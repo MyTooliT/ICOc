@@ -528,22 +528,22 @@ class TestSth(unittest.TestCase):
 
     def test0011EnergySaveMode1(self):
         self.PeakCan.Logger.Info("Read out parameters from EEPORM")
-        [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode([SystemCommandBlueToothEnergyModeReducedRead, 0, 0, 0, 0, 0, 0, 0])
+        [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode([SystemCommandBlueToothEnergyModeReducedRead, self.PeakCan.DeviceNr, 0, 0, 0, 0, 0, 0])
         self.PeakCan.Logger.Info("First Read Time Sleep Time1: " + str(timeReset) + " ms")
         self.PeakCan.Logger.Info("First Read Time Advertisement Time 1: " + str(timeAdvertisement) + " ms")
-        [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode([SystemCommandBlueToothEnergyModeReducedWrite, 0, 0xE8, 0x03, 0, 0, 0xE8, 0x03])
+        [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode([SystemCommandBlueToothEnergyModeReducedWrite, self.PeakCan.DeviceNr, 0xE8, 0x03, 0, 0, 0xE8, 0x03])
         self.PeakCan.Logger.Info("First Write Time Sleep Time1(ACK): " + str(timeReset) + " ms")
         self.PeakCan.Logger.Info("First Write Time Advertisement Time 1(ACK): " + str(timeAdvertisement) + " ms")
         self.assertEqual(timeReset, 1000)
         self.assertEqual(timeAdvertisement, 1000)
-        [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode([SystemCommandBlueToothEnergyModeReducedRead, 0, 0, 0, 0, 0, 0, 0])
+        [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode([SystemCommandBlueToothEnergyModeReducedRead, self.PeakCan.DeviceNr, 0, 0, 0, 0, 0, 0])
         self.PeakCan.Logger.Info("Read Time Sleep Time1: " + str(timeReset) + " ms")
         self.PeakCan.Logger.Info("Read Time Advertisement Time 1: " + str(timeAdvertisement) + " ms")
         self.assertEqual(timeReset, 1000)
         self.assertEqual(timeAdvertisement, 1000)
         self._resetSth()
         self.PeakCan.BlueToothConnectPollingName(MY_TOOL_IT_NETWORK_STU1, TestDeviceName)
-        [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode([SystemCommandBlueToothEnergyModeReducedRead, 0, 0, 0, 0, 0, 0, 0])
+        [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode([SystemCommandBlueToothEnergyModeReducedRead, self.PeakCan.DeviceNr, 0, 0, 0, 0, 0, 0])
         self.PeakCan.Logger.Info("Read Time Sleep Time1: " + str(timeReset) + " ms")
         self.PeakCan.Logger.Info("Read Time Advertisement Time 1: " + str(timeAdvertisement) + " ms")
         self.assertEqual(timeReset, 1000)
@@ -557,20 +557,20 @@ class TestSth(unittest.TestCase):
         S1B3 = (Sleep1TimeReset >> 24) & 0xFF
         A1B0 = Sleep1AdvertisementTimeReset & 0xFF
         A1B1 = (Sleep1AdvertisementTimeReset >> 8) & 0xFF
-        Payload = [SystemCommandBlueToothEnergyModeReducedWrite, 0, S1B0, S1B1, S1B2, S1B3, A1B0, A1B1]
+        Payload = [SystemCommandBlueToothEnergyModeReducedWrite, self.PeakCan.DeviceNr, S1B0, S1B1, S1B2, S1B3, A1B0, A1B1]
         [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode(Payload)
         self.PeakCan.Logger.Info("Write Time Sleep Time1(ACK): " + str(timeReset) + " ms")
         self.PeakCan.Logger.Info("Write Time Advertisement Time 1(ACK): " + str(timeAdvertisement) + " ms")
         self.assertEqual(timeReset, Sleep1TimeReset)
         self.assertEqual(timeAdvertisement, Sleep1AdvertisementTimeReset)
-        [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode([SystemCommandBlueToothEnergyModeReducedRead, 0, 0, 0, 0, 0, 0, 0])
+        [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode([SystemCommandBlueToothEnergyModeReducedRead, self.PeakCan.DeviceNr, 0, 0, 0, 0, 0, 0])
         self.PeakCan.Logger.Info("Read Time Sleep Time1: " + str(timeReset) + " ms")
         self.PeakCan.Logger.Info("Read Time Advertisement Time 1: " + str(timeAdvertisement) + " ms")
         self.assertEqual(timeReset, Sleep1TimeReset)
         self.assertEqual(timeAdvertisement, Sleep1AdvertisementTimeReset)
         self._resetSth()
         self.PeakCan.BlueToothConnectPollingName(MY_TOOL_IT_NETWORK_STU1, TestDeviceName)
-        [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode([SystemCommandBlueToothEnergyModeReducedRead, 0, 0, 0, 0, 0, 0, 0])
+        [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode([SystemCommandBlueToothEnergyModeReducedRead, self.PeakCan.DeviceNr, 0, 0, 0, 0, 0, 0])
         self.PeakCan.Logger.Info("Read Time Sleep Time1: " + str(timeReset) + " ms")
         self.PeakCan.Logger.Info("Read Time Advertisement Time 1: " + str(timeAdvertisement) + " ms")
         self.assertEqual(timeReset, Sleep1TimeReset)
@@ -583,27 +583,27 @@ class TestSth(unittest.TestCase):
     def test0011EnergySaveMode2(self):
         self.PeakCan.Logger.Info("Set Energy Mode1 parameters")
         self.PeakCan.Logger.Info("Write EM1 parameters to EEPORM")
-        [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode([SystemCommandBlueToothEnergyModeReducedWrite, 0, 0xE8, 0x03, 0, 0, 0xE8, 0x03])
+        [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode([SystemCommandBlueToothEnergyModeReducedWrite, self.PeakCan.DeviceNr, 0xE8, 0x03, 0, 0, 0xE8, 0x03])
         self.PeakCan.Logger.Info("First Write Time Sleep Time1(ACK): " + str(timeReset) + " ms")
         self.PeakCan.Logger.Info("First Write Time Advertisement Time 1(ACK): " + str(timeAdvertisement) + " ms")
         self.PeakCan.Logger.Info("Doing Energy Mode2 stuff")
         self.PeakCan.Logger.Info("Read out EM2 parameters from EEPORM")
-        [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode([SystemCommandBlueToothEnergyModeLowestRead, 0, 0, 0, 0, 0, 0, 0])
+        [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode([SystemCommandBlueToothEnergyModeLowestRead, self.PeakCan.DeviceNr, 0, 0, 0, 0, 0, 0])
         self.PeakCan.Logger.Info("First Read Time Sleep Time1: " + str(timeReset) + " ms")
         self.PeakCan.Logger.Info("First Read Time Advertisement Time 1: " + str(timeAdvertisement) + " ms")
-        [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode([SystemCommandBlueToothEnergyModeLowestWrite, 0, 0xD0, 0x07, 0, 0, 0xD0, 0x07])
+        [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode([SystemCommandBlueToothEnergyModeLowestWrite, self.PeakCan.DeviceNr, 0xD0, 0x07, 0, 0, 0xD0, 0x07])
         self.PeakCan.Logger.Info("First Write Time Sleep Time1(ACK): " + str(timeReset) + " ms")
         self.PeakCan.Logger.Info("First Write Time Advertisement Time 1(ACK): " + str(timeAdvertisement) + " ms")
         self.assertEqual(timeReset, 2000)
         self.assertEqual(timeAdvertisement, 2000)
-        [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode([SystemCommandBlueToothEnergyModeLowestRead, 0, 0, 0, 0, 0, 0, 0])
+        [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode([SystemCommandBlueToothEnergyModeLowestRead, self.PeakCan.DeviceNr, 0, 0, 0, 0, 0, 0])
         self.PeakCan.Logger.Info("Read Time Sleep Time1: " + str(timeReset) + " ms")
         self.PeakCan.Logger.Info("Read Time Advertisement Time 1: " + str(timeAdvertisement) + " ms")
         self.assertEqual(timeReset, 2000)
         self.assertEqual(timeAdvertisement, 2000)
         self._resetSth()
         self.PeakCan.BlueToothConnectPollingName(MY_TOOL_IT_NETWORK_STU1, TestDeviceName)
-        [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode([SystemCommandBlueToothEnergyModeLowestRead, 0, 0, 0, 0, 0, 0, 0])
+        [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode([SystemCommandBlueToothEnergyModeLowestRead, self.PeakCan.DeviceNr, 0, 0, 0, 0, 0, 0])
         self.PeakCan.Logger.Info("Read Time Sleep Time1: " + str(timeReset) + " ms")
         self.PeakCan.Logger.Info("Read Time Advertisement Time 1: " + str(timeAdvertisement) + " ms")
         self.assertEqual(timeReset, 2000)
@@ -617,20 +617,20 @@ class TestSth(unittest.TestCase):
         S1B3 = (Sleep2TimeReset >> 24) & 0xFF
         A1B0 = Sleep2AdvertisementTimeReset & 0xFF
         A1B1 = (Sleep2AdvertisementTimeReset >> 8) & 0xFF
-        Payload = [SystemCommandBlueToothEnergyModeLowestWrite, 0, S1B0, S1B1, S1B2, S1B3, A1B0, A1B1]
+        Payload = [SystemCommandBlueToothEnergyModeLowestWrite, self.PeakCan.DeviceNr, S1B0, S1B1, S1B2, S1B3, A1B0, A1B1]
         [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode(Payload)
         self.PeakCan.Logger.Info("Write Time Sleep Time1(ACK): " + str(timeReset) + " ms")
         self.PeakCan.Logger.Info("Write Time Advertisement Time 1(ACK): " + str(timeAdvertisement) + " ms")
         self.assertEqual(timeReset, Sleep2TimeReset)
         self.assertEqual(timeAdvertisement, Sleep2AdvertisementTimeReset)
-        [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode([SystemCommandBlueToothEnergyModeLowestRead, 0, 0, 0, 0, 0, 0, 0])
+        [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode([SystemCommandBlueToothEnergyModeLowestRead, self.PeakCan.DeviceNr, 0, 0, 0, 0, 0, 0])
         self.PeakCan.Logger.Info("Read Time Sleep Time1: " + str(timeReset) + " ms")
         self.PeakCan.Logger.Info("Read Time Advertisement Time 1: " + str(timeAdvertisement) + " ms")
         self.assertEqual(timeReset, Sleep2TimeReset)
         self.assertEqual(timeAdvertisement, Sleep2AdvertisementTimeReset)
         self._resetSth()
         self.PeakCan.BlueToothConnectPollingName(MY_TOOL_IT_NETWORK_STU1, TestDeviceName)
-        [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode([SystemCommandBlueToothEnergyModeLowestRead, 0, 0, 0, 0, 0, 0, 0])
+        [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode([SystemCommandBlueToothEnergyModeLowestRead, self.PeakCan.DeviceNr, 0, 0, 0, 0, 0, 0])
         self.PeakCan.Logger.Info("Read Time Sleep Time1: " + str(timeReset) + " ms")
         self.PeakCan.Logger.Info("Read Time Advertisement Time 1: " + str(timeAdvertisement) + " ms")
         self.assertEqual(timeReset, Sleep2TimeReset)
@@ -638,6 +638,7 @@ class TestSth(unittest.TestCase):
         self.PeakCan.Logger.Info("Reset via test0011EnergySaveMode1 EM1 parameters")
         self.test0011EnergySaveMode1()
 
+    
     """
     Test HMI
     """
@@ -728,6 +729,9 @@ class TestSth(unittest.TestCase):
         self.PeakCan.Logger.Info("Received: " + Name)
         self.assertEqual(TestDeviceName, Name)
         print("Last Set Name: " + Name)
+    
+    
+
         
     """
     Get Bluetooth Address
@@ -737,6 +741,26 @@ class TestSth(unittest.TestCase):
         self.PeakCan.Logger.Info("Get Bluetooth Address")
         self.PeakCan.Logger.Info("BlueTooth Address: " + hex(self.PeakCan.BlueToothAddress(MY_TOOL_IT_NETWORK_STH1)))
 
+    """
+    Check Bluetooth connectablity
+    """
+
+    def test0105BlueToothConnect(self):
+        self.PeakCan.BlueToothEnergyModeNr(8000, Sleep1AdvertisementTimeReset, 1)
+        self.PeakCan.BlueToothEnergyModeNr(SleepTimeMin, Sleep2AdvertisementTimeReset, 2)  
+        for _i in range(0, 10):      
+            self.PeakCan.BlueToothDisconnect(MY_TOOL_IT_NETWORK_STU1)
+            sleep(9)
+            self.PeakCan.BlueToothConnectPollingName(MY_TOOL_IT_NETWORK_STU1, TestDeviceName)
+        self.PeakCan.BlueToothEnergyModeNr(SleepTimeMin, Sleep1AdvertisementTimeReset, 1)
+        self.PeakCan.BlueToothEnergyModeNr(Sleep2TimeReset, Sleep2AdvertisementTimeReset, 2)  
+        for _i in range(0,100):      
+            self.PeakCan.BlueToothDisconnect(MY_TOOL_IT_NETWORK_STU1)
+            sleep(0.5)
+            self.PeakCan.BlueToothConnectPollingName(MY_TOOL_IT_NETWORK_STU1, TestDeviceName)        
+        self.PeakCan.BlueToothEnergyModeNr(Sleep1TimeReset, Sleep1AdvertisementTimeReset, 1)
+        self.PeakCan.BlueToothEnergyModeNr(Sleep2TimeReset, Sleep2AdvertisementTimeReset, 2)  
+                
     """
     Get Battery Voltage via single command
     """
@@ -1035,6 +1059,16 @@ class TestSth(unittest.TestCase):
         self.PeakCan.ReadArrayReset()
         
     """
+    Test heavy usage of data acquiring
+    """        
+
+    def test0334StreamingHeavyDuty(self):
+        for _i in range(0, 90):
+            self.SamplingRate(2, AdcAcquisitionTime3, AdcOverSamplingRate64, AdcReferenceVDD, runTime=5000)
+            self._streamingStop()
+            self.PeakCan.ReadArrayReset()
+        
+    """
     Test x-Axis Line
     """
 
@@ -1279,8 +1313,8 @@ class TestSth(unittest.TestCase):
                         self._resetStu()
                         self.PeakCan.Logger.Info("Connect to STH")
                         self.PeakCan.BlueToothConnectPollingName(MY_TOOL_IT_NETWORK_STU1, TestDeviceName)
-        SamplingRateMaxDet+=0.5
-        SamplingRateMaxDet=int(SamplingRateMaxDet)
+        SamplingRateMaxDet += 0.5
+        SamplingRateMaxDet = int(SamplingRateMaxDet)
         self.PeakCan.Logger.Info("Maximum Single Sampling Rate: " + str(SamplingRateMaxDet))
         print("Maximum Single Sampling Rate: " + str(SamplingRateMaxDet))
         self.assertEqual(SamplingRateMaxDet, SamplingRateSingleMax)
@@ -1315,8 +1349,8 @@ class TestSth(unittest.TestCase):
                         self._resetStu()
                         self.PeakCan.Logger.Info("Connect to STH")
                         self.PeakCan.BlueToothConnectPollingName(MY_TOOL_IT_NETWORK_STU1, TestDeviceName)
-        SamplingRateMaxDet+=0.5
-        SamplingRateMaxDet=int(SamplingRateMaxDet)
+        SamplingRateMaxDet += 0.5
+        SamplingRateMaxDet = int(SamplingRateMaxDet)
         self.PeakCan.Logger.Info("Maximum Double Sampling Rate: " + str(SamplingRateMaxDet))
         print("Maximum Double Sampling Rate: " + str(SamplingRateMaxDet))
         self.assertEqual(SamplingRateMaxDet, SamplingRateDoubleMax)
@@ -1352,8 +1386,8 @@ class TestSth(unittest.TestCase):
                         self.PeakCan.Logger.Info("Connect to STH")
                         self.PeakCan.BlueToothConnectPollingName(MY_TOOL_IT_NETWORK_STU1, TestDeviceName)
         self.PeakCan.Logger.Info("Maximum Tripple Sampling Rate: " + str(SamplingRateMaxDet))
-        SamplingRateMaxDet+=0.5
-        SamplingRateMaxDet=int(SamplingRateMaxDet)
+        SamplingRateMaxDet += 0.5
+        SamplingRateMaxDet = int(SamplingRateMaxDet)
         print("Maximum Tripple Sampling Rate: " + str(SamplingRateMaxDet))
         self.assertEqual(SamplingRateMaxDet, SamplingRateTrippleMax)
 
@@ -1759,7 +1793,7 @@ class TestSth(unittest.TestCase):
         self.assertEqual(MinutesReset2, 1)
         self.assertEqual(MinutesReset3, 1)
         self.assertEqual(MinutesOveral1, MinutesOveral2)                
-        self.assertEqual(MinutesOveral1+1, MinutesOveral3)
+        self.assertEqual(MinutesOveral1 + 1, MinutesOveral3)
         
                 
 if __name__ == "__main__":

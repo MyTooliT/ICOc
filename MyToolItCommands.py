@@ -276,8 +276,8 @@ DataSets30 = 7
 TestCommandSignalLine = 1
 TestCommandSignalRamp = 2
     
-SystemCommandBlueToothConnectTime = 12
-SystemCommandBlueToothConnectTimeOut = 4
+SystemCommandBlueToothConnectTime = 20
+SystemCommandBlueToothConnectTimeOut = 16
 SystemCommandBlueToothDisconnectTime = 1
 SystemCommandBlueToothReserved = 0
 SystemCommandBlueToothConnect = 1

@@ -119,8 +119,7 @@ class PeakCanFd(object):
     def __exit__(self): 
         if False == self.Error:
             if False != self.RunReadThread:
-                self.RunReadThread = False
-                self.readThread.join()
+                self.readThreadStop()
             else:
                 self.Logger.Error("Peak CAN Message Over Run")
                 self.Error = True
@@ -133,11 +132,14 @@ class PeakCanFd(object):
         self.__exit__()
         self.Error = True
         raise
-        
-    def ReadArrayReset(self):
+
+    def readThreadStop(self):
         if False != self.RunReadThread:
-            self.RunReadThread = False
+            self.RunReadThread = False            
             self.readThread.join()
+                    
+    def ReadArrayReset(self):
+        self.readThreadStop()            
         self.readArray = [{"CanMsg" : self.CanMessage20(0, 0, 0, [0, 0, 0, 0, 0, 0, 0, 0]), "PcTime" : self.getTimeMs(), "PeakCanTime" : 0}]
         self.readArray.append({"CanMsg" : self.CanMessage20(0, 0, 0, [0, 0, 0, 0, 0, 0, 0, 0]), "PcTime" : self.getTimeMs(), "PeakCanTime" : 0})
         sleep(0.2)
@@ -146,6 +148,7 @@ class PeakCanFd(object):
         self.readThread = threading.Thread(target=self.ReadMessage, name="CanReadThread")
         self.readThread.start()
         self.Reset()
+        sleep(0.2)
         
     def ConfigureTraceFile(self):
         # Configure the maximum size of a trace file to 5 megabytes
@@ -786,11 +789,11 @@ class PeakCanFd(object):
         deviceNumbers = self.BlueToothConnectTotalScannedDeviceNr(stuNr)
         ret = 0
         if deviceNr < deviceNumbers:
-            currentTime = time()
-            endTime = currentTime + SystemCommandBlueToothConnectTimeOut     
-            while time() < endTime and 0 == ret:       
-                self.BlueToothConnectDeviceConnect(stuNr, deviceNr)
-                ret = 0 < self.BlueToothCheckConnect(stuNr)           
+            currentTime = time()            
+            endTime = currentTime + SystemCommandBlueToothConnectTimeOut 
+            self.BlueToothConnectDeviceConnect(stuNr, deviceNr)    
+            while time() < endTime and 0 == ret:      
+                ret = self.BlueToothCheckConnect(stuNr)            
         return ret
 
     def BlueToothDisconnect(self, stuNr):
@@ -849,16 +852,17 @@ class PeakCanFd(object):
         self.Name = None       
         deviceNumber = 0 
         recNameList = []
-        currentTime = time()
-        endTime = currentTime + SystemCommandBlueToothConnectTime
+        endTime = time() + SystemCommandBlueToothConnectTime
         while None == self.Name and 8 > deviceNumber and time() < endTime:
             if 0 < self.BlueToothConnect(stuNr, deviceNumber):
+                endTime = time() + SystemCommandBlueToothConnectTime
                 RecName = ''
                 while '' == RecName and time() < endTime:
                     RecName = self.BlueToothNameGet(deviceNumber)[0:8]
                 recNameList.append(RecName)
                 if Name == RecName:
                     self.Name = Name
+                    self.DeviceNr = deviceNumber
                 else:
                     deviceNumber += 1
                     self.BlueToothDisconnect(stuNr)
@@ -867,6 +871,25 @@ class PeakCanFd(object):
             print("Available Names: " + str(recNameList))
             self.__exitError()
 
+
+    def BlueToothEnergyModeNr(self, Sleep1TimeReset, Sleep1AdvertisementTimeReset, modeNr):
+        S1B0 = Sleep1TimeReset & 0xFF
+        S1B1 = (Sleep1TimeReset >> 8) & 0xFF
+        S1B2 = (Sleep1TimeReset >> 16) & 0xFF
+        S1B3 = (Sleep1TimeReset >> 24) & 0xFF
+        A1B0 = Sleep1AdvertisementTimeReset & 0xFF
+        A1B1 = (Sleep1AdvertisementTimeReset >> 8) & 0xFF
+        if 2 == modeNr:
+            self.Logger.Info("Setting Bluetooth Energy Mode 2")
+            modeNr = SystemCommandBlueToothEnergyModeLowestWrite
+        else:
+            self.Logger.Info("Setting Bluetooth Energy Mode 1")
+            modeNr = SystemCommandBlueToothEnergyModeReducedWrite
+        Payload = [modeNr, self.DeviceNr, S1B0, S1B1, S1B2, S1B3, A1B0, A1B1]
+        [timeReset, timeAdvertisement] = self.BlueToothEnergyMode(Payload) 
+        self.Logger.Info("Energy Mode ResetTime/AdvertisementTime: " + str(timeReset) + "/" + str(timeAdvertisement))
+        return [timeReset, timeAdvertisement]   
+    
     def BlueToothEnergyMode(self, Payload):
         cmd = self.CanCmd(MY_TOOL_IT_BLOCK_SYSTEM, MY_TOOL_IT_SYSTEM_BLUETOOTH, 1, 0)
         message = self.CanMessage20(cmd, self.sender, self.receiver, Payload)
