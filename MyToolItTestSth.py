@@ -765,7 +765,7 @@ class TestSth(unittest.TestCase):
         self.PeakCan.BlueToothEnergyModeNr(SleepTimeMin, Sleep1AdvertisementTimeReset, 1)
         self.PeakCan.BlueToothEnergyModeNr(Sleep2TimeReset, Sleep2AdvertisementTimeReset, 2)  
         for _i in range(0, 10):      
-            self.PeakCan.BlueToothDisconn > ect(MY_TOOL_IT_NETWORK_STU1)
+            self.PeakCan.BlueToothDisconnect(MY_TOOL_IT_NETWORK_STU1)
             sleep(SleepTimeMin / 1000)
             self.PeakCan.BlueToothConnectPollingName(MY_TOOL_IT_NETWORK_STU1, TestDeviceName)        
         self.PeakCan.BlueToothEnergyModeNr(Sleep1TimeReset, Sleep1AdvertisementTimeReset, 1)
