@@ -406,6 +406,29 @@ class TestSth(unittest.TestCase):
             momentOrder /= len(sortArray)
         return momentOrder
 
+    def streamingValueStatisticsValue(self, sortArray):
+        statistics = {}
+        statistics["Minimum"] = sortArray[0]
+        statistics["Quantil1"] = self.streamingValueStatisticsQuantile(sortArray, 0.01)
+        statistics["Quantil5"] = self.streamingValueStatisticsQuantile(sortArray, 0.05)
+        statistics["Quantil25"] = self.streamingValueStatisticsQuantile(sortArray, 0.25)
+        statistics["Median"] = self.streamingValueStatisticsQuantile(sortArray, 0.5)
+        statistics["Quantil75"] = self.streamingValueStatisticsQuantile(sortArray, 0.75)
+        statistics["Quantil95"] = self.streamingValueStatisticsQuantile(sortArray, 0.95)
+        statistics["Quantil99"] = self.streamingValueStatisticsQuantile(sortArray, 0.99)
+        statistics["Maximum"] = sortArray[-1]
+        statistics["ArithmeticAverage"] = self.streamingValueStatisticsArithmeticAverage(sortArray)
+        statistics["StandardDeviation"] = self.streamingValueStatisticsVariance(sortArray) ** 0.5
+        statistics["Variance"] = self.streamingValueStatisticsVariance(sortArray)
+        statistics["Skewness"] = self.streamingValueStatisticsMomentOrder(sortArray, 3)
+        statistics["Kurtosis"] = self.streamingValueStatisticsMomentOrder(sortArray, 4)
+        statistics["Data"] = sortArray
+        statistics["InterQuartialRange"] = statistics["Quantil75"] - statistics["Quantil25"]
+        statistics["90PRange"] = statistics["Quantil95"] - statistics["Quantil5"]
+        statistics["98PRange"] = statistics["Quantil99"] - statistics["Quantil1"]
+        statistics["TotalRange"] = sortArray[-1] - sortArray[0]        
+        return statistics
+    
     def streamingValueStatistics(self, Array1, Array2, Array3):
         sortArray1 = Array1.copy()
         sortArray2 = Array2.copy()
@@ -416,68 +439,11 @@ class TestSth(unittest.TestCase):
 
         statistics = {"Value1" : None, "Value2" : None, "Value3" : None}
         if 0 < len(sortArray1):
-            statistics["Value1"] = {}
-            statistics["Value1"]["Minimum"] = sortArray1[0]
-            statistics["Value1"]["Quantil1"] = self.streamingValueStatisticsQuantile(sortArray1, 0.01)
-            statistics["Value1"]["Quantil5"] = self.streamingValueStatisticsQuantile(sortArray1, 0.05)
-            statistics["Value1"]["Quantil25"] = self.streamingValueStatisticsQuantile(sortArray1, 0.25)
-            statistics["Value1"]["Median"] = self.streamingValueStatisticsQuantile(sortArray1, 0.5)
-            statistics["Value1"]["Quantil75"] = self.streamingValueStatisticsQuantile(sortArray1, 0.75)
-            statistics["Value1"]["Quantil95"] = self.streamingValueStatisticsQuantile(sortArray1, 0.95)
-            statistics["Value1"]["Quantil99"] = self.streamingValueStatisticsQuantile(sortArray1, 0.99)
-            statistics["Value1"]["Maximum"] = sortArray1[-1]
-            statistics["Value1"]["ArithmeticAverage"] = self.streamingValueStatisticsArithmeticAverage(sortArray1)
-            statistics["Value1"]["StandardDeviation"] = self.streamingValueStatisticsVariance(sortArray1) ** 0.5
-            statistics["Value1"]["Variance"] = self.streamingValueStatisticsVariance(sortArray1)
-            statistics["Value1"]["Skewness"] = self.streamingValueStatisticsMomentOrder(sortArray1, 3)
-            statistics["Value1"]["Kurtosis"] = self.streamingValueStatisticsMomentOrder(sortArray1, 4)
-            statistics["Value1"]["Data"] = sortArray1
-            statistics["Value1"]["InterQuartialRange"] = statistics["Value1"]["Quantil75"] - statistics["Value1"]["Quantil25"]
-            statistics["Value1"]["90PRange"] = statistics["Value1"]["Quantil95"] - statistics["Value1"]["Quantil5"]
-            statistics["Value1"]["98PRange"] = statistics["Value1"]["Quantil99"] - statistics["Value1"]["Quantil1"]
-            statistics["Value1"]["TotalRange"] = sortArray1[-1] - sortArray1[0]
+            statistics["Value1"] = self.streamingValueStatisticsValue(sortArray1)
         if 0 < len(sortArray2):
-            statistics["Value2"] = {}
-            statistics["Value2"]["Minimum"] = sortArray2[0]
-            statistics["Value2"]["Quantil1"] = self.streamingValueStatisticsQuantile(sortArray2, 0.01)
-            statistics["Value2"]["Quantil5"] = self.streamingValueStatisticsQuantile(sortArray2, 0.05)
-            statistics["Value2"]["Quantil25"] = self.streamingValueStatisticsQuantile(sortArray2, 0.25)
-            statistics["Value2"]["Median"] = self.streamingValueStatisticsQuantile(sortArray2, 0.5)
-            statistics["Value2"]["Quantil75"] = self.streamingValueStatisticsQuantile(sortArray2, 0.75)
-            statistics["Value2"]["Quantil95"] = self.streamingValueStatisticsQuantile(sortArray2, 0.95)
-            statistics["Value2"]["Quantil99"] = self.streamingValueStatisticsQuantile(sortArray2, 0.99)
-            statistics["Value2"]["Maximum"] = sortArray2[-1]
-            statistics["Value2"]["ArithmeticAverage"] = self.streamingValueStatisticsArithmeticAverage(sortArray2)
-            statistics["Value2"]["StandardDeviation"] = self.streamingValueStatisticsVariance(sortArray2) ** 0.5
-            statistics["Value2"]["Variance"] = self.streamingValueStatisticsVariance(sortArray2)
-            statistics["Value2"]["Skewness"] = self.streamingValueStatisticsMomentOrder(sortArray2, 3)
-            statistics["Value2"]["Kurtosis"] = self.streamingValueStatisticsMomentOrder(sortArray2, 4)
-            statistics["Value2"]["Data"] = sortArray2
-            statistics["Value2"]["InterQuartialRange"] = statistics["Value2"]["Quantil75"] - statistics["Value2"]["Quantil25"]
-            statistics["Value2"]["90PRange"] = statistics["Value2"]["Quantil95"] - statistics["Value2"]["Quantil5"]
-            statistics["Value2"]["98PRange"] = statistics["Value2"]["Quantil99"] - statistics["Value2"]["Quantil1"]
-            statistics["Value2"]["TotalRange"] = sortArray2[-1] - sortArray2[0]
+            statistics["Value2"] = self.streamingValueStatisticsValue(sortArray2)
         if 0 < len(sortArray3):
-            statistics["Value3"] = {}
-            statistics["Value3"]["Minimum"] = sortArray3[0]
-            statistics["Value3"]["Quantil1"] = self.streamingValueStatisticsQuantile(sortArray3, 0.01)
-            statistics["Value3"]["Quantil5"] = self.streamingValueStatisticsQuantile(sortArray3, 0.05)
-            statistics["Value3"]["Quantil25"] = self.streamingValueStatisticsQuantile(sortArray3, 0.25)
-            statistics["Value3"]["Median"] = self.streamingValueStatisticsQuantile(sortArray3, 0.5)
-            statistics["Value3"]["Quantil75"] = self.streamingValueStatisticsQuantile(sortArray3, 0.75)
-            statistics["Value3"]["Quantil95"] = self.streamingValueStatisticsQuantile(sortArray3, 0.95)
-            statistics["Value3"]["Quantil99"] = self.streamingValueStatisticsQuantile(sortArray3, 0.99)
-            statistics["Value3"]["Maximum"] = sortArray3[-1]
-            statistics["Value3"]["ArithmeticAverage"] = self.streamingValueStatisticsArithmeticAverage(sortArray3)
-            statistics["Value3"]["StandardDeviation"] = self.streamingValueStatisticsVariance(sortArray3) ** 0.5
-            statistics["Value3"]["Variance"] = self.streamingValueStatisticsVariance(sortArray3)
-            statistics["Value3"]["Skewness"] = self.streamingValueStatisticsMomentOrder(sortArray3, 3)
-            statistics["Value3"]["Kurtosis"] = self.streamingValueStatisticsMomentOrder(sortArray3, 4)
-            statistics["Value3"]["Data"] = sortArray3
-            statistics["Value3"]["InterQuartialRange"] = statistics["Value3"]["Quantil75"] - statistics["Value3"]["Quantil25"]
-            statistics["Value3"]["90PRange"] = statistics["Value3"]["Quantil95"] - statistics["Value3"]["Quantil5"]
-            statistics["Value3"]["98PRange"] = statistics["Value3"]["Quantil99"] - statistics["Value3"]["Quantil1"]
-            statistics["Value3"]["TotalRange"] = sortArray3[-1] - sortArray3[0]
+            statistics["Value3"] = self.streamingValueStatisticsValue(sortArray3)
         return statistics
 
     def signalIndicators(self, array1, array2, array3):
@@ -1313,8 +1279,8 @@ class TestSth(unittest.TestCase):
                         self._resetStu()
                         self.PeakCan.Logger.Info("Connect to STH")
                         self.PeakCan.BlueToothConnectPollingName(MY_TOOL_IT_NETWORK_STU1, TestDeviceName)
-        SamplingRateMaxDet += 0.5
-        SamplingRateMaxDet = int(SamplingRateMaxDet)
+        SamplingRateMaxDet+=0.5
+        SamplingRateMaxDet=int(SamplingRateMaxDet)
         self.PeakCan.Logger.Info("Maximum Single Sampling Rate: " + str(SamplingRateMaxDet))
         print("Maximum Single Sampling Rate: " + str(SamplingRateMaxDet))
         self.assertEqual(SamplingRateMaxDet, SamplingRateSingleMax)
@@ -1349,8 +1315,8 @@ class TestSth(unittest.TestCase):
                         self._resetStu()
                         self.PeakCan.Logger.Info("Connect to STH")
                         self.PeakCan.BlueToothConnectPollingName(MY_TOOL_IT_NETWORK_STU1, TestDeviceName)
-        SamplingRateMaxDet += 0.5
-        SamplingRateMaxDet = int(SamplingRateMaxDet)
+        SamplingRateMaxDet+=0.5
+        SamplingRateMaxDet=int(SamplingRateMaxDet)
         self.PeakCan.Logger.Info("Maximum Double Sampling Rate: " + str(SamplingRateMaxDet))
         print("Maximum Double Sampling Rate: " + str(SamplingRateMaxDet))
         self.assertEqual(SamplingRateMaxDet, SamplingRateDoubleMax)
@@ -1386,8 +1352,8 @@ class TestSth(unittest.TestCase):
                         self.PeakCan.Logger.Info("Connect to STH")
                         self.PeakCan.BlueToothConnectPollingName(MY_TOOL_IT_NETWORK_STU1, TestDeviceName)
         self.PeakCan.Logger.Info("Maximum Tripple Sampling Rate: " + str(SamplingRateMaxDet))
-        SamplingRateMaxDet += 0.5
-        SamplingRateMaxDet = int(SamplingRateMaxDet)
+        SamplingRateMaxDet+=0.5
+        SamplingRateMaxDet=int(SamplingRateMaxDet)
         print("Maximum Tripple Sampling Rate: " + str(SamplingRateMaxDet))
         self.assertEqual(SamplingRateMaxDet, SamplingRateTrippleMax)
 
@@ -1793,7 +1759,7 @@ class TestSth(unittest.TestCase):
         self.assertEqual(MinutesReset2, 1)
         self.assertEqual(MinutesReset3, 1)
         self.assertEqual(MinutesOveral1, MinutesOveral2)                
-        self.assertEqual(MinutesOveral1 + 1, MinutesOveral3)
+        self.assertEqual(MinutesOveral1+1, MinutesOveral3)
         
                 
 if __name__ == "__main__":

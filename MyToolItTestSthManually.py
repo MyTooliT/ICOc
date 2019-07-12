@@ -3,13 +3,13 @@ from PeakCanFd import *
 from MyToolItNetworkNumbers import *
 from SthLimits import *
 
-log_location='../Logs/STU/'
+log_location='../Logs/STH/'
 
 class TestSthManually(unittest.TestCase):
 
     def setUp(self):
         print("TestCase: ", self._testMethodName)
-        int(input('Press Any Key to Continue')) 
+        input('Press Any Key to Continue')
         self.fileName = log_location + self._testMethodName + ".txt"
         self.fileNameError = log_location + "Error_" + self._testMethodName + ".txt"
         self.PeakCan = PeakCanFd(PCAN_BAUD_1M, self.fileName, self.fileNameError, MY_TOOL_IT_NETWORK_SPU1, MY_TOOL_IT_NETWORK_STH1)
@@ -21,6 +21,12 @@ class TestSthManually(unittest.TestCase):
         self.PeakCan.Logger.Info("Connect to STH")
         self.PeakCan.BlueToothConnectPollingName(MY_TOOL_IT_NETWORK_STU1, TestDeviceName)
         self.Error = False
+        self.PeakCan.Logger.Info("STU BlueTooth Address: " + hex(self.PeakCan.BlueToothAddress(MY_TOOL_IT_NETWORK_STU1)))
+        self.PeakCan.Logger.Info("STH BlueTooth Address: " + hex(self.PeakCan.BlueToothAddress(MY_TOOL_IT_NETWORK_STH1)))
+        self._statusWords()
+        temp = self._SthAdcTemp()
+        self.assertGreaterEqual(TempInternalMax, temp)
+        self.assertLessEqual(TempInternalMin, temp)
         print("Start")
         self.PeakCan.Logger.Info("Start")
 
@@ -43,6 +49,38 @@ class TestSthManually(unittest.TestCase):
         return False
 
 
+    def _resetStu(self, retries=5, log=True):
+        return self.PeakCan.cmdReset(MY_TOOL_IT_NETWORK_STU1, retries=retries, log=log)
+
+    def _resetSth(self, retries=5, log=True):
+        return self.PeakCan.cmdReset(MY_TOOL_IT_NETWORK_STH1, retries=retries, log=log)    
+
+    def _SthAdcTemp(self):
+        ret = self.PeakCan.calibMeasurement(MY_TOOL_IT_NETWORK_STH1, CalibMeassurementActionMeasure, CalibMeassurementTypeTemp, 1, AdcReference1V25, log=False)
+        result = float(messageWordGet(ret[4:]))
+        result /= 1000
+        self.PeakCan.Logger.Info("Temperature(Chip): " + str(result) + "°C") 
+        self.PeakCan.calibMeasurement(MY_TOOL_IT_NETWORK_STH1, CalibMeassurementActionNone, CalibMeassurementTypeTemp, 1, AdcReferenceNone, log=False, bReset=True)
+        return result
+    
+    def _statusWords(self):
+        ErrorWord = SthErrorWord()
+        psw0 = self.PeakCan.statusWord0(MY_TOOL_IT_NETWORK_STH1)
+        self.PeakCan.Logger.Info("STH Status Word: " + hex(psw0))
+        psw0 = self.PeakCan.statusWord0(MY_TOOL_IT_NETWORK_STU1)
+        self.PeakCan.Logger.Info("STU Status Word: " + hex(psw0))
+        ErrorWord.asword = self.PeakCan.statusWord1(MY_TOOL_IT_NETWORK_STH1)
+        if True == ErrorWord.b.bAdcOverRun:
+            print("STH Error Word: " + hex(ErrorWord.asword))
+            self.Error = True
+        self.PeakCan.Logger.Info("STH Error Word: " + hex(ErrorWord.asword))
+        ErrorWord.asword = self.PeakCan.statusWord1(MY_TOOL_IT_NETWORK_STU1)
+        if True == ErrorWord.b.bAdcOverRun:
+            print("STU Error Word: " + hex(ErrorWord.asword))
+            self.Error = True
+        self.PeakCan.Logger.Info("STU Error Word: " + hex(ErrorWord.asword))
+        
+        
     """
     Test Acknowledgement from STH. Write message and check identifier to be ack (No Error)
     """
@@ -52,7 +90,7 @@ class TestSthManually(unittest.TestCase):
         expectedData.asbyte = 0
         expectedData.b.u2NodeState = 0
         expectedData.b.u3NetworkState = 6
-        self.PeakCan.cmdSend(self, MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_BLOCK_SYSTEM, MY_TOOL_IT_SYSTEM_ACTIVE_STATE, [expectedData.asbyte])
+        self.PeakCan.cmdSend(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_BLOCK_SYSTEM, MY_TOOL_IT_SYSTEM_ACTIVE_STATE, [expectedData.asbyte])
         cmd = self.PeakCan.CanCmd(MY_TOOL_IT_BLOCK_SYSTEM, MY_TOOL_IT_SYSTEM_ACTIVE_STATE, 1, 0)
 
         msg = self.PeakCan.CanMessage20(cmd, MY_TOOL_IT_NETWORK_SPU1, MY_TOOL_IT_NETWORK_STH1, [expectedData.asbyte])
