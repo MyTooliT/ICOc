@@ -651,7 +651,6 @@ class TestSth(unittest.TestCase):
         self.assertEqual(timeAdvertisement, Sleep2AdvertisementTimeReset)
         self.PeakCan.Logger.Info("Reset via test0011EnergySaveMode1 EM1 parameters")
         self.test0011EnergySaveMode1()
-
     
     """
     Test HMI
@@ -743,9 +742,6 @@ class TestSth(unittest.TestCase):
         self.PeakCan.Logger.Info("Received: " + Name)
         self.assertEqual(TestDeviceName, Name)
         print("Last Set Name: " + Name)
-    
-    
-
         
     """
     Get Bluetooth Address
@@ -764,13 +760,13 @@ class TestSth(unittest.TestCase):
         self.PeakCan.BlueToothEnergyModeNr(SleepTimeMin, Sleep2AdvertisementTimeReset, 2)  
         for _i in range(0, 10):      
             self.PeakCan.BlueToothDisconnect(MY_TOOL_IT_NETWORK_STU1)
-            sleep(2*SleepTimeMin/1000)
+            sleep(2 * SleepTimeMin / 1000)
             self.PeakCan.BlueToothConnectPollingName(MY_TOOL_IT_NETWORK_STU1, TestDeviceName)
         self.PeakCan.BlueToothEnergyModeNr(SleepTimeMin, Sleep1AdvertisementTimeReset, 1)
         self.PeakCan.BlueToothEnergyModeNr(Sleep2TimeReset, Sleep2AdvertisementTimeReset, 2)  
-        for _i in range(0,10):      
-            self.PeakCan.BlueToothDisconnect(MY_TOOL_IT_NETWORK_STU1)
-            sleep(SleepTimeMin/1000)
+        for _i in range(0, 10):      
+            self.PeakCan.BlueToothDisconn > ect(MY_TOOL_IT_NETWORK_STU1)
+            sleep(SleepTimeMin / 1000)
             self.PeakCan.BlueToothConnectPollingName(MY_TOOL_IT_NETWORK_STU1, TestDeviceName)        
         self.PeakCan.BlueToothEnergyModeNr(Sleep1TimeReset, Sleep1AdvertisementTimeReset, 1)
         self.PeakCan.BlueToothEnergyModeNr(Sleep2TimeReset, Sleep2AdvertisementTimeReset, 2)  
