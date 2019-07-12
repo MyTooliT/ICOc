@@ -531,29 +531,29 @@ class TestSth(unittest.TestCase):
         [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode([SystemCommandBlueToothEnergyModeReducedRead, self.PeakCan.DeviceNr, 0, 0, 0, 0, 0, 0])
         self.PeakCan.Logger.Info("First Read Time Sleep Time1: " + str(timeReset) + " ms")
         self.PeakCan.Logger.Info("First Read Time Advertisement Time 1: " + str(timeAdvertisement) + " ms")
-        S1B0 = sleepTimeMin & 0xFF
-        S1B1 = (sleepTimeMin >> 8) & 0xFF
-        S1B2 = (sleepTimeMin >> 16) & 0xFF
-        S1B3 = (sleepTimeMin >> 24) & 0xFF
+        S1B0 = SleepTimeMin & 0xFF
+        S1B1 = (SleepTimeMin >> 8) & 0xFF
+        S1B2 = (SleepTimeMin >> 16) & 0xFF
+        S1B3 = (SleepTimeMin >> 24) & 0xFF
         A1B0 = 1000 & 0xFF
         A1B1 = (1000 >> 8) & 0xFF
         Payload = [SystemCommandBlueToothEnergyModeReducedWrite, self.PeakCan.DeviceNr, S1B0, S1B1, S1B2, S1B3, A1B0, A1B1]
         [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode(Payload)
         self.PeakCan.Logger.Info("First Write Time Sleep Time1(ACK): " + str(timeReset) + " ms")
         self.PeakCan.Logger.Info("First Write Time Advertisement Time 1(ACK): " + str(timeAdvertisement) + " ms")
-        self.assertEqual(timeReset, sleepTimeMin)
+        self.assertEqual(timeReset, SleepTimeMin)
         self.assertEqual(timeAdvertisement, 1000)
         [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode([SystemCommandBlueToothEnergyModeReducedRead, self.PeakCan.DeviceNr, 0, 0, 0, 0, 0, 0])
         self.PeakCan.Logger.Info("Read Time Sleep Time1: " + str(timeReset) + " ms")
         self.PeakCan.Logger.Info("Read Time Advertisement Time 1: " + str(timeAdvertisement) + " ms")
-        self.assertEqual(timeReset, sleepTimeMin)
+        self.assertEqual(timeReset, SleepTimeMin)
         self.assertEqual(timeAdvertisement, 1000)
         self._resetSth()
         self.PeakCan.BlueToothConnectPollingName(MY_TOOL_IT_NETWORK_STU1, TestDeviceName)
         [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode([SystemCommandBlueToothEnergyModeReducedRead, self.PeakCan.DeviceNr, 0, 0, 0, 0, 0, 0])
         self.PeakCan.Logger.Info("Read Time Sleep Time1: " + str(timeReset) + " ms")
         self.PeakCan.Logger.Info("Read Time Advertisement Time 1: " + str(timeAdvertisement) + " ms")
-        self.assertEqual(timeReset, sleepTimeMin)
+        self.assertEqual(timeReset, SleepTimeMin)
         self.assertEqual(timeAdvertisement, 1000)
         # Reset to default values
         self.PeakCan.Logger.Info("Write Time Sleep Time1: " + str(Sleep1TimeReset) + " ms")
@@ -590,10 +590,10 @@ class TestSth(unittest.TestCase):
     def test0012EnergySaveMode2(self):
         self.PeakCan.Logger.Info("Set Energy Mode1 parameters")
         self.PeakCan.Logger.Info("Write EM1 parameters to EEPORM")
-        S1B0 = sleepTimeMin & 0xFF
-        S1B1 = (sleepTimeMin >> 8) & 0xFF
-        S1B2 = (sleepTimeMin >> 16) & 0xFF
-        S1B3 = (sleepTimeMin >> 24) & 0xFF
+        S1B0 = SleepTimeMin & 0xFF
+        S1B1 = (SleepTimeMin >> 8) & 0xFF
+        S1B2 = (SleepTimeMin >> 16) & 0xFF
+        S1B3 = (SleepTimeMin >> 24) & 0xFF
         A1B0 = 2000 & 0xFF
         A1B1 = (2000 >> 8) & 0xFF
         Payload = [SystemCommandBlueToothEnergyModeLowestWrite, self.PeakCan.DeviceNr, S1B0, S1B1, S1B2, S1B3, A1B0, A1B1]
@@ -608,19 +608,19 @@ class TestSth(unittest.TestCase):
         [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode(Payload)
         self.PeakCan.Logger.Info("First Write Time Sleep Time1(ACK): " + str(timeReset) + " ms")
         self.PeakCan.Logger.Info("First Write Time Advertisement Time 1(ACK): " + str(timeAdvertisement) + " ms")
-        self.assertEqual(timeReset, sleepTimeMin)
+        self.assertEqual(timeReset, SleepTimeMin)
         self.assertEqual(timeAdvertisement, 2000)
         [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode([SystemCommandBlueToothEnergyModeLowestRead, self.PeakCan.DeviceNr, 0, 0, 0, 0, 0, 0])
         self.PeakCan.Logger.Info("Read Time Sleep Time1: " + str(timeReset) + " ms")
         self.PeakCan.Logger.Info("Read Time Advertisement Time 1: " + str(timeAdvertisement) + " ms")
-        self.assertEqual(timeReset, sleepTimeMin)
+        self.assertEqual(timeReset, SleepTimeMin)
         self.assertEqual(timeAdvertisement, 2000)
         self._resetSth()
         self.PeakCan.BlueToothConnectPollingName(MY_TOOL_IT_NETWORK_STU1, TestDeviceName)
         [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode([SystemCommandBlueToothEnergyModeLowestRead, self.PeakCan.DeviceNr, 0, 0, 0, 0, 0, 0])
         self.PeakCan.Logger.Info("Read Time Sleep Time1: " + str(timeReset) + " ms")
         self.PeakCan.Logger.Info("Read Time Advertisement Time 1: " + str(timeAdvertisement) + " ms")
-        self.assertEqual(timeReset, sleepTimeMin)
+        self.assertEqual(timeReset, SleepTimeMin)
         self.assertEqual(timeAdvertisement, 2000)
         # Reset to default values
         self.PeakCan.Logger.Info("Write Time Sleep Time1: " + str(Sleep2TimeReset) + " ms")
@@ -760,17 +760,17 @@ class TestSth(unittest.TestCase):
     """
 
     def test0105BlueToothConnect(self):
-        self.PeakCan.BlueToothEnergyModeNr(8000, Sleep1AdvertisementTimeReset, 1)
+        self.PeakCan.BlueToothEnergyModeNr(SleepTimeMin, Sleep1AdvertisementTimeReset, 1)
         self.PeakCan.BlueToothEnergyModeNr(SleepTimeMin, Sleep2AdvertisementTimeReset, 2)  
         for _i in range(0, 10):      
             self.PeakCan.BlueToothDisconnect(MY_TOOL_IT_NETWORK_STU1)
-            sleep(9)
+            sleep(2*SleepTimeMin/1000)
             self.PeakCan.BlueToothConnectPollingName(MY_TOOL_IT_NETWORK_STU1, TestDeviceName)
         self.PeakCan.BlueToothEnergyModeNr(SleepTimeMin, Sleep1AdvertisementTimeReset, 1)
         self.PeakCan.BlueToothEnergyModeNr(Sleep2TimeReset, Sleep2AdvertisementTimeReset, 2)  
-        for _i in range(0,100):      
+        for _i in range(0,10):      
             self.PeakCan.BlueToothDisconnect(MY_TOOL_IT_NETWORK_STU1)
-            sleep(0.5)
+            sleep(SleepTimeMin/1000)
             self.PeakCan.BlueToothConnectPollingName(MY_TOOL_IT_NETWORK_STU1, TestDeviceName)        
         self.PeakCan.BlueToothEnergyModeNr(Sleep1TimeReset, Sleep1AdvertisementTimeReset, 1)
         self.PeakCan.BlueToothEnergyModeNr(Sleep2TimeReset, Sleep2AdvertisementTimeReset, 2)  
