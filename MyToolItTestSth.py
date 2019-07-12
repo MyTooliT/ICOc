@@ -1,7 +1,9 @@
 import unittest
 import sys
 import os
-
+file_path = 'C:\Program Files\PCAN-Basic API\Include\PCANBasic.py'
+dir_name = os.path.dirname(file_path)
+sys.path.append(dir_name)
 import math
 from PCANBasic import *
 from PeakCanFd import *
@@ -1311,6 +1313,8 @@ class TestSth(unittest.TestCase):
                         self._resetStu()
                         self.PeakCan.Logger.Info("Connect to STH")
                         self.PeakCan.BlueToothConnectPollingName(MY_TOOL_IT_NETWORK_STU1, TestDeviceName)
+        SamplingRateMaxDet += 0.5
+        SamplingRateMaxDet = int(SamplingRateMaxDet)
         self.PeakCan.Logger.Info("Maximum Single Sampling Rate: " + str(SamplingRateMaxDet))
         print("Maximum Single Sampling Rate: " + str(SamplingRateMaxDet))
         self.assertEqual(SamplingRateMaxDet, SamplingRateSingleMax)
@@ -1345,6 +1349,8 @@ class TestSth(unittest.TestCase):
                         self._resetStu()
                         self.PeakCan.Logger.Info("Connect to STH")
                         self.PeakCan.BlueToothConnectPollingName(MY_TOOL_IT_NETWORK_STU1, TestDeviceName)
+        SamplingRateMaxDet += 0.5
+        SamplingRateMaxDet = int(SamplingRateMaxDet)
         self.PeakCan.Logger.Info("Maximum Double Sampling Rate: " + str(SamplingRateMaxDet))
         print("Maximum Double Sampling Rate: " + str(SamplingRateMaxDet))
         self.assertEqual(SamplingRateMaxDet, SamplingRateDoubleMax)
@@ -1380,6 +1386,8 @@ class TestSth(unittest.TestCase):
                         self.PeakCan.Logger.Info("Connect to STH")
                         self.PeakCan.BlueToothConnectPollingName(MY_TOOL_IT_NETWORK_STU1, TestDeviceName)
         self.PeakCan.Logger.Info("Maximum Tripple Sampling Rate: " + str(SamplingRateMaxDet))
+        SamplingRateMaxDet += 0.5
+        SamplingRateMaxDet = int(SamplingRateMaxDet)
         print("Maximum Tripple Sampling Rate: " + str(SamplingRateMaxDet))
         self.assertEqual(SamplingRateMaxDet, SamplingRateTrippleMax)
 
@@ -1785,7 +1793,7 @@ class TestSth(unittest.TestCase):
         self.assertEqual(MinutesReset2, 1)
         self.assertEqual(MinutesReset3, 1)
         self.assertEqual(MinutesOveral1, MinutesOveral2)                
-        self.assertEqual(MinutesOveral1+1, MinutesOveral3)
+        self.assertEqual(MinutesOveral1 + 1, MinutesOveral3)
         
                 
 if __name__ == "__main__":
