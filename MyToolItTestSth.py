@@ -531,22 +531,29 @@ class TestSth(unittest.TestCase):
         [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode([SystemCommandBlueToothEnergyModeReducedRead, self.PeakCan.DeviceNr, 0, 0, 0, 0, 0, 0])
         self.PeakCan.Logger.Info("First Read Time Sleep Time1: " + str(timeReset) + " ms")
         self.PeakCan.Logger.Info("First Read Time Advertisement Time 1: " + str(timeAdvertisement) + " ms")
-        [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode([SystemCommandBlueToothEnergyModeReducedWrite, self.PeakCan.DeviceNr, 0xE8, 0x03, 0, 0, 0xE8, 0x03])
+        S1B0 = sleepTimeMin & 0xFF
+        S1B1 = (sleepTimeMin >> 8) & 0xFF
+        S1B2 = (sleepTimeMin >> 16) & 0xFF
+        S1B3 = (sleepTimeMin >> 24) & 0xFF
+        A1B0 = 1000 & 0xFF
+        A1B1 = (1000 >> 8) & 0xFF
+        Payload = [SystemCommandBlueToothEnergyModeReducedWrite, self.PeakCan.DeviceNr, S1B0, S1B1, S1B2, S1B3, A1B0, A1B1]
+        [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode(Payload)
         self.PeakCan.Logger.Info("First Write Time Sleep Time1(ACK): " + str(timeReset) + " ms")
         self.PeakCan.Logger.Info("First Write Time Advertisement Time 1(ACK): " + str(timeAdvertisement) + " ms")
-        self.assertEqual(timeReset, 1000)
+        self.assertEqual(timeReset, sleepTimeMin)
         self.assertEqual(timeAdvertisement, 1000)
         [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode([SystemCommandBlueToothEnergyModeReducedRead, self.PeakCan.DeviceNr, 0, 0, 0, 0, 0, 0])
         self.PeakCan.Logger.Info("Read Time Sleep Time1: " + str(timeReset) + " ms")
         self.PeakCan.Logger.Info("Read Time Advertisement Time 1: " + str(timeAdvertisement) + " ms")
-        self.assertEqual(timeReset, 1000)
+        self.assertEqual(timeReset, sleepTimeMin)
         self.assertEqual(timeAdvertisement, 1000)
         self._resetSth()
         self.PeakCan.BlueToothConnectPollingName(MY_TOOL_IT_NETWORK_STU1, TestDeviceName)
         [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode([SystemCommandBlueToothEnergyModeReducedRead, self.PeakCan.DeviceNr, 0, 0, 0, 0, 0, 0])
         self.PeakCan.Logger.Info("Read Time Sleep Time1: " + str(timeReset) + " ms")
         self.PeakCan.Logger.Info("Read Time Advertisement Time 1: " + str(timeAdvertisement) + " ms")
-        self.assertEqual(timeReset, 1000)
+        self.assertEqual(timeReset, sleepTimeMin)
         self.assertEqual(timeAdvertisement, 1000)
         # Reset to default values
         self.PeakCan.Logger.Info("Write Time Sleep Time1: " + str(Sleep1TimeReset) + " ms")
@@ -580,10 +587,17 @@ class TestSth(unittest.TestCase):
     Test Energy Mode 2 - If you like to evaluate power consumption: Please do it manually
     """
 
-    def test0011EnergySaveMode2(self):
+    def test0012EnergySaveMode2(self):
         self.PeakCan.Logger.Info("Set Energy Mode1 parameters")
         self.PeakCan.Logger.Info("Write EM1 parameters to EEPORM")
-        [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode([SystemCommandBlueToothEnergyModeReducedWrite, self.PeakCan.DeviceNr, 0xE8, 0x03, 0, 0, 0xE8, 0x03])
+        S1B0 = sleepTimeMin & 0xFF
+        S1B1 = (sleepTimeMin >> 8) & 0xFF
+        S1B2 = (sleepTimeMin >> 16) & 0xFF
+        S1B3 = (sleepTimeMin >> 24) & 0xFF
+        A1B0 = 2000 & 0xFF
+        A1B1 = (2000 >> 8) & 0xFF
+        Payload = [SystemCommandBlueToothEnergyModeLowestWrite, self.PeakCan.DeviceNr, S1B0, S1B1, S1B2, S1B3, A1B0, A1B1]
+        [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode(Payload)
         self.PeakCan.Logger.Info("First Write Time Sleep Time1(ACK): " + str(timeReset) + " ms")
         self.PeakCan.Logger.Info("First Write Time Advertisement Time 1(ACK): " + str(timeAdvertisement) + " ms")
         self.PeakCan.Logger.Info("Doing Energy Mode2 stuff")
@@ -591,22 +605,22 @@ class TestSth(unittest.TestCase):
         [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode([SystemCommandBlueToothEnergyModeLowestRead, self.PeakCan.DeviceNr, 0, 0, 0, 0, 0, 0])
         self.PeakCan.Logger.Info("First Read Time Sleep Time1: " + str(timeReset) + " ms")
         self.PeakCan.Logger.Info("First Read Time Advertisement Time 1: " + str(timeAdvertisement) + " ms")
-        [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode([SystemCommandBlueToothEnergyModeLowestWrite, self.PeakCan.DeviceNr, 0xD0, 0x07, 0, 0, 0xD0, 0x07])
+        [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode(Payload)
         self.PeakCan.Logger.Info("First Write Time Sleep Time1(ACK): " + str(timeReset) + " ms")
         self.PeakCan.Logger.Info("First Write Time Advertisement Time 1(ACK): " + str(timeAdvertisement) + " ms")
-        self.assertEqual(timeReset, 2000)
+        self.assertEqual(timeReset, sleepTimeMin)
         self.assertEqual(timeAdvertisement, 2000)
         [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode([SystemCommandBlueToothEnergyModeLowestRead, self.PeakCan.DeviceNr, 0, 0, 0, 0, 0, 0])
         self.PeakCan.Logger.Info("Read Time Sleep Time1: " + str(timeReset) + " ms")
         self.PeakCan.Logger.Info("Read Time Advertisement Time 1: " + str(timeAdvertisement) + " ms")
-        self.assertEqual(timeReset, 2000)
+        self.assertEqual(timeReset, sleepTimeMin)
         self.assertEqual(timeAdvertisement, 2000)
         self._resetSth()
         self.PeakCan.BlueToothConnectPollingName(MY_TOOL_IT_NETWORK_STU1, TestDeviceName)
         [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyMode([SystemCommandBlueToothEnergyModeLowestRead, self.PeakCan.DeviceNr, 0, 0, 0, 0, 0, 0])
         self.PeakCan.Logger.Info("Read Time Sleep Time1: " + str(timeReset) + " ms")
         self.PeakCan.Logger.Info("Read Time Advertisement Time 1: " + str(timeAdvertisement) + " ms")
-        self.assertEqual(timeReset, 2000)
+        self.assertEqual(timeReset, sleepTimeMin)
         self.assertEqual(timeAdvertisement, 2000)
         # Reset to default values
         self.PeakCan.Logger.Info("Write Time Sleep Time1: " + str(Sleep2TimeReset) + " ms")

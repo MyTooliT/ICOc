@@ -2,14 +2,15 @@ import ctypes
 c_uint8 = ctypes.c_uint8
 c_uint32 = ctypes.c_uint32
 
-
 SthModuleStreaming = 0
-AdcConfigAllPrescalerMax=4
+AdcConfigAllPrescalerMax = 4
 SleepTimeMin = 250  # Mininimum Time for Sleeping
+sleepTimeMin = 10000
 Sleep1TimeReset = 300000
 Sleep1AdvertisementTimeReset = 400
 Sleep2TimeReset = 3600000
 Sleep2AdvertisementTimeReset = 800
+
 
 class SthErrorWordFlags(ctypes.BigEndianStructure):
     _fields_ = [
