@@ -255,7 +255,7 @@ class TestSth(unittest.TestCase):
             samplingPoints = self.PeakCan.samplingPoints(array1, array2, array3)
             self.PeakCan.Logger.Info("Running Time: " + str(runTime) + "ms")
             if False != startupTime:
-                self.PeakCan.Logger.Info("Startup Time: " + str(StreamingStartupTimeMs) + "ms")
+                self.PeakCan.Logger.Info("Startup Time: " + str(startupTime) + "ms")
             self.PeakCan.Logger.Info("Assumed Sampling Points/s: " + str(calcRate))
             samplingRateDet = 1000 * samplingPoints / (runTime)
             self.PeakCan.Logger.Info("Determined Sampling Points/s: " + str(samplingRateDet))
@@ -752,25 +752,147 @@ class TestSth(unittest.TestCase):
         self.PeakCan.Logger.Info("BlueTooth Address: " + hex(self.PeakCan.BlueToothAddress(MY_TOOL_IT_NETWORK_STH1)))
 
     """
-    Check Bluetooth connectablity
+    Check Bluetooth connectablity for standard settings with minimimum sleep time
     """
 
-    def test0105BlueToothConnect(self):
+    def test0105BlueToothConnectStandard(self):
         self.PeakCan.BlueToothEnergyModeNr(SleepTimeMin, Sleep1AdvertisementTimeReset, 1)
         self.PeakCan.BlueToothEnergyModeNr(SleepTimeMin, Sleep2AdvertisementTimeReset, 2)  
+        timeAverageSleep2 = 0
+        self.PeakCan.Logger.Info("Test Sleep Mode 2 with Adverteisement Time: " + str(Sleep2AdvertisementTimeReset) + "ms") 
         for _i in range(0, 10):      
             self.PeakCan.BlueToothDisconnect(MY_TOOL_IT_NETWORK_STU1)
             sleep(2 * SleepTimeMin / 1000)
+            timeStampDisconnected = self.PeakCan.Logger.getTimeStamp()
             self.PeakCan.BlueToothConnectPollingName(MY_TOOL_IT_NETWORK_STU1, TestDeviceName)
+            timeStampConnected = self.PeakCan.Logger.getTimeStamp()
+            timeConnect = timeStampConnected - timeStampDisconnected
+            timeAverageSleep2 += timeConnect
+            self.PeakCan.Logger.Info("TimeStamp before connecting start : " + str(timeStampDisconnected) + "ms")
+            self.PeakCan.Logger.Info("TimeStamp after reconnected : " + str(timeStampConnected) + "ms")
+            self.PeakCan.Logger.Info("Connecting Time : " + str(timeConnect) + "ms")
+        timeAverageSleep2 /= 10
+        self.PeakCan.Logger.Info("Average Connecting Time for Sleep Mode 2 : " + str(timeAverageSleep2) + "ms")
         self.PeakCan.BlueToothEnergyModeNr(SleepTimeMin, Sleep1AdvertisementTimeReset, 1)
         self.PeakCan.BlueToothEnergyModeNr(Sleep2TimeReset, Sleep2AdvertisementTimeReset, 2)  
+        timeAverageSleep1 = 0
+        self.PeakCan.Logger.Info("Test Sleep Mode 1 with Adverteisement Time: " + str(Sleep1AdvertisementTimeReset) + "ms") 
         for _i in range(0, 10):      
             self.PeakCan.BlueToothDisconnect(MY_TOOL_IT_NETWORK_STU1)
             sleep(SleepTimeMin / 1000)
-            self.PeakCan.BlueToothConnectPollingName(MY_TOOL_IT_NETWORK_STU1, TestDeviceName)        
+            timeStampDisconnected = self.PeakCan.Logger.getTimeStamp()
+            self.PeakCan.BlueToothConnectPollingName(MY_TOOL_IT_NETWORK_STU1, TestDeviceName)     
+            timeStampConnected = self.PeakCan.Logger.getTimeStamp()
+            timeConnect = timeStampConnected - timeStampDisconnected
+            timeAverageSleep1 += timeConnect
+            self.PeakCan.Logger.Info("TimeStamp before connecting start : " + str(timeStampDisconnected) + "ms")
+            self.PeakCan.Logger.Info("TimeStamp after reconnected : " + str(timeStampConnected) + "ms")
+            self.PeakCan.Logger.Info("Connecting Time : " + str(timeConnect) + "ms")  
+        timeAverageSleep1 /= 10        
+        self.PeakCan.Logger.Info("Average Connecting Time for Sleep Mode 1 : " + str(timeAverageSleep1) + "ms")
         self.PeakCan.BlueToothEnergyModeNr(Sleep1TimeReset, Sleep1AdvertisementTimeReset, 1)
         self.PeakCan.BlueToothEnergyModeNr(Sleep2TimeReset, Sleep2AdvertisementTimeReset, 2)  
-                
+        self.assertLess(timeAverageSleep1, ConnectionTimeSleep1MaxMs)
+        self.assertLess(timeAverageSleep2, ConnectionTimeSleep2MaxMs)
+
+    """
+    Check Bluetooth connectablity for maximum values
+    """
+
+    def test0106BlueToothConnectMax(self):
+        self.PeakCan.BlueToothEnergyModeNr(SleepTimeMin, SleepAdvertisementTimeMax, 1)
+        self.PeakCan.BlueToothEnergyModeNr(SleepTimeMin, SleepAdvertisementTimeMax, 2)  
+        timeAverageSleep2 = 0
+        self.PeakCan.Logger.Info("Test Sleep Mode 2 with Advertisement Time: " + str(Sleep2AdvertisementTimeReset) + "ms") 
+        for _i in range(0, 10):      
+            self.PeakCan.BlueToothDisconnect(MY_TOOL_IT_NETWORK_STU1)
+            sleep(2 * SleepTimeMin / 1000)
+            timeStampDisconnected = self.PeakCan.Logger.getTimeStamp()
+            self.PeakCan.BlueToothConnectPollingName(MY_TOOL_IT_NETWORK_STU1, TestDeviceName)
+            timeStampConnected = self.PeakCan.Logger.getTimeStamp()
+            timeConnect = timeStampConnected - timeStampDisconnected
+            timeAverageSleep2 += timeConnect
+            self.PeakCan.Logger.Info("TimeStamp before connecting start : " + str(timeStampDisconnected) + "ms")
+            self.PeakCan.Logger.Info("TimeStamp after reconnected : " + str(timeStampConnected) + "ms")
+            self.PeakCan.Logger.Info("Connecting Time : " + str(timeConnect) + "ms")
+        timeAverageSleep2 /= 10
+        self.PeakCan.Logger.Info("Average Connecting Time: " + str(timeAverageSleep2) + "ms")
+        self.PeakCan.BlueToothEnergyModeNr(Sleep1TimeReset, Sleep1AdvertisementTimeReset, 1)
+        self.PeakCan.BlueToothEnergyModeNr(Sleep2TimeReset, Sleep2AdvertisementTimeReset, 2)
+        self.assertLess(timeAverageSleep2, ConnectionTimeMaximumMs)
+        
+    """
+    Check Bluetooth connectablity for Minimum values (Standard Setting at start, not configuratble, 50ms atm)
+    """
+
+    def test0107BlueToothConnectMin(self): 
+        self.PeakCan.BlueToothEnergyModeNr(Sleep1TimeReset, Sleep1AdvertisementTimeReset, 1)
+        self.PeakCan.BlueToothEnergyModeNr(Sleep2TimeReset, Sleep2AdvertisementTimeReset, 2)
+        timeAverage = 0
+        self.PeakCan.Logger.Info("Test Normal Connection Time") 
+        for _i in range(0, 10):      
+            self.PeakCan.BlueToothDisconnect(MY_TOOL_IT_NETWORK_STU1)
+            timeStampDisconnected = self.PeakCan.Logger.getTimeStamp()
+            self.PeakCan.BlueToothConnectPollingName(MY_TOOL_IT_NETWORK_STU1, TestDeviceName)
+            timeStampConnected = self.PeakCan.Logger.getTimeStamp()
+            timeConnect = timeStampConnected - timeStampDisconnected
+            timeAverage += timeConnect
+            self.PeakCan.Logger.Info("TimeStamp before connecting start : " + str(timeStampDisconnected) + "ms")
+            self.PeakCan.Logger.Info("TimeStamp after reconnected : " + str(timeStampConnected) + "ms")
+            self.PeakCan.Logger.Info("Connecting Time : " + str(timeConnect) + "ms")
+        timeAverage /= 10       
+        self.PeakCan.Logger.Info("Average Connecting Time: " + str(timeAverage) + "ms")
+        self.assertLess(timeAverage, ConnectionTimeNormalMaxMs)
+
+    """
+    Check Minimum Sleeping Time
+    """
+
+    def test0108BlueToothConnectWrongValues(self): 
+        # Do not take Time (Note that maximum is 2^32-1... Not testable due to 4Bytes Only
+        [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyModeNr(SleepTimeMin - 1, Sleep1AdvertisementTimeReset, 1)
+        if 0 == timeReset and 0 == timeAdvertisement:
+            self.PeakCan.Logger.Info("Sleep Time1 was not taken: " + str(SleepTimeMin - 1) + "ms")
+        else:
+            self.PeakCan.Logger.Error("Sleep Time1 was taken: " + str(SleepTimeMin - 1) + "ms")
+            self.PeakCan.__exitError()
+        [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyModeNr(SleepTimeMin - 1, Sleep2AdvertisementTimeReset, 2)
+        if 0 == timeReset and 0 == timeAdvertisement:
+            self.PeakCan.Logger.Info("Sleep Time2 was not taken: " + str(SleepTimeMin - 1) + "ms")
+        else:
+            self.PeakCan.Logger.Error("Sleep Time2 was taken: " + str(SleepTimeMin - 1) + "ms")
+            self.PeakCan.__exitError()
+            
+        # Do not take Advertisement Time - Min
+        [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyModeNr(Sleep1TimeReset, SleepAdvertisementTimeMin - 1, 1)
+        if 0 == timeReset and 0 == timeAdvertisement:
+            self.PeakCan.Logger.Info("Advertisement Time1 was not taken: " + str(SleepAdvertisementTimeMin - 1) + "ms")
+        else:
+            self.PeakCan.Logger.Error("Advertisement Time1 was taken: " + str(SleepAdvertisementTimeMin - 1) + "ms")
+            self.PeakCan.__exitError()
+        [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyModeNr(Sleep2TimeReset, SleepAdvertisementTimeMin - 1, 2)
+        if 0 == timeReset and 0 == timeAdvertisement:
+            self.PeakCan.Logger.Info("Advertisement Time2 was not taken: " + str(SleepAdvertisementTimeMin - 1) + "ms")
+        else:
+            self.PeakCan.Logger.Error("Advertisement Time2 was taken: " + str(SleepAdvertisementTimeMin - 1) + "ms")
+            self.PeakCan.__exitError()
+        # Do not take Advertisement Time - Max
+        [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyModeNr(Sleep1TimeReset, SleepAdvertisementTimeMax + 1, 1)
+        if 0 == timeReset and 0 == timeAdvertisement:
+            self.PeakCan.Logger.Info("Advertisement Time1 was not taken: " + str(SleepAdvertisementTimeMax + 1) + "ms")
+        else:
+            self.PeakCan.Logger.Error("Advertisement Time1 was taken: " + str(SleepAdvertisementTimeMax + 1) + "ms")
+            self.PeakCan.__exitError()
+        [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyModeNr(Sleep2TimeReset, SleepAdvertisementTimeMax + 1, 2)
+        if 0 == timeReset and 0 == timeAdvertisement:
+            self.PeakCan.Logger.Info("Advertisement Time2 was not taken: " + str(SleepAdvertisementTimeMax + 1) + "ms")
+        else:
+            self.PeakCan.Logger.Error("Advertisement Time2 was taken: " + str(SleepAdvertisementTimeMax + 1) + "ms")
+            self.PeakCan.__exitError()
+
+        self.PeakCan.BlueToothEnergyModeNr(Sleep1TimeReset, Sleep1AdvertisementTimeReset, 1)
+        self.PeakCan.BlueToothEnergyModeNr(Sleep2TimeReset, Sleep2AdvertisementTimeReset, 2)           
+                                           
     """
     Get Battery Voltage via single command
     """
@@ -1401,6 +1523,56 @@ class TestSth(unittest.TestCase):
         print("Maximum Tripple Sampling Rate: " + str(SamplingRateMaxDet))
         self.assertEqual(SamplingRateMaxDet, SamplingRateTrippleMax)
 
+    """
+    Testing ADC Sampling Prescaler Min
+    """
+
+    def test0512AdcPrescalerMin(self):
+        self.SamplingRate(2, AdcAcquisitionTime8, AdcOverSamplingRate64, AdcReferenceVDD, b1=1, b2=0, b3=0, runTime=1000)
+
+    """
+    Testing ADC Sampling Prescaler Min/Max
+    """
+
+    def test0513AdcPrescalerMax(self):
+        self.SamplingRate(127, AdcAcquisitionTime1, AdcOverSamplingRate32, AdcReferenceVDD, b1=1, b2=0, b3=0, runTime=10000)
+   
+    """
+    Testing ADC Sampling Acquisition Min
+    """
+
+    def test0514AdcAcquisitionMin(self):
+        self.SamplingRate(2, AdcAcquisitionTime1, AdcOverSamplingRate128, AdcReferenceVDD, b1=1, b2=0, b3=0, runTime=1000)
+
+    """
+    Testing ADC Sampling Acquisition Max
+    """
+
+    def test0515AdcAcquisitionMax(self):
+        self.SamplingRate(2, AdcAcquisitionTime256, AdcOverSamplingRate32, AdcReferenceVDD, b1=1, b2=0, b3=0, runTime=1000)
+  
+    """
+    Testing ADC Sampling Oversampling Rate Min
+    """
+
+    def test0516AdcOverSamplingRateMin(self):
+        self.SamplingRate(8, AdcAcquisitionTime256, AdcOverSamplingRate2, AdcReferenceVDD, b1=1, b2=0, b3=0, runTime=1000)
+
+    """
+    Testing ADC Sampling Oversampling Rate Max
+    """
+
+    def test0517AdcOverSamplingRateMax(self):
+        self.SamplingRate(2, AdcAcquisitionTime1, AdcOverSamplingRate4096, AdcReferenceVDD, b1=1, b2=0, b3=0, runTime=20000)
+          
+    """
+    Testing ADC Sampling Oversampling Rate None
+    """
+
+    def test0518AdcOverSamplingRateNone(self):
+        self.SamplingRate(8, AdcAcquisitionTime256, AdcOverSamplingRateNone, AdcReferenceVDD, b1=1, b2=0, b3=0, runTime=1000)
+        
+                        
     """
     Check Calibration Measurement
     """

@@ -140,8 +140,8 @@ else:
     SigIndAccZSNR = 70
 
 # Time
-SamplingToleranceLow = 0.95
-SamplingToleranceHigh = 1.05
+SamplingToleranceLow = 0.90
+SamplingToleranceHigh = 1.10
 
 #Temperature
 TempInternal3V3Middle=13000
