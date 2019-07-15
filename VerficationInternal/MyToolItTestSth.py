@@ -1997,5 +1997,5 @@ if __name__ == "__main__":
         print(f)     
         runner = unittest.TextTestRunner(f)
         unittest.main(argv=['first-arg-is-ignored'], testRunner=runner)  
-    #unittest.main(argv=['first-arg-is-ignored'], exit=False) >> logFileLocation
+
 
