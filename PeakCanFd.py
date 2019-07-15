@@ -453,7 +453,8 @@ class PeakCanFd(object):
         if 0 < len(array3):
             array3 = [array3[0]]
         return [array1, array2, array3]
-
+    
+       
     def streamingValueCollect(self, receiver, subCmd, dataSets, b1, b2, b3, testTimeMs, log=True, StartupTimeMs=0):
         accFormat = AtvcFormat()
         accFormat.asbyte = 0
@@ -538,6 +539,18 @@ class PeakCanFd(object):
                 self.Logger.Info(preFix + "3: " + str(fCbfRecalc(array3[i])) + postFix)
         return samplingPoints
       
+      
+      
+    def streamingStart(self, receiver, subCmd, dataSets, b1, b2, b3, log=True):
+        accFormat = AtvcFormat()
+        accFormat.asbyte = 0
+        accFormat.b.bStreaming = 1
+        accFormat.b.bNumber1 = b1
+        accFormat.b.bNumber2 = b2
+        accFormat.b.bNumber3 = b3
+        accFormat.b.u3DataSets = dataSets
+        return self.PeakCan.cmdSend(receiver, MY_TOOL_IT_BLOCK_STREAMING, subCmd, [accFormat.asbyte], log=log)   
+        
     def streamingStop(self, receiver, subCmd):
         AtvcSet = AtvcFormat()
         AtvcSet.asbyte = 0
@@ -550,6 +563,9 @@ class PeakCanFd(object):
         self.WriteFrameWaitAckRetries(message, retries=10, printLog=False)
         self.Logger.Info("_____________________________________________________________")
         sleep(1)  # Waiting for remaining returns
+
+
+
         
     def ConfigAdc(self, receiver, preq, aquistionTime, oversampling, adcRef, log=True):
         if False != log:
@@ -899,6 +915,19 @@ class PeakCanFd(object):
         timeReset = fSleepTime(timeReset)
         timeAdvertisement = fSleepAdvertisement(timeAdvertisement)
         return [timeReset, timeAdvertisement]
+
+    def Standby(self, receiver):
+        sendData = ActiveState()
+        sendData.asbyte = 0
+        sendData.b.bSetState = 1
+        sendData.b.u2NodeState = 2
+        sendData.b.u3NetworkState = 2
+        self.PeakCan.Logger.Info("Send Standby Command")
+        index = self.PeakCan.cmdSend(receiver, MY_TOOL_IT_BLOCK_SYSTEM, MY_TOOL_IT_SYSTEM_ACTIVE_STATE, [sendData.asbyte])        
+        self.PeakCan.Logger.Info("Received Payload " + str(self.getReadMessageData(index)["Payload"]))
+
+
+
 
     def BlueToothRssi(self, subscriber):
         cmd = self.CanCmd(MY_TOOL_IT_BLOCK_SYSTEM, MY_TOOL_IT_SYSTEM_BLUETOOTH, 1, 0)

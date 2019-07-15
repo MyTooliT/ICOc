@@ -1,9 +1,7 @@
 import unittest
 import sys
 import os
-file_path = 'C:\Program Files\PCAN-Basic API\Include\PCANBasic.py'
-dir_name = os.path.dirname(file_path)
-sys.path.append(dir_name)
+
 import math
 from PCANBasic import *
 from PeakCanFd import *
@@ -16,7 +14,7 @@ from SthLimits import *
 from testSignal import *
 
 log_file = 'TestStu.txt'
-log_location = '../Logs/STH/'
+log_location = '../../Logs/STH/'
 
 
 def fVoltageBattery(x):
@@ -1571,7 +1569,6 @@ class TestSth(unittest.TestCase):
 
     def test0518AdcOverSamplingRateNone(self):
         self.SamplingRate(8, AdcAcquisitionTime256, AdcOverSamplingRateNone, AdcReferenceVDD, b1=1, b2=0, b3=0, runTime=1000)
-        
                         
     """
     Check Calibration Measurement
@@ -1938,12 +1935,12 @@ class TestSth(unittest.TestCase):
         self.PeakCan.Logger.Info("PowerOnOff Payload after STU Reset: " + self.PeakCan.payload2Hex(PowerOnOff4))
         self.PeakCan.Logger.Info("Power On Counter after STU Reset: " + str(PowerOn4))
         self.PeakCan.Logger.Info("Power Off Counter after STU Reset: " + str(PowerOff4))
-        self.assertEqual(PowerOn1 + 2, PowerOn2)
-        self.assertEqual(PowerOff1, PowerOff2)
+        self.assertEqual(PowerOn1 + 1, PowerOn2)
+        self.assertEqual(PowerOff1 + 1, PowerOff2)
         self.assertEqual(PowerOff2 + 1, PowerOff3)
-        self.assertEqual(PowerOn2 + 1, PowerOn3)
+        self.assertEqual(PowerOn2, PowerOn3)
         self.assertEqual(PowerOff3 + 1, PowerOff4)
-        self.assertEqual(PowerOn3 + 1, PowerOn4)
+        self.assertEqual(PowerOn3, PowerOn4)
 
     """
     Check Operating Minutes

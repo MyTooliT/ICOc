@@ -12,7 +12,7 @@ TestDeviceName = "Tanja"
 # Recalculation Factors
 AdcMax = 0xFFFF
 AccelerationToAccGravitity = 200
-SamplingRateVfsToleranceRation = 16
+SamplingRateVfsToleranceRation = 64
 
 SamplingRateMin = 150  # To check maximum frequencies to be max
 SamplingRateMax = 14000  # To check maximum frequencies to be max
