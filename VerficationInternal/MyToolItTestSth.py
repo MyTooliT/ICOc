@@ -2,6 +2,11 @@ import unittest
 import sys
 import os
 
+#Required to add peakcan
+file_path = '../'
+dir_name = os.path.dirname(file_path)
+sys.path.append(dir_name)
+
 import math
 from PCANBasic import *
 from PeakCanFd import *
@@ -1977,12 +1982,20 @@ class TestSth(unittest.TestCase):
                 
 if __name__ == "__main__":
     print(sys.version)
-    if not os.path.exists(os.path.dirname(log_location + log_file)):
-        os.makedirs(os.path.dirname(log_location + log_file))
-    f = open(log_location + log_file, "w")
-    loader = unittest.TestLoader()
-    start_dir = 'path/to/your/test/files'
-    suite = loader.discover(start_dir)
-    runner = unittest.TextTestRunner(f)
-    unittest.main(suite)
-    f.close()
+    log_location = sys.argv[1]
+    log_file = sys.argv[2]
+    if '/' != log_location[-1]:
+        log_location += '/'
+    logFileLocation = log_location + log_file
+    dir_name = os.path.dirname(logFileLocation)
+    sys.path.append(dir_name)
+
+    print("Log Files will be saved at: " + str(logFileLocation))
+    if not os.path.exists(dir_name):
+        os.makedirs(dir_name)
+    with open(logFileLocation, "w") as f:
+        print(f)     
+        runner = unittest.TextTestRunner(f)
+        unittest.main(argv=['first-arg-is-ignored'], testRunner=runner)  
+    #unittest.main(argv=['first-arg-is-ignored'], exit=False) >> logFileLocation
+
