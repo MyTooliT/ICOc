@@ -1,17 +1,15 @@
 import sys
 import os
-file_path = 'C:\Program Files\PCAN-Basic API\Include\PCANBasic.py'
-dir_name = os.path.dirname(file_path)
-sys.path.append(dir_name)
 
+import xml.etree.ElementTree as ET
 from PCANBasic import *   
 from PeakCanFd import *
 from MyToolItNetworkNumbers import *
 from MyToolItCommands import *
-from time import sleep
-from time import time
+from time import sleep, time
 from random import randint
 from MyToolItSth import *
+from datetime import datetime
 import getopt
 
 BlueToothDeviceListAquireTime = 5
@@ -33,24 +31,100 @@ def messageValueGet(m):
     return Acc  
 
 
+
+# def __init__(self, log_location, iAcc1, iAcc2, iAcc3, dev, prescaler, aquistionTime, oversampling, runtime):
 class aquAcc():
 
-    def __init__(self, log_location, iAcc1, iAcc2, iAcc3, dev, prescaler, aquistionTime, oversampling, runtime):
-        self.Error = False
+    def __init__(self):
+        self.KeyBoadInterrupt = False  
+        self.Error = False     
+        self.Close = True   
         self.connected = 0
-        self.log_location = log_location
-        self.iAcc1 = int(iAcc1)
-        self.iAcc2 = int(iAcc2)
-        self.iAcc3 = int(iAcc3)
-        self.DataFormat = DataSetsNone
-        self.dev = int(dev)
-        self.prescaler = prescaler
-        self.aquistionTime = aquistionTime
-        self.oversampling = oversampling
-        self.runTime = int(runtime)   
-        self.KeyBoadInterrupt = False    
-        self.Close = True     
+        self.iStartTime = time()
+        self.sConfigFile = "configExample.xml"
+        self.sConfig = "X"
+        self.logLocation = "../Logs/STH/"
+        self.logName = "AccX12k5"
+        self.logNameCount = None
+        self.sSheetFile = None
+        self.iAccX = 1
+        self.iAccY = 0
+        self.iAccZ = 0
+        self.iVoltageX = 0
+        self.iVoltageY = 0
+        self.iVoltageZ = 0
+        self.tDataFormat = DataSets3
+        self.iDevNr = None
+        self.sDevName = TestDeviceName
+        self.iPrescaler = 2
+        self.sAquistionTime = "3"
+        self.sOversampling = "64"
+        self.sAdcRef = "AVDD"
+        self.iDisplayTime = 10  
+        self.iIntervalTime = 0
+        self.iRunTime = 0 
         
+    def vConfigSet(self, fileName, configName):
+        self.sConfigFile = fileName
+        self.sConfig = configName
+    
+    def vLogSet(self, sLogLocation, sLogFileName, iLogCount):
+        self.logLocation = sLogLocation
+        self.logName = sLogFileName
+        self.logNameCount = iLogCount
+        
+    def vSheetFileSet(self, sSheetFile):
+        self.sSheetFile = sSheetFile
+
+    def vAccSet(self, iX, iY, iZ):
+        self.iAccX = int(bool(0<iX))
+        self.iAccY = int(bool(0<iY))
+        self.iAccZ = int(bool(0<iZ))
+
+    def vVoltageSet(self, iX, iY, iZ):
+        self.iVoltageX = int(bool(0<iX))
+        self.iVoltageY = int(bool(0<iY))
+        self.iVoltageZ = int(bool(0<iZ))
+        
+
+         
+    def vDeviceNameSet(self, sDevName):
+        if 8<len(sDevName):
+            sDevName = sDevName[:8]
+        self.sDevName = sDevName    
+     
+         
+        
+    def vAdcConfig(self, iPrescaler, sAquistionTime, sOversampling, sAdcRef, tDataFormat):
+        if PrescalerMin > iPrescaler:
+            iPrescaler = PrescalerMin
+        elif PrescalerMax < iPrescaler:
+            iPrescaler = PrescalerMax    
+        iAcquisitionTime = iAdcAcquisitionTime[int(sAquistionTime)]
+        iOversampling = iAdcOverSamplingRate[int(sOversampling)]
+        iAdcRef = tAdcVRef[sAdcRef]
+        samplingRate = calcSamplingRate(iPrescaler, iAcquisitionTime, iOversampling)
+        
+        
+        self.iPrescaler = 2
+        self.sAquistionTime = "3"
+        self.sOversampling = "64"
+        self.sAdcRef = "AVDD"
+        self.tDataFormat = tDataFormat
+        
+    def sDateClock(self):
+        DataClockTimeStamp = datetime.datetime.fromtimestamp(self.iStartTime).strftime('%Y-%m-%d_%H:%M:%S')
+        return DataClockTimeStamp
+    
+    def sLogName(self):
+        if None != self.logNameCount:
+            logName = self.logName + "_" + self.sDateClock() +"_" + str(self.logNameCount).format(16) + ".txt"
+            self.logNameCount += 1
+        else:
+            logName = self.logName + "_" + self.sDateClock() + ".txt"
+        return logName
+    
+    
     def __exit__(self):
         self._streamingStop()
         self.PeakCan.readThreadStart()
@@ -84,7 +158,6 @@ class aquAcc():
                     self.Close = False
             except KeyboardInterrupt:
                 self.KeyBoadInterrupt = True
-                          
         
     def connect(self):
         if False == self.KeyBoadInterrupt:
@@ -388,22 +461,21 @@ class aquAcc():
             self.__exit__()     
         finally:
             self.__exit__()               
-                    
                               
     def GetStreamingAccData(self):
         accFormat = AtvcFormat()
         accFormat.asbyte = 0
         accFormat.b.bStreaming = 1
-        accFormat.b.bNumber1 = int(self.iAcc1)
-        accFormat.b.bNumber2 = int(self.iAcc2)
-        accFormat.b.bNumber3 = int(self.iAcc3)
+        accFormat.b.bNumber1 = int(self.iAccX)
+        accFormat.b.bNumber2 = int(self.iAccY)
+        accFormat.b.bNumber3 = int(self.iAccZ)
                 
         number = 0
-        if(False != self.iAcc1):
+        if(False != self.iAccX):
             number += 1
-        if(False != self.iAcc2):
+        if(False != self.iAccY):
             number += 1
-        if(False != self.iAcc3):
+        if(False != self.iAccZ):
             number += 1
 
         if((3 == number) or (2 == number)):
@@ -438,7 +510,6 @@ class aquAcc():
         else:
             endTime = currentTime + self.runTime * 1000
         self.GetStreamingAccDataProcess(endTime)
-
                 
     def GetMessageAccSingle(self, prefix, canData):       
         ackMsg = ("MsgCounter: " + str(canData[1]) + "; ") + prefix + " "
@@ -482,24 +553,23 @@ class aquAcc():
         
     def GetMessageAcc(self, canData):
         if self.DataFormat == DataSets1:
-            if (0 != self.iAcc1) and (0 != self.iAcc2) and (0 == self.iAcc3):
+            if (0 != self.iAccX) and (0 != self.iAccY) and (0 == self.iAccZ):
                 self.GetMessageAccDouble("AccX", "AccY", canData)
-            elif (0 != self.iAcc1) and (0 == self.iAcc2) and (0 != self.iAcc3):
+            elif (0 != self.iAccX) and (0 == self.iAccY) and (0 != self.iAccZ):
                 self.GetMessageAccDouble("AccX", "AccZ", canData)
-            elif (0 == self.iAcc1) and (0 != self.iAcc2) and (0 != self.iAcc3):
+            elif (0 == self.iAccX) and (0 != self.iAccY) and (0 != self.iAccZ):
                 self.GetMessageAccDouble("AccY", "AccZ", canData) 
             else:
                 self.GetMessageAccTripple("AccX", "AccY", "AccZ", canData)   
         elif self.DataFormat == DataSets3:
-            if 0 != self.iAcc1:
+            if 0 != self.iAccX:
                 self.GetMessageAccSingle("AccX", canData)               
-            elif 0 != self.iAcc2:
+            elif 0 != self.iAccY:
                 self.GetMessageAccSingle("AccY", canData)               
-            elif 0 != self.iAcc3:
+            elif 0 != self.iAccZ:
                 self.GetMessageAccSingle("AccZ", canData)       
         else:               
             self.PeakCan.Logger.Error("Wrong Ack format")
-
             
     def ReadMessage(self):
         readMessage = None

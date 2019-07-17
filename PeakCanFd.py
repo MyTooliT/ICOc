@@ -195,7 +195,25 @@ class PeakCanFd(object):
         elif MY_TOOL_IT_BLOCK_TEST == cmdBlock:
             cmdNrName = CommandBlockTest[cmdNr]
         return cmdNrName
-        
+    
+    def PeakCanPayload2Array(self, message):
+        payload = []
+        if None != message:
+            for item in message.DATA:
+                payload.append(item)
+        return payload
+    
+    def ComparePayloadEqual(self, payload1, payload2):
+        bEqual = False
+        if None != payload1 and None != payload2:
+            if len(payload1) == len(payload2):
+                bEqual = True
+                for i in range(0, len(payload1)):
+                    if payload1[i] != payload2[i]:
+                        bEqual = False
+                        break
+        return bEqual
+                
     def WriteFrame(self, CanMsg):  
         returnMessage = CanMsg
         if "Error" != returnMessage:
@@ -207,7 +225,7 @@ class PeakCanFd(object):
                 self.__exitError()
         return returnMessage
     
-    def WriteFrameWaitAck(self, CanMsg, waitMs=1000, currentIndex=None, printLog=False):  
+    def WriteFrameWaitAck(self, CanMsg, waitMs=1000, currentIndex=None, printLog=False, assumedPayload=None, bError=False):  
         indexStart = self.GetReadArrayIndex()
         sleep(0.001)  # to assure granularity
         if None == currentIndex:
@@ -218,18 +236,19 @@ class PeakCanFd(object):
             message = {"CanMsg" : self.CanMessage20(0, 0, 0, [0, 0, 0, 0, 0, 0, 0, 0]), "PcTime" : self.getTimeMs(), "PeakCanTime" : 0}
         if(False != printLog):
             print("Message ID Send: " + hex(CanMsg.ID))
-            payload = []
-            for item in CanMsg.DATA:
-                payload.append(item)
             print("Message DATA Send: " + self.payload2Hex(CanMsg.DATA))
         self.timeStampStart = self.getTimeMs()
         returnMessage = self.WriteFrame(CanMsg)        
         if "Error" != returnMessage:
             waitTimeMax = self.getTimeMs() + waitMs
-            CanMsgAck = self.CanMessage20Ack(CanMsg)
-            CanMsgAckError = self.CanMessage20AckError(CanMsg) 
+            if False != bError:
+                CanMsgAckError = self.CanMessage20Ack(CanMsg)
+                CanMsgAck = self.CanMessage20AckError(CanMsg)                 
+            else:
+                CanMsgAck = self.CanMessage20Ack(CanMsg)
+                CanMsgAckError = self.CanMessage20AckError(CanMsg) 
             indexStartError = currentIndex
-            while (CanMsgAck.ID != message["CanMsg"].ID) or (message["PcTime"] <= self.timeStampStart) or indexStart == self.GetReadArrayIndex():
+            while (CanMsgAck.ID != message["CanMsg"].ID) or (message["PcTime"] <= self.timeStampStart) or indexStart == self.GetReadArrayIndex() or (not self.ComparePayloadEqual(self.PeakCanPayload2Array(message["CanMsg"]), assumedPayload) and None != assumedPayload):
                 if((CanMsgAckError.ID == message["CanMsg"].ID) and (indexStartError < currentIndex)):
                     indexStartError = currentIndex
                     [command, sender, receiver] = self.CanMessage20GetFields(message["CanMsg"])
@@ -237,12 +256,14 @@ class PeakCanFd(object):
                     cmdName = self.strCmdNrToCmdName(command)
                     senderName = NetworkNumber[sender]
                     receiverName = NetworkNumber[receiver]
-                    payload = []
-                    for item in message["CanMsg"].DATA:
-                        payload.append(item)
-                    self.Logger.Error("Error Ack Received: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + str(payload))
-                    if False != printLog:
-                        print("Error Ack Received: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + str(payload))
+                    if False != bError:
+                        self.Logger.Error("Error Ack Received: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + self.payload2Hex(CanMsg.DATA))
+                        if False != printLog:
+                            print("Error Ack Received: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + self.payload2Hex(CanMsg.DATA))
+                    else:
+                        self.Logger.Error("Ack Received(Error assumed): " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + self.payload2Hex(CanMsg.DATA))
+                        if False != printLog:
+                            print("Ack Received(Error assumed): " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + self.payload2Hex(CanMsg.DATA))
                     break
                 elif(waitTimeMax < self.getTimeMs()):
                     returnMessage = "Error"
@@ -251,101 +272,27 @@ class PeakCanFd(object):
                     cmdName = self.strCmdNrToCmdName(command)
                     senderName = NetworkNumber[sender]
                     receiverName = NetworkNumber[receiver]
-                    payload = []
-                    for item in CanMsg.DATA:
-                        payload.append(item)
-                    self.Logger.Warning("No Ack Received: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + self.payload2Hex(payload))
+                    self.Logger.Warning("No (Error) Ack Received: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + self.payload2Hex(CanMsg.DATA))
                     if False != printLog:
-                        print("No Ack Received: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + str(payload))
+                        print("No (Error) Ack Received: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + str(CanMsg.DATA))
                     break
                 
                 if currentIndex < (self.GetReadArrayIndex() - 1):
                     currentIndex += 1
                     message = self.readArray[currentIndex]
                 else:
-                    sleep(0.1)
+                    sleep(waitMs / 10000)
                 
         if "Error" != returnMessage:
-            payload = []
-            for item in message["CanMsg"].DATA:
-                payload.append(item)
+            payload = self.PeakCanPayload2Array(message["CanMsg"])
             returnMessage = {"ID" : hex(message["CanMsg"].ID), "Payload" : payload, "PcTime" : message["PcTime"], "CanTime" : message["PeakCanTime"]}
             self.timeStampStart = self.getTimeMs()
         return [returnMessage, currentIndex]
     
-    def WriteFrameWaitErrorAck(self, CanMsg, waitMs=1000, currentIndex=None, printLog=False):  
-        indexStart = self.GetReadArrayIndex()
-        sleep(0.001)  # to assure granularity
-        if None == currentIndex:
-            currentIndex = self.GetReadArrayIndex() - 1
-        if currentIndex < len(self.readArray):
-            message = self.readArray[currentIndex]
-        else:
-            message = {"CanMsg" : self.CanMessage20(0, 0, 0, [0, 0, 0, 0, 0, 0, 0, 0]), "PcTime" : self.getTimeMs(), "PeakCanTime" : 0}
-        self.timeStampStart = self.getTimeMs()
-        if(False != printLog):
-            print("Message ID Send: " + hex(CanMsg.ID))
-            payload = []
-            for item in CanMsg.DATA:
-                payload.append(item)
-            print("Message DATA Send: " + self.payload2Hex(CanMsg.DATA))
-            
-        returnMessage = self.WriteFrame(CanMsg)        
-        if "Error" != returnMessage:
-            waitTimeMax = self.getTimeMs() + waitMs
-            CanMsgAck = self.CanMessage20Ack(CanMsg)
-            CanMsgAckError = self.CanMessage20AckError(CanMsg) 
-            indexStartError = currentIndex
-            while (CanMsgAckError.ID != message["CanMsg"].ID) or (message["PcTime"] <= self.timeStampStart) or indexStart == self.GetReadArrayIndex():
-                if((CanMsgAck.ID == message["CanMsg"].ID) and (indexStartError < currentIndex)):
-                    indexStartError = currentIndex
-                    [command, sender, receiver] = self.CanMessage20GetFields(message["CanMsg"])
-                    cmdBlockName = self.strCmdNrToBlockName(command)
-                    cmdName = self.strCmdNrToCmdName(command)
-                    senderName = NetworkNumber[sender]
-                    receiverName = NetworkNumber[receiver]
-                    payload = []
-                    for item in message["CanMsg"].DATA:
-                        payload.append(item)
-                    self.Logger.Error("Non Error Ack Received but Error Ack assumed: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + str(payload))
-                    if False != printLog:
-                        print("Non Error Ack Received but Error Ack assumed: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + str(payload))
-                    break
-                elif(waitTimeMax < self.getTimeMs()):
-                    returnMessage = "Error"
-                    [command, sender, receiver] = self.CanMessage20GetFields(CanMsg)
-                    cmdBlockName = self.strCmdNrToBlockName(command)
-                    cmdName = self.strCmdNrToCmdName(command)
-                    senderName = NetworkNumber[sender]
-                    receiverName = NetworkNumber[receiver]
-                    payload = []
-                    for item in CanMsg.DATA:
-                        payload.append(item)
-                    self.Logger.Warning("No Ack Received: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + self.payload2Hex(payload))
-                    if False != printLog:
-                        print("No Ack Received: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + str(payload))
-                    break
-                
-                if currentIndex < (self.GetReadArrayIndex() - 1):
-                    currentIndex += 1
-                    message = self.readArray[currentIndex]
-                else:
-                    sleep(0.1)
-        if "Error" != returnMessage:
-            payload = []
-            for item in message["CanMsg"].DATA:
-                payload.append(item)
-            returnMessage = {"ID" : hex(message["CanMsg"].ID), "Payload" : payload, "PcTime" : message["PcTime"], "CanTime" : message["PeakCanTime"]}
-            self.timeStampStart = self.getTimeMs()
-        return [returnMessage, currentIndex]
-    
-    def WriteFrameWaitAckRetries(self, CanMsg, retries=2, waitMs=1000, printLog=False, ErrorAck=False):  
+    def WriteFrameWaitAckRetries(self, CanMsg, retries=2, waitMs=1000, printLog=False, bErrorAck=False, assumedPayload=None, bErrorExit=True):  
         currentIndex = self.GetReadArrayIndex() - 1
         for i in range(0, retries):
-            if False != ErrorAck:
-                [returnMessage, currentIndex] = self.WriteFrameWaitErrorAck(CanMsg, waitMs=waitMs, currentIndex=currentIndex, printLog=printLog)
-            else:
-                [returnMessage, currentIndex] = self.WriteFrameWaitAck(CanMsg, waitMs=waitMs, currentIndex=currentIndex, printLog=printLog)
+            [returnMessage, currentIndex] = self.WriteFrameWaitAck(CanMsg, waitMs=waitMs, currentIndex=currentIndex, printLog=printLog, assumedPayload=assumedPayload, bError=bErrorAck)
             if "Error" != returnMessage:
                 break
             elif (retries - 1) == i:                
@@ -354,20 +301,18 @@ class PeakCanFd(object):
                 cmdName = self.strCmdNrToCmdName(command)
                 senderName = NetworkNumber[sender]
                 receiverName = NetworkNumber[receiver]
-                payload = []
-                for item in CanMsg.DATA:
-                    payload.append(item)
-                self.Logger.Error("Message Request Failed: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + str(payload))
+                self.Logger.Error("Message Request Failed: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + self.payload2Hex(CanMsg.DATA))
                 if False != printLog:
-                    print("Message Request Failed: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + str(payload))
-                self.__exitError()
+                    print("Message Request Failed: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + self.payload2Hex(CanMsg.DATA))
+                if False != bErrorExit:
+                    self.__exitError()
         return returnMessage
 
-    def cmdSend(self, receiver, blockCmd, subCmd, payload, log=True, retries=3, ErrorAck=False, printLog=False):
+    def cmdSend(self, receiver, blockCmd, subCmd, payload, log=True, retries=3, bErrorAck=False, printLog=False):
         cmd = self.CanCmd(blockCmd, subCmd, 1, 0)
         message = self.CanMessage20(cmd, self.sender, receiver, payload)
         index = self.GetReadArrayIndex()
-        msgAck = self.WriteFrameWaitAckRetries(message, retries=retries, waitMs=1000, ErrorAck=ErrorAck, printLog=printLog)
+        msgAck = self.WriteFrameWaitAckRetries(message, retries=retries, waitMs=1000, bErrorAck=bErrorAck, printLog=printLog)
         if False != log:
             canCmd = self.CanCmd(blockCmd, subCmd, 1, 0)
             self.Logger.Info(NetworkNumber[self.sender] + "->" + NetworkNumber[receiver] + "(CanTimeStamp - " + str(msgAck["CanTime"] - self.PeakCanTimeStampStart) + "ms): " + self.strCmdNrToCmdName(canCmd) + " - " + self.payload2Hex(payload))
@@ -453,31 +398,14 @@ class PeakCanFd(object):
         if 0 < len(array3):
             array3 = [array3[0]]
         return [array1, array2, array3]
-    
        
     def streamingValueCollect(self, receiver, subCmd, dataSets, b1, b2, b3, testTimeMs, log=True, StartupTimeMs=0):
-        accFormat = AtvcFormat()
-        accFormat.asbyte = 0
-        accFormat.b.bStreaming = 1
-        accFormat.b.bNumber1 = b1
-        accFormat.b.bNumber2 = b2
-        accFormat.b.bNumber3 = b3
-        accFormat.b.u3DataSets = dataSets
-        cmd = self.CanCmd(MY_TOOL_IT_BLOCK_STREAMING, subCmd, 1, 0)
-        message = self.CanMessage20(cmd, self.sender, receiver, [accFormat.asbyte])
         if False != log:
             self.Logger.Info("Test Time: " + str(testTimeMs) + "ms")
-            self.Logger.Info("Start sending streaming package; Subpayload: " + hex(accFormat.asbyte))
-            
-        sleep(0.2)
-        indexStart = self.GetReadArrayIndex() + 1
-        self.WriteFrameWaitAckRetries(message, retries=1)
-        timeEnd = self.getTimeMs() + testTimeMs
-        timeEnd += StartupTimeMs
+        indexStart = self.streamingStart(receiver, subCmd, dataSets, b1, b2, b3, log=log)
         if False != log:
             self.Logger.Info("indexStart: " + str(indexStart))
-        while self.getTimeMs() < timeEnd:
-            pass
+        sleep(testTimeMs / 1000)
         self.streamingStop(receiver, subCmd)
         sleep(1)  # synch to read thread
         indexEnd = self.GetReadArrayIndex() - 180  # do not catch stop command
@@ -488,7 +416,7 @@ class PeakCanFd(object):
         if False != log:
             self.Logger.Info("Deleted Messages do achieve " + str(testTimeMs) + "ms: " + str(countDel + 180))
             self.Logger.Info("indexEnd: " + str(indexEnd))
-        if 0.2*(indexEnd - indexStart) < countDel:
+        if 0.2 * (indexEnd - indexStart) < countDel:
             self.Logger.Warning("Deleted Messages do achieve " + str(testTimeMs) + "ms: " + str(countDel + 180))
         
         return[indexStart, indexEnd]
@@ -532,14 +460,12 @@ class PeakCanFd(object):
 
         for i in range(0, samplingPointMax):
             if 0 < len(array1):
-                self.Logger.Info(preFix + "1: " + str(fCbfRecalc(array1[i])) + postFix)
+                self.Logger.Info(preFix + "X: " + str(fCbfRecalc(array1[i])) + postFix)
             if 0 < len(array2):
-                self.Logger.Info(preFix + "2: " + str(fCbfRecalc(array2[i])) + postFix)
+                self.Logger.Info(preFix + "Y: " + str(fCbfRecalc(array2[i])) + postFix)
             if 0 < len(array3):
-                self.Logger.Info(preFix + "3: " + str(fCbfRecalc(array3[i])) + postFix)
+                self.Logger.Info(preFix + "Z: " + str(fCbfRecalc(array3[i])) + postFix)
         return samplingPoints
-      
-      
       
     def streamingStart(self, receiver, subCmd, dataSets, b1, b2, b3, log=True):
         accFormat = AtvcFormat()
@@ -549,9 +475,17 @@ class PeakCanFd(object):
         accFormat.b.bNumber2 = b2
         accFormat.b.bNumber3 = b3
         accFormat.b.u3DataSets = dataSets
-        return self.PeakCan.cmdSend(receiver, MY_TOOL_IT_BLOCK_STREAMING, subCmd, [accFormat.asbyte], log=log)   
+        cmd = self.CanCmd(MY_TOOL_IT_BLOCK_STREAMING, subCmd, 1, 0)
+        message = self.CanMessage20(cmd, self.sender, receiver, [accFormat.asbyte])
+        if False != log:
+            canCmd = self.CanCmd(MY_TOOL_IT_BLOCK_STREAMING, subCmd, 1, 0)
+            self.Logger.Info("Start sending  " + self.strCmdNrToCmdName(canCmd) + "; Subpayload: " + hex(accFormat.asbyte))
+            
+        indexStart = self.GetReadArrayIndex() + 1
+        self.WriteFrameWaitAckRetries(message, retries=1) 
+        return indexStart
         
-    def streamingStop(self, receiver, subCmd):
+    def streamingStop(self, receiver, subCmd, bErrorExit=True):
         AtvcSet = AtvcFormat()
         AtvcSet.asbyte = 0
         AtvcSet.b.bStreaming = 1
@@ -560,24 +494,21 @@ class PeakCanFd(object):
         message = self.CanMessage20(cmd, self.sender, receiver, [AtvcSet.asbyte])
         self.Logger.Info("_____________________________________________________________")
         self.Logger.Info("Stop Streaming - " + self.strCmdNrToCmdName(cmd))
-        self.WriteFrameWaitAckRetries(message, retries=10, printLog=False)
+        ack=self.WriteFrameWaitAckRetries(message, retries=100, waitMs=250, printLog=False, assumedPayload=[AtvcSet.asbyte, 0, 0, 0, 0, 0, 0, 0], bErrorExit=bErrorExit)
         self.Logger.Info("_____________________________________________________________")
-        sleep(1)  # Waiting for remaining returns
-
-
-
+        return ack
         
     def ConfigAdc(self, receiver, preq, aquistionTime, oversampling, adcRef, log=True):
         if False != log:
-            self.Logger.Info("Config ADC - Prescaler: " + str(preq) + "/" + str(AdcAcquisitionTime[aquistionTime]) + "/" + str(AdcOverSamplingRateName[oversampling]) + "/" + str(VRefName[adcRef]))
+            self.Logger.Info("Config ADC - Prescaler: " + str(preq) + "/" + str(AdcAcquisitionTimeName[aquistionTime]) + "/" + str(AdcOverSamplingRateName[oversampling]) + "/" + str(VRefName[adcRef]))
             self.Logger.Info("Calculated Sampling Rate: " + str(calcSamplingRate(preq, aquistionTime, oversampling)))
         byte1 = 1 << 7  # Set Sampling Rate
         cmd = self.CanCmd(MY_TOOL_IT_BLOCK_CONFIGURATION, MY_TOOL_IT_CONFIGURATION_ACCELERATION_CONFIGURATION, 1, 0)
         message = self.CanMessage20(cmd, self.sender, receiver, [byte1, preq, aquistionTime, oversampling, adcRef, 0, 0, 0])
         return self.WriteFrameWaitAckRetries(message, retries=5)["Payload"]
     
-    def calibMeasurement(self, receiver, u2Action, signal, dimension, vRef, log=True, retries=3, bSet=True, ErrorAck=False, bReset=False, printLog=False):
-        messageIdFilter = self.CanCmd(MY_TOOL_IT_BLOCK_CONFIGURATION, MY_TOOL_IT_CONFIGURATION_CALIBRATE_MEASSUREMENT, 0, ErrorAck != False)
+    def calibMeasurement(self, receiver, u2Action, signal, dimension, vRef, log=True, retries=3, bSet=True, bErrorAck=False, bReset=False, printLog=False):
+        messageIdFilter = self.CanCmd(MY_TOOL_IT_BLOCK_CONFIGURATION, MY_TOOL_IT_CONFIGURATION_CALIBRATE_MEASSUREMENT, 0, bErrorAck != False)
         messageIdFilter = self.CanMessage20Id(messageIdFilter, receiver, self.sender)
         messageIdFilter = hex(messageIdFilter)
         byte1 = CalibrationMeassurement()
@@ -586,7 +517,7 @@ class PeakCanFd(object):
         byte1.b.u2Action = u2Action
         byte1.b.bSet = bSet
         calibPayload = [byte1.asbyte, signal, dimension, vRef, 0, 0, 0, 0]
-        indexAssumed = self.cmdSend(receiver, MY_TOOL_IT_BLOCK_CONFIGURATION, MY_TOOL_IT_CONFIGURATION_CALIBRATE_MEASSUREMENT, calibPayload, log=log, retries=retries, ErrorAck=ErrorAck, printLog=printLog)
+        indexAssumed = self.cmdSend(receiver, MY_TOOL_IT_BLOCK_CONFIGURATION, MY_TOOL_IT_CONFIGURATION_CALIBRATE_MEASSUREMENT, calibPayload, log=log, retries=retries, bErrorAck=bErrorAck, printLog=printLog)
         indexRun = indexAssumed
         indexEnd = self.GetReadArrayIndex()
         returnAck = []
@@ -887,7 +818,6 @@ class PeakCanFd(object):
             print("Available Names: " + str(recNameList))
             self.__exitError()
 
-
     def BlueToothEnergyModeNr(self, Sleep1TimeReset, Sleep1AdvertisementTimeReset, modeNr):
         S1B0 = Sleep1TimeReset & 0xFF
         S1B1 = (Sleep1TimeReset >> 8) & 0xFF
@@ -922,12 +852,9 @@ class PeakCanFd(object):
         sendData.b.bSetState = 1
         sendData.b.u2NodeState = 2
         sendData.b.u3NetworkState = 2
-        self.PeakCan.Logger.Info("Send Standby Command")
-        index = self.PeakCan.cmdSend(receiver, MY_TOOL_IT_BLOCK_SYSTEM, MY_TOOL_IT_SYSTEM_ACTIVE_STATE, [sendData.asbyte])        
-        self.PeakCan.Logger.Info("Received Payload " + str(self.getReadMessageData(index)["Payload"]))
-
-
-
+        self.Logger.Info("Send Standby Command")
+        index = self.cmdSend(receiver, MY_TOOL_IT_BLOCK_SYSTEM, MY_TOOL_IT_SYSTEM_ACTIVE_STATE, [sendData.asbyte])        
+        self.Logger.Info("Received Payload " + self.payload2Hex(self.getReadMessageData(index)))
 
     def BlueToothRssi(self, subscriber):
         cmd = self.CanCmd(MY_TOOL_IT_BLOCK_SYSTEM, MY_TOOL_IT_SYSTEM_BLUETOOTH, 1, 0)

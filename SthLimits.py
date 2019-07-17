@@ -3,11 +3,6 @@ from MyToolItCommands import *
 Axis = 1
 PcbOnly = True
 
-# Version
-VersionMajor = 2
-VersionMinor = 1
-VersionBuild = 0
-TestDeviceName = "Tanja"
 
 # Recalculation Factors
 AdcMax = 0xFFFF

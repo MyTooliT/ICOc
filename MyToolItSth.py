@@ -2,6 +2,12 @@ import ctypes
 c_uint8 = ctypes.c_uint8
 c_uint32 = ctypes.c_uint32
 
+# Version
+VersionMajor = 2
+VersionMinor = 1
+VersionBuild = 0
+TestDeviceName = "Tanja"
+
 SthModuleStreaming = 0
 AdcConfigAllPrescalerMax = 4
 SleepTimeMin = 10000

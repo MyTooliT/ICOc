@@ -2,7 +2,7 @@ import unittest
 import sys
 import os
 
-#Required to add peakcan
+# Required to add peakcan
 file_path = '../'
 dir_name = os.path.dirname(file_path)
 sys.path.append(dir_name)
@@ -995,7 +995,7 @@ class TestSth(unittest.TestCase):
     """
 
     def test0321GetStreamingAccX(self):
-        [indexStart, indexEnd] = self.PeakCan.streamingValueCollect(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets3, 1, 0, 0, StreamingStandardTestTimeMs)
+        [indexStart, indexEnd] = self.PeakCan.streamingValueCollect(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets3, 1, 0, 0, 10 * StreamingStandardTestTimeMs)
         [array1, array2, array3] = self.PeakCan.streamingValueArray(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets3, 1, 0, 0, indexStart, indexEnd)
         self.PeakCan.ValueLog(array1, array2, array3, fAcceleration, "Acc", "g",)
         self.streamingValueCompare(array1, array2, array3, AdcMiddleX, AdcToleranceX, 0, 2 ** 32, 0, 2 ** 32, fAcceleration)
@@ -1202,7 +1202,40 @@ class TestSth(unittest.TestCase):
             self.SamplingRate(2, AdcAcquisitionTime3, AdcOverSamplingRate64, AdcReferenceVDD, runTime=5000)
             self._streamingStop()
             self.PeakCan.ReadArrayReset()
-        
+ 
+    """
+    Multi Streaming - AccX + VoltageBattery
+    """        
+
+    def test0335MultiStreamingAccXVoltBat(self):
+        self.PeakCan.streamingStart(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets3, 1, 0, 0)
+        indexStart = self.PeakCan.streamingStart(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, DataSets3, 1, 0, 0)
+        sleep(StreamingStandardTestTimeMs / 1000)
+        indexEnd = self.PeakCan.GetReadArrayIndex() - 1
+        self.PeakCan.streamingStop(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION)
+        self.PeakCan.streamingStop(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE)       
+        countDel = 0
+        while StreamingStandardTestTimeMs < self.PeakCan.getReadMessageTimeMs(indexStart, indexEnd) - 0.5:
+            countDel += 1
+            indexEnd -= 1
+        self.PeakCan.Logger.Info("Deleted Messages do achieve " + str(StreamingStandardTestTimeMs) + "ms: " + str(countDel + 180))
+        self.PeakCan.Logger.Info("indexStart: " + str(indexEnd))
+        self.PeakCan.Logger.Info("indexEnd: " + str(indexEnd))
+        if 0.2 * (indexEnd - indexStart) < countDel:
+            self.PeakCan.Logger.Warning("Deleted Messages do achieve " + str(StreamingStandardTestTimeMs) + "ms: " + str(countDel + 180))        
+        [arrayBat, array2, array3] = self.PeakCan.streamingValueArray(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, DataSets3, 1, 0, 0, indexStart, indexEnd)
+        self.assertEqual(0, len(array2))
+        self.assertEqual(0, len(array3))
+        [arrayAccX, array2, array3] = self.PeakCan.streamingValueArray(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets3, 1, 0, 0, indexStart, indexEnd)
+        self.assertEqual(0, len(array2))
+        self.assertEqual(0, len(array3))
+        self.PeakCan.Logger.Info("Voltage Sampling Points: " + str(len(arrayBat)))
+        self.PeakCan.Logger.Info("Acceleration Sampling Points: " + str(len(arrayAccX)))
+        self.PeakCan.ValueLog(arrayBat, array2, array3, fAdcRawDat, "Voltage", "")
+        self.PeakCan.ValueLog(arrayAccX, array2, array3, fAdcRawDat, "Acc", "")
+        self.streamingValueCompare(arrayBat, array2, array3, VoltMiddleBat, VoltToleranceBat, 0, 0, 0, 0, fVoltageBattery)   
+        self.streamingValueCompare(arrayAccX, array2, array3, AdcMiddleX, AdcToleranceX, 0, 0, 0, 0, fAcceleration)    
+      
     """
     Test x-Axis Line
     """
@@ -1375,19 +1408,11 @@ class TestSth(unittest.TestCase):
 
     def test0503SamplingRateOverSampling(self):
         self.SamplingRate(5, AdcAcquisitionTime8, AdcOverSamplingRate32, AdcReferenceVDD)
-
-    """
-    Testing ADC Sampling Rate - Single Sampling
-    """
-
-    def test0504SamplingRateSingleSampling(self):
-        self.SamplingRate(2, AdcAcquisitionTime3, AdcOverSamplingRate64, AdcReferenceVDD, runTime=5000)
-
     """
     Testing ADC Sampling Rate - Maximum(Single Data)
     """
 
-    def test0505SamplingRateDataSingleMax(self):
+    def test0504SamplingRateDataSingleMax(self):
         calcRate = self.SamplingRate(2, AdcAcquisitionTime3, AdcOverSamplingRate64, AdcReferenceVDD, runTime=5000)["SamplingRate"]
         print("Maximum Sampling Rate(Single Sampling): " + str(calcRate))
 
@@ -1395,7 +1420,7 @@ class TestSth(unittest.TestCase):
     Testing ADC Sampling Rate - Maximum(Double Data)
     """
 
-    def test0506SamplingRateDataDoubleMax(self):
+    def test0505SamplingRateDataDoubleMax(self):
         calcRate = self.SamplingRate(3, AdcAcquisitionTime8, AdcOverSamplingRate64, AdcReferenceVDD, b1=1, b2=1, b3=0, runTime=5000)["SamplingRate"]
         print("Maximum Sampling Rate(Double Sampling): " + str(calcRate))
 
@@ -1403,7 +1428,7 @@ class TestSth(unittest.TestCase):
     Testing ADC Sampling Rate - Maximum(Tripple Data)
     """
 
-    def test0507SamplingRateDataTrippleMax(self):
+    def test0506SamplingRateDataTrippleMax(self):
         calcRate = self.SamplingRate(2, AdcAcquisitionTime3, AdcOverSamplingRate64, AdcReferenceVDD, b1=1, b2=1, b3=1, runTime=5000)["SamplingRate"]
         print("Maximum Sampling Rate(Tripple Sampling): " + str(calcRate))
 
@@ -1411,7 +1436,7 @@ class TestSth(unittest.TestCase):
     Testing ADC Reference voltagegs
     """
 
-    def test0508VRef(self):
+    def test0507VRef(self):
         self.PeakCan.Logger.Info("Warm Up")
         self.SamplingRate(2, AdcAcquisitionTime3, AdcOverSamplingRate64, AdcReferenceVDD, b1=1, b2=1, b3=1, runTime=5000)
         for vRef in AdcReferenceList:
@@ -1422,7 +1447,7 @@ class TestSth(unittest.TestCase):
     ADC Configuration Combine all possible settings - Single Axis
     """
 
-    def test0509AdcConfigSingle(self):
+    def test0508AdcConfigSingle(self):
         SamplingRateMaxDet = 0
         for prescaler in range(2, AdcConfigAllPrescalerMax):
             for acquisitionTime in AdcAcquisitionTimeList:
@@ -1458,7 +1483,7 @@ class TestSth(unittest.TestCase):
     Combine all possible settings - Double Axis
     """
 
-    def test0510AdcConfigDouble(self):
+    def test0509AdcConfigDouble(self):
         SamplingRateMaxDet = 0
         for prescaler in range(2, AdcConfigAllPrescalerMax):
             for acquisitionTime in AdcAcquisitionTimeList:
@@ -1494,7 +1519,7 @@ class TestSth(unittest.TestCase):
     Combine all possible settings - Tripple Axis
     """
 
-    def test0511AdcConfigTripple(self):
+    def test0510AdcConfigTripple(self):
         SamplingRateMaxDet = 0
         for prescaler in range(2, AdcConfigAllPrescalerMax):
             for acquisitionTime in AdcAcquisitionTimeList:
@@ -1530,51 +1555,78 @@ class TestSth(unittest.TestCase):
     Testing ADC Sampling Prescaler Min
     """
 
-    def test0512AdcPrescalerMin(self):
+    def test0511AdcPrescalerMin(self):
         self.SamplingRate(2, AdcAcquisitionTime8, AdcOverSamplingRate64, AdcReferenceVDD, b1=1, b2=0, b3=0, runTime=1000)
 
     """
     Testing ADC Sampling Prescaler Min/Max
     """
 
-    def test0513AdcPrescalerMax(self):
+    def test0512AdcPrescalerMax(self):
         self.SamplingRate(127, AdcAcquisitionTime1, AdcOverSamplingRate32, AdcReferenceVDD, b1=1, b2=0, b3=0, runTime=10000)
    
     """
     Testing ADC Sampling Acquisition Min
     """
 
-    def test0514AdcAcquisitionMin(self):
+    def test0513AdcAcquisitionMin(self):
         self.SamplingRate(2, AdcAcquisitionTime1, AdcOverSamplingRate128, AdcReferenceVDD, b1=1, b2=0, b3=0, runTime=1000)
 
     """
     Testing ADC Sampling Acquisition Max
     """
 
-    def test0515AdcAcquisitionMax(self):
-        self.SamplingRate(2, AdcAcquisitionTime256, AdcOverSamplingRate32, AdcReferenceVDD, b1=1, b2=0, b3=0, runTime=1000)
+    def test0514AdcAcquisitionMax(self):
+        self.SamplingRate(2, AdcAcquisitionTime256, AdcOverSamplingRate32, AdcReferenceVDD, b1=1, b2=0, b3=0, runTime=100000)
   
     """
     Testing ADC Sampling Oversampling Rate Min
     """
 
-    def test0516AdcOverSamplingRateMin(self):
+    def test0515AdcOverSamplingRateMin(self):
         self.SamplingRate(8, AdcAcquisitionTime256, AdcOverSamplingRate2, AdcReferenceVDD, b1=1, b2=0, b3=0, runTime=1000)
 
     """
     Testing ADC Sampling Oversampling Rate Max
     """
 
-    def test0517AdcOverSamplingRateMax(self):
-        self.SamplingRate(2, AdcAcquisitionTime1, AdcOverSamplingRate4096, AdcReferenceVDD, b1=1, b2=0, b3=0, runTime=20000)
+    def test0516AdcOverSamplingRateMax(self):
+        self.SamplingRate(2, AdcAcquisitionTime1, AdcOverSamplingRate4096, AdcReferenceVDD, b1=1, b2=0, b3=0, runTime=100000)
           
     """
     Testing ADC Sampling Oversampling Rate None
     """
 
-    def test0518AdcOverSamplingRateNone(self):
+    def test0517AdcOverSamplingRateNone(self):
         self.SamplingRate(8, AdcAcquisitionTime256, AdcOverSamplingRateNone, AdcReferenceVDD, b1=1, b2=0, b3=0, runTime=1000)
-                        
+
+    """
+    Inject oversampling Rate fault. See that error status word is set correctly and tha the system still works
+    """               
+
+    def test0518AdcSamplingRateOverdrive(self):
+        prescaler = 2
+        acquisitionTime = AdcAcquisitionTime1
+        overSamplingRate = AdcOverSamplingRateNone
+        Settings = self.PeakCan.ConfigAdc(MY_TOOL_IT_NETWORK_STH1, prescaler, acquisitionTime, overSamplingRate, AdcReferenceVDD)[1:]
+        self.assertEqual(prescaler, Settings[0])
+        self.assertEqual(acquisitionTime, Settings[1])
+        self.assertEqual(overSamplingRate, Settings[2])
+        self.assertEqual(AdcReferenceVDD, Settings[3])
+        self.PeakCan.streamingStart(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets3, 1, 0, 0)
+        sleep(3)
+        ack = self.PeakCan.streamingStop(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, bErrorExit=False)
+        if "Error" == ack:
+            self.PeakCan.Logger.Warning("No Ack was received. May happen due to overload")
+            self._resetStu()
+            self.PeakCan.Logger.Info("Connect to STH")
+            self.PeakCan.BlueToothConnectPollingName(MY_TOOL_IT_NETWORK_STU1, TestDeviceName) 
+        else:
+            ErrorWord = SthErrorWord()
+            ErrorWord.asword = self.PeakCan.statusWord1(MY_TOOL_IT_NETWORK_STH1)
+            self.PeakCan.Logger.Info("STH Error Word: " + hex(ErrorWord.asword))
+            self.assertEqual(ErrorWord.b.bAdcOverRun, 1)
+        
     """
     Check Calibration Measurement
     """
@@ -1840,16 +1892,16 @@ class TestSth(unittest.TestCase):
     """
 
     def test0604CalibrationMeasurementState(self):
-        stateStartX = self.PeakCan.calibMeasurement(MY_TOOL_IT_NETWORK_STH1, CalibMeassurementActionInject, CalibMeassurementTypeAcc, 1, AdcReferenceVDD, bSet=False, ErrorAck=True)
-        stateStartY = self.PeakCan.calibMeasurement(MY_TOOL_IT_NETWORK_STH1, CalibMeassurementActionInject, CalibMeassurementTypeAcc, 2, AdcReferenceVDD, bSet=False, ErrorAck=True)
-        stateStartZ = self.PeakCan.calibMeasurement(MY_TOOL_IT_NETWORK_STH1, CalibMeassurementActionInject, CalibMeassurementTypeAcc, 3, AdcReferenceVDD, bSet=False, ErrorAck=True)
-        stateStartTemp = self.PeakCan.calibMeasurement(MY_TOOL_IT_NETWORK_STH1, CalibMeassurementActionInject, CalibMeassurementTypeTemp, 1, AdcReferenceVDD, bSet=False, ErrorAck=True)
-        stateStartVoltage = self.PeakCan.calibMeasurement(MY_TOOL_IT_NETWORK_STH1, CalibMeassurementActionInject, CalibMeassurementTypeVoltage, 1, AdcReferenceVDD, bSet=False, ErrorAck=True)        
-        stateStartVss = self.PeakCan.calibMeasurement(MY_TOOL_IT_NETWORK_STH1, CalibMeassurementActionInject, CalibMeassurementTypeVss, 1, AdcReferenceVDD, bSet=False, ErrorAck=True)
-        stateStartAvdd = self.PeakCan.calibMeasurement(MY_TOOL_IT_NETWORK_STH1, CalibMeassurementActionInject, CalibMeassurementTypeAvdd, 1, AdcReferenceVDD, bSet=False, ErrorAck=True)
-        stateStartDecouple = self.PeakCan.calibMeasurement(MY_TOOL_IT_NETWORK_STH1, CalibMeassurementActionInject, CalibMeassurementTypeRegulatedInternalPower, 1, AdcReferenceVDD, bSet=False, ErrorAck=True)
-        stateStartOpa1 = self.PeakCan.calibMeasurement(MY_TOOL_IT_NETWORK_STH1, CalibMeassurementActionInject, CalibMeassurementTypeOpvOutput, 1, AdcReferenceVDD, bSet=False, ErrorAck=True)
-        stateStartOpa2 = self.PeakCan.calibMeasurement(MY_TOOL_IT_NETWORK_STH1, CalibMeassurementActionInject, CalibMeassurementTypeOpvOutput, 2, AdcReferenceVDD, bSet=False, ErrorAck=True)
+        stateStartX = self.PeakCan.calibMeasurement(MY_TOOL_IT_NETWORK_STH1, CalibMeassurementActionInject, CalibMeassurementTypeAcc, 1, AdcReferenceVDD, bSet=False, bErrorAck=True)
+        stateStartY = self.PeakCan.calibMeasurement(MY_TOOL_IT_NETWORK_STH1, CalibMeassurementActionInject, CalibMeassurementTypeAcc, 2, AdcReferenceVDD, bSet=False, bErrorAck=True)
+        stateStartZ = self.PeakCan.calibMeasurement(MY_TOOL_IT_NETWORK_STH1, CalibMeassurementActionInject, CalibMeassurementTypeAcc, 3, AdcReferenceVDD, bSet=False, bErrorAck=True)
+        stateStartTemp = self.PeakCan.calibMeasurement(MY_TOOL_IT_NETWORK_STH1, CalibMeassurementActionInject, CalibMeassurementTypeTemp, 1, AdcReferenceVDD, bSet=False, bErrorAck=True)
+        stateStartVoltage = self.PeakCan.calibMeasurement(MY_TOOL_IT_NETWORK_STH1, CalibMeassurementActionInject, CalibMeassurementTypeVoltage, 1, AdcReferenceVDD, bSet=False, bErrorAck=True)        
+        stateStartVss = self.PeakCan.calibMeasurement(MY_TOOL_IT_NETWORK_STH1, CalibMeassurementActionInject, CalibMeassurementTypeVss, 1, AdcReferenceVDD, bSet=False, bErrorAck=True)
+        stateStartAvdd = self.PeakCan.calibMeasurement(MY_TOOL_IT_NETWORK_STH1, CalibMeassurementActionInject, CalibMeassurementTypeAvdd, 1, AdcReferenceVDD, bSet=False, bErrorAck=True)
+        stateStartDecouple = self.PeakCan.calibMeasurement(MY_TOOL_IT_NETWORK_STH1, CalibMeassurementActionInject, CalibMeassurementTypeRegulatedInternalPower, 1, AdcReferenceVDD, bSet=False, bErrorAck=True)
+        stateStartOpa1 = self.PeakCan.calibMeasurement(MY_TOOL_IT_NETWORK_STH1, CalibMeassurementActionInject, CalibMeassurementTypeOpvOutput, 1, AdcReferenceVDD, bSet=False, bErrorAck=True)
+        stateStartOpa2 = self.PeakCan.calibMeasurement(MY_TOOL_IT_NETWORK_STH1, CalibMeassurementActionInject, CalibMeassurementTypeOpvOutput, 2, AdcReferenceVDD, bSet=False, bErrorAck=True)
         ErrorPayloadAssumed = [0x0, 0x2, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0]
         self.PeakCan.Logger.Info("Assumed Error Payload: " + self.PeakCan.payload2Hex(ErrorPayloadAssumed)) 
         self.PeakCan.Logger.Info("State Start AccX: " + self.PeakCan.payload2Hex(stateStartX)) 
@@ -1882,8 +1934,8 @@ class TestSth(unittest.TestCase):
         ackInjectX = self.PeakCan.calibMeasurement(MY_TOOL_IT_NETWORK_STH1, CalibMeassurementActionInject, CalibMeassurementTypeAcc, 1, AdcReferenceVDD)
         stateInjectX = self.PeakCan.calibMeasurement(MY_TOOL_IT_NETWORK_STH1, CalibMeassurementActionInject, CalibMeassurementTypeAcc, 1, AdcReferenceVDD, bSet=False)          
         ackReset = self.PeakCan.calibMeasurement(MY_TOOL_IT_NETWORK_STH1, CalibMeassurementActionInject, CalibMeassurementTypeAcc, 1, AdcReferenceVDD, bReset=True)
-        stateStartX = self.PeakCan.calibMeasurement(MY_TOOL_IT_NETWORK_STH1, CalibMeassurementActionInject, CalibMeassurementTypeAcc, 1, AdcReferenceVDD, bSet=False, ErrorAck=True)
-        stateStartAvdd = self.PeakCan.calibMeasurement(MY_TOOL_IT_NETWORK_STH1, CalibMeassurementActionInject, CalibMeassurementTypeAvdd, 1, AdcReferenceVDD, bSet=False, ErrorAck=True)
+        stateStartX = self.PeakCan.calibMeasurement(MY_TOOL_IT_NETWORK_STH1, CalibMeassurementActionInject, CalibMeassurementTypeAcc, 1, AdcReferenceVDD, bSet=False, bErrorAck=True)
+        stateStartAvdd = self.PeakCan.calibMeasurement(MY_TOOL_IT_NETWORK_STH1, CalibMeassurementActionInject, CalibMeassurementTypeAvdd, 1, AdcReferenceVDD, bSet=False, bErrorAck=True)
         self.PeakCan.Logger.Info("Ack from Inject AccX Command: " + self.PeakCan.payload2Hex(ackInjectX))
         self.PeakCan.Logger.Info("State after Inject AccX Command: " + self.PeakCan.payload2Hex(stateInjectX))  
         self.PeakCan.Logger.Info("Ack from Reset Command: " + self.PeakCan.payload2Hex(ackReset))
@@ -1997,5 +2049,4 @@ if __name__ == "__main__":
         print(f)     
         runner = unittest.TextTestRunner(f)
         unittest.main(argv=['first-arg-is-ignored'], testRunner=runner)  
-
 

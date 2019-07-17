@@ -152,7 +152,7 @@ CommandBlockStreaming = {
     MY_TOOL_IT_STREAMING_CURRENT : "Streaming Command Current",
     }
 
-CommandBlockStatisticalData= {
+CommandBlockStatisticalData = {
     MY_TOOL_IT_STATISTICAL_DATA_POC_POF : "Statistical Data Command PowerOn/Off Counter",
     MY_TOOL_IT_STATISTICAL_DATA_OPERATING_TIME : "Statistical Data Command Operating Time",
     MY_TOOL_IT_STATISTICAL_DATA_UVC : "Statistical Data Command Undervoltage Counter",
@@ -161,7 +161,7 @@ CommandBlockStatisticalData= {
     MY_TOOL_IT_STATISTICAL_DATA_ENERGY : "Statistical Data Command Energy",
     }
 
-CommandBlockConfiguration= {
+CommandBlockConfiguration = {
     MY_TOOL_IT_CONFIGURATION_ACCELERATION_CONFIGURATION : "Configuration Command Acceleration Configuration",
     MY_TOOL_IT_CONFIGURATION_TEMPERATURE_CONFIGURATION : "Configuration Command Temperature Configuration",
     MY_TOOL_IT_CONFIGURATION_VOLTAGE_CONFIGURATION : "Configuration Command Voltage Configuration",
@@ -173,8 +173,7 @@ CommandBlockConfiguration= {
     MY_TOOL_IT_CONFIGURATION_CONFIGURATION_HMI : "Configuration Command HMI",
     }
 
-
-CommandBlockProductData= {
+CommandBlockProductData = {
     MY_TOOL_IT_PRODUCT_DATA_GTIN : "Product Data Command GTIN",
     MY_TOOL_IT_PRODUCT_DATA_HARDWARE_REVISION : "Product Data Command Hardware Revision",
     MY_TOOL_IT_PRODUCT_DATA_FIRMWARE_VERSION : "Product Data Command Firmware Version",
@@ -331,13 +330,16 @@ def to8bitSigned(num):
         num = -((~int(num) + 1) & mask2s)  # 2's complement
     return num
 
+
 def messageWordGet(m):
     Word = ((0xFF & m[3]) << 24) | ((0xFF & m[2]) << 16) | ((0xFF & m[1]) << 8) | (0xFF & m[0])
     return Word
 
+
 def messageValueGet(m):
     Acc = ((0xFF & m[1]) << 8) | (0xFF & m[0])
     return Acc
+
     
 def calcSamplingRate(prescaler, acquisitionTime, OverSamplingRate):
     if AdcAcquisitionTime1 == acquisitionTime:
@@ -393,7 +395,10 @@ def calcSamplingRate(prescaler, acquisitionTime, OverSamplingRate):
     return 38400000 / ((prescaler + 1) * (acquTime + 13) * samplingRate)
 
 
-AdcAcquisitionTime = {
+PrescalerMin = 2
+PrescalerMax = 127
+
+AdcAcquisitionTimeName = {
     AdcAcquisitionTime1 : "ADC Acquisition Time - 1Cycle",
     AdcAcquisitionTime2 : "ADC Acquisition Time - 2Cycle",
     AdcAcquisitionTime3 : "ADC Acquisition Time - 3Cycle",
@@ -404,6 +409,19 @@ AdcAcquisitionTime = {
     AdcAcquisitionTime64 : "ADC Acquisition Time - 64Cycle",
     AdcAcquisitionTime128 : "ADC Acquisition Time - 128Cycle",
     AdcAcquisitionTime256 : "ADC Acquisition Time - 256Cycle"
+    }
+
+iAdcAcquisitionTime = {
+    1 : AdcAcquisitionTime1,
+    2 : AdcAcquisitionTime2,
+    3 : AdcAcquisitionTime3,
+    4 : AdcAcquisitionTime4,
+    8 : AdcAcquisitionTime8,
+    16 : AdcAcquisitionTime16,
+    32 : AdcAcquisitionTime32,
+    64 : AdcAcquisitionTime64,
+    128 : AdcAcquisitionTime128,
+    256 : AdcAcquisitionTime256
     }
 
 AdcOverSamplingRateName = {
@@ -420,6 +438,23 @@ AdcOverSamplingRateName = {
     AdcOverSamplingRate1024 : "ADC Over Sampling Rate - 1024",
     AdcOverSamplingRate2048 : "ADC Over Sampling Rate - 2048",
     AdcOverSamplingRate4096 : "ADC Over Sampling Rate - 4096"
+    }
+
+
+iAdcOverSamplingRate = {
+    1 : AdcOverSamplingRateNone,
+    2 : AdcOverSamplingRate2,
+    4 : AdcOverSamplingRate4,
+    8 : AdcOverSamplingRate8,
+    16 : AdcOverSamplingRate16,
+    32 : AdcOverSamplingRate32,
+    64 : AdcOverSamplingRate64,
+    128 : AdcOverSamplingRate128,
+    256 : AdcOverSamplingRate256,
+    512 : AdcOverSamplingRate512,
+    1024 : AdcOverSamplingRate1024,
+    2048 : AdcOverSamplingRate2048,
+    4096 : AdcOverSamplingRate4096
     }
 
 VRefName = {
@@ -448,5 +483,19 @@ AdcVRefValuemV = {
     AdcReferenceVDD : 3300,
     AdcReference5V : 5000,
     AdcReference6V6 : 6000
+    }
+
+tAdcVRef = {
+    0 : AdcReferenceNone,
+    1250 : AdcReference1V25,
+    1650 : AdcReferenceVfs1V65,
+    1800 : AdcReferenceVfs1V8,
+    2100 : AdcReferenceVfs2V1,
+    2200 : AdcReferenceVfs2V2,
+    2500 : AdcReference2V5,
+    2700 : AdcReferenceVfs2V7,
+    3300 : AdcReferenceVDD,
+    5000 : AdcReference5V,
+    6000 : AdcReference6V6
     }
 
