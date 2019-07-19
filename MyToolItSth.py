@@ -19,7 +19,7 @@ Sleep2TimeReset = 3600000
 Sleep2AdvertisementTimeReset = 1600
 ConnectionTimeNormalMaxMs = 4000
 ConnectionTimeSleep1MaxMs = 5000
-ConnectionTimeSleep2MaxMs = 6000
+ConnectionTimeSleep2MaxMs = 7000
 ConnectionTimeMaximumMs = 15000
 
 

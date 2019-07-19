@@ -494,7 +494,7 @@ class PeakCanFd(object):
         message = self.CanMessage20(cmd, self.sender, receiver, [AtvcSet.asbyte])
         self.Logger.Info("_____________________________________________________________")
         self.Logger.Info("Stop Streaming - " + self.strCmdNrToCmdName(cmd))
-        ack=self.WriteFrameWaitAckRetries(message, retries=100, waitMs=250, printLog=False, assumedPayload=[AtvcSet.asbyte, 0, 0, 0, 0, 0, 0, 0], bErrorExit=bErrorExit)
+        ack=self.WriteFrameWaitAckRetries(message, retries=200, waitMs=250, printLog=False, assumedPayload=[AtvcSet.asbyte, 0, 0, 0, 0, 0, 0, 0], bErrorExit=bErrorExit)
         self.Logger.Info("_____________________________________________________________")
         return ack
         

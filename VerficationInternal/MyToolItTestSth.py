@@ -900,7 +900,7 @@ class TestSth(unittest.TestCase):
     Get Battery Voltage via single command
     """
 
-    def test0301GetSingleVoltageBattery(self):
+    def test0300GetSingleVoltageBattery(self):
         index = self.PeakCan.singleValueCollect(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, 1, 0, 0)
         [val1, val2, val3] = self.PeakCan.singleValueArray(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, 1, 0, 0, index)
         self.PeakCan.ValueLog(val1, val2, val3, fVoltageBattery, "Battery Voltage", "V")
@@ -910,7 +910,7 @@ class TestSth(unittest.TestCase):
     Test multi single battery meassurement
     """
 
-    def test0302GetSingleVoltageBatteryMultipleTimes(self):
+    def test0301GetSingleVoltageBatteryMultipleTimes(self):
         for _i in range(0, 10):
             index = self.PeakCan.singleValueCollect(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, 1, 0, 0)
             [val1, val2, val3] = self.PeakCan.singleValueArray(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, 1, 0, 0, index)
@@ -921,63 +921,63 @@ class TestSth(unittest.TestCase):
     Test single battery Acceleration X-Axis meassurement
     """
 
-    def test0303GetSingleAccX(self):
+    def test0302GetSingleAccX(self):
         index = self.PeakCan.singleValueCollect(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, 1, 0, 0)
         [val1, val2, val3] = self.PeakCan.singleValueArray(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, 1, 0, 0, index)
-        self.PeakCan.ValueLog(val1, val2, val3, fAcceleration, "Acceleration X", "g")
+        self.PeakCan.ValueLog(val1, val2, val3, fAcceleration, "Acc", "g")
         self.singleValueCompare(val1, val2, val3, AdcMiddleX, AdcToleranceX, 0, 0, 0, 0, fAcceleration)
 
     """
     Test single battery Acceleration Y-Axis meassurement
     """
 
-    def test0304GetSingleAccY(self):
+    def test0303GetSingleAccY(self):
         index = self.PeakCan.singleValueCollect(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, 0, 1, 0)
         [val1, val2, val3] = self.PeakCan.singleValueArray(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, 0, 1, 0, index)
-        self.PeakCan.ValueLog(val1, val2, val3, fAcceleration, "Acceleration Y", "g")
+        self.PeakCan.ValueLog(val1, val2, val3, fAcceleration, "Acc", "g")
         self.singleValueCompare(val1, val2, val3, 0, 0, AdcMiddleY, AdcToleranceY, 0, 0, fAcceleration)
 
     """
     Test single battery Acceleration Z-Axis meassurement
     """
 
-    def test0305GetSingleAccZ(self):
+    def test0304GetSingleAccZ(self):
         index = self.PeakCan.singleValueCollect(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, 0, 0, 1)
         [val1, val2, val3] = self.PeakCan.singleValueArray(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, 0, 0, 1, index)
-        self.PeakCan.ValueLog(val1, val2, val3, fAcceleration, "Acceleration X", "g")
+        self.PeakCan.ValueLog(val1, val2, val3, fAcceleration, "Acc", "g")
         self.singleValueCompare(val1, val2, val3, 0, 0, 0, 0, AdcMiddleZ, AdcToleranceZ, fAcceleration)
 
     """
     Test multi single X Acc meassurement
     """
 
-    def test0306GetSingleSingleAccXMultipleTimes(self):
+    def test0305GetSingleSingleAccXMultipleTimes(self):
         for _i in range(0, 10):
             index = self.PeakCan.singleValueCollect(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, 1, 0, 0)
             [val1, val2, val3] = self.PeakCan.singleValueArray(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, 1, 0, 0, index)
-            self.PeakCan.ValueLog(val1, val2, val3, fAcceleration, "Acceleration X", "g")
+            self.PeakCan.ValueLog(val1, val2, val3, fAcceleration, "Acc", "g")
             self.singleValueCompare(val1, val2, val3, AdcMiddleX, AdcToleranceX, 0, 0, 0, 0, fAcceleration)
 
     """
     Test multi single Y Acc meassurement
     """
 
-    def test0307GetSingleSingleAccYMultipleTimes(self):
+    def test0306GetSingleSingleAccYMultipleTimes(self):
         for _i in range(0, 10):
             index = self.PeakCan.singleValueCollect(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, 0, 1, 0)
             [val1, val2, val3] = self.PeakCan.singleValueArray(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, 0, 1, 0, index)
-            self.PeakCan.ValueLog(val1, val2, val3, fAcceleration, "Acceleration Y", "g")
+            self.PeakCan.ValueLog(val1, val2, val3, fAcceleration, "Acc", "g")
             self.singleValueCompare(val1, val2, val3, 0, 0, AdcMiddleY, AdcToleranceY, 0, 0, fAcceleration)
 
     """
     Test multi single Z Acc meassurement
     """
 
-    def test0308GetSingleSingleAccZMultipleTimes(self):
+    def test0307GetSingleSingleAccZMultipleTimes(self):
         for _i in range(0, 10):
             index = self.PeakCan.singleValueCollect(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, 0, 0, 1)
             [val1, val2, val3] = self.PeakCan.singleValueArray(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, 0, 0, 1, index)
-            self.PeakCan.ValueLog(val1, val2, val3, fAcceleration, "Acceleration Z", "g")
+            self.PeakCan.ValueLog(val1, val2, val3, fAcceleration, "Acc", "g")
             self.singleValueCompare(val1, val2, val3, 0, 0, 0, 0, AdcMiddleZ, AdcToleranceZ, fAcceleration)
             
     """
@@ -987,7 +987,7 @@ class TestSth(unittest.TestCase):
     def test0320GetStreamingVoltageBattery(self):
         [indexStart, indexEnd] = self.PeakCan.streamingValueCollect(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, DataSets3, 1, 0, 0, StreamingStandardTestTimeMs)
         [array1, array2, array3] = self.PeakCan.streamingValueArray(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, DataSets3, 1, 0, 0, indexStart, indexEnd)
-        self.PeakCan.ValueLog(array1, array2, array3, fVoltageBattery, "Battery", "V",)
+        self.PeakCan.ValueLog(array1, array2, array3, fVoltageBattery, "Voltage", "V",)
         self.streamingValueCompare(array1, array2, array3, VoltMiddleBat, VoltToleranceBat, 0, 0, 0, 0, fVoltageBattery)
 
     """
@@ -1194,14 +1194,11 @@ class TestSth(unittest.TestCase):
         self.PeakCan.ReadArrayReset()
         
     """
-    Test heavy usage of data acquiring
+    Test long usage of data acquiring
     """        
 
     def test0334StreamingHeavyDuty(self):
-        for _i in range(0, 90):
-            self.SamplingRate(2, AdcAcquisitionTime3, AdcOverSamplingRate64, AdcReferenceVDD, runTime=5000)
-            self._streamingStop()
-            self.PeakCan.ReadArrayReset()
+        self.SamplingRate(2, AdcAcquisitionTime3, AdcOverSamplingRate64, AdcReferenceVDD, runTime=900000)
  
     """
     Multi Streaming - AccX + VoltageBattery
