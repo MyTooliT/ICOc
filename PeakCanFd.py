@@ -291,6 +291,7 @@ class PeakCanFd(object):
     
     def WriteFrameWaitAckRetries(self, CanMsg, retries=2, waitMs=1000, printLog=False, bErrorAck=False, assumedPayload=None, bErrorExit=True):  
         currentIndex = self.GetReadArrayIndex() - 1
+        retries += 1
         for i in range(0, retries):
             [returnMessage, currentIndex] = self.WriteFrameWaitAck(CanMsg, waitMs=waitMs, currentIndex=currentIndex, printLog=printLog, assumedPayload=assumedPayload, bError=bErrorAck)
             if "Error" != returnMessage:
@@ -482,7 +483,7 @@ class PeakCanFd(object):
             self.Logger.Info("Start sending  " + self.strCmdNrToCmdName(canCmd) + "; Subpayload: " + hex(accFormat.asbyte))
             
         indexStart = self.GetReadArrayIndex() + 1
-        self.WriteFrameWaitAckRetries(message, retries=1) 
+        self.WriteFrameWaitAckRetries(message) 
         return indexStart
         
     def streamingStop(self, receiver, subCmd, bErrorExit=True):

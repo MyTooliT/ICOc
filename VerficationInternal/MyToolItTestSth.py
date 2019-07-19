@@ -1205,8 +1205,8 @@ class TestSth(unittest.TestCase):
     """        
 
     def test0335MultiStreamingAccXVoltBat(self):
-        self.PeakCan.streamingStart(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets3, 1, 0, 0)
-        indexStart = self.PeakCan.streamingStart(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, DataSets3, 1, 0, 0)
+        self.PeakCan.streamingStart(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, DataSets3, 1, 0, 0)
+        indexStart = self.PeakCan.streamingStart(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets3, 1, 0, 0)
         sleep(StreamingStandardTestTimeMs / 1000)
         indexEnd = self.PeakCan.GetReadArrayIndex() - 1
         self.PeakCan.streamingStop(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION)
@@ -1603,15 +1603,15 @@ class TestSth(unittest.TestCase):
 
     def test0518AdcSamplingRateOverdrive(self):
         prescaler = 2
-        acquisitionTime = AdcAcquisitionTime1
-        overSamplingRate = AdcOverSamplingRateNone
+        acquisitionTime = AdcAcquisitionTime16
+        overSamplingRate = AdcOverSamplingRate8
         Settings = self.PeakCan.ConfigAdc(MY_TOOL_IT_NETWORK_STH1, prescaler, acquisitionTime, overSamplingRate, AdcReferenceVDD)[1:]
         self.assertEqual(prescaler, Settings[0])
         self.assertEqual(acquisitionTime, Settings[1])
         self.assertEqual(overSamplingRate, Settings[2])
         self.assertEqual(AdcReferenceVDD, Settings[3])
         self.PeakCan.streamingStart(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets3, 1, 0, 0)
-        sleep(3)
+        sleep(10)
         ack = self.PeakCan.streamingStop(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, bErrorExit=False)
         if "Error" == ack:
             self.PeakCan.Logger.Warning("No Ack was received. May happen due to overload")
