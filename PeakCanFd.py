@@ -125,6 +125,10 @@ class PeakCanFd(object):
                 self.Error = True
         self.Reset()   
         self.m_objPCANBasic.Uninitialize(self.m_PcanHandle)
+        sleep(1)
+        [iDs, cmds] = self.ReadMessageStatistics()
+        for cmd, value in cmds.items():
+            self.Logger.Info(self.strCmdNrToCmdName(cmd) + " received " + str(value) + " times")
         self.Logger.__exit__()
             
     def __exitError(self):
@@ -251,7 +255,7 @@ class PeakCanFd(object):
             while (CanMsgAck.ID != message["CanMsg"].ID) or (message["PcTime"] <= self.timeStampStart) or indexStart == self.GetReadArrayIndex() or (not self.ComparePayloadEqual(self.PeakCanPayload2Array(message["CanMsg"]), assumedPayload) and None != assumedPayload):
                 if((CanMsgAckError.ID == message["CanMsg"].ID) and (indexStartError < currentIndex)):
                     indexStartError = currentIndex
-                    [command, sender, receiver] = self.CanMessage20GetFields(message["CanMsg"])
+                    [command, sender, receiver] = self.CanMessage20GetFields(message["CanMsg"].ID)
                     cmdBlockName = self.strCmdNrToBlockName(command)
                     cmdName = self.strCmdNrToCmdName(command)
                     senderName = NetworkNumber[sender]
@@ -267,7 +271,7 @@ class PeakCanFd(object):
                     break
                 elif(waitTimeMax < self.getTimeMs()):
                     returnMessage = "Error"
-                    [command, sender, receiver] = self.CanMessage20GetFields(CanMsg)
+                    [command, sender, receiver] = self.CanMessage20GetFields(CanMsg.ID)
                     cmdBlockName = self.strCmdNrToBlockName(command)
                     cmdName = self.strCmdNrToCmdName(command)
                     senderName = NetworkNumber[sender]
@@ -297,7 +301,7 @@ class PeakCanFd(object):
             if "Error" != returnMessage:
                 break
             elif (retries - 1) == i:                
-                [command, sender, receiver] = self.CanMessage20GetFields(CanMsg)
+                [command, sender, receiver] = self.CanMessage20GetFields(CanMsg.ID)
                 cmdBlockName = self.strCmdNrToBlockName(command)
                 cmdName = self.strCmdNrToCmdName(command)
                 senderName = NetworkNumber[sender]
@@ -316,7 +320,7 @@ class PeakCanFd(object):
         msgAck = self.WriteFrameWaitAckRetries(message, retries=retries, waitMs=1000, bErrorAck=bErrorAck, printLog=printLog)
         if False != log:
             canCmd = self.CanCmd(blockCmd, subCmd, 1, 0)
-            self.Logger.Info(NetworkNumber[self.sender] + "->" + NetworkNumber[receiver] + "(CanTimeStamp - " + str(msgAck["CanTime"] - self.PeakCanTimeStampStart) + "ms): " + self.strCmdNrToCmdName(canCmd) + " - " + self.payload2Hex(payload))
+            self.Logger.Info(NetworkNumber[self.sender] + "->" + NetworkNumber[receiver] + "(CanTimeStamp: " + str(msgAck["CanTime"] - self.PeakCanTimeStampStart) + "ms): " + self.strCmdNrToCmdName(canCmd) + " - " + self.payload2Hex(payload))
             self.Logger.Info("Assumed receive message number: " + str(index))
         sleep(0.2)  # synch to read thread
         return index 
@@ -442,6 +446,52 @@ class PeakCanFd(object):
                     raise
             runIndex += 1
         return [array1, array2, array3]
+
+    def ValueDataSet1MsgCounter(self, data, b1, b2, b3, array1, array2, array3):
+        if False != b1:
+            array1.append(data[1])
+        if False != b2:
+            array2.append(data[1])
+        if False != b3:
+            array3.append(data[1])
+        return [array1, array2, array3]
+
+    def ValueDataSet3MsgCounter(self, data, b1, b2, b3, array1, array2, array3):
+        if False != b1:
+            array1.append(data[1])
+            array1.append(data[1])
+            array1.append(data[1])
+        elif False != b2:        
+            array2.append(data[1])
+            array2.append(data[1])
+            array2.append(data[1])
+        elif False != b3:        
+            array3.append(data[1])
+            array3.append(data[1])
+            array3.append(data[1])
+        return [array1, array2, array3]
+    
+    
+    def streamingValueArrayMessageCounters(self, receiver, streamingCmd, dataSets, b1, b2, b3, indexStart, indexEnd):
+        messageIdFilter = self.CanCmd(MY_TOOL_IT_BLOCK_STREAMING, streamingCmd, 0, 0)
+        messageIdFilter = self.CanMessage20Id(messageIdFilter, receiver, self.sender)
+        messageIdFilter = hex(messageIdFilter)
+        runIndex = indexStart
+        array1 = []
+        array2 = []
+        array3 = []
+        while runIndex <= indexEnd:
+            data = self.getReadMessageData(runIndex)
+            messageId = self.getReadMessageId(runIndex)
+            if messageId == messageIdFilter:
+                if DataSets1 == dataSets:
+                    [array1, array2, array3] = self.ValueDataSet1MsgCounter(data, b1, b2, b3, array1, array2, array3)
+                elif DataSets3 == dataSets:
+                    [array1, array2, array3] = self.ValueDataSet3MsgCounter(data, b1, b2, b3, array1, array2, array3)
+                else:
+                    raise
+            runIndex += 1
+        return [array1, array2, array3]
     
     def samplingPoints(self, array1, array2, array3):
         samplingPoints = len(array1)
@@ -495,7 +545,7 @@ class PeakCanFd(object):
         message = self.CanMessage20(cmd, self.sender, receiver, [AtvcSet.asbyte])
         self.Logger.Info("_____________________________________________________________")
         self.Logger.Info("Stop Streaming - " + self.strCmdNrToCmdName(cmd))
-        ack=self.WriteFrameWaitAckRetries(message, retries=200, waitMs=250, printLog=False, assumedPayload=[AtvcSet.asbyte, 0, 0, 0, 0, 0, 0, 0], bErrorExit=bErrorExit)
+        ack = self.WriteFrameWaitAckRetries(message, retries=200, waitMs=250, printLog=False, assumedPayload=[AtvcSet.asbyte, 0, 0, 0, 0, 0, 0, 0], bErrorExit=bErrorExit)
         self.Logger.Info("_____________________________________________________________")
         return ack
         
@@ -616,14 +666,14 @@ class PeakCanFd(object):
     def CanCmdGetBlockCmd(self, command):
         return 0xFF & (command >> 2)
         
-    def CanMessage20GetFields(self, CANMsg): 
-        command = 0xFFFF & (CANMsg.ID >> 12)
-        sender = 0x3F & (CANMsg.ID >> 6)
-        receiver = 0x3F & (CANMsg.ID >> 0)
+    def CanMessage20GetFields(self, CANMsgId): 
+        command = 0xFFFF & (CANMsgId >> 12)
+        sender = 0x3F & (CANMsgId >> 6)
+        receiver = 0x3F & (CANMsgId >> 0)
         return [command, sender, receiver]
         
     def CanMessage20Ack(self, CANMsg): 
-        fields = self.CanMessage20GetFields(CANMsg)
+        fields = self.CanMessage20GetFields(CANMsg.ID)
         ackCmd = self.CanCmd(self.CanCmdGetBlock(fields[0]), self.CanCmdGetBlockCmd(fields[0]), 0, 0)
         data = []
         for i in range(CANMsg.LEN):
@@ -631,7 +681,7 @@ class PeakCanFd(object):
         return self.CanMessage20(ackCmd, fields[2], fields[1], data)   
 
     def CanMessage20AckError(self, CANMsg): 
-        fields = self.CanMessage20GetFields(CANMsg)
+        fields = self.CanMessage20GetFields(CANMsg.ID)
         ackCmd = self.CanCmd(self.CanCmdGetBlock(fields[0]), self.CanCmdGetBlockCmd(fields[0]), 0, 1)
         data = []
         for i in range(CANMsg.LEN):
@@ -666,6 +716,22 @@ class PeakCanFd(object):
             counter += 1
             
         return Array        
+            
+    def ReadMessageStatistics(self):
+        iDs = {}
+        cmds = {}
+        for i in range(2, self.GetReadArrayIndex()):
+            msg = self.readArray[i]["CanMsg"]              
+            if msg.ID in iDs:
+                iDs[msg.ID] += 1
+            else:
+                iDs[msg.ID] = 1
+                
+        for iD in iDs:
+            [command, sender, receiver] = self.CanMessage20GetFields(iD)  
+            cmds[command] = iDs[iD]
+                
+        return [iDs, cmds]
             
     def ReadMessage(self):
         # We execute the "Read" function of the PCANBasic
