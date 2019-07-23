@@ -1340,7 +1340,7 @@ class TestSth(unittest.TestCase):
     Mixed Streaming - AccX + AccZ + VoltageBattery
     """        
 
-    def test0338MixedStreamingAccXZVoltBat(self):
+    def test0339MixedStreamingAccXZVoltBat(self):
         self.PeakCan.streamingStart(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, DataSets3, 1, 0, 0)
         indexStart = self.PeakCan.streamingStart(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets1, 1, 0, 1)
         sleep(StreamingStandardTestTimeMs / 1000)
@@ -1373,7 +1373,7 @@ class TestSth(unittest.TestCase):
     Mixed Streaming - AccX + AccY + VoltageBattery
     """        
 
-    def test0339MixedStreamingAccXYVoltBat(self):
+    def test0340MixedStreamingAccXYVoltBat(self):
         self.PeakCan.streamingStart(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, DataSets3, 1, 0, 0)
         indexStart = self.PeakCan.streamingStart(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets1, 1, 1, 0)
         sleep(StreamingStandardTestTimeMs / 1000)
@@ -1406,7 +1406,7 @@ class TestSth(unittest.TestCase):
     Mixed Streaming - AccY + AccZ + VoltageBattery
     """        
 
-    def test0340MixedStreamingAccYZVoltBat(self):
+    def test0341MixedStreamingAccYZVoltBat(self):
         self.PeakCan.streamingStart(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, DataSets3, 1, 0, 0)
         indexStart = self.PeakCan.streamingStart(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets1, 0, 1, 1)
         sleep(StreamingStandardTestTimeMs / 1000)
@@ -1438,7 +1438,8 @@ class TestSth(unittest.TestCase):
     """
     Mixed Streaming - AccX + AccY + AccZ + VoltageBattery
     """        
-    def test0341MixedStreamingAccXYZVoltBat(self):
+
+    def test0342MixedStreamingAccXYZVoltBat(self):
         self.PeakCan.streamingStart(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, DataSets3, 1, 0, 0)
         indexStart = self.PeakCan.streamingStart(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets1, 1, 1, 1)
         sleep(StreamingStandardTestTimeMs / 1000)
@@ -1465,12 +1466,12 @@ class TestSth(unittest.TestCase):
         self.PeakCan.ValueLog(arrayAccX, arrayAccY, arrayAccZ, fAdcRawDat, "Acc", "")
         self.streamingValueCompare(arrayBat, array2, array3, VoltMiddleBat, VoltToleranceBat, 0, 0, 0, 0, fVoltageBattery)   
         self.streamingValueCompare(arrayAccX, array2, arrayAccZ, AdcMiddleX, AdcToleranceX, AdcMiddleY, AdcToleranceY, AdcMiddleZ, AdcToleranceZ, fAcceleration)      
-        
     
     """
     Stream Acceleration(X) and receive single sampling point for Battery
     """         
-    def test0342StreamingAccXSingleBattery(self):
+
+    def test0343StreamingAccXSingleBattery(self):
         indexStart = self.PeakCan.streamingStart(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets3, 1, 0, 0)
         sleep(1.025)
         self.PeakCan.singleValueCollect(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, 1, 0, 0)
@@ -1484,7 +1485,7 @@ class TestSth(unittest.TestCase):
         self.assertEqual(1, len(voltage1Array))
         self.assertEqual(0, len(voltage2Array))
         self.assertEqual(0, len(voltage3Array))
-        samplingPointsAccX = len(AccArray1)/10
+        samplingPointsAccX = len(AccArray1) / 10
         self.PeakCan.Logger.Info("Battery Voltage Raw: " + str(voltage1Array[0]))
         self.singleValueCompare(voltage1Array, voltage2Array, voltage3Array, VoltMiddleBat, VoltToleranceBat, 0, 0, 0, 0, fVoltageBattery)
         self.PeakCan.Logger.Info("Accleration X Sampling Points per seconds: " + str(samplingPointsAccX))     
@@ -1492,11 +1493,12 @@ class TestSth(unittest.TestCase):
         self.PeakCan.Logger.Info("Calculated Sampling Points per seconds: " + str(calcRate))   
         self.assertLess(calcRate * SamplingToleranceLow, samplingPointsAccX)
         self.assertGreater(calcRate * SamplingToleranceHigh, samplingPointsAccX)       
-
+        
     """
     Stream Acceleration(Y) and receive single sampling point for Battery
     """         
-    def test0343StreamingAccYSingleBattery(self):
+
+    def test0344StreamingAccYSingleBattery(self):
         indexStart = self.PeakCan.streamingStart(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets3, 0, 1, 0)
         sleep(1.025)
         self.PeakCan.singleValueCollect(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, 1, 0, 0)
@@ -1510,7 +1512,7 @@ class TestSth(unittest.TestCase):
         self.assertEqual(1, len(voltage1Array))
         self.assertEqual(0, len(voltage2Array))
         self.assertEqual(0, len(voltage3Array))
-        samplingPointsAccY = len(AccArray2)/10
+        samplingPointsAccY = len(AccArray2) / 10
         self.PeakCan.Logger.Info("Battery Voltage Raw: " + str(voltage1Array[0]))
         self.singleValueCompare(voltage1Array, voltage2Array, voltage3Array, VoltMiddleBat, VoltToleranceBat, 0, 0, 0, 0, fVoltageBattery)
         self.PeakCan.Logger.Info("Accleration Y Sampling Points per seconds: " + str(samplingPointsAccY))     
@@ -1519,11 +1521,11 @@ class TestSth(unittest.TestCase):
         self.assertLess(calcRate * SamplingToleranceLow, samplingPointsAccY)
         self.assertGreater(calcRate * SamplingToleranceHigh, samplingPointsAccY)        
 
-
     """
     Stream Acceleration(Z) and receive single sampling point for Battery
     """         
-    def test0344StreamingAccZSingleBattery(self):
+
+    def test0345StreamingAccZSingleBattery(self):
         indexStart = self.PeakCan.streamingStart(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets3, 0, 0, 1)
         sleep(1.025)
         self.PeakCan.singleValueCollect(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, 1, 0, 0)
@@ -1537,7 +1539,7 @@ class TestSth(unittest.TestCase):
         self.assertEqual(1, len(voltage1Array))
         self.assertEqual(0, len(voltage2Array))
         self.assertEqual(0, len(voltage3Array))
-        samplingPointsAccZ = len(AccArray3)/10
+        samplingPointsAccZ = len(AccArray3) / 10
         self.PeakCan.Logger.Info("Battery Voltage Raw: " + str(voltage1Array[0]))
         self.singleValueCompare(voltage1Array, voltage2Array, voltage3Array, VoltMiddleBat, VoltToleranceBat, 0, 0, 0, 0, fVoltageBattery)
         self.PeakCan.Logger.Info("Accleration Z Sampling Points per seconds: " + str(samplingPointsAccZ))     
@@ -1545,7 +1547,321 @@ class TestSth(unittest.TestCase):
         self.PeakCan.Logger.Info("Calculated Sampling Points per seconds: " + str(calcRate))   
         self.assertLess(calcRate * SamplingToleranceLow, samplingPointsAccZ)
         self.assertGreater(calcRate * SamplingToleranceHigh, samplingPointsAccZ)   
-                        
+                       
+    """
+    Stream Battery and receive single sampling point for AccX
+    """         
+
+    def test0346StreamingBatterySingleAccX(self):
+        indexStart = self.PeakCan.streamingStart(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, DataSets3, 1, 0, 0)
+        sleep(1.025)
+        self.PeakCan.singleValueCollect(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, 1, 0, 0)
+        sleep(9)
+        indexEnd = self.PeakCan.GetReadArrayIndex()
+        self.PeakCan.streamingStop(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE)
+        [voltage1Array, voltage2Array, voltage3Array] = self.PeakCan.streamingValueArray(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, DataSets3, 1, 0, 0, indexStart, indexEnd)
+        [AccArray1, AccArray2, AccArray3] = self.PeakCan.streamingValueArray(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets1, 1, 0, 0, indexStart, indexEnd)
+        self.assertEqual(0, len(AccArray2))
+        self.assertEqual(0, len(AccArray3))
+        self.assertEqual(1, len(AccArray1))
+        self.assertEqual(0, len(voltage2Array))
+        self.assertEqual(0, len(voltage3Array))
+        samplingPointsBattery = len(voltage1Array) / 10
+        self.PeakCan.Logger.Info("AccX Raw: " + str(AccArray1[0]))
+        self.singleValueCompare(AccArray1, AccArray2, AccArray3, AdcRawMiddleX, AdcRawToleranceX, AdcRawMiddleY, AdcRawToleranceY, AdcRawMiddleZ, AdcRawToleranceZ, fAdcRawDat)
+        self.PeakCan.Logger.Info("Battery Sampling Points per seconds: " + str(samplingPointsBattery))     
+        calcRate = calcSamplingRate(AdcPrescalerReset, AdcAcquisitionTimeReset, AdcAcquisitionOverSamplingRateReset) 
+        self.PeakCan.Logger.Info("Calculated Sampling Points per seconds: " + str(calcRate))   
+        self.assertLess(calcRate * SamplingToleranceLow, samplingPointsBattery)
+        self.assertGreater(calcRate * SamplingToleranceHigh, samplingPointsBattery)     
+  
+    """
+    Stream Battery and receive single sampling point for AccY
+    """         
+
+    def test0347StreamingBatterySingleAccY(self):
+        indexStart = self.PeakCan.streamingStart(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, DataSets3, 1, 0, 0)
+        sleep(1.025)
+        self.PeakCan.singleValueCollect(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, 0, 1, 0)
+        sleep(9)
+        indexEnd = self.PeakCan.GetReadArrayIndex()
+        self.PeakCan.streamingStop(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE)
+        [voltage1Array, voltage2Array, voltage3Array] = self.PeakCan.streamingValueArray(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, DataSets3, 1, 0, 0, indexStart, indexEnd)
+        [AccArray1, AccArray2, AccArray3] = self.PeakCan.streamingValueArray(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets1, 0, 1, 0, indexStart, indexEnd)
+        self.assertEqual(0, len(AccArray1))
+        self.assertEqual(0, len(AccArray3))
+        self.assertEqual(1, len(AccArray2))
+        self.assertEqual(0, len(voltage2Array))
+        self.assertEqual(0, len(voltage3Array))
+        samplingPointsBattery = len(voltage1Array) / 10
+        self.PeakCan.Logger.Info("AccY Raw: " + str(AccArray2[0]))
+        self.singleValueCompare(AccArray1, AccArray2, AccArray3, AdcRawMiddleX, AdcRawToleranceX, AdcRawMiddleY, AdcRawToleranceY, AdcRawMiddleZ, AdcRawToleranceZ, fAdcRawDat)
+        self.PeakCan.Logger.Info("Battery Sampling Points per seconds: " + str(samplingPointsBattery))     
+        calcRate = calcSamplingRate(AdcPrescalerReset, AdcAcquisitionTimeReset, AdcAcquisitionOverSamplingRateReset) 
+        self.PeakCan.Logger.Info("Calculated Sampling Points per seconds: " + str(calcRate))   
+        self.assertLess(calcRate * SamplingToleranceLow, samplingPointsBattery)
+        self.assertGreater(calcRate * SamplingToleranceHigh, samplingPointsBattery) 
+
+    """
+    Stream Battery and receive single sampling point for AccZ
+    """         
+
+    def test0348StreamingBatterySingleAccZ(self):
+        indexStart = self.PeakCan.streamingStart(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, DataSets3, 1, 0, 0)
+        sleep(1.025)
+        self.PeakCan.singleValueCollect(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, 0, 0, 1)
+        sleep(9)
+        indexEnd = self.PeakCan.GetReadArrayIndex()
+        self.PeakCan.streamingStop(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE)
+        [voltage1Array, voltage2Array, voltage3Array] = self.PeakCan.streamingValueArray(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, DataSets3, 1, 0, 0, indexStart, indexEnd)
+        [AccArray1, AccArray2, AccArray3] = self.PeakCan.streamingValueArray(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets1, 0, 0, 1, indexStart, indexEnd)
+        self.assertEqual(0, len(AccArray1))
+        self.assertEqual(0, len(AccArray2))
+        self.assertEqual(1, len(AccArray3))
+        self.assertEqual(0, len(voltage2Array))
+        self.assertEqual(0, len(voltage3Array))
+        samplingPointsBattery = len(voltage1Array) / 10
+        self.PeakCan.Logger.Info("AccZ Raw: " + str(AccArray3[0]))
+        self.singleValueCompare(AccArray1, AccArray2, AccArray3, AdcRawMiddleX, AdcRawToleranceX, AdcRawMiddleY, AdcRawToleranceY, AdcRawMiddleZ, AdcRawToleranceZ, fAdcRawDat)
+        self.PeakCan.Logger.Info("Battery Sampling Points per seconds: " + str(samplingPointsBattery))     
+        calcRate = calcSamplingRate(AdcPrescalerReset, AdcAcquisitionTimeReset, AdcAcquisitionOverSamplingRateReset) 
+        self.PeakCan.Logger.Info("Calculated Sampling Points per seconds: " + str(calcRate))   
+        self.assertLess(calcRate * SamplingToleranceLow, samplingPointsBattery)
+        self.assertGreater(calcRate * SamplingToleranceHigh, samplingPointsBattery)        
+
+    """
+    Stream Battery and receive single sampling point for AccYZ
+    """         
+
+    def test0349StreamingBatterySingleAccYZ(self):
+        indexStart = self.PeakCan.streamingStart(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, DataSets3, 1, 0, 0)
+        sleep(1.025)
+        self.PeakCan.singleValueCollect(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, 0, 1, 1)
+        sleep(9)
+        indexEnd = self.PeakCan.GetReadArrayIndex()
+        self.PeakCan.streamingStop(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE)
+        [voltage1Array, voltage2Array, voltage3Array] = self.PeakCan.streamingValueArray(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, DataSets3, 1, 0, 0, indexStart, indexEnd)
+        [AccArray1, AccArray2, AccArray3] = self.PeakCan.streamingValueArray(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets1, 0, 1, 1, indexStart, indexEnd)
+        self.assertEqual(0, len(AccArray1))
+        self.assertEqual(1, len(AccArray2))
+        self.assertEqual(1, len(AccArray3))
+        self.assertEqual(0, len(voltage2Array))
+        self.assertEqual(0, len(voltage3Array))
+        samplingPointsBattery = len(voltage1Array) / 10
+        self.PeakCan.Logger.Info("AccY Raw: " + str(AccArray2[0]))
+        self.PeakCan.Logger.Info("AccZ Raw: " + str(AccArray3[0]))
+        self.singleValueCompare(AccArray1, AccArray2, AccArray3, AdcRawMiddleX, AdcRawToleranceX, AdcRawMiddleY, AdcRawToleranceY, AdcRawMiddleZ, AdcRawToleranceZ, fAdcRawDat)
+        self.PeakCan.Logger.Info("Battery Sampling Points per seconds: " + str(samplingPointsBattery))     
+        calcRate = calcSamplingRate(AdcPrescalerReset, AdcAcquisitionTimeReset, AdcAcquisitionOverSamplingRateReset) 
+        self.PeakCan.Logger.Info("Calculated Sampling Points per seconds: " + str(calcRate))   
+        self.assertLess(calcRate * SamplingToleranceLow, samplingPointsBattery)
+        self.assertGreater(calcRate * SamplingToleranceHigh, samplingPointsBattery) 
+
+    """
+    Stream Battery and receive single sampling point for AccXZ
+    """         
+
+    def test0350StreamingBatterySingleAccXZ(self):
+        indexStart = self.PeakCan.streamingStart(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, DataSets3, 1, 0, 0)
+        sleep(1.025)
+        self.PeakCan.singleValueCollect(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, 1, 0, 1)
+        sleep(9)
+        indexEnd = self.PeakCan.GetReadArrayIndex()
+        self.PeakCan.streamingStop(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE)
+        [voltage1Array, voltage2Array, voltage3Array] = self.PeakCan.streamingValueArray(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, DataSets3, 1, 0, 0, indexStart, indexEnd)
+        [AccArray1, AccArray2, AccArray3] = self.PeakCan.streamingValueArray(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets1, 1, 0, 1, indexStart, indexEnd)
+        self.assertEqual(1, len(AccArray1))
+        self.assertEqual(0, len(AccArray2))
+        self.assertEqual(1, len(AccArray3))
+        self.assertEqual(0, len(voltage2Array))
+        self.assertEqual(0, len(voltage3Array))
+        samplingPointsBattery = len(voltage1Array) / 10
+        self.PeakCan.Logger.Info("AccX Raw: " + str(AccArray1[0]))
+        self.PeakCan.Logger.Info("AccZ Raw: " + str(AccArray3[0]))
+        self.singleValueCompare(AccArray1, AccArray2, AccArray3, AdcRawMiddleX, AdcRawToleranceX, AdcRawMiddleY, AdcRawToleranceY, AdcRawMiddleZ, AdcRawToleranceZ, fAdcRawDat)
+        self.PeakCan.Logger.Info("Battery Sampling Points per seconds: " + str(samplingPointsBattery))     
+        calcRate = calcSamplingRate(AdcPrescalerReset, AdcAcquisitionTimeReset, AdcAcquisitionOverSamplingRateReset) 
+        self.PeakCan.Logger.Info("Calculated Sampling Points per seconds: " + str(calcRate))   
+        self.assertLess(calcRate * SamplingToleranceLow, samplingPointsBattery)
+        self.assertGreater(calcRate * SamplingToleranceHigh, samplingPointsBattery)        
+
+    """
+    Stream Battery and receive single sampling point for AccXY
+    """         
+
+    def test0351StreamingBatterySingleAccXY(self):
+        indexStart = self.PeakCan.streamingStart(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, DataSets3, 1, 0, 0)
+        sleep(1.025)
+        self.PeakCan.singleValueCollect(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, 1, 1, 0)
+        sleep(9)
+        indexEnd = self.PeakCan.GetReadArrayIndex()
+        self.PeakCan.streamingStop(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE)
+        [voltage1Array, voltage2Array, voltage3Array] = self.PeakCan.streamingValueArray(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, DataSets3, 1, 0, 0, indexStart, indexEnd)
+        [AccArray1, AccArray2, AccArray3] = self.PeakCan.streamingValueArray(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets1, 1, 1, 0, indexStart, indexEnd)
+        self.assertEqual(1, len(AccArray1))
+        self.assertEqual(1, len(AccArray2))
+        self.assertEqual(0, len(AccArray3))
+        self.assertEqual(0, len(voltage2Array))
+        self.assertEqual(0, len(voltage3Array))
+        samplingPointsBattery = len(voltage1Array) / 10
+        self.PeakCan.Logger.Info("AccX Raw: " + str(AccArray1[0]))
+        self.PeakCan.Logger.Info("AccY Raw: " + str(AccArray2[0]))
+        self.singleValueCompare(AccArray1, AccArray2, AccArray3, AdcRawMiddleX, AdcRawToleranceX, AdcRawMiddleY, AdcRawToleranceY, AdcRawMiddleZ, AdcRawToleranceZ, fAdcRawDat)
+        self.PeakCan.Logger.Info("Battery Sampling Points per seconds: " + str(samplingPointsBattery))     
+        calcRate = calcSamplingRate(AdcPrescalerReset, AdcAcquisitionTimeReset, AdcAcquisitionOverSamplingRateReset) 
+        self.PeakCan.Logger.Info("Calculated Sampling Points per seconds: " + str(calcRate))   
+        self.assertLess(calcRate * SamplingToleranceLow, samplingPointsBattery)
+        self.assertGreater(calcRate * SamplingToleranceHigh, samplingPointsBattery)
+
+    """
+    Stream Battery and receive single sampling point for AccXYZ
+    """         
+
+    def test0352StreamingBatterySingleAccXYZ(self):
+        indexStart = self.PeakCan.streamingStart(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, DataSets3, 1, 0, 0)
+        sleep(1.025)
+        self.PeakCan.singleValueCollect(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, 1, 1, 1)
+        sleep(9)
+        indexEnd = self.PeakCan.GetReadArrayIndex()
+        self.PeakCan.streamingStop(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE)
+        [voltage1Array, voltage2Array, voltage3Array] = self.PeakCan.streamingValueArray(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, DataSets3, 1, 0, 0, indexStart, indexEnd)
+        [AccArray1, AccArray2, AccArray3] = self.PeakCan.streamingValueArray(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets1, 1, 1, 1, indexStart, indexEnd)
+        self.assertEqual(1, len(AccArray1))
+        self.assertEqual(1, len(AccArray2))
+        self.assertEqual(1, len(AccArray3))
+        self.assertEqual(0, len(voltage2Array))
+        self.assertEqual(0, len(voltage3Array))
+        samplingPointsBattery = len(voltage1Array) / 10
+        self.PeakCan.Logger.Info("AccX Raw: " + str(AccArray1[0]))
+        self.PeakCan.Logger.Info("AccY Raw: " + str(AccArray2[0]))
+        self.PeakCan.Logger.Info("AccZ Raw: " + str(AccArray2[0]))
+        self.singleValueCompare(AccArray1, AccArray2, AccArray3, AdcRawMiddleX, AdcRawToleranceX, AdcRawMiddleY, AdcRawToleranceY, AdcRawMiddleZ, AdcRawToleranceZ, fAdcRawDat)
+        self.PeakCan.Logger.Info("Battery Sampling Points per seconds: " + str(samplingPointsBattery))     
+        calcRate = calcSamplingRate(AdcPrescalerReset, AdcAcquisitionTimeReset, AdcAcquisitionOverSamplingRateReset) 
+        self.PeakCan.Logger.Info("Calculated Sampling Points per seconds: " + str(calcRate))   
+        self.assertLess(calcRate * SamplingToleranceLow, samplingPointsBattery)
+        self.assertGreater(calcRate * SamplingToleranceHigh, samplingPointsBattery)        
+   
+    """
+    Stream AccXY and receive single sampling point for Battery
+    """         
+
+    def test0353StreamingAccXYSingleBattery(self):
+        self.PeakCan.ConfigAdc(MY_TOOL_IT_NETWORK_STH1, 2, AdcAcquisitionTime3, AdcOverSamplingRate256, AdcReferenceVDD)
+        indexStart = self.PeakCan.streamingStart(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets1, 1, 1, 0)
+        sleep(1.025)
+        self.PeakCan.singleValueCollect(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, 1, 0, 0)
+        sleep(9)
+        indexEnd = self.PeakCan.GetReadArrayIndex()
+        self.PeakCan.streamingStop(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION)
+        [AccArray1, AccArray2, AccArray3] = self.PeakCan.streamingValueArray(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets1, 1, 1, 0, indexStart, indexEnd)
+        [voltage1Array, voltage2Array, voltage3Array] = self.PeakCan.streamingValueArray(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, DataSets1, 1, 0, 0, indexStart, indexEnd)
+        self.assertEqual(0, len(AccArray3))
+        self.assertEqual(1, len(voltage1Array))
+        self.assertEqual(0, len(voltage2Array))
+        self.assertEqual(0, len(voltage3Array))
+        samplingPointsAccX = len(AccArray1) / 10
+        samplingPointsAccY = len(AccArray2) / 10
+        self.PeakCan.Logger.Info("Battery Voltage Raw: " + str(voltage1Array[0]))
+        self.singleValueCompare(voltage1Array, voltage2Array, voltage3Array, VoltMiddleBat, VoltToleranceBat, 0, 0, 0, 0, fVoltageBattery)
+        self.PeakCan.Logger.Info("Accleration XY Sampling Points per seconds: " + str(samplingPointsAccX))     
+        calcRate = calcSamplingRate(2, AdcAcquisitionTime3, AdcOverSamplingRate256) 
+        calcRate /= 2
+        self.PeakCan.Logger.Info("Calculated Sampling Points per seconds: " + str(calcRate))   
+        self.assertLess(calcRate * SamplingToleranceLow, samplingPointsAccX)
+        self.assertGreater(calcRate * SamplingToleranceHigh, samplingPointsAccX)  
+        self.assertEqual(samplingPointsAccX, samplingPointsAccY)
+        
+    """
+    Stream AccXZ and receive single sampling point for Battery
+    """         
+
+    def test0354StreamingAccXZSingleBattery(self):
+        self.PeakCan.ConfigAdc(MY_TOOL_IT_NETWORK_STH1, 2, AdcAcquisitionTime3, AdcOverSamplingRate256, AdcReferenceVDD)
+        indexStart = self.PeakCan.streamingStart(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets1, 1, 0, 1)
+        sleep(1.025)
+        self.PeakCan.singleValueCollect(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, 1, 0, 0)
+        sleep(9)
+        indexEnd = self.PeakCan.GetReadArrayIndex()
+        self.PeakCan.streamingStop(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION)
+        [AccArray1, AccArray2, AccArray3] = self.PeakCan.streamingValueArray(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets1, 1, 0, 1, indexStart, indexEnd)
+        [voltage1Array, voltage2Array, voltage3Array] = self.PeakCan.streamingValueArray(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, DataSets1, 1, 0, 0, indexStart, indexEnd)
+        self.assertEqual(0, len(AccArray2))
+        self.assertEqual(1, len(voltage1Array))
+        self.assertEqual(0, len(voltage2Array))
+        self.assertEqual(0, len(voltage3Array))
+        samplingPointsAccX = len(AccArray1) / 10
+        samplingPointsAccZ = len(AccArray3) / 10
+        self.PeakCan.Logger.Info("Battery Voltage Raw: " + str(voltage1Array[0]))
+        self.singleValueCompare(voltage1Array, voltage2Array, voltage3Array, VoltMiddleBat, VoltToleranceBat, 0, 0, 0, 0, fVoltageBattery)
+        self.PeakCan.Logger.Info("Accleration XZ Sampling Points per seconds: " + str(samplingPointsAccX))     
+        calcRate = calcSamplingRate(2, AdcAcquisitionTime3, AdcOverSamplingRate256) 
+        calcRate /= 2
+        self.PeakCan.Logger.Info("Calculated Sampling Points per seconds: " + str(calcRate))   
+        self.assertLess(calcRate * SamplingToleranceLow, samplingPointsAccX)
+        self.assertGreater(calcRate * SamplingToleranceHigh, samplingPointsAccX)  
+        self.assertEqual(samplingPointsAccX, samplingPointsAccZ)
+
+    """
+    Stream AccYZ and receive single sampling point for Battery
+    """         
+
+    def test0355StreamingAccYZSingleBattery(self):
+        self.PeakCan.ConfigAdc(MY_TOOL_IT_NETWORK_STH1, 2, AdcAcquisitionTime3, AdcOverSamplingRate256, AdcReferenceVDD)
+        indexStart = self.PeakCan.streamingStart(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets1, 0, 1, 1)
+        sleep(1.025)
+        self.PeakCan.singleValueCollect(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, 1, 0, 0)
+        sleep(9)
+        indexEnd = self.PeakCan.GetReadArrayIndex()
+        self.PeakCan.streamingStop(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION)
+        [AccArray1, AccArray2, AccArray3] = self.PeakCan.streamingValueArray(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets1, 0, 1, 1, indexStart, indexEnd)
+        [voltage1Array, voltage2Array, voltage3Array] = self.PeakCan.streamingValueArray(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, DataSets1, 1, 0, 0, indexStart, indexEnd)
+        self.assertEqual(0, len(AccArray1))
+        self.assertEqual(1, len(voltage1Array))
+        self.assertEqual(0, len(voltage2Array))
+        self.assertEqual(0, len(voltage3Array))
+        samplingPointsAccY = len(AccArray2) / 10
+        samplingPointsAccZ = len(AccArray3) / 10
+        self.PeakCan.Logger.Info("Battery Voltage Raw: " + str(voltage1Array[0]))
+        self.singleValueCompare(voltage1Array, voltage2Array, voltage3Array, VoltMiddleBat, VoltToleranceBat, 0, 0, 0, 0, fVoltageBattery)
+        self.PeakCan.Logger.Info("Accleration YZ Sampling Points per seconds: " + str(samplingPointsAccY))     
+        calcRate = calcSamplingRate(2, AdcAcquisitionTime3, AdcOverSamplingRate256) 
+        calcRate /= 2
+        self.PeakCan.Logger.Info("Calculated Sampling Points per seconds: " + str(calcRate))   
+        self.assertLess(calcRate * SamplingToleranceLow, samplingPointsAccY)
+        self.assertGreater(calcRate * SamplingToleranceHigh, samplingPointsAccY)  
+        self.assertEqual(samplingPointsAccY, samplingPointsAccZ)
+
+    """
+    Stream AccXXZ and receive single sampling point for Battery
+    """         
+
+    def test0356StreamingAccXYZSingleBattery(self):
+        indexStart = self.PeakCan.streamingStart(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets1, 1, 1, 1)
+        sleep(1.025)
+        self.PeakCan.singleValueCollect(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, 1, 0, 0)
+        sleep(9)
+        indexEnd = self.PeakCan.GetReadArrayIndex()
+        self.PeakCan.streamingStop(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION)
+        [AccArray1, AccArray2, AccArray3] = self.PeakCan.streamingValueArray(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets1, 1, 1, 1, indexStart, indexEnd)
+        [voltage1Array, voltage2Array, voltage3Array] = self.PeakCan.streamingValueArray(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, DataSets1, 1, 0, 0, indexStart, indexEnd)
+        self.assertEqual(1, len(voltage1Array))
+        self.assertEqual(0, len(voltage2Array))
+        self.assertEqual(0, len(voltage3Array))
+        samplingPointsAccX = len(AccArray1) / 10
+        samplingPointsAccY = len(AccArray2) / 10
+        samplingPointsAccZ = len(AccArray3) / 10
+        self.PeakCan.Logger.Info("Battery Voltage Raw: " + str(voltage1Array[0]))
+        self.singleValueCompare(voltage1Array, voltage2Array, voltage3Array, VoltMiddleBat, VoltToleranceBat, 0, 0, 0, 0, fVoltageBattery)
+        self.PeakCan.Logger.Info("Accleration XYZ Sampling Points per seconds: " + str(samplingPointsAccY))     
+        calcRate = calcSamplingRate(AdcPrescalerReset, AdcAcquisitionTimeReset, AdcAcquisitionOverSamplingRateReset) 
+        calcRate /= 3
+        self.PeakCan.Logger.Info("Calculated Sampling Points per seconds: " + str(calcRate))   
+        self.assertLess(calcRate * SamplingToleranceLow, samplingPointsAccY)
+        self.assertGreater(calcRate * SamplingToleranceHigh, samplingPointsAccY)  
+        self.assertEqual(samplingPointsAccY, samplingPointsAccZ)
+        self.assertEqual(samplingPointsAccX, samplingPointsAccZ)        
+                                                  
     """
     Test x-Axis Line
     """
@@ -2162,6 +2478,7 @@ class TestSth(unittest.TestCase):
     """
     Message Counters AccX
     """           
+
     def test0523MessageCounterAccX(self):
         [indexStart, indexEnd] = self.PeakCan.streamingValueCollect(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets3, 1, 0, 0, 1000)
         [arrayAccX, arrayAccY, arrayAccZ] = self.PeakCan.streamingValueArrayMessageCounters(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets3, 1, 0, 0, indexStart, indexEnd)
@@ -2182,10 +2499,10 @@ class TestSth(unittest.TestCase):
             count += 1
             count %= 256
 
-
     """
     Message Counters AccY
     """           
+
     def test0524MessageCounterAccY(self):
         [indexStart, indexEnd] = self.PeakCan.streamingValueCollect(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets3, 0, 1, 0, 1000)
         [arrayAccX, arrayAccY, arrayAccZ] = self.PeakCan.streamingValueArrayMessageCounters(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets3, 0, 1, 0, indexStart, indexEnd)
@@ -2209,6 +2526,7 @@ class TestSth(unittest.TestCase):
     """
     Message Counters AccZ
     """           
+
     def test0525MessageCounterAccZ(self):
         [indexStart, indexEnd] = self.PeakCan.streamingValueCollect(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets3, 0, 0, 1, 1000)
         [arrayAccX, arrayAccY, arrayAccZ] = self.PeakCan.streamingValueArrayMessageCounters(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets3, 0, 0, 1, indexStart, indexEnd)
@@ -2229,15 +2547,14 @@ class TestSth(unittest.TestCase):
             count += 1
             count %= 256
        
-       
-       
     """
     Message Counters AccXY
     """           
+
     def test0526MessageCounterAccXY(self):
         self.PeakCan.ConfigAdc(MY_TOOL_IT_NETWORK_STH1, 2, AdcAcquisitionTime3, AdcOverSamplingRate256, AdcReferenceVDD)
         [indexStart, indexEnd] = self.PeakCan.streamingValueCollect(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets1, 1, 1, 0, 1000)
-        [arrayAccX, arrayAccY, arrayAccZ] = self.PeakCan.streamingValueArrayMessageCounters(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets1, 1,1, 0, indexStart, indexEnd)
+        [arrayAccX, arrayAccY, arrayAccZ] = self.PeakCan.streamingValueArrayMessageCounters(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets1, 1, 1, 0, indexStart, indexEnd)
         self.assertEqual(0, len(arrayAccZ))
         self.PeakCan.ValueLog(arrayAccX, arrayAccY, arrayAccZ, fAdcRawDat, "AccMsgCounter", "")
         count = arrayAccX[0]
@@ -2254,10 +2571,11 @@ class TestSth(unittest.TestCase):
     """
     Message Counters AccXZ
     """           
+
     def test0527MessageCounterAccXZ(self):
         self.PeakCan.ConfigAdc(MY_TOOL_IT_NETWORK_STH1, 2, AdcAcquisitionTime3, AdcOverSamplingRate256, AdcReferenceVDD)
         [indexStart, indexEnd] = self.PeakCan.streamingValueCollect(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets1, 1, 0, 1, 1000)
-        [arrayAccX, arrayAccY, arrayAccZ] = self.PeakCan.streamingValueArrayMessageCounters(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets1, 1,0, 1, indexStart, indexEnd)
+        [arrayAccX, arrayAccY, arrayAccZ] = self.PeakCan.streamingValueArrayMessageCounters(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets1, 1, 0, 1, indexStart, indexEnd)
         self.assertEqual(0, len(arrayAccY))
         self.PeakCan.ValueLog(arrayAccX, arrayAccY, arrayAccZ, fAdcRawDat, "AccMsgCounter", "")
         count = arrayAccX[0]
@@ -2274,7 +2592,8 @@ class TestSth(unittest.TestCase):
     """
     Message Counters AccXZ
     """           
-    def test0527MessageCounterAccYZ(self):
+
+    def test0528MessageCounterAccYZ(self):
         self.PeakCan.ConfigAdc(MY_TOOL_IT_NETWORK_STH1, 2, AdcAcquisitionTime3, AdcOverSamplingRate256, AdcReferenceVDD)
         [indexStart, indexEnd] = self.PeakCan.streamingValueCollect(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets1, 0, 1, 1, 1000)
         [arrayAccX, arrayAccY, arrayAccZ] = self.PeakCan.streamingValueArrayMessageCounters(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets1, 0, 1, 1, indexStart, indexEnd)
@@ -2294,7 +2613,8 @@ class TestSth(unittest.TestCase):
     """
     Message Counters AccXYZ
     """           
-    def test0528MessageCounterAccXYZ(self):
+
+    def test0529MessageCounterAccXYZ(self):
         [indexStart, indexEnd] = self.PeakCan.streamingValueCollect(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets1, 1, 1, 1, 1000)
         [arrayAccX, arrayAccY, arrayAccZ] = self.PeakCan.streamingValueArrayMessageCounters(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets1, 1, 1, 1, indexStart, indexEnd)
         self.PeakCan.ValueLog(arrayAccX, arrayAccY, arrayAccZ, fAdcRawDat, "AccMsgCounter", "")
@@ -2311,9 +2631,208 @@ class TestSth(unittest.TestCase):
             count %= 256
 
     """
-    Message Counters Battery
+    Message Counters AccX Battery
+    """        
+
+    def test0530MessageCountersAccXBattery(self):
+        prescaler = 2
+        acquisitionTime = AdcAcquisitionTime3
+        overSamplingRate = AdcOverSamplingRate64
+        adcRef = AdcReferenceVDD
+        Settings = self.PeakCan.ConfigAdc(MY_TOOL_IT_NETWORK_STH1, prescaler, acquisitionTime, overSamplingRate, adcRef)[1:]
+        self.assertEqual(prescaler, Settings[0])
+        self.assertEqual(acquisitionTime, Settings[1])
+        self.assertEqual(overSamplingRate, Settings[2])
+        self.assertEqual(adcRef, Settings[3])
+        calcSamplingRate(prescaler, acquisitionTime, overSamplingRate)
+        self.PeakCan.streamingStart(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, DataSets3, 1, 0, 0)
+        indexStart = self.PeakCan.streamingStart(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets3, 1, 0, 0)
+        sleep(StreamingStandardTestTimeMs / 1000 + 0.25)
+        indexEnd = self.PeakCan.GetReadArrayIndex() - 1
+        self.PeakCan.streamingStop(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION)
+        self.PeakCan.streamingStop(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE)   
+        sleep(1)    
+        countDel = 0
+        while StreamingStandardTestTimeMs + 0.25 < self.PeakCan.getReadMessageTimeMs(indexStart, indexEnd) - 0.5:
+            countDel += 1
+            indexEnd -= 1
+        self.PeakCan.Logger.Info("Deleted Messages do achieve " + str(StreamingStandardTestTimeMs) + "ms: " + str(countDel + 180))
+        self.PeakCan.Logger.Info("indexStart: " + str(indexStart))
+        self.PeakCan.Logger.Info("indexEnd: " + str(indexEnd))
+        if 0.2 * (indexEnd - indexStart) < countDel:
+            self.PeakCan.Logger.Warning("Deleted Messages do achieve " + str(StreamingStandardTestTimeMs) + "ms: " + str(countDel + 180))        
+        [arrayBat, array2, array3] = self.PeakCan.streamingValueArrayMessageCounters(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, DataSets3, 1, 0, 0, indexStart, indexEnd)
+        self.assertEqual(0, len(array2))
+        self.assertEqual(0, len(array3))
+        [arrayAccX, arrayAccY, arrayAccZ] = self.PeakCan.streamingValueArrayMessageCounters(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets3, 1, 0, 0, indexStart, indexEnd)
+        self.PeakCan.ValueLog(arrayAccX, arrayAccY, arrayAccZ, fAdcRawDat, "AccMsgCounter", "")
+        self.PeakCan.ValueLog(arrayBat, array2, array3, fAdcRawDat, "BatteryMsgCounter", "")
+        
+        count = arrayAccX[0]
+        self.assertGreaterEqual(count, 0)
+        self.assertLessEqual(count, 255)
+        i = 0
+        while i < len(arrayAccX):
+            self.assertEqual(count, arrayAccX[i])
+            i += 1
+            self.assertEqual(count, arrayAccX[i])
+            i += 1
+            self.assertEqual(count, arrayAccX[i])
+            i += 1
+            count += 1
+            count %= 256
+            
+        count = arrayBat[0]
+        self.assertGreaterEqual(count, 0)
+        self.assertLessEqual(count, 255)
+        i = 0
+        while i < len(arrayBat):
+            self.assertEqual(count, arrayBat[i])
+            i += 1
+            self.assertEqual(count, arrayBat[i])
+            i += 1
+            self.assertEqual(count, arrayBat[i])
+            i += 1
+            count += 1
+            count %= 256
+
+    """
+    Message Counters AccY Battery
+    """        
+
+    def test0531MessageCountersAccYBattery(self):
+        prescaler = 2
+        acquisitionTime = AdcAcquisitionTime3
+        overSamplingRate = AdcOverSamplingRate64
+        adcRef = AdcReferenceVDD
+        Settings = self.PeakCan.ConfigAdc(MY_TOOL_IT_NETWORK_STH1, prescaler, acquisitionTime, overSamplingRate, adcRef)[1:]
+        self.assertEqual(prescaler, Settings[0])
+        self.assertEqual(acquisitionTime, Settings[1])
+        self.assertEqual(overSamplingRate, Settings[2])
+        self.assertEqual(adcRef, Settings[3])
+        calcSamplingRate(prescaler, acquisitionTime, overSamplingRate)
+        self.PeakCan.streamingStart(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, DataSets3, 1, 0, 0)
+        indexStart = self.PeakCan.streamingStart(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets3, 0, 1, 0)
+        sleep(StreamingStandardTestTimeMs / 1000 + 0.25)
+        indexEnd = self.PeakCan.GetReadArrayIndex() - 1
+        self.PeakCan.streamingStop(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION)
+        self.PeakCan.streamingStop(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE)   
+        sleep(1)    
+        countDel = 0
+        while StreamingStandardTestTimeMs + 0.25 < self.PeakCan.getReadMessageTimeMs(indexStart, indexEnd) - 0.5:
+            countDel += 1
+            indexEnd -= 1
+        self.PeakCan.Logger.Info("Deleted Messages do achieve " + str(StreamingStandardTestTimeMs) + "ms: " + str(countDel + 180))
+        self.PeakCan.Logger.Info("indexStart: " + str(indexStart))
+        self.PeakCan.Logger.Info("indexEnd: " + str(indexEnd))
+        if 0.2 * (indexEnd - indexStart) < countDel:
+            self.PeakCan.Logger.Warning("Deleted Messages do achieve " + str(StreamingStandardTestTimeMs) + "ms: " + str(countDel + 180))        
+        [arrayBat, array2, array3] = self.PeakCan.streamingValueArrayMessageCounters(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, DataSets3, 1, 0, 0, indexStart, indexEnd)
+        self.assertEqual(0, len(array2))
+        self.assertEqual(0, len(array3))
+        [arrayAccX, arrayAccY, arrayAccZ] = self.PeakCan.streamingValueArrayMessageCounters(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets3, 0, 1, 0, indexStart, indexEnd)
+        self.PeakCan.ValueLog(arrayAccX, arrayAccY, arrayAccZ, fAdcRawDat, "AccMsgCounter", "")
+        self.PeakCan.ValueLog(arrayBat, array2, array3, fAdcRawDat, "BatteryMsgCounter", "")
+        
+        count = arrayAccY[0]
+        self.assertGreaterEqual(count, 0)
+        self.assertLessEqual(count, 255)
+        i = 0
+        while i < len(arrayAccY):
+            self.assertEqual(count, arrayAccY[i])
+            i += 1
+            self.assertEqual(count, arrayAccY[i])
+            i += 1
+            self.assertEqual(count, arrayAccY[i])
+            i += 1
+            count += 1
+            count %= 256
+            
+        count = arrayBat[0]
+        self.assertGreaterEqual(count, 0)
+        self.assertLessEqual(count, 255)
+        i = 0
+        while i < len(arrayBat):
+            self.assertEqual(count, arrayBat[i])
+            i += 1
+            self.assertEqual(count, arrayBat[i])
+            i += 1
+            self.assertEqual(count, arrayBat[i])
+            i += 1
+            count += 1
+            count %= 256            
+
+    """
+    Message Counters AccZ Battery
+    """        
+
+    def test0532MessageCountersAccZBattery(self):
+        prescaler = 2
+        acquisitionTime = AdcAcquisitionTime3
+        overSamplingRate = AdcOverSamplingRate64
+        adcRef = AdcReferenceVDD
+        Settings = self.PeakCan.ConfigAdc(MY_TOOL_IT_NETWORK_STH1, prescaler, acquisitionTime, overSamplingRate, adcRef)[1:]
+        self.assertEqual(prescaler, Settings[0])
+        self.assertEqual(acquisitionTime, Settings[1])
+        self.assertEqual(overSamplingRate, Settings[2])
+        self.assertEqual(adcRef, Settings[3])
+        calcSamplingRate(prescaler, acquisitionTime, overSamplingRate)
+        self.PeakCan.streamingStart(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, DataSets3, 1, 0, 0)
+        indexStart = self.PeakCan.streamingStart(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets3, 0, 0, 1)
+        sleep(StreamingStandardTestTimeMs / 1000 + 0.25)
+        indexEnd = self.PeakCan.GetReadArrayIndex() - 1
+        self.PeakCan.streamingStop(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION)
+        self.PeakCan.streamingStop(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE)   
+        sleep(1)    
+        countDel = 0
+        while StreamingStandardTestTimeMs + 0.25 < self.PeakCan.getReadMessageTimeMs(indexStart, indexEnd) - 0.5:
+            countDel += 1
+            indexEnd -= 1
+        self.PeakCan.Logger.Info("Deleted Messages do achieve " + str(StreamingStandardTestTimeMs) + "ms: " + str(countDel + 180))
+        self.PeakCan.Logger.Info("indexStart: " + str(indexStart))
+        self.PeakCan.Logger.Info("indexEnd: " + str(indexEnd))
+        if 0.2 * (indexEnd - indexStart) < countDel:
+            self.PeakCan.Logger.Warning("Deleted Messages do achieve " + str(StreamingStandardTestTimeMs) + "ms: " + str(countDel + 180))        
+        [arrayBat, array2, array3] = self.PeakCan.streamingValueArrayMessageCounters(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, DataSets3, 1, 0, 0, indexStart, indexEnd)
+        self.assertEqual(0, len(array2))
+        self.assertEqual(0, len(array3))
+        [arrayAccX, arrayAccY, arrayAccZ] = self.PeakCan.streamingValueArrayMessageCounters(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets3, 0, 0, 1, indexStart, indexEnd)
+        self.PeakCan.ValueLog(arrayAccX, arrayAccY, arrayAccZ, fAdcRawDat, "AccMsgCounter", "")
+        self.PeakCan.ValueLog(arrayBat, array2, array3, fAdcRawDat, "BatteryMsgCounter", "")
+        
+        count = arrayAccZ[0]
+        self.assertGreaterEqual(count, 0)
+        self.assertLessEqual(count, 255)
+        i = 0
+        while i < len(arrayAccZ):
+            self.assertEqual(count, arrayAccZ[i])
+            i += 1
+            self.assertEqual(count, arrayAccZ[i])
+            i += 1
+            self.assertEqual(count, arrayAccZ[i])
+            i += 1
+            count += 1
+            count %= 256
+            
+        count = arrayBat[0]
+        self.assertGreaterEqual(count, 0)
+        self.assertLessEqual(count, 255)
+        i = 0
+        while i < len(arrayBat):
+            self.assertEqual(count, arrayBat[i])
+            i += 1
+            self.assertEqual(count, arrayBat[i])
+            i += 1
+            self.assertEqual(count, arrayBat[i])
+            i += 1
+            count += 1
+            count %= 256   
+                        
+    """
+    Message Counters Battery - Data Set 1
     """           
-    def test0529MessageCounterBattery(self):
+
+    def test0533MessageCounterBattery(self):
         [indexStart, indexEnd] = self.PeakCan.streamingValueCollect(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, DataSets3, 1, 0, 0, 1000)
         [arrayBattery, array2, array3] = self.PeakCan.streamingValueArrayMessageCounters(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, DataSets3, 1, 0, 0, indexStart, indexEnd)
         self.PeakCan.ValueLog(arrayBattery, array2, array3, fAdcRawDat, "BatteryMsgCounter", "")
@@ -2334,11 +2853,11 @@ class TestSth(unittest.TestCase):
             count += 1
             count %= 256 
             
-            
     """
     Message Counters Battery with single Data Set
     """           
-    def test0530MessageCounterAccBatteryDataSetSingle(self):
+
+    def test0534MessageCounterAccBatteryDataSetSingle(self):
         self.PeakCan.ConfigAdc(MY_TOOL_IT_NETWORK_STH1, 2, AdcAcquisitionTime3, AdcOverSamplingRate256, AdcReferenceVDD)
         [indexStart, indexEnd] = self.PeakCan.streamingValueCollect(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, DataSets1, 1, 0, 0, 1000)
         [arrayBattery, array2, array3] = self.PeakCan.streamingValueArrayMessageCounters(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_VOLTAGE, DataSets1, 1, 0, 0, indexStart, indexEnd)
@@ -2355,11 +2874,11 @@ class TestSth(unittest.TestCase):
             i += 1
             count += 1
             count %= 256
-            
                    
     """
     Check Calibration Measurement
     """
+
     def test0600CalibrationMeasurement(self):
         ret = self.PeakCan.calibMeasurement(MY_TOOL_IT_NETWORK_STH1, CalibMeassurementActionMeasure, CalibMeassurementTypeAcc, 1, AdcReferenceVDD)
         result = messageWordGet(ret[4:])
@@ -2684,7 +3203,7 @@ class TestSth(unittest.TestCase):
         for i in range(4, 8):
             self.assertEqual(stateInjectX[i], 0x00)          
         self.PeakCan.Logger.Info("test0303GetSingleAccX")
-        self.test0303GetSingleAccX()
+        self.test0302GetSingleAccX()
         
     """
     Check Power On and Power Off Counters
@@ -2748,8 +3267,8 @@ class TestSth(unittest.TestCase):
         self.PeakCan.Logger.Info("Operating Minutes Payload: " + self.PeakCan.payload2Hex(OperatingMinutes1))
         self.PeakCan.Logger.Info("Operating Minutes since Reset: " + str(MinutesReset1))
         self.PeakCan.Logger.Info("Operating Minutes since frist PowerOn: " + str(MinutesOveral1))
-        self.PeakCan.Logger.Info("Operating Minutes Payload(+1minute): " + self.PeakCan.payload2Hex(OperatingMinutes2))
-        self.PeakCan.Logger.Info("Operating Minutes since Reset(+1minute): " + str(MinutesReset2))
+        self.PeakCan.Logger.Info("Operating Minutes Payload(+1 minute): " + self.PeakCan.payload2Hex(OperatingMinutes2))
+        self.PeakCan.Logger.Info("Operating Minutes since Reset(+1 minute): " + str(MinutesReset2))
         self.PeakCan.Logger.Info("Operating Minutes since frist PowerOn(+1minute): " + str(MinutesOveral2))    
         self.PeakCan.Logger.Info("Operating Minutes Payload(After Disconnect/Connect): " + self.PeakCan.payload2Hex(OperatingMinutes3))
         self.PeakCan.Logger.Info("Operating Minutes since Reset(After Disconnect/Connect): " + str(MinutesReset3))

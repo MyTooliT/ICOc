@@ -583,11 +583,11 @@ class PeakCanFd(object):
             self.Logger.Error("Calibration Measurement Fail Request")
         return returnAck
     
-    def statisticalData(self, receiver, subCmd, log=True, retries=3, ErrorAck=False, printLog=False):
-        messageIdFilter = self.CanCmd(MY_TOOL_IT_BLOCK_STATISTICAL_DATA, subCmd, 0, ErrorAck != False)
+    def statisticalData(self, receiver, subCmd, log=True, retries=3, bErrorAck=False, printLog=False):
+        messageIdFilter = self.CanCmd(MY_TOOL_IT_BLOCK_STATISTICAL_DATA, subCmd, 0, bErrorAck != False)
         messageIdFilter = self.CanMessage20Id(messageIdFilter, receiver, self.sender)
         messageIdFilter = hex(messageIdFilter)
-        indexAssumed = self.cmdSend(receiver, MY_TOOL_IT_BLOCK_STATISTICAL_DATA, subCmd, [], log=log, retries=retries, ErrorAck=ErrorAck, printLog=printLog)
+        indexAssumed = self.cmdSend(receiver, MY_TOOL_IT_BLOCK_STATISTICAL_DATA, subCmd, [], log=log, retries=retries, bErrorAck=bErrorAck, printLog=printLog)
         indexRun = indexAssumed
         indexEnd = self.GetReadArrayIndex()
         returnAck = []
