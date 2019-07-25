@@ -293,7 +293,7 @@ class PeakCanFd(object):
             self.timeStampStart = self.getTimeMs()
         return [returnMessage, currentIndex]
     
-    def WriteFrameWaitAckRetries(self, CanMsg, retries=2, waitMs=1000, printLog=False, bErrorAck=False, assumedPayload=None, bErrorExit=True):  
+    def WriteFrameWaitAckRetries(self, CanMsg, retries=10, waitMs=1000, printLog=False, bErrorAck=False, assumedPayload=None, bErrorExit=True):  
         currentIndex = self.GetReadArrayIndex() - 1
         retries += 1
         for i in range(0, retries):
@@ -410,6 +410,7 @@ class PeakCanFd(object):
         indexStart = self.streamingStart(receiver, subCmd, dataSets, b1, b2, b3, log=log)
         if False != log:
             self.Logger.Info("indexStart: " + str(indexStart))
+        testTimeMs += StartupTimeMs
         sleep(testTimeMs / 1000)
         self.streamingStop(receiver, subCmd)
         sleep(1)  # synch to read thread
@@ -545,7 +546,7 @@ class PeakCanFd(object):
         message = self.CanMessage20(cmd, self.sender, receiver, [AtvcSet.asbyte])
         self.Logger.Info("_____________________________________________________________")
         self.Logger.Info("Stop Streaming - " + self.strCmdNrToCmdName(cmd))
-        ack = self.WriteFrameWaitAckRetries(message, retries=200, waitMs=250, printLog=False, assumedPayload=[AtvcSet.asbyte, 0, 0, 0, 0, 0, 0, 0], bErrorExit=bErrorExit)
+        ack = self.WriteFrameWaitAckRetries(message, retries=20, printLog=False, assumedPayload=[AtvcSet.asbyte, 0, 0, 0, 0, 0, 0, 0], bErrorExit=bErrorExit)
         self.Logger.Info("_____________________________________________________________")
         return ack
         
@@ -943,7 +944,7 @@ class PeakCanFd(object):
         cmd = self.CanCmd(MY_TOOL_IT_BLOCK_SYSTEM, MY_TOOL_IT_SYSTEM_ROUTING, 1, 0)
         payload = [subCmd, port, 0, 0, 0, 0, 0, 0]
         message = self.CanMessage20(cmd, self.sender, receiver, payload)
-        ack = self.WriteFrameWaitAckRetries(message, retries=5)["Payload"][2:]
+        ack = self.WriteFrameWaitAckRetries(message, retries=10)["Payload"][2:]
         ack = self.AsciiStringWordLittleEndian(ack)
         return ack
     

@@ -1198,7 +1198,7 @@ class TestSth(unittest.TestCase):
     """        
 
     def test0334StreamingHeavyDuty(self):
-        self.SamplingRate(2, AdcAcquisitionTime3, AdcOverSamplingRate64, AdcReferenceVDD, runTime=900000)
+        self.SamplingRate(2, AdcAcquisitionTime3, AdcOverSamplingRate64, AdcReferenceVDD, runTime=3600000)
  
     """
     Mixed Streaming - AccX + VoltageBattery
@@ -2040,7 +2040,7 @@ class TestSth(unittest.TestCase):
     """
 
     def test0504SamplingRateDataSingleMax(self):
-        calcRate = self.SamplingRate(2, AdcAcquisitionTime3, AdcOverSamplingRate64, AdcReferenceVDD, runTime=5000)["SamplingRate"]
+        calcRate = self.SamplingRate(2, AdcAcquisitionTime3, AdcOverSamplingRate64, AdcReferenceVDD, runTime=10000)["SamplingRate"]
         print("Maximum Sampling Rate(Single Sampling): " + str(calcRate))
 
     """
@@ -2048,7 +2048,7 @@ class TestSth(unittest.TestCase):
     """
 
     def test0505SamplingRateDataDoubleMax(self):
-        calcRate = self.SamplingRate(3, AdcAcquisitionTime8, AdcOverSamplingRate64, AdcReferenceVDD, b1=1, b2=1, b3=0, runTime=5000)["SamplingRate"]
+        calcRate = self.SamplingRate(3, AdcAcquisitionTime8, AdcOverSamplingRate64, AdcReferenceVDD, b1=1, b2=1, b3=0, runTime=10000)["SamplingRate"]
         print("Maximum Sampling Rate(Double Sampling): " + str(calcRate))
 
     """
@@ -2056,7 +2056,7 @@ class TestSth(unittest.TestCase):
     """
 
     def test0506SamplingRateDataTrippleMax(self):
-        calcRate = self.SamplingRate(2, AdcAcquisitionTime3, AdcOverSamplingRate64, AdcReferenceVDD, b1=1, b2=1, b3=1, runTime=5000)["SamplingRate"]
+        calcRate = self.SamplingRate(2, AdcAcquisitionTime3, AdcOverSamplingRate64, AdcReferenceVDD, b1=1, b2=1, b3=1, runTime=10000)["SamplingRate"]
         print("Maximum Sampling Rate(Tripple Sampling): " + str(calcRate))
 
     """
