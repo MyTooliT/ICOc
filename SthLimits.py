@@ -3,7 +3,6 @@ from MyToolItCommands import *
 Axis = 1
 PcbOnly = True
 
-
 # Recalculation Factors
 AdcMax = 0xFFFF
 AccelerationToAccGravitity = 200
@@ -11,9 +10,16 @@ SamplingRateVfsToleranceRation = 64
 
 SamplingRateMin = 150  # To check maximum frequencies to be max
 SamplingRateMax = 14000  # To check maximum frequencies to be max
-SamplingRateSingleMax = 12500
-SamplingRateDoubleMax = 7143
-SamplingRateTrippleMax = 12500
+SamplingRateSingleMax = 9600
+SamplingRateSingleMaxAcqTime = AdcAcquisitionTime[8]
+SamplingRateSingleMaxOverSamples = AdcOverSamplingRate[64]
+SamplingRateDoubleMax = 7200
+SamplingRateDoubleMaxPrescaler=3
+SamplingRateDoubleMaxAcqTime = AdcAcquisitionTime[8]
+SamplingRateDoubleMaxOverSamples = AdcOverSamplingRate[64]
+SamplingRateTrippleMax = 9600
+SamplingRateTrippleMaxAcqTime = SamplingRateSingleMaxAcqTime
+SamplingRateTrippleMaxOverSamples = SamplingRateSingleMaxOverSamples
 # Time Definition
 StreamingStartupTimeMs = 250
 StreamingStandardTestTimeMs = (10000)
@@ -69,8 +75,8 @@ AdcMiddleZ = 0
 AdcToleranceX = 5
 AdcRawMiddleX = 2 ** 15
 AdcRawToleranceX = 128
-SelfTestOutputChangemVMin=70
-SelfTestOutputChangemVTyp=110
+SelfTestOutputChangemVMin = 70
+SelfTestOutputChangemVTyp = 110
 
 SigIndAccXQ1 = 2 ** 15 * 0.99
 SigIndAccXQ25 = 2 ** 15 * 0.995
@@ -136,14 +142,13 @@ else:
 
 # Time
 SamplingToleranceLow = 0.90
-SamplingToleranceHigh = 1.10
+SamplingToleranceHigh = 1.1
 
-#Temperature
-TempInternal3V3Middle=13000
-TempInternal3V3Tolerance=2000
-TempInternalMin=10.0
-TempInternalMax=60.0
+# Temperature
+TempInternal3V3Middle = 13000
+TempInternal3V3Tolerance = 2000
+TempInternalMin = 10.0
+TempInternalMax = 60.0
 
-
-#Reset States
+# Reset States
 CalibrationMeassurementPayloadReset = [0, 0, 0, AdcReference["VDD"], 0, 0, 0, 0]

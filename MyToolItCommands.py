@@ -275,10 +275,10 @@ CalibMeassurementActionNr = {
 }
 
 CalibMeassurementActionName = {
-    "None" : "Calibration Measurement Action - None/Reset",
-    "Inject" : "Calibration Measurement Action - Inject",
-    "Eject" : "Calibration Measurement Action - Eject",
-    "Measure" : "Calibration Measurement Action - Measure",
+    0 : "Calibration Measurement Action - None/Reset",
+    1 : "Calibration Measurement Action - Inject",
+    2 : "Calibration Measurement Action - Eject",
+    3 : "Calibration Measurement Action - Measure",
 }
 
 CalibMeassurementTypeNr = {
@@ -341,7 +341,7 @@ AdcAcquisitionTimeName = {
 }
 
 AdcOverSamplingRate = {
-    1 : 0,
+    1 : 1,
     2 : 1,
     4 : 2,
     8 : 3,

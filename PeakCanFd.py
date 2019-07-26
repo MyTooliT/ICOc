@@ -570,6 +570,9 @@ class PeakCanFd(object):
         byte1.b.bReset = bReset
         byte1.b.u2Action = u2Action
         byte1.b.bSet = bSet
+        self.Logger.Info(CalibMeassurementActionName[u2Action])
+        self.Logger.Info(CalibMeassurementTypeName[signal] + str(dimension))
+        self.Logger.Info(VRefName[vRef])
         calibPayload = [byte1.asbyte, signal, dimension, vRef, 0, 0, 0, 0]
         indexAssumed = self.cmdSend(receiver, MyToolItBlock["Configuration"], MyToolItConfiguration["CalibrateMeasurement"], calibPayload, log=log, retries=retries, bErrorAck=bErrorAck, printLog=printLog)
         indexRun = indexAssumed

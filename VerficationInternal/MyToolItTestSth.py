@@ -113,7 +113,7 @@ class TestSth(unittest.TestCase):
         result = float(messageWordGet(ret[4:]))
         result /= 1000
         self.PeakCan.Logger.Info("Temperature(Chip): " + str(result) + "°C") 
-        self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["None"], CalibMeassurementTypeNr["Temp"], 1, 0, log=False, bReset=True)
+        self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["None"], CalibMeassurementTypeNr["Temp"], 1, AdcReference["VDD"], log=False, bReset=True)
         return result
 
     def _statusWords(self):
@@ -1087,7 +1087,7 @@ class TestSth(unittest.TestCase):
     """
 
     def test0325GetStreamingAccDouble(self):
-        self.PeakCan.ConfigAdc(MyToolItNetworkNr["STH1"], 2, AdcAcquisitionTime[16], AdcOverSamplingRate[64], AdcReference["VDD"])
+        self.PeakCan.ConfigAdc(MyToolItNetworkNr["STH1"], SamplingRateDoubleMaxPrescaler, SamplingRateDoubleMaxAcqTime, SamplingRateDoubleMaxOverSamples, AdcReference["VDD"])
         [indexStart, indexEnd] = self.PeakCan.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 0, 1000)
         [array1, array2, array3] = self.PeakCan.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 0, indexStart, indexEnd)
         self.PeakCan.ValueLog(array1, array2, array3, fAdcRawDat, "Acc", "",)
@@ -1107,7 +1107,7 @@ class TestSth(unittest.TestCase):
 
     def test0326SignalIndicatorsAccX(self):
         self.TurnOffLed()
-        self.PeakCan.ConfigAdc(MyToolItNetworkNr["STH1"], 2, AdcAcquisitionTime[8], AdcOverSamplingRate[64], AdcReference["VDD"])
+        self.PeakCan.ConfigAdc(MyToolItNetworkNr["STH1"], 2, SamplingRateSingleMaxAcqTime, SamplingRateSingleMaxOverSamples, AdcReference["VDD"])
         [indexStart, indexEnd] = self.PeakCan.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0, StreamingStandardTestTimeMs)
         [array1, array2, array3] = self.PeakCan.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0, indexStart, indexEnd)
         statistics = self.signalIndicators(array1, array2, array3)
@@ -1120,7 +1120,7 @@ class TestSth(unittest.TestCase):
 
     def test0327SignalIndicatorsAccY(self):
         self.TurnOffLed()
-        self.PeakCan.ConfigAdc(MyToolItNetworkNr["STH1"], 2, AdcAcquisitionTime[8], AdcOverSamplingRate[64], AdcReference["VDD"])
+        self.PeakCan.ConfigAdc(MyToolItNetworkNr["STH1"], 2, SamplingRateSingleMaxAcqTime, SamplingRateSingleMaxOverSamples, AdcReference["VDD"])
         [indexStart, indexEnd] = self.PeakCan.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 1, 0, StreamingStandardTestTimeMs)
         [array1, array2, array3] = self.PeakCan.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 1, 0, indexStart, indexEnd)
         statistics = self.signalIndicators(array1, array2, array3)
@@ -1133,7 +1133,7 @@ class TestSth(unittest.TestCase):
 
     def test0328SignalIndicatorsAccZ(self):
         self.TurnOffLed()
-        self.PeakCan.ConfigAdc(MyToolItNetworkNr["STH1"], 2, AdcAcquisitionTime[8], AdcOverSamplingRate[64], AdcReference["VDD"])
+        self.PeakCan.ConfigAdc(MyToolItNetworkNr["STH1"], 2, SamplingRateSingleMaxAcqTime, SamplingRateSingleMaxOverSamples, AdcReference["VDD"])
         [indexStart, indexEnd] = self.PeakCan.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 0, 1, StreamingStandardTestTimeMs)
         [array1, array2, array3] = self.PeakCan.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 0, 1, indexStart, indexEnd)
         statistics = self.signalIndicators(array1, array2, array3)
@@ -1146,7 +1146,7 @@ class TestSth(unittest.TestCase):
 
     def test0329SignalIndicatorsBattery(self):
         self.TurnOffLed()
-        self.PeakCan.ConfigAdc(MyToolItNetworkNr["STH1"], 2, AdcAcquisitionTime[8], AdcOverSamplingRate[64], AdcReference["VDD"])
+        self.PeakCan.ConfigAdc(MyToolItNetworkNr["STH1"], 2, SamplingRateSingleMaxAcqTime, SamplingRateSingleMaxOverSamples, AdcReference["VDD"])
         [indexStart, indexEnd] = self.PeakCan.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0, StreamingStandardTestTimeMs)
         [array1, array2, array3] = self.PeakCan.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0, indexStart, indexEnd)
         statistics = self.signalIndicators(array1, array2, array3)
@@ -1250,7 +1250,7 @@ class TestSth(unittest.TestCase):
     """        
 
     def test0334StreamingHeavyDuty(self):
-        self.SamplingRate(2, AdcAcquisitionTime[3], AdcOverSamplingRate[64], AdcReference["VDD"], runTime=1200000)
+        self.SamplingRate(2, SamplingRateSingleMaxAcqTime, SamplingRateSingleMaxOverSamples, AdcReference["VDD"], runTime=1200000)
  
     """
     Mixed Streaming - AccX + VoltageBattery
@@ -2071,7 +2071,7 @@ class TestSth(unittest.TestCase):
     """
 
     def test0501SamplingRatePreq(self):
-        self.SamplingRate(5, AdcAcquisitionTime[8], AdcOverSamplingRate[64], AdcReference["VDD"])
+        self.SamplingRate(5, SamplingRateSingleMaxAcqTime, SamplingRateSingleMaxOverSamples, AdcReference["VDD"])
 
     """
     Testing ADC Sampling Rate - Acquisiton Time
@@ -2092,7 +2092,7 @@ class TestSth(unittest.TestCase):
     """
 
     def test0504SamplingRateDataSingleMax(self):
-        calcRate = self.SamplingRate(2, AdcAcquisitionTime[3], AdcOverSamplingRate[64], AdcReference["VDD"], runTime=10000)["SamplingRate"]
+        calcRate = self.SamplingRate(2, SamplingRateSingleMaxAcqTime, SamplingRateSingleMaxOverSamples, AdcReference["VDD"], runTime=10000)["SamplingRate"]
         print("Maximum Sampling Rate(Single Sampling): " + str(calcRate))
 
     """
@@ -2100,7 +2100,7 @@ class TestSth(unittest.TestCase):
     """
 
     def test0505SamplingRateDataDoubleMax(self):
-        calcRate = self.SamplingRate(3, AdcAcquisitionTime[8], AdcOverSamplingRate[64], AdcReference["VDD"], b1=1, b2=1, b3=0, runTime=10000)["SamplingRate"]
+        calcRate = self.SamplingRate(SamplingRateDoubleMaxPrescaler, SamplingRateDoubleMaxAcqTime, SamplingRateDoubleMaxOverSamples, AdcReference["VDD"], b1=1, b2=1, b3=0, runTime=10000)["SamplingRate"]
         print("Maximum Sampling Rate(Double Sampling): " + str(calcRate))
 
     """
@@ -2108,7 +2108,7 @@ class TestSth(unittest.TestCase):
     """
 
     def test0506SamplingRateDataTrippleMax(self):
-        calcRate = self.SamplingRate(2, AdcAcquisitionTime[3], AdcOverSamplingRate[64], AdcReference["VDD"], b1=1, b2=1, b3=1, runTime=10000)["SamplingRate"]
+        calcRate = self.SamplingRate(2, SamplingRateSingleMaxAcqTime, SamplingRateSingleMaxOverSamples, AdcReference["VDD"], b1=1, b2=1, b3=1, runTime=10000)["SamplingRate"]
         print("Maximum Sampling Rate(Tripple Sampling): " + str(calcRate))
 
     """
@@ -2117,10 +2117,10 @@ class TestSth(unittest.TestCase):
 
     def test0507VRef(self):
         self.PeakCan.Logger.Info("Warm Up")
-        self.SamplingRate(2, AdcAcquisitionTime[3], AdcOverSamplingRate[64], AdcReference["VDD"], b1=1, b2=1, b3=1, runTime=5000)
+        self.SamplingRate(2, SamplingRateSingleMaxAcqTime, SamplingRateSingleMaxOverSamples, AdcReference["VDD"], b1=1, b2=1, b3=1, runTime=5000)
         for _vRefkey, vRefVal in AdcReference.items():
             self.PeakCan.Logger.Info("Using Voltage Reference: " + VRefName[vRefVal])
-            self.SamplingRate(2, AdcAcquisitionTime[3], AdcOverSamplingRate[64], vRefVal, b1=1, b2=1, b3=1, runTime=5000, compare=(AdcReference["Vfs1V65"] <= vRefVal), startupTime=False)
+            self.SamplingRate(2, SamplingRateSingleMaxAcqTime, SamplingRateSingleMaxOverSamples, vRefVal, b1=1, b2=1, b3=1, runTime=5000, compare=(AdcReference["Vfs1V65"] <= vRefVal), startupTime=False)
 
     """
     ADC Configuration Combine all possible settings - Single Axis (but only for prescaler 2)
@@ -2245,7 +2245,7 @@ class TestSth(unittest.TestCase):
     """
 
     def test0511AdcPrescalerMin(self):
-        self.SamplingRate(Prescaler["Min"], AdcAcquisitionTime[8], AdcOverSamplingRate[64], AdcReference["VDD"], b1=1, b2=0, b3=0, runTime=4000)
+        self.SamplingRate(Prescaler["Min"], SamplingRateSingleMaxAcqTime, SamplingRateSingleMaxOverSamples, AdcReference["VDD"], b1=1, b2=0, b3=0, runTime=4000)
 
     """
     Testing ADC Sampling Prescaler Min/Max
@@ -2287,7 +2287,7 @@ class TestSth(unittest.TestCase):
     """
 
     def test0517AdcOverSamplingRateNone(self):
-        self.SamplingRate(16, AdcAcquisitionTime[256], AdcOverSamplingRate[0], AdcReference["VDD"], b1=1, b2=0, b3=0, runTime=4000)
+        self.SamplingRate(16, AdcAcquisitionTime[256], AdcOverSamplingRate[1], AdcReference["VDD"], b1=1, b2=0, b3=0, runTime=4000)
 
     """
     Inject oversampling Rate fault. See that error status word is set correctly and tha the system still works
@@ -2302,22 +2302,22 @@ class TestSth(unittest.TestCase):
         self.assertEqual(acquisitionTime, Settings[1])
         self.assertEqual(overSamplingRate, Settings[2])
         self.assertEqual(AdcReference["VDD"], Settings[3])
-        indexStart = self.PeakCan.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0)
+        self.PeakCan.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0)
         time.sleep(10)
-        indexEnd = self.PeakCan.GetReadArrayIndex() - 1
+        self.PeakCan.GetReadArrayIndex() - 1
         ack = self.PeakCan.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], bErrorExit=False)
         self.assertNotEqual("Error", ack)
         ErrorWord = SthErrorWord()
         ErrorWord.asword = self.PeakCan.statusWord1(MyToolItNetworkNr["STH1"])
+        self.PeakCan.Logger.Info("Reset Error Status Word")
         self.PeakCan.Logger.Info("STH Error Word Reserved: " + hex(ErrorWord.b.Reserved))
         self.PeakCan.Logger.Info("STH Error Word bAdcOverRun: " + hex(ErrorWord.b.bAdcOverRun))
         self.PeakCan.Logger.Info("STH Error Word bTxFail: " + hex(ErrorWord.b.bTxFail))
         self.assertEqual(ErrorWord.b.bAdcOverRun, 1)
-        self.PeakCan.Logger.Info("Reset Error Status Word")
-        self.PeakCan.statusWord1(MyToolItNetworkNr["STH1"], [0, 0, 0, 0, 0xFF, 0xFF, 0xFF, 0xFF])
-        time.sleep(2)
-        bytesSeconds = (indexEnd - indexStart) * 12 / 10
-        self.PeakCan.Logger.Info("BlueTooth transfered: " + str(bytesSeconds) + " Bytes/s")
+        self._resetStu()        
+        self.PeakCan.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
+
+        
         
     """
     Mixed Streaming - AccX + VoltageBattery
@@ -2325,8 +2325,8 @@ class TestSth(unittest.TestCase):
 
     def test0519SamplingRateMixedStreamingAccXBat(self):
         prescaler = 2
-        acquisitionTime = AdcAcquisitionTime[3]
-        overSamplingRate = AdcOverSamplingRate[64]
+        acquisitionTime = SamplingRateSingleMaxAcqTime
+        overSamplingRate = SamplingRateSingleMaxOverSamples
         adcRef = AdcReference["VDD"]
         Settings = self.PeakCan.ConfigAdc(MyToolItNetworkNr["STH1"], prescaler, acquisitionTime, overSamplingRate, adcRef)[1:]
         self.assertEqual(prescaler, Settings[0])
@@ -2426,8 +2426,8 @@ class TestSth(unittest.TestCase):
 
     def test0521SamplingRateMixedStreamingAccXYZBat(self):
         prescaler = 2
-        acquisitionTime = AdcAcquisitionTime[3]
-        overSamplingRate = AdcOverSamplingRate[64]
+        acquisitionTime = SamplingRateSingleMaxAcqTime
+        overSamplingRate = SamplingRateSingleMaxOverSamples
         adcRef = AdcReference["VDD"]
         Settings = self.PeakCan.ConfigAdc(MyToolItNetworkNr["STH1"], prescaler, acquisitionTime, overSamplingRate, adcRef)[1:]
         self.assertEqual(prescaler, Settings[0])
@@ -2481,8 +2481,8 @@ class TestSth(unittest.TestCase):
 
     def test0522MessageCountersMixerdSignals(self):
         prescaler = 2
-        acquisitionTime = AdcAcquisitionTime[3]
-        overSamplingRate = AdcOverSamplingRate[64]
+        acquisitionTime = SamplingRateSingleMaxAcqTime
+        overSamplingRate = SamplingRateSingleMaxOverSamples
         adcRef = AdcReference["VDD"]
         Settings = self.PeakCan.ConfigAdc(MyToolItNetworkNr["STH1"], prescaler, acquisitionTime, overSamplingRate, adcRef)[1:]
         self.assertEqual(prescaler, Settings[0])
@@ -2542,7 +2542,8 @@ class TestSth(unittest.TestCase):
     """           
 
     def test0523MessageCounterAccX(self):
-        [indexStart, indexEnd] = self.PeakCan.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0, 1000)
+        self.PeakCan.ConfigAdc(MyToolItNetworkNr["STH1"], 8, AdcAcquisitionTime[2], AdcOverSamplingRate[64], AdcReference["VDD"])
+        [indexStart, indexEnd] = self.PeakCan.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0, 10000)
         [arrayAccX, arrayAccY, arrayAccZ] = self.PeakCan.streamingValueArrayMessageCounters(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0, indexStart, indexEnd)
         self.assertEqual(0, len(arrayAccY))
         self.assertEqual(0, len(arrayAccZ))
@@ -2698,8 +2699,8 @@ class TestSth(unittest.TestCase):
 
     def test0530MessageCountersAccXBattery(self):
         prescaler = 2
-        acquisitionTime = AdcAcquisitionTime[3]
-        overSamplingRate = AdcOverSamplingRate[64]
+        acquisitionTime = SamplingRateSingleMaxAcqTime
+        overSamplingRate = SamplingRateSingleMaxOverSamples
         adcRef = AdcReference["VDD"]
         Settings = self.PeakCan.ConfigAdc(MyToolItNetworkNr["STH1"], prescaler, acquisitionTime, overSamplingRate, adcRef)[1:]
         self.assertEqual(prescaler, Settings[0])
@@ -2764,8 +2765,8 @@ class TestSth(unittest.TestCase):
 
     def test0531MessageCountersAccYBattery(self):
         prescaler = 2
-        acquisitionTime = AdcAcquisitionTime[3]
-        overSamplingRate = AdcOverSamplingRate[64]
+        acquisitionTime = SamplingRateSingleMaxAcqTime
+        overSamplingRate = SamplingRateSingleMaxOverSamples
         adcRef = AdcReference["VDD"]
         Settings = self.PeakCan.ConfigAdc(MyToolItNetworkNr["STH1"], prescaler, acquisitionTime, overSamplingRate, adcRef)[1:]
         self.assertEqual(prescaler, Settings[0])
@@ -2830,8 +2831,8 @@ class TestSth(unittest.TestCase):
 
     def test0532MessageCountersAccZBattery(self):
         prescaler = 2
-        acquisitionTime = AdcAcquisitionTime[3]
-        overSamplingRate = AdcOverSamplingRate[64]
+        acquisitionTime = SamplingRateSingleMaxAcqTime
+        overSamplingRate = SamplingRateSingleMaxOverSamples
         adcRef = AdcReference["VDD"]
         Settings = self.PeakCan.ConfigAdc(MyToolItNetworkNr["STH1"], prescaler, acquisitionTime, overSamplingRate, adcRef)[1:]
         self.assertEqual(prescaler, Settings[0])
@@ -2920,7 +2921,7 @@ class TestSth(unittest.TestCase):
     """           
 
     def test0534MessageCounterAccBatteryDataSetSingle(self):
-        self.PeakCan.ConfigAdc(MyToolItNetworkNr["STH1"], 2, AdcAcquisitionTime[3], AdcOverSamplingRate[256], AdcReference["VDD"])
+        self.PeakCan.ConfigAdc(MyToolItNetworkNr["STH1"], 2, SamplingRateSingleMaxAcqTime, SamplingRateSingleMaxOverSamples, AdcReference["VDD"])
         [indexStart, indexEnd] = self.PeakCan.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[1], 1, 0, 0, 1000)
         [arrayBattery, array2, array3] = self.PeakCan.streamingValueArrayMessageCounters(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[1], 1, 0, 0, indexStart, indexEnd)
         self.PeakCan.ValueLog(arrayBattery, array2, array3, fAdcRawDat, "BatteryMsgCounter", "")
@@ -2997,7 +2998,7 @@ class TestSth(unittest.TestCase):
     """
 
     def test0601CalibrationMeasurementTemperature(self):
-        ret = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["RegulatedInternalPower"]["Temp"], 1, AdcReference["1V25"], log=False)
+        ret = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["Temp"], 1, AdcReference["1V25"], log=False)
         result = float(messageWordGet(ret[4:]))
         result /= 1000
         self.PeakCan.Logger.Info("Temperature(Chip): " + str(result) + "°C") 
@@ -3010,56 +3011,57 @@ class TestSth(unittest.TestCase):
 
     def test0602CalibrationMeasurementVRef(self):
         self.test0601CalibrationMeasurementTemperature()  # 1V25
-        for _vRefKey, vRefValue in AdcReference.items():
-            ret = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["RegulatedInternalPower"]["Acc"], 1, vRefValue)
-            result = messageWordGet(ret[4:])
-            self.PeakCan.Logger.Info("ADC Value: " + str(result))
-            result = result * ((vRefValue * 50) / (AdcReference["VDD"] * 50))
-            self.PeakCan.Logger.Info("Recalculated value(result*" + str(vRefValue * 50) + "/" + str(AdcReference["VDD"] * 50) + "): " + str(result))
-            self.assertLessEqual(AdcRawMiddleX - AdcRawToleranceX, result * SamplingToleranceHigh)
-            self.assertGreaterEqual(AdcRawMiddleX + AdcRawToleranceX, result * SamplingToleranceLow)
+        for vRefKey, vRefValue in AdcReference.items():
+            if AdcReference["Vfs1V65"] <= AdcReference[vRefKey]:
+                ret = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["Acc"], 1, vRefValue)
+                result = messageWordGet(ret[4:])
+                self.PeakCan.Logger.Info("ADC Value: " + str(result))
+                result = result * ((vRefValue) / (AdcReference["VDD"]))
+                self.PeakCan.Logger.Info("Recalculated value(result*" + str(vRefValue * 50) + "/" + str(AdcReference["VDD"] * 50) + "): " + str(result))
+                self.assertLessEqual(AdcRawMiddleX - AdcRawToleranceX, result * SamplingToleranceHigh)
+                self.assertGreaterEqual(AdcRawMiddleX + AdcRawToleranceX, result * SamplingToleranceLow)
             
     """
     Calibration - Check Injection and Ejection
     """
 
     def test0603CalibrationMeasurementEjectInject(self):
-        kX1ack = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["RegulatedInternalPower"]["Acc"], 1, AdcReference["VDD"])
+        kX1ack = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["Acc"], 1, AdcReference["VDD"])
         kX1 = messageWordGet(kX1ack[4:])
-        kY1ack = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["RegulatedInternalPower"]["Acc"], 2, AdcReference["VDD"])
+        kY1ack = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["Acc"], 2, AdcReference["VDD"])
         kY1 = messageWordGet(kY1ack[4:])
-        kZ1ack = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["RegulatedInternalPower"]["Acc"], 3, AdcReference["VDD"])
+        kZ1ack = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["Acc"], 3, AdcReference["VDD"])
         kZ1 = messageWordGet(kZ1ack[4:])
-        ackInjectX = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"], CalibMeassurementTypeNr["RegulatedInternalPower"]["Acc"], 1, AdcReference["VDD"])
-        stateInjectX = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"], CalibMeassurementTypeNr["RegulatedInternalPower"]["Acc"], 1, AdcReference["VDD"], bSet=False)
-        ackInjectY = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"], CalibMeassurementTypeNr["RegulatedInternalPower"]["Acc"], 2, AdcReference["VDD"])
-        stateInjectY = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"], CalibMeassurementTypeNr["RegulatedInternalPower"]["Acc"], 2, AdcReference["VDD"], bSet=False)
-        ackInjectZ = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"], CalibMeassurementTypeNr["RegulatedInternalPower"]["Acc"], 3, AdcReference["VDD"])
-        stateInjectZ = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"], CalibMeassurementTypeNr["RegulatedInternalPower"]["Acc"], 3, AdcReference["VDD"], bSet=False)
+        ackInjectX = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"], CalibMeassurementTypeNr["Acc"], 1, AdcReference["VDD"])
+        stateInjectX = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"], CalibMeassurementTypeNr["Acc"], 1, AdcReference["VDD"], bSet=False)
+        ackInjectY = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"], CalibMeassurementTypeNr["Acc"], 2, AdcReference["VDD"])
+        stateInjectY = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"], CalibMeassurementTypeNr["Acc"], 2, AdcReference["VDD"], bSet=False)
+        ackInjectZ = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"], CalibMeassurementTypeNr["Acc"], 3, AdcReference["VDD"])
+        stateInjectZ = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"], CalibMeassurementTypeNr["Acc"], 3, AdcReference["VDD"], bSet=False)
         time.sleep(0.1)
-        kX2ack = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["RegulatedInternalPower"]["Acc"], 1, AdcReference["VDD"])
+        kX2ack = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["Acc"], 1, AdcReference["VDD"])
         kX2 = messageWordGet(kX2ack[4:])
-        kY2ack = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["RegulatedInternalPower"]["Acc"], 2, AdcReference["VDD"])
+        kY2ack = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["Acc"], 2, AdcReference["VDD"])
         kY2 = messageWordGet(kY2ack[4:])
-        kZ2ack = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["RegulatedInternalPower"]["Acc"], 3, AdcReference["VDD"])
+        kZ2ack = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["Acc"], 3, AdcReference["VDD"])
         kZ2 = messageWordGet(kZ2ack[4:])
-        ackEjectX = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Eject"], CalibMeassurementTypeNr["RegulatedInternalPower"]["Acc"], 1, AdcReference["VDD"])
-        stateEjectX = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"], CalibMeassurementTypeNr["RegulatedInternalPower"]["Acc"], 1, AdcReference["VDD"], bSet=False)
-        ackEjectY = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Eject"], CalibMeassurementTypeNr["RegulatedInternalPower"]["Acc"], 2, AdcReference["VDD"])
-        stateEjectY = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"], CalibMeassurementTypeNr["RegulatedInternalPower"]["Acc"], 2, AdcReference["VDD"], bSet=False)
-        ackEjectZ = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Eject"], CalibMeassurementTypeNr["RegulatedInternalPower"]["Acc"], 3, AdcReference["VDD"])
-        stateEjectZ = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"], CalibMeassurementTypeNr["RegulatedInternalPower"]["Acc"], 3, AdcReference["VDD"], bSet=False)
-        kX3ack = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["RegulatedInternalPower"]["Acc"], 1, AdcReference["VDD"])
+        ackEjectX = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Eject"], CalibMeassurementTypeNr["Acc"], 1, AdcReference["VDD"])
+        stateEjectX = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"], CalibMeassurementTypeNr["Acc"], 1, AdcReference["VDD"], bSet=False)
+        ackEjectY = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Eject"], CalibMeassurementTypeNr["Acc"], 2, AdcReference["VDD"])
+        stateEjectY = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"], CalibMeassurementTypeNr["Acc"], 2, AdcReference["VDD"], bSet=False)
+        ackEjectZ = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Eject"], CalibMeassurementTypeNr["Acc"], 3, AdcReference["VDD"])
+        stateEjectZ = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"], CalibMeassurementTypeNr["Acc"], 3, AdcReference["VDD"], bSet=False)
+        kX3ack = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["Acc"], 1, AdcReference["VDD"])
         kX3 = messageWordGet(kX3ack[4:])
-        kY3ack = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["RegulatedInternalPower"]["Acc"], 2, AdcReference["VDD"])
+        kY3ack = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["Acc"], 2, AdcReference["VDD"])
         kY3 = messageWordGet(kY3ack[4:])
-        kZ3ack = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["RegulatedInternalPower"]["Acc"], 3, AdcReference["VDD"])
+        kZ3ack = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["Acc"], 3, AdcReference["VDD"])
         kZ3 = messageWordGet(kZ3ack[4:])
-        kX4ack = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["RegulatedInternalPower"]["Acc"], 1, AdcReference["VDD"])
+        kX4ack = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["Acc"], 1, AdcReference["VDD"])
         kX4 = messageWordGet(kX4ack[4:])
-        kY4ack = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["RegulatedInternalPower"]["Acc"], 2, AdcReference["VDD"])
+        kY4ack = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["Acc"], 2, AdcReference["VDD"])
         kY4 = messageWordGet(kY4ack[4:])
-        kZ4ack = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["RegulatedInternalPower"]["Acc"], 3, AdcReference["VDD"])
+        kZ4ack = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["Acc"], 3, AdcReference["VDD"])
         kZ4 = messageWordGet(kZ4ack[4:])
         self.PeakCan.Logger.Info("ackInjectX: " + payload2Hex(ackInjectX))
         self.PeakCan.Logger.Info("stateInjectX: " + payload2Hex(stateInjectX))
@@ -3339,8 +3341,11 @@ class TestSth(unittest.TestCase):
         self.assertEqual(MinutesReset3, 1)
         self.assertEqual(MinutesOveral1, MinutesOveral2)                
         self.assertEqual(MinutesOveral1 + 1, MinutesOveral3)
-        
-    def test800StatusWords0Reset(self):
+   
+    """
+    Status Word after Reset
+    """        
+    def test0800StatusWords0Reset(self):
         StateWord = SthStateWord()
         StateWord.asword = self.PeakCan.statusWord0(MyToolItNetworkNr["STH1"])
         self.PeakCan.Logger.Info("STH State Word: " + hex(StateWord.asword))
@@ -3348,9 +3353,97 @@ class TestSth(unittest.TestCase):
         self.PeakCan.Logger.Info("STH State Word - " + NetworkStateName[StateWord.b.u3NetworkState])
         self.assertEqual(StateWord.b.bError, 0)
         self.assertEqual(StateWord.b.u3NetworkState, NetworkState["Operating"])
+
+    """
+    Status Word in ADC overrun error case
+    """        
+    def test0801StatusWords0AdcOverRun(self):
+        prescaler = 2
+        acquisitionTime = AdcAcquisitionTime[1]
+        overSamplingRate = AdcOverSamplingRate[2]
+        Settings = self.PeakCan.ConfigAdc(MyToolItNetworkNr["STH1"], prescaler, acquisitionTime, overSamplingRate, AdcReference["VDD"])[1:]
+        self.assertEqual(prescaler, Settings[0])
+        self.assertEqual(acquisitionTime, Settings[1])
+        self.assertEqual(overSamplingRate, Settings[2])
+        self.assertEqual(AdcReference["VDD"], Settings[3])
+        self.PeakCan.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0)
+        time.sleep(1)
+        self.PeakCan.GetReadArrayIndex() - 1
+        ack = self.PeakCan.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], bErrorExit=False)
+        self.assertNotEqual("Error", ack)
+        StateWord = SthStateWord()
+        StateWord.asword = self.PeakCan.statusWord0(MyToolItNetworkNr["STH1"])
+        self.PeakCan.Logger.Info("STH State Word: " + hex(StateWord.asword))
+        self.PeakCan.Logger.Info("STH State Word - bError: " + str(StateWord.b.bError))
+        self.PeakCan.Logger.Info("STH State Word - " + NetworkStateName[StateWord.b.u3NetworkState])
+        self.assertEqual(StateWord.b.bError, 1)
+        self.assertEqual(StateWord.b.u3NetworkState, NetworkState["Error"])
+        self._resetStu()        
+        self.PeakCan.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
+    
+
+    """
+    Status Word after Reset
+    """
+    def test0820StatusWords1Reset(self):
+        ErrorWord = SthErrorWord()
+        ErrorWord.asword = self.PeakCan.statusWord1(MyToolItNetworkNr["STH1"])
+        self.PeakCan.Logger.Info("STH Error Word: " + hex(ErrorWord.asword))
+        self.PeakCan.Logger.Info("STH Error Word Reserved: " + hex(ErrorWord.b.Reserved))
+        self.PeakCan.Logger.Info("STH Error Word bAdcOverRun: " + hex(ErrorWord.b.bAdcOverRun))
+        self.PeakCan.Logger.Info("STH Error Word bTxFail: " + hex(ErrorWord.b.bTxFail))
+        self.assertEqual(ErrorWord.asword, 0)
         
-    def test801StatusWords0AdcOverRun(self):
-        pass
+                    
+    """
+    Status Word after ADC Overrun
+    """
+    def test0821StatusWords1AdcOverRun(self):
+        prescaler = 2
+        acquisitionTime = AdcAcquisitionTime[1]
+        overSamplingRate = AdcOverSamplingRate[2]
+        Settings = self.PeakCan.ConfigAdc(MyToolItNetworkNr["STH1"], prescaler, acquisitionTime, overSamplingRate, AdcReference["VDD"])[1:]
+        self.assertEqual(prescaler, Settings[0])
+        self.assertEqual(acquisitionTime, Settings[1])
+        self.assertEqual(overSamplingRate, Settings[2])
+        self.assertEqual(AdcReference["VDD"], Settings[3])
+        self.PeakCan.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0)
+        time.sleep(1)
+        ErrorWord = SthErrorWord()
+        ErrorWord.asword = self.PeakCan.statusWord1(MyToolItNetworkNr["STH1"])
+        self.PeakCan.Logger.Info("STH Error Word: " + hex(ErrorWord.asword))
+        self.PeakCan.Logger.Info("STH Error Word Reserved: " + hex(ErrorWord.b.Reserved))
+        self.PeakCan.Logger.Info("STH Error Word bAdcOverRun: " + hex(ErrorWord.b.bAdcOverRun))
+        self.PeakCan.Logger.Info("STH Error Word bTxFail: " + hex(ErrorWord.b.bTxFail))
+        self.assertEqual(ErrorWord.b.bAdcOverRun, 1)
+        self._resetStu()        
+        self.PeakCan.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
+        
+    """
+    Status Word after Overspeed
+    """
+    def test0822StatusWords1TxFail(self):
+        prescaler = 2
+        acquisitionTime = AdcAcquisitionTime[8]
+        overSamplingRate = AdcOverSamplingRate[32]
+        Settings = self.PeakCan.ConfigAdc(MyToolItNetworkNr["STH1"], prescaler, acquisitionTime, overSamplingRate, AdcReference["VDD"])[1:]
+        self.assertEqual(prescaler, Settings[0])
+        self.assertEqual(acquisitionTime, Settings[1])
+        self.assertEqual(overSamplingRate, Settings[2])
+        self.assertEqual(AdcReference["VDD"], Settings[3])
+        self.PeakCan.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0)
+        time.sleep(10)
+        ErrorWord = SthErrorWord()
+        ErrorWord.asword = self.PeakCan.statusWord1(MyToolItNetworkNr["STH1"])
+        self.PeakCan.Logger.Info("STH Error Word: " + hex(ErrorWord.asword))
+        self.PeakCan.Logger.Info("STH Error Word Reserved: " + hex(ErrorWord.b.Reserved))
+        self.PeakCan.Logger.Info("STH Error Word bAdcOverRun: " + hex(ErrorWord.b.bAdcOverRun))
+        self.PeakCan.Logger.Info("STH Error Word bTxFail: " + hex(ErrorWord.b.bTxFail))
+        self.assertEqual(ErrorWord.b.bAdcOverRun, 0)
+        self.assertEqual(ErrorWord.b.bTxFail, 1)
+        self._resetStu()        
+        self.PeakCan.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
+        
         
 if __name__ == "__main__":
     print(sys.version)
