@@ -9,7 +9,7 @@ PeakCanInterrupt = 11
 PeakCanBitrateFd = "f_clock_mhz=20, nom_brp=5, nom_tseg1=2, nom_tseg2=1, nom_sjw=1, data_brp=2, data_tseg1=3, data_tseg2=1, data_sjw=1"
 
 from MyToolItCommands import *
-from MyToolItNetworkNumbers import NetworkNumber
+from MyToolItNetworkNumbers import MyToolItNetworkNr, MyToolItNetworkName
 
 
 def fSleepTime(timeReset):
@@ -63,6 +63,7 @@ class Logger():
         self.file.write("ms): ")
         self.file.write(message)
         self.file.write("\n")
+        self.file.flush()
         
     def Error(self, message):
         self.file.write("[E](")
@@ -70,6 +71,7 @@ class Logger():
         self.file.write("ms): ")
         self.file.write(message)
         self.file.write("\n")
+        self.file.flush()
         
     def Warning(self, message):
         self.file.write("[W](")
@@ -77,6 +79,7 @@ class Logger():
         self.file.write("ms): ")
         self.file.write(message)
         self.file.write("\n")
+        self.file.flush()
         
         
 class PeakCanFd(object):
@@ -126,7 +129,7 @@ class PeakCanFd(object):
         self.Reset()   
         self.m_objPCANBasic.Uninitialize(self.m_PcanHandle)
         sleep(1)
-        [iDs, cmds] = self.ReadMessageStatistics()
+        [_iDs, cmds] = self.ReadMessageStatistics()
         for cmd, value in cmds.items():
             self.Logger.Info(self.strCmdNrToCmdName(cmd) + " received " + str(value) + " times")
         self.Logger.__exit__()
@@ -186,17 +189,17 @@ class PeakCanFd(object):
         cmdBlock = self.CanCmdGetBlock(cmd)
         cmdNr = self.CanCmdGetBlockCmd(cmd)
         cmdNrName = "Unknown"
-        if MY_TOOL_IT_BLOCK_SYSTEM == cmdBlock:
+        if MyToolItBlock["System"] == cmdBlock:
             cmdNrName = CommandBlockSystem[cmdNr]
-        elif MY_TOOL_IT_BLOCK_STREAMING == cmdBlock:
+        elif MyToolItBlock["Streaming"] == cmdBlock:
             cmdNrName = CommandBlockStreaming[cmdNr]
-        elif MY_TOOL_IT_BLOCK_STATISTICAL_DATA == cmdBlock:
+        elif MyToolItBlock["StatisticalData"] == cmdBlock:
             cmdNrName = CommandBlockStatisticalData[cmdNr]
-        elif MY_TOOL_IT_BLOCK_CONFIGURATION == cmdBlock:
+        elif MyToolItBlock["Configuration"] == cmdBlock:
             cmdNrName = CommandBlockConfiguration[cmdNr]
-        elif MY_TOOL_IT_BLOCK_PRODUCT_DATA == cmdBlock:
+        elif MyToolItBlock["ProductData"] == cmdBlock:
             cmdNrName = CommandBlockProductData[cmdNr]
-        elif MY_TOOL_IT_BLOCK_TEST == cmdBlock:
+        elif MyToolItBlock["Test"] == cmdBlock:
             cmdNrName = CommandBlockTest[cmdNr]
         return cmdNrName
     
@@ -240,7 +243,7 @@ class PeakCanFd(object):
             message = {"CanMsg" : self.CanMessage20(0, 0, 0, [0, 0, 0, 0, 0, 0, 0, 0]), "PcTime" : self.getTimeMs(), "PeakCanTime" : 0}
         if(False != printLog):
             print("Message ID Send: " + hex(CanMsg.ID))
-            print("Message DATA Send: " + self.payload2Hex(CanMsg.DATA))
+            print("Message DATA Send: " + payload2Hex(CanMsg.DATA))
         self.timeStampStart = self.getTimeMs()
         returnMessage = self.WriteFrame(CanMsg)        
         if "Error" != returnMessage:
@@ -258,25 +261,25 @@ class PeakCanFd(object):
                     [command, sender, receiver] = self.CanMessage20GetFields(message["CanMsg"].ID)
                     cmdBlockName = self.strCmdNrToBlockName(command)
                     cmdName = self.strCmdNrToCmdName(command)
-                    senderName = NetworkNumber[sender]
-                    receiverName = NetworkNumber[receiver]
+                    senderName = MyToolItNetworkName[sender]
+                    receiverName = MyToolItNetworkName[receiver]
                     if False != bError:
-                        self.Logger.Error("Error Ack Received: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + self.payload2Hex(CanMsg.DATA))
+                        self.Logger.Error("Error Ack Received: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + payload2Hex(CanMsg.DATA))
                         if False != printLog:
-                            print("Error Ack Received: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + self.payload2Hex(CanMsg.DATA))
+                            print("Error Ack Received: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + payload2Hex(CanMsg.DATA))
                     else:
-                        self.Logger.Error("Ack Received(Error assumed): " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + self.payload2Hex(CanMsg.DATA))
+                        self.Logger.Error("Ack Received(Error assumed): " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + payload2Hex(CanMsg.DATA))
                         if False != printLog:
-                            print("Ack Received(Error assumed): " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + self.payload2Hex(CanMsg.DATA))
+                            print("Ack Received(Error assumed): " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + payload2Hex(CanMsg.DATA))
                     break
                 elif(waitTimeMax < self.getTimeMs()):
                     returnMessage = "Error"
                     [command, sender, receiver] = self.CanMessage20GetFields(CanMsg.ID)
                     cmdBlockName = self.strCmdNrToBlockName(command)
                     cmdName = self.strCmdNrToCmdName(command)
-                    senderName = NetworkNumber[sender]
-                    receiverName = NetworkNumber[receiver]
-                    self.Logger.Warning("No (Error) Ack Received: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + self.payload2Hex(CanMsg.DATA))
+                    senderName = MyToolItNetworkName[sender]
+                    receiverName = MyToolItNetworkName[receiver]
+                    self.Logger.Warning("No (Error) Ack Received: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + payload2Hex(CanMsg.DATA))
                     if False != printLog:
                         print("No (Error) Ack Received: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + str(CanMsg.DATA))
                     break
@@ -304,11 +307,11 @@ class PeakCanFd(object):
                 [command, sender, receiver] = self.CanMessage20GetFields(CanMsg.ID)
                 cmdBlockName = self.strCmdNrToBlockName(command)
                 cmdName = self.strCmdNrToCmdName(command)
-                senderName = NetworkNumber[sender]
-                receiverName = NetworkNumber[receiver]
-                self.Logger.Error("Message Request Failed: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + self.payload2Hex(CanMsg.DATA))
+                senderName = MyToolItNetworkName[sender]
+                receiverName = MyToolItNetworkName[receiver]
+                self.Logger.Error("Message Request Failed: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + payload2Hex(CanMsg.DATA))
                 if False != printLog:
-                    print("Message Request Failed: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + self.payload2Hex(CanMsg.DATA))
+                    print("Message Request Failed: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + payload2Hex(CanMsg.DATA))
                 if False != bErrorExit:
                     self.__exitError()
         return returnMessage
@@ -320,15 +323,15 @@ class PeakCanFd(object):
         msgAck = self.WriteFrameWaitAckRetries(message, retries=retries, waitMs=1000, bErrorAck=bErrorAck, printLog=printLog)
         if False != log:
             canCmd = self.CanCmd(blockCmd, subCmd, 1, 0)
-            self.Logger.Info(NetworkNumber[self.sender] + "->" + NetworkNumber[receiver] + "(CanTimeStamp: " + str(msgAck["CanTime"] - self.PeakCanTimeStampStart) + "ms): " + self.strCmdNrToCmdName(canCmd) + " - " + self.payload2Hex(payload))
+            self.Logger.Info(MyToolItNetworkName[self.sender] + "->" + MyToolItNetworkName[receiver] + "(CanTimeStamp: " + str(msgAck["CanTime"] - self.PeakCanTimeStampStart) + "ms): " + self.strCmdNrToCmdName(canCmd) + " - " + payload2Hex(payload))
             self.Logger.Info("Assumed receive message number: " + str(index))
         sleep(0.2)  # synch to read thread
         return index 
 
     def cmdReset(self, receiver, retries=5, log=True):
         if False != log:
-            self.Logger.Info("Reset " + NetworkNumber[receiver])
-        cmd = self.CanCmd(MY_TOOL_IT_BLOCK_SYSTEM, MY_TOOL_IT_SYSTEM_RESET, 1, 0)
+            self.Logger.Info("Reset " + MyToolItNetworkName[receiver])
+        cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Reset"], 1, 0)
         retMsg = self.WriteFrameWaitAckRetries(self.CanMessage20(cmd, self.sender, receiver, []), retries=retries)
         sleep(2)
         return retMsg
@@ -339,8 +342,8 @@ class PeakCanFd(object):
         accFormat.b.bNumber1 = b1
         accFormat.b.bNumber2 = b2
         accFormat.b.bNumber3 = b3
-        accFormat.b.u3DataSets = DataSets1
-        return self.cmdSend(receiver, MY_TOOL_IT_BLOCK_STREAMING, subCmd, [accFormat.asbyte], log=log, printLog=printLog)
+        accFormat.b.u3DataSets = DataSets[1]
+        return self.cmdSend(receiver, MyToolItBlock["Streaming"], subCmd, [accFormat.asbyte], log=log, printLog=printLog)
 
     def ValueDataSet1(self, data, b1, b2, b3, array1, array2, array3):
         count = 0
@@ -384,7 +387,7 @@ class PeakCanFd(object):
         return [array1, array2, array3]
     
     def singleValueArray(self, receiver, subCmd, b1, b2, b3, index):
-        messageIdFilter = self.CanCmd(MY_TOOL_IT_BLOCK_STREAMING, subCmd, 0, 0)
+        messageIdFilter = self.CanCmd(MyToolItBlock["Streaming"], subCmd, 0, 0)
         messageIdFilter = self.CanMessage20Id(messageIdFilter, receiver, self.sender)
         messageIdFilter = hex(messageIdFilter)
         data = self.getReadMessageData(index)
@@ -428,7 +431,7 @@ class PeakCanFd(object):
         return[indexStart, indexEnd]
 
     def streamingValueArray(self, receiver, streamingCmd, dataSets, b1, b2, b3, indexStart, indexEnd):
-        messageIdFilter = self.CanCmd(MY_TOOL_IT_BLOCK_STREAMING, streamingCmd, 0, 0)
+        messageIdFilter = self.CanCmd(MyToolItBlock["Streaming"], streamingCmd, 0, 0)
         messageIdFilter = self.CanMessage20Id(messageIdFilter, receiver, self.sender)
         messageIdFilter = hex(messageIdFilter)
         runIndex = indexStart
@@ -439,9 +442,9 @@ class PeakCanFd(object):
             data = self.getReadMessageData(runIndex)
             messageId = self.getReadMessageId(runIndex)
             if messageId == messageIdFilter:
-                if DataSets1 == dataSets:
+                if DataSets[1] == dataSets:
                     [array1, array2, array3] = self.ValueDataSet1(data, b1, b2, b3, array1, array2, array3)
-                elif DataSets3 == dataSets:
+                elif DataSets[3] == dataSets:
                     [array1, array2, array3] = self.ValueDataSet3(data, b1, b2, b3, array1, array2, array3)
                 else:
                     raise
@@ -472,9 +475,8 @@ class PeakCanFd(object):
             array3.append(data[1])
         return [array1, array2, array3]
     
-    
     def streamingValueArrayMessageCounters(self, receiver, streamingCmd, dataSets, b1, b2, b3, indexStart, indexEnd):
-        messageIdFilter = self.CanCmd(MY_TOOL_IT_BLOCK_STREAMING, streamingCmd, 0, 0)
+        messageIdFilter = self.CanCmd(MyToolItBlock["Streaming"], streamingCmd, 0, 0)
         messageIdFilter = self.CanMessage20Id(messageIdFilter, receiver, self.sender)
         messageIdFilter = hex(messageIdFilter)
         runIndex = indexStart
@@ -485,9 +487,9 @@ class PeakCanFd(object):
             data = self.getReadMessageData(runIndex)
             messageId = self.getReadMessageId(runIndex)
             if messageId == messageIdFilter:
-                if DataSets1 == dataSets:
+                if DataSets[1] == dataSets:
                     [array1, array2, array3] = self.ValueDataSet1MsgCounter(data, b1, b2, b3, array1, array2, array3)
-                elif DataSets3 == dataSets:
+                elif DataSets[3] == dataSets:
                     [array1, array2, array3] = self.ValueDataSet3MsgCounter(data, b1, b2, b3, array1, array2, array3)
                 else:
                     raise
@@ -527,10 +529,10 @@ class PeakCanFd(object):
         accFormat.b.bNumber2 = b2
         accFormat.b.bNumber3 = b3
         accFormat.b.u3DataSets = dataSets
-        cmd = self.CanCmd(MY_TOOL_IT_BLOCK_STREAMING, subCmd, 1, 0)
+        cmd = self.CanCmd(MyToolItBlock["Streaming"], subCmd, 1, 0)
         message = self.CanMessage20(cmd, self.sender, receiver, [accFormat.asbyte])
         if False != log:
-            canCmd = self.CanCmd(MY_TOOL_IT_BLOCK_STREAMING, subCmd, 1, 0)
+            canCmd = self.CanCmd(MyToolItBlock["Streaming"], subCmd, 1, 0)
             self.Logger.Info("Start sending  " + self.strCmdNrToCmdName(canCmd) + "; Subpayload: " + hex(accFormat.asbyte))
             
         indexStart = self.GetReadArrayIndex() + 1
@@ -541,8 +543,8 @@ class PeakCanFd(object):
         AtvcSet = AtvcFormat()
         AtvcSet.asbyte = 0
         AtvcSet.b.bStreaming = 1
-        AtvcSet.b.u3DataSets = DataSetsNone
-        cmd = self.CanCmd(MY_TOOL_IT_BLOCK_STREAMING, subCmd, 1, 0)
+        AtvcSet.b.u3DataSets = DataSets[0]
+        cmd = self.CanCmd(MyToolItBlock["Streaming"], subCmd, 1, 0)
         message = self.CanMessage20(cmd, self.sender, receiver, [AtvcSet.asbyte])
         self.Logger.Info("_____________________________________________________________")
         self.Logger.Info("Stop Streaming - " + self.strCmdNrToCmdName(cmd))
@@ -555,12 +557,12 @@ class PeakCanFd(object):
             self.Logger.Info("Config ADC - Prescaler: " + str(preq) + "/" + str(AdcAcquisitionTimeName[aquistionTime]) + "/" + str(AdcOverSamplingRateName[oversampling]) + "/" + str(VRefName[adcRef]))
             self.Logger.Info("Calculated Sampling Rate: " + str(calcSamplingRate(preq, aquistionTime, oversampling)))
         byte1 = 1 << 7  # Set Sampling Rate
-        cmd = self.CanCmd(MY_TOOL_IT_BLOCK_CONFIGURATION, MY_TOOL_IT_CONFIGURATION_ACCELERATION_CONFIGURATION, 1, 0)
+        cmd = self.CanCmd(MyToolItBlock["Configuration"], MyToolItConfiguration["Acceleration"], 1, 0)
         message = self.CanMessage20(cmd, self.sender, receiver, [byte1, preq, aquistionTime, oversampling, adcRef, 0, 0, 0])
         return self.WriteFrameWaitAckRetries(message, retries=5)["Payload"]
     
     def calibMeasurement(self, receiver, u2Action, signal, dimension, vRef, log=True, retries=3, bSet=True, bErrorAck=False, bReset=False, printLog=False):
-        messageIdFilter = self.CanCmd(MY_TOOL_IT_BLOCK_CONFIGURATION, MY_TOOL_IT_CONFIGURATION_CALIBRATE_MEASSUREMENT, 0, bErrorAck != False)
+        messageIdFilter = self.CanCmd(MyToolItBlock["Configuration"], MyToolItConfiguration["CalibrateMeasurement"], 0, bErrorAck != False)
         messageIdFilter = self.CanMessage20Id(messageIdFilter, receiver, self.sender)
         messageIdFilter = hex(messageIdFilter)
         byte1 = CalibrationMeassurement()
@@ -569,7 +571,7 @@ class PeakCanFd(object):
         byte1.b.u2Action = u2Action
         byte1.b.bSet = bSet
         calibPayload = [byte1.asbyte, signal, dimension, vRef, 0, 0, 0, 0]
-        indexAssumed = self.cmdSend(receiver, MY_TOOL_IT_BLOCK_CONFIGURATION, MY_TOOL_IT_CONFIGURATION_CALIBRATE_MEASSUREMENT, calibPayload, log=log, retries=retries, bErrorAck=bErrorAck, printLog=printLog)
+        indexAssumed = self.cmdSend(receiver, MyToolItBlock["Configuration"], MyToolItConfiguration["CalibrateMeasurement"], calibPayload, log=log, retries=retries, bErrorAck=bErrorAck, printLog=printLog)
         indexRun = indexAssumed
         indexEnd = self.GetReadArrayIndex()
         returnAck = []
@@ -585,10 +587,10 @@ class PeakCanFd(object):
         return returnAck
     
     def statisticalData(self, receiver, subCmd, log=True, retries=3, bErrorAck=False, printLog=False):
-        messageIdFilter = self.CanCmd(MY_TOOL_IT_BLOCK_STATISTICAL_DATA, subCmd, 0, bErrorAck != False)
+        messageIdFilter = self.CanCmd(MyToolItBlock["StatisticalData"], subCmd, 0, bErrorAck != False)
         messageIdFilter = self.CanMessage20Id(messageIdFilter, receiver, self.sender)
         messageIdFilter = hex(messageIdFilter)
-        indexAssumed = self.cmdSend(receiver, MY_TOOL_IT_BLOCK_STATISTICAL_DATA, subCmd, [], log=log, retries=retries, bErrorAck=bErrorAck, printLog=printLog)
+        indexAssumed = self.cmdSend(receiver, MyToolItBlock["StatisticalData"], subCmd, [], log=log, retries=retries, bErrorAck=bErrorAck, printLog=printLog)
         indexRun = indexAssumed
         indexEnd = self.GetReadArrayIndex()
         returnAck = []
@@ -603,35 +605,20 @@ class PeakCanFd(object):
             self.Logger.Error("Statistical Data Fail Request")
         return returnAck
 
-    def statusWord0(self, receiver):
-        cmd = self.CanCmd(MY_TOOL_IT_BLOCK_SYSTEM, MY_TOOL_IT_SYSTEM_STATUS_WORD0, 1, 0)
-        msg = self.CanMessage20(cmd, self.sender, receiver, [])
+    def statusWord0(self, receiver, payload = []):
+        cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["StatusWord0"], 1, 0)
+        msg = self.CanMessage20(cmd, self.sender, receiver, payload)
         psw0 = self.WriteFrameWaitAckRetries(msg, retries=5)["Payload"]
-        psw0 = self.AsciiStringWordBigEndian(psw0[0:4])
+        psw0 = AsciiStringWordBigEndian(psw0[0:4])
         return psw0
 
-    def statusWord1(self, receiver):
-        cmd = self.CanCmd(MY_TOOL_IT_BLOCK_SYSTEM, MY_TOOL_IT_SYSTEM_STATUS_WORD1, 1, 0)
-        msg = self.CanMessage20(cmd, self.sender, receiver, [])
+    def statusWord1(self, receiver, payload = []):
+        cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["StatusWord1"], 1, 0)
+        msg = self.CanMessage20(cmd, self.sender, receiver, payload)
         psw1 = self.WriteFrameWaitAckRetries(msg, retries=5)["Payload"]
-        psw1 = self.AsciiStringWordBigEndian(psw1[0:4])
+        psw1 = AsciiStringWordBigEndian(psw1[0:4])
         return psw1
-           
-    def payload2Hex(self, payload):
-        payloadHex = '[{}]'.format(', '.join(hex(x) for x in payload))
-        return payloadHex
-    
-    def AsciiStringWordBigEndian(self, ByteArray):
-        value = 0
-        for byte in range(len(ByteArray)):
-            value += (ByteArray[byte] << (8 * byte))
-        return value
-    
-    def AsciiStringWordLittleEndian(self, ByteArray):
-        value = 0
-        for byte in range(len(ByteArray)):
-            value += (ByteArray[byte] << (8 * (len(ByteArray) - byte - 1)))
-        return value
+        
         
     def getTimeMs(self):
         return int(round(time() * 1000)) - int(self.startTime)
@@ -729,7 +716,7 @@ class PeakCanFd(object):
                 iDs[msg.ID] = 1
                 
         for iD in iDs:
-            [command, sender, receiver] = self.CanMessage20GetFields(iD)  
+            [command, _sender, _receiver] = self.CanMessage20GetFields(iD)  
             cmds[command] = iDs[iD]
                 
         return [iDs, cmds]
@@ -769,33 +756,33 @@ class PeakCanFd(object):
         return len(self.readArray)
     
     def BlueToothCmd(self, receiver, subCmd):
-        cmd = self.CanCmd(MY_TOOL_IT_BLOCK_SYSTEM, MY_TOOL_IT_SYSTEM_BLUETOOTH, 1, 0)
+        cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0)
         payload = [subCmd, 0, 0, 0, 0, 0, 0, 0]
         message = self.CanMessage20(cmd, self.sender, receiver, payload)
         ack = self.WriteFrameWaitAckRetries(message, retries=2)["Payload"][2:]
-        ack = self.AsciiStringWordLittleEndian(ack)
+        ack = AsciiStringWordLittleEndian(ack)
         return ack
             
     def BlueToothConnectConnect(self, receiver):
-        cmd = self.CanCmd(MY_TOOL_IT_BLOCK_SYSTEM, MY_TOOL_IT_SYSTEM_BLUETOOTH, 1, 0)
-        message = self.CanMessage20(cmd, self.sender, receiver, [SystemCommandBlueToothConnect, 0, 0, 0, 0, 0, 0, 0])
+        cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0)
+        message = self.CanMessage20(cmd, self.sender, receiver, [SystemCommandBlueTooth["Connect"], 0, 0, 0, 0, 0, 0, 0])
         self.WriteFrameWaitAckRetries(message, retries=2)            
         
     def BlueToothConnectTotalScannedDeviceNr(self, receiver):
-        cmd = self.CanCmd(MY_TOOL_IT_BLOCK_SYSTEM, MY_TOOL_IT_SYSTEM_BLUETOOTH, 1, 0)
-        message = self.CanMessage20(cmd, self.sender, receiver, [SystemCommandBlueToothGetNumberAvailableDevices, 0, 0, 0, 0, 0, 0, 0])
+        cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0)
+        message = self.CanMessage20(cmd, self.sender, receiver, [SystemCommandBlueTooth["GetNumberAvailableDevices"], 0, 0, 0, 0, 0, 0, 0])
         msg = self.WriteFrameWaitAckRetries(message, retries=2)
         deviceNumbers = int(msg["Payload"][2]) - ord('0')
         return deviceNumbers
     
     def BlueToothConnectDeviceConnect(self, receiver, deviceNr):
-        cmd = self.CanCmd(MY_TOOL_IT_BLOCK_SYSTEM, MY_TOOL_IT_SYSTEM_BLUETOOTH, 1, 0)
-        message = self.CanMessage20(cmd, self.sender, receiver, [SystemCommandBlueToothDeviceConnect, deviceNr, 0, 0, 0, 0, 0, 0])
+        cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0)
+        message = self.CanMessage20(cmd, self.sender, receiver, [SystemCommandBlueTooth["DeviceConnect"], deviceNr, 0, 0, 0, 0, 0, 0])
         self.WriteFrameWaitAckRetries(message, retries=2)
 
     def BlueToothCheckConnect(self, receiver):
-        cmd = self.CanCmd(MY_TOOL_IT_BLOCK_SYSTEM, MY_TOOL_IT_SYSTEM_BLUETOOTH, 1, 0)
-        message = self.CanMessage20(cmd, self.sender, receiver, [SystemCommandBlueToothDeviceCheckConnected, 0, 0, 0, 0, 0, 0, 0])
+        cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0)
+        message = self.CanMessage20(cmd, self.sender, receiver, [SystemCommandBlueTooth["DeviceCheckConnected"], 0, 0, 0, 0, 0, 0, 0])
         connectToDevice = self.WriteFrameWaitAckRetries(message, retries=2)["Payload"][2]
         return connectToDevice
     
@@ -805,15 +792,15 @@ class PeakCanFd(object):
         ret = 0
         if deviceNr < deviceNumbers:
             currentTime = time()            
-            endTime = currentTime + SystemCommandBlueToothConnectTimeOut 
+            endTime = currentTime + BluetoothTime["Out"] 
             self.BlueToothConnectDeviceConnect(stuNr, deviceNr)    
             while time() < endTime and 0 == ret:      
                 ret = self.BlueToothCheckConnect(stuNr)            
         return ret
 
     def BlueToothDisconnect(self, stuNr):
-        cmd = self.CanCmd(MY_TOOL_IT_BLOCK_SYSTEM, MY_TOOL_IT_SYSTEM_BLUETOOTH, 1, 0)
-        message = self.CanMessage20(cmd, self.sender, stuNr, [SystemCommandBlueToothDisconnect, 0, 0, 0, 0, 0, 0, 0])
+        cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0)
+        message = self.CanMessage20(cmd, self.sender, stuNr, [SystemCommandBlueTooth["Disconnect"], 0, 0, 0, 0, 0, 0, 0])
         self.WriteFrameWaitAckRetries(message, retries=2)
         return 0 == self.BlueToothCheckConnect(stuNr)
 
@@ -822,15 +809,15 @@ class PeakCanFd(object):
     """
 
     def BlueToothNameWrite(self, DeviceNr, Name):
-        cmd = self.CanCmd(MY_TOOL_IT_BLOCK_SYSTEM, MY_TOOL_IT_SYSTEM_BLUETOOTH, 1, 0)
-        Payload = [SystemCommandBlueToothSetName1, DeviceNr, 0, 0, 0, 0, 0, 0]
+        cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0)
+        Payload = [SystemCommandBlueTooth["SetName1"], DeviceNr, 0, 0, 0, 0, 0, 0]
         for i in range(0, 6):
             if(len(Name) <= i):
                 break
             Payload[i + 2] = ord(Name[i])
         message = self.CanMessage20(cmd, self.sender, self.receiver, Payload)
         self.WriteFrameWaitAckRetries(message, retries=2)
-        Payload = [SystemCommandBlueToothSetName2, DeviceNr, 0, 0, 0, 0, 0, 0]
+        Payload = [SystemCommandBlueTooth["SetName2"], DeviceNr, 0, 0, 0, 0, 0, 0]
         for i in range(0, 6):
             if(len(Name) <= i + 6):
                 break
@@ -843,10 +830,10 @@ class PeakCanFd(object):
     """
 
     def BlueToothNameGet(self, DeviceNr):
-        cmd = self.CanCmd(MY_TOOL_IT_BLOCK_SYSTEM, MY_TOOL_IT_SYSTEM_BLUETOOTH, 1, 0)
-        message = self.CanMessage20(cmd, self.sender, self.receiver, [SystemCommandBlueToothGetName1, DeviceNr, 0, 0, 0, 0, 0, 0])
+        cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0)
+        message = self.CanMessage20(cmd, self.sender, self.receiver, [SystemCommandBlueTooth["GetName1"], DeviceNr, 0, 0, 0, 0, 0, 0])
         Name = self.WriteFrameWaitAckRetries(message, retries=2)["Payload"][2:]
-        message = self.CanMessage20(cmd, self.sender, self.receiver, [SystemCommandBlueToothGetName2, DeviceNr, 0, 0, 0, 0, 0, 0])
+        message = self.CanMessage20(cmd, self.sender, self.receiver, [SystemCommandBlueTooth["GetName2"], DeviceNr, 0, 0, 0, 0, 0, 0])
         Name = Name + self.WriteFrameWaitAckRetries(message)["Payload"][2:]
         i = 0
         while i < len(Name):
@@ -867,10 +854,10 @@ class PeakCanFd(object):
         self.Name = None       
         deviceNumber = 0 
         recNameList = []
-        endTime = time() + SystemCommandBlueToothConnectTime
+        endTime = time() + BluetoothTime["Connect"]
         while None == self.Name and 8 > deviceNumber and time() < endTime:
             if 0 < self.BlueToothConnect(stuNr, deviceNumber):
-                endTime = time() + SystemCommandBlueToothConnectTime
+                endTime = time() + BluetoothTime["Connect"]
                 RecName = ''
                 while '' == RecName and time() < endTime:
                     RecName = self.BlueToothNameGet(deviceNumber)[0:8]
@@ -895,17 +882,17 @@ class PeakCanFd(object):
         A1B1 = (Sleep1AdvertisementTimeReset >> 8) & 0xFF
         if 2 == modeNr:
             self.Logger.Info("Setting Bluetooth Energy Mode 2")
-            modeNr = SystemCommandBlueToothEnergyModeLowestWrite
+            modeNr = SystemCommandBlueTooth["EnergyModeLowestWrite"]
         else:
             self.Logger.Info("Setting Bluetooth Energy Mode 1")
-            modeNr = SystemCommandBlueToothEnergyModeReducedWrite
+            modeNr = SystemCommandBlueTooth["EnergyModeReducedWrite"]
         Payload = [modeNr, self.DeviceNr, S1B0, S1B1, S1B2, S1B3, A1B0, A1B1]
         [timeReset, timeAdvertisement] = self.BlueToothEnergyMode(Payload) 
         self.Logger.Info("Energy Mode ResetTime/AdvertisementTime: " + str(timeReset) + "/" + str(timeAdvertisement))
         return [timeReset, timeAdvertisement]   
     
     def BlueToothEnergyMode(self, Payload):
-        cmd = self.CanCmd(MY_TOOL_IT_BLOCK_SYSTEM, MY_TOOL_IT_SYSTEM_BLUETOOTH, 1, 0)
+        cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0)
         message = self.CanMessage20(cmd, self.sender, self.receiver, Payload)
         EnergyModeReduced = self.WriteFrameWaitAckRetries(message, retries=2)["Payload"][2:]
         timeReset = EnergyModeReduced[:4]
@@ -921,31 +908,31 @@ class PeakCanFd(object):
         sendData.b.u2NodeState = 2
         sendData.b.u3NetworkState = 2
         self.Logger.Info("Send Standby Command")
-        index = self.cmdSend(receiver, MY_TOOL_IT_BLOCK_SYSTEM, MY_TOOL_IT_SYSTEM_ACTIVE_STATE, [sendData.asbyte])        
-        self.Logger.Info("Received Payload " + self.payload2Hex(self.getReadMessageData(index)))
+        index = self.cmdSend(receiver, MyToolItBlock["System"], MyToolItSystem["ActiveState"], [sendData.asbyte])        
+        self.Logger.Info("Received Payload " + payload2Hex(self.getReadMessageData(index)))
 
     def BlueToothRssi(self, subscriber):
-        cmd = self.CanCmd(MY_TOOL_IT_BLOCK_SYSTEM, MY_TOOL_IT_SYSTEM_BLUETOOTH, 1, 0)
-        payload = [SystemCommandBlueToothRssi, 0, 0, 0, 0, 0, 0, 0]
+        cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0)
+        payload = [SystemCommandBlueTooth["Rssi"], 0, 0, 0, 0, 0, 0, 0]
         message = self.CanMessage20(cmd, self.sender, subscriber, payload)
         ack = self.WriteFrameWaitAckRetries(message, retries=2)["Payload"][2]
         ack = to8bitSigned(ack)
         return ack
 
     def BlueToothAddress(self, subscriber):
-        cmd = self.CanCmd(MY_TOOL_IT_BLOCK_SYSTEM, MY_TOOL_IT_SYSTEM_BLUETOOTH, 1, 0)
-        payload = [SystemCommandBlueToothMacAddress, 0, 0, 0, 0, 0, 0, 0]
+        cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0)
+        payload = [SystemCommandBlueTooth["MacAddress"], 0, 0, 0, 0, 0, 0, 0]
         message = self.CanMessage20(cmd, self.sender, subscriber, payload)
         ack = self.WriteFrameWaitAckRetries(message, retries=2)["Payload"][2:]
         ack = fBlueToothMacAddress(ack)
         return ack    
 
     def RoutingInformationCmd(self, receiver, subCmd, port):
-        cmd = self.CanCmd(MY_TOOL_IT_BLOCK_SYSTEM, MY_TOOL_IT_SYSTEM_ROUTING, 1, 0)
+        cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Routing"], 1, 0)
         payload = [subCmd, port, 0, 0, 0, 0, 0, 0]
         message = self.CanMessage20(cmd, self.sender, receiver, payload)
         ack = self.WriteFrameWaitAckRetries(message, retries=10)["Payload"][2:]
-        ack = self.AsciiStringWordLittleEndian(ack)
+        ack = AsciiStringWordLittleEndian(ack)
         return ack
     
     def SamplingPointNumber(self, b1, b2, b3):
@@ -961,11 +948,11 @@ class PeakCanFd(object):
     def Can20DataSet(self, b1, b2, b3):
         count = self.SamplingPointNumber(b1, b2, b3)
         if 0 == count:
-            dataSets = DataSetsNone
+            dataSets = DataSets[0]
         elif 1 == count:
-            dataSets = DataSets3
+            dataSets = DataSets[3]
         elif 3 >= count:
-            dataSets = DataSets1
+            dataSets = DataSets[1]
         else:
             self.__exitError()  
         return dataSets  

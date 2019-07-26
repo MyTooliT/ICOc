@@ -293,12 +293,12 @@ class aquAcc():
         cmd = self.PeakCan.CanCmd(MY_TOOL_IT_BLOCK_SYSTEM, MY_TOOL_IT_SYSTEM_STATUS_WORD0, 1, 0)
         msg = self.PeakCan.CanMessage20(cmd, MY_TOOL_IT_NETWORK_SPU1, MY_TOOL_IT_NETWORK_STH1, [])
         psw0 = self.PeakCan.WriteFrameWaitAckRetries(msg)[1]
-        psw0 = self.PeakCan.AsciiStringWordBigEndian(psw0[0:4])
+        psw0 = AsciiStringWordBigEndian(psw0[0:4])
         self.PeakCan.Logger.Info("Status Word: " + hex(psw0))
         cmd = self.PeakCan.CanCmd(MY_TOOL_IT_BLOCK_SYSTEM, MY_TOOL_IT_SYSTEM_STATUS_WORD1, 1, 0)
         msg = self.PeakCan.CanMessage20(cmd, MY_TOOL_IT_NETWORK_SPU1, MY_TOOL_IT_NETWORK_STH1, [])
         psw1 = self.PeakCan.WriteFrameWaitAckRetries(msg)[1]
-        psw1 = self.PeakCan.AsciiStringWordBigEndian(psw1[0:4])
+        psw1 = AsciiStringWordBigEndian(psw1[0:4])
         ErrorWord.asword = psw1
         if True == ErrorWord.b.bAdcOverRun:
             print("Error Word: " + hex(psw1))
@@ -333,7 +333,7 @@ class aquAcc():
         payload = [subCmd, 0, 0, 0, 0, 0, 0, 0]
         message = self.PeakCan.CanMessage20(cmd, MY_TOOL_IT_NETWORK_SPU1, subscriber, payload)
         ack = self.PeakCan.WriteFrameWaitAckRetries(message)[1][2:]
-        ack = self.PeakCan.AsciiStringWordLittleEndian(ack)
+        ack = AsciiStringWordLittleEndian(ack)
         return ack
     
     def _BlueToothRssi(self, subscriber):
@@ -361,7 +361,7 @@ class aquAcc():
         payload = [subCmd, port, 0, 0, 0, 0, 0, 0]
         message = self.PeakCan.CanMessage20(cmd, MY_TOOL_IT_NETWORK_SPU1, subscriber, payload)
         ack = self.PeakCan.WriteFrameWaitAckRetries(message)[1][2:]
-        ack = self.PeakCan.AsciiStringWordLittleEndian(ack)
+        ack = AsciiStringWordLittleEndian(ack)
         return ack
         
     def _RoutingInformationSthSend(self):

@@ -1,68 +1,69 @@
-MY_TOOL_IT_NETWORK_BROADCAST_ACK=0     
-MY_TOOL_IT_NETWORK_STH1=1              
-MY_TOOL_IT_NETWORK_STH2=2              
-MY_TOOL_IT_NETWORK_STH3=3              
-MY_TOOL_IT_NETWORK_STH4=4              
-MY_TOOL_IT_NETWORK_STH5=5              
-MY_TOOL_IT_NETWORK_STH6=6              
-MY_TOOL_IT_NETWORK_STH7=7              
-MY_TOOL_IT_NETWORK_STH8=8              
-MY_TOOL_IT_NETWORK_STH9=9              
-MY_TOOL_IT_NETWORK_STH10=10            
-MY_TOOL_IT_NETWORK_STH11=11            
-MY_TOOL_IT_NETWORK_STH12=12            
-MY_TOOL_IT_NETWORK_STH13=13            
-MY_TOOL_IT_NETWORK_STH14=14            
-MY_TOOL_IT_NETWORK_SPU1=15             
-MY_TOOL_IT_NETWORK_SPU2=16             
-MY_TOOL_IT_NETWORK_STU1=17             
-MY_TOOL_IT_NETWORK_STU2=18             
-MY_TOOL_IT_NETWORK_STU3=19             
-MY_TOOL_IT_NETWORK_STU4=20             
-MY_TOOL_IT_NETWORK_STU5=21             
-MY_TOOL_IT_NETWORK_STU6=22             
-MY_TOOL_IT_NETWORK_STU7=23             
-MY_TOOL_IT_NETWORK_STU8=24             
-MY_TOOL_IT_NETWORK_STU9=25             
-MY_TOOL_IT_NETWORK_STU10=26            
-MY_TOOL_IT_NETWORK_STU11=27            
-MY_TOOL_IT_NETWORK_STU12=28            
-MY_TOOL_IT_NETWORK_STU13=29            
-MY_TOOL_IT_NETWORK_STU14=30            
-MY_TOOL_IT_NETWORK_BROADCAST_NO_ACK=31 
+MyToolItNetworkNr = {
+    "BroadCast":0,    
+    "STH1":1,              
+    "STH2":2,              
+    "STH3":3,              
+    "STH4":4,              
+    "STH5":5,              
+    "STH6":6,              
+    "STH7":7,              
+    "STH8":8,              
+    "STH9":9,              
+    "STH10":10,            
+    "STH11":11,            
+    "STH12":12,            
+    "STH13":13,            
+    "STH14":14,            
+    "SPU1":15,             
+    "SPU2":16,             
+    "STU1":17,             
+    "STU2":18,             
+    "STU3":19,             
+    "STU4":20,             
+    "STU5":21,             
+    "STU6":22,             
+    "STU7":23,             
+    "STU8":24,             
+    "STU9":25,             
+    "STU10":26,            
+    "STU11":27,            
+    "STU12":28,            
+    "STU13":29,            
+    "STU14":30,            
+    "BroadCastNoAck":31 
+}
 
-
-NetworkNumber = {
-MY_TOOL_IT_NETWORK_BROADCAST_ACK : "Broadcast with ACK",   
-MY_TOOL_IT_NETWORK_STH1 : "STH1",          
-MY_TOOL_IT_NETWORK_STH2 : "STH2",          
-MY_TOOL_IT_NETWORK_STH3 : "STH3",          
-MY_TOOL_IT_NETWORK_STH4 : "STH4",          
-MY_TOOL_IT_NETWORK_STH5 : "STH5",          
-MY_TOOL_IT_NETWORK_STH6 : "STH6",          
-MY_TOOL_IT_NETWORK_STH7 : "STH7",          
-MY_TOOL_IT_NETWORK_STH8 : "STH8",          
-MY_TOOL_IT_NETWORK_STH9 : "STH9",          
-MY_TOOL_IT_NETWORK_STH10 : "STH10",          
-MY_TOOL_IT_NETWORK_STH11 : "STH11",          
-MY_TOOL_IT_NETWORK_STH12 : "STH12",          
-MY_TOOL_IT_NETWORK_STH13 : "STH13",          
-MY_TOOL_IT_NETWORK_STH14 : "STH14",          
-MY_TOOL_IT_NETWORK_SPU1 : "SPU1",           
-MY_TOOL_IT_NETWORK_SPU2 : "SPU2",           
-MY_TOOL_IT_NETWORK_STU1 : "STU1",           
-MY_TOOL_IT_NETWORK_STU2 : "STU2",           
-MY_TOOL_IT_NETWORK_STU3 : "STU3",           
-MY_TOOL_IT_NETWORK_STU4 : "STU4",           
-MY_TOOL_IT_NETWORK_STU5 : "STU5",           
-MY_TOOL_IT_NETWORK_STU6 : "STU6",           
-MY_TOOL_IT_NETWORK_STU7 : "STU7",           
-MY_TOOL_IT_NETWORK_STU8 : "STU8",           
-MY_TOOL_IT_NETWORK_STU9 : "STU9",           
-MY_TOOL_IT_NETWORK_STU10 : "STU10",          
-MY_TOOL_IT_NETWORK_STU11 : "STU11",          
-MY_TOOL_IT_NETWORK_STU12 : "STU12",          
-MY_TOOL_IT_NETWORK_STU13 : "STU13",          
-MY_TOOL_IT_NETWORK_STU14 : "STU14",          
-MY_TOOL_IT_NETWORK_BROADCAST_NO_ACK : "Broadcast WITHOUT ACK",
-    }
+MyToolItNetworkName = {
+    MyToolItNetworkNr["BroadCast"] : "Broadcast with ACK",   
+    MyToolItNetworkNr["STH1"] : "STH1",          
+    MyToolItNetworkNr["STH2"] : "STH2",          
+    MyToolItNetworkNr["STH3"] : "STH3",          
+    MyToolItNetworkNr["STH4"] : "STH4",          
+    MyToolItNetworkNr["STH5"] : "STH5",          
+    MyToolItNetworkNr["STH6"] : "STH6",          
+    MyToolItNetworkNr["STH7"] : "STH7",          
+    MyToolItNetworkNr["STH8"] : "STH8",          
+    MyToolItNetworkNr["STH9"] : "STH9",          
+    MyToolItNetworkNr["STH10"] : "STH10",          
+    MyToolItNetworkNr["STH11"] : "STH11",          
+    MyToolItNetworkNr["STH12"] : "STH12",          
+    MyToolItNetworkNr["STH13"] : "STH13",          
+    MyToolItNetworkNr["STH14"] : "STH14",          
+    MyToolItNetworkNr["SPU1"] : "SPU1",           
+    MyToolItNetworkNr["SPU2"] : "SPU2",           
+    MyToolItNetworkNr["STU1"] : "STU1",           
+    MyToolItNetworkNr["STU2"] : "STU2",           
+    MyToolItNetworkNr["STU3"] : "STU3",           
+    MyToolItNetworkNr["STU4"] : "STU4",           
+    MyToolItNetworkNr["STU5"] : "STU5",           
+    MyToolItNetworkNr["STU6"] : "STU6",           
+    MyToolItNetworkNr["STU7"] : "STU7",           
+    MyToolItNetworkNr["STU8"] : "STU8",           
+    MyToolItNetworkNr["STU9"] : "STU9",           
+    MyToolItNetworkNr["STU10"] : "STU10",          
+    MyToolItNetworkNr["STU11"] : "STU11",          
+    MyToolItNetworkNr["STU12"] : "STU12",          
+    MyToolItNetworkNr["STU13"] : "STU13",          
+    MyToolItNetworkNr["STU14"] : "STU14",          
+    MyToolItNetworkNr["BroadCastNoAck"] : "Broadcast WITHOUT ACK",
+}

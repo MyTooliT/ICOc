@@ -21,8 +21,8 @@ SAMPLING_POINTS_SECOND_RESET = 9523
 
 # Reset Values
 AdcPrescalerReset = 2
-AdcAcquisitionTimeReset = AdcAcquisitionTime8               
-AdcAcquisitionOverSamplingRateReset = AdcOverSamplingRate64             
+AdcAcquisitionTimeReset = AdcAcquisitionTime[8]               
+AdcAcquisitionOverSamplingRateReset = AdcOverSamplingRate[64]             
 
 # Limits
 # Voltage
@@ -146,4 +146,4 @@ TempInternalMax=60.0
 
 
 #Reset States
-CalibrationMeassurementPayloadReset = [0, 0, 0, AdcReferenceVDD, 0, 0, 0, 0]
+CalibrationMeassurementPayloadReset = [0, 0, 0, AdcReference["VDD"], 0, 0, 0, 0]

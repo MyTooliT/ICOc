@@ -250,13 +250,13 @@ class TestSthManually(unittest.TestCase):
     def testManually0700UnderVoltageCounter(self):
         UnderVoltage1 = self.PeakCan.statisticalData(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STATISTICAL_DATA_UVC, printLog=True)    
         UnderVoltagePowerOnFirst1 = messageWordGet(UnderVoltage1[:4])
-        self.PeakCan.Logger.Info("Under Voltage Counter since first Power On: " + self.PeakCan.payload2Hex(UnderVoltage1))
+        self.PeakCan.Logger.Info("Under Voltage Counter since first Power On: " + payload2Hex(UnderVoltage1))
         self.PeakCan.Logger.Info("Under Voltage Counter since first Power On: " + str(UnderVoltagePowerOnFirst1))
         input('Power Off Device and wait 1s and then press Any Key to Continue')
         self.PeakCan.BlueToothConnectPollingName(MY_TOOL_IT_NETWORK_STU1, TestDeviceName)
         UnderVoltage2 = self.PeakCan.statisticalData(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STATISTICAL_DATA_UVC, printLog=True)    
         UnderVoltagePowerOnFirst2 = messageWordGet(UnderVoltage2[:4])
-        self.PeakCan.Logger.Info("Under Voltage Counter since first Power On: " + self.PeakCan.payload2Hex(UnderVoltage2))
+        self.PeakCan.Logger.Info("Under Voltage Counter since first Power On: " + payload2Hex(UnderVoltage2))
         self.PeakCan.Logger.Info("Under Voltage Counter since first Power On: " + str(UnderVoltagePowerOnFirst2))
         self.assertEqual(0xFFFFFFFF&(UnderVoltagePowerOnFirst1+1), UnderVoltagePowerOnFirst2)
         

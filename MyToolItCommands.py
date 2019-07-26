@@ -45,282 +45,431 @@ class CalibrationMeassurementFormatFlags(ctypes.BigEndianStructure):
 class CalibrationMeassurement(ctypes.Union):
     _fields_ = [("b", CalibrationMeassurementFormatFlags),
                 ("asbyte", c_uint8)]   
+
     
+MyToolItBlock = {
+    "System" : 0x00,
+    "Streaming" : 0x04,
+    "StatisticalData" : 0x08,
+    "Configuration" : 0x28,
+    "ProductData" : 0x3E,
+    "Test" : 0x3F,
+}
 
-MY_TOOL_IT_BLOCK_SYSTEM = 0x00   
-MY_TOOL_IT_BLOCK_STREAMING = 0x04
-MY_TOOL_IT_BLOCK_STATISTICAL_DATA = 0x08
-MY_TOOL_IT_BLOCK_CONFIGURATION = 0x28
-MY_TOOL_IT_BLOCK_PRODUCT_DATA = 0x3E 
-MY_TOOL_IT_BLOCK_TEST = 0x3F
+MyToolItSystem = {
+    "Verboten" : 0x00,
+    "Reset" : 0x01,
+    "ActiveState" : 0x02,
+    "Mode" : 0x03,
+    "Alarm" : 0x04,
+    "StatusWord0" : 0x05,
+    "StatusWord1" : 0x06,
+    "StatusWord2" : 0x07,
+    "StatusWord3" : 0x08,
+    "Test" : 0x09,
+    "Log" : 0x0A,
+    "Bluetooth" : 0x0B,
+    "Routing" : 0x0C,
+}
 
-MY_TOOL_IT_SYSTEM_VERBOTEN = 0x00
-MY_TOOL_IT_SYSTEM_RESET = 0x01
-MY_TOOL_IT_SYSTEM_ACTIVE_STATE = 0x02
-MY_TOOL_IT_SYSTEM_MODE = 0x03
-MY_TOOL_IT_SYSTEM_ALARM = 0x04
-MY_TOOL_IT_SYSTEM_STATUS_WORD0 = 0x05
-MY_TOOL_IT_SYSTEM_STATUS_WORD1 = 0x06
-MY_TOOL_IT_SYSTEM_STATUS_WORD2 = 0x07
-MY_TOOL_IT_SYSTEM_STATUS_WORD3 = 0x08
-MY_TOOL_IT_SYSTEM_TEST = 0x09
-MY_TOOL_IT_SYSTEM_LOG = 0x0A
-MY_TOOL_IT_SYSTEM_BLUETOOTH = 0x0B
-MY_TOOL_IT_SYSTEM_ROUTING = 0x0C
-MY_TOOL_IT_STREAMING_ACCELERATION = 0x00
-MY_TOOL_IT_STREAMING_TEMPERATURE = 0x01
-MY_TOOL_IT_STREAMING_VOLTAGE = 0x20
-MY_TOOL_IT_STREAMING_CURRENT = 0x40
-MY_TOOL_IT_STATISTICAL_DATA_POC_POF = 0x00
-MY_TOOL_IT_STATISTICAL_DATA_OPERATING_TIME = 0x01
-MY_TOOL_IT_STATISTICAL_DATA_UVC = 0x02
-MY_TOOL_IT_STATISTICAL_DATA_MEASUREMENT_INTERVAL = 0x40
-MY_TOOL_IT_STATISTICAL_DATA_QUANTITY_INTERVAL = 0x41
-MY_TOOL_IT_STATISTICAL_DATA_ENERGY = 0x80
-MY_TOOL_IT_CONFIGURATION_ACCELERATION_CONFIGURATION = 0x00
-MY_TOOL_IT_CONFIGURATION_TEMPERATURE_CONFIGURATION = 0x01
-MY_TOOL_IT_CONFIGURATION_VOLTAGE_CONFIGURATION = 0x20
-MY_TOOL_IT_CONFIGURATION_CURRENT_CONFIGURATION = 0x40
-MY_TOOL_IT_CONFIGURATION_CALIBRATION_FACTOR_K = 0x60
-MY_TOOL_IT_CONFIGURATION_CALIBRATION_FACTOR_D = 0x61
-MY_TOOL_IT_CONFIGURATION_CALIBRATE_MEASSUREMENT = 0x62
-MY_TOOL_IT_CONFIGURATION_ALARM = 0x80
-MY_TOOL_IT_CONFIGURATION_CONFIGURATION_HMI = 0xC0
-MY_TOOL_IT_PRODUCT_DATA_GTIN = 0x00
-MY_TOOL_IT_PRODUCT_DATA_HARDWARE_REVISION = 0x01
-MY_TOOL_IT_PRODUCT_DATA_FIRMWARE_VERSION = 0x02
-MY_TOOL_IT_PRODUCT_DATA_RELEASE_NAME = 0x03
-MY_TOOL_IT_PRODUCT_DATA_SERIAL_NUMBER1 = 0x04
-MY_TOOL_IT_PRODUCT_DATA_SERIAL_NUMBER2 = 0x05
-MY_TOOL_IT_PRODUCT_DATA_SERIAL_NUMBER3 = 0x06
-MY_TOOL_IT_PRODUCT_DATA_SERIAL_NUMBER4 = 0x07
-MY_TOOL_IT_PRODUCT_DATA_NAME1 = 0x08
-MY_TOOL_IT_PRODUCT_DATA_NAME2 = 0x09
-MY_TOOL_IT_PRODUCT_DATA_NAME3 = 0x0A
-MY_TOOL_IT_PRODUCT_DATA_NAME4 = 0x0B
-MY_TOOL_IT_PRODUCT_DATA_NAME5 = 0x0C
-MY_TOOL_IT_PRODUCT_DATA_NAME6 = 0x0D
-MY_TOOL_IT_PRODUCT_DATA_NAME7 = 0x0E
-MY_TOOL_IT_PRODUCT_DATA_NAME8 = 0x0F
-MY_TOOL_IT_PRODUCT_DATA_NAME9 = 0x10
-MY_TOOL_IT_PRODUCT_DATA_NAME10 = 0x11
-MY_TOOL_IT_PRODUCT_DATA_NAME11 = 0x12
-MY_TOOL_IT_PRODUCT_DATA_NAME12 = 0x13
-MY_TOOL_IT_PRODUCT_DATA_NAME13 = 0x14
-MY_TOOL_IT_PRODUCT_DATA_NAME14 = 0x15
-MY_TOOL_IT_PRODUCT_DATA_NAME15 = 0x16
-MY_TOOL_IT_PRODUCT_DATA_NAME16 = 0x17
-MY_TOOL_IT_PRODUCT_DATA_OEM_FREE_USE1 = 0x18
-MY_TOOL_IT_PRODUCT_DATA_OEM_FREE_USE2 = 0x19
-MY_TOOL_IT_PRODUCT_DATA_OEM_FREE_USE3 = 0x1A
-MY_TOOL_IT_PRODUCT_DATA_OEM_FREE_USE4 = 0x1B
-MY_TOOL_IT_PRODUCT_DATA_OEM_FREE_USE5 = 0x1C
-MY_TOOL_IT_PRODUCT_DATA_OEM_FREE_USE6 = 0x1D
-MY_TOOL_IT_PRODUCT_DATA_OEM_FREE_USE7 = 0x1E
-MY_TOOL_IT_PRODUCT_DATA_OEM_FREE_USE8 = 0x1F
-MY_TOOL_IT_TEST_SIGNAL = 0x01
+SystemCommandBlueTooth = {
+    "Reserved" : 0,
+    "Connect" : 1,
+    "GetNumberAvailableDevices" : 2,
+    "SetName1" : 3,
+    "SetName2" : 4,
+    "GetName1" : 5,
+    "GetName2" : 6,
+    "DeviceConnect" : 7,
+    "DeviceCheckConnected" : 8,
+    "Disconnect" : 9,
+    "SendCounter" : 10,
+    "ReceiveCounter" : 11,
+    "Rssi" : 12,
+    "EnergyModeReducedRead" : 13,
+    "EnergyModeReducedWrite" : 14,
+    "EnergyModeLowestRead" : 15,
+    "EnergyModeLowestWrite" : 16,
+    "MacAddress" : 17,
+}
+
+BluetoothTime = {
+    "Connect" : 20,
+    "Out" : (4 * 5),
+}
+
+SystemCommandRouting = {
+    "Reserved" : 0,
+    "SendCounter" : 1,
+    "SendFailCounter" : 2,
+    "SendLowLevelByteCounter" : 3,
+    "ReceiveCounter" : 4,
+    "ReceiveFailCounter" : 5,
+    "ReceiveLowLevelByteCounter" : 6,
+}
+
+MyToolItStreaming = {
+    "Acceleration" : 0x00,
+    "Temperature" : 0x01,
+    "Voltage" : 0x20,
+    "Current" : 0x40,
+}
+
+MyToolItStatData = {
+    "PocPof" : 0x00,
+    "OperatingTime" : 0x01,
+    "Uvc" : 0x02,
+    "MeasurementInterval" : 0x40,
+    "QuantityInterval" : 0x41,
+    "Energy" : 0x80,
+}
+
+MyToolItConfiguration = {
+    "Acceleration" : 0x00,
+    "Temperature" : 0x01,
+    "Voltage" : 0x20,
+    "Current" : 0x40,
+    "CalibrationFactorK" : 0x60,
+    "CalibrationFactorD" : 0x61,
+    "CalibrateMeasurement" : 0x62,
+    "Alarm" : 0x80,
+    "Hmi" : 0xC0
+}
+
+MyToolItProductData = {
+    "GTIN" : 0x00,
+    "HardwareRevision" : 0x01,
+    "FirmwareVersion" : 0x02,
+    "ReleaseName" : 0x03,
+    "SerialNumber1" : 0x04,
+    "SerialNumber2" : 0x05,
+    "SerialNumber3" : 0x06,
+    "SerialNumber4" : 0x07,
+    "Name1" : 0x08,
+    "Name2" : 0x09,
+    "Name3" : 0x0A,
+    "Name4" : 0x0B,
+    "Name5" : 0x0C,
+    "Name6" : 0x0D,
+    "Name7" : 0x0E,
+    "Name8" : 0x0F,
+    "Name9" : 0x10,
+    "Name10" : 0x11,
+    "Name11" : 0x12,
+    "Name12" : 0x13,
+    "Name13" : 0x14,
+    "Name14" : 0x15,
+    "Name15" : 0x16,
+    "Name16" : 0x17,
+    "OemFreeUse1" : 0x18,
+    "OemFreeUse2" : 0x19,
+    "OemFreeUse3" : 0x1A,
+    "OemFreeUse4" : 0x1B,
+    "OemFreeUse5" : 0x1C,
+    "OemFreeUse6" : 0x1D,
+    "OemFreeUse7" : 0x1E,
+    "OemFreeUse8" : 0x1F,
+}
+
+MyToolItTest = {
+"Signal" : 0x01,
+}
 
 CommandBlock = {
-    MY_TOOL_IT_BLOCK_SYSTEM : "Command Block System",
-    MY_TOOL_IT_BLOCK_STREAMING : "Command Block Streaming",
-    MY_TOOL_IT_BLOCK_STATISTICAL_DATA : "Command Block Statistical Data",
-    MY_TOOL_IT_BLOCK_CONFIGURATION : "Command Block Configuration",
-    MY_TOOL_IT_BLOCK_PRODUCT_DATA :"Command Block Product Data",
-    MY_TOOL_IT_BLOCK_TEST : "Command Block Test",
-    }
+    MyToolItBlock["System"] : "Command Block System",
+    MyToolItBlock["Streaming"] : "Command Block Streaming",
+    MyToolItBlock["StatisticalData"] : "Command Block Statistical Data",
+    MyToolItBlock["Configuration"] : "Command Block Configuration",
+    MyToolItBlock["ProductData"] :"Command Block Product Data",
+    MyToolItBlock["Test"] : "Command Block Test",
+}
 
 CommandBlockSystem = {
-    MY_TOOL_IT_SYSTEM_VERBOTEN : "System Command Verboten",
-    MY_TOOL_IT_SYSTEM_RESET : "System Command Reset",
-    MY_TOOL_IT_SYSTEM_ACTIVE_STATE : "System Command Active State",
-    MY_TOOL_IT_SYSTEM_MODE : "System Command Mode",
-    MY_TOOL_IT_SYSTEM_ALARM : "System Command Alarm",
-    MY_TOOL_IT_SYSTEM_STATUS_WORD0 : "System Command Status Word0",
-    MY_TOOL_IT_SYSTEM_STATUS_WORD1 : "System Command Status Word1",
-    MY_TOOL_IT_SYSTEM_STATUS_WORD2 : "System Command Status Word2",
-    MY_TOOL_IT_SYSTEM_STATUS_WORD3 : "System Command Status Word3",
-    MY_TOOL_IT_SYSTEM_TEST : "System Command Test",
-    MY_TOOL_IT_SYSTEM_LOG : "System Command Log",
-    MY_TOOL_IT_SYSTEM_BLUETOOTH : "System Command BlueTooth",
-    MY_TOOL_IT_SYSTEM_ROUTING : "System Command Routing",
-    }
+    MyToolItSystem["Verboten"]      : "System Command Verboten",
+    MyToolItSystem["Reset"]         : "System Command Reset",
+    MyToolItSystem["ActiveState"]   : "System Command Active State",
+    MyToolItSystem["Mode"]          : "System Command Mode",
+    MyToolItSystem["Alarm"]         : "System Command Alarm",
+    MyToolItSystem["StatusWord0"]   : "System Command Status Word0",
+    MyToolItSystem["StatusWord1"]   : "System Command Status Word1",
+    MyToolItSystem["StatusWord2"]   : "System Command Status Word2",
+    MyToolItSystem["StatusWord3"]   : "System Command Status Word3",
+    MyToolItSystem["Test"]          : "System Command Test",
+    MyToolItSystem["Log"]           : "System Command Log",
+    MyToolItSystem["Bluetooth"]     : "System Command BlueTooth",
+    MyToolItSystem["Routing"]       : "System Command Routing",
+}
 
 CommandBlockStreaming = {
-    MY_TOOL_IT_STREAMING_ACCELERATION : "Streaming Command Acceleration",
-    MY_TOOL_IT_STREAMING_TEMPERATURE : "Streaming Command Temperature",
-    MY_TOOL_IT_STREAMING_VOLTAGE : "Streaming Command Voltage",
-    MY_TOOL_IT_STREAMING_CURRENT : "Streaming Command Current",
-    }
+    MyToolItStreaming["Acceleration"] : "Streaming Command Acceleration",
+    MyToolItStreaming["Temperature"] : "Streaming Command Temperature",
+    MyToolItStreaming["Voltage"] : "Streaming Command Voltage",
+    MyToolItStreaming["Current"] : "Streaming Command Current",
+}
 
 CommandBlockStatisticalData = {
-    MY_TOOL_IT_STATISTICAL_DATA_POC_POF : "Statistical Data Command PowerOn/Off Counter",
-    MY_TOOL_IT_STATISTICAL_DATA_OPERATING_TIME : "Statistical Data Command Operating Time",
-    MY_TOOL_IT_STATISTICAL_DATA_UVC : "Statistical Data Command Undervoltage Counter",
-    MY_TOOL_IT_STATISTICAL_DATA_MEASUREMENT_INTERVAL : "Statistical Data Command Measurement Interval",
-    MY_TOOL_IT_STATISTICAL_DATA_QUANTITY_INTERVAL : "Statistical Data Command Quantity Interval",
-    MY_TOOL_IT_STATISTICAL_DATA_ENERGY : "Statistical Data Command Energy",
-    }
+    MyToolItStatData["PocPof"] : "Statistical Data Command PowerOn/Off Counter",
+    MyToolItStatData["OperatingTime"] : "Statistical Data Command Operating Time",
+    MyToolItStatData["Uvc"] : "Statistical Data Command Undervoltage Counter",
+    MyToolItStatData["MeasurementInterval"] : "Statistical Data Command Measurement Interval",
+    MyToolItStatData["QuantityInterval"] : "Statistical Data Command Quantity Interval",
+    MyToolItStatData["Energy"] : "Statistical Data Command Energy",
+}
 
 CommandBlockConfiguration = {
-    MY_TOOL_IT_CONFIGURATION_ACCELERATION_CONFIGURATION : "Configuration Command Acceleration Configuration",
-    MY_TOOL_IT_CONFIGURATION_TEMPERATURE_CONFIGURATION : "Configuration Command Temperature Configuration",
-    MY_TOOL_IT_CONFIGURATION_VOLTAGE_CONFIGURATION : "Configuration Command Voltage Configuration",
-    MY_TOOL_IT_CONFIGURATION_CURRENT_CONFIGURATION : "Configuration Command Current Configuration",
-    MY_TOOL_IT_CONFIGURATION_CALIBRATION_FACTOR_K : "Configuration Command Calibration Factor K",
-    MY_TOOL_IT_CONFIGURATION_CALIBRATION_FACTOR_D : "Configuration Command Calibration Factor D",
-    MY_TOOL_IT_CONFIGURATION_CALIBRATE_MEASSUREMENT : "Configuration Command Calibration Measurement",
-    MY_TOOL_IT_CONFIGURATION_ALARM : "Configuration Command Alarm",
-    MY_TOOL_IT_CONFIGURATION_CONFIGURATION_HMI : "Configuration Command HMI",
-    }
+    MyToolItConfiguration["Acceleration"] : "Configuration Command Acceleration Configuration",
+    MyToolItConfiguration["Temperature"] : "Configuration Command Temperature Configuration",
+    MyToolItConfiguration["Voltage"] : "Configuration Command Voltage Configuration",
+    MyToolItConfiguration["Current"] : "Configuration Command Current Configuration",
+    MyToolItConfiguration["CalibrationFactorK"] : "Configuration Command Calibration Factor K",
+    MyToolItConfiguration["CalibrationFactorD"] : "Configuration Command Calibration Factor D",
+    MyToolItConfiguration["CalibrateMeasurement"] : "Configuration Command Calibration Measurement",
+    MyToolItConfiguration["Alarm"] : "Configuration Command Alarm",
+    MyToolItConfiguration["Hmi"] : "Configuration Command HMI",
+}
 
 CommandBlockProductData = {
-    MY_TOOL_IT_PRODUCT_DATA_GTIN : "Product Data Command GTIN",
-    MY_TOOL_IT_PRODUCT_DATA_HARDWARE_REVISION : "Product Data Command Hardware Revision",
-    MY_TOOL_IT_PRODUCT_DATA_FIRMWARE_VERSION : "Product Data Command Firmware Version",
-    MY_TOOL_IT_PRODUCT_DATA_RELEASE_NAME : "Product Data Command Release Name",
-    MY_TOOL_IT_PRODUCT_DATA_SERIAL_NUMBER1 : "Product Data Command Serial Number 1",
-    MY_TOOL_IT_PRODUCT_DATA_SERIAL_NUMBER2 : "Product Data Command Serial Number 2",
-    MY_TOOL_IT_PRODUCT_DATA_SERIAL_NUMBER3 : "Product Data Command Serial Number 3",
-    MY_TOOL_IT_PRODUCT_DATA_SERIAL_NUMBER4 : "Product Data Command Serial Number 4",
-    MY_TOOL_IT_PRODUCT_DATA_NAME1 : "Product Data Command Name1",
-    MY_TOOL_IT_PRODUCT_DATA_NAME2 : "Product Data Command Name2",
-    MY_TOOL_IT_PRODUCT_DATA_NAME3 : "Product Data Command Name3",
-    MY_TOOL_IT_PRODUCT_DATA_NAME4 : "Product Data Command Name4",
-    MY_TOOL_IT_PRODUCT_DATA_NAME5 : "Product Data Command Name5",
-    MY_TOOL_IT_PRODUCT_DATA_NAME6 : "Product Data Command Name6",
-    MY_TOOL_IT_PRODUCT_DATA_NAME7 : "Product Data Command Name7",
-    MY_TOOL_IT_PRODUCT_DATA_NAME8 : "Product Data Command Name8",
-    MY_TOOL_IT_PRODUCT_DATA_NAME9 : "Product Data Command Name9",
-    MY_TOOL_IT_PRODUCT_DATA_NAME10 : "Product Data Command Name10",
-    MY_TOOL_IT_PRODUCT_DATA_NAME11 : "Product Data Command Name11",
-    MY_TOOL_IT_PRODUCT_DATA_NAME12 : "Product Data Command Name12",
-    MY_TOOL_IT_PRODUCT_DATA_NAME13 : "Product Data Command Name13",
-    MY_TOOL_IT_PRODUCT_DATA_NAME14 : "Product Data Command Name14",
-    MY_TOOL_IT_PRODUCT_DATA_NAME15 : "Product Data Command Name15",
-    MY_TOOL_IT_PRODUCT_DATA_NAME16 : "Product Data Command Name16",
-    MY_TOOL_IT_PRODUCT_DATA_OEM_FREE_USE1 : "Product Data Command Free Use 1",
-    MY_TOOL_IT_PRODUCT_DATA_OEM_FREE_USE2 : "Product Data Command Free Use 2",
-    MY_TOOL_IT_PRODUCT_DATA_OEM_FREE_USE3 : "Product Data Command Free Use 3",
-    MY_TOOL_IT_PRODUCT_DATA_OEM_FREE_USE4 : "Product Data Command Free Use 4",
-    MY_TOOL_IT_PRODUCT_DATA_OEM_FREE_USE5 : "Product Data Command Free Use 5",
-    MY_TOOL_IT_PRODUCT_DATA_OEM_FREE_USE6 : "Product Data Command Free Use 6",
-    MY_TOOL_IT_PRODUCT_DATA_OEM_FREE_USE7 : "Product Data Command Free Use 7",
-    MY_TOOL_IT_PRODUCT_DATA_OEM_FREE_USE8 : "Product Data Command Free Use 8",
-    }
+    MyToolItProductData["GTIN"] : "Product Data Command GTIN",
+    MyToolItProductData["HardwareRevision"] : "Product Data Command Hardware Revision",
+    MyToolItProductData["FirmwareVersion"] : "Product Data Command Firmware Version",
+    MyToolItProductData["ReleaseName"] : "Product Data Command Release Name",
+    MyToolItProductData["SerialNumber1"] : "Product Data Command Serial Number 1",
+    MyToolItProductData["SerialNumber2"] : "Product Data Command Serial Number 2",
+    MyToolItProductData["SerialNumber3"] : "Product Data Command Serial Number 3",
+    MyToolItProductData["SerialNumber4"] : "Product Data Command Serial Number 4",
+    MyToolItProductData["Name1"] : "Product Data Command Name1",
+    MyToolItProductData["Name2"] : "Product Data Command Name2",
+    MyToolItProductData["Name3"]: "Product Data Command Name3",
+    MyToolItProductData["Name4"]: "Product Data Command Name4",
+    MyToolItProductData["Name5"]: "Product Data Command Name5",
+    MyToolItProductData["Name6"]: "Product Data Command Name6",
+    MyToolItProductData["Name7"]: "Product Data Command Name7",
+    MyToolItProductData["Name8"]: "Product Data Command Name8",
+    MyToolItProductData["Name9"]: "Product Data Command Name9",
+    MyToolItProductData["Name10"] : "Product Data Command Name10",
+    MyToolItProductData["Name11"] : "Product Data Command Name11",
+    MyToolItProductData["Name12"] : "Product Data Command Name12",
+    MyToolItProductData["Name13"] : "Product Data Command Name13",
+    MyToolItProductData["Name14"] : "Product Data Command Name14",
+    MyToolItProductData["Name15"] : "Product Data Command Name15",
+    MyToolItProductData["Name16"] : "Product Data Command Name16",
+    MyToolItProductData["OemFreeUse1"] : "Product Data Command Free Use 1",
+    MyToolItProductData["OemFreeUse2"] : "Product Data Command Free Use 2",
+    MyToolItProductData["OemFreeUse3"] : "Product Data Command Free Use 3",
+    MyToolItProductData["OemFreeUse4"] : "Product Data Command Free Use 4",
+    MyToolItProductData["OemFreeUse5"] : "Product Data Command Free Use 5",
+    MyToolItProductData["OemFreeUse6"] : "Product Data Command Free Use 6",
+    MyToolItProductData["OemFreeUse7"] : "Product Data Command Free Use 7",
+    MyToolItProductData["OemFreeUse8"] : "Product Data Command Free Use 8",
+}
 
 CommandBlockTest = {
-    MY_TOOL_IT_TEST_SIGNAL : "Test Command Signal",
-    }
+    MyToolItTest["Signal"] : "Test Command Signal",
+}
 
-CalibMeassurementActionNone = 0
-CalibMeassurementActionInject = 1
-CalibMeassurementActionEject = 2
-CalibMeassurementActionMeasure = 3
+CalibMeassurementActionNr = {
+    "None" : 0,
+    "Inject" : 1,
+    "Eject" : 2,
+    "Measure" : 3,
+}
 
-CalibMeassurementTypeAcc = 0
-CalibMeassurementTypeTemp = 1
-CalibMeassurementTypeVoltage = 32
-CalibMeassurementTypeVss = 96
-CalibMeassurementTypeAvdd = 97
-CalibMeassurementTypeRegulatedInternalPower = 98
-CalibMeassurementTypeOpvOutput = 99
+CalibMeassurementActionName = {
+    "None" : "Calibration Measurement Action - None/Reset",
+    "Inject" : "Calibration Measurement Action - Inject",
+    "Eject" : "Calibration Measurement Action - Eject",
+    "Measure" : "Calibration Measurement Action - Measure",
+}
 
-AdcAcquisitionTime1 = 0
-AdcAcquisitionTime2 = 1
-AdcAcquisitionTime3 = 2
-AdcAcquisitionTime4 = 3
-AdcAcquisitionTime8 = 4
-AdcAcquisitionTime16 = 5
-AdcAcquisitionTime32 = 6
-AdcAcquisitionTime64 = 7
-AdcAcquisitionTime128 = 8
-AdcAcquisitionTime256 = 9
-AdcAcquisitionTimeList = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-AdcOverSamplingRateNone = 0
-AdcOverSamplingRate2 = 1
-AdcOverSamplingRate4 = 2
-AdcOverSamplingRate8 = 3
-AdcOverSamplingRate16 = 4
-AdcOverSamplingRate32 = 5
-AdcOverSamplingRate64 = 6 
-AdcOverSamplingRate128 = 7
-AdcOverSamplingRate256 = 8
-AdcOverSamplingRate512 = 9
-AdcOverSamplingRate1024 = 10
-AdcOverSamplingRate2048 = 11
-AdcOverSamplingRate4096 = 12
-AdcOverSamplingRateList = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-AdcReferenceNone = 0      
-AdcReference1V25 = 25     
-AdcReferenceVfs1V65 = 33  
-AdcReferenceVfs1V8 = 36   
-AdcReferenceVfs2V1 = 42   
-AdcReferenceVfs2V2 = 44   
-AdcReference2V5 = 50      
-AdcReferenceVfs2V7 = 54    
-AdcReferenceVDD = 66      
-AdcReference5V = 100      
-AdcReference6V6 = 132     
-AdcReferenceList = [AdcReference1V25, AdcReferenceVfs1V65, AdcReferenceVfs1V8, AdcReferenceVfs2V1, AdcReferenceVfs2V2, AdcReference2V5, AdcReferenceVfs2V7, AdcReferenceVDD, AdcReference5V, AdcReference6V6]
+CalibMeassurementTypeNr = {
+    "Acc" : 0,
+    "Temp" : 1,
+    "Voltage" : 32,
+    "Vss" : 96,
+    "Avdd" : 97,
+    "RegulatedInternalPower" : 98,
+    "OpvOutput" : 99,
+}
 
-DataSetsNone = 0
-DataSets1 = 1
-DataSets3 = 2
-DataSets6 = 3
-DataSets10 = 4
-DataSets15 = 5
-DataSets20 = 6
-DataSets30 = 7
+CalibMeassurementTypeName = {
+    CalibMeassurementTypeNr["Acc"] : "Calibration Measurement Type - Acceleration",
+    CalibMeassurementTypeNr["Temp"] : "Calibration Measurement Type - Temperature",
+    CalibMeassurementTypeNr["Voltage"] : "Calibration Measurement Type - Voltage",
+    CalibMeassurementTypeNr["Vss"] : "Calibration Measurement Type - VSS(Ground)",
+    CalibMeassurementTypeNr["Avdd"] :"Calibration Measurement Type - AVDD(Analog Supply)",
+    CalibMeassurementTypeNr["RegulatedInternalPower"] : "Calibration Measurement Type - Regulated Internal Power",
+    CalibMeassurementTypeNr["OpvOutput"]  : "Calibration Measurement Type - OPV Output",
+}
 
-TestCommandSignalLine = 1
-TestCommandSignalRamp = 2
-    
-SystemCommandBlueToothConnectTime = 20
-SystemCommandBlueToothConnectTimeOut = 16
-SystemCommandBlueToothDisconnectTime = 1
-SystemCommandBlueToothReserved = 0
-SystemCommandBlueToothConnect = 1
-SystemCommandBlueToothGetNumberAvailableDevices = 2
-SystemCommandBlueToothSetName1 = 3
-SystemCommandBlueToothSetName2 = 4
-SystemCommandBlueToothGetName1 = 5
-SystemCommandBlueToothGetName2 = 6
-SystemCommandBlueToothDeviceConnect = 7
-SystemCommandBlueToothDeviceCheckConnected = 8
-SystemCommandBlueToothDisconnect = 9
-SystemCommandBlueToothSendCounter = 10
-SystemCommandBlueToothReceiveCounter = 11
-SystemCommandBlueToothRssi = 12
-SystemCommandBlueToothEnergyModeReducedRead = 13
-SystemCommandBlueToothEnergyModeReducedWrite = 14
-SystemCommandBlueToothEnergyModeLowestRead = 15
-SystemCommandBlueToothEnergyModeLowestWrite = 16
-SystemCommandBlueToothMacAddress = 17
+AdcAcquisitionTime = {
+    1 : 0,
+    2 : 1,
+    3 : 2,
+    4 : 3,
+    8 : 4,
+    16 : 5,
+    32 : 6,
+    64 : 7,
+    128 : 8,
+    256 : 9,
+}
 
-SystemCommandRoutingReserved = 0
-SystemCommandRoutingSendCounter = 1
-SystemCommandRoutingSendFailCounter = 2
-SystemCommandRoutingSendLowLevelByteCounter = 3
-SystemCommandRoutingReceiveCounter = 4
-SystemCommandRoutingReceiveFailCounter = 5
-SystemCommandRoutingReceiveLowLevelByteCounter = 6
+AdcAcquisitionTimeReverse = {
+    0 : 1,
+    1 : 2,
+    2 : 3,
+    3 : 4,
+    4 : 8,
+    5 : 16,
+    6 : 32,
+    7 : 64,
+    8 : 128,
+    9 : 256,
+}
 
-CalibMeassurementAction = {
-    CalibMeassurementTypeAcc : "Calibration Measurement Type - Acceleration",
-    CalibMeassurementTypeTemp : "Calibration Measurement Type - Temperature",
-    CalibMeassurementTypeVoltage : "Calibration Measurement Type - Voltage",
-    CalibMeassurementTypeVss : "Calibration Measurement Type - VSS(Ground)",
-    CalibMeassurementTypeAvdd :"Calibration Measurement Type - AVDD(Analog Supply)",
-    CalibMeassurementTypeRegulatedInternalPower : "Calibration Measurement Type - Regulated Internal Power",
-    CalibMeassurementTypeOpvOutput  : "Calibration Measurement Type - OPV Output",
-    }
+AdcAcquisitionTimeName = {
+    AdcAcquisitionTime[1] : "ADC Acquisition Time - 1 Cycle",
+    AdcAcquisitionTime[2] : "ADC Acquisition Time - 2 Cycles",
+    AdcAcquisitionTime[3] : "ADC Acquisition Time - 3 Cycles",
+    AdcAcquisitionTime[4] : "ADC Acquisition Time - 4 Cycles",
+    AdcAcquisitionTime[8] : "ADC Acquisition Time - 8 Cycles",
+    AdcAcquisitionTime[16] : "ADC Acquisition Time - 16 Cycles",
+    AdcAcquisitionTime[32] : "ADC Acquisition Time - 32 Cycles",
+    AdcAcquisitionTime[64] : "ADC Acquisition Time - 64 Cycles",
+    AdcAcquisitionTime[128] : "ADC Acquisition Time - 128 Cycles",
+    AdcAcquisitionTime[256] : "ADC Acquisition Time - 256 Cycles"
+}
 
-CalibMeassurementAction = {
-    CalibMeassurementActionNone : "Calibration Measurement Action - None/Reset",
-    CalibMeassurementActionInject : "Calibration Measurement Action - Inject",
-    CalibMeassurementActionEject : "Calibration Measurement Action - Eject",
-    CalibMeassurementActionMeasure : "Calibration Measurement Action - Measure",
-    }
+AdcOverSamplingRate = {
+    1 : 0,
+    2 : 1,
+    4 : 2,
+    8 : 3,
+    16 : 4,
+    32 : 5,
+    64 : 6,
+    128 : 7,
+    256 : 8,
+    512 : 9,
+    1024 : 10,
+    2048 : 11,
+    4096 : 12,
+}
+
+AdcOverSamplingRateReverse = {
+    0 : 1,
+    1 : 2,
+    2 : 4,
+    3 : 8,
+    4 : 16,
+    5 : 32, 
+    6 : 64, 
+    7 : 128,
+    8 : 256,
+    9 : 512,
+    10 : 1024,
+    11 : 2048,
+    12 : 4096,
+}
+
+AdcOverSamplingRateName = {
+    AdcOverSamplingRate[1] : "ADC Single Sampling",
+    AdcOverSamplingRate[2] : "ADC Over Sampling Rate - 2",
+    AdcOverSamplingRate[4] : "ADC Over Sampling Rate - 4",
+    AdcOverSamplingRate[8] : "ADC Over Sampling Rate - 8",
+    AdcOverSamplingRate[16] : "ADC Over Sampling Rate - 16",
+    AdcOverSamplingRate[32] : "ADC Over Sampling Rate - 32",
+    AdcOverSamplingRate[64] : "ADC Over Sampling Rate - 64",
+    AdcOverSamplingRate[128] : "ADC Over Sampling Rate - 128",
+    AdcOverSamplingRate[256] : "ADC Over Sampling Rate - 256",
+    AdcOverSamplingRate[512] : "ADC Over Sampling Rate - 512",
+    AdcOverSamplingRate[1024] : "ADC Over Sampling Rate - 1024",
+    AdcOverSamplingRate[2048] : "ADC Over Sampling Rate - 2048",
+    AdcOverSamplingRate[4096] : "ADC Over Sampling Rate - 4096"
+}
+
+AdcReference = {     
+    "1V25" : 25,
+    "Vfs1V65" : 33,
+    "Vfs1V8" : 36,
+    "Vfs2V1" : 42,
+    "Vfs2V2" : 44,
+    "2V5" : 50,
+    "Vfs2V7" : 54,
+    "VDD" : 66,
+    "5V" : 100,
+    "6V6" : 132,
+}
+ 
+VRefName = {
+    25 : "ADC Reference 1V25",
+    33   : "ADC Reference 1V65",
+    36 : "ADC Reference 1V8",
+    42 : "ADC Reference 2V1",
+    44 : "ADC Reference 2V2",
+    50 : "ADC Reference 2V5",
+    54 : "ADC Reference 2V7",
+    66 : "ADC Reference VDD(3V3)",
+    100 : "ADC Reference 5V",
+    132 : "ADC Reference 6V6",
+}
+
+AdcVRefValuemV = {
+    AdcReference["1V25"] : 1250,
+    AdcReference["Vfs1V65"] : 1650,
+    AdcReference["Vfs1V8"] : 1800,
+    AdcReference["Vfs2V1"] : 2100,
+    AdcReference["Vfs2V2"] : 2200,
+    AdcReference["2V5"] : 2500,
+    AdcReference["Vfs2V7"] : 2700,
+    AdcReference["VDD"] : 3300,
+    AdcReference["5V"] : 5000,
+    AdcReference["6V6"] : 6000
+}
+
+
+DataSets = {
+    0 : 0,
+    1 : 1,
+    3 : 2,
+    6 : 3,
+    10 : 4,
+    15 : 5,
+    20 : 6,
+    30 : 7,
+}
+
+TestCommandSignal = {
+    "Line" : 1,
+    "Ramp" : 2,
+}
+
+Prescaler = {
+    "Min" : 2,
+    "Max" : 127,
+}
+
+NetworkState = {
+    "Failure" : 0,
+    "Error"  : 1,
+    "Standby" : 2,
+    "GracefulDegration2" : 3,
+    "GracefulDegration1" : 4,
+    "Operating" : 5,
+    "Startup" : 6,
+    "NoChange"  : 7,
+}
+
+NetworkStateName = {
+    0 : "Network State Failure",
+    1 : "Network State Error",
+    2 : "Network State Standby",
+    3 : "Network State GracefulDegration2",
+    4 : "Network State GracefulDegration1",
+    5 : "Network State Operating",
+    6 : "Network State Startup",
+    7 : "Network State NoChange",
+}
 
 
 def to8bitSigned(num):
@@ -342,160 +491,23 @@ def messageValueGet(m):
 
     
 def calcSamplingRate(prescaler, acquisitionTime, OverSamplingRate):
-    if AdcAcquisitionTime1 == acquisitionTime:
-        acquTime = 1
-    elif AdcAcquisitionTime2 == acquisitionTime:
-        acquTime = 2
-    elif AdcAcquisitionTime3 == acquisitionTime:
-        acquTime = 3
-    elif AdcAcquisitionTime4 == acquisitionTime:
-        acquTime = 4
-    elif AdcAcquisitionTime8 == acquisitionTime:
-        acquTime = 8
-    elif AdcAcquisitionTime16 == acquisitionTime:
-        acquTime = 16
-    elif AdcAcquisitionTime32 == acquisitionTime:
-        acquTime = 32
-    elif AdcAcquisitionTime64 == acquisitionTime:
-        acquTime = 64
-    elif AdcAcquisitionTime128 == acquisitionTime:
-        acquTime = 128
-    elif AdcAcquisitionTime256 == acquisitionTime:
-        acquTime = 256
-    else:
-        raise
-    if AdcOverSamplingRateNone == OverSamplingRate:
-        samplingRate = 1
-    elif AdcOverSamplingRate2 == OverSamplingRate:
-        samplingRate = 2
-    elif AdcOverSamplingRate4 == OverSamplingRate:
-        samplingRate = 4
-    elif AdcOverSamplingRate8 == OverSamplingRate:
-        samplingRate = 8
-    elif AdcOverSamplingRate16 == OverSamplingRate:
-        samplingRate = 16
-    elif AdcOverSamplingRate32 == OverSamplingRate:
-        samplingRate = 32
-    elif AdcOverSamplingRate64 == OverSamplingRate:
-        samplingRate = 64
-    elif AdcOverSamplingRate128 == OverSamplingRate:
-        samplingRate = 128
-    elif AdcOverSamplingRate256 == OverSamplingRate:
-        samplingRate = 256
-    elif AdcOverSamplingRate512 == OverSamplingRate:
-        samplingRate = 512
-    elif AdcOverSamplingRate1024 == OverSamplingRate:
-        samplingRate = 1024
-    elif AdcOverSamplingRate2048 == OverSamplingRate:
-        samplingRate = 2048
-    elif AdcOverSamplingRate4096 == OverSamplingRate:
-        samplingRate = 4096
-    else:
-        raise
+    acquTime = AdcAcquisitionTimeReverse[acquisitionTime]
+    samplingRate = AdcOverSamplingRateReverse[OverSamplingRate]
     return 38400000 / ((prescaler + 1) * (acquTime + 13) * samplingRate)
 
 
-PrescalerMin = 2
-PrescalerMax = 127
+def payload2Hex(payload):
+    payloadHex = '[{}]'.format(', '.join(hex(x) for x in payload))
+    return payloadHex
 
-AdcAcquisitionTimeName = {
-    AdcAcquisitionTime1 : "ADC Acquisition Time - 1Cycle",
-    AdcAcquisitionTime2 : "ADC Acquisition Time - 2Cycle",
-    AdcAcquisitionTime3 : "ADC Acquisition Time - 3Cycle",
-    AdcAcquisitionTime4 : "ADC Acquisition Time - 4Cycle",
-    AdcAcquisitionTime8 : "ADC Acquisition Time - 8Cycle",
-    AdcAcquisitionTime16 : "ADC Acquisition Time - 16Cycle",
-    AdcAcquisitionTime32 : "ADC Acquisition Time - 32Cycle",
-    AdcAcquisitionTime64 : "ADC Acquisition Time - 64Cycle",
-    AdcAcquisitionTime128 : "ADC Acquisition Time - 128Cycle",
-    AdcAcquisitionTime256 : "ADC Acquisition Time - 256Cycle"
-    }
+def AsciiStringWordBigEndian(ByteArray):
+    value = 0
+    for byte in range(len(ByteArray)):
+        value += (ByteArray[byte] << (8 * byte))
+    return value
 
-iAdcAcquisitionTime = {
-    1 : AdcAcquisitionTime1,
-    2 : AdcAcquisitionTime2,
-    3 : AdcAcquisitionTime3,
-    4 : AdcAcquisitionTime4,
-    8 : AdcAcquisitionTime8,
-    16 : AdcAcquisitionTime16,
-    32 : AdcAcquisitionTime32,
-    64 : AdcAcquisitionTime64,
-    128 : AdcAcquisitionTime128,
-    256 : AdcAcquisitionTime256
-    }
-
-AdcOverSamplingRateName = {
-    AdcOverSamplingRateNone : "ADC Single Sampling",
-    AdcOverSamplingRate2 : "ADC Over Sampling Rate - 2",
-    AdcOverSamplingRate4 : "ADC Over Sampling Rate - 4",
-    AdcOverSamplingRate8 : "ADC Over Sampling Rate - 8",
-    AdcOverSamplingRate16 : "ADC Over Sampling Rate - 16",
-    AdcOverSamplingRate32 : "ADC Over Sampling Rate - 32",
-    AdcOverSamplingRate64 : "ADC Over Sampling Rate - 64",
-    AdcOverSamplingRate128 : "ADC Over Sampling Rate - 128",
-    AdcOverSamplingRate256 : "ADC Over Sampling Rate - 256",
-    AdcOverSamplingRate512 : "ADC Over Sampling Rate - 512",
-    AdcOverSamplingRate1024 : "ADC Over Sampling Rate - 1024",
-    AdcOverSamplingRate2048 : "ADC Over Sampling Rate - 2048",
-    AdcOverSamplingRate4096 : "ADC Over Sampling Rate - 4096"
-    }
-
-
-iAdcOverSamplingRate = {
-    1 : AdcOverSamplingRateNone,
-    2 : AdcOverSamplingRate2,
-    4 : AdcOverSamplingRate4,
-    8 : AdcOverSamplingRate8,
-    16 : AdcOverSamplingRate16,
-    32 : AdcOverSamplingRate32,
-    64 : AdcOverSamplingRate64,
-    128 : AdcOverSamplingRate128,
-    256 : AdcOverSamplingRate256,
-    512 : AdcOverSamplingRate512,
-    1024 : AdcOverSamplingRate1024,
-    2048 : AdcOverSamplingRate2048,
-    4096 : AdcOverSamplingRate4096
-    }
-
-VRefName = {
-    AdcReferenceNone : "ADC Reference None",
-    AdcReference1V25 : "ADC Reference 1V25",
-    AdcReferenceVfs1V65 : "ADC Reference 1V65",
-    AdcReferenceVfs1V8 : "ADC Reference 1V8",
-    AdcReferenceVfs2V1 : "ADC Reference 2V1",
-    AdcReferenceVfs2V2 : "ADC Reference 2V2",
-    AdcReference2V5 : "ADC Reference 2V5",
-    AdcReferenceVfs2V7 : "ADC Reference 2V7",
-    AdcReferenceVDD : "ADC Reference VDD(3V3)",
-    AdcReference5V : "ADC Reference 5V",
-    AdcReference6V6 : "ADC Reference 6V6"
-    }
-
-AdcVRefValuemV = {
-    AdcReferenceNone : 0,
-    AdcReference1V25 : 1250,
-    AdcReferenceVfs1V65 : 1650,
-    AdcReferenceVfs1V8 : 1800,
-    AdcReferenceVfs2V1 : 2100,
-    AdcReferenceVfs2V2 : 2200,
-    AdcReference2V5 : 2500,
-    AdcReferenceVfs2V7 : 2700,
-    AdcReferenceVDD : 3300,
-    AdcReference5V : 5000,
-    AdcReference6V6 : 6000
-    }
-
-tAdcVRef = {
-    0 : AdcReferenceNone,
-    1250 : AdcReference1V25,
-    1650 : AdcReferenceVfs1V65,
-    1800 : AdcReferenceVfs1V8,
-    2100 : AdcReferenceVfs2V1,
-    2200 : AdcReferenceVfs2V2,
-    2500 : AdcReference2V5,
-    2700 : AdcReferenceVfs2V7,
-    3300 : AdcReferenceVDD,
-    5000 : AdcReference5V,
-    6000 : AdcReference6V6
-    }
-
+def AsciiStringWordLittleEndian(ByteArray):
+    value = 0
+    for byte in range(len(ByteArray)):
+        value += (ByteArray[byte] << (8 * (len(ByteArray) - byte - 1)))
+    return value
