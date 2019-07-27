@@ -7,9 +7,10 @@ file_path = '../'
 dir_name = os.path.dirname(file_path)
 sys.path.append(dir_name)
                 
-from PeakCanFd import *
-from MyToolItNetworkNumbers import *
+import PeakCanFd
+from MyToolItNetworkNumbers import MyToolItNetworkNr
 from SthLimits import *
+import time
 
 log_location='../../Logs/STH/'
 
@@ -20,17 +21,17 @@ class TestSthManually(unittest.TestCase):
         input('Press Any Key to Continue')
         self.fileName = log_location + self._testMethodName + ".txt"
         self.fileNameError = log_location + "Error_" + self._testMethodName + ".txt"
-        self.PeakCan = PeakCanFd(PCAN_BAUD_1M, self.fileName, self.fileNameError, MY_TOOL_IT_NETWORK_SPU1, MY_TOOL_IT_NETWORK_STH1)
+        self.PeakCan = PeakCanFd.PeakCanFd(PeakCanFd.PCAN_BAUD_1M, self.fileName, self.fileNameError, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"])
         self.PeakCan.Logger.Info("TestCase: " + str(self._testMethodName))
         self._resetStu()
         self.PeakCan.Logger.Info("Connect to STH")
-        self.PeakCan.BlueToothConnectPollingName(MY_TOOL_IT_NETWORK_STU1, TestDeviceName)
+        self.PeakCan.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
         self._resetSth()
         self.PeakCan.Logger.Info("Connect to STH")
-        self.PeakCan.BlueToothConnectPollingName(MY_TOOL_IT_NETWORK_STU1, TestDeviceName)
+        self.PeakCan.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
         self.Error = False
-        self.PeakCan.Logger.Info("STU BlueTooth Address: " + hex(self.PeakCan.BlueToothAddress(MY_TOOL_IT_NETWORK_STU1)))
-        self.PeakCan.Logger.Info("STH BlueTooth Address: " + hex(self.PeakCan.BlueToothAddress(MY_TOOL_IT_NETWORK_STH1)))
+        self.PeakCan.Logger.Info("STU BlueTooth Address: " + hex(self.PeakCan.BlueToothAddress(MyToolItNetworkNr["STU1"])))
+        self.PeakCan.Logger.Info("STH BlueTooth Address: " + hex(self.PeakCan.BlueToothAddress(MyToolItNetworkNr["STH1"])))
         self._statusWords()
         temp = self._SthAdcTemp()
         self.assertGreaterEqual(TempInternalMax, temp)
@@ -58,31 +59,31 @@ class TestSthManually(unittest.TestCase):
 
 
     def _resetStu(self, retries=5, log=True):
-        return self.PeakCan.cmdReset(MY_TOOL_IT_NETWORK_STU1, retries=retries, log=log)
+        return self.PeakCan.cmdReset(MyToolItNetworkNr["STU1"], retries=retries, log=log)
 
     def _resetSth(self, retries=5, log=True):
-        return self.PeakCan.cmdReset(MY_TOOL_IT_NETWORK_STH1, retries=retries, log=log)    
+        return self.PeakCan.cmdReset(MyToolItNetworkNr["STH1"], retries=retries, log=log)    
 
     def _SthAdcTemp(self):
-        ret = self.PeakCan.calibMeasurement(MY_TOOL_IT_NETWORK_STH1, CalibMeassurementActionMeasure, CalibMeassurementTypeTemp, 1, AdcReference1V25, log=False)
+        ret = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["Temp"], 1, AdcReference["1V25"], log=False)
         result = float(messageWordGet(ret[4:]))
         result /= 1000
         self.PeakCan.Logger.Info("Temperature(Chip): " + str(result) + "°C") 
-        self.PeakCan.calibMeasurement(MY_TOOL_IT_NETWORK_STH1, CalibMeassurementActionNone, CalibMeassurementTypeTemp, 1, AdcReferenceNone, log=False, bReset=True)
+        self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["None"], CalibMeassurementTypeNr["Temp"], 1, 0, log=False, bReset=True)
         return result
     
     def _statusWords(self):
         ErrorWord = SthErrorWord()
-        psw0 = self.PeakCan.statusWord0(MY_TOOL_IT_NETWORK_STH1)
+        psw0 = self.PeakCan.statusWord0(MyToolItNetworkNr["STH1"])
         self.PeakCan.Logger.Info("STH Status Word: " + hex(psw0))
-        psw0 = self.PeakCan.statusWord0(MY_TOOL_IT_NETWORK_STU1)
+        psw0 = self.PeakCan.statusWord0(MyToolItNetworkNr["STU1"])
         self.PeakCan.Logger.Info("STU Status Word: " + hex(psw0))
-        ErrorWord.asword = self.PeakCan.statusWord1(MY_TOOL_IT_NETWORK_STH1)
+        ErrorWord.asword = self.PeakCan.statusWord1(MyToolItNetworkNr["STH1"])
         if True == ErrorWord.b.bAdcOverRun:
             print("STH Error Word: " + hex(ErrorWord.asword))
             self.Error = True
         self.PeakCan.Logger.Info("STH Error Word: " + hex(ErrorWord.asword))
-        ErrorWord.asword = self.PeakCan.statusWord1(MY_TOOL_IT_NETWORK_STU1)
+        ErrorWord.asword = self.PeakCan.statusWord1(MyToolItNetworkNr["STU1"])
         if True == ErrorWord.b.bAdcOverRun:
             print("STU Error Word: " + hex(ErrorWord.asword))
             self.Error = True
@@ -90,14 +91,14 @@ class TestSthManually(unittest.TestCase):
  
     def TurnOffLed(self):
         self.PeakCan.Logger.Info("Turn Off LED")
-        cmd = self.PeakCan.CanCmd(MY_TOOL_IT_BLOCK_CONFIGURATION, MY_TOOL_IT_CONFIGURATION_CONFIGURATION_HMI, 1, 0)
-        message = self.PeakCan.CanMessage20(cmd, MY_TOOL_IT_NETWORK_SPU1, MY_TOOL_IT_NETWORK_STH1, [129, 1, 2, 0, 0, 0, 0, 0])
+        cmd = self.PeakCan.CanCmd(MyToolItBlock["Configuration"], MyToolItConfiguration["Hmi"], 1, 0)
+        message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [129, 1, 2, 0, 0, 0, 0, 0])
         self.PeakCan.WriteFrameWaitAckRetries(message)
 
     def TurnOnLed(self):
         self.PeakCan.Logger.Info("Turn On LED")
-        cmd = self.PeakCan.CanCmd(MY_TOOL_IT_BLOCK_CONFIGURATION, MY_TOOL_IT_CONFIGURATION_CONFIGURATION_HMI, 1, 0)
-        message = self.PeakCan.CanMessage20(cmd, MY_TOOL_IT_NETWORK_SPU1, MY_TOOL_IT_NETWORK_STH1, [129, 1, 1, 0, 0, 0, 0, 0])
+        cmd = self.PeakCan.CanCmd(MyToolItBlock["Configuration"], MyToolItConfiguration["Hmi"], 1, 0)
+        message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [129, 1, 1, 0, 0, 0, 0, 0])
         self.PeakCan.WriteFrameWaitAckRetries(message)        
         
     """
@@ -109,16 +110,16 @@ class TestSthManually(unittest.TestCase):
         expectedData.asbyte = 0
         expectedData.b.u2NodeState = 0
         expectedData.b.u3NetworkState = 6
-        self.PeakCan.cmdSend(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_BLOCK_SYSTEM, MY_TOOL_IT_SYSTEM_ACTIVE_STATE, [expectedData.asbyte])
-        cmd = self.PeakCan.CanCmd(MY_TOOL_IT_BLOCK_SYSTEM, MY_TOOL_IT_SYSTEM_ACTIVE_STATE, 1, 0)
+        self.PeakCan.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["System"], MyToolItSystem["ActiveState"], [expectedData.asbyte])
+        cmd = self.PeakCan.CanCmd(MyToolItBlock["System"], MyToolItSystem["ActiveState"], 1, 0)
 
-        msg = self.PeakCan.CanMessage20(cmd, MY_TOOL_IT_NETWORK_SPU1, MY_TOOL_IT_NETWORK_STH1, [expectedData.asbyte])
+        msg = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [expectedData.asbyte])
         self.PeakCan.Logger.Info("Write Message")
         self.PeakCan.WriteFrame(msg)
         self.PeakCan.Logger.Info("Wait 200ms")
-        sleep(0.2)
-        cmd = self.PeakCan.CanCmd(MY_TOOL_IT_BLOCK_SYSTEM, MY_TOOL_IT_SYSTEM_ACTIVE_STATE, 0, 0)
-        msgAckExpected = self.PeakCan.CanMessage20(cmd, MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_NETWORK_SPU1, [0])
+        time.sleep(0.2)
+        cmd = self.PeakCan.CanCmd(MyToolItBlock["System"], MyToolItSystem["ActiveState"], 0, 0)
+        msgAckExpected = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["STH1"], MyToolItNetworkNr["SPU1"], [0])
         self.PeakCan.Logger.Info("Send ID: " + hex(msg.ID) + "; Expected ID: " + hex(msgAckExpected.ID) + "; Received ID: " + hex(self.PeakCan.getReadMessage(-1).ID))
         self.PeakCan.Logger.Info("Send Data: " + hex(0) + "; Expected Data: " + hex(expectedData.asbyte) + "; Received Data: " + hex(self.PeakCan.getReadMessage(-1).DATA[0]))
         self.assertEqual(hex(msgAckExpected.ID), hex(self.PeakCan.getReadMessage(-1).ID))
@@ -141,15 +142,15 @@ class TestSthManually(unittest.TestCase):
         failTry.b.bSetState = 1
         failTry.b.u2NodeState = 2
         failTry.b.u3NetworkState = 6
-        cmd = self.PeakCan.CanCmd(MY_TOOL_IT_BLOCK_SYSTEM, MY_TOOL_IT_SYSTEM_ACTIVE_STATE, 1, 0)
-        message = self.PeakCan.CanMessage20(cmd, MY_TOOL_IT_NETWORK_SPU1, MY_TOOL_IT_NETWORK_STH1, [sendData.asbyte])
+        cmd = self.PeakCan.CanCmd(MyToolItBlock["System"], MyToolItSystem["ActiveState"], 1, 0)
+        message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [sendData.asbyte])
         self.PeakCan.Logger.Info("Send Shut Down Command")
         receivedData.asbyte = self.PeakCan.WriteFrameWaitAckRetries(message)["Payload"][0]
         self.PeakCan.Logger.Info("Send try should fail")
-        message = self.PeakCan.CanMessage20(cmd, MY_TOOL_IT_NETWORK_SPU1, MY_TOOL_IT_NETWORK_STH1, [failTry.asbyte])
+        message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [failTry.asbyte])
         self.PeakCan.WriteFrame(message)
         self.PeakCan.Logger.Info("Wait 200ms")
-        sleep(0.2)
+        time.sleep(0.2)
         receivedDataFailTry.asbyte = self.PeakCan.getReadMessage(-1).DATA[0]
         self.PeakCan.Logger.Info("Fail Try Payload Byte for Active State Command(send): " + str(sendData.asbyte))
         self.PeakCan.Logger.Info("Fail Try Payload Byte for Active State Command(Received): " + str(receivedData.asbyte))
@@ -165,33 +166,33 @@ class TestSthManually(unittest.TestCase):
     """   
 
     def testManually0011PowerConsumptionEnergySaveMode(self):
-        self.PeakCan.BlueToothEnergyModeNr(SleepTimeMin, Sleep1AdvertisementTimeReset, 1)
-        self.PeakCan.BlueToothEnergyModeNr(Sleep2TimeReset, Sleep1AdvertisementTimeReset, 2)
-        self.PeakCan.BlueToothDisconnect(MY_TOOL_IT_NETWORK_STU1)        
+        self.PeakCan.BlueToothEnergyModeNr(SleepTime["Min"], SleepTime["AdvertisementReset1"], 1)
+        self.PeakCan.BlueToothEnergyModeNr(SleepTime["Reset2"], SleepTime["AdvertisementReset1"], 2)
+        self.PeakCan.BlueToothDisconnect(MyToolItNetworkNr["STU1"])        
         print("Start Simplicty Energy Profiler and connect to target (STH)")
-        print("Waiting" + str(SleepTimeMin) + "ms")
-        sleep(SleepTimeMin/1000)
-        print("Measure Power Consumption for advertisement time " + str(Sleep1AdvertisementTimeReset) + "ms")
+        print("Waiting" + str(SleepTime["Min"]) + "ms")
+        time.sleep(SleepTime["Min"]/1000)
+        print("Measure Power Consumption for advertisement time " + str(SleepTime["AdvertisementReset1"]) + "ms")
         input('Press any key to continue')
-        self.PeakCan.BlueToothConnectPollingName(MY_TOOL_IT_NETWORK_STU1, TestDeviceName)
-        self.PeakCan.BlueToothEnergyModeNr(SleepTimeMin, Sleep2AdvertisementTimeReset, 1)
-        self.PeakCan.BlueToothEnergyModeNr(Sleep2TimeReset, Sleep2AdvertisementTimeReset, 2)
-        self.PeakCan.BlueToothDisconnect(MY_TOOL_IT_NETWORK_STU1)
-        print("Waiting" + str(SleepTimeMin) + "ms")
-        sleep(SleepTimeMin/1000)
-        print("Measure Power Consumption for advertisement time " + str(Sleep2AdvertisementTimeReset) + "ms")
+        self.PeakCan.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
+        self.PeakCan.BlueToothEnergyModeNr(SleepTime["Min"], SleepTime["AdvertisementReset2"], 1)
+        self.PeakCan.BlueToothEnergyModeNr(SleepTime["Reset2"], SleepTime["AdvertisementReset2"], 2)
+        self.PeakCan.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
+        print("Waiting" + str(SleepTime["Min"]) + "ms")
+        time.sleep(SleepTime["Min"]/1000)
+        print("Measure Power Consumption for advertisement time " + str(SleepTime["AdvertisementReset2"]) + "ms")
         input('Press any key to continue')
-        self.PeakCan.BlueToothConnectPollingName(MY_TOOL_IT_NETWORK_STU1, TestDeviceName)
-        self.PeakCan.BlueToothEnergyModeNr(SleepTimeMin, ConnectionTimeNormalMaxMs, 1)
-        self.PeakCan.BlueToothEnergyModeNr(Sleep2TimeReset, ConnectionTimeNormalMaxMs, 2)
-        self.PeakCan.BlueToothDisconnect(MY_TOOL_IT_NETWORK_STU1)
-        print("Waiting" + str(SleepTimeMin) + "ms")
-        sleep(SleepTimeMin/1000)
-        print("Measure Power Consumption for advertisement time " + str(ConnectionTimeNormalMaxMs) + "ms")
+        self.PeakCan.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
+        self.PeakCan.BlueToothEnergyModeNr(SleepTime["Min"], TestConfig["ConTimeNormalMaxMs"], 1)
+        self.PeakCan.BlueToothEnergyModeNr(SleepTime["Reset2"], TestConfig["ConTimeNormalMaxMs"], 2)
+        self.PeakCan.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
+        print("Waiting" + str(SleepTime["Min"]) + "ms")
+        time.sleep(SleepTime["Min"]/1000)
+        print("Measure Power Consumption for advertisement time " + str(TestConfig["ConTimeNormalMaxMs"]) + "ms")
         input('Press any key to continue')
-        self.PeakCan.BlueToothConnectPollingName(MY_TOOL_IT_NETWORK_STU1, TestDeviceName)
-        self.PeakCan.BlueToothEnergyModeNr(Sleep1TimeReset, Sleep1AdvertisementTimeReset, 1)
-        self.PeakCan.BlueToothEnergyModeNr(Sleep2TimeReset, Sleep2AdvertisementTimeReset, 2)  
+        self.PeakCan.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
+        self.PeakCan.BlueToothEnergyModeNr(SleepTime["Reset1"], SleepTime["AdvertisementReset1"], 1)
+        self.PeakCan.BlueToothEnergyModeNr(SleepTime["Reset2"], SleepTime["AdvertisementReset2"], 2)  
 
 
     """
@@ -199,7 +200,7 @@ class TestSthManually(unittest.TestCase):
     """   
 
     def testManually0012PowerConsumptionStandby(self):
-        self.PeakCan.Standby(MY_TOOL_IT_NETWORK_STH1)
+        self.PeakCan.Standby(MyToolItNetworkNr["STH1"])
         print("Start Simplicty Energy Profiler and connect to target (STH)")    
         print("Measure Power Consumption for standby.") 
         input('Press any key to continue')
@@ -211,14 +212,14 @@ class TestSthManually(unittest.TestCase):
     Power Consumption - Connected
     """   
     def testManually0013PowerConsumptionConnected(self):
-        self.PeakCan.BlueToothEnergyModeNr(~0, Sleep1AdvertisementTimeReset, 1)
-        self.PeakCan.BlueToothEnergyModeNr(~0, Sleep1AdvertisementTimeReset, 2)
+        self.PeakCan.BlueToothEnergyModeNr(~0, SleepTime["AdvertisementReset1"], 1)
+        self.PeakCan.BlueToothEnergyModeNr(~0, SleepTime["AdvertisementReset1"], 2)
         print("Start Simplicty Energy Profiler and connect to target (STH)")   
         input('Press any key to continue') 
         print("Measure Power Consumption for connected.") 
         input('Press any key to continue')
-        self.PeakCan.BlueToothEnergyModeNr(Sleep1TimeReset, Sleep1AdvertisementTimeReset, 1)
-        self.PeakCan.BlueToothEnergyModeNr(Sleep2TimeReset, Sleep2AdvertisementTimeReset, 2)  
+        self.PeakCan.BlueToothEnergyModeNr(SleepTime["Reset1"], SleepTime["AdvertisementReset1"], 1)
+        self.PeakCan.BlueToothEnergyModeNr(SleepTime["Reset2"], SleepTime["AdvertisementReset2"], 2)  
  
     """
     Power Consumption - Measuring at reset conditions
@@ -226,10 +227,10 @@ class TestSthManually(unittest.TestCase):
     def testManually0014PowerConsumptionMeasuring(self):
         print("Start Simplicty Energy Profiler and connect to target (STH)") 
         input('Press any key to continue')
-        self.PeakCan.streamingStart(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets3, 1, 0, 0)
+        self.PeakCan.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0)
         print("Measure Power Consumption for meassuring.") 
         input('Press any key to continue')
-        self.PeakCan.streamingStop(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION)     
+        self.PeakCan.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"])     
         
     """
     Power Consumption - Measuring at reset conditions - LED turned off
@@ -238,23 +239,23 @@ class TestSthManually(unittest.TestCase):
         self.TurnOffLed()
         print("Start Simplicty Energy Profiler and connect to target (STH)") 
         input('Press any key to continue')
-        self.PeakCan.streamingStart(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION, DataSets3, 1, 0, 0)
+        self.PeakCan.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0)
         print("Measure Power Consumption for meassuring with turned off LED.") 
         input('Press any key to continue')
-        self.PeakCan.streamingStop(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STREAMING_ACCELERATION)  
+        self.PeakCan.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"])  
                   
     """
     Under Voltage Counter
     """   
 
     def testManually0700UnderVoltageCounter(self):
-        UnderVoltage1 = self.PeakCan.statisticalData(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STATISTICAL_DATA_UVC, printLog=True)    
+        UnderVoltage1 = self.PeakCan.statisticalData(MyToolItNetworkNr["STH1"], MyToolItStatData["Uvc"], printLog=True)    
         UnderVoltagePowerOnFirst1 = messageWordGet(UnderVoltage1[:4])
         self.PeakCan.Logger.Info("Under Voltage Counter since first Power On: " + payload2Hex(UnderVoltage1))
         self.PeakCan.Logger.Info("Under Voltage Counter since first Power On: " + str(UnderVoltagePowerOnFirst1))
         input('Power Off Device and wait 1s and then press Any Key to Continue')
-        self.PeakCan.BlueToothConnectPollingName(MY_TOOL_IT_NETWORK_STU1, TestDeviceName)
-        UnderVoltage2 = self.PeakCan.statisticalData(MY_TOOL_IT_NETWORK_STH1, MY_TOOL_IT_STATISTICAL_DATA_UVC, printLog=True)    
+        self.PeakCan.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
+        UnderVoltage2 = self.PeakCan.statisticalData(MyToolItNetworkNr["STH1"], MyToolItStatData["Uvc"], printLog=True)    
         UnderVoltagePowerOnFirst2 = messageWordGet(UnderVoltage2[:4])
         self.PeakCan.Logger.Info("Under Voltage Counter since first Power On: " + payload2Hex(UnderVoltage2))
         self.PeakCan.Logger.Info("Under Voltage Counter since first Power On: " + str(UnderVoltagePowerOnFirst2))
