@@ -480,6 +480,12 @@ NetworkStateName = {
     7 : "Network State NoChange",
 }
 
+CalibrationFactor = {
+    "Acceleration" : 0,
+    "Temperature" : 1,
+    "Voltage" : 32,    
+}
+
 
 def to8bitSigned(num):
     mask7 = 128  # Check 8th bit ~ 2^8
