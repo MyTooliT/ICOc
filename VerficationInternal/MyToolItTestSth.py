@@ -746,6 +746,7 @@ class TestSth(unittest.TestCase):
     """
     Write each calibration factor k entry
     """
+
     def test0030CalibrationFactorsKSingle(self):
         for _keyK, valueK in CalibrationFactor.items():
             b0 = 2
@@ -789,6 +790,7 @@ class TestSth(unittest.TestCase):
     """
     Write each calibration factor D entry
     """
+
     def test0031CalibrationFactorsDSingle(self):
         for _keyD, valueD in CalibrationFactor.items():
             b0 = 2
@@ -832,30 +834,31 @@ class TestSth(unittest.TestCase):
     """
     Write all calibraton factors and read them afterwards
     """
+
     def test0032CalibrationFactorsKDWriteThenRead(self):
-        b0 = 2-1
-        b1 = 8-1
-        b2 = 32-1
-        b3 = 128-1
+        b0 = 2 - 1
+        b1 = 8 - 1
+        b2 = 32 - 1
+        b3 = 128 - 1
         for _keyKD, valueKD in CalibrationFactor.items():
             for i in range(1, 4):
-                b0+=1
-                b1+=1
-                b2+=1
-                b3+=1
+                b0 += 1
+                b1 += 1
+                b2 += 1
+                b3 += 1
                 writePayload = [valueKD, i, (1 << 7), 0, b0, b1, b2, b3]
                 self.PeakCan.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Configuration"], MyToolItConfiguration["CalibrationFactorK"], writePayload)
                 self.PeakCan.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Configuration"], MyToolItConfiguration["CalibrationFactorD"], writePayload)
-        b0 = 2-1
-        b1 = 8-1
-        b2 = 32-1
-        b3 = 128-1                                      
+        b0 = 2 - 1
+        b1 = 8 - 1
+        b2 = 32 - 1
+        b3 = 128 - 1                                      
         for _keyKD, valueKD in CalibrationFactor.items():
             for i in range(1, 4):
-                b0+=1
-                b1+=1
-                b2+=1
-                b3+=1
+                b0 += 1
+                b1 += 1
+                b2 += 1
+                b3 += 1
                 readPayload = [valueKD, i, 0, 0, 0, 0, 0, 0]
                 readKIndex = self.PeakCan.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Configuration"], MyToolItConfiguration["CalibrationFactorK"], readPayload)
                 readDIndex = self.PeakCan.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Configuration"], MyToolItConfiguration["CalibrationFactorD"], readPayload)
@@ -896,10 +899,9 @@ class TestSth(unittest.TestCase):
                 self.PeakCan.Logger.Info("Read Payload D: " + payload2Hex(readD))
                 self.assertEqual(readK[0], valueK)
                 self.assertEqual(readK[1], i)
-                for j in range(2,8):
+                for j in range(2, 8):
                     self.assertEqual(readK[j], 0)
                     self.assertEqual(readD[j], 0) 
-                
                                     
     """
     Write name and get name (bluetooth command)
@@ -1963,7 +1965,10 @@ class TestSth(unittest.TestCase):
     """         
 
     def test0353StreamingAccXYSingleBattery(self):
-        self.PeakCan.ConfigAdc(MyToolItNetworkNr["STH1"], SamplingRateDoubleMaxPrescaler, SamplingRateDoubleMaxAcqTime, SamplingRateDoubleMaxOverSamples, AdcReference["VDD"])
+        prescaler = SamplingRateDoubleMaxPrescaler
+        acqTime = SamplingRateDoubleMaxAcqTime
+        overSamples = SamplingRateDoubleMaxOverSamples + 1
+        self.PeakCan.ConfigAdc(MyToolItNetworkNr["STH1"], prescaler, acqTime, overSamples, AdcReference["VDD"])
         indexStart = self.PeakCan.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 0)
         time.sleep(1.025)
         self.PeakCan.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], 1, 0, 0)
@@ -1981,7 +1986,7 @@ class TestSth(unittest.TestCase):
         self.PeakCan.Logger.Info("Battery Voltage Raw: " + str(voltage1Array[0]))
         self.singleValueCompare(voltage1Array, voltage2Array, voltage3Array, VoltMiddleBat, VoltToleranceBat, 0, 0, 0, 0, fVoltageBattery)
         self.PeakCan.Logger.Info("Accleration XY Sampling Points per seconds: " + str(samplingPointsAccX))     
-        calcRate = calcSamplingRate(2, AdcAcquisitionTime[3], AdcOverSamplingRate[256]) 
+        calcRate = calcSamplingRate(prescaler, acqTime, overSamples) 
         calcRate /= 2
         self.PeakCan.Logger.Info("Calculated Sampling Points per seconds: " + str(calcRate))   
         self.assertLess(calcRate * SamplingToleranceLow, samplingPointsAccX)
@@ -1993,7 +1998,10 @@ class TestSth(unittest.TestCase):
     """         
 
     def test0354StreamingAccXZSingleBattery(self):
-        self.PeakCan.ConfigAdc(MyToolItNetworkNr["STH1"], SamplingRateDoubleMaxPrescaler, SamplingRateDoubleMaxAcqTime, SamplingRateDoubleMaxOverSamples, AdcReference["VDD"])
+        prescaler = SamplingRateDoubleMaxPrescaler
+        acqTime = SamplingRateDoubleMaxAcqTime
+        overSamples = SamplingRateDoubleMaxOverSamples + 1
+        self.PeakCan.ConfigAdc(MyToolItNetworkNr["STH1"], prescaler, acqTime, overSamples, AdcReference["VDD"])
         indexStart = self.PeakCan.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 0, 1)
         time.sleep(1.025)
         self.PeakCan.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], 1, 0, 0, DataSets[1])
@@ -2011,7 +2019,7 @@ class TestSth(unittest.TestCase):
         self.PeakCan.Logger.Info("Battery Voltage Raw: " + str(voltage1Array[0]))
         self.singleValueCompare(voltage1Array, voltage2Array, voltage3Array, VoltMiddleBat, VoltToleranceBat, 0, 0, 0, 0, fVoltageBattery)
         self.PeakCan.Logger.Info("Accleration XZ Sampling Points per seconds: " + str(samplingPointsAccX))     
-        calcRate = calcSamplingRate(2, AdcAcquisitionTime[3], AdcOverSamplingRate[256]) 
+        calcRate = calcSamplingRate(prescaler, acqTime, overSamples) 
         calcRate /= 2
         self.PeakCan.Logger.Info("Calculated Sampling Points per seconds: " + str(calcRate))   
         self.assertLess(calcRate * SamplingToleranceLow, samplingPointsAccX)
@@ -2023,7 +2031,10 @@ class TestSth(unittest.TestCase):
     """         
 
     def test0355StreamingAccYZSingleBattery(self):
-        self.PeakCan.ConfigAdc(MyToolItNetworkNr["STH1"], SamplingRateDoubleMaxPrescaler, SamplingRateDoubleMaxAcqTime, SamplingRateDoubleMaxOverSamples, AdcReference["VDD"])
+        prescaler = SamplingRateDoubleMaxPrescaler
+        acqTime = SamplingRateDoubleMaxAcqTime
+        overSamples = SamplingRateDoubleMaxOverSamples + 1
+        self.PeakCan.ConfigAdc(MyToolItNetworkNr["STH1"], prescaler, acqTime, overSamples, AdcReference["VDD"])
         indexStart = self.PeakCan.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 0, 1, 1)
         time.sleep(1.025)
         self.PeakCan.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], 1, 0, 0)
@@ -2041,7 +2052,7 @@ class TestSth(unittest.TestCase):
         self.PeakCan.Logger.Info("Battery Voltage Raw: " + str(voltage1Array[0]))
         self.singleValueCompare(voltage1Array, voltage2Array, voltage3Array, VoltMiddleBat, VoltToleranceBat, 0, 0, 0, 0, fVoltageBattery)
         self.PeakCan.Logger.Info("Accleration YZ Sampling Points per seconds: " + str(samplingPointsAccY))     
-        calcRate = calcSamplingRate(2, AdcAcquisitionTime[3], AdcOverSamplingRate[256]) 
+        calcRate = calcSamplingRate(prescaler, acqTime, overSamples) 
         calcRate /= 2
         self.PeakCan.Logger.Info("Calculated Sampling Points per seconds: " + str(calcRate))   
         self.assertLess(calcRate * SamplingToleranceLow, samplingPointsAccY)
@@ -2313,10 +2324,10 @@ class TestSth(unittest.TestCase):
 
     def test0507VRef(self):
         self.PeakCan.Logger.Info("Warm Up")
-        self.SamplingRate(SamplingRateTrippleMaxPrescaler, SamplingRateSingleMaxAcqTime, SamplingRateTrippleMaxAcqTime, AdcReference["VDD"], b1=1, b2=1, b3=1, runTime=5000)
+        self.SamplingRate(SamplingRateTrippleMaxPrescaler, SamplingRateTrippleMaxAcqTime, SamplingRateTrippleMaxOverSamples, AdcReference["VDD"], b1=1, b2=1, b3=1, runTime=5000)
         for _vRefkey, vRefVal in AdcReference.items():
             self.PeakCan.Logger.Info("Using Voltage Reference: " + VRefName[vRefVal])
-            self.SamplingRate(SamplingRateTrippleMaxPrescaler, SamplingRateSingleMaxAcqTime, SamplingRateTrippleMaxAcqTime, vRefVal, b1=1, b2=1, b3=1, runTime=5000, compare=(AdcReference["Vfs1V65"] <= vRefVal), startupTime=False)
+            self.SamplingRate(SamplingRateTrippleMaxPrescaler, SamplingRateTrippleMaxAcqTime, SamplingRateTrippleMaxOverSamples, vRefVal, b1=1, b2=1, b3=1, runTime=5000, compare=(AdcReference["Vfs1V65"] <= vRefVal), startupTime=False)
 
     """
     ADC Configuration Combine all possible settings - Single Axis (but only for prescaler 2)
