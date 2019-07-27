@@ -11,13 +11,15 @@ SamplingRateVfsToleranceRation = 64
 SamplingRateMin = 150  # To check maximum frequencies to be max
 SamplingRateMax = 14000  # To check maximum frequencies to be max
 SamplingRateSingleMax = 9600
+SamplingRateSingleMaxPrescaler=2
 SamplingRateSingleMaxAcqTime = AdcAcquisitionTime[8]
 SamplingRateSingleMaxOverSamples = AdcOverSamplingRate[64]
-SamplingRateDoubleMax = 7200
+SamplingRateDoubleMax = 7143
 SamplingRateDoubleMaxPrescaler=3
 SamplingRateDoubleMaxAcqTime = AdcAcquisitionTime[8]
 SamplingRateDoubleMaxOverSamples = AdcOverSamplingRate[64]
 SamplingRateTrippleMax = 9600
+SamplingRateTrippleMaxPrescaler=SamplingRateSingleMaxPrescaler
 SamplingRateTrippleMaxAcqTime = SamplingRateSingleMaxAcqTime
 SamplingRateTrippleMaxOverSamples = SamplingRateSingleMaxOverSamples
 # Time Definition

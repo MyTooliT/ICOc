@@ -119,6 +119,7 @@ MyToolItStatData = {
     "PocPof" : 0x00,
     "OperatingTime" : 0x01,
     "Uvc" : 0x02,
+    "Wdog" : 0x03,
     "MeasurementInterval" : 0x40,
     "QuantityInterval" : 0x41,
     "Energy" : 0x80,
@@ -211,6 +212,7 @@ CommandBlockStatisticalData = {
     MyToolItStatData["PocPof"] : "Statistical Data Command PowerOn/Off Counter",
     MyToolItStatData["OperatingTime"] : "Statistical Data Command Operating Time",
     MyToolItStatData["Uvc"] : "Statistical Data Command Undervoltage Counter",
+    MyToolItStatData["Wdog"] : "Statistical Data Command Watchdog Counter",
     MyToolItStatData["MeasurementInterval"] : "Statistical Data Command Measurement Interval",
     MyToolItStatData["QuantityInterval"] : "Statistical Data Command Quantity Interval",
     MyToolItStatData["Energy"] : "Statistical Data Command Energy",
@@ -447,6 +449,13 @@ TestCommandSignal = {
 Prescaler = {
     "Min" : 2,
     "Max" : 127,
+}
+
+Node = {
+    "NoChange" : 0,
+    "Bootloader" : 1,
+    "Application" : 2,
+    "Reserved" : 3,    
 }
 
 NetworkState = {
