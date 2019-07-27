@@ -2857,7 +2857,7 @@ class TestSth(unittest.TestCase):
             self.assertEqual(count, arrayAccZ[i])
             i += 1
             count += 1
-            count %= 256          
+            count %= 256            
                            
     """
     Message Counters AccXZ
@@ -3748,7 +3748,28 @@ class TestSth(unittest.TestCase):
         self.PeakCan.Logger.Info("Connect to STH")
         self.PeakCan.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
 
-
+    """
+    Test that nothing happens when sinding Command 0x0000
+    """
+    def test0900ErrorCmdVerboten(self):
+        cmd = self.PeakCan.CanCmd(0, 0, 1, 0)
+        message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["STU1"], MyToolItNetworkNr["STH1"], [])
+        msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, bErrorExit=False)
+        self.assertEqual("Error", msgAck)
+        cmd = self.PeakCan.CanCmd(0, 0, 1, 1)
+        message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["STU1"], MyToolItNetworkNr["STH1"], [])
+        msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, bErrorExit=False)
+        self.assertEqual("Error", msgAck)
+        cmd = self.PeakCan.CanCmd(0, 0, 0, 0)
+        message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["STU1"], MyToolItNetworkNr["STH1"], [])
+        msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, bErrorExit=False)
+        self.assertEqual("Error", msgAck)
+        cmd = self.PeakCan.CanCmd(0, 0, 0, 1)
+        message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["STU1"], MyToolItNetworkNr["STH1"], [])
+        msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, bErrorExit=False)
+        self.assertEqual("Error", msgAck)
+        
+        
 if __name__ == "__main__":
     print(sys.version)
     log_location = sys.argv[1]
