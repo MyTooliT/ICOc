@@ -195,9 +195,9 @@ class TestStu(unittest.TestCase):
             cmd = self.PeakCan.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0)
             message=self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [SystemCommandBlueTooth["Connect"], 0, 0, 0, 0, 0, 0, 0])
             self.PeakCan.WriteFrameWaitAckRetries(message)
-            time.sleep(SystemCommandBlueTooth["Connect"]Time)
+            time.sleep(BluetoothTime["Connect"])
             self.PeakCan.Logger.Info("Get number of available devices command")
-            message=self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [SystemCommandBlueToothGetNumberAvailableDevices, 0, 0, 0, 0, 0, 0, 0])
+            message=self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [SystemCommandBlueTooth["GetNumberAvailableDevices"], 0, 0, 0, 0, 0, 0, 0])
             msg=self.PeakCan.WriteFrameWaitAckRetries(message)
             deviceNumbers=int(chr(msg[1][2]))
             self.PeakCan.Logger.Info("Number of available devices: " + str(deviceNumbers))
@@ -206,7 +206,7 @@ class TestStu(unittest.TestCase):
             message=self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [SystemCommandBlueTooth["Disconnect"], 0, 0, 0, 0, 0, 0, 0])
             self.PeakCan.WriteFrameWaitAckRetries(message)
             self.PeakCan.Logger.Info("Number of available devices command")
-            message=self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [SystemCommandBlueToothGetNumberAvailableDevices, 0, 0, 0, 0, 0, 0, 0])
+            message=self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [SystemCommandBlueTooth["GetNumberAvailableDevices"], 0, 0, 0, 0, 0, 0, 0])
             msg=self.PeakCan.WriteFrameWaitAckRetries(message)
             deviceNumbers=int(chr(msg[1][2]))
             self.PeakCan.Logger.Info("Number of available devices: " + str(deviceNumbers))
@@ -216,12 +216,12 @@ class TestStu(unittest.TestCase):
         cmd = self.PeakCan.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0)
         message=self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [SystemCommandBlueTooth["Connect"], 0, 0, 0, 0, 0, 0, 0])
         self.PeakCan.WriteFrameWaitAckRetries(message)
-        time.sleep(SystemCommandBlueTooth["Connect"]Time)
+        time.sleep(BluetoothTime["Connect"])
         message=self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [SystemCommandBlueTooth["DeviceConnect"], deviceNr, 0, 0, 0, 0, 0, 0])
         connected = self.PeakCan.WriteFrameWaitAckRetries(message)
         connected = int(connected[1][2])
         self.assertNotEqual(0, connected)
-        time.sleep(SystemCommandBlueTooth["Connect"]Time)        
+        time.sleep(BluetoothTime["Connect"])        
         message=self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [SystemCommandBlueTooth["DeviceCheckConnected"], 0, 0, 0, 0, 0, 0, 0])
         connectToDevice=self.PeakCan.WriteFrameWaitAckRetries(message)[1][2]
         return int(connectToDevice)
@@ -230,7 +230,7 @@ class TestStu(unittest.TestCase):
         cmd = self.PeakCan.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0)
         message=self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [SystemCommandBlueTooth["Disconnect"], 0, 0, 0, 0, 0, 0, 0])
         self.PeakCan.WriteFrameWaitAckRetries(message)
-        time.sleep(SystemCommandBlueTooth["Disconnect"]Time)
+        time.sleep(BluetoothTime["Disconnect"])
         message=self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [SystemCommandBlueTooth["DeviceCheckConnected"], 0, 0, 0, 0, 0, 0, 0])
         connectToDevice=int(self.PeakCan.WriteFrameWaitAckRetries(message)[1][2])
         return connectToDevice
@@ -260,14 +260,14 @@ class TestStu(unittest.TestCase):
     def BlueToothNameWrite(self, DeviceNr, Name):
         cmd = self.PeakCan.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0)
         self.assertEqual(1, self.BlueToothConnect(0))
-        Payload=[SystemCommandBlueToothSetName1, DeviceNr, 0, 0, 0, 0, 0, 0]
+        Payload=[SystemCommandBlueTooth["SetName1"], DeviceNr, 0, 0, 0, 0, 0, 0]
         for i in range(0, 6):
             if(len(Name) <= i):
                 break
             Payload[i+2]=ord(Name[i])
         message=self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], Payload)
         self.PeakCan.WriteFrameWaitAckRetries(message)
-        Payload=[SystemCommandBlueToothSetName2, DeviceNr, 0, 0, 0, 0, 0, 0]
+        Payload=[SystemCommandBlueTooth["SetName2"], DeviceNr, 0, 0, 0, 0, 0, 0]
         for i in range(0, 6):
             if(len(Name) <= i+6):
                 break
@@ -280,10 +280,10 @@ class TestStu(unittest.TestCase):
         cmd = self.PeakCan.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0)
         message=self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [SystemCommandBlueTooth["Connect"], 0, 0, 0, 0, 0, 0, 0])
         self.PeakCan.WriteFrameWaitAckRetries(message)
-        time.sleep(SystemCommandBlueTooth["Connect"]Time)
-        message=self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [SystemCommandBlueToothGetName1, DeviceNr, 0, 0, 0, 0, 0, 0])
+        time.sleep(BluetoothTime["Connect"])
+        message=self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [SystemCommandBlueTooth["GetName1"], DeviceNr, 0, 0, 0, 0, 0, 0])
         Name=self.PeakCan.WriteFrameWaitAckRetries(message)[1][2:]
-        message=self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [SystemCommandBlueToothGetName2, DeviceNr, 0, 0, 0, 0, 0, 0])
+        message=self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [SystemCommandBlueTooth["GetName2"], DeviceNr, 0, 0, 0, 0, 0, 0])
         Name = Name + self.PeakCan.WriteFrameWaitAckRetries(message)[1][2:]     
         self.assertEqual(0, self.BlueToothDisconnect())
         i=0

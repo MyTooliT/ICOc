@@ -870,6 +870,7 @@ class PeakCanFd(object):
                 if Name == RecName:
                     self.Name = Name
                     self.DeviceNr = deviceNumber
+                    self.Logger.Info("Connected to: " + self.Name)
                 else:
                     deviceNumber += 1
                     self.BlueToothDisconnect(stuNr)

@@ -271,22 +271,22 @@ class TestSth(unittest.TestCase):
         if adcRef != AdcReference["VDD"]:
             ratT = SamplingRateVfsToleranceRation
         if False != compare:
+            if(1!=ratM ):
+                self.PeakCan.Logger.Info("Compare Ration to compensate not AVDD: " + str(ratM))
+            adcXMiddle = ratM * AdcRawMiddleX
+            adcYMiddle = ratM * AdcRawMiddleY
+            adcZMiddle = ratM * AdcRawMiddleZ
+            adcXTol = AdcRawToleranceX * ratT
+            adcYTol = AdcRawToleranceY * ratT
+            adcZTol = AdcRawToleranceZ * ratT
             if(16 > AdcOverSamplingRateReverse[overSamplingRate]):
-                adcXMiddle = ratM * AdcRawMiddleX / 2 ** (5 - AdcOverSamplingRateReverse[overSamplingRate])
-                adcYMiddle = ratM * AdcRawMiddleY / 2 ** (5 - AdcOverSamplingRateReverse[overSamplingRate])
-                adcZMiddle = ratM * AdcRawMiddleZ / 2 ** (5 - AdcOverSamplingRateReverse[overSamplingRate])
-                adcXTol = AdcRawToleranceX * ratT
-                adcYTol = AdcRawToleranceY * ratT
-                adcZTol = AdcRawToleranceZ * ratT
-                self.streamingValueCompare(array1, array2, array3, adcXMiddle, adcXTol, adcYMiddle, adcYTol, adcZMiddle, adcZTol, fAdcRawDat)
+                self.PeakCan.Logger.Info("Maximum ADC Value: " + str(AdcMax / 2 ** (5 - AdcOverSamplingRateReverse[overSamplingRate])))
+                adcXMiddle = adcZMiddle / 2 ** (5 - AdcOverSamplingRateReverse[overSamplingRate])
+                adcYMiddle = adcZMiddle / 2 ** (5 - AdcOverSamplingRateReverse[overSamplingRate])
+                adcZMiddle = adcZMiddle / 2 ** (5 - AdcOverSamplingRateReverse[overSamplingRate])
             else:
-                adcXMiddle = ratM * AdcRawMiddleX
-                adcYMiddle = ratM * AdcRawMiddleY
-                adcZMiddle = ratM * AdcRawMiddleZ
-                adcXTol = AdcRawToleranceX * ratT
-                adcYTol = AdcRawToleranceY * ratT
-                adcZTol = AdcRawToleranceZ * ratT
-                self.streamingValueCompare(array1, array2, array3, adcXMiddle, adcXTol, adcYMiddle, adcYTol, adcZMiddle, adcZTol, fAdcRawDat)
+                self.PeakCan.Logger.Info("Maximum ADC Value: " + str(AdcMax))
+            self.streamingValueCompare(array1, array2, array3, adcXMiddle, adcXTol, adcYMiddle, adcYTol, adcZMiddle, adcZTol, fAdcRawDat)
         if False != compareRate:
             self.assertLess(runTime / 1000 * calcRate * SamplingToleranceLow, samplingPoints)
             self.assertGreater(runTime / 1000 * calcRate * SamplingToleranceHigh, samplingPoints)
@@ -1969,10 +1969,10 @@ class TestSth(unittest.TestCase):
         acqTime = SamplingRateDoubleMaxAcqTime
         overSamples = SamplingRateDoubleMaxOverSamples + 1
         self.PeakCan.ConfigAdc(MyToolItNetworkNr["STH1"], prescaler, acqTime, overSamples, AdcReference["VDD"])
-        indexStart = self.PeakCan.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 0)
+        self.PeakCan.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 0)
         time.sleep(1.025)
-        self.PeakCan.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], 1, 0, 0)
-        time.sleep(9)
+        indexStart = self.PeakCan.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], 1, 0, 0)
+        time.sleep(10)
         indexEnd = self.PeakCan.GetReadArrayIndex()
         self.PeakCan.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"])
         [AccArray1, AccArray2, AccArray3] = self.PeakCan.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 0, indexStart, indexEnd)
@@ -1988,6 +1988,7 @@ class TestSth(unittest.TestCase):
         self.PeakCan.Logger.Info("Accleration XY Sampling Points per seconds: " + str(samplingPointsAccX))     
         calcRate = calcSamplingRate(prescaler, acqTime, overSamples) 
         calcRate /= 2
+        calcRate *= 1.1
         self.PeakCan.Logger.Info("Calculated Sampling Points per seconds: " + str(calcRate))   
         self.assertLess(calcRate * SamplingToleranceLow, samplingPointsAccX)
         self.assertGreater(calcRate * SamplingToleranceHigh, samplingPointsAccX)  
@@ -2002,10 +2003,10 @@ class TestSth(unittest.TestCase):
         acqTime = SamplingRateDoubleMaxAcqTime
         overSamples = SamplingRateDoubleMaxOverSamples + 1
         self.PeakCan.ConfigAdc(MyToolItNetworkNr["STH1"], prescaler, acqTime, overSamples, AdcReference["VDD"])
-        indexStart = self.PeakCan.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 0, 1)
+        self.PeakCan.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 0, 1)
         time.sleep(1.025)
-        self.PeakCan.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], 1, 0, 0, DataSets[1])
-        time.sleep(9)
+        indexStart = self.PeakCan.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], 1, 0, 0, DataSets[1])
+        time.sleep(10)
         indexEnd = self.PeakCan.GetReadArrayIndex()
         self.PeakCan.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"])
         [AccArray1, AccArray2, AccArray3] = self.PeakCan.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 0, 1, indexStart, indexEnd)
@@ -2021,6 +2022,7 @@ class TestSth(unittest.TestCase):
         self.PeakCan.Logger.Info("Accleration XZ Sampling Points per seconds: " + str(samplingPointsAccX))     
         calcRate = calcSamplingRate(prescaler, acqTime, overSamples) 
         calcRate /= 2
+        calcRate *= 1.1
         self.PeakCan.Logger.Info("Calculated Sampling Points per seconds: " + str(calcRate))   
         self.assertLess(calcRate * SamplingToleranceLow, samplingPointsAccX)
         self.assertGreater(calcRate * SamplingToleranceHigh, samplingPointsAccX)  
@@ -2035,10 +2037,10 @@ class TestSth(unittest.TestCase):
         acqTime = SamplingRateDoubleMaxAcqTime
         overSamples = SamplingRateDoubleMaxOverSamples + 1
         self.PeakCan.ConfigAdc(MyToolItNetworkNr["STH1"], prescaler, acqTime, overSamples, AdcReference["VDD"])
-        indexStart = self.PeakCan.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 0, 1, 1)
+        self.PeakCan.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 0, 1, 1)
         time.sleep(1.025)
-        self.PeakCan.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], 1, 0, 0)
-        time.sleep(9)
+        indexStart = self.PeakCan.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], 1, 0, 0)
+        time.sleep(10)
         indexEnd = self.PeakCan.GetReadArrayIndex()
         self.PeakCan.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"])
         [AccArray1, AccArray2, AccArray3] = self.PeakCan.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 0, 1, 1, indexStart, indexEnd)
@@ -2054,6 +2056,7 @@ class TestSth(unittest.TestCase):
         self.PeakCan.Logger.Info("Accleration YZ Sampling Points per seconds: " + str(samplingPointsAccY))     
         calcRate = calcSamplingRate(prescaler, acqTime, overSamples) 
         calcRate /= 2
+        calcRate *= 1.1
         self.PeakCan.Logger.Info("Calculated Sampling Points per seconds: " + str(calcRate))   
         self.assertLess(calcRate * SamplingToleranceLow, samplingPointsAccY)
         self.assertGreater(calcRate * SamplingToleranceHigh, samplingPointsAccY)  
@@ -2480,7 +2483,7 @@ class TestSth(unittest.TestCase):
     """
 
     def test0515AdcOverSamplingRateMin(self):
-        self.SamplingRate(8, AdcOverSamplingRate[256], AdcOverSamplingRate[2], AdcReference["VDD"], b1=1, b2=0, b3=0, runTime=1000)
+        self.SamplingRate(32, AdcOverSamplingRate[256], AdcOverSamplingRate[2], AdcReference["VDD"], b1=1, b2=0, b3=0, runTime=4000)
 
     """
     Testing ADC Sampling Oversampling Rate Max
@@ -2494,7 +2497,7 @@ class TestSth(unittest.TestCase):
     """
 
     def test0517AdcOverSamplingRateNone(self):
-        self.SamplingRate(16, AdcAcquisitionTime[256], AdcOverSamplingRate[1], AdcReference["VDD"], b1=1, b2=0, b3=0, runTime=4000)
+        self.SamplingRate(64, AdcAcquisitionTime[256], AdcOverSamplingRate[1], AdcReference["VDD"], b1=1, b2=0, b3=0, runTime=4000)
 
     """
     Inject oversampling Rate fault. See that error status word is set correctly and tha the system still works
@@ -2509,10 +2512,12 @@ class TestSth(unittest.TestCase):
         self.assertEqual(acquisitionTime, Settings[1])
         self.assertEqual(overSamplingRate, Settings[2])
         self.assertEqual(AdcReference["VDD"], Settings[3])
-        self.PeakCan.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0)
+        indexStart = self.PeakCan.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0)
         time.sleep(10)
         self.PeakCan.GetReadArrayIndex() - 1
-        ack = self.PeakCan.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], bErrorExit=False)
+        indexStop = ack = self.PeakCan.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], bErrorExit=False)
+        BytesTransfered=indexStop-indexStart
+        BytesTransfered*=8
         self.assertNotEqual("Error", ack)
         ErrorWord = SthErrorWord()
         ErrorWord.asword = self.PeakCan.statusWord1(MyToolItNetworkNr["STH1"])
@@ -2520,6 +2525,8 @@ class TestSth(unittest.TestCase):
         self.PeakCan.Logger.Info("STH Error Word Reserved: " + hex(ErrorWord.b.Reserved))
         self.PeakCan.Logger.Info("STH Error Word bAdcOverRun: " + hex(ErrorWord.b.bAdcOverRun))
         self.PeakCan.Logger.Info("STH Error Word bTxFail: " + hex(ErrorWord.b.bTxFail))
+        self.PeakCan.Logger.Info("Trasnfered Bytes: " + str(BytesTransfered))
+        self.assertLessEqual(BytesTransfered, 1000)
         self.assertEqual(ErrorWord.b.bAdcOverRun, 1)
         self._resetStu()        
         self.PeakCan.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
@@ -3513,10 +3520,11 @@ class TestSth(unittest.TestCase):
         self.PeakCan.Logger.Info("Power Off Counter after STU Reset: " + str(PowerOff4))
         self.assertEqual(PowerOn1 + 1, PowerOn2)
         self.assertEqual(PowerOff1 + 1, PowerOff2)
+        self.assertEqual(PowerOn2 + 1, PowerOn3)
         self.assertEqual(PowerOff2 + 1, PowerOff3)
-        self.assertEqual(PowerOn2, PowerOn3)
+        self.assertEqual(PowerOn3 + 1, PowerOn4)
         self.assertEqual(PowerOff3 + 1, PowerOff4)
-        self.assertEqual(PowerOn3, PowerOn4)
+        
 
     """
     Check Operating Minutes
@@ -3751,6 +3759,7 @@ class TestSth(unittest.TestCase):
     """
     Test that nothing happens when sinding Command 0x0000
     """
+
     def test0900ErrorCmdVerboten(self):
         cmd = self.PeakCan.CanCmd(0, 0, 1, 0)
         message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["STU1"], MyToolItNetworkNr["STH1"], [])
@@ -3769,7 +3778,21 @@ class TestSth(unittest.TestCase):
         msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, bErrorExit=False)
         self.assertEqual("Error", msgAck)
         
+    """
+    Test that nothing happens when sinding Reqest(1) and Error(1)
+    """
+    def test0901ErrorRequestError(self):
+        cmd = self.PeakCan.CanCmd(MyToolItBlock["System"], MyToolItSystem["Reset"], 1, 1)
+        message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["STU1"], MyToolItNetworkNr["STH1"], [])
+        msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, bErrorExit=False)
+        self.assertEqual("Error", msgAck)
+        cmd = self.PeakCan.CanCmd(MyToolItBlock["Streaming"], MyToolItStreaming["Acceleration"], 1, 1)
+        message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["STU1"], MyToolItNetworkNr["STH1"], [])
+        msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, bErrorExit=False)
+        self.assertEqual("Error", msgAck)        
+   
         
+                
 if __name__ == "__main__":
     print(sys.version)
     log_location = sys.argv[1]
