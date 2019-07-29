@@ -84,9 +84,6 @@ class TestSthManually(unittest.TestCase):
             self.Error = True
         self.PeakCan.Logger.Info("STH Error Word: " + hex(ErrorWord.asword))
         ErrorWord.asword = self.PeakCan.statusWord1(MyToolItNetworkNr["STU1"])
-        if True == ErrorWord.b.bAdcOverRun:
-            print("STU Error Word: " + hex(ErrorWord.asword))
-            self.Error = True
         self.PeakCan.Logger.Info("STU Error Word: " + hex(ErrorWord.asword))
  
     def TurnOffLed(self):

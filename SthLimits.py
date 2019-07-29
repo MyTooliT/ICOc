@@ -14,7 +14,7 @@ SamplingRateSingleMax = 9524
 SamplingRateSingleMaxPrescaler=2
 SamplingRateSingleMaxAcqTime = AdcAcquisitionTime[8]
 SamplingRateSingleMaxOverSamples = AdcOverSamplingRate[64]
-SamplingRateDoubleMax = 7143
+SamplingRateDoubleMax = 6896
 SamplingRateDoubleMaxPrescaler=2
 SamplingRateDoubleMaxAcqTime = AdcAcquisitionTime[16]
 SamplingRateDoubleMaxOverSamples = AdcOverSamplingRate[64]
@@ -25,7 +25,6 @@ SamplingRateTrippleMaxOverSamples = SamplingRateSingleMaxOverSamples
 # Time Definition
 StreamingStartupTimeMs = 250
 StreamingStandardTestTimeMs = (10000)
-SAMPLING_POINTS_SECOND_RESET = 9523
 
 # Reset Values
 AdcPrescalerReset = 2

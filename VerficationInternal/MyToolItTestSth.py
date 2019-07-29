@@ -130,13 +130,9 @@ class TestSth(unittest.TestCase):
         self.PeakCan.Logger.Info("STU Status Word: " + hex(psw0))
         ErrorWord.asword = self.PeakCan.statusWord1(MyToolItNetworkNr["STH1"])
         if True == ErrorWord.b.bAdcOverRun:
-            print("STH Error Word: " + hex(ErrorWord.asword))
             self.Error = True
         self.PeakCan.Logger.Info("STH Error Word: " + hex(ErrorWord.asword))
         ErrorWord.asword = self.PeakCan.statusWord1(MyToolItNetworkNr["STU1"])
-        if True == ErrorWord.b.bAdcOverRun:
-            print("STU Error Word: " + hex(ErrorWord.asword))
-            self.Error = True
         self.PeakCan.Logger.Info("STU Error Word: " + hex(ErrorWord.asword))
 
     def _streamingStop(self):
@@ -271,7 +267,7 @@ class TestSth(unittest.TestCase):
         if adcRef != AdcReference["VDD"]:
             ratT = SamplingRateVfsToleranceRation
         if False != compare:
-            if(1!=ratM ):
+            if(1 != ratM):
                 self.PeakCan.Logger.Info("Compare Ration to compensate not AVDD: " + str(ratM))
             adcXMiddle = ratM * AdcRawMiddleX
             adcYMiddle = ratM * AdcRawMiddleY
@@ -281,8 +277,8 @@ class TestSth(unittest.TestCase):
             adcZTol = AdcRawToleranceZ * ratT
             if(16 > AdcOverSamplingRateReverse[overSamplingRate]):
                 self.PeakCan.Logger.Info("Maximum ADC Value: " + str(AdcMax / 2 ** (5 - AdcOverSamplingRateReverse[overSamplingRate])))
-                adcXMiddle = adcZMiddle / 2 ** (5 - AdcOverSamplingRateReverse[overSamplingRate])
-                adcYMiddle = adcZMiddle / 2 ** (5 - AdcOverSamplingRateReverse[overSamplingRate])
+                adcXMiddle = adcXMiddle / 2 ** (5 - AdcOverSamplingRateReverse[overSamplingRate])
+                adcYMiddle = adcYMiddle / 2 ** (5 - AdcOverSamplingRateReverse[overSamplingRate])
                 adcZMiddle = adcZMiddle / 2 ** (5 - AdcOverSamplingRateReverse[overSamplingRate])
             else:
                 self.PeakCan.Logger.Info("Maximum ADC Value: " + str(AdcMax))
@@ -2515,9 +2511,10 @@ class TestSth(unittest.TestCase):
         indexStart = self.PeakCan.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0)
         time.sleep(10)
         self.PeakCan.GetReadArrayIndex() - 1
-        indexStop = ack = self.PeakCan.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], bErrorExit=False)
-        BytesTransfered=indexStop-indexStart
-        BytesTransfered*=8
+        ack = self.PeakCan.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], bErrorExit=False)
+        indexStop = self.PeakCan.GetReadArrayIndex() - 1
+        BytesTransfered = indexStop - indexStart
+        BytesTransfered *= 8
         self.assertNotEqual("Error", ack)
         ErrorWord = SthErrorWord()
         ErrorWord.asword = self.PeakCan.statusWord1(MyToolItNetworkNr["STH1"])
@@ -3524,7 +3521,6 @@ class TestSth(unittest.TestCase):
         self.assertEqual(PowerOff2 + 1, PowerOff3)
         self.assertEqual(PowerOn3 + 1, PowerOn4)
         self.assertEqual(PowerOff3 + 1, PowerOff4)
-        
 
     """
     Check Operating Minutes
@@ -3757,41 +3753,55 @@ class TestSth(unittest.TestCase):
         self.PeakCan.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
 
     """
-    Test that nothing happens when sinding Command 0x0000
+    Test that nothing happens when sinding Command 0x0000 to STH1
     """
 
-    def test0900ErrorCmdVerboten(self):
+    def test0900ErrorCmdVerbotenSth1(self):
         cmd = self.PeakCan.CanCmd(0, 0, 1, 0)
-        message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["STU1"], MyToolItNetworkNr["STH1"], [])
-        msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, bErrorExit=False)
+        message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [])
+        msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, retries=3, bErrorExit=False)
         self.assertEqual("Error", msgAck)
         cmd = self.PeakCan.CanCmd(0, 0, 1, 1)
-        message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["STU1"], MyToolItNetworkNr["STH1"], [])
-        msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, bErrorExit=False)
+        message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [])
+        msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, retries=3, bErrorExit=False)
         self.assertEqual("Error", msgAck)
         cmd = self.PeakCan.CanCmd(0, 0, 0, 0)
-        message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["STU1"], MyToolItNetworkNr["STH1"], [])
-        msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, bErrorExit=False)
+        message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [])
+        msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, retries=3, bErrorExit=False)
         self.assertEqual("Error", msgAck)
         cmd = self.PeakCan.CanCmd(0, 0, 0, 1)
-        message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["STU1"], MyToolItNetworkNr["STH1"], [])
-        msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, bErrorExit=False)
+        message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [])
+        msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, retries=3, bErrorExit=False)
         self.assertEqual("Error", msgAck)
-        
+
+               
     """
-    Test that nothing happens when sinding Reqest(1) and Error(1)
+    Test that nothing happens when sinding Reqest(1) and Error(1) to STH1
     """
-    def test0901ErrorRequestError(self):
+
+    def test0901ErrorRequestErrorSth1(self):
         cmd = self.PeakCan.CanCmd(MyToolItBlock["System"], MyToolItSystem["Reset"], 1, 1)
-        message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["STU1"], MyToolItNetworkNr["STH1"], [])
-        msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, bErrorExit=False)
+        message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [])
+        msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, retries=3, bErrorExit=False)
         self.assertEqual("Error", msgAck)
         cmd = self.PeakCan.CanCmd(MyToolItBlock["Streaming"], MyToolItStreaming["Acceleration"], 1, 1)
-        message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["STU1"], MyToolItNetworkNr["STH1"], [])
-        msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, bErrorExit=False)
-        self.assertEqual("Error", msgAck)        
-   
-        
+        message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [])
+        msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, retries=3, bErrorExit=False)
+        self.assertEqual("Error", msgAck)          
+     
+    """
+    Test Routing - Wrong Sender to STH1
+    """
+
+    def test0902WrongSenderSth1(self):
+        for numberKey, numberVal in MyToolItNetworkNr.items():
+            if "SPU1" != numberKey:
+                cmd = self.PeakCan.CanCmd(MyToolItBlock["System"], MyToolItSystem["Reset"], 1, 0)
+                message = self.PeakCan.CanMessage20(cmd, numberVal, MyToolItNetworkNr["STH1"], [])
+                msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, retries=3, bErrorExit=False)
+                self.assertEqual("Error", msgAck)
+
+                    
                 
 if __name__ == "__main__":
     print(sys.version)
