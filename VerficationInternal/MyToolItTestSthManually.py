@@ -69,7 +69,7 @@ class TestSthManually(unittest.TestCase):
         result = float(messageWordGet(ret[4:]))
         result /= 1000
         self.PeakCan.Logger.Info("Temperature(Chip): " + str(result) + "°C") 
-        self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["None"], CalibMeassurementTypeNr["Temp"], 1, 0, log=False, bReset=True)
+        self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["None"], CalibMeassurementTypeNr["Temp"], 1, AdcReference["VDD"], log=False, bReset=True)
         return result
     
     def _statusWords(self):
@@ -106,24 +106,24 @@ class TestSthManually(unittest.TestCase):
     """
 
     def testManually0001Ack(self):
-        expectedData = ActiveState()
-        expectedData.asbyte = 0
-        expectedData.b.u2NodeState = 0
-        expectedData.b.u3NetworkState = 6
-        self.PeakCan.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["System"], MyToolItSystem["ActiveState"], [expectedData.asbyte])
+        activeState = ActiveState()
         cmd = self.PeakCan.CanCmd(MyToolItBlock["System"], MyToolItSystem["ActiveState"], 1, 0)
-
-        msg = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [expectedData.asbyte])
+        msg = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [0])
         self.PeakCan.Logger.Info("Write Message")
         self.PeakCan.WriteFrame(msg)
         self.PeakCan.Logger.Info("Wait 200ms")
         time.sleep(0.2)
         cmd = self.PeakCan.CanCmd(MyToolItBlock["System"], MyToolItSystem["ActiveState"], 0, 0)
         msgAckExpected = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["STH1"], MyToolItNetworkNr["SPU1"], [0])
+        activeState.asbyte = self.PeakCan.getReadMessage(-1).DATA[0]
         self.PeakCan.Logger.Info("Send ID: " + hex(msg.ID) + "; Expected ID: " + hex(msgAckExpected.ID) + "; Received ID: " + hex(self.PeakCan.getReadMessage(-1).ID))
-        self.PeakCan.Logger.Info("Send Data: " + hex(0) + "; Expected Data: " + hex(expectedData.asbyte) + "; Received Data: " + hex(self.PeakCan.getReadMessage(-1).DATA[0]))
+        self.PeakCan.Logger.Info("Send Data: " + hex(0) + "; Received Data: " + hex(activeState.asbyte))
         self.assertEqual(hex(msgAckExpected.ID), hex(self.PeakCan.getReadMessage(-1).ID))
-        self.assertEqual(expectedData.asbyte, self.PeakCan.getReadMessage(-1).DATA[0])
+        self.assertEqual(activeState.b.bSetState, 0)
+        self.assertEqual(activeState.b.bReserved, 0)
+        self.assertEqual(activeState.b.u2NodeState, Node["Application"])
+        self.assertEqual(activeState.b.bReserved1, 0)
+        self.assertEqual(activeState.b.u3NetworkState, NetworkState["Operating"])
         
         
     """
@@ -253,7 +253,7 @@ class TestSthManually(unittest.TestCase):
         UnderVoltagePowerOnFirst1 = messageWordGet(UnderVoltage1[:4])
         self.PeakCan.Logger.Info("Under Voltage Counter since first Power On: " + payload2Hex(UnderVoltage1))
         self.PeakCan.Logger.Info("Under Voltage Counter since first Power On: " + str(UnderVoltagePowerOnFirst1))
-        input('Power Off Device and wait 1s and then press Any Key to Continue')
+        input('Power Off Device and wait 1s, power on again and then press Any Key to Continue')
         self.PeakCan.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
         UnderVoltage2 = self.PeakCan.statisticalData(MyToolItNetworkNr["STH1"], MyToolItStatData["Uvc"], printLog=True)    
         UnderVoltagePowerOnFirst2 = messageWordGet(UnderVoltage2[:4])
