@@ -30,6 +30,8 @@ class TestStu(unittest.TestCase):
         self.PeakCan.Logger.Info("STU BlueTooth Address: " + hex(self.PeakCan.BlueToothAddress(MyToolItNetworkNr["STU1"])))
         self._statusWords()
         self._StuWDog()
+        while False != self.BlueToothDisconnect():
+            pass
         print("Start")
         self.PeakCan.Logger.Info("_______________________________________________________________________________________________________________")
         self.PeakCan.Logger.Info("Start")
@@ -231,12 +233,12 @@ class TestStu(unittest.TestCase):
         cmd = self.PeakCan.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0)
         message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [SystemCommandBlueTooth["Connect"], 0, 0, 0, 0, 0, 0, 0])
         self.PeakCan.WriteFrameWaitAckRetries(message)
-        time.sleep(BluetoothTime["Connect"])
+        time.sleep(BluetoothTime["TestConnect"])
         message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [SystemCommandBlueTooth["DeviceConnect"], deviceNr, 0, 0, 0, 0, 0, 0])
         connected = self.PeakCan.WriteFrameWaitAckRetries(message)
         connected = int(connected["Payload"][2])
         self.assertNotEqual(0, connected)
-        time.sleep(BluetoothTime["Connect"])        
+        time.sleep(BluetoothTime["TestConnect"])        
         message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [SystemCommandBlueTooth["DeviceCheckConnected"], 0, 0, 0, 0, 0, 0, 0])
         connectToDevice = self.PeakCan.WriteFrameWaitAckRetries(message)["Payload"][2]
         return int(connectToDevice)
@@ -251,12 +253,12 @@ class TestStu(unittest.TestCase):
         return connectToDevice
     
     """
-    Connect and disconnect to device 100 times
+    Connect and disconnect to device 30 times
     """
 
     def test0102BlueToothConnectDisconnectDevice(self):
         self.PeakCan.Logger.Info("Bluetooth connect command and check connected command and disconnect command")
-        for i in range(0, 100):
+        for i in range(0, 30):
             self.PeakCan.Logger.Info("Loop Run: " + str(i))
             self.PeakCan.Logger.Info("Connect to Bluetooth Device")
             connectToDevice = self.BlueToothConnect(0)

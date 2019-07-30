@@ -99,6 +99,7 @@ BluetoothTime = {
     "Disconnect" : 1,
     "GetDeviceNumber" : 2,
     "DeviceConnect" : 5,
+    "TestConnect" : 4,
 }
 
 SystemCommandRouting = {
