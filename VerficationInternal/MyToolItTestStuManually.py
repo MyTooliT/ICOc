@@ -111,7 +111,7 @@ class TestSthManually(unittest.TestCase):
     Under Voltage Counter
     """   
 
-    def testManually0700UnderVoltageCounter(self):
+    def testManually0700PowerOnOffCounter(self):
         PowerOnOff1 = self.PeakCan.statisticalData(MyToolItNetworkNr["STU1"], MyToolItStatData["PocPof"])
         PowerOn1 = messageWordGet(PowerOnOff1[:4])
         PowerOff1 = messageWordGet(PowerOnOff1[4:])

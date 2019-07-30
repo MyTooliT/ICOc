@@ -316,7 +316,7 @@ class PeakCanFd(object):
                     self.__exitError()
         return returnMessage
 
-    def cmdSend(self, receiver, blockCmd, subCmd, payload, log=True, retries=3, bErrorAck=False, printLog=False):
+    def cmdSend(self, receiver, blockCmd, subCmd, payload, log=True, retries=10, bErrorAck=False, printLog=False):
         cmd = self.CanCmd(blockCmd, subCmd, 1, 0)
         message = self.CanMessage20(cmd, self.sender, receiver, payload)
         index = self.GetReadArrayIndex()

@@ -281,29 +281,31 @@ class TestStu(unittest.TestCase):
 
     def test0103BlueToothName(self):
         for _i in range(0, 10):
-            self.BlueToothConnect(0)
+            while 0 == self.PeakCan.BlueToothConnect(MyToolItNetworkNr["STU1"], 0):
+                pass
             self.PeakCan.Logger.Info("Bluetooth name command")
             self.PeakCan.Logger.Info("Connect")
             self.PeakCan.Logger.Info("Write Walther0")
             self.PeakCan.BlueToothNameWrite(0, "Walther0")
             self.PeakCan.Logger.Info("Check Walther0")
-            self.BlueToothDisconnect()
+            self.PeakCan.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
             self.PeakCan.cmdSend(MyToolItNetworkNr["STU1"], MyToolItBlock["System"], MyToolItSystem["Bluetooth"], [SystemCommandBlueTooth["Connect"], 0, 0, 0, 0, 0, 0, 0])
-            time.sleep(BluetoothTime["DeviceConnect"])
+            time.sleep(BluetoothTime["Disconnect"])
             Name = self.PeakCan.BlueToothNameGet(0)
             self.PeakCan.Logger.Info("Received Name: " + Name)
             self.assertEqual("Walther0", Name)
             self.PeakCan.Logger.Info("Write Marlies")
-            self.PeakCan.cmdSend(MyToolItNetworkNr["STU1"], MyToolItBlock["System"], MyToolItSystem["Bluetooth"], [SystemCommandBlueTooth["DeviceConnect"], 0, 0, 0, 0, 0, 0, 0])
+            while 0 == self.PeakCan.BlueToothConnect(MyToolItNetworkNr["STU1"], 0):
+                pass
             self.PeakCan.BlueToothNameWrite(0, "Marlies")
             self.PeakCan.Logger.Info("Check Marlies")
-            self.BlueToothDisconnect()
+            self.PeakCan.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
             self.PeakCan.cmdSend(MyToolItNetworkNr["STU1"], MyToolItBlock["System"], MyToolItSystem["Bluetooth"], [SystemCommandBlueTooth["Connect"], 0, 0, 0, 0, 0, 0, 0])
-            time.sleep(BluetoothTime["DeviceConnect"])
+            time.sleep(BluetoothTime["Disconnect"])
             Name = self.PeakCan.BlueToothNameGet(0)
             self.PeakCan.Logger.Info("Received Name: " + Name)
             self.assertEqual("Marlies" , Name)
-            self.BlueToothDisconnect()
+            self.PeakCan.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
 
     """
     Connect and disconnect to device 100 times, do it without time out, use connection chec    """
