@@ -13,7 +13,7 @@ import time
 from MyToolItStu import StuErrorWord
 from MyToolItCommands import *
 
-log_location = '../../Logs/STH/'
+log_location = '../../Logs/STU/'
 
 
 class TestSthManually(unittest.TestCase):
@@ -28,7 +28,6 @@ class TestSthManually(unittest.TestCase):
         self._resetStu()
         self.Error = False
         self.PeakCan.Logger.Info("STU BlueTooth Address: " + hex(self.PeakCan.BlueToothAddress(MyToolItNetworkNr["STU1"])))
-        self.PeakCan.Logger.Info("STH BlueTooth Address: " + hex(self.PeakCan.BlueToothAddress(MyToolItNetworkNr["STH1"])))
         self._statusWords()
         print("Start")
         self.PeakCan.Logger.Info("Start")
@@ -56,20 +55,10 @@ class TestSthManually(unittest.TestCase):
     
     def _statusWords(self):
         ErrorWord = StuErrorWord()
-        psw0 = self.PeakCan.statusWord0(MyToolItNetworkNr["STH1"])
-        self.PeakCan.Logger.Info("STH Status Word: " + hex(psw0))
         psw0 = self.PeakCan.statusWord0(MyToolItNetworkNr["STU1"])
         self.PeakCan.Logger.Info("STU Status Word: " + hex(psw0))
-        ErrorWord.asword = self.PeakCan.statusWord1(MyToolItNetworkNr["STH1"])
-        if True == ErrorWord.b.bAdcOverRun:
-            print("STH Error Word: " + hex(ErrorWord.asword))
-            self.Error = True
-        self.PeakCan.Logger.Info("STH Error Word: " + hex(ErrorWord.asword))
         ErrorWord.asword = self.PeakCan.statusWord1(MyToolItNetworkNr["STU1"])
-        if True == ErrorWord.b.bAdcOverRun:
-            print("STU Error Word: " + hex(ErrorWord.asword))
-            self.Error = True
-        self.PeakCan.Logger.Info("STU Error Word: " + hex(ErrorWord.asword))
+        self.PeakCan.Logger.Info("STU Error Word: " + hex(ErrorWord.asword))   
  
     def TurnOffLed(self):
         self.PeakCan.Logger.Info("Turn Off LED")
@@ -88,24 +77,22 @@ class TestSthManually(unittest.TestCase):
     """
 
     def testManually0001Ack(self):
-        activeState = ActiveState()
         cmd = self.PeakCan.CanCmd(MyToolItBlock["System"], MyToolItSystem["ActiveState"], 1, 0)
-        msg = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [0])
+        msg = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [0])
         self.PeakCan.Logger.Info("Write Message")
         self.PeakCan.WriteFrame(msg)
         self.PeakCan.Logger.Info("Wait 200ms")
-        time.sleep(0.2)
+        time.sleep(0.25)
         cmd = self.PeakCan.CanCmd(MyToolItBlock["System"], MyToolItSystem["ActiveState"], 0, 0)
-        msgAckExpected = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["STH1"], MyToolItNetworkNr["SPU1"], [0])
-        activeState.asbyte = self.PeakCan.getReadMessage(-1).DATA[0]
+        msgAckExpected = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["STU1"], MyToolItNetworkNr["SPU1"], [0])
         self.PeakCan.Logger.Info("Send ID: " + hex(msg.ID) + "; Expected ID: " + hex(msgAckExpected.ID) + "; Received ID: " + hex(self.PeakCan.getReadMessage(-1).ID))
-        self.PeakCan.Logger.Info("Send Data: " + hex(0) + "; Received Data: " + hex(activeState.asbyte))
+        expectedData = ActiveState()
+        expectedData.asbyte = 0
+        expectedData.b.u2NodeState = Node["Application"]
+        expectedData.b.u3NetworkState = NetworkState["Operating"]
+        self.PeakCan.Logger.Info("Send Data: " + hex(0) + "; Expected Data: " + hex(expectedData.asbyte) + "; Received Data: " + hex(self.PeakCan.getReadMessage(-1).DATA[0]))
         self.assertEqual(hex(msgAckExpected.ID), hex(self.PeakCan.getReadMessage(-1).ID))
-        self.assertEqual(activeState.b.bSetState, 0)
-        self.assertEqual(activeState.b.bReserved, 0)
-        self.assertEqual(activeState.b.u2NodeState, Node["Application"])
-        self.assertEqual(activeState.b.bReserved1, 0)
-        self.assertEqual(activeState.b.u3NetworkState, NetworkState["Operating"])
+        self.assertEqual(expectedData.asbyte, self.PeakCan.getReadMessage(-1).DATA[0])
                           
     """
     Under Voltage Counter
@@ -115,14 +102,14 @@ class TestSthManually(unittest.TestCase):
         PowerOnOff1 = self.PeakCan.statisticalData(MyToolItNetworkNr["STU1"], MyToolItStatData["PocPof"])
         PowerOn1 = messageWordGet(PowerOnOff1[:4])
         PowerOff1 = messageWordGet(PowerOnOff1[4:])
-        self.PeakCan.Logger.Info("Power On Counter since first Power On: " + payload2Hex(PowerOn1))
-        self.PeakCan.Logger.Info("Power On Counter since first Power On: " + str(PowerOff1))
-        input('Power Off Device and wait 1s, power on again and then press Any Key to Continue')
+        self.PeakCan.Logger.Info("Power On Counter since first Power On: " + str(PowerOn1))
+        self.PeakCan.Logger.Info("Power Off Counter since first Power On: " + str(PowerOff1))
+        input('Power Off Device, wait 1s, power on again and then press Any Key to Continue')
         PowerOnOff2 = self.PeakCan.statisticalData(MyToolItNetworkNr["STU1"], MyToolItStatData["PocPof"])
         PowerOn2 = messageWordGet(PowerOnOff2[:4])
         PowerOff2 = messageWordGet(PowerOnOff2[4:])
-        self.PeakCan.Logger.Info("Power On Counter since first Power On: " + payload2Hex(PowerOn2))
-        self.PeakCan.Logger.Info("Power On Counter since first Power On: " + str(PowerOff2))
+        self.PeakCan.Logger.Info("Power On Counter since first Power On: " + str(PowerOn2))
+        self.PeakCan.Logger.Info("Power Off Counter since first Power On: " + str(PowerOff2))
         self.assertEqual(PowerOn1 + 1, PowerOn2)
         self.assertEqual(PowerOff1 + 1, PowerOff2)
         
