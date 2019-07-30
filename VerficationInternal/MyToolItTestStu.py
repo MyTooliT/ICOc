@@ -1,7 +1,8 @@
 import unittest
 import sys
 import os
-file_path = 'C:\Program Files\PCAN-Basic API\Include\PCANBasic.py'
+# Required to add peakcan
+file_path = '../'
 dir_name = os.path.dirname(file_path)
 sys.path.append(dir_name)
 
@@ -13,7 +14,7 @@ from random import randint
 import time
 from MyToolItStu import Version, StuErrorWord
 log_file = 'TestStu.txt'
-log_location = '../Logs/STU/'
+log_location = '../../Logs/STU/'
         
 
 class TestStu(unittest.TestCase):
@@ -22,13 +23,13 @@ class TestStu(unittest.TestCase):
         print("TestCase: ", self._testMethodName)
         self.fileName = log_location + self._testMethodName + ".txt"
         self.fileNameError = log_location + "Error_" + self._testMethodName + ".txt"
-        self.PeakCan = PeakCanFd.PeakCanFd(PeakCanFd.PCAN_BAUD_1M, self.fileName, self.fileNameError, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"])
+        self.PeakCan = PeakCanFd.PeakCanFd(PeakCanFd.PCAN_BAUD_1M, self.fileName, self.fileNameError, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"])
         self.PeakCan.Logger.Info("TestCase: " + str(self._testMethodName))
         self.PeakCan.CanTimeStampStart(self._resetStu()["CanTime"])
         self.Error = False
         self.PeakCan.Logger.Info("STU BlueTooth Address: " + hex(self.PeakCan.BlueToothAddress(MyToolItNetworkNr["STU1"])))
         self._statusWords()
-        self._SthWDog()
+        self._StuWDog()
         print("Start")
         self.PeakCan.Logger.Info("_______________________________________________________________________________________________________________")
         self.PeakCan.Logger.Info("Start")
@@ -39,10 +40,6 @@ class TestStu(unittest.TestCase):
         if False == self.PeakCan.Error:
             self._statusWords()
             self.PeakCan.Logger.Info("Test Time End Time Stamp")
-        else:
-            ReceiveFailCounter = 0
-        if(0 < ReceiveFailCounter):
-            self.Error = True
         if False != self.PeakCan.Error:
             self.Error = True
         self.PeakCan.__exit__()
@@ -68,8 +65,8 @@ class TestStu(unittest.TestCase):
         
     def _statusWords(self):
         ErrorWord = StuErrorWord()
-        psw0 = self.PeakCan.statusWord0(MyToolItNetworkNr["STH1"])
-        self.PeakCan.Logger.Info("STH Status Word: " + hex(psw0))
+        psw0 = self.PeakCan.statusWord0(MyToolItNetworkNr["STU1"])
+        self.PeakCan.Logger.Info("STU Status Word: " + hex(psw0))
         ErrorWord.asword = self.PeakCan.statusWord1(MyToolItNetworkNr["STU1"])
         self.PeakCan.Logger.Info("STU Error Word: " + hex(ErrorWord.asword))    
     
@@ -89,8 +86,8 @@ class TestStu(unittest.TestCase):
         self.PeakCan.Logger.Info("Send ID: " + hex(msg.ID) + "; Expected ID: " + hex(msgAckExpected.ID) + "; Received ID: " + hex(self.PeakCan.getReadMessage(-1).ID))
         expectedData = ActiveState()
         expectedData.asbyte = 0
-        expectedData.b.u2NodeState = 2
-        expectedData.b.u3NetworkState = 6
+        expectedData.b.u2NodeState = Node["Application"]
+        expectedData.b.u3NetworkState = NetworkState["Operating"]
         self.PeakCan.Logger.Info("Send Data: " + hex(0) + "; Expected Data: " + hex(expectedData.asbyte) + "; Received Data: " + hex(self.PeakCan.getReadMessage(-1).DATA[0]))
         self.assertEqual(hex(msgAckExpected.ID), hex(self.PeakCan.getReadMessage(-1).ID))
         self.assertEqual(expectedData.asbyte, self.PeakCan.getReadMessage(-1).DATA[0])
@@ -401,7 +398,7 @@ class TestStu(unittest.TestCase):
 
     def test0111BlueToothAddress(self):
         self.PeakCan.Logger.Info("Get Bluetooth Address")
-        self.PeakCan.Logger.Info("BlueTooth Address: " + hex(self.PeakCan.BlueToothAddress(MyToolItNetworkNr["STH1"])))
+        self.PeakCan.Logger.Info("BlueTooth Address: " + hex(self.PeakCan.BlueToothAddress(MyToolItNetworkNr["STU1"])))
                     
     """
     Send Message to STH without connecting. Assumed result = not receiving anything. This especially tests the routing functionallity.
@@ -606,15 +603,15 @@ class TestStu(unittest.TestCase):
     """   
 
     def test0701StatisticsOperatingMinutes(self):
-        OperatingMinutes1 = self.PeakCan.statisticalData(MyToolItNetworkNr["STH1"], MyToolItStatData["OperatingTime"])    
+        OperatingMinutes1 = self.PeakCan.statisticalData(MyToolItNetworkNr["STU1"], MyToolItStatData["OperatingTime"])    
         MinutesReset1 = messageWordGet(OperatingMinutes1[:4])
         MinutesOveral1 = messageWordGet(OperatingMinutes1[4:])
         time.sleep(60)
-        OperatingMinutes2 = self.PeakCan.statisticalData(MyToolItNetworkNr["STH1"], MyToolItStatData["OperatingTime"])    
+        OperatingMinutes2 = self.PeakCan.statisticalData(MyToolItNetworkNr["STU1"], MyToolItStatData["OperatingTime"])    
         MinutesReset2 = messageWordGet(OperatingMinutes2[:4])
         MinutesOveral2 = messageWordGet(OperatingMinutes2[4:])
         self._resetStu()
-        OperatingMinutes3 = self.PeakCan.statisticalData(MyToolItNetworkNr["STH1"], MyToolItStatData["OperatingTime"])    
+        OperatingMinutes3 = self.PeakCan.statisticalData(MyToolItNetworkNr["STU1"], MyToolItStatData["OperatingTime"])    
         MinutesReset3 = messageWordGet(OperatingMinutes3[:4])
         MinutesOveral3 = messageWordGet(OperatingMinutes3[4:])
         self.PeakCan.Logger.Info("Operating Minutes Payload: " + payload2Hex(OperatingMinutes1))
@@ -646,50 +643,69 @@ class TestStu(unittest.TestCase):
         self.assertEqual(WDogCounter1, WDogCounter2)
 
     """
-    Test that nothing happens when sinding Command 0x0000
+    Test that nothing happens when sinding Command 0x0000 to STU1
     """
 
-    def test0900ErrorCmdVerboten(self):
+    def test0900ErrorCmdVerbotenStu1(self):
         cmd = self.PeakCan.CanCmd(0, 0, 1, 0)
         message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [])
-        msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, bErrorExit=False)
+        msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, retries=3, bErrorExit=False)
         self.assertEqual("Error", msgAck)
         cmd = self.PeakCan.CanCmd(0, 0, 1, 1)
         message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [])
-        msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, bErrorExit=False)
+        msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, retries=3, bErrorExit=False)
         self.assertEqual("Error", msgAck)
         cmd = self.PeakCan.CanCmd(0, 0, 0, 0)
         message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [])
-        msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, bErrorExit=False)
+        msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, retries=3, bErrorExit=False)
         self.assertEqual("Error", msgAck)
         cmd = self.PeakCan.CanCmd(0, 0, 0, 1)
         message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [])
-        msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, bErrorExit=False)
+        msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, retries=3, bErrorExit=False)
         self.assertEqual("Error", msgAck)
-        
+               
     """
-    Test that nothing happens when sinding Reqest(1) and Error(1)
+    Test that nothing happens when sinding Reqest(1) and Error(1) to STU1
     """
 
-    def test0901ErrorRequestError(self):
+    def test0901ErrorRequestErrorStu1(self):
         cmd = self.PeakCan.CanCmd(MyToolItBlock["System"], MyToolItSystem["Reset"], 1, 1)
         message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [])
-        msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, bErrorExit=False)
+        msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, retries=3, bErrorExit=False)
         self.assertEqual("Error", msgAck)
-        cmd = self.PeakCan.CanCmd(MyToolItBlock["System"], MyToolItSystem["ActiveState"], 1, 1)
+        cmd = self.PeakCan.CanCmd(MyToolItBlock["Streaming"], MyToolItStreaming["Acceleration"], 1, 1)
         message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [])
-        msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, bErrorExit=False)
-        self.assertEqual("Error", msgAck)            
+        msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, retries=3, bErrorExit=False)
+        self.assertEqual("Error", msgAck)          
+     
+    """
+    Test Routing - Wrong Sender to STU1
+    """
+
+    def test0902WrongSenderStu1(self):
+        for numberKey, numberVal in MyToolItNetworkNr.items():
+            if "SPU1" != numberKey:
+                cmd = self.PeakCan.CanCmd(MyToolItBlock["System"], MyToolItSystem["Reset"], 1, 0)
+                message = self.PeakCan.CanMessage20(cmd, numberVal, MyToolItNetworkNr["STU1"], [])
+                msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, retries=3, bErrorExit=False)
+                self.assertEqual("Error", msgAck)
+                       
 
          
 if __name__ == "__main__":
-    print(sys.version)    
-    if not os.path.exists(os.path.dirname(log_location + log_file)):
-        os.makedirs(os.path.dirname(log_location + log_file))
-    f = open(log_location + log_file, "w")
-    loader = unittest.TestLoader()
-    start_dir = 'path/to/your/test/files'
-    suite = loader.discover(start_dir)
-    runner = unittest.TextTestRunner(f)
-    unittest.main(suite)
-    f.close()
+    print(sys.version)
+    log_location = sys.argv[1]
+    log_file = sys.argv[2]
+    if '/' != log_location[-1]:
+        log_location += '/'
+    logFileLocation = log_location + log_file
+    dir_name = os.path.dirname(logFileLocation)
+    sys.path.append(dir_name)
+
+    print("Log Files will be saved at: " + str(logFileLocation))
+    if not os.path.exists(dir_name):
+        os.makedirs(dir_name)
+    with open(logFileLocation, "w") as f:
+        print(f)     
+        runner = unittest.TextTestRunner(f)
+        unittest.main(argv=['first-arg-is-ignored'], testRunner=runner) 
