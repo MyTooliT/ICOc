@@ -255,7 +255,7 @@ class PeakCanFd(object):
                 CanMsgAck = self.CanMessage20Ack(CanMsg)
                 CanMsgAckError = self.CanMessage20AckError(CanMsg) 
             indexStartError = currentIndex
-            while (CanMsgAck.ID != message["CanMsg"].ID) or (message["PcTime"] <= self.timeStampStart) or indexStart == self.GetReadArrayIndex() or (not self.ComparePayloadEqual(self.PeakCanPayload2Array(message["CanMsg"]), assumedPayload) and None != assumedPayload):
+            while (CanMsgAck.ID != message["CanMsg"].ID) or (message["PcTime"] < self.timeStampStart) or indexStart == self.GetReadArrayIndex() or (not self.ComparePayloadEqual(self.PeakCanPayload2Array(message["CanMsg"]), assumedPayload) and None != assumedPayload):
                 if((CanMsgAckError.ID == message["CanMsg"].ID) and (indexStartError < currentIndex)):
                     indexStartError = currentIndex
                     [command, sender, receiver] = self.CanMessage20GetFields(message["CanMsg"].ID)

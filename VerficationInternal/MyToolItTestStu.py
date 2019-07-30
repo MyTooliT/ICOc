@@ -146,7 +146,7 @@ class TestStu(unittest.TestCase):
 
     def test0005MultiSendSingleAckRetries(self):
         self.PeakCan.Logger.Info("Send and get ACK for 1000 times AND do it with two messages randomly ")
-        for _i in range(1, 1001):
+        for _i in range(1, 10001):
             self.PeakCan.cmdSend(MyToolItNetworkNr["STU1"], MyToolItBlock["System"], MyToolItSystem["Bluetooth"], [SystemCommandBlueTooth["DeviceCheckConnected"], 0, 0, 0, 0, 0, 0, 0], retries=0)
         self.test0001Ack()  # Test that it still works
         
