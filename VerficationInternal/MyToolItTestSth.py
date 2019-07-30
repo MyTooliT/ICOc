@@ -2339,7 +2339,7 @@ class TestSth(unittest.TestCase):
         overSamples = 0
         for acquisitionTimeKey, acquisitionTimeValue in AdcAcquisitionTime.items():
             for overSamplingKey, overSamplingVal in AdcOverSamplingRate.items():
-                samplingRate = calcSamplingRate(prescaler, acquisitionTimeValue, overSamplingVal)
+                samplingRate = int(calcSamplingRate(prescaler, acquisitionTimeValue, overSamplingVal))
                 if SamplingRateSingleMax >= samplingRate and SamplingRateMin <= samplingRate:
                     self.PeakCan.Logger.Info("Sampling Rate: " + str(samplingRate))
                     self.PeakCan.Logger.Info("Prescaler: " + str(prescaler))
@@ -2362,8 +2362,6 @@ class TestSth(unittest.TestCase):
                     self._resetStu()
                     self.PeakCan.Logger.Info("Connect to STH")
                     self.PeakCan.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
-        SamplingRateMaxDet += 0.5
-        SamplingRateMaxDet = int(SamplingRateMaxDet)
         self.PeakCan.Logger.Info("Maximum Single Sampling Rate: " + str(SamplingRateMaxDet) + "(" + str(prescaler) + "/" + str(aquisitionTime) + "/" + str(overSamples) + ")")
         self.assertEqual(SamplingRateMaxDet, SamplingRateSingleMax)
 
@@ -2378,7 +2376,7 @@ class TestSth(unittest.TestCase):
         overSamples = 0
         for acquisitionTimeKey, acquisitionTimeValue in AdcAcquisitionTime.items():
             for overSamplingKey, overSamplingVal in AdcOverSamplingRate.items():
-                samplingRate = calcSamplingRate(prescaler, acquisitionTimeValue, overSamplingVal)
+                samplingRate = int(calcSamplingRate(prescaler, acquisitionTimeValue, overSamplingVal))
                 if SamplingRateDoubleMax >= samplingRate and SamplingRateMin <= samplingRate:
                     self.PeakCan.Logger.Info("Sampling Rate: " + str(samplingRate))
                     self.PeakCan.Logger.Info("Prescaer: " + str(prescaler))
@@ -2401,8 +2399,6 @@ class TestSth(unittest.TestCase):
                     self._resetStu()
                     self.PeakCan.Logger.Info("Connect to STH")
                     self.PeakCan.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
-        SamplingRateMaxDet += 0.5
-        SamplingRateMaxDet = int(SamplingRateMaxDet)
         self.PeakCan.Logger.Info("Maximum Double Sampling Rate: " + str(SamplingRateMaxDet) + "(" + str(prescaler) + "/" + str(aquisitionTime) + "/" + str(overSamples) + ")")
         self.assertEqual(SamplingRateMaxDet, SamplingRateDoubleMax)
 
@@ -2417,7 +2413,7 @@ class TestSth(unittest.TestCase):
         overSamples = 0
         for acquisitionTimeKey, acquisitionTimeValue in AdcAcquisitionTime.items():
             for overSamplingKey, overSamplingVal in AdcOverSamplingRate.items():
-                samplingRate = calcSamplingRate(prescaler, acquisitionTimeValue, overSamplingVal)
+                samplingRate = int(calcSamplingRate(prescaler, acquisitionTimeValue, overSamplingVal))
                 if SamplingRateTrippleMax >= samplingRate and SamplingRateMin <= samplingRate:
                     self.PeakCan.Logger.Info("Sampling Rate: " + str(samplingRate))
                     self.PeakCan.Logger.Info("Prescaer: " + str(prescaler))
@@ -2441,8 +2437,6 @@ class TestSth(unittest.TestCase):
                     self.PeakCan.Logger.Info("Connect to STH")
                     self.PeakCan.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
         self.PeakCan.Logger.Info("Maximum Tripple Sampling Rate: " + str(SamplingRateMaxDet))
-        SamplingRateMaxDet += 0.5
-        SamplingRateMaxDet = int(SamplingRateMaxDet)
         self.PeakCan.Logger.Info("Maximum Tripple Sampling Rate: " + str(SamplingRateMaxDet) + "(" + str(prescaler) + "/" + str(aquisitionTime) + "/" + str(overSamples) + ")")
         self.assertEqual(SamplingRateMaxDet, SamplingRateTrippleMax)
 
