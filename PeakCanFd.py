@@ -788,7 +788,8 @@ class PeakCanFd(object):
         connectToDevice = self.WriteFrameWaitAckRetries(message, retries=2)["Payload"][2]
         return connectToDevice
     
-    def BlueToothConnect(self, stuNr, deviceNr):        
+    def BlueToothConnect(self, stuNr, deviceNr):   
+        self.Logger.Info("Connect to Device")     
         self.BlueToothConnectConnect(stuNr)
         deviceNumbers = self.BlueToothConnectTotalScannedDeviceNr(stuNr)
         ret = 0
@@ -801,7 +802,7 @@ class PeakCanFd(object):
         return ret
 
     def BlueToothDisconnect(self, stuNr):
-        self.Logger.Info("Disconnect from connected Device")
+        self.Logger.Info("Disconnect from Device")
         cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0)
         message = self.CanMessage20(cmd, self.sender, stuNr, [SystemCommandBlueTooth["Disconnect"], 0, 0, 0, 0, 0, 0, 0])
         self.WriteFrameWaitAckRetries(message, retries=2)
