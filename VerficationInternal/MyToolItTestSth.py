@@ -3767,7 +3767,6 @@ class TestSth(unittest.TestCase):
         message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [])
         msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, retries=3, bErrorExit=False)
         self.assertEqual("Error", msgAck)
-
                
     """
     Test that nothing happens when sinding Reqest(1) and Error(1) to STH1
@@ -3794,7 +3793,6 @@ class TestSth(unittest.TestCase):
                 message = self.PeakCan.CanMessage20(cmd, numberVal, MyToolItNetworkNr["STH1"], [])
                 msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, retries=3, bErrorExit=False)
                 self.assertEqual("Error", msgAck)
-
                     
                 
 if __name__ == "__main__":

@@ -31,7 +31,6 @@ def messageValueGet(m):
     return Acc  
 
 
-
 # def __init__(self, log_location, iAcc1, iAcc2, iAcc3, dev, prescaler, aquistionTime, oversampling, runtime):
 class aquAcc():
 
@@ -77,23 +76,19 @@ class aquAcc():
         self.sSheetFile = sSheetFile
 
     def vAccSet(self, iX, iY, iZ):
-        self.iAccX = int(bool(0<iX))
-        self.iAccY = int(bool(0<iY))
-        self.iAccZ = int(bool(0<iZ))
+        self.iAccX = int(bool(0 < iX))
+        self.iAccY = int(bool(0 < iY))
+        self.iAccZ = int(bool(0 < iZ))
 
     def vVoltageSet(self, iX, iY, iZ):
-        self.iVoltageX = int(bool(0<iX))
-        self.iVoltageY = int(bool(0<iY))
-        self.iVoltageZ = int(bool(0<iZ))
-        
-
+        self.iVoltageX = int(bool(0 < iX))
+        self.iVoltageY = int(bool(0 < iY))
+        self.iVoltageZ = int(bool(0 < iZ))
          
     def vDeviceNameSet(self, sDevName):
-        if 8<len(sDevName):
+        if 8 < len(sDevName):
             sDevName = sDevName[:8]
         self.sDevName = sDevName    
-     
-         
         
     def vAdcConfig(self, iPrescaler, sAquistionTime, sOversampling, sAdcRef, tDataFormat):
         if PrescalerMin > iPrescaler:
@@ -104,7 +99,6 @@ class aquAcc():
         iOversampling = iAdcOverSamplingRate[int(sOversampling)]
         iAdcRef = tAdcVRef[sAdcRef]
         samplingRate = calcSamplingRate(iPrescaler, iAcquisitionTime, iOversampling)
-        
         
         self.iPrescaler = 2
         self.sAquistionTime = "3"
@@ -118,12 +112,11 @@ class aquAcc():
     
     def sLogName(self):
         if None != self.logNameCount:
-            logName = self.logName + "_" + self.sDateClock() +"_" + str(self.logNameCount).format(16) + ".txt"
+            logName = self.logName + "_" + self.sDateClock() + "_" + str(self.logNameCount).format(16) + ".txt"
             self.logNameCount += 1
         else:
             logName = self.logName + "_" + self.sDateClock() + ".txt"
         return logName
-    
     
     def __exit__(self):
         self._streamingStop()

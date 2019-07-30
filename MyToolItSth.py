@@ -9,7 +9,6 @@ Version = {
     "Name" : "Tanja",
 }
 
-
 TestConfig = {
     "DevName" : "Tanja",
     "AdcConfigAllPrescalerMax" : 4,
@@ -33,23 +32,25 @@ SthModule = {
     "Streaming" : 0,
 }
 
+
 class SthErrorWordFlags(ctypes.LittleEndianStructure):
     _fields_ = [
             ("bTxFail", c_uint32, 1),
             ("bAdcOverRun", c_uint32, 1),
-            ("Reserved", c_uint32, 30),        
+            ("Reserved", c_uint32, 30),
         ]
 
 
 class SthErrorWord(ctypes.Union):
     _fields_ = [("b", SthErrorWordFlags),
                 ("asword", c_uint32)]
+
     
 class SthStateWordFlags(ctypes.LittleEndianStructure):
     _fields_ = [
             ("bError", c_uint32, 1),
             ("u3NetworkState", c_uint32, 3),
-            ("Reserved", c_uint32, 28),        
+            ("Reserved", c_uint32, 28),
         ]
 
 

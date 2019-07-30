@@ -2,7 +2,7 @@ import unittest
 import sys
 import os
 
-#Required to add peakcan
+# Required to add peakcan
 file_path = '../'
 dir_name = os.path.dirname(file_path)
 sys.path.append(dir_name)
@@ -13,7 +13,8 @@ import time
 from MyToolItStu import StuErrorWord
 from MyToolItCommands import *
 
-log_location='../../Logs/STH/'
+log_location = '../../Logs/STH/'
+
 
 class TestSthManually(unittest.TestCase):
 
@@ -49,7 +50,6 @@ class TestSthManually(unittest.TestCase):
         if True == self.Error:
             return True
         return False
-
 
     def _resetStu(self, retries=5, log=True):
         return self.PeakCan.cmdReset(MyToolItNetworkNr["STU1"], retries=retries, log=log)
@@ -106,7 +106,6 @@ class TestSthManually(unittest.TestCase):
         self.assertEqual(activeState.b.u2NodeState, Node["Application"])
         self.assertEqual(activeState.b.bReserved1, 0)
         self.assertEqual(activeState.b.u3NetworkState, NetworkState["Operating"])
-        
                           
     """
     Under Voltage Counter
@@ -124,8 +123,8 @@ class TestSthManually(unittest.TestCase):
         PowerOff2 = messageWordGet(PowerOnOff2[4:])
         self.PeakCan.Logger.Info("Power On Counter since first Power On: " + payload2Hex(PowerOn2))
         self.PeakCan.Logger.Info("Power On Counter since first Power On: " + str(PowerOff2))
-        self.assertEqual(PowerOn1+1, PowerOn2)
-        self.assertEqual(PowerOff1+1, PowerOff2)
+        self.assertEqual(PowerOn1 + 1, PowerOn2)
+        self.assertEqual(PowerOff1 + 1, PowerOff2)
         
         
 if __name__ == "__main__":
@@ -144,4 +143,4 @@ if __name__ == "__main__":
     with open(logFileLocation, "w") as f:
         print(f)     
         runner = unittest.TextTestRunner(f)
-        unittest.main(argv=['first-arg-is-ignored'], testRunner=runner) 
+        unittest.main(argv=['first-arg-is-ignored'], testRunner=runner)   

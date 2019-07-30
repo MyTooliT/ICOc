@@ -2,7 +2,7 @@ import unittest
 import sys
 import os
 
-#Required to add peakcan
+# Required to add peakcan
 file_path = '../'
 dir_name = os.path.dirname(file_path)
 sys.path.append(dir_name)
@@ -12,7 +12,8 @@ from MyToolItNetworkNumbers import MyToolItNetworkNr
 from SthLimits import *
 import time
 
-log_location='../../Logs/STH/'
+log_location = '../../Logs/STH/'
+
 
 class TestSthManually(unittest.TestCase):
 
@@ -56,7 +57,6 @@ class TestSthManually(unittest.TestCase):
         if True == self.Error:
             return True
         return False
-
 
     def _resetStu(self, retries=5, log=True):
         return self.PeakCan.cmdReset(MyToolItNetworkNr["STU1"], retries=retries, log=log)
@@ -122,10 +122,10 @@ class TestSthManually(unittest.TestCase):
         self.assertEqual(activeState.b.bReserved1, 0)
         self.assertEqual(activeState.b.u3NetworkState, NetworkState["Operating"])
         
-        
     """
     Test Standby Command - Run this manually! Only (power on) reset gets out of that (or replay firmware)
     """
+
     def testManually0010Standby(self):
         failTry = ActiveState()
         receivedData = ActiveState()
@@ -168,7 +168,7 @@ class TestSthManually(unittest.TestCase):
         self.PeakCan.BlueToothDisconnect(MyToolItNetworkNr["STU1"])        
         print("Start Simplicty Energy Profiler and connect to target (STH)")
         print("Waiting" + str(SleepTime["Min"]) + "ms")
-        time.sleep(SleepTime["Min"]/1000)
+        time.sleep(SleepTime["Min"] / 1000)
         print("Measure Power Consumption for advertisement time " + str(SleepTime["AdvertisementReset1"]) + "ms")
         input('Press any key to continue')
         self.PeakCan.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
@@ -176,7 +176,7 @@ class TestSthManually(unittest.TestCase):
         self.PeakCan.BlueToothEnergyModeNr(SleepTime["Reset2"], SleepTime["AdvertisementReset2"], 2)
         self.PeakCan.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
         print("Waiting" + str(SleepTime["Min"]) + "ms")
-        time.sleep(SleepTime["Min"]/1000)
+        time.sleep(SleepTime["Min"] / 1000)
         print("Measure Power Consumption for advertisement time " + str(SleepTime["AdvertisementReset2"]) + "ms")
         input('Press any key to continue')
         self.PeakCan.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
@@ -184,13 +184,12 @@ class TestSthManually(unittest.TestCase):
         self.PeakCan.BlueToothEnergyModeNr(SleepTime["Reset2"], TestConfig["ConTimeNormalMaxMs"], 2)
         self.PeakCan.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
         print("Waiting" + str(SleepTime["Min"]) + "ms")
-        time.sleep(SleepTime["Min"]/1000)
+        time.sleep(SleepTime["Min"] / 1000)
         print("Measure Power Consumption for advertisement time " + str(TestConfig["ConTimeNormalMaxMs"]) + "ms")
         input('Press any key to continue')
         self.PeakCan.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
         self.PeakCan.BlueToothEnergyModeNr(SleepTime["Reset1"], SleepTime["AdvertisementReset1"], 1)
         self.PeakCan.BlueToothEnergyModeNr(SleepTime["Reset2"], SleepTime["AdvertisementReset2"], 2)  
-
 
     """
     Power Consumption - Energy Save Modes
@@ -204,10 +203,10 @@ class TestSthManually(unittest.TestCase):
         print("Power off device for 1 minute(power consumpiton of the target is actually REALLY low)")
         input('Press any key to continue')
         
-        
     """
     Power Consumption - Connected
     """   
+
     def testManually0013PowerConsumptionConnected(self):
         self.PeakCan.BlueToothEnergyModeNr(~0, SleepTime["AdvertisementReset1"], 1)
         self.PeakCan.BlueToothEnergyModeNr(~0, SleepTime["AdvertisementReset1"], 2)
@@ -221,6 +220,7 @@ class TestSthManually(unittest.TestCase):
     """
     Power Consumption - Measuring at reset conditions
     """   
+
     def testManually0014PowerConsumptionMeasuring(self):
         print("Start Simplicty Energy Profiler and connect to target (STH)") 
         input('Press any key to continue')
@@ -232,6 +232,7 @@ class TestSthManually(unittest.TestCase):
     """
     Power Consumption - Measuring at reset conditions - LED turned off
     """   
+
     def testManually0015PowerConsumptionMeasuringLedOff(self):
         self.TurnOffLed()
         print("Start Simplicty Energy Profiler and connect to target (STH)") 
@@ -256,8 +257,7 @@ class TestSthManually(unittest.TestCase):
         UnderVoltagePowerOnFirst2 = messageWordGet(UnderVoltage2[:4])
         self.PeakCan.Logger.Info("Under Voltage Counter since first Power On: " + payload2Hex(UnderVoltage2))
         self.PeakCan.Logger.Info("Under Voltage Counter since first Power On: " + str(UnderVoltagePowerOnFirst2))
-        self.assertEqual(0xFFFFFFFF&(UnderVoltagePowerOnFirst1+1), UnderVoltagePowerOnFirst2)
-        
+        self.assertEqual(0xFFFFFFFF & (UnderVoltagePowerOnFirst1 + 1), UnderVoltagePowerOnFirst2)
         
         
 if __name__ == "__main__":
@@ -276,4 +276,4 @@ if __name__ == "__main__":
     with open(logFileLocation, "w") as f:
         print(f)     
         runner = unittest.TextTestRunner(f)
-        unittest.main(argv=['first-arg-is-ignored'], testRunner=runner) 
+        unittest.main(argv=['first-arg-is-ignored'], testRunner=runner)  

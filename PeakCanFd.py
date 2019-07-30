@@ -608,20 +608,19 @@ class PeakCanFd(object):
             self.Logger.Error("Statistical Data Fail Request")
         return returnAck
 
-    def statusWord0(self, receiver, payload = []):
+    def statusWord0(self, receiver, payload=[]):
         cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["StatusWord0"], 1, 0)
         msg = self.CanMessage20(cmd, self.sender, receiver, payload)
         psw0 = self.WriteFrameWaitAckRetries(msg, retries=5)["Payload"]
         psw0 = AsciiStringWordBigEndian(psw0[0:4])
         return psw0
 
-    def statusWord1(self, receiver, payload = []):
+    def statusWord1(self, receiver, payload=[]):
         cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["StatusWord1"], 1, 0)
         msg = self.CanMessage20(cmd, self.sender, receiver, payload)
         psw1 = self.WriteFrameWaitAckRetries(msg, retries=5)["Payload"]
         psw1 = AsciiStringWordBigEndian(psw1[0:4])
         return psw1
-        
         
     def getTimeMs(self):
         return int(round(time() * 1000)) - int(self.startTime)

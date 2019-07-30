@@ -365,8 +365,8 @@ AdcOverSamplingRateReverse = {
     2 : 4,
     3 : 8,
     4 : 16,
-    5 : 32, 
-    6 : 64, 
+    5 : 32,
+    6 : 64,
     7 : 128,
     8 : 256,
     9 : 512,
@@ -430,7 +430,6 @@ AdcVRefValuemV = {
     AdcReference["6V6"] : 6000
 }
 
-
 DataSets = {
     0 : 0,
     1 : 1,
@@ -456,7 +455,7 @@ Node = {
     "NoChange" : 0,
     "Bootloader" : 1,
     "Application" : 2,
-    "Reserved" : 3,    
+    "Reserved" : 3,
 }
 
 NetworkState = {
@@ -484,7 +483,7 @@ NetworkStateName = {
 CalibrationFactor = {
     "Acceleration" : 0,
     "Temperature" : 1,
-    "Voltage" : 32,    
+    "Voltage" : 32,
 }
 
 
@@ -516,11 +515,13 @@ def payload2Hex(payload):
     payloadHex = '[{}]'.format(', '.join(hex(x) for x in payload))
     return payloadHex
 
+
 def AsciiStringWordBigEndian(ByteArray):
     value = 0
     for byte in range(len(ByteArray)):
         value += (ByteArray[byte] << (8 * byte))
     return value
+
 
 def AsciiStringWordLittleEndian(ByteArray):
     value = 0
