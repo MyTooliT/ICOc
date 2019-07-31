@@ -127,6 +127,8 @@ MyToolItStatData = {
     "MeasurementInterval" : 0x40,
     "QuantityInterval" : 0x41,
     "Energy" : 0x80,
+    "EepromRead" : 0xFE,
+    "EepromWrite" : 0xFF,
 }
 
 MyToolItConfiguration = {
@@ -511,7 +513,7 @@ def messageValueGet(m):
 def calcSamplingRate(prescaler, acquisitionTime, OverSamplingRate):
     acquTime = AdcAcquisitionTimeReverse[acquisitionTime]
     samplingRate = AdcOverSamplingRateReverse[OverSamplingRate]
-    return 38400000 / ((prescaler + 1) * (acquTime + 13) * samplingRate)
+    return int(38400000 / ((prescaler + 1) * (acquTime + 13) * samplingRate)+0.5)
 
 
 def payload2Hex(payload):

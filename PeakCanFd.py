@@ -729,7 +729,7 @@ class PeakCanFd(object):
         while False != self.RunReadThread:
             result = self.m_objPCANBasic.Read(self.m_PcanHandle)
             if result[0] == PCAN_ERROR_OK:
-                peakCanTimeStamp = result[2].millis_overflow * (2 ** 32) + result[2].millis
+                peakCanTimeStamp = result[2].millis_overflow * (2 ** 32) + result[2].millis + result[2].micros/1000
                 self.readArray.append({"CanMsg" : result[1], "PcTime" : self.getTimeMs(), "PeakCanTime" : peakCanTimeStamp})                
             elif result[0] == PCAN_ERROR_QOVERRUN:
                 self.Logger.Error("RxOverRun")
@@ -878,6 +878,7 @@ class PeakCanFd(object):
             self.Logger.Info("Available Names: " + str(recNameList))
             print("Available Names: " + str(recNameList))
             self.__exitError()
+        return deviceNumber
 
     def BlueToothEnergyModeNr(self, Sleep1TimeReset, Sleep1AdvertisementTimeReset, modeNr):
         S1B0 = Sleep1TimeReset & 0xFF
