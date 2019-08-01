@@ -2,8 +2,8 @@ import sys
 import os
 
 import xml.etree.ElementTree as ET
-from PCANBasic import *   
-from PeakCanFd import *
+import PeakCanFd
+from PeakCanFd import rreplace 
 from MyToolItNetworkNumbers import *
 from MyToolItCommands import *
 from time import sleep, time
@@ -11,8 +11,8 @@ from random import randint
 from MyToolItSth import *
 from datetime import datetime
 import getopt
-import xlsxwriter
 import openpyxl
+from openpyxl.styles import Font
 
 BlueToothDeviceListAquireTime = 5
 BlueToothNoneDev = 255
@@ -34,7 +34,7 @@ def messageValueGet(m):
 
 
 # def __init__(self, log_location, iAcc1, iAcc2, iAcc3, dev, prescaler, aquistionTime, oversampling, runtime):
-class aquAcc():
+class myToolItWatch():
 
     def __init__(self):
         self.KeyBoadInterrupt = False  
@@ -42,8 +42,9 @@ class aquAcc():
         self.Close = True   
         self.bConnected = False
         self.iStartTime = time()
-        self.vLogSet(self, "../Logs/STH/", "AccX12k5", None)
-        self.vSheetFileSet(None, None)
+        self.vLogSet("../Logs/STH/", "AccX12k5.txt", None)
+        self.vConfigFileSet('configKeys.xml')
+        self.vSheetFileSet("test.xlsx")
         self.vAccSet(1, 0, 0, DataSets[3])
         self.vVoltageSet(1, 0, 0, DataSets[3])
         self.vDeviceNameSet(TestConfig["DevName"])
@@ -51,6 +52,8 @@ class aquAcc():
         self.vDisplayTime(10)  
         self.vRunTime(10, 0)
         self.PeakCan = PeakCanFd.PeakCanFd(PeakCanFd.PCAN_BAUD_1M, self.logName, self.logNameError, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"])
+        self.vConfigSet("STH", None)
+        self.PeakCan.readThreadStop()       
             
     def __exit__(self):
         self.PeakCan.ReadArrayReset()
@@ -59,10 +62,10 @@ class aquAcc():
             ReceiveFailCounter = self._RoutingInformation()
             self._statusWords()
             self.PeakCan.Disconnect()
+            if(0 < ReceiveFailCounter):
+                self.Error = True
         self.PeakCan.Logger.Info("End Time Stamp")
         
-        if(0 < ReceiveFailCounter):
-            self.Error = True
         if(False != self.Error):
             self.PeakCan.Logger.Info("Error")
             print("Error")
@@ -72,7 +75,7 @@ class aquAcc():
         if(False != self.Error):
             raise
         print("Fin")
-
+       
     def _BlueToothStatistics(self):
         SendCounter = self.PeakCan.BlueToothCmd(MyToolItNetworkNr["STH1"], SystemCommandBlueTooth["SendCounter"])
         self.PeakCan.Logger.Info("BlueTooth Send Counter(STH1): " + str(SendCounter))
@@ -157,22 +160,31 @@ class aquAcc():
         ReceiveFailCounter += self._RoutingInformationStuPortSpu()
         return ReceiveFailCounter
 
-
-#Setter Methods
-    def vConfigSet(self, fileName, configName):
-        self.sConfigFile = fileName
-        self.sConfig = configName
-    
+# Setter Methods
+    def vConfigFileSet(self, sfileName):
+        self.sConfigFile = sfileName
+        
+    def vConfigSet(self, product, sConfig):
+        if "STH" == product:
+            self.sProduct = "STH"
+            self.PeakCan.vSetReceiver(MyToolItNetworkNr["STH1"])    
+            self.sConfig = sConfig  
+        elif "STU" == product: 
+            self.sProduct = "STU"
+            self.PeakCan.vSetReceiver(MyToolItNetworkNr["STU1"])
+            self.sConfig = sConfig        
+        
     def vLogSet(self, sLogLocation, sLogFileName, iLogCount):
+        if '/' != sLogLocation[-1]:
+            sLogLocation = sLogLocation + '/'
         self.logLocation = sLogLocation
-        self.logName = sLogFileName
-        self.logNameError =  self.logName
-        self.logNameError.rreplace('.', "Error.txt")
+        self.logName = self.logLocation + sLogFileName
+        self.logNameError = self.logName
+        self.logNameError = rreplace(self.logNameError, '.', "Error.")
         self.logNameCount = iLogCount
         
-    def vSheetFileSet(self, sSheetFile, sConfig):
+    def vSheetFileSet(self, sSheetFile):
         self.sSheetFile = sSheetFile
-        self.sConfig = sConfig
         
     def vAccSet(self, iX, iY, iZ, dataSets):
         self.bAccX = int(bool(0 < iX))
@@ -221,8 +233,8 @@ class aquAcc():
             iPrescaler = Prescaler["Min"]
         elif Prescaler["Max"] < iPrescaler:
             iPrescaler = Prescaler["Max"]    
-        iAcquisitionTime = AdcAcquisitionTimeReverse[iAquistionTime]
-        iOversampling = AdcOverSamplingRateReverse[iOversampling]
+        iAcquisitionTime = AdcAcquisitionTime[iAquistionTime]
+        iOversampling = AdcOverSamplingRate[iOversampling]
         self.samplingRate = int(calcSamplingRate(iPrescaler, iAcquisitionTime, iOversampling) + 0.5)
         self.iPrescaler = iPrescaler
         self.sAquistionTime = iAcquisitionTime
@@ -258,11 +270,6 @@ class aquAcc():
         if False == self.KeyBoadInterrupt:
             try:
                 self.PeakCan.cmdReset(MyToolItNetworkNr["STU1"])
-                sleep(1)  
-                if 0 == self.PeakCan.GetReadArrayIndex():  
-                    self.KeyBoadInterrupt = True
-                else:
-                    self.Close = False
             except KeyboardInterrupt:
                 self.KeyBoadInterrupt = True
 
@@ -314,8 +321,6 @@ class aquAcc():
     def close(self):
         if False != self.Close:
             self.__exit__()          
-   
-
     
     def GetStreamingAccDataProcess(self, endTime):
         try:
@@ -446,51 +451,102 @@ class aquAcc():
     def ReadMessage(self):
         message = None
         result = self.m_objPCANBasic.Read(self.m_PcanHandle)
-        if result[0] == PCAN_ERROR_OK:
+        if result[0] == PeakCanFd.PCAN_ERROR_OK:
             peakCanTimeStamp = result[2].millis_overflow * (2 ** 32) + result[2].millis + result[2].micros / 1000
             message = {"CanMsg" : result[1], "PcTime" : self.getTimeMs(), "PeakCanTime" : peakCanTimeStamp}   
-        elif result[0] == PCAN_ERROR_QOVERRUN:
+        elif result[0] == PeakCanFd.PCAN_ERROR_QOVERRUN:
             self.Logger.Error("RxOverRun")
             print("RxOverRun")
             self.RunReadThread = False
         return message
 
+    def excelCellWidthAdjust(self, worksheet, factor=1.2, bSmaller=True):
+        for col in worksheet.columns:
+            max_length = 0
+            column = col[0].column  # Get the column name
+            for cell in col:
+                if cell.coordinate in worksheet.merged_cells:  # not check merge_cells
+                    continue
+                try:  # Necessary to avoid error on empty cells
+                    if len(str(cell.value)) > max_length:
+                        max_length = len(cell.value)
+                except:
+                    pass
+            adjusted_width = (max_length + 2) * factor
+            columLetter = chr(ord('A') + column - 1)
+            if adjusted_width > worksheet.column_dimensions[columLetter].width or False == bSmaller:
+                worksheet.column_dimensions[columLetter].width = adjusted_width
+            
     """
     Create Excel Sheet by xml definition
     """
+
     def excelSheetCreate(self):
-        tree = ET.parse('configKeys.xml')
+        tree = ET.parse(self.sConfigFile)
         root = tree.getroot()
-        dataDef = root.Data
-        config = None
-        for data in dataDef.findall('data'):
-            if data.get('name') == self.sConfig:
-                config = data
-        if None != config and None != self.sSheetFile:
+        dataDef = root.find('Data')
+        for product in dataDef.find('Product'):
+            if product.get('name') == self.sProduct:
+                break
+        for version in product.find('Version'):
+            if version.get('name') == self.sConfig:
+                break
+        if version.get('name') == self.sConfig:
             workbook = openpyxl.Workbook()
-            i = 1
-            for page in config.findall('page'):
-                worksheet = workbook.create_sheet(page.get('name')+"@" +hex(page.get('pageAddress')))
-                worksheet['A1'] = 'Address'
-                worksheet['B1'] = 'Length'
-                worksheet['C1'] = 'readOnly'
-                worksheet['D1'] = 'Value'
-                worksheet['E1'] = 'Unit'
-                worksheet['F1'] = 'Format'
-                worksheet['G1'] = 'Description'
-                for entry in page.findall('entry'):
-                    worksheet['A'+str(i)] = entry.get('subAddress')
-                    worksheet['B'+str(i)] = entry.get('length')
-                    worksheet['C'+str(i)] = entry.get('readOnly')
-                    worksheet['D'+str(i)] = entry.get('Value')
-                    worksheet['E'+str(i)] = entry.get('unit')
-                    worksheet['F'+str(i)] = entry.get('format')
-                    worksheet['G'+str(i)] = entry.get('description')
+            FontRow1 = Font(bold=True, size=20)
+            FontRowRow2 = Font(bold=False, size=12)
+            workbook.remove_sheet(workbook.get_sheet_by_name('Sheet'))
+            
+            for page in version.find('Page'):
+                i = 2
+                name = page.get('name')
+                pageAddress = int(page.find('pageAddress').text)
+                worksheet = workbook.create_sheet(name + "@" + hex(pageAddress))
+                worksheet['A1'] = 'Name'
+                worksheet['A1'].font = FontRow1
+                worksheet['B1'] = 'Address'
+                worksheet['B1'].font = FontRow1
+                worksheet['C1'] = 'Length'
+                worksheet['C1'].font = FontRow1
+                worksheet['D1'] = 'Read Only'
+                worksheet['D1'].font = FontRow1
+                worksheet['E1'] = 'Value'
+                worksheet['E1'].font = FontRow1
+                worksheet['F1'] = 'Unit'
+                worksheet['F1'].font = FontRow1
+                worksheet['G1'] = 'Format'
+                worksheet['G1'].font = FontRow1
+                worksheet['H1'] = 'Description'
+                worksheet['H1'].font = FontRow1
+                self.excelCellWidthAdjust(worksheet, 1.6, False)
+                for entry in page.find('Entry'):
+                    worksheet['A' + str(i)] = entry.get('name')
+                    worksheet['A' + str(i)].font = FontRowRow2
+                    worksheet['B' + str(i)] = int(entry.find('subAddress').text)
+                    worksheet['B' + str(i)].font = FontRowRow2
+                    worksheet['C' + str(i)] = int(entry.find('length').text)
+                    worksheet['C' + str(i)].font = FontRowRow2
+                    worksheet['D' + str(i)] = entry.find('readOnly').text
+                    worksheet['D' + str(i)].font = FontRowRow2
+                    try:
+                        worksheet['E' + str(i)] = int(entry.find('value').text, 0)
+                    except ValueError:
+                        worksheet['E' + str(i)] = entry.find('value').text
+                    worksheet['E' + str(i)].font = FontRowRow2
+                    worksheet['F' + str(i)] = entry.find('unit').text
+                    worksheet['F' + str(i)].font = FontRowRow2
+                    worksheet['G' + str(i)] = entry.find('format').text
+                    worksheet['G' + str(i)].font = FontRowRow2
+                    worksheet['H' + str(i)] = entry.find('description').text
+                    worksheet['H' + str(i)].font = FontRowRow2
+                    i += 1
+                self.excelCellWidthAdjust(worksheet)
             workbook.save(self.sSheetFile)
     
     """
     Create xml definiton by Excel Sheet
     """
+
     def excelSheetConfig(self):
         tree = ET.parse('configKeys.xml')
         root = tree.getroot()
@@ -509,32 +565,35 @@ class aquAcc():
                 newPage.SubElement('pageAddress', nameAddress[1])
                 worksheet = workbook[sheet]
                 newPage.SubElement('name', worksheet)
-                for i in range(1,worksheet.max_row + 1):
-                    newPage.SubElement('subAddress', sheet.cell(row=i,column=1) )
-                    newPage.SubElement('length', sheet.cell(row=i,column=2) )
-                    newPage.SubElement('readOnly', sheet.cell(row=i,column=3) )
-                    newPage.SubElement('Value', sheet.cell(row=i,column=4) )
-                    newPage.SubElement('unit', sheet.cell(row=i,column=5) )
-                    newPage.SubElement('format', sheet.cell(row=i,column=6) )
-                    newPage.SubElement('description', sheet.cell(row=i,column=7) )
+                for i in range(1, worksheet.max_row + 1):
+                    newPage.SubElement('subAddress', sheet.cell(row=i, column=1))
+                    newPage.SubElement('length', sheet.cell(row=i, column=2))
+                    newPage.SubElement('readOnly', sheet.cell(row=i, column=3))
+                    newPage.SubElement('Value', sheet.cell(row=i, column=4))
+                    newPage.SubElement('unit', sheet.cell(row=i, column=5))
+                    newPage.SubElement('format', sheet.cell(row=i, column=6))
+                    newPage.SubElement('description', sheet.cell(row=i, column=7))
             root.write('configKeys.xml')
-        
         
     """
     Read EEPROM to write values in Excel Sheet
     """    
+
     def excelSheetRead(self):
         pass
     
-    def run(self, **args):
+    def run(self, args):
         for arg in args:
             print(arg)
+        self.vConfigSet("STH", "v2.1.2")
+        self.excelSheetCreate()
+
            
 if __name__ == "__main__":
     # (self, log_location, bAcc1, bAcc2, bAcc3, dev, prescaler, aquistionTime, oversampling, runtime):
-    acquireData = aquAcc()
-    #(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6], sys.argv[7], sys.argv[8], sys.argv[9])
-    acquireData.reset()
-    acquireData.run(sys.argv)
-    acquireData.close()
+    watch = myToolItWatch()
+    # (sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6], sys.argv[7], sys.argv[8], sys.argv[9])
+    # watch.reset()
+    watch.run(sys.argv)
+    # watch.close()
         

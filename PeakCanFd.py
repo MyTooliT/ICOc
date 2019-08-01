@@ -146,7 +146,10 @@ class PeakCanFd(object):
         self.__exit__()
         self.Error = True
         raise
-
+    
+    def vSetReceiver(self, receiver):
+        self.receiver = receiver
+        
     def readThreadStop(self):
         if False != self.RunReadThread:
             self.RunReadThread = False            
