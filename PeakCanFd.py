@@ -3,6 +3,7 @@ from PCANBasic import *
 import threading
 from time import sleep, time
 import os
+from datetime import datetime
 
 PeakCanIoPort = 0x2A0
 PeakCanInterrupt = 11
@@ -36,6 +37,11 @@ def rreplace(s, old, new):
     return (s[::-1].replace(old[::-1], new[::-1], 1))[::-1]
 
 
+def sDateClock():
+    DataClockTimeStamp = datetime.fromtimestamp(time()).strftime('%Y-%m-%d_%H:%M:%S')
+    return DataClockTimeStamp
+
+    
 class Logger():
 
     def __init__(self, fileName, fileNameError):
@@ -89,6 +95,7 @@ class PeakCanFd(object):
         self.receiver = receiver
         self.Logger = Logger(testMethodName, testMethodNameError)
         self.Logger.ErrorFlag = False
+        self.Logger.Info(str(sDateClock()))
         self.startTime = int(round(time() * 1000))
         self.m_objPCANBasic = PCANBasic()
         self.baudrate = baudrate
@@ -729,7 +736,7 @@ class PeakCanFd(object):
         while False != self.RunReadThread:
             result = self.m_objPCANBasic.Read(self.m_PcanHandle)
             if result[0] == PCAN_ERROR_OK:
-                peakCanTimeStamp = result[2].millis_overflow * (2 ** 32) + result[2].millis + result[2].micros/1000
+                peakCanTimeStamp = result[2].millis_overflow * (2 ** 32) + result[2].millis + result[2].micros / 1000
                 self.readArray.append({"CanMsg" : result[1], "PcTime" : self.getTimeMs(), "PeakCanTime" : peakCanTimeStamp})                
             elif result[0] == PCAN_ERROR_QOVERRUN:
                 self.Logger.Error("RxOverRun")

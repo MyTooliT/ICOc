@@ -316,7 +316,7 @@
                             <subAddress>0xAC</subAddress>
                             <length>1</length>
                             <readOnly  IsActive="true"></readOnly>
-                            <defaultValue>0xAC</defaultValue>
+                            <Value>0xAC</Value>
                             <unit>""</unit>
                             <format>"ASCII"</format>
                             <description>"Determines Initialised EERPOM iff 0xAC"</description>
@@ -325,7 +325,7 @@
                             <subAddress>1</subAddress>
                             <length>8</length>
                             <readOnly  IsActive="False"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"unsigned"</format>
                             <description>"Defines Bluetooth advertisement name"</description>
@@ -334,7 +334,7 @@
                             <subAddress>9</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="False"></readOnly>
-                            <defaultValue>300000</defaultValue>
+                            <Value>300000</Value>
                             <unit>"ms"</unit>
                             <format>"unsigned"</format>
                             <description>"Time to from disconnected to sleep Mode 1 in ms"</description>
@@ -343,7 +343,7 @@
                             <subAddress>13</subAddress>
                             <length>2</length>
                             <readOnly  IsActive="False"></readOnly>
-                            <defaultValue>400</defaultValue>
+                            <Value>400</Value>
                             <unit>"ms"</unit>
                             <format>"unsigned"</format>
                             <description>"Bluetooth Advertisement Time in ms for Sleep Mode 1"</description>
@@ -352,7 +352,7 @@
                             <subAddress>15</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="False"></readOnly>
-                            <defaultValue>3600000</defaultValue>
+                            <Value>3600000</Value>
                             <unit>"ms"</unit>
                             <format>"unsigned"</format>
                             <description>"Time to from disconnected to sleep Mode 1 in ms"</description>
@@ -361,7 +361,7 @@
                             <subAddress>19</subAddress>
                             <length>19</length>
                             <readOnly  IsActive="False"></readOnly>
-                            <defaultValue>1600</defaultValue>
+                            <Value>1600</Value>
                             <unit>"ms"</unit>
                             <format>"unsigned"</format>
                             <description>"Bluetooth Advertisement Time in ms for Sleep Mode 1"</description>
@@ -375,7 +375,7 @@
                             <subAddress>0</subAddress>
                             <length>8</length>
                             <readOnly  IsActive="true"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"unsigned"</format>
                             <description>"Global Trade Identification Number (GTIN)"</description>
@@ -384,7 +384,7 @@
                             <subAddress>13</subAddress>
                             <length>1</length>
                             <readOnly  IsActive="true"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"unsigned"</format>
                             <description>"Hardware Revision Number - Major"</description>
@@ -393,7 +393,7 @@
                             <subAddress>14</subAddress>
                             <length>1</length>
                             <readOnly  IsActive="true"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"unsigned"</format>
                             <description>"Hardware Revision Number - Minor"</description>
@@ -402,7 +402,7 @@
                             <subAddress>15</subAddress>
                             <length>1</length>
                             <readOnly  IsActive="true"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"unsigned"</format>
                             <description>"Hardware Revision Number - Build"</description>
@@ -411,7 +411,7 @@
                             <subAddress>21</subAddress>
                             <length>1</length>
                             <readOnly  IsActive="true"></readOnly>
-                            <defaultValue>2</defaultValue>
+                            <Value>2</Value>
                             <unit>""</unit>
                             <format>"unsigned"</format>
                             <description>"Firmware Version Number - Major(1Byte)"</description>
@@ -420,7 +420,7 @@
                             <subAddress>22</subAddress>
                             <length>1</length>
                             <readOnly  IsActive="true"></readOnly>
-                            <defaultValue>1</defaultValue>
+                            <Value>1</Value>
                             <unit>""</unit>
                             <format>"unsigned"</format>
                             <description>"Firmware Version Number - Minor(1Byte)"</description>
@@ -429,7 +429,7 @@
                             <subAddress>23</subAddress>
                             <length>1</length>
                             <readOnly  IsActive="true"></readOnly>
-                            <defaultValue>1</defaultValue>
+                            <Value>1</Value>
                             <unit>""</unit>
                             <format>"unsigned"</format>
                             <description>"Firmware Version Number - Minor(1Byte)"</description>
@@ -438,7 +438,7 @@
                             <subAddress>24</subAddress>
                             <length>8</length>
                             <readOnly  IsActive="true"></readOnly>
-                            <defaultValue>"Tanja"</defaultValue>
+                            <Value>"Tanja"</Value>
                             <unit>""</unit>
                             <format>"UTF8"</format>
                             <description>"Release Name, represents Major - Minor"</description>
@@ -447,7 +447,7 @@
                             <subAddress>32</subAddress>
                             <length>32</length>
                             <readOnly  IsActive="true"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <format>"UTF8"</format>
                             <description>"Manufactor Serial Number"</description>
                         </entry>
@@ -455,7 +455,7 @@
                             <subAddress>64</subAddress>
                             <length>128</length>
                             <readOnly  IsActive="true"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"UTF8"</format>
                             <description>"Manufactor Name; This may extend Serial Number, supports URL, extend definition, etc."</description>
@@ -464,7 +464,7 @@
                             <subAddress>192</subAddress>
                             <length>64</length>
                             <readOnly  IsActive="true"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"-"</format>
                             <description>"Supports Manufactor Specific information in format that is free to choose"</description>
@@ -478,7 +478,7 @@
                             <subAddress>0</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="true"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"unsigned"</format>
                             <description>"Power On Cycles since first reset"</description>
@@ -487,7 +487,7 @@
                             <subAddress>4</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="true"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"unsigned"</format>
                             <description>"Power Off Cycles since first reset"</description>
@@ -496,7 +496,7 @@
                             <subAddress>8</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="true"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>"minutes"</unit>
                             <format>"unsigned"</format>
                             <description>"Operating Time since first power On in minutes"</description>
@@ -505,7 +505,7 @@
                             <subAddress>12</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="true"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"unsigned"</format>
                             <description>"Counts of under voltages that yields into turn off state(Brown Out)"</description>
@@ -519,7 +519,7 @@
                             <subAddress>0</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="false"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"float"</format>
                             <description>"Calibration Factor K for Acceleration X -> y=kx+d"</description>
@@ -528,7 +528,7 @@
                             <subAddress>4</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="false"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"float"</format>
                             <description>"Calibration Factor d for Acceleration X -> y=kx+d"</description>
@@ -537,7 +537,7 @@
                             <subAddress>8</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="false"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"float"</format>
                             <description>"Calibration Factor K for Acceleration Y -> y=kx+d"</description>
@@ -546,7 +546,7 @@
                             <subAddress>12</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="false"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"float"</format>
                             <description>"Calibration Factor d for Acceleration Y -> y=kx+d"</description>
@@ -555,7 +555,7 @@
                             <subAddress>16</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="false"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"float"</format>
                             <description>"Calibration Factor K for Acceleration Z -> y=kx+d"</description>
@@ -564,7 +564,7 @@
                             <subAddress>20</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="false"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"float"</format>
                             <description>"Calibration Factor d for Acceleration Z -> y=kx+d"</description>
@@ -573,7 +573,7 @@
                             <subAddress>24</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="false"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"float"</format>
                             <description>"Calibration Factor K for Battery Voltage -> y=kx+d"</description>
@@ -582,7 +582,7 @@
                             <subAddress>28</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="false"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"float"</format>
                             <description>"Calibration Factor d for Battery Voltage -> y=kx+d"</description>
@@ -591,7 +591,7 @@
                             <subAddress>32</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="false"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"float"</format>
                             <description>"Calibration Factor K for Voltage Y -> y=kx+d"</description>
@@ -600,7 +600,7 @@
                             <subAddress>36</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="false"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"float"</format>
                             <description>"Calibration Factor d for Voltage Y -> y=kx+d"</description>
@@ -609,7 +609,7 @@
                             <subAddress>40</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="false"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"float"</format>
                             <description>"Calibration Factor K for Voltage Z -> y=kx+d"</description>
@@ -618,7 +618,7 @@
                             <subAddress>44</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="false"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"float"</format>
                             <description>"Calibration Factor d for Voltage Z -> y=kx+d"</description>
@@ -627,7 +627,7 @@
                             <subAddress>48</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="false"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"float"</format>
                             <description>"Calibration Factor K for Internal Temperature -> y=kx+d"</description>
@@ -636,7 +636,7 @@
                             <subAddress>52</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="false"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"float"</format>
                             <description>"Calibration Factor d for Internal Temperature -> y=kx+d"</description>
@@ -645,7 +645,7 @@
                             <subAddress>56</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="false"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"float"</format>
                             <description>"Calibration Factor K for Temperature Y -> y=kx+d"</description>
@@ -654,7 +654,7 @@
                             <subAddress>60</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="false"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"float"</format>
                             <description>"Calibration Factor d for Temperature Y -> y=kx+d"</description>
@@ -663,7 +663,7 @@
                             <subAddress>66</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="false"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"float"</format>
                             <description>"Calibration Factor K for Temperature Z -> y=kx+d"</description>
@@ -672,7 +672,7 @@
                             <subAddress>70</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="false"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"float"</format>
                             <description>"Calibration Factor d for Temperature Z -> y=kx+d"</description>
@@ -690,7 +690,7 @@
                             <subAddress>0xAC</subAddress>
                             <length>1</length>
                             <readOnly  IsActive="true"></readOnly>
-                            <defaultValue>0xAC</defaultValue>
+                            <Value>0xAC</Value>
                             <unit>""</unit>
                             <format>"ASCII"</format>
                             <description>"Determines Initialised EERPOM iff 0xAC"</description>
@@ -699,7 +699,7 @@
                             <subAddress>1</subAddress>
                             <length>8</length>
                             <readOnly  IsActive="False"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"unsigned"</format>
                             <description>"Defines Bluetooth advertisement name"</description>
@@ -708,7 +708,7 @@
                             <subAddress>9</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="False"></readOnly>
-                            <defaultValue>300000</defaultValue>
+                            <Value>300000</Value>
                             <unit>"ms"</unit>
                             <format>"unsigned"</format>
                             <description>"Time to from disconnected to sleep Mode 1 in ms"</description>
@@ -717,7 +717,7 @@
                             <subAddress>13</subAddress>
                             <length>2</length>
                             <readOnly  IsActive="False"></readOnly>
-                            <defaultValue>400</defaultValue>
+                            <Value>400</Value>
                             <unit>"ms"</unit>
                             <format>"unsigned"</format>
                             <description>"Bluetooth Advertisement Time in ms for Sleep Mode 1"</description>
@@ -726,7 +726,7 @@
                             <subAddress>15</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="False"></readOnly>
-                            <defaultValue>3600000</defaultValue>
+                            <Value>3600000</Value>
                             <unit>"ms"</unit>
                             <format>"unsigned"</format>
                             <description>"Time to from disconnected to sleep Mode 1 in ms"</description>
@@ -735,7 +735,7 @@
                             <subAddress>19</subAddress>
                             <length>19</length>
                             <readOnly  IsActive="False"></readOnly>
-                            <defaultValue>1600</defaultValue>
+                            <Value>1600</Value>
                             <unit>"ms"</unit>
                             <format>"unsigned"</format>
                             <description>"Bluetooth Advertisement Time in ms for Sleep Mode 1"</description>
@@ -749,7 +749,7 @@
                             <subAddress>0</subAddress>
                             <length>8</length>
                             <readOnly  IsActive="true"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"unsigned"</format>
                             <description>"Global Trade Identification Number (GTIN)"</description>
@@ -758,7 +758,7 @@
                             <subAddress>13</subAddress>
                             <length>1</length>
                             <readOnly  IsActive="true"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"unsigned"</format>
                             <description>"Hardware Revision Number - Major"</description>
@@ -767,7 +767,7 @@
                             <subAddress>14</subAddress>
                             <length>1</length>
                             <readOnly  IsActive="true"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"unsigned"</format>
                             <description>"Hardware Revision Number - Minor"</description>
@@ -776,7 +776,7 @@
                             <subAddress>15</subAddress>
                             <length>1</length>
                             <readOnly  IsActive="true"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"unsigned"</format>
                             <description>"Hardware Revision Number - Build"</description>
@@ -785,7 +785,7 @@
                             <subAddress>21</subAddress>
                             <length>1</length>
                             <readOnly  IsActive="true"></readOnly>
-                            <defaultValue>2</defaultValue>
+                            <Value>2</Value>
                             <unit>""</unit>
                             <format>"unsigned"</format>
                             <description>"Firmware Version Number - Major(1Byte)"</description>
@@ -794,7 +794,7 @@
                             <subAddress>22</subAddress>
                             <length>1</length>
                             <readOnly  IsActive="true"></readOnly>
-                            <defaultValue>1</defaultValue>
+                            <Value>1</Value>
                             <unit>""</unit>
                             <format>"unsigned"</format>
                             <description>"Firmware Version Number - Minor(1Byte)"</description>
@@ -803,7 +803,7 @@
                             <subAddress>23</subAddress>
                             <length>1</length>
                             <readOnly  IsActive="true"></readOnly>
-                            <defaultValue>1</defaultValue>
+                            <Value>1</Value>
                             <unit>""</unit>
                             <format>"unsigned"</format>
                             <description>"Firmware Version Number - Minor(1Byte)"</description>
@@ -812,7 +812,7 @@
                             <subAddress>24</subAddress>
                             <length>8</length>
                             <readOnly  IsActive="true"></readOnly>
-                            <defaultValue>"Tanja"</defaultValue>
+                            <Value>"Tanja"</Value>
                             <unit>""</unit>
                             <format>"UTF8"</format>
                             <description>"Release Name, represents Major - Minor"</description>
@@ -821,7 +821,7 @@
                             <subAddress>32</subAddress>
                             <length>32</length>
                             <readOnly  IsActive="true"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <format>"UTF8"</format>
                             <description>"Manufactor Serial Number"</description>
                         </entry>
@@ -829,7 +829,7 @@
                             <subAddress>64</subAddress>
                             <length>128</length>
                             <readOnly  IsActive="true"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"UTF8"</format>
                             <description>"Manufactor Name; This may extend Serial Number, supports URL, extend definition, etc."</description>
@@ -838,7 +838,7 @@
                             <subAddress>192</subAddress>
                             <length>64</length>
                             <readOnly  IsActive="true"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"-"</format>
                             <description>"Supports Manufactor Specific information in format that is free to choose"</description>
@@ -852,7 +852,7 @@
                             <subAddress>0</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="true"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"unsigned"</format>
                             <description>"Power On Cycles since first reset"</description>
@@ -861,7 +861,7 @@
                             <subAddress>4</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="true"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"unsigned"</format>
                             <description>"Power Off Cycles since first reset"</description>
@@ -870,7 +870,7 @@
                             <subAddress>8</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="true"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>"minutes"</unit>
                             <format>"unsigned"</format>
                             <description>"Operating Time since first power On in minutes"</description>
@@ -879,7 +879,7 @@
                             <subAddress>12</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="true"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"unsigned"</format>
                             <description>"Counts of under voltages that yields into turn off state(Brown Out)"</description>
@@ -893,7 +893,7 @@
                             <subAddress>0</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="false"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"float"</format>
                             <description>"Calibration Factor K for Acceleration X -> y=kx+d"</description>
@@ -902,7 +902,7 @@
                             <subAddress>4</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="false"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"float"</format>
                             <description>"Calibration Factor d for Acceleration X -> y=kx+d"</description>
@@ -911,7 +911,7 @@
                             <subAddress>8</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="false"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"float"</format>
                             <description>"Calibration Factor K for Acceleration Y -> y=kx+d"</description>
@@ -920,7 +920,7 @@
                             <subAddress>12</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="false"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"float"</format>
                             <description>"Calibration Factor d for Acceleration Y -> y=kx+d"</description>
@@ -929,7 +929,7 @@
                             <subAddress>16</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="false"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"float"</format>
                             <description>"Calibration Factor K for Acceleration Z -> y=kx+d"</description>
@@ -938,7 +938,7 @@
                             <subAddress>20</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="false"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"float"</format>
                             <description>"Calibration Factor d for Acceleration Z -> y=kx+d"</description>
@@ -947,7 +947,7 @@
                             <subAddress>24</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="false"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"float"</format>
                             <description>"Calibration Factor K for Battery Voltage -> y=kx+d"</description>
@@ -956,7 +956,7 @@
                             <subAddress>28</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="false"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"float"</format>
                             <description>"Calibration Factor d for Battery Voltage -> y=kx+d"</description>
@@ -965,7 +965,7 @@
                             <subAddress>32</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="false"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"float"</format>
                             <description>"Calibration Factor K for Voltage Y -> y=kx+d"</description>
@@ -974,7 +974,7 @@
                             <subAddress>36</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="false"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"float"</format>
                             <description>"Calibration Factor d for Voltage Y -> y=kx+d"</description>
@@ -983,7 +983,7 @@
                             <subAddress>40</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="false"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"float"</format>
                             <description>"Calibration Factor K for Voltage Z -> y=kx+d"</description>
@@ -992,7 +992,7 @@
                             <subAddress>44</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="false"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"float"</format>
                             <description>"Calibration Factor d for Voltage Z -> y=kx+d"</description>
@@ -1001,7 +1001,7 @@
                             <subAddress>48</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="false"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"float"</format>
                             <description>"Calibration Factor K for Internal Temperature -> y=kx+d"</description>
@@ -1010,7 +1010,7 @@
                             <subAddress>52</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="false"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"float"</format>
                             <description>"Calibration Factor d for Internal Temperature -> y=kx+d"</description>
@@ -1019,7 +1019,7 @@
                             <subAddress>56</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="false"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"float"</format>
                             <description>"Calibration Factor K for Temperature Y -> y=kx+d"</description>
@@ -1028,7 +1028,7 @@
                             <subAddress>60</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="false"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"float"</format>
                             <description>"Calibration Factor d for Temperature Y -> y=kx+d"</description>
@@ -1037,7 +1037,7 @@
                             <subAddress>66</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="false"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"float"</format>
                             <description>"Calibration Factor K for Temperature Z -> y=kx+d"</description>
@@ -1046,7 +1046,7 @@
                             <subAddress>70</subAddress>
                             <length>4</length>
                             <readOnly  IsActive="false"></readOnly>
-                            <defaultValue>0</defaultValue>
+                            <Value>0</Value>
                             <unit>""</unit>
                             <format>"float"</format>
                             <description>"Calibration Factor d for Temperature Z -> y=kx+d"</description>
