@@ -308,7 +308,7 @@
     </ConfigSamplingRate>
     <Data>
         <Product>
-            <STH>
+            <product name="STH">
                 <data name="v2.1.0">
                     <Page>
                         <page name="System Configuration 0">
@@ -683,10 +683,11 @@
                         </page>
                     </Page>
                 </data>
-            </STH>
-            <STU>
+            </product>
+            <product name="STU">
             
-            </STU>
+            </product>
+		
         </Product>
  
     </Data>
