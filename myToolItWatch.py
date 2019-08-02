@@ -13,6 +13,7 @@ from datetime import datetime
 import getopt
 import openpyxl
 from openpyxl.styles import Font
+import copy
 
 BlueToothDeviceListAquireTime = 5
 BlueToothNoneDev = 255
@@ -542,19 +543,29 @@ class myToolItWatch():
                     i += 1
                 self.excelCellWidthAdjust(worksheet)
             workbook.save(self.sSheetFile)
-
     
     def _excelSheetEntryFind(self, entry, key, value):
         if None != value:
             entry.find(key).text = str(value)
 
+    """
+    Set endoding
+    """
     def _XmlWriteEndoding(self, root):
         xml = (bytes('<?xml version="1.0" encoding="UTF-8"?>\n', encoding='utf-8') + ET.tostring(root))
         xml = xml.decode('utf-8')
         with open(self.sConfigFile, 'w+') as f:
             f.write(xml)   
-            
-            
+      
+     
+    """
+    Creats a new config
+    """
+    def newXmlConfig(self, product):
+        cloneVersion = copy.deepcopy(product.find('Version')[0])
+        cloneVersion.set('name', self.sConfig) 
+        product.find('Version').append(cloneVersion)
+
     """
     Write xml definiton by Excel Sheet
     """
@@ -572,7 +583,11 @@ class myToolItWatch():
         workbook = openpyxl.load_workbook(self.sSheetFile)
         if workbook:
             if version.get('name') != self.sConfig:
-                pass
+                self.newXmlConfig(product)
+                tree.write(self.sConfigFile)
+                self._XmlWriteEndoding(root)
+                del tree
+                self.excelSheetConfig()
             else:
                 for worksheetName in workbook.sheetnames:
                     name = str(worksheetName).split('@')
@@ -601,6 +616,15 @@ class myToolItWatch():
                 tree.write(self.sConfigFile)
                 self._XmlWriteEndoding(root)
         
+    def xmlPrintVersions(self):
+        tree = ET.parse(self.sConfigFile)
+        root = tree.getroot() 
+        dataDef = root.find('Data')
+        for product in dataDef.find('Product'):
+            print(product.get('name') +":")
+            for version in product.find('Version'):
+                print("   " + version.get('name'))
+            
     """
     Read EEPROM to write values in Excel Sheet
     """    
@@ -608,12 +632,23 @@ class myToolItWatch():
     def excelSheetRead(self):
         pass
     
+    """
+    Write EEPROM to write values in Excel Sheet
+    """    
+
+    def excelSheetWrite(self):
+        pass
+    
     def run(self, args):
         for arg in args:
             print(arg)
-        self.vConfigSet("STH", "v2.1.2")
+        self.vConfigSet("STH", "v2.1.1")
+        self.xmlPrintVersions()
         self.excelSheetCreate()
-        input('Please Edit Excel Sheet')
+        input('Please Edit Excel Sheet and press Enter')
+        #newVersion = input('Please Type new Version Name')
+        newVersion="v2.1.2"
+        self.vConfigSet("STH", newVersion)
         self.excelSheetConfig()
 
            
