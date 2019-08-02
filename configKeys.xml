@@ -319,7 +319,7 @@
                                     <length>1</length>
                                     <readOnly>True</readOnly>
                                     <value>0xAC</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>ASCII</format>
                                     <description>Determines Initialised EERPOM iff 0xAC</description>
                                     </entry>
@@ -328,7 +328,7 @@
                                     <length>8</length>
                                     <readOnly>False</readOnly>
                                     <value>0</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>unsigned</format>
                                     <description>Defines Bluetooth advertisement name</description>
                                     </entry>
@@ -378,7 +378,7 @@
                                     <length>8</length>
                                     <readOnly>True</readOnly>
                                     <value>0</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>unsigned</format>
                                     <description>Global Trade Identification Number (GTIN)</description>
                                     </entry>
@@ -387,7 +387,7 @@
                                     <length>1</length>
                                     <readOnly>True</readOnly>
                                     <value>0</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>unsigned</format>
                                     <description>Hardware Revision Number - Major</description>
                                     </entry>
@@ -396,7 +396,7 @@
                                     <length>1</length>
                                     <readOnly>True</readOnly>
                                     <value>0</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>unsigned</format>
                                     <description>Hardware Revision Number - Minor</description>
                                     </entry>
@@ -405,7 +405,7 @@
                                     <length>1</length>
                                     <readOnly>True</readOnly>
                                     <value>0</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>unsigned</format>
                                     <description>Hardware Revision Number - Build</description>
                                     </entry>
@@ -414,7 +414,7 @@
                                     <length>1</length>
                                     <readOnly>True</readOnly>
                                     <value>2</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>unsigned</format>
                                     <description>Firmware Version Number - Major(1Byte)</description>
                                     </entry>
@@ -423,7 +423,7 @@
                                     <length>1</length>
                                     <readOnly>True</readOnly>
                                     <value>1</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>unsigned</format>
                                     <description>Firmware Version Number - Minor(1Byte)</description>
                                     </entry>
@@ -432,7 +432,7 @@
                                     <length>1</length>
                                     <readOnly>True</readOnly>
                                     <value>1</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>unsigned</format>
                                     <description>Firmware Version Number - Minor(1Byte)</description>
                                     </entry>
@@ -441,7 +441,7 @@
                                     <length>8</length>
                                     <readOnly>True</readOnly>
                                     <value>Tanja</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>UTF8</format>
                                     <description>Release Name, represents Major - Minor</description>
                                     </entry>
@@ -450,7 +450,7 @@
                                     <length>32</length>
                                     <readOnly>True</readOnly>
                                     <value>0</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>UTF8</format>
                                     <description>Manufactor Serial Number</description>
                                     </entry>
@@ -459,7 +459,7 @@
                                     <length>128</length>
                                     <readOnly>True</readOnly>
                                     <value>0</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>UTF8</format>
                                     <description>Manufactor Name; This may extend Serial Number, supports URL, extend definition, etc.</description>
                                     </entry>
@@ -468,8 +468,8 @@
                                     <length>64</length>
                                     <readOnly>True</readOnly>
                                     <value>0</value>
-                                    <unit></unit>
-                                    <format></format>
+                                    <unit />
+                                    <format />
                                     <description>Supports Manufactor Specific information in format that is free to choose</description>
                                     </entry>
                                 </Entry>
@@ -482,7 +482,7 @@
                                     <length>4</length>
                                     <readOnly>True</readOnly>
                                     <value>0</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>unsigned</format>
                                     <description>Power On Cycles since first reset</description>
                                     </entry>
@@ -491,7 +491,7 @@
                                     <length>4</length>
                                     <readOnly>True</readOnly>
                                     <value>0</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>unsigned</format>
                                     <description>Power Off Cycles since first reset</description>
                                     </entry>
@@ -509,7 +509,7 @@
                                     <length>4</length>
                                     <readOnly>True</readOnly>
                                     <value>0</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>unsigned</format>
                                     <description>Counts of under voltages that yields into turn off state(Brown Out)</description>
                                     </entry>
@@ -523,7 +523,7 @@
                                     <length>4</length>
                                     <readOnly>False</readOnly>
                                     <value>0</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>float</format>
                                     <description>Calibration Factor K for Acceleration X -&gt; y=kx+d</description>
                                     </entry>
@@ -532,7 +532,7 @@
                                     <length>4</length>
                                     <readOnly>False</readOnly>
                                     <value>0</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>float</format>
                                     <description>Calibration Factor d for Acceleration X -&gt; y=kx+d</description>
                                     </entry>
@@ -541,7 +541,7 @@
                                     <length>4</length>
                                     <readOnly>False</readOnly>
                                     <value>0</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>float</format>
                                     <description>Calibration Factor K for Acceleration Y -&gt; y=kx+d</description>
                                     </entry>
@@ -550,7 +550,7 @@
                                     <length>4</length>
                                     <readOnly>False</readOnly>
                                     <value>0</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>float</format>
                                     <description>Calibration Factor d for Acceleration Y -&gt; y=kx+d</description>
                                     </entry>
@@ -559,7 +559,7 @@
                                     <length>4</length>
                                     <readOnly>False</readOnly>
                                     <value>0</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>float</format>
                                     <description>Calibration Factor K for Acceleration Z -&gt; y=kx+d</description>
                                     </entry>
@@ -568,7 +568,7 @@
                                     <length>4</length>
                                     <readOnly>False</readOnly>
                                     <value>0</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>float</format>
                                     <description>Calibration Factor d for Acceleration Z -&gt; y=kx+d</description>
                                     </entry>
@@ -577,7 +577,7 @@
                                     <length>4</length>
                                     <readOnly>False</readOnly>
                                     <value>0</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>float</format>
                                     <description>Calibration Factor K for Battery Voltage -&gt; y=kx+d</description>
                                     </entry>
@@ -586,7 +586,7 @@
                                     <length>4</length>
                                     <readOnly>False</readOnly>
                                     <value>0</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>float</format>
                                     <description>Calibration Factor d for Battery Voltage -&gt; y=kx+d</description>
                                     </entry>
@@ -595,7 +595,7 @@
                                     <length>4</length>
                                     <readOnly>False</readOnly>
                                     <value>0</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>float</format>
                                     <description>Calibration Factor K for Voltage Y -&gt; y=kx+d</description>
                                     </entry>
@@ -604,7 +604,7 @@
                                     <length>4</length>
                                     <readOnly>False</readOnly>
                                     <value>0</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>float</format>
                                     <description>Calibration Factor d for Voltage Y -&gt; y=kx+d</description>
                                     </entry>
@@ -613,7 +613,7 @@
                                     <length>4</length>
                                     <readOnly>False</readOnly>
                                     <value>0</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>float</format>
                                     <description>Calibration Factor K for Voltage Z -&gt; y=kx+d</description>
                                     </entry>
@@ -622,7 +622,7 @@
                                     <length>4</length>
                                     <readOnly>False</readOnly>
                                     <value>0</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>float</format>
                                     <description>Calibration Factor d for Voltage Z -&gt; y=kx+d</description>
                                     </entry>
@@ -631,7 +631,7 @@
                                     <length>4</length>
                                     <readOnly>False</readOnly>
                                     <value>0</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>float</format>
                                     <description>Calibration Factor K for Internal Temperature -&gt; y=kx+d</description>
                                     </entry>
@@ -640,7 +640,7 @@
                                     <length>4</length>
                                     <readOnly>False</readOnly>
                                     <value>0</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>float</format>
                                     <description>Calibration Factor d for Internal Temperature -&gt; y=kx+d</description>
                                     </entry>
@@ -649,7 +649,7 @@
                                     <length>4</length>
                                     <readOnly>False</readOnly>
                                     <value>0</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>float</format>
                                     <description>Calibration Factor K for Temperature Y -&gt; y=kx+d</description>
                                     </entry>
@@ -658,7 +658,7 @@
                                     <length>4</length>
                                     <readOnly>False</readOnly>
                                     <value>0</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>float</format>
                                     <description>Calibration Factor d for Temperature Y -&gt; y=kx+d</description>
                                     </entry>
@@ -667,7 +667,7 @@
                                     <length>4</length>
                                     <readOnly>False</readOnly>
                                     <value>0</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>float</format>
                                     <description>Calibration Factor K for Temperature Z -&gt; y=kx+d</description>
                                     </entry>
@@ -676,7 +676,7 @@
                                     <length>4</length>
                                     <readOnly>False</readOnly>
                                     <value>0</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>float</format>
                                     <description>Calibration Factor d for Temperature Z -&gt; y=kx+d</description>
                                     </entry>
@@ -698,7 +698,7 @@
                                     <length>8</length>
                                     <readOnly>True</readOnly>
                                     <value>0</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>unsigned</format>
                                     <description>Global Trade Identification Number (GTIN)</description>
                                     </entry>
@@ -707,7 +707,7 @@
                                     <length>1</length>
                                     <readOnly>True</readOnly>
                                     <value>0</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>unsigned</format>
                                     <description>Hardware Revision Number - Major</description>
                                     </entry>
@@ -716,7 +716,7 @@
                                     <length>1</length>
                                     <readOnly>True</readOnly>
                                     <value>0</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>unsigned</format>
                                     <description>Hardware Revision Number - Minor</description>
                                     </entry>
@@ -725,7 +725,7 @@
                                     <length>1</length>
                                     <readOnly>True</readOnly>
                                     <value>0</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>unsigned</format>
                                     <description>Hardware Revision Number - Build</description>
                                     </entry>
@@ -734,7 +734,7 @@
                                     <length>1</length>
                                     <readOnly>True</readOnly>
                                     <value>2</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>unsigned</format>
                                     <description>Firmware Version Number - Major(1Byte)</description>
                                     </entry>
@@ -743,7 +743,7 @@
                                     <length>1</length>
                                     <readOnly>True</readOnly>
                                     <value>1</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>unsigned</format>
                                     <description>Firmware Version Number - Minor(1Byte)</description>
                                     </entry>
@@ -752,7 +752,7 @@
                                     <length>1</length>
                                     <readOnly>True</readOnly>
                                     <value>1</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>unsigned</format>
                                     <description>Firmware Version Number - Minor(1Byte)</description>
                                     </entry>
@@ -761,7 +761,7 @@
                                     <length>8</length>
                                     <readOnly>True</readOnly>
                                     <value>"Tanja"</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>UTF8</format>
                                     <description>Release Name, represents Major - Minor</description>
                                     </entry>
@@ -770,7 +770,7 @@
                                     <length>32</length>
                                     <readOnly>True</readOnly>
                                     <value>0</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>UTF8</format>
                                     <description>Manufactor Serial Number</description>
                                     </entry>
@@ -779,7 +779,7 @@
                                     <length>128</length>
                                     <readOnly>True</readOnly>
                                     <value>0</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>UTF8</format>
                                     <description>Manufactor Name; This may extend Serial Number, supports URL, extend definition, etc.</description>
                                     </entry>
@@ -788,8 +788,8 @@
                                     <length>64</length>
                                     <readOnly>True</readOnly>
                                     <value>0</value>
-                                    <unit></unit>
-                                    <format></format>
+                                    <unit />
+                                    <format />
                                     <description>Supports Manufactor Specific information in format that is free to choose</description>
                                     </entry>
                                 </Entry>
@@ -802,7 +802,7 @@
                                     <length>4</length>
                                     <readOnly>True</readOnly>
                                     <value>0</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>unsigned</format>
                                     <description>Power On Cycles since first reset</description>
                                     </entry>
@@ -811,7 +811,7 @@
                                     <length>4</length>
                                     <readOnly>True</readOnly>
                                     <value>0</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>unsigned</format>
                                     <description>Power Off Cycles since first reset</description>
                                     </entry>
@@ -829,7 +829,7 @@
                                     <length>4</length>
                                     <readOnly>True</readOnly>
                                     <value>0</value>
-                                    <unit></unit>
+                                    <unit />
                                     <format>unsigned</format>
                                     <description>Counts of under voltages that yields into turn off state(Brown Out)</description>
                                     </entry>

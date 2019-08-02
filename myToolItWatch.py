@@ -483,7 +483,7 @@ class myToolItWatch():
 
     def excelSheetCreate(self):
         tree = ET.parse(self.sConfigFile)
-        root = tree.getroot()
+        root = tree.getroot() 
         dataDef = root.find('Data')
         for product in dataDef.find('Product'):
             if product.get('name') == self.sProduct:
@@ -529,7 +529,7 @@ class myToolItWatch():
                     worksheet['D' + str(i)] = entry.find('readOnly').text
                     worksheet['D' + str(i)].font = FontRowRow2
                     try:
-                        worksheet['E' + str(i)] = int(entry.find('value').text, 0)
+                        worksheet['E' + str(i)] = int(entry.find('value').text)
                     except ValueError:
                         worksheet['E' + str(i)] = entry.find('value').text
                     worksheet['E' + str(i)].font = FontRowRow2
@@ -542,38 +542,64 @@ class myToolItWatch():
                     i += 1
                 self.excelCellWidthAdjust(worksheet)
             workbook.save(self.sSheetFile)
+
     
+    def _excelSheetEntryFind(self, entry, key, value):
+        if None != value:
+            entry.find(key).text = str(value)
+
+    def _XmlWriteEndoding(self, root):
+        xml = (bytes('<?xml version="1.0" encoding="UTF-8"?>\n', encoding='utf-8') + ET.tostring(root))
+        xml = xml.decode('utf-8')
+        with open(self.sConfigFile, 'w+') as f:
+            f.write(xml)   
+            
+            
     """
-    Create xml definiton by Excel Sheet
+    Write xml definiton by Excel Sheet
     """
 
     def excelSheetConfig(self):
-        tree = ET.parse('configKeys.xml')
+        tree = ET.parse(self.sConfigFile)
         root = tree.getroot()
-        dataDef = root.Data
-        config = None
-        for data in dataDef.findall('data'):
-            if data.get('name') == self.sConfig:
-                config = data
+        dataDef = root.find('Data')
+        for product in dataDef.find('Product'):
+            if product.get('name') == self.sProduct:
+                break
+        for version in product.find('Version'):
+            if version.get('name') == self.sConfig:
+                break
         workbook = openpyxl.load_workbook(self.sSheetFile)
-        if None == config and workbook:
-            sheets = workbook.sheetnames
-            newPage = dataDef.SubElement(self.sConfig)
-            for sheet in sheets:
-                nameAddress = sheet.split('@')
-                newPage.SubElement('name', nameAddress[0])
-                newPage.SubElement('pageAddress', nameAddress[1])
-                worksheet = workbook[sheet]
-                newPage.SubElement('name', worksheet)
-                for i in range(1, worksheet.max_row + 1):
-                    newPage.SubElement('subAddress', sheet.cell(row=i, column=1))
-                    newPage.SubElement('length', sheet.cell(row=i, column=2))
-                    newPage.SubElement('readOnly', sheet.cell(row=i, column=3))
-                    newPage.SubElement('Value', sheet.cell(row=i, column=4))
-                    newPage.SubElement('unit', sheet.cell(row=i, column=5))
-                    newPage.SubElement('format', sheet.cell(row=i, column=6))
-                    newPage.SubElement('description', sheet.cell(row=i, column=7))
-            root.write('configKeys.xml')
+        if workbook:
+            if version.get('name') != self.sConfig:
+                pass
+            else:
+                for worksheetName in workbook.sheetnames:
+                    name = str(worksheetName).split('@')
+                    address = name[1]
+                    name = name[0]
+                    for page in version.find('Page'):
+                        i = 2
+                        pageName = page.get('name')
+                        pageAddress = hex(int(page.find('pageAddress').text))
+                        if name == pageName and pageAddress == address:
+                            worksheet = workbook.get_sheet_by_name(worksheetName)
+                            for entry in page.find('Entry'):
+                                value = str(worksheet['A' + str(i)].value)
+                                if None != value:
+                                    entry.set('name', value)
+                                else:
+                                    entry.set('name', "")
+                                self._excelSheetEntryFind(entry, 'subAddress', worksheet['B' + str(i)].value)
+                                self._excelSheetEntryFind(entry, 'length', worksheet['C' + str(i)].value)
+                                self._excelSheetEntryFind(entry, 'readOnly', worksheet['D' + str(i)].value)
+                                self._excelSheetEntryFind(entry, 'value', worksheet['E' + str(i)].value)
+                                self._excelSheetEntryFind(entry, 'unit', worksheet['F' + str(i)].value)
+                                self._excelSheetEntryFind(entry, 'format', worksheet['G' + str(i)].value)
+                                self._excelSheetEntryFind(entry, 'description', worksheet['H' + str(i)].value)
+                                i += 1
+                tree.write(self.sConfigFile)
+                self._XmlWriteEndoding(root)
         
     """
     Read EEPROM to write values in Excel Sheet
@@ -587,6 +613,8 @@ class myToolItWatch():
             print(arg)
         self.vConfigSet("STH", "v2.1.2")
         self.excelSheetCreate()
+        input('Please Edit Excel Sheet')
+        self.excelSheetConfig()
 
            
 if __name__ == "__main__":
