@@ -43,7 +43,7 @@ Gui = {
 # def __init__(self, log_location, iAcc1, iAcc2, iAcc3, dev, prescaler, aquistionTime, oversampling, runtime):
 class myToolItWatch():
 
-    def __init__(self, parseArguments=True):
+    def __init__(self):
         self.KeyBoadInterrupt = False  
         self.bError = False     
         self.bClose = True   
@@ -65,10 +65,7 @@ class myToolItWatch():
         self.vAdcRefVConfig("VDD")
         self.vDisplayTime(10)  
         self.vRunTime(10, 0)
-        if False != parseArguments:
-            self._ParserInit()
-            self._ParserConsoleArguments()
-        self.PeakCan.readThreadStop()       
+        self.PeakCan.readThreadStop()#TODO: Comment this out       
             
     def __exit__(self):
         self.PeakCan.ReadArrayReset()
@@ -93,106 +90,7 @@ class myToolItWatch():
             self.xmlConfigSave(self.tree, self.root)
         print("Fin")
        
-    def _ParserInit(self):
-        self.parser = argparse.ArgumentParser(description='Command Line Oprtions')
-        self.parser.add_argument('-a', '--adc', dest='adc_config', action='store', nargs=3, type=int, required=False, help='Prescaler AcquisitionTime OversamplingRate (3 inputs required in that row) - Note that acceleration and battery voltage measurements share a single ADC that samples up to 4 channels)')
-        self.parser.add_argument('-c', '--show_config', dest='show_config', action='store_true', required=False, help='Shows actual configuration (including command line arguments)')
-        self.parser.add_argument('-d', '--devs', dest='devNameList', action='store_true', required=False, help='Get Device Names of all available STHs')    
-        self.parser.add_argument('-e', '--xlsx', dest='xlsx', action='store', nargs=1, type=int, required=False, help='xlsx File to save take configuraton to a product')
-        self.parser.add_argument('-i', '--interval', dest='interval', action='store', nargs=1, type=int, required=False, help='Sets Interval Time (Time to save files in ms. Must be creater than 10')
-        self.parser.add_argument('-l', '--log_location', dest='log_name', action='store', nargs=1, type=str, required=False, help='Where to save Log Files (relative/absolute path+file name')
-        self.parser.add_argument('-n', '--name_connect', dest='name_connect', action='store', nargs=1, type=str, required=False, help='Connects to device Name and starts sampling as configured')
-        self.parser.add_argument('-p', '--points', dest='points', action='store', nargs=1, type=int, required=False, help='PPP samples X/Y/Z where P must be 1(Active) or 0(Off)')
-        self.parser.add_argument('-r', '--run_time', dest='run_time', action='store', nargs=1, type=int, required=False, help='Sets RunTime')
-        self.parser.add_argument('-s', '--sample_setup', dest='sample_setup', action='store', nargs=1, type=int, required=False, help='Starts sampling with configuration as given including additional command line arguments')
-        self.parser.add_argument('-x', '--xml', dest='xml_file_name', action='store', nargs=1, type=str, required=True, help='Selects xml configuration/data base file')
-        self.parser.add_argument('-v', '--version', dest='version', action='store', nargs=2, type=str, required=False, help='Product ProductVersion chooses product with version for handling Table Calculation Files (e.g. STH v2.1.2)')
-        self.parser.add_argument('--create', dest='create', action='store_true', required=False, help='Creates a config in the setup file. Configuration name is the same as configured in -x argument')
-        self.parser.add_argument('--gui_x_dim', dest='create', action='store', nargs=1, required=False, help='Time to show interval GUI window in ms. Value below 10 turns it off')
-        self.parser.add_argument('--refv', dest='refv', action='store', nargs=1, type=str, required=False, help='Prescaler AcquisitionTime OversamplingRate (3 inputs required in that row) - Note that acceleration and battery voltage measurements share a single ADC that samples up to 4 channels)')
-        self.parser.add_argument('--remove', dest='remove', action='store_true', required=False, help='Removes a config in the setup file. Configuration name is the same as configured in -x argument')
-        self.parser.add_argument('--save', dest='save', action='store_true', required=False, help='Saves Configuration in setup-xml File (Chose parameters as actually configured)')
-        self.parser.add_argument('--serials', dest='serials', action='store_true', required=False, help='Show all STH serials and bluetooth mac addresses')
-        self.parser.add_argument('--serial_connect', dest='serial_connect', action='store', nargs=1, type=int, required=False, help='Connects to device with specific serial number and starts sampliing as configured')
-        args = self.parser.parse_args()
-        self.args_dict = vars(args)
-     
-    def _ParserConsoleArguments(self):  
-        if None != self.args_dict['xml_file_name']:
-            self.vConfigFileSet(self.args_dict['xml_file_name'][0])
-        if None != self.args_dict['gui_x_dim']:
-            self.vLogSet(self.args_dict['gui_x_dim'][0])            
-        if None != self.args_dict['log_name']:
-            self.vLogSet(self.args_dict['log_name'][0]) 
-        if None != self.args_dict['adc_config']:
-            adcConfig = self.args_dict['adc_config']
-            self.vAdcConfig(adcConfig[0], adcConfig[1], adcConfig[2])
-        if None != self.args_dict['refv']:
-            self.vAdcRefVConfig(self.args_dict['refv'][0])
-        if None != self.args_dict['xlsx']:
-            self.vSheetFileSet(self.args_dict['xlsx'][0])
-        iIntervalTime = self.iIntervalTime
-        if None != self.args_dict['interval']:
-            iIntervalTime = self.args_dict['interval'][0]
-        if Gui["IntervalDimMinX"] > iIntervalTime:
-            iIntervalTime = 0
-            
-        iRunTime = self.iRunTime
-        if None != self.args_dict['run_time']:
-            iRunTime = self.args_dict['run_time'][0]
-        self.vRunTime(iRunTime, iIntervalTime)
-
-        if None != self.args_dict['name_connect']:
-            self.vDeviceNameSet(self.args_dict['name_connect'][0])
-            self.vSthAutoConnect(True)
-        elif None != self.args_dict['serial_connect']:    
-            self.vDeviceNameSerial(self.args_dict['serial_connect'][0])
-            self.vSthAutoConnect(True)
-            
-        if None != self.args_dict['points']: 
-            points = self.args_dict['points'][0] & 0x03
-            bX = bool(points & 1)
-            bY = bool((points >> 1) & 1)
-            bZ = bool((points >> 2) & 1)
-            pointBool = [bX, bY, bZ]
-            self.vAccSet(pointBool[2], pointBool[1], pointBool[0], pointBool.count(True))
-        
-        if None != self.args_dict['save']:
-            self.vSave2Xml(True)
-        
-        bRemove = False  
-        if None != self.args_dict['remove']:
-            bRemove = True
-                
-        bCreate = False
-        if None != self.args_dict['create'] and False == bRemove:
-            bCreate = True
-            self.vSave2Xml(True)
-        if None != self.args_dict['sample_setup']: 
-            sSampleConfig = self.args_dict['sample_setup']
-            if False == self.bSampleConfigSet() and False != bCreate:
-                self.newXmlConfig(sSampleConfig)
-                self.vSave2Xml(True)
-                bCreate = False
-                
-        if None != self.args_dict['version']: 
-            product = self.args_dict['version'][0]
-            version = self.args_dict['version'][1]
-            self.vConfigSet(product, version)
-            if False != bCreate:
-                dataDef = self.root.find('Data')
-                for product in dataDef.find('Product'):
-                    if product.get('name') == self.sProduct:
-                        break
-                if product.get('name') == self.sProduct:
-                    for version in product.find('Version'):
-                        if version.get('name') == self.sConfig:
-                            break
-                    if version.get('name') != self.sConfig:
-                        self.newXmlVersion(product)
-                        self.vSave2Xml(True)
-
-                
+               
     def _BlueToothStatistics(self):
         SendCounter = self.PeakCan.BlueToothCmd(MyToolItNetworkNr["STH1"], SystemCommandBlueTooth["SendCounter"])
         self.PeakCan.Logger.Info("BlueTooth Send Counter(STH1): " + str(SendCounter))
@@ -389,8 +287,10 @@ class myToolItWatch():
         self.iDisplayTime = int(displayTime) 
         
     def vRunTime(self, runTime, intervalTime):
-        self.iIntervalTime = intervalTime
-        self.iRunTime = runTime
+        self.iIntervalTime = int(intervalTime)
+        if Gui["IntervalDimMinX"] > self.iIntervalTime:
+            self.iIntervalTime = 0
+        self.iRunTime = int(runTime)
     
     def vVersion(self, major, minor, build):
         if 2 <= major and 1 <= minor:
@@ -401,7 +301,107 @@ class myToolItWatch():
     def sDateClock(self):
         DataClockTimeStamp = datetime.fromtimestamp(self.iStartTime).strftime('%Y-%m-%d_%H-%M-%S')
         return DataClockTimeStamp
-   
+
+    def vParserInit(self):
+        self.parser = argparse.ArgumentParser(description='Command Line Oprtions')
+        self.parser.add_argument('-a', '--adc', dest='adc_config', action='store', nargs=3, type=int, required=False, help='Prescaler AcquisitionTime OversamplingRate (3 inputs required in that row) - Note that acceleration and battery voltage measurements share a single ADC that samples up to 4 channels)')
+        self.parser.add_argument('-c', '--show_config', dest='show_config', action='store_true', required=False, help='Shows actual configuration (including command line arguments)')
+        self.parser.add_argument('-d', '--devs', dest='devNameList', action='store_true', required=False, help='Get Device Names of all available STHs')    
+        self.parser.add_argument('-e', '--xlsx', dest='xlsx', action='store', nargs=1, type=int, required=False, help='xlsx File to save take configuraton to a product')
+        self.parser.add_argument('-i', '--interval', dest='interval', action='store', nargs=1, type=int, required=False, help='Sets Interval Time (Time to save files in ms. Must be creater than 10')
+        self.parser.add_argument('-l', '--log_location', dest='log_name', action='store', nargs=1, type=str, required=False, help='Where to save Log Files (relative/absolute path+file name')
+        self.parser.add_argument('-n', '--name_connect', dest='name_connect', action='store', nargs=1, type=str, required=False, help='Connects to device Name and starts sampling as configured')
+        self.parser.add_argument('-p', '--points', dest='points', action='store', nargs=1, type=int, required=False, help='PPP samples X/Y/Z where P must be 1(Active) or 0(Off)')
+        self.parser.add_argument('-r', '--run_time', dest='run_time', action='store', nargs=1, type=int, required=False, help='Sets RunTime')
+        self.parser.add_argument('-s', '--sample_setup', dest='sample_setup', action='store', nargs=1, type=int, required=False, help='Starts sampling with configuration as given including additional command line arguments')
+        self.parser.add_argument('-x', '--xml', dest='xml_file_name', action='store', nargs=1, type=str, required=True, help='Selects xml configuration/data base file')
+        self.parser.add_argument('-v', '--version', dest='version', action='store', nargs=2, type=str, required=False, help='Product ProductVersion chooses product with version for handling Table Calculation Files (e.g. STH v2.1.2)')
+        self.parser.add_argument('--create', dest='create', action='store_true', required=False, help='Creates a config in the setup file. Configuration name is the same as configured in -x argument')
+        self.parser.add_argument('--gui_x_dim', dest='gui_x_dim', action='store', nargs=1, required=False, help='Time to show interval GUI window in ms. Value below 10 turns it off')
+        self.parser.add_argument('--refv', dest='refv', action='store', nargs=1, type=str, required=False, help='Prescaler AcquisitionTime OversamplingRate (3 inputs required in that row) - Note that acceleration and battery voltage measurements share a single ADC that samples up to 4 channels)')
+        self.parser.add_argument('--remove', dest='remove', action='store_true', required=False, help='Removes a config in the setup file. Configuration name is the same as configured in -x argument')
+        self.parser.add_argument('--save', dest='save', action='store_true', required=False, help='Saves Configuration in setup-xml File (Chose parameters as actually configured)')
+        self.parser.add_argument('--serials', dest='serials', action='store_true', required=False, help='Show all STH serials and bluetooth mac addresses')
+        self.parser.add_argument('--serial_connect', dest='serial_connect', action='store', nargs=1, type=int, required=False, help='Connects to device with specific serial number and starts sampliing as configured')
+        args = self.parser.parse_args()
+        self.args_dict = vars(args)
+     
+    def vParserConsoleArgumentsPass(self):  
+        if None != self.args_dict['xml_file_name']:
+            self.vConfigFileSet(self.args_dict['xml_file_name'][0])
+        if None != self.args_dict['gui_x_dim']:
+            self.vLogSet(self.args_dict['gui_x_dim'][0])            
+        if None != self.args_dict['log_name']:
+            self.vLogSet(self.args_dict['log_name'][0]) 
+        if None != self.args_dict['adc_config']:
+            adcConfig = self.args_dict['adc_config']
+            self.vAdcConfig(adcConfig[0], adcConfig[1], adcConfig[2])
+        if None != self.args_dict['refv']:
+            self.vAdcRefVConfig(self.args_dict['refv'][0])
+        if None != self.args_dict['xlsx']:
+            self.vSheetFileSet(self.args_dict['xlsx'][0])
+        iIntervalTime = self.iIntervalTime
+        if None != self.args_dict['interval']:
+            iIntervalTime = self.args_dict['interval'][0]
+        if Gui["IntervalDimMinX"] > iIntervalTime:
+            iIntervalTime = 0
+            
+        iRunTime = self.iRunTime
+        if None != self.args_dict['run_time']:
+            iRunTime = self.args_dict['run_time'][0]
+        self.vRunTime(iRunTime, iIntervalTime)
+
+        if None != self.args_dict['name_connect']:
+            self.vDeviceNameSet(self.args_dict['name_connect'][0])
+            self.vSthAutoConnect(True)
+        elif None != self.args_dict['serial_connect']:    
+            self.vDeviceNameSerial(self.args_dict['serial_connect'][0])
+            self.vSthAutoConnect(True)
+            
+        if None != self.args_dict['points']: 
+            points = self.args_dict['points'][0] & 0x03
+            bX = bool(points & 1)
+            bY = bool((points >> 1) & 1)
+            bZ = bool((points >> 2) & 1)
+            pointBool = [bX, bY, bZ]
+            self.vAccSet(pointBool[2], pointBool[1], pointBool[0], pointBool.count(True))
+        
+        if None != self.args_dict['save']:
+            self.vSave2Xml(True)
+        
+        bRemove = False  
+        if None != self.args_dict['remove']:
+            bRemove = True
+                
+        bCreate = False
+        if None != self.args_dict['create'] and False == bRemove:
+            bCreate = True
+            self.vSave2Xml(True)
+        if None != self.args_dict['sample_setup']: 
+            sSampleConfig = self.args_dict['sample_setup']
+            if False == self.bSampleConfigSet() and False != bCreate:
+                self.newXmlConfig(sSampleConfig)
+                self.vSave2Xml(True)
+                bCreate = False
+                
+        if None != self.args_dict['version']: 
+            product = self.args_dict['version'][0]
+            version = self.args_dict['version'][1]
+            self.vConfigSet(product, version)
+            if False != bCreate:
+                dataDef = self.root.find('Data')
+                for product in dataDef.find('Product'):
+                    if product.get('name') == self.sProduct:
+                        break
+                if product.get('name') == self.sProduct:
+                    for version in product.find('Version'):
+                        if version.get('name') == self.sConfig:
+                            break
+                    if version.get('name') != self.sConfig:
+                        self.newXmlVersion(product)
+                        self.vSave2Xml(True)
+                        
+                           
     def reset(self):
         if False == self.KeyBoadInterrupt:
             try:
@@ -794,24 +794,23 @@ class myToolItWatch():
         self.tree.find('Config').append(cloneVersion)
         self.xmlConfigSave(self.tree, self.root)
         self.vSampleConfigSet(sConfig)
-                        
-    def run(self, args):
-        print(self.args_dict)
+    
+    def _vRunConsoleStartup(self):
+        if None != self.args_dict['show_config']:
+            print("Hello World")
+        if None != self.args_dict['devNameList']:
+            pass    
+                            
+    def vRunConsole(self):
+        self._vRunConsoleStartup()
         
-#         self.xmlPrintVersions()
-#         self.excelSheetCreate()
-#         input('Please Edit Excel Sheet and press Enter')
-#         # newVersion = input('Please Type new Version Name')
-#         newVersion = "v2.1.2"
-#         self.vConfigSet("STH", newVersion)
-#         self.excelSheetConfig()
+
 
            
 if __name__ == "__main__":
-    # (self, log_location, bAcc1, bAcc2, bAcc3, dev, prescaler, aquistionTime, oversampling, runtime):
     watch = myToolItWatch()
-    # (sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6], sys.argv[7], sys.argv[8], sys.argv[9])
-    # watch.reset()
-    watch.run(sys.argv[1:])
-    # watch.bclose()
+    watch.vParserInit()
+    watch.vParserConsoleArgumentsPass()
+    watch.vRunConsole()
+
         
