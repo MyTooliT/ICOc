@@ -43,15 +43,13 @@ def sDateClock():
 
     
 class Logger():
-
     def __init__(self, fileName, fileNameError):
-        if not os.path.exists(os.path.dirname(fileName)):
-            os.makedirs(os.path.dirname(fileName))
-        self.file = open(fileName, "w")
         self.startTime = int(round(time() * 1000))
-        self.fileName = fileName
-        self.fileNameError = fileNameError
-
+        self.file = None
+        self.fileName = None
+        self.vRename(fileName, fileNameError)
+        
+        
     def __exit__(self):
         self.file.close()
         if False != self.ErrorFlag:
@@ -71,7 +69,7 @@ class Logger():
         self.file.write("\n")
         self.file.flush()
         
-    def Error(self, message):
+    def bError(self, message):
         self.file.write("[E](")
         self.file.write(str(self.getTimeStamp()))
         self.file.write("ms): ")
@@ -86,6 +84,21 @@ class Logger():
         self.file.write(message)
         self.file.write("\n")
         self.file.flush()
+        
+    def vRename(self, fileName, fileNameError):
+        if None != self.file:
+            self.vClose()
+        if not os.path.exists(os.path.dirname(fileName)) and os.path.isdir(fileName):
+            os.makedirs(os.path.dirname(fileName))
+        if None != self.fileName:
+            os.rename(self.fileName, fileName)
+        else:
+            self.fileName = fileName
+            self.fileNameError = fileNameError
+            self.file = open(fileName, "w", encoding='utf-8')
+
+    def vClose(self):
+        self.__exit__()
         
         
 class PeakCanFd(object):
@@ -103,7 +116,7 @@ class PeakCanFd(object):
         self.ioport = PeakCanIoPort
         self.interrupt = PeakCanInterrupt
         self.m_PcanHandle = PCAN_USBBUS1
-        self.Error = False
+        self.bError = False
         self.RunReadThread = False
         self.CanTimeStampStart(0)
         if 0 == baudrate:
@@ -127,12 +140,12 @@ class PeakCanFd(object):
             self.ReadArrayReset()
                         
     def __exit__(self): 
-        if False == self.Error:
+        if False == self.bError:
             if False != self.RunReadThread:
                 self.readThreadStop()
             else:
-                self.Logger.Error("Peak CAN Message Over Run")
-                self.Error = True
+                self.Logger.bError("Peak CAN Message Over Run")
+                self.bError = True
         self.Reset()   
         self.m_objPCANBasic.Uninitialize(self.m_PcanHandle)
         sleep(1)
@@ -144,9 +157,16 @@ class PeakCanFd(object):
     def __exitError(self):
         self.Logger.ErrorFlag = True
         self.__exit__()
-        self.Error = True
+        self.bError = True
         raise
     
+    def vLogNameChange(self, testMethodName, testMethodNameError):
+        self.Logger.vRename(testMethodName, testMethodNameError)
+        
+    def vLogNameCloseInterval(self, testMethodName, testMethodNameError):
+        self.Logger.vClose()
+        self.Logger = Logger(testMethodName, testMethodNameError)
+        
     def vSetReceiver(self, receiver):
         self.receiver = receiver
         
@@ -236,8 +256,8 @@ class PeakCanFd(object):
         if "Error" != returnMessage:
             returnMessage = self.m_objPCANBasic.Write(self.m_PcanHandle, CanMsg)
             if(PCAN_ERROR_OK != returnMessage):
-                print("WriteFrame Error: " + hex(returnMessage))
-                self.Logger.Info("WriteFrame Error: " + hex(returnMessage))
+                print("WriteFrame bError: " + hex(returnMessage))
+                self.Logger.Info("WriteFrame bError: " + hex(returnMessage))
                 returnMessage = "Error"    
                 self.__exitError()
         return returnMessage
@@ -274,13 +294,13 @@ class PeakCanFd(object):
                     senderName = MyToolItNetworkName[sender]
                     receiverName = MyToolItNetworkName[receiver]
                     if False != bError:
-                        self.Logger.Error("Error Ack Received: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + payload2Hex(CanMsg.DATA))
+                        self.Logger.bError("Error Ack Received: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + payload2Hex(CanMsg.DATA))
                         if False != printLog:
                             print("Error Ack Received: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + payload2Hex(CanMsg.DATA))
                     else:
-                        self.Logger.Error("Ack Received(Error assumed): " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + payload2Hex(CanMsg.DATA))
+                        self.Logger.bError("Ack Received(bError assumed): " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + payload2Hex(CanMsg.DATA))
                         if False != printLog:
-                            print("Ack Received(Error assumed): " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + payload2Hex(CanMsg.DATA))
+                            print("Ack Received(bError assumed): " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + payload2Hex(CanMsg.DATA))
                     break
                 elif(waitTimeMax < self.getTimeMs()):
                     returnMessage = "Error"
@@ -289,9 +309,9 @@ class PeakCanFd(object):
                     cmdName = self.strCmdNrToCmdName(command)
                     senderName = MyToolItNetworkName[sender]
                     receiverName = MyToolItNetworkName[receiver]
-                    self.Logger.Warning("No (Error) Ack Received: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + payload2Hex(CanMsg.DATA))
+                    self.Logger.Warning("No (bError) Ack Received: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + payload2Hex(CanMsg.DATA))
                     if False != printLog:
-                        print("No (Error) Ack Received: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + str(CanMsg.DATA))
+                        print("No (bError) Ack Received: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + str(CanMsg.DATA))
                     break
                 
                 if currentIndex < (self.GetReadArrayIndex() - 1):
@@ -319,7 +339,7 @@ class PeakCanFd(object):
                 cmdName = self.strCmdNrToCmdName(command)
                 senderName = MyToolItNetworkName[sender]
                 receiverName = MyToolItNetworkName[receiver]
-                self.Logger.Error("Message Request Failed: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + payload2Hex(CanMsg.DATA))
+                self.Logger.bError("Message Request Failed: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + payload2Hex(CanMsg.DATA))
                 if False != printLog:
                     print("Message Request Failed: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + payload2Hex(CanMsg.DATA))
                 if False != bErrorExit:
@@ -596,7 +616,7 @@ class PeakCanFd(object):
         if indexRun != indexAssumed:
             self.Logger.Warning("Calibration Measurement Index Miss (Assumed/Truly): " + str(indexAssumed) + "/" + str(indexRun))
         if indexRun == indexEnd:
-            self.Logger.Error("Calibration Measurement Fail Request")
+            self.Logger.bError("Calibration Measurement Fail Request")
         return returnAck
     
     def statisticalData(self, receiver, subCmd, log=True, retries=3, bErrorAck=False, printLog=False):
@@ -615,7 +635,7 @@ class PeakCanFd(object):
         if indexRun != indexAssumed:
             self.Logger.Warning("Statistical Data Index Miss (Assumed/Truly): " + str(indexAssumed) + "/" + str(indexRun))
         if indexRun == indexEnd:
-            self.Logger.Error("Statistical Data Fail Request")
+            self.Logger.bError("Statistical Data Fail Request")
         return returnAck
 
     def statusWord0(self, receiver, payload=[]):
@@ -742,7 +762,7 @@ class PeakCanFd(object):
                 peakCanTimeStamp = result[2].millis_overflow * (2 ** 32) + result[2].millis + result[2].micros / 1000
                 self.readArray.append({"CanMsg" : result[1], "PcTime" : self.getTimeMs(), "PeakCanTime" : peakCanTimeStamp})                
             elif result[0] == PCAN_ERROR_QOVERRUN:
-                self.Logger.Error("RxOverRun")
+                self.Logger.bError("RxOverRun")
                 print("RxOverRun")
                 self.RunReadThread = False
     

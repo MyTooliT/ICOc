@@ -30,7 +30,7 @@ class TestSthManually(unittest.TestCase):
         self._resetSth()
         self.PeakCan.Logger.Info("Connect to STH")
         self.PeakCan.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
-        self.Error = False
+        self.bError = False
         self.PeakCan.Logger.Info("STU BlueTooth Address: " + hex(self.PeakCan.BlueToothAddress(MyToolItNetworkNr["STU1"])))
         self.PeakCan.Logger.Info("STH BlueTooth Address: " + hex(self.PeakCan.BlueToothAddress(MyToolItNetworkNr["STH1"])))
         self._statusWords()
@@ -41,8 +41,8 @@ class TestSthManually(unittest.TestCase):
         self.PeakCan.Logger.Info("Start")
 
     def tearDown(self):
-        if False != self.PeakCan.Error:
-            self.Error = True
+        if False != self.PeakCan.bError:
+            self.bError = True
         self.PeakCan.__exit__()
         if self._test_has_failed():
             if os.path.isfile(self.fileNameError) and os.path.isfile(self.fileName):
@@ -54,7 +54,7 @@ class TestSthManually(unittest.TestCase):
         for _method, error in self._outcome.errors:
             if error:
                 return True
-        if True == self.Error:
+        if True == self.bError:
             return True
         return False
 
@@ -80,11 +80,11 @@ class TestSthManually(unittest.TestCase):
         self.PeakCan.Logger.Info("STU Status Word: " + hex(psw0))
         ErrorWord.asword = self.PeakCan.statusWord1(MyToolItNetworkNr["STH1"])
         if True == ErrorWord.b.bAdcOverRun:
-            print("STH Error Word: " + hex(ErrorWord.asword))
-            self.Error = True
-        self.PeakCan.Logger.Info("STH Error Word: " + hex(ErrorWord.asword))
+            print("STH bError Word: " + hex(ErrorWord.asword))
+            self.bError = True
+        self.PeakCan.Logger.Info("STH bError Word: " + hex(ErrorWord.asword))
         ErrorWord.asword = self.PeakCan.statusWord1(MyToolItNetworkNr["STU1"])
-        self.PeakCan.Logger.Info("STU Error Word: " + hex(ErrorWord.asword))
+        self.PeakCan.Logger.Info("STU bError Word: " + hex(ErrorWord.asword))
  
     def TurnOffLed(self):
         self.PeakCan.Logger.Info("Turn Off LED")
@@ -99,7 +99,7 @@ class TestSthManually(unittest.TestCase):
         self.PeakCan.WriteFrameWaitAckRetries(message)        
         
     """
-    Test Acknowledgement from STH. Write message and check identifier to be ack (No Error)
+    Test Acknowledgement from STH. Write message and check identifier to be ack (No bError)
     """
 
     def testManually0001Ack(self):

@@ -26,15 +26,15 @@ class TestSthManually(unittest.TestCase):
         self.PeakCan = PeakCanFd.PeakCanFd(PeakCanFd.PCAN_BAUD_1M, self.fileName, self.fileNameError, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"])
         self.PeakCan.Logger.Info("TestCase: " + str(self._testMethodName))
         self._resetStu()
-        self.Error = False
+        self.bError = False
         self.PeakCan.Logger.Info("STU BlueTooth Address: " + hex(self.PeakCan.BlueToothAddress(MyToolItNetworkNr["STU1"])))
         self._statusWords()
         print("Start")
         self.PeakCan.Logger.Info("Start")
 
     def tearDown(self):
-        if False != self.PeakCan.Error:
-            self.Error = True
+        if False != self.PeakCan.bError:
+            self.bError = True
         self.PeakCan.__exit__()
         if self._test_has_failed():
             if os.path.isfile(self.fileNameError) and os.path.isfile(self.fileName):
@@ -46,7 +46,7 @@ class TestSthManually(unittest.TestCase):
         for _method, error in self._outcome.errors:
             if error:
                 return True
-        if True == self.Error:
+        if True == self.bError:
             return True
         return False
 
@@ -58,7 +58,7 @@ class TestSthManually(unittest.TestCase):
         psw0 = self.PeakCan.statusWord0(MyToolItNetworkNr["STU1"])
         self.PeakCan.Logger.Info("STU Status Word: " + hex(psw0))
         ErrorWord.asword = self.PeakCan.statusWord1(MyToolItNetworkNr["STU1"])
-        self.PeakCan.Logger.Info("STU Error Word: " + hex(ErrorWord.asword))   
+        self.PeakCan.Logger.Info("STU bError Word: " + hex(ErrorWord.asword))   
  
     def TurnOffLed(self):
         self.PeakCan.Logger.Info("Turn Off LED")
@@ -73,7 +73,7 @@ class TestSthManually(unittest.TestCase):
         self.PeakCan.WriteFrameWaitAckRetries(message)        
         
     """
-    Test Acknowledgement from STH. Write message and check identifier to be ack (No Error)
+    Test Acknowledgement from STH. Write message and check identifier to be ack (No bError)
     """
 
     def testManually0001Ack(self):

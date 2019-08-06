@@ -57,7 +57,7 @@ class TestSth(unittest.TestCase):
         self._resetSth()
         self.PeakCan.Logger.Info("Connect to STH")
         self.PeakCan.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
-        self.Error = False
+        self.bError = False
         self.PeakCan.Logger.Info("STU BlueTooth Address: " + hex(self.PeakCan.BlueToothAddress(MyToolItNetworkNr["STU1"])))
         self.PeakCan.Logger.Info("STH BlueTooth Address: " + hex(self.PeakCan.BlueToothAddress(MyToolItNetworkNr["STH1"])))
         self._statusWords()
@@ -72,7 +72,7 @@ class TestSth(unittest.TestCase):
     def tearDown(self):
         self.PeakCan.Logger.Info("Fin")
         self.PeakCan.Logger.Info("_______________________________________________________________________________________________________________")
-        if False == self.PeakCan.Error:
+        if False == self.PeakCan.bError:
             self._streamingStop()
             self._BlueToothStatistics()
             ReceiveFailCounter = self._RoutingInformation()
@@ -85,9 +85,9 @@ class TestSth(unittest.TestCase):
         else:
             ReceiveFailCounter = 0
         if(0 < ReceiveFailCounter):
-            self.Error = True
-        if False != self.PeakCan.Error:
-            self.Error = True
+            self.bError = True
+        if False != self.PeakCan.bError:
+            self.bError = True
         self.PeakCan.__exit__()
         if self._test_has_failed():
             if os.path.isfile(self.fileNameError) and os.path.isfile(self.fileName):
@@ -99,7 +99,7 @@ class TestSth(unittest.TestCase):
         for _method, error in self._outcome.errors:
             if error:
                 return True
-        if True == self.Error:
+        if True == self.bError:
             return True
         return False
 
@@ -130,10 +130,10 @@ class TestSth(unittest.TestCase):
         self.PeakCan.Logger.Info("STU Status Word: " + hex(psw0))
         ErrorWord.asword = self.PeakCan.statusWord1(MyToolItNetworkNr["STH1"])
         if True == ErrorWord.b.bAdcOverRun:
-            self.Error = True
-        self.PeakCan.Logger.Info("STH Error Word: " + hex(ErrorWord.asword))
+            self.bError = True
+        self.PeakCan.Logger.Info("STH bError Word: " + hex(ErrorWord.asword))
         ErrorWord.asword = self.PeakCan.statusWord1(MyToolItNetworkNr["STU1"])
-        self.PeakCan.Logger.Info("STU Error Word: " + hex(ErrorWord.asword))
+        self.PeakCan.Logger.Info("STU bError Word: " + hex(ErrorWord.asword))
 
     def _streamingStop(self):
         self.PeakCan.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"])
@@ -517,7 +517,7 @@ class TestSth(unittest.TestCase):
         self.PeakCan.Logger.Info("____________________________________________________")
 
     """
-    Test Acknowledgement from STH. Write message and check identifier to be ack (No Error)
+    Test Acknowledgement from STH. Write message and check identifier to be ack (No bError)
     """
 
     def test0001Ack(self):
@@ -1030,13 +1030,13 @@ class TestSth(unittest.TestCase):
         if 0 == timeReset and 0 == timeAdvertisement:
             self.PeakCan.Logger.Info("Sleep Time1 was not taken: " + str(SleepTime["Min"] - 1) + "ms")
         else:
-            self.PeakCan.Logger.Error("Sleep Time1 was taken: " + str(SleepTime["Min"] - 1) + "ms")
+            self.PeakCan.Logger.bError("Sleep Time1 was taken: " + str(SleepTime["Min"] - 1) + "ms")
             self.PeakCan.__exitError()
         [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyModeNr(SleepTime["Min"] - 1, SleepTime["AdvertisementReset2"], 2)
         if 0 == timeReset and 0 == timeAdvertisement:
             self.PeakCan.Logger.Info("Sleep Time2 was not taken: " + str(SleepTime["Min"] - 1) + "ms")
         else:
-            self.PeakCan.Logger.Error("Sleep Time2 was taken: " + str(SleepTime["Min"] - 1) + "ms")
+            self.PeakCan.Logger.bError("Sleep Time2 was taken: " + str(SleepTime["Min"] - 1) + "ms")
             self.PeakCan.__exitError()
             
         # Do not take Advertisement Time - Min
@@ -1044,26 +1044,26 @@ class TestSth(unittest.TestCase):
         if 0 == timeReset and 0 == timeAdvertisement:
             self.PeakCan.Logger.Info("Advertisement Time1 was not taken: " + str(SleepTime["AdvertisementMin"] - 1) + "ms")
         else:
-            self.PeakCan.Logger.Error("Advertisement Time1 was taken: " + str(SleepTime["AdvertisementMin"] - 1) + "ms")
+            self.PeakCan.Logger.bError("Advertisement Time1 was taken: " + str(SleepTime["AdvertisementMin"] - 1) + "ms")
             self.PeakCan.__exitError()
         [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyModeNr(SleepTime["Reset2"], SleepTime["AdvertisementMin"] - 1, 2)
         if 0 == timeReset and 0 == timeAdvertisement:
             self.PeakCan.Logger.Info("Advertisement Time2 was not taken: " + str(SleepTime["AdvertisementMin"] - 1) + "ms")
         else:
-            self.PeakCan.Logger.Error("Advertisement Time2 was taken: " + str(SleepTime["AdvertisementMin"] - 1) + "ms")
+            self.PeakCan.Logger.bError("Advertisement Time2 was taken: " + str(SleepTime["AdvertisementMin"] - 1) + "ms")
             self.PeakCan.__exitError()
         # Do not take Advertisement Time - Max
         [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyModeNr(SleepTime["Reset1"], SleepTime["AdvertisementMax"] + 1, 1)
         if 0 == timeReset and 0 == timeAdvertisement:
             self.PeakCan.Logger.Info("Advertisement Time1 was not taken: " + str(SleepTime["AdvertisementMax"] + 1) + "ms")
         else:
-            self.PeakCan.Logger.Error("Advertisement Time1 was taken: " + str(SleepTime["AdvertisementMax"] + 1) + "ms")
+            self.PeakCan.Logger.bError("Advertisement Time1 was taken: " + str(SleepTime["AdvertisementMax"] + 1) + "ms")
             self.PeakCan.__exitError()
         [timeReset, timeAdvertisement] = self.PeakCan.BlueToothEnergyModeNr(SleepTime["Reset2"], SleepTime["AdvertisementMax"] + 1, 2)
         if 0 == timeReset and 0 == timeAdvertisement:
             self.PeakCan.Logger.Info("Advertisement Time2 was not taken: " + str(SleepTime["AdvertisementMax"] + 1) + "ms")
         else:
-            self.PeakCan.Logger.Error("Advertisement Time2 was taken: " + str(SleepTime["AdvertisementMax"] + 1) + "ms")
+            self.PeakCan.Logger.bError("Advertisement Time2 was taken: " + str(SleepTime["AdvertisementMax"] + 1) + "ms")
             self.PeakCan.__exitError()
 
         self.PeakCan.BlueToothEnergyModeNr(SleepTime["Reset1"], SleepTime["AdvertisementReset1"], 1)
@@ -2509,13 +2509,13 @@ class TestSth(unittest.TestCase):
         indexStop = self.PeakCan.GetReadArrayIndex() - 1
         BytesTransfered = indexStop - indexStart
         BytesTransfered *= 8
-        self.assertNotEqual("Error", ack)
+        self.assertNotEqual("bError", ack)
         ErrorWord = SthErrorWord()
         ErrorWord.asword = self.PeakCan.statusWord1(MyToolItNetworkNr["STH1"])
-        self.PeakCan.Logger.Info("Reset Error Status Word")
-        self.PeakCan.Logger.Info("STH Error Word Reserved: " + hex(ErrorWord.b.Reserved))
-        self.PeakCan.Logger.Info("STH Error Word bAdcOverRun: " + hex(ErrorWord.b.bAdcOverRun))
-        self.PeakCan.Logger.Info("STH Error Word bTxFail: " + hex(ErrorWord.b.bTxFail))
+        self.PeakCan.Logger.Info("Reset bError Status Word")
+        self.PeakCan.Logger.Info("STH bError Word Reserved: " + hex(ErrorWord.b.Reserved))
+        self.PeakCan.Logger.Info("STH bError Word bAdcOverRun: " + hex(ErrorWord.b.bAdcOverRun))
+        self.PeakCan.Logger.Info("STH bError Word bTxFail: " + hex(ErrorWord.b.bTxFail))
         self.PeakCan.Logger.Info("Trasnfered Bytes: " + str(BytesTransfered))
         self.assertLessEqual(BytesTransfered, 1000)
         self.assertEqual(ErrorWord.b.bAdcOverRun, 1)
@@ -3420,7 +3420,7 @@ class TestSth(unittest.TestCase):
         stateStartOpa1 = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"], CalibMeassurementTypeNr["OpvOutput"], 1, AdcReference["VDD"], bSet=False, bErrorAck=True)
         stateStartOpa2 = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"], CalibMeassurementTypeNr["OpvOutput"], 2, AdcReference["VDD"], bSet=False, bErrorAck=True)
         ErrorPayloadAssumed = [0x0, 0x2, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0]
-        self.PeakCan.Logger.Info("Assumed Error Payload: " + payload2Hex(ErrorPayloadAssumed)) 
+        self.PeakCan.Logger.Info("Assumed bError Payload: " + payload2Hex(ErrorPayloadAssumed)) 
         self.PeakCan.Logger.Info("State Start AccX: " + payload2Hex(stateStartX)) 
         self.PeakCan.Logger.Info("State Start AccY: " + payload2Hex(stateStartY)) 
         self.PeakCan.Logger.Info("State Start AccZ: " + payload2Hex(stateStartZ)) 
@@ -3598,14 +3598,14 @@ class TestSth(unittest.TestCase):
         time.sleep(1)
         self.PeakCan.GetReadArrayIndex() - 1
         ack = self.PeakCan.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], bErrorExit=False)
-        self.assertNotEqual("Error", ack)
+        self.assertNotEqual("bError", ack)
         StateWord = SthStateWord()
         StateWord.asword = self.PeakCan.statusWord0(MyToolItNetworkNr["STH1"])
         self.PeakCan.Logger.Info("STH State Word: " + hex(StateWord.asword))
         self.PeakCan.Logger.Info("STH State Word - bError: " + str(StateWord.b.bError))
         self.PeakCan.Logger.Info("STH State Word - " + NetworkStateName[StateWord.b.u3NetworkState])
         self.assertEqual(StateWord.b.bError, 1)
-        self.assertEqual(StateWord.b.u3NetworkState, NetworkState["Error"])
+        self.assertEqual(StateWord.b.u3NetworkState, NetworkState["bError"])
         self._resetStu()        
         self.PeakCan.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
 
@@ -3616,10 +3616,10 @@ class TestSth(unittest.TestCase):
     def test0820StatusWords1Reset(self):
         ErrorWord = SthErrorWord()
         ErrorWord.asword = self.PeakCan.statusWord1(MyToolItNetworkNr["STH1"])
-        self.PeakCan.Logger.Info("STH Error Word: " + hex(ErrorWord.asword))
-        self.PeakCan.Logger.Info("STH Error Word Reserved: " + hex(ErrorWord.b.Reserved))
-        self.PeakCan.Logger.Info("STH Error Word bAdcOverRun: " + hex(ErrorWord.b.bAdcOverRun))
-        self.PeakCan.Logger.Info("STH Error Word bTxFail: " + hex(ErrorWord.b.bTxFail))
+        self.PeakCan.Logger.Info("STH bError Word: " + hex(ErrorWord.asword))
+        self.PeakCan.Logger.Info("STH bError Word Reserved: " + hex(ErrorWord.b.Reserved))
+        self.PeakCan.Logger.Info("STH bError Word bAdcOverRun: " + hex(ErrorWord.b.bAdcOverRun))
+        self.PeakCan.Logger.Info("STH bError Word bTxFail: " + hex(ErrorWord.b.bTxFail))
         self.assertEqual(ErrorWord.asword, 0)
                     
     """
@@ -3639,10 +3639,10 @@ class TestSth(unittest.TestCase):
         time.sleep(1)
         ErrorWord = SthErrorWord()
         ErrorWord.asword = self.PeakCan.statusWord1(MyToolItNetworkNr["STH1"])
-        self.PeakCan.Logger.Info("STH Error Word: " + hex(ErrorWord.asword))
-        self.PeakCan.Logger.Info("STH Error Word Reserved: " + hex(ErrorWord.b.Reserved))
-        self.PeakCan.Logger.Info("STH Error Word bAdcOverRun: " + hex(ErrorWord.b.bAdcOverRun))
-        self.PeakCan.Logger.Info("STH Error Word bTxFail: " + hex(ErrorWord.b.bTxFail))
+        self.PeakCan.Logger.Info("STH bError Word: " + hex(ErrorWord.asword))
+        self.PeakCan.Logger.Info("STH bError Word Reserved: " + hex(ErrorWord.b.Reserved))
+        self.PeakCan.Logger.Info("STH bError Word bAdcOverRun: " + hex(ErrorWord.b.bAdcOverRun))
+        self.PeakCan.Logger.Info("STH bError Word bTxFail: " + hex(ErrorWord.b.bTxFail))
         self.assertEqual(ErrorWord.b.bAdcOverRun, 1)
         self._resetStu()        
         self.PeakCan.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
@@ -3664,10 +3664,10 @@ class TestSth(unittest.TestCase):
         time.sleep(10)
         ErrorWord = SthErrorWord()
         ErrorWord.asword = self.PeakCan.statusWord1(MyToolItNetworkNr["STH1"])
-        self.PeakCan.Logger.Info("STH Error Word: " + hex(ErrorWord.asword))
-        self.PeakCan.Logger.Info("STH Error Word Reserved: " + hex(ErrorWord.b.Reserved))
-        self.PeakCan.Logger.Info("STH Error Word bAdcOverRun: " + hex(ErrorWord.b.bAdcOverRun))
-        self.PeakCan.Logger.Info("STH Error Word bTxFail: " + hex(ErrorWord.b.bTxFail))
+        self.PeakCan.Logger.Info("STH bError Word: " + hex(ErrorWord.asword))
+        self.PeakCan.Logger.Info("STH bError Word Reserved: " + hex(ErrorWord.b.Reserved))
+        self.PeakCan.Logger.Info("STH bError Word bAdcOverRun: " + hex(ErrorWord.b.bAdcOverRun))
+        self.PeakCan.Logger.Info("STH bError Word bTxFail: " + hex(ErrorWord.b.bTxFail))
         self.assertEqual(ErrorWord.b.bAdcOverRun, 0)
         self.assertEqual(ErrorWord.b.bTxFail, 1)
         self._resetStu()        
@@ -3702,7 +3702,7 @@ class TestSth(unittest.TestCase):
         activeState = ActiveState()
         activeState.asbyte = 0  # Set=0 ->Read
         activeState.b.u2NodeState = Node["Application"]
-        activeState.b.u3NetworkState = NetworkState["Error"]
+        activeState.b.u3NetworkState = NetworkState["bError"]
         activeState.b.bSetState = 1
         indexAssumed = self.PeakCan.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["System"], MyToolItSystem["ActiveState"], [activeState.asbyte])        
         activeState.asbyte = self.PeakCan.getReadMessageData(indexAssumed)[0]
@@ -3716,7 +3716,7 @@ class TestSth(unittest.TestCase):
         self.assertEqual(activeState.b.bReserved, 0)
         self.assertEqual(activeState.b.u2NodeState, Node["Application"])
         self.assertEqual(activeState.b.bReserved1, 0)
-        self.assertEqual(activeState.b.u3NetworkState, NetworkState["Error"])
+        self.assertEqual(activeState.b.u3NetworkState, NetworkState["bError"])
         indexAssumed = self.PeakCan.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["System"], MyToolItSystem["ActiveState"], [0])        
         activeState.asbyte = self.PeakCan.getReadMessageData(indexAssumed)[0]
         self.PeakCan.Logger.Info("STH Active State(Read Ack): " + hex(activeState.asbyte))
@@ -3729,7 +3729,7 @@ class TestSth(unittest.TestCase):
         self.assertEqual(activeState.b.bReserved, 0)
         self.assertEqual(activeState.b.u2NodeState, Node["Application"])
         self.assertEqual(activeState.b.bReserved1, 0)
-        self.assertEqual(activeState.b.u3NetworkState, NetworkState["Error"])  
+        self.assertEqual(activeState.b.u3NetworkState, NetworkState["bError"])  
         self.PeakCan.Logger.Info("Trying to receive Stream (Must not work)")
         accFormat = AtvcFormat()
         accFormat.asbyte = 0
@@ -3741,7 +3741,7 @@ class TestSth(unittest.TestCase):
         cmd = self.PeakCan.CanCmd(MyToolItBlock["Streaming"], MyToolItStreaming["Acceleration"], 1, 0)
         message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [accFormat.asbyte])
         ack = self.PeakCan.WriteFrameWaitAckRetries(message, bErrorExit=False)
-        self.assertEqual("Error", ack)
+        self.assertEqual("bError", ack)
         self.PeakCan.CanTimeStampStart(self._resetStu()["CanTime"])
         self.PeakCan.Logger.Info("Connect to STH")
         self.PeakCan.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
@@ -3754,33 +3754,33 @@ class TestSth(unittest.TestCase):
         cmd = self.PeakCan.CanCmd(0, 0, 1, 0)
         message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [])
         msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, retries=3, bErrorExit=False)
-        self.assertEqual("Error", msgAck)
+        self.assertEqual("bError", msgAck)
         cmd = self.PeakCan.CanCmd(0, 0, 1, 1)
         message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [])
         msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, retries=3, bErrorExit=False)
-        self.assertEqual("Error", msgAck)
+        self.assertEqual("bError", msgAck)
         cmd = self.PeakCan.CanCmd(0, 0, 0, 0)
         message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [])
         msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, retries=3, bErrorExit=False)
-        self.assertEqual("Error", msgAck)
+        self.assertEqual("bError", msgAck)
         cmd = self.PeakCan.CanCmd(0, 0, 0, 1)
         message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [])
         msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, retries=3, bErrorExit=False)
-        self.assertEqual("Error", msgAck)
+        self.assertEqual("bError", msgAck)
                
     """
-    Test that nothing happens when sinding Reqest(1) and Error(1) to STH1
+    Test that nothing happens when sinding Reqest(1) and bError(1) to STH1
     """
 
     def test0901ErrorRequestErrorSth1(self):
         cmd = self.PeakCan.CanCmd(MyToolItBlock["System"], MyToolItSystem["Reset"], 1, 1)
         message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [])
         msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, retries=3, bErrorExit=False)
-        self.assertEqual("Error", msgAck)
+        self.assertEqual("bError", msgAck)
         cmd = self.PeakCan.CanCmd(MyToolItBlock["Streaming"], MyToolItStreaming["Acceleration"], 1, 1)
         message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [])
         msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, retries=3, bErrorExit=False)
-        self.assertEqual("Error", msgAck)          
+        self.assertEqual("bError", msgAck)          
      
     """
     Test Routing - Wrong Sender to STH1
@@ -3792,7 +3792,7 @@ class TestSth(unittest.TestCase):
                 cmd = self.PeakCan.CanCmd(MyToolItBlock["System"], MyToolItSystem["Reset"], 1, 0)
                 message = self.PeakCan.CanMessage20(cmd, numberVal, MyToolItNetworkNr["STH1"], [])
                 msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, retries=3, bErrorExit=False)
-                self.assertEqual("Error", msgAck)
+                self.assertEqual("bError", msgAck)
                     
                 
 if __name__ == "__main__":

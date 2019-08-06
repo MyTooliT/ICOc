@@ -26,7 +26,7 @@ class TestStu(unittest.TestCase):
         self.PeakCan = PeakCanFd.PeakCanFd(PeakCanFd.PCAN_BAUD_1M, self.fileName, self.fileNameError, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"])
         self.PeakCan.Logger.Info("TestCase: " + str(self._testMethodName))
         self.PeakCan.CanTimeStampStart(self._resetStu()["CanTime"])
-        self.Error = False
+        self.bError = False
         self.PeakCan.Logger.Info("STU BlueTooth Address: " + hex(self.PeakCan.BlueToothAddress(MyToolItNetworkNr["STU1"])))
         self._statusWords()
         self._StuWDog()
@@ -39,11 +39,11 @@ class TestStu(unittest.TestCase):
     def tearDown(self): 
         self.PeakCan.Logger.Info("Fin")
         self.PeakCan.Logger.Info("_______________________________________________________________________________________________________________")
-        if False == self.PeakCan.Error:
+        if False == self.PeakCan.bError:
             self._statusWords()
             self.PeakCan.Logger.Info("Test Time End Time Stamp")
-        if False != self.PeakCan.Error:
-            self.Error = True
+        if False != self.PeakCan.bError:
+            self.bError = True
         self.PeakCan.__exit__()
         if self._test_has_failed():
             if os.path.isfile(self.fileNameError) and os.path.isfile(self.fileName):
@@ -70,10 +70,10 @@ class TestStu(unittest.TestCase):
         psw0 = self.PeakCan.statusWord0(MyToolItNetworkNr["STU1"])
         self.PeakCan.Logger.Info("STU Status Word: " + hex(psw0))
         ErrorWord.asword = self.PeakCan.statusWord1(MyToolItNetworkNr["STU1"])
-        self.PeakCan.Logger.Info("STU Error Word: " + hex(ErrorWord.asword))    
+        self.PeakCan.Logger.Info("STU bError Word: " + hex(ErrorWord.asword))    
     
     """
-    Test Acknowledgement from STU. Write message and check identifier to be ack (No Error)
+    Test Acknowledgement from STU. Write message and check identifier to be ack (No bError)
     """    
 
     def test0001Ack(self):
@@ -125,7 +125,7 @@ class TestStu(unittest.TestCase):
             else:
                 cmd = self.PeakCan.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0)
                 msg = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [SystemCommandBlueTooth["DeviceCheckConnected"], 0, 0, 0, 0, 0, 0, 0])
-            self.assertNotEqual("Error", self.PeakCan.WriteFrameWaitAck(msg))
+            self.assertNotEqual("bError", self.PeakCan.WriteFrameWaitAck(msg))
         self.test0001Ack()  # Test that it still works
         
     """ Send Mutliple Frames with waiting for an ACK: Send->Ack->Send->Ack, this also do a retry, tests the test framework - Multiple Messages"""
@@ -141,7 +141,7 @@ class TestStu(unittest.TestCase):
             else:
                 cmd = self.PeakCan.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0)
                 msg = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [SystemCommandBlueTooth["DeviceCheckConnected"], 0, 0, 0, 0, 0, 0, 0])
-            self.assertNotEqual("Error", self.PeakCan.WriteFrameWaitAckRetries(msg, retries=3))
+            self.assertNotEqual("bError", self.PeakCan.WriteFrameWaitAckRetries(msg, retries=3))
         self.test0001Ack()  # Test that it still works
         
         """ Send Mutliple Frames with waiting for an ACK: Send->Ack->Send->Ack, this also do a retry, tests the test framework - Single Message"""
@@ -159,7 +159,7 @@ class TestStu(unittest.TestCase):
     def test0006SenderReceiver(self):
         cmd = self.PeakCan.CanCmd(MyToolItBlock["System"], MyToolItSystem["ActiveState"], 1, 0)
         msg = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["STU1"], MyToolItNetworkNr["STU1"], [0])
-        self.assertEqual("Error", self.PeakCan.WriteFrameWaitAck(msg)[0])
+        self.assertEqual("bError", self.PeakCan.WriteFrameWaitAck(msg)[0])
         # Test that it still works
         msg = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [0])
         self.PeakCan.WriteFrameWaitAckRetries(msg, retries=0)
@@ -169,30 +169,30 @@ class TestStu(unittest.TestCase):
     """ 
 
     def test0007ChristmasTree(self):
-        self.PeakCan.Logger.Info("Error Request Frame from STU1 to STU1")
+        self.PeakCan.Logger.Info("bError Request Frame from STU1 to STU1")
         cmd = self.PeakCan.CanCmd(MyToolItBlock["System"], MyToolItSystem["ActiveState"], 1, 1)
         msg = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["STU1"], MyToolItNetworkNr["STU1"], [0])
-        self.assertEqual("Error", self.PeakCan.WriteFrameWaitAck(msg)[0])
-        self.PeakCan.Logger.Info("Error Request Frame from SPU1 to STU1")
+        self.assertEqual("bError", self.PeakCan.WriteFrameWaitAck(msg)[0])
+        self.PeakCan.Logger.Info("bError Request Frame from SPU1 to STU1")
         cmd = self.PeakCan.CanCmd(MyToolItBlock["System"], MyToolItSystem["ActiveState"], 1, 1)
         msg = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [0])
-        self.assertEqual("Error", self.PeakCan.WriteFrameWaitAck(msg)[0])
-        self.PeakCan.Logger.Info("Error Ack Frame from STU1 to STU1")
+        self.assertEqual("bError", self.PeakCan.WriteFrameWaitAck(msg)[0])
+        self.PeakCan.Logger.Info("bError Ack Frame from STU1 to STU1")
         cmd = self.PeakCan.CanCmd(MyToolItBlock["System"], MyToolItSystem["ActiveState"], 0, 1)
         msg = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["STU1"], MyToolItNetworkNr["STU1"], [0])
-        self.assertEqual("Error", self.PeakCan.WriteFrameWaitAck(msg)[0])
-        self.PeakCan.Logger.Info("Error Ack Frame from SPU1 to STU1")
+        self.assertEqual("bError", self.PeakCan.WriteFrameWaitAck(msg)[0])
+        self.PeakCan.Logger.Info("bError Ack Frame from SPU1 to STU1")
         cmd = self.PeakCan.CanCmd(MyToolItBlock["System"], MyToolItSystem["ActiveState"], 0, 1)
         msg = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [0])
-        self.assertEqual("Error", self.PeakCan.WriteFrameWaitAck(msg)[0])
+        self.assertEqual("bError", self.PeakCan.WriteFrameWaitAck(msg)[0])
         self.PeakCan.Logger.Info("Ack Frame from STU1 to STU1")
         cmd = self.PeakCan.CanCmd(MyToolItBlock["System"], MyToolItSystem["ActiveState"], 0, 0)
         msg = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["STU1"], MyToolItNetworkNr["STU1"], [0])
-        self.assertEqual("Error", self.PeakCan.WriteFrameWaitAck(msg)[0])
+        self.assertEqual("bError", self.PeakCan.WriteFrameWaitAck(msg)[0])
         self.PeakCan.Logger.Info("Ack Frame from SPU1 to STU1")
         cmd = self.PeakCan.CanCmd(MyToolItBlock["System"], MyToolItSystem["ActiveState"], 0, 0)
         msg = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [0])
-        self.assertEqual("Error", self.PeakCan.WriteFrameWaitAck(msg)[0])
+        self.assertEqual("bError", self.PeakCan.WriteFrameWaitAck(msg)[0])
         
         # Test that it still works
         self.PeakCan.Logger.Info("Normal Request to STU1")
@@ -265,12 +265,12 @@ class TestStu(unittest.TestCase):
             if(0 != connectToDevice):
                 self.PeakCan.Logger.Info("Bluetooth STH connected")
             else:
-                self.PeakCan.Logger.Error("Bluetooth STH not Connected")
+                self.PeakCan.Logger.bError("Bluetooth STH not Connected")
             self.assertNotEqual(0, connectToDevice)
             self.PeakCan.Logger.Info("Disconnect from Bluetooth Device")
             connectToDevice = self.BlueToothDisconnect()
             if(0 != connectToDevice):
-                self.PeakCan.Logger.Error("Bluetooth STH connected")
+                self.PeakCan.Logger.bError("Bluetooth STH connected")
             else:
                 self.PeakCan.Logger.Info("Bluetooth STH not Connected")
             self.assertEqual(0, connectToDevice)
@@ -382,7 +382,7 @@ class TestStu(unittest.TestCase):
             if (MyToolItNetworkNr["STU1"] != i):
                 msg = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], i, [0])
                 ack = self.PeakCan.WriteFrameWaitAck(msg)
-                self.assertEqual("Error", ack[0])
+                self.assertEqual("bError", ack[0])
 
         # Test that it still works
         msg = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [0])
@@ -425,7 +425,7 @@ class TestStu(unittest.TestCase):
             else:
                 cmd = self.PeakCan.CanCmd(MyToolItBlock["System"], MyToolItSystem["StatusWord0"], 1, 0)
                 msg = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [0, 0, 0, 0, 0, 0, 0, 0])
-            self.assertNotEqual("Error", self.PeakCan.WriteFrameWaitAck(msg))
+            self.assertNotEqual("bError", self.PeakCan.WriteFrameWaitAck(msg))
          
     """ Send Mutliple Frames with waiting for an ACK: Send->Ack->Send->Ack with routing, this also do a retry, tests the test framework - Multiple Messages"""
 
@@ -442,7 +442,7 @@ class TestStu(unittest.TestCase):
             else:
                 cmd = self.PeakCan.CanCmd(MyToolItBlock["System"], MyToolItSystem["StatusWord0"], 1, 0)
                 msg = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [0, 0, 0, 0, 0, 0, 0, 0])
-            self.assertNotEqual("Error", self.PeakCan.WriteFrameWaitAckRetries(msg, retries=0))
+            self.assertNotEqual("bError", self.PeakCan.WriteFrameWaitAckRetries(msg, retries=0))
          
         """ Send Mutliple Frames with waiting for an ACK: Send->Ack->Send->Ack with routing, this also do a retry, tests the test framework - Single Message"""
 
@@ -455,7 +455,7 @@ class TestStu(unittest.TestCase):
             self.PeakCan.Logger.Info("Run: " + str(i))
             cmd = self.PeakCan.CanCmd(MyToolItBlock["System"], MyToolItSystem["StatusWord0"], 1, 0)
             msg = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [0, 0, 0, 0, 0, 0, 0, 0])
-            self.assertNotEqual("Error", self.PeakCan.WriteFrameWaitAckRetries(msg, retries=0))
+            self.assertNotEqual("bError", self.PeakCan.WriteFrameWaitAckRetries(msg, retries=0))
          
     """
     Send addressing same sender and receiver via Routing
@@ -467,7 +467,7 @@ class TestStu(unittest.TestCase):
         self.assertEqual(1, self.BlueToothConnect(0))
         cmd = self.PeakCan.CanCmd(MyToolItBlock["System"], MyToolItSystem["ActiveState"], 1, 0)
         msg = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["STH1"], MyToolItNetworkNr["STH1"], [0])
-        self.assertEqual("Error", self.PeakCan.WriteFrameWaitAck(msg)[0])
+        self.assertEqual("bError", self.PeakCan.WriteFrameWaitAck(msg)[0])
         # Test that it still works
         msg = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [0])
         self.PeakCan.WriteFrameWaitAckRetries(msg, retries=0)
@@ -477,32 +477,32 @@ class TestStu(unittest.TestCase):
     """ 
 
     def test0209RoutingChristmasTree(self):
-        self.PeakCan.Logger.Info("Error Request Frame from STH1 to STH1")
+        self.PeakCan.Logger.Info("bError Request Frame from STH1 to STH1")
         self.PeakCan.Logger.Info("Connect")
         self.assertEqual(1, self.BlueToothConnect(0))
         cmd = self.PeakCan.CanCmd(MyToolItBlock["System"], MyToolItSystem["ActiveState"], 1, 1)
         msg = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["STH1"], MyToolItNetworkNr["STH1"], [0])
-        self.assertEqual("Error", self.PeakCan.WriteFrameWaitAck(msg)[0])
-        self.PeakCan.Logger.Info("Error Request Frame from SPU1 to STH1")
+        self.assertEqual("bError", self.PeakCan.WriteFrameWaitAck(msg)[0])
+        self.PeakCan.Logger.Info("bError Request Frame from SPU1 to STH1")
         cmd = self.PeakCan.CanCmd(MyToolItBlock["System"], MyToolItSystem["ActiveState"], 1, 1)
         msg = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [0])
-        self.assertEqual("Error", self.PeakCan.WriteFrameWaitAck(msg)[0])
-        self.PeakCan.Logger.Info("Error Ack Frame from STH1 to STH1")
+        self.assertEqual("bError", self.PeakCan.WriteFrameWaitAck(msg)[0])
+        self.PeakCan.Logger.Info("bError Ack Frame from STH1 to STH1")
         cmd = self.PeakCan.CanCmd(MyToolItBlock["System"], MyToolItSystem["ActiveState"], 0, 1)
         msg = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["STH1"], MyToolItNetworkNr["STH1"], [0])
-        self.assertEqual("Error", self.PeakCan.WriteFrameWaitAck(msg)[0])
-        self.PeakCan.Logger.Info("Error Ack Frame from SPU1 to STH1")
+        self.assertEqual("bError", self.PeakCan.WriteFrameWaitAck(msg)[0])
+        self.PeakCan.Logger.Info("bError Ack Frame from SPU1 to STH1")
         cmd = self.PeakCan.CanCmd(MyToolItBlock["System"], MyToolItSystem["ActiveState"], 0, 1)
         msg = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [0])
-        self.assertEqual("Error", self.PeakCan.WriteFrameWaitAck(msg)[0])
+        self.assertEqual("bError", self.PeakCan.WriteFrameWaitAck(msg)[0])
         self.PeakCan.Logger.Info("Ack Frame from STH1 to STH1")
         cmd = self.PeakCan.CanCmd(MyToolItBlock["System"], MyToolItSystem["ActiveState"], 0, 0)
         msg = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["STH1"], MyToolItNetworkNr["STH1"], [0])
-        self.assertEqual("Error", self.PeakCan.WriteFrameWaitAck(msg)[0])
+        self.assertEqual("bError", self.PeakCan.WriteFrameWaitAck(msg)[0])
         self.PeakCan.Logger.Info("Ack Frame from SPU1 to STH1")
         cmd = self.PeakCan.CanCmd(MyToolItBlock["System"], MyToolItSystem["ActiveState"], 0, 0)
         msg = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [0])
-        self.assertEqual("Error", self.PeakCan.WriteFrameWaitAck(msg)[0])
+        self.assertEqual("bError", self.PeakCan.WriteFrameWaitAck(msg)[0])
          
         # Test that it still works
         self.PeakCan.Logger.Info("Normal Request to STH1")
@@ -583,33 +583,33 @@ class TestStu(unittest.TestCase):
         cmd = self.PeakCan.CanCmd(0, 0, 1, 0)
         message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [])
         msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, retries=3, bErrorExit=False)
-        self.assertEqual("Error", msgAck)
+        self.assertEqual("bError", msgAck)
         cmd = self.PeakCan.CanCmd(0, 0, 1, 1)
         message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [])
         msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, retries=3, bErrorExit=False)
-        self.assertEqual("Error", msgAck)
+        self.assertEqual("bError", msgAck)
         cmd = self.PeakCan.CanCmd(0, 0, 0, 0)
         message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [])
         msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, retries=3, bErrorExit=False)
-        self.assertEqual("Error", msgAck)
+        self.assertEqual("bError", msgAck)
         cmd = self.PeakCan.CanCmd(0, 0, 0, 1)
         message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [])
         msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, retries=3, bErrorExit=False)
-        self.assertEqual("Error", msgAck)
+        self.assertEqual("bError", msgAck)
                
     """
-    Test that nothing happens when sinding Reqest(1) and Error(1) to STU1
+    Test that nothing happens when sinding Reqest(1) and bError(1) to STU1
     """
 
     def test0901ErrorRequestErrorStu1(self):
         cmd = self.PeakCan.CanCmd(MyToolItBlock["System"], MyToolItSystem["Reset"], 1, 1)
         message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [])
         msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, retries=3, bErrorExit=False)
-        self.assertEqual("Error", msgAck)
+        self.assertEqual("bError", msgAck)
         cmd = self.PeakCan.CanCmd(MyToolItBlock["Streaming"], MyToolItStreaming["Acceleration"], 1, 1)
         message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [])
         msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, retries=3, bErrorExit=False)
-        self.assertEqual("Error", msgAck)          
+        self.assertEqual("bError", msgAck)          
      
 
          
