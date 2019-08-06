@@ -3,11 +3,11 @@
     <Config>
         <config name="X">
                 <DeviceName>"Tanja"</DeviceName>
-                <Acc>"X"</Acc>
+                <Acc>100</Acc>
                 <Voltage>"None"</Voltage>
-                <AdcRef>"AVDD"</AdcRef>
+                <AdcRef>"VDD"</AdcRef>
                 <Prescaler>2</Prescaler>
-                <AcquisitionTime>"3"</AcquisitionTime>
+                <AcquisitionTime>"8"</AcquisitionTime>
                 <OverSamples>"64"</OverSamples>
                 <LogLocation>"../../Logs/"</LogLocation>
                 <LogName>"AccX12k5"</LogName>
@@ -17,11 +17,11 @@
         </config>
         <config name="Y">
                 <DeviceName>"Tanja"</DeviceName>
-                <Acc>"Y"</Acc>
+                <Acc>010</Acc>
                 <Voltage>"None"</Voltage>
-                <AdcRef>"AVDD"</AdcRef>
+                <AdcRef>"VDD"</AdcRef>
                 <Prescaler>2</Prescaler>
-                <AcquisitionTime>"3"</AcquisitionTime>
+                <AcquisitionTime>"8"</AcquisitionTime>
                 <OverSamples>"64"</OverSamples>
                 <LogLocation>"../../Logs/"</LogLocation>
                 <LogName>"AccY12k5"</LogName>
@@ -31,11 +31,11 @@
         </config>
         <config name="Z">
                 <DeviceName>"Tanja"</DeviceName>
-                <Acc>"Y"</Acc>
+                <Acc>001</Acc>
                 <Voltage>"None"</Voltage>
-                <AdcRef>"AVDD"</AdcRef>
+                <AdcRef>"VDD"</AdcRef>
                 <Prescaler>2</Prescaler>
-                <AcquisitionTime>"3"</AcquisitionTime>
+                <AcquisitionTime>"8"</AcquisitionTime>
                 <OverSamples>"64"</OverSamples>
                 <LogLocation>"../../Logs/"</LogLocation>
                 <LogName>"AccZ12k5"</LogName>
@@ -45,11 +45,11 @@
         </config>
         <config name="XY">
                 <DeviceName>"Tanja"</DeviceName>
-                <Acc>"XY"</Acc>
+                <Acc>110</Acc>
                 <Voltage>"None"</Voltage>
-                <AdcRef>"AVDD"</AdcRef>
+                <AdcRef>"VDD"</AdcRef>
                 <Prescaler>2</Prescaler>
-                <AcquisitionTime>"3"</AcquisitionTime>
+                <AcquisitionTime>"8"</AcquisitionTime>
                 <OverSamples>"64"</OverSamples>
                 <LogLocation>"../../Logs/"</LogLocation>
                 <LogName>"AccXY12k5"</LogName>
@@ -59,11 +59,11 @@
         </config>
         <config name="YZ">
                 <DeviceName>"Tanja"</DeviceName>
-                <Acc>"YZ"</Acc>
+                <Acc>011"</Acc>
                 <Voltage>"None"</Voltage>
-                <AdcRef>"AVDD"</AdcRef>
+                <AdcRef>"VDD"</AdcRef>
                 <Prescaler>2</Prescaler>
-                <AcquisitionTime>"3"</AcquisitionTime>
+                <AcquisitionTime>"8"</AcquisitionTime>
                 <OverSamples>"64"</OverSamples>
                 <LogLocation>"../../Logs/"</LogLocation>
                 <LogName>"AccYZ12k5"</LogName>
@@ -73,11 +73,11 @@
         </config>
         <config name="XYZ">
                 <DeviceName>"Tanja"</DeviceName>
-                <Acc>"XYZ"</Acc>
+                <Acc>111</Acc>
                 <Voltage>"None"</Voltage>
-                <AdcRef>"AVDD"</AdcRef>
+                <AdcRef>"VDD"</AdcRef>
                 <Prescaler>2</Prescaler>
-                <AcquisitionTime>"3"</AcquisitionTime>
+                <AcquisitionTime>"8"</AcquisitionTime>
                 <OverSamples>"64"</OverSamples>
                 <LogLocation>"../../Logs/"</LogLocation>
                 <LogName>"AccXYZ12k5"</LogName>
@@ -87,7 +87,7 @@
         </config>
         <config name="XHighRes">
                 <DeviceName>"Tanja"</DeviceName>
-                <Acc>"X"</Acc>
+                <Acc>100</Acc>
                 <Voltage>"None"</Voltage>
                 <AdcRef>"1V25"</AdcRef>
                 <Prescaler>2</Prescaler>
@@ -101,7 +101,7 @@
         </config>
         <config name="YHighRes">
                 <DeviceName>"Tanja"</DeviceName>
-                <Acc>"Y"</Acc>
+                <Acc>010</Acc>
                 <Voltage>"None"</Voltage>
                 <AdcRef>"1V25"</AdcRef>
                 <Prescaler>2</Prescaler>
@@ -115,7 +115,7 @@
         </config>
         <config name="ZHighRes">
                 <DeviceName>"Tanja"</DeviceName>
-                <Acc>"Y"</Acc>
+                <Acc>001</Acc>
                 <Voltage>"None"</Voltage>
                 <AdcRef>"1V25"</AdcRef>
                 <Prescaler>2</Prescaler>
@@ -210,7 +210,7 @@
             <mVolt>2700</mVolt>
             <key>54</key>
         </config>
-        <config name="AVDD">
+        <config name="VDD">
             <mVolt>3300</mVolt>
             <key>66</key>
         </config>
@@ -325,7 +325,7 @@
             <Prescaler>2</Prescaler>
             <OverSamples>"64"</OverSamples>
             <AcquisitionTime>"8"</AcquisitionTime>
-            <AdcRef>"AVDD"</AdcRef>
+            <AdcRef>"VDD"</AdcRef>
         </config>
         <config name="SingleMaxSamples1V25">
             <SamplingRate>9523</SamplingRate>
@@ -341,12 +341,12 @@
             <AcquisitionTime>"8"</AcquisitionTime>
             <AdcRef>"1V25"</AdcRef>
         </config>
-        <config name="SingleMaxSamplesAVDD">
+        <config name="SingleMaxSamplesVDD">
             <SamplingRate>9523</SamplingRate>
             <Prescaler>2</Prescaler>
             <OverSamples>"64"</OverSamples>
             <AcquisitionTime>"8"</AcquisitionTime>
-            <AdcRef>"AVDD"</AdcRef>
+            <AdcRef>"VDD"</AdcRef>
         </config>
         <config name="DoubleMaxSamples1V25">
             <SamplingRate>8824</SamplingRate>
@@ -362,12 +362,12 @@
             <AcquisitionTime>"4"</AcquisitionTime>
             <AdcRef>"1V25"</AdcRef>
         </config>
-        <config name="DoubleMaxSamplesAVDD">
+        <config name="DoubleMaxSamplesVDD">
             <SamplingRate>8824</SamplingRate>
             <Prescaler>3</Prescaler>
             <OverSamples>"64"</OverSamples>
             <AcquisitionTime>"4"</AcquisitionTime>
-            <AdcRef>"AVDD"</AdcRef>
+            <AdcRef>"VDD"</AdcRef>
         </config>
         <config name="TripleMaxSamples1V25">
             <SamplingRate>9523</SamplingRate>
@@ -383,12 +383,12 @@
             <AcquisitionTime>"8"</AcquisitionTime>
             <AdcRef>"1V25"</AdcRef>
         </config>
-        <config name="TripleMaxSamplesAVDD">
+        <config name="TripleMaxSamplesVDD">
             <SamplingRate>9523</SamplingRate>
             <Prescaler>2</Prescaler>
             <OverSamples>"64"</OverSamples>
             <AcquisitionTime>"8"</AcquisitionTime>
-            <AdcRef>"AVDD"</AdcRef>
+            <AdcRef>"VDD"</AdcRef>
         </config>
         <config name="HighResolution1V25">
             <SamplingRate>3571</SamplingRate>
@@ -404,12 +404,12 @@
             <AcquisitionTime>"1"</AcquisitionTime>
             <AdcRef>"1V25"</AdcRef>
         </config>
-        <config name="HighResolutionAVDD">
+        <config name="HighResolutionVDD">
             <SamplingRate>3571</SamplingRate>
             <Prescaler>2</Prescaler>
             <OverSamples>"256"</OverSamples>
             <AcquisitionTime>"1"</AcquisitionTime>
-            <AdcRef>"AVDD"</AdcRef>
+            <AdcRef>"VDD"</AdcRef>
         </config>
         <config name="MaxResolution1V25">
             <SamplingRate>2381</SamplingRate>
@@ -425,12 +425,12 @@
             <AcquisitionTime>"8"</AcquisitionTime>
             <AdcRef>"1V25"</AdcRef>
         </config>
-        <config name="MaxResolutionAVDD">
+        <config name="MaxResolutionVDD">
             <SamplingRate>2381</SamplingRate>
             <Prescaler>2</Prescaler>
             <OverSamples>"256"</OverSamples>
             <AcquisitionTime>"8"</AcquisitionTime>
-            <AdcRef>"AVDD"</AdcRef>
+            <AdcRef>"VDD"</AdcRef>
         </config>
     </ConfigSamplingRate>
     <Data>

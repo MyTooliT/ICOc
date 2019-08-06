@@ -36,7 +36,7 @@ def messageValueGet(m):
 
 
 Gui = {
-    "IntervalDimMinX" : 10, # Minimum interval time in ms
+    "IntervalDimMinX" : 10,  # Minimum interval time in ms
 }
 
 
@@ -52,20 +52,20 @@ class myToolItWatch():
         self.vSave2Xml(False)
         self.vSthAutoConnect(False)
         self.iStartTime = time()
-        self.vLogSet("init.txt")
+        self.bLogSet("init.txt")
         self.vConfigFileSet('configKeys.xml')
-        self.bSampleConfigSet(None)
+        self.bSampleSetupSet(None)
         self.vConfigSet("STH", "v2.1.1")
-        self.vSheetFileSet("test.xlsx")
-        self.vAccSet(True, False, False, DataSets[3])
-        self.vVoltageSet(True, False, False, DataSets[3])
+        self.vSheetFileSet(None)
+        self.vAccSet(True, False, False, 3)
+        self.vVoltageSet(False, False, False, 3)
         self.vDeviceNameSet(TestConfig["DevName"])
         self.vDeviceNameSerial(None)
-        self.vAdcConfig(2, 3, 64)
+        self.vAdcConfig(2, 8, 64)
         self.vAdcRefVConfig("VDD")
         self.vDisplayTime(10)  
         self.vRunTime(10, 0)
-        self.PeakCan.readThreadStop()#TODO: Comment this out       
+        self.PeakCan.readThreadStop()  # TODO: Comment this out       
             
     def __exit__(self):
         self.PeakCan.ReadArrayReset()
@@ -87,9 +87,8 @@ class myToolItWatch():
         if(False != self.bError):
             raise
         if False != self.bSave:
-            self.xmlConfigSave(self.tree, self.root)
+            self.xmlSave(self.tree, self.root)
         print("Fin")
-       
                
     def _BlueToothStatistics(self):
         SendCounter = self.PeakCan.BlueToothCmd(MyToolItNetworkNr["STH1"], SystemCommandBlueTooth["SendCounter"])
@@ -181,8 +180,8 @@ class myToolItWatch():
         self.bSave = bSave
         
     def vConfigFileSet(self, sfileName):
-        self.sConfigFile = sfileName
-        self.tree = ET.parse(self.sConfigFile)
+        self.sXmlFileName = sfileName
+        self.tree = ET.parse(self.sXmlFileName)
         self.root = self.tree.getroot()
         
     def vConfigSet(self, product, sConfig):
@@ -195,27 +194,29 @@ class myToolItWatch():
             self.PeakCan.vSetReceiver(MyToolItNetworkNr["STU1"])
             self.sConfig = sConfig        
 
-    def bSampleConfigSet(self, sSetupConfig):
+    def bSampleSetupSet(self, sSetup):
         bReturn = False
-        self.sSampleConfig = sSetupConfig
+        self.sSetupConfig = sSetup
         for config in self.tree.find('Config'):
-            if self.sSampleConfig == config.get('name'):
-                self.sConfig = config
+            if self.sSetupConfig == config.get('name'):
                 bReturn = True
                 break
         return bReturn
         
-    def vLogSet(self, sLogLocation):
+    def bLogSet(self, sLogLocation):
+        bOk = False
         if -1 != sLogLocation.rfind('.'):
             sLogLocation = rreplace(sLogLocation, '.', "_" + self.sDateClock() + ".")
             logNameError = sLogLocation
             logNameError = rreplace(logNameError, '.', "bError.")
             self.PeakCan.vLogNameChange(sLogLocation, logNameError)
+            bOk = True
+        return bOk
     
     def vLogCountInc(self):
-        fileName = self.PeakCanFd.Logger.fileName[:-24]
+        fileName = self.PeakCan.Logger.fileName[:-24]
         fileName = fileName + "_" + self.sDateClock() + ".txt"
-        self.PeakCanFd.vLogNameCloseInterval(fileName, self.PeakCanFd.Logger.fileNameError)
+        self.PeakCan.vLogNameCloseInterval(fileName, self.PeakCan.Logger.fileNameError)
         
     def vSheetFileSet(self, sSheetFile):
         self.sSheetFile = sSheetFile
@@ -224,16 +225,10 @@ class myToolItWatch():
         self.bAccX = bool(bX) 
         self.bAccY = bool(bY) 
         self.bAccZ = bool(bZ) 
-        if dataSets in DataSets:
-            self.tAccDataFormat = dataSets
+        if (dataSets in DataSets) and dataSets >= [self.bAccX, self.bAccY, self.bAccZ].count(True):
+            self.tAccDataFormat = DataSets[dataSets]
         else:
-            number = 0
-            if(False != self.bAccX):
-                number += 1
-            if(False != self.bAccY):
-                number += 1
-            if(False != self.bAccZ):
-                number += 1
+            dataSets = [self.bAccX, self.bAccY, self.bAccZ].count(True)
             while not dataSets in DataSets:
                     dataSets += 1
             self.tAccDataFormat = dataSets
@@ -242,16 +237,10 @@ class myToolItWatch():
         self.bVoltageX = bool(bX)
         self.bVoltageY = bool(bY)
         self.bVoltageZ = bool(bZ)
-        if dataSets in DataSets:
-            self.tVoltageDataFormat = dataSets
+        if (dataSets in DataSets) and dataSets >= [self.bVoltageX, self.bVoltageY, self.bVoltageZ].count(True):
+            self.tVoltageDataFormat = DataSets[dataSets]
         else:
-            number = 0
-            if(False != self.bAccX):
-                number += 1
-            if(False != self.bAccY):
-                number += 1
-            if(False != self.bAccZ):
-                number += 1
+            dataSets = [self.bVoltageX, self.bVoltageY, self.bVoltageZ].count(True)
             while not dataSets in DataSets:
                     dataSets += 1
             self.tVoltageDataFormat = dataSets
@@ -277,8 +266,8 @@ class myToolItWatch():
         iOversampling = AdcOverSamplingRate[iOversampling]
         self.samplingRate = int(calcSamplingRate(iPrescaler, iAcquisitionTime, iOversampling) + 0.5)
         self.iPrescaler = iPrescaler
-        self.sAquistionTime = iAcquisitionTime
-        self.sOversampling = iOversampling
+        self.iAquistionTime = iAcquisitionTime
+        self.iOversampling = iOversampling
         
     def vAdcRefVConfig(self, sAdcRef):
         self.sAdcRef = sAdcRef
@@ -315,24 +304,92 @@ class myToolItWatch():
         self.parser.add_argument('-r', '--run_time', dest='run_time', action='store', nargs=1, type=int, required=False, help='Sets RunTime')
         self.parser.add_argument('-s', '--sample_setup', dest='sample_setup', action='store', nargs=1, type=int, required=False, help='Starts sampling with configuration as given including additional command line arguments')
         self.parser.add_argument('-x', '--xml', dest='xml_file_name', action='store', nargs=1, type=str, required=True, help='Selects xml configuration/data base file')
-        self.parser.add_argument('-v', '--version', dest='version', action='store', nargs=2, type=str, required=False, help='Product ProductVersion chooses product with version for handling Table Calculation Files (e.g. STH v2.1.2)')
+        self.parser.add_argument('-v', '--version', dest='version', action='store', nargs=2, type=str, required=False, help='Chooses product with version for handling Table Calculation Files (e.g. STH v2.1.2)')
         self.parser.add_argument('--create', dest='create', action='store_true', required=False, help='Creates a config in the setup file. Configuration name is the same as configured in -x argument')
         self.parser.add_argument('--gui_x_dim', dest='gui_x_dim', action='store', nargs=1, required=False, help='Time to show interval GUI window in ms. Value below 10 turns it off')
         self.parser.add_argument('--refv', dest='refv', action='store', nargs=1, type=str, required=False, help='Prescaler AcquisitionTime OversamplingRate (3 inputs required in that row) - Note that acceleration and battery voltage measurements share a single ADC that samples up to 4 channels)')
         self.parser.add_argument('--remove', dest='remove', action='store_true', required=False, help='Removes a config in the setup file. Configuration name is the same as configured in -x argument')
         self.parser.add_argument('--save', dest='save', action='store_true', required=False, help='Saves Configuration in setup-xml File (Chose parameters as actually configured)')
         self.parser.add_argument('--serials', dest='serials', action='store_true', required=False, help='Show all STH serials and bluetooth mac addresses')
-        self.parser.add_argument('--serial_connect', dest='serial_connect', action='store', nargs=1, type=int, required=False, help='Connects to device with specific serial number and starts sampliing as configured')
+        self.parser.add_argument('--serial_connect', dest='serial_connect', action='store', nargs=1, type=int, required=False, help='Connects to device with specific serial number and starts sampling as configured')
         args = self.parser.parse_args()
         self.args_dict = vars(args)
-     
+    
+    def vParserConsoleArgumentsPassXml(self):
+        if None != self.args_dict['version'] and None != self.args_dict['sample_setup']:
+            print("You can't use sample setup and product/version simultaneously")
+            self.exit()
+        bRemove = False  
+        if False != self.args_dict['remove']:
+            bRemove = True      
+            self.vSave2Xml(True)          
+        bCreate = False        
+        if False != self.args_dict['create']:
+            if False != bRemove:
+                print("You can't create and remove simultaneously.")
+                self.__exit__()
+            else:
+                bCreate = True     
+                self.vSave2Xml(True)
+                       
+        self.vConfigFileSet(self.args_dict['xml_file_name'][0])
+                  
+        if False != self.args_dict['save']:
+            self.vSave2Xml(True)      
+        if None != self.args_dict['sample_setup']: 
+            sSetup = self.args_dict['sample_setup']
+            bSetupFound = self.bSampleSetupSet(sSetup)
+            if False != bCreate:
+                if False != bSetupFound:
+                    print("Sample Configuration not found")
+                    self.__exit_()
+                else:
+                    self.newXmlSetup(sSetup)
+                    self.vSave2Xml(True)
+                    bCreate = False
+            if False != bRemove:
+                if False != bSetupFound: 
+                    if 1 < len(self.tree.find('Config')):
+                        self.removeXmlSetup(bSetupFound)
+                    else:
+                        print("You cant remove the last sample setup")
+                        self.__exit_()
+                else:
+                    print("You try to remove something that does not exist")
+                    self.__exit_()
+                
+        if None != self.args_dict['version']: 
+            self.vConfigSet(self.args_dict['version'][0], self.args_dict['version'][1])
+            if False != bCreate or False != bRemove:
+                dataDef = self.root.find('Data')
+                for product in dataDef.find('Product'):
+                    if product.get('name') == self.sProduct:
+                        break
+                if product.get('name') == self.sProduct:
+                    for productVersion in product.find('Version'):
+                        if productVersion.get('name') == self.sConfig:
+                            break
+                    if productVersion.get('name') != self.sConfig and False != bCreate:
+                        self.newXmlVersion(product)
+                        self.vSave2Xml(True)
+                    elif productVersion.get('name') == self.sConfig and False != bRemove:
+                        if 1 < len(product.find('Version')):
+                            self.removeXmlVersion(product.find('Version'))
+                    elif False != bCreate:
+                        print("Error! you tried to create a product/version that allready exists")
+                        self.__exit__()
+                    else:
+                        print("Error! you tried to create a sample setup that allready exists")
+                        self.__exit__()
+            else:
+                self.vGetXmlSetup()
+        
     def vParserConsoleArgumentsPass(self):  
-        if None != self.args_dict['xml_file_name']:
-            self.vConfigFileSet(self.args_dict['xml_file_name'][0])
+        self.vParserConsoleArgumentsPassXml()    
         if None != self.args_dict['gui_x_dim']:
-            self.vLogSet(self.args_dict['gui_x_dim'][0])            
+            self.bLogSet(self.args_dict['gui_x_dim'][0])            
         if None != self.args_dict['log_name']:
-            self.vLogSet(self.args_dict['log_name'][0]) 
+            self.bLogSet(self.args_dict['log_name'][0]) 
         if None != self.args_dict['adc_config']:
             adcConfig = self.args_dict['adc_config']
             self.vAdcConfig(adcConfig[0], adcConfig[1], adcConfig[2])
@@ -342,10 +399,7 @@ class myToolItWatch():
             self.vSheetFileSet(self.args_dict['xlsx'][0])
         iIntervalTime = self.iIntervalTime
         if None != self.args_dict['interval']:
-            iIntervalTime = self.args_dict['interval'][0]
-        if Gui["IntervalDimMinX"] > iIntervalTime:
-            iIntervalTime = 0
-            
+            iIntervalTime = self.args_dict['interval'][0]           
         iRunTime = self.iRunTime
         if None != self.args_dict['run_time']:
             iRunTime = self.args_dict['run_time'][0]
@@ -365,42 +419,6 @@ class myToolItWatch():
             bZ = bool((points >> 2) & 1)
             pointBool = [bX, bY, bZ]
             self.vAccSet(pointBool[2], pointBool[1], pointBool[0], pointBool.count(True))
-        
-        if None != self.args_dict['save']:
-            self.vSave2Xml(True)
-        
-        bRemove = False  
-        if None != self.args_dict['remove']:
-            bRemove = True
-                
-        bCreate = False
-        if None != self.args_dict['create'] and False == bRemove:
-            bCreate = True
-            self.vSave2Xml(True)
-        if None != self.args_dict['sample_setup']: 
-            sSampleConfig = self.args_dict['sample_setup']
-            if False == self.bSampleConfigSet() and False != bCreate:
-                self.newXmlConfig(sSampleConfig)
-                self.vSave2Xml(True)
-                bCreate = False
-                
-        if None != self.args_dict['version']: 
-            product = self.args_dict['version'][0]
-            version = self.args_dict['version'][1]
-            self.vConfigSet(product, version)
-            if False != bCreate:
-                dataDef = self.root.find('Data')
-                for product in dataDef.find('Product'):
-                    if product.get('name') == self.sProduct:
-                        break
-                if product.get('name') == self.sProduct:
-                    for version in product.find('Version'):
-                        if version.get('name') == self.sConfig:
-                            break
-                    if version.get('name') != self.sConfig:
-                        self.newXmlVersion(product)
-                        self.vSave2Xml(True)
-                        
                            
     def reset(self):
         if False == self.KeyBoadInterrupt:
@@ -688,7 +706,7 @@ class myToolItWatch():
     def _XmlWriteEndoding(self):
         xml = (bytes('<?xml version="1.0" encoding="UTF-8"?>\n', encoding='utf-8') + ET.tostring(self.root))
         xml = xml.decode('utf-8')
-        with open(self.sConfigFile, 'w+') as f:
+        with open(self.sXmlFileName, 'w+') as f:
             f.write(xml)   
      
     """
@@ -704,21 +722,16 @@ class myToolItWatch():
     Removes a config
     """
 
-    def removeXmlConfig(self):
-        dataDef = self.root.find('Data')
-        for product in dataDef.find('Product'):
-            if product.get('name') == self.sProduct:
-                break
-        if product.get('name') == self.sProduct:
-            product.find('Version').remove(self.sConfig)
-            self.xmlConfigSave(self.tree, self.root)
+    def removeXmlVersion(self, versions):
+        versions.remove(self.sConfig)
+        self.xmlSave(self.tree, self.root)
         
     """
     Save XML File (in any state)
     """
 
-    def xmlConfigSave(self):
-        self.tree.write(self.sConfigFile)
+    def xmlSave(self):
+        self.tree.write(self.sXmlFileName)
         self._XmlWriteEndoding()   
         del self.tree
         
@@ -738,7 +751,7 @@ class myToolItWatch():
         if workbook:
             if version.get('name') != self.sConfig:
                 self.newXmlVersion(product)
-                self.xmlConfigSave(self.tree, self.root)
+                self.xmlSave(self.tree, self.root)
                 self.excelSheetConfig()
             else:
                 for worksheetName in workbook.sheetnames:
@@ -765,7 +778,7 @@ class myToolItWatch():
                                 self._excelSheetEntryFind(entry, 'format', worksheet['G' + str(i)].value)
                                 self._excelSheetEntryFind(entry, 'description', worksheet['H' + str(i)].value)
                                 i += 1
-                self.xmlConfigSave(self.tree, self.root)
+                self.xmlSave(self.tree, self.root)
         
     def xmlPrintVersions(self):
         dataDef = self.root.find('Data')
@@ -787,24 +800,69 @@ class myToolItWatch():
 
     def excelSheetWrite(self):
         pass
-        
-    def newXmlConfig(self, sConfig):
-        cloneVersion = copy.deepcopy(self.newXmlVersion(self.tree.find('Config'))[0])
+    
+    def vSetXmlSetup(self):
+        for config in self.tree.find('Config'):
+            if config.get('name') == self.sSetupConfig:        
+                config.find('DeviceName').text = str(self.sDevName)
+                iAcc = int(self.bAccX) << 2 | int(self.bAccX) << 1 | int(self.bAccX) << 0
+                config.find('Acc').text = str(iAcc)
+                config.find('Prescaler').text = str(self.iPrescaler)
+                config.find('AcquisitionTime').text = str(AdcAcquisitionTimeReverse[self.iAquistionTime])
+                config.find('OverSamples').text = str(AdcOverSamplingRateReverse[self.iOversampling])
+                config.find('AdcRef').text = str(self.sAdcRef)
+                config.find('RunTime').text = str(self.iRunTime)
+                config.find('IntervalTime').text = str(self.iIntervalTime)
+                config.find('DisplayTime').text = str(self.iDisplayTime)
+                
+    def vGetXmlSetup(self):
+        for config in self.tree.find('Config'):
+            if config.get('name') == self.sSetupConfig:
+                self.vDeviceNameSet(config.find('DeviceName').text)
+                samplePoints = int(self.vDeviceNameSet(config.find('Acc').text))
+                samplePoints = str(samplePoints & 0x03)
+                self.vAccSet(bool(samplePoints[2]), bool(samplePoints[1]), bool(samplePoints[0]), -1)
+                self.vAdcConfig(int(config.find('Prescaler').text), int(config.find('AcquisitionTime').text), int(config.find('OverSamples').text))
+                self.vAdcRefVConfig(config.find('AdcRef').text)
+                self.bLogSet(config.find('LogName').text)
+                self.vRunTime(int(config.find('RunTime').text), int(config.find('IntervalTime').text))
+                self.vDisplayTime(int(config.find('DisplayTime').text))
+               
+    def removeXmlSetup(self, sConfig):
+        self.tree.find('Config').remove(sConfig)       
+                
+    def newXmlSetup(self, sConfig):
+        cloneVersion = copy.deepcopy(self.tree.find('Config')[0])
         cloneVersion.set('name', sConfig) 
         self.tree.find('Config').append(cloneVersion)
-        self.xmlConfigSave(self.tree, self.root)
-        self.vSampleConfigSet(sConfig)
+        self.xmlSave(self.tree, self.root)
+        self.bSampleConfigSet(sConfig)
     
+    def _vRunConsoleStartupShow(self):
+        print("XML File: " + str(self.sXmlFileName))
+        print("Product Configuration: " + self.sProduct + " " + self.sConfig)
+        print("Setup Configuration: " + str(self.sSetupConfig))
+        print("AutoSave?: " + str(self.bSave))
+        print("Table Calculation File: " + str(self.sSheetFile))
+        print("Log Name: " + str(self.PeakCan.Logger.fileName))
+        print("Device Name (to be connected): " + str(self.sDevName))
+        print("Serial Number(to be connected): " + str(self.sSerial))
+        print("AutoConnect?: " + str(self.bSthAutoConnect))
+        print("Run Time: " + str(self.iRunTime) + "s")
+        print("Inteval Time: " + str(self.iIntervalTime) + "s")
+        print("Display Time: " + str(self.iDisplayTime) + "ms")
+        print("Adc Prescaler/AcquisitionTime/OversamplingRate/Reference(Samples/s): " + str(self.iPrescaler) + "/" + str(AdcAcquisitionTimeReverse[self.iAquistionTime]) + "/" + str(AdcOverSamplingRateReverse[self.iOversampling]) + "/" + str(self.sAdcRef) + "(" + str(self.samplingRate) + ")")
+        print("Acc Config(XYZ/DataSets): " + str(int(self.bAccX)) + str(int(self.bAccY)) + str(int(self.bAccZ)) + "/" + str(DataSetsReverse[self.tAccDataFormat]))
+        print("Voltage Config(XYZ/DataSets): " + str(int(self.bVoltageX)) + str(int(self.bVoltageY)) + str(int(self.bVoltageZ)) + "/" + str(DataSetsReverse[self.tAccDataFormat]) + ("(X=Battery)"))
+        
     def _vRunConsoleStartup(self):
         if None != self.args_dict['show_config']:
-            print("Hello World")
+            self._vRunConsoleStartupShow()
         if None != self.args_dict['devNameList']:
             pass    
                             
     def vRunConsole(self):
         self._vRunConsoleStartup()
-        
-
 
            
 if __name__ == "__main__":
@@ -812,5 +870,4 @@ if __name__ == "__main__":
     watch.vParserInit()
     watch.vParserConsoleArgumentsPass()
     watch.vRunConsole()
-
         

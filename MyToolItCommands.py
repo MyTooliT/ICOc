@@ -446,6 +446,17 @@ DataSets = {
     30 : 7,
 }
 
+DataSetsReverse = {
+    0:0 ,
+    1:1 ,
+    2:3 ,
+    3:6 ,
+    4:10,
+    5:15,
+    6:20,
+    7:30,
+}
+
 TestCommandSignal = {
     "Line" : 1,
     "Ramp" : 2,
@@ -513,7 +524,7 @@ def messageValueGet(m):
 def calcSamplingRate(prescaler, acquisitionTime, OverSamplingRate):
     acquTime = AdcAcquisitionTimeReverse[acquisitionTime]
     samplingRate = AdcOverSamplingRateReverse[OverSamplingRate]
-    return int(38400000 / ((prescaler + 1) * (acquTime + 13) * samplingRate)+0.5)
+    return int(38400000 / ((prescaler + 1) * (acquTime + 13) * samplingRate) + 0.5)
 
 
 def payload2Hex(payload):
