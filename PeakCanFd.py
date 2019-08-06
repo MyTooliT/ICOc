@@ -92,11 +92,18 @@ class Logger():
             os.makedirs(os.path.dirname(fileName))
         if None != self.fileName:
             os.rename(self.fileName, fileName)
-        else:
-            self.fileName = fileName
-            self.fileNameError = fileNameError
-            self.file = open(fileName, "w", encoding='utf-8')
-
+        self.fileName = fileName
+        self.fileNameError = fileNameError
+        self.file = open(fileName, "w", encoding='utf-8')
+        
+    def vDel(self):
+        self.vClose()
+        if os.path.isfile(self.fileName):
+            os.remove(self.fileName)
+        elif os.path.isfile(self.fileNameError):
+            os.remove(self.fileNameError)
+            
+            
     def vClose(self):
         self.__exit__()
         
@@ -166,6 +173,9 @@ class PeakCanFd(object):
     def vLogNameCloseInterval(self, testMethodName, testMethodNameError):
         self.Logger.vClose()
         self.Logger = Logger(testMethodName, testMethodNameError)
+        
+    def vLogDel(self):
+        self.Logger.vDel()
         
     def vSetReceiver(self, receiver):
         self.receiver = receiver

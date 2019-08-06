@@ -7,10 +7,10 @@
                 <Voltage>"None"</Voltage>
                 <AdcRef>"VDD"</AdcRef>
                 <Prescaler>2</Prescaler>
-                <AcquisitionTime>"8"</AcquisitionTime>
-                <OverSamples>"64"</OverSamples>
+                <AcquisitionTime>8</AcquisitionTime>
+                <OverSamples>64</OverSamples>
                 <LogLocation>"../../Logs/"</LogLocation>
-                <LogName>"AccX12k5"</LogName>
+                <LogName>AccX12k5</LogName>
                 <DisplayTime>10</DisplayTime>
                 <IntervalTime>0</IntervalTime>
                 <RunTime>0</RunTime>
@@ -21,10 +21,10 @@
                 <Voltage>"None"</Voltage>
                 <AdcRef>"VDD"</AdcRef>
                 <Prescaler>2</Prescaler>
-                <AcquisitionTime>"8"</AcquisitionTime>
-                <OverSamples>"64"</OverSamples>
+                <AcquisitionTime>8</AcquisitionTime>
+                <OverSamples>64</OverSamples>
                 <LogLocation>"../../Logs/"</LogLocation>
-                <LogName>"AccY12k5"</LogName>
+                <LogName>AccY12k5</LogName>
                 <DisplayTime>10</DisplayTime>
                 <IntervalTime>0</IntervalTime>
                 <RunTime>0</RunTime>
@@ -35,10 +35,10 @@
                 <Voltage>"None"</Voltage>
                 <AdcRef>"VDD"</AdcRef>
                 <Prescaler>2</Prescaler>
-                <AcquisitionTime>"8"</AcquisitionTime>
-                <OverSamples>"64"</OverSamples>
+                <AcquisitionTime>8</AcquisitionTime>
+                <OverSamples>64</OverSamples>
                 <LogLocation>"../../Logs/"</LogLocation>
-                <LogName>"AccZ12k5"</LogName>
+                <LogName>AccZ12k5</LogName>
                 <DisplayTime>10</DisplayTime>
                 <IntervalTime>0</IntervalTime>
                 <RunTime>0</RunTime>
@@ -49,10 +49,10 @@
                 <Voltage>"None"</Voltage>
                 <AdcRef>"VDD"</AdcRef>
                 <Prescaler>2</Prescaler>
-                <AcquisitionTime>"8"</AcquisitionTime>
-                <OverSamples>"64"</OverSamples>
+                <AcquisitionTime>8</AcquisitionTime>
+                <OverSamples>64</OverSamples>
                 <LogLocation>"../../Logs/"</LogLocation>
-                <LogName>"AccXY12k5"</LogName>
+                <LogName>AccXY12k5</LogName>
                 <DisplayTime>10</DisplayTime>
                 <IntervalTime>0</IntervalTime>
                 <RunTime>0</RunTime>
@@ -63,10 +63,10 @@
                 <Voltage>"None"</Voltage>
                 <AdcRef>"VDD"</AdcRef>
                 <Prescaler>2</Prescaler>
-                <AcquisitionTime>"8"</AcquisitionTime>
-                <OverSamples>"64"</OverSamples>
+                <AcquisitionTime>8</AcquisitionTime>
+                <OverSamples>64</OverSamples>
                 <LogLocation>"../../Logs/"</LogLocation>
-                <LogName>"AccYZ12k5"</LogName>
+                <LogName>AccYZ12k5</LogName>
                 <DisplayTime>10</DisplayTime>
                 <IntervalTime>0</IntervalTime>
                 <RunTime>0</RunTime>
@@ -77,10 +77,10 @@
                 <Voltage>"None"</Voltage>
                 <AdcRef>"VDD"</AdcRef>
                 <Prescaler>2</Prescaler>
-                <AcquisitionTime>"8"</AcquisitionTime>
-                <OverSamples>"64"</OverSamples>
+                <AcquisitionTime>8</AcquisitionTime>
+                <OverSamples>64</OverSamples>
                 <LogLocation>"../../Logs/"</LogLocation>
-                <LogName>"AccXYZ12k5"</LogName>
+                <LogName>AccXYZ12k5</LogName>
                 <DisplayTime>10</DisplayTime>
                 <IntervalTime>0</IntervalTime>
                 <RunTime>0</RunTime>
@@ -91,10 +91,10 @@
                 <Voltage>"None"</Voltage>
                 <AdcRef>"1V25"</AdcRef>
                 <Prescaler>2</Prescaler>
-                <AcquisitionTime>"8"</AcquisitionTime>
-                <OverSamples>"256"</OverSamples>
+                <AcquisitionTime>1</AcquisitionTime>
+                <OverSamples>256</OverSamples>
                 <LogLocation>"../../Logs/"</LogLocation>
-                <LogName>"AccX2k4"</LogName>
+                <LogName>AccX2k4</LogName>
                 <DisplayTime>10</DisplayTime>
                 <IntervalTime>0</IntervalTime>
                 <RunTime>0</RunTime>
@@ -105,10 +105,10 @@
                 <Voltage>"None"</Voltage>
                 <AdcRef>"1V25"</AdcRef>
                 <Prescaler>2</Prescaler>
-                <AcquisitionTime>"8"</AcquisitionTime>
-                <OverSamples>"256"</OverSamples>
+                <AcquisitionTime>1</AcquisitionTime>
+                <OverSamples>256</OverSamples>
                 <LogLocation>"../../Logs/"</LogLocation>
-                <LogName>"AccY2k4"</LogName>
+                <LogName>AccY2k4</LogName>
                 <DisplayTime>10</DisplayTime>
                 <IntervalTime>0</IntervalTime>
                 <RunTime>0</RunTime>
@@ -119,317 +119,126 @@
                 <Voltage>"None"</Voltage>
                 <AdcRef>"1V25"</AdcRef>
                 <Prescaler>2</Prescaler>
-                <AcquisitionTime>"8"</AcquisitionTime>
-                <OverSamples>"256"</OverSamples>
+                <AcquisitionTime>1</AcquisitionTime>
+                <OverSamples>256</OverSamples>
                 <LogLocation>"../../Logs/"</LogLocation>
-                <LogName>"AccZ2k4"</LogName>
+                <LogName>AccZ2k4</LogName>
                 <DisplayTime>10</DisplayTime>
                 <IntervalTime>0</IntervalTime>
                 <RunTime>0</RunTime>
         </config>
     </Config>
-    <ConfigAcc>
-        <config name="X">
-            <X>1</X>
-            <Y>0</Y>
-            <Z>0</Z>
-        </config>
-        <config name="Y">
-            <X>0</X>
-            <Y>1</Y>
-            <Z>0</Z>
-        </config>
-        <config name="Z">
-            <X>0</X>
-            <Y>0</Y>
-            <Z>1</Z>
-        </config>
-        <config name="XY">
-            <X>1</X>
-            <Y>1</Y>
-            <Z>0</Z>
-        </config>
-        <config name="XZ">
-            <X>1</X>
-            <Y>0</Y>
-            <Z>1</Z>
-        </config>
-        <config name="YZ">
-            <X>0</X>
-            <Y>1</Y>
-            <Z>1</Z>
-        </config>
-        <config name="XYZ">
-            <X>1</X>
-            <Y>1</Y>
-            <Z>1</Z>
-        </config>
-    </ConfigAcc>
-    <ConfigVoltage>
-        <config name="None">
-            <X>0</X>
-            <Y>0</Y>
-            <Z>0</Z>
-        </config>
-        <config name="Battery">
-            <X>1</X>
-            <Y>0</Y>
-            <Z>0</Z>
-        </config>
-    </ConfigVoltage>
-    <ConfigAdcRef>
-        <config name="None">
-            <mVolt>0</mVolt>
-            <key>0</key>
-        </config>
-        <config name="1V25">
-            <mVolt>1250</mVolt>
-            <key>25</key>
-        </config>
-        <config name="1V65">
-            <mVolt>1650</mVolt>
-            <key>33</key>
-        </config>
-        <config name="1V8">
-            <mVolt>1800</mVolt>
-            <key>36</key>
-        </config>
-        <config name="2V1">
-            <mVolt>2100</mVolt>
-            <key>42</key>
-        </config>
-        <config name="2V2">
-            <mVolt>2200</mVolt>
-            <key>44</key>
-        </config>
-        <config name="2V5">
-            <mVolt>2500</mVolt>
-            <key>50</key>
-        </config>
-        <config name="2V7">
-            <mVolt>2700</mVolt>
-            <key>54</key>
-        </config>
-        <config name="VDD">
-            <mVolt>3300</mVolt>
-            <key>66</key>
-        </config>
-        <config name="5V">
-            <mVolt>5000</mVolt>
-            <key>100</key>
-        </config>
-        <config name="6V6">
-            <mVolt>6600</mVolt>
-            <key>132</key>
-        </config>
-    </ConfigAdcRef>
-    <ConfigSamplingRateAcquisitionTime>
-        <config name="1">
-            <Cycles>1</Cycles>
-            <key>0</key>
-        </config>
-        <config name="2">
-            <Cycles>2</Cycles>
-            <key>1</key>
-        </config>
-        <config name="3">
-            <Cycles>3</Cycles>
-            <key>2</key>
-        </config>
-        <config name="4">
-            <Cycles>4</Cycles>
-            <key>3</key>
-        </config>
-        <config name="8">
-            <Cycles>8</Cycles>
-            <key>4</key>
-        </config>
-        <config name="16">
-            <Cycles>16</Cycles>
-            <key>5</key>
-        </config>
-        <config name="32">
-            <Cycles>32</Cycles>
-            <key>6</key>
-        </config>
-        <config name="64">
-            <Cycles>64</Cycles>
-            <key>7</key>
-        </config>
-        <config name="128">
-            <Cycles>128</Cycles>
-            <key>8</key>
-        </config>
-        <config name="256">
-            <Cycles>256</Cycles>
-            <key>9</key>
-        </config>
-    </ConfigSamplingRateAcquisitionTime>
-    <ConfigSamplingRateOversampling>
-        <config name="1">
-            <Samples>1</Samples>
-            <key>0</key>
-        </config>
-        <config name="2">
-            <Samples>2</Samples>
-            <key>1</key>
-        </config>
-        <config name="4">
-            <Samples>4</Samples>
-            <key>2</key>
-        </config>
-        <config name="8">
-            <Samples>8</Samples>
-            <key>3</key>
-        </config>
-        <config name="16">
-            <Samples>16</Samples>
-            <key>4</key>
-        </config>
-        <config name="32">
-            <Samples>32</Samples>
-            <key>5</key>
-        </config>
-        <config name="64">
-            <Samples>64</Samples>
-            <key>6</key>
-        </config>
-        <config name="128">
-            <Samples>128</Samples>
-            <key>7</key>
-        </config>
-        <config name="256">
-            <Samples>256</Samples>
-            <key>8</key>
-        </config>
-        <config name="512">
-            <Samples>512</Samples>
-            <key>9</key>
-        </config>
-        <config name="1024">
-            <Samples>1024</Samples>
-            <key>10</key>
-        </config>
-        <config name="2048">
-            <Samples>2048</Samples>
-            <key>11</key>
-        </config>
-        <config name="4096">
-            <Samples>4096</Samples>
-            <key>12</key>
-        </config>
-    </ConfigSamplingRateOversampling>
     <ConfigSamplingRate>
         <config name="Reset">
             <SamplingRate>9523</SamplingRate>
             <Prescaler>2</Prescaler>
-            <OverSamples>"64"</OverSamples>
-            <AcquisitionTime>"8"</AcquisitionTime>
+            <OverSamples>64</OverSamples>
+            <AcquisitionTime>8</AcquisitionTime>
             <AdcRef>"VDD"</AdcRef>
         </config>
         <config name="SingleMaxSamples1V25">
             <SamplingRate>9523</SamplingRate>
             <Prescaler>2</Prescaler>
-            <OverSamples>"64"</OverSamples>
-            <AcquisitionTime>"8"</AcquisitionTime>
+            <OverSamples>64</OverSamples>
+            <AcquisitionTime>8</AcquisitionTime>
             <AdcRef>"1V25"</AdcRef>
         </config>
         <config name="SingleMaxSamples2V5">
             <SamplingRate>9523</SamplingRate>
             <Prescaler>2</Prescaler>
-            <OverSamples>"64"</OverSamples>
-            <AcquisitionTime>"8"</AcquisitionTime>
+            <OverSamples>64</OverSamples>
+            <AcquisitionTime>8</AcquisitionTime>
             <AdcRef>"1V25"</AdcRef>
         </config>
         <config name="SingleMaxSamplesVDD">
             <SamplingRate>9523</SamplingRate>
             <Prescaler>2</Prescaler>
-            <OverSamples>"64"</OverSamples>
-            <AcquisitionTime>"8"</AcquisitionTime>
+            <OverSamples>64</OverSamples>
+            <AcquisitionTime>8</AcquisitionTime>
             <AdcRef>"VDD"</AdcRef>
         </config>
         <config name="DoubleMaxSamples1V25">
             <SamplingRate>8824</SamplingRate>
             <Prescaler>3</Prescaler>
-            <OverSamples>"64"</OverSamples>
+            <OverSamples>64</OverSamples>
             <AcquisitionTime>"4"</AcquisitionTime>
             <AdcRef>"1V25"</AdcRef>
         </config>
         <config name="DoubleMaxSamples2V5">
             <SamplingRate>8824</SamplingRate>
             <Prescaler>3</Prescaler>
-            <OverSamples>"64"</OverSamples>
+            <OverSamples>64</OverSamples>
             <AcquisitionTime>"4"</AcquisitionTime>
             <AdcRef>"1V25"</AdcRef>
         </config>
         <config name="DoubleMaxSamplesVDD">
             <SamplingRate>8824</SamplingRate>
             <Prescaler>3</Prescaler>
-            <OverSamples>"64"</OverSamples>
+            <OverSamples>64</OverSamples>
             <AcquisitionTime>"4"</AcquisitionTime>
             <AdcRef>"VDD"</AdcRef>
         </config>
         <config name="TripleMaxSamples1V25">
             <SamplingRate>9523</SamplingRate>
             <Prescaler>2</Prescaler>
-            <OverSamples>"64"</OverSamples>
-            <AcquisitionTime>"8"</AcquisitionTime>
+            <OverSamples>64</OverSamples>
+            <AcquisitionTime>8</AcquisitionTime>
             <AdcRef>"1V25"</AdcRef>
         </config>
         <config name="TripleMaxSamples2V5">
             <SamplingRate>9523</SamplingRate>
             <Prescaler>2</Prescaler>
-            <OverSamples>"64"</OverSamples>
-            <AcquisitionTime>"8"</AcquisitionTime>
+            <OverSamples>64</OverSamples>
+            <AcquisitionTime>8</AcquisitionTime>
             <AdcRef>"1V25"</AdcRef>
         </config>
         <config name="TripleMaxSamplesVDD">
             <SamplingRate>9523</SamplingRate>
             <Prescaler>2</Prescaler>
-            <OverSamples>"64"</OverSamples>
-            <AcquisitionTime>"8"</AcquisitionTime>
+            <OverSamples>64</OverSamples>
+            <AcquisitionTime>8</AcquisitionTime>
             <AdcRef>"VDD"</AdcRef>
         </config>
         <config name="HighResolution1V25">
             <SamplingRate>3571</SamplingRate>
             <Prescaler>2</Prescaler>
-            <OverSamples>"256"</OverSamples>
-            <AcquisitionTime>"1"</AcquisitionTime>
+            <OverSamples>256</OverSamples>
+            <AcquisitionTime>1</AcquisitionTime>
             <AdcRef>"1V25"</AdcRef>
         </config>
         <config name="HighResolution2V5">
             <SamplingRate>3571</SamplingRate>
             <Prescaler>2</Prescaler>
-            <OverSamples>"256"</OverSamples>
-            <AcquisitionTime>"1"</AcquisitionTime>
+            <OverSamples>256</OverSamples>
+            <AcquisitionTime>1</AcquisitionTime>
             <AdcRef>"1V25"</AdcRef>
         </config>
         <config name="HighResolutionVDD">
             <SamplingRate>3571</SamplingRate>
             <Prescaler>2</Prescaler>
-            <OverSamples>"256"</OverSamples>
-            <AcquisitionTime>"1"</AcquisitionTime>
+            <AcquisitionTime>1</AcquisitionTime>
+            <AcquisitionTime>1</AcquisitionTime>
             <AdcRef>"VDD"</AdcRef>
         </config>
         <config name="MaxResolution1V25">
             <SamplingRate>2381</SamplingRate>
             <Prescaler>2</Prescaler>
-            <OverSamples>"256"</OverSamples>
-            <AcquisitionTime>"8"</AcquisitionTime>
+            <OverSamples>256</OverSamples>
+            <AcquisitionTime>1</AcquisitionTime>
             <AdcRef>"1V25"</AdcRef>
         </config>
         <config name="MaxResolution2V5">
             <SamplingRate>2381</SamplingRate>
             <Prescaler>2</Prescaler>
-            <OverSamples>"256"</OverSamples>
-            <AcquisitionTime>"8"</AcquisitionTime>
+            <OverSamples>256</OverSamples>
+            <AcquisitionTime>1</AcquisitionTime>
             <AdcRef>"1V25"</AdcRef>
         </config>
         <config name="MaxResolutionVDD">
             <SamplingRate>2381</SamplingRate>
             <Prescaler>2</Prescaler>
-            <OverSamples>"256"</OverSamples>
-            <AcquisitionTime>"8"</AcquisitionTime>
+            <OverSamples>256</OverSamples>
+            <AcquisitionTime>1</AcquisitionTime>
             <AdcRef>"VDD"</AdcRef>
         </config>
     </ConfigSamplingRate>
