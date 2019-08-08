@@ -303,27 +303,26 @@ class myToolItWatch():
 
     def vParserInit(self):
         self.parser = argparse.ArgumentParser(description='Command Line Oprtions')
-        self.parser.add_argument('-a', '--adc', dest='adc_config', action='store', nargs=3, type=int, required=False, help='Prescaler AcquisitionTime OversamplingRate (3 inputs required in that row) - Note that acceleration and battery voltage measurements share a single ADC that samples up to 4 channels)')
-        self.parser.add_argument('-d', '--devs', dest='devNameList', action='store_true', required=False, help='Get Device Names of all available STHs')    
-        self.parser.add_argument('-e', '--xlsx', dest='xlsx', action='store', nargs=1, type=str, required=False, help='xlsx File to save take configuraton to a product')
-        self.parser.add_argument('-i', '--interval', dest='interval', action='store', nargs=1, type=int, required=False, help='Sets Interval Time (Time to save files in ms. Must be creater than 10')
-        self.parser.add_argument('-l', '--log_location', dest='log_name', action='store', nargs=1, type=str, required=False, help='Where to save Log Files (relative/absolute path+file name')
-        self.parser.add_argument('-n', '--name_connect', dest='name_connect', action='store', nargs=1, type=str, required=False, help='Connects to device Name and starts sampling as configured')
-        self.parser.add_argument('-p', '--points', dest='points', action='store', nargs=1, type=int, required=False, help='PPP samples X/Y/Z where P must be 1(Active) or 0(Off)')
-        self.parser.add_argument('-r', '--run_time', dest='run_time', action='store', nargs=1, type=int, required=False, help='Sets RunTime')
+        self.parser.add_argument('-a', '--adc', dest='adc_config', action='store', nargs=3, type=int, required=False, help='Prescaler AcquisitionTime OversamplingRate (3 inputs required in that order e.g. 2 8 64) - Note that acceleration and battery voltage measurements share a single ADC that samples up to 4 channels)')
+        self.parser.add_argument('-b', '--bluetooth_connect', dest='bluetooth_connect', action='store', nargs=1, type=str, required=False, help='Connect to device specified by Bluetooth address and starts sampling as configured')
+        self.parser.add_argument('-d', '--devs', dest='devNameList', action='store_true', required=False, help='Get Device Names, Bluetooth address and Receive Signal Strength Indicators(RSSI) of all available STHs')    
+        self.parser.add_argument('-e', '--xlsx', dest='xlsx', action='store', nargs=1, type=str, required=False, help='Table Calculation File(xlsx) to transfer configuration from/to STH/STU')
+        self.parser.add_argument('-i', '--interval', dest='interval', action='store', nargs=1, type=int, required=False, help='Sets Interval Time (Output file is saved each interval time in seconds. Lower than 10 causes a single file')
+        self.parser.add_argument('-l', '--log_location', dest='log_name', action='store', nargs=1, type=str, required=False, help='Where to save Log Files (relative/absolute path+file name)')
+        self.parser.add_argument('-n', '--name_connect', dest='name_connect', action='store', nargs=1, type=str, required=False, help='Connect to device specified by Name and starts sampling as configured')
+        self.parser.add_argument('-p', '--points', dest='points', action='store', nargs=1, type=int, required=False, help='PPP specifies which axis(X/Y/Z) are active(1) or off(0)')
+        self.parser.add_argument('-r', '--run_time', dest='run_time', action='store', nargs=1, type=int, required=False, help='Sets RunTime in seconds. 0 specifies infinity')
         self.parser.add_argument('-s', '--sample_setup', dest='sample_setup', action='store', nargs=1, type=str, required=False, help='Starts sampling with configuration as given including additional command line arguments')
         self.parser.add_argument('-v', '--version', dest='version', action='store', nargs=2, type=str, required=False, help='Chooses product with version for handling Table Calculation Files (e.g. STH v2.1.2)')
         self.parser.add_argument('-x', '--xml', dest='xml_file_name', action='store', nargs=1, type=str, required=True, help='Selects xml configuration/data base file')
-        self.parser.add_argument('--create', dest='create', action='store_true', required=False, help='Creates a config in the setup file. Configuration name is the same as configured in -x argument')
-        self.parser.add_argument('--gui_x_dim', dest='gui_x_dim', action='store', nargs=1, required=False, help='Time to show interval GUI window in ms. Value below 10 turns it off')
-        self.parser.add_argument('--refv', dest='refv', action='store', nargs=1, type=str, required=False, help='Prescaler AcquisitionTime OversamplingRate (3 inputs required in that row) - Note that acceleration and battery voltage measurements share a single ADC that samples up to 4 channels)')
-        self.parser.add_argument('--remove', dest='remove', action='store_true', required=False, help='Removes a config in the setup file. Configuration name is the same as configured in -x argument')
-        self.parser.add_argument('--save', dest='save', action='store_true', required=False, help='Saves Configuration in setup-xml File (Chose parameters as actually configured)')
-        self.parser.add_argument('--serials', dest='serials', action='store_true', required=False, help='Show all STH serials and bluetooth mac addresses')
-        self.parser.add_argument('--serial_connect', dest='serial_connect', action='store', nargs=1, type=int, required=False, help='Connects to device with specific serial number and starts sampling as configured')
-        self.parser.add_argument('--show_config', dest='show_config', action='store_true', required=False, help='Shows actual configuration (including command line arguments)')
-        self.parser.add_argument('--show_products', dest='show_products', action='store_true', required=False, help='Shows actual configuration (including command line arguments)')
-        self.parser.add_argument('--show_setups', dest='show_setups', action='store_true', required=False, help='Shows actual configuration (including command line arguments)')
+        self.parser.add_argument('--create', dest='create', action='store_true', required=False, help='Creates a device configuration or sample setup in the xml file')
+        self.parser.add_argument('--gui_x_dim', dest='gui_x_dim', action='store', nargs=1, required=False, help='Length of visualization interval in ms for the graphical acceleration view . Value below 10 turns it off')
+        self.parser.add_argument('--refv', dest='refv', action='store', nargs=1, type=str, required=False, help='ADC\'s Reference voltage, VDD=Standard')
+        self.parser.add_argument('--remove', dest='remove', action='store_true', required=False, help='Removes a device configuration or sample setup in the xml file')
+        self.parser.add_argument('--save', dest='save', action='store_true', required=False, help='Saves a device configuration or sample setup in the xml file)')
+        self.parser.add_argument('--show_config', dest='show_config', action='store_true', required=False, help='Shows current configuration (including command line arguments)')
+        self.parser.add_argument('--show_products', dest='show_products', action='store_true', required=False, help='Shows all available devices and additional versions')
+        self.parser.add_argument('--show_setups', dest='show_setups', action='store_true', required=False, help='Shows current configuration (including command line arguments)')
         args = self.parser.parse_args()
         self.args_dict = vars(args)
     
@@ -424,9 +423,6 @@ class myToolItWatch():
 
         if None != self.args_dict['name_connect']:
             self.vDeviceNameSet(self.args_dict['name_connect'][0])
-            self.vSthAutoConnect(True)
-        elif None != self.args_dict['serial_connect']:    
-            self.vDeviceNameSerial(self.args_dict['serial_connect'][0])
             self.vSthAutoConnect(True)
             
         if None != self.args_dict['points']: 
@@ -887,7 +883,7 @@ class myToolItWatch():
         print("Table Calculation File: " + str(self.sSheetFile))
         print("Log Name: " + str(self.PeakCan.Logger.fileName))
         print("Device Name (to be connected): " + str(self.sDevName))
-        print("Serial Number(to be connected): " + str(self.sSerial))
+        print("Bluetooth address(to be connected): " + str(self.sSerial))#Todo machen
         print("AutoConnect?: " + str(self.bSthAutoConnect))
         print("Run Time: " + str(self.iRunTime) + "s")
         print("Inteval Time: " + str(self.iIntervalTime) + "s")

@@ -40,34 +40,20 @@ VoltRawOpa2Tolerance = 2
 VoltRawOpa3Middle = 0
 VoltRawOpa3Tolerance = 2
 VoltRawVssTolerance = 1
-if False != PcbOnly:
-    VoltMiddleBat = 0
-    VoltToleranceBat = 0.5
-    VoltRawMiddleBat = 780
-    VoltRawToleranceBat = 300
-    SigIndBatteryQ1 = 0
-    SigIndBatteryQ25 = 1
-    SigIndBatteryMedL = 2
-    SigIndBatteryMedH = 10
-    SigIndBatteryQ75 = 20
-    SigIndBatteryQ99 = 30
-    SigIndBatteryVar = 100
-    SigIndBatterySkewness = 0.6
-    SigIndBatterySNR = 70
-else:
-    VoltMiddleBat = 0
-    VoltToleranceBat = 0.5   
-    VoltRawMiddleBat = 780 
-    VoltRawToleranceBat = 300
-    SigIndBatteryQ1 = 0
-    SigIndBatteryQ25 = 1
-    SigIndBatteryMedL = 2
-    SigIndBatteryMedH = 10
-    SigIndBatteryQ75 = 20
-    SigIndBatteryQ99 = 30
-    SigIndBatteryVar = 100
-    SigIndBatterySkewness = 0.6
-    SigIndBatterySNR = 70
+VoltMiddleBat = 0
+VoltToleranceBat = 0.5   
+VoltRawMiddleBat = 780 
+VoltRawToleranceBat = 300
+SigIndBatteryQ1 = 0
+SigIndBatteryQ25 = 1
+SigIndBatteryMedL = 2
+SigIndBatteryMedH = 10
+SigIndBatteryQ75 = 20
+SigIndBatteryQ99 = 30
+SigIndBatteryVar = 100
+SigIndBatterySkewness = 0.6
+SigIndBatterySNR = 60
+
     
 # Acceleration
 AdcMiddleX = 0
@@ -95,7 +81,7 @@ if 1 == Axis:
     AdcRawToleranceY = 54000
     AdcRawToleranceZ = 54000
     SigIndAccXSkewness = 0.9
-    SigIndAccXSNR = 75
+    SigIndAccXSNR = 60
     SigIndAccYQ1 = 0
     SigIndAccYQ25 = 1
     SigIndAccYMedL = 2
@@ -104,7 +90,7 @@ if 1 == Axis:
     SigIndAccYQ99 = 2000
     SigIndAccYVar = 40000
     SigIndAccYSkewness = 20
-    SigIndAccYSNR = 40
+    SigIndAccYSNR = 60
     SigIndAccZQ1 = 0
     SigIndAccZQ25 = 1
     SigIndAccZMedL = 2
@@ -113,7 +99,7 @@ if 1 == Axis:
     SigIndAccZQ99 = 2000
     SigIndAccZVar = 40000
     SigIndAccZSkewness = 20
-    SigIndAccZSNR = 40
+    SigIndAccZSNR = 60
 else:
     AdcToleranceY = 5
     AdcToleranceZ = 5
@@ -139,7 +125,7 @@ else:
     SigIndAccZQ99 = 2 ** 15 * 1.01
     SigIndAccZVar = 100
     SigIndAccZSkewness = 0.6
-    SigIndAccZSNR = 70
+    SigIndAccZSNR = 60
 
 # Time
 SamplingToleranceLow = 0.90

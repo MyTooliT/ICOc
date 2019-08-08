@@ -306,7 +306,82 @@ class TestStu(unittest.TestCase):
             self.PeakCan.Logger.Info("Received Name: " + Name)
             self.assertEqual("Marlies" , Name)
             self.PeakCan.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
+            
+    """
+    Check that correct Bluetooth addresses are (correctly)  listed
+    """
 
+    def test0104BluetoothAddressDevices(self):
+        for _i in range(0, 10):
+            self.PeakCan.BlueToothConnectConnect(MyToolItNetworkNr["STU1"])
+            endTime = time.time() + 5
+            while 0 == self.PeakCan.BlueToothConnectTotalScannedDeviceNr(MyToolItNetworkNr["STU1"]):
+                if time.time() > endTime:
+                    break
+            time.sleep(0.5)
+            devNrs = self.PeakCan.BlueToothConnectTotalScannedDeviceNr(MyToolItNetworkNr["STU1"])
+            for devNr in range(0, devNrs):
+                self.PeakCan.Logger.Info("Device Number " + str(devNr))
+                Address = self.PeakCan.BlueToothAddressGet(MyToolItNetworkNr["STU1"], devNr)
+            self.PeakCan.Logger.Info("Address: " + hex(Address))
+            self.assertGreater(Address, 0)
+            self.PeakCan.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
+    
+    """
+    Check that correct Bluetooth RSSIs are listed
+    """    
+
+    def test105BluetoothRssi(self):
+        for _i in range(0, 10):
+            self.PeakCan.BlueToothConnectConnect(MyToolItNetworkNr["STU1"])
+            endTime = time.time() + 5
+            while 0 == self.PeakCan.BlueToothConnectTotalScannedDeviceNr(MyToolItNetworkNr["STU1"]):
+                if time.time() > endTime:
+                    break
+            time.sleep(0.5)
+            Rssi = self.PeakCan.BlueToothRssiGet(MyToolItNetworkNr["STU1"], 0)
+            self.PeakCan.Logger.Info("RSSI: " + int(Rssi))
+            self.assertNotEqual(Rssi, 127)
+            self.PeakCan.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
+
+    """
+    Check that correct Bluetooth RSSIs change
+    """    
+
+    def test106BluetoothRssiChange(self):
+        self.PeakCan.BlueToothConnectConnect(MyToolItNetworkNr["STU1"])
+        endTime = time.time() + 5
+        while 0 == self.PeakCan.BlueToothConnectTotalScannedDeviceNr(MyToolItNetworkNr["STU1"]):
+            if time.time() > endTime:
+                break
+        time.sleep(0.5)
+        Rssi = []
+        for _i in range(0, 20):
+            Rssi.append(self.PeakCan.BlueToothRssiGet(MyToolItNetworkNr["STU1"], 0))
+            self.PeakCan.Logger.Info("RSSI: " + int(Rssi[-1]))
+            self.assertNotEqual(Rssi, 127)
+        self.PeakCan.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
+        Rssi.sort()
+        self.assertNotEqual(Rssi[1], Rssi[-2])
+            
+    """
+    Check that correct Bluetooth name, addresses and RSSIs are (correctly) listed
+    """   
+
+    def test107BluetoothNameAddressRssi(self):
+        self.PeakCan.BlueToothConnectConnect(MyToolItNetworkNr["STU1"])
+        endTime = time.time() + 5
+        while 0 == self.PeakCan.BlueToothConnectTotalScannedDeviceNr(MyToolItNetworkNr["STU1"]):
+            if time.time() > endTime:
+                break
+        Name = self.PeakCan.BlueToothNameGet(MyToolItNetworkNr["STU1"], 0)
+        Address = self.PeakCan.BlueToothAddressGet(MyToolItNetworkNr["STU1"], 0)
+        Rssi = self.PeakCan.BlueToothRssiGet(MyToolItNetworkNr["STU1"], 0)
+        self.PeakCan.Logger.Info("Name: " + Name)
+        self.PeakCan.Logger.Info("Address: " + hex(Address))
+        self.PeakCan.Logger.Info("RSSI: " + str(Rssi))
+        self.PeakCan.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
+    
     """
     Connect and disconnect to device 100 times, do it without time out, use connection chec    """
 
@@ -610,7 +685,6 @@ class TestStu(unittest.TestCase):
         message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [])
         msgAck = self.PeakCan.WriteFrameWaitAckRetries(message, waitMs=1000, retries=3, bErrorExit=False)
         self.assertEqual("bError", msgAck)          
-     
 
          
 if __name__ == "__main__":

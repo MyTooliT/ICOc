@@ -908,24 +908,26 @@ class TestSth(unittest.TestCase):
         self.PeakCan.Logger.Info("Write Walther0")
         self.PeakCan.BlueToothNameWrite(0, "Walther0")
         self.PeakCan.Logger.Info("Check Walther0")
-        Name = self.PeakCan.BlueToothNameGet(0)[0:8]
+        Name = self.PeakCan.BlueToothNameGet(MyToolItNetworkNr["STH1"], 0)[0:8]
         self.PeakCan.Logger.Info("Received: " + Name)
         self.assertEqual("Walther0", Name)
         self.PeakCan.Logger.Info("Write " + TestConfig["DevName"])
         self.PeakCan.BlueToothNameWrite(0, TestConfig["DevName"])
         self.PeakCan.Logger.Info("Check " + TestConfig["DevName"])
-        Name = self.PeakCan.BlueToothNameGet(0)[0:8]
+        Name = self.PeakCan.BlueToothNameGet(MyToolItNetworkNr["STH1"], 0)[0:8]
         self.PeakCan.Logger.Info("Received: " + Name)
         self.assertEqual(TestConfig["DevName"], Name)
         print("Last Set Name: " + Name)
         
     """
-    Get Bluetooth Address
+    Bluetooth Address
     """
 
     def test0104BlueToothAddress(self):
         self.PeakCan.Logger.Info("Get Bluetooth Address")
-        self.PeakCan.Logger.Info("BlueTooth Address: " + hex(self.PeakCan.BlueToothAddress(MyToolItNetworkNr["STH1"])))
+        iAddress = int(self.PeakCan.BlueToothAddress(MyToolItNetworkNr["STH1"]))
+        self.assertGreater(iAddress, 0)
+        self.PeakCan.Logger.Info("BlueTooth Address: " + hex(iAddress))
 
     """
     Check Bluetooth connectablity for standard settings with minimimum sleep time
@@ -1068,7 +1070,21 @@ class TestSth(unittest.TestCase):
 
         self.PeakCan.BlueToothEnergyModeNr(SleepTime["Reset1"], SleepTime["AdvertisementReset1"], 1)
         self.PeakCan.BlueToothEnergyModeNr(SleepTime["Reset2"], SleepTime["AdvertisementReset2"], 2)           
-                                                
+        
+    """
+    Bluetooth Address
+    """
+
+    def test0109BlueToothRssi(self):
+        self.PeakCan.Logger.Info("Get Bluetooth Address")
+        iRssi = int(self.PeakCan.BlueToothRssi(MyToolItNetworkNr["STH1"]))
+        self.assertGreater(iRssi, -80)
+        self.assertLess(iRssi, 20)
+        self.PeakCan.Logger.Info("BlueTooth RSSI: " + hex(iRssi))   
+
+
+  
+        
     """
     Get Battery Voltage via single command
     """

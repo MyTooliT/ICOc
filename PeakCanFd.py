@@ -43,12 +43,12 @@ def sDateClock():
 
     
 class Logger():
+
     def __init__(self, fileName, fileNameError):
         self.startTime = int(round(time() * 1000))
         self.file = None
         self.fileName = None
         self.vRename(fileName, fileNameError)
-        
         
     def __exit__(self):
         self.file.close()
@@ -102,7 +102,6 @@ class Logger():
             os.remove(self.fileName)
         elif os.path.isfile(self.fileNameError):
             os.remove(self.fileNameError)
-            
             
     def vClose(self):
         self.__exit__()
@@ -806,6 +805,7 @@ class PeakCanFd(object):
         return ack
             
     def BlueToothConnectConnect(self, receiver):
+        self.Logger.Info("Bluetoot connect")
         cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0)
         message = self.CanMessage20(cmd, self.sender, receiver, [SystemCommandBlueTooth["Connect"], 0, 0, 0, 0, 0, 0, 0])
         self.WriteFrameWaitAckRetries(message, retries=2)            
@@ -842,7 +842,7 @@ class PeakCanFd(object):
         return ret
 
     def BlueToothDisconnect(self, stuNr):
-        self.Logger.Info("Disconnect from Device")
+        self.Logger.Info("Bluetooth disconnect")
         cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0)
         message = self.CanMessage20(cmd, self.sender, stuNr, [SystemCommandBlueTooth["Disconnect"], 0, 0, 0, 0, 0, 0, 0])
         self.WriteFrameWaitAckRetries(message, retries=2)
@@ -868,16 +868,16 @@ class PeakCanFd(object):
             Payload[i + 2] = ord(Name[i + 6])
         message = self.CanMessage20(cmd, self.sender, self.receiver, Payload)
         self.WriteFrameWaitAckRetries(message, retries=2)
-
+        
     """
     Get name (bluetooth command)
     """
 
-    def BlueToothNameGet(self, DeviceNr):
+    def BlueToothNameGet(self, receiver, DeviceNr):
         cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0)
-        message = self.CanMessage20(cmd, self.sender, self.receiver, [SystemCommandBlueTooth["GetName1"], DeviceNr, 0, 0, 0, 0, 0, 0])
+        message = self.CanMessage20(cmd, self.sender, receiver, [SystemCommandBlueTooth["GetName1"], DeviceNr, 0, 0, 0, 0, 0, 0])
         Name = self.WriteFrameWaitAckRetries(message, retries=2)["Payload"][2:]
-        message = self.CanMessage20(cmd, self.sender, self.receiver, [SystemCommandBlueTooth["GetName2"], DeviceNr, 0, 0, 0, 0, 0, 0])
+        message = self.CanMessage20(cmd, self.sender, receiver, [SystemCommandBlueTooth["GetName2"], DeviceNr, 0, 0, 0, 0, 0, 0])
         Name = Name + self.WriteFrameWaitAckRetries(message)["Payload"][2:]
         i = 0
         while i < len(Name):
@@ -891,6 +891,28 @@ class PeakCanFd(object):
         return Name
     
     """
+    Get address (bluetooth command)
+    """
+
+    def BlueToothAddressGet(self, receiver, DeviceNr):
+        cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0)
+        message = self.CanMessage20(cmd, self.sender, receiver, [SystemCommandBlueTooth["MacAddress"], DeviceNr, 0, 0, 0, 0, 0, 0])
+        Address = self.WriteFrameWaitAckRetries(message, retries=2)["Payload"][2:]
+        return fBlueToothMacAddress(Address)
+    
+    """
+    Get RSSI (bluetooth command)
+    """
+
+    def BlueToothRssiGet(self, receiver, DeviceNr):
+        cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0)
+        payload = [SystemCommandBlueTooth["Rssi"], DeviceNr, 0, 0, 0, 0, 0, 0]
+        message = self.CanMessage20(cmd, self.sender, receiver, payload)
+        ack = self.WriteFrameWaitAckRetries(message, retries=2)["Payload"][2]
+        ack = to8bitSigned(ack)
+        return ack
+    
+    """
     Connect to device via name
     """    
 
@@ -900,17 +922,19 @@ class PeakCanFd(object):
         recNameList = []
         endTime = time() + BluetoothTime["Connect"]
         self.Logger.Info("Try to connect to Test Device Name: " + Name)
+        self.BlueToothConnectConnect(stuNr)
         while None == self.Name and 8 > deviceNumber and time() < endTime:
-            if 0 < self.BlueToothConnect(stuNr, deviceNumber):
+            if 0 < self.BlueToothConnectTotalScannedDeviceNr(stuNr):
                 endTime = time() + BluetoothTime["Connect"]
                 RecName = ''
                 while '' == RecName and time() < endTime:
-                    RecName = self.BlueToothNameGet(deviceNumber)[0:8]
+                    RecName = self.BlueToothNameGet(stuNr, deviceNumber)[0:8]
                 recNameList.append(RecName)
                 if Name == RecName:
                     self.Name = Name
                     self.DeviceNr = deviceNumber
                     self.Logger.Info("Connected to: " + self.Name)
+                    self.BlueToothConnect(stuNr, deviceNumber)
                 else:
                     deviceNumber += 1
                     self.BlueToothDisconnect(stuNr)
@@ -960,7 +984,7 @@ class PeakCanFd(object):
 
     def BlueToothRssi(self, subscriber):
         cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0)
-        payload = [SystemCommandBlueTooth["Rssi"], 0, 0, 0, 0, 0, 0, 0]
+        payload = [SystemCommandBlueTooth["Rssi"], SystemCommandBlueTooth["SelfAddressing"], 0, 0, 0, 0, 0, 0]
         message = self.CanMessage20(cmd, self.sender, subscriber, payload)
         ack = self.WriteFrameWaitAckRetries(message, retries=2)["Payload"][2]
         ack = to8bitSigned(ack)
@@ -968,7 +992,7 @@ class PeakCanFd(object):
 
     def BlueToothAddress(self, subscriber):
         cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0)
-        payload = [SystemCommandBlueTooth["MacAddress"], 0, 0, 0, 0, 0, 0, 0]
+        payload = [SystemCommandBlueTooth["MacAddress"], SystemCommandBlueTooth["SelfAddressing"], 0, 0, 0, 0, 0, 0]
         message = self.CanMessage20(cmd, self.sender, subscriber, payload)
         ack = self.WriteFrameWaitAckRetries(message, retries=2)["Payload"][2:]
         ack = fBlueToothMacAddress(ack)
