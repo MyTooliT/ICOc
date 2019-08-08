@@ -348,7 +348,7 @@ class myToolItWatch():
         if None != self.args_dict['version'] and None != self.args_dict['sample_setup']:
             print("You can't use sample setup and product/version simultaneously")
             self.PeakCan.vLogDel()
-            sys.exit()
+            self.__exit__()
         bRemove = False  
         if False != self.args_dict['remove']:
             bRemove = True      
@@ -358,7 +358,7 @@ class myToolItWatch():
             if False != bRemove:
                 print("You can't create and remove simultaneously.")
                 self.PeakCan.vLogDel()
-                sys.exit()
+                self.__exit__()
             else:
                 bCreate = True     
                 self.vSave2Xml(True)
@@ -411,11 +411,11 @@ class myToolItWatch():
                     elif False != bCreate:
                         print("Error! you tried to create a product/version that allready exists")
                         self.PeakCan.vLogDel()
-                        sys.exit()
+                        self.__exit__()
                     else:
                         print("Error! you tried to create a sample setup that allready exists")
                         self.PeakCan.vLogDel()
-                        sys.exit()
+                        self.__exit__()
 
         
     def vParserConsoleArgumentsPass(self):  
@@ -488,7 +488,7 @@ class myToolItWatch():
                 self.PeakCan.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], self.sDevName)
             except KeyboardInterrupt:
                 self.KeyBoadInterrupt = True
-                sys.exit()
+                self.__exit__()
                 
     def vDataAquisition(self):  
         if False == self.KeyBoadInterrupt:
@@ -504,7 +504,7 @@ class myToolItWatch():
                     self.PeakCan.Logger.bError("Device not allocable")     
             except KeyboardInterrupt:
                 self.KeyBoadInterrupt = True
-                sys.exit()
+                self.__exit__()
                 
     def close(self):
         if False != self.PeakCan.bConnected:
@@ -526,9 +526,7 @@ class myToolItWatch():
         except KeyboardInterrupt:
             self.KeyBoadInterrupt = True
             print("Data acquisition determined")
-            sys.exit()     
-        finally:
-            sys.exit()               
+            self.__exit__()                 
                               
     def vGetStreamingAccData(self):  
         accFormat = AtvcFormat()
@@ -568,19 +566,19 @@ class myToolItWatch():
         ackMsg = ("MsgCounter: " + str(format(canData[1], '3d')) + "; ")
         ackMsg += ("TimeStamp: " + format(canTimeStamp, '12.3f') + "ms; ")
         ackMsg += (prefix + " ")
-        ackMsg += str(messageValueGet(canData[2:4]))
+        ackMsg += str(format(messageValueGet(canData[2:4]), '5d'))
         ackMsg += "; "
         self.PeakCan.Logger.Info(ackMsg)
         ackMsg = ("MsgCounter: " + str(format(canData[1], '3d')) + "; ")
         ackMsg += ("TimeStamp: " + format(canTimeStamp, '12.3f') + "ms; ")
         ackMsg += (prefix + " ")
-        ackMsg += str(messageValueGet(canData[4:6]))
+        ackMsg += str(format(messageValueGet(canData[4:6]), '5d'))
         ackMsg += "; "
         self.PeakCan.Logger.Info(ackMsg)
         ackMsg = ("MsgCounter: " + str(format(canData[1], '3d')) + "; ")
         ackMsg += ("TimeStamp: " + format(canTimeStamp, '12.3f') + "ms; ")
         ackMsg += (prefix + " ")
-        ackMsg += str(messageValueGet(canData[6:8]))
+        ackMsg += str(format(messageValueGet(canData[6:8]), '5d'))
         ackMsg += "; "
         self.PeakCan.Logger.Info(ackMsg)   
         
@@ -591,11 +589,11 @@ class myToolItWatch():
         ackMsg = ("MsgCounter: " + str(format(canData[1], '3d')) + "; ")
         ackMsg += ("TimeStamp: " + format(canTimeStamp, '12.3f') + "ms; ")
         ackMsg += (prefix1 + " ")
-        ackMsg += str(messageValueGet(canData[2:4]))
+        ackMsg += str(format(messageValueGet(canData[2:4]), '5d'))
         ackMsg += "; "
         ackMsg += prefix2
         ackMsg += " "
-        ackMsg += str(messageValueGet(canData[4:6]))
+        ackMsg += str(format(messageValueGet(canData[4:6]), '5d'))
         ackMsg += "; "
         self.PeakCan.Logger.Info(ackMsg)       
 
@@ -606,15 +604,15 @@ class myToolItWatch():
         ackMsg = ("MsgCounter: " + str(format(canData[1], '3d')) + "; ")
         ackMsg += ("TimeStamp: " + format(canTimeStamp, '12.3f') + "ms; ")
         ackMsg += (prefix1 + " ")
-        ackMsg += str(messageValueGet(canData[2:4]))
+        ackMsg += str(format(messageValueGet(canData[2:4]), '5d'))
         ackMsg += "; "
         ackMsg += prefix2
         ackMsg += " "
-        ackMsg += str(messageValueGet(canData[4:6]))
+        ackMsg += str(format(messageValueGet(canData[4:6]), '5d'))
         ackMsg += "; "
         ackMsg += prefix3
         ackMsg += " "
-        ackMsg += str(messageValueGet(canData[6:8]))
+        ackMsg += str(format(messageValueGet(canData[6:8]), '5d'))
         ackMsg += "; "
         self.PeakCan.Logger.Info(ackMsg)                        
 
@@ -866,14 +864,14 @@ class myToolItWatch():
                 self.vDeviceNameSet(config.find('DeviceName').text)
                 self.vDeviceAddressSet(config.find('DeviceAddress').text)
                 samplePoints = config.find('Acc').text
-                bAccX = int(samplePoints[2])
+                bAccX = int(samplePoints[0])
                 bAccY = int(samplePoints[1])
-                bAccZ = int(samplePoints[0])
+                bAccZ = int(samplePoints[2])
                 self.vAccSet(bAccX, bAccY, bAccZ, -1)
                 samplePoints = config.find('Voltage').text
-                bVoltageX = int(samplePoints[2])
+                bVoltageX = int(samplePoints[0])
                 bVoltageY = int(samplePoints[1])
-                bVoltageZ = int(samplePoints[0])
+                bVoltageZ = int(samplePoints[2])
                 self.vVoltageSet(bVoltageX, bVoltageY, bVoltageZ, -1)
                 self.vAdcConfig(int(config.find('Prescaler').text), int(config.find('AcquisitionTime').text), int(config.find('OverSamples').text))
                 self.vAdcRefVConfig(config.find('AdcRef').text)
