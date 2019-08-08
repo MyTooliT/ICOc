@@ -328,7 +328,7 @@ class myToolItWatch():
         self.parser.add_argument('-i', '--interval', dest='interval', action='store', nargs=1, type=int, required=False, help='Sets Interval Time (Output file is saved each interval time in seconds. Lower than 10 causes a single file')
         self.parser.add_argument('-l', '--log_location', dest='log_name', action='store', nargs=1, type=str, required=False, help='Where to save Log Files (relative/absolute path+file name)')
         self.parser.add_argument('-n', '--name_connect', dest='name_connect', action='store', nargs=1, type=str, required=False, help='Connect to device specified by Name and starts sampling as configured')
-        self.parser.add_argument('-p', '--points', dest='points', action='store', nargs=1, type=int, required=False, help='PPP specifies which axis(X/Y/Z) are active(1) or off(0)')
+        self.parser.add_argument('-p', '--points', dest='points', action='store', nargs=1, type=int, required=False, help='PPP specifies which acceleration axis(X/Y/Z) are active(1) or off(0)')
         self.parser.add_argument('-r', '--run_time', dest='run_time', action='store', nargs=1, type=int, required=False, help='Sets RunTime in seconds. 0 specifies infinity')
         self.parser.add_argument('-s', '--sample_setup', dest='sample_setup', action='store', nargs=1, type=str, required=False, help='Starts sampling with configuration as given including additional command line arguments')
         self.parser.add_argument('-v', '--version', dest='version', action='store', nargs=2, type=str, required=False, help='Chooses product with version for handling Table Calculation Files (e.g. STH v2.1.2)')
@@ -341,6 +341,7 @@ class myToolItWatch():
         self.parser.add_argument('--show_config', dest='show_config', action='store_true', required=False, help='Shows current configuration (including command line arguments)')
         self.parser.add_argument('--show_products', dest='show_products', action='store_true', required=False, help='Shows all available devices and additional versions')
         self.parser.add_argument('--show_setups', dest='show_setups', action='store_true', required=False, help='Shows current configuration (including command line arguments)')
+        self.parser.add_argument('--voltage_points', dest='voltage_points', action='store', nargs=1, type=int, required=False, help='PPP specifies which voltage axis (sample points; X/Y/Z) are active(1) or off(0). Note that x specifies the battery')
         args = self.parser.parse_args()
         self.args_dict = vars(args)
     
@@ -447,12 +448,21 @@ class myToolItWatch():
             self.vSthAutoConnect(True)            
             
         if None != self.args_dict['points']: 
-            points = self.args_dict['points'][0] & 0x03
+            points = self.args_dict['points'][0] & 0x07
             bX = bool(points & 1)
             bY = bool((points >> 1) & 1)
             bZ = bool((points >> 2) & 1)
             pointBool = [bX, bY, bZ]
             self.vAccSet(pointBool[2], pointBool[1], pointBool[0], pointBool.count(True))
+        if None != self.args_dict['voltage_points']: 
+            points = self.args_dict['voltage_points'][0] & 0x07
+            bX = bool(points & 1)
+            bY = bool((points >> 1) & 1)
+            bZ = bool((points >> 2) & 1)
+            pointBool = [bX, bY, bZ]
+            self.vVoltageSet(pointBool[2], pointBool[1], pointBool[0], pointBool.count(True))                          
+                           
+                           
                            
     def reset(self):
         if False == self.KeyBoadInterrupt:
@@ -517,18 +527,20 @@ class myToolItWatch():
             while(self.PeakCan.getTimeMs() < endTime):
                 ack = self.ReadMessage()
                 if(None != ack):
-                    if(self.AckExpected.ID != ack["CanMsg"].ID):
+                    if(self.AccAckExpected.ID != ack["CanMsg"].ID and self.VoltageAckExpected.ID != ack["CanMsg"].ID):
                         self.PeakCan.Logger.bError("CanId bError: " + str(ack["CanMsg"].ID))
-                    elif(self.AckExpected.DATA[0] != ack["CanMsg"].DATA[0]):
+                    elif(self.AccAckExpected.DATA[0] != ack["CanMsg"].DATA[0] and self.VoltageAckExpected.DATA[0] != ack["CanMsg"].DATA[0])  :
                         self.PeakCan.Logger.bError("Wrong Subheader-Format(Acceleration Format): " + str(ack["CanMsg"].ID))
-                    else:
+                    elif self.AccAckExpected.ID == ack["CanMsg"].ID:
                         self.GetMessageAcc(ack)       
+                    else:
+                        self.GetMessageVoltage(ack)     
         except KeyboardInterrupt:
             self.KeyBoadInterrupt = True
             print("Data acquisition determined")
             self.__exit__()                 
-                              
-    def vGetStreamingAccData(self):  
+    
+    def vGetStreamingAccDataAccStart(self): 
         accFormat = AtvcFormat()
         accFormat.asbyte = 0
         accFormat.b.bStreaming = 1
@@ -537,18 +549,46 @@ class myToolItWatch():
         accFormat.b.bNumber3 = self.bAccZ
         accFormat.b.u3DataSets = self.tAccDataFormat
         cmd = self.PeakCan.CanCmd(MyToolItBlock["Streaming"], MyToolItStreaming["Acceleration"], 0, 0)
-        self.AckExpected = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["STH1"], MyToolItNetworkNr["SPU1"], [accFormat.asbyte])
+        self.AccAckExpected = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["STH1"], MyToolItNetworkNr["SPU1"], [accFormat.asbyte])
         cmd = self.PeakCan.CanCmd(MyToolItBlock["Streaming"], MyToolItStreaming["Acceleration"], 1, 0)
         message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [accFormat.asbyte])
-        self.PeakCan.Logger.Info("MsgId/Subpayload: " + hex(message.ID) + "/" + hex(accFormat.asbyte))
+        self.PeakCan.Logger.Info("MsgId/Subpayload(Acc): " + hex(message.ID) + "/" + hex(accFormat.asbyte))
         ack = None
         endTime = self.PeakCan.getTimeMs() + 4000
         while (None == ack) and (self.PeakCan.getTimeMs() < endTime):
             self.PeakCan.WriteFrame(message)
             readEndTime = self.PeakCan.getTimeMs() + 500
             while((None == ack) and  (self.PeakCan.getTimeMs() < readEndTime)):
-                ack = self.ReadMessage()
-        
+                ack = self.ReadMessage()        
+        return ack
+
+
+    def vGetStreamingAccDataVoltageStart(self): 
+        voltageFormat = AtvcFormat()
+        voltageFormat.asbyte = 0
+        voltageFormat.b.bStreaming = 1
+        voltageFormat.b.bNumber1 = self.bVoltageX
+        voltageFormat.b.bNumber2 = self.bVoltageY
+        voltageFormat.b.bNumber3 = self.bVoltageZ
+        voltageFormat.b.u3DataSets = self.tVoltageDataFormat
+        cmd = self.PeakCan.CanCmd(MyToolItBlock["Streaming"], MyToolItStreaming["Voltage"], 0, 0)
+        self.VoltageAckExpected = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["STH1"], MyToolItNetworkNr["SPU1"], [voltageFormat.asbyte])
+        cmd = self.PeakCan.CanCmd(MyToolItBlock["Streaming"], MyToolItStreaming["Voltage"], 1, 0)
+        message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [voltageFormat.asbyte])
+        self.PeakCan.Logger.Info("MsgId/Subpayload(Voltage): " + hex(message.ID) + "/" + hex(voltageFormat.asbyte))
+        ack = None
+        endTime = self.PeakCan.getTimeMs() + 4000
+        while (None == ack) and (self.PeakCan.getTimeMs() < endTime):
+            self.PeakCan.WriteFrame(message)
+            readEndTime = self.PeakCan.getTimeMs() + 500
+            while((None == ack) and  (self.PeakCan.getTimeMs() < readEndTime)):
+                ack = self.ReadMessage()        
+        return ack
+                                 
+    def vGetStreamingAccData(self):  
+        ack = self.vGetStreamingAccDataAccStart()
+        if None != ack:
+            ack = self.vGetStreamingAccDataVoltageStart()
         currentTime = self.PeakCan.getTimeMs()
         if None == ack:
             self.PeakCan.Logger.bError("No Ack received from Device: " + str(self.dev))
@@ -633,6 +673,26 @@ class myToolItWatch():
                 self.GetMessageAccSingle("AccY", canData)               
             elif 0 != self.bAccZ:
                 self.GetMessageAccSingle("AccZ", canData)       
+        else:               
+            self.PeakCan.Logger.bError("Wrong Ack format")
+
+    def GetMessageVoltage(self, canData):
+        if self.tAccDataFormat == DataSets[1]:
+            if (0 != self.bAccX) and (0 != self.bAccY) and (0 == self.bAccZ):
+                self.GetMessageAccDouble("VoltageX", "VoltageY", canData)
+            elif (0 != self.bAccX) and (0 == self.bAccY) and (0 != self.bAccZ):
+                self.GetMessageAccDouble("VoltageX", "VoltageZ", canData)
+            elif (0 == self.bAccX) and (0 != self.bAccY) and (0 != self.bAccZ):
+                self.GetMessageAccDouble("VoltageY", "VoltageZ", canData) 
+            else:
+                self.GetMessageAccTripple("VoltageX", "VoltageY", "VoltageZ", canData)   
+        elif self.tAccDataFormat == DataSets[3]:
+            if 0 != self.bAccX:
+                self.GetMessageAccSingle("VoltageX", canData)               
+            elif 0 != self.bAccY:
+                self.GetMessageAccSingle("VoltageY", canData)               
+            elif 0 != self.bAccZ:
+                self.GetMessageAccSingle("VoltageZ", canData)       
         else:               
             self.PeakCan.Logger.bError("Wrong Ack format")
             
@@ -923,7 +983,26 @@ class myToolItWatch():
         print("Acc Config(XYZ/DataSets): " + str(int(self.bAccX)) + str(int(self.bAccY)) + str(int(self.bAccZ)) + "/" + str(DataSetsReverse[self.tAccDataFormat]))
         print("Voltage Config(XYZ/DataSets): " + str(int(self.bVoltageX)) + str(int(self.bVoltageY)) + str(int(self.bVoltageZ)) + "/" + str(DataSetsReverse[self.tAccDataFormat]) + ("(X=Battery)"))
         
+        
+    def _vRunConsoleStartupLoggerPrint(self):
+        self.PeakCan.Logger.Info("XML File: " + str(self.sXmlFileName))
+        self.PeakCan.Logger.Info("Product Configuration: " + str(self.sProduct) + " " + str(self.sConfig))
+        self.PeakCan.Logger.Info("Setup Configuration: " + str(self.sSetupConfig))
+        self.PeakCan.Logger.Info("AutoSave?: " + str(self.bSave))
+        self.PeakCan.Logger.Info("Table Calculation File: " + str(self.sSheetFile))
+        self.PeakCan.Logger.Info("Log Name: " + str(self.PeakCan.Logger.fileName))
+        self.PeakCan.Logger.Info("Device Name (to be connected): " + str(self.sDevName))
+        self.PeakCan.Logger.Info("Bluetooth address(to be connected): " + str(self.iAddress))#Todo machen
+        self.PeakCan.Logger.Info("AutoConnect?: " + str(self.bSthAutoConnect))
+        self.PeakCan.Logger.Info("Run Time: " + str(self.iRunTime) + "s")
+        self.PeakCan.Logger.Info("Inteval Time: " + str(self.iIntervalTime) + "s")
+        self.PeakCan.Logger.Info("Display Time: " + str(self.iDisplayTime) + "ms")
+        self.PeakCan.Logger.Info("Adc Prescaler/AcquisitionTime/OversamplingRate/Reference(Samples/s): " + str(self.iPrescaler) + "/" + str(AdcAcquisitionTimeReverse[self.iAquistionTime]) + "/" + str(AdcOverSamplingRateReverse[self.iOversampling]) + "/" + str(self.sAdcRef) + "(" + str(self.samplingRate) + ")")
+        self.PeakCan.Logger.Info("Acc Config(XYZ/DataSets): " + str(int(self.bAccX)) + str(int(self.bAccY)) + str(int(self.bAccZ)) + "/" + str(DataSetsReverse[self.tAccDataFormat]))
+        self.PeakCan.Logger.Info("Voltage Config(XYZ/DataSets): " + str(int(self.bVoltageX)) + str(int(self.bVoltageY)) + str(int(self.bVoltageZ)) + "/" + str(DataSetsReverse[self.tAccDataFormat]) + ("(X=Battery)"))
+        
     def _vRunConsoleStartup(self):
+        self._vRunConsoleStartupLoggerPrint()
         if False != self.args_dict['show_config']:
             self._vRunConsoleStartupShow()
         if False != self.args_dict['show_products']:
