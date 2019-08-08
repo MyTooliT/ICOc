@@ -45,6 +45,7 @@ def sDateClock():
 class Logger():
 
     def __init__(self, fileName, fileNameError):
+        self.ErrorFlag = False
         self.startTime = int(round(time() * 1000))
         self.file = None
         self.fileName = None
@@ -57,6 +58,7 @@ class Logger():
                 os.remove(self.fileNameError)
             if os.path.isfile(self.fileName):
                 os.rename(self.fileName, self.fileNameError)
+
 
     def getTimeStamp(self):     
         return int(round(time() * 1000)) - int(self.startTime)
@@ -114,7 +116,6 @@ class PeakCanFd(object):
         self.sender = sender
         self.receiver = receiver
         self.Logger = Logger(testMethodName, testMethodNameError)
-        self.Logger.ErrorFlag = False
         self.Logger.Info(str(sDateClock()))
         self.startTime = int(round(time() * 1000))
         self.m_objPCANBasic = PCANBasic()

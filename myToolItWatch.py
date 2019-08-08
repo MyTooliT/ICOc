@@ -48,10 +48,10 @@ class myToolItWatch():
         self.bError = False     
         self.bClose = True   
         self.bConnected = False
-        self.PeakCan = PeakCanFd.PeakCanFd(PeakCanFd.PCAN_BAUD_1M, "init.txt", "", MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"])
+        self.PeakCan = PeakCanFd.PeakCanFd(PeakCanFd.PCAN_BAUD_1M, "init.txt", "initError.txt", MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"])
         self.vSave2Xml(False)
         self.vSthAutoConnect(False)
-        self.iStartTime = time()
+        self.PeakCan.Logger.Info("Start Time: " + self.sDateClock())
         self.bLogSet("init.txt")
         self.vConfigFileSet('configKeys.xml')
         self.bSampleSetupSet(None)
@@ -231,7 +231,9 @@ class myToolItWatch():
     def vLogCountInc(self):
         fileName = self.PeakCan.Logger.fileName[:-24]
         fileName = fileName + "_" + self.sDateClock() + ".txt"
-        self.PeakCan.vLogNameCloseInterval(fileName, self.PeakCan.Logger.fileNameError)
+        logNameError = fileName
+        logNameError = rreplace(logNameError, '.', "bError.")
+        self.PeakCan.vLogNameCloseInterval(fileName, logNameError)
         
     def vSheetFileSet(self, sSheetFile):
         self.sSheetFile = sSheetFile
@@ -316,7 +318,7 @@ class myToolItWatch():
             self.Build = build
             
     def sDateClock(self):
-        DataClockTimeStamp = datetime.fromtimestamp(self.iStartTime).strftime('%Y-%m-%d_%H-%M-%S')
+        DataClockTimeStamp = datetime.fromtimestamp(time()).strftime('%Y-%m-%d_%H-%M-%S')
         return DataClockTimeStamp
 
     def vParserInit(self):
@@ -521,10 +523,18 @@ class myToolItWatch():
             self.__exit__()  
 
     def vGetStreamingAccDataProcess(self, endTime):
-#         print("Inteval Time: " + str(self.iIntervalTime) + "s")
+#         print("Inteval Time: " + str() + "s")
 #         print("Display Time: " + str(self.iDisplayTime) + "ms")
+
+        iIntervalTime = self.iIntervalTime*1000
+        if 0 == self.iIntervalTime:
+            iIntervalTime += (1 << 32)
+        startTime = self.PeakCan.getTimeMs()
         try:
             while(self.PeakCan.getTimeMs() < endTime):
+                if (self.PeakCan.getTimeMs() - startTime) >= iIntervalTime:
+                    startTime = self.PeakCan.getTimeMs()
+                    self.vLogCountInc()
                 ack = self.ReadMessage()
                 if(None != ack):
                     if(self.AccAckExpected.ID != ack["CanMsg"].ID and self.VoltageAckExpected.ID != ack["CanMsg"].ID):
