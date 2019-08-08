@@ -3,245 +3,131 @@
     <Config>
         <config name="X">
                 <DeviceName>"Tanja"</DeviceName>
+                <DeviceAddress>0</DeviceAddress>
                 <Acc>100</Acc>
-                <Voltage>"None"</Voltage>
-                <AdcRef>"VDD"</AdcRef>
+                <Voltage>000</Voltage>
+                <AdcRef>VDD</AdcRef>
                 <Prescaler>2</Prescaler>
                 <AcquisitionTime>8</AcquisitionTime>
                 <OverSamples>64</OverSamples>
-                <LogLocation>"../../Logs/"</LogLocation>
-                <LogName>AccX12k5</LogName>
+                <LogName>../Logs/Watch/AccX12k5</LogName>
                 <DisplayTime>10</DisplayTime>
                 <IntervalTime>0</IntervalTime>
                 <RunTime>0</RunTime>
         </config>
         <config name="Y">
                 <DeviceName>"Tanja"</DeviceName>
+                <DeviceAddress>0</DeviceAddress>
                 <Acc>010</Acc>
-                <Voltage>"None"</Voltage>
-                <AdcRef>"VDD"</AdcRef>
+                <Voltage>000</Voltage>
+                <AdcRef>VDD</AdcRef>
                 <Prescaler>2</Prescaler>
                 <AcquisitionTime>8</AcquisitionTime>
-                <OverSamples>64</OverSamples>
-                <LogLocation>"../../Logs/"</LogLocation>
-                <LogName>AccY12k5</LogName>
+                <OverSamples>64</OverSamples>        
+                <LogName>../Logs/Watch/AccY12k5</LogName>
                 <DisplayTime>10</DisplayTime>
                 <IntervalTime>0</IntervalTime>
                 <RunTime>0</RunTime>
         </config>
         <config name="Z">
                 <DeviceName>"Tanja"</DeviceName>
+                <DeviceAddress>0</DeviceAddress>
                 <Acc>001</Acc>
-                <Voltage>"None"</Voltage>
-                <AdcRef>"VDD"</AdcRef>
+                <Voltage>000</Voltage>
+                <AdcRef>VDD</AdcRef>
                 <Prescaler>2</Prescaler>
                 <AcquisitionTime>8</AcquisitionTime>
                 <OverSamples>64</OverSamples>
-                <LogLocation>"../../Logs/"</LogLocation>
-                <LogName>AccZ12k5</LogName>
+                <LogName>../Logs/Watch/AccZ12k5</LogName>
                 <DisplayTime>10</DisplayTime>
                 <IntervalTime>0</IntervalTime>
                 <RunTime>0</RunTime>
         </config>
         <config name="XY">
                 <DeviceName>"Tanja"</DeviceName>
+                <DeviceAddress>0</DeviceAddress>
                 <Acc>110</Acc>
-                <Voltage>"None"</Voltage>
-                <AdcRef>"VDD"</AdcRef>
+                <Voltage>000</Voltage>
+                <AdcRef>VDD</AdcRef>
                 <Prescaler>2</Prescaler>
                 <AcquisitionTime>8</AcquisitionTime>
                 <OverSamples>64</OverSamples>
-                <LogLocation>"../../Logs/"</LogLocation>
-                <LogName>AccXY12k5</LogName>
+                <LogName>../Logs/Watch/AccXY12k5</LogName>
                 <DisplayTime>10</DisplayTime>
                 <IntervalTime>0</IntervalTime>
                 <RunTime>0</RunTime>
         </config>
         <config name="YZ">
                 <DeviceName>"Tanja"</DeviceName>
+                <DeviceAddress>0</DeviceAddress>
                 <Acc>011"</Acc>
-                <Voltage>"None"</Voltage>
-                <AdcRef>"VDD"</AdcRef>
+                <Voltage>000</Voltage>
+                <AdcRef>VDD</AdcRef>
                 <Prescaler>2</Prescaler>
                 <AcquisitionTime>8</AcquisitionTime>
                 <OverSamples>64</OverSamples>
-                <LogLocation>"../../Logs/"</LogLocation>
-                <LogName>AccYZ12k5</LogName>
+                <LogName>../Logs/Watch/AccYZ12k5</LogName>
                 <DisplayTime>10</DisplayTime>
                 <IntervalTime>0</IntervalTime>
                 <RunTime>0</RunTime>
         </config>
         <config name="XYZ">
                 <DeviceName>"Tanja"</DeviceName>
+                <DeviceAddress>0</DeviceAddress>
                 <Acc>111</Acc>
-                <Voltage>"None"</Voltage>
-                <AdcRef>"VDD"</AdcRef>
+                <Voltage>000</Voltage>
+                <AdcRef>VDD</AdcRef>
                 <Prescaler>2</Prescaler>
                 <AcquisitionTime>8</AcquisitionTime>
                 <OverSamples>64</OverSamples>
-                <LogLocation>"../../Logs/"</LogLocation>
-                <LogName>AccXYZ12k5</LogName>
+                <LogName>../Logs/Watch/AccXYZ12k5</LogName>
                 <DisplayTime>10</DisplayTime>
                 <IntervalTime>0</IntervalTime>
                 <RunTime>0</RunTime>
         </config>
         <config name="XHighRes">
                 <DeviceName>"Tanja"</DeviceName>
+                <DeviceAddress>0</DeviceAddress>
                 <Acc>100</Acc>
-                <Voltage>"None"</Voltage>
-                <AdcRef>"1V25"</AdcRef>
+                <Voltage>000</Voltage>
+                <AdcRef>1V25</AdcRef>
                 <Prescaler>2</Prescaler>
                 <AcquisitionTime>1</AcquisitionTime>
                 <OverSamples>256</OverSamples>
-                <LogLocation>"../../Logs/"</LogLocation>
-                <LogName>AccX2k4</LogName>
+                <LogName>../Logs/Watch/AccX2k4</LogName>
                 <DisplayTime>10</DisplayTime>
                 <IntervalTime>0</IntervalTime>
                 <RunTime>0</RunTime>
         </config>
         <config name="YHighRes">
                 <DeviceName>"Tanja"</DeviceName>
+                <DeviceAddress>0</DeviceAddress>
                 <Acc>010</Acc>
-                <Voltage>"None"</Voltage>
-                <AdcRef>"1V25"</AdcRef>
+                <Voltage>000</Voltage>
+                <AdcRef>1V25</AdcRef>
                 <Prescaler>2</Prescaler>
                 <AcquisitionTime>1</AcquisitionTime>
                 <OverSamples>256</OverSamples>
-                <LogLocation>"../../Logs/"</LogLocation>
-                <LogName>AccY2k4</LogName>
+                <LogName>../Logs/Watch/AccY2k4</LogName>
                 <DisplayTime>10</DisplayTime>
                 <IntervalTime>0</IntervalTime>
                 <RunTime>0</RunTime>
         </config>
         <config name="ZHighRes">
                 <DeviceName>"Tanja"</DeviceName>
+                <DeviceAddress>0</DeviceAddress>
                 <Acc>001</Acc>
-                <Voltage>"None"</Voltage>
-                <AdcRef>"1V25"</AdcRef>
+                <Voltage>000</Voltage>
+                <AdcRef>1V25</AdcRef>
                 <Prescaler>2</Prescaler>
                 <AcquisitionTime>1</AcquisitionTime>
                 <OverSamples>256</OverSamples>
-                <LogLocation>"../../Logs/"</LogLocation>
-                <LogName>AccZ2k4</LogName>
+                <LogName>../Logs/Watch/AccZ2k4</LogName>
                 <DisplayTime>10</DisplayTime>
                 <IntervalTime>0</IntervalTime>
                 <RunTime>0</RunTime>
         </config>
     </Config>
-    <ConfigSamplingRate>
-        <config name="Reset">
-            <SamplingRate>9523</SamplingRate>
-            <Prescaler>2</Prescaler>
-            <OverSamples>64</OverSamples>
-            <AcquisitionTime>8</AcquisitionTime>
-            <AdcRef>"VDD"</AdcRef>
-        </config>
-        <config name="SingleMaxSamples1V25">
-            <SamplingRate>9523</SamplingRate>
-            <Prescaler>2</Prescaler>
-            <OverSamples>64</OverSamples>
-            <AcquisitionTime>8</AcquisitionTime>
-            <AdcRef>"1V25"</AdcRef>
-        </config>
-        <config name="SingleMaxSamples2V5">
-            <SamplingRate>9523</SamplingRate>
-            <Prescaler>2</Prescaler>
-            <OverSamples>64</OverSamples>
-            <AcquisitionTime>8</AcquisitionTime>
-            <AdcRef>"1V25"</AdcRef>
-        </config>
-        <config name="SingleMaxSamplesVDD">
-            <SamplingRate>9523</SamplingRate>
-            <Prescaler>2</Prescaler>
-            <OverSamples>64</OverSamples>
-            <AcquisitionTime>8</AcquisitionTime>
-            <AdcRef>"VDD"</AdcRef>
-        </config>
-        <config name="DoubleMaxSamples1V25">
-            <SamplingRate>8824</SamplingRate>
-            <Prescaler>3</Prescaler>
-            <OverSamples>64</OverSamples>
-            <AcquisitionTime>"4"</AcquisitionTime>
-            <AdcRef>"1V25"</AdcRef>
-        </config>
-        <config name="DoubleMaxSamples2V5">
-            <SamplingRate>8824</SamplingRate>
-            <Prescaler>3</Prescaler>
-            <OverSamples>64</OverSamples>
-            <AcquisitionTime>"4"</AcquisitionTime>
-            <AdcRef>"1V25"</AdcRef>
-        </config>
-        <config name="DoubleMaxSamplesVDD">
-            <SamplingRate>8824</SamplingRate>
-            <Prescaler>3</Prescaler>
-            <OverSamples>64</OverSamples>
-            <AcquisitionTime>"4"</AcquisitionTime>
-            <AdcRef>"VDD"</AdcRef>
-        </config>
-        <config name="TripleMaxSamples1V25">
-            <SamplingRate>9523</SamplingRate>
-            <Prescaler>2</Prescaler>
-            <OverSamples>64</OverSamples>
-            <AcquisitionTime>8</AcquisitionTime>
-            <AdcRef>"1V25"</AdcRef>
-        </config>
-        <config name="TripleMaxSamples2V5">
-            <SamplingRate>9523</SamplingRate>
-            <Prescaler>2</Prescaler>
-            <OverSamples>64</OverSamples>
-            <AcquisitionTime>8</AcquisitionTime>
-            <AdcRef>"1V25"</AdcRef>
-        </config>
-        <config name="TripleMaxSamplesVDD">
-            <SamplingRate>9523</SamplingRate>
-            <Prescaler>2</Prescaler>
-            <OverSamples>64</OverSamples>
-            <AcquisitionTime>8</AcquisitionTime>
-            <AdcRef>"VDD"</AdcRef>
-        </config>
-        <config name="HighResolution1V25">
-            <SamplingRate>3571</SamplingRate>
-            <Prescaler>2</Prescaler>
-            <OverSamples>256</OverSamples>
-            <AcquisitionTime>1</AcquisitionTime>
-            <AdcRef>"1V25"</AdcRef>
-        </config>
-        <config name="HighResolution2V5">
-            <SamplingRate>3571</SamplingRate>
-            <Prescaler>2</Prescaler>
-            <OverSamples>256</OverSamples>
-            <AcquisitionTime>1</AcquisitionTime>
-            <AdcRef>"1V25"</AdcRef>
-        </config>
-        <config name="HighResolutionVDD">
-            <SamplingRate>3571</SamplingRate>
-            <Prescaler>2</Prescaler>
-            <AcquisitionTime>1</AcquisitionTime>
-            <AcquisitionTime>1</AcquisitionTime>
-            <AdcRef>"VDD"</AdcRef>
-        </config>
-        <config name="MaxResolution1V25">
-            <SamplingRate>2381</SamplingRate>
-            <Prescaler>2</Prescaler>
-            <OverSamples>256</OverSamples>
-            <AcquisitionTime>1</AcquisitionTime>
-            <AdcRef>"1V25"</AdcRef>
-        </config>
-        <config name="MaxResolution2V5">
-            <SamplingRate>2381</SamplingRate>
-            <Prescaler>2</Prescaler>
-            <OverSamples>256</OverSamples>
-            <AcquisitionTime>1</AcquisitionTime>
-            <AdcRef>"1V25"</AdcRef>
-        </config>
-        <config name="MaxResolutionVDD">
-            <SamplingRate>2381</SamplingRate>
-            <Prescaler>2</Prescaler>
-            <OverSamples>256</OverSamples>
-            <AcquisitionTime>1</AcquisitionTime>
-            <AdcRef>"VDD"</AdcRef>
-        </config>
-    </ConfigSamplingRate>
     <Data>
         <Product>
             <product name="STH">

@@ -2,6 +2,11 @@ import ctypes
 c_uint8 = ctypes.c_uint8
 
 
+Config = {
+    "DeviceNumberMax" : 32
+}
+
+
 class ActiveStateFlags(ctypes.BigEndianStructure):
     _fields_ = [
             ("bSetState", c_uint8, 1),

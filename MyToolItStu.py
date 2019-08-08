@@ -10,6 +10,7 @@ Version = {
 }
 
 
+
 class StuErrorWordFlags(ctypes.LittleEndianStructure):
     _fields_ = [
             ("bTxFail", c_uint32, 1),

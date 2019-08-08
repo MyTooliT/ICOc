@@ -60,20 +60,19 @@ class myToolItWatch():
         self.vAccSet(True, False, False, 3)
         self.vVoltageSet(False, False, False, 3)
         self.vDeviceNameSet(TestConfig["DevName"])
-        self.vDeviceNameSerial(None)
+        self.vDeviceAddressSet("0")
         self.vAdcConfig(2, 8, 64)
         self.vAdcRefVConfig("VDD")
         self.vDisplayTime(10)  
         self.vRunTime(10, 0)
-        self.PeakCan.readThreadStop()  # TODO: Comment this out       
             
     def __exit__(self):
         self.PeakCan.ReadArrayReset()
-        if False != self.bConnected:
+        if False != self.PeakCan.bConnected:
             self._BlueToothStatistics()
             ReceiveFailCounter = self._RoutingInformation()
             self._statusWords()
-            self.PeakCan.Disconnect()
+            self.PeakCan.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
             if(0 < ReceiveFailCounter):
                 self.bError = True
         self.PeakCan.Logger.Info("End Time Stamp")
@@ -89,7 +88,21 @@ class myToolItWatch():
         if False != self.bSave:
             self.xmlSave(self.tree, self.root)
         print("Fin")
-               
+
+    def _statusWords(self):
+        ErrorWord = SthErrorWord()
+        psw0 = self.PeakCan.statusWord0(MyToolItNetworkNr["STH1"])
+        self.PeakCan.Logger.Info("STH Status Word: " + hex(psw0))
+        psw0 = self.PeakCan.statusWord0(MyToolItNetworkNr["STU1"])
+        self.PeakCan.Logger.Info("STU Status Word: " + hex(psw0))
+        ErrorWord.asword = self.PeakCan.statusWord1(MyToolItNetworkNr["STH1"])
+        if True == ErrorWord.b.bAdcOverRun:
+            self.bError = True
+        self.PeakCan.Logger.Info("STH bError Word: " + hex(ErrorWord.asword))
+        ErrorWord.asword = self.PeakCan.statusWord1(MyToolItNetworkNr["STU1"])
+        self.PeakCan.Logger.Info("STU bError Word: " + hex(ErrorWord.asword))
+        
+        
     def _BlueToothStatistics(self):
         SendCounter = self.PeakCan.BlueToothCmd(MyToolItNetworkNr["STH1"], SystemCommandBlueTooth["SendCounter"])
         self.PeakCan.Logger.Info("BlueTooth Send Counter(STH1): " + str(SendCounter))
@@ -257,15 +270,20 @@ class myToolItWatch():
     
     def vSthAutoConnect(self, bSthAutoConnect):     
         self.bSthAutoConnect = bool(bSthAutoConnect)
-     
-    def vDeviceNameSerial(self, sDevName):   
-        self.sSerial = sDevName
         
     def vDeviceNameSet(self, sDevName):
         if 8 < len(sDevName):
             sDevName = sDevName[:8]
         self.sDevName = sDevName
         self.iDevNr = None
+        
+    def vDeviceAddressSet(self, iAddress):
+        iAddress = int(iAddress, base=0)
+        if 0<= iAddress and (2**48-1)>iAddress:
+            iAddress = hex(iAddress)
+            self.iAddress = iAddress
+        else:
+            self.iAddress = 0        
         
     def vAdcConfig(self, iPrescaler, iAquistionTime, iOversampling):
         if Prescaler["Min"] > iPrescaler:
@@ -424,6 +442,9 @@ class myToolItWatch():
         if None != self.args_dict['name_connect']:
             self.vDeviceNameSet(self.args_dict['name_connect'][0])
             self.vSthAutoConnect(True)
+        elif None != self.args_dict['bluetooth_connect']:
+            self.vDeviceAddressSet(self.args_dict['bluetooth_connect'][0])
+            self.vSthAutoConnect(True)            
             
         if None != self.args_dict['points']: 
             points = self.args_dict['points'][0] & 0x03
@@ -469,15 +490,15 @@ class myToolItWatch():
                 self.KeyBoadInterrupt = True
                 sys.exit()
                 
-    def execute(self):  
+    def vDataAquisition(self):  
         if False == self.KeyBoadInterrupt:
             try:
-                if 1 == self.connected:
-                    self.configStreamingAcc(self.prescaler, self.aquistionTime, self.oversampling)    
+                if False != self.PeakCan.bConnected: 
+                    self.PeakCan.ConfigAdc(MyToolItNetworkNr["STH1"], self.iPrescaler, self.iAquistionTime, self.iOversampling, AdcReference[self.sAdcRef])
                     self.PeakCan.readThreadStop()            
                     print("Start")
                     self.PeakCan.Logger.Info("Start")
-                    self.GetStreamingAccData()
+                    self.vGetStreamingAccData()
                 else:
                     print("Device not allocable")    
                     self.PeakCan.Logger.bError("Device not allocable")     
@@ -486,10 +507,12 @@ class myToolItWatch():
                 sys.exit()
                 
     def close(self):
-        if False != self.bClose:
-            sys.exit()          
-    
-    def GetStreamingAccDataProcess(self, endTime):
+        if False != self.PeakCan.bConnected:
+            self.__exit__()  
+
+    def vGetStreamingAccDataProcess(self, endTime):
+#         print("Inteval Time: " + str(self.iIntervalTime) + "s")
+#         print("Display Time: " + str(self.iDisplayTime) + "ms")
         try:
             while(self.PeakCan.getTimeMs() < endTime):
                 ack = self.ReadMessage()
@@ -507,7 +530,7 @@ class myToolItWatch():
         finally:
             sys.exit()               
                               
-    def GetStreamingAccData(self):
+    def vGetStreamingAccData(self):  
         accFormat = AtvcFormat()
         accFormat.asbyte = 0
         accFormat.b.bStreaming = 1
@@ -532,30 +555,30 @@ class myToolItWatch():
         if None == ack:
             self.PeakCan.Logger.bError("No Ack received from Device: " + str(self.dev))
             endTime = currentTime
-        elif(0 == self.runTime):
+        elif(0 == self.iRunTime):
             endTime = currentTime + (1 << 32)
         else:
-            endTime = currentTime + self.runTime * 1000
-        self.GetStreamingAccDataProcess(endTime)
+            endTime = currentTime + self.iRunTime * 1000
+        self.vGetStreamingAccDataProcess(endTime)
                 
     def GetMessageAccSingle(self, prefix, canMsg):       
         canData = canMsg["CanMsg"].DATA
         canTimeStamp = canMsg["PeakCanTime"]
         canTimeStamp = round(canTimeStamp, 3)
-        ackMsg = ("MsgCounter: " + str(canData[1]) + "; ")
-        ackMsg += (format(canTimeStamp, '0.3f') + "; ")
+        ackMsg = ("MsgCounter: " + str(format(canData[1], '3d')) + "; ")
+        ackMsg += ("TimeStamp: " + format(canTimeStamp, '12.3f') + "ms; ")
         ackMsg += (prefix + " ")
         ackMsg += str(messageValueGet(canData[2:4]))
         ackMsg += "; "
         self.PeakCan.Logger.Info(ackMsg)
-        ackMsg = ("MsgCounter: " + str(canData[1]) + "; ")
-        ackMsg += (format(canTimeStamp, '0.3f') + "; ")
+        ackMsg = ("MsgCounter: " + str(format(canData[1], '3d')) + "; ")
+        ackMsg += ("TimeStamp: " + format(canTimeStamp, '12.3f') + "ms; ")
         ackMsg += (prefix + " ")
         ackMsg += str(messageValueGet(canData[4:6]))
         ackMsg += "; "
         self.PeakCan.Logger.Info(ackMsg)
-        ackMsg = ("MsgCounter: " + str(canData[1]) + "; ")
-        ackMsg += (format(canTimeStamp, '0.3f') + "; ")
+        ackMsg = ("MsgCounter: " + str(format(canData[1], '3d')) + "; ")
+        ackMsg += ("TimeStamp: " + format(canTimeStamp, '12.3f') + "ms; ")
         ackMsg += (prefix + " ")
         ackMsg += str(messageValueGet(canData[6:8]))
         ackMsg += "; "
@@ -565,8 +588,8 @@ class myToolItWatch():
         canData = canMsg["CanMsg"].DATA
         canTimeStamp = canMsg["PeakCanTime"]
         canTimeStamp = round(canTimeStamp, 3)
-        ackMsg = ("MsgCounter: " + str(canData[1]) + "; ")
-        ackMsg += (format(canTimeStamp, '0.3f') + "; ")
+        ackMsg = ("MsgCounter: " + str(format(canData[1], '3d')) + "; ")
+        ackMsg += ("TimeStamp: " + format(canTimeStamp, '12.3f') + "ms; ")
         ackMsg += (prefix1 + " ")
         ackMsg += str(messageValueGet(canData[2:4]))
         ackMsg += "; "
@@ -580,8 +603,8 @@ class myToolItWatch():
         canData = canMsg["CanMsg"].DATA
         canTimeStamp = canMsg["PeakCanTime"]
         canTimeStamp = round(canTimeStamp, 3)
-        ackMsg = ("MsgCounter: " + str(canData[1]) + "; ")
-        ackMsg += (format(canTimeStamp, '0.3f') + "; ")
+        ackMsg = ("MsgCounter: " + str(format(canData[1], '3d')) + "; ")
+        ackMsg += ("TimeStamp: " + format(canTimeStamp, '12.3f') + "ms; ")
         ackMsg += (prefix1 + " ")
         ackMsg += str(messageValueGet(canData[2:4]))
         ackMsg += "; "
@@ -596,7 +619,7 @@ class myToolItWatch():
         self.PeakCan.Logger.Info(ackMsg)                        
 
     def GetMessageAcc(self, canData):
-        if self.DataFormat == DataSets[1]:
+        if self.tAccDataFormat == DataSets[1]:
             if (0 != self.bAccX) and (0 != self.bAccY) and (0 == self.bAccZ):
                 self.GetMessageAccDouble("AccX", "AccY", canData)
             elif (0 != self.bAccX) and (0 == self.bAccY) and (0 != self.bAccZ):
@@ -605,7 +628,7 @@ class myToolItWatch():
                 self.GetMessageAccDouble("AccY", "AccZ", canData) 
             else:
                 self.GetMessageAccTripple("AccX", "AccY", "AccZ", canData)   
-        elif self.DataFormat == DataSets[3]:
+        elif self.tAccDataFormat == DataSets[3]:
             if 0 != self.bAccX:
                 self.GetMessageAccSingle("AccX", canData)               
             elif 0 != self.bAccY:
@@ -617,14 +640,14 @@ class myToolItWatch():
             
     def ReadMessage(self):
         message = None
-        result = self.m_objPCANBasic.Read(self.m_PcanHandle)
+        result = self.PeakCan.m_objPCANBasic.Read(self.PeakCan.m_PcanHandle)
         if result[0] == PeakCanFd.PCAN_ERROR_OK:
             peakCanTimeStamp = result[2].millis_overflow * (2 ** 32) + result[2].millis + result[2].micros / 1000
-            message = {"CanMsg" : result[1], "PcTime" : self.getTimeMs(), "PeakCanTime" : peakCanTimeStamp}   
+            message = {"CanMsg" : result[1], "PcTime" : self.PeakCan.getTimeMs(), "PeakCanTime" : peakCanTimeStamp}   
         elif result[0] == PeakCanFd.PCAN_ERROR_QOVERRUN:
             self.Logger.bError("RxOverRun")
             print("RxOverRun")
-            self.RunReadThread = False
+            raise
         return message
 
     def excelCellWidthAdjust(self, worksheet, factor=1.2, bSmaller=True):
@@ -719,7 +742,7 @@ class myToolItWatch():
     def _XmlWriteEndoding(self):
         xml = (bytes('<?xml version="1.0" encoding="UTF-8"?>\n', encoding='utf-8') + ET.tostring(self.root))
         xml = xml.decode('utf-8')
-        with open(self.sXmlFileName, 'w+') as f:
+        with open(self.sXmlFileName, "w", encoding='utf-8') as f:
             f.write(xml)   
      
     """
@@ -822,12 +845,16 @@ class myToolItWatch():
         for config in self.tree.find('Config'):
             if config.get('name') == self.sSetupConfig:        
                 config.find('DeviceName').text = str(self.sDevName)
-                iAcc = int(self.bAccX) << 2 | int(self.bAccX) << 1 | int(self.bAccX) << 0
+                config.find('DeviceAddress').text = str(self.iAddress)
+                iAcc = int(self.bAccX) << 2 | int(self.bAccY) << 1 | int(self.bAccZ) << 0
                 config.find('Acc').text = str(iAcc)
+                iVoltage = int(self.bVoltageX) << 2 | int(self.bVoltageY) << 1 | int(self.bAcZ) << 0
+                config.find('Voltage').text = str(iVoltage)
                 config.find('Prescaler').text = str(self.iPrescaler)
                 config.find('AcquisitionTime').text = str(AdcAcquisitionTimeReverse[self.iAquistionTime])
                 config.find('OverSamples').text = str(AdcOverSamplingRateReverse[self.iOversampling])
                 config.find('AdcRef').text = str(self.sAdcRef)
+                config.find('LogName').text = self.PeakCan.Logger.fileName[:-24]
                 config.find('RunTime').text = str(self.iRunTime)
                 config.find('IntervalTime').text = str(self.iIntervalTime)
                 config.find('DisplayTime').text = str(self.iDisplayTime)
@@ -837,11 +864,17 @@ class myToolItWatch():
         for config in self.tree.find('Config'):
             if config.get('name') == self.sSetupConfig:
                 self.vDeviceNameSet(config.find('DeviceName').text)
+                self.vDeviceAddressSet(config.find('DeviceAddress').text)
                 samplePoints = config.find('Acc').text
                 bAccX = int(samplePoints[2])
                 bAccY = int(samplePoints[1])
                 bAccZ = int(samplePoints[0])
                 self.vAccSet(bAccX, bAccY, bAccZ, -1)
+                samplePoints = config.find('Voltage').text
+                bVoltageX = int(samplePoints[2])
+                bVoltageY = int(samplePoints[1])
+                bVoltageZ = int(samplePoints[0])
+                self.vVoltageSet(bVoltageX, bVoltageY, bVoltageZ, -1)
                 self.vAdcConfig(int(config.find('Prescaler').text), int(config.find('AcquisitionTime').text), int(config.find('OverSamples').text))
                 self.vAdcRefVConfig(config.find('AdcRef').text)
                 self.bLogSet(str(config.find('LogName').text) + ".txt")
@@ -883,7 +916,7 @@ class myToolItWatch():
         print("Table Calculation File: " + str(self.sSheetFile))
         print("Log Name: " + str(self.PeakCan.Logger.fileName))
         print("Device Name (to be connected): " + str(self.sDevName))
-        print("Bluetooth address(to be connected): " + str(self.sSerial))#Todo machen
+        print("Bluetooth address(to be connected): " + str(self.iAddress))#Todo machen
         print("AutoConnect?: " + str(self.bSthAutoConnect))
         print("Run Time: " + str(self.iRunTime) + "s")
         print("Inteval Time: " + str(self.iIntervalTime) + "s")
@@ -904,6 +937,16 @@ class myToolItWatch():
                             
     def vRunConsole(self):
         self._vRunConsoleStartup()
+        self.reset()
+        if False != self.bSthAutoConnect:
+            if "0x0" != self.iAddress:
+                self.PeakCan.BlueToothConnectPollingAddress(MyToolItNetworkNr["STU1"], self.iAddress)
+            else:
+                self.PeakCan.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], self.sDevName)
+            if False != self.PeakCan.bConnected:
+                self.vDataAquisition()          
+        self.close()        
+        
 
            
 if __name__ == "__main__":
@@ -911,4 +954,5 @@ if __name__ == "__main__":
     watch.vParserInit()
     watch.vParserConsoleArgumentsPass()
     watch.vRunConsole()
+    
         

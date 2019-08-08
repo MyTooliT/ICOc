@@ -110,6 +110,7 @@ class Logger():
 class PeakCanFd(object):
 
     def __init__(self, baudrate, testMethodName, testMethodNameError, sender, receiver):
+        self.bConnected = False
         self.sender = sender
         self.receiver = receiver
         self.Logger = Logger(testMethodName, testMethodNameError)
@@ -923,7 +924,7 @@ class PeakCanFd(object):
         endTime = time() + BluetoothTime["Connect"]
         self.Logger.Info("Try to connect to Test Device Name: " + Name)
         self.BlueToothConnectConnect(stuNr)
-        while None == self.Name and 8 > deviceNumber and time() < endTime:
+        while None == self.Name and Config["DeviceNumberMax"] > deviceNumber and time() < endTime:
             if 0 < self.BlueToothConnectTotalScannedDeviceNr(stuNr):
                 endTime = time() + BluetoothTime["Connect"]
                 RecName = ''
@@ -931,16 +932,64 @@ class PeakCanFd(object):
                     RecName = self.BlueToothNameGet(stuNr, deviceNumber)[0:8]
                 recNameList.append(RecName)
                 if Name == RecName:
+                    self.iAddress = hex(self.BlueToothAddressGet(stuNr, deviceNumber))
                     self.Name = Name
                     self.DeviceNr = deviceNumber
-                    self.Logger.Info("Connected to: " + self.Name)
-                    self.BlueToothConnect(stuNr, deviceNumber)
+                    currentTime = time()            
+                    endTime = currentTime + BluetoothTime["Connect"] 
+                    self.BlueToothConnectDeviceConnect(stuNr, deviceNumber)  
+                    ret = 0  
+                    while time() < endTime and 0 == ret:      
+                        ret = self.BlueToothCheckConnect(stuNr)  
+                    self.bConnected = bool(0!=ret)
+                    if False != self.bConnected:
+                        self.Logger.Info("Connected to: " + self.Name)
                 else:
                     deviceNumber += 1
                     self.BlueToothDisconnect(stuNr)
         if None == self.Name:
             self.Logger.Info("Available Names: " + str(recNameList))
             print("Available Names: " + str(recNameList))
+            self.__exitError()
+        return deviceNumber
+    
+    """
+    Connect to device via Bluetooth Address
+    """    
+
+    def BlueToothConnectPollingAddress(self, stuNr, iAddress):
+        self.Name = None       
+        deviceNumber = 0 
+        recAddressList = []
+        endTime = time() + BluetoothTime["Connect"]
+        self.Logger.Info("Try to connect to Test Device Address: " + str(iAddress))
+        self.BlueToothConnectConnect(stuNr)
+        while None == self.Name and Config["DeviceNumberMax"] > deviceNumber and time() < endTime:
+            if 0 < self.BlueToothConnectTotalScannedDeviceNr(stuNr):
+                endTime = time() + BluetoothTime["Connect"]
+                RecAddress = 0
+                while 0 == RecAddress and time() < endTime:
+                    RecAddress = hex(self.BlueToothAddressGet(stuNr, deviceNumber))
+                recAddressList.append(RecAddress)
+                if iAddress == RecAddress:
+                    self.iAddress = iAddress
+                    self.Name = self.BlueToothNameGet(stuNr, deviceNumber)[0:8]
+                    self.DeviceNr = deviceNumber
+                    currentTime = time()            
+                    endTime = currentTime + BluetoothTime["Connect"] 
+                    self.BlueToothConnectDeviceConnect(stuNr, deviceNumber)  
+                    ret = 0  
+                    while time() < endTime and 0 == ret:      
+                        ret = self.BlueToothCheckConnect(stuNr)  
+                    self.bConnected = bool(0!=ret)
+                    if False != self.bConnected:
+                        self.Logger.Info("Connected to: " + str(self.iAddress))
+                else:
+                    deviceNumber += 1
+                    self.BlueToothDisconnect(stuNr)
+        if None == self.Name:
+            self.Logger.Info("Available Names: " + str(recAddressList))
+            print("Available Names: " + str(recAddressList))
             self.__exitError()
         return deviceNumber
 
