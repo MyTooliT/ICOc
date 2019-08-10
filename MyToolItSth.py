@@ -21,7 +21,7 @@ TestConfig = {
 SleepTime = {
     "Min" : 10000,
     "Reset1" : 300000,
-    "AdvertisementMin" : 50,
+    "AdvertisementMin" : 200,
     "AdvertisementMax" : 4000,
     "AdvertisementReset1" : 400,
     "Reset2" : 3600000,
