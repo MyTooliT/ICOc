@@ -44,15 +44,15 @@ VoltMiddleBat = 0
 VoltToleranceBat = 0.5   
 VoltRawMiddleBat = 780 
 VoltRawToleranceBat = 300
-SigIndBatteryQ1 = 0
-SigIndBatteryQ25 = 1
-SigIndBatteryMedL = 2
-SigIndBatteryMedH = 10
-SigIndBatteryQ75 = 20
-SigIndBatteryQ99 = 30
-SigIndBatteryVar = 100
-SigIndBatterySkewness = 0.6
-SigIndBatterySNR = 60
+SigIndBatteryQ1 = 1          
+SigIndBatteryQ25 = 10         
+SigIndBatteryMedL = 20        
+SigIndBatteryMedH = 100    
+SigIndBatteryQ75 = 120     
+SigIndBatteryQ99 = 140     
+SigIndBatteryVar = 40000     
+SigIndBatterySkewness = 20   
+SigIndBatterySNR = 60        
 
     
 # Acceleration
@@ -61,7 +61,7 @@ AdcMiddleY = 0
 AdcMiddleZ = 0
 AdcToleranceX = 5
 AdcRawMiddleX = 2 ** 15
-AdcRawToleranceX = 128
+AdcRawToleranceX = 512
 SelfTestOutputChangemVMin = 70
 SelfTestOutputChangemVTyp = 110
 
@@ -71,13 +71,12 @@ SigIndAccXMedL = 2 ** 15 * 0.997
 SigIndAccXMedH = 2 ** 15 * 1.003
 SigIndAccXQ75 = 2 ** 15 * 1.005
 SigIndAccXQ99 = 2 ** 15 * 1.01
-SigIndAccXVar = 100
+SigIndAccXVar = 2000
 if 1 == Axis:
     AdcToleranceY = 200
     AdcToleranceZ = 200
     AdcRawMiddleY = 0
     AdcRawMiddleZ = 0
-    VoltRawToleranceBat = 60
     AdcRawToleranceY = 54000
     AdcRawToleranceZ = 54000
     SigIndAccXSkewness = 0.9
@@ -105,9 +104,8 @@ else:
     AdcToleranceZ = 5
     AdcRawMiddleY = 0
     AdcRawMiddleZ = 0
-    VoltRawToleranceBat = 60
-    AdcRawToleranceY = 54000
-    AdcRawToleranceZ = 54000    
+    AdcRawToleranceY = 512
+    AdcRawToleranceZ = 512    
     SigIndAccY1 = 2 ** 15 * 0.99
     SigIndAccY25 = 2 ** 15 * 0.995
     SigIndAccYedL = 2 ** 15 * 0.999
