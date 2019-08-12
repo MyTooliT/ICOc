@@ -47,6 +47,9 @@ class myToolItWatch():
         self.bError = False     
         self.bClose = True   
         self.bConnected = False
+        self.iMsgLoss = 0
+        self.iMsgsTotal = 0
+        self.iMsgCounterLast = 0
         self.PeakCan = PeakCanFd.PeakCanFd(PeakCanFd.PCAN_BAUD_1M, "init.txt", "initError.txt", MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"])
         self.vSave2Xml(False)
         self.vSthAutoConnect(False)
@@ -243,7 +246,6 @@ class myToolItWatch():
         self.bAccX = bool(bX) 
         self.bAccY = bool(bY) 
         self.bAccZ = bool(bZ) 
-        
 
         if  (dataSets in DataSets):
             self.tAccDataFormat = DataSets[dataSets]
@@ -316,10 +318,10 @@ class myToolItWatch():
         self.iRunTime = int(runTime)
     
     def vGraphInit(self, xDim=10, sampleInterval=0.05):
-        self.timeStamp = int(round(time() * 1000))
-        self.iSampleInterval = sampleInterval*1000
-        self.fPacketLoss = 0
-        
+        self.tDataPointTimeStamp = int(round(time() * 1000))
+        self.iPacketLossTimeStamp = int(round(time() * 1000))
+        self.iSampleInterval = sampleInterval * 1000
+                
     def guiProcessStop(self):
         try:
             self.commandQueue.put(["Run", False])
@@ -340,27 +342,41 @@ class myToolItWatch():
         self.guiProcess = multiprocessing.Process(target=vPlotter, args=(self.dataQueue, self.commandQueue))
         self.guiProcess.start()
         self.commandQueue.put(["sampleInterval", self.iSampleInterval])
-        self.commandQueue.put(["diagramName", "Acceleration("+str(self.fPacketLoss) +"%)"])
+        self.vGraphPacketLossUpdate(0)
         if False != self.bAccX:
             self.commandQueue.put(["lineNameX", "AccX"])
         if False != self.bAccY:
             self.commandQueue.put(["lineNameY", "AccY"])
         if False != self.bAccZ:
             self.commandQueue.put(["lineNameZ", "AccZ"])
-        self.vGraphPacketLossUpdate()
         self.commandQueue.put(["Plot", True])
      
     def vGraphPointNext(self, x, y, z):
         timeStampNow = int(round(time() * 1000))
-        if self.iSampleInterval < (timeStampNow - self.timeStamp):
-            self.timeStamp = timeStampNow
+        if self.iSampleInterval < (timeStampNow - self.tDataPointTimeStamp):
+            self.tDataPointTimeStamp = timeStampNow
             self.dataQueue.put({"X": x, "Y" : y, "Z" : z})
-            
 
-    def vGraphPacketLossUpdate(self):
-        if 0 < self.fPacketLoss:
-            self.commandQueue.put(["diagramName", "Acceleration("+str(self.fPacketLoss) +"%)"])
-            self.fPacketLoss = 0
+    def vGraphPacketLossUpdate(self, msgCounter):
+        self.iMsgCounterLast += 1
+        self.iMsgCounterLast %= 256
+        if  self.iMsgCounterLast != msgCounter:
+            iLost = msgCounter - self.iMsgCounterLast
+            self.iMsgLoss += iLost
+            self.iMsgsTotal += iLost
+            if 0 > iLost:
+                self.iMsgLoss += 256
+                self.iMsgsTotal += 256
+            self.iMsgCounterLast = msgCounter
+        else:
+            self.iMsgsTotal += 1
+        
+        iPacketLossTimeStamp = int(round(time() * 1000))
+        if 1000 < (iPacketLossTimeStamp - self.iPacketLossTimeStamp):
+            self.iPacketLossTimeStamp = iPacketLossTimeStamp       
+            self.commandQueue.put(["diagramName", "Acceleration(" + str(format(100*self.iMsgLoss/self.iMsgsTotal, '3.3f')) + "%)"])
+            self.iMsgLoss = 0
+            self.iMsgsTotal = 0
         
     def vVersion(self, major, minor, build):
         if 2 <= major and 1 <= minor:
@@ -591,7 +607,8 @@ class myToolItWatch():
                     elif(self.AccAckExpected.DATA[0] != ack["CanMsg"].DATA[0] and self.VoltageAckExpected.DATA[0] != ack["CanMsg"].DATA[0])  :
                         self.PeakCan.Logger.bError("Wrong Subheader-Format(Acceleration Format): " + str(ack["CanMsg"].ID))
                     elif self.AccAckExpected.ID == ack["CanMsg"].ID:
-                        self.GetMessageAcc(ack)       
+                        self.GetMessageAcc(ack)
+                                   
                     else:
                         self.GetMessageVoltage(ack)     
         except KeyboardInterrupt:
@@ -656,7 +673,6 @@ class myToolItWatch():
         else:
             endTime = currentTime + self.iRunTime * 1000
         self.vGetStreamingAccDataProcess(endTime)
-                
         
     def GetMessageSingle(self, prefix, canMsg):  
         canData = canMsg["CanMsg"].DATA 
@@ -684,7 +700,6 @@ class myToolItWatch():
         ackMsg += str(format(p3, '5d'))
         ackMsg += "; "
         self.PeakCan.Logger.Info(ackMsg)  
-
         
     def GetMessageDouble(self, prefix1, prefix2, canMsg):
         canData = canMsg["CanMsg"].DATA
@@ -725,6 +740,8 @@ class myToolItWatch():
     def GetMessageAcc(self, canData):
         data = canData["CanMsg"].DATA
         msgCounter = data[1]
+        self.vGraphPacketLossUpdate(msgCounter)
+        
         if self.tAccDataFormat == DataSets[1]:
             if (False != self.bAccX) and (False != self.bAccY) and (False == self.bAccZ):
                 self.GetMessageDouble("AccX", "AccY", canData)
