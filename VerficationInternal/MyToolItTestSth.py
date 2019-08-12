@@ -250,7 +250,7 @@ class TestSth(unittest.TestCase):
         dataSets = self.PeakCan.Can20DataSet(b1, b2, b3)
         [indexStart, indexEnd] = self.PeakCan.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], dataSets, b1, b2, b3, runTime, log=log, StartupTimeMs=startupTime)
         [array1, array2, array3] = self.PeakCan.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], dataSets, b1, b2, b3, indexStart, indexEnd)
-        self.PeakCan.ReadArrayReset()
+        self.PeakCan.ReadThreadReset()
         samplingPoints = self.PeakCan.samplingPoints(array1, array2, array3)
         if False != log:
             samplingPoints = self.PeakCan.samplingPoints(array1, array2, array3)
@@ -1415,13 +1415,13 @@ class TestSth(unittest.TestCase):
     def test0333StreamingMultiConfig(self):
         self.PeakCan.Logger.Info("Streaming AccX starts")
         self.test0321GetStreamingAccX()
-        self.PeakCan.ReadArrayReset()
+        self.PeakCan.ReadThreadReset()
         self.PeakCan.Logger.Info("Streaming AccXYZ starts")
         self.test0324GetStreamingAccXYZ()
-        self.PeakCan.ReadArrayReset()
+        self.PeakCan.ReadThreadReset()
         self.PeakCan.Logger.Info("Streaming AccX starts")
         self.test0321GetStreamingAccX()
-        self.PeakCan.ReadArrayReset()
+        self.PeakCan.ReadThreadReset()
         
     """
     Test long usage of data acquiring

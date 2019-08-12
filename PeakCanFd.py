@@ -145,7 +145,7 @@ class PeakCanFd(object):
                 print("Error while setting PCAN_BUSOFF_AUTORESET")
             self.ConfigureTraceFile()
             self.Reset()
-            self.ReadArrayReset()
+            self.ReadThreadReset()
                         
     def __exit__(self): 
         if False == self.bError:
@@ -186,7 +186,7 @@ class PeakCanFd(object):
             self.RunReadThread = False            
             self.readThread.join()
                     
-    def ReadArrayReset(self):
+    def ReadThreadReset(self):
         self.readThreadStop()            
         self.readArray = [{"CanMsg" : self.CanMessage20(0, 0, 0, [0, 0, 0, 0, 0, 0, 0, 0]), "PcTime" : self.getTimeMs(), "PeakCanTime" : 0}]
         self.readArray.append({"CanMsg" : self.CanMessage20(0, 0, 0, [0, 0, 0, 0, 0, 0, 0, 0]), "PcTime" : self.getTimeMs(), "PeakCanTime" : 0})

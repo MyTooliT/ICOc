@@ -16,7 +16,7 @@ cDict = {
     "timePoints" : np.linspace(0, 4, 20 + 1)[0:-1],
     "xAccPoints" : np.linspace(2 ** 15, 2 ** 15, 20 + 1)[0:-1],
     "yAccPoints" : np.linspace(2 ** 15, 2 ** 15, 20 + 1)[0:-1],
-    "zAccPoints" : np.linspace(0, 1, 20 + 1)[0:-1],
+    "zAccPoints" : np.linspace(2 ** 15, 2 ** 15, 20 + 1)[0:-1],
 }
 
 
@@ -39,18 +39,18 @@ def tPlotterInit():
         legendHandles.append(line1)  
         legendName.append(cDict["lineNameX"])   
     if "" != cDict["lineNameY"]:
-        line2, = ax.plot(cDict["timePoints"], cDict["YAccPoints"], '-o', alpha=0.8, label='Y')
-        legendHandles.append(line1)  
+        line2, = ax.plot(cDict["timePoints"], cDict["yAccPoints"], '-o', alpha=0.8, label='Y')
+        legendHandles.append(line2)  
         legendName.append(cDict["lineNameY"])    
     if "" != cDict["lineNameZ"]:
-        line3, = ax.plot(cDict["timePoints"], cDict["YAccPoints"], '-o', alpha=0.8, label='Z')
-        legendHandles.append(line1)  
-        legendName.append(cDict[cDict["lineNameZ"]])
+        line3, = ax.plot(cDict["timePoints"], cDict["zAccPoints"], '-o', alpha=0.8, label='Z')
+        legendHandles.append(line3)  
+        legendName.append(cDict["lineNameZ"])
     # update plot label/title
     plt.xlabel(cDict["X-Label"])
     plt.ylabel(cDict["Y-Label"])
     plt.legend(legendHandles, legendName)
-    plt.title('Title: {}'.format(cDict["diagramName"]))
+    plt.title('{}'.format(cDict["diagramName"]))
     plt.show()
     return [line1, line2, line3]
 
@@ -82,7 +82,7 @@ def vPlotterCommand(command, value):
         cDict["zPoints"] = np.linspace(0, 1, value + 1)[0:-1],
 
      
-def vPlotter(x, commandQueue):
+def vPlotter(valueQueue, commandQueue):
     global cDict
     
     while False != cDict["Run"] and False == cDict["Plot"]:
@@ -92,33 +92,38 @@ def vPlotter(x, commandQueue):
          
     [line1, line2, line3] = tPlotterInit()
     while False != cDict["Run"]:
-        if False == x.empty():
-            cDict["xAccPoints"][-1] = float(x.get())
-            [line1, line2, line3] = vlivePlot(cDict["xAccPoints"], line1, line2, line3, cDict["sampleInterval"])
+        if False == valueQueue.empty():
+            value = valueQueue.get()
+            cDict["xAccPoints"][-1] = float(value["X"])
+            cDict["yAccPoints"][-1] = float(value["Y"])
+            cDict["zAccPoints"][-1] = float(value["Z"])
+            [line1, line2, line3] = vlivePlot(cDict["xAccPoints"], cDict["yAccPoints"], cDict["zAccPoints"], line1, line2, line3, cDict["sampleInterval"])
             cDict["xAccPoints"] = np.append(cDict["xAccPoints"][1:], 0.0)
+            cDict["yAccPoints"] = np.append(cDict["yAccPoints"][1:], 0.0)
+            cDict["zAccPoints"] = np.append(cDict["zAccPoints"][1:], 0.0)
         if False == commandQueue.empty():
             [command, value] = commandQueue.get()  
             vPlotterCommand(command, value)
     print("Gui display closed")
 
         
-def vlivePlot(y1_data, line1, line2, line3, pause_time):
+def vlivePlot(yX_data, yY_data, yZ_data, line1, line2, line3, pause_time):
     # after the figure, axis, and line are created, we only need to update the y-data
     if None != line1:
-        line1.set_ydata(y1_data)
+        line1.set_ydata(yX_data)
         # adjust limits if new data goes beyond bounds
-        if np.min(y1_data) <= line1.axes.get_ylim()[0] or np.max(y1_data) >= line1.axes.get_ylim()[1]:
-            plt.ylim([np.min(y1_data) - np.std(y1_data), np.max(y1_data) + np.std(y1_data)])
+        if np.min(yX_data) <= line1.axes.get_ylim()[0] or np.max(yX_data) >= line1.axes.get_ylim()[1]:
+            plt.ylim([np.min(yX_data) - np.std(yX_data), np.max(yX_data) + np.std(yX_data)])
     if None != line2:
-        line2.set_ydata(y1_data)
+        line2.set_ydata(yY_data)
         # adjust limits if new data goes beyond bounds
-        if np.min(y1_data) <= line2.axes.get_ylim()[0] or np.max(y1_data) >= line2.axes.get_ylim()[1]:
-            plt.ylim([np.min(y1_data) - np.std(y1_data), np.max(y1_data) + np.std(y1_data)])
+        if np.min(yY_data) <= line2.axes.get_ylim()[0] or np.max(yY_data) >= line2.axes.get_ylim()[1]:
+            plt.ylim([np.min(yY_data) - np.std(yY_data), np.max(yY_data) + np.std(yY_data)])
     if None != line3:
-        line3.set_ydata(y1_data)
+        line3.set_ydata(yZ_data)
         # adjust limits if new data goes beyond bounds
-        if np.min(y1_data) <= line3.axes.get_ylim()[0] or np.max(y1_data) >= line3.axes.get_ylim()[1]:
-            plt.ylim([np.min(y1_data) - np.std(y1_data), np.max(y1_data) + np.std(y1_data)])
+        if np.min(yZ_data) <= line3.axes.get_ylim()[0] or np.max(yZ_data) >= line3.axes.get_ylim()[1]:
+            plt.ylim([np.min(yZ_data) - np.std(yZ_data), np.max(yZ_data) + np.std(yZ_data)])
     # this pauses the data so the figure/axis can catch up - the amount of pause can be altered above
     plt.pause(pause_time)
     

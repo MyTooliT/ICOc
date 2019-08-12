@@ -65,10 +65,11 @@ class myToolItWatch():
         self.vDisplayTime(10)  
         self.vRunTime(10, 0)
         self.vGraphInit()
+        self.PeakCan.readThreadStop()
             
     def __exit__(self):
         self.guiProcessStop()
-        self.PeakCan.ReadArrayReset()
+        self.PeakCan.ReadThreadReset()
         if False != self.PeakCan.bConnected:
             self._BlueToothStatistics()
             ReceiveFailCounter = self._RoutingInformation()
@@ -242,33 +243,36 @@ class myToolItWatch():
         self.bAccX = bool(bX) 
         self.bAccY = bool(bY) 
         self.bAccZ = bool(bZ) 
-        if (dataSets in DataSets) and dataSets >= [self.bAccX, self.bAccY, self.bAccZ].count(True):
+        
+
+        if  (dataSets in DataSets):
             self.tAccDataFormat = DataSets[dataSets]
         else:
             dataSets = [self.bAccX, self.bAccY, self.bAccZ].count(True)
-            dataSetTaken = DataSets[dataSets]
-            while not dataSets in DataSets or (dataSets < dataSetsMax):
-                    dataSets += 1
-                    if dataSets in DataSets:
-                        dataSetTaken = DataSets[dataSets]
-            self.tAccDataFormat = dataSetTaken
+            if 0 == dataSets:
+                pass
+            elif 1 == dataSets:
+                dataSets = 3
+            else:
+                dataSets = 1 
+            self.tAccDataFormat = DataSets[dataSets]
         
     def vVoltageSet(self, bX, bY, bZ, dataSets, dataSetsMax=3):
         self.bVoltageX = bool(bX)
         self.bVoltageY = bool(bY)
         self.bVoltageZ = bool(bZ)
-        if (dataSets in DataSets) and dataSets >= [self.bVoltageX, self.bVoltageY, self.bVoltageZ].count(True):
+        
+        if (dataSets in DataSets):
             self.tVoltageDataFormat = DataSets[dataSets]
         else:
             dataSets = [self.bVoltageX, self.bVoltageY, self.bVoltageZ].count(True)
-            while not dataSets in DataSets:
-                    dataSets += 1
-            dataSetTaken = DataSets[dataSets]
-            while not dataSets in DataSets or (dataSets < dataSetsMax):
-                    dataSets += 1
-                    if dataSets in DataSets:
-                        dataSetTaken = DataSets[dataSets]
-            self.tVoltageDataFormat = dataSetTaken
+            if 0 == dataSets:
+                pass
+            elif 1 == dataSets:
+                dataSets = 3
+            else:
+                dataSets = 1 
+            self.tVoltageDataFormat = DataSets[dataSets]
     
     def vSthAutoConnect(self, bSthAutoConnect):     
         self.bSthAutoConnect = bool(bSthAutoConnect)
@@ -314,12 +318,15 @@ class myToolItWatch():
     def vGraphInit(self, xDim=10, sampleInterval=0.05):
         self.timeStamp = int(round(time() * 1000))
         self.iSampleInterval = sampleInterval*1000
+        self.fPacketLoss = 0
         
     def guiProcessStop(self):
         try:
             self.commandQueue.put(["Run", False])
             self.dataQueue.close()
-            self.dataQueue.join_thread()      
+            self.commandQueue.close()
+            self.dataQueue.join_thread() 
+            self.commandQueue.join_thread()     
             self.guiProcess.join()
             self.runGuiput.close()
             self.runGuiput.join_thread()  
@@ -333,14 +340,27 @@ class myToolItWatch():
         self.guiProcess = multiprocessing.Process(target=vPlotter, args=(self.dataQueue, self.commandQueue))
         self.guiProcess.start()
         self.commandQueue.put(["sampleInterval", self.iSampleInterval])
-        self.commandQueue.put(["diagramName", "Acceleration Plotting"])
+        self.commandQueue.put(["diagramName", "Acceleration("+str(self.fPacketLoss) +"%)"])
+        if False != self.bAccX:
+            self.commandQueue.put(["lineNameX", "AccX"])
+        if False != self.bAccY:
+            self.commandQueue.put(["lineNameY", "AccY"])
+        if False != self.bAccZ:
+            self.commandQueue.put(["lineNameZ", "AccZ"])
+        self.vGraphPacketLossUpdate()
         self.commandQueue.put(["Plot", True])
      
-    def vGraphPointNext(self, x, y=None, z=None):
+    def vGraphPointNext(self, x, y, z):
         timeStampNow = int(round(time() * 1000))
         if self.iSampleInterval < (timeStampNow - self.timeStamp):
             self.timeStamp = timeStampNow
-            self.dataQueue.put(x)
+            self.dataQueue.put({"X": x, "Y" : y, "Z" : z})
+            
+
+    def vGraphPacketLossUpdate(self):
+        if 0 < self.fPacketLoss:
+            self.commandQueue.put(["diagramName", "Acceleration("+str(self.fPacketLoss) +"%)"])
+            self.fPacketLoss = 0
         
     def vVersion(self, major, minor, build):
         if 2 <= major and 1 <= minor:
@@ -481,22 +501,21 @@ class myToolItWatch():
             
         if None != self.args_dict['points']: 
             points = self.args_dict['points'][0] & 0x07
-            bX = bool(points & 1)
+            bZ = bool(points & 1)
             bY = bool((points >> 1) & 1)
-            bZ = bool((points >> 2) & 1)
-            pointBool = [bX, bY, bZ]
-            self.vAccSet(pointBool[2], pointBool[1], pointBool[0], pointBool.count(True))
+            bX = bool((points >> 2) & 1)
+            self.vAccSet(bX, bY, bZ, -1)
         if None != self.args_dict['voltage_points']: 
             points = self.args_dict['voltage_points'][0] & 0x07
-            bX = bool(points & 1)
+            bZ = bool(points & 1)
             bY = bool((points >> 1) & 1)
-            bZ = bool((points >> 2) & 1)
-            pointBool = [bX, bY, bZ]
-            self.vVoltageSet(pointBool[2], pointBool[1], pointBool[0], pointBool.count(True))                          
+            bX = bool((points >> 2) & 1)
+            self.vVoltageSet(bX, bY, bZ, -1)                          
                            
     def reset(self):
         if False == self.KeyBoadInterrupt:
             try:
+                self.PeakCan.ReadThreadReset()
                 self.PeakCan.cmdReset(MyToolItNetworkNr["STU1"])
             except KeyboardInterrupt:
                 self.KeyBoadInterrupt = True
@@ -630,7 +649,7 @@ class myToolItWatch():
             ack = self.vGetStreamingAccDataVoltageStart()
         currentTime = self.PeakCan.getTimeMs()
         if None == ack:
-            self.PeakCan.Logger.bError("No Ack received from Device: " + str(self.dev))
+            self.PeakCan.Logger.bError("No Ack received from Device: " + str(self.iDevNr))
             endTime = currentTime
         elif(0 == self.iRunTime):
             endTime = currentTime + (1 << 32)
@@ -638,7 +657,8 @@ class myToolItWatch():
             endTime = currentTime + self.iRunTime * 1000
         self.vGetStreamingAccDataProcess(endTime)
                 
-    def GetMessageAccSingle(self, prefix, canMsg):  
+        
+    def GetMessageSingle(self, prefix, canMsg):  
         canData = canMsg["CanMsg"].DATA 
         p1 = messageValueGet(canData[2:4])
         p2 = messageValueGet(canData[6:8])
@@ -664,26 +684,26 @@ class myToolItWatch():
         ackMsg += str(format(p3, '5d'))
         ackMsg += "; "
         self.PeakCan.Logger.Info(ackMsg)  
-        self.vGraphPointNext(p1)
-        self.vGraphPointNext(p2)
-        self.vGraphPointNext(p3)
+
         
-    def GetMessageAccDouble(self, prefix1, prefix2, canMsg):
+    def GetMessageDouble(self, prefix1, prefix2, canMsg):
         canData = canMsg["CanMsg"].DATA
         canTimeStamp = canMsg["PeakCanTime"]
         canTimeStamp = round(canTimeStamp, 3)
+        p1_1 = messageValueGet(canData[2:4])
+        p1_2 = messageValueGet(canData[4:6])
         ackMsg = ("MsgCounter: " + str(format(canData[1], '3d')) + "; ")
         ackMsg += ("TimeStamp: " + format(canTimeStamp, '12.3f') + "ms; ")
         ackMsg += (prefix1 + " ")
-        ackMsg += str(format(messageValueGet(canData[2:4]), '5d'))
+        ackMsg += str(format(p1_1, '5d'))
         ackMsg += "; "
         ackMsg += prefix2
         ackMsg += " "
-        ackMsg += str(format(messageValueGet(canData[4:6]), '5d'))
+        ackMsg += str(format(p1_2, '5d'))
         ackMsg += "; "
-        self.PeakCan.Logger.Info(ackMsg)       
+        self.PeakCan.Logger.Info(ackMsg) 
 
-    def GetMessageAccTripple(self, prefix1, prefix2, prefix3, canMsg):
+    def GetMessageTripple(self, prefix1, prefix2, prefix3, canMsg):
         canData = canMsg["CanMsg"].DATA
         canTimeStamp = canMsg["PeakCanTime"]
         canTimeStamp = round(canTimeStamp, 3)
@@ -703,42 +723,51 @@ class myToolItWatch():
         self.PeakCan.Logger.Info(ackMsg)                        
 
     def GetMessageAcc(self, canData):
+        data = canData["CanMsg"].DATA
+        msgCounter = data[1]
         if self.tAccDataFormat == DataSets[1]:
-            if (0 != self.bAccX) and (0 != self.bAccY) and (0 == self.bAccZ):
-                self.GetMessageAccDouble("AccX", "AccY", canData)
-            elif (0 != self.bAccX) and (0 == self.bAccY) and (0 != self.bAccZ):
-                self.GetMessageAccDouble("AccX", "AccZ", canData)
-            elif (0 == self.bAccX) and (0 != self.bAccY) and (0 != self.bAccZ):
-                self.GetMessageAccDouble("AccY", "AccZ", canData) 
+            if (False != self.bAccX) and (False != self.bAccY) and (False == self.bAccZ):
+                self.GetMessageDouble("AccX", "AccY", canData)
+                self.vGraphPointNext(messageValueGet(data[2:4]), messageValueGet(data[4:6]), 0)
+            elif (False != self.bAccX) and (False == self.bAccY) and (False != self.bAccZ):
+                self.GetMessageDouble("AccX", "AccZ", canData)
+                self.vGraphPointNext(messageValueGet(data[2:4]), 0, messageValueGet(data[4:6]))
+            elif (False == self.bAccX) and (False != self.bAccY) and (False != self.bAccZ):
+                self.GetMessageDouble("AccY", "AccZ", canData) 
+                self.vGraphPointNext(0, messageValueGet(data[2:4]), messageValueGet(data[4:6]))
             else:
-                self.GetMessageAccTripple("AccX", "AccY", "AccZ", canData)   
+                self.GetMessageTripple("AccX", "AccY", "AccZ", canData)   
+                self.vGraphPointNext(messageValueGet(data[2:4]), messageValueGet(data[4:6]), messageValueGet(data[6:8]))
         elif self.tAccDataFormat == DataSets[3]:
-            if 0 != self.bAccX:
-                self.GetMessageAccSingle("AccX", canData)               
-            elif 0 != self.bAccY:
-                self.GetMessageAccSingle("AccY", canData)               
-            elif 0 != self.bAccZ:
-                self.GetMessageAccSingle("AccZ", canData)       
+            if False != self.bAccX:
+                self.GetMessageSingle("AccX", canData)  
+                self.vGraphPointNext(messageValueGet(data[2:4]), 0, 0)            
+            elif False != self.bAccY:
+                self.GetMessageSingle("AccY", canData)   
+                self.vGraphPointNext(0, messageValueGet(data[2:4]), 0)          
+            elif False != self.bAccZ:
+                self.GetMessageSingle("AccZ", canData) 
+                self.vGraphPointNext(0, 0, messageValueGet(data[2:4]))   
         else:               
             self.PeakCan.Logger.bError("Wrong Ack format")
 
     def GetMessageVoltage(self, canData):
         if self.tAccDataFormat == DataSets[1]:
             if (0 != self.bAccX) and (0 != self.bAccY) and (0 == self.bAccZ):
-                self.GetMessageAccDouble("VoltageX", "VoltageY", canData)
+                self.GetMessageDouble("VoltageX", "VoltageY", canData)
             elif (0 != self.bAccX) and (0 == self.bAccY) and (0 != self.bAccZ):
-                self.GetMessageAccDouble("VoltageX", "VoltageZ", canData)
+                self.GetMessageDouble("VoltageX", "VoltageZ", canData)
             elif (0 == self.bAccX) and (0 != self.bAccY) and (0 != self.bAccZ):
-                self.GetMessageAccDouble("VoltageY", "VoltageZ", canData) 
+                self.GetMessageDouble("VoltageY", "VoltageZ", canData) 
             else:
-                self.GetMessageAccTripple("VoltageX", "VoltageY", "VoltageZ", canData)   
+                self.GetMessageTripple("VoltageX", "VoltageY", "VoltageZ", canData)   
         elif self.tAccDataFormat == DataSets[3]:
             if 0 != self.bAccX:
-                self.GetMessageAccSingle("VoltageX", canData)               
+                self.GetMessageSingle("VoltageX", canData)               
             elif 0 != self.bAccY:
-                self.GetMessageAccSingle("VoltageY", canData)               
+                self.GetMessageSingle("VoltageY", canData)               
             elif 0 != self.bAccZ:
-                self.GetMessageAccSingle("VoltageZ", canData)       
+                self.GetMessageSingle("VoltageZ", canData)       
         else:               
             self.PeakCan.Logger.bError("Wrong Ack format")
             
