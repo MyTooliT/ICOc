@@ -336,8 +336,6 @@ class myToolItWatch():
             self.dataQueue.join_thread() 
             self.commandQueue.join_thread()     
             self.guiProcess.join()
-            self.runGuiput.close()
-            self.runGuiput.join_thread()  
         except:
             pass
                     
@@ -361,10 +359,13 @@ class myToolItWatch():
      
     def vGraphPointNext(self, x, y, z):
         if 0 < self.iDisplayTime:  
-            timeStampNow = int(round(time() * 1000))
-            if self.iGraphSampleInterval <= (timeStampNow - self.tDataPointTimeStamp):
-                self.tDataPointTimeStamp = timeStampNow
-                self.dataQueue.put({"X": x, "Y" : y, "Z" : z})
+            if False != self.guiProcess.is_alive():
+                timeStampNow = int(round(time() * 1000))
+                if self.iGraphSampleInterval <= (timeStampNow - self.tDataPointTimeStamp):
+                    self.tDataPointTimeStamp = timeStampNow
+                    self.dataQueue.put({"X": x, "Y" : y, "Z" : z})
+            else:
+                self.aquireEndTime = self.PeakCan.getTimeMs()
 
     def vGraphPacketLossUpdate(self, msgCounter):
         if 0 < self.iDisplayTime:  
@@ -597,7 +598,7 @@ class myToolItWatch():
         if False != self.PeakCan.bConnected:
             self.__exit__()  
 
-    def vGetStreamingAccDataProcess(self, endTime):
+    def vGetStreamingAccDataProcess(self):
 #         print("Inteval Time: " + str() + "s")
 #         print("Display Time: " + str(self.iDisplayTime) + "ms")
 
@@ -606,7 +607,7 @@ class myToolItWatch():
             iIntervalTime += (1 << 32)
         startTime = self.PeakCan.getTimeMs()
         try:
-            while(self.PeakCan.getTimeMs() < endTime):
+            while(self.PeakCan.getTimeMs() < self.aquireEndTime):
                 if (self.PeakCan.getTimeMs() - startTime) >= iIntervalTime:
                     startTime = self.PeakCan.getTimeMs()
                     self.vLogCountInc()
@@ -677,12 +678,12 @@ class myToolItWatch():
         currentTime = self.PeakCan.getTimeMs()
         if None == ack:
             self.PeakCan.Logger.bError("No Ack received from Device: " + str(self.iDevNr))
-            endTime = currentTime
+            self.aquireEndTime = currentTime
         elif(0 == self.iRunTime):
-            endTime = currentTime + (1 << 32)
+            self.aquireEndTime = currentTime + (1 << 32)
         else:
-            endTime = currentTime + self.iRunTime * 1000
-        self.vGetStreamingAccDataProcess(endTime)
+            self.aquireEndTime = currentTime + self.iRunTime * 1000
+        self.vGetStreamingAccDataProcess()
         
     def GetMessageSingle(self, prefix, canMsg):  
         canData = canMsg["CanMsg"].DATA 

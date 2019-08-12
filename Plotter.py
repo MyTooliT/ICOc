@@ -20,6 +20,11 @@ cDict = {
 }
 
 
+def vHandeClose(evt):
+    global cDict
+    cDict["Run"] = False
+    cDict["Plot"] = False
+
 def tPlotterInit():
     global cDict
     plt.style.use('ggplot')
@@ -28,6 +33,7 @@ def tPlotterInit():
     plt.ion()
     fig = plt.figure(figsize=(cDict["figSizeX"], cDict["figSizeY"]))
     ax = fig.add_subplot(111)
+    fig.canvas.mpl_connect('close_event', vHandeClose)
     legendHandles = []
     legendName = []
     line1 = None
