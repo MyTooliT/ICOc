@@ -34,8 +34,9 @@ def messageValueGet(m):
     return Acc  
 
 
-Gui = {
+Watch = {
     "IntervalDimMinX" : 10,  # Minimum interval time in ms
+    "DisplayTimeMax" : 20,  # Maximum Display Time in seconds
 }
 
 
@@ -308,19 +309,23 @@ class myToolItWatch():
     def vAdcRefVConfig(self, sAdcRef):
         self.sAdcRef = sAdcRef
         
-    def vDisplayTime(self, displayTime):
-        self.iDisplayTime = int(displayTime) 
+    def vDisplayTime(self, iDisplayTime):
+        if Watch["DisplayTimeMax"] < iDisplayTime:
+            iDisplayTime = Watch["DisplayTimeMax"]
+        self.iDisplayTime = int(iDisplayTime) 
         
     def vRunTime(self, runTime, intervalTime):
         self.iIntervalTime = int(intervalTime)
-        if Gui["IntervalDimMinX"] > self.iIntervalTime:
+        if Watch["IntervalDimMinX"] > self.iIntervalTime:
             self.iIntervalTime = 0
         self.iRunTime = int(runTime)
-    
-    def vGraphInit(self, xDim=10, sampleInterval=0.05):
-        self.tDataPointTimeStamp = int(round(time() * 1000))
-        self.iPacketLossTimeStamp = int(round(time() * 1000))
-        self.iSampleInterval = sampleInterval * 1000
+    """
+    sampleInterval in ms
+    """
+    def vGraphInit(self, sampleInterval=50):
+        self.tDataPointTimeStamp = 0
+        self.iPacketLossTimeStamp = 0
+        self.iGraphSampleInterval = sampleInterval
                 
     def guiProcessStop(self):
         try:
@@ -336,45 +341,49 @@ class myToolItWatch():
             pass
                     
     def guiProcessRestart(self):
-        self.guiProcessStop()          
-        self.dataQueue = multiprocessing.Queue()
-        self.commandQueue = multiprocessing.Queue()
-        self.guiProcess = multiprocessing.Process(target=vPlotter, args=(self.dataQueue, self.commandQueue))
-        self.guiProcess.start()
-        self.commandQueue.put(["sampleInterval", self.iSampleInterval])
-        self.vGraphPacketLossUpdate(0)
-        if False != self.bAccX:
-            self.commandQueue.put(["lineNameX", "AccX"])
-        if False != self.bAccY:
-            self.commandQueue.put(["lineNameY", "AccY"])
-        if False != self.bAccZ:
-            self.commandQueue.put(["lineNameZ", "AccZ"])
-        self.commandQueue.put(["Plot", True])
+        self.guiProcessStop()       
+        if 0 < self.iDisplayTime:   
+            self.dataQueue = multiprocessing.Queue()
+            self.commandQueue = multiprocessing.Queue()
+            self.guiProcess = multiprocessing.Process(target=vPlotter, args=(self.dataQueue, self.commandQueue))
+            self.guiProcess.start() 
+            self.commandQueue.put(["sampleInterval", self.iGraphSampleInterval / 1000])
+            self.commandQueue.put(["xDim", self.iDisplayTime])
+            self.vGraphPacketLossUpdate(0)
+            if False != self.bAccX:
+                self.commandQueue.put(["lineNameX", "AccX"])
+            if False != self.bAccY:
+                self.commandQueue.put(["lineNameY", "AccY"])
+            if False != self.bAccZ:
+                self.commandQueue.put(["lineNameZ", "AccZ"])
+            self.commandQueue.put(["Plot", True])
      
     def vGraphPointNext(self, x, y, z):
-        timeStampNow = int(round(time() * 1000))
-        if self.iSampleInterval < (timeStampNow - self.tDataPointTimeStamp):
-            self.tDataPointTimeStamp = timeStampNow
-            self.dataQueue.put({"X": x, "Y" : y, "Z" : z})
+        if 0 < self.iDisplayTime:  
+            timeStampNow = int(round(time() * 1000))
+            if self.iGraphSampleInterval < (timeStampNow - self.tDataPointTimeStamp):
+                self.tDataPointTimeStamp = timeStampNow
+                self.dataQueue.put({"X": x, "Y" : y, "Z" : z})
 
     def vGraphPacketLossUpdate(self, msgCounter):
-        self.iMsgCounterLast += 1
-        self.iMsgCounterLast %= 256
-        if  self.iMsgCounterLast != msgCounter:
-            iLost = msgCounter - self.iMsgCounterLast
-            self.iMsgLoss += iLost
-            self.iMsgsTotal += iLost
-            if 0 > iLost:
-                self.iMsgLoss += 256
-                self.iMsgsTotal += 256
-            self.iMsgCounterLast = msgCounter
-        else:
-            self.iMsgsTotal += 1
+        if 0 < self.iDisplayTime:  
+            self.iMsgCounterLast += 1
+            self.iMsgCounterLast %= 256
+            if  self.iMsgCounterLast != msgCounter:
+                iLost = msgCounter - self.iMsgCounterLast
+                self.iMsgLoss += iLost
+                self.iMsgsTotal += iLost
+                if 0 > iLost:
+                    self.iMsgLoss += 256
+                    self.iMsgsTotal += 256
+                self.iMsgCounterLast = msgCounter
+            else:
+                self.iMsgsTotal += 1
         
         iPacketLossTimeStamp = int(round(time() * 1000))
         if 1000 < (iPacketLossTimeStamp - self.iPacketLossTimeStamp):
             self.iPacketLossTimeStamp = iPacketLossTimeStamp       
-            self.commandQueue.put(["diagramName", "Acceleration(" + str(format(100*self.iMsgLoss/self.iMsgsTotal, '3.3f')) + "%)"])
+            self.commandQueue.put(["diagramName", "Acceleration(" + str(format(100 * self.iMsgLoss / self.iMsgsTotal, '3.3f')) + "%)"])
             self.iMsgLoss = 0
             self.iMsgsTotal = 0
         
@@ -1066,7 +1075,7 @@ class myToolItWatch():
         print("AutoConnect?: " + str(self.bSthAutoConnect))
         print("Run Time: " + str(self.iRunTime) + "s")
         print("Inteval Time: " + str(self.iIntervalTime) + "s")
-        print("Display Time: " + str(self.iDisplayTime) + "ms")
+        print("Display Time: " + str(self.iDisplayTime) + "s")
         print("Adc Prescaler/AcquisitionTime/OversamplingRate/Reference(Samples/s): " + str(self.iPrescaler) + "/" + str(AdcAcquisitionTimeReverse[self.iAquistionTime]) + "/" + str(AdcOverSamplingRateReverse[self.iOversampling]) + "/" + str(self.sAdcRef) + "(" + str(self.samplingRate) + ")")
         print("Acc Config(XYZ/DataSets): " + str(int(self.bAccX)) + str(int(self.bAccY)) + str(int(self.bAccZ)) + "/" + str(DataSetsReverse[self.tAccDataFormat]))
         print("Voltage Config(XYZ/DataSets): " + str(int(self.bVoltageX)) + str(int(self.bVoltageY)) + str(int(self.bVoltageZ)) + "/" + str(DataSetsReverse[self.tAccDataFormat]) + ("(X=Battery)"))

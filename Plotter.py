@@ -8,15 +8,15 @@ cDict = {
     "lineNameY" : "",
     "lineNameZ" : "",
     "diagramName" : "Acceleration",
-    "sampleInterval" : 0.025,
+    "sampleInterval" : 0,
     "figSizeX" : 13,
     "figSizeY" : 6,
     "X-Label" : "s",
     "Y-Label" : "",
-    "timePoints" : np.linspace(0, 4, 20 + 1)[0:-1],
-    "xAccPoints" : np.linspace(2 ** 15, 2 ** 15, 20 + 1)[0:-1],
-    "yAccPoints" : np.linspace(2 ** 15, 2 ** 15, 20 + 1)[0:-1],
-    "zAccPoints" : np.linspace(2 ** 15, 2 ** 15, 20 + 1)[0:-1],
+    "timePoints" : None,
+    "xAccPoints" : None,
+    "yAccPoints" : None,
+    "zAccPoints" : None,
 }
 
 
@@ -75,11 +75,14 @@ def vPlotterCommand(command, value):
         cDict[command] = value
     if "figSizeY" == command:
         cDict[command] = value
+    if "sampleInterval" == command:
+        cDict[command] = value
     if "xDim" == command:
-        cDict["timePoints"] = np.linspace(0, cDict["sampleInterval"] * value / 1000, value + 1)[0:-1],
-        cDict["xPoints"] = np.linspace(2 ** 15, 2 ** 15, value + 1)[0:-1],
-        cDict["yPoints"] = np.linspace(2 ** 15, 2 ** 15, value + 1)[0:-1],
-        cDict["zPoints"] = np.linspace(0, 1, value + 1)[0:-1],
+        dataPoints = value/cDict["sampleInterval"]
+        cDict["timePoints"] = np.linspace(0, value, dataPoints+1)[0:-1]
+        cDict["xAccPoints"] = np.linspace(2 ** 15, 2 ** 15, dataPoints + 1)[0:-1]
+        cDict["yAccPoints"] = np.linspace(2 ** 15, 2 ** 15, dataPoints + 1)[0:-1]
+        cDict["zAccPoints"] = np.linspace(2 ** 15, 2 ** 15, dataPoints + 1)[0:-1]
 
      
 def vPlotter(valueQueue, commandQueue):
@@ -97,7 +100,7 @@ def vPlotter(valueQueue, commandQueue):
             cDict["xAccPoints"][-1] = float(value["X"])
             cDict["yAccPoints"][-1] = float(value["Y"])
             cDict["zAccPoints"][-1] = float(value["Z"])
-            [line1, line2, line3] = vlivePlot(cDict["xAccPoints"], cDict["yAccPoints"], cDict["zAccPoints"], line1, line2, line3, cDict["sampleInterval"])
+            [line1, line2, line3] = vlivePlot(cDict["xAccPoints"], cDict["yAccPoints"], cDict["zAccPoints"], line1, line2, line3, cDict["sampleInterval"]/2)
             cDict["xAccPoints"] = np.append(cDict["xAccPoints"][1:], 0.0)
             cDict["yAccPoints"] = np.append(cDict["yAccPoints"][1:], 0.0)
             cDict["zAccPoints"] = np.append(cDict["zAccPoints"][1:], 0.0)
