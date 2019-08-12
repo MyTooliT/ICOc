@@ -100,7 +100,7 @@ def vPlotter(valueQueue, commandQueue):
             cDict["xAccPoints"][-1] = float(value["X"])
             cDict["yAccPoints"][-1] = float(value["Y"])
             cDict["zAccPoints"][-1] = float(value["Z"])
-            [line1, line2, line3] = vlivePlot(cDict["xAccPoints"], cDict["yAccPoints"], cDict["zAccPoints"], line1, line2, line3, cDict["sampleInterval"]/2)
+            [line1, line2, line3] = vlivePlot(cDict["xAccPoints"], cDict["yAccPoints"], cDict["zAccPoints"], line1, line2, line3, cDict["sampleInterval"]/10)
             cDict["xAccPoints"] = np.append(cDict["xAccPoints"][1:], 0.0)
             cDict["yAccPoints"] = np.append(cDict["yAccPoints"][1:], 0.0)
             cDict["zAccPoints"] = np.append(cDict["zAccPoints"][1:], 0.0)

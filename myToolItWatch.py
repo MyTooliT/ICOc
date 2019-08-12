@@ -37,6 +37,7 @@ def messageValueGet(m):
 Watch = {
     "IntervalDimMinX" : 10,  # Minimum interval time in ms
     "DisplayTimeMax" : 20,  # Maximum Display Time in seconds
+    "DisplaySampleRateMs" : 100,  # Maximum Display Time in seconds
 }
 
 
@@ -68,7 +69,7 @@ class myToolItWatch():
         self.vAdcRefVConfig("VDD")
         self.vDisplayTime(10)  
         self.vRunTime(10, 0)
-        self.vGraphInit()
+        self.vGraphInit(Watch["DisplaySampleRateMs"])
         self.PeakCan.readThreadStop()
             
     def __exit__(self):
@@ -322,7 +323,7 @@ class myToolItWatch():
     """
     sampleInterval in ms
     """
-    def vGraphInit(self, sampleInterval=50):
+    def vGraphInit(self, sampleInterval=200):
         self.tDataPointTimeStamp = 0
         self.iPacketLossTimeStamp = 0
         self.iGraphSampleInterval = sampleInterval
@@ -361,7 +362,7 @@ class myToolItWatch():
     def vGraphPointNext(self, x, y, z):
         if 0 < self.iDisplayTime:  
             timeStampNow = int(round(time() * 1000))
-            if self.iGraphSampleInterval < (timeStampNow - self.tDataPointTimeStamp):
+            if self.iGraphSampleInterval <= (timeStampNow - self.tDataPointTimeStamp):
                 self.tDataPointTimeStamp = timeStampNow
                 self.dataQueue.put({"X": x, "Y" : y, "Z" : z})
 
