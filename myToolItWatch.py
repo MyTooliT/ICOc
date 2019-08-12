@@ -15,61 +15,10 @@ import openpyxl
 from openpyxl.styles import Font
 import copy
 import argparse
-import matplotlib.pyplot as plt
-import numpy as np
 import multiprocessing
+from Plotter import vPlotter
 
 BlueToothDeviceListAquireTime = 5
-BlueToothNoneDev = 255
-
-StreamingStopTimeMs = 200
-
-plt.style.use('ggplot')
-
-xDim = 20
-timePoints = np.linspace(0, 1, xDim + 1)[0:-1]
-xPoints = np.linspace(2 ** 15, 2 ** 15, xDim + 1)[0:-1]
-yPoints = np.linspace(2 ** 15, 2 ** 15, xDim + 1)[0:-1]
-zPoints = np.linspace(0, 1, xDim + 1)[0:-1]
-line1 = []       
-sampleInterval=0.05
-
-
-def vPlotter(x, runGui):
-    global xPoints
-    global line1
-    while False != runGui.empty():
-        if False == x.empty():
-            xPoints[-1] = float(x.get())
-            line1 = live_plotter(timePoints, xPoints, line1)
-            xPoints = np.append(xPoints[1:], 0.0)
-    print("Gui display closed")
-
-        
-def live_plotter(x_vec, y1_data, line1, identifier='', pause_time=sampleInterval/2):
-    if line1 == []:
-        # this is the call to matplotlib that allows dynamic plotting
-        plt.ion()
-        fig = plt.figure(figsize=(6, 3))
-        ax = fig.add_subplot(111)
-        # create a variable for the line so we can later update it
-        line1, = ax.plot(x_vec, y1_data, '-o', alpha=0.8)        
-        # update plot label/title
-        plt.ylabel('Y Label')
-        plt.title('Title: {}'.format(identifier))
-        plt.show()
-    
-    # after the figure, axis, and line are created, we only need to update the y-data
-    line1.set_ydata(y1_data)
-    # adjust limits if new data goes beyond bounds
-    if np.min(y1_data) <= line1.axes.get_ylim()[0] or np.max(y1_data) >= line1.axes.get_ylim()[1]:
-        plt.ylim([np.min(y1_data) - np.std(y1_data), np.max(y1_data) + np.std(y1_data)])
-   
-    # this pauses the data so the figure/axis can catch up - the amount of pause can be altered above
-    plt.pause(pause_time)
-    
-    # return line so we can update it again in the next iteration
-    return line1
 
 
 def to8bitSigned(num): 
@@ -362,17 +311,15 @@ class myToolItWatch():
             self.iIntervalTime = 0
         self.iRunTime = int(runTime)
     
-    def vGraphInit(self, xDim=10):
-        global bGraphRunning
-        bGraphRunning = False
+    def vGraphInit(self, xDim=10, sampleInterval=0.05):
         self.timeStamp = int(round(time() * 1000))
         self.iSampleInterval = sampleInterval*1000
         
     def guiProcessStop(self):
         try:
-            self.runGui.put(1)
-            self.queue.close()
-            self.queue.join_thread()      
+            self.commandQueue.put(["Run", False])
+            self.dataQueue.close()
+            self.dataQueue.join_thread()      
             self.guiProcess.join()
             self.runGuiput.close()
             self.runGuiput.join_thread()  
@@ -381,16 +328,19 @@ class myToolItWatch():
                     
     def guiProcessRestart(self):
         self.guiProcessStop()          
-        self.queue = multiprocessing.Queue()
-        self.runGui = multiprocessing.Queue()
-        self.guiProcess = multiprocessing.Process(target=vPlotter, args=(self.queue, self.runGui))
+        self.dataQueue = multiprocessing.Queue()
+        self.commandQueue = multiprocessing.Queue()
+        self.guiProcess = multiprocessing.Process(target=vPlotter, args=(self.dataQueue, self.commandQueue))
         self.guiProcess.start()
+        self.commandQueue.put(["sampleInterval", self.iSampleInterval])
+        self.commandQueue.put(["diagramName", "Acceleration Plotting"])
+        self.commandQueue.put(["Plot", True])
      
     def vGraphPointNext(self, x, y=None, z=None):
         timeStampNow = int(round(time() * 1000))
         if self.iSampleInterval < (timeStampNow - self.timeStamp):
             self.timeStamp = timeStampNow
-            self.queue.put(x)
+            self.dataQueue.put(x)
         
     def vVersion(self, major, minor, build):
         if 2 <= major and 1 <= minor:
