@@ -5,8 +5,6 @@ cDict = {
     "Run" : True,
     "Plot": False,
     "Axis" : 0,
-    "Interval" : 0,
-    "PacketLoss" : 0,
     "lineNameX" : "",
     "lineNameY" : "",
     "lineNameZ" : "",
@@ -14,9 +12,9 @@ cDict = {
     "sampleInterval" : 0.025,
     "figSizeX" : 13,
     "figSizeY" : 6,
-    "X-Label" : "ms",
+    "X-Label" : "s",
     "Y-Label" : "",
-    "timePoints" : np.linspace(0, 4000, 20 + 1)[0:-1],
+    "timePoints" : np.linspace(0, 4, 20 + 1)[0:-1],
     "xAccPoints" : np.linspace(2 ** 15, 2 ** 15, 20 + 1)[0:-1],
     "yAccPoints" : np.linspace(2 ** 15, 2 ** 15, 20 + 1)[0:-1],
     "zAccPoints" : np.linspace(0, 1, 20 + 1)[0:-1],
@@ -50,7 +48,7 @@ def vPlotterCommand(command, value):
         if False != cDict["Plot"]:
             plt.title('{}'.format(cDict["diagramName"]))
     if "xDim" == command:
-        cDict["timePoints"] = np.linspace(0, cDict["sampleInterval"]*value, value + 1)[0:-1],
+        cDict["timePoints"] = np.linspace(0, cDict["sampleInterval"]*value/1000, value + 1)[0:-1],
         cDict["xPoints"] = np.linspace(2 ** 15, 2 ** 15, value + 1)[0:-1],
         cDict["yPoints"] = np.linspace(2 ** 15, 2 ** 15, value + 1)[0:-1],
         cDict["zPoints"] = np.linspace(0, 1, value + 1)[0:-1],
