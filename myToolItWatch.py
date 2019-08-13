@@ -17,6 +17,7 @@ import copy
 import argparse
 import multiprocessing
 from Plotter import vPlotter
+import numpy as np
 
 BlueToothDeviceListAquireTime = 5
 
@@ -36,12 +37,11 @@ def messageValueGet(m):
 
 Watch = {
     "IntervalDimMinX" : 10,  # Minimum interval time in ms
-    "DisplayTimeMax" : 20,  # Maximum Display Time in seconds
+    "DisplayTimeMax" : 10,  # Maximum Display Time in seconds
     "DisplaySampleRateMs" : 100,  # Maximum Display Time in seconds
+    "DisplayBlockSize" : 10,
 }
 
-
-# def __init__(self, log_location, iAcc1, iAcc2, iAcc3, dev, prescaler, aquistionTime, oversampling, runtime):
 class myToolItWatch():
 
     def __init__(self):
@@ -69,7 +69,7 @@ class myToolItWatch():
         self.vAdcRefVConfig("VDD")
         self.vDisplayTime(10)  
         self.vRunTime(10, 0)
-        self.vGraphInit(Watch["DisplaySampleRateMs"])
+        self.vGraphInit(Watch["DisplaySampleRateMs"], Watch["DisplayBlockSize"])
         self.PeakCan.readThreadStop()
             
     def __exit__(self):
@@ -244,7 +244,7 @@ class myToolItWatch():
     def vSheetFileSet(self, sSheetFile):
         self.sSheetFile = sSheetFile
         
-    def vAccSet(self, bX, bY, bZ, dataSets, dataSetsMax=3):
+    def vAccSet(self, bX, bY, bZ, dataSets):
         self.bAccX = bool(bX) 
         self.bAccY = bool(bY) 
         self.bAccZ = bool(bZ) 
@@ -261,7 +261,7 @@ class myToolItWatch():
                 dataSets = 1 
             self.tAccDataFormat = DataSets[dataSets]
         
-    def vVoltageSet(self, bX, bY, bZ, dataSets, dataSetsMax=3):
+    def vVoltageSet(self, bX, bY, bZ, dataSets):
         self.bVoltageX = bool(bX)
         self.bVoltageY = bool(bY)
         self.bVoltageZ = bool(bZ)
@@ -323,10 +323,13 @@ class myToolItWatch():
     """
     sampleInterval in ms
     """
-    def vGraphInit(self, sampleInterval=200):
+    def vGraphInit(self, sampleInterval=200, blockSize=10):
         self.tDataPointTimeStamp = 0
         self.iPacketLossTimeStamp = 0
+        self.iGraphBlockSize = blockSize
         self.iGraphSampleInterval = sampleInterval
+        self.sMsgLoss = "Acceleration(" + str(format(0, '3.3f')) + "%)"
+        self.GuiPackage = {"X": np.array([]), "Y" : np.array([]), "Z" : np.array([])}
                 
     def guiProcessStop(self):
         try:
@@ -346,7 +349,8 @@ class myToolItWatch():
             self.commandQueue = multiprocessing.Queue()
             self.guiProcess = multiprocessing.Process(target=vPlotter, args=(self.dataQueue, self.commandQueue))
             self.guiProcess.start() 
-            self.commandQueue.put(["sampleInterval", self.iGraphSampleInterval / 1000])
+            self.commandQueue.put(["dataBlockSize", self.iGraphBlockSize])
+            self.commandQueue.put(["sampleInterval", self.iGraphSampleInterval])
             self.commandQueue.put(["xDim", self.iDisplayTime])
             self.vGraphPacketLossUpdate(0)
             if False != self.bAccX:
@@ -361,9 +365,14 @@ class myToolItWatch():
         if 0 < self.iDisplayTime:  
             if False != self.guiProcess.is_alive():
                 timeStampNow = int(round(time() * 1000))
-                if self.iGraphSampleInterval <= (timeStampNow - self.tDataPointTimeStamp):
+                if self.iGraphSampleInterval/self.iGraphBlockSize <= (timeStampNow - self.tDataPointTimeStamp):
                     self.tDataPointTimeStamp = timeStampNow
-                    self.dataQueue.put({"X": x, "Y" : y, "Z" : z})
+                    self.GuiPackage["X"] = np.hstack([self.GuiPackage["X"],[x]])
+                    self.GuiPackage["Y"] = np.hstack([self.GuiPackage["Y"],[x]])
+                    self.GuiPackage["Z"] = np.hstack([self.GuiPackage["Z"],[x]])
+                    if self.iGraphBlockSize <= len(self.GuiPackage["X"]):
+                        self.dataQueue.put(self.GuiPackage)
+                        self.GuiPackage = {"X": np.array([]), "Y" : np.array([]), "Z" : np.array([])}
             else:
                 self.aquireEndTime = self.PeakCan.getTimeMs()
 
@@ -383,9 +392,13 @@ class myToolItWatch():
                 self.iMsgsTotal += 1
         
         iPacketLossTimeStamp = int(round(time() * 1000))
-        if 1000 < (iPacketLossTimeStamp - self.iPacketLossTimeStamp):
-            self.iPacketLossTimeStamp = iPacketLossTimeStamp       
-            self.commandQueue.put(["diagramName", "Acceleration(" + str(format(100 * self.iMsgLoss / self.iMsgsTotal, '3.3f')) + "%)"])
+        if 1000 <= (iPacketLossTimeStamp - self.iPacketLossTimeStamp):
+            self.iPacketLossTimeStamp = iPacketLossTimeStamp  
+            sMsgLoss = "Acceleration(" + str(format(100 * self.iMsgLoss / self.iMsgsTotal, '3.3f')) + "%)"     
+            if sMsgLoss != self.sMsgLoss:
+                self.sMsgLoss = sMsgLoss
+                self.commandQueue.put(["diagramName", self.sMsgLoss])
+                
             self.iMsgLoss = 0
             self.iMsgsTotal = 0
         
@@ -414,7 +427,7 @@ class myToolItWatch():
         self.parser.add_argument('-v', '--version', dest='version', action='store', nargs=2, type=str, required=False, help='Chooses product with version for handling Table Calculation Files (e.g. STH v2.1.2)')
         self.parser.add_argument('-x', '--xml', dest='xml_file_name', action='store', nargs=1, type=str, required=True, help='Selects xml configuration/data base file')
         self.parser.add_argument('--create', dest='create', action='store_true', required=False, help='Creates a device configuration or sample setup in the xml file')
-        self.parser.add_argument('--gui_x_dim', dest='gui_x_dim', action='store', nargs=1, required=False, help='Length of visualization interval in ms for the graphical acceleration view . Value below 10 turns it off')
+        self.parser.add_argument('--gui_dim', dest='gui_dim', action='store', nargs=1, type=int, required=False, help='Length of visualization interval in ms for the graphical acceleration view . Value below 10 turns it off')
         self.parser.add_argument('--refv', dest='refv', action='store', nargs=1, type=str, required=False, help='ADC\'s Reference voltage, VDD=Standard')
         self.parser.add_argument('--remove', dest='remove', action='store_true', required=False, help='Removes a device configuration or sample setup in the xml file')
         self.parser.add_argument('--save', dest='save', action='store_true', required=False, help='Saves a device configuration or sample setup in the xml file)')
@@ -500,8 +513,8 @@ class myToolItWatch():
         
     def vParserConsoleArgumentsPass(self):  
         self.vParserConsoleArgumentsPassXml()    
-        if None != self.args_dict['gui_x_dim']:
-            self.iDisplayTime(self.args_dict['gui_x_dim'][0])            
+        if None != self.args_dict['gui_dim']:
+            self.vDisplayTime(self.args_dict['gui_dim'][0])            
         if None != self.args_dict['log_name']:
             self.bLogSet(self.args_dict['log_name'][0]) 
         if None != self.args_dict['adc_config']:

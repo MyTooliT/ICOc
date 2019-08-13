@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+from time import sleep
 
 cDict = {
     "Run" : True,
@@ -14,6 +15,7 @@ cDict = {
     "X-Label" : "s",
     "Y-Label" : "",
     "timePoints" : None,
+    "dataBlockSize" : 0,
     "xAccPoints" : None,
     "yAccPoints" : None,
     "zAccPoints" : None,
@@ -24,6 +26,7 @@ def vHandeClose(evt):
     global cDict
     cDict["Run"] = False
     cDict["Plot"] = False
+
 
 def tPlotterInit():
     global cDict
@@ -83,12 +86,14 @@ def vPlotterCommand(command, value):
         cDict[command] = value
     if "sampleInterval" == command:
         cDict[command] = value
+    if "dataBlockSize" == command:
+        cDict[command] = value
     if "xDim" == command:
-        dataPoints = value/cDict["sampleInterval"]
-        cDict["timePoints"] = np.linspace(0, value, dataPoints+1)[0:-1]
-        cDict["xAccPoints"] = np.linspace(2 ** 15, 2 ** 15, dataPoints + 1)[0:-1]
-        cDict["yAccPoints"] = np.linspace(2 ** 15, 2 ** 15, dataPoints + 1)[0:-1]
-        cDict["zAccPoints"] = np.linspace(2 ** 15, 2 ** 15, dataPoints + 1)[0:-1]
+        dataPoints = 1000*cDict["dataBlockSize"] * value / cDict["sampleInterval"]
+        cDict["timePoints"] = np.linspace(0, value, dataPoints)
+        cDict["xAccPoints"] = np.linspace(2 ** 15, 2 ** 15, dataPoints)
+        cDict["yAccPoints"] = np.linspace(2 ** 15, 2 ** 15, dataPoints)
+        cDict["zAccPoints"] = np.linspace(2 ** 15, 2 ** 15, dataPoints)
 
      
 def vPlotter(valueQueue, commandQueue):
@@ -100,19 +105,30 @@ def vPlotter(valueQueue, commandQueue):
             vPlotterCommand(command, value)
          
     [line1, line2, line3] = tPlotterInit()
+    pauseTime = (1/cDict["sampleInterval"]) / 2
     while False != cDict["Run"]:
-        if False == valueQueue.empty():
-            value = valueQueue.get()
-            cDict["xAccPoints"][-1] = float(value["X"])
-            cDict["yAccPoints"][-1] = float(value["Y"])
-            cDict["zAccPoints"][-1] = float(value["Z"])
-            [line1, line2, line3] = vlivePlot(cDict["xAccPoints"], cDict["yAccPoints"], cDict["zAccPoints"], line1, line2, line3, cDict["sampleInterval"]/10)
-            cDict["xAccPoints"] = np.append(cDict["xAccPoints"][1:], 0.0)
-            cDict["yAccPoints"] = np.append(cDict["yAccPoints"][1:], 0.0)
-            cDict["zAccPoints"] = np.append(cDict["zAccPoints"][1:], 0.0)
         if False == commandQueue.empty():
             [command, value] = commandQueue.get()  
             vPlotterCommand(command, value)
+        elif False == valueQueue.empty():
+            value = valueQueue.get()
+#             dataPoints = len(cDict["timePoints"])
+#             for i in range(0, dataPoints - cDict["dataBlockSize"]):
+#                 pointCopyFrom = i + cDict["dataBlockSize"]
+#                 cDict["xAccPoints"][i] = cDict["xAccPoints"][pointCopyFrom]
+#                 cDict["yAccPoints"][i] = cDict["yAccPoints"][pointCopyFrom]
+#                 cDict["zAccPoints"][i] = cDict["zAccPoints"][pointCopyFrom]
+
+            cDict["xAccPoints"] = cDict["xAccPoints"][cDict["dataBlockSize"]:]
+            cDict["yAccPoints"] = cDict["yAccPoints"][cDict["dataBlockSize"]:]
+            cDict["zAccPoints"] = cDict["zAccPoints"][cDict["dataBlockSize"]:]
+            cDict["xAccPoints"] = np.hstack([cDict["xAccPoints"], value['X']])
+            cDict["yAccPoints"] = np.hstack([cDict["yAccPoints"], value['Y']])
+            cDict["zAccPoints"] = np.hstack([cDict["zAccPoints"], value['Z']])
+            [line1, line2, line3] = vlivePlot(cDict["xAccPoints"], cDict["yAccPoints"], cDict["zAccPoints"], line1, line2, line3, pauseTime)
+        else:
+            sleep(pauseTime/2)
+
     print("Gui display closed")
 
         
