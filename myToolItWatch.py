@@ -16,8 +16,13 @@ from openpyxl.styles import Font
 import copy
 import argparse
 import multiprocessing
-from Plotter import vPlotter
-import numpy as np
+from Plotter import vPlotter, tArray2Binary
+import socket
+
+
+HOST = 'localhost'          # The remote host
+PORT = 50007                # The same port as used by the server
+
 
 BlueToothDeviceListAquireTime = 5
 
@@ -39,7 +44,7 @@ Watch = {
     "IntervalDimMinX" : 10,  # Minimum interval time in ms
     "DisplayTimeMax" : 10,  # Maximum Display Time in seconds
     "DisplaySampleRateMs" : 100,  # Maximum Display Time in seconds
-    "DisplayBlockSize" : 5,
+    "DisplayBlockSize" : 10,
 }
 
 class myToolItWatch():
@@ -329,15 +334,15 @@ class myToolItWatch():
         self.iGraphBlockSize = blockSize
         self.iGraphSampleInterval = sampleInterval
         self.sMsgLoss = "Acceleration(" + str(format(0, '3.3f')) + "%)"
-        self.GuiPackage = {"X": np.array([]), "Y" : np.array([]), "Z" : np.array([])}
-                
+        self.GuiPackage = [[], [], []]
+        self.tSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                        
     def guiProcessStop(self):
         try:
             self.commandQueue.put(["Run", False])
-            self.dataQueue.close()
             self.commandQueue.close()
-            self.dataQueue.join_thread() 
-            self.commandQueue.join_thread()     
+            self.commandQueue.join_thread()
+            self.tSocket.close()     
             self.guiProcess.join()
         except:
             pass
@@ -345,9 +350,8 @@ class myToolItWatch():
     def guiProcessRestart(self):
         self.guiProcessStop()       
         if 0 < self.iDisplayTime:   
-            self.dataQueue = multiprocessing.Queue()
             self.commandQueue = multiprocessing.Queue()
-            self.guiProcess = multiprocessing.Process(target=vPlotter, args=(self.dataQueue, self.commandQueue))
+            self.guiProcess = multiprocessing.Process(target=vPlotter, args=(self.commandQueue,))
             self.guiProcess.start() 
             self.commandQueue.put(["dataBlockSize", self.iGraphBlockSize])
             self.commandQueue.put(["sampleInterval", self.iGraphSampleInterval])
@@ -360,6 +364,7 @@ class myToolItWatch():
             if False != self.bAccZ:
                 self.commandQueue.put(["lineNameZ", "AccZ"])
             self.commandQueue.put(["Plot", True])
+            self.tSocket.connect((HOST, PORT))
      
     def vGraphPointNext(self, x, y, z):
         if 0 < self.iDisplayTime:  
@@ -367,12 +372,15 @@ class myToolItWatch():
                 timeStampNow = int(round(time() * 1000))
                 if self.iGraphSampleInterval/self.iGraphBlockSize <= (timeStampNow - self.tDataPointTimeStamp):
                     self.tDataPointTimeStamp = timeStampNow
-                    self.GuiPackage["X"] = np.hstack([self.GuiPackage["X"],[x]])
-                    self.GuiPackage["Y"] = np.hstack([self.GuiPackage["Y"],[x]])
-                    self.GuiPackage["Z"] = np.hstack([self.GuiPackage["Z"],[x]])
-                    if self.iGraphBlockSize <= len(self.GuiPackage["X"]):
-                        self.dataQueue.put(self.GuiPackage)
-                        self.GuiPackage = {"X": np.array([]), "Y" : np.array([]), "Z" : np.array([])}
+                    self.GuiPackage[0].append(x)
+                    self.GuiPackage[1].append(y)
+                    self.GuiPackage[2].append(z)
+                    if self.iGraphBlockSize <= len(self.GuiPackage[0]):
+                        try:
+                            self.tSocket.sendall(tArray2Binary(self.GuiPackage))
+                        except:
+                            pass
+                        self.GuiPackage = [[], [], []]
             else:
                 self.aquireEndTime = self.PeakCan.getTimeMs()
 
