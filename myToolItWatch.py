@@ -19,10 +19,8 @@ import multiprocessing
 from Plotter import vPlotter, tArray2Binary
 import socket
 
-
-HOST = 'localhost'          # The remote host
-PORT = 50007                # The same port as used by the server
-
+HOST = 'localhost'  # The remote host
+PORT = 50007  # The same port as used by the server
 
 BlueToothDeviceListAquireTime = 5
 
@@ -46,6 +44,7 @@ Watch = {
     "DisplaySampleRateMs" : 100,  # Maximum Display Time in seconds
     "DisplayBlockSize" : 10,
 }
+
 
 class myToolItWatch():
 
@@ -87,6 +86,7 @@ class myToolItWatch():
             self.PeakCan.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
             if(0 < ReceiveFailCounter):
                 self.bError = True
+            self.PeakCan.readThreadStop()
         self.PeakCan.Logger.Info("End Time Stamp")
         
         if(False != self.bError):
@@ -325,9 +325,11 @@ class myToolItWatch():
         if Watch["IntervalDimMinX"] > self.iIntervalTime:
             self.iIntervalTime = 0
         self.iRunTime = int(runTime)
+
     """
     sampleInterval in ms
     """
+
     def vGraphInit(self, sampleInterval=200, blockSize=10):
         self.tDataPointTimeStamp = 0
         self.iPacketLossTimeStamp = 0
@@ -370,7 +372,7 @@ class myToolItWatch():
         if 0 < self.iDisplayTime:  
             if False != self.guiProcess.is_alive():
                 timeStampNow = int(round(time() * 1000))
-                if self.iGraphSampleInterval/self.iGraphBlockSize <= (timeStampNow - self.tDataPointTimeStamp):
+                if self.iGraphSampleInterval / self.iGraphBlockSize <= (timeStampNow - self.tDataPointTimeStamp):
                     self.tDataPointTimeStamp = timeStampNow
                     self.GuiPackage[0].append(x)
                     self.GuiPackage[1].append(y)
@@ -596,7 +598,7 @@ class myToolItWatch():
             except KeyboardInterrupt:
                 self.KeyBoadInterrupt = True
                 self.__exit__()
-                
+               
     def vDataAquisition(self):  
         if False == self.KeyBoadInterrupt:
             try:
@@ -616,7 +618,7 @@ class myToolItWatch():
                 self.__exit__()
                 
     def close(self):
-        if False != self.PeakCan.bConnected:
+        if False != self.PeakCan.RunReadThread:
             self.__exit__()  
 
     def vGetStreamingAccDataProcess(self):
@@ -1129,7 +1131,28 @@ class myToolItWatch():
         if False != self.args_dict['show_setups']:
             self.xmlPrintSetups()
         if False != self.args_dict['devNameList']:
-            pass    
+            pass  
+
+    def clear(self): 
+      
+        # for windows 
+        if os.name == 'nt': 
+            _ = os.system('cls') 
+      
+        # for mac and linux(here, os.name is 'posix') 
+        else: 
+            _ = os.system('clear')   
+        
+    def vRunConsoleNormal(self):
+        while True:
+            try:
+                devList = self.PeakCan.tgetDeviveList(MyToolItNetworkNr["STU1"])
+                self.clear()
+                for dev in devList:
+                    print("DeviceNumber: " + str(dev["DeviceNumber"]) +"; Name: " + str(dev["Name"]) +"; Address: " + hex(dev["Address"]) +"; RSSI: " + str(dev["RSSI"]))
+            except KeyboardInterrupt:
+                self.KeyBoadInterrupt = True
+                break
                             
     def vRunConsole(self):
         self._vRunConsoleStartup()
@@ -1140,7 +1163,10 @@ class myToolItWatch():
             else:
                 self.PeakCan.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], self.sDevName)
             if False != self.PeakCan.bConnected:
-                self.vDataAquisition()          
+                self.vDataAquisition()     
+        else:
+            self.vRunConsoleNormal()
+             
         self.close()        
 
            

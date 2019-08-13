@@ -33,7 +33,7 @@ def tArray2Binary(array):
     binary = ' '.join(format(ord(letter), 'b') for letter in strDict)
     return binary.encode()
 
-def tBinary2Dict(tBinary):
+def tBinary2Array(tBinary):
     jsn = ''.join(chr(int(x, 2)) for x in tBinary.split())
     msg = None
     try:
@@ -143,7 +143,7 @@ def vPlotter(commandQueue):
         else:
             value = cDict["Connection"].recv(1024)
             if None != value:
-                value = tBinary2Dict(value)
+                value = tBinary2Array(value)
                 if None != value:    
                     cDict["xAccPoints"] = cDict["xAccPoints"][cDict["dataBlockSize"]:]
                     cDict["yAccPoints"] = cDict["yAccPoints"][cDict["dataBlockSize"]:]

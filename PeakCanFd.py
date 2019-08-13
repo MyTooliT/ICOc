@@ -953,6 +953,26 @@ class PeakCanFd(object):
             print("Available Names: " + str(recNameList))
             self.__exitError()
         return deviceNumber
+
+
+    def tgetDeviveList(self, stuNr):       
+        devList = []        
+        self.BlueToothConnectConnect(stuNr)
+        devAll = self.BlueToothConnectTotalScannedDeviceNr(stuNr)
+        for dev in range(0, devAll):
+            endTime = time() + BluetoothTime["Connect"]
+            name = ''
+            while '' == name and time() < endTime:
+                name = self.BlueToothNameGet(stuNr, dev)[0:8]
+            endTime = time() + BluetoothTime["Connect"]
+            address = 0
+            while 0 == address and time() < endTime:
+                address = self.BlueToothAddressGet(stuNr, dev)
+            rssi = 0
+            while 0 == rssi and time() < endTime:
+                rssi = self.BlueToothRssiGet(stuNr, dev)
+            devList.append({"DeviceNumber": dev, "Name" : name, "Address" : address, "RSSI" : rssi})
+        return devList
     
     """
     Connect to device via Bluetooth Address
