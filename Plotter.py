@@ -105,7 +105,7 @@ def vPlotter(valueQueue, commandQueue):
             vPlotterCommand(command, value)
          
     [line1, line2, line3] = tPlotterInit()
-    pauseTime = (1/cDict["sampleInterval"]) / 2
+    pauseTime = (1/cDict["sampleInterval"]) / 4
     while False != cDict["Run"]:
         if False == commandQueue.empty():
             [command, value] = commandQueue.get()  
@@ -126,9 +126,6 @@ def vPlotter(valueQueue, commandQueue):
             cDict["yAccPoints"] = np.hstack([cDict["yAccPoints"], value['Y']])
             cDict["zAccPoints"] = np.hstack([cDict["zAccPoints"], value['Z']])
             [line1, line2, line3] = vlivePlot(cDict["xAccPoints"], cDict["yAccPoints"], cDict["zAccPoints"], line1, line2, line3, pauseTime)
-        else:
-            sleep(pauseTime/2)
-
     print("Gui display closed")
 
         

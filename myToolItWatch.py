@@ -39,7 +39,7 @@ Watch = {
     "IntervalDimMinX" : 10,  # Minimum interval time in ms
     "DisplayTimeMax" : 10,  # Maximum Display Time in seconds
     "DisplaySampleRateMs" : 100,  # Maximum Display Time in seconds
-    "DisplayBlockSize" : 10,
+    "DisplayBlockSize" : 5,
 }
 
 class myToolItWatch():
