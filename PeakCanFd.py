@@ -111,7 +111,7 @@ class Logger():
         
 class PeakCanFd(object):
 
-    def __init__(self, baudrate, testMethodName, testMethodNameError, sender, receiver):
+    def __init__(self, baudrate, testMethodName, testMethodNameError, sender, receiver, prescaler=2, acquisition=8, oversampling=64):
         self.bConnected = False
         self.sender = sender
         self.receiver = receiver
@@ -127,6 +127,13 @@ class PeakCanFd(object):
         self.bError = False
         self.RunReadThread = False
         self.CanTimeStampStart(0)
+        self.AdcConfig = {"Prescaler" : prescaler, "AquisitionTime" : acquisition, "OverSamplingRate" : oversampling}
+        self.AccConfig = AtvcFormat()
+        self.AccConfig.asbyte = 0
+        self.AccConfig.b.bStreaming = 1
+        self.VoltageConfig = AtvcFormat()
+        self.VoltageConfig.asbyte = 0
+        self.VoltageConfig.b.bStreaming = 1
         if 0 == baudrate:
             self.m_IsFD = True
         else:
@@ -562,38 +569,107 @@ class PeakCanFd(object):
                 self.Logger.Info(preFix + "Z: " + str(fCbfRecalc(array3[i])) + postFix)
         return samplingPoints
       
+      
+    def dataPointsTotal(self, b1, b2, b3):
+        return [bool(b1), bool(b2), bool(b3)].count(True)
+        
+    def dataSetsCan20(self, b1, b2, b3):
+        dataSets = [bool(b1), bool(b2), bool(b3)].count(True)
+        if 0 == dataSets:
+            pass
+        elif 1 == dataSets:
+            dataSets = 3
+        else:
+            dataSets = 1 
+        return dataSets
+    
+    def bandwith(self):
+        samplingRate = calcSamplingRate(self.AdcConfig["Prescaler"], self.AdcConfig["AquisitionTime"], self.AdcConfig["OverSamplingRate"])
+        dataSetsAcc = self.dataSetsCan20(self.AccConfig.b.bNumber1, self.AccConfig.b.bNumber2, self.AccConfig.b.bNumber3)
+        dataSetsVoltage = self.dataSetsCan20(self.VoltageConfig.b.bNumber1, self.VoltageConfig.b.bNumber2, self.VoltageConfig.b.bNumber3)
+        dataPointsAcc = self.dataPointsTotal(self.AccConfig.b.bNumber1, self.AccConfig.b.bNumber2, self.AccConfig.b.bNumber3)
+        dataPointsVoltage = self.dataPointsTotal(self.VoltageConfig.b.bNumber1, self.VoltageConfig.b.bNumber2, self.VoltageConfig.b.bNumber3)
+        totalDataPoints = dataPointsAcc + dataPointsVoltage
+        msgAcc = samplingRate/totalDataPoints
+        if 0 < dataSetsAcc:
+            msgAcc /= dataSetsAcc
+        else:
+            msgAcc = 0
+        msgVoltage = samplingRate/totalDataPoints
+        if 0 < dataSetsVoltage:
+            msgVoltage /= dataSetsVoltage
+        else:
+            msgVoltage = 0
+        return [msgAcc, msgVoltage, dataSetsAcc, dataSetsVoltage]
+              
+    def canBandwith(self):
+        [msgAcc, msgVoltage, dataSetsAcc, dataSetsVoltage] = self.bandwith()
+        #(Header + Subheader(Message Counter) + data)*msg/s
+        bitsAcc = (67 + 16 + dataSetsAcc*16)*msgAcc
+        bitsVoltage = (67 + 16 + dataSetsVoltage*16)*msgVoltage
+        return (bitsAcc + bitsVoltage)
+         
+    def bluetoothBandwidth(self):
+        [msgAcc, msgVoltage, dataSetsAcc, dataSetsVoltage] = self.bandwith()
+        #(Header + Subheader(Message Counter) + data)/samples
+        bitsAcc = (32 + 16 + dataSetsAcc*16)*msgAcc
+        bitsVoltage = (32 + 16 + dataSetsVoltage*16)*msgVoltage
+        
+        return (bitsAcc + bitsVoltage)
+    
+    
     def streamingStart(self, receiver, subCmd, dataSets, b1, b2, b3, log=True):
-        accFormat = AtvcFormat()
-        accFormat.asbyte = 0
-        accFormat.b.bStreaming = 1
-        accFormat.b.bNumber1 = b1
-        accFormat.b.bNumber2 = b2
-        accFormat.b.bNumber3 = b3
-        accFormat.b.u3DataSets = dataSets
+        if MyToolItStreaming["Acceleration"] == subCmd:
+            self.AccConfig.asbyte = 0
+            self.AccConfig.b.bStreaming = 1
+            self.AccConfig.b.bNumber1 = b1
+            self.AccConfig.b.bNumber2 = b2
+            self.AccConfig.b.bNumber3 = b3
+            self.AccConfig.b.u3DataSets = dataSets
+            streamingFormat = self.AccConfig
+        if MyToolItStreaming["Voltage"] == subCmd:
+            self.VoltageConfig.asbyte = 0
+            self.VoltageConfig.b.bStreaming = 1
+            self.VoltageConfig.b.bNumber1 = b1
+            self.VoltageConfig.b.bNumber2 = b2
+            self.VoltageConfig.b.bNumber3 = b3
+            self.VoltageConfig.b.u3DataSets = dataSets
+            streamingFormat = self.VoltageConfig
+        if False != log:
+            self.Logger.Info("Can Bandwitdh(Best): " + str(self.canBandwith()) + "bit/s")
+            self.Logger.Info("Bluetooth Bandwitdh(Best): " + str(self.bluetoothBandwidth()) + "bit/s")
+    
         cmd = self.CanCmd(MyToolItBlock["Streaming"], subCmd, 1, 0)
-        message = self.CanMessage20(cmd, self.sender, receiver, [accFormat.asbyte])
+        message = self.CanMessage20(cmd, self.sender, receiver, [streamingFormat.asbyte])
         if False != log:
             canCmd = self.CanCmd(MyToolItBlock["Streaming"], subCmd, 1, 0)
-            self.Logger.Info("Start sending  " + self.strCmdNrToCmdName(canCmd) + "; Subpayload: " + hex(accFormat.asbyte))
+            self.Logger.Info("Start sending  " + self.strCmdNrToCmdName(canCmd) + "; Subpayload: " + hex(streamingFormat.asbyte))
             
         indexStart = self.GetReadArrayIndex() + 1
         self.WriteFrameWaitAckRetries(message) 
         return indexStart
         
     def streamingStop(self, receiver, subCmd, bErrorExit=True):
-        AtvcSet = AtvcFormat()
-        AtvcSet.asbyte = 0
-        AtvcSet.b.bStreaming = 1
-        AtvcSet.b.u3DataSets = DataSets[0]
+        if MyToolItStreaming["Acceleration"] == subCmd:
+            self.AccConfig.asbyte = 0
+            self.AccConfig.b.bStreaming = 1
+            self.AccConfig.b.u3DataSets = DataSets[0]
+            streamingFormat = self.AccConfig
+        if MyToolItStreaming["Voltage"] == subCmd:
+            self.VoltageConfig.asbyte = 0
+            self.VoltageConfig.b.bStreaming = 1
+            self.VoltageConfig.b.u3DataSets = DataSets[0]
+            streamingFormat = self.VoltageConfig
         cmd = self.CanCmd(MyToolItBlock["Streaming"], subCmd, 1, 0)
-        message = self.CanMessage20(cmd, self.sender, receiver, [AtvcSet.asbyte])
+        message = self.CanMessage20(cmd, self.sender, receiver, [streamingFormat.asbyte])
         self.Logger.Info("_____________________________________________________________")
         self.Logger.Info("Stop Streaming - " + self.strCmdNrToCmdName(cmd))
-        ack = self.WriteFrameWaitAckRetries(message, retries=20, printLog=False, assumedPayload=[AtvcSet.asbyte, 0, 0, 0, 0, 0, 0, 0], bErrorExit=bErrorExit)
+        ack = self.WriteFrameWaitAckRetries(message, retries=20, printLog=False, assumedPayload=[streamingFormat.asbyte, 0, 0, 0, 0, 0, 0, 0], bErrorExit=bErrorExit)
         self.Logger.Info("_____________________________________________________________")
         return ack
         
     def ConfigAdc(self, receiver, preq, aquistionTime, oversampling, adcRef, log=True):
+        self.AdcConfig = {"Prescaler" : preq, "AquisitionTime" : aquistionTime, "OverSamplingRate" : oversampling}
         if False != log:
             self.Logger.Info("Config ADC - Prescaler: " + str(preq) + "/" + str(AdcAcquisitionTimeName[aquistionTime]) + "/" + str(AdcOverSamplingRateName[oversampling]) + "/" + str(VRefName[adcRef]))
             self.Logger.Info("Calculated Sampling Rate: " + str(calcSamplingRate(preq, aquistionTime, oversampling)))

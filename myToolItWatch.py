@@ -18,6 +18,7 @@ import argparse
 import multiprocessing
 from Plotter import vPlotter, tArray2Binary
 import socket
+import msvcrt
 
 HOST = 'localhost'  # The remote host
 PORT = 50007  # The same port as used by the server
@@ -257,13 +258,7 @@ class myToolItWatch():
         if  (dataSets in DataSets):
             self.tAccDataFormat = DataSets[dataSets]
         else:
-            dataSets = [self.bAccX, self.bAccY, self.bAccZ].count(True)
-            if 0 == dataSets:
-                pass
-            elif 1 == dataSets:
-                dataSets = 3
-            else:
-                dataSets = 1 
+            dataSets = self.PeakCan.dataSetsCan20(bX, bY, bZ)
             self.tAccDataFormat = DataSets[dataSets]
         
     def vVoltageSet(self, bX, bY, bZ, dataSets):
@@ -274,13 +269,7 @@ class myToolItWatch():
         if (dataSets in DataSets):
             self.tVoltageDataFormat = DataSets[dataSets]
         else:
-            dataSets = [self.bVoltageX, self.bVoltageY, self.bVoltageZ].count(True)
-            if 0 == dataSets:
-                pass
-            elif 1 == dataSets:
-                dataSets = 3
-            else:
-                dataSets = 1 
+            dataSets = self.PeakCan.dataSetsCan20(bX, bY, bZ)
             self.tVoltageDataFormat = DataSets[dataSets]
     
     def vSthAutoConnect(self, bSthAutoConnect):     
@@ -1132,7 +1121,15 @@ class myToolItWatch():
             self.xmlPrintSetups()
         if False != self.args_dict['devNameList']:
             pass  
-
+        
+    def _vAutoConnect(self):
+        devList = self.PeakCan.tgetDeviveList(MyToolItNetworkNr["STU1"])
+        self.clear()
+        for dev in devList:
+            print("DeviceNumber: " + str(dev["DeviceNumber"]) +"; Name: " + str(dev["Name"]) +"; Address: " + hex(dev["Address"]) +"; RSSI: " + str(dev["RSSI"]))
+            self.vRunConsoleNormalMenu()
+            
+            
     def clear(self): 
       
         # for windows 
@@ -1142,14 +1139,29 @@ class myToolItWatch():
         # for mac and linux(here, os.name is 'posix') 
         else: 
             _ = os.system('clear')   
+            
+    def vRunConsoleNormalMenuMain(self):
+        print("Enter Digit 0-9 to connect to STH 0-9")
+        print("P: Change parameters")
+        print("N: Change Device Name")
+        print("T: Test Menu")
+        print("E: EEPROM Parameters")
+        print("H: Holder Page")
+        userResponse = msvcrt.getch().decode('utf-8')
+        print(userResponse.lower())
+        if userResponse.lower() == '1':
+            print("Pressed 1")
+            sleep(1)
+            
+    def vRunConsoleNormalMenu(self):
+        self.vRunConsoleNormalMenuMain()
+            
+        
         
     def vRunConsoleNormal(self):
         while True:
             try:
-                devList = self.PeakCan.tgetDeviveList(MyToolItNetworkNr["STU1"])
-                self.clear()
-                for dev in devList:
-                    print("DeviceNumber: " + str(dev["DeviceNumber"]) +"; Name: " + str(dev["Name"]) +"; Address: " + hex(dev["Address"]) +"; RSSI: " + str(dev["RSSI"]))
+                self._vAutoConnect()
             except KeyboardInterrupt:
                 self.KeyBoadInterrupt = True
                 break

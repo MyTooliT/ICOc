@@ -49,7 +49,7 @@ class TestSth(unittest.TestCase):
         print("TestCase: ", self._testMethodName)
         self.fileName = log_location + self._testMethodName + ".txt"
         self.fileNameError = log_location + "Error_" + self._testMethodName + ".txt"
-        self.PeakCan = PeakCanFd.PeakCanFd(PeakCanFd.PCAN_BAUD_1M, self.fileName, self.fileNameError, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"])
+        self.PeakCan = PeakCanFd.PeakCanFd(PeakCanFd.PCAN_BAUD_1M, self.fileName, self.fileNameError, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], AdcPrescalerReset, AdcAcquisitionTimeReset, AdcAcquisitionOverSamplingRateReset)
         self.PeakCan.Logger.Info("TestCase: " + str(self._testMethodName))
         self.PeakCan.CanTimeStampStart(self._resetStu()["CanTime"])
         self.PeakCan.Logger.Info("Connect to STH")
@@ -1081,9 +1081,6 @@ class TestSth(unittest.TestCase):
         self.assertGreater(iRssi, -80)
         self.assertLess(iRssi, 20)
         self.PeakCan.Logger.Info("BlueTooth RSSI: " + hex(iRssi))   
-
-
-  
         
     """
     Get Battery Voltage via single command
@@ -2607,7 +2604,9 @@ class TestSth(unittest.TestCase):
         time.sleep(StreamingStandardTestTimeMs / 1000 + 0.25)
         indexEnd = self.PeakCan.GetReadArrayIndex() - 1
         self.PeakCan.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"])
-        self.PeakCan.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"])   
+        self.PeakCan.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"])  
+        
+         
         time.sleep(1)    
         countDel = 0
         while StreamingStandardTestTimeMs + 0.25 < self.PeakCan.getReadMessageTimeMs(indexStart, indexEnd) - 0.5:
