@@ -59,7 +59,6 @@ class Logger():
             if os.path.isfile(self.fileName):
                 os.rename(self.fileName, self.fileNameError)
 
-
     def getTimeStamp(self):     
         return int(round(time() * 1000)) - int(self.startTime)
                             
@@ -175,6 +174,9 @@ class PeakCanFd(object):
         self.bError = True
         raise
     
+    def __close__(self):
+        self.__exit__()
+    
     def vLogNameChange(self, testMethodName, testMethodNameError):
         self.Logger.vRename(testMethodName, testMethodNameError)
         
@@ -195,10 +197,8 @@ class PeakCanFd(object):
                     
     def ReadThreadReset(self):
         self.readThreadStop()            
-        self.readArray = [{"CanMsg" : self.CanMessage20(0, 0, 0, [0, 0, 0, 0, 0, 0, 0, 0]), "PcTime" : self.getTimeMs(), "PeakCanTime" : 0}]
-        self.readArray.append({"CanMsg" : self.CanMessage20(0, 0, 0, [0, 0, 0, 0, 0, 0, 0, 0]), "PcTime" : self.getTimeMs(), "PeakCanTime" : 0})
+        self.readArray = [{"CanMsg" : self.CanMessage20(0, 0, 0, [0, 0, 0, 0, 0, 0, 0, 0]), "PcTime" : (1<<64), "PeakCanTime" : 0}]
         sleep(0.2)
-        self.timeStampStart = self.getTimeMs()
         self.RunReadThread = True
         self.readThread = threading.Thread(target=self.ReadMessage, name="CanReadThread")
         self.readThread.start()
@@ -267,6 +267,8 @@ class PeakCanFd(object):
                     if payload1[i] != payload2[i]:
                         bEqual = False
                         break
+        else:
+            bEqual = True
         return bEqual
                 
     def WriteFrame(self, CanMsg):  
@@ -279,20 +281,53 @@ class PeakCanFd(object):
                 returnMessage = "Error"    
                 self.__exitError()
         return returnMessage
+
+    def WriteFrameWaitAckOk(self, message):      
+        payload = self.PeakCanPayload2Array(message["CanMsg"])
+        returnMessage = {"ID" : hex(message["CanMsg"].ID), "Payload" : payload, "PcTime" : message["PcTime"], "CanTime" : message["PeakCanTime"]}
+        return returnMessage
     
-    def WriteFrameWaitAck(self, CanMsg, waitMs=1000, currentIndex=None, printLog=False, assumedPayload=None, bError=False):  
-        indexStart = self.GetReadArrayIndex()
-        sleep(0.001)  # to assure granularity
+    def WriteFrameWaitAckError(self, message, bError, printLog):
+        [command, sender, receiver] = self.CanMessage20GetFields(message["CanMsg"].ID)
+        cmdBlockName = self.strCmdNrToBlockName(command)
+        cmdName = self.strCmdNrToCmdName(command)
+        senderName = MyToolItNetworkName[sender]
+        receiverName = MyToolItNetworkName[receiver]
+        if False != bError:
+            self.Logger.bError("Error Ack Received: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + payload2Hex(message["CanMsg"].DATA))
+            if False != printLog:
+                print("Error Ack Received: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + payload2Hex(message["CanMsg"].DATA))
+        else:
+            self.Logger.bError("Ack Received(bError assumed): " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + payload2Hex(message["CanMsg"].DATA))
+            if False != printLog:
+                print("Ack Received(bError assumed): " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + payload2Hex(message["CanMsg"].DATA))        
+        return self.WriteFrameWaitAckOk(message)
+    
+    def WriteFrameWaitAckTimeOut(self, CanMsg, printLog):        
+        [command, sender, receiver] = self.CanMessage20GetFields(CanMsg.ID)
+        cmdBlockName = self.strCmdNrToBlockName(command)
+        cmdName = self.strCmdNrToCmdName(command)
+        senderName = MyToolItNetworkName[sender]
+        receiverName = MyToolItNetworkName[receiver]
+        self.Logger.Warning("No (bError) Ack Received: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + payload2Hex(CanMsg.DATA))
+        if False != printLog:
+            print("No (bError) Ack Received: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + str(CanMsg.DATA))
+        return "Error"  
+      
+    def WriteFrameWaitAck(self, CanMsg, waitMs=1000, currentIndex=None, printLog=False, assumedPayload=None, bError=False, sendTime = None):
+        if 100 > waitMs:
+            self.__exitError()  
+        if None == sendTime:
+            sendTime = self.getTimeMs()
         if None == currentIndex:
-            currentIndex = self.GetReadArrayIndex() - 1
-        if currentIndex < len(self.readArray):
-            message = self.readArray[currentIndex]
-        else: 
-            message = {"CanMsg" : self.CanMessage20(0, 0, 0, [0, 0, 0, 0, 0, 0, 0, 0]), "PcTime" : self.getTimeMs(), "PeakCanTime" : 0}
+            currentIndex = self.GetReadArrayIndex()
+        if currentIndex >= self.GetReadArrayIndex():
+            currentIndex = self.GetReadArrayIndex()-1
+        message = self.readArray[currentIndex]
+
         if(False != printLog):
             print("Message ID Send: " + hex(CanMsg.ID))
             print("Message DATA Send: " + payload2Hex(CanMsg.DATA))
-        self.timeStampStart = self.getTimeMs()
         returnMessage = self.WriteFrame(CanMsg)        
         if "Error" != returnMessage:
             waitTimeMax = self.getTimeMs() + waitMs
@@ -302,53 +337,29 @@ class PeakCanFd(object):
             else:
                 CanMsgAck = self.CanMessage20Ack(CanMsg)
                 CanMsgAckError = self.CanMessage20AckError(CanMsg) 
-            indexStartError = currentIndex
-            while (CanMsgAck.ID != message["CanMsg"].ID) or (message["PcTime"] < self.timeStampStart) or indexStart == self.GetReadArrayIndex() or (not self.ComparePayloadEqual(self.PeakCanPayload2Array(message["CanMsg"]), assumedPayload) and None != assumedPayload):
-                if((CanMsgAckError.ID == message["CanMsg"].ID) and (indexStartError < currentIndex)):
-                    indexStartError = currentIndex
-                    [command, sender, receiver] = self.CanMessage20GetFields(message["CanMsg"].ID)
-                    cmdBlockName = self.strCmdNrToBlockName(command)
-                    cmdName = self.strCmdNrToCmdName(command)
-                    senderName = MyToolItNetworkName[sender]
-                    receiverName = MyToolItNetworkName[receiver]
-                    if False != bError:
-                        self.Logger.bError("Error Ack Received: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + payload2Hex(CanMsg.DATA))
-                        if False != printLog:
-                            print("Error Ack Received: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + payload2Hex(CanMsg.DATA))
-                    else:
-                        self.Logger.bError("Ack Received(bError assumed): " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + payload2Hex(CanMsg.DATA))
-                        if False != printLog:
-                            print("Ack Received(bError assumed): " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + payload2Hex(CanMsg.DATA))
-                    break
-                elif(waitTimeMax < self.getTimeMs()):
-                    returnMessage = "Error"
-                    [command, sender, receiver] = self.CanMessage20GetFields(CanMsg.ID)
-                    cmdBlockName = self.strCmdNrToBlockName(command)
-                    cmdName = self.strCmdNrToCmdName(command)
-                    senderName = MyToolItNetworkName[sender]
-                    receiverName = MyToolItNetworkName[receiver]
-                    self.Logger.Warning("No (bError) Ack Received: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + payload2Hex(CanMsg.DATA))
-                    if False != printLog:
-                        print("No (bError) Ack Received: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + str(CanMsg.DATA))
-                    break
-                
-                if currentIndex < (self.GetReadArrayIndex() - 1):
-                    currentIndex += 1
+            returnMessage = "Run"
+            while "Run" == returnMessage:
+                if(waitTimeMax < self.getTimeMs()):
+                    returnMessage = self.WriteFrameWaitAckTimeOut(CanMsg, printLog)
+                elif sendTime > message["PcTime"]:
+                    message = self.readArray[0]      
+                elif CanMsgAck.ID == message["CanMsg"].ID and self.ComparePayloadEqual(self.PeakCanPayload2Array(message["CanMsg"]), assumedPayload):
+                    returnMessage = self.WriteFrameWaitAckOk(message)
+                elif CanMsgAckError.ID == message["CanMsg"].ID:
+                    returnMessage = self.WriteFrameWaitAckError(message, bError, printLog)
+                elif currentIndex < (self.GetReadArrayIndex() -1):
+                    currentIndex += 1   
                     message = self.readArray[currentIndex]
                 else:
-                    sleep(waitMs / 10000)
-                
-        if "Error" != returnMessage:
-            payload = self.PeakCanPayload2Array(message["CanMsg"])
-            returnMessage = {"ID" : hex(message["CanMsg"].ID), "Payload" : payload, "PcTime" : message["PcTime"], "CanTime" : message["PeakCanTime"]}
-            self.timeStampStart = self.getTimeMs()
+                    sleep(0.010)
         return [returnMessage, currentIndex]
     
     def WriteFrameWaitAckRetries(self, CanMsg, retries=10, waitMs=1000, printLog=False, bErrorAck=False, assumedPayload=None, bErrorExit=True):  
         currentIndex = self.GetReadArrayIndex() - 1
         retries += 1
+        sendTime = self.getTimeMs()
         for i in range(0, retries):
-            [returnMessage, currentIndex] = self.WriteFrameWaitAck(CanMsg, waitMs=waitMs, currentIndex=currentIndex, printLog=printLog, assumedPayload=assumedPayload, bError=bErrorAck)
+            [returnMessage, currentIndex] = self.WriteFrameWaitAck(CanMsg, waitMs=waitMs, currentIndex=currentIndex, printLog=printLog, assumedPayload=assumedPayload, bError=bErrorAck, sendTime = sendTime)
             if "Error" != returnMessage:
                 break
             elif (retries - 1) == i:                
@@ -362,6 +373,7 @@ class PeakCanFd(object):
                     print("Message Request Failed: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + payload2Hex(CanMsg.DATA))
                 if False != bErrorExit:
                     self.__exitError()
+        sleep(0.010)
         return returnMessage
 
     def cmdSend(self, receiver, blockCmd, subCmd, payload, log=True, retries=10, bErrorAck=False, printLog=False):
@@ -569,7 +581,6 @@ class PeakCanFd(object):
                 self.Logger.Info(preFix + "Z: " + str(fCbfRecalc(array3[i])) + postFix)
         return samplingPoints
       
-      
     def dataPointsTotal(self, b1, b2, b3):
         return [bool(b1), bool(b2), bool(b3)].count(True)
         
@@ -590,12 +601,12 @@ class PeakCanFd(object):
         dataPointsAcc = self.dataPointsTotal(self.AccConfig.b.bNumber1, self.AccConfig.b.bNumber2, self.AccConfig.b.bNumber3)
         dataPointsVoltage = self.dataPointsTotal(self.VoltageConfig.b.bNumber1, self.VoltageConfig.b.bNumber2, self.VoltageConfig.b.bNumber3)
         totalDataPoints = dataPointsAcc + dataPointsVoltage
-        msgAcc = samplingRate/totalDataPoints
+        msgAcc = samplingRate / totalDataPoints
         if 0 < dataSetsAcc:
             msgAcc /= dataSetsAcc
         else:
             msgAcc = 0
-        msgVoltage = samplingRate/totalDataPoints
+        msgVoltage = samplingRate / totalDataPoints
         if 0 < dataSetsVoltage:
             msgVoltage /= dataSetsVoltage
         else:
@@ -604,19 +615,18 @@ class PeakCanFd(object):
               
     def canBandwith(self):
         [msgAcc, msgVoltage, dataSetsAcc, dataSetsVoltage] = self.bandwith()
-        #(Header + Subheader(Message Counter) + data)*msg/s
-        bitsAcc = (67 + 16 + dataSetsAcc*16)*msgAcc
-        bitsVoltage = (67 + 16 + dataSetsVoltage*16)*msgVoltage
+        # (Header + Subheader(Message Counter) + data)*msg/s
+        bitsAcc = (67 + 16 + dataSetsAcc * 16) * msgAcc
+        bitsVoltage = (67 + 16 + dataSetsVoltage * 16) * msgVoltage
         return (bitsAcc + bitsVoltage)
          
     def bluetoothBandwidth(self):
         [msgAcc, msgVoltage, dataSetsAcc, dataSetsVoltage] = self.bandwith()
-        #(Header + Subheader(Message Counter) + data)/samples
-        bitsAcc = (32 + 16 + dataSetsAcc*16)*msgAcc
-        bitsVoltage = (32 + 16 + dataSetsVoltage*16)*msgVoltage
+        # (Header + Subheader(Message Counter) + data)/samples
+        bitsAcc = (32 + 16 + dataSetsAcc * 16) * msgAcc
+        bitsVoltage = (32 + 16 + dataSetsVoltage * 16) * msgVoltage
         
         return (bitsAcc + bitsVoltage)
-    
     
     def streamingStart(self, receiver, subCmd, dataSets, b1, b2, b3, log=True):
         if MyToolItStreaming["Acceleration"] == subCmd:
@@ -627,7 +637,7 @@ class PeakCanFd(object):
             self.AccConfig.b.bNumber3 = b3
             self.AccConfig.b.u3DataSets = dataSets
             streamingFormat = self.AccConfig
-        if MyToolItStreaming["Voltage"] == subCmd:
+        elif MyToolItStreaming["Voltage"] == subCmd:
             self.VoltageConfig.asbyte = 0
             self.VoltageConfig.b.bStreaming = 1
             self.VoltageConfig.b.bNumber1 = b1
@@ -635,6 +645,8 @@ class PeakCanFd(object):
             self.VoltageConfig.b.bNumber3 = b3
             self.VoltageConfig.b.u3DataSets = dataSets
             streamingFormat = self.VoltageConfig
+        else:
+            self.__exitError()
         if False != log:
             self.Logger.Info("Can Bandwitdh(Best): " + str(self.canBandwith()) + "bit/s")
             self.Logger.Info("Bluetooth Bandwitdh(Best): " + str(self.bluetoothBandwidth()) + "bit/s")
@@ -645,7 +657,7 @@ class PeakCanFd(object):
             canCmd = self.CanCmd(MyToolItBlock["Streaming"], subCmd, 1, 0)
             self.Logger.Info("Start sending  " + self.strCmdNrToCmdName(canCmd) + "; Subpayload: " + hex(streamingFormat.asbyte))
             
-        indexStart = self.GetReadArrayIndex() + 1
+        indexStart = self.GetReadArrayIndex()
         self.WriteFrameWaitAckRetries(message) 
         return indexStart
         
@@ -655,11 +667,13 @@ class PeakCanFd(object):
             self.AccConfig.b.bStreaming = 1
             self.AccConfig.b.u3DataSets = DataSets[0]
             streamingFormat = self.AccConfig
-        if MyToolItStreaming["Voltage"] == subCmd:
+        elif MyToolItStreaming["Voltage"] == subCmd:
             self.VoltageConfig.asbyte = 0
             self.VoltageConfig.b.bStreaming = 1
             self.VoltageConfig.b.u3DataSets = DataSets[0]
             streamingFormat = self.VoltageConfig
+        else:
+            self.__exitError()
         cmd = self.CanCmd(MyToolItBlock["Streaming"], subCmd, 1, 0)
         message = self.CanMessage20(cmd, self.sender, receiver, [streamingFormat.asbyte])
         self.Logger.Info("_____________________________________________________________")
@@ -695,7 +709,7 @@ class PeakCanFd(object):
         indexRun = indexAssumed
         indexEnd = self.GetReadArrayIndex()
         returnAck = []
-        while indexRun <= indexEnd:
+        while indexRun < indexEnd:
             if messageIdFilter == self.getReadMessageId(indexRun):
                 returnAck = self.getReadMessageData(indexRun)
                 break
@@ -714,7 +728,7 @@ class PeakCanFd(object):
         indexRun = indexAssumed
         indexEnd = self.GetReadArrayIndex()
         returnAck = []
-        while indexRun <= indexEnd:
+        while indexRun < indexEnd:
             if messageIdFilter == self.getReadMessageId(indexRun):
                 returnAck = self.getReadMessageData(indexRun)
                 break
@@ -827,7 +841,7 @@ class PeakCanFd(object):
     def ReadMessageStatistics(self):
         iDs = {}
         cmds = {}
-        for i in range(2, self.GetReadArrayIndex()):
+        for i in range(0, self.GetReadArrayIndex()):
             msg = self.readArray[i]["CanMsg"]              
             if msg.ID in iDs:
                 iDs[msg.ID] += 1
@@ -841,17 +855,18 @@ class PeakCanFd(object):
         return [iDs, cmds]
             
     def ReadMessage(self):
-        # We execute the "Read" function of the PCANBasic
-        #
-        while False != self.RunReadThread:
-            result = self.m_objPCANBasic.Read(self.m_PcanHandle)
-            if result[0] == PCAN_ERROR_OK:
-                peakCanTimeStamp = result[2].millis_overflow * (2 ** 32) + result[2].millis + result[2].micros / 1000
-                self.readArray.append({"CanMsg" : result[1], "PcTime" : self.getTimeMs(), "PeakCanTime" : peakCanTimeStamp})                
-            elif result[0] == PCAN_ERROR_QOVERRUN:
-                self.Logger.bError("RxOverRun")
-                print("RxOverRun")
-                self.RunReadThread = False
+        try:
+            while False != self.RunReadThread:
+                result = self.m_objPCANBasic.Read(self.m_PcanHandle)
+                if result[0] == PCAN_ERROR_OK:
+                    peakCanTimeStamp = result[2].millis_overflow * (2 ** 32) + result[2].millis + result[2].micros / 1000
+                    self.readArray.append({"CanMsg" : result[1], "PcTime" : self.getTimeMs(), "PeakCanTime" : peakCanTimeStamp})                
+                elif result[0] == PCAN_ERROR_QOVERRUN:
+                    self.Logger.bError("RxOverRun")
+                    print("RxOverRun")
+                    self.RunReadThread = False
+        except KeyboardInterrupt:
+            self.RunReadThread = False
     
     def getReadMessage(self, element):
         return self.readArray[element]["CanMsg"]
@@ -1018,7 +1033,7 @@ class PeakCanFd(object):
                     ret = 0  
                     while time() < endTime and 0 == ret:      
                         ret = self.BlueToothCheckConnect(stuNr)  
-                    self.bConnected = bool(0!=ret)
+                    self.bConnected = bool(0 != ret)
                     if False != self.bConnected:
                         self.Logger.Info("Connected to: " + self.Name)
                 else:
@@ -1029,7 +1044,6 @@ class PeakCanFd(object):
             print("Available Names: " + str(recNameList))
             self.__exitError()
         return deviceNumber
-
 
     def tgetDeviveList(self, stuNr):       
         devList = []        
@@ -1078,7 +1092,7 @@ class PeakCanFd(object):
                     ret = 0  
                     while time() < endTime and 0 == ret:      
                         ret = self.BlueToothCheckConnect(stuNr)  
-                    self.bConnected = bool(0!=ret)
+                    self.bConnected = bool(0 != ret)
                     if False != self.bConnected:
                         self.Logger.Info("Connected to: " + str(self.iAddress))
                 else:
