@@ -197,7 +197,7 @@ class PeakCanFd(object):
                     
     def ReadThreadReset(self):
         self.readThreadStop()            
-        self.readArray = [{"CanMsg" : self.CanMessage20(0, 0, 0, [0, 0, 0, 0, 0, 0, 0, 0]), "PcTime" : (1<<64), "PeakCanTime" : 0}]
+        self.readArray = [{"CanMsg" : self.CanMessage20(0, 0, 0, [0, 0, 0, 0, 0, 0, 0, 0]), "PcTime" : (1 << 64), "PeakCanTime" : 0}]
         sleep(0.2)
         self.RunReadThread = True
         self.readThread = threading.Thread(target=self.ReadMessage, name="CanReadThread")
@@ -314,7 +314,7 @@ class PeakCanFd(object):
             print("No (bError) Ack Received: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + str(CanMsg.DATA))
         return "Error"  
       
-    def WriteFrameWaitAck(self, CanMsg, waitMs=1000, currentIndex=None, printLog=False, assumedPayload=None, bError=False, sendTime = None):
+    def WriteFrameWaitAck(self, CanMsg, waitMs=1000, currentIndex=None, printLog=False, assumedPayload=None, bError=False, sendTime=None):
         if 100 > waitMs:
             self.__exitError()  
         if None == sendTime:
@@ -322,7 +322,7 @@ class PeakCanFd(object):
         if None == currentIndex:
             currentIndex = self.GetReadArrayIndex()
         if currentIndex >= self.GetReadArrayIndex():
-            currentIndex = self.GetReadArrayIndex()-1
+            currentIndex = self.GetReadArrayIndex() - 1
         message = self.readArray[currentIndex]
 
         if(False != printLog):
@@ -347,7 +347,7 @@ class PeakCanFd(object):
                     returnMessage = self.WriteFrameWaitAckOk(message)
                 elif CanMsgAckError.ID == message["CanMsg"].ID:
                     returnMessage = self.WriteFrameWaitAckError(message, bError, printLog)
-                elif currentIndex < (self.GetReadArrayIndex() -1):
+                elif currentIndex < (self.GetReadArrayIndex() - 1):
                     currentIndex += 1   
                     message = self.readArray[currentIndex]
                 else:
@@ -355,11 +355,11 @@ class PeakCanFd(object):
         return [returnMessage, currentIndex]
     
     def WriteFrameWaitAckRetries(self, CanMsg, retries=10, waitMs=1000, printLog=False, bErrorAck=False, assumedPayload=None, bErrorExit=True):  
-        currentIndex = self.GetReadArrayIndex() - 1
         retries += 1
+        currentIndex = self.GetReadArrayIndex() - 1
         sendTime = self.getTimeMs()
         for i in range(0, retries):
-            [returnMessage, currentIndex] = self.WriteFrameWaitAck(CanMsg, waitMs=waitMs, currentIndex=currentIndex, printLog=printLog, assumedPayload=assumedPayload, bError=bErrorAck, sendTime = sendTime)
+            [returnMessage, currentIndex] = self.WriteFrameWaitAck(CanMsg, waitMs=waitMs, currentIndex=currentIndex, printLog=printLog, assumedPayload=assumedPayload, bError=bErrorAck, sendTime=sendTime)
             if "Error" != returnMessage:
                 break
             elif (retries - 1) == i:                
@@ -675,7 +675,7 @@ class PeakCanFd(object):
         else:
             self.__exitError()
         cmd = self.CanCmd(MyToolItBlock["Streaming"], subCmd, 1, 0)
-        message = self.CanMessage20(cmd, self.sender, receiver, [streamingFormat.asbyte])
+        message = self.CanMessage20(cmd, self.sender, receiver, [streamingFormat.asbyte, 0])
         self.Logger.Info("_____________________________________________________________")
         self.Logger.Info("Stop Streaming - " + self.strCmdNrToCmdName(cmd))
         ack = self.WriteFrameWaitAckRetries(message, retries=20, printLog=False, assumedPayload=[streamingFormat.asbyte, 0, 0, 0, 0, 0, 0, 0], bErrorExit=bErrorExit)
@@ -709,7 +709,7 @@ class PeakCanFd(object):
         indexRun = indexAssumed
         indexEnd = self.GetReadArrayIndex()
         returnAck = []
-        while indexRun < indexEnd:
+        while indexRun <= indexEnd:
             if messageIdFilter == self.getReadMessageId(indexRun):
                 returnAck = self.getReadMessageData(indexRun)
                 break
@@ -728,7 +728,7 @@ class PeakCanFd(object):
         indexRun = indexAssumed
         indexEnd = self.GetReadArrayIndex()
         returnAck = []
-        while indexRun < indexEnd:
+        while indexRun <= indexEnd:
             if messageIdFilter == self.getReadMessageId(indexRun):
                 returnAck = self.getReadMessageData(indexRun)
                 break
