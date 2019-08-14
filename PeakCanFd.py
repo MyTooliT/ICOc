@@ -675,7 +675,7 @@ class PeakCanFd(object):
         else:
             self.__exitError()
         cmd = self.CanCmd(MyToolItBlock["Streaming"], subCmd, 1, 0)
-        message = self.CanMessage20(cmd, self.sender, receiver, [streamingFormat.asbyte, 0])
+        message = self.CanMessage20(cmd, self.sender, receiver, [streamingFormat.asbyte])
         self.Logger.Info("_____________________________________________________________")
         self.Logger.Info("Stop Streaming - " + self.strCmdNrToCmdName(cmd))
         ack = self.WriteFrameWaitAckRetries(message, retries=20, printLog=False, assumedPayload=[streamingFormat.asbyte, 0, 0, 0, 0, 0, 0, 0], bErrorExit=bErrorExit)
@@ -709,7 +709,7 @@ class PeakCanFd(object):
         indexRun = indexAssumed
         indexEnd = self.GetReadArrayIndex()
         returnAck = []
-        while indexRun <= indexEnd:
+        while indexRun < indexEnd:
             if messageIdFilter == self.getReadMessageId(indexRun):
                 returnAck = self.getReadMessageData(indexRun)
                 break
@@ -728,7 +728,7 @@ class PeakCanFd(object):
         indexRun = indexAssumed
         indexEnd = self.GetReadArrayIndex()
         returnAck = []
-        while indexRun <= indexEnd:
+        while indexRun < indexEnd:
             if messageIdFilter == self.getReadMessageId(indexRun):
                 returnAck = self.getReadMessageData(indexRun)
                 break
