@@ -52,12 +52,16 @@ class Logger():
         self.vRename(fileName, fileNameError)
         
     def __exit__(self):
-        self.file.close()
-        if False != self.ErrorFlag:
-            if os.path.isfile(self.fileNameError) and os.path.isfile(self.fileName):
-                os.remove(self.fileNameError)
-            if os.path.isfile(self.fileName):
-                os.rename(self.fileName, self.fileNameError)
+        try:
+            self.file.close()
+            if False != self.ErrorFlag:
+                if os.path.isfile(self.fileNameError) and os.path.isfile(self.fileName):
+                    os.remove(self.fileNameError)
+                if os.path.isfile(self.fileName):
+                    os.rename(self.fileName, self.fileNameError)
+        except:
+            pass
+
 
     def getTimeStamp(self):     
         return int(round(time() * 1000)) - int(self.startTime)
@@ -105,7 +109,10 @@ class Logger():
             os.remove(self.fileNameError)
             
     def vClose(self):
-        self.__exit__()
+        try:
+            self.__exit__()
+        except:
+            pass
         
         
 class PeakCanFd(object):
@@ -154,28 +161,37 @@ class PeakCanFd(object):
             self.ReadThreadReset()
                         
     def __exit__(self): 
-        if False == self.bError:
-            if False != self.RunReadThread:
-                self.readThreadStop()
-            else:
-                self.Logger.bError("Peak CAN Message Over Run")
-                self.bError = True
-        self.Reset()   
-        self.m_objPCANBasic.Uninitialize(self.m_PcanHandle)
-        sleep(1)
-        [_iDs, cmds] = self.ReadMessageStatistics()
-        for cmd, value in cmds.items():
-            self.Logger.Info(self.strCmdNrToCmdName(cmd) + " received " + str(value) + " times")
-        self.Logger.__exit__()
+        try:
+            if False == self.bError:
+                if False != self.RunReadThread:
+                    self.readThreadStop()
+                else:
+                    self.Logger.bError("Peak CAN Message Over Run")
+                    self.bError = True
+            self.Reset()   
+            self.m_objPCANBasic.Uninitialize(self.m_PcanHandle)
+            sleep(1)
+            [_iDs, cmds] = self.ReadMessageStatistics()
+            for cmd, value in cmds.items():
+                self.Logger.Info(self.strCmdNrToCmdName(cmd) + " received " + str(value) + " times")
+            self.Logger.__exit__()
+        except:
+            pass
             
     def __exitError(self):
-        self.Logger.ErrorFlag = True
-        self.__exit__()
-        self.bError = True
+        try:
+            self.Logger.ErrorFlag = True
+            self.__exit__()
+            self.bError = True
+        except:
+            pass
         raise
     
     def __close__(self):
-        self.__exit__()
+        try:
+            self.__exit__()
+        except:
+            pass
     
     def vLogNameChange(self, testMethodName, testMethodNameError):
         self.Logger.vRename(testMethodName, testMethodNameError)
@@ -191,19 +207,25 @@ class PeakCanFd(object):
         self.receiver = receiver
         
     def readThreadStop(self):
-        if False != self.RunReadThread:
-            self.RunReadThread = False            
-            self.readThread.join()
-                    
+        try:
+            if False != self.RunReadThread:
+                self.RunReadThread = False            
+                self.readThread.join()
+        except:
+            pass
+        
     def ReadThreadReset(self):
-        self.readThreadStop()            
-        self.readArray = [{"CanMsg" : self.CanMessage20(0, 0, 0, [0, 0, 0, 0, 0, 0, 0, 0]), "PcTime" : (1 << 64), "PeakCanTime" : 0}]
-        sleep(0.2)
-        self.RunReadThread = True
-        self.readThread = threading.Thread(target=self.ReadMessage, name="CanReadThread")
-        self.readThread.start()
-        self.Reset()
-        sleep(0.2)
+        try:
+            self.readThreadStop()            
+            self.readArray = [{"CanMsg" : self.CanMessage20(0, 0, 0, [0, 0, 0, 0, 0, 0, 0, 0]), "PcTime" : (1 << 64), "PeakCanTime" : 0}]
+            sleep(0.2)
+            self.RunReadThread = True
+            self.readThread = threading.Thread(target=self.ReadMessage, name="CanReadThread")
+            self.readThread.start()
+            self.Reset()
+            sleep(0.2)
+        except:
+            pass
         
     def ConfigureTraceFile(self):
         # Configure the maximum size of a trace file to 5 megabytes
@@ -225,8 +247,11 @@ class PeakCanFd(object):
             print("Error while init Peak Can Basic Module while setting value in Trace File: " , stsResult)
             
     def Reset(self):
-        self.m_objPCANBasic.Reset(self.m_PcanHandle)
-
+        try: 
+            self.m_objPCANBasic.Reset(self.m_PcanHandle)
+        except:
+            pass
+        
     def CanTimeStampStart(self, CanTimeStampStart):
         self.PeakCanTimeStampStart = CanTimeStampStart
         
@@ -315,7 +340,7 @@ class PeakCanFd(object):
         return "Error"  
       
     def WriteFrameWaitAck(self, CanMsg, waitMs=1000, currentIndex=None, printLog=False, assumedPayload=None, bError=False, sendTime=None):
-        if 100 > waitMs:
+        if 200 > waitMs:
             self.__exitError()  
         if None == sendTime:
             sendTime = self.getTimeMs()
@@ -351,7 +376,7 @@ class PeakCanFd(object):
                     currentIndex += 1   
                     message = self.readArray[currentIndex]
                 else:
-                    sleep(0.010)
+                    sleep(0.001)
         return [returnMessage, currentIndex]
     
     def WriteFrameWaitAckRetries(self, CanMsg, retries=10, waitMs=1000, printLog=False, bErrorAck=False, assumedPayload=None, bErrorExit=True):  
@@ -373,7 +398,7 @@ class PeakCanFd(object):
                     print("Message Request Failed: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + payload2Hex(CanMsg.DATA))
                 if False != bErrorExit:
                     self.__exitError()
-        sleep(0.010)
+        sleep(0.1)
         return returnMessage
 
     def cmdSend(self, receiver, blockCmd, subCmd, payload, log=True, retries=10, bErrorAck=False, printLog=False):
