@@ -357,6 +357,8 @@ class myToolItWatch():
             self.commandQueue.put(["Plot", True])
             self.tSocket.connect((HOST, PORT))
      
+     
+     
     def vGraphPointNext(self, x, y, z):
         if 0 < self.iDisplayTime:  
             if False != self.guiProcess.is_alive():
@@ -614,9 +616,6 @@ class myToolItWatch():
             self.__exit__()  
 
     def vGetStreamingAccDataProcess(self):
-#         print("Inteval Time: " + str() + "s")
-#         print("Display Time: " + str(self.iDisplayTime) + "ms")
-
         iIntervalTime = self.iIntervalTime * 1000
         if 0 == self.iIntervalTime:
             iIntervalTime += (1 << 32)
