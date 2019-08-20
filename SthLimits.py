@@ -1,5 +1,4 @@
-from MyToolItSth import *
-from MyToolItCommands import *
+from MyToolItCommands import AdcAcquisitionTime, AdcOverSamplingRate, AdcReference
 Axis = 1
 PcbOnly = True
 
@@ -36,10 +35,10 @@ AdcAcquisitionOverSamplingRateReset = AdcOverSamplingRate[64]
 VoltRawDecoupleMiddle = 23678
 VoltRawDecoupleTolerance = 100
 VoltRawOpa2Middle = 0
-VoltRawOpa2Tolerance = 2
+VoltRawOpa2Tolerance = 3
 VoltRawOpa3Middle = 0
-VoltRawOpa3Tolerance = 2
-VoltRawVssTolerance = 1
+VoltRawOpa3Tolerance = 3
+VoltRawVssTolerance = 3
 VoltMiddleBat = 0
 VoltToleranceBat = 0.5   
 VoltRawMiddleBat = 11000 

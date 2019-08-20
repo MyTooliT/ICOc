@@ -11,7 +11,8 @@ import PeakCanFd
 import math
 from MyToolItNetworkNumbers import MyToolItNetworkNr
 import time
-from MyToolItSth import Version, SthModule, SleepTime, SthErrorWord, TestConfig
+from MyToolItSth import TestConfig, SthModule, SleepTime, SthErrorWord, SthStateWord
+from MyToolItCommands import *
 from SthLimits import *
 from testSignal import *
 
