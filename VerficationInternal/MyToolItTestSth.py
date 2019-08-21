@@ -3,6 +3,8 @@ import sys
 import os
 
 # Required to add peakcan
+dir_name = os.path.dirname('')
+sys.path.append(dir_name)
 file_path = '../'
 dir_name = os.path.dirname(file_path)
 sys.path.append(dir_name)
@@ -2606,7 +2608,6 @@ class TestSth(unittest.TestCase):
         indexEnd = self.PeakCan.GetReadArrayIndex() - 1
         self.PeakCan.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"])
         self.PeakCan.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"])  
-        
          
         time.sleep(1)    
         countDel = 0
@@ -3583,7 +3584,39 @@ class TestSth(unittest.TestCase):
         self.PeakCan.Logger.Info("Watchdog Counter after second reset: " + str(WDogCounter3))
         self.assertEqual(WDogCounter1, WDogCounter2)
         self.assertEqual(WDogCounter1, WDogCounter3)
-        
+
+    """
+    Check Watchdog counter to not increment
+    """   
+
+    def test0750StatisticPageWriteRead(self):
+        # Write 0xFF over the page
+        timeStamp = self.PeakCan.getTimeMs()
+        for offset in range(0, 256, 4):
+            self.PeakCan.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Write"], [EepromPage["Statistics"], 0xFF & offset, 4, 0, 0xFF, 0xFF, 0xFF, 0xFF])
+        self.PeakCan.Logger.Info("Page Write Time: " + str(self.PeakCan.getTimeMs() - timeStamp) + "ms")
+        # Read back 0xFF over the page
+        timeStamp = self.PeakCan.getTimeMs()
+        for offset in range(0, 256, 4):
+            index = self.PeakCan.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Read"], [EepromPage["Statistics"], 0xFF & offset, 4, 0, 0, 0, 0, 0])   
+            dataReadBack = self.PeakCan.getReadMessageData(index)     
+            for dataByte in dataReadBack[4:]:
+                self.assertEqual(dataByte, 0xFF)
+        self.PeakCan.Logger.Info("Page Read Time: " + str(self.PeakCan.getTimeMs() - timeStamp) + "ms")
+        # Write 0x00 over the page
+        timeStamp = self.PeakCan.getTimeMs()
+        for offset in range(0, 256, 4):
+            self.PeakCan.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Write"], [EepromPage["Statistics"], 0xFF & offset, 4, 0, 0, 0, 0, 0])
+        self.PeakCan.Logger.Info("Page Write Time: " + str(self.PeakCan.getTimeMs() - timeStamp) + "ms")
+        # Read back 0x00 over the page    
+        timeStamp = self.PeakCan.getTimeMs()
+        for offset in range(0, 256, 4):
+            index = self.PeakCan.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Read"], [EepromPage["Statistics"], 0xFF & offset, 4, 0, 0, 0, 0, 0])   
+            dataReadBack = self.PeakCan.getReadMessageData(index)     
+            for dataByte in dataReadBack[4:]:
+                self.assertEqual(dataByte, 0x00)             
+        self.PeakCan.Logger.Info("Page Read Time: " + str(self.PeakCan.getTimeMs() - timeStamp) + "ms")       
+                       
     """
     Status Word after Reset
     """        
