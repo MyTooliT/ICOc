@@ -3,7 +3,10 @@ from myToolItWatch import myToolItWatch
 from MyToolItCommands import *
 from MyToolItNetworkNumbers import *
 from time import sleep
+import glob
 import curses
+import os
+import PeakCanFd
 
 
 class mwt(myToolItWatch):
@@ -118,7 +121,6 @@ class mwt(myToolItWatch):
         if ord('e') == keyPress:
             bContinue = True
         return bContinue
-                
                                 
     def bTerminalHolderConnect(self, keyPress):
         self.PeakCan.Logger.Info("Start bTerminalHolderConnect")
@@ -126,6 +128,7 @@ class mwt(myToolItWatch):
         keyPress = -1
         self.PeakCan.Logger.Info("Start Loop")
         bRun = True
+        bContinue = False
         devList = None
         while False != bRun:
             devList = self.tTerminalHeaderExtended(devList)
@@ -154,12 +157,24 @@ class mwt(myToolItWatch):
                 bRun = False
             elif(0x03 == keyPress) or (ord('q') == keyPress):
                 bRun = False
+                bContinue = True
             else:
                 devList = None
             keyPress = -1
         return bContinue
     
-    
+    def vTerminalStuEeprom(self):
+        self.stdscr.clear()
+        if None != self.sSheetFile and None != self.sProduct and None != self.sConfig:
+            self.stdscr.clear()
+            self.stdscr.addstr("e: Escape(Exit) this menu\n")
+            pageNames = self.atExcelSheetNames()
+            pageNumber = 0
+            for pageName in pageNames:
+                self.stdscr.addstr(str(pageNumber) + "1: Read Page " + str(pageName) + "\n")
+                pageNumber += 1        
+            self.stdscr.refresh()
+        
     def vTerminalLogFileName(self):
         self.stdscr.addstr("Log File Name(" + self.PeakCan.Logger.fileName + "): ")  
         sLogFileName = self.sTerminalInputStringIn()       
@@ -174,19 +189,159 @@ class mwt(myToolItWatch):
         sName = self.sTerminalInputStringIn()         
         self.vDeviceNameSet(sName)
         self.PeakCan.BlueToothNameWrite(0, sName)
-                   
-    def bTerminalMainMenu(self):
+    
+    def vTerminalTests(self):
         bRun = True
-        devList = self.tTerminalHeaderExtended()            
-        self.stdscr.addstr("\n")
-        self.stdscr.addstr("q: Quit program\n")
-        self.stdscr.addstr("0-9: Enter Number to connect to STH(ENTER required at the end of the number)\n")
-        self.stdscr.addstr("l: Log File Name\n")
-        self.stdscr.addstr("n: Change Device Name\n")
-        self.stdscr.addstr("t: Test Menu\n")
-        self.stdscr.addstr("e: EEPROM Parameters\n")
-        self.stdscr.addstr("h: Holder Page\n")
+        while False != bRun:
+            self.tTerminalHeaderExtended() 
+            pyFiles = []
+            for file in glob.glob("./VerficationInternal/*.py"):
+                file = file.split("\\")
+                pyFiles.append(file[-1])
+            self.stdscr.addstr("\nVerficationInternal: \n")
+            iTestNumber = 1
+            for i in range(0, len(pyFiles)):
+                self.stdscr.addstr("    " + str(iTestNumber) + ": " + pyFiles[i] + "\n")
+                iTestNumber += 1
+            self.stdscr.refresh()
+            self.stdscr.addstr("Attention! If you want to kill the test press CTRL+Break(STRG+Pause)\n")
+            self.stdscr.addstr("Please pick a test number or 0 to escape: ")
+            iKeyPress = self.stdscr.getch()
+            iDigit = int(iKeyPress - ord('0'))
+            if 0 <= iDigit and 9 >= iDigit:
+                bRun = False
+                iTestNumberRun = self.iTerminalInputNumberIn(iDigit) 
+                if 0 == iTestNumberRun:
+                    pass
+                elif iTestNumberRun < iTestNumber:
+                    self.PeakCan.__exit__() 
+                    sDirPath = os.path.dirname(os.path.realpath(pyFiles[iTestNumberRun - 1]))
+                    sDirPath += "\\VerficationInternal\\"
+                    sDirPath += pyFiles[iTestNumberRun - 1]
+                    try:
+                        os.system("python " + str(sDirPath) + " ../Logs/STH SthAuto.txt")
+                    except KeyboardInterrupt:
+                        pass
+                    self.PeakCan = PeakCanFd.PeakCanFd(PeakCanFd.PCAN_BAUD_1M, "init.txt", "initError.txt", MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"])
+                else:
+                    pass
+           
+    def vTerminalXmlProductVersionCreate(self):
+        self.stdscr.clear()
+        asProductList = self.atXmlProductList()
+        number = 0
+        for version in asProductList:
+            self.stdscr.addstr(str(number) + ": " + version + "\n")
+            number += 1
+        self.stdscr.addstr("Device for deriving: ")
         self.stdscr.refresh()
+        iProduct = self.iTerminalInputNumberIn()
+        asVersionList = self.atXmlVersionList(asProductList[iProduct])
+        number = 0
+        for version in asVersionList:
+            self.stdscr.addstr(str(number) + ": " + version + "\n")
+            number += 1
+        self.stdscr.addstr("Version for deriving: ")
+        self.stdscr.refresh()
+        if 0 < len(asVersionList):
+            iVersion = self.iTerminalInputNumberIn()
+            self.stdscr.addstr("New Version Name: ")
+            sVersionName = self.sTerminalInputStringIn()
+            if iVersion < len(asVersionList):
+                dataDef = self.root.find('Data')
+                for product in dataDef.find('Product'):
+                    if product.get('name') == asProductList[iProduct]:
+                        break
+                self.newXmlVersion(product, sVersionName)
+                self.xmlSave()
+    
+    def vTerminalXmlProductVersionChange(self):
+        self.stdscr.addstr("Please enter product name(STH or STU): ")
+        self.stdscr.refresh()
+        sProductName = self.sTerminalInputStringIn()
+        self.stdscr.addstr("Please enter version: ")
+        self.stdscr.refresh()
+        sVersion = self.sTerminalInputStringIn()
+        self.vConfigSet(sProductName, sVersion)  
+                
+    def vTerminalXmlProductVersionList(self):
+        self.stdscr.clear()
+        for product in self.atXmlProductList():
+            self.stdscr.addstr("Device: " + str(product) + "\n")
+            asVersions = self.atXmlVersionList(product)
+            for version in asVersions:
+                self.stdscr.addstr("            " + str(version) + "\n")
+        self.stdscr.addstr("Press any key to return\n")
+        self.stdscr.refresh()
+        while -1 == self.stdscr.getch():
+            pass
+        
+    def vTerminalXmlProductVersionRemove(self):
+        self.stdscr.clear()
+        asProductList = self.atXmlProductList()
+        number = 0
+        for version in asProductList:
+            self.stdscr.addstr(str(number) + ": " + version + "\n")
+            number += 1
+        self.stdscr.addstr("Device for version removing: ")
+        self.stdscr.refresh()
+        iProduct = self.iTerminalInputNumberIn()
+        asVersionList = self.atXmlVersionList(asProductList[iProduct])
+        number = 0
+        for version in asVersionList:
+            self.stdscr.addstr(str(number) + ": " + version + "\n")
+            number += 1
+        self.stdscr.addstr("Version to remove: ")
+        self.stdscr.refresh()
+        if 1 < len(asVersionList):
+            iVersion = self.iTerminalInputNumberIn()
+            if iVersion < len(asVersionList):
+                dataDef = self.root.find('Data')
+                for product in dataDef.find('Product'):
+                    if product.get('name') == asProductList[iProduct]:
+                        break
+                for version in product.find('Version'):
+                    if version.get('name') == asVersionList[iVersion]:
+                        break
+                self.removeXmlVersion(product.find('Version'), version)
+            
+    def vTerminalXmlExcelChange(self):
+        self.stdscr.addstr("Please enter Excel File name for new Excel Sheet")
+        self.stdscr.refresh()
+        sFileName = self.sTerminalInputStringIn()
+        self.vSheetFileSet(sFileName)
+        
+    def vTerminalXml(self):
+        bRun = True
+        while False != bRun:
+            self.stdscr.clear()
+            self.stdscr.addstr("Device: " + str(self.sProduct) + "\n")
+            self.stdscr.addstr("Version: " + str(self.sConfig) + "\n")
+            self.stdscr.addstr("Excel Sheet Name(.xlsx): " + str(self.sSheetFile) + "\n")  
+            self.stdscr.addstr("c: Create new Version\n")
+            self.stdscr.addstr("d: Chance Device(Product) and version\n")
+            self.stdscr.addstr("l: List product and versions\n")
+            self.stdscr.addstr("r: Remove Version\n")
+            self.stdscr.addstr("x: Chance Excel Sheet Name(.xlsx)\n")  
+            self.stdscr.refresh()
+            keyPress = self.stdscr.getch()
+            if ord('q') == keyPress:
+                bRun = False
+            elif 0x03 == keyPress:  # CTRL+C
+                bRun = False
+            elif ord('c') == keyPress:
+                self.vTerminalXmlProductVersionCreate()
+            elif ord('d') == keyPress:
+                self.vTerminalXmlProductVersionChange()
+            elif ord('l') == keyPress:
+                self.vTerminalXmlProductVersionList()
+            elif ord('r') == keyPress:   
+                self.vTerminalXmlProductVersionRemove()
+            elif ord('x') == keyPress:
+                self.vTerminalXmlExcelChange()
+     
+    def bTerminalMainMenuKeyEvaluation(self, devList):
+        bRun = True
         keyPress = self.stdscr.getch()
         if ord('q') == keyPress:
             bRun = False
@@ -211,12 +366,30 @@ class mwt(myToolItWatch):
                     self.PeakCan.BlueToothConnectPollingAddress(MyToolItNetworkNr["STU1"], self.iAddress)
                     self.vTerminalDeviceName()
                     self.PeakCan.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
-                    bConnected = True
+                    bConnected = True        
             if False == bConnected:
                 self.stdscr.addstr("Device was not available\n")
-                self.stdscr.refresh()                
-            
-        return bRun
+                self.stdscr.refresh()    
+        elif ord('s') == keyPress:    
+            self.vTerminalStuEeprom() 
+        elif ord('t') == keyPress:    
+            self.vTerminalTests()              
+        elif ord('x') == keyPress:    
+            self.vTerminalXml()   
+        return bRun 
+                  
+    def bTerminalMainMenu(self):
+        devList = self.tTerminalHeaderExtended()            
+        self.stdscr.addstr("\n")
+        self.stdscr.addstr("q: Quit program\n")
+        self.stdscr.addstr("0-9: Enter Number to connect to STH(ENTER required at the end of the number)\n")
+        self.stdscr.addstr("l: Log File Name\n")
+        self.stdscr.addstr("n: Change Device Name\n")
+        self.stdscr.addstr("s: STU EEPROM Parameters\n")
+        self.stdscr.addstr("t: Test Menu\n")
+        self.stdscr.addstr("x: Xml Data Base\n")        
+        self.stdscr.refresh()
+        return self.bTerminalMainMenuKeyEvaluation(devList)
 
     def vListKeys(self, tDict):
         if 0 < len(tDict):
@@ -258,8 +431,7 @@ class mwt(myToolItWatch):
         self.stdscr.refresh()
         return sString         
     
-    def iTerminalInputNumberIn(self):
-        iNumber = 0
+    def iTerminalInputNumberIn(self, iNumber=0):
         iKeyPress = -1
         bRun = True
         cursorXPos = self.stdscr.getyx()[1] + 2
@@ -311,9 +483,9 @@ class mwt(myToolItWatch):
     def tTerminalHeaderExtended(self, devList=None):
         self.vTerminalHeader()
         if None == devList:
-            devList = self.PeakCan.tgetDeviveList(MyToolItNetworkNr["STU1"])
+            devList = self.PeakCan.tDeviceList(MyToolItNetworkNr["STU1"])
         for dev in devList:
-            self.stdscr.addstr("DeviceNumber: " + str(dev["DeviceNumber"]) + "; Name: " + str(dev["Name"]) + "; Address: " + hex(dev["Address"]) + "; RSSI: " + str(dev["RSSI"]) + "\n") 
+            self.stdscr.addstr("Device Number: " + str(dev["DeviceNumber"]) + "; Name: " + str(dev["Name"]) + "; Address: " + hex(dev["Address"]) + "; RSSI: " + str(dev["RSSI"]) + "\n") 
         return devList    
             
     def vTerminalHeader(self):
@@ -340,6 +512,7 @@ class mwt(myToolItWatch):
             curses.echo()
             # restore the terminal to its original state
             curses.endwin()
+            self.bTerminal = False
             
     def vRunConsole(self):
         self._vRunConsoleStartup()
@@ -348,7 +521,6 @@ class mwt(myToolItWatch):
             self.vRunConsoleAutoConnect()
         else:
             self.vTerminal()
-             
         self.close()        
 
            

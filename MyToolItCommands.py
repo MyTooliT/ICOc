@@ -1,7 +1,6 @@
 import ctypes
 c_uint8 = ctypes.c_uint8
 
-
 Config = {
     "DeviceNumberMax" : 32
 }
@@ -57,6 +56,7 @@ MyToolItBlock = {
     "Streaming" : 0x04,
     "StatisticalData" : 0x08,
     "Configuration" : 0x28,
+    "Eeprom" : 0x3D,
     "ProductData" : 0x3E,
     "Test" : 0x3F,
 }
@@ -134,8 +134,6 @@ MyToolItStatData = {
     "MeasurementInterval" : 0x40,
     "QuantityInterval" : 0x41,
     "Energy" : 0x80,
-    "EepromRead" : 0xFE,
-    "EepromWrite" : 0xFF,
 }
 
 MyToolItConfiguration = {
@@ -148,6 +146,11 @@ MyToolItConfiguration = {
     "CalibrateMeasurement" : 0x62,
     "Alarm" : 0x80,
     "Hmi" : 0xC0
+}
+
+MyToolItEeprom = {
+    "Read" : 0x00,
+    "Write" : 0x01
 }
 
 MyToolItProductData = {
@@ -243,6 +246,11 @@ CommandBlockConfiguration = {
     MyToolItConfiguration["Hmi"] : "Configuration Command HMI",
 }
 
+CommandBlockEeprom = {
+    MyToolItEeprom["Read"] : "Eeprom Command Read",
+    MyToolItEeprom["Write"] : "Eeprom Command Write",
+}
+
 CommandBlockProductData = {
     MyToolItProductData["GTIN"] : "Product Data Command GTIN",
     MyToolItProductData["HardwareRevision"] : "Product Data Command Hardware Revision",
@@ -280,6 +288,13 @@ CommandBlockProductData = {
 
 CommandBlockTest = {
     MyToolItTest["Signal"] : "Test Command Signal",
+}
+
+EepromPage = {
+    "SystemConfiguration0" : 0,
+    "ProductData" : 4,
+    "Statistics" : 5,
+    "Calibration0" : 8,
 }
 
 CalibMeassurementActionNr = {
@@ -521,6 +536,13 @@ def to8bitSigned(num):
 def messageWordGet(m):
     Word = ((0xFF & m[3]) << 24) | ((0xFF & m[2]) << 16) | ((0xFF & m[1]) << 8) | (0xFF & m[0])
     return Word
+
+
+def array2Value(array, length):
+    word = 0
+    for i in range(0, length):
+        valueShifted = array[i] << (8*(length-i-1))
+        word |= valueShifted
 
 
 def messageValueGet(m):

@@ -99,7 +99,7 @@ class myToolItWatch():
         if(False != self.bError):
             raise
         if False != self.bSave:
-            self.xmlSave(self.tree, self.root)
+            self.xmlSave()
         print("Fin")
 
     def _statusWords(self):
@@ -499,11 +499,11 @@ class myToolItWatch():
                         if productVersion.get('name') == self.sConfig:
                             break
                     if productVersion.get('name') != self.sConfig and False != bCreate:
-                        self.newXmlVersion(product)
+                        self.newXmlVersion(product, self.sConfig)
                         self.vSave2Xml(True)
                     elif productVersion.get('name') == self.sConfig and False != bRemove:
                         if 1 < len(product.find('Version')):
-                            self.removeXmlVersion(product.find('Version'))
+                            self.removeXmlVersion(product.find('Version'), productVersion)
                     elif False != bCreate:
                         print("Error! you tried to create a product/version that allready exists")
                         self.PeakCan.vLogDel()
@@ -827,6 +827,26 @@ class myToolItWatch():
             sleep(0.0002)
         return message
 
+
+    def atXmlProductList(self):
+        dataDef = self.root.find('Data')               
+        asProducts = []
+        for product in dataDef.find('Product'):
+            asProducts.append(str(product.get('name')))
+        return asProducts
+    
+    
+    def atXmlVersionList(self, sProduct):
+        dataDef = self.root.find('Data')               
+        asVersions = []
+        for product in dataDef.find('Product'):
+            if product.get('name') == sProduct:
+                break
+        for version in product.find('Version'):
+            asVersions.append(str(version.get('name')))
+        return asVersions  
+    
+    
     def excelCellWidthAdjust(self, worksheet, factor=1.2, bSmaller=True):
         for col in worksheet.columns:
             max_length = 0
@@ -926,10 +946,11 @@ class myToolItWatch():
     Creats a new config
     """
 
-    def newXmlVersion(self, product):
+    def newXmlVersion(self, product, sVersion):
         cloneVersion = copy.deepcopy(product.find('Version')[0])
-        cloneVersion.set('name', self.sConfig) 
+        cloneVersion.set('name', sVersion) 
         product.find('Version').append(cloneVersion)
+            
 
     """
     Save XML File (in any state)
@@ -939,14 +960,15 @@ class myToolItWatch():
         self.tree.write(self.sXmlFileName)
         self._XmlWriteEndoding()   
         del self.tree
+        self.vConfigFileSet(self.sXmlFileName)
         
     """
     Removes a config
     """
 
-    def removeXmlVersion(self, versions):
-        versions.remove(self.sConfig)
-        self.xmlSave(self.tree, self.root)
+    def removeXmlVersion(self, versions, version):
+        versions.remove(version)
+        self.xmlSave()
 
     def xmlPrintVersions(self):
         dataDef = self.root.find('Data')
@@ -970,8 +992,8 @@ class myToolItWatch():
         workbook = openpyxl.load_workbook(self.sSheetFile)
         if workbook:
             if version.get('name') != self.sConfig:
-                self.newXmlVersion(product)
-                self.xmlSave(self.tree, self.root)
+                self.newXmlVersion(product, self.sConfig)
+                self.xmlSave()
                 self.excelSheetConfig()
             else:
                 for worksheetName in workbook.sheetnames:
@@ -998,15 +1020,70 @@ class myToolItWatch():
                                 self._excelSheetEntryFind(entry, 'format', worksheet['G' + str(i)].value)
                                 self._excelSheetEntryFind(entry, 'description', worksheet['H' + str(i)].value)
                                 i += 1
-                self.xmlSave(self.tree, self.root)
-            
+                self.xmlSave()
+    
+    
+    def iExcelSheetPageLength(self, worksheet):
+        i = 2
+        totalLength = 0
+        while 256 > i:
+            if None != worksheet['A' + str(i)].value:
+                length = int(worksheet['C' + str(i)].value)
+                totalLength += length
+                i+=length
+            else:
+                break
+        return totalLength 
+    
+    def vExcelSheetPageValue(self, worksheet, byteArry):
+        i = 2
+        totalLength = 0
+        while len(byteArry) > totalLength:
+            if None != worksheet['A' + str(i)].value:
+                length = worksheet['C' + str(i)].value
+                worksheet['E' + str(i)] = array2Value(byteArry[totalLength:], length)
+                totalLength += length
+                i+=length
+            else:
+                break
+        return totalLength    
+    
+    
+    def atExcelSheetNames(self):
+        workSheetNames = []
+        workbook = openpyxl.load_workbook(self.sSheetFile)
+        if workbook:
+            for worksheetName in workbook.sheetnames:
+                name = str(worksheetName).split('@')
+                address = name[1]
+                name = name[0]
+                workSheetNames.append(name)
+        return workSheetNames
+    
     """
-    Read EEPROM to write values in Excel Sheet
+    Read EEPROM page to write values in Excel Sheet
     """    
 
-    def excelSheetRead(self):
-        pass
-    
+    def excelSheetRead(self, namePage):
+        workbook = openpyxl.load_workbook(self.sSheetFile)
+        if workbook:
+            for worksheetName in workbook.sheetnames:
+                name = str(worksheetName).split('@')
+                address = name[1]
+                name = name[0]
+                if namePage == name:
+                    worksheet = workbook.get_sheet_by_name(worksheetName)
+                    pageContent = []
+                    readLength = self.iExcelSheetPageLength(worksheet)
+                    for offset in range(0, readLength, 4):
+                        index = self.PeakCan.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Read"], [address, 0xFF & offset, 4, 0, 0, 0, 0, 0])   
+                        pageContent.extend(self.PeakCan.getReadMessageData(index)[4:])
+                    pageContent = pageContent[0:readLength]
+                    self.vExcelSheetPageValue(worksheet, pageContent)
+            workbook.save(self.sSheetFile)    
+                
+                
+                
     """
     Write EEPROM to write values in Excel Sheet
     """    
@@ -1062,7 +1139,7 @@ class myToolItWatch():
         cloneVersion = copy.deepcopy(self.tree.find('Config')[0])
         cloneVersion.set('name', sConfig) 
         self.tree.find('Config').append(cloneVersion)
-        self.xmlSave(self.tree, self.root)
+        self.xmlSave()
         self.bSampleConfigSet(sConfig)
 
     def xmlPrintSetups(self):

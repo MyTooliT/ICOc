@@ -149,7 +149,7 @@ class PeakCanFd(object):
         else:
             result = self.m_objPCANBasic.Initialize(self.m_PcanHandle, baudrate, self.hwtype, self.ioport, self.interrupt)
         if result != PCAN_ERROR_OK:
-            print("Error while init Peak Can Basi Module: " , result)
+            print("Error while init Peak Can Basi Module!!!: " + str(result))
         else:
             # Prepares the PCAN-Basic's PCAN-Trace file
             #
@@ -376,31 +376,34 @@ class PeakCanFd(object):
                     currentIndex += 1   
                     message = self.readArray[currentIndex]
                 else:
-                    sleep(0.001)
+                    sleep(0.002)
         return [returnMessage, currentIndex]
     
     def WriteFrameWaitAckRetries(self, CanMsg, retries=10, waitMs=1000, printLog=False, bErrorAck=False, assumedPayload=None, bErrorExit=True):  
-        retries += 1
-        currentIndex = self.GetReadArrayIndex() - 1
-        sendTime = self.getTimeMs()
-        for i in range(0, retries):
-            [returnMessage, currentIndex] = self.WriteFrameWaitAck(CanMsg, waitMs=waitMs, currentIndex=currentIndex, printLog=printLog, assumedPayload=assumedPayload, bError=bErrorAck, sendTime=sendTime)
-            if "Error" != returnMessage:
-                break
-            elif (retries - 1) == i:                
-                [command, sender, receiver] = self.CanMessage20GetFields(CanMsg.ID)
-                cmdBlockName = self.strCmdNrToBlockName(command)
-                cmdName = self.strCmdNrToCmdName(command)
-                senderName = MyToolItNetworkName[sender]
-                receiverName = MyToolItNetworkName[receiver]
-                self.Logger.bError("Message Request Failed: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + payload2Hex(CanMsg.DATA))
-                if False != printLog:
-                    print("Message Request Failed: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + payload2Hex(CanMsg.DATA))
-                if False != bErrorExit:
-                    self.__exitError()
-        sleep(0.1)
-        return returnMessage
-
+        try:
+            retries += 1
+            currentIndex = self.GetReadArrayIndex() - 1
+            sendTime = self.getTimeMs()
+            for i in range(0, retries):
+                [returnMessage, currentIndex] = self.WriteFrameWaitAck(CanMsg, waitMs=waitMs, currentIndex=currentIndex, printLog=printLog, assumedPayload=assumedPayload, bError=bErrorAck, sendTime=sendTime)
+                if "Error" != returnMessage:
+                    break
+                elif (retries - 1) == i:                
+                    [command, sender, receiver] = self.CanMessage20GetFields(CanMsg.ID)
+                    cmdBlockName = self.strCmdNrToBlockName(command)
+                    cmdName = self.strCmdNrToCmdName(command)
+                    senderName = MyToolItNetworkName[sender]
+                    receiverName = MyToolItNetworkName[receiver]
+                    self.Logger.bError("Message Request Failed: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + payload2Hex(CanMsg.DATA))
+                    if False != printLog:
+                        print("Message Request Failed: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + payload2Hex(CanMsg.DATA))
+                    if False != bErrorExit:
+                        self.__exitError()
+            sleep(0.01)
+            return returnMessage
+        except KeyboardInterrupt:
+            self.RunReadThread = False
+        
     def cmdSend(self, receiver, blockCmd, subCmd, payload, log=True, retries=10, bErrorAck=False, printLog=False):
         cmd = self.CanCmd(blockCmd, subCmd, 1, 0)
         message = self.CanMessage20(cmd, self.sender, receiver, payload)
@@ -673,8 +676,8 @@ class PeakCanFd(object):
         else:
             self.__exitError()
         if False != log:
-            self.Logger.Info("Can Bandwitdh(Best): " + str(self.canBandwith()) + "bit/s")
-            self.Logger.Info("Bluetooth Bandwitdh(Best): " + str(self.bluetoothBandwidth()) + "bit/s")
+            self.Logger.Info("Can Bandwitdh(Lowest, may be more): " + str(self.canBandwith()) + "bit/s")
+            self.Logger.Info("Bluetooth Bandwitdh(Lowest, may be more): " + str(self.bluetoothBandwidth()) + "bit/s")
     
         cmd = self.CanCmd(MyToolItBlock["Streaming"], subCmd, 1, 0)
         message = self.CanMessage20(cmd, self.sender, receiver, [streamingFormat.asbyte])
@@ -1070,7 +1073,7 @@ class PeakCanFd(object):
             self.__exitError()
         return deviceNumber
 
-    def tgetDeviveList(self, stuNr):       
+    def tDeviceList(self, stuNr):       
         devList = []        
         self.BlueToothConnectConnect(stuNr)
         devAll = self.BlueToothConnectTotalScannedDeviceNr(stuNr)
