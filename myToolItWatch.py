@@ -333,35 +333,46 @@ class myToolItWatch():
         self.sMsgLoss = "Acceleration(" + str(format(0, '3.3f')) + "%)"
         self.GuiPackage = {"X":[], "Y" : [], "Z" : []}
         self.tSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        
                         
     def guiProcessStop(self):
         try:
-            self.commandQueue.put(["Run", False])
-            self.commandQueue.close()
-            self.commandQueue.join_thread()
+            self.vGraphSend(["Run", False])
             self.tSocket.close()     
             self.guiProcess.join()
         except:
             pass
-                    
+    
+    def vGraphSend(self, data):
+        bSend = True
+        data = tArray2Binary(data)
+        while False != bSend:
+            self.tSocket.sendall(data)
+            sleep(0.1)
+            ack = self.tSocket.recv(2**10)   
+            if None != ack:
+                if data == ack:
+                    bSend = False
+                     
     def guiProcessRestart(self):
         self.guiProcessStop()       
         if 0 < self.iDisplayTime:   
-            self.commandQueue = multiprocessing.Queue()
-            self.guiProcess = multiprocessing.Process(target=vPlotter, args=(self.commandQueue,))
-            self.guiProcess.start() 
-            self.commandQueue.put(["dataBlockSize", self.iGraphBlockSize])
-            self.commandQueue.put(["sampleInterval", self.iGraphSampleInterval])
-            self.commandQueue.put(["xDim", self.iDisplayTime])
+            self.guiProcess = multiprocessing.Process(target=vPlotter)
+            self.guiProcess.start()
+            print("Connect to GUI")
+            self.tSocket.connect((HOST, PORT))
+            self.vGraphSend(["dataBlockSize", self.iGraphBlockSize])
+            self.vGraphSend(["sampleInterval", self.iGraphSampleInterval])
+            self.vGraphSend(["xDim", self.iDisplayTime])
             self.vGraphPacketLossUpdate(0)
             if False != self.bAccX:
-                self.commandQueue.put(["lineNameX", "AccX"])
+                self.vGraphSend(["lineNameX", "AccX"])
             if False != self.bAccY:
-                self.commandQueue.put(["lineNameY", "AccY"])
+                self.vGraphSend(["lineNameY", "AccY"])
             if False != self.bAccZ:
-                self.commandQueue.put(["lineNameZ", "AccZ"])
-            self.commandQueue.put(["Plot", True])
-            self.tSocket.connect((HOST, PORT))
+                self.vGraphSend(tArray2Binary())
+            self.vGraphSend(["Plot", True])
+            
      
      
      
@@ -376,7 +387,7 @@ class myToolItWatch():
                     self.GuiPackage["Z"].append(z)
                     if self.iGraphBlockSize <= len(self.GuiPackage["X"]):
                         try:
-                            self.tSocket.sendall(tArray2Binary(self.GuiPackage))
+                            self.tSocket.sendall(tArray2Binary(["data", self.GuiPackage]))
                         except:
                             pass
                         self.GuiPackage = {"X":[], "Y" : [], "Z" : []}
@@ -404,8 +415,7 @@ class myToolItWatch():
             sMsgLoss = "Acceleration(" + str(format(100-(100 * self.iMsgLoss / self.iMsgsTotal), '3.3f')) + "%)"     
             if sMsgLoss != self.sMsgLoss:
                 self.sMsgLoss = sMsgLoss
-                self.commandQueue.put(["diagramName", self.sMsgLoss])
-                
+                self.tSocket.sendall(tArray2Binary(["diagramName", self.sMsgLoss]))                
             self.iMsgLoss = 0
             self.iMsgsTotal = 0
         

@@ -123,36 +123,43 @@ def vPlotterCommand(command, value):
         cDict["xAccPoints"] = np.linspace(2 ** 15, 2 ** 15, dataPoints)
         cDict["yAccPoints"] = np.linspace(2 ** 15, 2 ** 15, dataPoints)
         cDict["zAccPoints"] = np.linspace(2 ** 15, 2 ** 15, dataPoints)
-
-     
-def vPlotter(commandQueue):
+         
+def vPlotter():
     global cDict
-    
+    vPloterSocketInit()
     while False != cDict["Run"] and False == cDict["Plot"]:
-        if False == commandQueue.empty():
-            [command, value] = commandQueue.get()  
-            vPlotterCommand(command, value)
+        cmd = cDict["Connection"].recv(2**10)
+        if None != cmd: 
+            cmd = tBinary2Array(cmd)
+            if None != cmd: 
+                command = cmd[0]
+                value = cmd[1]
+                vPlotterCommand(command, value)
+                cDict["Connection"].sendall(tArray2Binary([command, value]))
          
     [line1, line2, line3] = tPlotterInit()
-    vPloterSocketInit()
+    
     pauseTime = (1 / cDict["sampleInterval"]) / 4
     while False != cDict["Run"]:
-        if False == commandQueue.empty():
-            [command, value] = commandQueue.get()  
-            vPlotterCommand(command, value)
-        else:
-            value = cDict["Connection"].recv(2**16)
-            if None != value:
-                value = tBinary2Array(value)
-                if None != value:    
-                    cDict["xAccPoints"] = cDict["xAccPoints"][cDict["dataBlockSize"]:]
-                    cDict["yAccPoints"] = cDict["yAccPoints"][cDict["dataBlockSize"]:]
-                    cDict["zAccPoints"] = cDict["zAccPoints"][cDict["dataBlockSize"]:]
-                    cDict["xAccPoints"] = np.hstack([cDict["xAccPoints"], value["X"]])
-                    cDict["yAccPoints"] = np.hstack([cDict["yAccPoints"], value["Y"]])
-                    cDict["zAccPoints"] = np.hstack([cDict["zAccPoints"], value["Z"]])
-                    [line1, line2, line3] = vlivePlot(cDict["xAccPoints"], cDict["yAccPoints"], cDict["zAccPoints"], line1, line2, line3, pauseTime)
-    cDict["Connection"]
+            cmd = cDict["Connection"].recv(2**16)
+            if None != cmd:
+                cmd = tBinary2Array(cmd)
+                if None != cmd: 
+                    if "data" == cmd[0]:
+                        value = cmd[1]   
+                        cDict["xAccPoints"] = cDict["xAccPoints"][cDict["dataBlockSize"]:]
+                        cDict["yAccPoints"] = cDict["yAccPoints"][cDict["dataBlockSize"]:]
+                        cDict["zAccPoints"] = cDict["zAccPoints"][cDict["dataBlockSize"]:]
+                        cDict["xAccPoints"] = np.hstack([cDict["xAccPoints"], value["X"]])
+                        cDict["yAccPoints"] = np.hstack([cDict["yAccPoints"], value["Y"]])
+                        cDict["zAccPoints"] = np.hstack([cDict["zAccPoints"], value["Z"]])
+                        [line1, line2, line3] = vlivePlot(cDict["xAccPoints"], cDict["yAccPoints"], cDict["zAccPoints"], line1, line2, line3, pauseTime)
+                    else:
+                        command = cmd[0]
+                        value = cmd[1]
+                        vPlotterCommand(command, value)
+                        cDict["Connection"].sendall(tArray2Binary([command, value]))
+    cDict["Connection"].close()
     print("Gui display closed")
 
         
