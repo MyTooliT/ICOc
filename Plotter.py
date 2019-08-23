@@ -141,16 +141,16 @@ def vPlotter(commandQueue):
             [command, value] = commandQueue.get()  
             vPlotterCommand(command, value)
         else:
-            value = cDict["Connection"].recv(1024)
+            value = cDict["Connection"].recv(2**16)
             if None != value:
                 value = tBinary2Array(value)
                 if None != value:    
                     cDict["xAccPoints"] = cDict["xAccPoints"][cDict["dataBlockSize"]:]
                     cDict["yAccPoints"] = cDict["yAccPoints"][cDict["dataBlockSize"]:]
                     cDict["zAccPoints"] = cDict["zAccPoints"][cDict["dataBlockSize"]:]
-                    cDict["xAccPoints"] = np.hstack([cDict["xAccPoints"], value[0]])
-                    cDict["yAccPoints"] = np.hstack([cDict["yAccPoints"], value[1]])
-                    cDict["zAccPoints"] = np.hstack([cDict["zAccPoints"], value[2]])
+                    cDict["xAccPoints"] = np.hstack([cDict["xAccPoints"], value["X"]])
+                    cDict["yAccPoints"] = np.hstack([cDict["yAccPoints"], value["Y"]])
+                    cDict["zAccPoints"] = np.hstack([cDict["zAccPoints"], value["Z"]])
                     [line1, line2, line3] = vlivePlot(cDict["xAccPoints"], cDict["yAccPoints"], cDict["zAccPoints"], line1, line2, line3, pauseTime)
     cDict["Connection"]
     print("Gui display closed")

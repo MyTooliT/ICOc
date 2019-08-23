@@ -293,13 +293,19 @@ class myToolItWatch():
         if Prescaler["Min"] > iPrescaler:
             iPrescaler = Prescaler["Min"]
         elif Prescaler["Max"] < iPrescaler:
-            iPrescaler = Prescaler["Max"]    
-        iAcquisitionTime = AdcAcquisitionTime[iAquistionTime]
-        iOversampling = AdcOverSamplingRate[iOversampling]
-        self.samplingRate = int(calcSamplingRate(iPrescaler, iAcquisitionTime, iOversampling) + 0.5)
-        self.iPrescaler = iPrescaler
-        self.iAquistionTime = iAcquisitionTime
-        self.iOversampling = iOversampling
+            iPrescaler = Prescaler["Max"]  
+        try:  
+            iAcquisitionTime = AdcAcquisitionTime[iAquistionTime]
+            iOversampling = AdcOverSamplingRate[iOversampling]
+            bTakeIt = True
+        except:
+            bTakeIt = False
+            
+        if False != bTakeIt:
+            self.samplingRate = int(calcSamplingRate(iPrescaler, iAcquisitionTime, iOversampling) + 0.5)
+            self.iPrescaler = iPrescaler
+            self.iAquistionTime = iAcquisitionTime
+            self.iOversampling = iOversampling
         
     def vAdcRefVConfig(self, sAdcRef):
         self.sAdcRef = sAdcRef
@@ -325,7 +331,7 @@ class myToolItWatch():
         self.iGraphBlockSize = blockSize
         self.iGraphSampleInterval = sampleInterval
         self.sMsgLoss = "Acceleration(" + str(format(0, '3.3f')) + "%)"
-        self.GuiPackage = [[], [], []]
+        self.GuiPackage = {"X":[], "Y" : [], "Z" : []}
         self.tSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                         
     def guiProcessStop(self):
@@ -365,15 +371,15 @@ class myToolItWatch():
                 timeStampNow = int(round(time() * 1000))
                 if self.iGraphSampleInterval / self.iGraphBlockSize <= (timeStampNow - self.tDataPointTimeStamp):
                     self.tDataPointTimeStamp = timeStampNow
-                    self.GuiPackage[0].append(x)
-                    self.GuiPackage[1].append(y)
-                    self.GuiPackage[2].append(z)
-                    if self.iGraphBlockSize <= len(self.GuiPackage[0]):
+                    self.GuiPackage["X"].append(x)
+                    self.GuiPackage["Y"].append(y)
+                    self.GuiPackage["Z"].append(z)
+                    if self.iGraphBlockSize <= len(self.GuiPackage["X"]):
                         try:
                             self.tSocket.sendall(tArray2Binary(self.GuiPackage))
                         except:
                             pass
-                        self.GuiPackage = [[], [], []]
+                        self.GuiPackage = {"X":[], "Y" : [], "Z" : []}
             else:
                 self.aquireEndTime = self.PeakCan.getTimeMs()
 
@@ -395,7 +401,7 @@ class myToolItWatch():
         iPacketLossTimeStamp = int(round(time() * 1000))
         if 1000 <= (iPacketLossTimeStamp - self.iPacketLossTimeStamp):
             self.iPacketLossTimeStamp = iPacketLossTimeStamp  
-            sMsgLoss = "Acceleration(" + str(format(100 * self.iMsgLoss / self.iMsgsTotal, '3.3f')) + "%)"     
+            sMsgLoss = "Acceleration(" + str(format(100-(100 * self.iMsgLoss / self.iMsgsTotal), '3.3f')) + "%)"     
             if sMsgLoss != self.sMsgLoss:
                 self.sMsgLoss = sMsgLoss
                 self.commandQueue.put(["diagramName", self.sMsgLoss])
@@ -795,20 +801,20 @@ class myToolItWatch():
 
     def GetMessageVoltage(self, canData):
         if self.tAccDataFormat == DataSets[1]:
-            if (0 != self.bAccX) and (0 != self.bAccY) and (0 == self.bAccZ):
+            if (0 != self.bVoltageX) and (0 != self.bVoltageY) and (0 == self.bVoltageZ):
                 self.GetMessageDouble("VoltageX", "VoltageY", canData)
-            elif (0 != self.bAccX) and (0 == self.bAccY) and (0 != self.bAccZ):
+            elif (0 != self.bVoltageX) and (0 == self.bVoltageY) and (0 != self.bVoltageZ):
                 self.GetMessageDouble("VoltageX", "VoltageZ", canData)
-            elif (0 == self.bAccX) and (0 != self.bAccY) and (0 != self.bAccZ):
+            elif (0 == self.bVoltageX) and (0 != self.bVoltageY) and (0 != self.bVoltageZ):
                 self.GetMessageDouble("VoltageY", "VoltageZ", canData) 
             else:
                 self.GetMessageTripple("VoltageX", "VoltageY", "VoltageZ", canData)   
-        elif self.tAccDataFormat == DataSets[3]:
-            if 0 != self.bAccX:
+        elif self.tVoltageDataFormat == DataSets[3]:
+            if 0 != self.bVoltageX:
                 self.GetMessageSingle("VoltageX", canData)               
-            elif 0 != self.bAccY:
+            elif 0 != self.bVoltageY:
                 self.GetMessageSingle("VoltageY", canData)               
-            elif 0 != self.bAccZ:
+            elif 0 != self.bVoltageZ:
                 self.GetMessageSingle("VoltageZ", canData)       
         else:               
             self.PeakCan.Logger.bError("Wrong Ack format")
@@ -828,24 +834,20 @@ class myToolItWatch():
         return message
 
 
-    def atXmlProductList(self):
+    def atXmlProductVersion(self):
         dataDef = self.root.find('Data')               
-        asProducts = []
+        asProducts = {}
+        iProduct = 1
         for product in dataDef.find('Product'):
-            asProducts.append(str(product.get('name')))
-        return asProducts
-    
-    
-    def atXmlVersionList(self, sProduct):
-        dataDef = self.root.find('Data')               
-        asVersions = []
-        for product in dataDef.find('Product'):
-            if product.get('name') == sProduct:
-                break
-        for version in product.find('Version'):
-            asVersions.append(str(version.get('name')))
-        return asVersions  
-    
+            asProducts[iProduct] = {}
+            asProducts[iProduct]["Product"] = product
+            asProducts[iProduct]["Versions"] = {}            
+            iVersion = 1
+            for version in product.find('Version'):
+                asProducts[iProduct]["Versions"][iVersion] = version
+                iVersion += 1      
+            iProduct+=1          
+        return asProducts    
     
     def excelCellWidthAdjust(self, worksheet, factor=1.2, bSmaller=True):
         for col in worksheet.columns:
@@ -966,8 +968,8 @@ class myToolItWatch():
     Removes a config
     """
 
-    def removeXmlVersion(self, versions, version):
-        versions.remove(version)
+    def removeXmlVersion(self, product, vesion):
+        product.find('Version').remove(vesion)
         self.xmlSave()
 
     def xmlPrintVersions(self):
@@ -1091,20 +1093,29 @@ class myToolItWatch():
     def excelSheetWrite(self):
         pass
     
+    
+    def atXmlSetup(self):           
+        asSetups = {}
+        iSetup = 1
+        for setup in self.tree.find('Config'):
+            asSetups[iSetup] = setup      
+            iSetup += 1   
+        return asSetups  
+    
+    
     def vSetXmlSetup(self):
         for config in self.tree.find('Config'):
             if config.get('name') == self.sSetupConfig:        
                 config.find('DeviceName').text = str(self.sDevName)
                 config.find('DeviceAddress').text = str(self.iAddress)
-                iAcc = int(self.bAccX) << 2 | int(self.bAccY) << 1 | int(self.bAccZ) << 0
-                config.find('Acc').text = str(iAcc)
-                iVoltage = int(self.bVoltageX) << 2 | int(self.bVoltageY) << 1 | int(self.bAcZ) << 0
-                config.find('Voltage').text = str(iVoltage)
+                config.find('Acc').text = str(int(self.bAccX)) + str(int(self.bAccY)) + str(int(self.bAccZ))
+                config.find('Voltage').text = str(int(self.bVoltageX)) + str(int(self.bVoltageY)) + str(int(self.bVoltageZ))
                 config.find('Prescaler').text = str(self.iPrescaler)
                 config.find('AcquisitionTime').text = str(AdcAcquisitionTimeReverse[self.iAquistionTime])
                 config.find('OverSamples').text = str(AdcOverSamplingRateReverse[self.iOversampling])
                 config.find('AdcRef').text = str(self.sAdcRef)
-                config.find('LogName').text = self.PeakCan.Logger.fileName[:-24]
+                sFileName = self.PeakCan.Logger.fileName
+                config.find('LogName').text = sFileName[:sFileName.lfind('.'):]
                 config.find('RunTime').text = str(self.iRunTime)
                 config.find('IntervalTime').text = str(self.iIntervalTime)
                 config.find('DisplayTime').text = str(self.iDisplayTime)
