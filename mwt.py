@@ -276,6 +276,37 @@ class mwt(myToolItWatch):
         while -1 == self.stdscr.getch():
             pass
         
+    def vTerminalXmlSetupList(self):
+        self.stdscr.clear()
+        number = 1
+        setupArray=[]
+        for setup in self.tree.find('Config'):
+            self.stdscr.addstr(str(number) + ": " + setup.get('name') + "\n")
+            setupArray.append(setup)
+            number += 1
+        self.stdscr.addstr("Choose device to show settings or 0 to escape: ")
+        self.stdscr.refresh()
+        iSetup = self.iTerminalInputNumberIn()
+        if 0 < iSetup:
+            setup = setupArray[iSetup-1]
+            self.stdscr.addstr("Device Name: " + setup.find('DeviceName').text + "\n")
+            self.stdscr.addstr("Acceleration Points(X/Y/Z): " + setup.find('Acc').text + "\n")
+            self.stdscr.addstr("Prescaler: " + setup.find('Prescaler').text + "\n")
+            self.stdscr.addstr("Acquisition Time: " + setup.find('AcquisitionTime').text + "\n")
+            self.stdscr.addstr("Oversampling Rate: " + setup.find('OverSamples').text + "\n")
+            iAcquisitionTime = AdcAcquisitionTime[int(setup.find('AcquisitionTime').text)]
+            iOversampling = AdcOverSamplingRate[int(setup.find('OverSamples').text)]
+            samplingRate = int(calcSamplingRate(int(setup.find('Prescaler').text), iAcquisitionTime, iOversampling) + 0.5)
+            self.stdscr.addstr("Derived samplring rate from upper three parameters: " + str(samplingRate) + "\n")
+            self.stdscr.addstr("ADC Reference Voltage: " + setup.find('AdcRef').text + "\n")
+            self.stdscr.addstr("Log Name: " + setup.find('LogName').text + "\n")
+            self.stdscr.addstr("RunTime/IntervalTime: " + setup.find('RunTime').text + "/" + setup.find('DisplayTime').text + "\n")
+            self.stdscr.addstr("Display Time: " + setup.find('DisplayTime').text + "\n")              
+            self.stdscr.addstr("Press any key to return\n")
+            self.stdscr.refresh()
+            while -1 == self.stdscr.getch():
+                pass        
+        
     def vTerminalXmlProductVersionRemove(self):
         self.stdscr.clear()
         asProductList = self.atXmlProductList()
@@ -304,42 +335,63 @@ class mwt(myToolItWatch):
                     if version.get('name') == asVersionList[iVersion]:
                         break
                 self.removeXmlVersion(product.find('Version'), version)
-            
+                       
+    def vTerminalXmlSetupChange(self):
+        self.stdscr.addstr("Please enter setup name: ")
+        self.stdscr.refresh()
+        sSetupName = self.sTerminalInputStringIn()
+        self.bSampleSetupSet(sSetupName)
+                    
     def vTerminalXmlExcelChange(self):
         self.stdscr.addstr("Please enter Excel File name for new Excel Sheet")
         self.stdscr.refresh()
         sFileName = self.sTerminalInputStringIn()
         self.vSheetFileSet(sFileName)
-        
+    
+    def vTerminalXmlKeyEvaluation(self):
+        bRun = True
+        keyPress = self.stdscr.getch()
+        if ord('q') == keyPress:
+            bRun = False
+        elif 0x03 == keyPress:  # CTRL+C
+            bRun = False
+        elif ord('c') == keyPress:
+            self.vTerminalXmlProductVersionCreate()
+        elif ord('d') == keyPress:
+            self.vTerminalXmlProductVersionChange()
+        elif ord('l') == keyPress:
+            self.vTerminalXmlProductVersionList()
+        elif ord('L') == keyPress:
+            self.vTerminalXmlSetupList()
+        elif ord('r') == keyPress:   
+            self.vTerminalXmlProductVersionRemove()
+        elif ord('s') == keyPress:
+            self.vTerminalXmlSetupChange()
+        elif ord('x') == keyPress:
+            self.vTerminalXmlExcelChange()
+        return bRun
+      
     def vTerminalXml(self):
         bRun = True
         while False != bRun:
             self.stdscr.clear()
             self.stdscr.addstr("Device: " + str(self.sProduct) + "\n")
             self.stdscr.addstr("Version: " + str(self.sConfig) + "\n")
+            self.stdscr.addstr("Configuration: " + str(self.sConfig) + "\n")
+            self.stdscr.addstr("Predefined Setup " + str(self.sSetupConfig) + "\n")
             self.stdscr.addstr("Excel Sheet Name(.xlsx): " + str(self.sSheetFile) + "\n")  
             self.stdscr.addstr("c: Create new Version\n")
+            self.stdscr.addstr("C: Create new Setup\n")
             self.stdscr.addstr("d: Chance Device(Product) and version\n")
             self.stdscr.addstr("l: List product and versions\n")
+            self.stdscr.addstr("L: List Setups\n")
             self.stdscr.addstr("r: Remove Version\n")
+            self.stdscr.addstr("s: Change Setup\n")
             self.stdscr.addstr("x: Chance Excel Sheet Name(.xlsx)\n")  
             self.stdscr.refresh()
-            keyPress = self.stdscr.getch()
-            if ord('q') == keyPress:
-                bRun = False
-            elif 0x03 == keyPress:  # CTRL+C
-                bRun = False
-            elif ord('c') == keyPress:
-                self.vTerminalXmlProductVersionCreate()
-            elif ord('d') == keyPress:
-                self.vTerminalXmlProductVersionChange()
-            elif ord('l') == keyPress:
-                self.vTerminalXmlProductVersionList()
-            elif ord('r') == keyPress:   
-                self.vTerminalXmlProductVersionRemove()
-            elif ord('x') == keyPress:
-                self.vTerminalXmlExcelChange()
-     
+            bRun = self.vTerminalXmlKeyEvaluation()
+
+ 
     def bTerminalMainMenuKeyEvaluation(self, devList):
         bRun = True
         keyPress = self.stdscr.getch()
