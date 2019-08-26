@@ -235,21 +235,17 @@ class mwt(myToolItWatch):
             if iVersion in atList[iProduct]["Versions"]:
                 self.stdscr.addstr("New Version Name: ")
                 sVersionName = self.sTerminalInputStringIn()
-                self.newXmlVersion(atList[iProduct]["Product"], sVersionName)
-                self.xmlSave()
+                self.newXmlVersion(atList[iProduct]["Product"], atList[iProduct]["Versions"][iVersion], sVersionName)
+                
                     
     def vTerminalXmlSetupCreate(self, atList):
-        self.stdscr.addstr("Setup configuration for deriving: ")
-        iSetup = self.iTerminalInputNumberIn()
-        if iSetup in atList:
+        self.stdscr.addstr("Version for deriving: ")
+        iVersion = self.iTerminalInputNumberIn()
+        if iVersion in atList:
             self.stdscr.addstr("New Setup Name: ")
             sSetupName = self.sTerminalInputStringIn()
-            dataDef = self.root.find('Data')
-            for product in dataDef.find('Product'):
-                if product.get('name') == atList[iSetup]:
-                    break
-            self.newXmlVersion(product, sSetupName)
-            self.xmlSave()        
+            self.newXmlSetup(atList[iVersion], sSetupName)
+        
         
     def vTerminalXmlProductVersionChange(self, atList):
         self.stdscr.addstr("Please chose device: ")
@@ -314,9 +310,8 @@ class mwt(myToolItWatch):
     def vTerminalXmlSetupRemove(self, atList):
         self.stdscr.addstr("Chose setup to remove: ")
         iSetup = self.iTerminalInputNumberIn()
-        if iSetup in atList:
-            dataDef = self.root.find('Data')
-            self.removeXmlVersion(dataDef.find('Config'), atList[iSetup])    
+        if iSetup in atList and 1 < len(atList):
+            self.removeXmlSetup(atList[iSetup])    
                       
     def vTerminalXmlSetupChange(self, atList):
         self.stdscr.addstr("Please chose setup: ")
@@ -356,12 +351,13 @@ class mwt(myToolItWatch):
         self.vAdcConfig(iPrescaler, iAcquisitionTime, iOversamples)         
      
     def vTerminalXmlSetupModifyVRef(self):
+        self.stdscr.clear()
         iNumber = 1
         tKeyDict = {}
         for key in AdcReference.keys():
             self.stdscr.addstr(str(iNumber) + ": " + str(key) + "\n")
             tKeyDict[iNumber] = str(key)
-            iNumber+=1
+            iNumber += 1
         iSelection = self.iTerminalInputNumberIn()
         if iSelection in tKeyDict:
             self.vAdcRefVConfig(tKeyDict[iSelection])
@@ -404,9 +400,11 @@ class mwt(myToolItWatch):
             self.vTerminalXmlSetupModifyDisplayTime()
         elif 99 == iSelection: 
             self.vSetXmlSetup()
+            self.xmlSave()
         return bReturn
                        
     def vTerminalXmlSetupModify(self):
+        sSetupConfig = self.sSetupConfig
         if None != self.sSetupConfig:
             setup = None
             atSetups = self.atXmlSetup()
@@ -416,34 +414,43 @@ class mwt(myToolItWatch):
             if None != setup:
                 bRun = True
                 while False != bRun:
-                    self.stdscr.clear()
-                    self.stdscr.addstr("0: Exit\n")
-                    self.stdscr.addstr("1 : Device Name: " + self.sDevName + "\n")
-                    self.stdscr.addstr(" : XML Device Name: " + setup.find('DeviceName').text + "\n")
-                    self.stdscr.addstr("2: Acceleration Points(X/Y/Z): " + str(int(self.bAccX)) + str(int(self.bAccY)) + str(int(self.bAccZ)) + "\n")
-                    self.stdscr.addstr(" : XML Acceleration Points(X/Y/Z): " + setup.find('Acc').text + "\n")
-                    self.stdscr.addstr("3: Voltage Points(X/Y/Z): " + str(int(self.bVoltageX)) + str(int(self.bVoltageY)) + str(int(self.bVoltageZ)) + "\n")
-                    self.stdscr.addstr(" : XML Voltage Points(X/Y/Z): " + setup.find('Voltage').text + "\n")
-                    iAcquisitionTime = AdcAcquisitionTimeReverse[self.iAquistionTime]
-                    iOversampling = AdcOverSamplingRateReverse[self.iOversampling]
-                    self.stdscr.addstr("4: Prescaler/AcquisitionTime/OversamplingRate(samples/s): " + str(self.iPrescaler) + "/" + str(iAcquisitionTime) + "/" + str(iOversampling) + "(" + str(self.samplingRate) + ")\n") 
-                    iPrescaler = int(setup.find('Prescaler').text)
-                    iAcquisitionTime = int(setup.find('AcquisitionTime').text)
-                    iOversampling = int(setup.find('OverSamples').text)
-                    iSamplingRate = int(calcSamplingRate(int(setup.find('Prescaler').text), AdcAcquisitionTime[iAcquisitionTime], AdcOverSamplingRate[iOversampling]) + 0.5)
-                    self.stdscr.addstr(" : XML Prescaler/AcquisitionTime/OversamplingRate(samples/s): " + str(iPrescaler) + "/" + str(iAcquisitionTime) + "/" + str(iOversampling) + "(" + str(iSamplingRate) + ")\n")               
-                    self.stdscr.addstr("5: ADC Reference Voltage: " + self.sAdcRef + "\n")
-                    self.stdscr.addstr(" : XML ADC Reference Voltage: " + setup.find('AdcRef').text + "\n")
-                    self.stdscr.addstr("6: Log Name: " + self.PeakCan.Logger.fileName + "\n")
-                    self.stdscr.addstr(" : XML Log Name: " + setup.find('LogName').text + "\n")
-                    self.stdscr.addstr("7: RunTime/IntervalTime: " + str(self.iRunTime) + "/" + str(self.iIntervalTime) + "\n")
-                    self.stdscr.addstr(" : XML RunTime/IntervalTime: " + setup.find('RunTime').text + "/" + setup.find('DisplayTime').text + "\n")
-                    self.stdscr.addstr("8: Display Time: " + str(self.iDisplayTime) + "\n")
-                    self.stdscr.addstr(" : XML Display Time: " + setup.find('DisplayTime').text + "\n")
-                    self.stdscr.addstr("99: Save to xml File\n")   
-                    self.stdscr.addstr("Your selection: ")          
-                    self.stdscr.refresh()
-                    bRun = self.bTerminalXmlSetupModifyKeyEvaluation()
+                    if sSetupConfig != self.sSetupConfig:
+                        bRun = False
+                        for key in atSetups.keys():
+                            if atSetups[key].get('name') == self.sSetupConfig:
+                                setup = atSetups[key]
+                                sSetupConfig = self.sSetupConfig
+                                bRun = True
+                    if False != bRun:   
+                        self.stdscr.clear()
+                        self.stdscr.addstr(self.sSetupConfig + "\n\n")
+                        self.stdscr.addstr("0: Exit\n")
+                        self.stdscr.addstr("1 : Device Name: " + self.sDevName + "\n")
+                        self.stdscr.addstr(" : XML Device Name: " + setup.find('DeviceName').text + "\n")
+                        self.stdscr.addstr("2: Acceleration Points(X/Y/Z): " + str(int(self.bAccX)) + str(int(self.bAccY)) + str(int(self.bAccZ)) + "\n")
+                        self.stdscr.addstr(" : XML Acceleration Points(X/Y/Z): " + setup.find('Acc').text + "\n")
+                        self.stdscr.addstr("3: Voltage Points(X/Y/Z): " + str(int(self.bVoltageX)) + str(int(self.bVoltageY)) + str(int(self.bVoltageZ)) + "\n")
+                        self.stdscr.addstr(" : XML Voltage Points(X/Y/Z): " + setup.find('Voltage').text + "\n")
+                        iAcquisitionTime = AdcAcquisitionTimeReverse[self.iAquistionTime]
+                        iOversampling = AdcOverSamplingRateReverse[self.iOversampling]
+                        self.stdscr.addstr("4: Prescaler/AcquisitionTime/OversamplingRate(samples/s): " + str(self.iPrescaler) + "/" + str(iAcquisitionTime) + "/" + str(iOversampling) + "(" + str(self.samplingRate) + ")\n") 
+                        iPrescaler = int(setup.find('Prescaler').text)
+                        iAcquisitionTime = int(setup.find('AcquisitionTime').text)
+                        iOversampling = int(setup.find('OverSamples').text)
+                        iSamplingRate = int(calcSamplingRate(int(setup.find('Prescaler').text), AdcAcquisitionTime[iAcquisitionTime], AdcOverSamplingRate[iOversampling]) + 0.5)
+                        self.stdscr.addstr(" : XML Prescaler/AcquisitionTime/OversamplingRate(samples/s): " + str(iPrescaler) + "/" + str(iAcquisitionTime) + "/" + str(iOversampling) + "(" + str(iSamplingRate) + ")\n")               
+                        self.stdscr.addstr("5: ADC Reference Voltage: " + self.sAdcRef + "\n")
+                        self.stdscr.addstr(" : XML ADC Reference Voltage: " + setup.find('AdcRef').text + "\n")
+                        self.stdscr.addstr("6: Log Name: " + self.PeakCan.Logger.fileName + "\n")
+                        self.stdscr.addstr(" : XML Log Name: " + setup.find('LogName').text + "\n")
+                        self.stdscr.addstr("7: RunTime/IntervalTime: " + str(self.iRunTime) + "/" + str(self.iIntervalTime) + "\n")
+                        self.stdscr.addstr(" : XML RunTime/IntervalTime: " + setup.find('RunTime').text + "/" + setup.find('DisplayTime').text + "\n")
+                        self.stdscr.addstr("8: Display Time: " + str(self.iDisplayTime) + "\n")
+                        self.stdscr.addstr(" : XML Display Time: " + setup.find('DisplayTime').text + "\n")
+                        self.stdscr.addstr("99: Save to xml File\n")   
+                        self.stdscr.addstr("Your selection: ")          
+                        self.stdscr.refresh()
+                        bRun = self.bTerminalXmlSetupModifyKeyEvaluation()
 
     def vTerminalXmlExcelChange(self):
         self.stdscr.addstr("Please enter Excel File name for new Excel Sheet")

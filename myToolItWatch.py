@@ -493,7 +493,7 @@ class myToolItWatch():
             elif False != bRemove:
                 if False != bSetupFound: 
                     if 1 < len(self.tree.find('Config')):
-                        self.removeXmlSetup(bSetupFound)
+                        self.removeXmlSetup(sSetup)
                     else:
                         print("You cant remove the last sample setup")
                         self.__exit_()
@@ -515,7 +515,7 @@ class myToolItWatch():
                         if productVersion.get('name') == self.sConfig:
                             break
                     if productVersion.get('name') != self.sConfig and False != bCreate:
-                        self.newXmlVersion(product, self.sConfig)
+                        self.newXmlVersion(product, product.find('Version')[0], self.sConfig)
                         self.vSave2Xml(True)
                     elif productVersion.get('name') == self.sConfig and False != bRemove:
                         if 1 < len(product.find('Version')):
@@ -958,11 +958,12 @@ class myToolItWatch():
     Creats a new config
     """
 
-    def newXmlVersion(self, product, sVersion):
-        cloneVersion = copy.deepcopy(product.find('Version')[0])
+    def newXmlVersion(self, product, productVersion, sVersion):
+        cloneVersion = copy.deepcopy(productVersion)
         cloneVersion.set('name', sVersion) 
-        product.find('Version').append(cloneVersion)
-            
+        product.find('Version').append(cloneVersion)        
+        self.xmlSave()    
+        self.vConfigSet(product.get('name'), sVersion)
 
     """
     Save XML File (in any state)
@@ -1004,7 +1005,7 @@ class myToolItWatch():
         workbook = openpyxl.load_workbook(self.sSheetFile)
         if workbook:
             if version.get('name') != self.sConfig:
-                self.newXmlVersion(product, self.sConfig)
+                self.newXmlVersion(product, product.find('Version')[0], self.sConfig)
                 self.xmlSave()
                 self.excelSheetConfig()
             else:
@@ -1125,7 +1126,7 @@ class myToolItWatch():
                 config.find('OverSamples').text = str(AdcOverSamplingRateReverse[self.iOversampling])
                 config.find('AdcRef').text = str(self.sAdcRef)
                 sFileName = self.PeakCan.Logger.fileName
-                config.find('LogName').text = sFileName[:sFileName.lfind('.'):]
+                config.find('LogName').text = sFileName[:sFileName.find('_'):]
                 config.find('RunTime').text = str(self.iRunTime)
                 config.find('IntervalTime').text = str(self.iIntervalTime)
                 config.find('DisplayTime').text = str(self.iDisplayTime)
@@ -1153,15 +1154,19 @@ class myToolItWatch():
                 self.vDisplayTime(int(config.find('DisplayTime').text))
                 break
                            
-    def removeXmlSetup(self, sConfig):
-        self.tree.find('Config').remove(sConfig)       
+    def removeXmlSetup(self, setup):
+        if( setup.get('name') == self.sSetupConfig):
+            self.bSampleSetupSet(None)
+        self.tree.find('Config').remove(setup)  
+        self.xmlSave()     
+
                 
-    def newXmlSetup(self, sConfig):
-        cloneVersion = copy.deepcopy(self.tree.find('Config')[0])
+    def newXmlSetup(self, setup, sConfig):
+        cloneVersion = copy.deepcopy(setup)
         cloneVersion.set('name', sConfig) 
         self.tree.find('Config').append(cloneVersion)
         self.xmlSave()
-        self.bSampleConfigSet(sConfig)
+        self.bSampleSetupSet(sConfig)
 
     def xmlPrintSetups(self):
         for setup in self.tree.find('Config'):
