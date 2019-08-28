@@ -980,7 +980,8 @@ class PeakCanFd(object):
         cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0)
         message = self.CanMessage20(cmd, self.sender, stuNr, [SystemCommandBlueTooth["Disconnect"], 0, 0, 0, 0, 0, 0, 0])
         self.WriteFrameWaitAckRetries(message, retries=2)
-        return 0 == self.BlueToothCheckConnect(stuNr)
+        self.bConnected = 0 != self.BlueToothCheckConnect(stuNr)
+        return not self.bConnected
 
     """
     Write name and get name (bluetooth command)

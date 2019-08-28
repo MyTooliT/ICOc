@@ -65,6 +65,16 @@ class mwt(myToolItWatch):
             self.stdscr.refresh()            
             iDisplayTime = self.iTerminalInputNumberIn()  
             self.vDisplayTime(iDisplayTime)
+        elif ord('e') == keyPress:
+            bRun = False
+            bContinue = True 
+            self.PeakCan.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
+        elif ord('f') == keyPress:
+            self.stdscr.clear()
+            self.stdscr.refresh()
+            sOemFreeUse = self.PeakCan.sProductData("OemFreeUse")  
+            self.stdscr.addstr("OEM Free Use: \n" + sOemFreeUse + "\n")
+            self.vTerminalAnyKey()  
         elif ord('n') == keyPress:
             self.vTerminalDeviceName()
         elif ord('O') == keyPress:
@@ -79,16 +89,6 @@ class mwt(myToolItWatch):
                 bRun = False
                 self.PeakCan.bConnected = False
                 bContinue = True
-        elif ord('e') == keyPress:
-            bRun = False
-            bContinue = True 
-            self.PeakCan.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
-        elif ord('f') == keyPress:
-            self.stdscr.clear()
-            self.stdscr.refresh()
-            sOemFreeUse = self.PeakCan.sProductData("OemFreeUse")  
-            self.stdscr.addstr("OEM Free Use: \n" + sOemFreeUse + "\n")
-            self.vTerminalAnyKey()             
         elif ord('p') == keyPress:
             self.stdscr.addstr("New sample axis (xyz; 0=off, 1=on; e.g. 100): ")
             iPoints = self.iTerminalInputNumberIn() 
@@ -184,17 +184,21 @@ class mwt(myToolItWatch):
                 else:
                     iNumber = 0
             elif 0x0A == keyPress:
-                self.stdscr.addstr("\nTry to connect to device number " + str(iNumber) + "\n")
-                self.stdscr.refresh()
-                self.PeakCan.Logger.Info("Device List: " + str(devList))
-                for dev in devList:
-                    iDevNumber = int(dev["DeviceNumber"])
-                    if iDevNumber == iNumber:
-                        self.vDeviceAddressSet(str(dev["Address"]))
-                        self.stdscr.addstr("Connect to " + hex(dev["Address"]) + "(" + str(dev["Name"]) + ")\n")
-                        self.stdscr.refresh()
-                        self.PeakCan.BlueToothConnectPollingAddress(MyToolItNetworkNr["STU1"], self.iAddress)
-                        bContinue = self.bTerminalHolderConnectCommands()
+                if 0 < iNumber:
+                    iNumber-=1
+                    self.stdscr.addstr("\nTry to connect to device number " + str(iNumber) + "\n")
+                    self.stdscr.refresh()
+                    self.PeakCan.Logger.Info("Device List: " + str(devList))
+                    for dev in devList:
+                        iDevNumber = int(dev["DeviceNumber"])
+                        if iDevNumber == iNumber:
+                            self.vDeviceAddressSet(str(dev["Address"]))
+                            self.stdscr.addstr("Connect to " + hex(dev["Address"]) + "(" + str(dev["Name"]) + ")\n")
+                            self.stdscr.refresh()
+                            self.PeakCan.BlueToothConnectPollingAddress(MyToolItNetworkNr["STU1"], self.iAddress)
+                            bContinue = self.bTerminalHolderConnectCommands()
+                else:
+                    bContinue = True
                 bRun = False
             elif(0x03 == keyPress) or (ord('q') == keyPress):
                 bRun = False
@@ -207,14 +211,18 @@ class mwt(myToolItWatch):
     def vTerminalEepromExcelChange(self):
         self.stdscr.addstr("Please enter Excel File name for new Excel Sheet")
         sFileName = self.sTerminalInputStringIn()
-        self.vSheetFileSet(sFileName)
-        
+        if ".xlsx" == sFileName[-5:]:
+            self.vSheetFileSet(sFileName)
+        else:
+            self.stdscr.addstr(".xlsx file ending required")
+            self.stdscr.refresh()
+            sleep(1)
         
     def tTerminalEepromKeyEvaluation(self):
         keyPress = self.stdscr.getch()
         bRun = True
         bContinue = False
-        if (0x03 == keyPress) or (ord('q') == keyPress):
+        if 0x03 == keyPress:
             bRun = False
         elif ord('x') == keyPress:
             self.vTerminalEepromExcelChange()
@@ -270,44 +278,31 @@ class mwt(myToolItWatch):
         self.PeakCan.BlueToothNameWrite(0, sName)
     
     def bTerminalTests(self):
-        bRun = True
         bContinue = True
-        while False != bRun:
-            self.tTerminalHeaderExtended() 
-            pyFiles = []
-            for file in glob.glob("./VerficationInternal/*.py"):
-                file = file.split("\\")
-                pyFiles.append(file[-1])
-            self.stdscr.addstr("\nVerficationInternal: \n")
-            iTestNumber = 1
-            for i in range(0, len(pyFiles)):
-                self.stdscr.addstr("    " + str(iTestNumber) + ": " + pyFiles[i] + "\n")
-                iTestNumber += 1
-            self.stdscr.refresh()
-            self.stdscr.addstr("Attention! If you want to kill the test press CTRL+Break(STRG+Pause)\n")
-            self.stdscr.addstr("Please pick a test number or 0 to escape: ")
-            iKeyPress = self.stdscr.getch()
-            iDigit = int(iKeyPress - ord('0'))
-            if 0 <= iDigit and 9 >= iDigit:
-                bRun = False
-                iTestNumberRun = self.iTerminalInputNumberIn(iDigit) 
-                if 0 == iTestNumberRun:
-                    pass
-                elif iTestNumberRun < iTestNumber:
-                    self.PeakCan.__exit__() 
-                    sDirPath = os.path.dirname(os.path.realpath(pyFiles[iTestNumberRun - 1]))
-                    sDirPath += "\\VerficationInternal\\"
-                    sDirPath += pyFiles[iTestNumberRun - 1]
-                    try:
-                        os.system("python " + str(sDirPath) + " ../Logs/STH SthAuto.txt")
-                    except KeyboardInterrupt:
-                        pass
-                    self.PeakCan = PeakCanFd.PeakCanFd(PeakCanFd.PCAN_BAUD_1M, "init.txt", "initError.txt", MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"])
-                else:
-                    pass
-            elif(0x03 == iKeyPress): 
-                bRun = False
-                bContinue = False
+        self.tTerminalHeaderExtended() 
+        pyFiles = []
+        for file in glob.glob("./VerficationInternal/*.py"):
+            file = file.split("\\")
+            pyFiles.append(file[-1])
+        self.stdscr.addstr("\nVerficationInternal: \n")
+        iTestNumber = 1
+        for i in range(0, len(pyFiles)):
+            self.stdscr.addstr("    " + str(iTestNumber) + ": " + pyFiles[i] + "\n")
+            iTestNumber += 1
+        self.stdscr.refresh()
+        self.stdscr.addstr("Attention! If you want to kill the test press CTRL+Break(STRG+Pause)\n")
+        self.stdscr.addstr("Please pick a test number or 0 to escape: ")
+        iTestNumberRun = self.iTerminalInputNumberIn() 
+        if 0 < iTestNumberRun and iTestNumberRun < iTestNumber:
+            self.PeakCan.__exit__() 
+            sDirPath = os.path.dirname(os.path.realpath(pyFiles[iTestNumberRun - 1]))
+            sDirPath += "\\VerficationInternal\\"
+            sDirPath += pyFiles[iTestNumberRun - 1]
+            try:
+                os.system("python " + str(sDirPath) + " ../Logs/STH SthAuto.txt")
+            except KeyboardInterrupt:
+                pass
+            self.PeakCan = PeakCanFd.PeakCanFd(PeakCanFd.PCAN_BAUD_1M, "init.txt", "initError.txt", MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"])
         return bContinue
                 
            
@@ -597,7 +592,7 @@ class mwt(myToolItWatch):
             bRun = False
         elif 0x03 == keyPress:  # CTRL+C
             bRun = False
-        elif ord('0') <= keyPress and ord('9') >= keyPress:
+        elif ord('1') <= keyPress and ord('9') >= keyPress:
             self.PeakCan.Logger.Info("Call bTerminalHolderConnect")
             bRun = self.bTerminalHolderConnect(keyPress)
         elif ord('E') == keyPress:    
@@ -608,20 +603,22 @@ class mwt(myToolItWatch):
             self.stdscr.addstr("Pick a device number from the list: ")
             self.stdscr.refresh()            
             iDevice = self.iTerminalInputNumberIn()  
-            bConnected = False
-            for dev in devList:
-                iDevNumber = int(dev["DeviceNumber"])
-                if iDevNumber == iDevice:
-                    self.vDeviceAddressSet(str(dev["Address"]))
-                    self.stdscr.addstr("Connect to " + hex(dev["Address"]) + "(" + str(dev["Name"]) + ")\n")
-                    self.stdscr.refresh()
-                    self.PeakCan.BlueToothConnectPollingAddress(MyToolItNetworkNr["STU1"], self.iAddress)
-                    self.vTerminalDeviceName()
-                    self.PeakCan.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
-                    bConnected = True        
-            if False == bConnected:
-                self.stdscr.addstr("Device was not available\n")
-                self.stdscr.refresh()    
+            if 0 < iDevice:
+                iDevice-=1
+                bConnected = False
+                for dev in devList:
+                    iDevNumber = int(dev["DeviceNumber"])
+                    if iDevNumber == iDevice:
+                        self.vDeviceAddressSet(str(dev["Address"]))
+                        self.stdscr.addstr("Connect to " + hex(dev["Address"]) + "(" + str(dev["Name"]) + ")\n")
+                        self.stdscr.refresh()
+                        self.PeakCan.BlueToothConnectPollingAddress(MyToolItNetworkNr["STU1"], self.iAddress)
+                        self.vTerminalDeviceName()
+                        self.PeakCan.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
+                        bConnected = True        
+                if False == bConnected:
+                    self.stdscr.addstr("Device was not available\n")
+                    self.stdscr.refresh()    
         elif ord('t') == keyPress:    
             bRun = self.bTerminalTests()              
         elif ord('x') == keyPress:    
@@ -632,8 +629,8 @@ class mwt(myToolItWatch):
         devList = self.tTerminalHeaderExtended()            
         self.stdscr.addstr("\n")
         self.stdscr.addstr("q: Quit program\n")
-        self.stdscr.addstr("0-9: Enter Number to connect to STH(ENTER required at the end of the number)\n")
-        self.stdscr.addstr("E: EEPROM Parameters\n")
+        self.stdscr.addstr("1-9: Connect to STH number (ENTER at input end)\n")
+        self.stdscr.addstr("E: EEPROM (Permanent Storage)\n")
         self.stdscr.addstr("l: Log File Name\n")
         self.stdscr.addstr("n: Change Device Name\n")
         self.stdscr.addstr("t: Test Menu\n")
@@ -742,7 +739,7 @@ class mwt(myToolItWatch):
         if None == devList:
             devList = self.PeakCan.tDeviceList(MyToolItNetworkNr["STU1"])
         for dev in devList:
-            self.stdscr.addstr("Device Number: " + str(dev["DeviceNumber"]) + "; Name: " + str(dev["Name"]) + "; Address: " + hex(dev["Address"]) + "; RSSI: " + str(dev["RSSI"]) + "\n") 
+            self.stdscr.addstr("Device Number: " + str(dev["DeviceNumber"]+1) + "; Name: " + str(dev["Name"]) + "; Address: " + hex(dev["Address"]) + "; RSSI: " + str(dev["RSSI"]) + "\n") 
         return devList    
             
     def vTerminalHeader(self):
