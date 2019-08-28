@@ -11,6 +11,8 @@ import PeakCanFd
 from MyToolItNetworkNumbers import MyToolItNetworkNr
 from SthLimits import *
 import time
+from MyToolItSth import TestConfig, SthErrorWord, SleepTime
+from MyToolItCommands import *
 
 log_location = '../../Logs/STH/'
 
@@ -66,7 +68,7 @@ class TestSthManually(unittest.TestCase):
 
     def _SthAdcTemp(self):
         ret = self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["Temp"], 1, AdcReference["1V25"], log=False)
-        result = float(messageWordGet(ret[4:]))
+        result = float(iMessage2Value(ret[4:]))
         result /= 1000
         self.PeakCan.Logger.Info("Temperature(Chip): " + str(result) + "°C") 
         self.PeakCan.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["None"], CalibMeassurementTypeNr["Temp"], 1, AdcReference["VDD"], log=False, bReset=True)
@@ -248,13 +250,13 @@ class TestSthManually(unittest.TestCase):
 
     def testManually0700UnderVoltageCounter(self):
         UnderVoltage1 = self.PeakCan.statisticalData(MyToolItNetworkNr["STH1"], MyToolItStatData["Uvc"], printLog=True)    
-        UnderVoltagePowerOnFirst1 = messageWordGet(UnderVoltage1[:4])
+        UnderVoltagePowerOnFirst1 = iMessage2Value(UnderVoltage1[:4])
         self.PeakCan.Logger.Info("Under Voltage Counter since first Power On: " + payload2Hex(UnderVoltage1))
         self.PeakCan.Logger.Info("Under Voltage Counter since first Power On: " + str(UnderVoltagePowerOnFirst1))
         input('Power Off Device and wait 1s, power on again and then press Any Key to Continue')
         self.PeakCan.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
         UnderVoltage2 = self.PeakCan.statisticalData(MyToolItNetworkNr["STH1"], MyToolItStatData["Uvc"], printLog=True)    
-        UnderVoltagePowerOnFirst2 = messageWordGet(UnderVoltage2[:4])
+        UnderVoltagePowerOnFirst2 = iMessage2Value(UnderVoltage2[:4])
         self.PeakCan.Logger.Info("Under Voltage Counter since first Power On: " + payload2Hex(UnderVoltage2))
         self.PeakCan.Logger.Info("Under Voltage Counter since first Power On: " + str(UnderVoltagePowerOnFirst2))
         self.assertEqual(0xFFFFFFFF & (UnderVoltagePowerOnFirst1 + 1), UnderVoltagePowerOnFirst2)

@@ -100,14 +100,14 @@ class TestSthManually(unittest.TestCase):
 
     def testManually0700PowerOnOffCounter(self):
         PowerOnOff1 = self.PeakCan.statisticalData(MyToolItNetworkNr["STU1"], MyToolItStatData["PocPof"])
-        PowerOn1 = messageWordGet(PowerOnOff1[:4])
-        PowerOff1 = messageWordGet(PowerOnOff1[4:])
+        PowerOn1 = iMessage2Value(PowerOnOff1[:4])
+        PowerOff1 = iMessage2Value(PowerOnOff1[4:])
         self.PeakCan.Logger.Info("Power On Counter since first Power On: " + str(PowerOn1))
         self.PeakCan.Logger.Info("Power Off Counter since first Power On: " + str(PowerOff1))
         input('Power Off Device, wait 1s, power on again and then press Any Key to Continue')
         PowerOnOff2 = self.PeakCan.statisticalData(MyToolItNetworkNr["STU1"], MyToolItStatData["PocPof"])
-        PowerOn2 = messageWordGet(PowerOnOff2[:4])
-        PowerOff2 = messageWordGet(PowerOnOff2[4:])
+        PowerOn2 = iMessage2Value(PowerOnOff2[:4])
+        PowerOff2 = iMessage2Value(PowerOnOff2[4:])
         self.PeakCan.Logger.Info("Power On Counter since first Power On: " + str(PowerOn2))
         self.PeakCan.Logger.Info("Power Off Counter since first Power On: " + str(PowerOff2))
         self.assertEqual(PowerOn1 + 1, PowerOn2)

@@ -533,9 +533,11 @@ def to8bitSigned(num):
     return num
 
 
-def messageWordGet(m):
-    Word = ((0xFF & m[3]) << 24) | ((0xFF & m[2]) << 16) | ((0xFF & m[1]) << 8) | (0xFF & m[0])
-    return Word
+def iMessage2Value(m):
+    iValue = 0
+    for i in range(0, len(m)):
+        iValue |= ((0xFF & m[i]) << (i*8)) 
+    return iValue
 
 
 def array2Value(array, length):

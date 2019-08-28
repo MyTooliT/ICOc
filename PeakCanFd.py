@@ -4,6 +4,7 @@ import threading
 from time import sleep, time
 import os
 from datetime import datetime
+import array
 
 PeakCanIoPort = 0x2A0
 PeakCanInterrupt = 11
@@ -41,7 +42,19 @@ def sDateClock():
     DataClockTimeStamp = datetime.fromtimestamp(time()).strftime('%Y-%m-%d_%H:%M:%S')
     return DataClockTimeStamp
 
-    
+
+def sArray2String(Name):
+    i = 0
+    while i < len(Name):
+        Name[i] = chr(Name[i])
+        i += 1
+    Name = ''.join(Name)
+    for character in range(0, ord(' ')):
+        Name = Name[0:8].replace(chr(character), '')
+    for character in range(128, 0xFF):
+        Name = Name[0:8].replace(chr(character), '')
+    return Name
+            
 class Logger():
 
     def __init__(self, fileName, fileNameError):
@@ -376,7 +389,7 @@ class PeakCanFd(object):
                     currentIndex += 1   
                     message = self.readArray[currentIndex]
                 else:
-                    sleep(0.002)
+                    sleep(0.001)
         return [returnMessage, currentIndex]
     
     def WriteFrameWaitAckRetries(self, CanMsg, retries=10, waitMs=1000, printLog=False, bErrorAck=False, assumedPayload=None, bErrorExit=True):  
@@ -399,7 +412,7 @@ class PeakCanFd(object):
                         print("Message Request Failed: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + payload2Hex(CanMsg.DATA))
                     if False != bErrorExit:
                         self.__exitError()
-            sleep(0.01)
+            sleep(0.1)
             return returnMessage
         except KeyboardInterrupt:
             self.RunReadThread = False
@@ -1000,15 +1013,7 @@ class PeakCanFd(object):
         Name = self.WriteFrameWaitAckRetries(message, retries=2)["Payload"][2:]
         message = self.CanMessage20(cmd, self.sender, receiver, [SystemCommandBlueTooth["GetName2"], DeviceNr, 0, 0, 0, 0, 0, 0])
         Name = Name + self.WriteFrameWaitAckRetries(message)["Payload"][2:]
-        i = 0
-        while i < len(Name):
-            Name[i] = chr(Name[i])
-            i += 1
-        Name = ''.join(Name)
-        for character in range(0, ord(' ')):
-            Name = Name[0:8].replace(chr(character), '')
-        for character in range(128, 0xFF):
-            Name = Name[0:8].replace(chr(character), '')
+        Name = sArray2String(Name)
         return Name
     
     """
@@ -1080,7 +1085,9 @@ class PeakCanFd(object):
         for dev in range(0, devAll):
             endTime = time() + BluetoothTime["Connect"]
             name = ''
-            while '' == name and time() < endTime:
+            nameOld = None
+            while nameOld != name and time() < endTime:
+                nameOld = name
                 name = self.BlueToothNameGet(stuNr, dev)[0:8]
             endTime = time() + BluetoothTime["Connect"]
             address = 0
@@ -1164,11 +1171,59 @@ class PeakCanFd(object):
         sendData = ActiveState()
         sendData.asbyte = 0
         sendData.b.bSetState = 1
-        sendData.b.u2NodeState = 2
-        sendData.b.u3NetworkState = 2
+        sendData.b.u2NodeState = Node["Application"]
+        sendData.b.u3NetworkState = NetworkState["Standby"]
         self.Logger.Info("Send Standby Command")
         index = self.cmdSend(receiver, MyToolItBlock["System"], MyToolItSystem["ActiveState"], [sendData.asbyte])        
         self.Logger.Info("Received Payload " + payload2Hex(self.getReadMessageData(index)))
+    
+    def sProductData(self, name): 
+        sReturn = ""
+        if "GTIN" == name:
+            index = self.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["ProductData"], MyToolItProductData["GTIN"], [])
+            iGtin = iMessage2Value(self.getReadMessageData(index))
+            sReturn = str(iGtin)      
+        elif "HardwareRevision" == name:
+            index = self.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["ProductData"], MyToolItProductData["HardwareRevision"], [])
+            tHwRev = self.getReadMessageData(index)
+            sReturn = str(tHwRev[2]) + "." + str(tHwRev[1]) + "." + str(tHwRev[0]) 
+        elif "FirmwareVersion" == name:
+            index = self.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["ProductData"], MyToolItProductData["FirmwareVersion"], [])
+            tFirmwareVersion = self.getReadMessageData(index)
+            sReturn = str(tFirmwareVersion[2]) + "." + str(tFirmwareVersion[1]) + "." + str(tFirmwareVersion[0])         
+        elif "ReleaseName" == name:
+            index = self.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["ProductData"], MyToolItProductData["ReleaseName"], [])
+            aiName = self.getReadMessageData(index)
+            sReturn = sArray2String(aiName)
+        elif "SerialNumber" == name:
+            aiSerialNumber = []
+            for i in range(1, 5):
+                index = self.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["ProductData"], MyToolItProductData["SerialNumber"+str(i)], [])
+                aiSerialNumber.extend(self.getReadMessageData(index))
+            try:
+                sReturn = array.array('b', bytearray(aiSerialNumber)).tostring().decode('utf-8')
+            except:
+                sReturn = ""
+        elif "Name" == name:
+            aiName = []
+            for i in range(1, 17):
+                index = self.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["ProductData"], MyToolItProductData["Name"+str(i)], [])
+                aiName.extend(self.getReadMessageData(index))
+            try:
+                sReturn = array.array('b', bytearray(aiName)).tostring().decode('utf-8')
+            except:
+                sReturn = ""
+        elif "OemFreeUse" == name:
+            aiOemFreeUse = []
+            for i in range(1, 9):
+                index = self.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["ProductData"], MyToolItProductData["OemFreeUse"+str(i)], [])
+                aiOemFreeUse.extend(self.getReadMessageData(index))
+            sReturn = payload2Hex(aiOemFreeUse)       
+        else:
+            sReturn = "-1"
+        return sReturn
+            
+        
 
     def BlueToothRssi(self, subscriber):
         cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0)

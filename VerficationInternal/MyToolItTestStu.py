@@ -61,7 +61,7 @@ class TestStu(unittest.TestCase):
         return self.PeakCan.cmdReset(MyToolItNetworkNr["STU1"], retries=retries, log=log)
 
     def _StuWDog(self):
-        WdogCounter = messageWordGet(self.PeakCan.statisticalData(MyToolItNetworkNr["STU1"], MyToolItStatData["Wdog"])[:4])
+        WdogCounter = iMessage2Value(self.PeakCan.statisticalData(MyToolItNetworkNr["STU1"], MyToolItStatData["Wdog"])[:4])
         self.PeakCan.Logger.Info("WatchDog Counter: " + str(WdogCounter))
         return WdogCounter 
         
@@ -591,12 +591,12 @@ class TestStu(unittest.TestCase):
 
     def test0700StatisticsPowerOnCounterPowerOffCounter(self):
         PowerOnOff1 = self.PeakCan.statisticalData(MyToolItNetworkNr["STU1"], MyToolItStatData["PocPof"])
-        PowerOn1 = messageWordGet(PowerOnOff1[:4])
-        PowerOff1 = messageWordGet(PowerOnOff1[4:])              
+        PowerOn1 = iMessage2Value(PowerOnOff1[:4])
+        PowerOff1 = iMessage2Value(PowerOnOff1[4:])              
         self._resetStu()        
         PowerOnOff2 = self.PeakCan.statisticalData(MyToolItNetworkNr["STU1"], MyToolItStatData["PocPof"])
-        PowerOn2 = messageWordGet(PowerOnOff2[:4])
-        PowerOff2 = messageWordGet(PowerOnOff2[4:]) 
+        PowerOn2 = iMessage2Value(PowerOnOff2[:4])
+        PowerOff2 = iMessage2Value(PowerOnOff2[4:]) 
         self.PeakCan.Logger.Info("PowerOnOff Payload before STU Reset: " + payload2Hex(PowerOnOff1))
         self.PeakCan.Logger.Info("Power On Counter before STU Reset: " + str(PowerOn1))
         self.PeakCan.Logger.Info("Power Off Counter before STU Reset: " + str(PowerOff1))
@@ -612,16 +612,16 @@ class TestStu(unittest.TestCase):
 
     def test0701StatisticsOperatingMinutes(self):
         OperatingMinutes1 = self.PeakCan.statisticalData(MyToolItNetworkNr["STU1"], MyToolItStatData["OperatingTime"])    
-        MinutesReset1 = messageWordGet(OperatingMinutes1[:4])
-        MinutesOveral1 = messageWordGet(OperatingMinutes1[4:])
+        MinutesReset1 = iMessage2Value(OperatingMinutes1[:4])
+        MinutesOveral1 = iMessage2Value(OperatingMinutes1[4:])
         time.sleep(60)
         OperatingMinutes2 = self.PeakCan.statisticalData(MyToolItNetworkNr["STU1"], MyToolItStatData["OperatingTime"])    
-        MinutesReset2 = messageWordGet(OperatingMinutes2[:4])
-        MinutesOveral2 = messageWordGet(OperatingMinutes2[4:])
+        MinutesReset2 = iMessage2Value(OperatingMinutes2[:4])
+        MinutesOveral2 = iMessage2Value(OperatingMinutes2[4:])
         self._resetStu()
         OperatingMinutes3 = self.PeakCan.statisticalData(MyToolItNetworkNr["STU1"], MyToolItStatData["OperatingTime"])    
-        MinutesReset3 = messageWordGet(OperatingMinutes3[:4])
-        MinutesOveral3 = messageWordGet(OperatingMinutes3[4:])
+        MinutesReset3 = iMessage2Value(OperatingMinutes3[:4])
+        MinutesOveral3 = iMessage2Value(OperatingMinutes3[4:])
         self.PeakCan.Logger.Info("Operating Minutes Payload: " + payload2Hex(OperatingMinutes1))
         self.PeakCan.Logger.Info("Operating Minutes since Reset: " + str(MinutesReset1))
         self.PeakCan.Logger.Info("Operating Minutes since frist PowerOn: " + str(MinutesOveral1))
