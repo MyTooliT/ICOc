@@ -287,7 +287,7 @@ class mwt(myToolItWatch):
             self.stdscr.addstr("Version: " + str(self.sConfig) + "\n")
             self.stdscr.addstr("Network Number: " + str(self.sNetworkNumber) + "\n")
             self.stdscr.addstr("Excel Sheet Name: " + str(self.sSheetFile) + "\n")    
-            self.stdscr.addstr("e: Escape(Exit) this menu\n")
+            self.stdscr.addstr("e: Escape this menu\n")
             self.stdscr.addstr("l: List devices and versions (an change current device/product)\n")
             self.stdscr.addstr("x: Chance Excel Sheet Name(.xlsx)\n")          
             if None != self.sSheetFile and "STU" == self.sProduct and None != self.sConfig:

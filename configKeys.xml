@@ -341,9 +341,9 @@
                                     <length>4</length>
                                     <readOnly>True</readOnly>
                                     <value>0</value>
-                                    <unit>minutes</unit>
+                                    <unit>seconds</unit>
                                     <format>unsigned</format>
-                                    <description>Operating Time since first power On in minutes</description>
+                                    <description>Operating Time since first power On in seconds</description>
                                     </entry>
                                     <entry name="Under Voltage Counter since first Power On">
                                     <subAddress>12</subAddress>
@@ -679,9 +679,9 @@
                                     <length>4</length>
                                     <readOnly>True</readOnly>
                                     <value>0</value>
-                                    <unit>minutes</unit>
+                                    <unit>seconds</unit>
                                     <format>unsigned</format>
-                                    <description>Operating Time since first power On in minutes</description>
+                                    <description>Operating Time since first power On in seconds</description>
                                     </entry>
                                     <entry name="Under Voltage Counter since first Power On">
                                     <subAddress>12</subAddress>

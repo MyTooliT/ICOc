@@ -18,6 +18,8 @@ import argparse
 import multiprocessing
 from Plotter import vPlotter, tArray2Binary
 import socket
+import array
+
 
 HOST = 'localhost'  # The remote host
 PORT = 50007  # The same port as used by the server
@@ -99,7 +101,6 @@ class myToolItWatch():
             raise
         if False != self.bSave:
             self.xmlSave()
-        print("Fin")
 
     def _statusWords(self):
         ErrorWord = SthErrorWord()
@@ -1047,29 +1048,37 @@ class myToolItWatch():
                     self.xmlSave()
     
     def iExcelSheetPageLength(self, worksheet):
-        i = 2
         totalLength = 0
-        while 256 > i:
+        for i in range(2, 256+2):
             if None != worksheet['A' + str(i)].value:
                 length = int(worksheet['C' + str(i)].value)
                 totalLength += length
-                i += length
             else:
                 break
         return totalLength 
     
-    def vExcelSheetPageValue(self, worksheet, byteArry):
+    def vExcelSheetPageValue(self, worksheet, aBytes):
         i = 2
         totalLength = 0
-        self.PeakCan.Logger.Info("Length of byte array: " + str(len(byteArry)) + "\n")
-        while len(byteArry) > totalLength:
+        while len(aBytes) > totalLength:
             if None != worksheet['A' + str(i)].value:
                 length = worksheet['C' + str(i)].value
-                value = array2Value(byteArry[totalLength:], length)
-                self.PeakCan.Logger.Info("Value for " + str(i) + str(value))
-                worksheet['E' + str(i)] = array2Value(byteArry[totalLength:], length)
+                value = aBytes[totalLength:totalLength+length]
+                if "UTF8" == worksheet['G' + str(i)].value:
+                    try:
+                        if 0 == value[-1]:
+                            value = value[0:-1]
+                        value = array.array('b', value).tostring().decode('utf-8')
+                    except:
+                        value = ""
+                elif "unsigned" == worksheet['G' + str(i)].value:
+                    value = str(iMessage2Value(value))
+                else:
+                    value = payload2Hex(value)
+                self.PeakCan.Logger.Info("Value for " + str(i) +": " + str(value))
+                worksheet['E' + str(i)] = value
                 totalLength += length
-                i += length
+                i += 1
             else:
                 break
         return totalLength    
@@ -1080,7 +1089,7 @@ class myToolItWatch():
         if workbook:
             for worksheetName in workbook.sheetnames:
                 name = str(worksheetName).split('@')
-                address = name[1]
+                _address = name[1]
                 name = name[0]
                 workSheetNames.append(name)
         return workSheetNames
@@ -1091,6 +1100,7 @@ class myToolItWatch():
 
     def excelSheetRead(self, namePage, iReceiver):
         self.PeakCan.Logger.Info("Receiver: " + str(iReceiver))
+        self.PeakCan.Logger.Info(namePage)
         workbook = openpyxl.load_workbook(self.sSheetFile)
         if workbook:
             for worksheetName in workbook.sheetnames:
