@@ -14,11 +14,24 @@ class mwt(myToolItWatch):
     def __init__(self):
         myToolItWatch.__init__(self)
         self.bTerminal = False
+        self.vNetworkNumber(None)
+        
         
     def close(self):
-        self.PeakCan.Logger.Info("Close Terminal")
         self.vTerminalTeardown()            
         myToolItWatch.close(self) 
+    
+    #setter methods
+    def vNetworkNumber(self, sNetworkNumber):
+        if sNetworkNumber in MyToolItNetworkNr:
+            self.sNetworkNumber = sNetworkNumber
+        elif "0" == sNetworkNumber:
+            self.sNetworkNumber = "BroadCast"
+        elif "31" == sNetworkNumber:
+            self.sNetworkNumber = "BroadCastNoAck"
+        else:
+            self.sNetworkNumber = None
+              
         
     def vTerminalHolderConnectCommandsAdcConfig(self):
         self.stdscr.addstr("Prescaler(2-127): ")
@@ -164,10 +177,8 @@ class mwt(myToolItWatch):
         return bContinue
                                 
     def bTerminalHolderConnect(self, keyPress):
-        self.PeakCan.Logger.Info("Start bTerminalHolderConnect")
         iNumber = int(keyPress - ord('0'))
         keyPress = -1
-        self.PeakCan.Logger.Info("Start Loop")
         bRun = True
         bContinue = False
         devList = None
@@ -188,7 +199,6 @@ class mwt(myToolItWatch):
                     iNumber-=1
                     self.stdscr.addstr("\nTry to connect to device number " + str(iNumber) + "\n")
                     self.stdscr.refresh()
-                    self.PeakCan.Logger.Info("Device List: " + str(devList))
                     for dev in devList:
                         iDevNumber = int(dev["DeviceNumber"])
                         if iDevNumber == iNumber:
@@ -208,15 +218,30 @@ class mwt(myToolItWatch):
             keyPress = -1
         return bContinue
     
-    def vTerminalEepromExcelChange(self):
-        self.stdscr.addstr("Please enter Excel File name for new Excel Sheet")
+    def vTerminalEepromChange(self):
+        self.stdscr.addstr("Please enter Excel File name for new Excel Sheet(.xlsx will be added): ")
         sFileName = self.sTerminalInputStringIn()
-        if ".xlsx" == sFileName[-5:]:
-            self.vSheetFileSet(sFileName)
-        else:
-            self.stdscr.addstr(".xlsx file ending required")
-            self.stdscr.refresh()
-            sleep(1)
+        sFileName += ".xlsx"
+        self.vSheetFileSet(sFileName)
+        
+    def vTerminalEepromPageRead(self, iDigit, receiver):
+        iPageNumber = self.iTerminalInputNumberIn(iDigit)
+        pageNames = self.atExcelSheetNames()
+        pageNumber = 1
+        for pageName in pageNames:
+            if pageNumber == iPageNumber:
+                self.excelSheetRead(pageName, receiver)
+            pageNumber += 1  
+
+    def vTerminalEepromRead(self, iReceiver):
+        pageNames = self.atExcelSheetNames()
+        for pageName in pageNames:
+            self.excelSheetRead(pageName, iReceiver)
+
+    def vTerminalEepromWrite(self):
+        pageNames = self.atExcelSheetNames()
+        for pageName in pageNames:
+            self.excelSheetWrite(pageName)           
         
     def tTerminalEepromKeyEvaluation(self):
         keyPress = self.stdscr.getch()
@@ -225,35 +250,55 @@ class mwt(myToolItWatch):
         if 0x03 == keyPress:
             bRun = False
         elif ord('x') == keyPress:
-            self.vTerminalEepromExcelChange()
+            self.vTerminalEepromChange()
         elif ord('l') == keyPress:
             atList = self.atTerminalXmlProductVersionList()
             self.vTerminalXmlProductVersionChange(atList)
+            if None != self.sProduct and None != self.sConfig:
+                self.stdscr.addstr("Please enter Network Number(1-14): ")
+                sNetworkNumber = self.sTerminalInputStringIn()
+                self.vNetworkNumber(self.sProduct+sNetworkNumber) 
+            else:
+                self.vNetworkNumber(None)               
         elif ord('e') == keyPress:
             bRun = False
             bContinue = True
-        
-            
+        elif ord('0') < keyPress and ord('9') > keyPress:
+            iReceiver = MyToolItNetworkNr[self.sNetworkNumber]
+            self.vTerminalEepromPageRead(ord(keyPress), iReceiver)
+        elif ord('R') == keyPress:
+            iReceiver = MyToolItNetworkNr[self.sNetworkNumber]
+            self.vTerminalEepromRead(iReceiver)
+            try:
+                os.system("excel " + self.sSheetFile)
+            except:
+                pass
+        elif ord('W') == keyPress:
+            pass
         return [bRun, bContinue]
             
     def bTerminalEeprom(self):
         bRun = True
         bContinue = False
+        
         while False != bRun:
             self.stdscr.clear()
             self.stdscr.addstr("Device: " + str(self.sProduct) + "\n")
             self.stdscr.addstr("Version: " + str(self.sConfig) + "\n")
-            self.stdscr.addstr("Excel Sheet Name(.xlsx): " + str(self.sSheetFile) + "\n")    
+            self.stdscr.addstr("Network Number: " + str(self.sNetworkNumber) + "\n")
+            self.stdscr.addstr("Excel Sheet Name: " + str(self.sSheetFile) + "\n")    
             self.stdscr.addstr("e: Escape(Exit) this menu\n")
             self.stdscr.addstr("l: List devices and versions (an change current device/product)\n")
             self.stdscr.addstr("x: Chance Excel Sheet Name(.xlsx)\n")          
             if None != self.sSheetFile and "STU" == self.sProduct and None != self.sConfig:
-                try:
+                try:                       
                     pageNames = self.atExcelSheetNames()
-                    pageNumber = 0
+                    pageNumber = 1
                     for pageName in pageNames:
                         self.stdscr.addstr(str(pageNumber) + ": Read Page " + str(pageName) + "\n")
                         pageNumber += 1  
+                    self.stdscr.addstr("R: Read all from EEPROM to sheet\n")
+                    self.stdscr.addstr("W: Write all from Sheet to EEPROM\n")
                 except:
                     self.excelSheetCreate()
                 self.stdscr.refresh()
@@ -299,7 +344,10 @@ class mwt(myToolItWatch):
             sDirPath += "\\VerficationInternal\\"
             sDirPath += pyFiles[iTestNumberRun - 1]
             try:
-                os.system("python " + str(sDirPath) + " ../Logs/STH SthAuto.txt")
+                if sDirPath.find("Sth"):
+                    os.system("python " + str(sDirPath) + " ../Logs/STH SthAuto.txt")
+                else:
+                    os.system("python " + str(sDirPath) + " ../Logs/STU StuAuto.txt")
             except KeyboardInterrupt:
                 pass
             self.PeakCan = PeakCanFd.PeakCanFd(PeakCanFd.PCAN_BAUD_1M, "init.txt", "initError.txt", MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"])
@@ -563,6 +611,12 @@ class mwt(myToolItWatch):
             self.vTerminalXmlSetupRemove(atList)   
         elif ord('S') == keyPress:   
             self.vTerminalXmlSetupModify()
+        elif ord('W') == keyPress:   
+            self.excelProductVersion2XmlProductVersion()
+        elif ord('x') == keyPress:
+            self.vTerminalEepromChange()
+        elif ord('X') == keyPress:
+            self.excelSheetCreate()
         return [bRun, bContinue]
       
     def bTerminalXml(self):
@@ -571,6 +625,7 @@ class mwt(myToolItWatch):
             self.stdscr.clear()
             self.stdscr.addstr("Device: " + str(self.sProduct) + "\n")
             self.stdscr.addstr("Version: " + str(self.sConfig) + "\n")
+            self.stdscr.addstr("Excel Sheet Name: " + str(self.sSheetFile) + "\n")
             self.stdscr.addstr("Predefined Setup: " + str(self.sSetupConfig) + "\n")
             self.stdscr.addstr("c: Create new Version\n")
             self.stdscr.addstr("C: Create new Setup\n")
@@ -579,7 +634,10 @@ class mwt(myToolItWatch):
             self.stdscr.addstr("L: List Setups (an change current device/product)\n")
             self.stdscr.addstr("r: Remove Version\n")
             self.stdscr.addstr("R: Remove Setup\n")
-            self.stdscr.addstr("S: Modyfiy current selected predefined setup\n")  
+            self.stdscr.addstr("S: Modify current selected predefined setup\n") 
+            self.stdscr.addstr("W: Write Excel Sheet to Product-Version(Create new entries)\n")
+            self.stdscr.addstr("x: Chance Excel Sheet Name(.xlsx)\n") 
+            self.stdscr.addstr("X: Write XML Config to Excel Sheet\n")
             self.stdscr.refresh()
             [bRun, bContinue] = self.vTerminalXmlKeyEvaluation()
         return bContinue
@@ -593,7 +651,6 @@ class mwt(myToolItWatch):
         elif 0x03 == keyPress:  # CTRL+C
             bRun = False
         elif ord('1') <= keyPress and ord('9') >= keyPress:
-            self.PeakCan.Logger.Info("Call bTerminalHolderConnect")
             bRun = self.bTerminalHolderConnect(keyPress)
         elif ord('E') == keyPress:    
             bRun = self.bTerminalEeprom() 

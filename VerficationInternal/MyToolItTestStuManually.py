@@ -3,10 +3,11 @@ import sys
 import os
 
 # Required to add peakcan
+dir_name = os.path.dirname('')
+sys.path.append(dir_name)
 file_path = '../'
 dir_name = os.path.dirname(file_path)
 sys.path.append(dir_name)
-                
 import PeakCanFd
 from MyToolItNetworkNumbers import MyToolItNetworkNr
 import time

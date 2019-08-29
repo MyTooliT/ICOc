@@ -3586,7 +3586,7 @@ class TestSth(unittest.TestCase):
         self.assertEqual(WDogCounter1, WDogCounter3)
 
     """
-    Check Watchdog counter to not increment
+    Check EEPROM Read/Write
     """   
 
     def test0750StatisticPageWriteRead(self):

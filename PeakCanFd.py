@@ -412,7 +412,7 @@ class PeakCanFd(object):
                         print("Message Request Failed: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + payload2Hex(CanMsg.DATA))
                     if False != bErrorExit:
                         self.__exitError()
-            sleep(0.1)
+            sleep(0.01)
             return returnMessage
         except KeyboardInterrupt:
             self.RunReadThread = False
@@ -426,7 +426,7 @@ class PeakCanFd(object):
             canCmd = self.CanCmd(blockCmd, subCmd, 1, 0)
             self.Logger.Info(MyToolItNetworkName[self.sender] + "->" + MyToolItNetworkName[receiver] + "(CanTimeStamp: " + str(msgAck["CanTime"] - self.PeakCanTimeStampStart) + "ms): " + self.strCmdNrToCmdName(canCmd) + " - " + payload2Hex(payload))
             self.Logger.Info("Assumed receive message number: " + str(index))
-        sleep(0.2)  # synch to read thread
+        #sleep(0.2)  # synch to read thread TODO: Really kick it out?
         return index 
 
     def cmdReset(self, receiver, retries=5, log=True):
@@ -517,7 +517,7 @@ class PeakCanFd(object):
         testTimeMs += StartupTimeMs
         sleep(testTimeMs / 1000)
         self.streamingStop(receiver, subCmd)
-        sleep(1)  # synch to read thread
+        sleep(2)  # synch to read thread
         indexEnd = self.GetReadArrayIndex() - 180  # do not catch stop command
         countDel = 0
         while testTimeMs < self.getReadMessageTimeMs(indexStart, indexEnd) - 0.5:

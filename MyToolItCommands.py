@@ -197,6 +197,7 @@ CommandBlock = {
     MyToolItBlock["Streaming"] : "Command Block Streaming",
     MyToolItBlock["StatisticalData"] : "Command Block Statistical Data",
     MyToolItBlock["Configuration"] : "Command Block Configuration",
+    MyToolItBlock["Eeprom"] : "Command Block EEPROM",
     MyToolItBlock["ProductData"] :"Command Block Product Data",
     MyToolItBlock["Test"] : "Command Block Test",
 }
