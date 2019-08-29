@@ -205,6 +205,15 @@
                                     <format>unsigned</format>
                                     <description>Global Trade Identification Number (GTIN)</description>
                                     </entry>
+                                    <entry name="Hardware Revision - Reserved">
+                                    <subAddress>8</subAddress>
+                                    <length>5</length>
+                                    <readOnly>True</readOnly>
+                                    <value>0</value>
+                                    <unit />
+                                    <format>unsigned</format>
+                                    <description>Hardware Revision Number - Major</description>
+                                    </entry>
                                     <entry name="Hardware Revision - Major">
                                     <subAddress>13</subAddress>
                                     <length>1</length>
@@ -231,6 +240,15 @@
                                     <unit />
                                     <format>unsigned</format>
                                     <description>Hardware Revision Number - Build</description>
+                                    </entry>
+                                    <entry name="Firmware Version Number - Reserved">
+                                    <subAddress>16</subAddress>
+                                    <length>1</length>
+                                    <readOnly>True</readOnly>
+                                    <value>2</value>
+                                    <unit />
+                                    <format>unsigned</format>
+                                    <description>Firmware Version Number - Major(1Byte)</description>
                                     </entry>
                                     <entry name="Firmware Version Number - Major">
                                     <subAddress>21</subAddress>
@@ -297,7 +315,7 @@
                                     </entry>
                                 </Entry>
                             </page>
-                            <page name="StatistiFcs">
+                            <page name="Statistics">
                                 <pageAddress>5</pageAddress>
                                 <Entry>
                                     <entry name="Power On Cylces">
@@ -525,6 +543,15 @@
                                     <format>unsigned</format>
                                     <description>Global Trade Identification Number (GTIN)</description>
                                     </entry>
+                                    <entry name="Hardware Revision - Reserved">
+                                    <subAddress>8</subAddress>
+                                    <length>5</length>
+                                    <readOnly>True</readOnly>
+                                    <value>0</value>
+                                    <unit />
+                                    <format>unsigned</format>
+                                    <description>Hardware Revision Number - Major</description>
+                                    </entry>
                                     <entry name="Hardware Revision - Major">
                                     <subAddress>13</subAddress>
                                     <length>1</length>
@@ -551,6 +578,15 @@
                                     <unit />
                                     <format>unsigned</format>
                                     <description>Hardware Revision Number - Build</description>
+                                    </entry>
+                                    <entry name="Firmware Version Number - Reserved">
+                                    <subAddress>16</subAddress>
+                                    <length>1</length>
+                                    <readOnly>True</readOnly>
+                                    <value>2</value>
+                                    <unit />
+                                    <format>unsigned</format>
+                                    <description>Firmware Version Number - Major(1Byte)</description>
                                     </entry>
                                     <entry name="Firmware Version Number - Major">
                                     <subAddress>21</subAddress>
@@ -583,7 +619,7 @@
                                     <subAddress>24</subAddress>
                                     <length>8</length>
                                     <readOnly>True</readOnly>
-                                    <value>"Tanja"</value>
+                                    <value>Tanja</value>
                                     <unit />
                                     <format>UTF8</format>
                                     <description>Release Name, represents Major - Minor</description>
