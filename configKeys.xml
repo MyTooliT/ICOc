@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ConfigKey>
     <lastRun>
-        <LogName>../Logs/Watch/WatchLog</LogName>
+        <LogName>WatchLog</LogName>
         <Product>STU</Product>
-        <Version>v2.1.1</Version>
+        <Version>v2.1.0</Version>
         <NetworkNumber>STU1</NetworkNumber>
         <SheetFile>Watch.xlsx</SheetFile>
     </lastRun>
