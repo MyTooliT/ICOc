@@ -50,19 +50,22 @@ class TestSth(unittest.TestCase):
 
     def setUp(self):
         print("TestCase: ", self._testMethodName)
+        self.bError = False
         self.fileName = log_location + self._testMethodName + ".txt"
         self.fileNameError = log_location + "Error_" + self._testMethodName + ".txt"
         self.PeakCan = PeakCanFd.PeakCanFd(PeakCanFd.PCAN_BAUD_1M, self.fileName, self.fileNameError, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], AdcPrescalerReset, AdcAcquisitionTimeReset, AdcAcquisitionOverSamplingRateReset)
         self.PeakCan.Logger.Info("TestCase: " + str(self._testMethodName))
-        self.PeakCan.CanTimeStampStart(self._resetStu()["CanTime"])
+        self.PeakCan.CanTimeStampStart(self._resetStu()["CanTime"]) #This will also reset to STH
         self.PeakCan.Logger.Info("Connect to STH")
         self.PeakCan.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
-        self._resetSth()
-        self.PeakCan.Logger.Info("Connect to STH")
-        self.PeakCan.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
-        self.bError = False
         self.PeakCan.Logger.Info("STU BlueTooth Address: " + hex(self.PeakCan.BlueToothAddress(MyToolItNetworkNr["STU1"])))
         self.PeakCan.Logger.Info("STH BlueTooth Address: " + hex(self.PeakCan.BlueToothAddress(MyToolItNetworkNr["STH1"])))
+        iOperatingSeconds = self.PeakCan.statisticalData(MyToolItNetworkNr["STU1"], MyToolItStatData["OperatingTime"])[4:]    
+        iOperatingSeconds = iMessage2Value(iOperatingSeconds)
+        self.PeakCan.Logger.Info("STU Operating Seconds: " + str(iOperatingSeconds))
+        iOperatingSeconds = self.PeakCan.statisticalData(MyToolItNetworkNr["STH1"], MyToolItStatData["OperatingTime"])[4:]    
+        iOperatingSeconds = iMessage2Value(iOperatingSeconds)
+        self.PeakCan.Logger.Info("STH Operating Seconds: " + str(iOperatingSeconds))
         self._statusWords()
         temp = self._SthAdcTemp()
         self.assertGreaterEqual(TempInternalMax, temp)
@@ -79,6 +82,12 @@ class TestSth(unittest.TestCase):
             self._streamingStop()
             self._BlueToothStatistics()
             ReceiveFailCounter = self._RoutingInformation()
+	        iOperatingSeconds = self.PeakCan.statisticalData(MyToolItNetworkNr["STU1"], MyToolItStatData["OperatingTime"])[4:]    
+	        iOperatingSeconds = iMessage2Value(iOperatingSeconds)
+	        self.PeakCan.Logger.Info("STU Operating Seconds: " + str(iOperatingSeconds))
+	        iOperatingSeconds = self.PeakCan.statisticalData(MyToolItNetworkNr["STH1"], MyToolItStatData["OperatingTime"])[4:]    
+	        iOperatingSeconds = iMessage2Value(iOperatingSeconds)
+	        self.PeakCan.Logger.Info("STH Operating Seconds: " + str(iOperatingSeconds))
             self._statusWords()
             temp = self._SthAdcTemp()
             self.assertGreaterEqual(TempInternalMax, temp)
@@ -541,6 +550,16 @@ class TestSth(unittest.TestCase):
         self.assertEqual(hex(msgAckExpected.ID), hex(self.PeakCan.getReadMessage(-1).ID))
         self.assertEqual(expectedData.asbyte, self.PeakCan.getReadMessage(-1).DATA[0])
 
+    """
+    Tests if STH gets properly reseted
+    """
+    def test0002SthReset(self):
+        self._resetSth() 
+        self.PeakCan.Logger.Info("Try to get Active State (0x80")
+        self.PeakCan.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["System"], MyToolItSystem["ActiveState"], [0x80], bErrorExit=False)#Not receiving gets  tested in cmdSend
+        self.PeakCan.Logger.Info("Connect to STH")
+        self.PeakCan.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
+        
     """
     Test Energy Mode 1 - If you like to evaluate power consumption: Please do it manually
     """
@@ -3541,7 +3560,7 @@ class TestSth(unittest.TestCase):
         OperatingSeconds = self.PeakCan.statisticalData(MyToolItNetworkNr["STH1"], MyToolItStatData["OperatingTime"])    
         SecondsReset1 = iMessage2Value(OperatingSeconds[:4])
         SecondsOveral1 = iMessage2Value(OperatingSeconds[4:])
-        time.sleep(60)
+        time.sleep(60*1.02)
         OperatingSeconds = self.PeakCan.statisticalData(MyToolItNetworkNr["STH1"], MyToolItStatData["OperatingTime"])    
         SecondsReset2 = iMessage2Value(OperatingSeconds[:4])
         SecondsOveral2 = iMessage2Value(OperatingSeconds[4:])
@@ -3550,7 +3569,7 @@ class TestSth(unittest.TestCase):
         OperatingSeconds = self.PeakCan.statisticalData(MyToolItNetworkNr["STH1"], MyToolItStatData["OperatingTime"])    
         SecondsReset3 = iMessage2Value(OperatingSeconds[:4])
         SecondsOveral3 = iMessage2Value(OperatingSeconds[4:])
-        time.sleep(60*30+2)
+        time.sleep(60*30*1.02) # looks like time is running at 98%calculated time or better
         OperatingSeconds = self.PeakCan.statisticalData(MyToolItNetworkNr["STH1"], MyToolItStatData["OperatingTime"])    
         SecondsReset4 = iMessage2Value(OperatingSeconds[:4])
         SecondsOveral4 = iMessage2Value(OperatingSeconds[4:])
@@ -3562,19 +3581,19 @@ class TestSth(unittest.TestCase):
         self.PeakCan.Logger.Info("Operating Seconds since frist PowerOn(After Disconnect/Connect): " + str(SecondsOveral3))    
         self.PeakCan.Logger.Info("Operating Seconds since Reset(+30 minutes): " + str(SecondsReset4))
         self.PeakCan.Logger.Info("Operating Seconds since frist PowerOn(+30minutes): " + str(SecondsOveral4))  
-        self.assertLess(SecondsReset1, 10)                
-        self.assertGreater(SecondsReset2, 60)
-        self.assertLess(SecondsReset2, 70)
-        self.assertGreater(SecondsReset3, 60)
-        self.assertLess(SecondsReset3, 70)
-        self.assertGreater(SecondsReset4, 60+60*30)
-        self.assertLess(SecondsReset4, 75+60*30)
-        self.assertEqual(SecondsOveral1, SecondsOveral2)    
-        self.assertLess(SecondsOveral1 + 58, SecondsOveral3)            
-        self.assertGreater(SecondsOveral1 + 63, SecondsOveral3)
-        self.assertLess(SecondsOveral1 + 58, SecondsOveral3)            
-        self.assertGreater(SecondsOveral1 + 63, SecondsOveral3)  
-#         self.assertEqual(SecondsOveral3 + 30*60, SecondsOveral4)            
+        self.assertLessEqual(SecondsReset1, 10)                
+        self.assertGreaterEqual(SecondsReset2, 60)
+        self.assertLessEqual(SecondsReset2, 70)
+        self.assertGreaterEqual(SecondsReset3, 60)
+        self.assertLessEqual(SecondsReset3, 70)
+        self.assertGreaterEqual(SecondsReset4, 60+60*30)
+        self.assertLessEqual(SecondsReset4, 75+60*30)
+        self.assertEqualEqual(SecondsOveral1, SecondsOveral2)    
+        self.assertLessEqual(SecondsOveral1 + 58, SecondsOveral3)            
+        self.assertGreaterEqual(SecondsOveral1 + 63, SecondsOveral3)
+        self.assertLessEqual(SecondsOveral1 + 58, SecondsOveral3)            
+        self.assertGreaterEqual(SecondsOveral1 + 63, SecondsOveral3)  
+        self.assertEqual(SecondsOveral3 + 30*60, SecondsOveral4)            
     
     """
     Check Watchdog counter to not increment

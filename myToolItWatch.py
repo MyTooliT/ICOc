@@ -586,8 +586,8 @@ class myToolItWatch():
         except ValueError:
             print("Not a number") 
     
-    def getBlueToothDeviceList(self): 
-        self.PeakCan.BlueToothConnectConnect(MyToolItNetworkNr["STH1"])
+    def getBlueToothDeviceList(self, log=True): 
+        self.PeakCan.BlueToothConnectConnect(MyToolItNetworkNr["STH1"], log=log)
         deviceNumbers = 0
         endTime = time() + BlueToothDeviceListAquireTime
         while(time() < endTime):
@@ -600,7 +600,7 @@ class myToolItWatch():
     def BlueToothConnectName(self):
         if False == self.KeyBoadInterrupt:
             try:
-                self.PeakCan.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], self.sDevName)
+                self.PeakCan.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], self.sDevName, log=False)
             except KeyboardInterrupt:
                 self.KeyBoadInterrupt = True
                 self.__exit__()
@@ -875,7 +875,7 @@ class myToolItWatch():
     Create Excel Sheet by xml definition - product
     """ 
 
-    def excelSheetCreateVersion(self, version):
+    def excelSheetCreateVersion(self, version):        
         if version.get('name') == self.sConfig:
             workbook = openpyxl.Workbook()
             FontRow1 = Font(bold=True, size=20)
@@ -926,7 +926,10 @@ class myToolItWatch():
                     worksheet['H' + str(i)].font = FontRowRow2
                     i += 1
                 self.excelCellWidthAdjust(worksheet)
-            workbook.save(self.sSheetFile)        
+            try:
+                workbook.save(self.sSheetFile) 
+            except:
+                pass#maybe its currently opened somewhere       
              
     """
     Create Excel Sheet by xml definition - product
@@ -935,6 +938,7 @@ class myToolItWatch():
     def excelSheetCreateProduct(self, product):
         if None != self.sConfig:
             for version in product.find('Version'):
+                self.PeakCan.Logger.Info(version.get('name'))
                 if version.get('name') == self.sConfig:
                     self.excelSheetCreateVersion(version)
                     break
@@ -1116,7 +1120,10 @@ class myToolItWatch():
                         pageContent.extend(self.PeakCan.getReadMessageData(index)[4:])
                     pageContent = pageContent[0:readLength]
                     self.vExcelSheetPageValue(worksheet, pageContent)
-            workbook.save(self.sSheetFile)    
+            try:
+                workbook.save(self.sSheetFile) 
+            except:
+                pass#maybe its currently opened somewhere  
                 
     """
     Read EEPROM to write values in Excel Sheet
@@ -1143,7 +1150,10 @@ class myToolItWatch():
                         au8Payload = [address, 0xFF & offset, 4, 0].extend(au8WritePacakge)
                         index = self.PeakCan.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Read"], au8Payload)   
                         pageContent.extend(self.PeakCan.getReadMessageData(index)[4:])
-            workbook.save(self.sSheetFile)
+            try:
+                workbook.save(self.sSheetFile) 
+            except:
+                pass#maybe its currently opened somewhere
     
     def atXmlSetup(self):           
         asSetups = {}
@@ -1279,7 +1289,7 @@ class myToolItWatch():
         if "0x0" != self.iAddress:
             self.PeakCan.BlueToothConnectPollingAddress(MyToolItNetworkNr["STU1"], self.iAddress)
         else:
-            self.PeakCan.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], self.sDevName)
+            self.PeakCan.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], self.sDevName, log=False)
         if False != self.PeakCan.bConnected:
             self.vDataAquisition() 
                                

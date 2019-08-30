@@ -7,22 +7,56 @@ import glob
 import curses
 import os
 import PeakCanFd
-
+import subprocess
 
 class mwt(myToolItWatch):
 
     def __init__(self):
         myToolItWatch.__init__(self)
         self.bTerminal = False
-        self.vNetworkNumber(None)
+        self.vNetworkNumberSet(None)
         
         
     def close(self):
+        self.vCloseSaveStoreLastConfig()
         self.vTerminalTeardown()            
         myToolItWatch.close(self) 
     
+    def bLastConfig(self):
+        bLoadLastConfig = True
+        for key in self.args_dict.keys():
+            if None != self.args_dict[key] and False != self.args_dict[key]:
+                if 'xml_file_name' != key:
+                    bLoadLastConfig = False
+        return bLoadLastConfig
+                    
+                    
+    def vOpenLastConfig(self):
+        if False != self.bLastConfig():
+            lastRun = self.tree.find('lastRun')
+            self.bLogSet(str(lastRun.find('LogName').text) + ".txt")
+            self.vConfigSet(str(lastRun.find('Product').text), str(lastRun.find('Version').text))
+            self.vNetworkNumberSet(str(lastRun.find('NetworkNumber').text))
+            self.vSheetFileSet(str(lastRun.find('SheetFile').text)) 
+                      
+    def vCloseSaveStoreLastConfig(self):
+        if False != self.bLastConfig():
+            self.xmlSave()
+            lastRun = self.tree.find('lastRun')
+            sLogName = self.PeakCan.Logger.fileName.split('_')[0]
+            sLogName = sLogName.split('.')[0] # Just to be sure
+            lastRun.find('LogName').text = str(sLogName)
+            lastRun.find('Product').text = self.sProduct
+            lastRun.find('Version').text = self.sConfig
+            lastRun.find('NetworkNumber').text = self.sNetworkNumber
+            if None != self.sSheetFile:
+                sSheetFile = self.sSheetFile.split('.')[0]
+            else:
+                sSheetFile = self.sSheetFile
+            lastRun.find('SheetFile').text = str(sSheetFile)
+                        
     #setter methods
-    def vNetworkNumber(self, sNetworkNumber):
+    def vNetworkNumberSet(self, sNetworkNumber):
         if sNetworkNumber in MyToolItNetworkNr:
             self.sNetworkNumber = sNetworkNumber
         elif "0" == sNetworkNumber:
@@ -172,7 +206,6 @@ class mwt(myToolItWatch):
             self.stdscr.addstr("v: Activate Battery Voltage Streaming\n")
             self.stdscr.addstr("V: Disable Battery Voltage Streaming\n")
             self.stdscr.refresh()
-
             [bRun, bContinue] = self.tTerminalHolderConnectCommandsKeyEvaluation()
         return bContinue
                                 
@@ -257,9 +290,9 @@ class mwt(myToolItWatch):
             if None != self.sProduct and None != self.sConfig:
                 self.stdscr.addstr("Please enter Network Number(1-14): ")
                 sNetworkNumber = self.sTerminalInputStringIn()
-                self.vNetworkNumber(self.sProduct+sNetworkNumber) 
+                self.vNetworkNumberSet(self.sProduct+sNetworkNumber) 
             else:
-                self.vNetworkNumber(None)               
+                self.vNetworkNumberSet(None)               
         elif ord('e') == keyPress:
             bRun = False
             bContinue = True
@@ -267,14 +300,16 @@ class mwt(myToolItWatch):
             iReceiver = MyToolItNetworkNr[self.sNetworkNumber]
             self.vTerminalEepromPageRead(ord(keyPress), iReceiver)
         elif ord('R') == keyPress:
-            iReceiver = MyToolItNetworkNr[self.sNetworkNumber]
-            self.vTerminalEepromRead(iReceiver)
-            try:
-                os.system("excel " + self.sSheetFile)
-            except:
-                pass
+            if False != os.path.isfile(self.sSheetFile):
+                iReceiver = MyToolItNetworkNr[self.sNetworkNumber]
+                self.vTerminalEepromRead(iReceiver)
+                try:
+                    process = subprocess.Popen(['excel', self.sSheetFile], stdout = subprocess.PIPE )
+                except:
+                    pass
         elif ord('W') == keyPress:
-            pass
+            if False != os.path.isfile(self.sSheetFile):
+                pass
         return [bRun, bContinue]
             
     def bTerminalEeprom(self):
@@ -299,8 +334,9 @@ class mwt(myToolItWatch):
                         pageNumber += 1  
                     self.stdscr.addstr("R: Read all from EEPROM to sheet\n")
                     self.stdscr.addstr("W: Write all from Sheet to EEPROM\n")
-                except:
+                except:                    
                     self.excelSheetCreate()
+                    
                 self.stdscr.refresh()
 
             [bRun, bContinue] = self.tTerminalEepromKeyEvaluation()
@@ -308,9 +344,9 @@ class mwt(myToolItWatch):
         
         
     def vTerminalLogFileName(self):
-        self.stdscr.addstr("Log File Name(" + self.PeakCan.Logger.fileName + "): ")  
+        self.stdscr.addstr("Log File Name(" + self.PeakCan.Logger.fileName[0:-4] + "): ")  
         sLogFileName = self.sTerminalInputStringIn()       
-        self.bLogSet(sLogFileName)
+        self.bLogSet(sLogFileName+'.txt')
         self.stdscr.addstr("" + self.PeakCan.Logger.fileName)
         self.stdscr.refresh()
         sleep(2)
@@ -779,8 +815,10 @@ class mwt(myToolItWatch):
         iNumber *= 10             
         iNumber += iDigit
         return iNumber
-                
+     
+                  
     def vTerminal(self):
+        self.vOpenLastConfig()
         self.vTerminalNew()
         self.stdscr.clear()
         bRun = True

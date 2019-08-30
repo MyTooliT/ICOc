@@ -112,7 +112,7 @@ class Logger():
             os.rename(self.fileName, fileName)
         self.fileName = fileName
         self.fileNameError = fileNameError
-        self.file = open(fileName, "w", encoding='utf-8')
+        self.file = open(fileName, "a", encoding='utf-8')
         
     def vDel(self):
         self.vClose()
@@ -352,7 +352,7 @@ class PeakCanFd(object):
             print("No (bError) Ack Received: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + str(CanMsg.DATA))
         return "Error"  
       
-    def WriteFrameWaitAck(self, CanMsg, waitMs=1000, currentIndex=None, printLog=False, assumedPayload=None, bError=False, sendTime=None):
+    def WriteFrameWaitAck(self, CanMsg, waitMs=1000, currentIndex=None, printLog=False, assumedPayload=None, bError=False, sendTime=None, notAckIdleWaitTimeMs=0.01):
         if 200 > waitMs:
             self.__exitError()  
         if None == sendTime:
@@ -389,16 +389,16 @@ class PeakCanFd(object):
                     currentIndex += 1   
                     message = self.readArray[currentIndex]
                 else:
-                    sleep(0.001)
+                    sleep(notAckIdleWaitTimeMs)
         return [returnMessage, currentIndex]
     
-    def WriteFrameWaitAckRetries(self, CanMsg, retries=10, waitMs=1000, printLog=False, bErrorAck=False, assumedPayload=None, bErrorExit=True):  
+    def WriteFrameWaitAckRetries(self, CanMsg, retries=10, waitMs=1000, printLog=False, bErrorAck=False, assumedPayload=None, bErrorExit=True, notAckIdleWaitTimeMs=0.01):  
         try:
             retries += 1
             currentIndex = self.GetReadArrayIndex() - 1
             sendTime = self.getTimeMs()
             for i in range(0, retries):
-                [returnMessage, currentIndex] = self.WriteFrameWaitAck(CanMsg, waitMs=waitMs, currentIndex=currentIndex, printLog=printLog, assumedPayload=assumedPayload, bError=bErrorAck, sendTime=sendTime)
+                [returnMessage, currentIndex] = self.WriteFrameWaitAck(CanMsg, waitMs=waitMs, currentIndex=currentIndex, printLog=printLog, assumedPayload=assumedPayload, bError=bErrorAck, sendTime=sendTime, notAckIdleWaitTimeMs=notAckIdleWaitTimeMs)
                 if "Error" != returnMessage:
                     break
                 elif (retries - 1) == i:                
@@ -417,14 +417,19 @@ class PeakCanFd(object):
         except KeyboardInterrupt:
             self.RunReadThread = False
         
-    def cmdSend(self, receiver, blockCmd, subCmd, payload, log=True, retries=10, bErrorAck=False, printLog=False):
+    def cmdSend(self, receiver, blockCmd, subCmd, payload, log=True, retries=10, bErrorAck=False, printLog=False, bErrorExit=True):
         cmd = self.CanCmd(blockCmd, subCmd, 1, 0)
         message = self.CanMessage20(cmd, self.sender, receiver, payload)
         index = self.GetReadArrayIndex()
-        msgAck = self.WriteFrameWaitAckRetries(message, retries=retries, waitMs=1000, bErrorAck=bErrorAck, printLog=printLog)
+        msgAck = self.WriteFrameWaitAckRetries(message, retries=retries, waitMs=1000, bErrorAck=bErrorAck, printLog=printLog, bErrorExit=bErrorExit)
+        if msgAck != "Error" and False == bErrorExit:
+            self.__exitError()
         if False != log:
             canCmd = self.CanCmd(blockCmd, subCmd, 1, 0)
-            self.Logger.Info(MyToolItNetworkName[self.sender] + "->" + MyToolItNetworkName[receiver] + "(CanTimeStamp: " + str(msgAck["CanTime"] - self.PeakCanTimeStampStart) + "ms): " + self.strCmdNrToCmdName(canCmd) + " - " + payload2Hex(payload))
+            if "Error" != msgAck:
+                self.Logger.Info(MyToolItNetworkName[self.sender] + "->" + MyToolItNetworkName[receiver] + "(CanTimeStamp: " + str(msgAck["CanTime"] - self.PeakCanTimeStampStart) + "ms): " + self.strCmdNrToCmdName(canCmd) + " - " + payload2Hex(payload))
+            else:
+                self.Logger.Info(MyToolItNetworkName[self.sender] + "->" + MyToolItNetworkName[receiver] + ": " + self.strCmdNrToCmdName(canCmd) + " - " + "Error")
             self.Logger.Info("Assumed receive message number: " + str(index))
         #sleep(0.2)  # synch to read thread TODO: Really kick it out?
         return index 
@@ -938,8 +943,9 @@ class PeakCanFd(object):
         ack = AsciiStringWordLittleEndian(ack)
         return ack
             
-    def BlueToothConnectConnect(self, receiver):
-        self.Logger.Info("Bluetoot connect")
+    def BlueToothConnectConnect(self, receiver, log=True):
+        if False != log:
+            self.Logger.Info("Bluetoot connect")
         cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0)
         message = self.CanMessage20(cmd, self.sender, receiver, [SystemCommandBlueTooth["Connect"], 0, 0, 0, 0, 0, 0, 0])
         self.WriteFrameWaitAckRetries(message, retries=2)            
@@ -1043,13 +1049,13 @@ class PeakCanFd(object):
     Connect to device via name
     """    
 
-    def BlueToothConnectPollingName(self, stuNr, Name):
+    def BlueToothConnectPollingName(self, stuNr, Name, log=True):
         self.Name = None       
         deviceNumber = 0 
         recNameList = []
         endTime = time() + BluetoothTime["Connect"]
         self.Logger.Info("Try to connect to Test Device Name: " + Name)
-        self.BlueToothConnectConnect(stuNr)
+        self.BlueToothConnectConnect(stuNr, log=log)
         while None == self.Name and Config["DeviceNumberMax"] > deviceNumber and time() < endTime:
             if 0 < self.BlueToothConnectTotalScannedDeviceNr(stuNr):
                 endTime = time() + BluetoothTime["Connect"]
@@ -1081,7 +1087,7 @@ class PeakCanFd(object):
 
     def tDeviceList(self, stuNr):       
         devList = []        
-        self.BlueToothConnectConnect(stuNr)
+        self.BlueToothConnectConnect(stuNr, log = False)
         devAll = self.BlueToothConnectTotalScannedDeviceNr(stuNr)
         for dev in range(0, devAll):
             endTime = time() + BluetoothTime["Connect"]
