@@ -82,12 +82,12 @@ class TestSth(unittest.TestCase):
             self._streamingStop()
             self._BlueToothStatistics()
             ReceiveFailCounter = self._RoutingInformation()
-	        iOperatingSeconds = self.PeakCan.statisticalData(MyToolItNetworkNr["STU1"], MyToolItStatData["OperatingTime"])[4:]    
-	        iOperatingSeconds = iMessage2Value(iOperatingSeconds)
-	        self.PeakCan.Logger.Info("STU Operating Seconds: " + str(iOperatingSeconds))
-	        iOperatingSeconds = self.PeakCan.statisticalData(MyToolItNetworkNr["STH1"], MyToolItStatData["OperatingTime"])[4:]    
-	        iOperatingSeconds = iMessage2Value(iOperatingSeconds)
-	        self.PeakCan.Logger.Info("STH Operating Seconds: " + str(iOperatingSeconds))
+            iOperatingSeconds = self.PeakCan.statisticalData(MyToolItNetworkNr["STU1"], MyToolItStatData["OperatingTime"])[4:]    
+            iOperatingSeconds = iMessage2Value(iOperatingSeconds)
+            self.PeakCan.Logger.Info("STU Operating Seconds: " + str(iOperatingSeconds))
+            iOperatingSeconds = self.PeakCan.statisticalData(MyToolItNetworkNr["STH1"], MyToolItStatData["OperatingTime"])[4:]    
+            iOperatingSeconds = iMessage2Value(iOperatingSeconds)
+            self.PeakCan.Logger.Info("STH Operating Seconds: " + str(iOperatingSeconds))
             self._statusWords()
             temp = self._SthAdcTemp()
             self.assertGreaterEqual(TempInternalMax, temp)
