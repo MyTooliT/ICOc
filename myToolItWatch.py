@@ -2,8 +2,8 @@ import sys
 import os
 
 import xml.etree.ElementTree as ET
-import PeakCanFd
-from PeakCanFd import rreplace 
+import CanFd
+from CanFd import rreplace 
 from MyToolItNetworkNumbers import *
 from MyToolItCommands import *
 from time import sleep, time
@@ -57,10 +57,10 @@ class myToolItWatch():
         self.iMsgLoss = 0
         self.iMsgsTotal = 0
         self.iMsgCounterLast = 0
-        self.PeakCan = PeakCanFd.PeakCanFd(PeakCanFd.PCAN_BAUD_1M, "init.txt", "initError.txt", MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"])
+        self.Can = CanFd.CanFd(CanFd.PCAN_BAUD_1M, "init.txt", "initError.txt", MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"])
         self.vSave2Xml(False)
         self.vSthAutoConnect(False)
-        self.PeakCan.Logger.Info("Start Time: " + self.sDateClock())
+        self.Can.Logger.Info("Start Time: " + self.sDateClock())
         self.bLogSet("init.txt")
         self.vConfigFileSet('configKeys.xml')
         self.bSampleSetupSet(None)
@@ -75,27 +75,27 @@ class myToolItWatch():
         self.vDisplayTime(10)  
         self.vRunTime(10, 0)
         self.vGraphInit(Watch["DisplaySampleRateMs"], Watch["DisplayBlockSize"])
-        self.PeakCan.readThreadStop()
+        self.Can.readThreadStop()
             
     def __exit__(self):
         self.guiProcessStop()
-        self.PeakCan.ReadThreadReset()
-        if False != self.PeakCan.bConnected:
+        self.Can.ReadThreadReset()
+        if False != self.Can.bConnected:
             self._BlueToothStatistics()
             ReceiveFailCounter = self._RoutingInformation()
             self._statusWords()
-            self.PeakCan.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
+            self.Can.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
             if(0 < ReceiveFailCounter):
                 self.bError = True
-            self.PeakCan.readThreadStop()
-        self.PeakCan.Logger.Info("End Time Stamp")
+            self.Can.readThreadStop()
+        self.Can.Logger.Info("End Time Stamp")
         
         if(False != self.bError):
-            self.PeakCan.Logger.Info("!!!!Error!!!!")
+            self.Can.Logger.Info("!!!!Error!!!!")
             print("!!!!Error!!!!")
         else:
-            self.PeakCan.Logger.Info("Fin")
-        self.PeakCan.__exit__()  
+            self.Can.Logger.Info("Fin")
+        self.Can.__exit__()  
         if(False != self.bError):
             raise
         if False != self.bSave:
@@ -103,44 +103,44 @@ class myToolItWatch():
 
     def _statusWords(self):
         ErrorWord = SthErrorWord()
-        psw0 = self.PeakCan.statusWord0(MyToolItNetworkNr["STH1"])
-        self.PeakCan.Logger.Info("STH Status Word: " + hex(psw0))
-        psw0 = self.PeakCan.statusWord0(MyToolItNetworkNr["STU1"])
-        self.PeakCan.Logger.Info("STU Status Word: " + hex(psw0))
-        ErrorWord.asword = self.PeakCan.statusWord1(MyToolItNetworkNr["STH1"])
+        psw0 = self.Can.statusWord0(MyToolItNetworkNr["STH1"])
+        self.Can.Logger.Info("STH Status Word: " + hex(psw0))
+        psw0 = self.Can.statusWord0(MyToolItNetworkNr["STU1"])
+        self.Can.Logger.Info("STU Status Word: " + hex(psw0))
+        ErrorWord.asword = self.Can.statusWord1(MyToolItNetworkNr["STH1"])
         if True == ErrorWord.b.bAdcOverRun:
             self.bError = True
-        self.PeakCan.Logger.Info("STH bError Word: " + hex(ErrorWord.asword))
-        ErrorWord.asword = self.PeakCan.statusWord1(MyToolItNetworkNr["STU1"])
-        self.PeakCan.Logger.Info("STU bError Word: " + hex(ErrorWord.asword))
+        self.Can.Logger.Info("STH bError Word: " + hex(ErrorWord.asword))
+        ErrorWord.asword = self.Can.statusWord1(MyToolItNetworkNr["STU1"])
+        self.Can.Logger.Info("STU bError Word: " + hex(ErrorWord.asword))
         
     def _BlueToothStatistics(self):
-        SendCounter = self.PeakCan.BlueToothCmd(MyToolItNetworkNr["STH1"], SystemCommandBlueTooth["SendCounter"])
-        self.PeakCan.Logger.Info("BlueTooth Send Counter(STH1): " + str(SendCounter))
-        Rssi = self.PeakCan.BlueToothRssi(MyToolItNetworkNr["STH1"])
-        self.PeakCan.Logger.Info("BlueTooth Rssi(STH1): " + str(Rssi) + "dBm")
-        SendCounter = self.PeakCan.BlueToothCmd(MyToolItNetworkNr["STU1"], SystemCommandBlueTooth["SendCounter"])
-        self.PeakCan.Logger.Info("BlueTooth Send Counter(STU1): " + str(SendCounter))
-        ReceiveCounter = self.PeakCan.BlueToothCmd(MyToolItNetworkNr["STU1"], SystemCommandBlueTooth["ReceiveCounter"])
-        self.PeakCan.Logger.Info("BlueTooth Receive Counter(STU1): " + str(ReceiveCounter))
-        Rssi = self.PeakCan.BlueToothRssi(MyToolItNetworkNr["STU1"])
-        self.PeakCan.Logger.Info("BlueTooth Rssi(STU1): " + str(Rssi) + "dBm")
+        SendCounter = self.Can.BlueToothCmd(MyToolItNetworkNr["STH1"], SystemCommandBlueTooth["SendCounter"])
+        self.Can.Logger.Info("BlueTooth Send Counter(STH1): " + str(SendCounter))
+        Rssi = self.Can.BlueToothRssi(MyToolItNetworkNr["STH1"])
+        self.Can.Logger.Info("BlueTooth Rssi(STH1): " + str(Rssi) + "dBm")
+        SendCounter = self.Can.BlueToothCmd(MyToolItNetworkNr["STU1"], SystemCommandBlueTooth["SendCounter"])
+        self.Can.Logger.Info("BlueTooth Send Counter(STU1): " + str(SendCounter))
+        ReceiveCounter = self.Can.BlueToothCmd(MyToolItNetworkNr["STU1"], SystemCommandBlueTooth["ReceiveCounter"])
+        self.Can.Logger.Info("BlueTooth Receive Counter(STU1): " + str(ReceiveCounter))
+        Rssi = self.Can.BlueToothRssi(MyToolItNetworkNr["STU1"])
+        self.Can.Logger.Info("BlueTooth Rssi(STU1): " + str(Rssi) + "dBm")
 
     def _RoutingInformationSthSend(self):
-        SendCounter = self.PeakCan.RoutingInformationCmd(MyToolItNetworkNr["STH1"], SystemCommandRouting["SendCounter"], MyToolItNetworkNr["STU1"])
-        self.PeakCan.Logger.Info("STH1 - Send Counter(Port STU1): " + str(SendCounter))
-        SendCounter = self.PeakCan.RoutingInformationCmd(MyToolItNetworkNr["STH1"], SystemCommandRouting["SendFailCounter"], MyToolItNetworkNr["STU1"])
-        self.PeakCan.Logger.Info("STH1 - Send Fail Counter(Port STU1): " + str(SendCounter))
-        SendCounter = self.PeakCan.RoutingInformationCmd(MyToolItNetworkNr["STH1"], SystemCommandRouting["SendLowLevelByteCounter"], MyToolItNetworkNr["STU1"])
-        self.PeakCan.Logger.Info("STH1 - Send Byte Counter(Port STU1): " + str(SendCounter))
+        SendCounter = self.Can.RoutingInformationCmd(MyToolItNetworkNr["STH1"], SystemCommandRouting["SendCounter"], MyToolItNetworkNr["STU1"])
+        self.Can.Logger.Info("STH1 - Send Counter(Port STU1): " + str(SendCounter))
+        SendCounter = self.Can.RoutingInformationCmd(MyToolItNetworkNr["STH1"], SystemCommandRouting["SendFailCounter"], MyToolItNetworkNr["STU1"])
+        self.Can.Logger.Info("STH1 - Send Fail Counter(Port STU1): " + str(SendCounter))
+        SendCounter = self.Can.RoutingInformationCmd(MyToolItNetworkNr["STH1"], SystemCommandRouting["SendLowLevelByteCounter"], MyToolItNetworkNr["STU1"])
+        self.Can.Logger.Info("STH1 - Send Byte Counter(Port STU1): " + str(SendCounter))
 
     def _RoutingInformationSthReceive(self):
-        ReceiveCounter = self.PeakCan.RoutingInformationCmd(MyToolItNetworkNr["STH1"], SystemCommandRouting["ReceiveCounter"], MyToolItNetworkNr["STU1"])
-        self.PeakCan.Logger.Info("STH1 - Receive Counter(Port STU1): " + str(ReceiveCounter))
-        ReceiveFailCounter = self.PeakCan.RoutingInformationCmd(MyToolItNetworkNr["STH1"], SystemCommandRouting["ReceiveFailCounter"], MyToolItNetworkNr["STU1"])
-        self.PeakCan.Logger.Info("STH1 - Receive Fail Counter(Port STU1): " + str(ReceiveFailCounter))
-        ReceiveCounter = self.PeakCan.RoutingInformationCmd(MyToolItNetworkNr["STH1"], SystemCommandRouting["ReceiveLowLevelByteCounter"], MyToolItNetworkNr["STU1"])
-        self.PeakCan.Logger.Info("STH1 - Receive Byte Counter(Port STU1): " + str(ReceiveCounter))
+        ReceiveCounter = self.Can.RoutingInformationCmd(MyToolItNetworkNr["STH1"], SystemCommandRouting["ReceiveCounter"], MyToolItNetworkNr["STU1"])
+        self.Can.Logger.Info("STH1 - Receive Counter(Port STU1): " + str(ReceiveCounter))
+        ReceiveFailCounter = self.Can.RoutingInformationCmd(MyToolItNetworkNr["STH1"], SystemCommandRouting["ReceiveFailCounter"], MyToolItNetworkNr["STU1"])
+        self.Can.Logger.Info("STH1 - Receive Fail Counter(Port STU1): " + str(ReceiveFailCounter))
+        ReceiveCounter = self.Can.RoutingInformationCmd(MyToolItNetworkNr["STH1"], SystemCommandRouting["ReceiveLowLevelByteCounter"], MyToolItNetworkNr["STU1"])
+        self.Can.Logger.Info("STH1 - Receive Byte Counter(Port STU1): " + str(ReceiveCounter))
         return ReceiveFailCounter
 
     def _RoutingInformationSth(self):
@@ -149,20 +149,20 @@ class myToolItWatch():
         return ReceiveFailCounter
 
     def _RoutingInformationStuPortSpuSend(self):
-        SendCounter = self.PeakCan.RoutingInformationCmd(MyToolItNetworkNr["STU1"], SystemCommandRouting["SendCounter"], MyToolItNetworkNr["SPU1"])
-        self.PeakCan.Logger.Info("STU1 - Send Counter(Port SPU1): " + str(SendCounter))
-        SendCounter = self.PeakCan.RoutingInformationCmd(MyToolItNetworkNr["STU1"], SystemCommandRouting["SendFailCounter"], MyToolItNetworkNr["SPU1"])
-        self.PeakCan.Logger.Info("STU1 - Send Fail Counter(Port SPU1): " + str(SendCounter))
-        SendCounter = self.PeakCan.RoutingInformationCmd(MyToolItNetworkNr["STU1"], SystemCommandRouting["SendLowLevelByteCounter"], MyToolItNetworkNr["SPU1"])
-        self.PeakCan.Logger.Info("STU1 - Send Byte Counter(Port SPU1): " + str(SendCounter))
+        SendCounter = self.Can.RoutingInformationCmd(MyToolItNetworkNr["STU1"], SystemCommandRouting["SendCounter"], MyToolItNetworkNr["SPU1"])
+        self.Can.Logger.Info("STU1 - Send Counter(Port SPU1): " + str(SendCounter))
+        SendCounter = self.Can.RoutingInformationCmd(MyToolItNetworkNr["STU1"], SystemCommandRouting["SendFailCounter"], MyToolItNetworkNr["SPU1"])
+        self.Can.Logger.Info("STU1 - Send Fail Counter(Port SPU1): " + str(SendCounter))
+        SendCounter = self.Can.RoutingInformationCmd(MyToolItNetworkNr["STU1"], SystemCommandRouting["SendLowLevelByteCounter"], MyToolItNetworkNr["SPU1"])
+        self.Can.Logger.Info("STU1 - Send Byte Counter(Port SPU1): " + str(SendCounter))
 
     def _RoutingInformationStuPortSpuReceive(self):
-        ReceiveCounter = self.PeakCan.RoutingInformationCmd(MyToolItNetworkNr["STU1"], SystemCommandRouting["ReceiveCounter"], MyToolItNetworkNr["SPU1"])
-        self.PeakCan.Logger.Info("STU1 - Receive Counter(Port SPU1): " + str(ReceiveCounter))
-        ReceiveFailCounter = self.PeakCan.RoutingInformationCmd(MyToolItNetworkNr["STU1"], SystemCommandRouting["ReceiveFailCounter"], MyToolItNetworkNr["SPU1"])
-        self.PeakCan.Logger.Info("STU1 - Receive Fail Counter(Port SPU1): " + str(ReceiveFailCounter))
-        ReceiveCounter = self.PeakCan.RoutingInformationCmd(MyToolItNetworkNr["STU1"], SystemCommandRouting["ReceiveLowLevelByteCounter"], MyToolItNetworkNr["SPU1"])
-        self.PeakCan.Logger.Info("STU1 - Receive Byte Counter(Port SPU1): " + str(ReceiveCounter))
+        ReceiveCounter = self.Can.RoutingInformationCmd(MyToolItNetworkNr["STU1"], SystemCommandRouting["ReceiveCounter"], MyToolItNetworkNr["SPU1"])
+        self.Can.Logger.Info("STU1 - Receive Counter(Port SPU1): " + str(ReceiveCounter))
+        ReceiveFailCounter = self.Can.RoutingInformationCmd(MyToolItNetworkNr["STU1"], SystemCommandRouting["ReceiveFailCounter"], MyToolItNetworkNr["SPU1"])
+        self.Can.Logger.Info("STU1 - Receive Fail Counter(Port SPU1): " + str(ReceiveFailCounter))
+        ReceiveCounter = self.Can.RoutingInformationCmd(MyToolItNetworkNr["STU1"], SystemCommandRouting["ReceiveLowLevelByteCounter"], MyToolItNetworkNr["SPU1"])
+        self.Can.Logger.Info("STU1 - Receive Byte Counter(Port SPU1): " + str(ReceiveCounter))
         return ReceiveFailCounter
 
     def _RoutingInformationStuPortSpu(self):
@@ -171,20 +171,20 @@ class myToolItWatch():
         return ReceiveFailCounter
 
     def _RoutingInformationStuPortSthSend(self):
-        SendCounter = self.PeakCan.RoutingInformationCmd(MyToolItNetworkNr["STU1"], SystemCommandRouting["SendCounter"], MyToolItNetworkNr["STH1"])
-        self.PeakCan.Logger.Info("STU1 - Send Counter(Port STH1): " + str(SendCounter))
-        SendCounter = self.PeakCan.RoutingInformationCmd(MyToolItNetworkNr["STU1"], SystemCommandRouting["SendFailCounter"], MyToolItNetworkNr["STH1"])
-        self.PeakCan.Logger.Info("STU1 - Send Fail Counter(Port STH1): " + str(SendCounter))
-        SendCounter = self.PeakCan.RoutingInformationCmd(MyToolItNetworkNr["STU1"], SystemCommandRouting["SendLowLevelByteCounter"], MyToolItNetworkNr["STH1"])
-        self.PeakCan.Logger.Info("STU1 - Send Byte Counter(Port STH1): " + str(SendCounter))
+        SendCounter = self.Can.RoutingInformationCmd(MyToolItNetworkNr["STU1"], SystemCommandRouting["SendCounter"], MyToolItNetworkNr["STH1"])
+        self.Can.Logger.Info("STU1 - Send Counter(Port STH1): " + str(SendCounter))
+        SendCounter = self.Can.RoutingInformationCmd(MyToolItNetworkNr["STU1"], SystemCommandRouting["SendFailCounter"], MyToolItNetworkNr["STH1"])
+        self.Can.Logger.Info("STU1 - Send Fail Counter(Port STH1): " + str(SendCounter))
+        SendCounter = self.Can.RoutingInformationCmd(MyToolItNetworkNr["STU1"], SystemCommandRouting["SendLowLevelByteCounter"], MyToolItNetworkNr["STH1"])
+        self.Can.Logger.Info("STU1 - Send Byte Counter(Port STH1): " + str(SendCounter))
 
     def _RoutingInformationStuPortSthReceive(self):
-        ReceiveCounter = self.PeakCan.RoutingInformationCmd(MyToolItNetworkNr["STU1"], SystemCommandRouting["ReceiveCounter"], MyToolItNetworkNr["STH1"])
-        self.PeakCan.Logger.Info("STU1 - Receive Counter(Port STH1): " + str(ReceiveCounter))
-        ReceiveFailCounter = self.PeakCan.RoutingInformationCmd(MyToolItNetworkNr["STU1"], SystemCommandRouting["ReceiveFailCounter"], MyToolItNetworkNr["STH1"])
-        self.PeakCan.Logger.Info("STU1 - Receive Fail Counter(Port STH1): " + str(ReceiveFailCounter))
-        ReceiveCounter = self.PeakCan.RoutingInformationCmd(MyToolItNetworkNr["STU1"], SystemCommandRouting["ReceiveLowLevelByteCounter"], MyToolItNetworkNr["STH1"])
-        self.PeakCan.Logger.Info("STU1 - Receive Byte Counter(Port STH1): " + str(ReceiveCounter))
+        ReceiveCounter = self.Can.RoutingInformationCmd(MyToolItNetworkNr["STU1"], SystemCommandRouting["ReceiveCounter"], MyToolItNetworkNr["STH1"])
+        self.Can.Logger.Info("STU1 - Receive Counter(Port STH1): " + str(ReceiveCounter))
+        ReceiveFailCounter = self.Can.RoutingInformationCmd(MyToolItNetworkNr["STU1"], SystemCommandRouting["ReceiveFailCounter"], MyToolItNetworkNr["STH1"])
+        self.Can.Logger.Info("STU1 - Receive Fail Counter(Port STH1): " + str(ReceiveFailCounter))
+        ReceiveCounter = self.Can.RoutingInformationCmd(MyToolItNetworkNr["STU1"], SystemCommandRouting["ReceiveLowLevelByteCounter"], MyToolItNetworkNr["STH1"])
+        self.Can.Logger.Info("STU1 - Receive Byte Counter(Port STH1): " + str(ReceiveCounter))
         return ReceiveFailCounter
 
     def _RoutingInformationStuPortSth(self):
@@ -213,11 +213,11 @@ class myToolItWatch():
         self.sConfig = None
         if "STH" == product:
             self.sProduct = "STH"
-            self.PeakCan.vSetReceiver(MyToolItNetworkNr["STH1"])    
+            self.Can.vSetReceiver(MyToolItNetworkNr["STH1"])    
             self.sConfig = sConfig  
         elif "STU" == product: 
             self.sProduct = "STU"
-            self.PeakCan.vSetReceiver(MyToolItNetworkNr["STU1"])
+            self.Can.vSetReceiver(MyToolItNetworkNr["STU1"])
             self.sConfig = sConfig        
 
     def bSampleSetupSet(self, sSetup):
@@ -235,16 +235,16 @@ class myToolItWatch():
             sLogLocation = rreplace(sLogLocation, '.', "_" + self.sDateClock() + ".")
             logNameError = sLogLocation
             logNameError = rreplace(logNameError, '.', "bError.")
-            self.PeakCan.vLogNameChange(sLogLocation, logNameError)
+            self.Can.vLogNameChange(sLogLocation, logNameError)
             bOk = True
         return bOk
     
     def vLogCountInc(self):
-        fileName = self.PeakCan.Logger.fileName[:-24]
+        fileName = self.Can.Logger.fileName[:-24]
         fileName = fileName + "_" + self.sDateClock() + ".txt"
         logNameError = fileName
         logNameError = rreplace(logNameError, '.', "bError.")
-        self.PeakCan.vLogNameCloseInterval(fileName, logNameError)
+        self.Can.vLogNameCloseInterval(fileName, logNameError)
         
     def vSheetFileSet(self, sSheetFile):
         self.sSheetFile = sSheetFile
@@ -257,7 +257,7 @@ class myToolItWatch():
         if  (dataSets in DataSets):
             self.tAccDataFormat = DataSets[dataSets]
         else:
-            dataSets = self.PeakCan.dataSetsCan20(bX, bY, bZ)
+            dataSets = self.Can.dataSetsCan20(bX, bY, bZ)
             self.tAccDataFormat = DataSets[dataSets]
         
     def vVoltageSet(self, bX, bY, bZ, dataSets):
@@ -268,7 +268,7 @@ class myToolItWatch():
         if (dataSets in DataSets):
             self.tVoltageDataFormat = DataSets[dataSets]
         else:
-            dataSets = self.PeakCan.dataSetsCan20(bX, bY, bZ)
+            dataSets = self.Can.dataSetsCan20(bX, bY, bZ)
             self.tVoltageDataFormat = DataSets[dataSets]
     
     def vSthAutoConnect(self, bSthAutoConnect):     
@@ -387,7 +387,7 @@ class myToolItWatch():
                             pass
                         self.GuiPackage = {"X":[], "Y" : [], "Z" : []}
             else:
-                self.aquireEndTime = self.PeakCan.getTimeMs()
+                self.aquireEndTime = self.Can.getTimeMs()
 
     def vGraphPacketLossUpdate(self, msgCounter):
         if 0 < self.iDisplayTime:  
@@ -454,7 +454,7 @@ class myToolItWatch():
     def vParserConsoleArgumentsPassXml(self):
         if None != self.args_dict['version'] and None != self.args_dict['sample_setup']:
             print("You can't use sample setup and product/version simultaneously")
-            self.PeakCan.vLogDel()
+            self.Can.vLogDel()
             self.__exit__()
         bRemove = False  
         if False != self.args_dict['remove']:
@@ -464,7 +464,7 @@ class myToolItWatch():
         if False != self.args_dict['create']:
             if False != bRemove:
                 print("You can't create and remove simultaneously.")
-                self.PeakCan.vLogDel()
+                self.Can.vLogDel()
                 self.__exit__()
             else:
                 bCreate = True     
@@ -517,11 +517,11 @@ class myToolItWatch():
                             self.removeXmlVersion(product.find('Version'), productVersion)
                     elif False != bCreate:
                         print("Error! you tried to create a product/version that allready exists")
-                        self.PeakCan.vLogDel()
+                        self.Can.vLogDel()
                         self.__exit__()
                     else:
                         print("Error! you tried to create a sample setup that allready exists")
-                        self.PeakCan.vLogDel()
+                        self.Can.vLogDel()
                         self.__exit__()
         
     def vParserConsoleArgumentsPass(self):  
@@ -570,8 +570,8 @@ class myToolItWatch():
     def reset(self):
         if False == self.KeyBoadInterrupt:
             try:
-                self.PeakCan.ReadThreadReset()
-                self.PeakCan.cmdReset(MyToolItNetworkNr["STU1"])
+                self.Can.ReadThreadReset()
+                self.Can.cmdReset(MyToolItNetworkNr["STU1"])
             except KeyboardInterrupt:
                 self.KeyBoadInterrupt = True
 
@@ -579,27 +579,27 @@ class myToolItWatch():
         try:
             self.iDevNr = int(input('Input:'))  
             try:
-                self.PeakCan.BlueToothConnect(MyToolItNetworkNr["STU1"], self.iDevNr)          
+                self.Can.BlueToothConnect(MyToolItNetworkNr["STU1"], self.iDevNr)          
             except KeyboardInterrupt:
                 self.KeyBoadInterrupt = True
         except ValueError:
             print("Not a number") 
     
     def getBlueToothDeviceList(self, log=True): 
-        self.PeakCan.BlueToothConnectConnect(MyToolItNetworkNr["STH1"], log=log)
+        self.Can.BlueToothConnectConnect(MyToolItNetworkNr["STH1"], log=log)
         deviceNumbers = 0
         endTime = time() + BlueToothDeviceListAquireTime
         while(time() < endTime):
-            deviceNumbers = self.PeakCan.BlueToothConnectTotalScannedDeviceNr(MyToolItNetworkNr["STH1"])
+            deviceNumbers = self.Can.BlueToothConnectTotalScannedDeviceNr(MyToolItNetworkNr["STH1"])
         nameList = []
         for dev in range(deviceNumbers):
-            nameList.append([dev, self.PeakCan.BlueToothNameGet(dev)])
+            nameList.append([dev, self.Can.BlueToothNameGet(dev)])
         return nameList   
                 
     def BlueToothConnectName(self):
         if False == self.KeyBoadInterrupt:
             try:
-                self.PeakCan.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], self.sDevName, log=False)
+                self.Can.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], self.sDevName, log=False)
             except KeyboardInterrupt:
                 self.KeyBoadInterrupt = True
                 self.__exit__()
@@ -607,41 +607,41 @@ class myToolItWatch():
     def vDataAquisition(self):  
         if False == self.KeyBoadInterrupt:
             try:
-                if False != self.PeakCan.bConnected: 
-                    self.PeakCan.ConfigAdc(MyToolItNetworkNr["STH1"], self.iPrescaler, self.iAquistionTime, self.iOversampling, AdcReference[self.sAdcRef])
-                    self.PeakCan.readThreadStop()     
+                if False != self.Can.bConnected: 
+                    self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], self.iPrescaler, self.iAquistionTime, self.iOversampling, AdcReference[self.sAdcRef])
+                    self.Can.readThreadStop()     
                     self.guiProcessRestart()       
                     print("Start")
-                    self.PeakCan.Logger.Info("Start")
+                    self.Can.Logger.Info("Start")
                     self.vGetStreamingAccData()
                     self.guiProcessStop()
                 else:
                     print("Device not allocable")    
-                    self.PeakCan.Logger.bError("Device not allocable")     
+                    self.Can.Logger.bError("Device not allocable")     
             except KeyboardInterrupt:
                 self.KeyBoadInterrupt = True
                 self.__exit__()
                 
     def close(self):          
-        if False != self.PeakCan.RunReadThread:
+        if False != self.Can.RunReadThread:
             self.__exit__()  
 
     def vGetStreamingAccDataProcess(self):
         iIntervalTime = self.iIntervalTime * 1000
         if 0 == self.iIntervalTime:
             iIntervalTime += (1 << 32)
-        startTime = self.PeakCan.getTimeMs()
+        startTime = self.Can.getTimeMs()
         try:
-            while(self.PeakCan.getTimeMs() < self.aquireEndTime):
-                if (self.PeakCan.getTimeMs() - startTime) >= iIntervalTime:
-                    startTime = self.PeakCan.getTimeMs()
+            while(self.Can.getTimeMs() < self.aquireEndTime):
+                if (self.Can.getTimeMs() - startTime) >= iIntervalTime:
+                    startTime = self.Can.getTimeMs()
                     self.vLogCountInc()
                 ack = self.ReadMessage()
                 if(None != ack):
                     if(self.AccAckExpected.ID != ack["CanMsg"].ID and self.VoltageAckExpected.ID != ack["CanMsg"].ID):
-                        self.PeakCan.Logger.bError("CanId bError: " + str(ack["CanMsg"].ID))
+                        self.Can.Logger.bError("CanId bError: " + str(ack["CanMsg"].ID))
                     elif(self.AccAckExpected.DATA[0] != ack["CanMsg"].DATA[0] and self.VoltageAckExpected.DATA[0] != ack["CanMsg"].DATA[0])  :
-                        self.PeakCan.Logger.bError("Wrong Subheader-Format(Acceleration Format): " + str(ack["CanMsg"].ID))
+                        self.Can.Logger.bError("Wrong Subheader-Format(Acceleration Format): " + str(ack["CanMsg"].ID))
                     elif self.AccAckExpected.ID == ack["CanMsg"].ID:
                         self.GetMessageAcc(ack)
                                    
@@ -660,17 +660,17 @@ class myToolItWatch():
         accFormat.b.bNumber2 = self.bAccY
         accFormat.b.bNumber3 = self.bAccZ
         accFormat.b.u3DataSets = self.tAccDataFormat
-        cmd = self.PeakCan.CanCmd(MyToolItBlock["Streaming"], MyToolItStreaming["Acceleration"], 0, 0)
-        self.AccAckExpected = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["STH1"], MyToolItNetworkNr["SPU1"], [accFormat.asbyte])
-        cmd = self.PeakCan.CanCmd(MyToolItBlock["Streaming"], MyToolItStreaming["Acceleration"], 1, 0)
-        message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [accFormat.asbyte])
-        self.PeakCan.Logger.Info("MsgId/Subpayload(Acc): " + hex(message.ID) + "/" + hex(accFormat.asbyte))
+        cmd = self.Can.CanCmd(MyToolItBlock["Streaming"], MyToolItStreaming["Acceleration"], 0, 0)
+        self.AccAckExpected = self.Can.CanMessage20(cmd, MyToolItNetworkNr["STH1"], MyToolItNetworkNr["SPU1"], [accFormat.asbyte])
+        cmd = self.Can.CanCmd(MyToolItBlock["Streaming"], MyToolItStreaming["Acceleration"], 1, 0)
+        message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [accFormat.asbyte])
+        self.Can.Logger.Info("MsgId/Subpayload(Acc): " + hex(message.ID) + "/" + hex(accFormat.asbyte))
         ack = None
-        endTime = self.PeakCan.getTimeMs() + 4000
-        while (None == ack) and (self.PeakCan.getTimeMs() < endTime):
-            self.PeakCan.WriteFrame(message)
-            readEndTime = self.PeakCan.getTimeMs() + 500
-            while((None == ack) and  (self.PeakCan.getTimeMs() < readEndTime)):
+        endTime = self.Can.getTimeMs() + 4000
+        while (None == ack) and (self.Can.getTimeMs() < endTime):
+            self.Can.WriteFrame(message)
+            readEndTime = self.Can.getTimeMs() + 500
+            while((None == ack) and  (self.Can.getTimeMs() < readEndTime)):
                 ack = self.ReadMessage()        
         return ack
 
@@ -682,17 +682,17 @@ class myToolItWatch():
         voltageFormat.b.bNumber2 = self.bVoltageY
         voltageFormat.b.bNumber3 = self.bVoltageZ
         voltageFormat.b.u3DataSets = self.tVoltageDataFormat
-        cmd = self.PeakCan.CanCmd(MyToolItBlock["Streaming"], MyToolItStreaming["Voltage"], 0, 0)
-        self.VoltageAckExpected = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["STH1"], MyToolItNetworkNr["SPU1"], [voltageFormat.asbyte])
-        cmd = self.PeakCan.CanCmd(MyToolItBlock["Streaming"], MyToolItStreaming["Voltage"], 1, 0)
-        message = self.PeakCan.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [voltageFormat.asbyte])
-        self.PeakCan.Logger.Info("MsgId/Subpayload(Voltage): " + hex(message.ID) + "/" + hex(voltageFormat.asbyte))
+        cmd = self.Can.CanCmd(MyToolItBlock["Streaming"], MyToolItStreaming["Voltage"], 0, 0)
+        self.VoltageAckExpected = self.Can.CanMessage20(cmd, MyToolItNetworkNr["STH1"], MyToolItNetworkNr["SPU1"], [voltageFormat.asbyte])
+        cmd = self.Can.CanCmd(MyToolItBlock["Streaming"], MyToolItStreaming["Voltage"], 1, 0)
+        message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [voltageFormat.asbyte])
+        self.Can.Logger.Info("MsgId/Subpayload(Voltage): " + hex(message.ID) + "/" + hex(voltageFormat.asbyte))
         ack = None
-        endTime = self.PeakCan.getTimeMs() + 4000
-        while (None == ack) and (self.PeakCan.getTimeMs() < endTime):
-            self.PeakCan.WriteFrame(message)
-            readEndTime = self.PeakCan.getTimeMs() + 500
-            while((None == ack) and  (self.PeakCan.getTimeMs() < readEndTime)):
+        endTime = self.Can.getTimeMs() + 4000
+        while (None == ack) and (self.Can.getTimeMs() < endTime):
+            self.Can.WriteFrame(message)
+            readEndTime = self.Can.getTimeMs() + 500
+            while((None == ack) and  (self.Can.getTimeMs() < readEndTime)):
                 ack = self.ReadMessage()        
         return ack
                                  
@@ -700,9 +700,9 @@ class myToolItWatch():
         ack = self.vGetStreamingAccDataAccStart()
         if None != ack:
             ack = self.vGetStreamingAccDataVoltageStart()
-        currentTime = self.PeakCan.getTimeMs()
+        currentTime = self.Can.getTimeMs()
         if None == ack:
-            self.PeakCan.Logger.bError("No Ack received from Device: " + str(self.iDevNr))
+            self.Can.Logger.bError("No Ack received from Device: " + str(self.iDevNr))
             self.aquireEndTime = currentTime
         elif(0 == self.iRunTime):
             self.aquireEndTime = currentTime + (1 << 32)
@@ -723,19 +723,19 @@ class myToolItWatch():
         ackMsg += (prefix + " ")
         ackMsg += str(format(p1, '5d'))
         ackMsg += "; "
-        self.PeakCan.Logger.Info(ackMsg)
+        self.Can.Logger.Info(ackMsg)
         ackMsg = ("MsgCounter: " + str(format(canData[1], '3d')) + "; ")
         ackMsg += ("TimeStamp: " + format(canTimeStamp, '12.3f') + "ms; ")
         ackMsg += (prefix + " ")
         ackMsg += str(format(p2, '5d'))
         ackMsg += "; "
-        self.PeakCan.Logger.Info(ackMsg)
+        self.Can.Logger.Info(ackMsg)
         ackMsg = ("MsgCounter: " + str(format(canData[1], '3d')) + "; ")
         ackMsg += ("TimeStamp: " + format(canTimeStamp, '12.3f') + "ms; ")
         ackMsg += (prefix + " ")
         ackMsg += str(format(p3, '5d'))
         ackMsg += "; "
-        self.PeakCan.Logger.Info(ackMsg)  
+        self.Can.Logger.Info(ackMsg)  
         
     def GetMessageDouble(self, prefix1, prefix2, canMsg):
         canData = canMsg["CanMsg"].DATA
@@ -752,7 +752,7 @@ class myToolItWatch():
         ackMsg += " "
         ackMsg += str(format(p1_2, '5d'))
         ackMsg += "; "
-        self.PeakCan.Logger.Info(ackMsg) 
+        self.Can.Logger.Info(ackMsg) 
 
     def GetMessageTripple(self, prefix1, prefix2, prefix3, canMsg):
         canData = canMsg["CanMsg"].DATA
@@ -771,7 +771,7 @@ class myToolItWatch():
         ackMsg += " "
         ackMsg += str(format(messageValueGet(canData[6:8]), '5d'))
         ackMsg += "; "
-        self.PeakCan.Logger.Info(ackMsg)                        
+        self.Can.Logger.Info(ackMsg)                        
 
     def GetMessageAcc(self, canData):
         data = canData["CanMsg"].DATA
@@ -802,7 +802,7 @@ class myToolItWatch():
                 self.GetMessageSingle("AccZ", canData) 
                 self.vGraphPointNext(0, 0, messageValueGet(data[2:4]))   
         else:               
-            self.PeakCan.Logger.bError("Wrong Ack format")
+            self.Can.Logger.bError("Wrong Ack format")
 
     def GetMessageVoltage(self, canData):
         if self.tAccDataFormat == DataSets[1]:
@@ -822,15 +822,15 @@ class myToolItWatch():
             elif 0 != self.bVoltageZ:
                 self.GetMessageSingle("VoltageZ", canData)       
         else:               
-            self.PeakCan.Logger.bError("Wrong Ack format")
+            self.Can.Logger.bError("Wrong Ack format")
             
     def ReadMessage(self):
         message = None
-        result = self.PeakCan.m_objPCANBasic.Read(self.PeakCan.m_PcanHandle)
-        if result[0] == PeakCanFd.PCAN_ERROR_OK:
+        result = self.Can.m_objPCANBasic.Read(self.Can.m_PcanHandle)
+        if result[0] == CanFd.PCAN_ERROR_OK:
             peakCanTimeStamp = result[2].millis_overflow * (2 ** 32) + result[2].millis + result[2].micros / 1000
-            message = {"CanMsg" : result[1], "PcTime" : self.PeakCan.getTimeMs(), "PeakCanTime" : peakCanTimeStamp}   
-        elif result[0] == PeakCanFd.PCAN_ERROR_QOVERRUN:
+            message = {"CanMsg" : result[1], "PcTime" : self.Can.getTimeMs(), "PeakCanTime" : peakCanTimeStamp}   
+        elif result[0] == CanFd.PCAN_ERROR_QOVERRUN:
             self.Logger.bError("RxOverRun")
             print("RxOverRun")
             raise
@@ -1078,7 +1078,7 @@ class myToolItWatch():
                         value = self.vUnicodeIllegalRemove(value, 255)
                         value = array.array('b', value).tostring().decode('utf-8', 'replace')
                     except Exception as e:
-                        self.PeakCan.Logger.Info(str(e))
+                        self.Can.Logger.Info(str(e))
                         value = ""
                 elif "unsigned" == worksheet['G' + str(i)].value:
                     value = str(iMessage2Value(value))
@@ -1107,7 +1107,7 @@ class myToolItWatch():
     """    
 
     def excelSheetRead(self, namePage, iReceiver):
-        self.PeakCan.Logger.Info("Read EEPROM Page " + str(namePage) + " from " + MyToolItNetworkName[iReceiver])
+        self.Can.Logger.Info("Read EEPROM Page " + str(namePage) + " from " + MyToolItNetworkName[iReceiver])
         workbook = openpyxl.load_workbook(self.sSheetFile)
         if workbook:
             for worksheetName in workbook.sheetnames:
@@ -1120,12 +1120,12 @@ class myToolItWatch():
                     readLength = self.iExcelSheetPageLength(worksheet)
                     for offset in range(0, readLength, 4):
                         payload = [address, 0xFF & offset, 4, 0, 0, 0, 0, 0]
-                        index = self.PeakCan.cmdSend(iReceiver, MyToolItBlock["Eeprom"], MyToolItEeprom["Read"], payload, log=False)   
-                        readBackFrame = self.PeakCan.getReadMessageData(index)[4:]
-                        self.PeakCan.Logger.Info("Read Back Frame: " + str(readBackFrame))
+                        index = self.Can.cmdSend(iReceiver, MyToolItBlock["Eeprom"], MyToolItEeprom["Read"], payload, log=False)   
+                        readBackFrame = self.Can.getReadMessageData(index)[4:]
+                        self.Can.Logger.Info("Read Back Frame: " + str(readBackFrame))
                         pageContent.extend(readBackFrame)
                     pageContent = pageContent[0:readLength]
-                    self.PeakCan.Logger.Info("Read Data: " + payload2Hex(pageContent))
+                    self.Can.Logger.Info("Read Data: " + payload2Hex(pageContent))
                     self.iExcelSheetPageValue(worksheet, pageContent)
             workbook.save(self.sSheetFile)  
      
@@ -1138,7 +1138,7 @@ class myToolItWatch():
                 try:
                     value = str(value).encode('utf-8')
                 except Exception as e: 
-                    self.PeakCan.Logger.Info(str(e))
+                    self.Can.Logger.Info(str(e))
                     value = [0] * iLength
                 iCopyLength = len(value)
                 if iLength < iCopyLength:
@@ -1153,7 +1153,7 @@ class myToolItWatch():
                 value = value[1:-1].split(',')
                 for i in range(0, len(value)):
                     byteArray[i] = int(value[i], 16)
-        self.PeakCan.Logger.Info("Byte Array: " + str(byteArray)) 
+        self.Can.Logger.Info("Byte Array: " + str(byteArray)) 
         return byteArray
     
     """
@@ -1161,7 +1161,7 @@ class myToolItWatch():
     """    
 
     def excelSheetWrite(self, namePage, iReceiver):
-        self.PeakCan.Logger.Info("Write Excel Page " + str(namePage) + " to " + MyToolItNetworkName[iReceiver])
+        self.Can.Logger.Info("Write Excel Page " + str(namePage) + " to " + MyToolItNetworkName[iReceiver])
         workbook = openpyxl.load_workbook(self.sSheetFile)
         if workbook:
             for worksheetName in workbook.sheetnames:
@@ -1176,7 +1176,7 @@ class myToolItWatch():
                     for i in range(2, 256 + 2, 1):
                         if None != worksheet['A' + str(i)].value:
                             au8ElementData = self.au8excelValueToByteArray(worksheet, i)
-                            self.PeakCan.Logger.Info("au8ElementData: " + payload2Hex(au8ElementData))
+                            self.Can.Logger.Info("au8ElementData: " + payload2Hex(au8ElementData))
                             for j in range(0, len(au8ElementData), 1):
                                 au8WriteData[iByteIndex + j] = au8ElementData[j] 
                             iLength = int(worksheet['C' + str(i)].value)
@@ -1187,13 +1187,13 @@ class myToolItWatch():
                     if 0 != iWriteLength%4:
                         iWriteLength+=iWriteLength%4
                     au8WriteData = au8WriteData[0:iWriteLength] 
-                    self.PeakCan.Logger.Info("Write Content: " + payload2Hex(au8WriteData))
-                    self.PeakCan.Logger.Info("Write Length: " + str(len(au8WriteData)))
+                    self.Can.Logger.Info("Write Content: " + payload2Hex(au8WriteData))
+                    self.Can.Logger.Info("Write Length: " + str(len(au8WriteData)))
                     for offset in range(0, iWriteLength, 4):
                         au8WritePackage = au8WriteData[offset:offset + 4]
                         au8Payload = [address, 0xFF & offset, 4, 0]
                         au8Payload.extend(au8WritePackage)
-                        self.PeakCan.cmdSend(iReceiver, MyToolItBlock["Eeprom"], MyToolItEeprom["Write"], au8Payload, log = False)   
+                        self.Can.cmdSend(iReceiver, MyToolItBlock["Eeprom"], MyToolItEeprom["Write"], au8Payload, log = False)   
             try:
                 workbook.close(self.sSheetFile) 
             except:
@@ -1218,7 +1218,7 @@ class myToolItWatch():
                 config.find('AcquisitionTime').text = str(AdcAcquisitionTimeReverse[self.iAquistionTime])
                 config.find('OverSamples').text = str(AdcOverSamplingRateReverse[self.iOversampling])
                 config.find('AdcRef').text = str(self.sAdcRef)
-                sFileName = self.PeakCan.Logger.fileName
+                sFileName = self.Can.Logger.fileName
                 config.find('LogName').text = sFileName[:sFileName.find('_'):]
                 config.find('RunTime').text = str(self.iRunTime)
                 config.find('IntervalTime').text = str(self.iIntervalTime)
@@ -1280,7 +1280,7 @@ class myToolItWatch():
         print("Setup Configuration: " + str(self.sSetupConfig))
         print("AutoSave?: " + str(self.bSave))
         print("Table Calculation File: " + str(self.sSheetFile))
-        print("Log Name: " + str(self.PeakCan.Logger.fileName))
+        print("Log Name: " + str(self.Can.Logger.fileName))
         print("Device Name (to be connected): " + str(self.sDevName))
         print("Bluetooth address(to be connected): " + str(self.iAddress))  # Todo machen
         print("AutoConnect?: " + str(self.bSthAutoConnect))
@@ -1292,21 +1292,21 @@ class myToolItWatch():
         print("Voltage Config(XYZ/DataSets): " + str(int(self.bVoltageX)) + str(int(self.bVoltageY)) + str(int(self.bVoltageZ)) + "/" + str(DataSetsReverse[self.tAccDataFormat]) + ("(X=Battery)"))
         
     def _vRunConsoleStartupLoggerPrint(self):
-        self.PeakCan.Logger.Info("XML File: " + str(self.sXmlFileName))
-        self.PeakCan.Logger.Info("Product Configuration: " + str(self.sProduct) + " " + str(self.sConfig))
-        self.PeakCan.Logger.Info("Setup Configuration: " + str(self.sSetupConfig))
-        self.PeakCan.Logger.Info("AutoSave?: " + str(self.bSave))
-        self.PeakCan.Logger.Info("Table Calculation File: " + str(self.sSheetFile))
-        self.PeakCan.Logger.Info("Log Name: " + str(self.PeakCan.Logger.fileName))
-        self.PeakCan.Logger.Info("Device Name (to be connected): " + str(self.sDevName))
-        self.PeakCan.Logger.Info("Bluetooth address(to be connected): " + str(self.iAddress))  # Todo machen
-        self.PeakCan.Logger.Info("AutoConnect?: " + str(self.bSthAutoConnect))
-        self.PeakCan.Logger.Info("Run Time: " + str(self.iRunTime) + "s")
-        self.PeakCan.Logger.Info("Inteval Time: " + str(self.iIntervalTime) + "s")
-        self.PeakCan.Logger.Info("Display Time: " + str(self.iDisplayTime) + "ms")
-        self.PeakCan.Logger.Info("Adc Prescaler/AcquisitionTime/OversamplingRate/Reference(Samples/s): " + str(self.iPrescaler) + "/" + str(AdcAcquisitionTimeReverse[self.iAquistionTime]) + "/" + str(AdcOverSamplingRateReverse[self.iOversampling]) + "/" + str(self.sAdcRef) + "(" + str(self.samplingRate) + ")")
-        self.PeakCan.Logger.Info("Acc Config(XYZ/DataSets): " + str(int(self.bAccX)) + str(int(self.bAccY)) + str(int(self.bAccZ)) + "/" + str(DataSetsReverse[self.tAccDataFormat]))
-        self.PeakCan.Logger.Info("Voltage Config(XYZ/DataSets): " + str(int(self.bVoltageX)) + str(int(self.bVoltageY)) + str(int(self.bVoltageZ)) + "/" + str(DataSetsReverse[self.tAccDataFormat]) + ("(X=Battery)"))
+        self.Can.Logger.Info("XML File: " + str(self.sXmlFileName))
+        self.Can.Logger.Info("Product Configuration: " + str(self.sProduct) + " " + str(self.sConfig))
+        self.Can.Logger.Info("Setup Configuration: " + str(self.sSetupConfig))
+        self.Can.Logger.Info("AutoSave?: " + str(self.bSave))
+        self.Can.Logger.Info("Table Calculation File: " + str(self.sSheetFile))
+        self.Can.Logger.Info("Log Name: " + str(self.Can.Logger.fileName))
+        self.Can.Logger.Info("Device Name (to be connected): " + str(self.sDevName))
+        self.Can.Logger.Info("Bluetooth address(to be connected): " + str(self.iAddress))  # Todo machen
+        self.Can.Logger.Info("AutoConnect?: " + str(self.bSthAutoConnect))
+        self.Can.Logger.Info("Run Time: " + str(self.iRunTime) + "s")
+        self.Can.Logger.Info("Inteval Time: " + str(self.iIntervalTime) + "s")
+        self.Can.Logger.Info("Display Time: " + str(self.iDisplayTime) + "ms")
+        self.Can.Logger.Info("Adc Prescaler/AcquisitionTime/OversamplingRate/Reference(Samples/s): " + str(self.iPrescaler) + "/" + str(AdcAcquisitionTimeReverse[self.iAquistionTime]) + "/" + str(AdcOverSamplingRateReverse[self.iOversampling]) + "/" + str(self.sAdcRef) + "(" + str(self.samplingRate) + ")")
+        self.Can.Logger.Info("Acc Config(XYZ/DataSets): " + str(int(self.bAccX)) + str(int(self.bAccY)) + str(int(self.bAccZ)) + "/" + str(DataSetsReverse[self.tAccDataFormat]))
+        self.Can.Logger.Info("Voltage Config(XYZ/DataSets): " + str(int(self.bVoltageX)) + str(int(self.bVoltageY)) + str(int(self.bVoltageZ)) + "/" + str(DataSetsReverse[self.tAccDataFormat]) + ("(X=Battery)"))
         
     def _vRunConsoleStartup(self):
         self._vRunConsoleStartupLoggerPrint()
@@ -1331,10 +1331,10 @@ class myToolItWatch():
     def vRunConsoleAutoConnect(self):
         self.clear()
         if "0x0" != self.iAddress:
-            self.PeakCan.BlueToothConnectPollingAddress(MyToolItNetworkNr["STU1"], self.iAddress)
+            self.Can.BlueToothConnectPollingAddress(MyToolItNetworkNr["STU1"], self.iAddress)
         else:
-            self.PeakCan.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], self.sDevName, log=False)
-        if False != self.PeakCan.bConnected:
+            self.Can.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], self.sDevName, log=False)
+        if False != self.Can.bConnected:
             self.vDataAquisition() 
                                
     def vRunConsole(self):

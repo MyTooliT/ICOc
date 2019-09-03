@@ -131,7 +131,7 @@ class Logger():
             pass
         
         
-class PeakCanFd(object):
+class CanFd(object):
 
     def __init__(self, baudrate, testMethodName, testMethodNameError, sender, receiver, prescaler=2, acquisition=8, oversampling=64, FreshLog=False):
         self.bConnected = False

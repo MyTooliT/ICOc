@@ -6,7 +6,7 @@ from time import sleep
 import glob
 import curses
 import os
-import PeakCanFd
+import CanFd
 import subprocess
 
 class mwt(myToolItWatch):
@@ -46,7 +46,7 @@ class mwt(myToolItWatch):
         if False != self.bLastConfig():
             self.xmlSave()
             lastRun = self.tree.find('lastRun')
-            sLogName = self.PeakCan.Logger.fileName.split('_')[0]
+            sLogName = self.Can.Logger.fileName.split('_')[0]
             sLogName = sLogName.split('.')[0] # Just to be sure
             lastRun.find('LogName').text = str(sLogName)
             lastRun.find('Product').text = self.sProduct
@@ -118,11 +118,11 @@ class mwt(myToolItWatch):
         elif ord('e') == keyPress:
             bRun = False
             bContinue = True 
-            self.PeakCan.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
+            self.Can.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
         elif ord('f') == keyPress:
             self.stdscr.clear()
             self.stdscr.refresh()
-            sOemFreeUse = self.PeakCan.sProductData("OemFreeUse")  
+            sOemFreeUse = self.Can.sProductData("OemFreeUse")  
             self.stdscr.addstr("OEM Free Use: \n" + sOemFreeUse + "\n")
             self.vTerminalAnyKey()  
         elif ord('n') == keyPress:
@@ -135,9 +135,9 @@ class mwt(myToolItWatch):
             self.stdscr.refresh()   
             sYes = self.sTerminalInputStringIn()
             if "y" == sYes:
-                self.PeakCan.Standby(MyToolItNetworkNr["STH1"])
+                self.Can.Standby(MyToolItNetworkNr["STH1"])
                 bRun = False
-                self.PeakCan.bConnected = False
+                self.Can.bConnected = False
                 bContinue = True
         elif ord('p') == keyPress:
             self.stdscr.addstr("New sample axis (xyz; 0=off, 1=on; e.g. 100): ")
@@ -154,8 +154,8 @@ class mwt(myToolItWatch):
         elif ord('S') == keyPress: 
             self.stdscr.clear()
             self.stdscr.refresh()
-            sSerialNumber = self.PeakCan.sProductData("SerialNumber")  
-            sName = self.PeakCan.sProductData("Name")  
+            sSerialNumber = self.Can.sProductData("SerialNumber")  
+            sName = self.Can.sProductData("Name")  
             self.stdscr.addstr("Serial: " + sSerialNumber + " " + sName + "\n")  
             self.vTerminalAnyKey()
         elif ord('v') == keyPress:
@@ -165,16 +165,16 @@ class mwt(myToolItWatch):
         return [bRun, bContinue]      
      
     def bTerminalHolderConnectCommandsShowDataValues(self):
-        sGtin = self.PeakCan.sProductData("GTIN")  
-        sHwRev = self.PeakCan.sProductData("HardwareRevision")  
-        sSwVersion = self.PeakCan.sProductData("FirmwareVersion")  
-        sReleaseName = self.PeakCan.sProductData("ReleaseName")  
+        sGtin = self.Can.sProductData("GTIN")  
+        sHwRev = self.Can.sProductData("HardwareRevision")  
+        sSwVersion = self.Can.sProductData("FirmwareVersion")  
+        sReleaseName = self.Can.sProductData("ReleaseName")  
         self.stdscr.addstr("Global Trad Identifcation Number (GTIN): " + sGtin + "\n")
         self.stdscr.addstr("Hardware Revision(Major.Minor.Build): " + sHwRev + "\n")
         self.stdscr.addstr("Firmware Version(Major.Minor.Build): " + sSwVersion + "\n")
         self.stdscr.addstr("Firmware Release Name: " + sReleaseName + "\n")
-        index = self.PeakCan.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], 1, 0, 0)
-        iBatteryVoltage = messageValueGet(self.PeakCan.getReadMessageData(index)[2:4]) / 1000
+        index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], 1, 0, 0)
+        iBatteryVoltage = messageValueGet(self.Can.getReadMessageData(index)[2:4]) / 1000
         if None != iBatteryVoltage:
             self.stdscr.addstr("Battery Voltage: " + str(iBatteryVoltage) + "V\n")   
 
@@ -241,7 +241,7 @@ class mwt(myToolItWatch):
                             self.vDeviceAddressSet(str(dev["Address"]))
                             self.stdscr.addstr("Connect to " + hex(dev["Address"]) + "(" + str(dev["Name"]) + ")\n")
                             self.stdscr.refresh()
-                            self.PeakCan.BlueToothConnectPollingAddress(MyToolItNetworkNr["STU1"], self.iAddress)
+                            self.Can.BlueToothConnectPollingAddress(MyToolItNetworkNr["STU1"], self.iAddress)
                             bContinue = self.bTerminalHolderConnectCommands()
                 else:
                     bContinue = True
@@ -354,10 +354,10 @@ class mwt(myToolItWatch):
         
         
     def vTerminalLogFileName(self):
-        self.stdscr.addstr("Log File Name(" + self.PeakCan.Logger.fileName[0:-4] + "): ")  
+        self.stdscr.addstr("Log File Name(" + self.Can.Logger.fileName[0:-4] + "): ")  
         sLogFileName = self.sTerminalInputStringIn()       
         self.bLogSet(sLogFileName+'.txt')
-        self.stdscr.addstr("" + self.PeakCan.Logger.fileName)
+        self.stdscr.addstr("" + self.Can.Logger.fileName)
         self.stdscr.refresh()
         sleep(2)
         
@@ -366,7 +366,7 @@ class mwt(myToolItWatch):
         self.stdscr.refresh()   
         sName = self.sTerminalInputStringIn()         
         self.vDeviceNameSet(sName)
-        self.PeakCan.BlueToothNameWrite(0, sName)
+        self.Can.BlueToothNameWrite(0, sName)
     
     def bTerminalTests(self):
         bContinue = True
@@ -385,7 +385,7 @@ class mwt(myToolItWatch):
         self.stdscr.addstr("Please pick a test number or 0 to escape: ")
         iTestNumberRun = self.iTerminalInputNumberIn() 
         if 0 < iTestNumberRun and iTestNumberRun < iTestNumber:
-            self.PeakCan.__exit__() 
+            self.Can.__exit__() 
             sDirPath = os.path.dirname(os.path.realpath(pyFiles[iTestNumberRun - 1]))
             sDirPath += "\\VerficationInternal\\"
             sDirPath += pyFiles[iTestNumberRun - 1]
@@ -396,7 +396,7 @@ class mwt(myToolItWatch):
                     os.system("python " + str(sDirPath) + " ../Logs/STU StuAuto.txt")
             except KeyboardInterrupt:
                 pass
-            self.PeakCan = PeakCanFd.PeakCanFd(PeakCanFd.PCAN_BAUD_1M, "init.txt", "initError.txt", MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"])
+            self.Can = CanFd.CanFd(CanFd.PCAN_BAUD_1M, "init.txt", "initError.txt", MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"])
         return bContinue
                 
            
@@ -615,7 +615,7 @@ class mwt(myToolItWatch):
                         self.stdscr.addstr(" : XML Prescaler/AcquisitionTime/OversamplingRate(samples/s): " + str(iPrescaler) + "/" + str(iAcquisitionTime) + "/" + str(iOversampling) + "(" + str(iSamplingRate) + ")\n")               
                         self.stdscr.addstr("5: ADC Reference Voltage: " + self.sAdcRef + "\n")
                         self.stdscr.addstr(" : XML ADC Reference Voltage: " + setup.find('AdcRef').text + "\n")
-                        self.stdscr.addstr("6: Log Name: " + self.PeakCan.Logger.fileName + "\n")
+                        self.stdscr.addstr("6: Log Name: " + self.Can.Logger.fileName + "\n")
                         self.stdscr.addstr(" : XML Log Name: " + setup.find('LogName').text + "\n")
                         self.stdscr.addstr("7: RunTime/IntervalTime: " + str(self.iRunTime) + "/" + str(self.iIntervalTime) + "\n")
                         self.stdscr.addstr(" : XML RunTime/IntervalTime: " + setup.find('RunTime').text + "/" + setup.find('DisplayTime').text + "\n")
@@ -715,9 +715,9 @@ class mwt(myToolItWatch):
                         self.vDeviceAddressSet(str(dev["Address"]))
                         self.stdscr.addstr("Connect to " + hex(dev["Address"]) + "(" + str(dev["Name"]) + ")\n")
                         self.stdscr.refresh()
-                        self.PeakCan.BlueToothConnectPollingAddress(MyToolItNetworkNr["STU1"], self.iAddress)
+                        self.Can.BlueToothConnectPollingAddress(MyToolItNetworkNr["STU1"], self.iAddress)
                         self.vTerminalDeviceName()
-                        self.PeakCan.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
+                        self.Can.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
                         bConnected = True        
                 if False == bConnected:
                     self.stdscr.addstr("Device was not available\n")
@@ -842,7 +842,7 @@ class mwt(myToolItWatch):
     def tTerminalHeaderExtended(self, devList=None):
         self.vTerminalHeader()
         if None == devList:
-            devList = self.PeakCan.tDeviceList(MyToolItNetworkNr["STU1"])
+            devList = self.Can.tDeviceList(MyToolItNetworkNr["STU1"])
         for dev in devList:
             self.stdscr.addstr("Device Number: " + str(dev["DeviceNumber"]+1) + "; Name: " + str(dev["Name"]) + "; Address: " + hex(dev["Address"]) + "; RSSI: " + str(dev["RSSI"]) + "\n") 
         return devList    
