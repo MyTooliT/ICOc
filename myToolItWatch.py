@@ -1120,7 +1120,7 @@ class myToolItWatch():
                     readLength = self.iExcelSheetPageLength(worksheet)
                     for offset in range(0, readLength, 4):
                         payload = [address, 0xFF & offset, 4, 0, 0, 0, 0, 0]
-                        index = self.PeakCan.cmdSend(iReceiver, MyToolItBlock["Eeprom"], MyToolItEeprom["Read"], payload, log=True)   
+                        index = self.PeakCan.cmdSend(iReceiver, MyToolItBlock["Eeprom"], MyToolItEeprom["Read"], payload, log=False)   
                         readBackFrame = self.PeakCan.getReadMessageData(index)[4:]
                         self.PeakCan.Logger.Info("Read Back Frame: " + str(readBackFrame))
                         pageContent.extend(readBackFrame)
@@ -1193,7 +1193,7 @@ class myToolItWatch():
                         au8WritePackage = au8WriteData[offset:offset + 4]
                         au8Payload = [address, 0xFF & offset, 4, 0]
                         au8Payload.extend(au8WritePackage)
-                        self.PeakCan.cmdSend(iReceiver, MyToolItBlock["Eeprom"], MyToolItEeprom["Write"], au8Payload, log = True)   
+                        self.PeakCan.cmdSend(iReceiver, MyToolItBlock["Eeprom"], MyToolItEeprom["Write"], au8Payload, log = False)   
             try:
                 workbook.close(self.sSheetFile) 
             except:
