@@ -1204,7 +1204,7 @@ class myToolItWatch():
                         au8Payload.extend(au8WritePackage)
                         self.Can.cmdSend(iReceiver, MyToolItBlock["Eeprom"], MyToolItEeprom["Write"], au8Payload, log = False)   
             try:
-                workbook.close(self.sSheetFile) 
+                workbook.close() 
             except Exception as e: 
                 sError = "Could not close file: " + str(e)
                 self.Can.Logger.Info(sError)
