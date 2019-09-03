@@ -25,7 +25,7 @@ class TestStu(unittest.TestCase):
         print("TestCase: ", self._testMethodName)
         self.fileName = log_location + self._testMethodName + ".txt"
         self.fileNameError = log_location + "Error_" + self._testMethodName + ".txt"
-        self.PeakCan = PeakCanFd.PeakCanFd(PeakCanFd.PCAN_BAUD_1M, self.fileName, self.fileNameError, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"])
+        self.PeakCan = PeakCanFd.PeakCanFd(PeakCanFd.PCAN_BAUD_1M, self.fileName, self.fileNameError, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], FreshLog=True)
         self.PeakCan.Logger.Info("TestCase: " + str(self._testMethodName))
         self.PeakCan.CanTimeStampStart(self._resetStu()["CanTime"])
         self.bError = False

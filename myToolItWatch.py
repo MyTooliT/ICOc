@@ -20,7 +20,6 @@ from Plotter import vPlotter, tArray2Binary
 import socket
 import array
 
-
 HOST = 'localhost'  # The remote host
 PORT = 50007  # The same port as used by the server
 
@@ -92,8 +91,8 @@ class myToolItWatch():
         self.PeakCan.Logger.Info("End Time Stamp")
         
         if(False != self.bError):
-            self.PeakCan.Logger.Info("bError")
-            print("bError")
+            self.PeakCan.Logger.Info("!!!!Error!!!!")
+            print("!!!!Error!!!!")
         else:
             self.PeakCan.Logger.Info("Fin")
         self.PeakCan.__exit__()  
@@ -926,10 +925,7 @@ class myToolItWatch():
                     worksheet['H' + str(i)].font = FontRowRow2
                     i += 1
                 self.excelCellWidthAdjust(worksheet)
-            try:
-                workbook.save(self.sSheetFile) 
-            except:
-                pass#maybe its currently opened somewhere       
+            workbook.save(self.sSheetFile)       
              
     """
     Create Excel Sheet by xml definition - product
@@ -938,7 +934,6 @@ class myToolItWatch():
     def excelSheetCreateProduct(self, product):
         if None != self.sConfig:
             for version in product.find('Version'):
-                self.PeakCan.Logger.Info(version.get('name'))
                 if version.get('name') == self.sConfig:
                     self.excelSheetCreateVersion(version)
                     break
@@ -1053,39 +1048,48 @@ class myToolItWatch():
     
     def iExcelSheetPageLength(self, worksheet):
         totalLength = 0
-        for i in range(2, 256+2):
+        for i in range(2, 256 + 2):
             if None != worksheet['A' + str(i)].value:
                 length = int(worksheet['C' + str(i)].value)
                 totalLength += length
             else:
                 break
         return totalLength 
-    
-    def vExcelSheetPageValue(self, worksheet, aBytes):
+          
+
+    def vUnicodeIllegalRemove(self, value, character):
+        while(True):
+            try:
+                value.remove(character)
+            except:
+                break  
+        return value      
+        
+    def iExcelSheetPageValue(self, worksheet, aBytes):
         i = 2
-        totalLength = 0
-        while len(aBytes) > totalLength:
+        iTotalLength = 0
+        while len(aBytes) > iTotalLength:
             if None != worksheet['A' + str(i)].value:
-                length = worksheet['C' + str(i)].value
-                value = aBytes[totalLength:totalLength+length]
+                iLength = worksheet['C' + str(i)].value
+                value = aBytes[iTotalLength:iTotalLength + iLength]
                 if "UTF8" == worksheet['G' + str(i)].value:
                     try:
-                        if 0 == value[-1]:
-                            value = value[0:-1]
-                        value = array.array('b', value).tostring().decode('utf-8')
-                    except:
+                        value = self.vUnicodeIllegalRemove(value, 0)
+                        value = self.vUnicodeIllegalRemove(value, 255)
+                        value = array.array('b', value).tostring().decode('utf-8', 'replace')
+                    except Exception as e:
+                        self.PeakCan.Logger.Info(str(e))
                         value = ""
                 elif "unsigned" == worksheet['G' + str(i)].value:
                     value = str(iMessage2Value(value))
-                else:
+                else:                    
                     value = payload2Hex(value)
-                self.PeakCan.Logger.Info("Value for " + str(i) +": " + str(value))
-                worksheet['E' + str(i)] = value
-                totalLength += length
+                worksheet['E' + str(i)] = str(value)
+                iTotalLength += iLength
                 i += 1
             else:
                 break
-        return totalLength    
+        return iTotalLength    
     
     def atExcelSheetNames(self):
         workSheetNames = []
@@ -1103,8 +1107,7 @@ class myToolItWatch():
     """    
 
     def excelSheetRead(self, namePage, iReceiver):
-        self.PeakCan.Logger.Info("Receiver: " + str(iReceiver))
-        self.PeakCan.Logger.Info(namePage)
+        self.PeakCan.Logger.Info("Read EEPROM Page " + str(namePage) + " from " + MyToolItNetworkName[iReceiver])
         workbook = openpyxl.load_workbook(self.sSheetFile)
         if workbook:
             for worksheetName in workbook.sheetnames:
@@ -1116,44 +1119,85 @@ class myToolItWatch():
                     pageContent = []
                     readLength = self.iExcelSheetPageLength(worksheet)
                     for offset in range(0, readLength, 4):
-                        index = self.PeakCan.cmdSend(iReceiver, MyToolItBlock["Eeprom"], MyToolItEeprom["Read"], [address, 0xFF & offset, 4, 0, 0, 0, 0, 0])   
-                        pageContent.extend(self.PeakCan.getReadMessageData(index)[4:])
+                        payload = [address, 0xFF & offset, 4, 0, 0, 0, 0, 0]
+                        index = self.PeakCan.cmdSend(iReceiver, MyToolItBlock["Eeprom"], MyToolItEeprom["Read"], payload, log=True)   
+                        readBackFrame = self.PeakCan.getReadMessageData(index)[4:]
+                        self.PeakCan.Logger.Info("Read Back Frame: " + str(readBackFrame))
+                        pageContent.extend(readBackFrame)
                     pageContent = pageContent[0:readLength]
-                    self.vExcelSheetPageValue(worksheet, pageContent)
-            try:
-                workbook.save(self.sSheetFile) 
-            except:
-                pass#maybe its currently opened somewhere  
-                
+                    self.PeakCan.Logger.Info("Read Data: " + payload2Hex(pageContent))
+                    self.iExcelSheetPageValue(worksheet, pageContent)
+            workbook.save(self.sSheetFile)  
+     
+    def au8excelValueToByteArray(self, worksheet, iIndex):
+        iLength = int(worksheet['C' + str(iIndex)].value)
+        value = worksheet['E' + str(iIndex)].value
+        byteArray = [0] * iLength
+        if None != value:
+            if "UTF8" == worksheet['G' + str(iIndex)].value:
+                try:
+                    value = str(value).encode('utf-8')
+                except Exception as e: 
+                    self.PeakCan.Logger.Info(str(e))
+                    value = [0] * iLength
+                iCopyLength = len(value)
+                if iLength < iCopyLength:
+                    iCopyLength = iLength
+                for i in range(0, iCopyLength):
+                    byteArray[i] = value[i]
+            elif "unsigned" == worksheet['G' + str(iIndex)].value:
+                byteArray = au8Value2Array(int(value), iLength)       
+            else:
+                if 0 == value:
+                    value = ""
+                value = value[1:-1].split(',')
+                for i in range(0, len(value)):
+                    byteArray[i] = int(value[i], 16)
+        self.PeakCan.Logger.Info("Byte Array: " + str(byteArray)) 
+        return byteArray
+    
     """
-    Read EEPROM to write values in Excel Sheet
+    Read Excel Sheet to write values to EEPROM
     """    
 
-    def excelSheetWrite(self, namePage):
+    def excelSheetWrite(self, namePage, iReceiver):
+        self.PeakCan.Logger.Info("Write Excel Page " + str(namePage) + " to " + MyToolItNetworkName[iReceiver])
         workbook = openpyxl.load_workbook(self.sSheetFile)
         if workbook:
             for worksheetName in workbook.sheetnames:
                 name = str(worksheetName).split('@')
-                address = name[1]
+                address = int(name[1], base=16)
                 name = name[0]
                 if namePage == name:
                     worksheet = workbook.get_sheet_by_name(worksheetName)
-                    pageContent = []
-                    readLength = self.iExcelSheetPageLength(worksheet)
                     # Prepare Write Data
                     au8WriteData = [0] * 256
-                    for i in range(2, readLength + 2, 1):
-                        au8WriteData[i] = worksheet['E' + str(i)].value
-                    
-                    for offset in range(0, readLength, 4):
-                        au8WritePacakge = au8WriteData[offset:offset + 4]
-                        au8Payload = [address, 0xFF & offset, 4, 0].extend(au8WritePacakge)
-                        index = self.PeakCan.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Read"], au8Payload)   
-                        pageContent.extend(self.PeakCan.getReadMessageData(index)[4:])
+                    iByteIndex = 0
+                    for i in range(2, 256 + 2, 1):
+                        if None != worksheet['A' + str(i)].value:
+                            au8ElementData = self.au8excelValueToByteArray(worksheet, i)
+                            self.PeakCan.Logger.Info("au8ElementData: " + payload2Hex(au8ElementData))
+                            for j in range(0, len(au8ElementData), 1):
+                                au8WriteData[iByteIndex + j] = au8ElementData[j] 
+                            iLength = int(worksheet['C' + str(i)].value)
+                            iByteIndex += iLength
+                        else:
+                            break
+                    iWriteLength = self.iExcelSheetPageLength(worksheet)  
+                    if 0 != iWriteLength%4:
+                        iWriteLength+=iWriteLength%4
+                    au8WriteData = au8WriteData[0:iWriteLength] 
+                    self.PeakCan.Logger.Info("Write Content: " + payload2Hex(au8WriteData))
+                    self.PeakCan.Logger.Info("Write Length: " + str(len(au8WriteData)))
+                    for offset in range(0, iWriteLength, 4):
+                        au8WritePackage = au8WriteData[offset:offset + 4]
+                        au8Payload = [address, 0xFF & offset, 4, 0]
+                        au8Payload.extend(au8WritePackage)
+                        self.PeakCan.cmdSend(iReceiver, MyToolItBlock["Eeprom"], MyToolItEeprom["Write"], au8Payload, log = True)   
             try:
-                workbook.save(self.sSheetFile) 
+                workbook.close(self.sSheetFile) 
             except:
-                pass#maybe its currently opened somewhere
+                pass  # maybe its currently opened somewhere
     
     def atXmlSetup(self):           
         asSetups = {}

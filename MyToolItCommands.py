@@ -541,11 +541,13 @@ def iMessage2Value(m):
     return iValue
 
 
-def array2Value(array, length):
-    word = 0
-    for i in range(0, length):
-        valueShifted = array[i] << (8*(length-i-1))
-        word |= valueShifted
+def au8Value2Array(iValue, iLength):
+    au8Array = [0]*iLength
+    for i in range(0, iLength, 1):
+        iShiftBits = 8*(i)
+        u8Value = (iValue>>iShiftBits)
+        au8Array[i] = 0xff&u8Value
+    return au8Array
 
 
 def messageValueGet(m):

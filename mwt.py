@@ -13,11 +13,14 @@ class mwt(myToolItWatch):
 
     def __init__(self):
         myToolItWatch.__init__(self)
+        self.process = None
         self.bTerminal = False
         self.vNetworkNumberSet(None)
         
         
     def close(self):
+        if None != self.process:
+            self.process.terminate()
         self.vCloseSaveStoreLastConfig()
         self.vTerminalTeardown()            
         myToolItWatch.close(self) 
@@ -267,14 +270,26 @@ class mwt(myToolItWatch):
             pageNumber += 1  
 
     def vTerminalEepromRead(self, iReceiver):
+        self.stdscr.addstr("Read ...\n")
+        self.stdscr.refresh()
         pageNames = self.atExcelSheetNames()
         for pageName in pageNames:
             self.excelSheetRead(pageName, iReceiver)
 
-    def vTerminalEepromWrite(self):
+    def vTerminalEepromWrite(self, iReceiver):
+        self.stdscr.addstr("Write ...\n")
+        self.stdscr.refresh()
         pageNames = self.atExcelSheetNames()
         for pageName in pageNames:
-            self.excelSheetWrite(pageName)           
+            self.excelSheetWrite(pageName, iReceiver)           
+    
+    def tTerminalEepromCreateOpenExcelSheet(self):
+        if None != self.sSheetFile and "STU" == self.sProduct and None != self.sConfig:
+            try:                       
+                self.atExcelSheetNames()
+            except:                    
+                self.excelSheetCreate()
+    
         
     def tTerminalEepromKeyEvaluation(self):
         keyPress = self.stdscr.getch()
@@ -284,6 +299,7 @@ class mwt(myToolItWatch):
             bRun = False
         elif ord('x') == keyPress:
             self.vTerminalEepromChange()
+            self.tTerminalEepromCreateOpenExcelSheet()
         elif ord('l') == keyPress:
             atList = self.atTerminalXmlProductVersionList()
             self.vTerminalXmlProductVersionChange(atList)
@@ -292,7 +308,8 @@ class mwt(myToolItWatch):
                 sNetworkNumber = self.sTerminalInputStringIn()
                 self.vNetworkNumberSet(self.sProduct+sNetworkNumber) 
             else:
-                self.vNetworkNumberSet(None)               
+                self.vNetworkNumberSet(None) 
+            self.tTerminalEepromCreateOpenExcelSheet()              
         elif ord('e') == keyPress:
             bRun = False
             bContinue = True
@@ -302,20 +319,23 @@ class mwt(myToolItWatch):
         elif ord('R') == keyPress:
             if False != os.path.isfile(self.sSheetFile):
                 iReceiver = MyToolItNetworkNr[self.sNetworkNumber]
+                if None != self.process:
+                    self.process.terminate()
                 self.vTerminalEepromRead(iReceiver)
-                try:
-                    process = subprocess.Popen(['excel', self.sSheetFile], stdout = subprocess.PIPE )
-                except:
-                    pass
+                self.process = subprocess.Popen(['excel', self.sSheetFile], stdout = subprocess.PIPE )
         elif ord('W') == keyPress:
             if False != os.path.isfile(self.sSheetFile):
-                pass
+                iReceiver = MyToolItNetworkNr[self.sNetworkNumber]
+                self.vTerminalEepromWrite(iReceiver)
+
+            
         return [bRun, bContinue]
             
     def bTerminalEeprom(self):
         bRun = True
         bContinue = False
         
+        self.tTerminalEepromCreateOpenExcelSheet()                    
         while False != bRun:
             self.stdscr.clear()
             self.stdscr.addstr("Device: " + str(self.sProduct) + "\n")
@@ -325,20 +345,10 @@ class mwt(myToolItWatch):
             self.stdscr.addstr("e: Escape this menu\n")
             self.stdscr.addstr("l: List devices and versions (an change current device/product)\n")
             self.stdscr.addstr("x: Chance Excel Sheet Name(.xlsx)\n")          
-            if None != self.sSheetFile and "STU" == self.sProduct and None != self.sConfig:
-                try:                       
-                    pageNames = self.atExcelSheetNames()
-                    pageNumber = 1
-                    for pageName in pageNames:
-                        self.stdscr.addstr(str(pageNumber) + ": Read Page " + str(pageName) + "\n")
-                        pageNumber += 1  
-                    self.stdscr.addstr("R: Read all from EEPROM to sheet\n")
-                    self.stdscr.addstr("W: Write all from Sheet to EEPROM\n")
-                except:                    
-                    self.excelSheetCreate()
-                    
+            if None != self.sSheetFile and "STU" == self.sProduct and None != self.sConfig:                     
+                self.stdscr.addstr("R: Read all from EEPROM to sheet\n")
+                self.stdscr.addstr("W: Write all from Sheet to EEPROM\n")                    
                 self.stdscr.refresh()
-
             [bRun, bContinue] = self.tTerminalEepromKeyEvaluation()
         return bContinue
         

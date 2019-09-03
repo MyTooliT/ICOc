@@ -53,7 +53,7 @@ class TestSth(unittest.TestCase):
         self.bError = False
         self.fileName = log_location + self._testMethodName + ".txt"
         self.fileNameError = log_location + "Error_" + self._testMethodName + ".txt"
-        self.PeakCan = PeakCanFd.PeakCanFd(PeakCanFd.PCAN_BAUD_1M, self.fileName, self.fileNameError, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], AdcPrescalerReset, AdcAcquisitionTimeReset, AdcAcquisitionOverSamplingRateReset)
+        self.PeakCan = PeakCanFd.PeakCanFd(PeakCanFd.PCAN_BAUD_1M, self.fileName, self.fileNameError, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], AdcPrescalerReset, AdcAcquisitionTimeReset, AdcAcquisitionOverSamplingRateReset, FreshLog=True)
         self.PeakCan.Logger.Info("TestCase: " + str(self._testMethodName))
         self.PeakCan.CanTimeStampStart(self._resetStu()["CanTime"]) #This will also reset to STH
         self.PeakCan.Logger.Info("Connect to STH")

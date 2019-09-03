@@ -57,12 +57,12 @@ def sArray2String(Name):
             
 class Logger():
 
-    def __init__(self, fileName, fileNameError):
+    def __init__(self, fileName, fileNameError, FreshLog=False):
         self.ErrorFlag = False
         self.startTime = int(round(time() * 1000))
         self.file = None
         self.fileName = None
-        self.vRename(fileName, fileNameError)
+        self.vRename(fileName, fileNameError,FreshLog=FreshLog)
         
     def __exit__(self):
         try:
@@ -103,7 +103,7 @@ class Logger():
         self.file.write("\n")
         self.file.flush()
         
-    def vRename(self, fileName, fileNameError):
+    def vRename(self, fileName, fileNameError, FreshLog=False):
         if None != self.file:
             self.vClose()
         if not os.path.exists(os.path.dirname(fileName)) and os.path.isdir(fileName):
@@ -112,7 +112,10 @@ class Logger():
             os.rename(self.fileName, fileName)
         self.fileName = fileName
         self.fileNameError = fileNameError
-        self.file = open(fileName, "a", encoding='utf-8')
+        if False != FreshLog:
+            self.file = open(fileName, "w", encoding='utf-8')
+        else:
+            self.file = open(fileName, "a", encoding='utf-8')
         
     def vDel(self):
         self.vClose()
@@ -130,11 +133,11 @@ class Logger():
         
 class PeakCanFd(object):
 
-    def __init__(self, baudrate, testMethodName, testMethodNameError, sender, receiver, prescaler=2, acquisition=8, oversampling=64):
+    def __init__(self, baudrate, testMethodName, testMethodNameError, sender, receiver, prescaler=2, acquisition=8, oversampling=64, FreshLog=False):
         self.bConnected = False
         self.sender = sender
         self.receiver = receiver
-        self.Logger = Logger(testMethodName, testMethodNameError)
+        self.Logger = Logger(testMethodName, testMethodNameError, FreshLog=FreshLog)
         self.Logger.Info(str(sDateClock()))
         self.startTime = int(round(time() * 1000))
         self.m_objPCANBasic = PCANBasic()
