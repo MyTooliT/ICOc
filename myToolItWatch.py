@@ -571,7 +571,7 @@ class myToolItWatch():
         if False == self.KeyBoadInterrupt:
             try:
                 self.Can.ReadThreadReset()
-                self.Can.cmdReset(MyToolItNetworkNr["STU1"])
+                #self.Can.cmdReset(MyToolItNetworkNr["STU1"])
             except KeyboardInterrupt:
                 self.KeyBoadInterrupt = True
 
@@ -1084,6 +1084,7 @@ class myToolItWatch():
                     value = str(iMessage2Value(value))
                 else:                    
                     value = payload2Hex(value)
+                value = str(value)
                 worksheet['E' + str(i)] = str(value)
                 iTotalLength += iLength
                 i += 1
@@ -1156,8 +1157,8 @@ class myToolItWatch():
             elif "unsigned" == worksheet['G' + str(iIndex)].value:
                 byteArray = au8Value2Array(int(value), iLength)       
             else:
-                if 0 == value:
-                    value = ""
+                if "0" == value or 0 == value:
+                    value = "[0x0]"
                 value = value[1:-1].split(',')
                 for i in range(0, len(value)):
                     byteArray[i] = int(value[i], 16)
