@@ -1106,7 +1106,8 @@ class myToolItWatch():
     Read EEPROM page to write values in Excel Sheet
     """    
 
-    def excelSheetRead(self, namePage, iReceiver):
+    def sExcelSheetRead(self, namePage, iReceiver):
+        sError = None
         self.Can.Logger.Info("Read EEPROM Page " + str(namePage) + " from " + MyToolItNetworkName[iReceiver])
         workbook = openpyxl.load_workbook(self.sSheetFile)
         if workbook:
@@ -1127,7 +1128,14 @@ class myToolItWatch():
                     pageContent = pageContent[0:readLength]
                     self.Can.Logger.Info("Read Data: " + payload2Hex(pageContent))
                     self.iExcelSheetPageValue(worksheet, pageContent)
-            workbook.save(self.sSheetFile)  
+            try:
+                workbook.save(self.sSheetFile) 
+            except Exception as e: 
+                sError = "Could not save file(Opened by another application?): " + str(e)
+                self.Can.Logger.Info(sError)
+                print(sError)
+        return sError
+                 
      
     def au8excelValueToByteArray(self, worksheet, iIndex):
         iLength = int(worksheet['C' + str(iIndex)].value)
@@ -1160,7 +1168,8 @@ class myToolItWatch():
     Read Excel Sheet to write values to EEPROM
     """    
 
-    def excelSheetWrite(self, namePage, iReceiver):
+    def sExcelSheetWrite(self, namePage, iReceiver):
+        sError = None
         self.Can.Logger.Info("Write Excel Page " + str(namePage) + " to " + MyToolItNetworkName[iReceiver])
         workbook = openpyxl.load_workbook(self.sSheetFile)
         if workbook:
@@ -1196,8 +1205,11 @@ class myToolItWatch():
                         self.Can.cmdSend(iReceiver, MyToolItBlock["Eeprom"], MyToolItEeprom["Write"], au8Payload, log = False)   
             try:
                 workbook.close(self.sSheetFile) 
-            except:
-                pass  # maybe its currently opened somewhere
+            except Exception as e: 
+                sError = "Could not close file: " + str(e)
+                self.Can.Logger.Info(sError)
+                print(sError)
+        return sError
     
     def atXmlSetup(self):           
         asSetups = {}

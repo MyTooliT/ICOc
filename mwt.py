@@ -259,29 +259,37 @@ class mwt(myToolItWatch):
         sFileName = self.sTerminalInputStringIn()
         sFileName += ".xlsx"
         self.vSheetFileSet(sFileName)
-        
-    def vTerminalEepromPageRead(self, iDigit, receiver):
-        iPageNumber = self.iTerminalInputNumberIn(iDigit)
-        pageNames = self.atExcelSheetNames()
-        pageNumber = 1
-        for pageName in pageNames:
-            if pageNumber == iPageNumber:
-                self.excelSheetRead(pageName, receiver)
-            pageNumber += 1  
 
-    def vTerminalEepromRead(self, iReceiver):
+    def bTerminalEepromRead(self, iReceiver):
         self.stdscr.addstr("Read ...\n")
         self.stdscr.refresh()
         pageNames = self.atExcelSheetNames()
+        sError = None
         for pageName in pageNames:
-            self.excelSheetRead(pageName, iReceiver)
-
-    def vTerminalEepromWrite(self, iReceiver):
+            sError = self.sExcelSheetRead(pageName, iReceiver)
+            if None != sError:
+                break
+            
+        if None != sError:
+            self.stdscr.addstr(sError +"@ page: " + str(pageName) + "\n")
+            self.stdscr.refresh()
+            sleep(3)
+        return None == sError
+            
+    def bTerminalEepromWrite(self, iReceiver):
         self.stdscr.addstr("Write ...\n")
         self.stdscr.refresh()
+        sError = None
         pageNames = self.atExcelSheetNames()
         for pageName in pageNames:
-            self.excelSheetWrite(pageName, iReceiver)           
+            sError = self.sExcelSheetWrite(pageName, iReceiver)  
+            if None != sError:
+                break      
+        if None != sError:
+            self.stdscr.addstr(sError +"@ page: " + str(pageName) + "\n")
+            self.stdscr.refresh()
+            sleep(3)   
+        return None == sError
     
     def tTerminalEepromCreateOpenExcelSheet(self):
         if None != self.sSheetFile and "STU" == self.sProduct and None != self.sConfig:
@@ -313,20 +321,17 @@ class mwt(myToolItWatch):
         elif ord('e') == keyPress:
             bRun = False
             bContinue = True
-        elif ord('0') < keyPress and ord('9') > keyPress:
-            iReceiver = MyToolItNetworkNr[self.sNetworkNumber]
-            self.vTerminalEepromPageRead(ord(keyPress), iReceiver)
         elif ord('R') == keyPress:
             if False != os.path.isfile(self.sSheetFile):
                 iReceiver = MyToolItNetworkNr[self.sNetworkNumber]
                 if None != self.process:
                     self.process.terminate()
-                self.vTerminalEepromRead(iReceiver)
-                self.process = subprocess.Popen(['excel', self.sSheetFile], stdout = subprocess.PIPE )
+                if False != self.bTerminalEepromRead(iReceiver):
+                    self.process = subprocess.Popen(['excel', self.sSheetFile], stdout = subprocess.PIPE )
         elif ord('W') == keyPress:
             if False != os.path.isfile(self.sSheetFile):
                 iReceiver = MyToolItNetworkNr[self.sNetworkNumber]
-                self.vTerminalEepromWrite(iReceiver)
+                self.bTerminalEepromWrite(iReceiver)
 
             
         return [bRun, bContinue]
