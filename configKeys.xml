@@ -219,7 +219,7 @@
                                     <value>0</value>
                                     <unit />
                                     <format>unsigned</format>
-                                    <description>Hardware Revision Number - Major</description>
+                                    <description>Hardware Revision Number - Reserved</description>
                                     </entry>
                                     <entry name="Hardware Revision - Major">
                                     <subAddress>13</subAddress>
@@ -255,7 +255,7 @@
                                     <value>2</value>
                                     <unit />
                                     <format>unsigned</format>
-                                    <description>Firmware Version Number - Major(1Byte)</description>
+                                    <description>Firmware Version Number - Reserved</description>
                                     </entry>
                                     <entry name="Firmware Version Number - Major">
                                     <subAddress>21</subAddress>
@@ -264,7 +264,7 @@
                                     <value>2</value>
                                     <unit />
                                     <format>unsigned</format>
-                                    <description>Firmware Version Number - Major(1Byte)</description>
+                                    <description>Firmware Version Number - Major</description>
                                     </entry>
                                     <entry name="Firmware Version Number - Minor">
                                     <subAddress>22</subAddress>
@@ -273,7 +273,7 @@
                                     <value>1</value>
                                     <unit />
                                     <format>unsigned</format>
-                                    <description>Firmware Version Number - Minor(1Byte)</description>
+                                    <description>Firmware Version Number - Minor</description>
                                     </entry>
                                     <entry name="Firmware Version Number - Build">
                                     <subAddress>23</subAddress>
@@ -282,7 +282,7 @@
                                     <value>1</value>
                                     <unit />
                                     <format>unsigned</format>
-                                    <description>Firmware Version Number - Minor(1Byte)</description>
+                                    <description>Firmware Version Number - Build</description>
                                     </entry>
                                     <entry name="Release Name">
                                     <subAddress>24</subAddress>
@@ -332,7 +332,7 @@
                                     <value>0</value>
                                     <unit />
                                     <format>unsigned</format>
-                                    <description>Power On Cycles since first reset</description>
+                                    <description>Power On Cycles since first reset(Note that a reset also counts as power on)</description>
                                     </entry>
                                     <entry name="Power Off Cylces">
                                     <subAddress>4</subAddress>
@@ -670,7 +670,7 @@
                                     <value>0</value>
                                     <unit />
                                     <format>unsigned</format>
-                                    <description>Power On Cycles since first reset</description>
+                                    <description>Power On Cycles since first reset(Note that a resets also counts as power on)</description>
                                     </entry>
                                     <entry name="Power Off Cylces">
                                     <subAddress>4</subAddress>
