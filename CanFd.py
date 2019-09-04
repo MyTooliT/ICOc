@@ -365,7 +365,7 @@ class CanFd(object):
             print("No (bError) Ack Received: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + str(CanMsg.DATA))
         return "Error"  
       
-    def WriteFrameWaitAck(self, CanMsg, waitMs=1000, currentIndex=None, printLog=False, assumedPayload=None, bError=False, sendTime=None, notAckIdleWaitTimeMs=0.01):
+    def WriteFrameWaitAck(self, CanMsg, waitMs=1000, currentIndex=None, printLog=False, assumedPayload=None, bError=False, sendTime=None, notAckIdleWaitTimeMs=0.001):
         if 200 > waitMs:
             self.__exitError()  
         if None == sendTime:
@@ -405,7 +405,7 @@ class CanFd(object):
                     sleep(notAckIdleWaitTimeMs)
         return [returnMessage, currentIndex]
     
-    def WriteFrameWaitAckRetries(self, CanMsg, retries=10, waitMs=1000, printLog=False, bErrorAck=False, assumedPayload=None, bErrorExit=True, notAckIdleWaitTimeMs=0.01):  
+    def WriteFrameWaitAckRetries(self, CanMsg, retries=10, waitMs=1000, printLog=False, bErrorAck=False, assumedPayload=None, bErrorExit=True, notAckIdleWaitTimeMs=0.001):  
         try:
             retries += 1
             currentIndex = self.GetReadArrayIndex() - 1
@@ -446,6 +446,26 @@ class CanFd(object):
             self.Logger.Info("Assumed receive message number: " + str(index))
         #sleep(0.2)  # synch to read thread TODO: Really kick it out?
         return index 
+    
+    """
+    Send cmd and return Ack 
+    """
+    def cmdSendData(self, receiver, blockCmd, subCmd, payload, log=True, retries=10, bErrorAck=False, printLog=False, bErrorExit=True):
+        cmd = self.CanCmd(blockCmd, subCmd, 1, 0)
+        message = self.CanMessage20(cmd, self.sender, receiver, payload)
+        index = self.GetReadArrayIndex()
+        msgAck = self.WriteFrameWaitAckRetries(message, retries=retries, waitMs=1000, bErrorAck=bErrorAck, printLog=printLog, bErrorExit=bErrorExit)
+        if msgAck != "Error" and False == bErrorExit:
+            self.__exitError()
+        if False != log:
+            canCmd = self.CanCmd(blockCmd, subCmd, 1, 0)
+            if "Error" != msgAck:
+                self.Logger.Info(MyToolItNetworkName[self.sender] + "->" + MyToolItNetworkName[receiver] + "(CanTimeStamp: " + str(msgAck["CanTime"] - self.PeakCanTimeStampStart) + "ms): " + self.strCmdNrToCmdName(canCmd) + " - " + payload2Hex(payload))
+            else:
+                self.Logger.Info(MyToolItNetworkName[self.sender] + "->" + MyToolItNetworkName[receiver] + ": " + self.strCmdNrToCmdName(canCmd) + " - " + "Error")
+            self.Logger.Info("Assumed receive message number: " + str(index))
+        #sleep(0.2)  # synch to read thread TODO: Really kick it out?
+        return msgAck 
 
     def cmdReset(self, receiver, retries=5, log=True):
         if False != log:
@@ -783,20 +803,8 @@ class CanFd(object):
         messageIdFilter = self.CanCmd(MyToolItBlock["StatisticalData"], subCmd, 0, bErrorAck != False)
         messageIdFilter = self.CanMessage20Id(messageIdFilter, receiver, self.sender)
         messageIdFilter = hex(messageIdFilter)
-        indexAssumed = self.cmdSend(receiver, MyToolItBlock["StatisticalData"], subCmd, [], log=log, retries=retries, bErrorAck=bErrorAck, printLog=printLog)
-        indexRun = indexAssumed
-        indexEnd = self.GetReadArrayIndex()
-        returnAck = []
-        while indexRun < indexEnd:
-            if messageIdFilter == self.getReadMessageId(indexRun):
-                returnAck = self.getReadMessageData(indexRun)
-                break
-            indexRun += indexRun
-        if indexRun != indexAssumed:
-            self.Logger.Warning("Statistical Data Index Miss (Assumed/Truly): " + str(indexAssumed) + "/" + str(indexRun))
-        if indexRun == indexEnd:
-            self.Logger.bError("Statistical Data Fail Request")
-        return returnAck
+        msgAck = self.cmdSendData(receiver, MyToolItBlock["StatisticalData"], subCmd, [], log=log, retries=retries, bErrorAck=bErrorAck, printLog=printLog)
+        return msgAck["Payload"]
 
     def statusWord0(self, receiver, payload=[]):
         cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["StatusWord0"], 1, 0)

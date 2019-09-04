@@ -1124,7 +1124,6 @@ class myToolItWatch():
                         payload = [address, 0xFF & offset, 4, 0, 0, 0, 0, 0]
                         index = self.Can.cmdSend(iReceiver, MyToolItBlock["Eeprom"], MyToolItEeprom["Read"], payload, log=False)   
                         readBackFrame = self.Can.getReadMessageData(index)[4:]
-                        self.Can.Logger.Info("Read Back Frame: " + str(readBackFrame))
                         pageContent.extend(readBackFrame)
                     pageContent = pageContent[0:readLength]
                     self.Can.Logger.Info("Read Data: " + payload2Hex(pageContent))
