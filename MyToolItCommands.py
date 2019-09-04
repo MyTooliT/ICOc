@@ -545,6 +545,7 @@ def au8ChangeEndianOrder(m):
     au8InverseEndian = [0]*iLength
     for i in range(0, len(m)):
         au8InverseEndian[i] = m[iLength-i-1]
+    return au8InverseEndian
         
 def au8Value2Array(iValue, iLength):
     au8Array = [0]*iLength

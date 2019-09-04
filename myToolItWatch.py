@@ -1103,12 +1103,15 @@ class myToolItWatch():
                     value = str(iMessage2Value(value))
                 elif "float" == worksheet['G' + str(i)].value:
                     if None != value:
-                        value = au8ChangeEndianOrder(value)
-                        value = bytearray(value)
-                        value = struct.unpack('<f', value)[0]
+                        pass
+                        #value = au8ChangeEndianOrder(value)
                     else: 
                         value = 0.0
+                    self.Can.Logger.Info("Value from EEPROM: " + str(value))
+                    value = bytearray(value)
+                    value = struct.unpack('f', value)[0]
                     value = str(value)
+                    self.Can.Logger.Info("Value as float: " + str(value))
                 else:                    
                     value = payload2Hex(value)
                 value = str(value)
@@ -1197,7 +1200,14 @@ class myToolItWatch():
             elif "unsigned" == worksheet['G' + str(iIndex)].value:
                 byteArray = au8Value2Array(int(value), iLength)   
             elif "float" == worksheet['G' + str(iIndex)].value:
-                byteArray = au8Value2Array(int(float(value)), iLength)
+                value = float(value)
+                self.Can.Logger.Info("Float Value: " + str(value))
+                value = struct.pack('f', value)
+                self.Can.Logger.Info("Packed Value: " + str(value))
+                value = int.from_bytes(value, byteorder='little')
+                self.Can.Logger.Info("Int Value: " + str(value))
+                byteArray = au8Value2Array(int(value), 4)   
+                self.Can.Logger.Info("byteArray: " + str(byteArray))
             else:
                 if "0" == value or 0 == value:
                     value = "[0x0]"
@@ -1227,7 +1237,6 @@ class myToolItWatch():
                     for i in range(2, 256 + 2, 1):
                         if None != worksheet['A' + str(i)].value:
                             au8ElementData = self.au8excelValueToByteArray(worksheet, i)
-                            self.Can.Logger.Info("au8ElementData: " + payload2Hex(au8ElementData))
                             for j in range(0, len(au8ElementData), 1):
                                 au8WriteData[iByteIndex + j] = au8ElementData[j] 
                             iLength = int(worksheet['C' + str(i)].value)
