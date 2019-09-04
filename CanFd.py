@@ -41,19 +41,6 @@ def rreplace(s, old, new):
 def sDateClock():
     DataClockTimeStamp = datetime.fromtimestamp(time()).strftime('%Y-%m-%d_%H:%M:%S')
     return DataClockTimeStamp
-
-
-def sArray2String(Name):
-    i = 0
-    while i < len(Name):
-        Name[i] = chr(Name[i])
-        i += 1
-    Name = ''.join(Name)
-    for character in range(0, ord(' ')):
-        Name = Name[0:8].replace(chr(character), '')
-    for character in range(128, 0xFF):
-        Name = Name[0:8].replace(chr(character), '')
-    return Name
             
 class Logger():
 

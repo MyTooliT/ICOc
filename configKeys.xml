@@ -2,9 +2,9 @@
 <ConfigKey>
     <lastRun>
         <LogName>WatchLog</LogName>
-        <Product>STU</Product>
-        <Version>v2.1.0</Version>
-        <NetworkNumber>STU1</NetworkNumber>
+        <Product>STH</Product>
+        <Version>v2.1.1</Version>
+        <NetworkNumber>STH1</NetworkNumber>
         <SheetFile>Watch</SheetFile>
     </lastRun>
     <Config>

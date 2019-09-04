@@ -19,6 +19,7 @@ import multiprocessing
 from Plotter import vPlotter, tArray2Binary
 import socket
 import array
+import struct
 
 HOST = 'localhost'  # The remote host
 PORT = 50007  # The same port as used by the server
@@ -571,7 +572,7 @@ class myToolItWatch():
         if False == self.KeyBoadInterrupt:
             try:
                 self.Can.ReadThreadReset()
-                #self.Can.cmdReset(MyToolItNetworkNr["STU1"])
+                self.Can.cmdReset(MyToolItNetworkNr["STU1"])
             except KeyboardInterrupt:
                 self.KeyBoadInterrupt = True
 
@@ -870,21 +871,60 @@ class myToolItWatch():
             if adjusted_width > worksheet.column_dimensions[columLetter].width or False == bSmaller:
                 worksheet.column_dimensions[columLetter].width = adjusted_width
 
-    """
-    Create Excel Sheet by xml definition - product
-    """ 
 
-    def excelSheetCreateVersion(self, version):        
+    """
+    Get Page Names from xml by product and versions as List - Version
+    """
+    def atProductPagesVersion(self, version):
+        atPageList = []
         if version.get('name') == self.sConfig:
+            for page in version.find('Page'):
+                tpageDict = {}
+                tpageDict["Name"] = str(page.get('name'))
+                tpageDict["Address"] = int(page.find('pageAddress').text)
+                tpageDict["Entry"] = page.find('Entry')
+                atPageList.append(tpageDict)
+        return atPageList
+    """
+    Get Page Names from xml by product and versions as List - Product
+    """
+    def atProductPagesProduct(self, product):
+        atPageList = []
+        if None != self.sConfig:
+            for version in product.find('Version'):
+                if version.get('name') == self.sConfig:
+                    atPageList = self.atProductPagesVersion(version)
+                    break
+        return atPageList
+                    
+    """
+    Get Page Names from xml by product and versions as List
+    """
+    def atProductPages(self):
+        atPageList = []
+        if None != self.sProduct:
+            dataDef = self.root.find('Data')
+            for product in dataDef.find('Product'):
+                if product.get('name') == self.sProduct:
+                    atPageList = self.atProductPagesProduct(product)
+                    break
+        return atPageList
+       
+
+    """
+    Create Excel Sheet by xml definition
+    """
+    def excelSheetCreate(self):
+        atProductPages = self.atProductPages()
+        if 0 < len(atProductPages):
             workbook = openpyxl.Workbook()
             FontRow1 = Font(bold=True, size=20)
             FontRowRow2 = Font(bold=False, size=12)
             workbook.remove_sheet(workbook.get_sheet_by_name('Sheet'))
-            
-            for page in version.find('Page'):
+            for page in atProductPages:
                 i = 2
-                name = page.get('name')
-                pageAddress = int(page.find('pageAddress').text)
+                name = page["Name"]
+                pageAddress = page["Address"]
                 worksheet = workbook.create_sheet(name + "@" + hex(pageAddress))
                 worksheet['A1'] = 'Name'
                 worksheet['A1'].font = FontRow1
@@ -903,7 +943,7 @@ class myToolItWatch():
                 worksheet['H1'] = 'Description'
                 worksheet['H1'].font = FontRow1
                 self.excelCellWidthAdjust(worksheet, 1.6, False)
-                for entry in page.find('Entry'):
+                for entry in page["Entry"]:
                     worksheet['A' + str(i)] = entry.get('name')
                     worksheet['A' + str(i)].font = FontRowRow2
                     worksheet['B' + str(i)] = int(entry.find('subAddress').text)
@@ -925,31 +965,8 @@ class myToolItWatch():
                     worksheet['H' + str(i)].font = FontRowRow2
                     i += 1
                 self.excelCellWidthAdjust(worksheet)
-            workbook.save(self.sSheetFile)       
-             
-    """
-    Create Excel Sheet by xml definition - product
-    """ 
-
-    def excelSheetCreateProduct(self, product):
-        if None != self.sConfig:
-            for version in product.find('Version'):
-                if version.get('name') == self.sConfig:
-                    self.excelSheetCreateVersion(version)
-                    break
-                       
-    """
-    Create Excel Sheet by xml definition
-    """
-
-    def excelSheetCreate(self):
-        if None != self.sProduct:
-            dataDef = self.root.find('Data')
-            for product in dataDef.find('Product'):
-                if product.get('name') == self.sProduct:
-                    self.excelSheetCreateProduct(product)
-                    break
-    
+            workbook.save(self.sSheetFile)
+       
     def _excelSheetEntryFind(self, entry, key, value):
         if None != value:
             entry.find(key).text = str(value)
@@ -1080,8 +1097,18 @@ class myToolItWatch():
                     except Exception as e:
                         self.Can.Logger.Info(str(e))
                         value = ""
+                elif "ASCII" == worksheet['G' + str(i)].value:
+                    value = sArray2String(value)
                 elif "unsigned" == worksheet['G' + str(i)].value:
                     value = str(iMessage2Value(value))
+                elif "float" == worksheet['G' + str(i)].value:
+                    if None != value:
+                        value = au8ChangeEndianOrder(value)
+                        value = bytearray(value)
+                        value = struct.unpack('<f', value)[0]
+                    else: 
+                        value = 0.0
+                    value = str(value)
                 else:                    
                     value = payload2Hex(value)
                 value = str(value)
@@ -1094,13 +1121,16 @@ class myToolItWatch():
     
     def atExcelSheetNames(self):
         workSheetNames = []
-        workbook = openpyxl.load_workbook(self.sSheetFile)
-        if workbook:
-            for worksheetName in workbook.sheetnames:
-                name = str(worksheetName).split('@')
-                _address = name[1]
-                name = name[0]
-                workSheetNames.append(name)
+        try:
+            workbook = openpyxl.load_workbook(self.sSheetFile)
+            if workbook:
+                for worksheetName in workbook.sheetnames:
+                    name = str(worksheetName).split('@')
+                    _address = name[1]
+                    name = name[0]
+                    workSheetNames.append(name)
+        except:
+            pass
         return workSheetNames
     
     """
@@ -1153,15 +1183,27 @@ class myToolItWatch():
                     iCopyLength = iLength
                 for i in range(0, iCopyLength):
                     byteArray[i] = value[i]
+            elif "ASCII" == worksheet['G' + str(iIndex)].value:
+                try:
+                    value = str(value).encode('ascii')
+                except Exception as e: 
+                    self.Can.Logger.Info(str(e))
+                    value = [0] * iLength
+                iCopyLength = len(value)
+                if iLength < iCopyLength:
+                    iCopyLength = iLength
+                for i in range(0, iCopyLength):
+                    byteArray[i] = value[i]                
             elif "unsigned" == worksheet['G' + str(iIndex)].value:
-                byteArray = au8Value2Array(int(value), iLength)       
+                byteArray = au8Value2Array(int(value), iLength)   
+            elif "float" == worksheet['G' + str(iIndex)].value:
+                byteArray = au8Value2Array(int(float(value)), iLength)
             else:
                 if "0" == value or 0 == value:
                     value = "[0x0]"
                 value = value[1:-1].split(',')
                 for i in range(0, len(value)):
                     byteArray[i] = int(value[i], 16)
-        self.Can.Logger.Info("Byte Array: " + str(byteArray)) 
         return byteArray
     
     """

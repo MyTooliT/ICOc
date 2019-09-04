@@ -540,7 +540,12 @@ def iMessage2Value(m):
         iValue |= ((0xFF & m[i]) << (i*8)) 
     return iValue
 
-
+def au8ChangeEndianOrder(m):
+    iLength = len(m)
+    au8InverseEndian = [0]*iLength
+    for i in range(0, len(m)):
+        au8InverseEndian[i] = m[iLength-i-1]
+        
 def au8Value2Array(iValue, iLength):
     au8Array = [0]*iLength
     for i in range(0, iLength, 1):
@@ -578,3 +583,15 @@ def AsciiStringWordLittleEndian(ByteArray):
     for byte in range(len(ByteArray)):
         value += (ByteArray[byte] << (8 * (len(ByteArray) - byte - 1)))
     return value
+
+
+def sArray2String(Name):
+    for i in range(0, len(Name)):
+        Name[i] = chr(Name[i])
+        i += 1
+    Name = ''.join(Name)
+    for character in range(0, ord(' ')):
+        Name = Name[0:8].replace(chr(character), '')
+    for character in range(128, 0xFF):
+        Name = Name[0:8].replace(chr(character), '')
+    return Name
