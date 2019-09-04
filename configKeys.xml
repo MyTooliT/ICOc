@@ -5,7 +5,7 @@
         <Product>STU</Product>
         <Version>v2.1.0</Version>
         <NetworkNumber>STU1</NetworkNumber>
-        <SheetFile>Watch.xlsx</SheetFile>
+        <SheetFile>Watch</SheetFile>
     </lastRun>
     <Config>
         <config name="X">
@@ -150,7 +150,7 @@
                                     <readOnly>True</readOnly>
                                     <value>0xAC</value>
                                     <unit />
-                                    <format></format>
+                                    <format />
                                     <description>Determines Initialised EERPOM iff 0xAC or locked EEPROM iff 0xCA</description>
                                     </entry>
                                     <entry name="Radio Name">
