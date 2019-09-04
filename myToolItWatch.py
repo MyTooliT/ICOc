@@ -1201,13 +1201,9 @@ class myToolItWatch():
                 byteArray = au8Value2Array(int(value), iLength)   
             elif "float" == worksheet['G' + str(iIndex)].value:
                 value = float(value)
-                self.Can.Logger.Info("Float Value: " + str(value))
                 value = struct.pack('f', value)
-                self.Can.Logger.Info("Packed Value: " + str(value))
                 value = int.from_bytes(value, byteorder='little')
-                self.Can.Logger.Info("Int Value: " + str(value))
                 byteArray = au8Value2Array(int(value), 4)   
-                self.Can.Logger.Info("byteArray: " + str(byteArray))
             else:
                 if "0" == value or 0 == value:
                     value = "[0x0]"
@@ -1248,7 +1244,6 @@ class myToolItWatch():
                         iWriteLength+=iWriteLength%4
                     au8WriteData = au8WriteData[0:iWriteLength] 
                     self.Can.Logger.Info("Write Content: " + payload2Hex(au8WriteData))
-                    self.Can.Logger.Info("Write Length: " + str(len(au8WriteData)))
                     for offset in range(0, iWriteLength, 4):
                         au8WritePackage = au8WriteData[offset:offset + 4]
                         au8Payload = [address, 0xFF & offset, 4, 0]
