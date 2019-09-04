@@ -40,6 +40,8 @@ class mwt(myToolItWatch):
             self.vNetworkNumberSet(str(lastRun.find('NetworkNumber').text))
             sFileName = str(lastRun.find('SheetFile').text) + ".xlsx"
             self.vSheetFileSet(sFileName) 
+            self.bSampleSetupSet(str(lastRun.find('Setup').text)) 
+            
                       
     def vCloseSaveStoreLastConfig(self):
         lastRun = self.tree.find('lastRun')
@@ -54,6 +56,7 @@ class mwt(myToolItWatch):
         else:
             sSheetFile = self.sSheetFile
         lastRun.find('SheetFile').text = str(sSheetFile)
+        lastRun.find('Setup').text = self.sSetupConfig
         self.xmlSave()
                         
     # setter methods
@@ -165,7 +168,7 @@ class mwt(myToolItWatch):
         sHwRev = self.Can.sProductData("HardwareRevision")  
         sSwVersion = self.Can.sProductData("FirmwareVersion")  
         sReleaseName = self.Can.sProductData("ReleaseName")  
-        self.stdscr.addstr("Global Trad Identifcation Number (GTIN): " + sGtin + "\n")
+        self.stdscr.addstr("Global Trade Identifcation Number (GTIN): " + sGtin + "\n")
         self.stdscr.addstr("Hardware Revision(Major.Minor.Build): " + sHwRev + "\n")
         self.stdscr.addstr("Firmware Version(Major.Minor.Build): " + sSwVersion + "\n")
         self.stdscr.addstr("Firmware Release Name: " + sReleaseName + "\n")
@@ -251,8 +254,9 @@ class mwt(myToolItWatch):
     def vTerminalEepromChange(self):
         self.stdscr.addstr("Please enter Excel File name for new Excel Sheet(.xlsx will be added): ")
         sFileName = self.sTerminalInputStringIn()
-        sFileName += ".xlsx"
-        self.vSheetFileSet(sFileName)
+        if "" != sFileName:
+            sFileName += ".xlsx"
+            self.vSheetFileSet(sFileName)
 
     def bTerminalEepromRead(self, iReceiver):
         self.stdscr.addstr("Read ...\n")
@@ -300,10 +304,10 @@ class mwt(myToolItWatch):
                 else:
                     bMatch = False
                 if False == bMatch:
-                    self.excelSheetCreate()
+                    self.vExcelSheetCreate()
             except:  
                 try:                  
-                    self.excelSheetCreate()               
+                    self.vExcelSheetCreate()               
                     atExcelName = self.atExcelSheetNames()
                 except:
                     self.stdscr.addstr("Please close opened Excel File. Can create fresh one(different device)\n")                    
@@ -685,11 +689,21 @@ class mwt(myToolItWatch):
         elif ord('S') == keyPress:   
             self.vTerminalXmlSetupModify()
         elif ord('W') == keyPress:   
+            if None != self.process:
+                self.process.terminate() 
             self.excelProductVersion2XmlProductVersion()
         elif ord('x') == keyPress:
             self.vTerminalEepromChange()
         elif ord('X') == keyPress:
-            self.excelSheetCreate()
+            try:        
+                if None != self.process:
+                    self.process.terminate()          
+                self.vExcelSheetCreate()               
+                self.process = subprocess.Popen(['excel', self.sSheetFile], stdout=subprocess.PIPE)
+            except:
+                self.stdscr.addstr("Please close opened Excel File. Can create fresh one(different device)\n")                    
+                self.stdscr.refresh()
+                sleep(5)
         return [bRun, bContinue]
       
     def bTerminalXml(self):
@@ -707,7 +721,8 @@ class mwt(myToolItWatch):
             self.stdscr.addstr("L: List Setups (an change current device/product)\n")
             self.stdscr.addstr("r: Remove Version\n")
             self.stdscr.addstr("R: Remove Setup\n")
-            self.stdscr.addstr("S: Modify current selected predefined setup\n") 
+            if None != self.sSetupConfig:
+                self.stdscr.addstr("S: Modify current selected predefined setup\n") 
             self.stdscr.addstr("W: Write Excel Sheet to Product-Version(Create new entries)\n")
             self.stdscr.addstr("x: Chance Excel Sheet Name(.xlsx)\n") 
             self.stdscr.addstr("X: Write XML Config to Excel Sheet\n")

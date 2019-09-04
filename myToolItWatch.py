@@ -914,7 +914,7 @@ class myToolItWatch():
     """
     Create Excel Sheet by xml definition
     """
-    def excelSheetCreate(self):
+    def vExcelSheetCreate(self):
         atProductPages = self.atProductPages()
         if 0 < len(atProductPages):
             workbook = openpyxl.Workbook()
@@ -965,7 +965,7 @@ class myToolItWatch():
                     worksheet['H' + str(i)].font = FontRowRow2
                     i += 1
                 self.excelCellWidthAdjust(worksheet)
-            workbook.save(self.sSheetFile)
+            workbook.save(self.sSheetFile) 
        
     def _excelSheetEntryFind(self, entry, key, value):
         if None != value:
