@@ -150,7 +150,7 @@
                                     <readOnly>True</readOnly>
                                     <value>0xAC</value>
                                     <unit />
-                                    <format>ASCII</format>
+                                    <format></format>
                                     <description>Determines Initialised EERPOM iff 0xAC or locked EEPROM(0xCA)</description>
                                     </entry>
                                     <entry name="Radio Name">
@@ -159,7 +159,7 @@
                                     <readOnly>False</readOnly>
                                     <value>0</value>
                                     <unit />
-                                    <format>UTF8</format>
+                                    <format>ASCII</format>
                                     <description>Defines Bluetooth advertisement name</description>
                                     </entry>
                                     <entry name="Sleep Time 1">
