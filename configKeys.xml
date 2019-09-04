@@ -191,7 +191,7 @@
                                     </entry>
                                     <entry name="Advertisement Time 2">
                                     <subAddress>19</subAddress>
-                                    <length>19</length>
+                                    <length>2</length>
                                     <readOnly>False</readOnly>
                                     <value>1600</value>
                                     <unit>ms</unit>
