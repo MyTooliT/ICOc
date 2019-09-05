@@ -3,8 +3,8 @@
     <lastRun>
         <LogName>WatchLog</LogName>
         <Product>STU</Product>
-        <Version>v2.1.0</Version>
-        <NetworkNumber />
+        <Version>v2.1.2</Version>
+        <NetworkNumber>STU1</NetworkNumber>
         <SheetFile>Watch</SheetFile>
         <Setup>X</Setup>
     </lastRun>
