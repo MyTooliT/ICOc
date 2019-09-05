@@ -4,7 +4,7 @@
         <LogName>WatchLog</LogName>
         <Product>STU</Product>
         <Version>v2.1.2</Version>
-        <NetworkNumber>STH1</NetworkNumber>
+        <NetworkNumber>STU1</NetworkNumber>
         <SheetFile>Watch</SheetFile>
         <Setup>X</Setup>
     </lastRun>
@@ -673,7 +673,7 @@
                                     <subAddress>23</subAddress>
                                     <length>1</length>
                                     <readOnly>True</readOnly>
-                                    <value>1</value>
+                                    <value>3</value>
                                     <unit />
                                     <format>unsigned</format>
                                     <description>Firmware Version Number - Build</description>
@@ -1178,7 +1178,7 @@
                                     <subAddress>23</subAddress>
                                     <length>1</length>
                                     <readOnly>True</readOnly>
-                                    <value>1</value>
+                                    <value>2</value>
                                     <unit />
                                     <format>unsigned</format>
                                     <description>Firmware Version Number - Build</description>
