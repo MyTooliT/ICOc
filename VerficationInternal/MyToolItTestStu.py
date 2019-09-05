@@ -14,7 +14,7 @@ from MyToolItNetworkNumbers import MyToolItNetworkNr
 from MyToolItCommands import *
 from random import randint
 import time
-from MyToolItStu import Version, StuErrorWord
+from MyToolItStu import TestConfig, StuErrorWord
 log_file = 'TestStu.txt'
 log_location = '../../Logs/STU/'
         
@@ -662,6 +662,16 @@ class TestStu(unittest.TestCase):
         self.Can.Logger.Info("Watchdog Counter at start: " + str(WDogCounter1))
         self.Can.Logger.Info("Watchdog Counter after reset: " + str(WDogCounter2))
         self.assertEqual(WDogCounter1, WDogCounter2)
+
+    """
+    Check ProductionDate
+    """   
+
+    def test0703ProductionDate(self):
+        sProductionDate = self.Can.statisticalData(MyToolItNetworkNr["STU1"], MyToolItStatData["ProductionDate"])  
+        sProductionDate = sArray2String(sProductionDate)
+        self.Can.Logger.Info("Production Date: "+ sProductionDate)
+        self.assertEqual(TestConfig["ProductionDate"], sProductionDate)
 
 
     """

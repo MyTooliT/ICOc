@@ -3615,7 +3615,17 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("Watchdog Counter after second reset: " + str(WDogCounter3))
         self.assertEqual(WDogCounter1, WDogCounter2)
         self.assertEqual(WDogCounter1, WDogCounter3)
+        
+    """
+    Check ProductionDate
+    """   
 
+    def test0703ProductionDate(self):
+        sProductionDate = self.Can.statisticalData(MyToolItNetworkNr["STH1"], MyToolItStatData["ProductionDate"])  
+        sProductionDate = sArray2String(sProductionDate)
+        self.Can.Logger.Info("Production Date: "+ sProductionDate)
+        self.assertEqual(TestConfig["ProductionDate"], sProductionDate)
+        
     """
     Check EEPROM Read/Write
     """   

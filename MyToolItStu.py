@@ -9,7 +9,10 @@ Version = {
     "Name" : "Valerie",
 }
 
-
+TestConfig = {
+    "DevName" : "Valerie",
+    "ProductionDate" : "20190905",
+    }
 
 class StuErrorWordFlags(ctypes.LittleEndianStructure):
     _fields_ = [
