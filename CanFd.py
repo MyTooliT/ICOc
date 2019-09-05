@@ -1203,11 +1203,11 @@ class CanFd(object):
         elif "HardwareRevision" == name:
             index = self.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["ProductData"], MyToolItProductData["HardwareRevision"], [])
             tHwRev = self.getReadMessageData(index)
-            sReturn = str(tHwRev[2]) + "." + str(tHwRev[1]) + "." + str(tHwRev[0]) 
+            sReturn = str(tHwRev[5]) + "." + str(tHwRev[6]) + "." + str(tHwRev[7]) 
         elif "FirmwareVersion" == name:
             index = self.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["ProductData"], MyToolItProductData["FirmwareVersion"], [])
             tFirmwareVersion = self.getReadMessageData(index)
-            sReturn = str(tFirmwareVersion[2]) + "." + str(tFirmwareVersion[1]) + "." + str(tFirmwareVersion[0])         
+            sReturn = str(tFirmwareVersion[5]) + "." + str(tFirmwareVersion[6]) + "." + str(tFirmwareVersion[7])         
         elif "ReleaseName" == name:
             index = self.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["ProductData"], MyToolItProductData["ReleaseName"], [])
             aiName = self.getReadMessageData(index)
