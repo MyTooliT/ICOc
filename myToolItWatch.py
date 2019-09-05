@@ -600,7 +600,7 @@ class myToolItWatch():
     def BlueToothConnectName(self):
         if False == self.KeyBoadInterrupt:
             try:
-                self.Can.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], self.sDevName, log=False)
+                self.Can.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], self.sDevName, log = False)
             except KeyboardInterrupt:
                 self.KeyBoadInterrupt = True
                 self.__exit__()
@@ -841,18 +841,18 @@ class myToolItWatch():
 
     def atXmlProductVersion(self):
         dataDef = self.root.find('Data')               
-        asProducts = {}
+        atProducts = {}
         iProduct = 1
         for product in dataDef.find('Product'):
-            asProducts[iProduct] = {}
-            asProducts[iProduct]["Product"] = product
-            asProducts[iProduct]["Versions"] = {}            
+            atProducts[iProduct] = {}
+            atProducts[iProduct]["Product"] = product
+            atProducts[iProduct]["Versions"] = {}            
             iVersion = 1
             for version in product.find('Version'):
-                asProducts[iProduct]["Versions"][iVersion] = version
+                atProducts[iProduct]["Versions"][iVersion] = version
                 iVersion += 1      
             iProduct += 1          
-        return asProducts    
+        return atProducts    
     
     def excelCellWidthAdjust(self, worksheet, factor=1.2, bSmaller=True):
         for col in worksheet.columns:
@@ -871,23 +871,25 @@ class myToolItWatch():
             if adjusted_width > worksheet.column_dimensions[columLetter].width or False == bSmaller:
                 worksheet.column_dimensions[columLetter].width = adjusted_width
 
-
     """
     Get Page Names from xml by product and versions as List - Version
     """
+
     def atProductPagesVersion(self, version):
         atPageList = []
         if version.get('name') == self.sConfig:
             for page in version.find('Page'):
-                tpageDict = {}
-                tpageDict["Name"] = str(page.get('name'))
-                tpageDict["Address"] = int(page.find('pageAddress').text)
-                tpageDict["Entry"] = page.find('Entry')
-                atPageList.append(tpageDict)
+                tPageDict = {}
+                tPageDict["Name"] = str(page.get('name'))
+                tPageDict["Address"] = int(page.find('pageAddress').text)
+                tPageDict["Entry"] = page.find('Entry')
+                atPageList.append(tPageDict)
         return atPageList
+
     """
     Get Page Names from xml by product and versions as List - Product
     """
+
     def atProductPagesProduct(self, product):
         atPageList = []
         if None != self.sConfig:
@@ -900,6 +902,7 @@ class myToolItWatch():
     """
     Get Page Names from xml by product and versions as List
     """
+
     def atProductPages(self):
         atPageList = []
         if None != self.sProduct:
@@ -909,11 +912,11 @@ class myToolItWatch():
                     atPageList = self.atProductPagesProduct(product)
                     break
         return atPageList
-       
 
     """
     Create Excel Sheet by xml definition
     """
+
     def vExcelSheetCreate(self):
         atProductPages = self.atProductPages()
         if 0 < len(atProductPages):
@@ -1016,53 +1019,106 @@ class myToolItWatch():
             print(product.get('name') + ":")
             for version in product.find('Version'):
                 print("   " + version.get('name'))
+    
+    """
+    Write xml entry by Excel Sheet entry
+    """
+    def _vExcelProductVersion2XmlProductVersionEntry(self, tEntryXml, tWorkSheet, iEntryExcel):
+        sExcelEntryName = str(tWorkSheet['A' + str(iEntryExcel)].value)
+        if None != sExcelEntryName:
+            tEntryXml.set('name', sExcelEntryName)
+        else:
+            tEntryXml.set('name', "")
+        self._excelSheetEntryFind(tEntryXml, 'subAddress', tWorkSheet['B' + str(iEntryExcel)].value)
+        self._excelSheetEntryFind(tEntryXml, 'length', tWorkSheet['C' + str(iEntryExcel)].value)
+        self._excelSheetEntryFind(tEntryXml, 'readOnly', tWorkSheet['D' + str(iEntryExcel)].value)
+        self._excelSheetEntryFind(tEntryXml, 'value', tWorkSheet['E' + str(iEntryExcel)].value)
+        self._excelSheetEntryFind(tEntryXml, 'unit', tWorkSheet['F' + str(iEntryExcel)].value)
+        self._excelSheetEntryFind(tEntryXml, 'format', tWorkSheet['G' + str(iEntryExcel)].value)
+        self._excelSheetEntryFind(tEntryXml, 'description', tWorkSheet['H' + str(iEntryExcel)].value)  
         
+    """
+    Create xml entry by Excel Sheet entry
+    """
+    def _tExcelProductVersion2XmlProductVersionEntryNew(self, atEntries):
+            tEntry = self.tXmlChildNew(atEntries, 'entry')
+            self.tXmlChildNew(tEntry, 'subAddress')
+            self.tXmlChildNew(tEntry, 'length')
+            self.tXmlChildNew(tEntry, 'readOnly')
+            self.tXmlChildNew(tEntry, 'value')
+            self.tXmlChildNew(tEntry, 'unit')
+            self.tXmlChildNew(tEntry, 'format')
+            self.tXmlChildNew(tEntry, 'description')             
+            return tEntry
+        
+    """
+    Write xml definiton by Excel Sheet - Excel Entries
+    """
+
+    def _iExcelProductVersion2XmlProductVersionPageExcel(self, tWorkSheet, iExcelRow, atXmlEntries):
+        iEntryChild = 0
+        while None != tWorkSheet['A' + str(iExcelRow)].value:
+            if iEntryChild < len(atXmlEntries):
+                tEntry = atXmlEntries[iEntryChild]   
+            else:                
+                tEntry = self._tExcelProductVersion2XmlProductVersionEntryNew(atXmlEntries)
+            self._vExcelProductVersion2XmlProductVersionEntry(tEntry, tWorkSheet, iExcelRow)
+            iEntryChild+=1
+            iExcelRow+=1
+        #Remove Delete entries
+        while iEntryChild < len(atXmlEntries):
+            atXmlEntries.remove(atXmlEntries[iEntryChild])  
+            iEntryChild+=1
+        return iExcelRow
+            
+    """
+    Write xml definiton by Excel Sheet
+    """
+#Production Date    16    4    True    20190905    date    ASCII    Production Date (EEPROM Production Write) in the format yyyymmdd (year month day)
+
+    def vExcelProductVersion2XmlProductVersionPage(self, tWorkbook, atProductPages):
+        for tWorksheetName in tWorkbook.sheetnames:
+            name = str(tWorksheetName).split('@')
+            address = name[1]
+            name = name[0]
+            bXmlPageFound = False
+            for tPageDict in atProductPages:
+                iExcelRow = 2
+                pageName = tPageDict["Name"]
+                pageAddress = hex(tPageDict["Address"])
+                if name == pageName and pageAddress == address:
+                    bXmlPageFound = True
+                    tWorkSheet = tWorkbook.get_sheet_by_name(tWorksheetName)
+                    iExcelRow = self._iExcelProductVersion2XmlProductVersionPageExcel(tWorkSheet, iExcelRow, tPageDict["Entry"])
+                    break
+            if False == bXmlPageFound:
+                pass
+
     """
     Write xml definiton by Excel Sheet
     """
 
-    def excelProductVersion2XmlProductVersion(self):
+    def vExcelProductVersion2XmlProductVersion(self):
         if None != self.sProduct and None != self.sConfig and None != self.sSheetFile:
-            dataDef = self.root.find('Data')
-            for product in dataDef.find('Product'):
-                if product.get('name') == self.sProduct:
-                    break
-            for version in product.find('Version'):
-                if version.get('name') == self.sConfig:
-                    break
-            workbook = openpyxl.load_workbook(self.sSheetFile)
-            if workbook:
-                if version.get('name') != self.sConfig:
-                    self.newXmlVersion(product, product.find('Version')[0], self.sConfig)
-                    self.xmlSave()
-                    self.excelProductVersion2XmlProductVersion()
+            tWorkbook = openpyxl.load_workbook(self.sSheetFile)
+            if tWorkbook:
+                atProductPages = self.atProductPages()
+                if 0 < len(atProductPages):
+                    self.vExcelProductVersion2XmlProductVersionPage(tWorkbook, atProductPages)
                 else:
-                    for worksheetName in workbook.sheetnames:
-                        name = str(worksheetName).split('@')
-                        address = name[1]
-                        name = name[0]
-                        for page in version.find('Page'):
-                            i = 2
-                            pageName = page.get('name')
-                            pageAddress = hex(int(page.find('pageAddress').text))
-                            if name == pageName and pageAddress == address:
-                                worksheet = workbook.get_sheet_by_name(worksheetName)
-                                for entry in page.find('Entry'):
-                                    value = str(worksheet['A' + str(i)].value)
-                                    if None != value:
-                                        entry.set('name', value)
-                                    else:
-                                        entry.set('name', "")
-                                    self._excelSheetEntryFind(entry, 'subAddress', worksheet['B' + str(i)].value)
-                                    self._excelSheetEntryFind(entry, 'length', worksheet['C' + str(i)].value)
-                                    self._excelSheetEntryFind(entry, 'readOnly', worksheet['D' + str(i)].value)
-                                    self._excelSheetEntryFind(entry, 'value', worksheet['E' + str(i)].value)
-                                    self._excelSheetEntryFind(entry, 'unit', worksheet['F' + str(i)].value)
-                                    self._excelSheetEntryFind(entry, 'format', worksheet['G' + str(i)].value)
-                                    self._excelSheetEntryFind(entry, 'description', worksheet['H' + str(i)].value)
-                                    i += 1
-                    self.xmlSave()
-    
+                    for tProduct in self.root.find('Data').find('Product'):
+                        if tProduct.get('name') == self.sProduct:
+                            for tVersion in tProduct.find('Version'):
+                                if tVersion.get('name') == self.sConfig:
+                                    self.newXmlVersion(tProduct, tVersion, self.sConfig)
+                                    self.xmlSave()
+                                    self.vExcelProductVersion2XmlProductVersion() 
+                self.xmlSave()
+       
+
+
+                    
+                    
     def iExcelSheetPageLength(self, worksheet):
         totalLength = 0
         for i in range(2, 256 + 2):
@@ -1072,7 +1128,6 @@ class myToolItWatch():
             else:
                 break
         return totalLength 
-          
 
     def vUnicodeIllegalRemove(self, value, character):
         while(True):
@@ -1104,7 +1159,7 @@ class myToolItWatch():
                 elif "float" == worksheet['G' + str(i)].value:
                     if None != value:
                         pass
-                        #value = au8ChangeEndianOrder(value)
+                        # value = au8ChangeEndianOrder(value)
                     else: 
                         value = 0.0
                     self.Can.Logger.Info("Value from EEPROM: " + str(value))
@@ -1168,7 +1223,6 @@ class myToolItWatch():
                 self.Can.Logger.Info(sError)
                 print(sError)
         return sError
-                 
      
     def au8excelValueToByteArray(self, worksheet, iIndex):
         iLength = int(worksheet['C' + str(iIndex)].value)
@@ -1240,15 +1294,15 @@ class myToolItWatch():
                         else:
                             break
                     iWriteLength = self.iExcelSheetPageLength(worksheet)  
-                    if 0 != iWriteLength%4:
-                        iWriteLength+=iWriteLength%4
+                    if 0 != iWriteLength % 4:
+                        iWriteLength += iWriteLength % 4
                     au8WriteData = au8WriteData[0:iWriteLength] 
                     self.Can.Logger.Info("Write Content: " + payload2Hex(au8WriteData))
                     for offset in range(0, iWriteLength, 4):
                         au8WritePackage = au8WriteData[offset:offset + 4]
                         au8Payload = [address, 0xFF & offset, 4, 0]
                         au8Payload.extend(au8WritePackage)
-                        self.Can.cmdSend(iReceiver, MyToolItBlock["Eeprom"], MyToolItEeprom["Write"], au8Payload, log = False)   
+                        self.Can.cmdSend(iReceiver, MyToolItBlock["Eeprom"], MyToolItEeprom["Write"], au8Payload, log=False)   
             try:
                 workbook.close() 
             except Exception as e: 
@@ -1318,6 +1372,10 @@ class myToolItWatch():
         self.xmlSave()
         self.bSampleSetupSet(sConfig)
 
+    def tXmlChildNew(self, tParrent, sName):
+        new = ET.SubElement(tParrent, sName)
+        return new
+        
     def xmlPrintSetups(self):
         for setup in self.tree.find('Config'):
             print(setup.get('name'))

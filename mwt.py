@@ -691,11 +691,15 @@ class mwt(myToolItWatch):
         elif ord('W') == keyPress:   
             if None != self.process:
                 self.process.terminate() 
-            self.excelProductVersion2XmlProductVersion()
+            self.stdscr.addstr("Write...\n")
+            self.stdscr.refresh()
+            self.vExcelProductVersion2XmlProductVersion()
         elif ord('x') == keyPress:
             self.vTerminalEepromChange()
         elif ord('X') == keyPress:
             try:        
+                self.stdscr.addstr("Create...\n")
+                self.stdscr.refresh()
                 if None != self.process:
                     self.process.terminate()          
                 self.vExcelSheetCreate()               
@@ -723,7 +727,7 @@ class mwt(myToolItWatch):
             self.stdscr.addstr("R: Remove Setup\n")
             if None != self.sSetupConfig:
                 self.stdscr.addstr("S: Modify current selected predefined setup\n") 
-            self.stdscr.addstr("W: Write Excel Sheet to Product-Version(Create new entries)\n")
+            self.stdscr.addstr("W: Write Excel Sheet to Product-Version\n")
             self.stdscr.addstr("x: Chance Excel Sheet Name(.xlsx)\n") 
             self.stdscr.addstr("X: Write XML Config to Excel Sheet\n")
             self.stdscr.refresh()
