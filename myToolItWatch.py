@@ -1079,12 +1079,12 @@ class myToolItWatch():
     """
     Write existing xml definiton by Excel Sheet - Excel Entries
     """
-    def _bExcelProductVersion2XmlProductVersionPageExist(self, tWorkSheet, atProductPages, name, address):
+    def _bExcelProductVersion2XmlProductVersionPageExist(self, tWorkSheet, atProductPages, sName, sAddress):
         bFound = False
         for tPageDict in atProductPages:
-            pageName = tPageDict["Name"]
-            pageAddress = hex(tPageDict["Address"])
-            if name == pageName and pageAddress == address:
+            sXmlName = tPageDict["Name"]
+            sXmlAddress = hex(tPageDict["Address"])
+            if sName == sXmlName and sXmlAddress == sAddress:
                 self._vExcelProductVersion2XmlProductVersionPageEntries(tWorkSheet, tPageDict["Entry"])
                 bFound = True
                 break
@@ -1117,14 +1117,14 @@ class myToolItWatch():
     def vExcelProductVersion2XmlProductVersionPage(self, tWorkbook):
         atProductPages = self.atProductPages()
         for tWorksheetName in tWorkbook.sheetnames:
-            name = str(tWorksheetName).split('@')
-            name = name[0]
-            address = name[1]            
+            sName = str(tWorksheetName).split('@')
+            sAddress = sName[1] 
+            sName = sName[0]
             tWorkSheet = tWorkbook.get_sheet_by_name(tWorksheetName)
-            if False == self._bExcelProductVersion2XmlProductVersionPageExist(tWorkSheet, atProductPages, name, address):
-                self._vExcelProductVersion2XmlProductVersionPageNew(str(name), str(address))
+            if False == self._bExcelProductVersion2XmlProductVersionPageExist(tWorkSheet, atProductPages, sName, sAddress):
+                self._vExcelProductVersion2XmlProductVersionPageNew(sName, sAddress)
                 atProductPages = self.atProductPages()
-                if False == self._bExcelProductVersion2XmlProductVersionPageExist(tWorkSheet, atProductPages, name, address):
+                if False == self._bExcelProductVersion2XmlProductVersionPageExist(tWorkSheet, atProductPages, sName, sAddress):
                     break
     
     
@@ -1138,7 +1138,9 @@ class myToolItWatch():
                 if product.get('name') == self.sProduct:
                     for version in product.find('Version'):
                         if version.get('name') == self.sConfig:
-                            version.find('Page').remove(sName)
+                            for page in version.find('Page'):
+                                if page.get('name') == sName:
+                                    version.find('Page').remove(page)
                             return
                         
                         
@@ -1149,18 +1151,18 @@ class myToolItWatch():
         atProductPages = self.atProductPages()#Reload to have up2Date Copy
         for i in range(0, len(atProductPages)):
             tPageDict = atProductPages[i]
-            pageName = tPageDict["Name"]
-            pageAddress = hex(tPageDict["Address"])
+            sXmlName = tPageDict["Name"]
+            sXmlAddress = hex(tPageDict["Address"])
             bFound = False
             for tWorksheetName in tWorkbook.sheetnames:
-                name = str(tWorksheetName).split('@')
-                name = name[0]
-                address = name[1]            
-                if name == pageName and pageAddress == address:
+                sName = str(tWorksheetName).split('@')
+                sAddress = sName[1]
+                sName = sName[0]
+                if sName == sXmlName and sXmlAddress == sAddress:
                     bFound = True
                     break     
             if False == bFound:
-                self._vExcelProductVersion2XmlProductVersionXmlPageRemoveAction(str(name))
+                self._vExcelProductVersion2XmlProductVersionXmlPageRemoveAction(sXmlName)
                     
     """
     Write xml definiton by Excel Sheet and do checks
@@ -1180,7 +1182,7 @@ class myToolItWatch():
                                     self.xmlSave()
                                     self.vExcelProductVersion2XmlProductVersion() 
                 #Remove Deleted Pages
-                self._vExcelProductVersion2XmlProductVersionXmlPageRemove()
+                self._vExcelProductVersion2XmlProductVersionXmlPageRemove(tWorkbook)
                 self.xmlSave()
        
 
@@ -1251,10 +1253,10 @@ class myToolItWatch():
             workbook = openpyxl.load_workbook(self.sSheetFile)
             if workbook:
                 for worksheetName in workbook.sheetnames:
-                    name = str(worksheetName).split('@')
-                    _address = name[1]
-                    name = name[0]
-                    workSheetNames.append(name)
+                    sName = str(worksheetName).split('@')
+                    _sAddress = sName[1]
+                    sName = sName[0]
+                    workSheetNames.append(sName)
         except:
             pass
         return workSheetNames
