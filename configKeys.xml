@@ -371,7 +371,7 @@
                                     <subAddress>0</subAddress>
                                     <length>4</length>
                                     <readOnly>False</readOnly>
-                                    <value>0.0</value>
+                                    <value>1.0</value>
                                     <unit />
                                     <format>float</format>
                                     <description>Calibration Factor K for Acceleration X -&gt; y=kx+d</description>
@@ -389,7 +389,7 @@
                                     <subAddress>8</subAddress>
                                     <length>4</length>
                                     <readOnly>False</readOnly>
-                                    <value>0.0</value>
+                                    <value>1.0</value>
                                     <unit />
                                     <format>float</format>
                                     <description>Calibration Factor K for Acceleration Y -&gt; y=kx+d</description>
@@ -407,7 +407,7 @@
                                     <subAddress>16</subAddress>
                                     <length>4</length>
                                     <readOnly>False</readOnly>
-                                    <value>0.0</value>
+                                    <value>1.0</value>
                                     <unit />
                                     <format>float</format>
                                     <description>Calibration Factor K for Acceleration Z -&gt; y=kx+d</description>
@@ -425,7 +425,7 @@
                                     <subAddress>24</subAddress>
                                     <length>4</length>
                                     <readOnly>False</readOnly>
-                                    <value>0.0</value>
+                                    <value>1.0</value>
                                     <unit />
                                     <format>float</format>
                                     <description>Calibration Factor K for Battery Voltage -&gt; y=kx+d</description>
@@ -443,7 +443,7 @@
                                     <subAddress>32</subAddress>
                                     <length>4</length>
                                     <readOnly>False</readOnly>
-                                    <value>0.0</value>
+                                    <value>1.0</value>
                                     <unit />
                                     <format>float</format>
                                     <description>Calibration Factor K for Voltage Y -&gt; y=kx+d</description>
@@ -461,7 +461,7 @@
                                     <subAddress>40</subAddress>
                                     <length>4</length>
                                     <readOnly>False</readOnly>
-                                    <value>0.0</value>
+                                    <value>1.0</value>
                                     <unit />
                                     <format>float</format>
                                     <description>Calibration Factor K for Voltage Z -&gt; y=kx+d</description>
@@ -479,7 +479,7 @@
                                     <subAddress>48</subAddress>
                                     <length>4</length>
                                     <readOnly>False</readOnly>
-                                    <value>0.0</value>
+                                    <value>1.0</value>
                                     <unit />
                                     <format>float</format>
                                     <description>Calibration Factor K for Internal Temperature -&gt; y=kx+d</description>
@@ -497,7 +497,7 @@
                                     <subAddress>56</subAddress>
                                     <length>4</length>
                                     <readOnly>False</readOnly>
-                                    <value>0.0</value>
+                                    <value>1.0</value>
                                     <unit />
                                     <format>float</format>
                                     <description>Calibration Factor K for Temperature Y -&gt; y=kx+d</description>
@@ -515,7 +515,7 @@
                                     <subAddress>66</subAddress>
                                     <length>4</length>
                                     <readOnly>False</readOnly>
-                                    <value>0.0</value>
+                                    <value>1.0</value>
                                     <unit />
                                     <format>float</format>
                                     <description>Calibration Factor K for Temperature Z -&gt; y=kx+d</description>
