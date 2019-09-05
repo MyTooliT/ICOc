@@ -913,6 +913,27 @@ class myToolItWatch():
                     break
         return atPageList
 
+    def tExcelWorkSheetCreate(self, workbook, name, pageAddress):
+        tWorkSheet = workbook.create_sheet(name + "@" + hex(pageAddress))
+        tFontRow = Font(bold=True, size=20)
+        tWorkSheet['A1'] = 'Name'
+        tWorkSheet['A1'].font = tFontRow
+        tWorkSheet['B1'] = 'Address'
+        tWorkSheet['B1'].font = tFontRow
+        tWorkSheet['C1'] = 'Length'
+        tWorkSheet['C1'].font = tFontRow
+        tWorkSheet['D1'] = 'Read Only'
+        tWorkSheet['D1'].font = tFontRow
+        tWorkSheet['E1'] = 'Value'
+        tWorkSheet['E1'].font = tFontRow
+        tWorkSheet['F1'] = 'Unit'
+        tWorkSheet['F1'].font = tFontRow
+        tWorkSheet['G1'] = 'Format'
+        tWorkSheet['G1'].font = tFontRow
+        tWorkSheet['H1'] = 'Description'
+        tWorkSheet['H1'].font = tFontRow
+        return tWorkSheet
+
     """
     Create Excel Sheet by xml definition
     """
@@ -921,53 +942,36 @@ class myToolItWatch():
         atProductPages = self.atProductPages()
         if 0 < len(atProductPages):
             workbook = openpyxl.Workbook()
-            FontRow1 = Font(bold=True, size=20)
-            FontRowRow2 = Font(bold=False, size=12)
+            tFontRowRow = Font(bold=False, size=12)
             workbook.remove_sheet(workbook.get_sheet_by_name('Sheet'))
             for page in atProductPages:
                 i = 2
                 name = page["Name"]
                 pageAddress = page["Address"]
-                worksheet = workbook.create_sheet(name + "@" + hex(pageAddress))
-                worksheet['A1'] = 'Name'
-                worksheet['A1'].font = FontRow1
-                worksheet['B1'] = 'Address'
-                worksheet['B1'].font = FontRow1
-                worksheet['C1'] = 'Length'
-                worksheet['C1'].font = FontRow1
-                worksheet['D1'] = 'Read Only'
-                worksheet['D1'].font = FontRow1
-                worksheet['E1'] = 'Value'
-                worksheet['E1'].font = FontRow1
-                worksheet['F1'] = 'Unit'
-                worksheet['F1'].font = FontRow1
-                worksheet['G1'] = 'Format'
-                worksheet['G1'].font = FontRow1
-                worksheet['H1'] = 'Description'
-                worksheet['H1'].font = FontRow1
-                self.excelCellWidthAdjust(worksheet, 1.6, False)
+                tWorkSheet = self.tExcelWorkSheetCreate(workbook, name, pageAddress)
+                self.excelCellWidthAdjust(tWorkSheet, 1.6, False)
                 for entry in page["Entry"]:
-                    worksheet['A' + str(i)] = entry.get('name')
-                    worksheet['A' + str(i)].font = FontRowRow2
-                    worksheet['B' + str(i)] = int(entry.find('subAddress').text)
-                    worksheet['B' + str(i)].font = FontRowRow2
-                    worksheet['C' + str(i)] = int(entry.find('length').text)
-                    worksheet['C' + str(i)].font = FontRowRow2
-                    worksheet['D' + str(i)] = entry.find('readOnly').text
-                    worksheet['D' + str(i)].font = FontRowRow2
+                    tWorkSheet['A' + str(i)] = entry.get('name')
+                    tWorkSheet['A' + str(i)].font = tFontRowRow
+                    tWorkSheet['B' + str(i)] = int(entry.find('subAddress').text)
+                    tWorkSheet['B' + str(i)].font = tFontRowRow
+                    tWorkSheet['C' + str(i)] = int(entry.find('length').text)
+                    tWorkSheet['C' + str(i)].font = tFontRowRow
+                    tWorkSheet['D' + str(i)] = entry.find('readOnly').text
+                    tWorkSheet['D' + str(i)].font = tFontRowRow
                     try:
-                        worksheet['E' + str(i)] = int(entry.find('value').text)
+                        tWorkSheet['E' + str(i)] = int(entry.find('value').text)
                     except ValueError:
-                        worksheet['E' + str(i)] = entry.find('value').text
-                    worksheet['E' + str(i)].font = FontRowRow2
-                    worksheet['F' + str(i)] = entry.find('unit').text
-                    worksheet['F' + str(i)].font = FontRowRow2
-                    worksheet['G' + str(i)] = entry.find('format').text
-                    worksheet['G' + str(i)].font = FontRowRow2
-                    worksheet['H' + str(i)] = entry.find('description').text
-                    worksheet['H' + str(i)].font = FontRowRow2
+                        tWorkSheet['E' + str(i)] = entry.find('value').text
+                    tWorkSheet['E' + str(i)].font = tFontRowRow
+                    tWorkSheet['F' + str(i)] = entry.find('unit').text
+                    tWorkSheet['F' + str(i)].font = tFontRowRow
+                    tWorkSheet['G' + str(i)] = entry.find('format').text
+                    tWorkSheet['G' + str(i)].font = tFontRowRow
+                    tWorkSheet['H' + str(i)] = entry.find('description').text
+                    tWorkSheet['H' + str(i)].font = tFontRowRow
                     i += 1
-                self.excelCellWidthAdjust(worksheet)
+                self.excelCellWidthAdjust(tWorkSheet)
             workbook.save(self.sSheetFile) 
        
     def _excelSheetEntryFind(self, entry, key, value):
@@ -987,7 +991,6 @@ class myToolItWatch():
     """
     Creats a new config
     """
-
     def newXmlVersion(self, product, productVersion, sVersion):
         cloneVersion = copy.deepcopy(productVersion)
         cloneVersion.set('name', sVersion) 
@@ -1051,12 +1054,15 @@ class myToolItWatch():
             self.tXmlChildNew(tEntry, 'description')             
             return tEntry
         
+                
+                       
     """
-    Write xml definiton by Excel Sheet - Excel Entries
+    Write xml definiton by Excel Sheet - Excel Page Entries
     """
 
-    def _iExcelProductVersion2XmlProductVersionPageExcel(self, tWorkSheet, iExcelRow, atXmlEntries):
+    def _vExcelProductVersion2XmlProductVersionPageEntries(self, tWorkSheet, atXmlEntries):
         iEntryChild = 0
+        iExcelRow = 2
         while None != tWorkSheet['A' + str(iExcelRow)].value:
             if iEntryChild < len(atXmlEntries):
                 tEntry = atXmlEntries[iEntryChild]   
@@ -1069,42 +1075,102 @@ class myToolItWatch():
         while iEntryChild < len(atXmlEntries):
             atXmlEntries.remove(atXmlEntries[iEntryChild])  
             iEntryChild+=1
-        return iExcelRow
-            
+
+    """
+    Write existing xml definiton by Excel Sheet - Excel Entries
+    """
+    def _bExcelProductVersion2XmlProductVersionPageExist(self, tWorkSheet, atProductPages, name, address):
+        bFound = False
+        for tPageDict in atProductPages:
+            pageName = tPageDict["Name"]
+            pageAddress = hex(tPageDict["Address"])
+            if name == pageName and pageAddress == address:
+                self._vExcelProductVersion2XmlProductVersionPageEntries(tWorkSheet, tPageDict["Entry"])
+                bFound = True
+                break
+        return bFound
+    
+    
+    """
+    Create xml page by Excel Work Sheet
+    """
+    def _vExcelProductVersion2XmlProductVersionPageNew(self, sName, sAddress):
+        if None != self.sProduct and None != self.sConfig:
+            dataDef = self.root.find('Data')
+            for product in dataDef.find('Product'):
+                if product.get('name') == self.sProduct:
+                    for version in product.find('Version'):
+                        if version.get('name') == self.sConfig:
+                            tPage = self.tXmlChildNew(version.find('Page'), 'page')
+                            tPage.set('name', sName)
+                            self.tXmlChildNew(tPage, 'Address')
+                            tPage.find('Address').text = sAddress
+                            self.tXmlChildNew(tPage, 'Entry')    
+                            return
+                    
+                    
     """
     Write xml definiton by Excel Sheet
     """
-#Production Date    16    4    True    20190905    date    ASCII    Production Date (EEPROM Production Write) in the format yyyymmdd (year month day)
+#Production Date    16    8    True    20190905    date    ASCII    Production Date (EEPROM Production Write) in the format yyyymmdd (year month day)
 
-    def vExcelProductVersion2XmlProductVersionPage(self, tWorkbook, atProductPages):
+    def vExcelProductVersion2XmlProductVersionPage(self, tWorkbook):
+        atProductPages = self.atProductPages()
         for tWorksheetName in tWorkbook.sheetnames:
             name = str(tWorksheetName).split('@')
-            address = name[1]
             name = name[0]
-            bXmlPageFound = False
-            for tPageDict in atProductPages:
-                iExcelRow = 2
-                pageName = tPageDict["Name"]
-                pageAddress = hex(tPageDict["Address"])
-                if name == pageName and pageAddress == address:
-                    bXmlPageFound = True
-                    tWorkSheet = tWorkbook.get_sheet_by_name(tWorksheetName)
-                    iExcelRow = self._iExcelProductVersion2XmlProductVersionPageExcel(tWorkSheet, iExcelRow, tPageDict["Entry"])
+            address = name[1]            
+            tWorkSheet = tWorkbook.get_sheet_by_name(tWorksheetName)
+            if False == self._bExcelProductVersion2XmlProductVersionPageExist(tWorkSheet, atProductPages, name, address):
+                self._vExcelProductVersion2XmlProductVersionPageNew(str(name), str(address))
+                atProductPages = self.atProductPages()
+                if False == self._bExcelProductVersion2XmlProductVersionPageExist(tWorkSheet, atProductPages, name, address):
                     break
-            if False == bXmlPageFound:
-                pass
-
+    
+    
     """
-    Write xml definiton by Excel Sheet
+    Create xml page by Excel Work Sheet
     """
-
+    def _vExcelProductVersion2XmlProductVersionXmlPageRemoveAction(self, sName):
+        if None != self.sProduct and None != self.sConfig:
+            dataDef = self.root.find('Data')
+            for product in dataDef.find('Product'):
+                if product.get('name') == self.sProduct:
+                    for version in product.find('Version'):
+                        if version.get('name') == self.sConfig:
+                            version.find('Page').remove(sName)
+                            return
+                        
+                        
+    """
+    Write xml definiton by Excel Sheet - Remove entries that are not part of an excel sheet
+    """
+    def _vExcelProductVersion2XmlProductVersionXmlPageRemove(self, tWorkbook):
+        atProductPages = self.atProductPages()#Reload to have up2Date Copy
+        for i in range(0, len(atProductPages)):
+            tPageDict = atProductPages[i]
+            pageName = tPageDict["Name"]
+            pageAddress = hex(tPageDict["Address"])
+            bFound = False
+            for tWorksheetName in tWorkbook.sheetnames:
+                name = str(tWorksheetName).split('@')
+                name = name[0]
+                address = name[1]            
+                if name == pageName and pageAddress == address:
+                    bFound = True
+                    break     
+            if False == bFound:
+                self._vExcelProductVersion2XmlProductVersionXmlPageRemoveAction(str(name))
+                    
+    """
+    Write xml definiton by Excel Sheet and do checks
+    """
     def vExcelProductVersion2XmlProductVersion(self):
         if None != self.sProduct and None != self.sConfig and None != self.sSheetFile:
             tWorkbook = openpyxl.load_workbook(self.sSheetFile)
             if tWorkbook:
-                atProductPages = self.atProductPages()
-                if 0 < len(atProductPages):
-                    self.vExcelProductVersion2XmlProductVersionPage(tWorkbook, atProductPages)
+                if 0 < len(self.atProductPages()):
+                    self.vExcelProductVersion2XmlProductVersionPage(tWorkbook)
                 else:
                     for tProduct in self.root.find('Data').find('Product'):
                         if tProduct.get('name') == self.sProduct:
@@ -1113,6 +1179,8 @@ class myToolItWatch():
                                     self.newXmlVersion(tProduct, tVersion, self.sConfig)
                                     self.xmlSave()
                                     self.vExcelProductVersion2XmlProductVersion() 
+                #Remove Deleted Pages
+                self._vExcelProductVersion2XmlProductVersionXmlPageRemove()
                 self.xmlSave()
        
 
