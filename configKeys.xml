@@ -2,8 +2,8 @@
 <ConfigKey>
     <lastRun>
         <LogName>WatchLog</LogName>
-        <Product>STU</Product>
-        <Version>v2.1.2</Version>
+        <Product>STH</Product>
+        <Version>v2.1.3</Version>
         <NetworkNumber>STU1</NetworkNumber>
         <SheetFile>Watch</SheetFile>
         <Setup>X</Setup>
@@ -542,7 +542,7 @@
                                     <subAddress>0</subAddress>
                                     <length>1</length>
                                     <readOnly>True</readOnly>
-                                    <value>0xAC</value>
+                                    <value>[0xAC]</value>
                                     <unit />
                                     <format />
                                     <description>Determines Initialised EERPOM iff 0xAC or locked EEPROM iff 0xCA</description>

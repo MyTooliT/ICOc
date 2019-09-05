@@ -346,7 +346,7 @@ class mwt(myToolItWatch):
                     self.vConnect()
                 if None != self.process:
                     self.process.terminate()
-                if False != self.Can.bConnected:
+                if False != self.Can.bConnected or MyToolItNetworkNr["STU1"] <= iReceiver:
                     if False != self.bTerminalEepromRead(iReceiver):
                         self.process = subprocess.Popen(['excel', self.sSheetFile], stdout=subprocess.PIPE)
         elif ord('W') == keyPress:
@@ -355,7 +355,7 @@ class mwt(myToolItWatch):
                 if MyToolItNetworkNr["STH1"] <= iReceiver and MyToolItNetworkNr["STH14"] >= iReceiver:
                     self.stdscr.clear()
                     self.vConnect()
-                if False != self.Can.bConnected:
+                if False != self.Can.bConnected or MyToolItNetworkNr["STU1"] <= iReceiver:
                     self.bTerminalEepromWrite(iReceiver)
         elif ord('x') == keyPress:
             self.vTerminalEepromChange()
