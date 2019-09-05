@@ -1112,8 +1112,6 @@ class myToolItWatch():
     """
     Write xml definiton by Excel Sheet
     """
-#Production Date    16    8    True    20190905    date    ASCII    Production Date (EEPROM Production Write) in the format yyyymmdd (year month day)
-
     def vExcelProductVersion2XmlProductVersionPage(self, tWorkbook):
         atProductPages = self.atProductPages()
         for tWorksheetName in tWorkbook.sheetnames:
