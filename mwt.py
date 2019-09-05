@@ -333,8 +333,9 @@ class mwt(myToolItWatch):
             self.vTerminalXmlProductVersionChange(atList)
             if None != self.sProduct and None != self.sConfig:
                 self.stdscr.addstr("Please enter Network Number(1-14): ")
-                sNetworkNumber = self.sTerminalInputStringIn()
-                self.vNetworkNumberSet(self.sProduct + sNetworkNumber) 
+                iNetworkNumber = self.iTerminalInputNumberIn()
+                if 0 < iNetworkNumber and 14 >= iNetworkNumber:
+                    self.vNetworkNumberSet(self.sProduct + str(iNetworkNumber)) 
             else:
                 self.vNetworkNumberSet(None) 
             self.tTerminalEepromCreateOpenExcelSheet()  

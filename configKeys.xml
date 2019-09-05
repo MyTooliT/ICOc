@@ -4,7 +4,7 @@
         <LogName>WatchLog</LogName>
         <Product>STU</Product>
         <Version>v2.1.0</Version>
-        <NetworkNumber>STU1</NetworkNumber>
+        <NetworkNumber />
         <SheetFile>Watch</SheetFile>
         <Setup>X</Setup>
     </lastRun>
