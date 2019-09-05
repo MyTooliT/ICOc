@@ -71,6 +71,7 @@ class mwt(myToolItWatch):
             self.sNetworkNumber = None
         
     def vTerminalHolderConnectCommandsAdcConfig(self):
+        self.stdscr.clear()
         self.stdscr.addstr("Prescaler(2-127): ")
         self.stdscr.refresh()
         iPrescaler = self.iTerminalInputNumberIn()
@@ -93,6 +94,7 @@ class mwt(myToolItWatch):
             pass
     
     def vTerminalHolderConnectCommandsRunTimeIntervalTime(self):
+        self.stdscr.clear()
         self.stdscr.addstr("Run Time(s): ")
         self.stdscr.refresh()            
         iRunTime = self.iTerminalInputNumberIn()   
@@ -110,6 +112,7 @@ class mwt(myToolItWatch):
         elif ord('a') == keyPress:
             self.vTerminalHolderConnectCommandsAdcConfig()
         elif ord('d') == keyPress:
+            self.stdscr.clear()
             self.stdscr.addstr("Display Time(s): ")
             self.stdscr.refresh()            
             iDisplayTime = self.iTerminalInputNumberIn()  
@@ -139,6 +142,7 @@ class mwt(myToolItWatch):
                 self.Can.bConnected = False
                 bContinue = True
         elif ord('p') == keyPress:
+            self.stdscr.clear()
             self.stdscr.addstr("New sample axis (xyz; 0=off, 1=on; e.g. 100): ")
             iPoints = self.iTerminalInputNumberIn() 
             bZ = bool(iPoints & 1)
@@ -148,6 +152,7 @@ class mwt(myToolItWatch):
         elif ord('r') == keyPress:
             self.vTerminalHolderConnectCommandsRunTimeIntervalTime()
         elif ord('s') == keyPress:
+            self.stdscr.clear()
             self.vDataAquisition()
             bRun = False
         elif ord('S') == keyPress: 
@@ -399,6 +404,7 @@ class mwt(myToolItWatch):
         sleep(2)
         
     def vTerminalDeviceName(self):
+        self.stdscr.clear()
         self.stdscr.addstr("New Device Name (max. 8 characters): ")
         self.stdscr.refresh()   
         sName = self.sTerminalInputStringIn()         
@@ -804,7 +810,7 @@ class mwt(myToolItWatch):
                 self.stdscr.addstr(str(key) + "): ")
     
     def vTerminalAnyKey(self):
-        self.stdscr.addstr("Press any key to continue\n")
+        self.stdscr.addstr("\nPress any key to continue\n")
         self.stdscr.refresh()  
         iKeyPress = -1  
         while -1 == iKeyPress:

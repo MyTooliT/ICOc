@@ -43,7 +43,7 @@ def messageValueGet(m):
 Watch = {
     "IntervalDimMinX" : 10,  # Minimum interval time in ms
     "DisplayTimeMax" : 10,  # Maximum Display Time in seconds
-    "DisplaySampleRateMs" : 100,  # Maximum Display Time in seconds
+    "DisplaySampleRateMs" : 200,  # Maximum Display Time in seconds
     "DisplayBlockSize" : 10,
 }
 
@@ -369,7 +369,7 @@ class myToolItWatch():
             if False != self.bAccY:
                 self.vGraphSend(["lineNameY", "AccY"])
             if False != self.bAccZ:
-                self.vGraphSend(tArray2Binary())
+                self.vGraphSend(["lineNameZ", "AccZ"])
             self.vGraphSend(["Plot", True])
      
     def vGraphPointNext(self, x, y, z):
