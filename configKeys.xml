@@ -226,7 +226,7 @@
                                     <subAddress>13</subAddress>
                                     <length>1</length>
                                     <readOnly>True</readOnly>
-                                    <value>0</value>
+                                    <value>2</value>
                                     <unit />
                                     <format>unsigned</format>
                                     <description>Hardware Revision Number - Major</description>
@@ -235,7 +235,7 @@
                                     <subAddress>14</subAddress>
                                     <length>1</length>
                                     <readOnly>True</readOnly>
-                                    <value>0</value>
+                                    <value>1</value>
                                     <unit />
                                     <format>unsigned</format>
                                     <description>Hardware Revision Number - Minor</description>
@@ -244,7 +244,7 @@
                                     <subAddress>15</subAddress>
                                     <length>1</length>
                                     <readOnly>True</readOnly>
-                                    <value>0</value>
+                                    <value>3</value>
                                     <unit />
                                     <format>unsigned</format>
                                     <description>Hardware Revision Number - Build</description>
@@ -253,7 +253,7 @@
                                     <subAddress>16</subAddress>
                                     <length>5</length>
                                     <readOnly>True</readOnly>
-                                    <value>2</value>
+                                    <value>0</value>
                                     <unit />
                                     <format>unsigned</format>
                                     <description>Firmware Version Number - Reserved</description>
@@ -957,7 +957,7 @@
                                     <subAddress>13</subAddress>
                                     <length>1</length>
                                     <readOnly>True</readOnly>
-                                    <value>0</value>
+                                    <value>2</value>
                                     <unit />
                                     <format>unsigned</format>
                                     <description>Hardware Revision Number - Major</description>
@@ -966,7 +966,7 @@
                                     <subAddress>14</subAddress>
                                     <length>1</length>
                                     <readOnly>True</readOnly>
-                                    <value>0</value>
+                                    <value>1</value>
                                     <unit />
                                     <format>unsigned</format>
                                     <description>Hardware Revision Number - Minor</description>
@@ -975,7 +975,7 @@
                                     <subAddress>15</subAddress>
                                     <length>1</length>
                                     <readOnly>True</readOnly>
-                                    <value>0</value>
+                                    <value>3</value>
                                     <unit />
                                     <format>unsigned</format>
                                     <description>Hardware Revision Number - Build</description>
@@ -984,7 +984,7 @@
                                     <subAddress>16</subAddress>
                                     <length>5</length>
                                     <readOnly>True</readOnly>
-                                    <value>2</value>
+                                    <value>0</value>
                                     <unit />
                                     <format>unsigned</format>
                                     <description>Firmware Version Number - Reserved</description>
