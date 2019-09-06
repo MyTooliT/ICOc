@@ -629,14 +629,7 @@ class TestSth(unittest.TestCase):
     def test0012EnergySaveMode2(self):
         self.Can.Logger.Info("Set Energy Mode1 parameters")
         self.Can.Logger.Info("Write EM1 parameters to EEPORM")
-        S1B0 = SleepTime["Min"] & 0xFF
-        S1B1 = (SleepTime["Min"] >> 8) & 0xFF
-        S1B2 = (SleepTime["Min"] >> 16) & 0xFF
-        S1B3 = (SleepTime["Min"] >> 24) & 0xFF
-        A1B0 = 2000 & 0xFF
-        A1B1 = (2000 >> 8) & 0xFF
-        Payload = [SystemCommandBlueTooth["EnergyModeLowestWrite"], self.Can.DeviceNr, S1B0, S1B1, S1B2, S1B3, A1B0, A1B1]
-        [timeReset, timeAdvertisement] = self.Can.BlueToothEnergyMode(Payload)
+        [timeReset, timeAdvertisement] = self.Can.BlueToothEnergyModeNr(SleepTime["Min"], 2000, 2)
         self.Can.Logger.Info("First Write Time Sleep Time1(ACK): " + str(timeReset) + " ms")
         self.Can.Logger.Info("First Write Time Advertisement Time 1(ACK): " + str(timeAdvertisement) + " ms")
         self.Can.Logger.Info("Doing Energy Mode2 stuff")
@@ -644,9 +637,9 @@ class TestSth(unittest.TestCase):
         [timeReset, timeAdvertisement] = self.Can.BlueToothEnergyMode([SystemCommandBlueTooth["EnergyModeLowestRead"], self.Can.DeviceNr, 0, 0, 0, 0, 0, 0])
         self.Can.Logger.Info("First Read Time Sleep Time1: " + str(timeReset) + " ms")
         self.Can.Logger.Info("First Read Time Advertisement Time 1: " + str(timeAdvertisement) + " ms")
-        [timeReset, timeAdvertisement] = self.Can.BlueToothEnergyMode(Payload)
-        self.Can.Logger.Info("First Write Time Sleep Time1(ACK): " + str(timeReset) + " ms")
-        self.Can.Logger.Info("First Write Time Advertisement Time 1(ACK): " + str(timeAdvertisement) + " ms")
+        [timeReset, timeAdvertisement] = self.Can.BlueToothEnergyModeNr(SleepTime["Min"], 2000, 2)
+        self.Can.Logger.Info("Second Write Time Sleep Time1(ACK): " + str(timeReset) + " ms")
+        self.Can.Logger.Info("Second Write Time Advertisement Time 1(ACK): " + str(timeAdvertisement) + " ms")
         self.assertEqual(timeReset, SleepTime["Min"])
         self.assertEqual(timeAdvertisement, 2000)
         [timeReset, timeAdvertisement] = self.Can.BlueToothEnergyMode([SystemCommandBlueTooth["EnergyModeLowestRead"], self.Can.DeviceNr, 0, 0, 0, 0, 0, 0])
@@ -664,14 +657,7 @@ class TestSth(unittest.TestCase):
         # Reset to default values
         self.Can.Logger.Info("Write Time Sleep Time1: " + str(SleepTime["Reset2"]) + " ms")
         self.Can.Logger.Info("Write Time Advertisement Time 1: " + str(SleepTime["AdvertisementReset2"]) + " ms")
-        S1B0 = SleepTime["Reset2"] & 0xFF
-        S1B1 = (SleepTime["Reset2"] >> 8) & 0xFF
-        S1B2 = (SleepTime["Reset2"] >> 16) & 0xFF
-        S1B3 = (SleepTime["Reset2"] >> 24) & 0xFF
-        A1B0 = SleepTime["AdvertisementReset2"] & 0xFF
-        A1B1 = (SleepTime["AdvertisementReset2"] >> 8) & 0xFF
-        Payload = [SystemCommandBlueTooth["EnergyModeLowestWrite"], self.Can.DeviceNr, S1B0, S1B1, S1B2, S1B3, A1B0, A1B1]
-        [timeReset, timeAdvertisement] = self.Can.BlueToothEnergyMode(Payload)
+        [timeReset, timeAdvertisement] = self.Can.BlueToothEnergyModeNr(SleepTime["Reset2"], SleepTime["AdvertisementReset2"], 2)
         self.Can.Logger.Info("Write Time Sleep Time1(ACK): " + str(timeReset) + " ms")
         self.Can.Logger.Info("Write Time Advertisement Time 1(ACK): " + str(timeAdvertisement) + " ms")
         self.assertEqual(timeReset, SleepTime["Reset2"])
