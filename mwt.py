@@ -433,10 +433,15 @@ class mwt(myToolItWatch):
             sDirPath += "\\VerficationInternal\\"
             sDirPath += pyFiles[iTestNumberRun - 1]
             try:
-                if sDirPath.find("Sth"):
-                    os.system("python " + str(sDirPath) + " ../Logs/STH SthAuto.txt")
+                sString = ""
+                if -1 != sDirPath.find("Sth"):
+                    sString = "python " + str(sDirPath) + " ../Logs/STH SthAuto.txt"                    
                 else:
-                    os.system("python " + str(sDirPath) + " ../Logs/STU StuAuto.txt")
+                    sString = "python " + str(sDirPath) + " ../Logs/STU StuAuto.txt"
+                    
+                self.stdscr.addstr(sString+"\n")
+                self.stdscr.refresh()
+                os.system(sString)
             except KeyboardInterrupt:
                 pass
             self.Can = CanFd.CanFd(CanFd.PCAN_BAUD_1M, "init.txt", "initError.txt", MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"])
