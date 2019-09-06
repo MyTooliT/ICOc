@@ -1,6 +1,8 @@
+#
+
 import sys
 import os
-
+from version import sMyToolItWatchVersion
 import xml.etree.ElementTree as ET
 import CanFd
 from CanFd import rreplace 
@@ -199,6 +201,12 @@ class myToolItWatch():
         ReceiveFailCounter += self._RoutingInformationStuPortSpu()
         return ReceiveFailCounter
 
+    """
+    version
+    """
+    def sVersion(self):
+        return sMyToolItWatchVersion
+    
 # Setter Methods
 
     def vSave2Xml(self, bSave):

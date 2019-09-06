@@ -1,0 +1,282 @@
+[TOC]
+
+# MyToolIt Watch
+
+The MyToolIt Watch system supports Sensory Tool Holder Data to the users.
+
+## System diagram 
+
+The following figure describes the overall system. 
+
+![1557822976437](assets/AdcRohskizze.png)
+
+The Icotronic System consists of the Stationary Transceiver Unit(STU), the Sensory Tool Holder(STH) and a subscriber that uses STH and STU via the MyToolIt Protocol. The MyToolIt Protocol is a network protocol exchanges information between subscribers and therefor MyToolIt access Controller Area Network and Bluetooth to transport information. This Information transport is used to provide services to the user. A user service may be a controlling process, collecting data, request serial numbers, etc. Note that the MyToolIt is expendable for other underlaying data link layer protocols such as e.g. Wireless LAN.
+
+Furthermore, the main system services may be divided as follows:
+
+- Data Collection
+  - Acceleration Sensor Data
+  - Voltage Measurement
+  - Temperature of the electronics
+  - User specific signals
+
+- Storage Requests
+  - Statistical Data
+  - Production Data e.g. Serial Numbers
+  - Parameters
+  - Calibration Factors (kx+d)
+
+- Configuration
+  - Analog Digital Converter (ADC) - The ADC converts e.g. sensory data
+  - Communication Parameters e.g. Bluetooth Advertisement Time
+  - 
+- Remaining Serivces
+  - Time
+  - Standby
+  - Meta information e.g. number of send Bytes a a communication port like CAN
+  - Human Machine Interface configuration
+
+- Test Functionality
+  - Test Signals
+
+## Data Acquisition
+
+The data acquisition subsystem consists of input pins to measure sensory data like acceleration (physical values corresponds to voltages) and this input pins may be multiplexed to achieve a vector e.g. acceleration in x, y and z dimension. Furthermore, input values are filtered via an Anti-Aliasing Filter (AAF). This AAF is not configurable and required due to the Nyquist–Shannon sampling theorem. Moreover, the sample and hold (S&H) part converts a time continuous signal into a time discrete signal such that the converter proper translate a continues value into a discrete value. This time discrete and value discrete value may be processed in a digital processing system to e.g. do averaging. Note that the part from AAF to DSP is the Analog to Digital Converter Part that must be clocked by an internal frequency and a prescaler. Furthermore, the MyToolIt protocol transports the digital value to the personal computer and this data are stored in a log file. Note that Controller Area Network (CAN) is the interface between the Personal Computer and the Sensory System and the Personal Computer connects to CAN via the PEAK CAN-USB adapter.
+
+# Getting started
+
+In order to setup a test-bench you need:
+
+- CAN-Adapter
+  - Peak-Tech
+  - socket CAN (not available yet)
+- STU
+- Sensory tool holder
+
+## Peak-Tech
+
+### Download the driver
+
+Download the driver installer for your operating system (https://www.peak-system.com/PCAN-USB-FD.365.0.html) and include the PCAN-Basic option in your install to get the Python interface.
+
+### Install the Peak-Basic API
+
+does not work, download PCAN-Basic API seperately. This provides a zip folder that needso to be in: 
+
+```
+C:\Program Files\PEAK-System\PCAN-Basic API\
+```
+
+So that the acqAcc.py can locate the driver.
+
+### Check/Configure your hardware
+
+Check if you Peak adapter's hardware is configured correctly
+
+JP4 needs to be connected in order to activate the +5V supply. Be aware that the adapter can only supply 10mA of current. This is far too less for this application. However, it can be used as active signal.
+
+![1557745879083](assets/1557745879083.png)
+
+JP1 and JP2 need to be connected to terminate the CAN Bus inside the adapter. This is highly recommended as the cable is not terminated externally in most cases.
+
+![1557746065070](assets\1557746065070.png)
+
+### Connectors
+
+The pinout of Peak-CAN
+
+![1557754909385](assets/1557754909385.png)
+
+Adapter cabel's pinout
+
+| X301 pin | signal     | wirecolor | XLR pin | sub-D pin |
+| :------- | ---------- | --------- | ------- | --------- |
+| 1        | +5V        | red       |         |           |
+| 2        | EXT_!Reset | orange    |         | NC        |
+| 3        | CAN_H      | yellow    |         | 7         |
+| 4        | CAN_L      | green     |         | 2         |
+| 5        | NC         | brown     |         | NC        |
+| 6        | GND        | black     |         | 3         |
+
+
+
+# test/flash the firmware
+
+how can we test the firmware installed on a STH or STU?
+
+how can we test for bootloader
+
+set the debug to out
+
+clone the repo
+
+flash the firmware
+
+compile the firmware
+
+# Software
+
+This chapter describes how to setup/execute the required software for acquiring data.
+
+## Python Interpreter and Python packages
+
+The required Python interpreter version is Python 3.5.4. Python 3.5.4 is supported at https://www.python.org/downloads/release/python-354/ . Furthermore, do not forgot to set the environment variables such that python interpreter runs are executed without the absolute Python path. Note that there will be missing python packages and its required to install theme via "python -m pip install packageName" and missing packages are listed at the program start of MyToolIt Watch and MyToolIt Watch Terminal.
+
+It is recommended to use the anaconda installer to get python and an editor. (<https://www.anaconda.com/>)
+
+## Download the program
+
+Please clone https://teckubtib@bitbucket.org/mytoolit/acquiredata.git (master) to a folder of your choice.
+
+This contains everything necessary to connect to an STU via CAN and pull data from the attached STHs.
+
+## Program Execution
+
+MyToolIt Watch supports a program library, console access and a terminal that access the Watch program library. Thus, MyToolIt Watch may be embedded in another application or used standalone.
+
+### Help
+
+The program also supports help. The help support may be used as follows:
+
+- Open Command Prompt (Eingabeaufforderung)
+- Navigate to the MyToolIt Watch directory via cd directoryName
+- Type python mwt.py -h 
+
+#### Services
+
+MyToolIt Watch derives it functionality to MyToolItWatch and MyToolIt Watch includes an additional terminal service. Furthermore, MyToolItWatch Terminal supports the following services:
+
+- STH access for measuring data, configure measuring, request production data, measuring accumulator voltage, setting the Device Name of the STH (Bluetooth advertismet name), putting the STH into Standby(Only the charging cradle resets the Standby State)
+- Access the EEPROM via Excel for setting the EEPROM or receiving stored data such as the operating seconds since first power on.
+- Set the logname (The MyToolIt Service will ask you for this log file).
+- Change the STH device Name directly
+- Test Menu that actually supports internal verification of the STH and STU (keyword Sth or Stu determines this) and the internal verification is also spitted into automated and manual tests.
+- Configuration of the configKeys.xml XML File
+  - Create new versions of STH and STU(Describes the EEPROM content via Excel)
+  - Create new setups that describes measure configurations via console start
+  - Remove versions
+  - Remove setups
+  - Set Excel names
+
+Note that CTRL+C (Strg+C) always quit the program or an input request.
+
+### Program library
+
+The MyToolIt Watch library may be used to integrate MyToolIt Watch into non MyToolIt Application e.g. write your own python scripts to fulfill tasks. The library is described via comments and used via MyToolIt Watch Terminal.
+
+### Console Application
+
+MyToolIt Watch for acquiring data may be started directly via the command prompt. To call it directly you have to open a command prompt (Eingabeauffordernung), navigate to the MyToolIt Watch directory and execute MyToolIt Watch or MyToolIt Watch Terminal.	 
+
+The correct use of this command will yield into an automatic start of the data acquisition.
+
+#### Additional Arguments
+
+Open a command prompt (console) and navigate to the software project folder(location of mytoolitwatch.py). To execute the program call mwt.py with the corresponding arguments to configure ADC settings.
+
+``` 
+ python mwt.py -x configKeys.xml additionalArguments
+```
+
+| argument                                     | meaning/Example                                              |
+| -------------------------------------------- | ------------------------------------------------------------ |
+| -h                                           | Show help menu                                               |
+| -x configKeys.xml                            | Specifies XML File. Note that you may create another xml file and use this. |
+| -a prescaler acquistionTime overSamplingRate | Configurate ADC prescaler(2-127), Acquistion Time(1,2,3,4,8,16, ... 256) and oversampling Rate(1,2,4,8, 16, .... 4096) |
+| -b Address                                   | Connects to device with specified address                    |
+| -c                                           | auto connect as described in setup file                      |
+| -e name.xlsx                                 | Chose Excel File to for accessing EERPOM(Read and Write)     |
+| -i time                                      | Interval Time for creating a fresh log file in seconds. Values below 10 will deactivate this feature |
+| -l logName                                   | Specifies logname where data and information will be dumped  |
+| -n name                                      | Connect to device name(bluetooth name). Note that this will be overruled by the -b parameter. |
+| -p xyz                                       | Acceleration Sampling Points in the format xyz e.g. 100 will collect Data for x-Acceleration axis or 111 will collect x, y and z-Acceleration axis. |
+| -r time                                      | Run Time in seconds or 0 for infinite                        |
+| -s samplesetup                               | Use sample setup to avoid passing additional parameters for program start e.g. -s X |
+| -v device version                            | Chose device and version for access e.g. STH v2.1.3          |
+| -- gui_dim seconds                           | Time axis length in seconds. Note that 0 deactivates this feature. |
+| --refv ref                                   | Specifies ADC reference voltage. Notat that VDD(3V3) supports the full ADC range:<br /><1V25<br/>Vfs1V65<br/>Vfs1V8<br/>Vfs2V1<br/>Vfs2V2<br/>2V5<br/>Vfs2V7<br/>VDD<br/>5V<br/>6V6br /> |
+| --save                                       | Saves setup in the configuration. Note that this will store additional setup settings.<br /> |
+| --show_config                                | Shows current configuration after loading xml data base and passing additional arguments.<br /> |
+| --voltage_points xyz                         | Turn on battery voltage streaming(100) or turns off battery voltage streaming(000) |
+
+
+
+##### Prescaler AcquisationTime and OversamplingRate
+
+The rampling rate is achieved via the following formula:
+$$
+f_{sampling} = \frac{38,4MHz}{((Prescaler+1)\cdot(AquisationTime +13)\cdot OversamplingRate)}
+$$
+Mention that single measurements will be send in data triples and a CAN20 message contains in a such case a data triple. Moreover, other formats (e.g. AccX, AccY, AccZ) are a data points and a CAN 20 message contains such a data point. Note, that the performance of the computer system is limited and an overload yields into lost messages.  Please check the data log for the Error Status Word of the Stationary Transceiver Holder (STU).
+
+The prescaler determines the Analog Digital Converter (ADC) Frequency and should be as low as possible. Moreover, the acquisition time determines the hold time before sampling such that the actual voltage charges a capacitor. The capacitor charge determines the corresponding physical value and this capacitor is disconnected from the input circuit during the conversion. Furthermore, the oversampling rate determines the number of samples for averaging. Note that the ADC of the system is a 12-Bit ADC and with 256 over samples the maximum accuracy of 16-Bit may be achieved.
+
+As the lowest usable prescaler setting is 2, this table lists compares the resulting ADC overall sampling frequency (not per Acc channel) as function of oversampling and acquisition time. The resulting sampling rate must not exceed 9.5kS/s.
+
+|   f_sample   |      |          |          |          |          |          |          |          |          |
+| :----------: | ---- | -------- | -------- | -------- | -------- | -------- | -------- | -------- | -------- |
+|              |      | AcqTime  |          |          |          |          |          |          |          |
+| Oversampling |      | 1        | 2        | 3        | 4        | 8        | 16       | 32       | 64       |
+|      1       |      | 2.74E+06 | 2.56E+06 | 2.40E+06 | 2.26E+06 | 1.83E+06 | 1.32E+06 | 8.53E+05 | 4.99E+05 |
+|      2       |      | 1.37E+06 | 1.28E+06 | 1.20E+06 | 1.13E+06 | 9.14E+05 | 6.62E+05 | 4.27E+05 | 2.49E+05 |
+|      4       |      | 6.86E+05 | 6.40E+05 | 6.00E+05 | 5.65E+05 | 4.57E+05 | 3.31E+05 | 2.13E+05 | 1.25E+05 |
+|      8       |      | 3.43E+05 | 3.20E+05 | 3.00E+05 | 2.82E+05 | 2.29E+05 | 1.66E+05 | 1.07E+05 | 6.23E+04 |
+|      16      |      | 1.71E+05 | 1.60E+05 | 1.50E+05 | 1.41E+05 | 1.14E+05 | 8.28E+04 | 5.33E+04 | 3.12E+04 |
+|      32      |      | 8.57E+04 | 8.00E+04 | 7.50E+04 | 7.06E+04 | 5.71E+04 | 4.14E+04 | 2.67E+04 | 1.56E+04 |
+|      64      |      | 4.29E+04 | 4.00E+04 | 3.75E+04 | 3.53E+04 | 2.86E+04 | 2.07E+04 | 1.33E+04 | 7.79E+03 |
+|     128      |      | 2.14E+04 | 2.00E+04 | 1.88E+04 | 1.76E+04 | 1.43E+04 | 1.03E+04 | 6.67E+03 | 3.90E+03 |
+|     256      |      | 1.07E+04 | 1.00E+04 | 9.38E+03 | 8.82E+03 | 7.14E+03 | 5.17E+03 | 3.33E+03 | 1.95E+03 |
+|     512      |      | 5.36E+03 | 5.00E+03 | 4.69E+03 | 4.41E+03 | 3.57E+03 | 2.59E+03 | 1.67E+03 | 9.74E+02 |
+|     1024     |      | 2.68E+03 | 2.50E+03 | 2.34E+03 | 2.21E+03 | 1.79E+03 | 1.29E+03 | 8.33E+02 | 4.87E+02 |
+|     2048     |      | 1.34E+03 | 1.25E+03 | 1.17E+03 | 1.10E+03 | 8.93E+02 | 6.47E+02 | 4.17E+02 | 2.44E+02 |
+|     4096     |      | 6.70E+02 | 6.25E+02 | 5.86E+02 | 5.51E+02 | 4.46E+02 | 3.23E+02 | 2.08E+02 | 1.22E+02 |
+
+
+
+## Logging
+
+Each log entry is time stamped and tagged. Tags are separated into Information [I], Warnings [W] and Errors [E]. Furthermore, the time stamp is put into the log at logging time and this time stamp has an accuracy of 500ms or better (The operating system and the python interpreter are not real time capable). Not that the common accuracy is usually about 5ms or better.
+
+### BlueTooth Send Counter
+
+Number of send Bluetooth Frames. Note that multiple MyToolIt messages are put into a single Bluetooth frame.
+
+### BlueTooth Receive Counter
+
+Number of received Bluetooth Frames. Note that multiple MyToolIt messages are put into a single Bluetooth frame.
+
+### BlueTooth Rssi
+
+The Receive Signal Strength Indicator determines (approximately) the received signal power. Note that a RSSI over -70dBm determines a good signal quality and below -90dBm determines a poor signal quality. Please mention that this value is taken at the end of the log once (but may be supported during measuring).
+
+### Send Counter
+
+Number of sent messages to a port e.g. STH to STU
+
+### Send Fail Counter
+
+Number of trashed messages at a port. A send message may get trashed in overload cases.
+
+### Send Byte Counter
+
+Number of send bytes at a port. This number correlates to the Send Counter and is determined approximately.
+
+### Receive Counter
+
+Number of received messages from a port e.g. STU to STH
+
+### Receive Fail Counter
+
+Number of dropped messages. This must not happen at all and determines and overloaded computer system.
+
+### Receive Byte Counter
+
+Number of received bytes at a port. This number correlates to the Send Counter and is determined approximately.
+
+### Status Word
+
+The log show the status word of the STU. Please do not take any information out of this log entry.
+
+### Error Word
+
+Error Status Word of the STU and this <u>**Error Status Word must be 0.**</u>

@@ -433,7 +433,7 @@ AdcReference = {
     "5V" : 100,
     "6V6" : 132,
 }
- 
+
 VRefName = {
     25 : "ADC Reference 1V25",
     33   : "ADC Reference 1V65",

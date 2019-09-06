@@ -12,6 +12,7 @@ Version = {
 TestConfig = {
     "DevName" : "Valerie",
     "ProductionDate" : "20190905",
+    "HolderName" : "Tanja",
     }
 
 class StuErrorWordFlags(ctypes.LittleEndianStructure):
