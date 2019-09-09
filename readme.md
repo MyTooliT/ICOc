@@ -2,7 +2,7 @@
 
 # MyToolIt Watch
 
-The MyToolIt Watch system supports Sensory Tool Holder Data to the users.
+The MyToolIt Watch system supports Sensory Tool Holder Data and additional services like serial numbers or statistics to the users.
 
 ## System diagram 
 
@@ -10,48 +10,50 @@ The following figure describes the overall system.
 
 ![1557822976437](assets/AdcRohskizze.png)
 
-The Icotronic System consists of the Stationary Transceiver Unit(STU), the Sensory Tool Holder(STH) and a subscriber that uses STH and STU via the MyToolIt Protocol. The MyToolIt Protocol is a network protocol exchanges information between subscribers and therefor MyToolIt access Controller Area Network and Bluetooth to transport information. This Information transport is used to provide services to the user. A user service may be a controlling process, collecting data, request serial numbers, etc. Note that the MyToolIt is expendable for other underlaying data link layer protocols such as e.g. Wireless LAN.
+The Icotronic System consists of the Stationary Transceiver Unit(STU), the Sensory Tool Holder(STH) and a subscriber that uses STH and STU via the MyToolIt Protocol. The MyToolIt Protocol is a network protocol exchanges information between subscribers and therefor MyToolIt access Controller Area Network and Bluetooth to transport information. This Information transport is used to provide services to the user. A user service may be collecting data, request serial numbers, operating time, etc. Note that the MyToolIt Protocol is expendable for other underlaying data link layer protocols such as e.g. Wireless LAN. Thus the STU is accessable by CAN20, Bluetooth and other data link layer protocols.
 
 Furthermore, the main system services may be divided as follows:
 
 - Data Collection
   - Acceleration Sensor Data
   - Voltage Measurement
-  - Temperature of the electronics
+  - Temperature meassurement of the electronics
   - User specific signals
 
 - Storage Requests
   - Statistical Data
   - Production Data e.g. Serial Numbers
-  - Parameters
+  - Parameters e.g. Bluetooth advertisement time
   - Calibration Factors (kx+d)
 
 - Configuration
-  - Analog Digital Converter (ADC) - The ADC converts e.g. sensory data
-  - Communication Parameters e.g. Bluetooth Advertisement Time
-  - 
+  - Analog Digital Converter (ADC) - The ADC converts e.g. voltages from sensors to sensory signals
+  - Communication Parameters e.g. Bluetooth Advertisement Name
+  - EEPROM Lock Status
+  - Human Machine Interface (HMI)
 - Remaining Serivces
   - Time
   - Standby
-  - Meta information e.g. number of send Bytes a a communication port like CAN
-  - Human Machine Interface configuration
+  - Meta communication information e.g. number of send Bytes a a communication port like CAN
+  - 
 
 - Test Functionality
   - Test Signals
 
 ## Data Acquisition
 
-The data acquisition subsystem consists of input pins to measure sensory data like acceleration (physical values corresponds to voltages) and this input pins may be multiplexed to achieve a vector e.g. acceleration in x, y and z dimension. Furthermore, input values are filtered via an Anti-Aliasing Filter (AAF). This AAF is not configurable and required due to the Nyquist–Shannon sampling theorem. Moreover, the sample and hold (S&H) part converts a time continuous signal into a time discrete signal such that the converter proper translate a continues value into a discrete value. This time discrete and value discrete value may be processed in a digital processing system to e.g. do averaging. Note that the part from AAF to DSP is the Analog to Digital Converter Part that must be clocked by an internal frequency and a prescaler. Furthermore, the MyToolIt protocol transports the digital value to the personal computer and this data are stored in a log file. Note that Controller Area Network (CAN) is the interface between the Personal Computer and the Sensory System and the Personal Computer connects to CAN via the PEAK CAN-USB adapter.
+The data acquisition subsystem consists of input pins to measure sensory data like acceleration (physical values corresponds to voltages) and this input pins may be multiplexed to achieve a vector e.g. acceleration in x, y and z dimension. Furthermore, input values are filtered via an Anti-Aliasing Filter (AAF). This AAF is not configurable and required due to the Nyquist–Shannon sampling theorem. Moreover, the sample and hold (S&H) part converts a time continuous signal into a time discrete signal such that the converter proper translate a continues value into a discrete value. This time discrete and value discrete value may be processed in a digital processing system to e.g. do averaging. Note that the part from AAF to DSP is the Analog to Digital Converter Part that must be clocked by a clock frequency and a prescaler. Furthermore, the MyToolIt protocol transports the digital value to the personal computer and this data are stored in a log file. Note that Controller Area Network (CAN) is the interface between the Personal Computer and the Sensory System and the Personal Computer connects to CAN via the PEAK CAN-USB adapter.
 
 # Getting started
 
 In order to setup a test-bench you need:
 
 - CAN-Adapter
-  - Peak-Tech
-  - socket CAN (not available yet)
+  - Peak-Tech (Including driver)
 - STU
-- Sensory tool holder
+- STH
+- Python (See Software)
+- Additional python packages (See Software)
 
 ## Peak-Tech
 
@@ -144,7 +146,7 @@ The program also supports help. The help support may be used as follows:
 
 #### Services
 
-MyToolIt Watch derives it functionality to MyToolItWatch and MyToolIt Watch includes an additional terminal service. Furthermore, MyToolItWatch Terminal supports the following services:
+MyToolIt Watch derives it functionality to MyToolIt Watch Terminal(mwt.py) and MyToolIt Watch Terminal includes an additional terminal service. Furthermore, MyToolItWatch Terminal supports the following services:
 
 - STH access for measuring data, configure measuring, request production data, measuring accumulator voltage, setting the Device Name of the STH (Bluetooth advertismet name), putting the STH into Standby(Only the charging cradle resets the Standby State)
 - Access the EEPROM via Excel for setting the EEPROM or receiving stored data such as the operating seconds since first power on.
@@ -207,9 +209,9 @@ The rampling rate is achieved via the following formula:
 $$
 f_{sampling} = \frac{38,4MHz}{((Prescaler+1)\cdot(AquisationTime +13)\cdot OversamplingRate)}
 $$
-Mention that single measurements will be send in data triples and a CAN20 message contains in a such case a data triple. Moreover, other formats (e.g. AccX, AccY, AccZ) are a data points and a CAN 20 message contains such a data point. Note, that the performance of the computer system is limited and an overload yields into lost messages.  Please check the data log for the Error Status Word of the Stationary Transceiver Holder (STU).
+Mention that continuous measurements will be send in data triples and a CAN20 message contains in a such case a data triple. Moreover, other formats (e.g. AccX, AccY and AccZ as a vector) are a data points and a CAN 20 message contains such a data point. Note, that the performance of the computer system is limited and an overload yields into lost messages.  Please check the data log for the Error Status Word of the Stationary Transceiver Holder (STU).
 
-The prescaler determines the Analog Digital Converter (ADC) Frequency and should be as low as possible. Moreover, the acquisition time determines the hold time before sampling such that the actual voltage charges a capacitor. The capacitor charge determines the corresponding physical value and this capacitor is disconnected from the input circuit during the conversion. Furthermore, the oversampling rate determines the number of samples for averaging. Note that the ADC of the system is a 12-Bit ADC and with 256 over samples the maximum accuracy of 16-Bit may be achieved.
+The prescaler determines the Analog Digital Converter (ADC) Clock. Moreover, the acquisition time determines the hold time before sampling such that the actual voltage charges a capacitor. The capacitor charge determines the corresponding physical value and this capacitor is disconnected from the input circuit during the conversion. Furthermore, the oversampling rate determines the number of samples for averaging. Note that the ADC of the system is a 12-Bit ADC and with 256 over samples the maximum accuracy of 16-Bit may be achieved.
 
 As the lowest usable prescaler setting is 2, this table lists compares the resulting ADC overall sampling frequency (not per Acc channel) as function of oversampling and acquisition time. The resulting sampling rate must not exceed 9.5kS/s.
 
@@ -236,6 +238,38 @@ As the lowest usable prescaler setting is 2, this table lists compares the resul
 ## Logging
 
 Each log entry is time stamped and tagged. Tags are separated into Information [I], Warnings [W] and Errors [E]. Furthermore, the time stamp is put into the log at logging time and this time stamp has an accuracy of 500ms or better (The operating system and the python interpreter are not real time capable). Not that the common accuracy is usually about 5ms or better.
+
+
+
+### Measuring Entry
+
+Each data points gets logged into the log file. Note that AccX stands for acceleration point X, AccY stands for the acceleration point y and AccZ stands for the acceleration point z.
+
+#### Single Measurements
+
+Three measuring points are stored into a single CAN20 message. A CAN message contains a message counter that cyclic increments from 0-255. Thus each message generates three entries in the log with the same message counter (MsgCounter). Moreover, at a reception of a CAN message generates a time stamp (Time Stamp) . Time Stamps in reference to the message counters may be used to determine the correct sampling frequency, message losses and to determine the message jitter (Maximum-Minimums Time determines a jitter). Furthermore, the message value represents the ADC value from the conversion from a sensor voltage to a sensor value. The sensory value transforms to the calibrated International System of Unit (SI) by processing kx+d and the corresponding k and d may be taken from the EEPROM by the configuration commands 0x60(Calibration Factor k) and 0x61(Calibration Factor d). Please see the following example:
+
+[I](2937092ms): MsgCounter:   8; TimeStamp: 236265914.467ms; AccX 32658; 
+[I](2937092ms): MsgCounter:   8; TimeStamp: 236265914.467ms; AccX 32668; 
+[I](2937092ms): MsgCounter:   8; TimeStamp: 236265914.467ms; AccX 32671; 
+[I](2937092ms): MsgCounter:   9; TimeStamp: 236265914.665ms; AccX 32564; 
+[I](2937092ms): MsgCounter:   9; TimeStamp: 236265914.665ms; AccX 32591; 
+[I](2937092ms): MsgCounter:   9; TimeStamp: 236265914.665ms; AccX 32693; 
+[I](2937092ms): MsgCounter:  10; TimeStamp: 236265914.857ms; AccX 32698; 
+[I](2937092ms): MsgCounter:  10; TimeStamp: 236265914.857ms; AccX 32670; 
+[I](2937092ms): MsgCounter:  10; TimeStamp: 236265914.857ms; AccX 32578; 
+
+In this example 3 CAN messages are received and these messages contains 9 data points (x-dimension in that case). Each CAN message keeps a message counter value(8,9, 10) and the message jitter is 198µs-192µs -> 6µs for that interval.
+
+#### Double and Triple Measurements
+
+A single vector fits into a single CAN20 message. A CAN message contains a message counter that cyclic increments from 0-255. Thus each vector generates a single entry that contains a message counter value(MsgCounter). Moreover, each received CAN message gets time stamped (Time Stamp). Time Stamps in reference to the message counters may be used to determine the correct sampling frequency, message losses and to determine the message jitter (Maximum-Minimums Time determines a jitter). Furthermore, the message value represents the ADC value from the conversion from a sensor voltage to a sensor value. Each sensory value transforms to the calibrated International System of Unit (SI) by processing kx+d and the corresponding k and d may be taken from the EEPROM by the configuration commands 0x60(Calibration Factor k) and 0x61(Calibration Factor d). Please see the following example:
+
+[I](1076702ms): MsgCounter: 197; TimeStamp: 238783540.943ms; AccX 32682; AccY 10904; AccZ 10957; 
+[I](1076703ms): MsgCounter: 198; TimeStamp: 238783541.115ms; AccX 32654; AccY 10984; AccZ 10972; 
+[I](1076703ms): MsgCounter: 199; TimeStamp: 238783541.285ms; AccX 32683; AccY 11006; AccZ 10902; 
+
+In this example 3 CAN messages are received and these messages contains 3 vectors(x,y, z-dimension in that case). Each CAN message keeps a message counter value(197,198, 199) and the message jitter is 172µs-170µs -> 2µs for that interval.
 
 ### BlueTooth Send Counter
 
