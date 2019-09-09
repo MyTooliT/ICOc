@@ -4,6 +4,9 @@ Release Notes
 Version Format: Major.Minor.Build
 
 ################################################################################
+Version 1.0.1:
+
+################################################################################
 Version 1.0.0:
     Initial Release:
         * Release Date: 6. September 2019
@@ -25,4 +28,4 @@ Version 1.0.0:
 """
 
 
-sMyToolItWatchVersion="1.0.0"
+sMyToolItWatchVersion="1.0.1"

@@ -13,19 +13,6 @@ PeakCanBitrateFd = "f_clock_mhz=20, nom_brp=5, nom_tseg1=2, nom_tseg2=1, nom_sjw
 from MyToolItCommands import *
 from MyToolItNetworkNumbers import MyToolItNetworkNr, MyToolItNetworkName
 
-
-def fSleepTime(timeReset):
-    return ((0xFF & timeReset[3]) << 24) | ((0xFF & timeReset[2]) << 16) | ((0xFF & timeReset[1]) << 8) | (0xFF & timeReset[0])
-
-
-def fSleepAdvertisement(timeAdvertisement):
-    return ((0xFF & timeAdvertisement[1]) << 8) | (0xFF & timeAdvertisement[0])
-
-
-def fBlueToothMacAddress(macAddress):
-    return ((0xFF & macAddress[5]) << 40) | ((0xFF & macAddress[4]) << 32) | ((0xFF & macAddress[3]) << 24) | ((0xFF & macAddress[2]) << 16) | ((0xFF & macAddress[1]) << 8) | (0xFF & macAddress[0])
-
-
 def to8bitSigned(num): 
     mask7 = 128  # Check 8th bit ~ 2^8
     mask2s = 127  # Keep first 7 bits
@@ -1041,7 +1028,7 @@ class CanFd(object):
         cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0)
         message = self.CanMessage20(cmd, self.sender, receiver, [SystemCommandBlueTooth["MacAddress"], DeviceNr, 0, 0, 0, 0, 0, 0])
         Address = self.WriteFrameWaitAckRetries(message, retries=2)["Payload"][2:]
-        return fBlueToothMacAddress(Address)
+        return iMessage2Value(Address)
     
     """
     Get RSSI (bluetooth command)
@@ -1180,8 +1167,8 @@ class CanFd(object):
         EnergyModeReduced = self.WriteFrameWaitAckRetries(message, retries=2)["Payload"][2:]
         timeReset = EnergyModeReduced[:4]
         timeAdvertisement = EnergyModeReduced[4:]
-        timeReset = fSleepTime(timeReset)
-        timeAdvertisement = fSleepAdvertisement(timeAdvertisement)
+        timeReset = iMessage2Value(timeReset)
+        timeAdvertisement = iMessage2Value(timeAdvertisement)
         return [timeReset, timeAdvertisement]
 
     def Standby(self, receiver):
@@ -1255,7 +1242,7 @@ class CanFd(object):
         payload = [SystemCommandBlueTooth["MacAddress"], SystemCommandBlueTooth["SelfAddressing"], 0, 0, 0, 0, 0, 0]
         message = self.CanMessage20(cmd, self.sender, subscriber, payload)
         ack = self.WriteFrameWaitAckRetries(message, retries=2)["Payload"][2:]
-        ack = fBlueToothMacAddress(ack)
+        ack = iMessage2Value(ack)
         return ack    
 
     def RoutingInformationCmd(self, receiver, subCmd, port):

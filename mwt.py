@@ -21,9 +21,9 @@ class mwt(myToolItWatch):
         if None != self.process:
             self.process.terminate()
         self.vCloseSaveStoreLastConfig()
-        self.vTerminalTeardown()            
+        self.vTerminalTeardown()                    
         myToolItWatch.close(self) 
-    
+
     def bLastConfig(self):
         bLoadLastConfig = True
         for key in self.args_dict.keys():
@@ -942,7 +942,7 @@ class mwt(myToolItWatch):
         if False != self.bSthAutoConnect:
             self.vRunConsoleAutoConnect()
         else:
-            self.vTerminal()
+            self.vTerminal()        
         self.close()        
 
            

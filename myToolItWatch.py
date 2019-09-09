@@ -291,7 +291,7 @@ class myToolItWatch():
         
     def vDeviceAddressSet(self, iAddress):
         iAddress = int(iAddress, base=0)
-        if 0 <= iAddress and (2 ** 48 - 1) > iAddress:
+        if 0 < iAddress and (2 ** 48 - 1) > iAddress:
             iAddress = hex(iAddress)
             self.iAddress = iAddress
         else:
@@ -620,10 +620,10 @@ class myToolItWatch():
                     self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], self.iPrescaler, self.iAquistionTime, self.iOversampling, AdcReference[self.sAdcRef])
                     self.Can.readThreadStop()     
                     self.guiProcessRestart()       
-                    print("Start")
                     self.Can.Logger.Info("Start")
                     self.vGetStreamingAccData()
-                    self.guiProcessStop()
+                    self.Can.ReadThreadReset()
+                    self.guiProcessStop()                    
                 else:
                     print("Device not allocable")    
                     self.Can.Logger.bError("Device not allocable")     
@@ -1189,11 +1189,7 @@ class myToolItWatch():
                                     self.vExcelProductVersion2XmlProductVersion() 
                 #Remove Deleted Pages
                 self._vExcelProductVersion2XmlProductVersionXmlPageRemove(tWorkbook)
-                self.xmlSave()
-       
-
-
-                    
+                self.xmlSave()                 
                     
     def iExcelSheetPageLength(self, worksheet):
         totalLength = 0
@@ -1522,7 +1518,7 @@ class myToolItWatch():
             
     def vRunConsoleAutoConnect(self):
         self.clear()
-        if "0x0" != self.iAddress:
+        if "0x0" != self.iAddress and 0 != self.iAddress and "0" != self.iAddress:
             self.Can.BlueToothConnectPollingAddress(MyToolItNetworkNr["STU1"], self.iAddress)
         else:
             self.Can.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], self.sDevName, log=False)
