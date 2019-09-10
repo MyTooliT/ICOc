@@ -437,7 +437,6 @@ class myToolItWatch():
         self.parser = argparse.ArgumentParser(description='Command Line Oprtions')
         self.parser.add_argument('-a', '--adc', dest='adc_config', action='store', nargs=3, type=int, required=False, help='Prescaler AcquisitionTime OversamplingRate (3 inputs required in that order e.g. 2 8 64) - Note that acceleration and battery voltage measurements share a single ADC that samples up to 4 channels)')
         self.parser.add_argument('-b', '--bluetooth_connect', dest='bluetooth_connect', action='store', nargs=1, type=str, required=False, help='Connect to device specified by Bluetooth address and starts sampling as configured')
-        self.parser.add_argument('-c', '--auto_connect', dest='auto_connect', action='store_true', required=False, help='Automatically connect to Device as defined in the given xml file')
         self.parser.add_argument('-d', '--devs', dest='devNameList', action='store_true', required=False, help='Get Device Names, Bluetooth address and Receive Signal Strength Indicators(RSSI) of all available STHs')    
         self.parser.add_argument('-e', '--xlsx', dest='xlsx', action='store', nargs=1, type=str, required=False, help='Table Calculation File(xlsx) to transfer configuration from/to STH/STU')
         self.parser.add_argument('-i', '--interval', dest='interval', action='store', nargs=1, type=int, required=False, help='Sets Interval Time (Output file is saved each interval time in seconds. Lower than 10 causes a single file')
@@ -560,8 +559,6 @@ class myToolItWatch():
         elif None != self.args_dict['bluetooth_connect']:
             self.vDeviceAddressSet(self.args_dict['bluetooth_connect'][0])
             self.vSthAutoConnect(True)        
-        elif False != self.args_dict['auto_connect']:    
-            self.vSthAutoConnect(True)   
             
         if None != self.args_dict['points']: 
             points = self.args_dict['points'][0] & 0x07
@@ -584,34 +581,6 @@ class myToolItWatch():
             except KeyboardInterrupt:
                 self.KeyBoadInterrupt = True
 
-    def BlueToothConnect(self):
-        try:
-            self.iDevNr = int(input('Input:'))  
-            try:
-                self.Can.BlueToothConnect(MyToolItNetworkNr["STU1"], self.iDevNr)          
-            except KeyboardInterrupt:
-                self.KeyBoadInterrupt = True
-        except ValueError:
-            print("Not a number") 
-    
-    def getBlueToothDeviceList(self, log=True): 
-        self.Can.BlueToothConnectConnect(MyToolItNetworkNr["STH1"], log=log)
-        deviceNumbers = 0
-        endTime = time() + BlueToothDeviceListAquireTime
-        while(time() < endTime):
-            deviceNumbers = self.Can.BlueToothConnectTotalScannedDeviceNr(MyToolItNetworkNr["STH1"])
-        nameList = []
-        for dev in range(deviceNumbers):
-            nameList.append([dev, self.Can.BlueToothNameGet(dev)])
-        return nameList   
-                
-    def BlueToothConnectName(self):
-        if False == self.KeyBoadInterrupt:
-            try:
-                self.Can.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], self.sDevName, log = False)
-            except KeyboardInterrupt:
-                self.KeyBoadInterrupt = True
-                self.__exit__()
                
     def vDataAquisition(self):  
         if False == self.KeyBoadInterrupt:
@@ -1414,6 +1383,8 @@ class myToolItWatch():
             if config.get('name') == self.sSetupConfig:
                 self.vDeviceNameSet(config.find('DeviceName').text)
                 self.vDeviceAddressSet(config.find('DeviceAddress').text)
+                if( ""!=self.sDevName or 0<self.iAddress):
+                    self.vSthAutoConnect(True)
                 samplePoints = config.find('Acc').text
                 bAccX = int(samplePoints[0])
                 bAccY = int(samplePoints[1])
@@ -1519,9 +1490,9 @@ class myToolItWatch():
     def vRunConsoleAutoConnect(self):
         self.clear()
         if "0x0" != self.iAddress and 0 != self.iAddress and "0" != self.iAddress:
-            self.Can.BlueToothConnectPollingAddress(MyToolItNetworkNr["STU1"], self.iAddress)
+            self.Can.bBlueToothConnectPollingAddress(MyToolItNetworkNr["STU1"], self.iAddress)
         else:
-            self.Can.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], self.sDevName, log=False)
+            self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], self.sDevName, log=False)
         if False != self.Can.bConnected:
             self.vDataAquisition() 
                                

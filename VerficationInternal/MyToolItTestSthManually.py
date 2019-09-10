@@ -30,10 +30,10 @@ class TestSthManually(unittest.TestCase):
         self.Can.Logger.Info("TestCase: " + str(self._testMethodName))
         self._resetStu()
         self.Can.Logger.Info("Connect to STH")
-        self.Can.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
+        self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
         self._resetSth()
         self.Can.Logger.Info("Connect to STH")
-        self.Can.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
+        self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
         self.bError = False
         self.Can.Logger.Info("STU BlueTooth Address: " + hex(self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"])))
         self.Can.Logger.Info("STH BlueTooth Address: " + hex(self.Can.BlueToothAddress(MyToolItNetworkNr["STH1"])))
@@ -94,13 +94,13 @@ class TestSthManually(unittest.TestCase):
         self.Can.Logger.Info("Turn Off LED")
         cmd = self.Can.CanCmd(MyToolItBlock["Configuration"], MyToolItConfiguration["Hmi"], 1, 0)
         message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [129, 1, 2, 0, 0, 0, 0, 0])
-        self.Can.WriteFrameWaitAckRetries(message)
+        self.Can.tWriteFrameWaitAckRetries(message)
 
     def TurnOnLed(self):
         self.Can.Logger.Info("Turn On LED")
         cmd = self.Can.CanCmd(MyToolItBlock["Configuration"], MyToolItConfiguration["Hmi"], 1, 0)
         message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [129, 1, 1, 0, 0, 0, 0, 0])
-        self.Can.WriteFrameWaitAckRetries(message)        
+        self.Can.tWriteFrameWaitAckRetries(message)        
         
     """
     Test Acknowledgement from STH. Write message and check identifier to be ack (No bError)
@@ -146,7 +146,7 @@ class TestSthManually(unittest.TestCase):
         cmd = self.Can.CanCmd(MyToolItBlock["System"], MyToolItSystem["ActiveState"], 1, 0)
         message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [sendData.asbyte])
         self.Can.Logger.Info("Send Shut Down Command")
-        receivedData.asbyte = self.Can.WriteFrameWaitAckRetries(message)["Payload"][0]
+        receivedData.asbyte = self.Can.tWriteFrameWaitAckRetries(message)["Payload"][0]
         self.Can.Logger.Info("Send try should fail")
         message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [failTry.asbyte])
         self.Can.WriteFrame(message)
@@ -175,7 +175,7 @@ class TestSthManually(unittest.TestCase):
         time.sleep(SleepTime["Min"] / 1000)
         print("Measure Power Consumption for advertisement time " + str(SleepTime["AdvertisementReset1"]) + "ms")
         input('Press any key to continue')
-        self.Can.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
+        self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
         self.Can.BlueToothEnergyModeNr(SleepTime["Min"], SleepTime["AdvertisementReset2"], 1)
         self.Can.BlueToothEnergyModeNr(SleepTime["Reset2"], SleepTime["AdvertisementReset2"], 2)
         self.Can.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
@@ -183,7 +183,7 @@ class TestSthManually(unittest.TestCase):
         time.sleep(SleepTime["Min"] / 1000)
         print("Measure Power Consumption for advertisement time " + str(SleepTime["AdvertisementReset2"]) + "ms")
         input('Press any key to continue')
-        self.Can.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
+        self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
         self.Can.BlueToothEnergyModeNr(SleepTime["Min"], TestConfig["ConTimeNormalMaxMs"], 1)
         self.Can.BlueToothEnergyModeNr(SleepTime["Reset2"], TestConfig["ConTimeNormalMaxMs"], 2)
         self.Can.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
@@ -191,7 +191,7 @@ class TestSthManually(unittest.TestCase):
         time.sleep(SleepTime["Min"] / 1000)
         print("Measure Power Consumption for advertisement time " + str(TestConfig["ConTimeNormalMaxMs"]) + "ms")
         input('Press any key to continue')
-        self.Can.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
+        self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
         self.Can.BlueToothEnergyModeNr(SleepTime["Reset1"], SleepTime["AdvertisementReset1"], 1)
         self.Can.BlueToothEnergyModeNr(SleepTime["Reset2"], SleepTime["AdvertisementReset2"], 2)  
 
@@ -256,7 +256,7 @@ class TestSthManually(unittest.TestCase):
         self.Can.Logger.Info("Under Voltage Counter since first Power On: " + payload2Hex(UnderVoltage1))
         self.Can.Logger.Info("Under Voltage Counter since first Power On: " + str(UnderVoltagePowerOnFirst1))
         input('Power Off Device and wait 1s, power on again and then press Any Key to Continue')
-        self.Can.BlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
+        self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
         UnderVoltage2 = self.Can.statisticalData(MyToolItNetworkNr["STH1"], MyToolItStatData["Uvc"], printLog=True)    
         UnderVoltagePowerOnFirst2 = iMessage2Value(UnderVoltage2[:4])
         self.Can.Logger.Info("Under Voltage Counter since first Power On: " + payload2Hex(UnderVoltage2))

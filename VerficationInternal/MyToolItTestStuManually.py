@@ -65,13 +65,13 @@ class TestSthManually(unittest.TestCase):
         self.Can.Logger.Info("Turn Off LED")
         cmd = self.Can.CanCmd(MyToolItBlock["Configuration"], MyToolItConfiguration["Hmi"], 1, 0)
         message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [129, 1, 2, 0, 0, 0, 0, 0])
-        self.Can.WriteFrameWaitAckRetries(message)
+        self.Can.tWriteFrameWaitAckRetries(message)
 
     def TurnOnLed(self):
         self.Can.Logger.Info("Turn On LED")
         cmd = self.Can.CanCmd(MyToolItBlock["Configuration"], MyToolItConfiguration["Hmi"], 1, 0)
         message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [129, 1, 1, 0, 0, 0, 0, 0])
-        self.Can.WriteFrameWaitAckRetries(message)        
+        self.Can.tWriteFrameWaitAckRetries(message)        
         
     """
     Test Acknowledgement from STH. Write message and check identifier to be ack (No bError)

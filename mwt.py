@@ -233,18 +233,17 @@ class mwt(myToolItWatch):
                 else:
                     iNumber = 0
             elif 0x0A == keyPress:
-                if 0 < iNumber:
-                    iNumber -= 1
+                if 0 < iNumber:                    
                     self.stdscr.addstr("\nTry to connect to device number " + str(iNumber) + "\n")
                     self.stdscr.refresh()
+                    iNumber -= 1
                     for dev in devList:
-                        iDevNumber = int(dev["DeviceNumber"])
-                        if iDevNumber == iNumber:
-                            self.vDeviceAddressSet(str(dev["Address"]))
+                        if dev["DeviceNumber"] == iNumber:
+                            self.vDeviceAddressSet(hex(dev["Address"]))
                             self.stdscr.addstr("Connect to " + hex(dev["Address"]) + "(" + str(dev["Name"]) + ")\n")
                             self.stdscr.refresh()
-                            self.Can.BlueToothConnectPollingAddress(MyToolItNetworkNr["STU1"], self.iAddress)
-                            bContinue = self.bTerminalHolderConnectCommands()
+                            if False != self.Can.bBlueToothConnectPollingAddress(MyToolItNetworkNr["STU1"], self.iAddress):
+                                bContinue = self.bTerminalHolderConnectCommands()
                 else:
                     bContinue = True
                 bRun = False
@@ -763,7 +762,7 @@ class mwt(myToolItWatch):
                         self.vDeviceAddressSet(str(dev["Address"]))
                         self.stdscr.addstr("Connect to " + hex(dev["Address"]) + "(" + str(dev["Name"]) + ")\n")
                         self.stdscr.refresh()
-                        self.Can.BlueToothConnectPollingAddress(MyToolItNetworkNr["STU1"], self.iAddress)    
+                        self.Can.bBlueToothConnectPollingAddress(MyToolItNetworkNr["STU1"], self.iAddress)    
                            
     def bTerminalMainMenuKeyEvaluation(self, devList):
         bRun = True

@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ConfigKey>
     <lastRun>
-        <LogName>init</LogName>
+        <LogName>None</LogName>
         <Product>STU</Product>
-        <Version>v2.1.2</Version>
-        <NetworkNumber>STU1</NetworkNumber>
-        <SheetFile>Watch</SheetFile>
+        <Version>v2.1.3</Version>
+        <NetworkNumber />
+        <SheetFile>None</SheetFile>
         <Setup>X</Setup>
     </lastRun>
     <Config>
         <config name="X">
-                <DeviceName>"Tanja"</DeviceName>
+                <DeviceName>Tanja</DeviceName>
                 <DeviceAddress>0</DeviceAddress>
                 <Acc>100</Acc>
                 <Voltage>000</Voltage>
@@ -24,7 +24,7 @@
                 <RunTime>0</RunTime>
         </config>
         <config name="Y">
-                <DeviceName>"Tanja"</DeviceName>
+                <DeviceName>Tanja</DeviceName>
                 <DeviceAddress>0</DeviceAddress>
                 <Acc>010</Acc>
                 <Voltage>000</Voltage>
@@ -38,7 +38,7 @@
                 <RunTime>0</RunTime>
         </config>
         <config name="Z">
-                <DeviceName>"Tanja"</DeviceName>
+                <DeviceName>Tanja</DeviceName>
                 <DeviceAddress>0</DeviceAddress>
                 <Acc>001</Acc>
                 <Voltage>000</Voltage>
@@ -52,7 +52,7 @@
                 <RunTime>0</RunTime>
         </config>
         <config name="XY">
-                <DeviceName>"Tanja"</DeviceName>
+                <DeviceName>Tanja</DeviceName>
                 <DeviceAddress>0</DeviceAddress>
                 <Acc>110</Acc>
                 <Voltage>000</Voltage>
@@ -66,7 +66,7 @@
                 <RunTime>0</RunTime>
         </config>
         <config name="YZ">
-                <DeviceName>"Tanja"</DeviceName>
+                <DeviceName>Tanja</DeviceName>
                 <DeviceAddress>0</DeviceAddress>
                 <Acc>011"</Acc>
                 <Voltage>000</Voltage>
@@ -80,7 +80,7 @@
                 <RunTime>0</RunTime>
         </config>
         <config name="XYZ">
-                <DeviceName>"Tanja"</DeviceName>
+                <DeviceName>Tanja</DeviceName>
                 <DeviceAddress>0</DeviceAddress>
                 <Acc>111</Acc>
                 <Voltage>000</Voltage>
@@ -94,7 +94,7 @@
                 <RunTime>0</RunTime>
         </config>
         <config name="XHighRes">
-                <DeviceName>"Tanja"</DeviceName>
+                <DeviceName>Tanja</DeviceName>
                 <DeviceAddress>0</DeviceAddress>
                 <Acc>100</Acc>
                 <Voltage>000</Voltage>
@@ -108,7 +108,7 @@
                 <RunTime>0</RunTime>
         </config>
         <config name="YHighRes">
-                <DeviceName>"Tanja"</DeviceName>
+                <DeviceName>Tanja</DeviceName>
                 <DeviceAddress>0</DeviceAddress>
                 <Acc>010</Acc>
                 <Voltage>000</Voltage>
@@ -122,7 +122,7 @@
                 <RunTime>0</RunTime>
         </config>
         <config name="ZHighRes">
-                <DeviceName>"Tanja"</DeviceName>
+                <DeviceName>Tanja</DeviceName>
                 <DeviceAddress>0</DeviceAddress>
                 <Acc>001</Acc>
                 <Voltage>000</Voltage>
@@ -701,6 +701,173 @@
                                     <description>Counts of under voltages that yields into turn off state(Brown Out)</description>
                                     </entry>
                                 <entry name="Watchdog Reset Counter "><subAddress>16</subAddress><length>4</length><readOnly>True</readOnly><value>0</value><unit>date</unit><format>unsigned</format><description>Watchdog Resets since first power on</description></entry><entry name="Production Date"><subAddress>20</subAddress><length>8</length><readOnly>True</readOnly><value>20190905</value><unit>date</unit><format>ASCII</format><description>Production Date (EEPROM Production Write) in the format yyyymmdd (year month day)</description></entry></Entry>
+                            </page>
+                        </Page>
+                    </version>
+                <version name="v2.1.3">
+                        <Page>
+                            <page name="Product Data">
+                                <pageAddress>4</pageAddress>
+                                <Entry>
+                                    <entry name="GTIN">
+                                    <subAddress>0</subAddress>
+                                    <length>8</length>
+                                    <readOnly>True</readOnly>
+                                    <value>0</value>
+                                    <unit />
+                                    <format>unsigned</format>
+                                    <description>Global Trade Identification Number (GTIN)</description>
+                                    </entry>
+                                    <entry name="Hardware Revision - Reserved">
+                                    <subAddress>8</subAddress>
+                                    <length>5</length>
+                                    <readOnly>True</readOnly>
+                                    <value>0</value>
+                                    <unit />
+                                    <format>unsigned</format>
+                                    <description>Hardware Revision Number - Major</description>
+                                    </entry>
+                                    <entry name="Hardware Revision - Major">
+                                    <subAddress>13</subAddress>
+                                    <length>1</length>
+                                    <readOnly>True</readOnly>
+                                    <value>2</value>
+                                    <unit />
+                                    <format>unsigned</format>
+                                    <description>Hardware Revision Number - Major</description>
+                                    </entry>
+                                    <entry name="Hardware Revision - Minor">
+                                    <subAddress>14</subAddress>
+                                    <length>1</length>
+                                    <readOnly>True</readOnly>
+                                    <value>1</value>
+                                    <unit />
+                                    <format>unsigned</format>
+                                    <description>Hardware Revision Number - Minor</description>
+                                    </entry>
+                                    <entry name="Hardware Revision - Build">
+                                    <subAddress>15</subAddress>
+                                    <length>1</length>
+                                    <readOnly>True</readOnly>
+                                    <value>3</value>
+                                    <unit />
+                                    <format>unsigned</format>
+                                    <description>Hardware Revision Number - Build</description>
+                                    </entry>
+                                    <entry name="Firmware Version Number - Reserved">
+                                    <subAddress>16</subAddress>
+                                    <length>5</length>
+                                    <readOnly>True</readOnly>
+                                    <value>0</value>
+                                    <unit />
+                                    <format>unsigned</format>
+                                    <description>Firmware Version Number - Reserved</description>
+                                    </entry>
+                                    <entry name="Firmware Version Number - Major">
+                                    <subAddress>21</subAddress>
+                                    <length>1</length>
+                                    <readOnly>True</readOnly>
+                                    <value>2</value>
+                                    <unit />
+                                    <format>unsigned</format>
+                                    <description>Firmware Version Number - Major</description>
+                                    </entry>
+                                    <entry name="Firmware Version Number - Minor">
+                                    <subAddress>22</subAddress>
+                                    <length>1</length>
+                                    <readOnly>True</readOnly>
+                                    <value>1</value>
+                                    <unit />
+                                    <format>unsigned</format>
+                                    <description>Firmware Version Number - Minor</description>
+                                    </entry>
+                                    <entry name="Firmware Version Number - Build">
+                                    <subAddress>23</subAddress>
+                                    <length>1</length>
+                                    <readOnly>True</readOnly>
+                                    <value>3</value>
+                                    <unit />
+                                    <format>unsigned</format>
+                                    <description>Firmware Version Number - Build</description>
+                                    </entry>
+                                    <entry name="Release Name">
+                                    <subAddress>24</subAddress>
+                                    <length>8</length>
+                                    <readOnly>True</readOnly>
+                                    <value>Tanja</value>
+                                    <unit />
+                                    <format>UTF8</format>
+                                    <description>Release Name, represents Major - Minor</description>
+                                    </entry>
+                                    <entry name="Serial Number">
+                                    <subAddress>32</subAddress>
+                                    <length>32</length>
+                                    <readOnly>True</readOnly>
+                                    <value>0</value>
+                                    <unit />
+                                    <format>UTF8</format>
+                                    <description>Manufactor Serial Number</description>
+                                    </entry>
+                                    <entry name="Name">
+                                    <subAddress>64</subAddress>
+                                    <length>128</length>
+                                    <readOnly>True</readOnly>
+                                    <value>0</value>
+                                    <unit />
+                                    <format>UTF8</format>
+                                    <description>Manufactor Name; This may extend Serial Number, supports URL, extend definition, etc.</description>
+                                    </entry>
+                                    <entry name="OEM Free Use">
+                                    <subAddress>192</subAddress>
+                                    <length>64</length>
+                                    <readOnly>True</readOnly>
+                                    <value>0</value>
+                                    <unit />
+                                    <format />
+                                    <description>Supports Manufactor Specific information in format that is free to choose</description>
+                                    </entry>
+                                </Entry>
+                            </page>
+                            <page name="Statistics">
+                                <pageAddress>5</pageAddress>
+                                <Entry>
+                                    <entry name="Power On Cylces">
+                                    <subAddress>0</subAddress>
+                                    <length>4</length>
+                                    <readOnly>True</readOnly>
+                                    <value>0</value>
+                                    <unit />
+                                    <format>unsigned</format>
+                                    <description>Power On Cycles since first reset(Note that a resets also counts as power on)</description>
+                                    </entry>
+                                    <entry name="Power Off Cylces">
+                                    <subAddress>4</subAddress>
+                                    <length>4</length>
+                                    <readOnly>True</readOnly>
+                                    <value>0</value>
+                                    <unit />
+                                    <format>unsigned</format>
+                                    <description>Power Off Cycles since first reset</description>
+                                    </entry>
+                                    <entry name="Operating Time since first power On">
+                                    <subAddress>8</subAddress>
+                                    <length>4</length>
+                                    <readOnly>True</readOnly>
+                                    <value>0</value>
+                                    <unit>seconds</unit>
+                                    <format>unsigned</format>
+                                    <description>Operating Time since first power On in seconds</description>
+                                    </entry>
+                                    <entry name="Under Voltage Counter since first Power On">
+                                    <subAddress>12</subAddress>
+                                    <length>4</length>
+                                    <readOnly>True</readOnly>
+                                    <value>0</value>
+                                    <unit />
+                                    <format>unsigned</format>
+                                    <description>Counts of under voltages that yields into turn off state(Brown Out)</description>
+                                    </entry>
+                                <entry name="Watchdog Reset Counter "><subAddress>16</subAddress><length>4</length><readOnly>True</readOnly><value>0</value><unit>date</unit><format>unsigned</format><description>Watchdog Resets since first power on</description></entry><entry name="Production Date"><subAddress>20</subAddress><length>8</length><readOnly>True</readOnly><value>20191005</value><unit>date</unit><format>ASCII</format><description>Production Date (EEPROM Production Write) in the format yyyymmdd (year month day)</description></entry></Entry>
                             </page>
                         </Page>
                     </version>
