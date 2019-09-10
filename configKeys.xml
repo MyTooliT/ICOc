@@ -2,9 +2,9 @@
 <ConfigKey>
     <lastRun>
         <LogName>None</LogName>
-        <Product>STU</Product>
+        <Product>STH</Product>
         <Version>v2.1.3</Version>
-        <NetworkNumber />
+        <NetworkNumber>STH1</NetworkNumber>
         <SheetFile>None</SheetFile>
         <Setup>X</Setup>
     </lastRun>
@@ -170,7 +170,7 @@
                                     <value>300000</value>
                                     <unit>ms</unit>
                                     <format>unsigned</format>
-                                    <description>Time to from disconnected to sleep Mode 1 in ms</description>
+                                    <description>Time to from disconnect/power on to Sleep Mode 1 in ms</description>
                                     </entry>
                                     <entry name="Advertisement Time 1">
                                     <subAddress>13</subAddress>
@@ -188,7 +188,7 @@
                                     <value>3600000</value>
                                     <unit>ms</unit>
                                     <format>unsigned</format>
-                                    <description>Time to from disconnected to sleep Mode 1 in ms</description>
+                                    <description>Time to from entering Sleep Mode 1 to Sleep Mode 2 in ms</description>
                                     </entry>
                                     <entry name="Advertisement Time 2">
                                     <subAddress>19</subAddress>
@@ -197,7 +197,7 @@
                                     <value>1600</value>
                                     <unit>ms</unit>
                                     <format>unsigned</format>
-                                    <description>Bluetooth Advertisement Time in ms for Sleep Mode 1</description>
+                                    <description>Bluetooth Advertisement Time in ms for Sleep Mode 2</description>
                                     </entry>
                                 </Entry>
                             </page>
