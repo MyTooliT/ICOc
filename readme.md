@@ -186,7 +186,6 @@ Open a command prompt (console) and navigate to the software project folder(loca
 | -x configKeys.xml                            | Specifies XML File. Note that you may create another xml file and use this. |
 | -a prescaler acquistionTime overSamplingRate | Configurate ADC prescaler(2-127), Acquistion Time(1,2,3,4,8,16, ... 256) and oversampling Rate(1,2,4,8, 16, .... 4096) |
 | -b Address                                   | Connects to device with specified address                    |
-| -c                                           | auto connect as described in setup file                      |
 | -e name.xlsx                                 | Chose Excel File to for accessing EERPOM(Read and Write)     |
 | -i time                                      | Interval Time for creating a fresh log file in seconds. Values below 10 will deactivate this feature |
 | -l logName                                   | Specifies logname where data and information will be dumped  |
