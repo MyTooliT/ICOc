@@ -1056,9 +1056,9 @@ class CanFd(object):
         while time() < endTime and False == self.bConnected:
             devList = self.tDeviceList(stuNr)
             for dev in devList:
-                if sName == dev["sDevName"]:
+                if sName == dev["Name"]:
                     self.iAddress = dev["Address"]
-                    self.sDevName = dev["sDevName"]
+                    self.sDevName = dev["Name"]
                     self.DeviceNr = dev["DeviceNumber"]
                     currentTime = time()            
                     endTime = currentTime + BluetoothTime["Connect"] 
