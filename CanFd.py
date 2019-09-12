@@ -334,9 +334,9 @@ class CanFd(object):
         cmdName = self.strCmdNrToCmdName(command)
         senderName = MyToolItNetworkName[sender]
         receiverName = MyToolItNetworkName[receiver]
-        self.Logger.Warning("No (bError) Ack Received: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + payload2Hex(CanMsg.DATA))
+        self.Logger.Warning("No (Error) Ack Received: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + payload2Hex(CanMsg.DATA))
         if False != printLog:
-            print("No (bError) Ack Received: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + str(CanMsg.DATA))
+            print("No (Error) Ack Received: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + str(CanMsg.DATA))
         return "Error"  
       
     def tWriteFrameWaitAck(self, CanMsg, waitMs=1000, currentIndex=None, printLog=False, assumedPayload=None, bError=False, sendTime=None, notAckIdleWaitTimeMs=0.001):
@@ -1048,15 +1048,17 @@ class CanFd(object):
     Connect to device via name
     """    
     def bBlueToothConnectPollingName(self, stuNr, sName, log=True):  
-        self.Name = None
+        self.sDevName = None
         endTime = time() + BluetoothTime["Connect"]
-        self.Logger.Info("Try to connect to Device Name: " + sName)
+        self.Logger.Info("Try to connect to Device sDevName: " + sName)
+        dev = None
+        devList = None
         while time() < endTime and False == self.bConnected:
             devList = self.tDeviceList(stuNr)
             for dev in devList:
-                if sName == dev["Name"]:
+                if sName == dev["sDevName"]:
                     self.iAddress = dev["Address"]
-                    self.Name = dev["Name"]
+                    self.sDevName = dev["sDevName"]
                     self.DeviceNr = dev["DeviceNumber"]
                     currentTime = time()            
                     endTime = currentTime + BluetoothTime["Connect"] 
@@ -1064,10 +1066,11 @@ class CanFd(object):
                     while time() < endTime and False == self.bConnected:      
                         self.bBlueToothCheckConnect(stuNr)  
                     if False != self.bConnected and False != log:
-                        self.Logger.Info("Connected to: " + str(self.iAddress))
-        if None == self.Name:
+                        self.Logger.Info("Connected to: " + hex(self.iAddress) + "("+self.sDevName + ")")
+                    break
+        if None == self.sDevName:
             if False != log:
-                self.Logger.Info("Available Devices: " + str(dev))
+                self.Logger.Info("Available Devices: " + str(devList))
             self.__exitError()
         return self.bConnected
 
@@ -1104,7 +1107,7 @@ class CanFd(object):
             for dev in devList:
                 if iAddress == hex(dev["Address"]):
                     self.iAddress = iAddress
-                    self.Name = dev["Name"]
+                    self.sDevName = dev["Name"]
                     self.DeviceNr = dev["DeviceNumber"]
                     currentTime = time()            
                     endTime = currentTime + BluetoothTime["Connect"] 
@@ -1112,8 +1115,8 @@ class CanFd(object):
                     while time() < endTime and False == self.bConnected:    
                         self.bBlueToothCheckConnect(stuNr)  
                     if False != self.bConnected and False != bLog:
-                        self.Logger.Info("Connected to: " + str(self.iAddress))
-        if None == self.Name:
+                        self.Logger.Info("Connected to: " + hex(self.iAddress))
+        if None == self.sDevName:
             self.Logger.Info("Available Devices: " + str(dev))
             self.__exitError()
         return self.bConnected
@@ -1132,6 +1135,7 @@ class CanFd(object):
             self.Logger.Info("Setting Bluetooth Energy Mode 1")
             modeNr = SystemCommandBlueTooth["EnergyModeReducedWrite"]
         Payload = [modeNr, self.DeviceNr, S1B0, S1B1, S1B2, S1B3, A1B0, A1B1]
+        sleep(0.1)
         [timeReset, timeAdvertisement] = self.BlueToothEnergyMode(Payload) 
         self.Logger.Info("Energy Mode ResetTime/AdvertisementTime: " + str(timeReset) + "/" + str(timeAdvertisement))
         return [timeReset, timeAdvertisement]   

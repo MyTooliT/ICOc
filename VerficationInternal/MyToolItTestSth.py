@@ -119,6 +119,7 @@ class TestSth(unittest.TestCase):
         return self.Can.cmdReset(MyToolItNetworkNr["STU1"], retries=retries, log=log)
 
     def _resetSth(self, retries=5, log=True):
+        self.Can.bConnected = False
         return self.Can.cmdReset(MyToolItNetworkNr["STH1"], retries=retries, log=log)
         
     def _SthAdcTemp(self):
@@ -570,14 +571,7 @@ class TestSth(unittest.TestCase):
         [timeReset, timeAdvertisement] = self.Can.BlueToothEnergyMode([SystemCommandBlueTooth["EnergyModeReducedRead"], self.Can.DeviceNr, 0, 0, 0, 0, 0, 0])
         self.Can.Logger.Info("First Read Time Sleep Time1: " + str(timeReset) + " ms")
         self.Can.Logger.Info("First Read Time Advertisement Time 1: " + str(timeAdvertisement) + " ms")
-        S1B0 = SleepTime["Min"] & 0xFF
-        S1B1 = (SleepTime["Min"] >> 8) & 0xFF
-        S1B2 = (SleepTime["Min"] >> 16) & 0xFF
-        S1B3 = (SleepTime["Min"] >> 24) & 0xFF
-        A1B0 = 1000 & 0xFF
-        A1B1 = (1000 >> 8) & 0xFF
-        Payload = [SystemCommandBlueTooth["EnergyModeReducedWrite"], self.Can.DeviceNr, S1B0, S1B1, S1B2, S1B3, A1B0, A1B1]
-        [timeReset, timeAdvertisement] = self.Can.BlueToothEnergyMode(Payload)
+        [timeReset, timeAdvertisement] = self.Can.BlueToothEnergyModeNr(SleepTime["Min"], 1000, 1)
         self.Can.Logger.Info("First Write Time Sleep Time1(ACK): " + str(timeReset) + " ms")
         self.Can.Logger.Info("First Write Time Advertisement Time 1(ACK): " + str(timeAdvertisement) + " ms")
         self.assertEqual(timeReset, SleepTime["Min"])
@@ -597,14 +591,7 @@ class TestSth(unittest.TestCase):
         # Reset to default values
         self.Can.Logger.Info("Write Time Sleep Time1: " + str(SleepTime["Reset1"]) + " ms")
         self.Can.Logger.Info("Write Time Advertisement Time 1: " + str(SleepTime["AdvertisementReset1"]) + " ms")
-        S1B0 = SleepTime["Reset1"] & 0xFF
-        S1B1 = (SleepTime["Reset1"] >> 8) & 0xFF
-        S1B2 = (SleepTime["Reset1"] >> 16) & 0xFF
-        S1B3 = (SleepTime["Reset1"] >> 24) & 0xFF
-        A1B0 = SleepTime["AdvertisementReset1"] & 0xFF
-        A1B1 = (SleepTime["AdvertisementReset1"] >> 8) & 0xFF
-        Payload = [SystemCommandBlueTooth["EnergyModeReducedWrite"], self.Can.DeviceNr, S1B0, S1B1, S1B2, S1B3, A1B0, A1B1]
-        [timeReset, timeAdvertisement] = self.Can.BlueToothEnergyMode(Payload)
+        [timeReset, timeAdvertisement] = self.Can.BlueToothEnergyModeNr(SleepTime["Reset1"], SleepTime["AdvertisementReset1"], 1)
         self.Can.Logger.Info("Write Time Sleep Time1(ACK): " + str(timeReset) + " ms")
         self.Can.Logger.Info("Write Time Advertisement Time 1(ACK): " + str(timeAdvertisement) + " ms")
         self.assertEqual(timeReset, SleepTime["Reset1"])
@@ -946,7 +933,7 @@ class TestSth(unittest.TestCase):
         self.Can.BlueToothEnergyModeNr(SleepTime["Min"], SleepTime["AdvertisementReset1"], 1)
         self.Can.BlueToothEnergyModeNr(SleepTime["Min"], SleepTime["AdvertisementReset2"], 2)  
         timeAverageSleep2 = 0
-        self.Can.Logger.Info("Test Sleep Mode 2 with Adverteisement Time: " + str(SleepTime["AdvertisementReset2"]) + "ms") 
+        self.Can.Logger.Info("Test Sleep Mode 2 with Advertisement Time: " + str(SleepTime["AdvertisementReset2"]) + "ms") 
         for _i in range(0, 10):      
             self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
             time.sleep(2 * SleepTime["Min"] / 1000)
@@ -963,7 +950,7 @@ class TestSth(unittest.TestCase):
         self.Can.BlueToothEnergyModeNr(SleepTime["Min"], SleepTime["AdvertisementReset1"], 1)
         self.Can.BlueToothEnergyModeNr(SleepTime["Reset2"], SleepTime["AdvertisementReset2"], 2)  
         timeAverageSleep1 = 0
-        self.Can.Logger.Info("Test Sleep Mode 1 with Adverteisement Time: " + str(SleepTime["AdvertisementReset1"]) + "ms") 
+        self.Can.Logger.Info("Test Sleep Mode 1 with Advertisement Time: " + str(SleepTime["AdvertisementReset1"]) + "ms") 
         for _i in range(0, 10):      
             self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
             time.sleep(SleepTime["Min"] / 1000)
