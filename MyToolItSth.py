@@ -13,8 +13,8 @@ TestConfig = {
     "DevName" : "Tanja",
     "ProductionDate" : "20190905",
     "AdcConfigAllPrescalerMax" : 4,
-    "ConTimeNormalMaxMs" : 4000,
-    "ConTimeSleep1MaxMs" : 5000,
+    "ConTimeNormalMaxMs" : 5000,
+    "ConTimeSleep1MaxMs" : 6000,
     "ConTimeSleep2MaxMs" : 7000,
     "ConTimeMaximumMs" : 15000,
     }
