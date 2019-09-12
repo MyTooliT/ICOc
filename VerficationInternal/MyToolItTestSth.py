@@ -93,7 +93,7 @@ class TestSth(unittest.TestCase):
             self.assertGreaterEqual(TempInternalMax, temp)
             self.assertLessEqual(TempInternalMin, temp)
             self.Can.Logger.Info("Test Time End Time Stamp")
-            self.Can.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
+            self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
         else:
             ReceiveFailCounter = 0
         if(0 < ReceiveFailCounter):
@@ -915,13 +915,13 @@ class TestSth(unittest.TestCase):
     def test0103BlueToothName(self):
         self.Can.Logger.Info("Bluetooth name command")
         self.Can.Logger.Info("Write Walther0")
-        self.Can.BlueToothNameWrite(0, "Walther0")
+        self.Can.vBlueToothNameWrite(MyToolItNetworkNr["STH1"], 0, "Walther0")
         self.Can.Logger.Info("Check Walther0")
         Name = self.Can.BlueToothNameGet(MyToolItNetworkNr["STH1"], 0)[0:8]
         self.Can.Logger.Info("Received: " + Name)
         self.assertEqual("Walther0", Name)
         self.Can.Logger.Info("Write " + TestConfig["DevName"])
-        self.Can.BlueToothNameWrite(0, TestConfig["DevName"])
+        self.Can.vBlueToothNameWrite(MyToolItNetworkNr["STH1"], 0, TestConfig["DevName"])
         self.Can.Logger.Info("Check " + TestConfig["DevName"])
         Name = self.Can.BlueToothNameGet(MyToolItNetworkNr["STH1"], 0)[0:8]
         self.Can.Logger.Info("Received: " + Name)
@@ -948,7 +948,7 @@ class TestSth(unittest.TestCase):
         timeAverageSleep2 = 0
         self.Can.Logger.Info("Test Sleep Mode 2 with Adverteisement Time: " + str(SleepTime["AdvertisementReset2"]) + "ms") 
         for _i in range(0, 10):      
-            self.Can.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
+            self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
             time.sleep(2 * SleepTime["Min"] / 1000)
             timeStampDisconnected = self.Can.Logger.getTimeStamp()
             self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
@@ -965,7 +965,7 @@ class TestSth(unittest.TestCase):
         timeAverageSleep1 = 0
         self.Can.Logger.Info("Test Sleep Mode 1 with Adverteisement Time: " + str(SleepTime["AdvertisementReset1"]) + "ms") 
         for _i in range(0, 10):      
-            self.Can.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
+            self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
             time.sleep(SleepTime["Min"] / 1000)
             timeStampDisconnected = self.Can.Logger.getTimeStamp()
             self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])     
@@ -992,7 +992,7 @@ class TestSth(unittest.TestCase):
         timeAverageSleep2 = 0
         self.Can.Logger.Info("Test Sleep Mode 2 with Advertisement Time: " + str(SleepTime["AdvertisementReset2"]) + "ms") 
         for _i in range(0, 10):      
-            self.Can.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
+            self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
             time.sleep(2 * SleepTime["Min"] / 1000)
             timeStampDisconnected = self.Can.Logger.getTimeStamp()
             self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
@@ -1018,7 +1018,7 @@ class TestSth(unittest.TestCase):
         timeAverage = 0
         self.Can.Logger.Info("Test Normal Connection Time") 
         for _i in range(0, 10):      
-            self.Can.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
+            self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
             timeStampDisconnected = self.Can.Logger.getTimeStamp()
             self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
             timeStampConnected = self.Can.Logger.getTimeStamp()
@@ -1041,13 +1041,13 @@ class TestSth(unittest.TestCase):
         if 0 == timeReset and 0 == timeAdvertisement:
             self.Can.Logger.Info("Sleep Time1 was not taken: " + str(SleepTime["Min"] - 1) + "ms")
         else:
-            self.Can.Logger.bError("Sleep Time1 was taken: " + str(SleepTime["Min"] - 1) + "ms")
+            self.Can.Logger.Error("Sleep Time1 was taken: " + str(SleepTime["Min"] - 1) + "ms")
             self.Can.__exitError()
         [timeReset, timeAdvertisement] = self.Can.BlueToothEnergyModeNr(SleepTime["Min"] - 1, SleepTime["AdvertisementReset2"], 2)
         if 0 == timeReset and 0 == timeAdvertisement:
             self.Can.Logger.Info("Sleep Time2 was not taken: " + str(SleepTime["Min"] - 1) + "ms")
         else:
-            self.Can.Logger.bError("Sleep Time2 was taken: " + str(SleepTime["Min"] - 1) + "ms")
+            self.Can.Logger.Error("Sleep Time2 was taken: " + str(SleepTime["Min"] - 1) + "ms")
             self.Can.__exitError()
             
         # Do not take Advertisement Time - Min
@@ -1055,26 +1055,26 @@ class TestSth(unittest.TestCase):
         if 0 == timeReset and 0 == timeAdvertisement:
             self.Can.Logger.Info("Advertisement Time1 was not taken: " + str(SleepTime["AdvertisementMin"] - 1) + "ms")
         else:
-            self.Can.Logger.bError("Advertisement Time1 was taken: " + str(SleepTime["AdvertisementMin"] - 1) + "ms")
+            self.Can.Logger.Error("Advertisement Time1 was taken: " + str(SleepTime["AdvertisementMin"] - 1) + "ms")
             self.Can.__exitError()
         [timeReset, timeAdvertisement] = self.Can.BlueToothEnergyModeNr(SleepTime["Reset2"], SleepTime["AdvertisementMin"] - 1, 2)
         if 0 == timeReset and 0 == timeAdvertisement:
             self.Can.Logger.Info("Advertisement Time2 was not taken: " + str(SleepTime["AdvertisementMin"] - 1) + "ms")
         else:
-            self.Can.Logger.bError("Advertisement Time2 was taken: " + str(SleepTime["AdvertisementMin"] - 1) + "ms")
+            self.Can.Logger.Error("Advertisement Time2 was taken: " + str(SleepTime["AdvertisementMin"] - 1) + "ms")
             self.Can.__exitError()
         # Do not take Advertisement Time - Max
         [timeReset, timeAdvertisement] = self.Can.BlueToothEnergyModeNr(SleepTime["Reset1"], SleepTime["AdvertisementMax"] + 1, 1)
         if 0 == timeReset and 0 == timeAdvertisement:
             self.Can.Logger.Info("Advertisement Time1 was not taken: " + str(SleepTime["AdvertisementMax"] + 1) + "ms")
         else:
-            self.Can.Logger.bError("Advertisement Time1 was taken: " + str(SleepTime["AdvertisementMax"] + 1) + "ms")
+            self.Can.Logger.Error("Advertisement Time1 was taken: " + str(SleepTime["AdvertisementMax"] + 1) + "ms")
             self.Can.__exitError()
         [timeReset, timeAdvertisement] = self.Can.BlueToothEnergyModeNr(SleepTime["Reset2"], SleepTime["AdvertisementMax"] + 1, 2)
         if 0 == timeReset and 0 == timeAdvertisement:
             self.Can.Logger.Info("Advertisement Time2 was not taken: " + str(SleepTime["AdvertisementMax"] + 1) + "ms")
         else:
-            self.Can.Logger.bError("Advertisement Time2 was taken: " + str(SleepTime["AdvertisementMax"] + 1) + "ms")
+            self.Can.Logger.Error("Advertisement Time2 was taken: " + str(SleepTime["AdvertisementMax"] + 1) + "ms")
             self.Can.__exitError()
 
         self.Can.BlueToothEnergyModeNr(SleepTime["Reset1"], SleepTime["AdvertisementReset1"], 1)
@@ -3510,7 +3510,7 @@ class TestSth(unittest.TestCase):
         PowerOnOff2 = self.Can.statisticalData(MyToolItNetworkNr["STH1"], MyToolItStatData["PocPof"])
         PowerOn2 = iMessage2Value(PowerOnOff2[:4])
         PowerOff2 = iMessage2Value(PowerOnOff2[4:])
-        self.Can.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
+        self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
         PowerOnOff3 = self.Can.statisticalData(MyToolItNetworkNr["STH1"], MyToolItStatData["PocPof"])
         PowerOn3 = iMessage2Value(PowerOnOff3[:4])
@@ -3551,7 +3551,7 @@ class TestSth(unittest.TestCase):
         OperatingSeconds = self.Can.statisticalData(MyToolItNetworkNr["STH1"], MyToolItStatData["OperatingTime"])    
         SecondsReset2 = iMessage2Value(OperatingSeconds[:4])
         SecondsOveral2 = iMessage2Value(OperatingSeconds[4:])
-        self.Can.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
+        self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
         OperatingSeconds = self.Can.statisticalData(MyToolItNetworkNr["STH1"], MyToolItStatData["OperatingTime"])    
         SecondsReset3 = iMessage2Value(OperatingSeconds[:4])

@@ -87,7 +87,7 @@ class myToolItWatch():
             self._BlueToothStatistics()
             ReceiveFailCounter = self._RoutingInformation()
             self._statusWords()
-            self.Can.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
+            self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
             if(0 < ReceiveFailCounter):
                 self.bError = True
             self.Can.readThreadStop()
@@ -432,6 +432,16 @@ class myToolItWatch():
     def sDateClock(self):
         DataClockTimeStamp = datetime.fromtimestamp(time()).strftime('%Y-%m-%d_%H-%M-%S')
         return DataClockTimeStamp
+    
+    def sBlueToothMacAddr(self, iAddr):
+        au8Value = au8ChangeEndianOrder(au8Value2Array(iAddr, 6))
+        sAddr = ""
+        for element in au8Value:
+            if 16 > element:
+                sAddr += "0"
+            sAddr += hex(element)[2:] + ":"
+        sAddr = sAddr[:-1]
+        return sAddr
 
     def vParserInit(self):
         self.parser = argparse.ArgumentParser(description='Command Line Oprtions')

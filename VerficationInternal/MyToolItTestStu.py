@@ -32,8 +32,6 @@ class TestStu(unittest.TestCase):
         self.Can.Logger.Info("STU BlueTooth Address: " + hex(self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"])))
         self._statusWords()
         self._StuWDog()
-        while False != self.BlueToothDisconnect():
-            pass
         print("Start")
         self.Can.Logger.Info("_______________________________________________________________________________________________________________")
         self.Can.Logger.Info("Start")
@@ -211,48 +209,20 @@ class TestStu(unittest.TestCase):
         for i in  range(0, 100):
             self.Can.Logger.Info("Loop Run: " + str(i))
             self.Can.Logger.Info("Connect")
-            cmd = self.Can.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0)
-            message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [SystemCommandBlueTooth["Connect"], 0, 0, 0, 0, 0, 0, 0])
-            self.Can.tWriteFrameWaitAckRetries(message, retries=0)
-            time.sleep(BluetoothTime["GetDeviceNumber"])
-            self.Can.Logger.Info("Get number of available devices command")
-            message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [SystemCommandBlueTooth["GetNumberAvailableDevices"], 0, 0, 0, 0, 0, 0, 0])
-            msg = self.Can.tWriteFrameWaitAckRetries(message, retries=0)
-            deviceNumbers = int(msg["Payload"][2]) - ord('0')
+            self.Can.vBlueToothConnectConnect(MyToolItNetworkNr["STU1"])
+            for _j in range(0, BluetoothTime["DeviceConnect"]):
+                deviceNumbers = self.Can.iBlueToothConnectTotalScannedDeviceNr(MyToolItNetworkNr["STU1"])
+                if(0<deviceNumbers):
+                    break
+                time.sleep(1)
             self.Can.Logger.Info("Number of available devices: " + str(deviceNumbers))
             self.assertGreater(deviceNumbers, 0)
-            self.Can.Logger.Info("Disconnect")
-            message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [SystemCommandBlueTooth["Disconnect"], 0, 0, 0, 0, 0, 0, 0])
-            self.Can.tWriteFrameWaitAckRetries(message, retries=0)
-            self.Can.Logger.Info("Number of available devices command")
-            message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [SystemCommandBlueTooth["GetNumberAvailableDevices"], 0, 0, 0, 0, 0, 0, 0])
-            msg = self.Can.tWriteFrameWaitAckRetries(message, retries=0)
-            deviceNumbers = int(msg["Payload"][2]) - ord('0')
+            if(False != self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])):
+                self.Can.Logger.Error("Bluetooth STH connected")
+                self.assertEqual(False, True)
+            deviceNumbers = self.Can.iBlueToothConnectTotalScannedDeviceNr(MyToolItNetworkNr["STU1"])
             self.Can.Logger.Info("Number of available devices: " + str(deviceNumbers))
             self.assertEqual(deviceNumbers, 0)
-
-    def BlueToothConnect(self, deviceNr):
-        cmd = self.Can.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0)
-        message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [SystemCommandBlueTooth["Connect"], 0, 0, 0, 0, 0, 0, 0])
-        self.Can.tWriteFrameWaitAckRetries(message)
-        time.sleep(BluetoothTime["TestConnect"])
-        message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [SystemCommandBlueTooth["DeviceConnect"], deviceNr, 0, 0, 0, 0, 0, 0])
-        connected = self.Can.tWriteFrameWaitAckRetries(message)
-        connected = int(connected["Payload"][2])
-        self.assertNotEqual(0, connected)
-        time.sleep(BluetoothTime["TestConnect"])        
-        message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [SystemCommandBlueTooth["DeviceCheckConnected"], 0, 0, 0, 0, 0, 0, 0])
-        connectToDevice = self.Can.tWriteFrameWaitAckRetries(message)["Payload"][2]
-        return int(connectToDevice)
-    
-    def BlueToothDisconnect(self):
-        cmd = self.Can.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0)
-        message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [SystemCommandBlueTooth["Disconnect"], 0, 0, 0, 0, 0, 0, 0])
-        self.Can.tWriteFrameWaitAckRetries(message)
-        time.sleep(BluetoothTime["Disconnect"])
-        message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [SystemCommandBlueTooth["DeviceCheckConnected"], 0, 0, 0, 0, 0, 0, 0])
-        connectToDevice = int(self.Can.tWriteFrameWaitAckRetries(message)["Payload"][2])
-        return connectToDevice
     
     """
     Connect and disconnect to device 30 times
@@ -260,54 +230,91 @@ class TestStu(unittest.TestCase):
 
     def test0102BlueToothConnectDisconnectDevice(self):
         self.Can.Logger.Info("Bluetooth connect command and check connected command and disconnect command")
-        for i in range(0, 30):
+        totalConnectDisconnectTime = 0
+        totalRuns=500
+        for i in range(0, totalRuns):
+            startTime = self.Can.Logger.getTimeStamp()
             self.Can.Logger.Info("Loop Run: " + str(i))
+            self.Can.Logger.Info("Connect")
+            self.Can.vBlueToothConnectConnect(MyToolItNetworkNr["STU1"])
+            for i in range(0, BluetoothTime["DeviceConnect"]):
+                if(0 < self.Can.iBlueToothConnectTotalScannedDeviceNr(MyToolItNetworkNr["STU1"])):
+                    break
+                else:
+                    time.sleep(1)
             self.Can.Logger.Info("Connect to Bluetooth Device")
-            connectToDevice = self.BlueToothConnect(0)
-            if(0 != connectToDevice):
+            
+            while False == self.Can.bBlueToothConnectDeviceConnect(MyToolItNetworkNr["STU1"], 0):
+                self.Can.Logger.Info("Device Connect to number 0")
+            for i in range(0, BluetoothTime["Connect"]):
+                if(False != self.Can.bBlueToothCheckConnect(MyToolItNetworkNr["STU1"])):
+                    break
+                else:
+                    time.sleep(1)
+            if(False != self.Can.bConnected):
                 self.Can.Logger.Info("Bluetooth STH connected")
             else:
-                self.Can.Logger.bError("Bluetooth STH not Connected")
-            self.assertNotEqual(0, connectToDevice)
+                self.Can.Logger.Error("Bluetooth STH not Connected")
+            self.assertNotEqual(False, self.Can.bConnected)
             self.Can.Logger.Info("Disconnect from Bluetooth Device")
-            connectToDevice = self.BlueToothDisconnect()
-            if(0 != connectToDevice):
-                self.Can.Logger.bError("Bluetooth STH connected")
+            if(False != self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])):
+                self.Can.Logger.Error("Bluetooth STH connected")
+                self.assertEqual(False, True)
             else:
                 self.Can.Logger.Info("Bluetooth STH not Connected")
-            self.assertEqual(0, connectToDevice)
+            ConnectDissconnectTime = self.Can.Logger.getTimeStamp()-startTime
+            self.Can.Logger.Info("Time to connect and disconnect: " + str(ConnectDissconnectTime)+"ms")
+            totalConnectDisconnectTime += ConnectDissconnectTime
+        totalConnectDisconnectTime/=totalRuns
+        self.Can.Logger.Info("Average Time to connect and disconnect: " + str(totalConnectDisconnectTime)+"ms")
 
     """
     Write name and get name (bluetooth command)
     """ 
 
     def test0103BlueToothName(self):
+        self.Can.Logger.Info("Bluetooth name command")
         for _i in range(0, 10):
-            while 0 == self.Can.BlueToothConnect(MyToolItNetworkNr["STU1"], 0):
-                pass
-            self.Can.Logger.Info("Bluetooth name command")
+            self.Can.Logger.Info("Loop Run: " + str(_i))
             self.Can.Logger.Info("Connect")
+            self.Can.vBlueToothConnectConnect(MyToolItNetworkNr["STU1"])
+            self.Can.Logger.Info("Connect to Bluetooth Device")
+            while False == self.Can.bBlueToothConnectDeviceConnect(MyToolItNetworkNr["STU1"], 0):
+                self.Can.Logger.Info("Device Connect to number 0")
+            for i in range(0, BluetoothTime["Connect"]):
+                if(False != self.Can.bBlueToothCheckConnect(MyToolItNetworkNr["STU1"])):
+                    i = 16
+                else:
+                    time.sleep(1)
+            
             self.Can.Logger.Info("Write Walther0")
-            self.Can.BlueToothNameWrite(0, "Walther0")
+            self.Can.vBlueToothNameWrite(MyToolItNetworkNr["STH1"], 0, "Walther0")
             self.Can.Logger.Info("Check Walther0")
-            self.Can.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
-            self.Can.cmdSend(MyToolItNetworkNr["STU1"], MyToolItBlock["System"], MyToolItSystem["Bluetooth"], [SystemCommandBlueTooth["Connect"], 0, 0, 0, 0, 0, 0, 0])
-            time.sleep(BluetoothTime["Disconnect"])
+            self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
+            self.Can.vBlueToothConnectConnect(MyToolItNetworkNr["STU1"])
+            time.sleep(2)
             Name = self.Can.BlueToothNameGet(MyToolItNetworkNr["STU1"], 0)
             self.Can.Logger.Info("Received Name: " + Name)
             self.assertEqual("Walther0", Name)
+            while False == self.Can.bBlueToothConnectDeviceConnect(MyToolItNetworkNr["STU1"], 0):
+                self.Can.Logger.Info("Device Connect to number 0")
+            for i in range(0, BluetoothTime["Connect"]):
+                if(False != self.Can.bBlueToothCheckConnect(MyToolItNetworkNr["STU1"])):
+                    i = 16
+                else:
+                    time.sleep(1)
+            
             self.Can.Logger.Info("Write " + TestConfig["HolderName"])
-            while 0 == self.Can.BlueToothConnect(MyToolItNetworkNr["STU1"], 0):
-                pass
-            self.Can.BlueToothNameWrite(0, TestConfig["HolderName"])
+            self.Can.vBlueToothNameWrite(MyToolItNetworkNr["STH1"], 0, TestConfig["HolderName"])
             self.Can.Logger.Info("Check "+ TestConfig["HolderName"])
-            self.Can.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
-            self.Can.cmdSend(MyToolItNetworkNr["STU1"], MyToolItBlock["System"], MyToolItSystem["Bluetooth"], [SystemCommandBlueTooth["Connect"], 0, 0, 0, 0, 0, 0, 0])
+            self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
+            self.Can.vBlueToothConnectConnect(MyToolItNetworkNr["STU1"])
+            time.sleep(2)
             time.sleep(BluetoothTime["Disconnect"])
             Name = self.Can.BlueToothNameGet(MyToolItNetworkNr["STU1"], 0)
             self.Can.Logger.Info("Received Name: " + Name)
             self.assertEqual(TestConfig["HolderName"] , Name)
-            self.Can.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
+            self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
             
     """
     Check that correct Bluetooth addresses are (correctly)  listed
@@ -315,19 +322,19 @@ class TestStu(unittest.TestCase):
 
     def test0104BluetoothAddressDevices(self):
         for _i in range(0, 10):
-            self.Can.BlueToothConnectConnect(MyToolItNetworkNr["STU1"])
+            self.Can.vBlueToothConnectConnect(MyToolItNetworkNr["STU1"])
             endTime = time.time() + 5
-            while 0 == self.Can.BlueToothConnectTotalScannedDeviceNr(MyToolItNetworkNr["STU1"]):
+            while 0 == self.Can.iBlueToothConnectTotalScannedDeviceNr(MyToolItNetworkNr["STU1"]):
                 if time.time() > endTime:
                     break
             time.sleep(0.5)
-            devNrs = self.Can.BlueToothConnectTotalScannedDeviceNr(MyToolItNetworkNr["STU1"])
+            devNrs = self.Can.iBlueToothConnectTotalScannedDeviceNr(MyToolItNetworkNr["STU1"])
             for devNr in range(0, devNrs):
                 self.Can.Logger.Info("Device Number " + str(devNr))
                 Address = self.Can.BlueToothAddressGet(MyToolItNetworkNr["STU1"], devNr)
             self.Can.Logger.Info("Address: " + hex(Address))
             self.assertGreater(Address, 0)
-            self.Can.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
+            self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
     
     """
     Check that correct Bluetooth RSSIs are listed
@@ -335,25 +342,25 @@ class TestStu(unittest.TestCase):
 
     def test105BluetoothRssi(self):
         for _i in range(0, 10):
-            self.Can.BlueToothConnectConnect(MyToolItNetworkNr["STU1"])
+            self.Can.vBlueToothConnectConnect(MyToolItNetworkNr["STU1"])
             endTime = time.time() + 5
-            while 0 == self.Can.BlueToothConnectTotalScannedDeviceNr(MyToolItNetworkNr["STU1"]):
+            while 0 == self.Can.iBlueToothConnectTotalScannedDeviceNr(MyToolItNetworkNr["STU1"]):
                 if time.time() > endTime:
                     break
             time.sleep(0.5)
             Rssi = self.Can.BlueToothRssiGet(MyToolItNetworkNr["STU1"], 0)
             self.Can.Logger.Info("RSSI: " + str(int(Rssi)))
             self.assertNotEqual(Rssi, 127)
-            self.Can.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
+            self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
 
     """
     Check that correct Bluetooth RSSIs change
     """    
 
     def test106BluetoothRssiChange(self):
-        self.Can.BlueToothConnectConnect(MyToolItNetworkNr["STU1"])
+        self.Can.vBlueToothConnectConnect(MyToolItNetworkNr["STU1"])
         endTime = time.time() + 5
-        while 0 == self.Can.BlueToothConnectTotalScannedDeviceNr(MyToolItNetworkNr["STU1"]):
+        while 0 == self.Can.iBlueToothConnectTotalScannedDeviceNr(MyToolItNetworkNr["STU1"]):
             if time.time() > endTime:
                 break
         time.sleep(0.5)
@@ -362,7 +369,7 @@ class TestStu(unittest.TestCase):
             Rssi.append(self.Can.BlueToothRssiGet(MyToolItNetworkNr["STU1"], 0))
             self.Can.Logger.Info("RSSI: " + str(int(Rssi[-1])))
             self.assertNotEqual(Rssi, 127)
-        self.Can.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
+        self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
         Rssi.sort()
         self.assertNotEqual(Rssi[1], Rssi[-2])
             
@@ -371,9 +378,9 @@ class TestStu(unittest.TestCase):
     """   
 
     def test107BluetoothNameAddressRssi(self):
-        self.Can.BlueToothConnectConnect(MyToolItNetworkNr["STU1"])
+        self.Can.vBlueToothConnectConnect(MyToolItNetworkNr["STU1"])
         endTime = time.time() + 5
-        while 0 == self.Can.BlueToothConnectTotalScannedDeviceNr(MyToolItNetworkNr["STU1"]):
+        while 0 == self.Can.iBlueToothConnectTotalScannedDeviceNr(MyToolItNetworkNr["STU1"]):
             if time.time() > endTime:
                 break
         Name = self.Can.BlueToothNameGet(MyToolItNetworkNr["STU1"], 0)
@@ -382,7 +389,7 @@ class TestStu(unittest.TestCase):
         self.Can.Logger.Info("Name: " + Name)
         self.Can.Logger.Info("Address: " + hex(Address))
         self.Can.Logger.Info("RSSI: " + str(Rssi))
-        self.Can.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
+        self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
     
     """
     Connect and disconnect to device 100 times, do it without time out, use connection chec    """
@@ -391,9 +398,10 @@ class TestStu(unittest.TestCase):
         self.Can.Logger.Info("Bluetooth connect command and check connected command and disconnect command")
         startTime = self.Can.Logger.getTimeStamp()
         for _i in range(0, 100):
-            while 0 == self.Can.BlueToothConnect(MyToolItNetworkNr["STU1"], 0):
+            self.Can.vBlueToothConnectConnect(MyToolItNetworkNr["STU1"], 0)
+            while 0 == self.Can.iBlueToothConnectTotalScannedDeviceNr(MyToolItNetworkNr["STU1"]):
                 pass
-            self.Can.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
+            self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
         endTime = self.Can.Logger.getTimeStamp() 
         ConnectDisconnectTime = endTime - startTime
         ConnectDisconnectTime /= 100
@@ -431,13 +439,16 @@ class TestStu(unittest.TestCase):
         expectedData.b.u2NodeState = Node["Application"]
         expectedData.b.u3NetworkState = NetworkState["Operating"]  
         self.Can.Logger.Info("Connect")
-        self.assertEqual(1, self.BlueToothConnect(0))
+        self.Can.vBlueToothConnectConnect(MyToolItNetworkNr["STU1"], 0)
+        while False == self.Can.bBlueToothConnectDeviceConnect(MyToolItNetworkNr["STU1"], 0):
+            self.Can.Logger.Info("Device Connect to number 0")
+        time.sleep(3)
         cmd = self.Can.CanCmd(MyToolItBlock["System"], MyToolItSystem["ActiveState"], 1, 0)
         msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [0])
         self.Can.Logger.Info("Write Message")
         self.Can.WriteFrame(msg)
         self.Can.Logger.Info("Wait 200ms")
-        time.sleep(0.25)
+        time.sleep(0.2)
         cmd = self.Can.CanCmd(MyToolItBlock["System"], MyToolItSystem["ActiveState"], 0, 0)
         msgAckExpected = self.Can.CanMessage20(cmd, MyToolItNetworkNr["STH1"], MyToolItNetworkNr["SPU1"], [expectedData.asbyte])
         self.Can.Logger.Info("Send ID: " + hex(msg.ID) + "; Expected ID: " + hex(msgAckExpected.ID) + "; Received ID: " + hex(self.Can.getReadMessage(-1).ID))
@@ -445,7 +456,7 @@ class TestStu(unittest.TestCase):
         self.assertEqual(hex(msgAckExpected.ID), hex(self.Can.getReadMessage(-1).ID))
         self.assertEqual(hex(msgAckExpected.DATA[0]), hex(self.Can.getReadMessage(-1).DATA[0]))
         self.Can.tWriteFrameWaitAckRetries(msg, retries=0)
-        self.Can.BlueToothDisconnect(MyToolItNetworkNr["STU1"])     
+        self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])     
            
     """
     Send Message to STH with connecting. Assumed result = receive correct ack. This especially tests the routing functionallity.
@@ -453,7 +464,10 @@ class TestStu(unittest.TestCase):
 
     def test0203MyToolItTestWrongReceiver(self):
         self.Can.Logger.Info("Connect")
-        self.assertEqual(1, self.BlueToothConnect(0))
+        self.Can.vBlueToothConnectConnect(MyToolItNetworkNr["STU1"], 0)
+        while False == self.Can.bBlueToothConnectDeviceConnect(MyToolItNetworkNr["STU1"], 0):
+            self.Can.Logger.Info("Device Connect to number 0")
+        time.sleep(3)
         cmd = self.Can.CanCmd(MyToolItBlock["System"], MyToolItSystem["ActiveState"], 1, 0)
         for i in range(MyToolItNetworkNr["STH2"], 32):
             if (MyToolItNetworkNr["STU1"] != i):
@@ -470,8 +484,10 @@ class TestStu(unittest.TestCase):
     def test0204RoutingMultiSend(self):
         self.Can.Logger.Info("Send command 100 times over STU to STH, check number of write/reads and do ack test at the end; do that for 1000 times")
         self.Can.Logger.Info("Connect")
-        while 0 == self.Can.BlueToothConnect(MyToolItNetworkNr["STU1"], 0):
-            pass
+        self.Can.vBlueToothConnectConnect(MyToolItNetworkNr["STU1"], 0)
+        while False == self.Can.bBlueToothConnectDeviceConnect(MyToolItNetworkNr["STU1"], 0):
+            self.Can.Logger.Info("Device Connect to number 0")
+        time.sleep(3)
         for i in range(1, 101):
             self.Can.Logger.Info("Received Index: " + str(self.Can.GetReadArrayIndex()))
             self.Can.Logger.Info("Run: " + str(i))
@@ -492,7 +508,10 @@ class TestStu(unittest.TestCase):
     def test0205RoutingMultiSendAck(self):
         self.Can.Logger.Info("Send and get ACK for 10000 times AND do it with two messages randomly ")
         self.Can.Logger.Info("Connect")
-        self.assertEqual(1, self.BlueToothConnect(0))
+        self.Can.vBlueToothConnectConnect(MyToolItNetworkNr["STU1"], 0)
+        while False == self.Can.bBlueToothConnectDeviceConnect(MyToolItNetworkNr["STU1"], 0):
+            self.Can.Logger.Info("Device Connect to number 0")
+        time.sleep(3)
         for i in range(1, 1001):
             self.Can.Logger.Info("Received Index: " + str(self.Can.GetReadArrayIndex()))
             self.Can.Logger.Info("Run: " + str(i))
@@ -509,7 +528,10 @@ class TestStu(unittest.TestCase):
     def test0206RoutingMultiSendAckRetries(self):
         self.Can.Logger.Info("Send and get ACK for 10000 times AND do it with two messages randomly ")
         self.Can.Logger.Info("Connect")
-        self.assertEqual(1, self.BlueToothConnect(0))
+        self.Can.vBlueToothConnectConnect(MyToolItNetworkNr["STU1"], 0)
+        while False == self.Can.bBlueToothConnectDeviceConnect(MyToolItNetworkNr["STU1"], 0):
+            self.Can.Logger.Info("Device Connect to number 0")
+        time.sleep(3)
         for i in range(1, 1001):
             self.Can.Logger.Info("Received Index: " + str(self.Can.GetReadArrayIndex()))
             self.Can.Logger.Info("Run: " + str(i))
@@ -526,7 +548,10 @@ class TestStu(unittest.TestCase):
     def test0207RoutingMultiSendSingleAckRetries(self):
         self.Can.Logger.Info("Send and get ACK for 10000 times AND do it with two messages randomly ")
         self.Can.Logger.Info("Connect")
-        self.assertEqual(1, self.BlueToothConnect(0))
+        self.Can.vBlueToothConnectConnect(MyToolItNetworkNr["STU1"], 0)
+        while False == self.Can.bBlueToothConnectDeviceConnect(MyToolItNetworkNr["STU1"], 0):
+            self.Can.Logger.Info("Device Connect to number 0")
+        time.sleep(3)
         for i in range(1, 1001):
             self.Can.Logger.Info("Received Index: " + str(self.Can.GetReadArrayIndex()))
             self.Can.Logger.Info("Run: " + str(i))
@@ -541,7 +566,10 @@ class TestStu(unittest.TestCase):
     def test0208RoutingSenderReceiver(self):
         self.Can.Logger.Info("Connect to STH and send message with STH1=sender/receiver")
         self.Can.Logger.Info("Connect")
-        self.assertEqual(1, self.BlueToothConnect(0))
+        self.Can.vBlueToothConnectConnect(MyToolItNetworkNr["STU1"], 0)
+        while False == self.Can.bBlueToothConnectDeviceConnect(MyToolItNetworkNr["STU1"], 0):
+            self.Can.Logger.Info("Device Connect to number 0")
+        time.sleep(3)
         cmd = self.Can.CanCmd(MyToolItBlock["System"], MyToolItSystem["ActiveState"], 1, 0)
         msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["STH1"], MyToolItNetworkNr["STH1"], [0])
         self.assertEqual("Error", self.Can.tWriteFrameWaitAck(msg)[0])
@@ -556,7 +584,10 @@ class TestStu(unittest.TestCase):
     def test0209RoutingChristmasTree(self):
         self.Can.Logger.Info("Error Request Frame from STH1 to STH1")
         self.Can.Logger.Info("Connect")
-        self.assertEqual(1, self.BlueToothConnect(0))
+        self.Can.vBlueToothConnectConnect(MyToolItNetworkNr["STU1"], 0)
+        while False == self.Can.bBlueToothConnectDeviceConnect(MyToolItNetworkNr["STU1"], 0):
+            self.Can.Logger.Info("Device Connect to number 0")
+        time.sleep(3)
         cmd = self.Can.CanCmd(MyToolItBlock["System"], MyToolItSystem["ActiveState"], 1, 1)
         msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["STH1"], MyToolItNetworkNr["STH1"], [0])
         self.assertEqual("Error", self.Can.tWriteFrameWaitAck(msg)[0])

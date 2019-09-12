@@ -11,6 +11,7 @@ import subprocess
 
 
 class mwt(myToolItWatch):
+
     def __init__(self):
         myToolItWatch.__init__(self)
         self.process = None
@@ -41,7 +42,6 @@ class mwt(myToolItWatch):
             sFileName = str(lastRun.find('SheetFile').text) + ".xlsx"
             self.vSheetFileSet(sFileName) 
             self.bSampleSetupSet(str(lastRun.find('Setup').text)) 
-            
                       
     def vCloseSaveStoreLastConfig(self):
         lastRun = self.tree.find('lastRun')
@@ -120,7 +120,7 @@ class mwt(myToolItWatch):
         elif ord('e') == keyPress:
             bRun = False
             bContinue = True 
-            self.Can.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
+            self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
         elif ord('f') == keyPress:
             self.stdscr.clear()
             self.stdscr.refresh()
@@ -324,12 +324,12 @@ class mwt(myToolItWatch):
         bRun = True
         bContinue = False
         if 0x03 == keyPress:
-            self.Can.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
+            self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
             bRun = False
         elif ord('d') == keyPress:
-            self.Can.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
+            self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
         elif ord('e') == keyPress:
-            self.Can.BlueToothDisconnect(MyToolItNetworkNr["STU1"])
+            self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
             bRun = False
             bContinue = True
         elif ord('l') == keyPress:
@@ -408,7 +408,7 @@ class mwt(myToolItWatch):
         self.stdscr.refresh()   
         sName = self.sTerminalInputStringIn()         
         self.vDeviceNameSet(sName)
-        self.Can.BlueToothNameWrite(0, sName)
+        self.Can.vBlueToothNameWrite(MyToolItNetworkNr["STH1"], 0, sName)
     
     def bTerminalTests(self):
         bContinue = True
@@ -438,7 +438,7 @@ class mwt(myToolItWatch):
                 else:
                     sString = "python " + str(sDirPath) + " ../Logs/STU StuAuto.txt"
                     
-                self.stdscr.addstr(sString+"\n")
+                self.stdscr.addstr(sString + "\n")
                 self.stdscr.refresh()
                 os.system(sString)
             except KeyboardInterrupt:
@@ -781,7 +781,7 @@ class mwt(myToolItWatch):
             self.vConnect(devList)
             if False != self.Can.bConnected:
                 self.vTerminalDeviceName()
-                self.Can.BlueToothDisconnect(MyToolItNetworkNr["STU1"])                 
+                self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])                 
             else:
                 self.stdscr.addstr("Device was not available\n")
                 self.stdscr.refresh()    
@@ -900,13 +900,13 @@ class mwt(myToolItWatch):
             except KeyboardInterrupt:
                 self.KeyBoadInterrupt = True
                 break
-
+       
     def tTerminalHeaderExtended(self, devList=None):
         self.vTerminalHeader()
         if None == devList:
             devList = self.Can.tDeviceList(MyToolItNetworkNr["STU1"])
         for dev in devList:
-            self.stdscr.addstr("Device Number: " + str(dev["DeviceNumber"] + 1) + "; Name: " + str(dev["Name"]) + "; Address: " + hex(dev["Address"]) + "; RSSI: " + str(dev["RSSI"]) + "\n") 
+            self.stdscr.addstr(str(dev["DeviceNumber"] + 1) + ": " + self.sBlueToothMacAddr(dev["Address"]) + "(" + str(dev["Name"]) + ")@" + str(dev["RSSI"]) + "dBm\n") 
         return devList    
             
     def vTerminalHeader(self):
