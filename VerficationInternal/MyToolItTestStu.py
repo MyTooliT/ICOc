@@ -58,6 +58,7 @@ class TestStu(unittest.TestCase):
         return False       
     
     def _resetStu(self, retries=5, log=True):
+        self.Can.bConnected = False
         return self.Can.cmdReset(MyToolItNetworkNr["STU1"], retries=retries, log=log)
 
     def _StuWDog(self):
@@ -634,8 +635,8 @@ class TestStu(unittest.TestCase):
         self.Can.Logger.Info("Power On Counter before STU Reset: " + str(PowerOn1))
         self.Can.Logger.Info("Power Off Counter before STU Reset: " + str(PowerOff1))
         self.Can.Logger.Info("PowerOnOff Payload after STU Reset: " + payload2Hex(PowerOnOff2))
-        self.Can.Logger.Info("Power On Counter after STU Reset: " + str(PowerOn1))
-        self.Can.Logger.Info("Power Off Counter after STU Reset: " + str(PowerOff1))
+        self.Can.Logger.Info("Power On Counter after STU Reset: " + str(PowerOn2))
+        self.Can.Logger.Info("Power Off Counter after STU Reset: " + str(PowerOff2))
         self.assertEqual(PowerOn1 + 1, PowerOn2)
         self.assertEqual(PowerOff1, PowerOff2)
 

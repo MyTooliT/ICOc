@@ -63,9 +63,11 @@ class TestSthManually(unittest.TestCase):
         return False
 
     def _resetStu(self, retries=5, log=True):
+        self.Can.bConnected = False
         return self.Can.cmdReset(MyToolItNetworkNr["STU1"], retries=retries, log=log)
 
     def _resetSth(self, retries=5, log=True):
+        self.Can.bConnected = False
         return self.Can.cmdReset(MyToolItNetworkNr["STH1"], retries=retries, log=log)    
 
     def _SthAdcTemp(self):
@@ -184,12 +186,12 @@ class TestSthManually(unittest.TestCase):
         print("Measure Power Consumption for advertisement time " + str(SleepTime["AdvertisementReset2"]) + "ms")
         input('Press any key to continue')
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
-        self.Can.BlueToothEnergyModeNr(SleepTime["Min"], TestConfig["ConTimeNormalMaxMs"], 1)
-        self.Can.BlueToothEnergyModeNr(SleepTime["Reset2"], TestConfig["ConTimeNormalMaxMs"], 2)
+        self.Can.BlueToothEnergyModeNr(SleepTime["Min"], SleepTime["AdvertisementMax"], 1)
+        self.Can.BlueToothEnergyModeNr(SleepTime["Reset2"], SleepTime["AdvertisementMax"], 2)
         self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
         print("Waiting" + str(SleepTime["Min"]) + "ms")
         time.sleep(SleepTime["Min"] / 1000)
-        print("Measure Power Consumption for advertisement time " + str(TestConfig["ConTimeNormalMaxMs"]) + "ms")
+        print("Measure Power Consumption for advertisement time " + str(SleepTime["AdvertisementMax"]) + "ms")
         input('Press any key to continue')
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
         self.Can.BlueToothEnergyModeNr(SleepTime["Reset1"], SleepTime["AdvertisementReset1"], 1)

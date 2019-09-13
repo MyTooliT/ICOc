@@ -1050,7 +1050,7 @@ class CanFd(object):
     def bBlueToothConnectPollingName(self, stuNr, sName, log=True):  
         self.sDevName = None
         endTime = time() + BluetoothTime["Connect"]
-        self.Logger.Info("Try to connect to Device sDevName: " + sName)
+        self.Logger.Info("Try to connect to Device Name: " + sName)
         dev = None
         devList = None
         while time() < endTime and False == self.bConnected:
@@ -1115,7 +1115,7 @@ class CanFd(object):
                     while time() < endTime and False == self.bConnected:    
                         self.bBlueToothCheckConnect(stuNr)  
                     if False != self.bConnected and False != bLog:
-                        self.Logger.Info("Connected to: " + hex(self.iAddress))
+                        self.Logger.Info("Connected to: " + self.iAddress)
         if None == self.sDevName:
             self.Logger.Info("Available Devices: " + str(dev))
             self.__exitError()
