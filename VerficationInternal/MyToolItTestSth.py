@@ -3605,6 +3605,12 @@ class TestSth(unittest.TestCase):
     """   
 
     def test0750StatisticPageWriteRead(self):
+        #Store content
+        startData=[]
+        for offset in range(0, 256, 4):
+            index = self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Read"], [EepromPage["Statistics"], 0xFF & offset, 4, 0, 0, 0, 0, 0])   
+            dataReadBack = self.Can.getReadMessageData(index)     
+            startData.extend(dataReadBack[4:])
         # Write 0xFF over the page
         timeStamp = self.Can.getTimeMs()
         for offset in range(0, 256, 4):
@@ -3631,7 +3637,15 @@ class TestSth(unittest.TestCase):
             for dataByte in dataReadBack[4:]:
                 self.assertEqual(dataByte, 0x00)             
         self.Can.Logger.Info("Page Read Time: " + str(self.Can.getTimeMs() - timeStamp) + "ms")       
-                       
+        #Write Back Page
+        timeStamp = self.Can.getTimeMs()
+        for offset in range(0, 256, 4):
+            payload =  [EepromPage["Statistics"], 0xFF & offset, 4, 0]
+            payload.extend(startData[offset:offset+4])
+            self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Write"], payload)
+        self.Can.Logger.Info("Page Write Time: " + str(self.Can.getTimeMs() - timeStamp) + "ms")   
+        self.test0703ProductionDate()  
+              
     """
     Status Word after Reset
     """        

@@ -375,7 +375,7 @@ class mwt(myToolItWatch):
         while False != bRun:
             self.stdscr.clear()
             if False != self.Can.bConnected:
-                self.stdscr.addstr("Connected: " + str(self.Can.iAddress) + "(" + str(self.Can.Name) + ")" + "\n")
+                self.stdscr.addstr("Connected: " + str(self.Can.iAddress) + "(" + str(self.Can.sDevName) + ")" + "\n")
                 self.stdscr.addstr("d: Disconnect from device\n")
             self.stdscr.addstr("Device: " + str(self.sProduct) + "\n")
             self.stdscr.addstr("Version: " + str(self.sConfig) + "\n")
