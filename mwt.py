@@ -83,7 +83,7 @@ class mwt(myToolItWatch):
         self.vListKeys(AdcOverSamplingRate)
         self.stdscr.refresh()
         iOversamplingRate = self.iTerminalInputNumberIn()
-        self.stdscr.addstr("ADC Reference")
+        self.stdscr.addstr("ADC Reference(VDD=3V3)")
         self.vListKeys(AdcReference)
         self.stdscr.refresh()     
         sAdcRef = self.sTerminalInputStringIn()        
@@ -111,12 +111,6 @@ class mwt(myToolItWatch):
             bRun = False
         elif ord('a') == keyPress:
             self.vTerminalHolderConnectCommandsAdcConfig()
-        elif ord('d') == keyPress:
-            self.stdscr.clear()
-            self.stdscr.addstr("Display Time(s): ")
-            self.stdscr.refresh()            
-            iDisplayTime = self.iTerminalInputNumberIn()  
-            self.vDisplayTime(iDisplayTime)
         elif ord('e') == keyPress:
             bRun = False
             bContinue = True 
@@ -153,53 +147,47 @@ class mwt(myToolItWatch):
             self.vTerminalHolderConnectCommandsRunTimeIntervalTime()
         elif ord('s') == keyPress:
             self.stdscr.clear()
-            self.vDataAquisition()
-            bRun = False
-        elif ord('S') == keyPress: 
-            self.stdscr.clear()
-            self.stdscr.refresh()
-            sSerialNumber = self.Can.sProductData("SerialNumber")  
-            sName = self.Can.sProductData("Name")  
-            self.stdscr.addstr("Serial: " + sSerialNumber + " " + sName + "\n")  
-            self.vTerminalAnyKey()
-        elif ord('v') == keyPress:
-            self.vVoltageSet(1, 0, 0, -1)
-        elif ord('V') == keyPress:
-            self.vVoltageSet(0, 0, 0, -1)             
+            if False == self.KeyBoadInterrupt:
+                try:
+                    self.vDataAquisition()
+                except KeyboardInterrupt:
+                    self.KeyBoadInterrupt = True
+                    self.__exit__()
+            bRun = False           
         return [bRun, bContinue]      
      
     def bTerminalHolderConnectCommandsShowDataValues(self):
         sGtin = self.Can.sProductData("GTIN")  
         sHwRev = self.Can.sProductData("HardwareRevision")  
-        sSwVersion = self.Can.sProductData("FirmwareVersion")  
-        sReleaseName = self.Can.sProductData("ReleaseName")  
+        sSwVersion = self.Can.sProductData("FirmwareVersion") 
+        sReleaseName = self.Can.sProductData("ReleaseName") 
+        sSerialNumber = self.Can.sProductData("SerialNumber")  
+        sName = self.Can.sProductData("Name")  
+        sSerial = str(sSerialNumber + "-" + sName)       
         self.stdscr.addstr("Global Trade Identifcation Number (GTIN): " + sGtin + "\n")
         self.stdscr.addstr("Hardware Revision(Major.Minor.Build): " + sHwRev + "\n")
         self.stdscr.addstr("Firmware Version(Major.Minor.Build): " + sSwVersion + "\n")
         self.stdscr.addstr("Firmware Release Name: " + sReleaseName + "\n")
+        self.stdscr.addstr("Serial: " + sSerial + "\n\n") 
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], 1, 0, 0)
         iBatteryVoltage = messageValueGet(self.Can.getReadMessageData(index)[2:4]) / 1000
         if None != iBatteryVoltage:
-            self.stdscr.addstr("Battery Voltage: " + str(iBatteryVoltage) + "V\n")   
+            self.stdscr.addstr("Battery Voltage: " + str(iBatteryVoltage) + "V\n\n")   
                   
     def bTerminalHolderConnectCommands(self):
         bContinue = True
-        bRun = True
-        
+        bRun = True 
+        self.vDisplayTime(10)
         while False != bRun:
             self.stdscr.clear()
-            self.stdscr.addstr("Device Name: " + str(self.sDevName) + "\n")
-            self.stdscr.addstr("Bluetooth address: " + str(self.iAddress) + "\n")
+            self.stdscr.addstr(self.sBlueToothMacAddr(int(self.iAddress, 16)) +"(" + str(self.sDevName) + ")\n")
             self.bTerminalHolderConnectCommandsShowDataValues()
-            self.stdscr.addstr("AutoConnect?: " + str(self.bSthAutoConnect) + "\n")
             self.stdscr.addstr("Run Time: " + str(self.iRunTime) + "s\n")
             self.stdscr.addstr("Inteval Time: " + str(self.iIntervalTime) + "s\n")
-            self.stdscr.addstr("Display Time: " + str(self.iDisplayTime) + "s\n")
             self.stdscr.addstr("Adc Prescaler/AcquisitionTime/OversamplingRate/Reference(Samples/s): " + str(self.iPrescaler) + "/" + str(AdcAcquisitionTimeReverse[self.iAquistionTime]) + "/" + str(AdcOverSamplingRateReverse[self.iOversampling]) + "/" + str(self.sAdcRef) + "(" + str(self.samplingRate) + ")\n")
             self.stdscr.addstr("Acc Config(XYZ/DataSets): " + str(int(self.bAccX)) + str(int(self.bAccY)) + str(int(self.bAccZ)) + "/" + str(DataSetsReverse[self.tAccDataFormat]) + "\n")
-            self.stdscr.addstr("Voltage Config(XYZ/DataSets): " + str(int(self.bVoltageX)) + str(int(self.bVoltageY)) + str(int(self.bVoltageZ)) + "/" + str(DataSetsReverse[self.tVoltageDataFormat]) + ("(X=Battery)\n"))
+            self.stdscr.addstr("\n")
             self.stdscr.addstr("a: Config ADC\n")
-            self.stdscr.addstr("d: Config display Time\n")
             self.stdscr.addstr("e: Exit and disconnect from holder\n")
             self.stdscr.addstr("f: OEM Free Use\n")
             self.stdscr.addstr("n: Set Device Name\n")
@@ -207,9 +195,6 @@ class mwt(myToolItWatch):
             self.stdscr.addstr("p: Config Acceleration Points(XYZ)\n")
             self.stdscr.addstr("r: Config run time and interval time\n")
             self.stdscr.addstr("s: Start Data Aquisition\n")
-            self.stdscr.addstr("S: Serial Number(and Name)\n")
-            self.stdscr.addstr("v: Activate Battery Voltage Streaming\n")
-            self.stdscr.addstr("V: Disable Battery Voltage Streaming\n")
             self.stdscr.refresh()
             [bRun, bContinue] = self.tTerminalHolderConnectCommandsKeyEvaluation()
         return bContinue

@@ -1182,18 +1182,20 @@ class CanFd(object):
             aiSerialNumber = []
             for i in range(1, 5):
                 index = self.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["ProductData"], MyToolItProductData["SerialNumber"+str(i)], [])
-                aiSerialNumber.extend(self.getReadMessageData(index))
+                element = self.getReadMessageData(index)
+                aiSerialNumber.extend(element)
             try:
-                sReturn = array.array('b', bytearray(aiSerialNumber)).tostring().decode('utf-8')
+                sReturn = array.array('b', bytearray(aiSerialNumber)).tostring().encode('utf-8')
             except:
                 sReturn = ""
         elif "Name" == name:
             aiName = []
             for i in range(1, 17):
                 index = self.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["ProductData"], MyToolItProductData["Name"+str(i)], [])
-                aiName.extend(self.getReadMessageData(index))
+                element = self.getReadMessageData(index)
+                aiName.extend(element)                    
             try:
-                sReturn = array.array('b', bytearray(aiName)).tostring().decode('utf-8')
+                sReturn = array.array('b', bytearray(aiName)).tostring().encode('utf-8')
             except:
                 sReturn = ""
         elif "OemFreeUse" == name:

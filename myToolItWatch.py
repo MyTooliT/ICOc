@@ -45,8 +45,8 @@ def messageValueGet(m):
 Watch = {
     "IntervalDimMinX" : 10,  # Minimum interval time in ms
     "DisplayTimeMax" : 10,  # Maximum Display Time in seconds
-    "DisplaySampleRateMs" : 200,  # Maximum Display Time in seconds
-    "DisplayBlockSize" : 10,
+    "DisplaySampleRateMs" : 1000,  # Maximum Display Time in ms
+    "DisplayBlockSize" : 100,
 }
 
     
@@ -366,7 +366,6 @@ class myToolItWatch():
         if 0 < self.iDisplayTime:   
             self.guiProcess = multiprocessing.Process(target=vPlotter)
             self.guiProcess.start()
-            print("Connect to GUI")
             self.tSocket.connect((HOST, PORT))
             self.vGraphSend(["dataBlockSize", self.iGraphBlockSize])
             self.vGraphSend(["sampleInterval", self.iGraphSampleInterval])
@@ -411,17 +410,16 @@ class myToolItWatch():
                     self.iMsgsTotal += 256
                 self.iMsgCounterLast = msgCounter
             else:
-                self.iMsgsTotal += 1
-        
-        iPacketLossTimeStamp = int(round(time() * 1000))
-        if 1000 <= (iPacketLossTimeStamp - self.iPacketLossTimeStamp):
-            self.iPacketLossTimeStamp = iPacketLossTimeStamp  
-            sMsgLoss = "Acceleration(" + str(format(100 - (100 * self.iMsgLoss / self.iMsgsTotal), '3.3f')) + "%)"     
-            if sMsgLoss != self.sMsgLoss:
-                self.sMsgLoss = sMsgLoss
-                self.tSocket.sendall(tArray2Binary(["diagramName", self.sMsgLoss]))                
-            self.iMsgLoss = 0
-            self.iMsgsTotal = 0
+                self.iMsgsTotal += 1     
+            iPacketLossTimeStamp = int(round(time() * 1000))
+            if 1000 <= (iPacketLossTimeStamp - self.iPacketLossTimeStamp):
+                self.iPacketLossTimeStamp = iPacketLossTimeStamp  
+                sMsgLoss = "Acceleration(" + str(format(100 - (100 * self.iMsgLoss / self.iMsgsTotal), '3.3f')) + "%)"     
+                if sMsgLoss != self.sMsgLoss:
+                    self.sMsgLoss = sMsgLoss
+                    self.tSocket.sendall(tArray2Binary(["diagramName", self.sMsgLoss]))                
+                self.iMsgLoss = 0
+                self.iMsgsTotal = 0
         
     def vVersion(self, major, minor, build):
         if 2 <= major and 1 <= minor:
@@ -603,9 +601,8 @@ class myToolItWatch():
                     self.vGetStreamingAccData()
                     self.Can.ReadThreadReset()
                     self.guiProcessStop()                    
-                else:
-                    print("Device not allocable")    
-                    self.Can.Logger.bError("Device not allocable")     
+                else: 
+                    self.Can.Logger.Error("Device not allocable")     
             except KeyboardInterrupt:
                 self.KeyBoadInterrupt = True
                 self.__exit__()
@@ -627,9 +624,9 @@ class myToolItWatch():
                 ack = self.ReadMessage()
                 if(None != ack):
                     if(self.AccAckExpected.ID != ack["CanMsg"].ID and self.VoltageAckExpected.ID != ack["CanMsg"].ID):
-                        self.Can.Logger.bError("CanId bError: " + str(ack["CanMsg"].ID))
+                        self.Can.Logger.Error("CanId bError: " + str(ack["CanMsg"].ID))
                     elif(self.AccAckExpected.DATA[0] != ack["CanMsg"].DATA[0] and self.VoltageAckExpected.DATA[0] != ack["CanMsg"].DATA[0])  :
-                        self.Can.Logger.bError("Wrong Subheader-Format(Acceleration Format): " + str(ack["CanMsg"].ID))
+                        self.Can.Logger.Error("Wrong Subheader-Format(Acceleration Format): " + str(ack["CanMsg"].ID))
                     elif self.AccAckExpected.ID == ack["CanMsg"].ID:
                         self.GetMessageAcc(ack)
                                    
@@ -690,7 +687,7 @@ class myToolItWatch():
             ack = self.vGetStreamingAccDataVoltageStart()
         currentTime = self.Can.getTimeMs()
         if None == ack:
-            self.Can.Logger.bError("No Ack received from Device: " + str(self.iDevNr))
+            self.Can.Logger.Error("No Ack received from Device: " + str(self.iDevNr))
             self.aquireEndTime = currentTime
         elif(0 == self.iRunTime):
             self.aquireEndTime = currentTime + (1 << 32)
@@ -790,7 +787,7 @@ class myToolItWatch():
                 self.GetMessageSingle("AccZ", canData) 
                 self.vGraphPointNext(0, 0, messageValueGet(data[2:4]))   
         else:               
-            self.Can.Logger.bError("Wrong Ack format")
+            self.Can.Logger.Error("Wrong Ack format")
 
     def GetMessageVoltage(self, canData):
         if self.tAccDataFormat == DataSets[1]:
@@ -810,7 +807,7 @@ class myToolItWatch():
             elif 0 != self.bVoltageZ:
                 self.GetMessageSingle("VoltageZ", canData)       
         else:               
-            self.Can.Logger.bError("Wrong Ack format")
+            self.Can.Logger.Error("Wrong Ack format")
             
     def ReadMessage(self):
         message = None
