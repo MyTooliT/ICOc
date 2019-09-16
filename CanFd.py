@@ -461,30 +461,30 @@ class CanFd(object):
     def ValueDataSet1(self, data, b1, b2, b3, array1, array2, array3):
         count = 0
         if False != b1:
-            Acc = messageValueGet(data[2:4])
+            Acc = iMessage2Value(data[2:4])
             array1.append(Acc)
             count += 1
         if False != b2:
             if 0 == count:
-                Acc = messageValueGet(data[2:4])
+                Acc = iMessage2Value(data[2:4])
             else:
-                Acc = messageValueGet(data[4:6])
+                Acc = iMessage2Value(data[4:6])
             array2.append(Acc)
             count += 1
         if False != b3:
             if 0 == count:
-                Acc = messageValueGet(data[2:4])
+                Acc = iMessage2Value(data[2:4])
             elif 1 == count:
-                Acc = messageValueGet(data[4:6])
+                Acc = iMessage2Value(data[4:6])
             else:
-                Acc = messageValueGet(data[6:8])
+                Acc = iMessage2Value(data[6:8])
             array3.append(Acc)
         return [array1, array2, array3]
 
     def ValueDataSet3(self, data, b1, b2, b3, array1, array2, array3):
-        Acc1 = messageValueGet(data[2:4])
-        Acc2 = messageValueGet(data[4:6])
-        Acc3 = messageValueGet(data[6:8])
+        Acc1 = iMessage2Value(data[2:4])
+        Acc2 = iMessage2Value(data[4:6])
+        Acc3 = iMessage2Value(data[6:8])
         if False != b1:
             array1.append(Acc1)
             array1.append(Acc2)

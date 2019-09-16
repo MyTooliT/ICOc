@@ -170,7 +170,7 @@ class mwt(myToolItWatch):
         self.stdscr.addstr("Firmware Release Name: " + sReleaseName + "\n")
         self.stdscr.addstr("Serial: " + sSerial + "\n\n") 
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], 1, 0, 0)
-        iBatteryVoltage = messageValueGet(self.Can.getReadMessageData(index)[2:4]) / 1000
+        iBatteryVoltage = iMessage2Value(self.Can.getReadMessageData(index)[2:4]) / 1000
         if None != iBatteryVoltage:
             self.stdscr.addstr("Battery Voltage: " + str(iBatteryVoltage) + "V\n\n")   
                   
@@ -381,8 +381,9 @@ class mwt(myToolItWatch):
         
     def vTerminalLogFileName(self):
         self.stdscr.addstr("Log File Name(" + self.Can.Logger.fileName[0:-4] + "): ")  
-        sLogFileName = self.sTerminalInputStringIn()       
-        self.bLogSet(sLogFileName + '.txt')
+        sLogFileName = self.sTerminalInputStringIn()  
+        if "" != sLogFileName:     
+            self.bLogSet(sLogFileName + '.txt')
         self.stdscr.addstr("" + self.Can.Logger.fileName)
         self.stdscr.refresh()
         sleep(2)
@@ -662,11 +663,13 @@ class mwt(myToolItWatch):
         if 0x03 == keyPress:  # CTRL+C
             bRun = False
         elif ord('c') == keyPress:
-            atList = self.atTerminalXmlProductVersionList()
-            self.vTerminalXmlProductVersionCreate(atList)
+            if None != self.sProduct and None != self.sConfig:
+                atList = self.atTerminalXmlProductVersionList()
+                self.vTerminalXmlProductVersionCreate(atList)
         elif ord('C') == keyPress:
-            atList = self.atTerminalXmlSetupList()
-            self.vTerminalXmlSetupCreate(atList)        
+            if None != self.sSetupConfig:
+                atList = self.atTerminalXmlSetupList()
+                self.vTerminalXmlSetupCreate(atList)        
         elif ord('e') == keyPress:
             bRun = False
             bContinue = True 
@@ -684,26 +687,28 @@ class mwt(myToolItWatch):
             self.vTerminalXmlSetupRemove(atList)   
         elif ord('S') == keyPress:   
             self.vTerminalXmlSetupModify()
-        elif ord('W') == keyPress:   
-            if None != self.process:
-                self.process.terminate() 
-            self.stdscr.addstr("Write...\n")
-            self.stdscr.refresh()
-            self.vExcelProductVersion2XmlProductVersion()
+        elif ord('W') == keyPress:  
+            if None != self.sProduct and None != self.sConfig and None != self.sSheetFile: 
+                if None != self.process:
+                    self.process.terminate() 
+                self.stdscr.addstr("Write...\n")
+                self.stdscr.refresh()
+                self.vExcelProductVersion2XmlProductVersion()
         elif ord('x') == keyPress:
             self.vTerminalEepromChange()
         elif ord('X') == keyPress:
-            try:        
-                self.stdscr.addstr("Create...\n")
-                self.stdscr.refresh()
-                if None != self.process:
-                    self.process.terminate()          
-                self.vExcelSheetCreate()               
-                self.process = subprocess.Popen(['excel', self.sSheetFile], stdout=subprocess.PIPE)
-            except:
-                self.stdscr.addstr("Please close opened Excel File. Can create fresh one(different device)\n")                    
-                self.stdscr.refresh()
-                sleep(5)
+            if None != self.sProduct and None != self.sConfig and None != self.sSheetFile:
+                try:        
+                    self.stdscr.addstr("Create...\n")
+                    self.stdscr.refresh()
+                    if None != self.process:
+                        self.process.terminate()          
+                    self.vExcelSheetCreate()               
+                    self.process = subprocess.Popen(['excel', self.sSheetFile], stdout=subprocess.PIPE)
+                except:
+                    self.stdscr.addstr("Please close opened Excel File. Can create fresh one(different device)\n")                    
+                    self.stdscr.refresh()
+                    sleep(5)
         return [bRun, bContinue]
       
     def bTerminalXml(self):
@@ -714,18 +719,22 @@ class mwt(myToolItWatch):
             self.stdscr.addstr("Version: " + str(self.sConfig) + "\n")
             self.stdscr.addstr("Excel Sheet Name: " + str(self.sSheetFile) + "\n")
             self.stdscr.addstr("Predefined Setup: " + str(self.sSetupConfig) + "\n")
-            self.stdscr.addstr("c: Create new Version\n")
-            self.stdscr.addstr("C: Create new Setup\n")
+            if None != self.sProduct and None != self.sConfig:
+                self.stdscr.addstr("c: Create new Version\n")
+            if None != self.sSetupConfig:
+                self.stdscr.addstr("C: Create new Setup\n")
             self.stdscr.addstr("e: Exit\n")
             self.stdscr.addstr("l: List devices and versions (an change current device/product)\n")
             self.stdscr.addstr("L: List Setups (an change current device/product)\n")
             self.stdscr.addstr("r: Remove Version\n")
             self.stdscr.addstr("R: Remove Setup\n")
             if None != self.sSetupConfig:
-                self.stdscr.addstr("S: Modify current selected predefined setup\n") 
-            self.stdscr.addstr("W: Write Excel Sheet to Product-Version\n")
+                self.stdscr.addstr("S: Modify current selected predefined setup\n")
+            if None != self.sProduct and None != self.sConfig and None != self.sSheetFile: 
+                self.stdscr.addstr("W: Write Excel Sheet to Product-Version\n")
             self.stdscr.addstr("x: Chance Excel Sheet Name(.xlsx)\n") 
-            self.stdscr.addstr("X: Write XML Config to Excel Sheet\n")
+            if None != self.sProduct and None != self.sConfig and None != self.sSheetFile:
+                self.stdscr.addstr("X: Write XML Config to Excel Sheet\n")
             self.stdscr.refresh()
             [bRun, bContinue] = self.vTerminalXmlKeyEvaluation()
         return bContinue

@@ -539,7 +539,7 @@ def to8bitSigned(num):
 def iMessage2Value(m):
     iValue = 0
     for i in range(0, len(m)):
-        iValue |= ((0xFF & m[i]) << (i*8)) 
+        iValue |= ((0xFF & int(m[i])) << (i*8)) 
     return iValue
 
 def au8ChangeEndianOrder(m):
@@ -557,12 +557,7 @@ def au8Value2Array(iValue, iLength):
         au8Array[i] = 0xff&u8Value
     return au8Array
 
-
-def messageValueGet(m):
-    Acc = ((0xFF & m[1]) << 8) | (0xFF & m[0])
-    return Acc
-
-    
+   
 def calcSamplingRate(prescaler, acquisitionTime, OverSamplingRate):
     acquTime = AdcAcquisitionTimeReverse[acquisitionTime]
     samplingRate = AdcOverSamplingRateReverse[OverSamplingRate]

@@ -36,12 +36,6 @@ def to8bitSigned(num):
         num = -((~int(num) + 1) & mask2s)  # 2's complement
     return num
 
-
-def messageValueGet(m):        
-    Acc = ((0xFF & m[1]) << 8) | (0xFF & m[0])
-    return Acc  
-
-
 Watch = {
     "IntervalDimMinX" : 10,  # Minimum interval time in ms
     "DisplayTimeMax" : 10,  # Maximum Display Time in seconds
@@ -441,24 +435,29 @@ class myToolItWatch():
         sAddr = sAddr[:-1]
         return sAddr
 
+    def iBlueToothMacAddr(self, sAddr):
+        au8Addr = sAddr.split(":")
+        au8Addr = au8ChangeEndianOrder(au8Addr)
+        for i in range(0, len(au8Addr)):
+            au8Addr[i] = int(au8Addr[i], 16)
+        iAddr = iMessage2Value(au8Addr)
+        return iAddr
+
     def vParserInit(self):
         self.parser = argparse.ArgumentParser(description='Command Line Oprtions')
         self.parser.add_argument('-a', '--adc', dest='adc_config', action='store', nargs=3, type=int, required=False, help='Prescaler AcquisitionTime OversamplingRate (3 inputs required in that order e.g. 2 8 64) - Note that acceleration and battery voltage measurements share a single ADC that samples up to 4 channels)')
         self.parser.add_argument('-b', '--bluetooth_connect', dest='bluetooth_connect', action='store', nargs=1, type=str, required=False, help='Connect to device specified by Bluetooth address and starts sampling as configured')
-        self.parser.add_argument('-d', '--devs', dest='devNameList', action='store_true', required=False, help='Get Device Names, Bluetooth address and Receive Signal Strength Indicators(RSSI) of all available STHs')    
-        self.parser.add_argument('-e', '--xlsx', dest='xlsx', action='store', nargs=1, type=str, required=False, help='Table Calculation File(xlsx) to transfer configuration from/to STH/STU')
+        self.parser.add_argument('-d, --gui_dim', dest='gui_dim', action='store', nargs=1, type=int, required=False, help='Length of visualization interval in ms for the graphical acceleration view . Value below 10 turns it off')
+        self.parser.add_argument('-e', '--xlsx', dest='xlsx', action='store', nargs=1, type=str, required=False, help='Table Calculation File(xlsx) name for transferring data between PC and STH/STU')
         self.parser.add_argument('-i', '--interval', dest='interval', action='store', nargs=1, type=int, required=False, help='Sets Interval Time (Output file is saved each interval time in seconds. Lower than 10 causes a single file')
         self.parser.add_argument('-l', '--log_location', dest='log_name', action='store', nargs=1, type=str, required=False, help='Where to save Log Files (relative/absolute path+file name)')
         self.parser.add_argument('-n', '--name_connect', dest='name_connect', action='store', nargs=1, type=str, required=False, help='Connect to device specified by Name and starts sampling as configured')
         self.parser.add_argument('-p', '--points', dest='points', action='store', nargs=1, type=int, required=False, help='PPP specifies which acceleration axis(X/Y/Z) are active(1) or off(0)')
-        self.parser.add_argument('-r', '--run_time', dest='run_time', action='store', nargs=1, type=int, required=False, help='Sets RunTime in seconds. 0 specifies infinity')
+        self.parser.add_argument('-r', '--run_time', dest='run_time', action='store', nargs=1, type=int, required=False, help='Sets RunTime in seconds. Below 10 specifies infinity')
         self.parser.add_argument('-s', '--sample_setup', dest='sample_setup', action='store', nargs=1, type=str, required=False, help='Starts sampling with configuration as given including additional command line arguments')
         self.parser.add_argument('-v', '--version', dest='version', action='store', nargs=2, type=str, required=False, help='Chooses product with version for handling Table Calculation Files (e.g. STH v2.1.2)')
         self.parser.add_argument('-x', '--xml', dest='xml_file_name', action='store', nargs=1, type=str, required=True, help='Selects xml configuration/data base file')
-        self.parser.add_argument('--create', dest='create', action='store_true', required=False, help='Creates a device configuration or sample setup in the xml file')
-        self.parser.add_argument('--gui_dim', dest='gui_dim', action='store', nargs=1, type=int, required=False, help='Length of visualization interval in ms for the graphical acceleration view . Value below 10 turns it off')
         self.parser.add_argument('--refv', dest='refv', action='store', nargs=1, type=str, required=False, help='ADC\'s Reference voltage, VDD=Standard')
-        self.parser.add_argument('--remove', dest='remove', action='store_true', required=False, help='Removes a device configuration or sample setup in the xml file')
         self.parser.add_argument('--save', dest='save', action='store_true', required=False, help='Saves a device configuration or sample setup in the xml file)')
         self.parser.add_argument('--show_config', dest='show_config', action='store_true', required=False, help='Shows current configuration (including command line arguments)')
         self.parser.add_argument('--show_products', dest='show_products', action='store_true', required=False, help='Shows all available devices and additional versions')
@@ -471,20 +470,7 @@ class myToolItWatch():
         if None != self.args_dict['version'] and None != self.args_dict['sample_setup']:
             print("You can't use sample setup and product/version simultaneously")
             self.Can.vLogDel()
-            self.__exit__()
-        bRemove = False  
-        if False != self.args_dict['remove']:
-            bRemove = True      
-            self.vSave2Xml(True)          
-        bCreate = False        
-        if False != self.args_dict['create']:
-            if False != bRemove:
-                print("You can't create and remove simultaneously.")
-                self.Can.vLogDel()
-                self.__exit__()
-            else:
-                bCreate = True     
-                self.vSave2Xml(True)
+            self.__exit__()     
                        
         self.vConfigFileSet(self.args_dict['xml_file_name'][0])
                   
@@ -492,53 +478,12 @@ class myToolItWatch():
             self.vSave2Xml(True)      
         if None != self.args_dict['sample_setup']: 
             sSetup = self.args_dict['sample_setup'][0]
-            bSetupFound = self.bSampleSetupSet(sSetup)
-            if False != bCreate:
-                if False != bSetupFound:
-                    print("Sample Configuration not found")
-                    self.__exit_()
-                else:
-                    self.newXmlSetup(sSetup)
-                    self.vSave2Xml(True)
-                    bCreate = False
-            elif False != bRemove:
-                if False != bSetupFound: 
-                    if 1 < len(self.tree.find('Config')):
-                        self.removeXmlSetup(sSetup)
-                    else:
-                        print("You cant remove the last sample setup")
-                        self.__exit_()
-                else:
-                    print("You try to remove something that does not exist")
-                    self.__exit_()
-            else:
+            if False != self.bSampleSetupSet(sSetup):
                 self.vGetXmlSetup()
-                
+                                
         if None != self.args_dict['version']: 
             self.vConfigSet(self.args_dict['version'][0], self.args_dict['version'][1])
-            if False != bCreate or False != bRemove:
-                dataDef = self.root.find('Data')
-                for product in dataDef.find('Product'):
-                    if product.get('name') == self.sProduct:
-                        break
-                if product.get('name') == self.sProduct:
-                    for productVersion in product.find('Version'):
-                        if productVersion.get('name') == self.sConfig:
-                            break
-                    if productVersion.get('name') != self.sConfig and False != bCreate:
-                        self.newXmlVersion(product, product.find('Version')[0], self.sConfig)
-                        self.vSave2Xml(True)
-                    elif productVersion.get('name') == self.sConfig and False != bRemove:
-                        if 1 < len(product.find('Version')):
-                            self.removeXmlVersion(product.find('Version'), productVersion)
-                    elif False != bCreate:
-                        print("Error! you tried to create a product/version that allready exists")
-                        self.Can.vLogDel()
-                        self.__exit__()
-                    else:
-                        print("Error! you tried to create a sample setup that allready exists")
-                        self.Can.vLogDel()
-                        self.__exit__()
+
         
     def vParserConsoleArgumentsPass(self):  
         self.vParserConsoleArgumentsPassXml()    
@@ -565,7 +510,8 @@ class myToolItWatch():
             self.vDeviceNameSet(self.args_dict['name_connect'][0])
             self.vSthAutoConnect(True)
         elif None != self.args_dict['bluetooth_connect']:
-            self.vDeviceAddressSet(self.args_dict['bluetooth_connect'][0])
+            iBlueToothMacAddr = self.iBlueToothMacAddr(self.args_dict['bluetooth_connect'][0])
+            self.vDeviceAddressSet(str(iBlueToothMacAddr))
             self.vSthAutoConnect(True)        
             
         if None != self.args_dict['points']: 
@@ -697,9 +643,9 @@ class myToolItWatch():
         
     def GetMessageSingle(self, prefix, canMsg):  
         canData = canMsg["CanMsg"].DATA 
-        p1 = messageValueGet(canData[2:4])
-        p2 = messageValueGet(canData[6:8])
-        p3 = messageValueGet(canData[4:6])   
+        p1 = iMessage2Value(canData[2:4])
+        p2 = iMessage2Value(canData[6:8])
+        p3 = iMessage2Value(canData[4:6])   
         
         canTimeStamp = canMsg["PeakCanTime"]
         canTimeStamp = round(canTimeStamp, 3)
@@ -726,8 +672,8 @@ class myToolItWatch():
         canData = canMsg["CanMsg"].DATA
         canTimeStamp = canMsg["PeakCanTime"]
         canTimeStamp = round(canTimeStamp, 3)
-        p1_1 = messageValueGet(canData[2:4])
-        p1_2 = messageValueGet(canData[4:6])
+        p1_1 = iMessage2Value(canData[2:4])
+        p1_2 = iMessage2Value(canData[4:6])
         ackMsg = ("MsgCounter: " + str(format(canData[1], '3d')) + "; ")
         ackMsg += ("TimeStamp: " + format(canTimeStamp, '12.3f') + "ms; ")
         ackMsg += (prefix1 + " ")
@@ -746,15 +692,15 @@ class myToolItWatch():
         ackMsg = ("MsgCounter: " + str(format(canData[1], '3d')) + "; ")
         ackMsg += ("TimeStamp: " + format(canTimeStamp, '12.3f') + "ms; ")
         ackMsg += (prefix1 + " ")
-        ackMsg += str(format(messageValueGet(canData[2:4]), '5d'))
+        ackMsg += str(format(iMessage2Value(canData[2:4]), '5d'))
         ackMsg += "; "
         ackMsg += prefix2
         ackMsg += " "
-        ackMsg += str(format(messageValueGet(canData[4:6]), '5d'))
+        ackMsg += str(format(iMessage2Value(canData[4:6]), '5d'))
         ackMsg += "; "
         ackMsg += prefix3
         ackMsg += " "
-        ackMsg += str(format(messageValueGet(canData[6:8]), '5d'))
+        ackMsg += str(format(iMessage2Value(canData[6:8]), '5d'))
         ackMsg += "; "
         self.Can.Logger.Info(ackMsg)                        
 
@@ -766,26 +712,26 @@ class myToolItWatch():
         if self.tAccDataFormat == DataSets[1]:
             if (False != self.bAccX) and (False != self.bAccY) and (False == self.bAccZ):
                 self.GetMessageDouble("AccX", "AccY", canData)
-                self.vGraphPointNext(messageValueGet(data[2:4]), messageValueGet(data[4:6]), 0)
+                self.vGraphPointNext(iMessage2Value(data[2:4]), iMessage2Value(data[4:6]), 0)
             elif (False != self.bAccX) and (False == self.bAccY) and (False != self.bAccZ):
                 self.GetMessageDouble("AccX", "AccZ", canData)
-                self.vGraphPointNext(messageValueGet(data[2:4]), 0, messageValueGet(data[4:6]))
+                self.vGraphPointNext(iMessage2Value(data[2:4]), 0, iMessage2Value(data[4:6]))
             elif (False == self.bAccX) and (False != self.bAccY) and (False != self.bAccZ):
                 self.GetMessageDouble("AccY", "AccZ", canData) 
-                self.vGraphPointNext(0, messageValueGet(data[2:4]), messageValueGet(data[4:6]))
+                self.vGraphPointNext(0, iMessage2Value(data[2:4]), iMessage2Value(data[4:6]))
             else:
                 self.GetMessageTripple("AccX", "AccY", "AccZ", canData)   
-                self.vGraphPointNext(messageValueGet(data[2:4]), messageValueGet(data[4:6]), messageValueGet(data[6:8]))
+                self.vGraphPointNext(iMessage2Value(data[2:4]), iMessage2Value(data[4:6]), iMessage2Value(data[6:8]))
         elif self.tAccDataFormat == DataSets[3]:
             if False != self.bAccX:
                 self.GetMessageSingle("AccX", canData)  
-                self.vGraphPointNext(messageValueGet(data[2:4]), 0, 0)            
+                self.vGraphPointNext(iMessage2Value(data[2:4]), 0, 0)            
             elif False != self.bAccY:
                 self.GetMessageSingle("AccY", canData)   
-                self.vGraphPointNext(0, messageValueGet(data[2:4]), 0)          
+                self.vGraphPointNext(0, iMessage2Value(data[2:4]), 0)          
             elif False != self.bAccZ:
                 self.GetMessageSingle("AccZ", canData) 
-                self.vGraphPointNext(0, 0, messageValueGet(data[2:4]))   
+                self.vGraphPointNext(0, 0, iMessage2Value(data[2:4]))   
         else:               
             self.Can.Logger.Error("Wrong Ack format")
 
@@ -1482,8 +1428,7 @@ class myToolItWatch():
             self.xmlPrintVersions()
         if False != self.args_dict['show_setups']:
             self.xmlPrintSetups()
-        if False != self.args_dict['devNameList']:
-            pass  
+
         
     def clear(self): 
         # for windows 
