@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ConfigKey>
     <lastRun>
-        <LogName>init</LogName>
-        <Product />
-        <Version />
-        <NetworkNumber />
-        <SheetFile>None</SheetFile>
-        <Setup>None</Setup>
+        <LogName>Watch</LogName>
+        <Product>STH</Product>
+        <Version>v2.1.4</Version>
+        <NetworkNumber>STH1</NetworkNumber>
+        <SheetFile>Watch</SheetFile>
+        <Setup>X</Setup>
     </lastRun>
     <Config>
         <config name="X">
