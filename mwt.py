@@ -2,6 +2,7 @@
 from myToolItWatch import myToolItWatch
 from MyToolItCommands import *
 from MyToolItNetworkNumbers import *
+from MyToolItSth import fVoltageBattery
 from time import sleep
 import glob
 import curses
@@ -170,9 +171,16 @@ class mwt(myToolItWatch):
         self.stdscr.addstr("Firmware Release Name: " + sReleaseName + "\n")
         self.stdscr.addstr("Serial: " + sSerial + "\n\n") 
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], 1, 0, 0)
-        iBatteryVoltage = iMessage2Value(self.Can.getReadMessageData(index)[2:4]) / 1000
+        iBatteryVoltage = iMessage2Value(self.Can.getReadMessageData(index)[2:4])
         if None != iBatteryVoltage:
-            self.stdscr.addstr("Battery Voltage: " + str(iBatteryVoltage) + "V\n\n")   
+            fBatteryVoltage = fVoltageBattery(iBatteryVoltage)
+            self.stdscr.addstr("Battery Voltage: " + '{:02.2f}'.format(fBatteryVoltage) + "V\n")   
+        au8TempReturn = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["Temp"], 1, AdcReference["1V25"], log=False)
+        iTemperature = float(iMessage2Value(au8TempReturn[4:]))
+        iTemperature /= 1000
+        self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["None"], CalibMeassurementTypeNr["Temp"], 1, AdcReference["VDD"], log=False, bReset=True)
+        if None != iTemperature:
+            self.stdscr.addstr("Internal Chip Temperature: " + '{:02.1f}'.format(iTemperature) + "°C\n\n")   
                   
     def bTerminalHolderConnectCommands(self):
         bContinue = True
@@ -180,7 +188,7 @@ class mwt(myToolItWatch):
         self.vDisplayTime(10)
         while False != bRun:
             self.stdscr.clear()
-            self.stdscr.addstr(self.sBlueToothMacAddr(int(self.iAddress, 16)) +"(" + str(self.sDevName) + ")\n")
+            self.stdscr.addstr(sBlueToothMacAddr(int(self.iAddress, 16)) +"(" + str(self.sDevName) + ")\n")
             self.bTerminalHolderConnectCommandsShowDataValues()
             self.stdscr.addstr("Run Time: " + str(self.iRunTime) + "s\n")
             self.stdscr.addstr("Inteval Time: " + str(self.iIntervalTime) + "s\n")
@@ -741,9 +749,9 @@ class mwt(myToolItWatch):
     
     def vConnect(self, devList=None):
         if None == devList:
-            devList = self.Can.tDeviceList(MyToolItNetworkNr["STU1"])
+            devList = self.Can.tDeviceList(MyToolItNetworkNr["STU1"], bLog=False)
             for dev in devList:
-                self.stdscr.addstr("Device Number: " + str(dev["DeviceNumber"] + 1) + "; Name: " + str(dev["Name"]) + "; Address: " + hex(dev["Address"]) + "; RSSI: " + str(dev["RSSI"]) + "\n") 
+                self.stdscr.addstr(str(dev["DeviceNumber"] + 1) + ": " + sBlueToothMacAddr(dev["Address"]) + "(" + str(dev["Name"]) + ")@" + str(dev["RSSI"]) + "dBm\n") 
         if False == self.Can.bConnected:
             self.stdscr.addstr("Pick a device number from the list: ")
             self.stdscr.refresh()            
@@ -898,9 +906,9 @@ class mwt(myToolItWatch):
     def tTerminalHeaderExtended(self, devList=None):
         self.vTerminalHeader()
         if None == devList:
-            devList = self.Can.tDeviceList(MyToolItNetworkNr["STU1"])
+            devList = self.Can.tDeviceList(MyToolItNetworkNr["STU1"], bLog=False)
         for dev in devList:
-            self.stdscr.addstr(str(dev["DeviceNumber"] + 1) + ": " + self.sBlueToothMacAddr(dev["Address"]) + "(" + str(dev["Name"]) + ")@" + str(dev["RSSI"]) + "dBm\n") 
+            self.stdscr.addstr(str(dev["DeviceNumber"] + 1) + ": " + sBlueToothMacAddr(dev["Address"]) + "(" + str(dev["Name"]) + ")@" + str(dev["RSSI"]) + "dBm\n") 
         return devList    
             
     def vTerminalHeader(self):

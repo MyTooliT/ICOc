@@ -424,24 +424,6 @@ class myToolItWatch():
     def sDateClock(self):
         DataClockTimeStamp = datetime.fromtimestamp(time()).strftime('%Y-%m-%d_%H-%M-%S')
         return DataClockTimeStamp
-    
-    def sBlueToothMacAddr(self, iAddr):
-        au8Value = au8ChangeEndianOrder(au8Value2Array(iAddr, 6))
-        sAddr = ""
-        for element in au8Value:
-            if 16 > element:
-                sAddr += "0"
-            sAddr += hex(element)[2:] + ":"
-        sAddr = sAddr[:-1]
-        return sAddr
-
-    def iBlueToothMacAddr(self, sAddr):
-        au8Addr = sAddr.split(":")
-        au8Addr = au8ChangeEndianOrder(au8Addr)
-        for i in range(0, len(au8Addr)):
-            au8Addr[i] = int(au8Addr[i], 16)
-        iAddr = iMessage2Value(au8Addr)
-        return iAddr
 
     def vParserInit(self):
         self.parser = argparse.ArgumentParser(description='Command Line Oprtions')
@@ -510,8 +492,8 @@ class myToolItWatch():
             self.vDeviceNameSet(self.args_dict['name_connect'][0])
             self.vSthAutoConnect(True)
         elif None != self.args_dict['bluetooth_connect']:
-            iBlueToothMacAddr = self.iBlueToothMacAddr(self.args_dict['bluetooth_connect'][0])
-            self.vDeviceAddressSet(str(iBlueToothMacAddr))
+            sBlueToothMacAddr = str(iBlueToothMacAddr(self.args_dict['bluetooth_connect'][0]))
+            self.vDeviceAddressSet(sBlueToothMacAddr)
             self.vSthAutoConnect(True)        
             
         if None != self.args_dict['points']: 
@@ -1202,7 +1184,11 @@ class myToolItWatch():
                     worksheet = workbook.get_sheet_by_name(worksheetName)
                     pageContent = []
                     readLength = self.iExcelSheetPageLength(worksheet)
-                    for offset in range(0, readLength, 4):
+                    readLengthAlligned = readLength
+                    if 0 != readLengthAlligned%4:
+                        readLengthAlligned+=4
+                        readLengthAlligned-=(readLengthAlligned%4)
+                    for offset in range(0, readLengthAlligned, 4):
                         payload = [address, 0xFF & offset, 4, 0, 0, 0, 0, 0]
                         index = self.Can.cmdSend(iReceiver, MyToolItBlock["Eeprom"], MyToolItEeprom["Read"], payload, log=False)   
                         readBackFrame = self.Can.getReadMessageData(index)[4:]
@@ -1289,7 +1275,8 @@ class myToolItWatch():
                             break
                     iWriteLength = self.iExcelSheetPageLength(worksheet)  
                     if 0 != iWriteLength % 4:
-                        iWriteLength += iWriteLength % 4
+                        iWriteLength += 4
+                        iWriteLength -= (iWriteLength % 4)
                     au8WriteData = au8WriteData[0:iWriteLength] 
                     self.Can.Logger.Info("Write Content: " + payload2Hex(au8WriteData))
                     for offset in range(0, iWriteLength, 4):

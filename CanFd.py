@@ -1,10 +1,9 @@
-
 from PCANBasic import *
 import threading
-from time import sleep, time
+import time 
 import os
-from datetime import datetime
 import array
+import math
 
 PeakCanIoPort = 0x2A0
 PeakCanInterrupt = 11
@@ -13,27 +12,12 @@ PeakCanBitrateFd = "f_clock_mhz=20, nom_brp=5, nom_tseg1=2, nom_tseg2=1, nom_sjw
 from MyToolItCommands import *
 from MyToolItNetworkNumbers import MyToolItNetworkNr, MyToolItNetworkName
 
-def to8bitSigned(num): 
-    mask7 = 128  # Check 8th bit ~ 2^8
-    mask2s = 127  # Keep first 7 bits
-    if (mask7 & num == 128):  # Check Sign (8th bit)
-        num = -((~int(num) + 1) & mask2s)  # 2's complement
-    return num
-
-
-def rreplace(s, old, new):
-    return (s[::-1].replace(old[::-1], new[::-1], 1))[::-1]
-
-
-def sDateClock():
-    DataClockTimeStamp = datetime.fromtimestamp(time()).strftime('%Y-%m-%d_%H:%M:%S')
-    return DataClockTimeStamp
-            
+           
 class Logger():
 
     def __init__(self, fileName, fileNameError, FreshLog=False):
         self.ErrorFlag = False
-        self.startTime = int(round(time() * 1000))
+        self.startTime = int(round(time.time()* 1000))
         self.file = None
         self.fileName = None
         self.vRename(fileName, fileNameError,FreshLog=FreshLog)
@@ -51,7 +35,7 @@ class Logger():
 
 
     def getTimeStamp(self):     
-        return int(round(time() * 1000)) - int(self.startTime)
+        return int(round(time.time() * 1000)) - int(self.startTime)
                             
     def Info(self, message):
         self.file.write("[I](")
@@ -113,7 +97,7 @@ class CanFd(object):
         self.receiver = receiver
         self.Logger = Logger(testMethodName, testMethodNameError, FreshLog=FreshLog)
         self.Logger.Info(str(sDateClock()))
-        self.startTime = int(round(time() * 1000))
+        self.startTime = int(round(time.time() * 1000))
         self.m_objPCANBasic = PCANBasic()
         self.baudrate = baudrate
         self.hwtype = PCAN_TYPE_ISA
@@ -163,7 +147,7 @@ class CanFd(object):
             self.tCanReadWriteMutex.acquire() # Insane 
             self.m_objPCANBasic.Uninitialize(self.m_PcanHandle)
             self.tCanReadWriteMutex.release()
-            sleep(1)
+            time.sleep(1)
             [_iDs, cmds] = self.ReadMessageStatistics()
             for cmd, value in cmds.items():
                 self.Logger.Info(self.strCmdNrToCmdName(cmd) + " received " + str(value) + " times")
@@ -211,12 +195,12 @@ class CanFd(object):
         try:
             self.readThreadStop()            
             self.readArray = [{"CanMsg" : self.CanMessage20(0, 0, 0, [0, 0, 0, 0, 0, 0, 0, 0]), "PcTime" : (1 << 64), "PeakCanTime" : 0}]
-            sleep(0.2)
+            time.sleep(0.2)
             self.RunReadThread = True
             self.readThread = threading.Thread(target=self.ReadMessage, name="CanReadThread")
             self.readThread.start()
             self.Reset()
-            sleep(0.2)
+            time.sleep(0.2)
         except:
             pass
         
@@ -376,7 +360,7 @@ class CanFd(object):
                     currentIndex += 1   
                     message = self.readArray[currentIndex]
                 else:
-                    sleep(notAckIdleWaitTimeMs)
+                    time.sleep(notAckIdleWaitTimeMs)
         return [returnMessage, currentIndex]
     
     def tWriteFrameWaitAckRetries(self, CanMsg, retries=10, waitMs=1000, printLog=False, bErrorAck=False, assumedPayload=None, bErrorExit=True, notAckIdleWaitTimeMs=0.001):  
@@ -399,7 +383,7 @@ class CanFd(object):
                         print("Message Request Failed: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + payload2Hex(CanMsg.DATA))
                     if False != bErrorExit:
                         self.__exitError()
-            sleep(0.01)
+            time.sleep(0.01)
             return returnMessage
         except KeyboardInterrupt:
             self.RunReadThread = False
@@ -418,7 +402,7 @@ class CanFd(object):
             else:
                 self.Logger.Info(MyToolItNetworkName[self.sender] + "->" + MyToolItNetworkName[receiver] + ": " + self.strCmdNrToCmdName(canCmd) + " - " + "Error")
             self.Logger.Info("Assumed receive message number: " + str(index))
-        #sleep(0.2)  # synch to read thread TODO: Really kick it out?
+        #time.sleep(0.2)  # synch to read thread TODO: Really kick it out?
         return index 
     
     """
@@ -438,7 +422,7 @@ class CanFd(object):
             else:
                 self.Logger.Info(MyToolItNetworkName[self.sender] + "->" + MyToolItNetworkName[receiver] + ": " + self.strCmdNrToCmdName(canCmd) + " - " + "Error")
             self.Logger.Info("Assumed receive message number: " + str(index))
-        #sleep(0.2)  # synch to read thread TODO: Really kick it out?
+        #time.sleep(0.2)  # synch to read thread TODO: Really kick it out?
         return msgAck 
 
     def cmdReset(self, receiver, retries=5, log=True):
@@ -446,7 +430,7 @@ class CanFd(object):
             self.Logger.Info("Reset " + MyToolItNetworkName[receiver])
         cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Reset"], 1, 0)
         retMsg = self.tWriteFrameWaitAckRetries(self.CanMessage20(cmd, self.sender, receiver, []), retries=retries)
-        sleep(2)
+        time.sleep(2)
         return retMsg
         
     def singleValueCollect(self, receiver, subCmd, b1, b2, b3, log=True, printLog=False):
@@ -527,9 +511,9 @@ class CanFd(object):
         if False != log:
             self.Logger.Info("indexStart: " + str(indexStart))
         testTimeMs += StartupTimeMs
-        sleep(testTimeMs / 1000)
+        time.sleep(testTimeMs / 1000)
         self.streamingStop(receiver, subCmd)
-        sleep(2)  # synch to read thread
+        time.sleep(2)  # synch to read thread
         indexEnd = self.GetReadArrayIndex() - 180  # do not catch stop command
         countDel = 0
         while testTimeMs < self.getReadMessageTimeMs(indexStart, indexEnd) - 0.5:
@@ -633,6 +617,125 @@ class CanFd(object):
             if 0 < len(array3):
                 self.Logger.Info(preFix + "Z: " + str(fCbfRecalc(array3[i])) + postFix)
         return samplingPoints
+    
+    def streamingValueStatisticsArithmeticAverage(self, sortArray):
+        arithmeticAverage = 0
+        if None != arithmeticAverage:
+            for Value in sortArray:
+                arithmeticAverage += Value
+            arithmeticAverage /= len(sortArray)
+        return arithmeticAverage
+
+    def streamingValueStatisticsSort(self, sortArray):
+        if None != sortArray:
+            sortArray.sort()
+        return sortArray
+
+    def streamingValueStatisticsQuantile(self, sortArray, quantil):
+        if None != sortArray:
+            sortArray.sort()
+            samplingPoints = len(sortArray)
+            if(samplingPoints % 2 == 0):
+                quantilSet = sortArray[int(samplingPoints * quantil)]
+                quantilSet += sortArray[int(samplingPoints * quantil - 1)]
+                quantilSet /= 2
+            else:
+                quantilSet = sortArray[int(quantil * samplingPoints)]
+        else:
+            quantilSet = None
+        return quantilSet
+
+    def streamingValueStatisticsVariance(self, sortArray):
+        variance = 0
+        arithmeticAverage = self.streamingValueStatisticsArithmeticAverage(sortArray)
+        if None != sortArray:
+            for Value in sortArray:
+                Value = (Value - arithmeticAverage) ** 2
+                variance += Value
+            variance /= len(sortArray)
+        return variance
+
+    def streamingValueStatisticsMomentOrder(self, sortArray, order):
+        momentOrder = 0
+        arithmeticAverage = self.streamingValueStatisticsArithmeticAverage(sortArray)
+        standardDeviation = self.streamingValueStatisticsVariance(sortArray) ** 0.5
+        if None != sortArray:
+            for Value in sortArray:
+                Value = (Value - arithmeticAverage) / standardDeviation
+                Value = Value ** order
+                momentOrder += Value
+            momentOrder /= len(sortArray)
+        return momentOrder
+    
+    
+    def streamingValueStatisticsValue(self, sortArray):
+        statistics = {}
+        statistics["Minimum"] = sortArray[0]
+        statistics["Quantil1"] = self.streamingValueStatisticsQuantile(sortArray, 0.01)
+        statistics["Quantil5"] = self.streamingValueStatisticsQuantile(sortArray, 0.05)
+        statistics["Quantil25"] = self.streamingValueStatisticsQuantile(sortArray, 0.25)
+        statistics["Median"] = self.streamingValueStatisticsQuantile(sortArray, 0.5)
+        statistics["Quantil75"] = self.streamingValueStatisticsQuantile(sortArray, 0.75)
+        statistics["Quantil95"] = self.streamingValueStatisticsQuantile(sortArray, 0.95)
+        statistics["Quantil99"] = self.streamingValueStatisticsQuantile(sortArray, 0.99)
+        statistics["Maximum"] = sortArray[-1]
+        statistics["ArithmeticAverage"] = self.streamingValueStatisticsArithmeticAverage(sortArray)
+        statistics["StandardDeviation"] = self.streamingValueStatisticsVariance(sortArray) ** 0.5
+        statistics["Variance"] = self.streamingValueStatisticsVariance(sortArray)
+        statistics["Skewness"] = self.streamingValueStatisticsMomentOrder(sortArray, 3)
+        statistics["Kurtosis"] = self.streamingValueStatisticsMomentOrder(sortArray, 4)
+        statistics["Data"] = sortArray
+        statistics["InterQuartialRange"] = statistics["Quantil75"] - statistics["Quantil25"]
+        statistics["90PRange"] = statistics["Quantil95"] - statistics["Quantil5"]
+        statistics["98PRange"] = statistics["Quantil99"] - statistics["Quantil1"]
+        statistics["TotalRange"] = sortArray[-1] - sortArray[0]        
+        return statistics
+    
+    def streamingValueStatistics(self, Array1, Array2, Array3):
+        sortArray1 = Array1.copy()
+        sortArray2 = Array2.copy()
+        sortArray3 = Array3.copy()
+        sortArray1 = self.streamingValueStatisticsSort(sortArray1)
+        sortArray2 = self.streamingValueStatisticsSort(sortArray2)
+        sortArray3 = self.streamingValueStatisticsSort(sortArray3)
+
+        statistics = {"Value1" : None, "Value2" : None, "Value3" : None}
+        if 0 < len(sortArray1):
+            statistics["Value1"] = self.streamingValueStatisticsValue(sortArray1)
+        if 0 < len(sortArray2):
+            statistics["Value2"] = self.streamingValueStatisticsValue(sortArray2)
+        if 0 < len(sortArray3):
+            statistics["Value3"] = self.streamingValueStatisticsValue(sortArray3)
+        return statistics
+
+    def signalIndicators(self, array1, array2, array3):
+        statistics = self.streamingValueStatistics(array1, array2, array3)
+        for key, stat in statistics.items():
+            if None != stat:
+                self.Can.Logger.Info("____________________________________________________")
+                self.Can.Logger.Info(key)
+                self.Can.Logger.Info("Minimum: " + str(stat["Minimum"]))
+                self.Can.Logger.Info("Quantil 1%: " + str(stat["Quantil1"]))
+                self.Can.Logger.Info("Quantil 5%: " + str(stat["Quantil5"]))
+                self.Can.Logger.Info("Quantil 25%: " + str(stat["Quantil25"]))
+                self.Can.Logger.Info("Median: " + str(stat["Median"]))
+                self.Can.Logger.Info("Quantil 75%: " + str(stat["Quantil75"]))
+                self.Can.Logger.Info("Quantil 95%: " + str(stat["Quantil95"]))
+                self.Can.Logger.Info("Quantil 99%: " + str(stat["Quantil99"]))
+                self.Can.Logger.Info("Maximum: " + str(stat["Maximum"]))
+                self.Can.Logger.Info("Arithmetic Average: " + str(stat["ArithmeticAverage"]))
+                self.Can.Logger.Info("Standard Deviation: " + str(stat["StandardDeviation"]))
+                self.Can.Logger.Info("Variance: " + str(stat["Variance"]))
+                self.Can.Logger.Info("Skewness: " + str(stat["Skewness"]))
+                self.Can.Logger.Info("Kurtosis: " + str(stat["Kurtosis"]))
+                self.Can.Logger.Info("Inter Quartial Range: " + str(stat["InterQuartialRange"]))
+                self.Can.Logger.Info("90%-Range: " + str(stat["90PRange"]))
+                self.Can.Logger.Info("98%-Range: " + str(stat["98PRange"]))
+                self.Can.Logger.Info("Total Range: " + str(stat["TotalRange"]))
+                SNR = 20 * math.log((stat["StandardDeviation"] / AdcMax), 10)
+                self.Can.Logger.Info("SNR: " + str(SNR))
+                self.Can.Logger.Info("____________________________________________________")
+        return statistics
       
     def dataPointsTotal(self, b1, b2, b3):
         return [bool(b1), bool(b2), bool(b3)].count(True)
@@ -795,7 +898,7 @@ class CanFd(object):
         return psw1
         
     def getTimeMs(self):
-        return int(round(time() * 1000)) - int(self.startTime)
+        return int(round(time.time() * 1000)) - int(self.startTime)
     
     def CanMessage20(self, command, sender, receiver, data):   
         # We create a TPCANMsg message structure
@@ -1049,24 +1152,24 @@ class CanFd(object):
     """    
     def bBlueToothConnectPollingName(self, stuNr, sName, log=True):  
         self.sDevName = None
-        endTime = time() + BluetoothTime["Connect"]
+        endTime = time.time() + BluetoothTime["Connect"]
         self.Logger.Info("Try to connect to Device Name: " + sName)
         dev = None
         devList = None
-        while time() < endTime and False == self.bConnected:
+        while time.time() < endTime and False == self.bConnected:
             devList = self.tDeviceList(stuNr)
             for dev in devList:
                 if sName == dev["Name"]:
                     self.iAddress = dev["Address"]
                     self.sDevName = dev["Name"]
                     self.DeviceNr = dev["DeviceNumber"]
-                    currentTime = time()            
+                    currentTime = time.time()            
                     endTime = currentTime + BluetoothTime["Connect"] 
                     self.bBlueToothConnectDeviceConnect(stuNr, self.DeviceNr)  
-                    while time() < endTime and False == self.bConnected:      
+                    while time.time() < endTime and False == self.bConnected:      
                         self.bBlueToothCheckConnect(stuNr)  
                     if False != self.bConnected and False != log:
-                        self.Logger.Info("Connected to: " + hex(self.iAddress) + "("+self.sDevName + ")")
+                        self.Logger.Info("Connected to: " + sBlueToothMacAddr(self.iAddress) + "("+self.sDevName + ")")
                     break
         if None == self.sDevName:
             if False != log:
@@ -1074,23 +1177,23 @@ class CanFd(object):
             self.__exitError()
         return self.bConnected
 
-    def tDeviceList(self, stuNr):       
+    def tDeviceList(self, stuNr, bLog=True):       
         devList = []        
         self.vBlueToothConnectConnect(stuNr, log = False)
-        devAll = self.iBlueToothConnectTotalScannedDeviceNr(stuNr)
+        devAll = self.iBlueToothConnectTotalScannedDeviceNr(stuNr, log=bLog)
         for dev in range(0, devAll):
-            endTime = time() + BluetoothTime["Connect"]
+            endTime = time.time() + BluetoothTime["Connect"]
             name = ''
             nameOld = None
-            while nameOld != name and time() < endTime:
+            while nameOld != name and time.time() < endTime:
                 nameOld = name
                 name = self.BlueToothNameGet(stuNr, dev)[0:8]
-            endTime = time() + BluetoothTime["Connect"]
+            endTime = time.time() + BluetoothTime["Connect"]
             address = 0
-            while 0 == address and time() < endTime:
+            while 0 == address and time.time() < endTime:
                 address = self.BlueToothAddressGet(stuNr, dev)
             rssi = 0
-            while 0 == rssi and time() < endTime:
+            while 0 == rssi and time.time() < endTime:
                 rssi = self.BlueToothRssiGet(stuNr, dev)
             devList.append({"DeviceNumber": dev, "Name" : name, "Address" : address, "RSSI" : rssi})
         return devList
@@ -1100,19 +1203,19 @@ class CanFd(object):
     """    
 
     def bBlueToothConnectPollingAddress(self, stuNr, iAddress, bLog=True):  
-        endTime = time() + BluetoothTime["Connect"]
+        endTime = time.time() + BluetoothTime["Connect"]
         self.Logger.Info("Try to connect to Test Device Address: " + str(iAddress))
-        while time() < endTime and False == self.bConnected:
+        while time.time() < endTime and False == self.bConnected:
             devList = self.tDeviceList(stuNr)
             for dev in devList:
                 if iAddress == hex(dev["Address"]):
                     self.iAddress = iAddress
                     self.sDevName = dev["Name"]
                     self.DeviceNr = dev["DeviceNumber"]
-                    currentTime = time()            
+                    currentTime = time.time()            
                     endTime = currentTime + BluetoothTime["Connect"] 
                     self.bBlueToothConnectDeviceConnect(stuNr, self.DeviceNr)  
-                    while time() < endTime and False == self.bConnected:    
+                    while time.time() < endTime and False == self.bConnected:    
                         self.bBlueToothCheckConnect(stuNr)  
                     if False != self.bConnected and False != bLog:
                         self.Logger.Info("Connected to: " + self.iAddress)
@@ -1135,7 +1238,7 @@ class CanFd(object):
             self.Logger.Info("Setting Bluetooth Energy Mode 1")
             modeNr = SystemCommandBlueTooth["EnergyModeReducedWrite"]
         Payload = [modeNr, self.DeviceNr, S1B0, S1B1, S1B2, S1B3, A1B0, A1B1]
-        sleep(0.1)
+        time.sleep(0.1)
         [timeReset, timeAdvertisement] = self.BlueToothEnergyMode(Payload) 
         self.Logger.Info("Energy Mode ResetTime/AdvertisementTime: " + str(timeReset) + "/" + str(timeAdvertisement))
         return [timeReset, timeAdvertisement]   

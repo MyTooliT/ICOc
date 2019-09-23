@@ -2,6 +2,12 @@ from MyToolItCommands import AdcAcquisitionTime, AdcOverSamplingRate, AdcReferen
 Axis = 1
 PcbOnly = True
 
+def vSthLimitsConfig(iAxis, bPcbOnly):
+    global Axis
+    global PcbOnly
+    Axis=iAxis
+    PcbOnly = bPcbOnly
+
 # Recalculation Factors
 AdcMax = 0xFFFF
 AccelerationToAccGravitity = 200
@@ -32,15 +38,13 @@ AdcAcquisitionOverSamplingRateReset = AdcOverSamplingRate[64]
 
 # Limits
 # Voltage
-VoltRawDecoupleMiddle = 23678
-VoltRawDecoupleTolerance = 100
 VoltRawOpa2Middle = 0
 VoltRawOpa2Tolerance = 3
 VoltRawOpa3Middle = 0
 VoltRawOpa3Tolerance = 3
 VoltRawVssTolerance = 3
-VoltMiddleBat = 0
-VoltToleranceBat = 0.5   
+VoltMiddleBat = 3.2
+VoltToleranceBat = 0.2   
 VoltRawMiddleBat = 11000 
 VoltRawToleranceBat = 300
 SigIndBatteryQ1 = 8000         
@@ -58,7 +62,7 @@ SigIndBatterySNR = 60
 AdcMiddleX = 0
 AdcMiddleY = 0
 AdcMiddleZ = 0
-AdcToleranceX = 5
+AdcToleranceX = 2
 AdcRawMiddleX = 2 ** 15
 AdcRawToleranceX = 512
 SelfTestOutputChangemVMin = 70
@@ -133,6 +137,7 @@ TempInternal3V3Middle = 13000
 TempInternal3V3Tolerance = 2000
 TempInternalMin = 10.0
 TempInternalMax = 60.0
-
+TempInternalProductionTestMin = 20.0
+TempInternalProductionMax = 35.0
 # Reset States
 CalibrationMeassurementPayloadReset = [0, 0, 0, AdcReference["VDD"], 0, 0, 0, 0]

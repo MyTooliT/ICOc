@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ConfigKey>
     <lastRun>
-        <LogName>Watch</LogName>
-        <Product>STH</Product>
-        <Version>v2.1.4</Version>
-        <NetworkNumber>STH1</NetworkNumber>
-        <SheetFile>Watch</SheetFile>
+        <LogName />
+        <Product />
+        <Version />
+        <NetworkNumber />
+        <SheetFile>None</SheetFile>
         <Setup>X</Setup>
     </lastRun>
     <Config>
@@ -140,7 +140,7 @@
         <Product>
             <product name="STH">
                 <Version>
-                    <version name="v2.1.4">
+                    <version name="v2.1.5">
                         <Page>
                             <page name="System Configuration0">
                                 <pageAddress>0</pageAddress>
@@ -176,7 +176,7 @@
                                     <subAddress>13</subAddress>
                                     <length>2</length>
                                     <readOnly>False</readOnly>
-                                    <value>400</value>
+                                    <value>2000</value>
                                     <unit>ms</unit>
                                     <format>unsigned</format>
                                     <description>Bluetooth Advertisement Time in ms for Sleep Mode 1</description>
@@ -185,7 +185,7 @@
                                     <subAddress>15</subAddress>
                                     <length>4</length>
                                     <readOnly>False</readOnly>
-                                    <value>3600000</value>
+                                    <value>259200000</value>
                                     <unit>ms</unit>
                                     <format>unsigned</format>
                                     <description>Time to from entering Sleep Mode 1 to Sleep Mode 2 in ms</description>
@@ -194,7 +194,7 @@
                                     <subAddress>19</subAddress>
                                     <length>2</length>
                                     <readOnly>False</readOnly>
-                                    <value>1600</value>
+                                    <value>4000</value>
                                     <unit>ms</unit>
                                     <format>unsigned</format>
                                     <description>Bluetooth Advertisement Time in ms for Sleep Mode 2</description>
@@ -280,7 +280,7 @@
                                     <subAddress>23</subAddress>
                                     <length>1</length>
                                     <readOnly>True</readOnly>
-                                    <value>4</value>
+                                    <value>5</value>
                                     <unit />
                                     <format>unsigned</format>
                                     <description>Firmware Version Number - Build</description>
@@ -316,7 +316,7 @@
                                     <subAddress>192</subAddress>
                                     <length>64</length>
                                     <readOnly>True</readOnly>
-                                    <value>[0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0]</value>
+                                    <value>[0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xc0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0]</value>
                                     <unit />
                                     <format />
                                     <description>Supports Manufactor Specific information in format that is free to choose</description>
@@ -362,7 +362,7 @@
                                     <format>unsigned</format>
                                     <description>Counts of under voltages that yields into turn off state(Brown Out)</description>
                                     </entry>
-                                <entry name="Watchdog Reset Counter "><subAddress>16</subAddress><length>4</length><readOnly>True</readOnly><value>0</value><unit>date</unit><format>unsigned</format><description>Watchdog Resets since first power on</description></entry><entry name="Production Date"><subAddress>20</subAddress><length>8</length><readOnly>True</readOnly><value>20190905</value><unit>date</unit><format>ASCII</format><description>Production Date (EEPROM Production Write) in the format yyyymmdd (year month day)</description></entry></Entry>
+                                <entry name="Watchdog Reset Counter "><subAddress>16</subAddress><length>4</length><readOnly>True</readOnly><value>0</value><unit>date</unit><format>unsigned</format><description>Watchdog Resets since first power on</description></entry><entry name="Production Date"><subAddress>20</subAddress><length>8</length><readOnly>True</readOnly><value>20190905</value><unit>date</unit><format>ASCII</format><description>Production Date (EEPROM Production Write) in the format yyyymmdd (year month day)</description></entry><entry name="Batch Number"><subAddress>28</subAddress><length>4</length><readOnly>True</readOnly><value>1</value><unit /><format>unsigned</format><description>Consecutive number for manufactured devices</description></entry></Entry>
                             </page>
                             <page name="Calibration0">
                                 <pageAddress>8</pageAddress>

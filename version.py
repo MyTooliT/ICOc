@@ -28,4 +28,4 @@ Version 1.0.0:
 """
 
 
-sMyToolItWatchVersion="1.0.1"
+sMyToolItWatchVersion="1.0.2"

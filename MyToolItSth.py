@@ -1,6 +1,7 @@
 import ctypes
 c_uint8 = ctypes.c_uint8
 c_uint32 = ctypes.c_uint32
+from SthLimits import *
 
 Version = {
     "VersionMajor" : 2,
@@ -22,11 +23,11 @@ TestConfig = {
 SleepTime = {
     "Min" : 10000,
     "Reset1" : 300000,
-    "AdvertisementMin" : 200,
+    "AdvertisementMin" : 500,
     "AdvertisementMax" : 4000,
-    "AdvertisementReset1" : 400,
+    "AdvertisementReset1" : 1500,
     "Reset2" : 3600000,
-    "AdvertisementReset2" : 1600,
+    "AdvertisementReset2" : 3000,
     }
 
 SthModule = {
@@ -58,3 +59,19 @@ class SthStateWordFlags(ctypes.LittleEndianStructure):
 class SthStateWord(ctypes.Union):
     _fields_ = [("b", SthStateWordFlags),
                 ("asword", c_uint32)]
+
+
+def fVoltageBattery(x):
+    if(0 < x):
+        voltage = (x*57*3.3)/(10*2**16)
+    else:
+        voltage = 0
+    return voltage
+
+def fAdcRawDat(x):
+    return x
+
+
+def fAcceleration(x):
+    return ((x / AdcMax - 1 / 2) * AccelerationToAccGravitity)
+

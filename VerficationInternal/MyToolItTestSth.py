@@ -13,44 +13,26 @@ import CanFd
 import math
 from MyToolItNetworkNumbers import MyToolItNetworkNr
 import time
-from MyToolItSth import TestConfig, SthModule, SleepTime, SthErrorWord, SthStateWord
+from MyToolItSth import TestConfig, SthModule, SleepTime, SthErrorWord, SthStateWord, fVoltageBattery, fAdcRawDat, fAcceleration
 from MyToolItCommands import *
 from SthLimits import *
 from testSignal import *
 
+sVersion = "v2.1.5"
 log_file = 'TestStu.txt'
 log_location = '../../Logs/STH/'
+sOtaLocation = "../../SimplicityStudio/v4_workspace/STH/builds/"
 
 
-def fVoltageBattery(x):
-    if(0 < x):
-        voltage = ((10.5 * 3300) / (16 * 4096 * 1000 * x))
-    else:
-        voltage = 0
-    return voltage
-
-
-def fAdcRawDat(x):
-    return x
-
-
-def fAcceleration(x):
-    return ((x / AdcMax - 1 / 2) * AccelerationToAccGravitity)
-
-
-def fAccelerationSingle(x):
-    return (100 * (x / 4096 - 1 / 2))
-
-
-def fCheckFunctionNone(statistics):
-    pass
 
 
 class TestSth(unittest.TestCase):
+    sVersion = sVersion
+    sLogLocation = log_location
 
     def setUp(self):
-        print("TestCase: ", self._testMethodName)
         self.bError = False
+        self.sOtaLocation = sOtaLocation + TestSth.sVersion
         self.fileName = log_location + self._testMethodName + ".txt"
         self.fileNameError = log_location + "Error_" + self._testMethodName + ".txt"
         self.Can = CanFd.CanFd(CanFd.PCAN_BAUD_1M, self.fileName, self.fileNameError, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], AdcPrescalerReset, AdcAcquisitionTimeReset, AdcAcquisitionOverSamplingRateReset, FreshLog=True)
@@ -58,8 +40,10 @@ class TestSth(unittest.TestCase):
         self.Can.CanTimeStampStart(self._resetStu()["CanTime"])  # This will also reset to STH
         self.Can.Logger.Info("Connect to STH")
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
-        self.Can.Logger.Info("STU BlueTooth Address: " + hex(self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"])))
-        self.Can.Logger.Info("STH BlueTooth Address: " + hex(self.Can.BlueToothAddress(MyToolItNetworkNr["STH1"])))
+        self.sStuAddr = sBlueToothMacAddr(self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"]))
+        self.sSthAddr = sBlueToothMacAddr(self.Can.BlueToothAddress(MyToolItNetworkNr["STH1"]))
+        self.Can.Logger.Info("STU BlueTooth Address: " + self.sStuAddr)
+        self.Can.Logger.Info("STH BlueTooth Address: " + self.sSthAddr)
         iOperatingSeconds = self.Can.statisticalData(MyToolItNetworkNr["STU1"], MyToolItStatData["OperatingTime"])[4:]    
         iOperatingSeconds = iMessage2Value(iOperatingSeconds)
         self.Can.Logger.Info("STU Operating Seconds: " + str(iOperatingSeconds))
@@ -71,7 +55,6 @@ class TestSth(unittest.TestCase):
         self.assertGreaterEqual(TempInternalMax, temp)
         self.assertLessEqual(TempInternalMin, temp)
         self._SthWDog()
-        print("Start")
         self.Can.Logger.Info("_______________________________________________________________________________________________________________")
         self.Can.Logger.Info("Start")
 
@@ -145,9 +128,9 @@ class TestSth(unittest.TestCase):
         ErrorWord.asword = self.Can.statusWord1(MyToolItNetworkNr["STH1"])
         if True == ErrorWord.b.bAdcOverRun:
             self.bError = True
-        self.Can.Logger.Info("STH bError Word: " + hex(ErrorWord.asword))
+        self.Can.Logger.Info("STH Error Word: " + hex(ErrorWord.asword))
         ErrorWord.asword = self.Can.statusWord1(MyToolItNetworkNr["STU1"])
-        self.Can.Logger.Info("STU bError Word: " + hex(ErrorWord.asword))
+        self.Can.Logger.Info("STU Error Word: " + hex(ErrorWord.asword))
 
     def _streamingStop(self):
         self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"])
@@ -387,123 +370,9 @@ class TestSth(unittest.TestCase):
         for i in range(0, len(testSignal)):
             self.assertEqual(array[i], testSignal[i])
 
-    def streamingValueStatisticsArithmeticAverage(self, sortArray):
-        arithmeticAverage = 0
-        if None != arithmeticAverage:
-            for Value in sortArray:
-                arithmeticAverage += Value
-            arithmeticAverage /= len(sortArray)
-        return arithmeticAverage
 
-    def streamingValueStatisticsSort(self, sortArray):
-        if None != sortArray:
-            sortArray.sort()
-        return sortArray
 
-    def streamingValueStatisticsQuantile(self, sortArray, quantil):
-        if None != sortArray:
-            sortArray.sort()
-            samplingPoints = len(sortArray)
-            if(samplingPoints % 2 == 0):
-                quantilSet = sortArray[int(samplingPoints * quantil)]
-                quantilSet += sortArray[int(samplingPoints * quantil - 1)]
-                quantilSet /= 2
-            else:
-                quantilSet = sortArray[int(quantil * samplingPoints)]
-        else:
-            quantilSet = None
-        return quantilSet
 
-    def streamingValueStatisticsVariance(self, sortArray):
-        variance = 0
-        arithmeticAverage = self.streamingValueStatisticsArithmeticAverage(sortArray)
-        if None != sortArray:
-            for Value in sortArray:
-                Value = (Value - arithmeticAverage) ** 2
-                variance += Value
-            variance /= len(sortArray)
-        return variance
-
-    def streamingValueStatisticsMomentOrder(self, sortArray, order):
-        momentOrder = 0
-        arithmeticAverage = self.streamingValueStatisticsArithmeticAverage(sortArray)
-        standardDeviation = self.streamingValueStatisticsVariance(sortArray) ** 0.5
-        if None != sortArray:
-            for Value in sortArray:
-                Value = (Value - arithmeticAverage) / standardDeviation
-                Value = Value ** order
-                momentOrder += Value
-            momentOrder /= len(sortArray)
-        return momentOrder
-
-    def streamingValueStatisticsValue(self, sortArray):
-        statistics = {}
-        statistics["Minimum"] = sortArray[0]
-        statistics["Quantil1"] = self.streamingValueStatisticsQuantile(sortArray, 0.01)
-        statistics["Quantil5"] = self.streamingValueStatisticsQuantile(sortArray, 0.05)
-        statistics["Quantil25"] = self.streamingValueStatisticsQuantile(sortArray, 0.25)
-        statistics["Median"] = self.streamingValueStatisticsQuantile(sortArray, 0.5)
-        statistics["Quantil75"] = self.streamingValueStatisticsQuantile(sortArray, 0.75)
-        statistics["Quantil95"] = self.streamingValueStatisticsQuantile(sortArray, 0.95)
-        statistics["Quantil99"] = self.streamingValueStatisticsQuantile(sortArray, 0.99)
-        statistics["Maximum"] = sortArray[-1]
-        statistics["ArithmeticAverage"] = self.streamingValueStatisticsArithmeticAverage(sortArray)
-        statistics["StandardDeviation"] = self.streamingValueStatisticsVariance(sortArray) ** 0.5
-        statistics["Variance"] = self.streamingValueStatisticsVariance(sortArray)
-        statistics["Skewness"] = self.streamingValueStatisticsMomentOrder(sortArray, 3)
-        statistics["Kurtosis"] = self.streamingValueStatisticsMomentOrder(sortArray, 4)
-        statistics["Data"] = sortArray
-        statistics["InterQuartialRange"] = statistics["Quantil75"] - statistics["Quantil25"]
-        statistics["90PRange"] = statistics["Quantil95"] - statistics["Quantil5"]
-        statistics["98PRange"] = statistics["Quantil99"] - statistics["Quantil1"]
-        statistics["TotalRange"] = sortArray[-1] - sortArray[0]        
-        return statistics
-    
-    def streamingValueStatistics(self, Array1, Array2, Array3):
-        sortArray1 = Array1.copy()
-        sortArray2 = Array2.copy()
-        sortArray3 = Array3.copy()
-        sortArray1 = self.streamingValueStatisticsSort(sortArray1)
-        sortArray2 = self.streamingValueStatisticsSort(sortArray2)
-        sortArray3 = self.streamingValueStatisticsSort(sortArray3)
-
-        statistics = {"Value1" : None, "Value2" : None, "Value3" : None}
-        if 0 < len(sortArray1):
-            statistics["Value1"] = self.streamingValueStatisticsValue(sortArray1)
-        if 0 < len(sortArray2):
-            statistics["Value2"] = self.streamingValueStatisticsValue(sortArray2)
-        if 0 < len(sortArray3):
-            statistics["Value3"] = self.streamingValueStatisticsValue(sortArray3)
-        return statistics
-
-    def signalIndicators(self, array1, array2, array3):
-        statistics = self.streamingValueStatistics(array1, array2, array3)
-        for key, stat in statistics.items():
-            if None != stat:
-                self.Can.Logger.Info("____________________________________________________")
-                self.Can.Logger.Info(key)
-                self.Can.Logger.Info("Minimum: " + str(stat["Minimum"]))
-                self.Can.Logger.Info("Quantil 1%: " + str(stat["Quantil1"]))
-                self.Can.Logger.Info("Quantil 5%: " + str(stat["Quantil5"]))
-                self.Can.Logger.Info("Quantil 25%: " + str(stat["Quantil25"]))
-                self.Can.Logger.Info("Median: " + str(stat["Median"]))
-                self.Can.Logger.Info("Quantil 75%: " + str(stat["Quantil75"]))
-                self.Can.Logger.Info("Quantil 95%: " + str(stat["Quantil95"]))
-                self.Can.Logger.Info("Quantil 99%: " + str(stat["Quantil99"]))
-                self.Can.Logger.Info("Maximum: " + str(stat["Maximum"]))
-                self.Can.Logger.Info("Arithmetic Average: " + str(stat["ArithmeticAverage"]))
-                self.Can.Logger.Info("Standard Deviation: " + str(stat["StandardDeviation"]))
-                self.Can.Logger.Info("Variance: " + str(stat["Variance"]))
-                self.Can.Logger.Info("Skewness: " + str(stat["Skewness"]))
-                self.Can.Logger.Info("Kurtosis: " + str(stat["Kurtosis"]))
-                self.Can.Logger.Info("Inter Quartial Range: " + str(stat["InterQuartialRange"]))
-                self.Can.Logger.Info("90%-Range: " + str(stat["90PRange"]))
-                self.Can.Logger.Info("98%-Range: " + str(stat["98PRange"]))
-                self.Can.Logger.Info("Total Range: " + str(stat["TotalRange"]))
-                SNR = 20 * math.log((stat["StandardDeviation"] / AdcMax), 10)
-                self.Can.Logger.Info("SNR: " + str(SNR))
-                self.Can.Logger.Info("____________________________________________________")
-        return statistics
 
     def siginalIndicatorCheck(self, name, statistic, quantil1, quantil25, medianL, medianH, quantil75, quantil99, variance, skewness, SNR):
         self.Can.Logger.Info("____________________________________________________")
@@ -530,6 +399,30 @@ class TestSth(unittest.TestCase):
         self.assertGreaterEqual(abs(SignalSNR), abs(SNR))
         self.Can.Logger.Info("____________________________________________________")
 
+    """
+    Test the over the air update
+    """
+    def test0000OverTheAirUpdate(self):
+        self._resetStu()
+        time.sleep(1)
+        for i in range(1, 5):
+            sSystemCall = self.sOtaLocation + "/ota-dfu.exe COM6 115200 " 
+            sSystemCall += self.sOtaLocation + "/ServerApplication.gbl "
+            sSystemCall += self.sSthAddr + " -> " + self.sLogLocation 
+            sSystemCall += self._testMethodName + "Ota" + str(i) + ".txt"
+            if os.name == 'nt': 
+                sSystemCall = sSystemCall.replace("/", "\\")
+                os.system(sSystemCall)
+            # for mac and linux(here, os.name is 'posix') 
+            else: 
+                os.system(sSystemCall)            
+            tFile = open(self.sLogLocation + self._testMethodName + "Ota" + str(i) + ".txt", "r", encoding='utf-8')
+            asData = tFile.readlines()
+            self.assertEqual("Finishing DFU block...OK\n", asData[-2])
+            self.assertEqual("Closing connection...OK\n", asData[-1])
+        self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
+        
+        
     """
     Test Acknowledgement from STH. Write message and check identifier to be ack (No bError)
     """
@@ -562,6 +455,12 @@ class TestSth(unittest.TestCase):
         self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["System"], MyToolItSystem["ActiveState"], [0x80], bErrorExit=False)  # Not receiving gets  tested in cmdSend
         self.Can.Logger.Info("Connect to STH")
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
+        
+        
+    def test0003SthTemperature(self):
+        temp = self._SthAdcTemp()
+        self.assertGreaterEqual(TempInternalMin, temp)
+        self.assertLessEqual(TempInternalMax, temp)
         
     """
     Test Energy Mode 1 - If you like to evaluate power consumption: Please do it manually
@@ -914,7 +813,6 @@ class TestSth(unittest.TestCase):
         Name = self.Can.BlueToothNameGet(MyToolItNetworkNr["STH1"], 0)[0:8]
         self.Can.Logger.Info("Received: " + Name)
         self.assertEqual(TestConfig["DevName"], Name)
-        print("Last Set Name: " + Name)
         
     """
     Bluetooth Address
@@ -2308,24 +2206,21 @@ class TestSth(unittest.TestCase):
     """
 
     def test0504SamplingRateDataSingleMax(self):
-        calcRate = self.SamplingRate(SamplingRateSingleMaxPrescaler, SamplingRateSingleMaxAcqTime, SamplingRateSingleMaxOverSamples, AdcReference["VDD"], runTime=10000)["SamplingRate"]
-        print("Maximum Sampling Rate(Single Sampling): " + str(calcRate))
+        self.SamplingRate(SamplingRateSingleMaxPrescaler, SamplingRateSingleMaxAcqTime, SamplingRateSingleMaxOverSamples, AdcReference["VDD"], runTime=10000)["SamplingRate"]
 
     """
     Testing ADC Sampling Rate - Maximum(Double Data)
     """
 
     def test0505SamplingRateDataDoubleMax(self):
-        calcRate = self.SamplingRate(SamplingRateDoubleMaxPrescaler, SamplingRateDoubleMaxAcqTime, SamplingRateDoubleMaxOverSamples, AdcReference["VDD"], b1=1, b2=1, b3=0, runTime=10000)["SamplingRate"]
-        print("Maximum Sampling Rate(Double Sampling): " + str(calcRate))
+        self.SamplingRate(SamplingRateDoubleMaxPrescaler, SamplingRateDoubleMaxAcqTime, SamplingRateDoubleMaxOverSamples, AdcReference["VDD"], b1=1, b2=1, b3=0, runTime=10000)["SamplingRate"]
 
     """
     Testing ADC Sampling Rate - Maximum(Tripple Data)
     """
 
     def test0506SamplingRateDataTrippleMax(self):
-        calcRate = self.SamplingRate(SamplingRateTrippleMaxPrescaler, SamplingRateTrippleMaxAcqTime, SamplingRateTrippleMaxOverSamples, AdcReference["VDD"], b1=1, b2=1, b3=1, runTime=10000)["SamplingRate"]
-        print("Maximum Sampling Rate(Tripple Sampling): " + str(calcRate))
+        self.SamplingRate(SamplingRateTrippleMaxPrescaler, SamplingRateTrippleMaxAcqTime, SamplingRateTrippleMaxOverSamples, AdcReference["VDD"], b1=1, b2=1, b3=1, runTime=10000)["SamplingRate"]
 
     """
     Testing ADC Reference voltagegs
@@ -3194,11 +3089,6 @@ class TestSth(unittest.TestCase):
         result = iMessage2Value(ret[4:])
         self.Can.Logger.Info("Calibration Result AVDD(3V3): " + str(result))
         self.assertLessEqual(2 ^ 16 - 100, result)
-        ret = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["RegulatedInternalPower"], 1, AdcReference["VDD"])
-        result = iMessage2Value(ret[4:])
-        self.Can.Logger.Info("Calibration Result Regulated Internal Power(DECOUPLE): " + str(result))
-        self.assertLessEqual(VoltRawDecoupleMiddle - VoltRawDecoupleTolerance, result)
-        self.assertGreaterEqual(VoltRawDecoupleMiddle + VoltRawDecoupleTolerance, result)
         ret = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["OpvOutput"], 1, AdcReference["VDD"])
         result = iMessage2Value(ret[4:])
         self.Can.Logger.Info("Calibration Result OPA2: " + str(result))
@@ -3427,7 +3317,6 @@ class TestSth(unittest.TestCase):
         stateStartVoltage = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"], CalibMeassurementTypeNr["Voltage"], 1, AdcReference["VDD"], bSet=False, bErrorAck=True)        
         stateStartVss = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"], CalibMeassurementTypeNr["Vss"], 1, AdcReference["VDD"], bSet=False, bErrorAck=True)
         stateStartAvdd = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"], CalibMeassurementTypeNr["Avdd"], 1, AdcReference["VDD"], bSet=False, bErrorAck=True)
-        stateStartDecouple = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"], CalibMeassurementTypeNr["RegulatedInternalPower"], 1, AdcReference["VDD"], bSet=False, bErrorAck=True)
         stateStartOpa1 = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"], CalibMeassurementTypeNr["OpvOutput"], 1, AdcReference["VDD"], bSet=False, bErrorAck=True)
         stateStartOpa2 = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"], CalibMeassurementTypeNr["OpvOutput"], 2, AdcReference["VDD"], bSet=False, bErrorAck=True)
         ErrorPayloadAssumed = [0x0, 0x2, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0]
@@ -3438,8 +3327,7 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("State Start Temp: " + payload2Hex(stateStartTemp)) 
         self.Can.Logger.Info("State Start Voltage: " + payload2Hex(stateStartVoltage)) 
         self.Can.Logger.Info("State Start Vss: " + payload2Hex(stateStartVss)) 
-        self.Can.Logger.Info("State Start Avdd: " + payload2Hex(stateStartAvdd)) 
-        self.Can.Logger.Info("State Start Decouple: " + payload2Hex(stateStartDecouple))        
+        self.Can.Logger.Info("State Start Avdd: " + payload2Hex(stateStartAvdd))       
         self.Can.Logger.Info("State Start Opa1: " + payload2Hex(stateStartOpa1))  
         self.Can.Logger.Info("State Start Opa2: " + payload2Hex(stateStartOpa2))  
         for i in range(0, 8):
@@ -3449,8 +3337,7 @@ class TestSth(unittest.TestCase):
             self.assertEqual(stateStartTemp[i], ErrorPayloadAssumed[i])
             self.assertEqual(stateStartVoltage[i], ErrorPayloadAssumed[i])
             self.assertEqual(stateStartVss[i], ErrorPayloadAssumed[i])
-            self.assertEqual(stateStartAvdd[i], ErrorPayloadAssumed[i])
-            self.assertEqual(stateStartDecouple[i], ErrorPayloadAssumed[i])      
+            self.assertEqual(stateStartAvdd[i], ErrorPayloadAssumed[i])    
             self.assertEqual(stateStartOpa1[i], ErrorPayloadAssumed[i])
             self.assertEqual(stateStartOpa2[i], ErrorPayloadAssumed[i])        
       
@@ -3874,20 +3761,19 @@ class TestSth(unittest.TestCase):
                     
                 
 if __name__ == "__main__":
-    print(sys.version)
-    log_location = sys.argv[1]
-    log_file = sys.argv[2]
-    if '/' != log_location[-1]:
-        log_location += '/'
-    logFileLocation = log_location + log_file
-    dir_name = os.path.dirname(logFileLocation)
+    sLogLocation = sys.argv[1]
+    sLogFile = sys.argv[2]
+    if '/' != sLogLocation[-1]:
+        sLogLocation += '/'
+    sLogFileLocation = sLogLocation + sLogFile
+    TestSth.sLogLocation = sLogLocation
+    TestSth.sVersion = sys.argv[3]
+    dir_name = os.path.dirname(sLogFileLocation)
     sys.path.append(dir_name)
 
-    print("Log Files will be saved at: " + str(logFileLocation))
     if not os.path.exists(dir_name):
         os.makedirs(dir_name)
-    with open(logFileLocation, "w") as f:
-        print(f)     
+    with open(sLogFileLocation, "w") as f:    
         runner = unittest.TextTestRunner(f)
         unittest.main(argv=['first-arg-is-ignored'], testRunner=runner)  
 

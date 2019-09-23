@@ -1,6 +1,9 @@
 import ctypes
 c_uint8 = ctypes.c_uint8
 
+import time
+from datetime import datetime
+
 Config = {
     "DeviceNumberMax" : 32
 }
@@ -320,7 +323,7 @@ CalibMeassurementTypeNr = {
     "Voltage" : 32,
     "Vss" : 96,
     "Avdd" : 97,
-    "RegulatedInternalPower" : 98,
+    "Reserved" : 98,
     "OpvOutput" : 99,
 }
 
@@ -330,7 +333,7 @@ CalibMeassurementTypeName = {
     CalibMeassurementTypeNr["Voltage"] : "Calibration Measurement Type - Voltage",
     CalibMeassurementTypeNr["Vss"] : "Calibration Measurement Type - VSS(Ground)",
     CalibMeassurementTypeNr["Avdd"] :"Calibration Measurement Type - AVDD(Analog Supply)",
-    CalibMeassurementTypeNr["RegulatedInternalPower"] : "Calibration Measurement Type - Regulated Internal Power",
+    CalibMeassurementTypeNr["Reserved"] : "Reserved",
     CalibMeassurementTypeNr["OpvOutput"]  : "Calibration Measurement Type - OPV Output",
 }
 
@@ -593,3 +596,29 @@ def sArray2String(Name):
     for character in range(128, 0xFF):
         Name = Name[0:8].replace(chr(character), '')
     return Name
+
+def sBlueToothMacAddr(iAddr):
+    au8Value = au8ChangeEndianOrder(au8Value2Array(iAddr, 6))
+    sAddr = ""
+    for element in au8Value:
+        if 16 > element:
+            sAddr += "0"
+        sAddr += hex(element)[2:] + ":"
+    sAddr = sAddr[:-1]
+    return sAddr
+
+def iBlueToothMacAddr(sAddr):
+    au8Addr = sAddr.split(":")
+    au8Addr = au8ChangeEndianOrder(au8Addr)
+    for i in range(0, len(au8Addr)):
+        au8Addr[i] = int(au8Addr[i], 16)
+    iAddr = iMessage2Value(au8Addr)
+    return iAddr
+
+def rreplace(s, old, new):
+    return (s[::-1].replace(old[::-1], new[::-1], 1))[::-1]
+
+
+def sDateClock():
+    DataClockTimeStamp = datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d_%H:%M:%S')
+    return DataClockTimeStamp
