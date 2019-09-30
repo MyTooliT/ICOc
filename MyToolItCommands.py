@@ -8,6 +8,7 @@ Config = {
     "DeviceNumberMax" : 32
 }
 
+AdcMax = 0xFFFF
 
 class ActiveStateFlags(ctypes.BigEndianStructure):
     _fields_ = [
@@ -323,7 +324,7 @@ CalibMeassurementTypeNr = {
     "Voltage" : 32,
     "Vss" : 96,
     "Avdd" : 97,
-    "Reserved" : 98,
+    "RegulatedInternalPower" : 98,
     "OpvOutput" : 99,
 }
 
@@ -333,7 +334,7 @@ CalibMeassurementTypeName = {
     CalibMeassurementTypeNr["Voltage"] : "Calibration Measurement Type - Voltage",
     CalibMeassurementTypeNr["Vss"] : "Calibration Measurement Type - VSS(Ground)",
     CalibMeassurementTypeNr["Avdd"] :"Calibration Measurement Type - AVDD(Analog Supply)",
-    CalibMeassurementTypeNr["Reserved"] : "Reserved",
+    CalibMeassurementTypeNr["RegulatedInternalPower"] : "Calibration Measurement Type - Regulated Internal Power",
     CalibMeassurementTypeNr["OpvOutput"]  : "Calibration Measurement Type - OPV Output",
 }
 

@@ -51,7 +51,7 @@ class TestSth(unittest.TestCase):
             self.Can.Logger.Info("TestCase: " + str(self._testMethodName))
             self.Can.CanTimeStampStart(self._resetStu()["CanTime"])  # This will also reset to STH
             self.Can.Logger.Info("Connect to STH")
-            self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
+            self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"], log=False)
             self.sStuAddr = sBlueToothMacAddr(self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"]))
             self.sSthAddr = sBlueToothMacAddr(self.Can.BlueToothAddress(MyToolItNetworkNr["STH1"]))
             self.Can.Logger.Info("STU BlueTooth Address: " + self.sStuAddr)
@@ -399,7 +399,7 @@ class TestSth(unittest.TestCase):
         asData = tFile.readlines()
         self.assertEqual("Finishing DFU block...OK\n", asData[-2])
         self.assertEqual("Closing connection...OK\n", asData[-1])
-        self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
+        self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"], log=False)
            
     """
     Test Acknowledgement from STH. Write message and check identifier to be ack (No bError)
@@ -446,7 +446,7 @@ class TestSth(unittest.TestCase):
     def test0005Reset(self):
         self.tWorkSheetWrite("D", "Tests Reset Command")
         self._resetSth()
-        self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
+        self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"], log=False)
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], 1, 0, 0)
         iBatteryVoltage = iMessage2Value(self.Can.getReadMessageData(index)[2:4])
         fBatteryVoltage = fVoltageBattery(iBatteryVoltage)

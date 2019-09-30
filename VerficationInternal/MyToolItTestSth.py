@@ -21,9 +21,7 @@ from testSignal import *
 sVersion = "v2.1.5"
 log_file = 'TestStu.txt'
 log_location = '../../Logs/STH/'
-sOtaLocation = "../../SimplicityStudio/v4_workspace/STH/builds/"
-
-
+sOtaLocation = "../../SimplicityStudio/v4_workspace/server_firmware/builds/"
 
 
 class TestSth(unittest.TestCase):
@@ -107,12 +105,12 @@ class TestSth(unittest.TestCase):
         return self.Can.cmdReset(MyToolItNetworkNr["STH1"], retries=retries, log=log)
         
     def _SthAdcTemp(self):
-        ret = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["Temp"], 1, AdcReference["1V25"], log=False)
-        result = float(iMessage2Value(ret[4:]))
-        result /= 1000
-        self.Can.Logger.Info("Temperature(Chip): " + str(result) + "°C") 
+        au8TempReturn = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["Temp"], 1, AdcReference["1V25"], log=False)
+        iTemperature = float(iMessage2Value(au8TempReturn[4:]))
+        iTemperature /= 1000
+        self.Can.Logger.Info("Temperature(Chip): " + str(iTemperature) + "°C") 
         self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["None"], CalibMeassurementTypeNr["Temp"], 1, AdcReference["VDD"], log=False, bReset=True)
-        return result
+        return iTemperature
     
     def _SthWDog(self):
         WdogCounter = iMessage2Value(self.Can.statisticalData(MyToolItNetworkNr["STH1"], MyToolItStatData["Wdog"])[:4])
@@ -370,10 +368,6 @@ class TestSth(unittest.TestCase):
         for i in range(0, len(testSignal)):
             self.assertEqual(array[i], testSignal[i])
 
-
-
-
-
     def siginalIndicatorCheck(self, name, statistic, quantil1, quantil25, medianL, medianH, quantil75, quantil99, variance, skewness, SNR):
         self.Can.Logger.Info("____________________________________________________")
         self.Can.Logger.Info("Singal Indicator Check: " + name)
@@ -402,6 +396,7 @@ class TestSth(unittest.TestCase):
     """
     Test the over the air update
     """
+
     def test0000OverTheAirUpdate(self):
         self._resetStu()
         time.sleep(1)
@@ -421,7 +416,6 @@ class TestSth(unittest.TestCase):
             self.assertEqual("Finishing DFU block...OK\n", asData[-2])
             self.assertEqual("Closing connection...OK\n", asData[-1])
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
-        
         
     """
     Test Acknowledgement from STH. Write message and check identifier to be ack (No bError)
@@ -456,11 +450,17 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("Connect to STH")
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
         
-        
     def test0003SthTemperature(self):
         temp = self._SthAdcTemp()
-        self.assertGreaterEqual(TempInternalMin, temp)
-        self.assertLessEqual(TempInternalMax, temp)
+        self.assertGreaterEqual(TempInternalMax, temp)
+        self.assertLessEqual(TempInternalMin, temp)
+        
+        
+    def test0004SthVersionNumber(self):
+        iIndex = self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["ProductData"], MyToolItProductData["FirmwareVersion"], [])
+        au8Version = self.Can.getReadMessageData(iIndex)[-3:]
+        sVersion = "v"+ str(au8Version[0]) + "." + str(au8Version[1]) + "." + str(au8Version[2])
+        self.assertEqual(sVersion, TestSth.sVersion)
         
     """
     Test Energy Mode 1 - If you like to evaluate power consumption: Please do it manually
@@ -1179,7 +1179,7 @@ class TestSth(unittest.TestCase):
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], SamplingRateSingleMaxPrescaler, SamplingRateSingleMaxAcqTime, SamplingRateSingleMaxOverSamples, AdcReference["VDD"])
         [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0, StreamingStandardTestTimeMs)
         [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0, indexStart, indexEnd)
-        statistics = self.signalIndicators(array1, array2, array3)
+        statistics = self.Can.signalIndicators(array1, array2, array3)
         self.siginalIndicatorCheck("ADC X", statistics["Value1"], SigIndAccXQ1, SigIndAccXQ25, SigIndAccXMedL, SigIndAccXMedH, SigIndAccXQ75, SigIndAccXQ99, SigIndAccXVar, SigIndAccXSkewness, SigIndAccXSNR)
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Acc", "")
         
@@ -1192,7 +1192,7 @@ class TestSth(unittest.TestCase):
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], SamplingRateSingleMaxPrescaler, SamplingRateSingleMaxAcqTime, SamplingRateSingleMaxOverSamples, AdcReference["VDD"])
         [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 1, 0, StreamingStandardTestTimeMs)
         [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 1, 0, indexStart, indexEnd)
-        statistics = self.signalIndicators(array1, array2, array3)
+        statistics = self.Can.signalIndicators(array1, array2, array3)
         self.siginalIndicatorCheck("ADC Y", statistics["Value2"], SigIndAccYQ1, SigIndAccYQ25, SigIndAccYMedL, SigIndAccYMedH, SigIndAccYQ75, SigIndAccYQ99, SigIndAccYVar, SigIndAccYSkewness, SigIndAccYSNR)
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Acc", "")
 
@@ -1205,7 +1205,7 @@ class TestSth(unittest.TestCase):
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], SamplingRateSingleMaxPrescaler, SamplingRateSingleMaxAcqTime, SamplingRateSingleMaxOverSamples, AdcReference["VDD"])
         [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 0, 1, StreamingStandardTestTimeMs)
         [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 0, 1, indexStart, indexEnd)
-        statistics = self.signalIndicators(array1, array2, array3)
+        statistics = self.Can.signalIndicators(array1, array2, array3)
         self.siginalIndicatorCheck("ADC Z", statistics["Value3"], SigIndAccZQ1, SigIndAccZQ25, SigIndAccZMedL, SigIndAccZMedH, SigIndAccZQ75, SigIndAccZQ99, SigIndAccZVar, SigIndAccZSkewness, SigIndAccZSNR)
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Acc", "")
 
@@ -1218,7 +1218,7 @@ class TestSth(unittest.TestCase):
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], SamplingRateSingleMaxPrescaler, SamplingRateSingleMaxAcqTime, SamplingRateSingleMaxOverSamples, AdcReference["VDD"])
         [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0, StreamingStandardTestTimeMs)
         [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0, indexStart, indexEnd)
-        statistics = self.signalIndicators(array1, array2, array3)
+        statistics = self.Can.signalIndicators(array1, array2, array3)
         self.siginalIndicatorCheck("Battery", statistics["Value1"], SigIndBatteryQ1, SigIndBatteryQ25, SigIndBatteryMedL, SigIndBatteryMedH, SigIndBatteryQ75, SigIndBatteryQ99, SigIndBatteryVar, SigIndBatterySkewness, SigIndBatterySNR)
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Voltage", "")
 
@@ -1231,23 +1231,23 @@ class TestSth(unittest.TestCase):
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], SamplingRateDoubleMaxPrescaler, SamplingRateDoubleMaxAcqTime, SamplingRateDoubleMaxOverSamples, AdcReference["VDD"])
         [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 0, 1000)
         [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 0, indexStart, indexEnd)
-        statistics = self.signalIndicators(array1, array2, array3)
+        statistics = self.Can.signalIndicators(array1, array2, array3)
         self.siginalIndicatorCheck("ADC X", statistics["Value1"], SigIndAccXQ1, SigIndAccXQ25, SigIndAccXMedL, SigIndAccXMedH, SigIndAccXQ75, SigIndAccXQ99, SigIndAccXVar, SigIndAccXSkewness, SigIndAccXSNR)
         self.siginalIndicatorCheck("ADC Y", statistics["Value2"], SigIndAccYQ1, SigIndAccYQ25, SigIndAccYMedL, SigIndAccYMedH, SigIndAccYQ75, SigIndAccYQ99, SigIndAccYVar, SigIndAccYSkewness, SigIndAccYSNR)
         [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 0, 1, 1000)
         [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 0, 1, indexStart, indexEnd)
-        statistics = self.signalIndicators(array1, array2, array3)
+        statistics = self.Can.signalIndicators(array1, array2, array3)
         self.siginalIndicatorCheck("ADC X", statistics["Value1"], SigIndAccXQ1, SigIndAccXQ25, SigIndAccXMedL, SigIndAccXMedH, SigIndAccXQ75, SigIndAccXQ99, SigIndAccXVar, SigIndAccXSkewness, SigIndAccXSNR)
         self.siginalIndicatorCheck("ADC Z", statistics["Value3"], SigIndAccZQ1, SigIndAccZQ25, SigIndAccZMedL, SigIndAccZMedH, SigIndAccZQ75, SigIndAccZQ99, SigIndAccZVar, SigIndAccZSkewness, SigIndAccZSNR)
         [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 0, 1, 1, 1000)
         [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 0, 1, 1, indexStart, indexEnd)
-        statistics = self.signalIndicators(array1, array2, array3)
+        statistics = self.Can.signalIndicators(array1, array2, array3)
         self.siginalIndicatorCheck("ADC Y", statistics["Value2"], SigIndAccYQ1, SigIndAccYQ25, SigIndAccYMedL, SigIndAccYMedH, SigIndAccYQ75, SigIndAccYQ99, SigIndAccYVar, SigIndAccYSkewness, SigIndAccYSNR)
         self.siginalIndicatorCheck("ADC Z", statistics["Value3"], SigIndAccZQ1, SigIndAccZQ25, SigIndAccZMedL, SigIndAccZMedH, SigIndAccZQ75, SigIndAccZQ99, SigIndAccZVar, SigIndAccZSkewness, SigIndAccZSNR)
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], SamplingRateTrippleMaxPrescaler, SamplingRateTrippleMaxAcqTime, SamplingRateTrippleMaxOverSamples, AdcReference["VDD"])
         [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 1, 1000)
         [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 1, indexStart, indexEnd)
-        statistics = self.signalIndicators(array1, array2, array3)
+        statistics = self.Can.signalIndicators(array1, array2, array3)
         self.siginalIndicatorCheck("ADC X", statistics["Value1"], SigIndAccXQ1, SigIndAccXQ25, SigIndAccXMedL, SigIndAccXMedH, SigIndAccXQ75, SigIndAccXQ99, SigIndAccXVar, SigIndAccXSkewness, SigIndAccXSNR)
         self.siginalIndicatorCheck("ADC Y", statistics["Value2"], SigIndAccYQ1, SigIndAccYQ25, SigIndAccYMedL, SigIndAccYMedH, SigIndAccYQ75, SigIndAccYQ99, SigIndAccYVar, SigIndAccYSkewness, SigIndAccYSNR)
         self.siginalIndicatorCheck("ADC Z", statistics["Value3"], SigIndAccZQ1, SigIndAccZQ25, SigIndAccZMedL, SigIndAccZMedH, SigIndAccZQ75, SigIndAccZQ99, SigIndAccZVar, SigIndAccZSkewness, SigIndAccZSNR)
@@ -1463,6 +1463,10 @@ class TestSth(unittest.TestCase):
     """        
 
     def test0339MixedStreamingAccXZVoltBat(self):
+        prescaler = SamplingRateDoubleMaxPrescaler
+        acqTime = SamplingRateDoubleMaxAcqTime
+        overSamples = SamplingRateDoubleMaxOverSamples
+        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], prescaler, acqTime, overSamples, AdcReference["VDD"])
         self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0)
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 0, 1)
         time.sleep(StreamingStandardTestTimeMs / 1000)
@@ -1496,8 +1500,12 @@ class TestSth(unittest.TestCase):
     """        
 
     def test0340MixedStreamingAccXYVoltBat(self):
-        self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0)
-        indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 0)
+        prescaler = SamplingRateDoubleMaxPrescaler
+        acqTime = SamplingRateDoubleMaxAcqTime
+        overSamples = SamplingRateDoubleMaxOverSamples
+        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], prescaler, acqTime, overSamples, AdcReference["VDD"])
+        self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 0)
+        indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0)
         time.sleep(StreamingStandardTestTimeMs / 1000)
         indexEnd = self.Can.GetReadArrayIndex() - 1
         self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"])
@@ -1529,6 +1537,13 @@ class TestSth(unittest.TestCase):
     """        
 
     def test0341MixedStreamingAccYZVoltBat(self):
+        prescaler = SamplingRateDoubleMaxPrescaler
+        acqTime = SamplingRateDoubleMaxAcqTime
+        overSamples = SamplingRateDoubleMaxOverSamples
+        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], prescaler, acqTime, overSamples, AdcReference["VDD"])
+        self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0)
+        self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 0)
+        time.sleep(StreamingStandardTestTimeMs / 1000)
         self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0)
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 0, 1, 1)
         time.sleep(StreamingStandardTestTimeMs / 1000)
@@ -3089,6 +3104,11 @@ class TestSth(unittest.TestCase):
         result = iMessage2Value(ret[4:])
         self.Can.Logger.Info("Calibration Result AVDD(3V3): " + str(result))
         self.assertLessEqual(2 ^ 16 - 100, result)
+        ret = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["RegulatedInternalPower"], 1, AdcReference["VDD"])
+        result = iMessage2Value(ret[4:])
+        self.Can.Logger.Info("Calibration Result Regulated Internal Power(DECOUPLE): " + str(result))
+        self.assertLessEqual(VoltRawDecoupleMiddle - VoltRawDecoupleTolerance, result)
+        self.assertGreaterEqual(VoltRawDecoupleMiddle + VoltRawDecoupleTolerance, result)
         ret = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["OpvOutput"], 1, AdcReference["VDD"])
         result = iMessage2Value(ret[4:])
         self.Can.Logger.Info("Calibration Result OPA2: " + str(result))
@@ -3317,6 +3337,7 @@ class TestSth(unittest.TestCase):
         stateStartVoltage = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"], CalibMeassurementTypeNr["Voltage"], 1, AdcReference["VDD"], bSet=False, bErrorAck=True)        
         stateStartVss = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"], CalibMeassurementTypeNr["Vss"], 1, AdcReference["VDD"], bSet=False, bErrorAck=True)
         stateStartAvdd = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"], CalibMeassurementTypeNr["Avdd"], 1, AdcReference["VDD"], bSet=False, bErrorAck=True)
+        stateStartDecouple = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"], CalibMeassurementTypeNr["RegulatedInternalPower"], 1, AdcReference["VDD"], bSet=False, bErrorAck=True)
         stateStartOpa1 = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"], CalibMeassurementTypeNr["OpvOutput"], 1, AdcReference["VDD"], bSet=False, bErrorAck=True)
         stateStartOpa2 = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"], CalibMeassurementTypeNr["OpvOutput"], 2, AdcReference["VDD"], bSet=False, bErrorAck=True)
         ErrorPayloadAssumed = [0x0, 0x2, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0]
@@ -3327,7 +3348,8 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("State Start Temp: " + payload2Hex(stateStartTemp)) 
         self.Can.Logger.Info("State Start Voltage: " + payload2Hex(stateStartVoltage)) 
         self.Can.Logger.Info("State Start Vss: " + payload2Hex(stateStartVss)) 
-        self.Can.Logger.Info("State Start Avdd: " + payload2Hex(stateStartAvdd))       
+        self.Can.Logger.Info("State Start Avdd: " + payload2Hex(stateStartAvdd)) 
+        self.Can.Logger.Info("State Start Decouple: " + payload2Hex(stateStartDecouple))        
         self.Can.Logger.Info("State Start Opa1: " + payload2Hex(stateStartOpa1))  
         self.Can.Logger.Info("State Start Opa2: " + payload2Hex(stateStartOpa2))  
         for i in range(0, 8):
@@ -3337,7 +3359,8 @@ class TestSth(unittest.TestCase):
             self.assertEqual(stateStartTemp[i], ErrorPayloadAssumed[i])
             self.assertEqual(stateStartVoltage[i], ErrorPayloadAssumed[i])
             self.assertEqual(stateStartVss[i], ErrorPayloadAssumed[i])
-            self.assertEqual(stateStartAvdd[i], ErrorPayloadAssumed[i])    
+            self.assertEqual(stateStartAvdd[i], ErrorPayloadAssumed[i])
+            self.assertEqual(stateStartDecouple[i], ErrorPayloadAssumed[i])      
             self.assertEqual(stateStartOpa1[i], ErrorPayloadAssumed[i])
             self.assertEqual(stateStartOpa2[i], ErrorPayloadAssumed[i])        
       
@@ -3484,7 +3507,7 @@ class TestSth(unittest.TestCase):
     def test0703ProductionDate(self):
         sProductionDate = self.Can.statisticalData(MyToolItNetworkNr["STH1"], MyToolItStatData["ProductionDate"])  
         sProductionDate = sArray2String(sProductionDate)
-        self.Can.Logger.Info("Production Date: "+ sProductionDate)
+        self.Can.Logger.Info("Production Date: " + sProductionDate)
         self.assertEqual(TestConfig["ProductionDate"], sProductionDate)
         
     """
@@ -3492,8 +3515,8 @@ class TestSth(unittest.TestCase):
     """   
 
     def test0750StatisticPageWriteRead(self):
-        #Store content
-        startData=[]
+        # Store content
+        startData = []
         for offset in range(0, 256, 4):
             index = self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Read"], [EepromPage["Statistics"], 0xFF & offset, 4, 0, 0, 0, 0, 0])   
             dataReadBack = self.Can.getReadMessageData(index)     
@@ -3524,11 +3547,11 @@ class TestSth(unittest.TestCase):
             for dataByte in dataReadBack[4:]:
                 self.assertEqual(dataByte, 0x00)             
         self.Can.Logger.Info("Page Read Time: " + str(self.Can.getTimeMs() - timeStamp) + "ms")       
-        #Write Back Page
+        # Write Back Page
         timeStamp = self.Can.getTimeMs()
         for offset in range(0, 256, 4):
-            payload =  [EepromPage["Statistics"], 0xFF & offset, 4, 0]
-            payload.extend(startData[offset:offset+4])
+            payload = [EepromPage["Statistics"], 0xFF & offset, 4, 0]
+            payload.extend(startData[offset:offset + 4])
             self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Write"], payload)
         self.Can.Logger.Info("Page Write Time: " + str(self.Can.getTimeMs() - timeStamp) + "ms")   
         self.test0703ProductionDate()  

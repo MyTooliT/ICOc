@@ -9,7 +9,6 @@ def vSthLimitsConfig(iAxis, bPcbOnly):
     PcbOnly = bPcbOnly
 
 # Recalculation Factors
-AdcMax = 0xFFFF
 AccelerationToAccGravitity = 200
 SamplingRateVfsToleranceRation = 64
 
@@ -38,6 +37,8 @@ AdcAcquisitionOverSamplingRateReset = AdcOverSamplingRate[64]
 
 # Limits
 # Voltage
+VoltRawDecoupleMiddle = 23678
+VoltRawDecoupleTolerance = 100
 VoltRawOpa2Middle = 0
 VoltRawOpa2Tolerance = 3
 VoltRawOpa3Middle = 0

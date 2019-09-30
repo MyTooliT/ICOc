@@ -2,6 +2,7 @@ import ctypes
 c_uint8 = ctypes.c_uint8
 c_uint32 = ctypes.c_uint32
 from SthLimits import *
+from MyToolItCommands import AdcMax
 
 Version = {
     "VersionMajor" : 2,
