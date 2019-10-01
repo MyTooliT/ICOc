@@ -3,18 +3,18 @@ import sys
 import os
 
 # Required to add peakcan
-dir_name = os.path.dirname('')
-sys.path.append(dir_name)
+sDirName = os.path.dirname('')
+sys.path.append(sDirName)
 file_path = '../'
-dir_name = os.path.dirname(file_path)
-sys.path.append(dir_name)
+sDirName = os.path.dirname(file_path)
+sys.path.append(sDirName)
 import CanFd
 from MyToolItNetworkNumbers import MyToolItNetworkNr
 import time
 from MyToolItStu import StuErrorWord
 from MyToolItCommands import *
 
-log_location = '../../Logs/STU/'
+sLogLocation = '../../Logs/STU/'
 
 
 class TestSthManually(unittest.TestCase):
@@ -22,8 +22,8 @@ class TestSthManually(unittest.TestCase):
     def setUp(self):
         print("TestCase: ", self._testMethodName)
         input('Press Any Key to Continue')
-        self.fileName = log_location + self._testMethodName + ".txt"
-        self.fileNameError = log_location + "Error_" + self._testMethodName + ".txt"
+        self.fileName = sLogLocation + self._testMethodName + ".txt"
+        self.fileNameError = sLogLocation + "Error_" + self._testMethodName + ".txt"
         self.Can = CanFd.CanFd(CanFd.PCAN_BAUD_1M, self.fileName, self.fileNameError, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"])
         self.Can.Logger.Info("TestCase: " + str(self._testMethodName))
         self._resetStu()
@@ -117,18 +117,18 @@ class TestSthManually(unittest.TestCase):
         
 if __name__ == "__main__":
     print(sys.version)
-    log_location = sys.argv[1]
-    log_file = sys.argv[2]
-    if '/' != log_location[-1]:
-        log_location += '/'
-    logFileLocation = log_location + log_file
-    dir_name = os.path.dirname(logFileLocation)
-    sys.path.append(dir_name)
+    sLogLocation = sys.argv[1]
+    sLogFile = sys.argv[2]
+    if '/' != sLogLocation[-1]:
+        sLogLocation += '/'
+    sLogFileLocation = sLogLocation + sLogFile
+    sDirName = os.path.dirname(sLogFileLocation)
+    sys.path.append(sDirName)
 
-    print("Log Files will be saved at: " + str(logFileLocation))
-    if not os.path.exists(dir_name):
-        os.makedirs(dir_name)
-    with open(logFileLocation, "w") as f:
+    print("Log Files will be saved at: " + str(sLogFileLocation))
+    if not os.path.exists(sDirName):
+        os.makedirs(sDirName)
+    with open(sLogFileLocation, "w") as f:
         print(f)     
         runner = unittest.TextTestRunner(f)
         unittest.main(argv=['first-arg-is-ignored'], testRunner=runner)   

@@ -3,11 +3,11 @@ import sys
 import os
 
 # Required to add peakcan
-dir_name = os.path.dirname('')
-sys.path.append(dir_name)
+sDirName = os.path.dirname('')
+sys.path.append(sDirName)
 file_path = '../'
-dir_name = os.path.dirname(file_path)
-sys.path.append(dir_name)
+sDirName = os.path.dirname(file_path)
+sys.path.append(sDirName)
 
 import CanFd
 import math
@@ -19,20 +19,17 @@ from SthLimits import *
 from testSignal import *
 
 sVersion = "v2.1.5"
-log_file = 'TestStu.txt'
-log_location = '../../Logs/STH/'
+sLogLocation = '../../Logs/STH/'
 sOtaLocation = "../../SimplicityStudio/v4_workspace/server_firmware/builds/"
 
 
 class TestSth(unittest.TestCase):
-    sVersion = sVersion
-    sLogLocation = log_location
 
     def setUp(self):
         self.bError = False
-        self.sOtaLocation = sOtaLocation + TestSth.sVersion
-        self.fileName = log_location + self._testMethodName + ".txt"
-        self.fileNameError = log_location + "Error_" + self._testMethodName + ".txt"
+        self.sOtaLocation = sOtaLocation + sVersion
+        self.fileName = sLogLocation + self._testMethodName + ".txt"
+        self.fileNameError = sLogLocation + "Error_" + self._testMethodName + ".txt"
         self.Can = CanFd.CanFd(CanFd.PCAN_BAUD_1M, self.fileName, self.fileNameError, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], AdcPrescalerReset, AdcAcquisitionTimeReset, AdcAcquisitionOverSamplingRateReset, FreshLog=True)
         self.Can.Logger.Info("TestCase: " + str(self._testMethodName))
         self.Can.CanTimeStampStart(self._resetStu()["CanTime"])  # This will also reset to STH
@@ -349,6 +346,7 @@ class TestSth(unittest.TestCase):
         if(samplingPoints3 > samplingPoints):
             samplingPoints = samplingPoints3
         self.Can.Logger.Info("Received Sampling Points: " + str(samplingPoints))
+        self.assertGreater(samplingPoints, 0)
         for i in range(0, samplingPoints):
             if 0 != samplingPoints1:
                 self.assertGreaterEqual(middle1 + tolerance1, fCbfRecalc(array1[i]))
@@ -450,17 +448,20 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("Connect to STH")
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
         
+    """
+    Test Temperature to be in range
+    """
+       
     def test0003SthTemperature(self):
         temp = self._SthAdcTemp()
         self.assertGreaterEqual(TempInternalMax, temp)
         self.assertLessEqual(TempInternalMin, temp)
         
-        
     def test0004SthVersionNumber(self):
         iIndex = self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["ProductData"], MyToolItProductData["FirmwareVersion"], [])
         au8Version = self.Can.getReadMessageData(iIndex)[-3:]
-        sVersion = "v"+ str(au8Version[0]) + "." + str(au8Version[1]) + "." + str(au8Version[2])
-        self.assertEqual(sVersion, TestSth.sVersion)
+        sVersion = "v" + str(au8Version[0]) + "." + str(au8Version[1]) + "." + str(au8Version[2])
+        self.assertEqual(sVersion, sVersion)
         
     """
     Test Energy Mode 1 - If you like to evaluate power consumption: Please do it manually
@@ -3442,6 +3443,9 @@ class TestSth(unittest.TestCase):
     """   
 
     def test0701StatisticsOperatingSeconds(self):
+        self._resetSth()
+        self.Can.Logger.Info("Connect to STH")
+        self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
         OperatingSeconds = self.Can.statisticalData(MyToolItNetworkNr["STH1"], MyToolItStatData["OperatingTime"])  
         SecondsReset1 = iMessage2Value(OperatingSeconds[:4])
         SecondsOveral1 = iMessage2Value(OperatingSeconds[4:])
@@ -3470,9 +3474,9 @@ class TestSth(unittest.TestCase):
         self.assertGreaterEqual(SecondsReset2, 60)
         self.assertLessEqual(SecondsReset2, 70)
         self.assertGreaterEqual(SecondsReset3, 60)
-        self.assertLessEqual(SecondsReset3, 70)
+        self.assertLessEqual(SecondsReset3, 80)
         self.assertGreaterEqual(SecondsReset4, 60 + 60 * 30)
-        self.assertLessEqual(SecondsReset4, 75 + 60 * 30)
+        self.assertLessEqual(SecondsReset4, 80 + 60 * 30)
         self.assertGreaterEqual(SecondsOveral1, SecondsOveral2)    
         self.assertLessEqual(SecondsOveral1 + 58, SecondsOveral3)            
         self.assertGreaterEqual(SecondsOveral1 + 63, SecondsOveral3)
@@ -3781,22 +3785,20 @@ class TestSth(unittest.TestCase):
                 message = self.Can.CanMessage20(cmd, numberVal, MyToolItNetworkNr["STH1"], [])
                 msgAck = self.Can.tWriteFrameWaitAckRetries(message, waitMs=1000, retries=3, bErrorExit=False)
                 self.assertEqual("Error", msgAck)
-                    
-                
+
+ 
 if __name__ == "__main__":
     sLogLocation = sys.argv[1]
     sLogFile = sys.argv[2]
+    sVersion = sys.argv[3]
     if '/' != sLogLocation[-1]:
         sLogLocation += '/'
     sLogFileLocation = sLogLocation + sLogFile
-    TestSth.sLogLocation = sLogLocation
-    TestSth.sVersion = sys.argv[3]
-    dir_name = os.path.dirname(sLogFileLocation)
-    sys.path.append(dir_name)
+    sDirName = os.path.dirname(sLogFileLocation)
+    sys.path.append(sDirName)
 
-    if not os.path.exists(dir_name):
-        os.makedirs(dir_name)
-    with open(sLogFileLocation, "w") as f:    
+    if not os.path.exists(sDirName):
+        os.makedirs(sDirName)
+    with open(sLogFileLocation, "w") as f:
         runner = unittest.TextTestRunner(f)
-        unittest.main(argv=['first-arg-is-ignored'], testRunner=runner)  
-
+        unittest.main(argv=['first-arg-is-ignored'], testRunner=runner) 

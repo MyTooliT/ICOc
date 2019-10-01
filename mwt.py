@@ -427,16 +427,32 @@ class mwt(myToolItWatch):
             sDirPath += pyFiles[iTestNumberRun - 1]
             try:
                 sString = ""
+                self.stdscr.clear()
+                atList = self.atXmlProductVersion()
                 if -1 != sDirPath.find("Sth"):
-                    sString = "python " + str(sDirPath) + " ../Logs/STH SthAuto.txt"                    
+                    for key in atList[1]["Versions"]:
+                        version = atList[1]["Versions"][key]
+                        self.stdscr.addstr(str(key) + ": " + str(version.get('name')) + "\n")
+                        self.stdscr.refresh()
+                    iVersion = self.iTerminalInputNumberIn()
+                    if iVersion in atList[1]["Versions"] or True:
+                        version = atList[1]["Versions"][iVersion]
+                        sString = "python " + str(sDirPath) + " ../Logs/STH SthAuto.txt " + str(version.get('name'))       
                 else:
-                    sString = "python " + str(sDirPath) + " ../Logs/STU StuAuto.txt"
-                    
-                self.stdscr.addstr(sString + "\n")
-                self.stdscr.refresh()
-                os.system(sString)
+                    for key in atList[2]["Versions"]:
+                        version = atList[2]["Versions"][key]
+                        self.stdscr.addstr(str(key) + ": " + str(version.get('name')) + "\n")
+                        self.stdscr.refresh()
+                    iVersion = self.iTerminalInputNumberIn()
+                    if iVersion in atList[2]["Versions"] or True:
+                        version = atList[2]["Versions"][iVersion]
+                    sString = "python " + str(sDirPath) + " ../Logs/STU StuAuto.txt " + str(version.get('name'))         
+                if "" != sString:  
+                    os.system(sString)
+                    self.iTerminalInputNumberIn()
             except KeyboardInterrupt:
                 pass
+                #TODO: Kill process
             self.Can = CanFd.CanFd(CanFd.PCAN_BAUD_1M, "init.txt", "initError.txt", MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"])
         return bContinue
            

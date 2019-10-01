@@ -13,7 +13,7 @@ Version = {
 
 TestConfig = {
     "DevName" : "Tanja",
-    "ProductionDate" : "20190905",
+    "ProductionDate" : "20190930",
     "AdcConfigAllPrescalerMax" : 4,
     "ConTimeNormalMaxMs" : 5000,
     "ConTimeSleep1MaxMs" : 6000,

@@ -318,7 +318,7 @@ class CanFd(object):
         cmdName = self.strCmdNrToCmdName(command)
         senderName = MyToolItNetworkName[sender]
         receiverName = MyToolItNetworkName[receiver]
-        self.Logger.Warning("No (Error) Ack Received: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + payload2Hex(CanMsg.DATA))
+        self.Logger.Warning("No (Error) Ack Received(" + senderName + "->" + receiverName + "): " + cmdBlockName + " - " + cmdName + "; Payload - " + payload2Hex(CanMsg.DATA))
         if False != printLog:
             print("No (Error) Ack Received: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + str(CanMsg.DATA))
         return "Error"  

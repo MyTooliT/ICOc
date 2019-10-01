@@ -12,13 +12,13 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
-log_file = 'log.txt'
-log_location = 'C:\\Users\\burgstaller\\Desktop\\Python\\CAN-PYTHON\\'
+sLogFile = 'log.txt'
+sLogLocation = 'C:\\Users\\burgstaller\\Desktop\\Python\\CAN-PYTHON\\'
 
 # Read data from file 'filename.csv' 
 # (in the same directory that your python process is based)
 # Control delimiters, rows, column names with read_csv (see later) 
-data = pd.read_csv(log_location + log_file, header=None, sep='\(|ms\)|\s+|;', skiprows=10, engine='python', skipfooter=50, error_bad_lines=False) 
+data = pd.read_csv(sLogLocation + sLogFile, header=None, sep='\(|ms\)|\s+|;', skiprows=10, engine='python', skipfooter=50, error_bad_lines=False) 
 # Preview the first 5 lines of the loaded data 
 data.head()
 
