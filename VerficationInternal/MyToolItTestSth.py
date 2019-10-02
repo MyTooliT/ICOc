@@ -1,6 +1,9 @@
 import unittest
 import sys
 import os
+from datetime import date
+from numpy.core.arrayprint import array2string
+
 
 # Required to add peakcan
 sDirName = os.path.dirname('')
@@ -396,12 +399,14 @@ class TestSth(unittest.TestCase):
     """
 
     def test0000OverTheAirUpdate(self):
+        iRuns = 4
+        iRuns += 1
         self._resetStu()
         time.sleep(1)
-        for i in range(1, 5):
+        for i in range(1, iRuns):
             sSystemCall = self.sOtaLocation + "/ota-dfu.exe COM6 115200 " 
             sSystemCall += self.sOtaLocation + "/ServerApplication.gbl "
-            sSystemCall += self.sSthAddr + " -> " + self.sLogLocation 
+            sSystemCall += self.sSthAddr + " -> " + sLogLocation 
             sSystemCall += self._testMethodName + "Ota" + str(i) + ".txt"
             if os.name == 'nt': 
                 sSystemCall = sSystemCall.replace("/", "\\")
@@ -409,10 +414,13 @@ class TestSth(unittest.TestCase):
             # for mac and linux(here, os.name is 'posix') 
             else: 
                 os.system(sSystemCall)            
-            tFile = open(self.sLogLocation + self._testMethodName + "Ota" + str(i) + ".txt", "r", encoding='utf-8')
+            tFile = open(sLogLocation + self._testMethodName + "Ota" + str(i) + ".txt", "r", encoding='utf-8')
             asData = tFile.readlines()
             self.assertEqual("Finishing DFU block...OK\n", asData[-2])
             self.assertEqual("Closing connection...OK\n", asData[-1])
+            tFile.close()
+        for i in range(1, iRuns):
+            os.remove(sLogLocation + "/test0000OverTheAirUpdateOta" + str(i) + ".txt")
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
         
     """
@@ -3505,14 +3513,25 @@ class TestSth(unittest.TestCase):
         self.assertEqual(WDogCounter1, WDogCounter3)
         
     """
-    Check ProductionDate
+    Write actual production date and Check ProductionDate
     """   
 
     def test0703ProductionDate(self):
+        sDate = date.today()
+        sDate = str(sDate).replace('-', '')
+        au8ProductionDate = []
+        for element in sDate:
+            au8ProductionDate.append(ord(element))
+        au8Payload = [5, 20, 4, 0]
+        au8Payload.extend(au8ProductionDate[:4])
+        self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Write"], au8Payload, log=False) 
+        au8Payload = [5, 24, 4, 0]
+        au8Payload.extend(au8ProductionDate[4:])
+        self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Write"], au8Payload, log=False) 
         sProductionDate = self.Can.statisticalData(MyToolItNetworkNr["STH1"], MyToolItStatData["ProductionDate"])  
         sProductionDate = sArray2String(sProductionDate)
         self.Can.Logger.Info("Production Date: " + sProductionDate)
-        self.assertEqual(TestConfig["ProductionDate"], sProductionDate)
+        self.assertEqual(sArray2String(au8ProductionDate), sProductionDate)
         
     """
     Check EEPROM Read/Write
@@ -3558,7 +3577,6 @@ class TestSth(unittest.TestCase):
             payload.extend(startData[offset:offset + 4])
             self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Write"], payload)
         self.Can.Logger.Info("Page Write Time: " + str(self.Can.getTimeMs() - timeStamp) + "ms")   
-        self.test0703ProductionDate()  
               
     """
     Status Word after Reset
