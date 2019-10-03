@@ -701,24 +701,24 @@
                                     <description>Counts of under voltages that yields into turn off state(Brown Out)</description>
                                     </entry>
                                     <entry name="Watchdog Reset Counter ">
-				    <subAddress>16</subAddress>
-				    <length>4</length>
-				    <readOnly>True</readOnly>
-				    <value>0</value>
-				    <unit></unit>
-				    <format>unsigned</format>
-				    <description>Watchdog Resets since first power on</description>
-				    </entry>
-				    <entry name="Production Date">
-				    <subAddress>20</subAddress>
-				    <length>8</length>
-				    <readOnly>True</readOnly>
-				    <value>20191005</value>
-				    <unit>date</unit>
-				    <format>ASCII</format>
-				    <description>Production Date (EEPROM Production Write) in the format yyyymmdd (year month day)</description>
-				    </entry>
-				</Entry>
+				    				<subAddress>16</subAddress>
+				    				<length>4</length>
+				    				<readOnly>True</readOnly>
+				    				<value>0</value>
+				    				<unit></unit>
+				    				<format>unsigned</format>
+				    				<description>Watchdog Resets since first power on</description>
+				    				</entry>
+				    				<entry name="Production Date">
+				    				<subAddress>20</subAddress>
+				    				<length>8</length>
+				    				<readOnly>True</readOnly>
+				    				<value>20191005</value>
+				    				<unit>date</unit>
+				    				<format>ASCII</format>
+				    				<description>Production Date (EEPROM Production Write) in the format yyyymmdd (year month day)</description>
+				    				</entry>
+								</Entry>
                             </page>
                         </Page>
                     </version>
