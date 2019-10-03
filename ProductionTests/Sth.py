@@ -31,7 +31,10 @@ def sSerialNumber(sExcelFileName):
     sSerial = str(value)
     return sSerial
 
+
 bSkip = False
+
+
 class TestSth(unittest.TestCase):
 
     def setUp(self):
@@ -250,7 +253,6 @@ class TestSth(unittest.TestCase):
             except Exception as e: 
                 sError = "Could not close file: " + str(e)
                 self.Can.Logger.Info(sError)
-                print(sError)
         return sError
 
     def vUnicodeIllegalRemove(self, value, character):
@@ -334,7 +336,6 @@ class TestSth(unittest.TestCase):
             except Exception as e: 
                 sError = "Could not save file(Opened by another application?): " + str(e)
                 self.Can.Logger.Info(sError)
-                print(sError)
         return sError
     
     def bCompareEerpomWriteRead(self):
@@ -461,6 +462,7 @@ class TestSth(unittest.TestCase):
     """
     Test Reset
     """   
+
     def test0099Reset(self):
         self.tWorkSheetWrite("D", "Tests Reset Command")
         self._resetSth()
@@ -478,20 +480,22 @@ class TestSth(unittest.TestCase):
     """
     Test that RSSI is good enough
     """
+
     def test0100Rssi(self):
         self.tWorkSheetWrite("D", "Tests RSSI")
         iRssiSth = int(self.Can.BlueToothRssi(MyToolItNetworkNr["STH1"]))
         iRssiStu = int(self.Can.BlueToothRssi(MyToolItNetworkNr["STU1"]))
-        self.tWorkSheetWrite("E", "RSSI @ STH: " + str(iRssiSth)+"dBm")
-        self.tWorkSheetWrite("F", "RSSI @ STU: " + str(iRssiStu)+"dBm")
+        self.tWorkSheetWrite("E", "RSSI @ STH: " + str(iRssiSth) + "dBm")
+        self.tWorkSheetWrite("F", "RSSI @ STU: " + str(iRssiStu) + "dBm")
         self.assertGreater(iRssiSth, RssiSthMin)
-        self.assertLess(iRssiSth, -30)
+        self.assertLess(iRssiSth, -20)
         self.assertGreater(iRssiStu, RssiStuMin)
-        self.assertLess(iRssiStu, -30)
+        self.assertLess(iRssiStu, -20)
         
     """
     Checks Acceleration at apparent gravity
     """
+
     def test0200AccXApparentGravity(self):
         self.tWorkSheetWrite("D", "Acceleration X - Apparent gravity")
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], 1, 0, 0)
@@ -522,6 +526,7 @@ class TestSth(unittest.TestCase):
     """
     Checks AccX SNR
     """
+
     def test0210AccXSnr(self):
         self.tWorkSheetWrite("D", "Test Acceleration SNR")
         self.TurnOffLed()
@@ -535,7 +540,6 @@ class TestSth(unittest.TestCase):
         self.assertGreaterEqual(abs(NonShakingAccXSnrRaw), abs(SigIndAccXSNR))
 #         self.assertGreaterEqual(abs(NonShakingAccYSnrRaw), abs(SigIndAccYSNR))
 #         self.assertGreaterEqual(abs(NonShakingAccZSnrRaw), abs(SigIndAccZSNR))
-        
         
     """
     Determine correct meassuring via self test 
@@ -563,8 +567,8 @@ class TestSth(unittest.TestCase):
         iDelta = k2mVX - k1mVX
         self.assertGreater(k2mVX, k1mVX)
         self.assertGreater(k2mVX, k3mVX)  
-        self.assertGreater(k1mVX+20, k3mVX) 
-        self.assertGreater(k3mVX+20, k1mVX)    
+        self.assertGreater(k1mVX + 20, k3mVX) 
+        self.assertGreater(k3mVX + 20, k1mVX)    
         self.assertGreater(iDelta, 50) 
         self.assertLess(iDelta, 150) 
          
@@ -608,6 +612,16 @@ class TestSth(unittest.TestCase):
 
     def test0399Eerpom(self):
         self.tWorkSheetWrite("D", "Write EEPROM with data and check that by read")
+        # Batch Number
+        batchFile = open("BatchNumber.txt")
+        batchData = batchFile.readlines()
+        batchData = batchData[0]
+        batchFile.close()
+        batchFile = open("BatchNumber.txt", "w")
+        sBatchNumber = str(int(batchData)+1)
+        batchFile.write(sBatchNumber)
+        batchFile.close()
+        self.vChangeExcelCell("Statistics@0x5", "E8", sBatchNumber)
         # Write
         workSheetNames = []
         workbook = openpyxl.load_workbook(self.sExcelEepromContentFileName)
@@ -634,7 +648,6 @@ class TestSth(unittest.TestCase):
         bMatch = self.bCompareEerpomWriteRead()
         self.tWorkSheetWrite("E", "Match: " + str(bMatch))
         self.assertEqual(bMatch, True)
-    
                 
     """
     Move Test Report to Results
