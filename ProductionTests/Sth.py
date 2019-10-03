@@ -296,7 +296,7 @@ class TestSth(unittest.TestCase):
                 else:                    
                     value = payload2Hex(value)
                 value = str(value)
-                worksheet['E' + str(i)] = str(value)
+                worksheet['E' + str(i)] = str(value).encode('utf8')
                 iTotalLength += iLength
                 i += 1
             else:
@@ -501,7 +501,7 @@ class TestSth(unittest.TestCase):
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], 1, 0, 0)
         [val1, _val2, _val3] = self.Can.singleValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], 1, 0, 0, index)
         fAccX = fAcceleration(val1[0])
-        self.tWorkSheetWrite("E", "Acceleration X - Apparent gravity: " + str(fAccX) + "V")
+        self.tWorkSheetWrite("E", "Acceleration X - Apparent gravity: " + str(fAccX) + "g")
         self.assertGreaterEqual(AdcMiddleX + AdcToleranceX, fAccX)
         self.assertLessEqual(AdcMiddleX - AdcToleranceX, fAccX)
 
@@ -536,7 +536,7 @@ class TestSth(unittest.TestCase):
         NonShakingAccXSnrRaw = 20 * math.log((StatisticsNonShaking["Value1"]["StandardDeviation"] / AdcMax), 10)
 #         NonShakingAccYSnrRaw = 20 * math.log((StatisticsNonShaking["Value2"]["StandardDeviation"] / AdcMax), 10)
 #         NonShakingAccZSnrRaw = 20 * math.log((StatisticsNonShaking["Value3"]["StandardDeviation"] / AdcMax), 10)
-        self.tWorkSheetWrite("E", "SNR AccX Raw non shaking: " + str(NonShakingAccXSnrRaw))
+        self.tWorkSheetWrite("E", "SNR AccX Raw non shaking: " + str(NonShakingAccXSnrRaw) + "g")
         self.assertGreaterEqual(abs(NonShakingAccXSnrRaw), abs(SigIndAccXSNR))
 #         self.assertGreaterEqual(abs(NonShakingAccYSnrRaw), abs(SigIndAccYSNR))
 #         self.assertGreaterEqual(abs(NonShakingAccZSnrRaw), abs(SigIndAccZSNR))
@@ -585,9 +585,16 @@ class TestSth(unittest.TestCase):
             fBatteryVoltage = fVoltageBattery(iBatteryVoltage)
             afBatteryVoltage.append(fBatteryVoltage)
         afBatteryVoltage.sort()
-        fD = struct.unpack("f", struct.pack("f", float(3.2 - afBatteryVoltage[4])))[0]
-        self.tWorkSheetWrite("E", "d: " + str(fD))
-        self.vChangeExcelCell("Calibration0@0x8", "E9", str(fD))
+        fD = float(3.2 - afBatteryVoltage[4])
+        fD = struct.unpack("f", struct.pack("f", fD))[0]
+        sD = str(fD)
+        fK = float(kBattery)
+        fK = struct.unpack("f", struct.pack("f", fK))[0]
+        sK = str(fK)
+        self.tWorkSheetWrite("E", "k: " + sK)
+        self.tWorkSheetWrite("F", "d: " + sD + "V")
+        self.vChangeExcelCell("Calibration0@0x8", "E8", sK)
+        self.vChangeExcelCell("Calibration0@0x8", "E9", sD)
         
     """
     Acceleration X zero balance
@@ -602,9 +609,17 @@ class TestSth(unittest.TestCase):
             fAccX = fAcceleration(iAccX)
             afAccelerationX.append(fAccX)
         afAccelerationX.sort()
-        fD = struct.unpack("f", struct.pack("f", float(0 - afAccelerationX[4])))[0]
-        self.tWorkSheetWrite("E", "d: " + str(fD))
-        self.vChangeExcelCell("Calibration0@0x8", "E3", str(fD))
+        fD = float(0 - afAccelerationX[4])
+        fD += dAccX
+        fD = struct.unpack("f", struct.pack("f", fD))[0]
+        sD = str(fD)
+        fK = float(kAccX)
+        fK = struct.unpack("f", struct.pack("f", fK))[0]
+        sK = str(fK)
+        self.tWorkSheetWrite("E", "k: " + sK)
+        self.tWorkSheetWrite("F", "d: " + sD + "g")
+        self.vChangeExcelCell("Calibration0@0x8", "E2", sK)
+        self.vChangeExcelCell("Calibration0@0x8", "E3", sD)
     
     """
     Write EEPROM with calibration data an read it back to check it as well
@@ -618,7 +633,7 @@ class TestSth(unittest.TestCase):
         batchData = batchData[0]
         batchFile.close()
         batchFile = open("BatchNumber.txt", "w")
-        sBatchNumber = str(int(batchData)+1)
+        sBatchNumber = str(int(batchData) + 1)
         batchFile.write(sBatchNumber)
         batchFile.close()
         self.vChangeExcelCell("Statistics@0x5", "E8", sBatchNumber)
