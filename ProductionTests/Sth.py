@@ -520,10 +520,28 @@ class TestSth(unittest.TestCase):
 #         self.assertLessEqual(AdcMiddleY - AdcToleranceY, fAccZ)  
 
     """
+    Checks AccX SNR
+    """
+    def test0210AccXSnr(self):
+        self.tWorkSheetWrite("D", "Test Acceleration SNR")
+        self.TurnOffLed()
+        [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 1, 4000)
+        [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 1, indexStart, indexEnd)
+        StatisticsNonShaking = self.Can.streamingValueStatistics(array1, array2, array3)
+        NonShakingAccXSnrRaw = 20 * math.log((StatisticsNonShaking["Value1"]["StandardDeviation"] / AdcMax), 10)
+#         NonShakingAccYSnrRaw = 20 * math.log((StatisticsNonShaking["Value2"]["StandardDeviation"] / AdcMax), 10)
+#         NonShakingAccZSnrRaw = 20 * math.log((StatisticsNonShaking["Value3"]["StandardDeviation"] / AdcMax), 10)
+        self.tWorkSheetWrite("E", "SNR AccX Raw non shaking: " + str(NonShakingAccXSnrRaw))
+        self.assertGreaterEqual(abs(NonShakingAccXSnrRaw), abs(SigIndAccXSNR))
+#         self.assertGreaterEqual(abs(NonShakingAccYSnrRaw), abs(SigIndAccYSNR))
+#         self.assertGreaterEqual(abs(NonShakingAccZSnrRaw), abs(SigIndAccZSNR))
+        
+        
+    """
     Determine correct meassuring via self test 
     """
       
-    def test0210AccSelfTest(self): 
+    def test0220AccSelfTest(self): 
         self.tWorkSheetWrite("D", "Acceleration Sensor Self Test")
         self.TurnOffLed()
         kX1ack = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["Acc"], 1, AdcReference["VDD"])
