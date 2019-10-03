@@ -82,7 +82,9 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("Test Time End Time Stamp")
         self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
         self.Can.__exit__()
-        if False == self._outcome.success or False != self.bError:
+        if self._outcome.errors[1][1]:
+            bSkip = True
+        if False != self.bError:
             bSkip = True
 
     def _resetStu(self, retries=5, log=True):
@@ -296,7 +298,10 @@ class TestSth(unittest.TestCase):
                 else:                    
                     value = payload2Hex(value)
                 value = str(value)
-                worksheet['E' + str(i)] = str(value).encode('utf8')
+                try:
+                    worksheet['E' + str(i)] = str(value).encode('utf8')
+                except:
+                    pass
                 iTotalLength += iLength
                 i += 1
             else:
