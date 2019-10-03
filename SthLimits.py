@@ -8,6 +8,10 @@ def vSthLimitsConfig(iAxis, bPcbOnly):
     Axis=iAxis
     PcbOnly = bPcbOnly
 
+
+RssiStuMin=-60#dBm
+RssiSthMin=-60#dBm
+
 # Recalculation Factors
 AccelerationToAccGravitity = 200
 SamplingRateVfsToleranceRation = 64

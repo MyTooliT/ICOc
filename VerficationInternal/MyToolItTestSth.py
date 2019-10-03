@@ -980,11 +980,11 @@ class TestSth(unittest.TestCase):
     """
 
     def test0109BlueToothRssi(self):
-        self.Can.Logger.Info("Get Bluetooth Address")
-        iRssi = int(self.Can.BlueToothRssi(MyToolItNetworkNr["STH1"]))
+        self.Can.Logger.Info("Get Bluetooth RSSI")
+        iRssi = self.Can.BlueToothRssi(MyToolItNetworkNr["STH1"])
         self.assertGreater(iRssi, -80)
         self.assertLess(iRssi, 20)
-        self.Can.Logger.Info("BlueTooth RSSI: " + hex(iRssi))   
+        self.Can.Logger.Info("BlueTooth RSSI: " + str(iRssi))   
         
     """
     Get Battery Voltage via single command

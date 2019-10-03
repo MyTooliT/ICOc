@@ -31,10 +31,11 @@ def sSerialNumber(sExcelFileName):
     sSerial = str(value)
     return sSerial
 
-
+bSkip = False
 class TestSth(unittest.TestCase):
 
     def setUp(self):
+        global bSkip
         self.bError = False
         vSthLimitsConfig(1, True)
         self.sOtaLocation = sOtaLocation + sVersion
@@ -42,9 +43,8 @@ class TestSth(unittest.TestCase):
         self.fileName = sLogLocation + self._testMethodName + ".txt"
         self.fileNameError = sLogLocation + "Error_" + self._testMethodName + ".txt"
         self.sExcelEepromContentFileName = "Sth" + sVersion + ".xlsx"
-        if False != self.bSkipTest() and "test9999StoreTestResults" != self._testMethodName:
-            self.tWorkbookOpenCreate()
-            self.skipTest()
+        if False != bSkip and "test9999StoreTestResults" != self._testMethodName:
+            self.skipTest("At least some previous test failed")
         else:
             self.Can = CanFd.CanFd(CanFd.PCAN_BAUD_1M, self.fileName, self.fileNameError, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], AdcPrescalerReset, AdcAcquisitionTimeReset, AdcAcquisitionOverSamplingRateReset, FreshLog=True)
             self.Can.Logger.Info("TestCase: " + str(self._testMethodName))
@@ -67,6 +67,7 @@ class TestSth(unittest.TestCase):
             self.Can.Logger.Info("Start")
 
     def tearDown(self):
+        global bSkip
         self.Can.Logger.Info("Fin")
         self.Can.Logger.Info("_______________________________________________________________________________________________________________")
         if "test9999StoreTestResults" != self._testMethodName:
@@ -78,32 +79,9 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("Test Time End Time Stamp")
         self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
         self.Can.__exit__()
-    
-    """
-    Checks if any test case of the actual test run has failed.
-    """    
-
-    def bSkipTest(self):      
-        bSkip = False
-        if hasattr(self, '_outcome'):  # Python 3.4+
-            result = self.defaultTestResult()  # these 2 methods have no side effects
-            self._feedErrorsToResult(result, self._outcome.errors)
-        else:  # Python 3.2 - 3.3 or 3.0 - 3.1 and 2.7
-            result = getattr(self, '_outcomeForDoCleanups', self._resultForDoCleanups)
-        bError = self.list2reason(result.errors)
-        bFailure = self.list2reason(result.failures)
-        # demo:   report short info immediately (not important)
-        if bError or bFailure:
+        if False == self._outcome.success or False != self.bError:
             bSkip = True
-            typ, text = ('ERROR', bError) if bError else ('FAIL', bFailure)
-            msg = [x for x in text.split('\n')[1:] if not x.startswith(' ')][0]
-            self.Can.Logger.Error("\n%s: %s\n     %s" % (typ, self.id(), msg))
-        return bSkip
 
-    def list2reason(self, exc_list):
-        if exc_list and exc_list[-1][0] is self:
-            return exc_list[-1][1]
-        
     def _resetStu(self, retries=5, log=True):
         self.Can.bConnected = False
         return self.Can.cmdReset(MyToolItNetworkNr["STU1"], retries=retries, log=log)
@@ -479,8 +457,11 @@ class TestSth(unittest.TestCase):
         else:
             self.tWorkSheetWrite("E", "NOK")
         self.assertEqual(sVersionRead, sVersion)
-        
-    def test0100Reset(self):
+    
+    """
+    Test Reset
+    """   
+    def test0099Reset(self):
         self.tWorkSheetWrite("D", "Tests Reset Command")
         self._resetSth()
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"], log=False)
@@ -494,6 +475,23 @@ class TestSth(unittest.TestCase):
         self.assertGreaterEqual(VoltMiddleBat + VoltToleranceBat, fBatteryVoltage)
         self.assertLessEqual(VoltMiddleBat - VoltToleranceBat, fBatteryVoltage)
         
+    """
+    Test that RSSI is good enough
+    """
+    def test0100Rssi(self):
+        self.tWorkSheetWrite("D", "Tests RSSI")
+        iRssiSth = int(self.Can.BlueToothRssi(MyToolItNetworkNr["STH1"]))
+        iRssiStu = int(self.Can.BlueToothRssi(MyToolItNetworkNr["STU1"]))
+        self.tWorkSheetWrite("E", "RSSI @ STH: " + str(iRssiSth)+"dBm")
+        self.tWorkSheetWrite("F", "RSSI @ STU: " + str(iRssiStu)+"dBm")
+        self.assertGreater(iRssiSth, RssiSthMin)
+        self.assertLess(iRssiSth, -30)
+        self.assertGreater(iRssiStu, RssiStuMin)
+        self.assertLess(iRssiStu, -30)
+        
+    """
+    Checks Acceleration at apparent gravity
+    """
     def test0200AccXApparentGravity(self):
         self.tWorkSheetWrite("D", "Acceleration X - Apparent gravity")
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], 1, 0, 0)
@@ -503,24 +501,55 @@ class TestSth(unittest.TestCase):
         self.assertGreaterEqual(AdcMiddleX + AdcToleranceX, fAccX)
         self.assertLessEqual(AdcMiddleX - AdcToleranceX, fAccX)
 
-    def test0201AccYApparentGravity(self):
-        self.tWorkSheetWrite("D", "Acceleration Y - Apparent gravity")
-        index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], 0, 1, 0)
-        [_val1, val2, _val3] = self.Can.singleValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], 0, 1, 0, index)
-        fAccY = fAcceleration(val2[0])
-        self.tWorkSheetWrite("E", "Acceleration Y - Apparent gravity: " + str(fAccY) + "V")
-        self.assertGreaterEqual(AdcMiddleY + AdcToleranceY, fAccY)
-        self.assertLessEqual(AdcMiddleY - AdcToleranceY, fAccY)        
+#     def test0201AccYApparentGravity(self):
+#         self.tWorkSheetWrite("D", "Acceleration Y - Apparent gravity")
+#         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], 0, 1, 0)
+#         [_val1, val2, _val3] = self.Can.singleValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], 0, 1, 0, index)
+#         fAccY = fAcceleration(val2[0])
+#         self.tWorkSheetWrite("E", "Acceleration Y - Apparent gravity: " + str(fAccY) + "V")
+#         self.assertGreaterEqual(AdcMiddleY + AdcToleranceY, fAccY)
+#         self.assertLessEqual(AdcMiddleY - AdcToleranceY, fAccY)        
+# 
+#     def test0202AccZApparentGravity(self):
+#         self.tWorkSheetWrite("D", "Acceleration Z - Apparent gravity")
+#         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], 0, 0, 1)
+#         [_val1, _val2, val3] = self.Can.singleValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], 0, 0, 1, index)
+#         fAccZ = fAcceleration(val3[0])
+#         self.tWorkSheetWrite("E", "Acceleration Z - Apparent gravity: " + str(fAccZ) + "V")
+#         self.assertGreaterEqual(AdcMiddleY + AdcToleranceY, fAccZ)
+#         self.assertLessEqual(AdcMiddleY - AdcToleranceY, fAccZ)  
 
-    def test0202AccZApparentGravity(self):
-        self.tWorkSheetWrite("D", "Acceleration Z - Apparent gravity")
-        index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], 0, 0, 1)
-        [_val1, _val2, val3] = self.Can.singleValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], 0, 0, 1, index)
-        fAccZ = fAcceleration(val3[0])
-        self.tWorkSheetWrite("E", "Acceleration Z - Apparent gravity: " + str(fAccZ) + "V")
-        self.assertGreaterEqual(AdcMiddleY + AdcToleranceY, fAccZ)
-        self.assertLessEqual(AdcMiddleY - AdcToleranceY, fAccZ)  
-     
+    """
+    Determine correct meassuring via self test 
+    """
+      
+    def test0210AccSelfTest(self): 
+        self.tWorkSheetWrite("D", "Acceleration Sensor Self Test")
+        self.TurnOffLed()
+        kX1ack = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["Acc"], 1, AdcReference["VDD"])
+        kX1 = iMessage2Value(kX1ack[4:])
+        self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"], CalibMeassurementTypeNr["Acc"], 1, AdcReference["VDD"])
+        time.sleep(0.1)
+        kX2ack = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["Acc"], 1, AdcReference["VDD"])
+        kX2 = iMessage2Value(kX2ack[4:])
+        self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Eject"], CalibMeassurementTypeNr["Acc"], 1, AdcReference["VDD"])
+        time.sleep(0.1)
+        kX3ack = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["Acc"], 1, AdcReference["VDD"])
+        kX3 = iMessage2Value(kX3ack[4:])
+        k1mVX = (50 * AdcReference["VDD"]) * kX1 / AdcMax
+        k2mVX = (50 * AdcReference["VDD"]) * kX2 / AdcMax
+        k3mVX = (50 * AdcReference["VDD"]) * kX3 / AdcMax
+        self.tWorkSheetWrite("E", "k1 before self test: " + str(k1mVX) + "mV")
+        self.tWorkSheetWrite("F", "k2 at self test: " + str(k2mVX) + "mV")
+        self.tWorkSheetWrite("G", "k3 at self test: " + str(k3mVX) + "mV")
+        iDelta = k2mVX - k1mVX
+        self.assertGreater(k2mVX, k1mVX)
+        self.assertGreater(k2mVX, k3mVX)  
+        self.assertGreater(k1mVX+20, k3mVX) 
+        self.assertGreater(k3mVX+20, k1mVX)    
+        self.assertGreater(iDelta, 50) 
+        self.assertLess(iDelta, 150) 
+         
     """
     Voltage zero balance
     """   
@@ -587,65 +616,26 @@ class TestSth(unittest.TestCase):
         bMatch = self.bCompareEerpomWriteRead()
         self.tWorkSheetWrite("E", "Match: " + str(bMatch))
         self.assertEqual(bMatch, True)
-      
-    def test0500AccShake(self): 
-        self.tWorkSheetWrite("D", "Shake Test")
-        self.TurnOffLed()
-        [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 1, 4000)
-        [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 1, indexStart, indexEnd)
-        StatisticsNonShaking = self.Can.streamingValueStatistics(array1, array2, array3)
-        NonShakingAccXSnrRaw = 20 * math.log((StatisticsNonShaking["Value1"]["StandardDeviation"] / AdcMax), 10)
-#         NonShakingAccYSnrRaw = 20 * math.log((StatisticsNonShaking["Value2"]["StandardDeviation"] / AdcMax), 10)
-#         NonShakingAccZSnrRaw = 20 * math.log((StatisticsNonShaking["Value3"]["StandardDeviation"] / AdcMax), 10)
-        self.tWorkSheetWrite("E", "SNR AccX Raw non shaking: " + str(NonShakingAccXSnrRaw))
-        self.assertGreaterEqual(abs(NonShakingAccXSnrRaw), abs(SigIndAccXSNR))
-#         self.assertGreaterEqual(abs(NonShakingAccYSnrRaw), abs(SigIndAccYSNR))
-#         self.assertGreaterEqual(abs(NonShakingAccZSnrRaw), abs(SigIndAccZSNR))
-        input("Press ENTER and shake")
-        time.sleep(4)
-        [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 1, 4000)
-        [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 1, indexStart, indexEnd)
-        StatisticsNonShaking = self.Can.streamingValueStatistics(array1, array2, array3)
-        ShakingAccXSnrRaw = 20 * math.log((StatisticsNonShaking["Value1"]["StandardDeviation"] / AdcMax), 10)
-#         ShakingAccYSnrRaw = 20 * math.log((StatisticsNonShaking["Value2"]["StandardDeviation"] / AdcMax), 10)
-#         ShakingAccZSnrRaw = 20 * math.log((StatisticsNonShaking["Value3"]["StandardDeviation"] / AdcMax), 10)
-        print("Stop shaking")
-        time.sleep(4)
-        self.tWorkSheetWrite("F", "SNR AccX Raw shaking: " + str(ShakingAccXSnrRaw))
-#         self.tWorkSheetWrite("I", "SNR AccY Raw shaking: " + str(ShakingAccYSnrRaw))
-#         self.tWorkSheetWrite("J", "SNR AccZ Raw shaking: " + str(ShakingAccZSnrRaw))
-        self.assertLessEqual(abs(ShakingAccXSnrRaw), abs(SigIndAccXSNR) / 1.5)
-#         self.assertLessEqual(abs(ShakingAccYSnrRaw), abs(SigIndAccYSNR) / 1.5)
-#         self.assertLessEqual(abs(ShakingAccZSnrRaw), abs(SigIndAccZSNR) / 1.5)
-        [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 1, 4000)
-        [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 1, indexStart, indexEnd)
-        StatisticsNonShaking = self.Can.streamingValueStatistics(array1, array2, array3)
-        NonShakingAccXSnrRaw = 20 * math.log((StatisticsNonShaking["Value1"]["StandardDeviation"] / AdcMax), 10)
-        NonShakingAccYSnrRaw = 20 * math.log((StatisticsNonShaking["Value2"]["StandardDeviation"] / AdcMax), 10)
-        NonShakingAccZSnrRaw = 20 * math.log((StatisticsNonShaking["Value3"]["StandardDeviation"] / AdcMax), 10)
-        self.tWorkSheetWrite("E", "SNR AccX Raw non shaking: " + str(NonShakingAccXSnrRaw))
-        self.tWorkSheetWrite("F", "SNR AccY Raw non shaking: " + str(NonShakingAccYSnrRaw))
-        self.tWorkSheetWrite("G", "SNR AccZ Raw non shaking: " + str(NonShakingAccZSnrRaw))
-        self.assertGreaterEqual(abs(NonShakingAccXSnrRaw), abs(SigIndAccXSNR))
-#         self.assertGreaterEqual(abs(NonShakingAccYSnrRaw), abs(SigIndAccYSNR))
-#         self.assertGreaterEqual(abs(NonShakingAccZSnrRaw), abs(SigIndAccZSNR))
+    
                 
     """
     Move Test Report to Results
     """
 
     def test9999StoreTestResults(self):
+        global bSkip
         self.tWorkSheetWrite("D", "Store Results")
-        tWorkbookContent = openpyxl.load_workbook(self.sExcelEepromContentReadBackFileName)
-        for worksheetName in tWorkbookContent.sheetnames:
-            tWorkSheet = self.tWorkbook.create_sheet(worksheetName)
-            tWorkSheetContent = tWorkbookContent.get_sheet_by_name(worksheetName)
-            for row in tWorkSheetContent:
-                for cell in row:
-                    tWorkSheet[cell.coordinate].value = cell.value
-        tWorkbookContent.close()
-        os.remove(self.sExcelEepromContentReadBackFileName)
-        if False != self.bSkipTest():
+        if False != os.path.isfile(self.sExcelEepromContentReadBackFileName):
+            tWorkbookContent = openpyxl.load_workbook(self.sExcelEepromContentReadBackFileName)
+            for worksheetName in tWorkbookContent.sheetnames:
+                tWorkSheet = self.tWorkbook.create_sheet(worksheetName)
+                tWorkSheetContent = tWorkbookContent.get_sheet_by_name(worksheetName)
+                for row in tWorkSheetContent:
+                    for cell in row:
+                        tWorkSheet[cell.coordinate].value = cell.value
+            tWorkbookContent.close()
+            os.remove(self.sExcelEepromContentReadBackFileName)
+        if False != bSkip:
             self.tWorkSheetWrite("E", "NOK")   
             self.tWorkbook.save(self.sTestReport + ".xlsx")  
             os.rename(self.sTestReport + ".xlsx", "./Results/NOK_" + self.sTestReport + ".xlsx")       
