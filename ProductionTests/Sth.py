@@ -343,27 +343,28 @@ class TestSth(unittest.TestCase):
                 self.Can.Logger.Info(sError)
         return sError
     
-    def bCompareEerpomWriteRead(self):
-        bMatch = True
+    def tCompareEerpomWriteRead(self):
+        tWorkSheetNameError = None
+        sCellNumberError = None
         tWorkbookReadBack = openpyxl.load_workbook(self.sExcelEepromContentReadBackFileName)
         tWorkbookWrite = openpyxl.load_workbook(self.sExcelEepromContentFileName)
         if tWorkbookReadBack and tWorkbookWrite:
             for worksheetName in tWorkbookWrite.sheetnames:
-                if False == bMatch:
-                    break
                 tWorkSheedReadBack = tWorkbookReadBack.get_sheet_by_name(worksheetName)
                 tWorkSheedWrite = tWorkbookWrite.get_sheet_by_name(worksheetName)
                 for i in range(2, 2 + 256):
                     if None != tWorkSheedWrite['A' + str(i)].value:
                         if str(tWorkSheedWrite['E' + str(i)].value) != str(tWorkSheedReadBack['E' + str(i)].value):
-                            bMatch = False
+                            tWorkSheetNameError = worksheetName
+                            sCellNumberError = 'E' + str(i)
                             break
                     else:
                         if None != tWorkSheedReadBack['A' + str(i)].value:
-                            bMatch = False
+                            tWorkSheetNameError = worksheetName
+                            sCellNumberError = 'A' + str(i)
                         break
                             
-        return bMatch
+        return [tWorkSheetNameError, sCellNumberError]
     
     """
     Change a specific content of an ExcelCell
@@ -665,9 +666,10 @@ class TestSth(unittest.TestCase):
             sError = self.sExcelSheetRead(pageName, MyToolItNetworkNr["STH1"])
             if None != sError:
                 break
-        bMatch = self.bCompareEerpomWriteRead()
-        self.tWorkSheetWrite("E", "Match: " + str(bMatch))
-        self.assertEqual(bMatch, True)
+        [tWorkSheetNameError, sCellNumberError] = self.tCompareEerpomWriteRead()
+        self.tWorkSheetWrite("E", "Error Worksheet: " + str(tWorkSheetNameError))
+        self.tWorkSheetWrite("F", "Error Cell: " + str(sCellNumberError))
+        self.assertEqual(tWorkSheetNameError, None)
                 
     """
     Move Test Report to Results
@@ -689,12 +691,19 @@ class TestSth(unittest.TestCase):
         if False != bSkip:
             self.tWorkSheetWrite("E", "NOK")   
             self.tWorkbook.save(self.sTestReport + ".xlsx")  
-            os.rename(self.sTestReport + ".xlsx", "./Results/NOK_" + self.sTestReport + ".xlsx")       
+            for i in range(0,100):
+                sStoreFileName = "./Results/NOK_" + self.sTestReport + "_nr" + str(i) + ".xlsx"
+                if False == os.path.isfile(sStoreFileName):
+                    os.rename(self.sTestReport + ".xlsx", sStoreFileName)    
+                    break                  
         else:
             self.tWorkSheetWrite("E", "OK")
             self.tWorkbook.save(self.sTestReport + ".xlsx")
-            os.rename(self.sTestReport + ".xlsx", "./Results/OK_" + self.sTestReport + ".xlsx") 
-
+            for i in range(0,100):
+                sStoreFileName = "./Results/OK_" + self.sTestReport + "_nr" + str(i) + ".xlsx"
+                if False == os.path.isfile(sStoreFileName):
+                    os.rename(self.sTestReport + ".xlsx", sStoreFileName) 
+                    break
                 
 if __name__ == "__main__":
     sLogLocation = sys.argv[1]

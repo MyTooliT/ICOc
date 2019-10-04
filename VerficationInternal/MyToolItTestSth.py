@@ -983,7 +983,7 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("Get Bluetooth RSSI")
         iRssi = self.Can.BlueToothRssi(MyToolItNetworkNr["STH1"])
         self.assertGreater(iRssi, -80)
-        self.assertLess(iRssi, 20)
+        self.assertLess(iRssi, -20)
         self.Can.Logger.Info("BlueTooth RSSI: " + str(iRssi))   
         
     """

@@ -337,24 +337,34 @@ class mwt(myToolItWatch):
                 self.vNetworkNumberSet(None) 
             self.tTerminalEepromCreateOpenExcelSheet()  
         elif ord('R') == keyPress:
-            if False != os.path.isfile(self.sSheetFile):
-                iReceiver = MyToolItNetworkNr[self.sNetworkNumber]
-                if MyToolItNetworkNr["STH1"] <= iReceiver and MyToolItNetworkNr["STH14"] >= iReceiver:
-                    self.stdscr.clear()
-                    self.vConnect()
-                if None != self.process:
-                    self.process.terminate()
-                if False != self.Can.bConnected or MyToolItNetworkNr["STU1"] <= iReceiver:
-                    if False != self.bTerminalEepromRead(iReceiver):
-                        self.process = subprocess.Popen(['excel', self.sSheetFile], stdout=subprocess.PIPE)
+            bShowReadWrite = (None != self.sSheetFile)    
+            bShowReadWrite = bShowReadWrite and ("STU" == self.sProduct or "STH" == self.sProduct)
+            bShowReadWrite = bShowReadWrite and (None != self.sConfig)
+            bShowReadWrite = bShowReadWrite and (None != self.sNetworkNumber)
+            if False != bShowReadWrite: 
+                if False != os.path.isfile(self.sSheetFile):
+                    iReceiver = MyToolItNetworkNr[self.sNetworkNumber]
+                    if MyToolItNetworkNr["STH1"] <= iReceiver and MyToolItNetworkNr["STH14"] >= iReceiver:
+                        self.stdscr.clear()
+                        self.vConnect()
+                    if None != self.process:
+                        self.process.terminate()
+                    if False != self.Can.bConnected or MyToolItNetworkNr["STU1"] <= iReceiver:
+                        if False != self.bTerminalEepromRead(iReceiver):
+                            self.process = subprocess.Popen(['excel', self.sSheetFile], stdout=subprocess.PIPE)
         elif ord('W') == keyPress:
-            if False != os.path.isfile(self.sSheetFile):
-                iReceiver = MyToolItNetworkNr[self.sNetworkNumber]
-                if MyToolItNetworkNr["STH1"] <= iReceiver and MyToolItNetworkNr["STH14"] >= iReceiver:
-                    self.stdscr.clear()
-                    self.vConnect()
-                if False != self.Can.bConnected or MyToolItNetworkNr["STU1"] <= iReceiver:
-                    self.bTerminalEepromWrite(iReceiver)
+            bShowReadWrite = (None != self.sSheetFile)    
+            bShowReadWrite = bShowReadWrite and ("STU" == self.sProduct or "STH" == self.sProduct)
+            bShowReadWrite = bShowReadWrite and (None != self.sConfig)
+            bShowReadWrite = bShowReadWrite and (None != self.sNetworkNumber)
+            if False != bShowReadWrite: 
+                if False != os.path.isfile(self.sSheetFile):
+                    iReceiver = MyToolItNetworkNr[self.sNetworkNumber]
+                    if MyToolItNetworkNr["STH1"] <= iReceiver and MyToolItNetworkNr["STH14"] >= iReceiver:
+                        self.stdscr.clear()
+                        self.vConnect()
+                    if False != self.Can.bConnected or MyToolItNetworkNr["STU1"] <= iReceiver:
+                        self.bTerminalEepromWrite(iReceiver)
         elif ord('x') == keyPress:
             self.vTerminalEepromChange()
             self.tTerminalEepromCreateOpenExcelSheet()            
@@ -380,6 +390,7 @@ class mwt(myToolItWatch):
             bShowReadWrite = (None != self.sSheetFile)    
             bShowReadWrite = bShowReadWrite and ("STU" == self.sProduct or "STH" == self.sProduct)
             bShowReadWrite = bShowReadWrite and (None != self.sConfig)
+            bShowReadWrite = bShowReadWrite and (None != self.sNetworkNumber)
             if False != bShowReadWrite:                     
                 self.stdscr.addstr("R: Read all from EEPROM to sheet\n")
                 self.stdscr.addstr("W: Write all from Sheet to EEPROM\n")                    

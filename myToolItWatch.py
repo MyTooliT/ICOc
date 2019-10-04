@@ -1146,7 +1146,10 @@ class myToolItWatch():
                 else:                    
                     value = payload2Hex(value)
                 value = str(value)
-                worksheet['E' + str(i)] = str(value)
+                try:
+                    worksheet['E' + str(i)] = str(value)
+                except:
+                	pass    
                 iTotalLength += iLength
                 i += 1
             else:
