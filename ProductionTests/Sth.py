@@ -414,7 +414,7 @@ class TestSth(unittest.TestCase):
     """
 
     def test0002Ack(self):
-        self.tWorkSheetWrite("D", "This test case checks the ability to communicate of the STH")
+        self.tWorkSheetWrite("D", "This test case checks the ability to communicate with the STH")
         cmd = self.Can.CanCmd(MyToolItBlock["System"], MyToolItSystem["ActiveState"], 1, 0)
         expectedData = ActiveState()
         expectedData.asbyte = 0
@@ -583,7 +583,7 @@ class TestSth(unittest.TestCase):
     """   
 
     def test0300AccCalibrationVoltage(self):
-        self.tWorkSheetWrite("D", "Calibrate Battery Voltage i.e. get d from kx+d(k=1)")
+        self.tWorkSheetWrite("D", "Calibrate Battery Voltage i.e. calculate k and get d via zero balance(kx+d)")
         afBatteryVoltage = []
         for _i in range(0, 9):
             index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], 1, 0, 0)
@@ -607,7 +607,7 @@ class TestSth(unittest.TestCase):
     """
 
     def test0320AccCalibrationAcceleration(self):
-        self.tWorkSheetWrite("D", "Calibrate Acceleration X i.e. get d from kx+d(k=1)")
+        self.tWorkSheetWrite("D", "Calibrate Acceleration X i.e. calculate k and get d via zero balance(kx+d)")
         afAccelerationX = []
         for _i in range(0, 9):
             index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], 1, 0, 0)
