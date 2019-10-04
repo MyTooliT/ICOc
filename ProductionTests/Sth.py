@@ -639,7 +639,11 @@ class TestSth(unittest.TestCase):
         batchData = batchData[0]
         batchFile.close()
         batchFile = open("BatchNumber.txt", "w")
-        sBatchNumber = str(int(batchData) + 1)
+        sStoreFileName = "./Results/OK_" + self.sTestReport + "_nr1.xlsx"
+        iBatchNr = int(batchData)
+        if False != os.path.isfile(sStoreFileName):
+            iBatchNr += 1
+        sBatchNumber = str(iBatchNr)
         batchFile.write(sBatchNumber)
         batchFile.close()
         self.vChangeExcelCell("Statistics@0x5", "E8", sBatchNumber)
