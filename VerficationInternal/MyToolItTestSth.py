@@ -1,9 +1,9 @@
 import unittest
 import sys
 import os
+import random
 from datetime import date
 from numpy.core.arrayprint import array2string
-
 
 # Required to add peakcan
 sDirName = os.path.dirname('')
@@ -394,6 +394,32 @@ class TestSth(unittest.TestCase):
         self.assertGreaterEqual(abs(SignalSNR), abs(SNR))
         self.Can.Logger.Info("____________________________________________________")
 
+    """
+    Write Page by value
+    """
+
+    def vEepromWritePage(self, iPage, value):
+        au8Content = [value] * 4
+        timeStamp = self.Can.getTimeMs()
+        for offset in range(0, 256, 4):
+            au8Payload = [iPage, 0xFF & offset, 4, 0] + au8Content
+            self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Write"], au8Payload)
+        self.Can.Logger.Info("Page Write Time: " + str(self.Can.getTimeMs() - timeStamp) + "ms")
+
+    """
+    Read page and check content
+    """
+    def vEepromReadPage(self, iPage, value):
+        timeStamp = self.Can.getTimeMs()
+        for offset in range(0, 256, 4):
+            au8Payload = [iPage, 0xFF & offset, 4, 0, 0, 0, 0, 0]
+            index = self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Read"], au8Payload)   
+            dataReadBack = self.Can.getReadMessageData(index)     
+            for dataByte in dataReadBack[4:]:
+                self.assertEqual(dataByte, value)
+        self.Can.Logger.Info("Page Read Time: " + str(self.Can.getTimeMs() - timeStamp) + "ms")
+            
+            
     """
     Test the over the air update
     """
@@ -3534,42 +3560,44 @@ class TestSth(unittest.TestCase):
         self.assertEqual(sArray2String(au8ProductionDate), sProductionDate)
         
     """
-    Check EEPROM Read/Write
+    Check EEPROM Read/Write - Determistic data
     """   
 
-    def test0750StatisticPageWriteRead(self):
+    def test0750StatisticPageWriteReadDeteministic(self):
         # Store content
         startData = []
         for offset in range(0, 256, 4):
             index = self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Read"], [EepromPage["Statistics"], 0xFF & offset, 4, 0, 0, 0, 0, 0])   
             dataReadBack = self.Can.getReadMessageData(index)     
             startData.extend(dataReadBack[4:])
-        # Write 0xFF over the page
-        timeStamp = self.Can.getTimeMs()
-        for offset in range(0, 256, 4):
-            self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Write"], [EepromPage["Statistics"], 0xFF & offset, 4, 0, 0xFF, 0xFF, 0xFF, 0xFF])
-        self.Can.Logger.Info("Page Write Time: " + str(self.Can.getTimeMs() - timeStamp) + "ms")
-        # Read back 0xFF over the page
-        timeStamp = self.Can.getTimeMs()
-        for offset in range(0, 256, 4):
-            index = self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Read"], [EepromPage["Statistics"], 0xFF & offset, 4, 0, 0, 0, 0, 0])   
-            dataReadBack = self.Can.getReadMessageData(index)     
-            for dataByte in dataReadBack[4:]:
-                self.assertEqual(dataByte, 0xFF)
-        self.Can.Logger.Info("Page Read Time: " + str(self.Can.getTimeMs() - timeStamp) + "ms")
-        # Write 0x00 over the page
-        timeStamp = self.Can.getTimeMs()
-        for offset in range(0, 256, 4):
-            self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Write"], [EepromPage["Statistics"], 0xFF & offset, 4, 0, 0, 0, 0, 0])
-        self.Can.Logger.Info("Page Write Time: " + str(self.Can.getTimeMs() - timeStamp) + "ms")
-        # Read back 0x00 over the page    
-        timeStamp = self.Can.getTimeMs()
-        for offset in range(0, 256, 4):
-            index = self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Read"], [EepromPage["Statistics"], 0xFF & offset, 4, 0, 0, 0, 0, 0])   
-            dataReadBack = self.Can.getReadMessageData(index)     
-            for dataByte in dataReadBack[4:]:
-                self.assertEqual(dataByte, 0x00)             
-        self.Can.Logger.Info("Page Read Time: " + str(self.Can.getTimeMs() - timeStamp) + "ms")       
+            
+        #Test it self
+        for _i in range(0, 100):
+            self.vEepromWritePage(EepromPage["Statistics"], 0xAA)
+            self.vEepromReadPage(EepromPage["Statistics"], 0xAA)
+            self.vEepromWritePage(EepromPage["Statistics"], 0xFF)
+            self.vEepromReadPage(EepromPage["Statistics"], 0xFF)
+            self.vEepromWritePage(EepromPage["Statistics"], 0xAA)
+            self.vEepromReadPage(EepromPage["Statistics"], 0xAA)    
+            self.vEepromWritePage(EepromPage["Statistics"], 0x00)
+            self.vEepromReadPage(EepromPage["Statistics"], 0x00)          
+            self.vEepromWritePage(EepromPage["Statistics"], 0xAA)
+            self.vEepromReadPage(EepromPage["Statistics"], 0xAA)  
+            self.vEepromWritePage(EepromPage["Statistics"], 0x55)
+            self.vEepromReadPage(EepromPage["Statistics"], 0x55) 
+            self.vEepromWritePage(EepromPage["Statistics"], 0xAA)
+            self.vEepromReadPage(EepromPage["Statistics"], 0xAA) 
+            self.vEepromWritePage(EepromPage["Statistics"], 0x55)
+            self.vEepromReadPage(EepromPage["Statistics"], 0x55)  
+            self.vEepromWritePage(EepromPage["Statistics"], 0x00)
+            self.vEepromReadPage(EepromPage["Statistics"], 0x00) 
+            self.vEepromWritePage(EepromPage["Statistics"], 0x55)
+            self.vEepromReadPage(EepromPage["Statistics"], 0x55)    
+            self.vEepromWritePage(EepromPage["Statistics"], 0xFF)
+            self.vEepromReadPage(EepromPage["Statistics"], 0xFF)
+            self.vEepromWritePage(EepromPage["Statistics"], 0x55)
+            self.vEepromReadPage(EepromPage["Statistics"], 0x55) 
+                                  
         # Write Back Page
         timeStamp = self.Can.getTimeMs()
         for offset in range(0, 256, 4):
@@ -3577,7 +3605,46 @@ class TestSth(unittest.TestCase):
             payload.extend(startData[offset:offset + 4])
             self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Write"], payload)
         self.Can.Logger.Info("Page Write Time: " + str(self.Can.getTimeMs() - timeStamp) + "ms")   
-              
+   
+   
+   
+    """
+    Check EEPROM Read/Write - Determistic data
+    """   
+
+    def test0751StatisticPageWriteReadRandom(self):
+        # Store content
+        startData = []
+        for offset in range(0, 256, 4):
+            index = self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Read"], [EepromPage["ProductData"], 0xFF & offset, 4, 0, 0, 0, 0, 0])   
+            dataReadBack = self.Can.getReadMessageData(index)     
+            startData.extend(dataReadBack[4:])
+            
+        #Test it self
+        for _i in range(0, 100):
+            au8ReadCheck = []
+            for offset in range(0, 256, 4):
+                au8Content = []
+                for _j in range(0, 4):
+                    u8Byte = int(random.random()*0xFF)
+                    au8Content.append(u8Byte)
+                au8ReadCheck.extend(au8Content)
+                au8Payload = [EepromPage["ProductData"], 0xFF & offset, 4, 0] + au8Content
+                self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Write"], au8Payload)
+            for offset in range(0, 256, 4):
+                au8Payload = [EepromPage["ProductData"], 0xFF & offset, 4, 0, 0, 0, 0, 0]
+                index = self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Read"], au8Payload)   
+                dataReadBack = self.Can.getReadMessageData(index)     
+                self.assertEqual(dataReadBack[4:], au8ReadCheck[offset:offset+4])
+                                      
+            # Write Back Page
+            timeStamp = self.Can.getTimeMs()
+            for offset in range(0, 256, 4):
+                payload = [EepromPage["ProductData"], 0xFF & offset, 4, 0]
+                payload.extend(startData[offset:offset + 4])
+                self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Write"], payload)
+            self.Can.Logger.Info("Page Write Time: " + str(self.Can.getTimeMs() - timeStamp) + "ms")   
+                            
     """
     Status Word after Reset
     """        

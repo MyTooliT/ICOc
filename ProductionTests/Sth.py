@@ -632,48 +632,50 @@ class TestSth(unittest.TestCase):
     """
 
     def test0399Eerpom(self):
-        self.tWorkSheetWrite("D", "Write EEPROM with data and check that by read")
-        # Batch Number
-        batchFile = open("BatchNumber.txt")
-        batchData = batchFile.readlines()
-        batchData = batchData[0]
-        batchFile.close()
-        batchFile = open("BatchNumber.txt", "w")
-        sStoreFileName = "./Results/OK_" + self.sTestReport + "_nr1.xlsx"
-        iBatchNr = int(batchData)
-        if False != os.path.isfile(sStoreFileName):
-            iBatchNr += 1
-        sBatchNumber = str(iBatchNr)
-        batchFile.write(sBatchNumber)
-        batchFile.close()
-        self.vChangeExcelCell("Statistics@0x5", "E8", sBatchNumber)
-        # Write
-        workSheetNames = []
-        workbook = openpyxl.load_workbook(self.sExcelEepromContentFileName)
-        if workbook:
-            for worksheetName in workbook.sheetnames:
-                sName = str(worksheetName).split('@')
-                _sAddress = sName[1]
-                sName = sName[0]
-                workSheetNames.append(sName)  
-        sDate = date.today()
-        sDate = str(sDate).replace('-', '')
-        self.vChangeExcelCell("Statistics@0x5", "E7", sDate)       
-        for pageName in workSheetNames:
-            sError = self.sExcelSheetWrite(pageName, MyToolItNetworkNr["STH1"])  
-            if None != sError:
-                break      
-        # Read Back
-        sError = None
-        copyfile(self.sExcelEepromContentFileName, self.sExcelEepromContentReadBackFileName)
-        for pageName in workSheetNames:
-            sError = self.sExcelSheetRead(pageName, MyToolItNetworkNr["STH1"])
-            if None != sError:
-                break
-        [tWorkSheetNameError, sCellNumberError] = self.tCompareEerpomWriteRead()
-        self.tWorkSheetWrite("E", "Error Worksheet: " + str(tWorkSheetNameError))
-        self.tWorkSheetWrite("F", "Error Cell: " + str(sCellNumberError))
-        self.assertEqual(tWorkSheetNameError, None)
+        for i in range(0,100):
+            print(str(i))
+            self.tWorkSheetWrite("D", "Write EEPROM with data and check that by read")
+            # Batch Number
+            batchFile = open("BatchNumber.txt")
+            batchData = batchFile.readlines()
+            batchData = batchData[0]
+            batchFile.close()
+            batchFile = open("BatchNumber.txt", "w")
+            sStoreFileName = "./Results/OK_" + self.sTestReport + "_nr1.xlsx"
+            iBatchNr = int(batchData)
+            if False != os.path.isfile(sStoreFileName):
+                iBatchNr += 1
+            sBatchNumber = str(iBatchNr)
+            batchFile.write(sBatchNumber)
+            batchFile.close()
+            self.vChangeExcelCell("Statistics@0x5", "E8", sBatchNumber)
+            # Write
+            workSheetNames = []
+            workbook = openpyxl.load_workbook(self.sExcelEepromContentFileName)
+            if workbook:
+                for worksheetName in workbook.sheetnames:
+                    sName = str(worksheetName).split('@')
+                    _sAddress = sName[1]
+                    sName = sName[0]
+                    workSheetNames.append(sName)  
+            sDate = date.today()
+            sDate = str(sDate).replace('-', '')
+            self.vChangeExcelCell("Statistics@0x5", "E7", sDate)       
+            for pageName in workSheetNames:
+                sError = self.sExcelSheetWrite(pageName, MyToolItNetworkNr["STH1"])  
+                if None != sError:
+                    break      
+            # Read Back
+            sError = None
+            copyfile(self.sExcelEepromContentFileName, self.sExcelEepromContentReadBackFileName)
+            for pageName in workSheetNames:
+                sError = self.sExcelSheetRead(pageName, MyToolItNetworkNr["STH1"])
+                if None != sError:
+                    break
+            [tWorkSheetNameError, sCellNumberError] = self.tCompareEerpomWriteRead()
+            self.tWorkSheetWrite("E", "Error Worksheet: " + str(tWorkSheetNameError))
+            self.tWorkSheetWrite("F", "Error Cell: " + str(sCellNumberError))
+            self.assertEqual(tWorkSheetNameError, None)
                 
     """
     Move Test Report to Results
