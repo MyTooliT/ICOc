@@ -14,8 +14,6 @@ kAccX = 200/(2**16-1)
 dAccX = -100
 kBattery = (57*3.3)/(10*2**16)
 
-
-RssiStuMin=-60#dBm
 RssiSthMin=-60#dBm
 
 # Recalculation Factors
