@@ -395,7 +395,24 @@ class TestSth(unittest.TestCase):
     def test0099Reset(self):
         self.tWorkSheetWrite("D", "Tests Reset Command")
         self._resetStu()
-        self.test0002Ack()
+        cmd = self.Can.CanCmd(MyToolItBlock["System"], MyToolItSystem["ActiveState"], 1, 0)
+        expectedData = ActiveState()
+        expectedData.asbyte = 0
+        expectedData.b.u2NodeState = Node["Application"]
+        expectedData.b.u3NetworkState = NetworkState["Operating"]
+        msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [expectedData.asbyte])
+        self.Can.Logger.Info("Write Message")
+        self.Can.WriteFrame(msg)
+        self.Can.Logger.Info("Wait 200ms")
+        time.sleep(0.2)
+        cmd = self.Can.CanCmd(MyToolItBlock["System"], MyToolItSystem["ActiveState"], 0, 0)
+        msgAckExpected = self.Can.CanMessage20(cmd, MyToolItNetworkNr["STU1"], MyToolItNetworkNr["SPU1"], [0])
+        self.Can.Logger.Info("Send ID: " + hex(msg.ID) + "; Expected ID: " + hex(msgAckExpected.ID) + "; Received ID: " + hex(self.Can.getReadMessage(-1).ID))
+        self.Can.Logger.Info("Send Data: " + hex(0) + "; Expected Data: " + hex(expectedData.asbyte) + "; Received Data: " + hex(self.Can.getReadMessage(-1).DATA[0]))
+        self.tWorkSheetWrite("E", "Test failed")
+        self.assertEqual(hex(msgAckExpected.ID), hex(self.Can.getReadMessage(-1).ID))
+        self.assertEqual(expectedData.asbyte, self.Can.getReadMessage(-1).DATA[0])
+        self.tWorkSheetWrite("E", "Test OK")
         
     """
     Test that RSSI is good enough
@@ -423,48 +440,48 @@ class TestSth(unittest.TestCase):
     """
 
     def test0399Eerpom(self):
-        for i in range(0, 100):
-            print(str(i))
-            self.tWorkSheetWrite("D", "Write EEPROM with data and check that by read")
-            # Batch Number
-            batchFile = open("BatchNumberStu.txt")
-            batchData = batchFile.readlines()
-            batchData = batchData[0]
-            batchFile.close()
-            batchFile = open("BatchNumberStu.txt", "w")
-            iBatchNr = int(batchData)
-            iBatchNr += 1                
-            sBatchNumber = str(iBatchNr)
-            batchFile.write(sBatchNumber)
-            batchFile.close()
-            self.vChangeExcelCell("Statistics@0x5", "E8", sBatchNumber)
-            # Write
-            workSheetNames = []
-            workbook = openpyxl.load_workbook(self.sExcelEepromContentFileName)
-            if workbook:
-                for worksheetName in workbook.sheetnames:
-                    sName = str(worksheetName).split('@')
-                    _sAddress = sName[1]
-                    sName = sName[0]
-                    workSheetNames.append(sName)  
-            sDate = date.today()
-            sDate = str(sDate).replace('-', '')
-            self.vChangeExcelCell("Statistics@0x5", "E7", sDate)       
-            for pageName in workSheetNames:
-                sError = self.sExcelSheetWrite(pageName, MyToolItNetworkNr["STU1"])  
-                if None != sError:
-                    break      
-            # Read Back
-            sError = None
-            copyfile(self.sExcelEepromContentFileName, self.sExcelEepromContentReadBackFileName)
-            for pageName in workSheetNames:
-                sError = self.sExcelSheetRead(pageName, MyToolItNetworkNr["STU1"])
-                if None != sError:
-                    break
-            [tWorkSheetNameError, sCellNumberError] = self.tCompareEerpomWriteRead()
-            self.tWorkSheetWrite("E", "Error Worksheet: " + str(tWorkSheetNameError))
-            self.tWorkSheetWrite("F", "Error Cell: " + str(sCellNumberError))
-            self.assertEqual(tWorkSheetNameError, None)
+        self._resetStu()
+        self.tWorkSheetWrite("D", "Write EEPROM with data and check that by read")
+        # Batch Number
+        batchFile = open("BatchNumberStu.txt")
+        batchData = batchFile.readlines()
+        batchData = batchData[0]
+        batchFile.close()
+        batchFile = open("BatchNumberStu.txt", "w")
+        iBatchNr = int(batchData)
+        iBatchNr += 1                
+        sBatchNumber = str(iBatchNr)
+        batchFile.write(sBatchNumber)
+        batchFile.close()
+        self.vChangeExcelCell("Statistics@0x5", "E8", sBatchNumber)
+        # Write
+        workSheetNames = []
+        workbook = openpyxl.load_workbook(self.sExcelEepromContentFileName)
+        if workbook:
+            for worksheetName in workbook.sheetnames:
+                sName = str(worksheetName).split('@')
+                _sAddress = sName[1]
+                sName = sName[0]
+                workSheetNames.append(sName)  
+        sDate = date.today()
+        sDate = str(sDate).replace('-', '')
+        self.vChangeExcelCell("Statistics@0x5", "E7", sDate)       
+        for pageName in workSheetNames:
+            sError = self.sExcelSheetWrite(pageName, MyToolItNetworkNr["STU1"])  
+            if None != sError:
+                break      
+        # Read Back
+        sError = None
+        copyfile(self.sExcelEepromContentFileName, self.sExcelEepromContentReadBackFileName)
+        for pageName in workSheetNames:
+            sError = self.sExcelSheetRead(pageName, MyToolItNetworkNr["STU1"])
+            if None != sError:
+                break
+        [tWorkSheetNameError, sCellNumberError] = self.tCompareEerpomWriteRead()
+        self.tWorkSheetWrite("E", "Error Worksheet: " + str(tWorkSheetNameError))
+        self.tWorkSheetWrite("F", "Error Cell: " + str(sCellNumberError))
+        self.assertEqual(tWorkSheetNameError, None)
+            
                 
     """
     Move Test Report to Results
@@ -487,7 +504,7 @@ class TestSth(unittest.TestCase):
             self.tWorkSheetWrite("E", "NOK")   
             self.tWorkbook.save(self.sTestReport + ".xlsx")  
             for i in range(0, 100):
-                sStoreFileName = "./ResultsSth/NOK_" + self.sTestReport + "_nr" + str(i) + ".xlsx"
+                sStoreFileName = "./ResultsStu/NOK_" + self.sTestReport + "_nr" + str(i) + ".xlsx"
                 if False == os.path.isfile(sStoreFileName):
                     os.rename(self.sTestReport + ".xlsx", sStoreFileName)    
                     break                  
@@ -495,7 +512,7 @@ class TestSth(unittest.TestCase):
             self.tWorkSheetWrite("E", "OK")
             self.tWorkbook.save(self.sTestReport + ".xlsx")
             for i in range(0, 100):
-                sStoreFileName = "./ResultsSth/OK_" + self.sTestReport + "_nr" + str(i) + ".xlsx"
+                sStoreFileName = "./ResultsStu/OK_" + self.sTestReport + "_nr" + str(i) + ".xlsx"
                 if False == os.path.isfile(sStoreFileName):
                     os.rename(self.sTestReport + ".xlsx", sStoreFileName) 
                     break
