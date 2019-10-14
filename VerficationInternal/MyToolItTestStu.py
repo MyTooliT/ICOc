@@ -83,7 +83,7 @@ class TestStu(unittest.TestCase):
         timeStamp = self.Can.getTimeMs()
         for offset in range(0, 256, 4):
             au8Payload = [iPage, 0xFF & offset, 4, 0] + au8Content
-            self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Write"], au8Payload)
+            self.Can.cmdSend(MyToolItNetworkNr["STU1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Write"], au8Payload)
         self.Can.Logger.Info("Page Write Time: " + str(self.Can.getTimeMs() - timeStamp) + "ms")
 
     """
@@ -93,7 +93,7 @@ class TestStu(unittest.TestCase):
         timeStamp = self.Can.getTimeMs()
         for offset in range(0, 256, 4):
             au8Payload = [iPage, 0xFF & offset, 4, 0, 0, 0, 0, 0]
-            index = self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Read"], au8Payload)   
+            index = self.Can.cmdSend(MyToolItNetworkNr["STU1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Read"], au8Payload)   
             dataReadBack = self.Can.getReadMessageData(index)     
             for dataByte in dataReadBack[4:]:
                 self.assertEqual(dataByte, value)
@@ -314,9 +314,9 @@ class TestStu(unittest.TestCase):
             self.Can.Logger.Info("Connect to Bluetooth Device")
             while False == self.Can.bBlueToothConnectDeviceConnect(MyToolItNetworkNr["STU1"], 0):
                 self.Can.Logger.Info("Device Connect to number 0")
-            for i in range(0, BluetoothTime["Connect"]):
+            for _i in range(0, BluetoothTime["Connect"]):
                 if(False != self.Can.bBlueToothCheckConnect(MyToolItNetworkNr["STU1"])):
-                    i = 16
+                    _i = 16
                 else:
                     time.sleep(1)
             
@@ -331,9 +331,9 @@ class TestStu(unittest.TestCase):
             self.assertEqual("Walther0", Name)
             while False == self.Can.bBlueToothConnectDeviceConnect(MyToolItNetworkNr["STU1"], 0):
                 self.Can.Logger.Info("Device Connect to number 0")
-            for i in range(0, BluetoothTime["Connect"]):
+            for _i in range(0, BluetoothTime["Connect"]):
                 if(False != self.Can.bBlueToothCheckConnect(MyToolItNetworkNr["STU1"])):
-                    i = 16
+                    _i = 16
                 else:
                     time.sleep(1)
             
@@ -398,7 +398,7 @@ class TestStu(unittest.TestCase):
                 break
         time.sleep(0.5)
         Rssi = []
-        for _i in range(0, 20):
+        for _i in range(0, 40):
             Rssi.append(self.Can.BlueToothRssiGet(MyToolItNetworkNr["STU1"], 0))
             self.Can.Logger.Info("RSSI: " + str(int(Rssi[-1])))
             self.assertNotEqual(Rssi, 127)
@@ -481,7 +481,7 @@ class TestStu(unittest.TestCase):
         self.Can.Logger.Info("Write Message")
         self.Can.WriteFrame(msg)
         self.Can.Logger.Info("Wait 200ms")
-        time.sleep(0.2)
+        time.sleep(0.4)
         cmd = self.Can.CanCmd(MyToolItBlock["System"], MyToolItSystem["ActiveState"], 0, 0)
         msgAckExpected = self.Can.CanMessage20(cmd, MyToolItNetworkNr["STH1"], MyToolItNetworkNr["SPU1"], [expectedData.asbyte])
         self.Can.Logger.Info("Send ID: " + hex(msg.ID) + "; Expected ID: " + hex(msgAckExpected.ID) + "; Received ID: " + hex(self.Can.getReadMessage(-1).ID))
@@ -750,7 +750,7 @@ class TestStu(unittest.TestCase):
             startData.extend(dataReadBack[4:])
             
         #Test it self
-        for _i in range(0, 100):
+        for _i in range(0, 25):
             self.vEepromWritePage(EepromPage["Statistics"], 0xAA)
             self.vEepromReadPage(EepromPage["Statistics"], 0xAA)
             self.vEepromWritePage(EepromPage["Statistics"], 0xFF)
@@ -808,10 +808,10 @@ class TestStu(unittest.TestCase):
                     au8Content.append(u8Byte)
                 au8ReadCheck.extend(au8Content)
                 au8Payload = [EepromPage["ProductData"], 0xFF & offset, 4, 0] + au8Content
-                self.Can.cmdSend(MyToolItNetworkNr[""], MyToolItBlock["Eeprom"], MyToolItEeprom["Write"], au8Payload)
+                self.Can.cmdSend(MyToolItNetworkNr["STU1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Write"], au8Payload)
             for offset in range(0, 256, 4):
                 au8Payload = [EepromPage["ProductData"], 0xFF & offset, 4, 0, 0, 0, 0, 0]
-                index = self.Can.cmdSend(MyToolItNetworkNr[""], MyToolItBlock["Eeprom"], MyToolItEeprom["Read"], au8Payload)   
+                index = self.Can.cmdSend(MyToolItNetworkNr["STU1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Read"], au8Payload)   
                 dataReadBack = self.Can.getReadMessageData(index)     
                 self.assertEqual(dataReadBack[4:], au8ReadCheck[offset:offset+4])
                                       
@@ -820,7 +820,7 @@ class TestStu(unittest.TestCase):
             for offset in range(0, 256, 4):
                 payload = [EepromPage["ProductData"], 0xFF & offset, 4, 0]
                 payload.extend(startData[offset:offset + 4])
-                self.Can.cmdSend(MyToolItNetworkNr[""], MyToolItBlock["Eeprom"], MyToolItEeprom["Write"], payload)
+                self.Can.cmdSend(MyToolItNetworkNr["STU1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Write"], payload)
             self.Can.Logger.Info("Page Write Time: " + str(self.Can.getTimeMs() - timeStamp) + "ms")   
         
     """

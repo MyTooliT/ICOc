@@ -79,8 +79,8 @@ SelfTestOutputChangemVTyp = 110
 
 SigIndAccXQ1 = 2 ** 15 * 0.99
 SigIndAccXQ25 = 2 ** 15 * 0.994
-SigIndAccXMedL = 2 ** 15 * 0.996
-SigIndAccXMedH = 2 ** 15 * 1.004
+SigIndAccXMedL = 2 ** 15 * 0.995
+SigIndAccXMedH = 2 ** 15 * 1.005
 SigIndAccXQ75 = 2 ** 15 * 1.008
 SigIndAccXQ99 = 2 ** 15 * 1.01
 SigIndAccXVar = 2000

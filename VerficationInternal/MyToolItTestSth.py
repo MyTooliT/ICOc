@@ -3572,7 +3572,7 @@ class TestSth(unittest.TestCase):
             startData.extend(dataReadBack[4:])
             
         #Test it self
-        for _i in range(0, 100):
+        for _i in range(0, 25):
             self.vEepromWritePage(EepromPage["Statistics"], 0xAA)
             self.vEepromReadPage(EepromPage["Statistics"], 0xAA)
             self.vEepromWritePage(EepromPage["Statistics"], 0xFF)

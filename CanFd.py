@@ -817,7 +817,7 @@ class CanFd(object):
         self.tWriteFrameWaitAckRetries(message) 
         return indexStart
         
-    def streamingStop(self, receiver, subCmd, bErrorExit=True, notAckIdleWaitTimeMs=0.0001):
+    def streamingStop(self, receiver, subCmd, bErrorExit=True, notAckIdleWaitTimeMs=0.00005):
         if MyToolItStreaming["Acceleration"] == subCmd:
             self.AccConfig.asbyte = 0
             self.AccConfig.b.bStreaming = 1
