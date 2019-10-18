@@ -20,27 +20,37 @@ from MyToolItStu import TestConfig, StuErrorWord
 sVersion = "v2.1.4"
 sLogFile = 'TestStu.txt'
 sLogLocation = '../../Logs/STU/'
-        
+sBuildLocation = "../../SimplicityStudio/v4_workspace/client_firmware/builds/"
+sSilabsCommanderLocation = "../../SimplicityStudio/SimplicityCommander/"
+sAdapterSerialNo = "440116697"
+sBoardType = "BGM111A256V2"
 
 class TestStu(unittest.TestCase):
 
     def setUp(self):
+        self.sBuildLocation = sBuildLocation + sVersion
+        self.sBootloader = sBuildLocation + "BootloaderOtaBgm111.s37"
+        self.sAdapterSerialNo = sAdapterSerialNo
+        self.sBoardType = sBoardType 
+        self.sSilabsCommander = sSilabsCommanderLocation + "commander"
         self.fileName = sLogLocation + self._testMethodName + ".txt"
         self.fileNameError = sLogLocation + "Error_" + self._testMethodName + ".txt"
+        self.bError = False
         self.Can = CanFd.CanFd(CanFd.PCAN_BAUD_1M, self.fileName, self.fileNameError, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], FreshLog=True)
         self.Can.Logger.Info("TestCase: " + str(self._testMethodName))
-        self.Can.CanTimeStampStart(self._resetStu()["CanTime"])
-        self.bError = False
-        self.Can.Logger.Info("STU BlueTooth Address: " + hex(self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"])))
-        self._statusWords()
-        self._StuWDog()
-        self.Can.Logger.Info("_______________________________________________________________________________________________________________")
-        self.Can.Logger.Info("Start")
+        if "test0000FirmwareFlash" != self._testMethodName:        
+            self.Can.CanTimeStampStart(self._resetStu()["CanTime"])
+            self.sStuAddr = hex(self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"]))
+            self.Can.Logger.Info("STU BlueTooth Address: " + self.sStuAddr)
+            self._statusWords()
+            self._StuWDog()
 
     def tearDown(self): 
-        self.Can.Logger.Info("Fin")
-        self.Can.Logger.Info("_______________________________________________________________________________________________________________")
         if False == self.Can.bError:
+            if "test0000FirmwareFlash" == self._testMethodName:
+                self.sStuAddr = hex(self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"]))
+                self.Can.Logger.Info("STU BlueTooth Address: " + self.sStuAddr)
+                self._StuWDog()
             self._statusWords()
             self.Can.Logger.Info("Test Time End Time Stamp")
         if False != self.Can.bError:
@@ -89,6 +99,7 @@ class TestStu(unittest.TestCase):
     """
     Read page and check content
     """
+
     def vEepromReadPage(self, iPage, value):
         timeStamp = self.Can.getTimeMs()
         for offset in range(0, 256, 4):
@@ -98,12 +109,62 @@ class TestStu(unittest.TestCase):
             for dataByte in dataReadBack[4:]:
                 self.assertEqual(dataByte, value)
         self.Can.Logger.Info("Page Read Time: " + str(self.Can.getTimeMs() - timeStamp) + "ms")
-           
+     
+    """
+    commander.exe convert ..\v4_workspace\client_firmware\builds\BootloaderOtaBgm111.s37 ..\v4_workspace\client_firmware\builds\v2.1.4\Client.s37 --patch 0x0fe04000:0x00 --patch 0x0fe041FC:0xF0 --patch 0x0fe041F8:0xFD -o manufacturing_image.hex -d BGM111A256V2 
+    commander flash manufacturing_image.hex --address 0x0 --serialno 440116697 -d BGM111A256V2 
+    """
+
+    def test0000FirmwareFlash(self):      
+        try:
+            os.remove(sLogLocation + self._testMethodName + "ManufacturingCreateResport.txt")
+        except:
+            pass
+        try:
+            os.remove(sLogLocation + self._testMethodName + "ManufacturingFlashResport.txt")
+        except:
+            pass
+        sSystemCall = self.sSilabsCommander + " convert "
+        sSystemCall += self.sBootloader + " "
+        sSystemCall += self.sBuildLocation + "/Client.s37 "
+        sSystemCall += "--patch 0x0fe04000:0x00 --patch 0x0fe041FC:0xF0 --patch 0x0fe041F8:0xFD "
+        sSystemCall += "-o " + self.sBuildLocation + "/manufacturing_imageStu" + sVersion + ".hex " 
+        sSystemCall += "-d BGM111A256V2 "
+        sSystemCall += ">> " + sLogLocation 
+        sSystemCall += self._testMethodName + "ManufacturingCreateResport.txt"
+        if os.name == 'nt': 
+            sSystemCall = sSystemCall.replace("/", "\\")
+            os.system(sSystemCall)
+        # for mac and linux(here, os.name is 'posix') 
+        else: 
+            os.system(sSystemCall)
+        tFile = open(sLogLocation + self._testMethodName + "ManufacturingCreateResport.txt", "r", encoding='utf-8')
+        asData = tFile.readlines()
+        tFile.close()
+        self.assertEqual("DONE\n", asData[-1])
+        sSystemCall = self.sSilabsCommander + " flash "
+        sSystemCall += self.sBuildLocation + "/manufacturing_imageStu" + sVersion + ".hex " 
+        sSystemCall += "--address 0x0 "
+        sSystemCall += "--serialno " + self.sAdapterSerialNo + " "
+        sSystemCall += "-d " + self.sBoardType + " "
+        sSystemCall += ">> " + sLogLocation 
+        sSystemCall += self._testMethodName + "ManufacturingFlashResport.txt"
+        if os.name == 'nt': 
+            sSystemCall = sSystemCall.replace("/", "\\")
+            os.system(sSystemCall)
+        # for mac and linux(here, os.name is 'posix') 
+        else: 
+            os.system(sSystemCall)    
+        tFile = open(sLogLocation + self._testMethodName + "ManufacturingCreateResport.txt", "r", encoding='utf-8')
+        asData = tFile.readlines()
+        tFile.close()
+        self.assertEqual("DONE\n", asData[-1])   
+        
     """
     Test Acknowledgement from STU. Write message and check identifier to be ack (No bError)
     """    
 
-    def test0001Ack(self):
+    def test0005Ack(self):
         cmd = self.Can.CanCmd(MyToolItBlock["System"], MyToolItSystem["ActiveState"], 1, 0)
         msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [0])
         self.Can.Logger.Info("Write Message")
@@ -121,7 +182,7 @@ class TestStu(unittest.TestCase):
         self.assertEqual(hex(msgAckExpected.ID), hex(self.Can.getReadMessage(-1).ID))
         self.assertEqual(expectedData.asbyte, self.Can.getReadMessage(-1).DATA[0])
         
-    def test0004SthVersionNumber(self):
+    def test0006SthVersionNumber(self):
         iIndex = self.Can.cmdSend(MyToolItNetworkNr["STU1"], MyToolItBlock["ProductData"], MyToolItProductData["FirmwareVersion"], [])
         au8Version = self.Can.getReadMessageData(iIndex)[-3:]
         sVersion = "v" + str(au8Version[0]) + "." + str(au8Version[1]) + "." + str(au8Version[2])
@@ -749,7 +810,7 @@ class TestStu(unittest.TestCase):
             dataReadBack = self.Can.getReadMessageData(index)     
             startData.extend(dataReadBack[4:])
             
-        #Test it self
+        # Test it self
         for _i in range(0, 25):
             self.vEepromWritePage(EepromPage["Statistics"], 0xAA)
             self.vEepromReadPage(EepromPage["Statistics"], 0xAA)
@@ -784,8 +845,6 @@ class TestStu(unittest.TestCase):
             self.Can.cmdSend(MyToolItNetworkNr["STU1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Write"], payload)
         self.Can.Logger.Info("Page Write Time: " + str(self.Can.getTimeMs() - timeStamp) + "ms")   
    
-   
-   
     """
     Check EEPROM Read/Write - Determistic data
     """   
@@ -798,13 +857,13 @@ class TestStu(unittest.TestCase):
             dataReadBack = self.Can.getReadMessageData(index)     
             startData.extend(dataReadBack[4:])
             
-        #Test it self
+        # Test it self
         for _i in range(0, 100):
             au8ReadCheck = []
             for offset in range(0, 256, 4):
                 au8Content = []
                 for _j in range(0, 4):
-                    u8Byte = int(random.random()*0xFF)
+                    u8Byte = int(random.random() * 0xFF)
                     au8Content.append(u8Byte)
                 au8ReadCheck.extend(au8Content)
                 au8Payload = [EepromPage["ProductData"], 0xFF & offset, 4, 0] + au8Content
@@ -813,7 +872,7 @@ class TestStu(unittest.TestCase):
                 au8Payload = [EepromPage["ProductData"], 0xFF & offset, 4, 0, 0, 0, 0, 0]
                 index = self.Can.cmdSend(MyToolItNetworkNr["STU1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Read"], au8Payload)   
                 dataReadBack = self.Can.getReadMessageData(index)     
-                self.assertEqual(dataReadBack[4:], au8ReadCheck[offset:offset+4])
+                self.assertEqual(dataReadBack[4:], au8ReadCheck[offset:offset + 4])
                                       
             # Write Back Page
             timeStamp = self.Can.getTimeMs()
