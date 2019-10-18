@@ -3,7 +3,7 @@
     <lastRun>
         <LogName>Watch</LogName>
         <Product>STU</Product>
-        <Version>v2.1.3</Version>
+        <Version>v2.1.4</Version>
         <NetworkNumber>STU1</NetworkNumber>
         <SheetFile>Watch</SheetFile>
         <Setup>X</Setup>
@@ -564,7 +564,7 @@
                                     <subAddress>13</subAddress>
                                     <length>1</length>
                                     <readOnly>True</readOnly>
-                                    <value>2</value>
+                                    <value>1</value>
                                     <unit />
                                     <format>unsigned</format>
                                     <description>Hardware Revision Number - Major</description>
@@ -573,16 +573,16 @@
                                     <subAddress>14</subAddress>
                                     <length>1</length>
                                     <readOnly>True</readOnly>
-                                    <value>1</value>
+                                    <value>3</value>
                                     <unit />
                                     <format>unsigned</format>
                                     <description>Hardware Revision Number - Minor</description>
                                     </entry>
-                                    <entry name="Hardware Revision - Build">
+                                    <entry name="Hardware Revision - Revision">
                                     <subAddress>15</subAddress>
                                     <length>1</length>
                                     <readOnly>True</readOnly>
-                                    <value>3</value>
+                                    <value>1</value>
                                     <unit />
                                     <format>unsigned</format>
                                     <description>Hardware Revision Number - Build</description>
@@ -636,16 +636,16 @@
                                     <subAddress>32</subAddress>
                                     <length>32</length>
                                     <readOnly>True</readOnly>
-                                    <value>0</value>
+                                    <value>MyToolItStu001-1-00001-001-2</value>
                                     <unit />
                                     <format>UTF8</format>
-                                    <description>Manufactor Serial Number</description>
+                                    <description>Manufactor Serial Number (Derived from ISBN); Product Group - Subgroup - Manufacture ID - Product Number - Check Digit</description>
                                     </entry>
                                     <entry name="Name">
                                     <subAddress>64</subAddress>
                                     <length>128</length>
                                     <readOnly>True</readOnly>
-                                    <value>0</value>
+                                    <value>Digital and Analog Communication with 5V-Supply - www.ico-tronic.com</value>
                                     <unit />
                                     <format>UTF8</format>
                                     <description>Manufactor Name; This may extend Serial Number, supports URL, extend definition, etc.</description>
