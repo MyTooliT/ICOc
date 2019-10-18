@@ -22,7 +22,10 @@ sVersion = "v2.1.4"
 sLogName = 'ProductionTestStu'
 sLogLocation = '../../Logs/ProductionTestStu/'
 sResultLocation = '../../ProductionTests/STH/'
-
+sBuildLocation = "../../SimplicityStudio/v4_workspace/client_firmware/builds/"
+sSilabsCommanderLocation = "../../SimplicityStudio/SimplicityCommander/"
+sAdapterSerialNo = "440116697"
+sBoardType = "BGM111A256V2"
 
 def sSerialNumber(sExcelFileName):
     tWorkbook = openpyxl.load_workbook(sExcelFileName)
@@ -40,7 +43,13 @@ class TestSth(unittest.TestCase):
     def setUp(self):
         global bSkip
         self.bError = False
+        self.sBuildLocation = sBuildLocation + sVersion
+        self.sBootloader = sBuildLocation + "BootloaderOtaBgm111.s37"
+        self.sAdapterSerialNo = sAdapterSerialNo
+        self.sBoardType = sBoardType 
+        self.sSilabsCommander = sSilabsCommanderLocation + "commander"
         self.iTestNumber = int(self._testMethodName[4:8])
+        self.sLogLocation = sLogLocation
         self.fileName = sLogLocation + self._testMethodName + ".txt"
         self.fileNameError = sLogLocation + "Error_" + self._testMethodName + ".txt"
         self.sExcelEepromContentFileName = "Stu" + sVersion + ".xlsx"
@@ -48,27 +57,29 @@ class TestSth(unittest.TestCase):
             self.skipTest("At least some previous test failed")
         else:
             self.Can = CanFd.CanFd(CanFd.PCAN_BAUD_1M, self.fileName, self.fileNameError, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], 0, 0, 0, FreshLog=True)
-            self.Can.Logger.Info("TestCase: " + str(self._testMethodName))
-            self.Can.CanTimeStampStart(self._resetStu()["CanTime"])  # This will also reset to STH
-            self.sStuAddr = sBlueToothMacAddr(self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"]))
-            self.Can.Logger.Info("STU BlueTooth Address: " + self.sStuAddr)
             self.sSerialNumber = sSerialNumber(self.sExcelEepromContentFileName)
-            self.sExcelEepromContentReadBackFileName = sLogName + "_" + self.sSerialNumber + "_" + self.sStuAddr.replace(":", "#") + "_ReadBack.xlsx"
             self.sDateClock = sDateClock() 
-            self.sTestReport = sLogName + "_" + self.sSerialNumber + "_" + self.sStuAddr.replace(":", "#")
-            self.tWorkbookOpenCreate()
-            self._statusWords()
-            self._SthWDog()
-            self.Can.Logger.Info("_______________________________________________________________________________________________________________")
-            self.Can.Logger.Info("Start")
+            self.Can.Logger.Info("TestCase: " + str(self._testMethodName))
+            if "test0000FirmwareFlash" != self._testMethodName:    
+                self.Can.CanTimeStampStart(self._resetStu()["CanTime"])  # This will also reset to STH
+                self.sStuAddr = sBlueToothMacAddr(self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"]))
+                self.sTestReport = sLogName + "_" + self.sSerialNumber + "_" + self.sStuAddr.replace(":", "#")
+                self.tWorkbookOpenCreate()
+                self.sExcelEepromContentReadBackFileName = sLogName + "_" + self.sSerialNumber + "_" + self.sStuAddr.replace(":", "#") + "_ReadBack.xlsx"
+                self.Can.Logger.Info("STU BlueTooth Address: " + self.sStuAddr)
+                self._statusWords()
+                self._SthWDog()
 
     def tearDown(self):
         global bSkip
-        self.Can.Logger.Info("Fin")
-        self.Can.Logger.Info("_______________________________________________________________________________________________________________")
-        if "test9999StoreTestResults" != self._testMethodName:
+        if "test9999StoreTestResults" != self._testMethodName and "test0000FirmwareFlash" != self._testMethodName:
             self.tWorkbook.save(self.sTestReport + ".xlsx")
-        self._statusWords()
+        if "test0000FirmwareFlash" == self._testMethodName:    
+            self.Can.CanTimeStampStart(self._resetStu()["CanTime"])  # This will also reset to STH
+            self.sStuAddr = sBlueToothMacAddr(self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"]))
+            self.Can.Logger.Info("STU BlueTooth Address: " + self.sStuAddr)
+            self._statusWords()
+            self._SthWDog()
         self.Can.Logger.Info("Test Time End Time Stamp")
         self.Can.__exit__()
         if self._outcome.errors[1][1]:
@@ -347,12 +358,62 @@ class TestSth(unittest.TestCase):
         worksheet = workbook.get_sheet_by_name(sWorkSheetName)    
         worksheet[sCellName] = sContent
         workbook.save(self.sExcelEepromContentFileName)   
-               
+
+    """
+    commander.exe convert ..\v4_workspace\client_firmware\builds\BootloaderOtaBgm111.s37 ..\v4_workspace\client_firmware\builds\v2.1.4\Client.s37 --patch 0x0fe04000:0x00 --patch 0x0fe041FC:0xF0 --patch 0x0fe041F8:0xFD -o manufacturing_image.hex -d BGM111A256V2 
+    commander flash manufacturing_image.hex --address 0x0 --serialno 440116697 -d BGM111A256V2 
+    """
+
+    def test0000FirmwareFlash(self):      
+        try:
+            os.remove(sLogLocation + self._testMethodName + "ManufacturingCreateResport.txt")
+        except:
+            pass
+        try:
+            os.remove(sLogLocation + self._testMethodName + "ManufacturingFlashResport.txt")
+        except:
+            pass
+        sSystemCall = self.sSilabsCommander + " convert "
+        sSystemCall += self.sBootloader + " "
+        sSystemCall += self.sBuildLocation + "/Client.s37 "
+        sSystemCall += "--patch 0x0fe04000:0x00 --patch 0x0fe041FC:0xF0 --patch 0x0fe041F8:0xFD "
+        sSystemCall += "-o " + self.sBuildLocation + "/manufacturing_imageStu" + sVersion + ".hex " 
+        sSystemCall += "-d BGM111A256V2 "
+        sSystemCall += ">> " + sLogLocation 
+        sSystemCall += self._testMethodName + "ManufacturingCreateResport.txt"
+        if os.name == 'nt': 
+            sSystemCall = sSystemCall.replace("/", "\\")
+            os.system(sSystemCall)
+        # for mac and linux(here, os.name is 'posix') 
+        else: 
+            os.system(sSystemCall)
+        tFile = open(sLogLocation + self._testMethodName + "ManufacturingCreateResport.txt", "r", encoding='utf-8')
+        asData = tFile.readlines()
+        tFile.close()
+        self.assertEqual("DONE\n", asData[-1])
+        sSystemCall = self.sSilabsCommander + " flash "
+        sSystemCall += self.sBuildLocation + "/manufacturing_imageStu" + sVersion + ".hex " 
+        sSystemCall += "--address 0x0 "
+        sSystemCall += "--serialno " + self.sAdapterSerialNo + " "
+        sSystemCall += "-d " + self.sBoardType + " "
+        sSystemCall += ">> " + sLogLocation 
+        sSystemCall += self._testMethodName + "ManufacturingFlashResport.txt"
+        if os.name == 'nt': 
+            sSystemCall = sSystemCall.replace("/", "\\")
+            os.system(sSystemCall)
+        # for mac and linux(here, os.name is 'posix') 
+        else: 
+            os.system(sSystemCall)    
+        tFile = open(sLogLocation + self._testMethodName + "ManufacturingCreateResport.txt", "r", encoding='utf-8')
+        asData = tFile.readlines()
+        tFile.close()
+        self.assertEqual("DONE\n", asData[-1]) 
+                       
     """
     Test Acknowledgement from STH. Write message and check identifier to be ack (No bError)
     """
 
-    def test0002Ack(self):
+    def test0005Ack(self):
         self.tWorkSheetWrite("D", "This test case checks the ability to communicate with the STU")
         cmd = self.Can.CanCmd(MyToolItBlock["System"], MyToolItSystem["ActiveState"], 1, 0)
         expectedData = ActiveState()
@@ -481,7 +542,6 @@ class TestSth(unittest.TestCase):
         self.tWorkSheetWrite("E", "Error Worksheet: " + str(tWorkSheetNameError))
         self.tWorkSheetWrite("F", "Error Cell: " + str(sCellNumberError))
         self.assertEqual(tWorkSheetNameError, None)
-            
                 
     """
     Move Test Report to Results
@@ -504,7 +564,7 @@ class TestSth(unittest.TestCase):
             self.tWorkSheetWrite("E", "NOK")   
             self.tWorkbook.save(self.sTestReport + ".xlsx")  
             for i in range(0, 100):
-                sStoreFileName = "./ResultsStu/NOK_" + self.sTestReport + "_nr" + str(i) + ".xlsx"
+                sStoreFileName = self.sLogLocation + "/ResultsStu/NOK_" + self.sTestReport + "_nr" + str(i) + ".xlsx"
                 if False == os.path.isfile(sStoreFileName):
                     os.rename(self.sTestReport + ".xlsx", sStoreFileName)    
                     break                  
@@ -512,7 +572,7 @@ class TestSth(unittest.TestCase):
             self.tWorkSheetWrite("E", "OK")
             self.tWorkbook.save(self.sTestReport + ".xlsx")
             for i in range(0, 100):
-                sStoreFileName = "./ResultsStu/OK_" + self.sTestReport + "_nr" + str(i) + ".xlsx"
+                sStoreFileName = self.sLogLocation + "/ResultsStu/OK_" + self.sTestReport + "_nr" + str(i) + ".xlsx"
                 if False == os.path.isfile(sStoreFileName):
                     os.rename(self.sTestReport + ".xlsx", sStoreFileName) 
                     break
