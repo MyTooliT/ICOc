@@ -645,7 +645,7 @@
                                     <subAddress>64</subAddress>
                                     <length>128</length>
                                     <readOnly>True</readOnly>
-                                    <value>Digital and Analog Communication with 5V-Supply - www.ico-tronic.com</value>
+                                    <value>Digital and Analog Communication with 5V-Supply</value>
                                     <unit />
                                     <format>UTF8</format>
                                     <description>Manufactor Name; This may extend Serial Number, supports URL, extend definition, etc.</description>
