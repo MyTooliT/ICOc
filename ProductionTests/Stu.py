@@ -69,9 +69,13 @@ class TestSth(unittest.TestCase):
                 self.Can.Logger.Info("STU BlueTooth Address: " + self.sStuAddr)
                 self._statusWords()
                 self._SthWDog()
+            self.Can.Logger.Info("_______________________________________________________________________________________________________________")
+            self.Can.Logger.Info("Start")
 
     def tearDown(self):
         global bSkip
+        self.Can.Logger.Info("Fin")
+        self.Can.Logger.Info("_______________________________________________________________________________________________________________")
         if "test9999StoreTestResults" != self._testMethodName and "test0000FirmwareFlash" != self._testMethodName:
             self.tWorkbook.save(self.sTestReport + ".xlsx")
         if "test0000FirmwareFlash" == self._testMethodName:    
@@ -378,7 +382,7 @@ class TestSth(unittest.TestCase):
         sSystemCall += self.sBuildLocation + "/Client.s37 "
         sSystemCall += "--patch 0x0fe04000:0x00 --patch 0x0fe041FC:0xF0 --patch 0x0fe041F8:0xFD "
         sSystemCall += "-o " + self.sBuildLocation + "/manufacturing_imageStu" + sVersion + ".hex " 
-        sSystemCall += "-d BGM111A256V2 "
+        sSystemCall += "-d " + self.sBoardType + " "
         sSystemCall += ">> " + sLogLocation 
         sSystemCall += self._testMethodName + "ManufacturingCreateResport.txt"
         if os.name == 'nt': 
@@ -390,6 +394,7 @@ class TestSth(unittest.TestCase):
         tFile = open(sLogLocation + self._testMethodName + "ManufacturingCreateResport.txt", "r", encoding='utf-8')
         asData = tFile.readlines()
         tFile.close()
+        self.assertEqual("Overwriting file:", asData[-2][:17])
         self.assertEqual("DONE\n", asData[-1])
         sSystemCall = self.sSilabsCommander + " flash "
         sSystemCall += self.sBuildLocation + "/manufacturing_imageStu" + sVersion + ".hex " 
@@ -404,10 +409,12 @@ class TestSth(unittest.TestCase):
         # for mac and linux(here, os.name is 'posix') 
         else: 
             os.system(sSystemCall)    
-        tFile = open(sLogLocation + self._testMethodName + "ManufacturingCreateResport.txt", "r", encoding='utf-8')
+        tFile = open(sLogLocation + self._testMethodName + "ManufacturingFlashResport.txt", "r", encoding='utf-8')
         asData = tFile.readlines()
         tFile.close()
-        self.assertEqual("DONE\n", asData[-1]) 
+        self.assertEqual("range 0x0FE04000 - 0x0FE047FF (2 KB)\n", asData[-2][10:])   
+        self.assertEqual("DONE\n", asData[-1])    
+
                        
     """
     Test Acknowledgement from STH. Write message and check identifier to be ack (No bError)

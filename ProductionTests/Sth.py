@@ -22,9 +22,11 @@ sVersion = "v2.1.5"
 sLogName = 'ProductionTestSth'
 sLogLocation = '../../Logs/ProductionTestSth/'
 sOtaComPort = 'COM6'
-sOtaLocation = "../../SimplicityStudio/v4_workspace/server_firmware/builds/"
+sBuildLocation = "../../SimplicityStudio/v4_workspace/server_firmware/builds/"
 sResultLocation = '../../ProductionTests/STH/'
-
+sSilabsCommanderLocation = "../../SimplicityStudio/SimplicityCommander/"
+sAdapterSerialNo = "440115849"
+sBoardType = "BGM113A256V2"
 
 def sSerialNumber(sExcelFileName):
     tWorkbook = openpyxl.load_workbook(sExcelFileName)
@@ -41,9 +43,14 @@ class TestSth(unittest.TestCase):
 
     def setUp(self):
         global bSkip
+        self.sBuildLocation = sBuildLocation + sVersion
+        self.sBootloader = sBuildLocation + "BootloaderOtaBgm113.s37"
+        self.sAdapterSerialNo = sAdapterSerialNo
+        self.sBoardType = sBoardType 
+        self.sSilabsCommander = sSilabsCommanderLocation + "commander"
         self.bError = False
         vSthLimitsConfig(1, True)
-        self.sOtaLocation = sOtaLocation + sVersion
+        self.sBuildLocation = sBuildLocation + sVersion
         self.iTestNumber = int(self._testMethodName[4:8])
         self.fileName = sLogLocation + self._testMethodName + ".txt"
         self.fileNameError = sLogLocation + "Error_" + self._testMethodName + ".txt"
@@ -51,23 +58,24 @@ class TestSth(unittest.TestCase):
         if False != bSkip and "test9999StoreTestResults" != self._testMethodName:
             self.skipTest("At least some previous test failed")
         else:
+            self.sDateClock = sDateClock() 
             self.Can = CanFd.CanFd(CanFd.PCAN_BAUD_1M, self.fileName, self.fileNameError, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], AdcPrescalerReset, AdcAcquisitionTimeReset, AdcAcquisitionOverSamplingRateReset, FreshLog=True)
             self.Can.Logger.Info("TestCase: " + str(self._testMethodName))
-            self.Can.CanTimeStampStart(self._resetStu()["CanTime"])  # This will also reset to STH
-            self.Can.Logger.Info("Connect to STH")
-            self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"], log=False)
-            self.sStuAddr = sBlueToothMacAddr(self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"]))
-            self.sSthAddr = sBlueToothMacAddr(self.Can.BlueToothAddress(MyToolItNetworkNr["STH1"]))
-            self.Can.Logger.Info("STU BlueTooth Address: " + self.sStuAddr)
-            self.Can.Logger.Info("STH BlueTooth Address: " + self.sSthAddr)
             self.sSerialNumber = sSerialNumber(self.sExcelEepromContentFileName)
-            self.sExcelEepromContentReadBackFileName = sLogName + "_" + self.sSerialNumber + "_" + self.sSthAddr.replace(":", "#") + "_ReadBack.xlsx"
-            self.sDateClock = sDateClock() 
-            self.sTestReport = sLogName + "_" + self.sSerialNumber + "_" + self.sSthAddr.replace(":", "#")
-            self.tWorkbookOpenCreate()
-            self._statusWords()
-            self._iSthAdcTemp()
-            self._SthWDog()
+            self.Can.CanTimeStampStart(self._resetStu()["CanTime"])  # This will also reset to STH
+            if "test0000FirmwareFlash" != self._testMethodName:
+                self.sTestReport = sLogName + "_" + self.sSerialNumber + "_" + self.sSthAddr.replace(":", "#")   
+                self.sSthAddr = sBlueToothMacAddr(self.Can.BlueToothAddress(MyToolItNetworkNr["STH1"]))
+                self.sExcelEepromContentReadBackFileName = sLogName + "_" + self.sSerialNumber + "_" + self.sSthAddr.replace(":", "#") + "_ReadBack.xlsx"
+                self.Can.Logger.Info("Connect to STH")
+                self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"], log=False)                
+                self.tWorkbookOpenCreate()
+                self._statusWords()
+                self._iSthAdcTemp()
+                self._SthWDog()
+                self.Can.Logger.Info("STH BlueTooth Address: " + self.sSthAddr)
+            self.sStuAddr = sBlueToothMacAddr(self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"]))
+            self.Can.Logger.Info("STU BlueTooth Address: " + self.sStuAddr)
             self.Can.Logger.Info("_______________________________________________________________________________________________________________")
             self.Can.Logger.Info("Start")
 
@@ -75,14 +83,15 @@ class TestSth(unittest.TestCase):
         global bSkip
         self.Can.Logger.Info("Fin")
         self.Can.Logger.Info("_______________________________________________________________________________________________________________")
-        if "test9999StoreTestResults" != self._testMethodName:
+        if "test9999StoreTestResults" != self._testMethodName and "test0000FirmwareFlash" != self._testMethodName:
             self.tWorkbook.save(self.sTestReport + ".xlsx")
-        self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"])
-        self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"])
-        self._statusWords()
-        self._iSthAdcTemp()
-        self.Can.Logger.Info("Test Time End Time Stamp")
-        self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
+        if "test0000FirmwareFlash" != self._testMethodName:
+            self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"])
+            self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"])
+            self._statusWords()
+            self._iSthAdcTemp()
+            self.Can.Logger.Info("Test Time End Time Stamp")
+            self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
         self.Can.__exit__()
         if self._outcome.errors[1][1]:
             bSkip = True
@@ -386,7 +395,77 @@ class TestSth(unittest.TestCase):
         worksheet[sCellName] = sContent
         workbook.save(self.sExcelEepromContentFileName)   
     
-    
+    """
+    commander.exe convert ..\v4_workspace\server_firmware\builds\BootloaderOtaBgm113.s37 ..\v4_workspace\server_firmware\builds\v2.1.5\Server.s37 --patch 0x0fe04000:0x00 --patch 0x0fe041FC:0xF0 --patch 0x0fe041F8:0xFD -o manufacturing_image.hex -d BGM113A256V2 
+    commander flash manufacturing_image.hex --address 0x0 --serialno 440116697 -d BGM113A256V2 
+    """
+
+    def test0000FirmwareFlash(self):      
+        try:
+            os.remove(sLogLocation + self._testMethodName + "ManufacturingCreateResport.txt")
+        except:
+            pass
+        try:
+            os.remove(sLogLocation + self._testMethodName + "ManufacturingFlashResport.txt")
+        except:
+            pass
+        try:
+            os.remove(sLogLocation + self._testMethodName + "DeviceInfo.txt")
+        except:
+            pass
+ 
+        sSystemCall = self.sSilabsCommander + " device info "
+        sSystemCall += "--serialno " + self.sAdapterSerialNo + " " 
+        sSystemCall += "-d " + self.sBoardType + " "
+        sSystemCall += ">> " + sLogLocation 
+        sSystemCall += self._testMethodName + "DeviceInfo.txt"
+        if os.name == 'nt': 
+            sSystemCall = sSystemCall.replace("/", "\\")
+            os.system(sSystemCall)
+        # for mac and linux(here, os.name is 'posix') 
+        else: 
+            os.system(sSystemCall)
+        tFile = open(sLogLocation + self._testMethodName + "DeviceInfo.txt", "r", encoding='utf-8')
+        asData = tFile.readlines()
+        tFile.close()            
+        if "Unique ID" == asData[-2][:9]:            
+            sSystemCall = self.sSilabsCommander + " convert "
+            sSystemCall += self.sBootloader + " "
+            sSystemCall += self.sBuildLocation + "/Server.s37 "
+            sSystemCall += "--patch 0x0fe04000:0x00 --patch 0x0fe041FC:0xF0 --patch 0x0fe041F8:0xFD "
+            sSystemCall += "-o " + self.sBuildLocation + "/manufacturing_imageSth" + sVersion + ".hex " 
+            sSystemCall += "-d " + self.sBoardType + " "
+            sSystemCall += ">> " + sLogLocation 
+            sSystemCall += self._testMethodName + "ManufacturingCreateResport.txt"
+            if os.name == 'nt': 
+                sSystemCall = sSystemCall.replace("/", "\\")
+                os.system(sSystemCall)
+            # for mac and linux(here, os.name is 'posix') 
+            else: 
+                os.system(sSystemCall)
+            tFile = open(sLogLocation + self._testMethodName + "ManufacturingCreateResport.txt", "r", encoding='utf-8')
+            asData = tFile.readlines()
+            tFile.close()
+            self.assertEqual("Overwriting file:", asData[-2][:17])
+            self.assertEqual("DONE\n", asData[-1])
+            sSystemCall = self.sSilabsCommander + " flash "
+            sSystemCall += self.sBuildLocation + "/manufacturing_imageSth" + sVersion + ".hex " 
+            sSystemCall += "--address 0x0 "
+            sSystemCall += "--serialno " + self.sAdapterSerialNo + " "
+            sSystemCall += "-d " + self.sBoardType + " "
+            sSystemCall += ">> " + sLogLocation 
+            sSystemCall += self._testMethodName + "ManufacturingFlashResport.txt"
+            if os.name == 'nt': 
+                sSystemCall = sSystemCall.replace("/", "\\")
+                os.system(sSystemCall)
+            # for mac and linux(here, os.name is 'posix') 
+            else: 
+                os.system(sSystemCall)    
+            tFile = open(sLogLocation + self._testMethodName + "ManufacturingFlashResport.txt", "r", encoding='utf-8')
+            asData = tFile.readlines()
+            tFile.close()
+            self.assertEqual("range 0x0FE04000 - 0x0FE047FF (2 KB)\n", asData[-2][10:])
+            self.assertEqual("DONE\n", asData[-1])   
     
     """
     
@@ -396,8 +475,8 @@ class TestSth(unittest.TestCase):
         self.tWorkSheetWrite("D", "Test the over the air update bootloader functionallity")
         self._resetStu()
         time.sleep(1)
-        sSystemCall = self.sOtaLocation + "/ota-dfu.exe COM6 115200 " 
-        sSystemCall += self.sOtaLocation + "/ServerApplication.gbl "
+        sSystemCall = self.sBuildLocation + "/ota-dfu.exe COM6 115200 " 
+        sSystemCall += self.sBuildLocation + "/ServerApplication.gbl "
         sSystemCall += self.sSthAddr + " -> " + sLogLocation 
         sSystemCall += self._testMethodName + "Ota.txt"
         if os.name == 'nt': 
@@ -679,8 +758,6 @@ class TestSth(unittest.TestCase):
         self.tWorkSheetWrite("E", "Error Worksheet: " + str(tWorkSheetNameError))
         self.tWorkSheetWrite("F", "Error Cell: " + str(sCellNumberError))
         self.assertEqual(tWorkSheetNameError, None)
-            
-            
                 
     """
     Move Test Report to Results
@@ -702,7 +779,7 @@ class TestSth(unittest.TestCase):
         if False != bSkip:
             self.tWorkSheetWrite("E", "NOK")   
             self.tWorkbook.save(self.sTestReport + ".xlsx")  
-            for i in range(0,100):
+            for i in range(0, 100):
                 sStoreFileName = "./ResultsSth/NOK_" + self.sTestReport + "_nr" + str(i) + ".xlsx"
                 if False == os.path.isfile(sStoreFileName):
                     os.rename(self.sTestReport + ".xlsx", sStoreFileName)    
@@ -710,13 +787,14 @@ class TestSth(unittest.TestCase):
         else:
             self.tWorkSheetWrite("E", "OK")
             self.tWorkbook.save(self.sTestReport + ".xlsx")
-            for i in range(0,100):
+            for i in range(0, 100):
                 sStoreFileName = "./ResultsSth/OK_" + self.sTestReport + "_nr" + str(i) + ".xlsx"
                 if False == os.path.isfile(sStoreFileName):
                     if 2 == i:
                         self.Can.Standby(MyToolItNetworkNr["STH1"])
                     os.rename(self.sTestReport + ".xlsx", sStoreFileName) 
                     break
+
                 
 if __name__ == "__main__":
     sLogLocation = sys.argv[1]

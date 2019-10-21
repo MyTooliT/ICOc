@@ -23,43 +23,52 @@ from testSignal import *
 
 sVersion = "v2.1.5"
 sLogLocation = '../../Logs/STH/'
-sOtaLocation = "../../SimplicityStudio/v4_workspace/server_firmware/builds/"
+sBuildLocation = "../../SimplicityStudio/v4_workspace/server_firmware/builds/"
+sSilabsCommanderLocation = "../../SimplicityStudio/SimplicityCommander/"
+sAdapterSerialNo = "440115849"
+sBoardType = "BGM113A256V2"
 
 
 class TestSth(unittest.TestCase):
 
     def setUp(self):
+        self.sBuildLocation = sBuildLocation + sVersion
+        self.sBootloader = sBuildLocation + "BootloaderOtaBgm113.s37"
+        self.sAdapterSerialNo = sAdapterSerialNo
+        self.sBoardType = sBoardType 
+        self.sSilabsCommander = sSilabsCommanderLocation + "commander"
         self.bError = False
-        self.sOtaLocation = sOtaLocation + sVersion
+        self.sBuildLocation = sBuildLocation + sVersion
         self.fileName = sLogLocation + self._testMethodName + ".txt"
         self.fileNameError = sLogLocation + "Error_" + self._testMethodName + ".txt"
         self.Can = CanFd.CanFd(CanFd.PCAN_BAUD_1M, self.fileName, self.fileNameError, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], AdcPrescalerReset, AdcAcquisitionTimeReset, AdcAcquisitionOverSamplingRateReset, FreshLog=True)
         self.Can.Logger.Info("TestCase: " + str(self._testMethodName))
-        self.Can.CanTimeStampStart(self._resetStu()["CanTime"])  # This will also reset to STH
-        self.Can.Logger.Info("Connect to STH")
-        self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
-        self.sStuAddr = sBlueToothMacAddr(self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"]))
-        self.sSthAddr = sBlueToothMacAddr(self.Can.BlueToothAddress(MyToolItNetworkNr["STH1"]))
-        self.Can.Logger.Info("STU BlueTooth Address: " + self.sStuAddr)
-        self.Can.Logger.Info("STH BlueTooth Address: " + self.sSthAddr)
-        iOperatingSeconds = self.Can.statisticalData(MyToolItNetworkNr["STU1"], MyToolItStatData["OperatingTime"])[4:]    
-        iOperatingSeconds = iMessage2Value(iOperatingSeconds)
-        self.Can.Logger.Info("STU Operating Seconds: " + str(iOperatingSeconds))
-        iOperatingSeconds = self.Can.statisticalData(MyToolItNetworkNr["STH1"], MyToolItStatData["OperatingTime"])[4:]    
-        iOperatingSeconds = iMessage2Value(iOperatingSeconds)
-        self.Can.Logger.Info("STH Operating Seconds: " + str(iOperatingSeconds))
-        self._statusWords()
-        temp = self._SthAdcTemp()
-        self.assertGreaterEqual(TempInternalMax, temp)
-        self.assertLessEqual(TempInternalMin, temp)
-        self._SthWDog()
+        if "test0000FirmwareFlash" != self._testMethodName: 
+            self.Can.CanTimeStampStart(self._resetStu()["CanTime"])  # This will also reset to STH
+            self.Can.Logger.Info("Connect to STH")
+            self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
+            self.sStuAddr = sBlueToothMacAddr(self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"]))
+            self.sSthAddr = sBlueToothMacAddr(self.Can.BlueToothAddress(MyToolItNetworkNr["STH1"]))
+            self.Can.Logger.Info("STU BlueTooth Address: " + self.sStuAddr)
+            self.Can.Logger.Info("STH BlueTooth Address: " + self.sSthAddr)
+            iOperatingSeconds = self.Can.statisticalData(MyToolItNetworkNr["STU1"], MyToolItStatData["OperatingTime"])[4:]    
+            iOperatingSeconds = iMessage2Value(iOperatingSeconds)
+            self.Can.Logger.Info("STU Operating Seconds: " + str(iOperatingSeconds))
+            iOperatingSeconds = self.Can.statisticalData(MyToolItNetworkNr["STH1"], MyToolItStatData["OperatingTime"])[4:]    
+            iOperatingSeconds = iMessage2Value(iOperatingSeconds)
+            self.Can.Logger.Info("STH Operating Seconds: " + str(iOperatingSeconds))
+            self._statusWords()
+            temp = self._SthAdcTemp()
+            self.assertGreaterEqual(TempInternalMax, temp)
+            self.assertLessEqual(TempInternalMin, temp)
+            self._SthWDog()
         self.Can.Logger.Info("_______________________________________________________________________________________________________________")
         self.Can.Logger.Info("Start")
 
     def tearDown(self):
         self.Can.Logger.Info("Fin")
         self.Can.Logger.Info("_______________________________________________________________________________________________________________")
-        if False == self.Can.bError:
+        if False == self.Can.bError and "test0000FirmwareFlash" != self._testMethodName:
             self._streamingStop()
             self._BlueToothStatistics()
             ReceiveFailCounter = self._RoutingInformation()
@@ -409,6 +418,7 @@ class TestSth(unittest.TestCase):
     """
     Read page and check content
     """
+
     def vEepromReadPage(self, iPage, value):
         timeStamp = self.Can.getTimeMs()
         for offset in range(0, 256, 4):
@@ -419,19 +429,70 @@ class TestSth(unittest.TestCase):
                 self.assertEqual(dataByte, value)
         self.Can.Logger.Info("Page Read Time: " + str(self.Can.getTimeMs() - timeStamp) + "ms")
             
-            
+    """
+    commander.exe convert ..\v4_workspace\server_firmware\builds\BootloaderOtaBgm113.s37 ..\v4_workspace\server_firmware\builds\v2.1.5\Server.s37 --patch 0x0fe04000:0x00 --patch 0x0fe041FC:0xF0 --patch 0x0fe041F8:0xFD -o manufacturing_image.hex -d BGM113A256V2 
+    commander flash manufacturing_image.hex --address 0x0 --serialno 440116697 -d BGM113A256V2 
+    """
+
+    def test0000FirmwareFlash(self):      
+        try:
+            os.remove(sLogLocation + self._testMethodName + "ManufacturingCreateResport.txt")
+        except:
+            pass
+        try:
+            os.remove(sLogLocation + self._testMethodName + "ManufacturingFlashResport.txt")
+        except:
+            pass
+        sSystemCall = self.sSilabsCommander + " convert "
+        sSystemCall += self.sBootloader + " "
+        sSystemCall += self.sBuildLocation + "/Server.s37 "
+        sSystemCall += "--patch 0x0fe04000:0x00 --patch 0x0fe041FC:0xF0 --patch 0x0fe041F8:0xFD "
+        sSystemCall += "-o " + self.sBuildLocation + "/manufacturing_imageSth" + sVersion + ".hex " 
+        sSystemCall += "-d " + self.sBoardType + " "
+        sSystemCall += ">> " + sLogLocation 
+        sSystemCall += self._testMethodName + "ManufacturingCreateResport.txt"
+        if os.name == 'nt': 
+            sSystemCall = sSystemCall.replace("/", "\\")
+            os.system(sSystemCall)
+        # for mac and linux(here, os.name is 'posix') 
+        else: 
+            os.system(sSystemCall)
+        tFile = open(sLogLocation + self._testMethodName + "ManufacturingCreateResport.txt", "r", encoding='utf-8')
+        asData = tFile.readlines()
+        tFile.close()
+        self.assertEqual("Overwriting file:", asData[-2][:17])
+        self.assertEqual("DONE\n", asData[-1])
+        sSystemCall = self.sSilabsCommander + " flash "
+        sSystemCall += self.sBuildLocation + "/manufacturing_imageSth" + sVersion + ".hex " 
+        sSystemCall += "--address 0x0 "
+        sSystemCall += "--serialno " + self.sAdapterSerialNo + " "
+        sSystemCall += "-d " + self.sBoardType + " "
+        sSystemCall += ">> " + sLogLocation 
+        sSystemCall += self._testMethodName + "ManufacturingFlashResport.txt"
+        if os.name == 'nt': 
+            sSystemCall = sSystemCall.replace("/", "\\")
+            os.system(sSystemCall)
+        # for mac and linux(here, os.name is 'posix') 
+        else: 
+            os.system(sSystemCall)    
+        tFile = open(sLogLocation + self._testMethodName + "ManufacturingFlashResport.txt", "r", encoding='utf-8')
+        asData = tFile.readlines()
+        tFile.close()
+        self.assertEqual("range 0x0FE04000 - 0x0FE047FF (2 KB)\n", asData[-2][10:])
+        self.assertEqual("DONE\n", asData[-1])       
+    
     """
     Test the over the air update
     """
 
-    def test0000OverTheAirUpdate(self):
+    def test0001OverTheAirUpdate(self):
         iRuns = 4
         iRuns += 1
         self._resetStu()
         time.sleep(1)
         for i in range(1, iRuns):
-            sSystemCall = self.sOtaLocation + "/ota-dfu.exe COM6 115200 " 
-            sSystemCall += self.sOtaLocation + "/ServerApplication.gbl "
+            sSystemCall = self.sBuildLocation + "/ota-dfu.exe COM6 115200 " 
+            sSystemCall += self.sBuildLocation + "/ServerApplication.gbl "
             sSystemCall += self.sSthAddr + " -> " + sLogLocation 
             sSystemCall += self._testMethodName + "Ota" + str(i) + ".txt"
             if os.name == 'nt': 
@@ -442,18 +503,19 @@ class TestSth(unittest.TestCase):
                 os.system(sSystemCall)            
             tFile = open(sLogLocation + self._testMethodName + "Ota" + str(i) + ".txt", "r", encoding='utf-8')
             asData = tFile.readlines()
+            tFile.close()
             self.assertEqual("Finishing DFU block...OK\n", asData[-2])
             self.assertEqual("Closing connection...OK\n", asData[-1])
-            tFile.close()
+            
         for i in range(1, iRuns):
-            os.remove(sLogLocation + "/test0000OverTheAirUpdateOta" + str(i) + ".txt")
+            os.remove(sLogLocation + "/test0001OverTheAirUpdateOta" + str(i) + ".txt")
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
-        
+ 
     """
     Test Acknowledgement from STH. Write message and check identifier to be ack (No bError)
     """
 
-    def test0001Ack(self):
+    def test0005Ack(self):
         cmd = self.Can.CanCmd(MyToolItBlock["System"], MyToolItSystem["ActiveState"], 1, 0)
         expectedData = ActiveState()
         expectedData.asbyte = 0
@@ -475,7 +537,7 @@ class TestSth(unittest.TestCase):
     Tests if STH gets properly reseted
     """
 
-    def test0002SthReset(self):
+    def test0006SthReset(self):
         self._resetSth() 
         self.Can.Logger.Info("Try to get Active State (0x80")
         self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["System"], MyToolItSystem["ActiveState"], [0x80], bErrorExit=False)  # Not receiving gets  tested in cmdSend
@@ -486,12 +548,12 @@ class TestSth(unittest.TestCase):
     Test Temperature to be in range
     """
        
-    def test0003SthTemperature(self):
+    def test0007SthTemperature(self):
         temp = self._SthAdcTemp()
         self.assertGreaterEqual(TempInternalMax, temp)
         self.assertLessEqual(TempInternalMin, temp)
         
-    def test0004SthVersionNumber(self):
+    def test0008SthVersionNumber(self):
         iIndex = self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["ProductData"], MyToolItProductData["FirmwareVersion"], [])
         au8Version = self.Can.getReadMessageData(iIndex)[-3:]
         sVersion = "v" + str(au8Version[0]) + "." + str(au8Version[1]) + "." + str(au8Version[2])
@@ -3571,7 +3633,7 @@ class TestSth(unittest.TestCase):
             dataReadBack = self.Can.getReadMessageData(index)     
             startData.extend(dataReadBack[4:])
             
-        #Test it self
+        # Test it self
         for _i in range(0, 25):
             self.vEepromWritePage(EepromPage["Statistics"], 0xAA)
             self.vEepromReadPage(EepromPage["Statistics"], 0xAA)
@@ -3606,8 +3668,6 @@ class TestSth(unittest.TestCase):
             self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Write"], payload)
         self.Can.Logger.Info("Page Write Time: " + str(self.Can.getTimeMs() - timeStamp) + "ms")   
    
-   
-   
     """
     Check EEPROM Read/Write - Determistic data
     """   
@@ -3620,13 +3680,13 @@ class TestSth(unittest.TestCase):
             dataReadBack = self.Can.getReadMessageData(index)     
             startData.extend(dataReadBack[4:])
             
-        #Test it self
+        # Test it self
         for _i in range(0, 100):
             au8ReadCheck = []
             for offset in range(0, 256, 4):
                 au8Content = []
                 for _j in range(0, 4):
-                    u8Byte = int(random.random()*0xFF)
+                    u8Byte = int(random.random() * 0xFF)
                     au8Content.append(u8Byte)
                 au8ReadCheck.extend(au8Content)
                 au8Payload = [EepromPage["ProductData"], 0xFF & offset, 4, 0] + au8Content
@@ -3635,7 +3695,7 @@ class TestSth(unittest.TestCase):
                 au8Payload = [EepromPage["ProductData"], 0xFF & offset, 4, 0, 0, 0, 0, 0]
                 index = self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Read"], au8Payload)   
                 dataReadBack = self.Can.getReadMessageData(index)     
-                self.assertEqual(dataReadBack[4:], au8ReadCheck[offset:offset+4])
+                self.assertEqual(dataReadBack[4:], au8ReadCheck[offset:offset + 4])
                                       
             # Write Back Page
             timeStamp = self.Can.getTimeMs()
