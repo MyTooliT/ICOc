@@ -64,12 +64,12 @@ class TestSth(unittest.TestCase):
             self.sSerialNumber = sSerialNumber(self.sExcelEepromContentFileName)
             self.Can.CanTimeStampStart(self._resetStu()["CanTime"])  # This will also reset to STH
             if "test0000FirmwareFlash" != self._testMethodName:
-                self.sTestReport = sLogName + "_" + self.sSerialNumber + "_" + self.sSthAddr.replace(":", "#")   
-                self.sSthAddr = sBlueToothMacAddr(self.Can.BlueToothAddress(MyToolItNetworkNr["STH1"]))
-                self.sExcelEepromContentReadBackFileName = sLogName + "_" + self.sSerialNumber + "_" + self.sSthAddr.replace(":", "#") + "_ReadBack.xlsx"
                 self.Can.Logger.Info("Connect to STH")
                 self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"], log=False)                
-                self.tWorkbookOpenCreate()
+                self.sSthAddr = sBlueToothMacAddr(self.Can.BlueToothAddress(MyToolItNetworkNr["STH1"]))
+                self.sTestReport = sLogName + "_" + self.sSerialNumber + "_" + self.sSthAddr.replace(":", "#")
+                self.sExcelEepromContentReadBackFileName = sLogName + "_" + self.sSerialNumber + "_" + self.sSthAddr.replace(":", "#") + "_ReadBack.xlsx"
+                self.tWorkbookOpenCreate()                
                 self._statusWords()
                 self._iSthAdcTemp()
                 self._SthWDog()
@@ -396,7 +396,8 @@ class TestSth(unittest.TestCase):
         workbook.save(self.sExcelEepromContentFileName)   
     
     """
-    commander.exe convert ..\v4_workspace\server_firmware\builds\BootloaderOtaBgm113.s37 ..\v4_workspace\server_firmware\builds\v2.1.5\Server.s37 --patch 0x0fe04000:0x00 --patch 0x0fe041FC:0xF0 --patch 0x0fe041F8:0xFD -o manufacturing_image.hex -d BGM113A256V2 
+    https://www.silabs.com/community/wireless/zigbee-and-thread/knowledge-base.entry.html/2017/12/28/building_firmwareim-1OPr
+    commander.exe convert ..\v4_workspace\server_firmware\builds\BootloaderOtaBgm113.s37 ..\v4_workspace\server_firmware\builds\v2.1.5\Server.s37 --patch 0x0fe04000:0x00 --patch 0x0fe041F8:0xFD -o manufacturing_image.hex -d BGM113A256V2 
     commander flash manufacturing_image.hex --address 0x0 --serialno 440116697 -d BGM113A256V2 
     """
 
@@ -432,7 +433,7 @@ class TestSth(unittest.TestCase):
             sSystemCall = self.sSilabsCommander + " convert "
             sSystemCall += self.sBootloader + " "
             sSystemCall += self.sBuildLocation + "/Server.s37 "
-            sSystemCall += "--patch 0x0fe04000:0x00 --patch 0x0fe041FC:0xF0 --patch 0x0fe041F8:0xFD "
+            sSystemCall += "--patch 0x0fe04000:0x00 --patch 0x0fe041F8:0xFD "
             sSystemCall += "-o " + self.sBuildLocation + "/manufacturing_imageSth" + sVersion + ".hex " 
             sSystemCall += "-d " + self.sBoardType + " "
             sSystemCall += ">> " + sLogLocation 

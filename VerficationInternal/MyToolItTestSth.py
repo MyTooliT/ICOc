@@ -430,7 +430,8 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("Page Read Time: " + str(self.Can.getTimeMs() - timeStamp) + "ms")
             
     """
-    commander.exe convert ..\v4_workspace\server_firmware\builds\BootloaderOtaBgm113.s37 ..\v4_workspace\server_firmware\builds\v2.1.5\Server.s37 --patch 0x0fe04000:0x00 --patch 0x0fe041FC:0xF0 --patch 0x0fe041F8:0xFD -o manufacturing_image.hex -d BGM113A256V2 
+    https://www.silabs.com/community/wireless/zigbee-and-thread/knowledge-base.entry.html/2017/12/28/building_firmwareim-1OPr
+    commander.exe convert ..\v4_workspace\server_firmware\builds\BootloaderOtaBgm113.s37 ..\v4_workspace\server_firmware\builds\v2.1.5\Server.s37 --patch 0x0fe04000:0x00 --patch 0x0fe041F8:0xFD -o manufacturing_image.hex -d BGM113A256V2 
     commander flash manufacturing_image.hex --address 0x0 --serialno 440116697 -d BGM113A256V2 
     """
 
@@ -446,7 +447,7 @@ class TestSth(unittest.TestCase):
         sSystemCall = self.sSilabsCommander + " convert "
         sSystemCall += self.sBootloader + " "
         sSystemCall += self.sBuildLocation + "/Server.s37 "
-        sSystemCall += "--patch 0x0fe04000:0x00 --patch 0x0fe041FC:0xF0 --patch 0x0fe041F8:0xFD "
+        sSystemCall += "--patch 0x0fe04000:0x00 --patch 0x0fe041F8:0xFD "
         sSystemCall += "-o " + self.sBuildLocation + "/manufacturing_imageSth" + sVersion + ".hex " 
         sSystemCall += "-d " + self.sBoardType + " "
         sSystemCall += ">> " + sLogLocation 
