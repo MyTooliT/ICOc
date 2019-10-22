@@ -1,10 +1,15 @@
 import unittest
+import os
+import sys
+sDirName = os.path.dirname('')
+sys.path.append(sDirName)
+file_path = '../'
+sDirName = os.path.dirname(file_path)
+sys.path.append(sDirName)
 import CanFd
 import time
 import array
 import openpyxl
-import os
-import sys
 import struct
 import SthLimits
 import MyToolItSth
@@ -21,7 +26,6 @@ from openpyxl.descriptors.base import DateTime
 sVersion = "v2.1.4"
 sLogName = 'ProductionTestStu'
 sLogLocation = '../../Logs/ProductionTestStu/'
-sResultLocation = '../../ProductionTests/STH/'
 sBuildLocation = "../../SimplicityStudio/v4_workspace/client_firmware/builds/"
 sSilabsCommanderLocation = "../../SimplicityStudio/SimplicityCommander/"
 sAdapterSerialNo = "440116697"
@@ -50,8 +54,8 @@ class TestSth(unittest.TestCase):
         self.sSilabsCommander = sSilabsCommanderLocation + "commander"
         self.iTestNumber = int(self._testMethodName[4:8])
         self.sLogLocation = sLogLocation
-        self.fileName = sLogLocation + self._testMethodName + ".txt"
-        self.fileNameError = sLogLocation + "Error_" + self._testMethodName + ".txt"
+        self.fileName = self.sLogLocation + self._testMethodName + ".txt"
+        self.fileNameError = self.sLogLocation + "Error_" + self._testMethodName + ".txt"
         self.sExcelEepromContentFileName = "Stu" + sVersion + ".xlsx"
         if False != bSkip and "test9999StoreTestResults" != self._testMethodName:
             self.skipTest("At least some previous test failed")
@@ -87,10 +91,27 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("Test Time End Time Stamp")
         self.Can.__exit__()
         if self._outcome.errors[1][1]:
+            if False == bSkip:
+                print("Error! Please put red point on it")
             bSkip = True
         if False != self.bError:
+            if False == bSkip:
+                print("Error! Please put red point on it")
             bSkip = True
 
+    def run(self, result=None):
+        global bSkip
+        """ Stop after first error """
+        if not result.errors:             
+            super(TestSth, self).run(result)
+        else:
+            if False == bSkip:
+                print("Error! Please put red point on it")  
+            bSkip = True 
+            if "test9999StoreTestResults" == self._testMethodName:
+                super(TestSth, self).run(result)
+
+            
     def _resetStu(self, retries=5, log=True):
         self.Can.bConnected = False
         return self.Can.cmdReset(MyToolItNetworkNr["STU1"], retries=retries, log=log)
@@ -371,11 +392,11 @@ class TestSth(unittest.TestCase):
 
     def test0000FirmwareFlash(self):      
         try:
-            os.remove(sLogLocation + self._testMethodName + "ManufacturingCreateResport.txt")
+            os.remove(self.sLogLocation + self._testMethodName + "ManufacturingCreateResport.txt")
         except:
             pass
         try:
-            os.remove(sLogLocation + self._testMethodName + "ManufacturingFlashResport.txt")
+            os.remove(self.sLogLocation + self._testMethodName + "ManufacturingFlashResport.txt")
         except:
             pass
         sSystemCall = self.sSilabsCommander + " convert "
@@ -384,7 +405,7 @@ class TestSth(unittest.TestCase):
         sSystemCall += "--patch 0x0fe04000:0x00 --patch 0x0fe041F8:0xFD "
         sSystemCall += "-o " + self.sBuildLocation + "/manufacturing_imageStu" + sVersion + ".hex " 
         sSystemCall += "-d " + self.sBoardType + " "
-        sSystemCall += ">> " + sLogLocation 
+        sSystemCall += ">> " + self.sLogLocation 
         sSystemCall += self._testMethodName + "ManufacturingCreateResport.txt"
         if os.name == 'nt': 
             sSystemCall = sSystemCall.replace("/", "\\")
@@ -392,7 +413,7 @@ class TestSth(unittest.TestCase):
         # for mac and linux(here, os.name is 'posix') 
         else: 
             os.system(sSystemCall)
-        tFile = open(sLogLocation + self._testMethodName + "ManufacturingCreateResport.txt", "r", encoding='utf-8')
+        tFile = open(self.sLogLocation + self._testMethodName + "ManufacturingCreateResport.txt", "r", encoding='utf-8')
         asData = tFile.readlines()
         tFile.close()
         self.assertEqual("Overwriting file:", asData[-2][:17])
@@ -402,7 +423,7 @@ class TestSth(unittest.TestCase):
         sSystemCall += "--address 0x0 "
         sSystemCall += "--serialno " + self.sAdapterSerialNo + " "
         sSystemCall += "-d " + self.sBoardType + " "
-        sSystemCall += ">> " + sLogLocation 
+        sSystemCall += ">> " + self.sLogLocation 
         sSystemCall += self._testMethodName + "ManufacturingFlashResport.txt"
         if os.name == 'nt': 
             sSystemCall = sSystemCall.replace("/", "\\")
@@ -410,7 +431,7 @@ class TestSth(unittest.TestCase):
         # for mac and linux(here, os.name is 'posix') 
         else: 
             os.system(sSystemCall)    
-        tFile = open(sLogLocation + self._testMethodName + "ManufacturingFlashResport.txt", "r", encoding='utf-8')
+        tFile = open(self.sLogLocation + self._testMethodName + "ManufacturingFlashResport.txt", "r", encoding='utf-8')
         asData = tFile.readlines()
         tFile.close()
         self.assertEqual("range 0x0FE04000 - 0x0FE047FF (2 KB)\n", asData[-2][10:])   
@@ -575,7 +596,7 @@ class TestSth(unittest.TestCase):
                 sStoreFileName = self.sLogLocation + "/ResultsStu/NOK_" + self.sTestReport + "_nr" + str(i) + ".xlsx"
                 if False == os.path.isfile(sStoreFileName):
                     os.rename(self.sTestReport + ".xlsx", sStoreFileName)    
-                    break                  
+                    break                
         else:
             self.tWorkSheetWrite("E", "OK")
             self.tWorkbook.save(self.sTestReport + ".xlsx")
