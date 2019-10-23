@@ -42,11 +42,10 @@ def sSerialNumber(sExcelFileName):
 bSkip = False
 
 
-class TestSth(unittest.TestCase):
+class TestStu(unittest.TestCase):
 
     def setUp(self):
         global bSkip
-        self.bError = False
         self.sBuildLocation = sBuildLocation + sVersion
         self.sBootloader = sBuildLocation + "BootloaderOtaBgm111.s37"
         self.sAdapterSerialNo = sAdapterSerialNo
@@ -68,6 +67,14 @@ class TestSth(unittest.TestCase):
                 self.Can.CanTimeStampStart(self._resetStu()["CanTime"])  # This will also reset to STH
                 self.sStuAddr = sBlueToothMacAddr(self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"]))
                 self.sTestReport = sLogName + "_" + self.sSerialNumber + "_" + self.sStuAddr.replace(":", "#")
+                sStoreFileName = "./ResultsStu/OK_" + self.sTestReport + "_nr0.xlsx"
+                if "test0005Ack" == self._testMethodName:
+                    batchFile = open("BatchNumberStu.txt", "w")
+                    iBatchNr = int(self.sBatchNumber)
+                    iBatchNr += 1
+                    self.sBatchNumber = str(iBatchNr)
+                    batchFile.write(self.sBatchNumber)
+                    batchFile.close()
                 self.tWorkbookOpenCreate()
                 self.sExcelEepromContentReadBackFileName = sLogName + "_" + self.sSerialNumber + "_" + self.sStuAddr.replace(":", "#") + "_ReadBack.xlsx"
                 self.Can.Logger.Info("STU BlueTooth Address: " + self.sStuAddr)
@@ -78,38 +85,41 @@ class TestSth(unittest.TestCase):
 
     def tearDown(self):
         global bSkip
-        self.Can.Logger.Info("Fin")
-        self.Can.Logger.Info("_______________________________________________________________________________________________________________")
         if "test9999StoreTestResults" != self._testMethodName and "test0000FirmwareFlash" != self._testMethodName:
             self.tWorkbook.save(self.sTestReport + ".xlsx")
-        if "test0000FirmwareFlash" == self._testMethodName:    
-            self.Can.CanTimeStampStart(self._resetStu()["CanTime"])  # This will also reset to STH
-            self.sStuAddr = sBlueToothMacAddr(self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"]))
-            self.Can.Logger.Info("STU BlueTooth Address: " + self.sStuAddr)
-            self._statusWords()
-            self._SthWDog()
-        self.Can.Logger.Info("Test Time End Time Stamp")
+        if False == self.Can.bError:  
+            self.Can.Logger.Info("Fin")
+            self.Can.Logger.Info("_______________________________________________________________________________________________________________")
+        if "test0000FirmwareFlash" == self._testMethodName: 
+            if False == self.Can.bError:  
+                self.Can.CanTimeStampStart(self._resetStu()["CanTime"])  # This will also reset to STH
+                self.sStuAddr = sBlueToothMacAddr(self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"]))
+                self.Can.Logger.Info("STU BlueTooth Address: " + self.sStuAddr)
+                self._statusWords()
+                self._SthWDog()
+        if False == self.Can.bError:  
+            self.Can.Logger.Info("Test Time End Time Stamp")
         self.Can.__exit__()
         if self._outcome.errors[1][1]:
             if False == bSkip:
-                print("Error! Please put red point on it")
-            bSkip = True
-        if False != self.bError:
-            if False == bSkip:
-                print("Error! Please put red point on it")
+                print("Error! Please put red point on it(" + self.sBatchNumber + ")")
             bSkip = True
 
     def run(self, result=None):
         global bSkip
+        batchFile = open("BatchNumberStu.txt")
+        sBatchData = batchFile.readlines()
+        self.sBatchNumber = sBatchData[0]
+        batchFile.close()
         """ Stop after first error """
         if not result.errors:             
-            super(TestSth, self).run(result)
+            super(TestStu, self).run(result)
         else:
             if False == bSkip:
-                print("Error! Please put red point on it")  
+                print("Error! Please put red point on it(" + self.sBatchNumber + ")")
             bSkip = True 
             if "test9999StoreTestResults" == self._testMethodName:
-                super(TestSth, self).run(result)
+                super(TestStu, self).run(result)
 
             
     def _resetStu(self, retries=5, log=True):
@@ -399,43 +409,78 @@ class TestSth(unittest.TestCase):
             os.remove(self.sLogLocation + self._testMethodName + "ManufacturingFlashResport.txt")
         except:
             pass
-        sSystemCall = self.sSilabsCommander + " convert "
-        sSystemCall += self.sBootloader + " "
-        sSystemCall += self.sBuildLocation + "/Client.s37 "
-        sSystemCall += "--patch 0x0fe04000:0x00 --patch 0x0fe041F8:0xFD "
-        sSystemCall += "-o " + self.sBuildLocation + "/manufacturing_imageStu" + sVersion + ".hex " 
-        sSystemCall += "-d " + self.sBoardType + " "
+        try:
+            os.remove(self.sLogLocation + self._testMethodName + "ManufacturingDebugUnlock.txt")
+        except:
+            pass
+        try:
+            os.remove(self.sLogLocation + self._testMethodName + "DeviceInfo.txt")
+        except:
+            pass
+        
+        
+        sSystemCall = self.sSilabsCommander + " device lock –-debug disable --serialno " + self.sAdapterSerialNo
+        sSystemCall += " -d " + self.sBoardType
         sSystemCall += ">> " + self.sLogLocation 
-        sSystemCall += self._testMethodName + "ManufacturingCreateResport.txt"
+        sSystemCall += self._testMethodName + "ManufacturingDebugUnlock.txt"
         if os.name == 'nt': 
             sSystemCall = sSystemCall.replace("/", "\\")
             os.system(sSystemCall)
         # for mac and linux(here, os.name is 'posix') 
         else: 
             os.system(sSystemCall)
-        tFile = open(self.sLogLocation + self._testMethodName + "ManufacturingCreateResport.txt", "r", encoding='utf-8')
-        asData = tFile.readlines()
-        tFile.close()
-        self.assertEqual("Overwriting file:", asData[-2][:17])
-        self.assertEqual("DONE\n", asData[-1])
-        sSystemCall = self.sSilabsCommander + " flash "
-        sSystemCall += self.sBuildLocation + "/manufacturing_imageStu" + sVersion + ".hex " 
-        sSystemCall += "--address 0x0 "
-        sSystemCall += "--serialno " + self.sAdapterSerialNo + " "
+        sSystemCall = self.sSilabsCommander + " device info "
+        sSystemCall += "--serialno " + self.sAdapterSerialNo + " " 
         sSystemCall += "-d " + self.sBoardType + " "
         sSystemCall += ">> " + self.sLogLocation 
-        sSystemCall += self._testMethodName + "ManufacturingFlashResport.txt"
+        sSystemCall += self._testMethodName + "DeviceInfo.txt"
         if os.name == 'nt': 
             sSystemCall = sSystemCall.replace("/", "\\")
             os.system(sSystemCall)
         # for mac and linux(here, os.name is 'posix') 
         else: 
-            os.system(sSystemCall)    
-        tFile = open(self.sLogLocation + self._testMethodName + "ManufacturingFlashResport.txt", "r", encoding='utf-8')
+            os.system(sSystemCall)
+        tFile = open(self.sLogLocation + self._testMethodName + "DeviceInfo.txt", "r", encoding='utf-8')
         asData = tFile.readlines()
-        tFile.close()
-        self.assertEqual("range 0x0FE04000 - 0x0FE047FF (2 KB)\n", asData[-2][10:])   
-        self.assertEqual("DONE\n", asData[-1])    
+        tFile.close()            
+        if "Unique ID" == asData[-2][:9]:          
+            sSystemCall = self.sSilabsCommander + " convert "
+            sSystemCall += self.sBootloader + " "
+            sSystemCall += self.sBuildLocation + "/Client.s37 "
+            sSystemCall += "--patch 0x0fe04000:0x00 --patch 0x0fe041F8:0xFD "
+            sSystemCall += "-o " + self.sBuildLocation + "/manufacturing_imageStu" + sVersion + ".hex " 
+            sSystemCall += "-d " + self.sBoardType + " "
+            sSystemCall += ">> " + self.sLogLocation 
+            sSystemCall += self._testMethodName + "ManufacturingCreateResport.txt"
+            if os.name == 'nt': 
+                sSystemCall = sSystemCall.replace("/", "\\")
+                os.system(sSystemCall)
+            # for mac and linux(here, os.name is 'posix') 
+            else: 
+                os.system(sSystemCall)
+            tFile = open(self.sLogLocation + self._testMethodName + "ManufacturingCreateResport.txt", "r", encoding='utf-8')
+            asData = tFile.readlines()
+            tFile.close()
+            self.assertEqual("Overwriting file:", asData[-2][:17])
+            self.assertEqual("DONE\n", asData[-1])
+            sSystemCall = self.sSilabsCommander + " flash "
+            sSystemCall += self.sBuildLocation + "/manufacturing_imageStu" + sVersion + ".hex " 
+            sSystemCall += "--address 0x0 "
+            sSystemCall += "--serialno " + self.sAdapterSerialNo + " "
+            sSystemCall += "-d " + self.sBoardType + " "
+            sSystemCall += ">> " + self.sLogLocation 
+            sSystemCall += self._testMethodName + "ManufacturingFlashResport.txt"
+            if os.name == 'nt': 
+                sSystemCall = sSystemCall.replace("/", "\\")
+                os.system(sSystemCall)
+            # for mac and linux(here, os.name is 'posix') 
+            else: 
+                os.system(sSystemCall)    
+            tFile = open(self.sLogLocation + self._testMethodName + "ManufacturingFlashResport.txt", "r", encoding='utf-8')
+            asData = tFile.readlines()
+            tFile.close()
+            self.assertEqual("range 0x0FE04000 - 0x0FE047FF (2 KB)\n", asData[-2][10:])   
+            self.assertEqual("DONE\n", asData[-1])    
 
                        
     """
@@ -532,18 +577,7 @@ class TestSth(unittest.TestCase):
     def test0399Eerpom(self):
         self._resetStu()
         self.tWorkSheetWrite("D", "Write EEPROM with data and check that by read")
-        # Batch Number
-        batchFile = open("BatchNumberStu.txt")
-        batchData = batchFile.readlines()
-        batchData = batchData[0]
-        batchFile.close()
-        batchFile = open("BatchNumberStu.txt", "w")
-        iBatchNr = int(batchData)
-        iBatchNr += 1                
-        sBatchNumber = str(iBatchNr)
-        batchFile.write(sBatchNumber)
-        batchFile.close()
-        self.vChangeExcelCell("Statistics@0x5", "E8", sBatchNumber)
+        self.vChangeExcelCell("Statistics@0x5", "E8", self.sBatchNumber)
         # Write
         workSheetNames = []
         workbook = openpyxl.load_workbook(self.sExcelEepromContentFileName)

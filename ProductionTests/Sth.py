@@ -32,6 +32,7 @@ sSilabsCommanderLocation = "../../SimplicityStudio/SimplicityCommander/"
 sAdapterSerialNo = "440115849"
 sBoardType = "BGM113A256V2"
 
+
 def sSerialNumber(sExcelFileName):
     tWorkbook = openpyxl.load_workbook(sExcelFileName)
     tWorkSheet = tWorkbook.get_sheet_by_name("Product Data@0x4")
@@ -75,6 +76,14 @@ class TestSth(unittest.TestCase):
                 self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"], log=False)                
                 self.sSthAddr = sBlueToothMacAddr(self.Can.BlueToothAddress(MyToolItNetworkNr["STH1"]))
                 self.sTestReport = sLogName + "_" + self.sSerialNumber + "_" + self.sSthAddr.replace(":", "#")
+                sStoreFileName = "./ResultsSth/OK_" + self.sTestReport + "_nr0.xlsx"
+                if False == os.path.isfile(sStoreFileName) and "test0001OverTheAirUpdate" == self._testMethodName:
+                    batchFile = open("BatchNumberSth.txt", "w")
+                    iBatchNr = int(self.sBatchNumber)
+                    iBatchNr += 1
+                    self.sBatchNumber = str(iBatchNr)
+                    batchFile.write(self.sBatchNumber)
+                    batchFile.close()
                 self.sExcelEepromContentReadBackFileName = sLogName + "_" + self.sSerialNumber + "_" + self.sSthAddr.replace(":", "#") + "_ReadBack.xlsx"
                 self.tWorkbookOpenCreate()                
                 self._statusWords()
@@ -102,22 +111,25 @@ class TestSth(unittest.TestCase):
         self.Can.__exit__()
         if self._outcome.errors[1][1]:
             if False == bSkip:
-                print("Error! Please put red point on it") 
+                print("Error! Please put red point on it(" + self.sBatchNumber + ")") 
             bSkip = True
         if False != self.bError:
             if False == bSkip:
-                print("Error! Please put red point on it") 
+                print("Error! Please put red point on it(" + self.sBatchNumber + ")") 
             bSkip = True
-   
 
     def run(self, result=None):
         global bSkip
+        batchFile = open("BatchNumberSth.txt")
+        sBatchData = batchFile.readlines()
+        self.sBatchNumber = sBatchData[0]
+        batchFile.close()
         """ Stop after first error """
         if not result.errors:             
             super(TestSth, self).run(result)
         else:
             if False == bSkip:
-                print("Error! Please put red point on it")  
+                print("Error! Please put red point on it(" + self.sBatchNumber + ")")  
             bSkip = True 
             if "test9999StoreTestResults" == self._testMethodName:
                 super(TestSth, self).run(result)
@@ -435,10 +447,25 @@ class TestSth(unittest.TestCase):
         except:
             pass
         try:
+            os.remove(self.sLogLocation + self._testMethodName + "ManufacturingDebugUnlock.txt")
+        except:
+            pass
+        try:
             os.remove(self.sLogLocation + self._testMethodName + "DeviceInfo.txt")
         except:
             pass
- 
+
+        sSystemCall = self.sSilabsCommander + " device lock –-debug disable --serialno " + self.sAdapterSerialNo
+        sSystemCall += " -d " + self.sBoardType
+        sSystemCall += ">> " + self.sLogLocation 
+        sSystemCall += self._testMethodName + "ManufacturingDebugUnlock.txt"
+        if os.name == 'nt': 
+            sSystemCall = sSystemCall.replace("/", "\\")
+            os.system(sSystemCall)
+        # for mac and linux(here, os.name is 'posix') 
+        else: 
+            os.system(sSystemCall)
+            
         sSystemCall = self.sSilabsCommander + " device info "
         sSystemCall += "--serialno " + self.sAdapterSerialNo + " " 
         sSystemCall += "-d " + self.sBoardType + " "
@@ -742,20 +769,7 @@ class TestSth(unittest.TestCase):
 
     def test0399Eerpom(self):
         self.tWorkSheetWrite("D", "Write EEPROM with data and check that by read")
-        # Batch Number
-        batchFile = open("BatchNumberSth.txt")
-        batchData = batchFile.readlines()
-        batchData = batchData[0]
-        batchFile.close()
-        batchFile = open("BatchNumberSth.txt", "w")
-        sStoreFileName = "./ResultsSth/OK_" + self.sTestReport + "_nr1.xlsx"
-        iBatchNr = int(batchData)
-        if False != os.path.isfile(sStoreFileName):
-            iBatchNr += 1
-        sBatchNumber = str(iBatchNr)
-        batchFile.write(sBatchNumber)
-        batchFile.close()
-        self.vChangeExcelCell("Statistics@0x5", "E8", sBatchNumber)
+        self.vChangeExcelCell("Statistics@0x5", "E8", self.sBatchNumber)
         # Write
         workSheetNames = []
         workbook = openpyxl.load_workbook(self.sExcelEepromContentFileName)
