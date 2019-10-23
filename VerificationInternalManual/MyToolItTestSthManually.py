@@ -164,38 +164,7 @@ class TestSthManually(unittest.TestCase):
         print("Power off device for 1 minute(power consumpiton of the target is actually REALLY low)")
         input('Press any key to continue')
         
-    """
-    Power Consumption - Energy Save Modes
-    """   
-
-    def testManually0011PowerConsumptionEnergySaveMode(self):
-        self.Can.BlueToothEnergyModeNr(SleepTime["Min"], SleepTime["AdvertisementReset1"], 1)
-        self.Can.BlueToothEnergyModeNr(SleepTime["Reset2"], SleepTime["AdvertisementReset1"], 2)
-        self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])        
-        print("Start Simplicty Energy Profiler and connect to target (STH)")
-        print("Waiting" + str(SleepTime["Min"]) + "ms")
-        time.sleep(SleepTime["Min"] / 1000)
-        print("Measure Power Consumption for advertisement time " + str(SleepTime["AdvertisementReset1"]) + "ms")
-        input('Press any key to continue')
-        self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
-        self.Can.BlueToothEnergyModeNr(SleepTime["Min"], SleepTime["AdvertisementReset2"], 1)
-        self.Can.BlueToothEnergyModeNr(SleepTime["Reset2"], SleepTime["AdvertisementReset2"], 2)
-        self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
-        print("Waiting" + str(SleepTime["Min"]) + "ms")
-        time.sleep(SleepTime["Min"] / 1000)
-        print("Measure Power Consumption for advertisement time " + str(SleepTime["AdvertisementReset2"]) + "ms")
-        input('Press any key to continue')
-        self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
-        self.Can.BlueToothEnergyModeNr(SleepTime["Min"], SleepTime["AdvertisementMax"], 1)
-        self.Can.BlueToothEnergyModeNr(SleepTime["Reset2"], SleepTime["AdvertisementMax"], 2)
-        self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
-        print("Waiting" + str(SleepTime["Min"]) + "ms")
-        time.sleep(SleepTime["Min"] / 1000)
-        print("Measure Power Consumption for advertisement time " + str(SleepTime["AdvertisementMax"]) + "ms")
-        input('Press any key to continue')
-        self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
-        self.Can.BlueToothEnergyModeNr(SleepTime["Reset1"], SleepTime["AdvertisementReset1"], 1)
-        self.Can.BlueToothEnergyModeNr(SleepTime["Reset2"], SleepTime["AdvertisementReset2"], 2)  
+  
 
     """
     Power Consumption - Energy Save Modes
@@ -207,46 +176,8 @@ class TestSthManually(unittest.TestCase):
         print("Measure Power Consumption for standby.") 
         input('Press any key to continue')
         print("Power off device for 1 minute(power consumpiton of the target is actually REALLY low)")
-        input('Press any key to continue')
-        
-    """
-    Power Consumption - Connected
-    """   
+        input('Press any key to continue')    
 
-    def testManually0013PowerConsumptionConnected(self):
-        self.Can.BlueToothEnergyModeNr(~0, SleepTime["AdvertisementReset1"], 1)
-        self.Can.BlueToothEnergyModeNr(~0, SleepTime["AdvertisementReset1"], 2)
-        print("Start Simplicty Energy Profiler and connect to target (STH)")   
-        input('Press any key to continue') 
-        print("Measure Power Consumption for connected.") 
-        input('Press any key to continue')
-        self.Can.BlueToothEnergyModeNr(SleepTime["Reset1"], SleepTime["AdvertisementReset1"], 1)
-        self.Can.BlueToothEnergyModeNr(SleepTime["Reset2"], SleepTime["AdvertisementReset2"], 2)  
- 
-    """
-    Power Consumption - Measuring at reset conditions
-    """   
-
-    def testManually0014PowerConsumptionMeasuring(self):
-        print("Start Simplicty Energy Profiler and connect to target (STH)") 
-        input('Press any key to continue')
-        self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0)
-        print("Measure Power Consumption for meassuring.") 
-        input('Press any key to continue')
-        self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"])     
-        
-    """
-    Power Consumption - Measuring at reset conditions - LED turned off
-    """   
-
-    def testManually0015PowerConsumptionMeasuringLedOff(self):
-        self.TurnOffLed()
-        print("Start Simplicty Energy Profiler and connect to target (STH)") 
-        input('Press any key to continue')
-        self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0)
-        print("Measure Power Consumption for meassuring with turned off LED.") 
-        input('Press any key to continue')
-        self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"])  
                   
     """
     Under Voltage Counter
