@@ -31,6 +31,9 @@ sSilabsCommanderLocation = "../../SimplicityStudio/SimplicityCommander/"
 sAdapterSerialNo = "440116697"
 sBoardType = "BGM111A256V2"
 
+"""
+Get serial number of STU Excel Sheet
+"""
 def sSerialNumber(sExcelFileName):
     tWorkbook = openpyxl.load_workbook(sExcelFileName)
     tWorkSheet = tWorkbook.get_sheet_by_name("Product Data@0x4")
@@ -40,6 +43,10 @@ def sSerialNumber(sExcelFileName):
 
 
 bSkip = False
+
+"""
+This class supports the production test of the Stationary Transceiving Unit (STU)
+"""
 
 
 class TestStu(unittest.TestCase):
@@ -121,17 +128,28 @@ class TestStu(unittest.TestCase):
             if "test9999StoreTestResults" == self._testMethodName:
                 super(TestStu, self).run(result)
 
-            
+    """
+    Resets the STU
+    """
+
     def _resetStu(self, retries=5, log=True):
         self.Can.bConnected = False
         return self.Can.cmdReset(MyToolItNetworkNr["STU1"], retries=retries, log=log)
     
+    """
+    Get the Status Words of the STU
+    """
+
     def _statusWords(self):
         ErrorWord = StuErrorWord()
         psw0 = self.Can.statusWord0(MyToolItNetworkNr["STU1"])
         self.Can.Logger.Info("STU Status Word: " + hex(psw0))
         ErrorWord.asword = self.Can.statusWord1(MyToolItNetworkNr["STU1"])
         self.Can.Logger.Info("STU Error Word: " + hex(ErrorWord.asword))
+
+    """
+    Get Watchdog Reset Counter
+    """
 
     def _SthWDog(self):
         WdogCounter = iMessage2Value(self.Can.statisticalData(MyToolItNetworkNr["STU1"], MyToolItStatData["Wdog"])[:4])
@@ -171,10 +189,18 @@ class TestStu(unittest.TestCase):
         self.tWorkSheetWrite("B", self._testMethodName)
         self.tWorkSheetWrite("C", self.sDateClock)
     
+    """
+    Write Excel Column. Note that sCol is e.g. "D"
+    """
+
     def tWorkSheetWrite(self, sCol, value):
         tFont = Font(bold=False, size=12)
         self.tWorkSheet[sCol + str(self.iTestRow + 1)].value = str(value)
         self.tWorkSheet[sCol + str(self.iTestRow + 1)].font = tFont
+
+    """
+    Transform excel value by format to byte arry for STU
+    """
 
     def au8excelValueToByteArray(self, worksheet, iIndex):
         iLength = int(worksheet['C' + str(iIndex)].value)
@@ -218,6 +244,10 @@ class TestStu(unittest.TestCase):
                     byteArray[i] = int(value[i], 16)
         return byteArray
     
+    """
+    Get Byte length of excell sheet entries
+    """
+
     def iExcelSheetPageLength(self, worksheet):
         totalLength = 0
         for i in range(2, 256 + 2):
@@ -268,6 +298,10 @@ class TestStu(unittest.TestCase):
                 self.Can.Logger.Info(sError)
         return sError
 
+    """
+    Remove an illegal UTF8 character
+    """
+
     def vUnicodeIllegalRemove(self, value, character):
         while(True):
             try:
@@ -276,6 +310,10 @@ class TestStu(unittest.TestCase):
                 break  
         return value          
     
+    """
+    Write byte array by correct format into excel
+    """
+
     def iExcelSheetPageValue(self, worksheet, aBytes):
         i = 2
         iTotalLength = 0
@@ -354,6 +392,10 @@ class TestStu(unittest.TestCase):
                 self.Can.Logger.Info(sError)
         return sError
     
+    """
+    Check that written is equal to read (excel format)
+    """
+
     def tCompareEerpomWriteRead(self):
         tWorkSheetNameError = None
         sCellNumberError = None
@@ -418,7 +460,6 @@ class TestStu(unittest.TestCase):
         except:
             pass
         
-        
         sSystemCall = self.sSilabsCommander + " device lock –-debug disable --serialno " + self.sAdapterSerialNo
         sSystemCall += " -d " + self.sBoardType
         sSystemCall += ">> " + self.sLogLocation 
@@ -481,7 +522,6 @@ class TestStu(unittest.TestCase):
             tFile.close()
             self.assertEqual("range 0x0FE04000 - 0x0FE047FF (2 KB)\n", asData[-2][10:])   
             self.assertEqual("DONE\n", asData[-1])    
-
                        
     """
     Test Acknowledgement from STH. Write message and check identifier to be ack (No bError)

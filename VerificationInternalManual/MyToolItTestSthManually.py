@@ -18,6 +18,10 @@ from MyToolItCommands import *
 
 sLogLocation = '../../Logs/STH/'
 
+"""
+This class supports a manual tests of the Sensory Tool Holder (STH)
+"""
+
 
 class TestSthManually(unittest.TestCase):
 
@@ -54,6 +58,10 @@ class TestSthManually(unittest.TestCase):
             if os.path.isfile(self.fileName):
                 os.rename(self.fileName, self.fileNameError)
 
+    """
+    Checks if test case has failed
+    """
+
     def _test_has_failed(self):
         for _method, error in self._outcome.errors:
             if error:
@@ -62,13 +70,25 @@ class TestSthManually(unittest.TestCase):
             return True
         return False
 
+    """
+    Reset the STU
+    """
+
     def _resetStu(self, retries=5, log=True):
         self.Can.bConnected = False
         return self.Can.cmdReset(MyToolItNetworkNr["STU1"], retries=retries, log=log)
 
+    """
+    Reset the STH
+    """
+
     def _resetSth(self, retries=5, log=True):
         self.Can.bConnected = False
         return self.Can.cmdReset(MyToolItNetworkNr["STH1"], retries=retries, log=log)    
+
+    """
+    Get the internal BGM113 Chip temeprature in °C
+    """
 
     def _SthAdcTemp(self):
         ret = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["Temp"], 1, AdcReference["1V25"], log=False)
@@ -78,6 +98,10 @@ class TestSthManually(unittest.TestCase):
         self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["None"], CalibMeassurementTypeNr["Temp"], 1, AdcReference["VDD"], log=False, bReset=True)
         return result
     
+    """
+    Get all status words of STH and STU
+    """
+
     def _statusWords(self):
         ErrorWord = SthErrorWord()
         psw0 = self.Can.statusWord0(MyToolItNetworkNr["STH1"])
@@ -92,11 +116,19 @@ class TestSthManually(unittest.TestCase):
         ErrorWord.asword = self.Can.statusWord1(MyToolItNetworkNr["STU1"])
         self.Can.Logger.Info("STU bError Word: " + hex(ErrorWord.asword))
  
+    """
+    Turn off STH LED
+    """
+
     def TurnOffLed(self):
         self.Can.Logger.Info("Turn Off LED")
         cmd = self.Can.CanCmd(MyToolItBlock["Configuration"], MyToolItConfiguration["Hmi"], 1, 0)
         message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [129, 1, 2, 0, 0, 0, 0, 0])
         self.Can.tWriteFrameWaitAckRetries(message)
+
+    """
+    Turn on STH LED
+    """
 
     def TurnOnLed(self):
         self.Can.Logger.Info("Turn On LED")
@@ -163,8 +195,6 @@ class TestSthManually(unittest.TestCase):
         self.assertEqual(receivedData.asbyte, receivedDataFailTry.asbyte)
         print("Power off device for 1 minute(power consumpiton of the target is actually REALLY low)")
         input('Press any key to continue')
-        
-  
 
     """
     Power Consumption - Energy Save Modes
@@ -177,7 +207,6 @@ class TestSthManually(unittest.TestCase):
         input('Press any key to continue')
         print("Power off device for 1 minute(power consumpiton of the target is actually REALLY low)")
         input('Press any key to continue')    
-
                   
     """
     Under Voltage Counter

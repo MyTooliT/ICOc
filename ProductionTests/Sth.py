@@ -32,6 +32,10 @@ sSilabsCommanderLocation = "../../SimplicityStudio/SimplicityCommander/"
 sAdapterSerialNo = "440115849"
 sBoardType = "BGM113A256V2"
 
+"""
+Get serial number that is stored in the excel file
+"""
+
 
 def sSerialNumber(sExcelFileName):
     tWorkbook = openpyxl.load_workbook(sExcelFileName)
@@ -43,6 +47,9 @@ def sSerialNumber(sExcelFileName):
 
 bSkip = False
 
+"""
+This class supports a production test of the Sensory Tool Holder (STH)
+"""
 
 class TestSth(unittest.TestCase):
 
@@ -134,14 +141,26 @@ class TestSth(unittest.TestCase):
             if "test9999StoreTestResults" == self._testMethodName:
                 super(TestSth, self).run(result)
 
+    """
+    Reset STU
+    """
+
     def _resetStu(self, retries=5, log=True):
         self.Can.bConnected = False
         return self.Can.cmdReset(MyToolItNetworkNr["STU1"], retries=retries, log=log)
     
+    """
+    Resets STH
+    """
+
     def _resetSth(self, retries=5, log=True):
         self.Can.bConnected = False
         return self.Can.cmdReset(MyToolItNetworkNr["STH1"], retries=retries, log=log)
                                
+    """
+    Get internal BGM113 Chip Temeprature in °C of STH
+    """
+
     def _iSthAdcTemp(self):
         ret = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["Temp"], 1, AdcReference["1V25"], log=False)
         result = float(iMessage2Value(ret[4:]))
@@ -150,6 +169,10 @@ class TestSth(unittest.TestCase):
         self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["None"], CalibMeassurementTypeNr["Temp"], 1, AdcReference["VDD"], log=False, bReset=True)
         return result
 
+    """
+    Get all status words of STH and STU
+    """
+    
     def _statusWords(self):
         ErrorWordSth = SthErrorWord()
         ErrorWordStu = StuErrorWord()
@@ -164,10 +187,24 @@ class TestSth(unittest.TestCase):
         ErrorWordStu.asword = self.Can.statusWord1(MyToolItNetworkNr["STU1"])
         self.Can.Logger.Info("STU Error Word: " + hex(ErrorWordStu.asword))
 
+    """
+    Retrieve STH Watchdog counter
+    """
+
     def _SthWDog(self):
         WdogCounter = iMessage2Value(self.Can.statisticalData(MyToolItNetworkNr["STH1"], MyToolItStatData["Wdog"])[:4])
         self.Can.Logger.Info("WatchDog Counter: " + str(WdogCounter))
         return WdogCounter 
+    
+    """
+    Turn off LED of STH
+    """
+
+    def TurnOffLed(self):
+        self.Can.Logger.Info("Turn Off LED")
+        cmd = self.Can.CanCmd(MyToolItBlock["Configuration"], MyToolItConfiguration["Hmi"], 1, 0)
+        message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [129, 1, 2, 0, 0, 0, 0, 0])
+        self.Can.tWriteFrameWaitAckRetries(message)   
            
     """
     Try to open Excel Sheet. If not able to open, then create a new one
@@ -202,16 +239,19 @@ class TestSth(unittest.TestCase):
         self.tWorkSheetWrite("B", self._testMethodName)
         self.tWorkSheetWrite("C", self.sDateClock)
     
+    """
+    Write Column in Row by value (Note that sColl is e.g. "D")
+    """
+
     def tWorkSheetWrite(self, sCol, value):
         tFont = Font(bold=False, size=12)
         self.tWorkSheet[sCol + str(self.iTestRow + 1)].value = str(value)
         self.tWorkSheet[sCol + str(self.iTestRow + 1)].font = tFont
 
-    def TurnOffLed(self):
-        self.Can.Logger.Info("Turn Off LED")
-        cmd = self.Can.CanCmd(MyToolItBlock["Configuration"], MyToolItConfiguration["Hmi"], 1, 0)
-        message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [129, 1, 2, 0, 0, 0, 0, 0])
-        self.Can.tWriteFrameWaitAckRetries(message)   
+    """
+    Transform excel sheet data to byte arrays such that the firmware can write
+    it. Please take always care of byte endian style i.e. MSB vs LSB.
+    """
 
     def au8excelValueToByteArray(self, worksheet, iIndex):
         iLength = int(worksheet['C' + str(iIndex)].value)
@@ -255,6 +295,10 @@ class TestSth(unittest.TestCase):
                     byteArray[i] = int(value[i], 16)
         return byteArray
     
+    """
+    How many bytes are represented in Excel Sheet
+    """
+
     def iExcelSheetPageLength(self, worksheet):
         totalLength = 0
         for i in range(2, 256 + 2):
@@ -265,6 +309,10 @@ class TestSth(unittest.TestCase):
                 break
         return totalLength 
     
+    """
+    Read Excel Sheet and write it to STH
+    """
+
     def sExcelSheetWrite(self, namePage, iReceiver):
         sError = None
         workbook = openpyxl.load_workbook(self.sExcelEepromContentFileName)
@@ -305,6 +353,10 @@ class TestSth(unittest.TestCase):
                 self.Can.Logger.Info(sError)
         return sError
 
+    """
+    Try to get of an illegal UTF8 character
+    """
+
     def vUnicodeIllegalRemove(self, value, character):
         while(True):
             try:
@@ -313,6 +365,10 @@ class TestSth(unittest.TestCase):
                 break  
         return value          
     
+    """
+    Write Byte Array into Excel Sheet with care of the format
+    """
+
     def iExcelSheetPageValue(self, worksheet, aBytes):
         i = 2
         iTotalLength = 0
@@ -391,6 +447,10 @@ class TestSth(unittest.TestCase):
                 self.Can.Logger.Info(sError)
         return sError
     
+    """
+    Compare Written to Read (both Excel)
+    """
+
     def tCompareEerpomWriteRead(self):
         tWorkSheetNameError = None
         sCellNumberError = None
@@ -520,7 +580,7 @@ class TestSth(unittest.TestCase):
             self.assertEqual("DONE\n", asData[-1])   
     
     """
-    
+    Tests over the air (OTA) update
     """    
 
     def test0001OverTheAirUpdate(self):
@@ -577,6 +637,10 @@ class TestSth(unittest.TestCase):
         self.assertGreaterEqual(TempInternalProductionMax, iTemperature)
         self.assertLessEqual(TempInternalProductionTestMin, iTemperature)
         
+    """
+    Tests batery voltage
+    """
+
     def test0020SthAccumulatorVoltage(self):
         self.tWorkSheetWrite("D", "Tests accumulator voltage")
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], 1, 0, 0)

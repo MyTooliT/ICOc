@@ -16,6 +16,10 @@ from MyToolItCommands import *
 
 sLogLocation = '../../Logs/STU/'
 
+"""
+This class supports the manual tests of the Stationary Transceiving Unit (STU)
+"""
+
 
 class TestSthManually(unittest.TestCase):
 
@@ -43,6 +47,10 @@ class TestSthManually(unittest.TestCase):
             if os.path.isfile(self.fileName):
                 os.rename(self.fileName, self.fileNameError)
 
+    """
+    Checks if any test has failed
+    """
+
     def _test_has_failed(self):
         for _method, error in self._outcome.errors:
             if error:
@@ -51,28 +59,24 @@ class TestSthManually(unittest.TestCase):
             return True
         return False
 
+    """
+    Resets the STU
+    """
+
     def _resetStu(self, retries=5, log=True):
         return self.Can.cmdReset(MyToolItNetworkNr["STU1"], retries=retries, log=log)
     
+    """
+    Get all status words of the STU
+    """
+
     def _statusWords(self):
         ErrorWord = StuErrorWord()
         psw0 = self.Can.statusWord0(MyToolItNetworkNr["STU1"])
         self.Can.Logger.Info("STU Status Word: " + hex(psw0))
         ErrorWord.asword = self.Can.statusWord1(MyToolItNetworkNr["STU1"])
         self.Can.Logger.Info("STU bError Word: " + hex(ErrorWord.asword))   
- 
-    def TurnOffLed(self):
-        self.Can.Logger.Info("Turn Off LED")
-        cmd = self.Can.CanCmd(MyToolItBlock["Configuration"], MyToolItConfiguration["Hmi"], 1, 0)
-        message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [129, 1, 2, 0, 0, 0, 0, 0])
-        self.Can.tWriteFrameWaitAckRetries(message)
-
-    def TurnOnLed(self):
-        self.Can.Logger.Info("Turn On LED")
-        cmd = self.Can.CanCmd(MyToolItBlock["Configuration"], MyToolItConfiguration["Hmi"], 1, 0)
-        message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [129, 1, 1, 0, 0, 0, 0, 0])
-        self.Can.tWriteFrameWaitAckRetries(message)        
-        
+    
     """
     Test Acknowledgement from STH. Write message and check identifier to be ack (No bError)
     """

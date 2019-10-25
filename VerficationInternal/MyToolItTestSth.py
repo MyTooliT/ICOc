@@ -28,6 +28,10 @@ sSilabsCommanderLocation = "../../SimplicityStudio/SimplicityCommander/"
 sAdapterSerialNo = "440115849"
 sBoardType = "BGM113A256V2"
 
+"""
+This class is used for automated internal verification of the sensory tool holder
+"""
+
 
 class TestSth(unittest.TestCase):
 
@@ -97,6 +101,10 @@ class TestSth(unittest.TestCase):
             if os.path.isfile(self.fileName):
                 os.rename(self.fileName, self.fileNameError)
 
+    """
+    Checks if test has failed
+    """
+
     def _test_has_failed(self):
         for _method, error in self._outcome.errors:
             if error:
@@ -105,13 +113,25 @@ class TestSth(unittest.TestCase):
             return True
         return False
 
+    """
+    Reset STU
+    """
+    
     def _resetStu(self, retries=5, log=True):
         self.Can.bConnected = False
         return self.Can.cmdReset(MyToolItNetworkNr["STU1"], retries=retries, log=log)
 
+    """
+    Reset STH
+    """
+
     def _resetSth(self, retries=5, log=True):
         self.Can.bConnected = False
         return self.Can.cmdReset(MyToolItNetworkNr["STH1"], retries=retries, log=log)
+
+    """
+    Retrieve BGM113 internal Chip Temperature from the STH
+    """    
 
     def _SthAdcTemp(self):
         au8TempReturn = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["Temp"], 1, AdcReference["1V25"], log=False)
@@ -121,10 +141,18 @@ class TestSth(unittest.TestCase):
         self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["None"], CalibMeassurementTypeNr["Temp"], 1, AdcReference["VDD"], log=False, bReset=True)
         return iTemperature
 
+    """
+    Retrieve Watch Dog Counter
+    """
+
     def _SthWDog(self):
         WdogCounter = iMessage2Value(self.Can.statisticalData(MyToolItNetworkNr["STH1"], MyToolItStatData["Wdog"])[:4])
         self.Can.Logger.Info("WatchDog Counter: " + str(WdogCounter))
         return WdogCounter
+
+    """
+    Get all Status Words from STH and STU
+    """
 
     def _statusWords(self):
         ErrorWord = SthErrorWord()
@@ -139,9 +167,17 @@ class TestSth(unittest.TestCase):
         ErrorWord.asword = self.Can.statusWord1(MyToolItNetworkNr["STU1"])
         self.Can.Logger.Info("STU Error Word: " + hex(ErrorWord.asword))
 
+    """
+    Stop any streaming 
+    """
+
     def _streamingStop(self):
         self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"])
         self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"])
+
+    """
+    Get RSSI, receive and send message counters of Bluetooth
+    """
 
     def _BlueToothStatistics(self):
         SendCounter = self.Can.BlueToothCmd(MyToolItNetworkNr["STH1"], SystemCommandBlueTooth["SendCounter"])
@@ -155,6 +191,10 @@ class TestSth(unittest.TestCase):
         Rssi = self.Can.BlueToothRssi(MyToolItNetworkNr["STU1"])
         self.Can.Logger.Info("BlueTooth Rssi(STU1): " + str(Rssi) + "dBm")
 
+    """
+    Routing information of STH send ports
+    """
+    
     def _RoutingInformationSthSend(self):
         SendCounter = self.Can.RoutingInformationCmd(MyToolItNetworkNr["STH1"], SystemCommandRouting["SendCounter"], MyToolItNetworkNr["STU1"])
         self.Can.Logger.Info("STH1 - Send Counter(Port STU1): " + str(SendCounter))
@@ -162,6 +202,10 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("STH1 - Send Fail Counter(Port STU1): " + str(SendCounter))
         SendCounter = self.Can.RoutingInformationCmd(MyToolItNetworkNr["STH1"], SystemCommandRouting["SendLowLevelByteCounter"], MyToolItNetworkNr["STU1"])
         self.Can.Logger.Info("STH1 - Send Byte Counter(Port STU1): " + str(SendCounter))
+
+    """
+    Routing information of STU send ports
+    """
 
     def _RoutingInformationSthReceive(self):
         ReceiveCounter = self.Can.RoutingInformationCmd(MyToolItNetworkNr["STH1"], SystemCommandRouting["ReceiveCounter"], MyToolItNetworkNr["STU1"])
@@ -172,10 +216,18 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("STH1 - Receive Byte Counter(Port STU1): " + str(ReceiveCounter))
         return ReceiveFailCounter
 
+    """
+    Routing information of STH
+    """
+
     def _RoutingInformationSth(self):
         self._RoutingInformationSthSend()
         ReceiveFailCounter = self._RoutingInformationSthReceive()
         return ReceiveFailCounter
+
+    """
+    Routing information of STU send port SPU
+    """
 
     def _RoutingInformationStuPortSpuSend(self):
         SendCounter = self.Can.RoutingInformationCmd(MyToolItNetworkNr["STU1"], SystemCommandRouting["SendCounter"], MyToolItNetworkNr["SPU1"])
@@ -184,6 +236,10 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("STU1 - Send Fail Counter(Port SPU1): " + str(SendCounter))
         SendCounter = self.Can.RoutingInformationCmd(MyToolItNetworkNr["STU1"], SystemCommandRouting["SendLowLevelByteCounter"], MyToolItNetworkNr["SPU1"])
         self.Can.Logger.Info("STU1 - Send Byte Counter(Port SPU1): " + str(SendCounter))
+
+    """
+    Routing information of STU receive port SPU
+    """
 
     def _RoutingInformationStuPortSpuReceive(self):
         ReceiveCounter = self.Can.RoutingInformationCmd(MyToolItNetworkNr["STU1"], SystemCommandRouting["ReceiveCounter"], MyToolItNetworkNr["SPU1"])
@@ -194,10 +250,18 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("STU1 - Receive Byte Counter(Port SPU1): " + str(ReceiveCounter))
         return ReceiveFailCounter
 
+    """
+    Routing information of STU port SPU
+    """
+
     def _RoutingInformationStuPortSpu(self):
         self._RoutingInformationStuPortSpuSend()
         ReceiveFailCounter = self._RoutingInformationStuPortSpuReceive()
         return ReceiveFailCounter
+
+    """
+    Routing information of STU send port STH
+    """
 
     def _RoutingInformationStuPortSthSend(self):
         SendCounter = self.Can.RoutingInformationCmd(MyToolItNetworkNr["STU1"], SystemCommandRouting["SendCounter"], MyToolItNetworkNr["STH1"])
@@ -206,6 +270,10 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("STU1 - Send Fail Counter(Port STH1): " + str(SendCounter))
         SendCounter = self.Can.RoutingInformationCmd(MyToolItNetworkNr["STU1"], SystemCommandRouting["SendLowLevelByteCounter"], MyToolItNetworkNr["STH1"])
         self.Can.Logger.Info("STU1 - Send Byte Counter(Port STH1): " + str(SendCounter))
+
+    """
+    Routing information of STU receive port STH
+    """
 
     def _RoutingInformationStuPortSthReceive(self):
         ReceiveCounter = self.Can.RoutingInformationCmd(MyToolItNetworkNr["STU1"], SystemCommandRouting["ReceiveCounter"], MyToolItNetworkNr["STH1"])
@@ -216,16 +284,28 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("STU1 - Receive Byte Counter(Port STH1): " + str(ReceiveCounter))
         return ReceiveFailCounter
 
+    """
+    Routing information of STU port STH
+    """
+
     def _RoutingInformationStuPortSth(self):
         self._RoutingInformationStuPortSthSend()
         ReceiveFailCounter = self._RoutingInformationStuPortSthReceive()
         return ReceiveFailCounter
+
+    """
+    Routing information of system
+    """
 
     def _RoutingInformation(self):
         ReceiveFailCounter = self._RoutingInformationSth()
         ReceiveFailCounter += self._RoutingInformationStuPortSth()
         ReceiveFailCounter += self._RoutingInformationStuPortSpu()
         return ReceiveFailCounter
+
+    """
+    Test single point in a three dimensional tube
+    """
 
     def singleValueCompare(self, array1, array2, array3, middle1, tolerance1, middle2, tolerance2, middle3, tolerance3, fCbfRecalc):
         if 0 < len(array1):
@@ -293,11 +373,19 @@ class TestSth(unittest.TestCase):
         result = {"SamplingRate" : calcRate, "Value1" : array1, "Value2" : array2, "Value3" : array3}
         return result
 
+    """
+    Turn off STH LED
+    """
+
     def TurnOffLed(self):
         self.Can.Logger.Info("Turn Off LED")
         cmd = self.Can.CanCmd(MyToolItBlock["Configuration"], MyToolItConfiguration["Hmi"], 1, 0)
         message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [129, 1, 2, 0, 0, 0, 0, 0])
         self.Can.tWriteFrameWaitAckRetries(message)
+
+    """
+    Turn on STH LED
+    """
 
     def TurnOnLed(self):
         self.Can.Logger.Info("Turn On LED")
@@ -306,11 +394,7 @@ class TestSth(unittest.TestCase):
         self.Can.tWriteFrameWaitAckRetries(message)
 
     """
-    Test single battery/Acc meassurement
-    """
-
-    """
-    Test Signal
+    Get streaming Data and collect them
     """
 
     def streamingTestSignalCollect(self, sender, receiver, subCmd, testSignal, testModule, value, dataSets, b1, b2, b3, testTimeMs, log=True):
@@ -348,6 +432,10 @@ class TestSth(unittest.TestCase):
             self.Can.Logger.Info("indexEnd: " + str(indexEnd))
         return[indexStart, indexEnd]
 
+    """
+    Compare collected streaming data with 3dimensional tube
+    """
+
     def streamingValueCompare(self, array1, array2, array3, middle1, tolerance1, middle2, tolerance2, middle3, tolerance3, fCbfRecalc):
         samplingPoints1 = len(array1)
         samplingPoints2 = len(array2)
@@ -370,6 +458,10 @@ class TestSth(unittest.TestCase):
                 self.assertGreaterEqual(middle3 + tolerance3, fCbfRecalc(array3[i]))
                 self.assertLessEqual(middle3 - tolerance3, fCbfRecalc(array3[i]))
 
+    """
+    Compare collected streaming data with 1dimensional tube
+    """
+
     def streamingValueCompareSignal(self, array, testSignal):
         self.Can.Logger.Info("Comparing to Test Signal(Test Signal/Received Signal)")
         for i in range(0, len(testSignal)):
@@ -377,6 +469,10 @@ class TestSth(unittest.TestCase):
         self.assertEqual(len(array), len(testSignal))
         for i in range(0, len(testSignal)):
             self.assertEqual(array[i], testSignal[i])
+
+    """
+    Compare calculated signal indicators of collected data e.g. Signal to noice ratio (SNR)
+    """
 
     def siginalIndicatorCheck(self, name, statistic, quantil1, quantil25, medianL, medianH, quantil75, quantil99, variance, skewness, SNR):
         self.Can.Logger.Info("____________________________________________________")
@@ -588,6 +684,10 @@ class TestSth(unittest.TestCase):
         temp = self._SthAdcTemp()
         self.assertGreaterEqual(TempInternalMax, temp)
         self.assertLessEqual(TempInternalMin, temp)
+
+    """
+    Checks correct version number
+    """
 
     def test0008SthVersionNumber(self):
         iIndex = self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["ProductData"], MyToolItProductData["FirmwareVersion"], [])

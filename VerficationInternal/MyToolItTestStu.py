@@ -25,6 +25,11 @@ sSilabsCommanderLocation = "../../SimplicityStudio/SimplicityCommander/"
 sAdapterSerialNo = "440116697"
 sBoardType = "BGM111A256V2"
 
+
+"""
+This class is used for automated internal verification of the Stationary Transceiving Unit (STU)
+"""
+
 class TestStu(unittest.TestCase):
 
     def setUp(self):
@@ -66,20 +71,34 @@ class TestStu(unittest.TestCase):
             if os.path.isfile(self.fileName):
                 os.rename(self.fileName, self.fileNameError)
  
+    """
+    Checks that a test case has failed or not
+    """
     def _test_has_failed(self):
         for _method, error in self._outcome.errors:
             if error:
                 return True
         return False       
     
+    
+    """
+    Reset Stationary Transceiving Unit
+    """
     def _resetStu(self, retries=5, log=True):
         self.Can.bConnected = False
         return self.Can.cmdReset(MyToolItNetworkNr["STU1"], retries=retries, log=log)
 
+    """
+    Retrieve Watchdog COunter of ST
+    """
     def _StuWDog(self):
         WdogCounter = iMessage2Value(self.Can.statisticalData(MyToolItNetworkNr["STU1"], MyToolItStatData["Wdog"])[:4])
         self.Can.Logger.Info("WatchDog Counter: " + str(WdogCounter))
         return WdogCounter 
+    
+    """
+    Retrieve all status words
+    """
         
     def _statusWords(self):
         ErrorWord = StuErrorWord()
