@@ -3,7 +3,7 @@
     <lastRun>
         <LogName>Watch</LogName>
         <Product>STU</Product>
-        <Version>v2.1.4</Version>
+        <Version>v2.1.5</Version>
         <NetworkNumber>STU1</NetworkNumber>
         <SheetFile>Watch</SheetFile>
         <Setup>X</Setup>
@@ -537,7 +537,7 @@
             </product>
             <product name="STU">
                 <Version>
-                    <version name="v2.1.4">
+                    <version name="v2.1.5">
                         <Page>
                             <page name="Product Data">
                                 <pageAddress>4</pageAddress>
@@ -618,7 +618,7 @@
                                     <subAddress>23</subAddress>
                                     <length>1</length>
                                     <readOnly>True</readOnly>
-                                    <value>4</value>
+                                    <value>5</value>
                                     <unit />
                                     <format>unsigned</format>
                                     <description>Firmware Version Number - Build</description>
@@ -713,12 +713,12 @@
 				    				<subAddress>20</subAddress>
 				    				<length>8</length>
 				    				<readOnly>True</readOnly>
-				    				<value>20190910</value>
+				    				<value>20192031</value>
 				    				<unit>date</unit>
 				    				<format>ASCII</format>
 				    				<description>Production Date (EEPROM Production Write) in the format yyyymmdd (year month day)</description>
 				    				</entry>
-								<entry name="Batch Number"><subAddress>28</subAddress><length>4</length><readOnly>True</readOnly><value>0</value><unit /><format>unsigned</format><description>Consecutive number for manufactured devices</description></entry></Entry>
+								<entry name="Batch Number"><subAddress>28</subAddress><length>4</length><readOnly>True</readOnly><value>2</value><unit /><format>unsigned</format><description>Consecutive number for manufactured devices</description></entry></Entry>
                             </page>
                         </Page>
                     </version>
