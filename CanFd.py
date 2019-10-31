@@ -1135,7 +1135,7 @@ class CanFd(object):
         return iMessage2Value(Address)
     
     """
-    Get RSSI (bluetooth command)
+    Get RSSI (Bluetooth command)
     """
 
     def BlueToothRssiGet(self, receiver, DeviceNr):
@@ -1146,6 +1146,27 @@ class CanFd(object):
         ack = ack[2]
         ack = to8bitSigned(ack)
         return ack
+    
+    
+    """
+    Connect to STH by connect to MAC Address command
+    """
+
+    def iBlueToothConnect2MacAddr(self, receiver, iMacAddr):
+        cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0)
+        au8Payload = [SystemCommandBlueTooth["DeviceConnectMacAddr"], 0]
+        au8MacAddr = au8Value2Array(int(iMacAddr), 6)
+        au8Payload.extend(au8MacAddr)
+        message = self.CanMessage20(cmd, self.sender, receiver, au8Payload)
+        ack = self.tWriteFrameWaitAckRetries(message, retries=2)
+        ack = ack["Payload"]
+        ack = ack[2:]
+        iMacAddrReadBack = iMessage2Value(ack)#if not successfull this will be 0
+        if iMacAddrReadBack != iMacAddr:
+            self.bConnected = False
+        else:
+            self.bConnected = True
+        return iMacAddrReadBack
     
     """
     Connect to device via name

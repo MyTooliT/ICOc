@@ -23,7 +23,7 @@ from StuLimits import PcbOnly, RssiStuMin
 from MyToolItCommands import *
 from openpyxl.descriptors.base import DateTime
 
-sVersion = "v2.1.4"
+sVersion = "v2.1.5"
 sLogName = 'ProductionTestStu'
 sLogLocation = '../../Logs/ProductionTestStu/'
 sBuildLocation = "../../SimplicityStudio/v4_workspace/client_firmware/builds/"

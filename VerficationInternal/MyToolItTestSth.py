@@ -692,8 +692,9 @@ class TestSth(unittest.TestCase):
     def test0008SthVersionNumber(self):
         iIndex = self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["ProductData"], MyToolItProductData["FirmwareVersion"], [])
         au8Version = self.Can.getReadMessageData(iIndex)[-3:]
-        sVersion = "v" + str(au8Version[0]) + "." + str(au8Version[1]) + "." + str(au8Version[2])
-        self.assertEqual(sVersion, sVersion)
+        sVersionReadBack = "v" + str(au8Version[0]) + "." + str(au8Version[1]) + "." + str(au8Version[2])
+        self.Can.Logger.Info("Version: " + sVersionReadBack)
+        self.assertEqual(sVersion, sVersionReadBack)
 
     """
     Test Energy Mode 1 - If you like to evaluate power consumption: Please do it manually

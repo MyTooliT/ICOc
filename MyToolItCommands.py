@@ -100,7 +100,7 @@ SystemCommandBlueTooth = {
     "EnergyModeLowestRead" : 15,
     "EnergyModeLowestWrite" : 16,
     "MacAddress" : 17,
-    
+    "DeviceConnectMacAddr" : 18,
     "SelfAddressing" : 255,
 }
 
@@ -109,7 +109,7 @@ BluetoothTime = {
     "Out" : (4 * 5),
     "Disconnect" : 2,
     "GetDeviceNumber" : 2,
-    "DeviceConnect" : 5,
+    "DeviceConnect" : 6,
     "TestConnect" : 4,
 }
 
