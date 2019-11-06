@@ -596,7 +596,7 @@ class TestStu(unittest.TestCase):
     def test0100Rssi(self):
         self.tWorkSheetWrite("D", "Tests RSSI")
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], MyToolItSth.TestConfig["DevName"], log=False)
-        time.sleep(1)
+        time.sleep(2)
         self.sStuAddr = sBlueToothMacAddr(self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"]))
         self.sSthAddr = sBlueToothMacAddr(self.Can.BlueToothAddress(MyToolItNetworkNr["STH1"]))
         self.Can.Logger.Info("STH BlueTooth Address: " + self.sSthAddr)

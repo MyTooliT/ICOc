@@ -375,7 +375,7 @@ class TestStu(unittest.TestCase):
     def test0102BlueToothConnectDisconnectDevice(self):
         self.Can.Logger.Info("Bluetooth connect command and check connected command and disconnect command")
         totalConnectDisconnectTime = 0
-        totalRuns = 100
+        totalRuns = 500
         for i in range(0, totalRuns):
             startTime = self.Can.Logger.getTimeStamp()
             self.Can.Logger.Info("Loop Run: " + str(i))

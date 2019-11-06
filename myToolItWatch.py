@@ -48,9 +48,9 @@ class myToolItWatch():
 
     def __init__(self):
         self.KeyBoadInterrupt = False  
+        self.bEepromIgnoreReadErrors = False
         self.bError = False     
-        self.bClose = True   
-        self.bConnected = False        
+        self.bClose = True          
         self.iMsgLoss = 0
         self.iMsgsTotal = 0
         self.iMsgCounterLast = 0
@@ -81,9 +81,11 @@ class myToolItWatch():
             self._BlueToothStatistics()
             ReceiveFailCounter = self._RoutingInformation()
             self._statusWords()
-            self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
             if(0 < ReceiveFailCounter):
                 self.bError = True
+            self.Can.readThreadStop()
+        self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
+        if False != self.Can.bConnected:
             self.Can.readThreadStop()
         self.Can.Logger.Info("End Time Stamp")
         
@@ -1175,6 +1177,9 @@ class myToolItWatch():
     """    
 
     def sExcelSheetRead(self, namePage, iReceiver):
+        tEepromSpecialConfig = EepromSpecialConfig()
+        tEepromSpecialConfig.asbyte = 0
+        tEepromSpecialConfig.b.bIgnoreErrors = self.bEepromIgnoreReadErrors
         sError = None
         self.Can.Logger.Info("Read EEPROM Page " + str(namePage) + " from " + MyToolItNetworkName[iReceiver])
         workbook = openpyxl.load_workbook(self.sSheetFile)
@@ -1192,7 +1197,7 @@ class myToolItWatch():
                         readLengthAlligned+=4
                         readLengthAlligned-=(readLengthAlligned%4)
                     for offset in range(0, readLengthAlligned, 4):
-                        payload = [address, 0xFF & offset, 4, 0, 0, 0, 0, 0]
+                        payload = [address, 0xFF & offset, 4, tEepromSpecialConfig.asbyte, 0, 0, 0, 0]
                         index = self.Can.cmdSend(iReceiver, MyToolItBlock["Eeprom"], MyToolItEeprom["Read"], payload, log=False)   
                         readBackFrame = self.Can.getReadMessageData(index)[4:]
                         pageContent.extend(readBackFrame)

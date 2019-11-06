@@ -3,7 +3,7 @@
     <lastRun>
         <LogName>Watch</LogName>
         <Product>STU</Product>
-        <Version>v2.1.5</Version>
+        <Version>v2.1.6</Version>
         <NetworkNumber>STU1</NetworkNumber>
         <SheetFile>Watch</SheetFile>
         <Setup>X</Setup>
@@ -714,6 +714,191 @@
 				    				<length>8</length>
 				    				<readOnly>True</readOnly>
 				    				<value>20192031</value>
+				    				<unit>date</unit>
+				    				<format>ASCII</format>
+				    				<description>Production Date (EEPROM Production Write) in the format yyyymmdd (year month day)</description>
+				    				</entry>
+								<entry name="Batch Number"><subAddress>28</subAddress><length>4</length><readOnly>True</readOnly><value>2</value><unit /><format>unsigned</format><description>Consecutive number for manufactured devices</description></entry></Entry>
+                            </page>
+                        </Page>
+                    </version>
+                <version name="v2.1.6">
+                        <Page>
+                            <page name="Product Data">
+                                <pageAddress>4</pageAddress>
+                                <Entry>
+                                    <entry name="GTIN">
+                                    <subAddress>0</subAddress>
+                                    <length>8</length>
+                                    <readOnly>True</readOnly>
+                                    <value>0</value>
+                                    <unit />
+                                    <format>unsigned</format>
+                                    <description>Global Trade Identification Number (GTIN)</description>
+                                    </entry>
+                                    <entry name="Hardware Revision - Reserved">
+                                    <subAddress>8</subAddress>
+                                    <length>5</length>
+                                    <readOnly>True</readOnly>
+                                    <value>0</value>
+                                    <unit />
+                                    <format>unsigned</format>
+                                    <description>Hardware Revision Number - Major</description>
+                                    </entry>
+                                    <entry name="Hardware Revision - Major">
+                                    <subAddress>13</subAddress>
+                                    <length>1</length>
+                                    <readOnly>True</readOnly>
+                                    <value>1</value>
+                                    <unit />
+                                    <format>unsigned</format>
+                                    <description>Hardware Revision Number - Major</description>
+                                    </entry>
+                                    <entry name="Hardware Revision - Minor">
+                                    <subAddress>14</subAddress>
+                                    <length>1</length>
+                                    <readOnly>True</readOnly>
+                                    <value>3</value>
+                                    <unit />
+                                    <format>unsigned</format>
+                                    <description>Hardware Revision Number - Minor</description>
+                                    </entry>
+                                    <entry name="Hardware Revision - Revision">
+                                    <subAddress>15</subAddress>
+                                    <length>1</length>
+                                    <readOnly>True</readOnly>
+                                    <value>1</value>
+                                    <unit />
+                                    <format>unsigned</format>
+                                    <description>Hardware Revision Number - Build</description>
+                                    </entry>
+                                    <entry name="Firmware Version Number - Reserved">
+                                    <subAddress>16</subAddress>
+                                    <length>5</length>
+                                    <readOnly>True</readOnly>
+                                    <value>0</value>
+                                    <unit />
+                                    <format>unsigned</format>
+                                    <description>Firmware Version Number - Reserved</description>
+                                    </entry>
+                                    <entry name="Firmware Version Number - Major">
+                                    <subAddress>21</subAddress>
+                                    <length>1</length>
+                                    <readOnly>True</readOnly>
+                                    <value>2</value>
+                                    <unit />
+                                    <format>unsigned</format>
+                                    <description>Firmware Version Number - Major</description>
+                                    </entry>
+                                    <entry name="Firmware Version Number - Minor">
+                                    <subAddress>22</subAddress>
+                                    <length>1</length>
+                                    <readOnly>True</readOnly>
+                                    <value>1</value>
+                                    <unit />
+                                    <format>unsigned</format>
+                                    <description>Firmware Version Number - Minor</description>
+                                    </entry>
+                                    <entry name="Firmware Version Number - Build">
+                                    <subAddress>23</subAddress>
+                                    <length>1</length>
+                                    <readOnly>True</readOnly>
+                                    <value>6</value>
+                                    <unit />
+                                    <format>unsigned</format>
+                                    <description>Firmware Version Number - Build</description>
+                                    </entry>
+                                    <entry name="Release Name">
+                                    <subAddress>24</subAddress>
+                                    <length>8</length>
+                                    <readOnly>True</readOnly>
+                                    <value>Valerie</value>
+                                    <unit />
+                                    <format>UTF8</format>
+                                    <description>Release Name, represents Major - Minor</description>
+                                    </entry>
+                                    <entry name="Serial Number">
+                                    <subAddress>32</subAddress>
+                                    <length>32</length>
+                                    <readOnly>True</readOnly>
+                                    <value>MyToolItStu001-1-00001-001-2</value>
+                                    <unit />
+                                    <format>UTF8</format>
+                                    <description>Manufactor Serial Number (Derived from ISBN); Product Group - Subgroup - Manufacture ID - Product Number - Check Digit</description>
+                                    </entry>
+                                    <entry name="Name">
+                                    <subAddress>64</subAddress>
+                                    <length>128</length>
+                                    <readOnly>True</readOnly>
+                                    <value>Digital and Analog Communication with 5V-Supply</value>
+                                    <unit />
+                                    <format>UTF8</format>
+                                    <description>Manufactor Name; This may extend Serial Number, supports URL, extend definition, etc.</description>
+                                    </entry>
+                                    <entry name="OEM Free Use">
+                                    <subAddress>192</subAddress>
+                                    <length>64</length>
+                                    <readOnly>True</readOnly>
+                                    <value>0</value>
+                                    <unit />
+                                    <format />
+                                    <description>Supports Manufactor Specific information in format that is free to choose</description>
+                                    </entry>
+                                </Entry>
+                            </page>
+                            <page name="Statistics">
+                                <pageAddress>5</pageAddress>
+                                <Entry>
+                                    <entry name="Power On Cylces">
+                                    <subAddress>0</subAddress>
+                                    <length>4</length>
+                                    <readOnly>True</readOnly>
+                                    <value>0</value>
+                                    <unit />
+                                    <format>unsigned</format>
+                                    <description>Power On Cycles since first reset(Note that a resets also counts as power on)</description>
+                                    </entry>
+                                    <entry name="Power Off Cylces">
+                                    <subAddress>4</subAddress>
+                                    <length>4</length>
+                                    <readOnly>True</readOnly>
+                                    <value>0</value>
+                                    <unit />
+                                    <format>unsigned</format>
+                                    <description>Power Off Cycles since first reset</description>
+                                    </entry>
+                                    <entry name="Operating Time since first power On">
+                                    <subAddress>8</subAddress>
+                                    <length>4</length>
+                                    <readOnly>True</readOnly>
+                                    <value>0</value>
+                                    <unit>seconds</unit>
+                                    <format>unsigned</format>
+                                    <description>Operating Time since first power On in seconds</description>
+                                    </entry>
+                                    <entry name="Under Voltage Counter since first Power On">
+                                    <subAddress>12</subAddress>
+                                    <length>4</length>
+                                    <readOnly>True</readOnly>
+                                    <value>0</value>
+                                    <unit />
+                                    <format>unsigned</format>
+                                    <description>Counts of under voltages that yields into turn off state(Brown Out)</description>
+                                    </entry>
+                                    <entry name="Watchdog Reset Counter ">
+				    				<subAddress>16</subAddress>
+				    				<length>4</length>
+				    				<readOnly>True</readOnly>
+				    				<value>0</value>
+				    				<unit />
+				    				<format>unsigned</format>
+				    				<description>Watchdog Resets since first power on</description>
+				    				</entry>
+				    				<entry name="Production Date">
+				    				<subAddress>20</subAddress>
+				    				<length>8</length>
+				    				<readOnly>True</readOnly>
+				    				<value>20191106</value>
 				    				<unit>date</unit>
 				    				<format>ASCII</format>
 				    				<description>Production Date (EEPROM Production Write) in the format yyyymmdd (year month day)</description>

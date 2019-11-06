@@ -11,7 +11,7 @@ Version = {
 
 TestConfig = {
     "DevName" : "Valerie",
-    "sVersion" : "v2.1.5",
+    "sVersion" : "v2.1.6",
     "ProductionDate" : "20192031",
     "HolderName" : "Tanja",
     }

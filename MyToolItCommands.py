@@ -52,7 +52,18 @@ class CalibrationMeassurementFormatFlags(ctypes.BigEndianStructure):
  
 class CalibrationMeassurement(ctypes.Union):
     _fields_ = [("b", CalibrationMeassurementFormatFlags),
-                ("asbyte", c_uint8)]   
+                ("asbyte", c_uint8)]  
+    
+
+class EepromSpecialConfigFlags(ctypes.BigEndianStructure):
+    _fields_ = [
+            ("bIgnoreErrors", c_uint8, 1),
+            ("Reserved", c_uint8, 7),
+            ] 
+    
+class EepromSpecialConfig(ctypes.Union):
+    _fields_ = [("b", EepromSpecialConfigFlags),
+                ("asbyte", c_uint8)]  
 
     
 MyToolItBlock = {

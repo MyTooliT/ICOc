@@ -134,7 +134,7 @@ class mwt(myToolItWatch):
             if "y" == sYes:
                 self.Can.Standby(MyToolItNetworkNr["STH1"])
                 bRun = False
-                self.Can.bConnected = False
+                self.Can.bBlueToothDisconnect()
                 bContinue = True
         elif ord('p') == keyPress:
             self.stdscr.clear()
@@ -365,6 +365,13 @@ class mwt(myToolItWatch):
                         self.vConnect()
                     if False != self.Can.bConnected or MyToolItNetworkNr["STU1"] <= iReceiver:
                         self.bTerminalEepromWrite(iReceiver)
+        elif ord('I') == keyPress:
+            bShowReadWrite = (None != self.sSheetFile)    
+            bShowReadWrite = bShowReadWrite and ("STU" == self.sProduct or "STH" == self.sProduct)
+            bShowReadWrite = bShowReadWrite and (None != self.sConfig)
+            bShowReadWrite = bShowReadWrite and (None != self.sNetworkNumber)
+            if False != bShowReadWrite: 
+                self.bEepromIgnoreReadErrors = not self.bEepromIgnoreReadErrors
         elif ord('x') == keyPress:
             self.vTerminalEepromChange()
             self.tTerminalEepromCreateOpenExcelSheet()            
@@ -373,7 +380,7 @@ class mwt(myToolItWatch):
     def bTerminalEeprom(self):
         bRun = True
         bContinue = False
-        
+        self.bEepromIgnoreReadErrors = False
         self.tTerminalEepromCreateOpenExcelSheet()                    
         while False != bRun:
             self.stdscr.clear()
@@ -383,7 +390,9 @@ class mwt(myToolItWatch):
             self.stdscr.addstr("Device: " + str(self.sProduct) + "\n")
             self.stdscr.addstr("Version: " + str(self.sConfig) + "\n")
             self.stdscr.addstr("Network Number: " + str(self.sNetworkNumber) + "\n")
-            self.stdscr.addstr("Excel Sheet Name: " + str(self.sSheetFile) + "\n")    
+            self.stdscr.addstr("Excel Sheet Name: " + str(self.sSheetFile) + "\n")  
+            if False != self.bEepromIgnoreReadErrors:
+                self.stdscr.addstr("EEPROM Read Errors will be ignored\n")   
             self.stdscr.addstr("e: Escape this menu\n")
             self.stdscr.addstr("l: List devices and versions (an change current device/product)\n")
             self.stdscr.addstr("x: Chance Excel Sheet Name(.xlsx)\n")    
@@ -391,7 +400,8 @@ class mwt(myToolItWatch):
             bShowReadWrite = bShowReadWrite and ("STU" == self.sProduct or "STH" == self.sProduct)
             bShowReadWrite = bShowReadWrite and (None != self.sConfig)
             bShowReadWrite = bShowReadWrite and (None != self.sNetworkNumber)
-            if False != bShowReadWrite:                     
+            if False != bShowReadWrite:         
+                self.stdscr.addstr("I: Ignore Read Errors\n")            
                 self.stdscr.addstr("R: Read all from EEPROM to sheet\n")
                 self.stdscr.addstr("W: Write all from Sheet to EEPROM\n")                    
                 self.stdscr.refresh()
