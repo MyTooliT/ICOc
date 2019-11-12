@@ -809,7 +809,7 @@
                                     <subAddress>20</subAddress>
                                     <length>4</length>
                                     <readOnly>False</readOnly>
-                                    <value>2.2958874039497803e-41</value>
+                                    <value>0.0</value>
                                     <unit />
                                     <format>float</format>
                                     <description>Calibration Factor d for Acceleration Z -&gt; y=kx+d</description>
@@ -827,7 +827,7 @@
                                     <subAddress>28</subAddress>
                                     <length>4</length>
                                     <readOnly>False</readOnly>
-                                    <value>2.2420775429197073e-44</value>
+                                    <value>0.0</value>
                                     <unit />
                                     <format>float</format>
                                     <description>Calibration Factor d for Battery Voltage -&gt; y=kx+d</description>
@@ -863,7 +863,7 @@
                                     <subAddress>44</subAddress>
                                     <length>4</length>
                                     <readOnly>False</readOnly>
-                                    <value>2.2420775429197073e-44</value>
+                                    <value>0.0</value>
                                     <unit />
                                     <format>float</format>
                                     <description>Calibration Factor d for Voltage Z -&gt; y=kx+d</description>
