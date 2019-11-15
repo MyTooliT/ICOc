@@ -802,6 +802,7 @@ class mwt(myToolItWatch):
                         self.stdscr.addstr("Connect to " + hex(dev["Address"]) + "(" + str(dev["Name"]) + ")\n")
                         self.stdscr.refresh()
                         self.Can.bBlueToothConnectPollingAddress(MyToolItNetworkNr["STU1"], self.iAddress)    
+                        time.sleep(1)
                            
     def bTerminalMainMenuKeyEvaluation(self, devList):
         bRun = True

@@ -851,7 +851,7 @@ class TestStu(unittest.TestCase):
         OperatingSeconds = self.Can.statisticalData(MyToolItNetworkNr["STU1"], MyToolItStatData["OperatingTime"])    
         SecondsReset3 = iMessage2Value(OperatingSeconds[:4])
         SecondsOveral3 = iMessage2Value(OperatingSeconds[4:])
-        time.sleep(60 * 30 + 20)
+        time.sleep(60 * 31)
         OperatingSeconds = self.Can.statisticalData(MyToolItNetworkNr["STU1"], MyToolItStatData["OperatingTime"])    
         SecondsReset4 = iMessage2Value(OperatingSeconds[:4])
         SecondsOveral4 = iMessage2Value(OperatingSeconds[4:])
@@ -867,8 +867,8 @@ class TestStu(unittest.TestCase):
         self.assertGreater(SecondsReset2, 60)
         self.assertLess(SecondsReset2, 70)
         self.assertLess(SecondsReset3, 10)
-        self.assertGreater(SecondsReset4, 60 * 30 - 20)
-        self.assertLess(SecondsReset4, 20 + 60 * 30)
+        self.assertGreater(SecondsReset4, 60 * 31 - 20)
+        self.assertLess(SecondsReset4, 20 + 60 * 31)
         self.assertEqual(SecondsOveral1, SecondsOveral2)    
         self.assertLess(SecondsOveral1 + 58, SecondsOveral3)            
         self.assertGreater(SecondsOveral1 + 63, SecondsOveral3)
@@ -976,13 +976,13 @@ class TestStu(unittest.TestCase):
                 dataReadBack = self.Can.getReadMessageData(index)     
                 self.assertEqual(dataReadBack[4:], au8ReadCheck[offset:offset + 4])
                                       
-            # Write Back Page
-            timeStamp = self.Can.getTimeMs()
-            for offset in range(0, 256, 4):
-                payload = [EepromPage["ProductData"], 0xFF & offset, 4, 0]
-                payload.extend(startData[offset:offset + 4])
-                self.Can.cmdSend(MyToolItNetworkNr["STU1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Write"], payload)
-            self.Can.Logger.Info("Page Write Time: " + str(self.Can.getTimeMs() - timeStamp) + "ms")   
+        # Write Back Page
+        timeStamp = self.Can.getTimeMs()
+        for offset in range(0, 256, 4):
+            payload = [EepromPage["ProductData"], 0xFF & offset, 4, 0]
+            payload.extend(startData[offset:offset + 4])
+            self.Can.cmdSend(MyToolItNetworkNr["STU1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Write"], payload)
+        self.Can.Logger.Info("Page Write Time: " + str(self.Can.getTimeMs() - timeStamp) + "ms")   
         
     """
     Test that nothing happens when sinding Command 0x0000 to STU1

@@ -252,6 +252,8 @@ class CanFd(object):
             cmdNrName = CommandBlockStatisticalData[cmdNr]
         elif MyToolItBlock["Configuration"] == cmdBlock:
             cmdNrName = CommandBlockConfiguration[cmdNr]
+        elif MyToolItBlock["Eeprom"] == cmdBlock:
+            cmdNrName = CommandBlockEeprom[cmdNr]
         elif MyToolItBlock["ProductData"] == cmdBlock:
             cmdNrName = CommandBlockProductData[cmdNr]
         elif MyToolItBlock["Test"] == cmdBlock:
@@ -432,6 +434,17 @@ class CanFd(object):
         retMsg = self.tWriteFrameWaitAckRetries(self.CanMessage20(cmd, self.sender, receiver, []), retries=retries)
         time.sleep(2)
         return retMsg
+    
+    """
+    Get EEPROM Write Request Counter, please note that the count start is power on
+    """
+
+    def u32EepromWriteRequestCounter(self):
+        index = self.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["WriteRequest"], [0]*8)
+        dataReadBack = self.getReadMessageData(index)[4:]
+        u32WriteRequestCounter = iMessage2Value(dataReadBack)
+        self.Logger.Info("EEPROM Write Request Counter: " + str(u32WriteRequestCounter))
+        return u32WriteRequestCounter
         
     def singleValueCollect(self, receiver, subCmd, b1, b2, b3, log=True, printLog=False):
         accFormat = AtvcFormat()
@@ -1293,10 +1306,12 @@ class CanFd(object):
         elif "HardwareRevision" == name:
             index = self.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["ProductData"], MyToolItProductData["HardwareRevision"], [])
             tHwRev = self.getReadMessageData(index)
+            self.Logger.Info("Hardware Revision: " + str(tHwRev))
             sReturn = str(tHwRev[5]) + "." + str(tHwRev[6]) + "." + str(tHwRev[7]) 
         elif "FirmwareVersion" == name:
             index = self.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["ProductData"], MyToolItProductData["FirmwareVersion"], [])
             tFirmwareVersion = self.getReadMessageData(index)
+            self.Logger.Info("Firmware Version: " + str(tFirmwareVersion))
             sReturn = str(tFirmwareVersion[5]) + "." + str(tFirmwareVersion[6]) + "." + str(tFirmwareVersion[7])         
         elif "ReleaseName" == name:
             index = self.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["ProductData"], MyToolItProductData["ReleaseName"], [])

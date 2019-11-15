@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ConfigKey>
     <lastRun>
-        <LogName>Watch</LogName>
-        <Product>STH</Product>
-        <Version>v2.1.6</Version>
-        <NetworkNumber>STH1</NetworkNumber>
-        <SheetFile>Watch</SheetFile>
+        <LogName />
+        <Product />
+        <Version />
+        <NetworkNumber />
+        <SheetFile>None</SheetFile>
         <Setup>X</Setup>
     </lastRun>
     <Config>

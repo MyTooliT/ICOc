@@ -166,7 +166,8 @@ MyToolItConfiguration = {
 
 MyToolItEeprom = {
     "Read" : 0x00,
-    "Write" : 0x01
+    "Write" : 0x01,
+    "WriteRequest" : 0x20
 }
 
 MyToolItProductData = {
@@ -267,6 +268,7 @@ CommandBlockConfiguration = {
 CommandBlockEeprom = {
     MyToolItEeprom["Read"] : "Eeprom Command Read",
     MyToolItEeprom["Write"] : "Eeprom Command Write",
+    MyToolItEeprom["WriteRequest"] : "Eeprom Command Write Request Counter",
 }
 
 CommandBlockProductData = {

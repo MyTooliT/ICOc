@@ -70,7 +70,7 @@ class myToolItWatch():
         self.vAdcConfig(2, 8, 64)
         self.vAdcRefVConfig("VDD")
         self.vDisplayTime(10)  
-        self.vRunTime(10, 0)
+        self.vRunTime(0, 0)
         self.vGraphInit(Watch["DisplaySampleRateMs"], Watch["DisplayBlockSize"])
         self.Can.readThreadStop()
             
@@ -83,7 +83,6 @@ class myToolItWatch():
             self._statusWords()
             if(0 < ReceiveFailCounter):
                 self.bError = True
-            self.Can.readThreadStop()
         self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
         if False != self.Can.bConnected:
             self.Can.readThreadStop()

@@ -55,6 +55,7 @@ class TestSth(unittest.TestCase):
             self.sSthAddr = sBlueToothMacAddr(self.Can.BlueToothAddress(MyToolItNetworkNr["STH1"]))
             self.Can.Logger.Info("STU BlueTooth Address: " + self.sStuAddr)
             self.Can.Logger.Info("STH BlueTooth Address: " + self.sSthAddr)
+            self.Can.u32EepromWriteRequestCounter()
             iOperatingSeconds = self.Can.statisticalData(MyToolItNetworkNr["STU1"], MyToolItStatData["OperatingTime"])[4:]
             iOperatingSeconds = iMessage2Value(iOperatingSeconds)
             self.Can.Logger.Info("STU Operating Seconds: " + str(iOperatingSeconds))
@@ -86,6 +87,7 @@ class TestSth(unittest.TestCase):
             temp = self._SthAdcTemp()
             self.assertGreaterEqual(TempInternalMax, temp)
             self.assertLessEqual(TempInternalMin, temp)
+            self.Can.u32EepromWriteRequestCounter()
             self.Can.Logger.Info("Test Time End Time Stamp")
             self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
         else:
@@ -3981,6 +3983,8 @@ class TestSth(unittest.TestCase):
         self._resetSth()
         self.Can.Logger.Info("Connect to STH")
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
+        time.sleep(2)
+        u32EepromWriteRequestCounterTestStart = self.Can.u32EepromWriteRequestCounter()
         OperatingSeconds = self.Can.statisticalData(MyToolItNetworkNr["STH1"], MyToolItStatData["OperatingTime"])
         SecondsReset1 = iMessage2Value(OperatingSeconds[:4])
         SecondsOveral1 = iMessage2Value(OperatingSeconds[4:])
@@ -4005,6 +4009,10 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("Operating Seconds since frist PowerOn(After Disconnect/Connect): " + str(SecondsOveral3))
         self.Can.Logger.Info("Operating Seconds since Reset(+30 minutes): " + str(SecondsReset4))
         self.Can.Logger.Info("Operating Seconds since frist PowerOn(+30minutes): " + str(SecondsOveral4))
+        u32EepromWriteRequestCounterTestEnd = self.Can.u32EepromWriteRequestCounter()
+        u32EepromWriteRequsts = u32EepromWriteRequestCounterTestEnd - u32EepromWriteRequestCounterTestStart
+        self.Can.Logger.Info("EEPROM Write Requests during tests: " + str(u32EepromWriteRequsts))
+        self.assertEqual(u32EepromWriteRequestCounterTestStart + 1, u32EepromWriteRequestCounterTestEnd)  # +1 due to operating seconds
         self.assertLessEqual(SecondsReset1, 10)
         self.assertGreaterEqual(SecondsReset2, 60)
         self.assertLessEqual(SecondsReset2, 70)
@@ -4065,7 +4073,10 @@ class TestSth(unittest.TestCase):
     """
 
     def test0750StatisticPageWriteReadDeteministic(self):
-        # Store content
+        uLoopRuns = 25
+        time.sleep(2)
+        u32EepromWriteRequestCounterTestStart = self.Can.u32EepromWriteRequestCounter()
+        self.Can.Logger.Info("Save up EEPROM content")
         startData = []
         for offset in range(0, 256, 4):
             index = self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Read"], [EepromPage["Statistics"], 0xFF & offset, 4, 0, 0, 0, 0, 0])
@@ -4073,7 +4084,9 @@ class TestSth(unittest.TestCase):
             startData.extend(dataReadBack[4:])
 
         # Test it self
-        for _i in range(0, 25):
+        for _i in range(0, uLoopRuns):
+            self.Can.Logger.Info("Next Run 12 Writes and Reads")
+            self.Can.u32EepromWriteRequestCounter()
             self.vEepromWritePage(EepromPage["Statistics"], 0xAA)
             self.vEepromReadPage(EepromPage["Statistics"], 0xAA)
             self.vEepromWritePage(EepromPage["Statistics"], 0xFF)
@@ -4098,29 +4111,39 @@ class TestSth(unittest.TestCase):
             self.vEepromReadPage(EepromPage["Statistics"], 0xFF)
             self.vEepromWritePage(EepromPage["Statistics"], 0x55)
             self.vEepromReadPage(EepromPage["Statistics"], 0x55)
-
-        # Write Back Page
+            self.Can.u32EepromWriteRequestCounter()
+            self.Can.Logger.Info("Fin Run 12 Writes and Reads")    
+            
+        self.Can.Logger.Info("Write back EEPROM content")
         timeStamp = self.Can.getTimeMs()
         for offset in range(0, 256, 4):
             payload = [EepromPage["Statistics"], 0xFF & offset, 4, 0]
             payload.extend(startData[offset:offset + 4])
             self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Write"], payload)
         self.Can.Logger.Info("Page Write Time: " + str(self.Can.getTimeMs() - timeStamp) + "ms")
-
+        u32EepromWriteRequestCounterTestEnd = self.Can.u32EepromWriteRequestCounter()
+        u32EepromWriteRequsts = u32EepromWriteRequestCounterTestEnd - u32EepromWriteRequestCounterTestStart
+        self.Can.Logger.Info("EEPROM Write Requests during tests: " + str(u32EepromWriteRequsts))
+        self.assertEqual(u32EepromWriteRequestCounterTestStart + 1, u32EepromWriteRequestCounterTestEnd)  # +1 due to incrementing at first write
+        
     """
     Check EEPROM Read/Write - Determistic data
     """
 
     def test0751StatisticPageWriteReadRandom(self):
-        # Store content
+        uLoopRuns = 100       
+        u32EepromWriteRequestCounterTestStart = self.Can.u32EepromWriteRequestCounter()
+        self.Can.Logger.Info("Save up EEPROM content")
         startData = []
         for offset in range(0, 256, 4):
             index = self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Read"], [EepromPage["ProductData"], 0xFF & offset, 4, 0, 0, 0, 0, 0])
             dataReadBack = self.Can.getReadMessageData(index)
             startData.extend(dataReadBack[4:])
-
+        
         # Test it self
-        for _i in range(0, 100):
+        for _i in range(0, uLoopRuns):
+            self.Can.Logger.Info("Next random Writes and Reads")
+            self.Can.u32EepromWriteRequestCounter()
             au8ReadCheck = []
             for offset in range(0, 256, 4):
                 au8Content = []
@@ -4135,15 +4158,81 @@ class TestSth(unittest.TestCase):
                 index = self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Read"], au8Payload)
                 dataReadBack = self.Can.getReadMessageData(index)
                 self.assertEqual(dataReadBack[4:], au8ReadCheck[offset:offset + 4])
+            self.Can.Logger.Info("Fin random Writes and Reads")
+            self.Can.u32EepromWriteRequestCounter()
 
-            # Write Back Page
-            timeStamp = self.Can.getTimeMs()
-            for offset in range(0, 256, 4):
-                payload = [EepromPage["ProductData"], 0xFF & offset, 4, 0]
-                payload.extend(startData[offset:offset + 4])
-                self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Write"], payload)
-            self.Can.Logger.Info("Page Write Time: " + str(self.Can.getTimeMs() - timeStamp) + "ms")
+        # Write Back Page
+        timeStamp = self.Can.getTimeMs()
+        for offset in range(0, 256, 4):
+            payload = [EepromPage["ProductData"], 0xFF & offset, 4, 0]
+            payload.extend(startData[offset:offset + 4])
+            self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Write"], payload)
+        self.Can.Logger.Info("Page Write Time: " + str(self.Can.getTimeMs() - timeStamp) + "ms")
+        self.Can.u32EepromWriteRequestCounter()
+        u32EepromWriteRequestCounterTestEnd = self.Can.u32EepromWriteRequestCounter()
+        u32EepromWriteRequsts = u32EepromWriteRequestCounterTestEnd - u32EepromWriteRequestCounterTestStart
+        self.Can.Logger.Info("EEPROM Write Requests during tests: " + str(u32EepromWriteRequsts))
+        self.assertEqual(u32EepromWriteRequestCounterTestStart + 1, u32EepromWriteRequestCounterTestEnd)  # +1 due to incrementing at first write
+        
+    """
+    Check single Write access at startup and off (Power On Counter and Power Off Counter)
+    """
 
+    def test0752EepromWriteRequestCounterConnectDisconnect(self):
+        u32EepromWriteRequestCounterTestStart = self.Can.u32EepromWriteRequestCounter()
+        time.sleep(1)
+        self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
+        self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
+        time.sleep(1)
+        u32EepromWriteRequestCounterTestEnd = self.Can.u32EepromWriteRequestCounter()
+        self.assertEqual(u32EepromWriteRequestCounterTestStart + 2, u32EepromWriteRequestCounterTestEnd)
+        
+    """
+    Check that page switched do not yield to Writing EEPROM
+    """
+
+    def test0753EepromWriteRequestCounterPageSwitches(self):        
+        time.sleep(1)
+        uLoopRuns = 5       
+        u32EepromWriteRequestCounterTestStart = self.Can.u32EepromWriteRequestCounter()
+        for _i in range(0, uLoopRuns):
+            for sPage in EepromPage:
+                self.Can.Logger.Info("Next Page")
+                for offset in range(0, 256, 4):
+                    au8Payload = [EepromPage[sPage], 0xFF & offset, 4, 0, 0, 0, 0, 0]
+                    self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Read"], au8Payload)
+        u32EepromWriteRequestCounterTestEnd = self.Can.u32EepromWriteRequestCounter()
+        u32EepromWriteRequsts = u32EepromWriteRequestCounterTestEnd - u32EepromWriteRequestCounterTestStart
+        self.Can.Logger.Info("EEPROM Write Requests during tests: " + str(u32EepromWriteRequsts))
+        self.assertEqual(u32EepromWriteRequestCounterTestStart, u32EepromWriteRequestCounterTestEnd)  # +1 due to incrementing at first write
+
+    """
+    Check that page switched with previews writes yield into to Writing EEPROM with the correct number of wirtes
+    """
+
+    def test0754EepromWriteRequestCounterPageWriteSwitches(self):        
+        time.sleep(1)
+        uLoopRuns = 5 
+        uPageStart = 10   
+        uPageRuns=6
+        u32EepromWriteRequestCounterTestStart = self.Can.u32EepromWriteRequestCounter()
+        for _i in range(0, uLoopRuns):
+            for uPageOffset in range(0, uPageRuns):
+                self.Can.Logger.Info("Next Page")
+                self.Can.u32EepromWriteRequestCounter()
+                uPage = uPageOffset + uPageStart
+                au8Payload = [uPage, 12, 4, 0, 0, 0, 0, 0]
+                self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Write"], au8Payload, log = False)
+                uPage = uPageOffset + 2
+                uPage %= uPageRuns
+                uPage += uPageStart
+                au8Payload = [uPage, 12, 4, 0, 0, 0, 0, 0]
+                self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Read"], au8Payload, log = False)
+        u32EepromWriteRequestCounterTestEnd = self.Can.u32EepromWriteRequestCounter()
+        u32EepromWriteRequsts = u32EepromWriteRequestCounterTestEnd - u32EepromWriteRequestCounterTestStart
+        self.Can.Logger.Info("EEPROM Write Requests during tests: " + str(u32EepromWriteRequsts))
+        self.assertEqual(uPageRuns * uLoopRuns, u32EepromWriteRequsts)
+        
     """
     Status Word after Reset
     """
