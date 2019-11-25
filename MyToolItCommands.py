@@ -337,7 +337,6 @@ CalibMeassurementTypeNr = {
     "Voltage" : 32,
     "Vss" : 96,
     "Avdd" : 97,
-    "RegulatedInternalPower" : 98,
     "OpvOutput" : 99,
 }
 
@@ -347,7 +346,6 @@ CalibMeassurementTypeName = {
     CalibMeassurementTypeNr["Voltage"] : "Calibration Measurement Type - Voltage",
     CalibMeassurementTypeNr["Vss"] : "Calibration Measurement Type - VSS(Ground)",
     CalibMeassurementTypeNr["Avdd"] :"Calibration Measurement Type - AVDD(Analog Supply)",
-    CalibMeassurementTypeNr["RegulatedInternalPower"] : "Calibration Measurement Type - Regulated Internal Power",
     CalibMeassurementTypeNr["OpvOutput"]  : "Calibration Measurement Type - OPV Output",
 }
 
@@ -544,6 +542,10 @@ CalibrationFactor = {
     "Voltage" : 32,
 }
 
+
+BlueToothDeviceNr = {
+    "Self" : 255,
+}
 
 def to8bitSigned(num):
     mask7 = 128  # Check 8th bit ~ 2^8

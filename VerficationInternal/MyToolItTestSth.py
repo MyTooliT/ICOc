@@ -21,9 +21,9 @@ from MyToolItCommands import *
 from SthLimits import *
 from testSignal import *
 
-sVersion = "v2.1.5"
+sVersion = TestConfig["Version"]
 sLogLocation = '../../Logs/STH/'
-sBuildLocation = "../../SimplicityStudio/v4_workspace/server_firmware/builds/"
+sHomeLocation = "../../SimplicityStudio/v4_workspace/STH/"
 sSilabsCommanderLocation = "../../SimplicityStudio/SimplicityCommander/"
 sAdapterSerialNo = "440115849"
 sBoardType = "BGM113A256V2"
@@ -36,13 +36,13 @@ This class is used for automated internal verification of the sensory tool holde
 class TestSth(unittest.TestCase):
 
     def setUp(self):
-        self.sBuildLocation = sBuildLocation + sVersion
-        self.sBootloader = sBuildLocation + "BootloaderOtaBgm113.s37"
+        self.sHomeLocation = sHomeLocation
+        self.sBuildLocation = sHomeLocation + "builds/" + sVersion
+        self.sBootloader = sHomeLocation + "builds/" + "BootloaderOtaBgm113.s37"
         self.sAdapterSerialNo = sAdapterSerialNo
         self.sBoardType = sBoardType
         self.sSilabsCommander = sSilabsCommanderLocation + "commander"
         self.bError = False
-        self.sBuildLocation = sBuildLocation + sVersion
         self.fileName = sLogLocation + self._testMethodName + ".txt"
         self.fileNameError = sLogLocation + "Error_" + self._testMethodName + ".txt"
         self.Can = CanFd.CanFd(CanFd.PCAN_BAUD_1M, self.fileName, self.fileNameError, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], AdcPrescalerReset, AdcAcquisitionTimeReset, AdcAcquisitionOverSamplingRateReset, FreshLog=True)
@@ -55,7 +55,7 @@ class TestSth(unittest.TestCase):
             self.sSthAddr = sBlueToothMacAddr(self.Can.BlueToothAddress(MyToolItNetworkNr["STH1"]))
             self.Can.Logger.Info("STU BlueTooth Address: " + self.sStuAddr)
             self.Can.Logger.Info("STH BlueTooth Address: " + self.sSthAddr)
-            self.Can.u32EepromWriteRequestCounter()
+            self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STH1"])
             iOperatingSeconds = self.Can.statisticalData(MyToolItNetworkNr["STU1"], MyToolItStatData["OperatingTime"])[4:]
             iOperatingSeconds = iMessage2Value(iOperatingSeconds)
             self.Can.Logger.Info("STU Operating Seconds: " + str(iOperatingSeconds))
@@ -87,7 +87,7 @@ class TestSth(unittest.TestCase):
             temp = self._SthAdcTemp()
             self.assertGreaterEqual(TempInternalMax, temp)
             self.assertLessEqual(TempInternalMin, temp)
-            self.Can.u32EepromWriteRequestCounter()
+            self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STH1"])
             self.Can.Logger.Info("Test Time End Time Stamp")
             self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
         else:
@@ -184,6 +184,8 @@ class TestSth(unittest.TestCase):
     def _BlueToothStatistics(self):
         SendCounter = self.Can.BlueToothCmd(MyToolItNetworkNr["STH1"], SystemCommandBlueTooth["SendCounter"])
         self.Can.Logger.Info("BlueTooth Send Counter(STH1): " + str(SendCounter))
+        ReceiveCounter = self.Can.BlueToothCmd(MyToolItNetworkNr["STH1"], SystemCommandBlueTooth["ReceiveCounter"])
+        self.Can.Logger.Info("BlueTooth Receive Counter(STU1): " + str(ReceiveCounter))
         Rssi = self.Can.BlueToothRssi(MyToolItNetworkNr["STH1"])
         self.Can.Logger.Info("BlueTooth Rssi(STH1): " + str(Rssi) + "dBm")
         SendCounter = self.Can.BlueToothCmd(MyToolItNetworkNr["STU1"], SystemCommandBlueTooth["SendCounter"])
@@ -535,25 +537,25 @@ class TestSth(unittest.TestCase):
 
     def test0000FirmwareFlash(self):
         try:
-            os.remove(self.sLogLocation + self._testMethodName + "ManufacturingCreateResport.txt")
+            os.remove(sLogLocation + self._testMethodName + "ManufacturingCreateResport.txt")
         except:
             pass
         try:
-            os.remove(self.sLogLocation + self._testMethodName + "ManufacturingFlashResport.txt")
+            os.remove(sLogLocation + self._testMethodName + "ManufacturingFlashResport.txt")
         except:
             pass
         try:
-            os.remove(self.sLogLocation + self._testMethodName + "ManufacturingDebugUnlock.txt")
+            os.remove(sLogLocation + self._testMethodName + "ManufacturingDebugUnlock.txt")
         except:
             pass
         try:
-            os.remove(self.sLogLocation + self._testMethodName + "DeviceInfo.txt")
+            os.remove(sLogLocation + self._testMethodName + "DeviceInfo.txt")
         except:
             pass
 
         sSystemCall = self.sSilabsCommander + " device lock –-debug disable --serialno " + self.sAdapterSerialNo
         sSystemCall += " -d " + self.sBoardType
-        sSystemCall += ">> " + self.sLogLocation
+        sSystemCall += ">> " + sLogLocation
         sSystemCall += self._testMethodName + "ManufacturingDebugUnlock.txt"
         if os.name == 'nt':
             sSystemCall = sSystemCall.replace("/", "\\")
@@ -565,7 +567,7 @@ class TestSth(unittest.TestCase):
         sSystemCall = self.sSilabsCommander + " device info "
         sSystemCall += "--serialno " + self.sAdapterSerialNo + " "
         sSystemCall += "-d " + self.sBoardType + " "
-        sSystemCall += ">> " + self.sLogLocation
+        sSystemCall += ">> " + sLogLocation
         sSystemCall += self._testMethodName + "DeviceInfo.txt"
         if os.name == 'nt':
             sSystemCall = sSystemCall.replace("/", "\\")
@@ -573,17 +575,17 @@ class TestSth(unittest.TestCase):
         # for mac and linux(here, os.name is 'posix')
         else:
             os.system(sSystemCall)
-        tFile = open(self.sLogLocation + self._testMethodName + "DeviceInfo.txt", "r", encoding='utf-8')
+        tFile = open(sLogLocation + self._testMethodName + "DeviceInfo.txt", "r", encoding='utf-8')
         asData = tFile.readlines()
         tFile.close()
         if "Unique ID" == asData[-2][:9]:
             sSystemCall = self.sSilabsCommander + " convert "
             sSystemCall += self.sBootloader + " "
-            sSystemCall += self.sBuildLocation + "/Server.s37 "
+            sSystemCall += self.sBuildLocation + "/firmware_server.s37 "
             sSystemCall += "--patch 0x0fe04000:0x00 --patch 0x0fe041F8:0xFD "
-            sSystemCall += "-o " + self.sBuildLocation + "/manufacturing_imageSth" + sVersion + ".hex "
+            sSystemCall += "-o " + self.sBuildLocation + "/manufacturingImageSth" + sVersion + ".hex "
             sSystemCall += "-d " + self.sBoardType + " "
-            sSystemCall += ">> " + self.sLogLocation
+            sSystemCall += ">> " + sLogLocation
             sSystemCall += self._testMethodName + "ManufacturingCreateResport.txt"
             if os.name == 'nt':
                 sSystemCall = sSystemCall.replace("/", "\\")
@@ -591,17 +593,16 @@ class TestSth(unittest.TestCase):
             # for mac and linux(here, os.name is 'posix')
             else:
                 os.system(sSystemCall)
-            tFile = open(self.sLogLocation + self._testMethodName + "ManufacturingCreateResport.txt", "r", encoding='utf-8')
+            tFile = open(sLogLocation + self._testMethodName + "ManufacturingCreateResport.txt", "r", encoding='utf-8')
             asData = tFile.readlines()
             tFile.close()
-            self.assertEqual("Overwriting file:", asData[-2][:17])
             self.assertEqual("DONE\n", asData[-1])
             sSystemCall = self.sSilabsCommander + " flash "
-            sSystemCall += self.sBuildLocation + "/manufacturing_imageSth" + sVersion + ".hex "
+            sSystemCall += self.sBuildLocation + "/manufacturingImageSth" + sVersion + ".hex "
             sSystemCall += "--address 0x0 "
             sSystemCall += "--serialno " + self.sAdapterSerialNo + " "
             sSystemCall += "-d " + self.sBoardType + " "
-            sSystemCall += ">> " + self.sLogLocation
+            sSystemCall += ">> " + sLogLocation
             sSystemCall += self._testMethodName + "ManufacturingFlashResport.txt"
             if os.name == 'nt':
                 sSystemCall = sSystemCall.replace("/", "\\")
@@ -609,7 +610,7 @@ class TestSth(unittest.TestCase):
             # for mac and linux(here, os.name is 'posix')
             else:
                 os.system(sSystemCall)
-            tFile = open(self.sLogLocation + self._testMethodName + "ManufacturingFlashResport.txt", "r", encoding='utf-8')
+            tFile = open(sLogLocation + self._testMethodName + "ManufacturingFlashResport.txt", "r", encoding='utf-8')
             asData = tFile.readlines()
             tFile.close()
             self.assertEqual("range 0x0FE04000 - 0x0FE047FF (2 KB)\n", asData[-2][10:])
@@ -620,13 +621,47 @@ class TestSth(unittest.TestCase):
     """
 
     def test0001OverTheAirUpdate(self):
-        iRuns = 4
-        iRuns += 1
-        self._resetStu()
-        time.sleep(1)
+        bCreate = os.path.isfile(self.sBuildLocation + "/OtaServer.gpl")
+        bCreate = bCreate and os.path.isfile(self.sBuildLocation + "/OtaApploader.gpl") 
+        bCreate = bCreate and os.path.isfile(self.sBuildLocation + "/OtaApploaderServer.gpl")
+        bCreate = not bCreate
+        if False != bCreate:
+            try:
+                os.remove(sLogLocation + self._testMethodName + "CreateReport.txt")                
+            except:
+                pass
+            
+            try:
+                os.remove(self.sBuildLocation + "/OtaServer.gpl")                
+            except:
+                pass
+            try:
+                os.remove(self.sBuildLocation + "/OtaApploader.gpl")                
+            except:
+                pass
+            try:
+                os.remove(self.sBuildLocation + "/OtaApploaderServer.gpl")                
+            except:
+                pass
+            iRuns = 4
+            iRuns += 1
+            self._resetStu()
+            time.sleep(1)
+            sSystemCall = self.sHomeLocation + "firmware_server/create_bl_files.bat "
+            sSystemCall += " -> " + sLogLocation
+            sSystemCall += self._testMethodName + "CreateReport.txt"
+            if os.name == 'nt':
+                sSystemCall = sSystemCall.replace("/", "\\")
+                os.system(sSystemCall)
+            # for mac and linux(here, os.name is 'posix')
+            else:
+                os.system(sSystemCall)
+            os.rename(self.sHomeLocation + "firmware_server/output_gbl/application.gbl", self.sBuildLocation + "/OtaServer.gpl")
+            os.rename(self.sHomeLocation + "firmware_server/output_gbl/apploader.gbl", self.sBuildLocation + "/OtaApploader.gpl")
+            os.rename(self.sHomeLocation + "firmware_server/output_gbl/full.gbl", self.sBuildLocation + "/OtaApploaderServer.gpl")
         for i in range(1, iRuns):
             sSystemCall = self.sBuildLocation + "/ota-dfu.exe COM6 115200 "
-            sSystemCall += self.sBuildLocation + "/ServerApplication.gbl "
+            sSystemCall += self.sBuildLocation + "/OtaServer.gpl "
             sSystemCall += self.sSthAddr + " -> " + sLogLocation
             sSystemCall += self._testMethodName + "Ota" + str(i) + ".txt"
             if os.name == 'nt':
@@ -691,7 +726,7 @@ class TestSth(unittest.TestCase):
     Checks correct version number
     """
 
-    def test0008SthVersionNumber(self):
+    def test0008VersionNumber(self):
         iIndex = self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["ProductData"], MyToolItProductData["FirmwareVersion"], [])
         au8Version = self.Can.getReadMessageData(iIndex)[-3:]
         sVersionReadBack = "v" + str(au8Version[0]) + "." + str(au8Version[1]) + "." + str(au8Version[2])
@@ -1690,19 +1725,33 @@ class TestSth(unittest.TestCase):
         self.streamingValueCompare(array1, array2, array3, AdcMiddleX, AdcToleranceX, AdcMiddleY, AdcToleranceY, AdcMiddleZ, AdcToleranceZ, fAcceleration)
 
     """
-    Test streaming Double-Axis meassurement
+    Test streaming AccX+AccY meassurement
     """
 
-    def test0325GetStreamingAccDouble(self):
+    def test0325GetStreamingAccXY(self):
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], SamplingRateDoubleMaxPrescaler, SamplingRateDoubleMaxAcqTime, SamplingRateDoubleMaxOverSamples, AdcReference["VDD"])
         [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 0, 1000)
         [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 0, indexStart, indexEnd)
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Acc", "",)
         self.streamingValueCompare(array1, array2, array3, AdcMiddleX, AdcToleranceX, AdcMiddleY, AdcToleranceY, AdcMiddleZ, AdcToleranceZ, fAcceleration)
+ 
+    """
+    Test streaming AccX+AccZ meassurement
+    """
+
+    def test0326GetStreamingAccXZ(self):
+        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], SamplingRateDoubleMaxPrescaler, SamplingRateDoubleMaxAcqTime, SamplingRateDoubleMaxOverSamples, AdcReference["VDD"])
         [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 0, 1, 1000)
         [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 0, 1, indexStart, indexEnd)
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Acc", "",)
-        self.streamingValueCompare(array1, array2, array3, AdcMiddleX, AdcToleranceX, AdcMiddleY, AdcToleranceY, AdcMiddleZ, AdcToleranceZ, fAcceleration)
+        self.streamingValueCompare(array1, array2, array3, AdcMiddleX, AdcToleranceX, AdcMiddleY, AdcToleranceY, AdcMiddleZ, AdcToleranceZ, fAcceleration)       
+
+
+    """
+    Test streaming AccY+AccZ meassurement
+    """
+    def test0327GetStreamingAccYZ(self):    
+        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], SamplingRateDoubleMaxPrescaler, SamplingRateDoubleMaxAcqTime, SamplingRateDoubleMaxOverSamples, AdcReference["VDD"]) 
         [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 0, 1, 1, 1000)
         [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 0, 1, 1, indexStart, indexEnd)
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Acc", "",)
@@ -1712,7 +1761,7 @@ class TestSth(unittest.TestCase):
     Test Signal-to-Noise Ration - x
     """
 
-    def test0326SignalIndicatorsAccX(self):
+    def test0330SignalIndicatorsAccX(self):
         self.TurnOffLed()
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], SamplingRateSingleMaxPrescaler, SamplingRateSingleMaxAcqTime, SamplingRateSingleMaxOverSamples, AdcReference["VDD"])
         [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0, StreamingStandardTestTimeMs)
@@ -1725,7 +1774,7 @@ class TestSth(unittest.TestCase):
     Test Signal-to-Noise Ration - Y
     """
 
-    def test0327SignalIndicatorsAccY(self):
+    def test0331SignalIndicatorsAccY(self):
         self.TurnOffLed()
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], SamplingRateSingleMaxPrescaler, SamplingRateSingleMaxAcqTime, SamplingRateSingleMaxOverSamples, AdcReference["VDD"])
         [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 1, 0, StreamingStandardTestTimeMs)
@@ -1738,7 +1787,7 @@ class TestSth(unittest.TestCase):
     Test Signal-to-Noise Ration - Z
     """
 
-    def test0328SignalIndicatorsAccZ(self):
+    def test0332SignalIndicatorsAccZ(self):
         self.TurnOffLed()
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], SamplingRateSingleMaxPrescaler, SamplingRateSingleMaxAcqTime, SamplingRateSingleMaxOverSamples, AdcReference["VDD"])
         [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 0, 1, StreamingStandardTestTimeMs)
@@ -1751,7 +1800,7 @@ class TestSth(unittest.TestCase):
     Test Signal-to-Noise Ration - Z
     """
 
-    def test0329SignalIndicatorsBattery(self):
+    def test0333SignalIndicatorsBattery(self):
         self.TurnOffLed()
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], SamplingRateSingleMaxPrescaler, SamplingRateSingleMaxAcqTime, SamplingRateSingleMaxOverSamples, AdcReference["VDD"])
         [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0, StreamingStandardTestTimeMs)
@@ -1764,7 +1813,7 @@ class TestSth(unittest.TestCase):
     Test Signal-to-Noise Ration - Acc Multi
     """
 
-    def test0330SignalIndicatorsMulti(self):
+    def test0334SignalIndicatorsMulti(self):
         self.TurnOffLed()
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], SamplingRateDoubleMaxPrescaler, SamplingRateDoubleMaxAcqTime, SamplingRateDoubleMaxOverSamples, AdcReference["VDD"])
         [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 0, 1000)
@@ -1794,7 +1843,7 @@ class TestSth(unittest.TestCase):
     Test Streaming multiple Times
     """
 
-    def test0331GetStreamingMultipleTimes(self):
+    def test0335GetStreamingMultipleTimes(self):
         for _i in range(0, 3):
             [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0, 1000)
             [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0, indexStart, indexEnd)
@@ -1820,7 +1869,7 @@ class TestSth(unittest.TestCase):
     Test multiple config battery, x, y, z
     """
 
-    def test0332StreamingMultiConfigBatAccXAccYAccZ(self):
+    def test0336StreamingMultiConfigBatAccXAccYAccZ(self):
         [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0, 1000)
         [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0, indexStart, indexEnd)
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Voltage", "")
@@ -1842,7 +1891,7 @@ class TestSth(unittest.TestCase):
     Test multiple config x-xyz-x
     """
 
-    def test0333StreamingMultiConfig(self):
+    def test0337StreamingMultiConfig(self):
         self.Can.Logger.Info("Streaming AccX starts")
         self.test0321GetStreamingAccX()
         self.Can.ReadThreadReset()
@@ -1857,14 +1906,14 @@ class TestSth(unittest.TestCase):
     Test long usage of data acquiring
     """
 
-    def test0334StreamingHeavyDuty(self):
+    def test0338StreamingHeavyDuty(self):
         self.SamplingRate(SamplingRateSingleMaxPrescaler, SamplingRateSingleMaxAcqTime, SamplingRateSingleMaxOverSamples, AdcReference["VDD"], runTime=1200000)
 
     """
     Mixed Streaming - AccX + VoltageBattery
     """
 
-    def test0335MixedStreamingAccXVoltBat(self):
+    def test0339MixedStreamingAccXVoltBat(self):
         self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0)
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0)
         time.sleep(StreamingStandardTestTimeMs / 1000)
@@ -1898,7 +1947,7 @@ class TestSth(unittest.TestCase):
     Mixed Streaming - AccX + VoltageBattery; Requesting Reverse
     """
 
-    def test0336MixedStreamingAccXVoltBatInverse(self):
+    def test0340MixedStreamingAccXVoltBatInverse(self):
         self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0)
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0)
         time.sleep(StreamingStandardTestTimeMs / 1000)
@@ -1932,7 +1981,7 @@ class TestSth(unittest.TestCase):
     Mixed Streaming - AccY + VoltageBattery
     """
 
-    def test0337MixedStreamingAccYVoltBat(self):
+    def test0341MixedStreamingAccYVoltBat(self):
         self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0)
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 1, 0)
         time.sleep(StreamingStandardTestTimeMs / 1000)
@@ -1966,7 +2015,7 @@ class TestSth(unittest.TestCase):
     Mixed Streaming - AccZ + VoltageBattery
     """
 
-    def test0338MixedStreamingAccZVoltBat(self):
+    def test0342MixedStreamingAccZVoltBat(self):
         self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0)
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 0, 1)
         time.sleep(StreamingStandardTestTimeMs / 1000)
@@ -2000,7 +2049,7 @@ class TestSth(unittest.TestCase):
     Mixed Streaming - AccX + AccZ + VoltageBattery
     """
 
-    def test0339MixedStreamingAccXZVoltBat(self):
+    def test0343MixedStreamingAccXZVoltBat(self):
         prescaler = SamplingRateDoubleMaxPrescaler
         acqTime = SamplingRateDoubleMaxAcqTime
         overSamples = SamplingRateDoubleMaxOverSamples
@@ -2037,7 +2086,7 @@ class TestSth(unittest.TestCase):
     Mixed Streaming - AccX + AccY + VoltageBattery
     """
 
-    def test0340MixedStreamingAccXYVoltBat(self):
+    def test0344MixedStreamingAccXYVoltBat(self):
         prescaler = SamplingRateDoubleMaxPrescaler
         acqTime = SamplingRateDoubleMaxAcqTime
         overSamples = SamplingRateDoubleMaxOverSamples
@@ -2074,7 +2123,7 @@ class TestSth(unittest.TestCase):
     Mixed Streaming - AccY + AccZ + VoltageBattery
     """
 
-    def test0341MixedStreamingAccYZVoltBat(self):
+    def test0345MixedStreamingAccYZVoltBat(self):
         prescaler = SamplingRateDoubleMaxPrescaler
         acqTime = SamplingRateDoubleMaxAcqTime
         overSamples = SamplingRateDoubleMaxOverSamples
@@ -2114,7 +2163,7 @@ class TestSth(unittest.TestCase):
     Mixed Streaming - AccX + AccY + AccZ + VoltageBattery
     """
 
-    def test0342MixedStreamingAccXYZVoltBat(self):
+    def test0346MixedStreamingAccXYZVoltBat(self):
         self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0)
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 1)
         time.sleep(StreamingStandardTestTimeMs / 1000)
@@ -2146,9 +2195,9 @@ class TestSth(unittest.TestCase):
     Stream Acceleration(X) and receive single sampling point for Battery
     """
 
-    def test0343StreamingAccXSingleBattery(self):
+    def test0347StreamingAccXSingleBattery(self):
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0)
-        time.sleep(1.025)
+        time.sleep(1.1)
         self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], 1, 0, 0)
         time.sleep(9)
         indexEnd = self.Can.GetReadArrayIndex()
@@ -2173,9 +2222,9 @@ class TestSth(unittest.TestCase):
     Stream Acceleration(Y) and receive single sampling point for Battery
     """
 
-    def test0344StreamingAccYSingleBattery(self):
+    def test0348StreamingAccYSingleBattery(self):
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 1, 0)
-        time.sleep(1.025)
+        time.sleep(1.1)
         self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], 1, 0, 0)
         time.sleep(9)
         indexEnd = self.Can.GetReadArrayIndex()
@@ -2200,9 +2249,9 @@ class TestSth(unittest.TestCase):
     Stream Acceleration(Z) and receive single sampling point for Battery
     """
 
-    def test0345StreamingAccZSingleBattery(self):
+    def test0349StreamingAccZSingleBattery(self):
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 0, 1)
-        time.sleep(1.025)
+        time.sleep(1.1)
         self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], 1, 0, 0)
         time.sleep(9)
         indexEnd = self.Can.GetReadArrayIndex()
@@ -2227,36 +2276,37 @@ class TestSth(unittest.TestCase):
     Stream Battery and receive single sampling point for AccX
     """
 
-    def test0346StreamingBatterySingleAccX(self):
-        indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0)
-        time.sleep(1.025)
-        self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], 1, 0, 0)
-        time.sleep(9)
-        indexEnd = self.Can.GetReadArrayIndex()
-        self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"])
-        [voltage1Array, voltage2Array, voltage3Array] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0, indexStart, indexEnd)
-        [AccArray1, AccArray2, AccArray3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 0, 0, indexStart, indexEnd)
-        self.assertEqual(0, len(AccArray2))
-        self.assertEqual(0, len(AccArray3))
-        self.assertEqual(1, len(AccArray1))
-        self.assertEqual(0, len(voltage2Array))
-        self.assertEqual(0, len(voltage3Array))
-        samplingPointsBattery = len(voltage1Array) / 10
-        self.Can.Logger.Info("AccX Raw: " + str(AccArray1[0]))
-        self.singleValueCompare(AccArray1, AccArray2, AccArray3, AdcRawMiddleX, AdcRawToleranceX, AdcRawMiddleY, AdcRawToleranceY, AdcRawMiddleZ, AdcRawToleranceZ, fAdcRawDat)
-        self.Can.Logger.Info("Battery Sampling Points per seconds: " + str(samplingPointsBattery))
-        calcRate = calcSamplingRate(AdcPrescalerReset, AdcAcquisitionTimeReset, AdcAcquisitionOverSamplingRateReset)
-        self.Can.Logger.Info("Calculated Sampling Points per seconds: " + str(calcRate))
-        self.assertLess(calcRate * SamplingToleranceLow, samplingPointsBattery)
-        self.assertGreater(calcRate * SamplingToleranceHigh, samplingPointsBattery)
+    def test0350StreamingBatterySingleAccX(self):
+        for _i in range(0, 1):
+            indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0)
+            time.sleep(1.1)
+            self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], 1, 0, 0)
+            time.sleep(9)
+            indexEnd = self.Can.GetReadArrayIndex()
+            self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"])
+            [voltage1Array, voltage2Array, voltage3Array] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0, indexStart, indexEnd)
+            [AccArray1, AccArray2, AccArray3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 0, 0, indexStart, indexEnd)
+            self.assertEqual(0, len(AccArray2))
+            self.assertEqual(0, len(AccArray3))
+            self.assertEqual(1, len(AccArray1))
+            self.assertEqual(0, len(voltage2Array))
+            self.assertEqual(0, len(voltage3Array))
+            samplingPointsBattery = len(voltage1Array) / 10
+            self.Can.Logger.Info("AccX Raw: " + str(AccArray1[0]))
+            self.singleValueCompare(AccArray1, AccArray2, AccArray3, AdcRawMiddleX, AdcRawToleranceX, AdcRawMiddleY, AdcRawToleranceY, AdcRawMiddleZ, AdcRawToleranceZ, fAdcRawDat)
+            self.Can.Logger.Info("Battery Sampling Points per seconds: " + str(samplingPointsBattery))
+            calcRate = calcSamplingRate(AdcPrescalerReset, AdcAcquisitionTimeReset, AdcAcquisitionOverSamplingRateReset)
+            self.Can.Logger.Info("Calculated Sampling Points per seconds: " + str(calcRate))
+            self.assertLess(calcRate * SamplingToleranceLow, samplingPointsBattery)
+            self.assertGreater(calcRate * SamplingToleranceHigh, samplingPointsBattery)
 
     """
     Stream Battery and receive single sampling point for AccY
     """
 
-    def test0347StreamingBatterySingleAccY(self):
+    def test0351StreamingBatterySingleAccY(self):
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0)
-        time.sleep(1.025)
+        time.sleep(1.1)
         self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], 0, 1, 0)
         time.sleep(9)
         indexEnd = self.Can.GetReadArrayIndex()
@@ -2281,9 +2331,9 @@ class TestSth(unittest.TestCase):
     Stream Battery and receive single sampling point for AccZ
     """
 
-    def test0348StreamingBatterySingleAccZ(self):
+    def test0352StreamingBatterySingleAccZ(self):
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0)
-        time.sleep(1.025)
+        time.sleep(1.1)
         self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], 0, 0, 1)
         time.sleep(9)
         indexEnd = self.Can.GetReadArrayIndex()
@@ -2308,9 +2358,9 @@ class TestSth(unittest.TestCase):
     Stream Battery and receive single sampling point for AccYZ
     """
 
-    def test0349StreamingBatterySingleAccYZ(self):
+    def test0353StreamingBatterySingleAccYZ(self):
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0)
-        time.sleep(1.025)
+        time.sleep(1.1)
         self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], 0, 1, 1)
         time.sleep(9)
         indexEnd = self.Can.GetReadArrayIndex()
@@ -2336,9 +2386,9 @@ class TestSth(unittest.TestCase):
     Stream Battery and receive single sampling point for AccXZ
     """
 
-    def test0350StreamingBatterySingleAccXZ(self):
+    def test0354StreamingBatterySingleAccXZ(self):
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0)
-        time.sleep(1.025)
+        time.sleep(1.1)
         self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], 1, 0, 1)
         time.sleep(9)
         indexEnd = self.Can.GetReadArrayIndex()
@@ -2364,9 +2414,9 @@ class TestSth(unittest.TestCase):
     Stream Battery and receive single sampling point for AccXY
     """
 
-    def test0351StreamingBatterySingleAccXY(self):
+    def test0355StreamingBatterySingleAccXY(self):
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0)
-        time.sleep(1.025)
+        time.sleep(1.1)
         self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], 1, 1, 0)
         time.sleep(9)
         indexEnd = self.Can.GetReadArrayIndex()
@@ -2392,9 +2442,9 @@ class TestSth(unittest.TestCase):
     Stream Battery and receive single sampling point for AccXYZ
     """
 
-    def test0352StreamingBatterySingleAccXYZ(self):
+    def test0356StreamingBatterySingleAccXYZ(self):
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0)
-        time.sleep(1.025)
+        time.sleep(1.1)
         self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], 1, 1, 1)
         time.sleep(9)
         indexEnd = self.Can.GetReadArrayIndex()
@@ -2421,13 +2471,13 @@ class TestSth(unittest.TestCase):
     Stream AccXY and receive single sampling point for Battery
     """
 
-    def test0353StreamingAccXYSingleBattery(self):
+    def test0357StreamingAccXYSingleBattery(self):
         prescaler = SamplingRateDoubleMaxPrescaler
         acqTime = SamplingRateDoubleMaxAcqTime
-        overSamples = SamplingRateDoubleMaxOverSamples + 1
+        overSamples = SamplingRateDoubleMaxOverSamples
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], prescaler, acqTime, overSamples, AdcReference["VDD"])
         self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 0)
-        time.sleep(1.025)
+        time.sleep(1.1)
         indexStart = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], 1, 0, 0)
         time.sleep(10)
         indexEnd = self.Can.GetReadArrayIndex()
@@ -2455,13 +2505,13 @@ class TestSth(unittest.TestCase):
     Stream AccXZ and receive single sampling point for Battery
     """
 
-    def test0354StreamingAccXZSingleBattery(self):
+    def test0358StreamingAccXZSingleBattery(self):
         prescaler = SamplingRateDoubleMaxPrescaler
         acqTime = SamplingRateDoubleMaxAcqTime
-        overSamples = SamplingRateDoubleMaxOverSamples + 1
+        overSamples = SamplingRateDoubleMaxOverSamples
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], prescaler, acqTime, overSamples, AdcReference["VDD"])
         self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 0, 1)
-        time.sleep(1.025)
+        time.sleep(1.1)
         indexStart = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], 1, 0, 0, DataSets[1])
         time.sleep(10)
         indexEnd = self.Can.GetReadArrayIndex()
@@ -2489,13 +2539,13 @@ class TestSth(unittest.TestCase):
     Stream AccYZ and receive single sampling point for Battery
     """
 
-    def test0355StreamingAccYZSingleBattery(self):
+    def test0359StreamingAccYZSingleBattery(self):
         prescaler = SamplingRateDoubleMaxPrescaler
         acqTime = SamplingRateDoubleMaxAcqTime
-        overSamples = SamplingRateDoubleMaxOverSamples + 1
+        overSamples = SamplingRateDoubleMaxOverSamples
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], prescaler, acqTime, overSamples, AdcReference["VDD"])
         self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 0, 1, 1)
-        time.sleep(1.025)
+        time.sleep(1.1)
         indexStart = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], 1, 0, 0)
         time.sleep(10)
         indexEnd = self.Can.GetReadArrayIndex()
@@ -2523,9 +2573,9 @@ class TestSth(unittest.TestCase):
     Stream AccXXZ and receive single sampling point for Battery
     """
 
-    def test0356StreamingAccXYZSingleBattery(self):
+    def test0360StreamingAccXYZSingleBattery(self):
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 1)
-        time.sleep(1.025)
+        time.sleep(1.1)
         self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], 1, 0, 0)
         time.sleep(9)
         indexEnd = self.Can.GetReadArrayIndex()
@@ -3642,11 +3692,6 @@ class TestSth(unittest.TestCase):
         result = iMessage2Value(ret[4:])
         self.Can.Logger.Info("Calibration Result AVDD(3V3): " + str(result))
         self.assertLessEqual(2 ^ 16 - 100, result)
-        ret = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["RegulatedInternalPower"], 1, AdcReference["VDD"])
-        result = iMessage2Value(ret[4:])
-        self.Can.Logger.Info("Calibration Result Regulated Internal Power(DECOUPLE): " + str(result))
-        self.assertLessEqual(VoltRawDecoupleMiddle - VoltRawDecoupleTolerance, result)
-        self.assertGreaterEqual(VoltRawDecoupleMiddle + VoltRawDecoupleTolerance, result)
         ret = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["OpvOutput"], 1, AdcReference["VDD"])
         result = iMessage2Value(ret[4:])
         self.Can.Logger.Info("Calibration Result OPA2: " + str(result))
@@ -3875,7 +3920,6 @@ class TestSth(unittest.TestCase):
         stateStartVoltage = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"], CalibMeassurementTypeNr["Voltage"], 1, AdcReference["VDD"], bSet=False, bErrorAck=True)
         stateStartVss = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"], CalibMeassurementTypeNr["Vss"], 1, AdcReference["VDD"], bSet=False, bErrorAck=True)
         stateStartAvdd = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"], CalibMeassurementTypeNr["Avdd"], 1, AdcReference["VDD"], bSet=False, bErrorAck=True)
-        stateStartDecouple = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"], CalibMeassurementTypeNr["RegulatedInternalPower"], 1, AdcReference["VDD"], bSet=False, bErrorAck=True)
         stateStartOpa1 = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"], CalibMeassurementTypeNr["OpvOutput"], 1, AdcReference["VDD"], bSet=False, bErrorAck=True)
         stateStartOpa2 = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"], CalibMeassurementTypeNr["OpvOutput"], 2, AdcReference["VDD"], bSet=False, bErrorAck=True)
         ErrorPayloadAssumed = [0x0, 0x2, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0]
@@ -3887,7 +3931,6 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("State Start Voltage: " + payload2Hex(stateStartVoltage))
         self.Can.Logger.Info("State Start Vss: " + payload2Hex(stateStartVss))
         self.Can.Logger.Info("State Start Avdd: " + payload2Hex(stateStartAvdd))
-        self.Can.Logger.Info("State Start Decouple: " + payload2Hex(stateStartDecouple))
         self.Can.Logger.Info("State Start Opa1: " + payload2Hex(stateStartOpa1))
         self.Can.Logger.Info("State Start Opa2: " + payload2Hex(stateStartOpa2))
         for i in range(0, 8):
@@ -3898,7 +3941,6 @@ class TestSth(unittest.TestCase):
             self.assertEqual(stateStartVoltage[i], ErrorPayloadAssumed[i])
             self.assertEqual(stateStartVss[i], ErrorPayloadAssumed[i])
             self.assertEqual(stateStartAvdd[i], ErrorPayloadAssumed[i])
-            self.assertEqual(stateStartDecouple[i], ErrorPayloadAssumed[i])
             self.assertEqual(stateStartOpa1[i], ErrorPayloadAssumed[i])
             self.assertEqual(stateStartOpa2[i], ErrorPayloadAssumed[i])
 
@@ -3984,11 +4026,11 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("Connect to STH")
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
         time.sleep(2)
-        u32EepromWriteRequestCounterTestStart = self.Can.u32EepromWriteRequestCounter()
+        u32EepromWriteRequestCounterTestStart = self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STH1"])
         OperatingSeconds = self.Can.statisticalData(MyToolItNetworkNr["STH1"], MyToolItStatData["OperatingTime"])
         SecondsReset1 = iMessage2Value(OperatingSeconds[:4])
         SecondsOveral1 = iMessage2Value(OperatingSeconds[4:])
-        time.sleep(60 * 1.02)
+        time.sleep(60)
         OperatingSeconds = self.Can.statisticalData(MyToolItNetworkNr["STH1"], MyToolItStatData["OperatingTime"])
         SecondsReset2 = iMessage2Value(OperatingSeconds[:4])
         SecondsOveral2 = iMessage2Value(OperatingSeconds[4:])
@@ -3997,7 +4039,7 @@ class TestSth(unittest.TestCase):
         OperatingSeconds = self.Can.statisticalData(MyToolItNetworkNr["STH1"], MyToolItStatData["OperatingTime"])
         SecondsReset3 = iMessage2Value(OperatingSeconds[:4])
         SecondsOveral3 = iMessage2Value(OperatingSeconds[4:])
-        time.sleep(60 * 30 * 1.02)  # looks like time is running at 98%calculated time or better
+        time.sleep(60 * 30) 
         OperatingSeconds = self.Can.statisticalData(MyToolItNetworkNr["STH1"], MyToolItStatData["OperatingTime"])
         SecondsReset4 = iMessage2Value(OperatingSeconds[:4])
         SecondsOveral4 = iMessage2Value(OperatingSeconds[4:])
@@ -4009,10 +4051,10 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("Operating Seconds since frist PowerOn(After Disconnect/Connect): " + str(SecondsOveral3))
         self.Can.Logger.Info("Operating Seconds since Reset(+30 minutes): " + str(SecondsReset4))
         self.Can.Logger.Info("Operating Seconds since frist PowerOn(+30minutes): " + str(SecondsOveral4))
-        u32EepromWriteRequestCounterTestEnd = self.Can.u32EepromWriteRequestCounter()
+        u32EepromWriteRequestCounterTestEnd = self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STH1"])
         u32EepromWriteRequsts = u32EepromWriteRequestCounterTestEnd - u32EepromWriteRequestCounterTestStart
         self.Can.Logger.Info("EEPROM Write Requests during tests: " + str(u32EepromWriteRequsts))
-        self.assertEqual(u32EepromWriteRequestCounterTestStart + 1, u32EepromWriteRequestCounterTestEnd)  # +1 due to operating seconds
+        self.assertEqual(3, u32EepromWriteRequsts)  # +1 due to operating seconds
         self.assertLessEqual(SecondsReset1, 10)
         self.assertGreaterEqual(SecondsReset2, 60)
         self.assertLessEqual(SecondsReset2, 70)
@@ -4075,7 +4117,7 @@ class TestSth(unittest.TestCase):
     def test0750StatisticPageWriteReadDeteministic(self):
         uLoopRuns = 25
         time.sleep(2)
-        u32EepromWriteRequestCounterTestStart = self.Can.u32EepromWriteRequestCounter()
+        u32EepromWriteRequestCounterTestStart = self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STH1"])
         self.Can.Logger.Info("Save up EEPROM content")
         startData = []
         for offset in range(0, 256, 4):
@@ -4086,7 +4128,7 @@ class TestSth(unittest.TestCase):
         # Test it self
         for _i in range(0, uLoopRuns):
             self.Can.Logger.Info("Next Run 12 Writes and Reads")
-            self.Can.u32EepromWriteRequestCounter()
+            self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STH1"])
             self.vEepromWritePage(EepromPage["Statistics"], 0xAA)
             self.vEepromReadPage(EepromPage["Statistics"], 0xAA)
             self.vEepromWritePage(EepromPage["Statistics"], 0xFF)
@@ -4111,7 +4153,7 @@ class TestSth(unittest.TestCase):
             self.vEepromReadPage(EepromPage["Statistics"], 0xFF)
             self.vEepromWritePage(EepromPage["Statistics"], 0x55)
             self.vEepromReadPage(EepromPage["Statistics"], 0x55)
-            self.Can.u32EepromWriteRequestCounter()
+            self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STH1"])
             self.Can.Logger.Info("Fin Run 12 Writes and Reads")    
             
         self.Can.Logger.Info("Write back EEPROM content")
@@ -4121,7 +4163,7 @@ class TestSth(unittest.TestCase):
             payload.extend(startData[offset:offset + 4])
             self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Write"], payload)
         self.Can.Logger.Info("Page Write Time: " + str(self.Can.getTimeMs() - timeStamp) + "ms")
-        u32EepromWriteRequestCounterTestEnd = self.Can.u32EepromWriteRequestCounter()
+        u32EepromWriteRequestCounterTestEnd = self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STH1"])
         u32EepromWriteRequsts = u32EepromWriteRequestCounterTestEnd - u32EepromWriteRequestCounterTestStart
         self.Can.Logger.Info("EEPROM Write Requests during tests: " + str(u32EepromWriteRequsts))
         self.assertEqual(u32EepromWriteRequestCounterTestStart + 1, u32EepromWriteRequestCounterTestEnd)  # +1 due to incrementing at first write
@@ -4132,7 +4174,7 @@ class TestSth(unittest.TestCase):
 
     def test0751StatisticPageWriteReadRandom(self):
         uLoopRuns = 100       
-        u32EepromWriteRequestCounterTestStart = self.Can.u32EepromWriteRequestCounter()
+        u32EepromWriteRequestCounterTestStart = self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STH1"])
         self.Can.Logger.Info("Save up EEPROM content")
         startData = []
         for offset in range(0, 256, 4):
@@ -4143,7 +4185,7 @@ class TestSth(unittest.TestCase):
         # Test it self
         for _i in range(0, uLoopRuns):
             self.Can.Logger.Info("Next random Writes and Reads")
-            self.Can.u32EepromWriteRequestCounter()
+            self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STH1"])
             au8ReadCheck = []
             for offset in range(0, 256, 4):
                 au8Content = []
@@ -4159,7 +4201,7 @@ class TestSth(unittest.TestCase):
                 dataReadBack = self.Can.getReadMessageData(index)
                 self.assertEqual(dataReadBack[4:], au8ReadCheck[offset:offset + 4])
             self.Can.Logger.Info("Fin random Writes and Reads")
-            self.Can.u32EepromWriteRequestCounter()
+            self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STH1"])
 
         # Write Back Page
         timeStamp = self.Can.getTimeMs()
@@ -4168,8 +4210,8 @@ class TestSth(unittest.TestCase):
             payload.extend(startData[offset:offset + 4])
             self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Write"], payload)
         self.Can.Logger.Info("Page Write Time: " + str(self.Can.getTimeMs() - timeStamp) + "ms")
-        self.Can.u32EepromWriteRequestCounter()
-        u32EepromWriteRequestCounterTestEnd = self.Can.u32EepromWriteRequestCounter()
+        self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STH1"])
+        u32EepromWriteRequestCounterTestEnd = self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STH1"])
         u32EepromWriteRequsts = u32EepromWriteRequestCounterTestEnd - u32EepromWriteRequestCounterTestStart
         self.Can.Logger.Info("EEPROM Write Requests during tests: " + str(u32EepromWriteRequsts))
         self.assertEqual(u32EepromWriteRequestCounterTestStart + 1, u32EepromWriteRequestCounterTestEnd)  # +1 due to incrementing at first write
@@ -4179,12 +4221,12 @@ class TestSth(unittest.TestCase):
     """
 
     def test0752EepromWriteRequestCounterConnectDisconnect(self):
-        u32EepromWriteRequestCounterTestStart = self.Can.u32EepromWriteRequestCounter()
+        u32EepromWriteRequestCounterTestStart = self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STH1"])
         time.sleep(1)
         self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
         time.sleep(1)
-        u32EepromWriteRequestCounterTestEnd = self.Can.u32EepromWriteRequestCounter()
+        u32EepromWriteRequestCounterTestEnd = self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STH1"])
         self.assertEqual(u32EepromWriteRequestCounterTestStart + 2, u32EepromWriteRequestCounterTestEnd)
         
     """
@@ -4194,14 +4236,14 @@ class TestSth(unittest.TestCase):
     def test0753EepromWriteRequestCounterPageSwitches(self):        
         time.sleep(1)
         uLoopRuns = 5       
-        u32EepromWriteRequestCounterTestStart = self.Can.u32EepromWriteRequestCounter()
+        u32EepromWriteRequestCounterTestStart = self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STH1"])
         for _i in range(0, uLoopRuns):
             for sPage in EepromPage:
                 self.Can.Logger.Info("Next Page")
                 for offset in range(0, 256, 4):
                     au8Payload = [EepromPage[sPage], 0xFF & offset, 4, 0, 0, 0, 0, 0]
                     self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Read"], au8Payload)
-        u32EepromWriteRequestCounterTestEnd = self.Can.u32EepromWriteRequestCounter()
+        u32EepromWriteRequestCounterTestEnd = self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STH1"])
         u32EepromWriteRequsts = u32EepromWriteRequestCounterTestEnd - u32EepromWriteRequestCounterTestStart
         self.Can.Logger.Info("EEPROM Write Requests during tests: " + str(u32EepromWriteRequsts))
         self.assertEqual(u32EepromWriteRequestCounterTestStart, u32EepromWriteRequestCounterTestEnd)  # +1 due to incrementing at first write
@@ -4211,15 +4253,15 @@ class TestSth(unittest.TestCase):
     """
 
     def test0754EepromWriteRequestCounterPageWriteSwitches(self):        
-        time.sleep(1)
+        time.sleep(2)
         uLoopRuns = 5 
         uPageStart = 10   
         uPageRuns=6
-        u32EepromWriteRequestCounterTestStart = self.Can.u32EepromWriteRequestCounter()
+        u32EepromWriteRequestCounterTestStart = self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STH1"])
         for _i in range(0, uLoopRuns):
             for uPageOffset in range(0, uPageRuns):
                 self.Can.Logger.Info("Next Page")
-                self.Can.u32EepromWriteRequestCounter()
+                self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STH1"])
                 uPage = uPageOffset + uPageStart
                 au8Payload = [uPage, 12, 4, 0, 0, 0, 0, 0]
                 self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Write"], au8Payload, log = False)
@@ -4228,7 +4270,7 @@ class TestSth(unittest.TestCase):
                 uPage += uPageStart
                 au8Payload = [uPage, 12, 4, 0, 0, 0, 0, 0]
                 self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Read"], au8Payload, log = False)
-        u32EepromWriteRequestCounterTestEnd = self.Can.u32EepromWriteRequestCounter()
+        u32EepromWriteRequestCounterTestEnd = self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STH1"])
         u32EepromWriteRequsts = u32EepromWriteRequestCounterTestEnd - u32EepromWriteRequestCounterTestStart
         self.Can.Logger.Info("EEPROM Write Requests during tests: " + str(u32EepromWriteRequsts))
         self.assertEqual(uPageRuns * uLoopRuns, u32EepromWriteRequsts)

@@ -1,24 +1,26 @@
 from MyToolItCommands import AdcAcquisitionTime, AdcOverSamplingRate, AdcReference
-Axis = 1
+Axis = 3
 PcbOnly = True
+bConnectedBattery = False
+
 
 def vSthLimitsConfig(iAxis, bPcbOnly):
     global Axis
     global PcbOnly
-    Axis=iAxis
+    Axis = iAxis
     PcbOnly = bPcbOnly
 
 
-#Calculated kx+d correction factors
-kAccX = 200/(2**16-1)
+# Calculated kx+d correction factors
+kAccX = 200 / (2 ** 16 - 1)
 dAccX = -100
-kBattery = (57*3.3)/(10*2**16)
+kBattery = (57 * 3.3) / (10 * 2 ** 16)
 
-RssiSthMin=-60#dBm
+RssiSthMin = -60  # dBm
 
 # Recalculation Factors
 AccelerationToAccGravitity = 200
-SamplingRateVfsToleranceRation = 64
+SamplingRateVfsToleranceRation = 32
 
 SamplingRateMin = 150  # To check maximum frequencies to be max
 SamplingRateMax = 14000  # To check maximum frequencies to be max
@@ -45,45 +47,59 @@ AdcAcquisitionOverSamplingRateReset = AdcOverSamplingRate[64]
 
 # Limits
 # Voltage
-VoltRawDecoupleMiddle = 23678
-VoltRawDecoupleTolerance = 100
 VoltRawOpa2Middle = 0
 VoltRawOpa2Tolerance = 3
 VoltRawOpa3Middle = 0
 VoltRawOpa3Tolerance = 3
 VoltRawVssTolerance = 3
-VoltMiddleBat = 3.2
-VoltToleranceBat = 0.2   
-VoltRawMiddleBat = 11000 
-VoltRawToleranceBat = 300
-SigIndBatteryQ1 = 8000         
-SigIndBatteryQ25 = 9000       
-SigIndBatteryMedL = 10000        
-SigIndBatteryMedH = 12000    
-SigIndBatteryQ75 = 13000     
-SigIndBatteryQ99 = 14000     
-SigIndBatteryVar = 40000     
-SigIndBatterySkewness = 20   
-SigIndBatterySNR = 60        
+if True == bConnectedBattery:
+    VoltMiddleBat = 3.2
+    SigIndBatteryQ1 = 8000         
+    SigIndBatteryQ25 = 9000       
+    SigIndBatteryMedL = 10000        
+    SigIndBatteryMedH = 12000    
+    SigIndBatteryQ75 = 13000     
+    SigIndBatteryQ99 = 14000     
+    SigIndBatteryVar = 40000     
+    SigIndBatterySkewness = 20   
+    SigIndBatterySNR = 60 
+    VoltRawMiddleBat = 11000 
+    VoltRawToleranceBat = 300
+else:
+    VoltMiddleBat = 0.2
+    SigIndBatteryQ1 = 600         
+    SigIndBatteryQ25 = 650       
+    SigIndBatteryMedL = 675        
+    SigIndBatteryMedH = 725    
+    SigIndBatteryQ75 = 750     
+    SigIndBatteryQ99 = 800     
+    SigIndBatteryVar = 40000     
+    SigIndBatterySkewness = 20   
+    SigIndBatterySNR = 60 
+    VoltRawMiddleBat = 700 
+    VoltRawToleranceBat = 200
+VoltToleranceBat = 0.1  
 
     
 # Acceleration
 AdcMiddleX = 0
 AdcMiddleY = 0
 AdcMiddleZ = 0
-AdcToleranceX = 2
+AdcToleranceX = 3
 AdcRawMiddleX = 2 ** 15
-AdcRawToleranceX = 512
+AdcRawToleranceX = 2048
 SelfTestOutputChangemVMin = 70
 SelfTestOutputChangemVTyp = 110
 
-SigIndAccXQ1 = 2 ** 15 * 0.99
-SigIndAccXQ25 = 2 ** 15 * 0.994
-SigIndAccXMedL = 2 ** 15 * 0.995
-SigIndAccXMedH = 2 ** 15 * 1.005
-SigIndAccXQ75 = 2 ** 15 * 1.008
-SigIndAccXQ99 = 2 ** 15 * 1.01
+SigIndAccXQ1 = 2 ** 15 * 0.95
+SigIndAccXQ25 = 2 ** 15 * 0.955
+SigIndAccXMedL = 2 ** 15 * 0.97
+SigIndAccXMedH = 2 ** 15 * 1.03
+SigIndAccXQ75 = 2 ** 15 * 1.045
+SigIndAccXQ99 = 2 ** 15 * 1.05
 SigIndAccXVar = 2000
+SigIndAccXSkewness = 0.9
+SigIndAccXSNR = 60
 if 1 == Axis:
     AdcToleranceY = 200
     AdcToleranceZ = 200
@@ -91,50 +107,48 @@ if 1 == Axis:
     AdcRawMiddleZ = 0
     AdcRawToleranceY = 54000
     AdcRawToleranceZ = 54000
-    SigIndAccXSkewness = 0.9
-    SigIndAccXSNR = 60
     SigIndAccYQ1 = 0
     SigIndAccYQ25 = 1
     SigIndAccYMedL = 2
-    SigIndAccYMedH = 2**16-3
-    SigIndAccYQ75 = 2**16-2
-    SigIndAccYQ99 = 2**16-1
+    SigIndAccYMedH = 2 ** 16 - 3
+    SigIndAccYQ75 = 2 ** 16 - 2
+    SigIndAccYQ99 = 2 ** 16 - 1
     SigIndAccYVar = 40000
     SigIndAccYSkewness = 20
     SigIndAccYSNR = 60
     SigIndAccZQ1 = 0
     SigIndAccZQ25 = 1
     SigIndAccZMedL = 2
-    SigIndAccZMedH = 2**16-3
-    SigIndAccZQ75 = 2**16-2
-    SigIndAccZQ99 = 2**16-1
+    SigIndAccZMedH = 2 ** 16 - 3
+    SigIndAccZQ75 = 2 ** 16 - 2
+    SigIndAccZQ99 = 2 ** 16 - 1
     SigIndAccZVar = 40000
     SigIndAccZSkewness = 20
     SigIndAccZSNR = 60
 else:
-    AdcToleranceY = 5
-    AdcToleranceZ = 5
-    AdcRawMiddleY = 0
-    AdcRawMiddleZ = 0
-    AdcRawToleranceY = 512
-    AdcRawToleranceZ = 512    
-    SigIndAccY1 = 2 ** 15 * 0.99
-    SigIndAccY25 = 2 ** 15 * 0.995
-    SigIndAccYedL = 2 ** 15 * 0.999
-    SigIndAccYedH = 2 ** 15 * 1.001
-    SigIndAccY75 = 2 ** 15 * 1.005
-    SigIndAccY99 = 2 ** 15 * 1.01
-    SigIndAccYar = 100
-    SigIndAccYkewness = 0.6
-    SigIndAccYNR = 70
-    SigIndAccZQ1 = 2 ** 15 * 0.99
-    SigIndAccZQ25 = 2 ** 15 * 0.995
-    SigIndAccZMedL = 2 ** 15 * 0.999
-    SigIndAccZMedH = 2 ** 15 * 1.001
-    SigIndAccZQ75 = 2 ** 15 * 1.005
-    SigIndAccZQ99 = 2 ** 15 * 1.01
-    SigIndAccZVar = 100
-    SigIndAccZSkewness = 0.6
+    AdcToleranceY = 3
+    AdcToleranceZ = 3
+    AdcRawMiddleY = 2 ** 15
+    AdcRawMiddleZ = 2 ** 15
+    AdcRawToleranceY = 2048
+    AdcRawToleranceZ = 2048    
+    SigIndAccYQ1 = 2 ** 15 * 0.95
+    SigIndAccYQ25 = 2 ** 15 * 0.955
+    SigIndAccYMedL = 2 ** 15 * 0.97
+    SigIndAccYMedH = 2 ** 15 * 1.03
+    SigIndAccYQ75 = 2 ** 15 * 1.045
+    SigIndAccYQ99 = 2 ** 15 * 1.05
+    SigIndAccYVar = 2000
+    SigIndAccYSkewness = 0.9
+    SigIndAccYSNR = 60
+    SigIndAccZQ1 = 2 ** 15 * 0.95
+    SigIndAccZQ25 = 2 ** 15 * 0.955
+    SigIndAccZMedL = 2 ** 15 * 0.97
+    SigIndAccZMedH = 2 ** 15 * 1.03
+    SigIndAccZQ75 = 2 ** 15 * 1.045
+    SigIndAccZQ99 = 2 ** 15 * 1.05
+    SigIndAccZVar = 2000
+    SigIndAccZSkewness = 0.9
     SigIndAccZSNR = 60
 
 # Time

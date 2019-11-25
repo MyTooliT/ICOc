@@ -394,7 +394,7 @@ class CanFd(object):
         cmd = self.CanCmd(blockCmd, subCmd, 1, 0)
         message = self.CanMessage20(cmd, self.sender, receiver, payload)
         index = self.GetReadArrayIndex()
-        msgAck = self.tWriteFrameWaitAckRetries(message, retries=retries, waitMs=1000, bErrorAck=bErrorAck, printLog=printLog, bErrorExit=bErrorExit)
+        msgAck = self.tWriteFrameWaitAckRetries(message, retries=retries, waitMs=1000, bErrorAck=bErrorAck, printLog=printLog, bErrorExit=bErrorExit, notAckIdleWaitTimeMs=0.001)
         if msgAck != "Error" and False == bErrorExit:
             self.__exitError()
         if False != log:
@@ -439,8 +439,8 @@ class CanFd(object):
     Get EEPROM Write Request Counter, please note that the count start is power on
     """
 
-    def u32EepromWriteRequestCounter(self):
-        index = self.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["WriteRequest"], [0]*8)
+    def u32EepromWriteRequestCounter(self, receiver):
+        index = self.cmdSend(receiver, MyToolItBlock["Eeprom"], MyToolItEeprom["WriteRequest"], [0]*8)
         dataReadBack = self.getReadMessageData(index)[4:]
         u32WriteRequestCounter = iMessage2Value(dataReadBack)
         self.Logger.Info("EEPROM Write Request Counter: " + str(u32WriteRequestCounter))
@@ -896,14 +896,14 @@ class CanFd(object):
         msgAck = self.cmdSendData(receiver, MyToolItBlock["StatisticalData"], subCmd, [], log=log, retries=retries, bErrorAck=bErrorAck, printLog=printLog)
         return msgAck["Payload"]
 
-    def statusWord0(self, receiver, payload=[]):
+    def statusWord0(self, receiver, payload=[0]*8):
         cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["StatusWord0"], 1, 0)
         msg = self.CanMessage20(cmd, self.sender, receiver, payload)
         psw0 = self.tWriteFrameWaitAckRetries(msg, retries=5)["Payload"]
         psw0 = AsciiStringWordBigEndian(psw0[0:4])
         return psw0
 
-    def statusWord1(self, receiver, payload=[]):
+    def statusWord1(self, receiver, payload=[0]*8):
         cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["StatusWord1"], 1, 0)
         msg = self.CanMessage20(cmd, self.sender, receiver, payload)
         psw1 = self.tWriteFrameWaitAckRetries(msg, retries=5)["Payload"]

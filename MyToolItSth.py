@@ -4,15 +4,9 @@ c_uint32 = ctypes.c_uint32
 from SthLimits import *
 from MyToolItCommands import AdcMax
 
-Version = {
-    "VersionMajor" : 2,
-    "VersionMinor" : 1,
-    "VersionBuild" : 1,
-    "Name" : "Tanja",
-}
-
 TestConfig = {
     "DevName" : "Tanja",
+    "Version" : "v2.1.6",
     "AdcConfigAllPrescalerMax" : 4,
     "ConTimeNormalMaxMs" : 5000,
     "ConTimeSleep1MaxMs" : 6000,
@@ -27,7 +21,7 @@ SleepTime = {
     "AdvertisementMax" : 4000,
     "AdvertisementReset1" : 2000,
     "Reset2" : 3600000,
-    "AdvertisementReset2" : 3000,
+    "AdvertisementReset2" : 4000,
     }
 
 SthModule = {

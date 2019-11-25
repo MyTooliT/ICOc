@@ -17,10 +17,10 @@ from random import randint
 import time
 from MyToolItStu import TestConfig, StuErrorWord
 
-
+sVersion = TestConfig["Version"]
 sLogFile = 'TestStu.txt'
 sLogLocation = '../../Logs/STU/'
-sBuildLocation = "../../SimplicityStudio/v4_workspace/client_firmware/builds/"
+sHomeLocation = "../../SimplicityStudio/v4_workspace/STU/"
 sSilabsCommanderLocation = "../../SimplicityStudio/SimplicityCommander/"
 sAdapterSerialNo = "440116697"
 sBoardType = "BGM111A256V2"
@@ -33,8 +33,9 @@ This class is used for automated internal verification of the Stationary Transce
 class TestStu(unittest.TestCase):
 
     def setUp(self):
-        self.sBuildLocation = sBuildLocation + TestConfig["sVersion"]
-        self.sBootloader = sBuildLocation + "BootloaderOtaBgm111.s37"
+        self.sHomeLocation = sHomeLocation
+        self.sBuildLocation = sHomeLocation + "builds/" + sVersion
+        self.sBootloader = sHomeLocation + "builds/" + "BootloaderOtaBgm111.s37"
         self.sAdapterSerialNo = sAdapterSerialNo
         self.sBoardType = sBoardType 
         self.sSilabsCommander = sSilabsCommanderLocation + "commander"
@@ -45,7 +46,7 @@ class TestStu(unittest.TestCase):
         self.Can.Logger.Info("TestCase: " + str(self._testMethodName))
         if "test0000FirmwareFlash" != self._testMethodName:        
             self.Can.CanTimeStampStart(self._resetStu()["CanTime"])
-            self.sStuAddr = hex(self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"]))
+            self.sStuAddr = sBlueToothMacAddr(self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"]))
             self.Can.Logger.Info("STU BlueTooth Address: " + self.sStuAddr)
             self._statusWords()
             self._StuWDog()
@@ -135,10 +136,10 @@ class TestStu(unittest.TestCase):
                 self.assertEqual(dataByte, value)
         self.Can.Logger.Info("Page Read Time: " + str(self.Can.getTimeMs() - timeStamp) + "ms")
      
-     
     """
     Connect to STH1 by device number 1
     """
+
     def vConnectSth1Dev0(self):
         self.Can.Logger.Info("Connect")
         self.Can.vBlueToothConnectConnect(MyToolItNetworkNr["STU1"])
@@ -172,9 +173,9 @@ class TestStu(unittest.TestCase):
             pass
         sSystemCall = self.sSilabsCommander + " convert "
         sSystemCall += self.sBootloader + " "
-        sSystemCall += self.sBuildLocation + "/Client.s37 "
+        sSystemCall += self.sBuildLocation + "/firmware_client.s37 "
         sSystemCall += "--patch 0x0fe04000:0x00 --patch 0x0fe041F8:0xFD "
-        sSystemCall += "-o " + self.sBuildLocation + "/manufacturing_imageStu" + TestConfig["sVersion"] + ".hex " 
+        sSystemCall += "-o " + self.sBuildLocation + "/manufacturingImageStu" + sVersion + ".hex " 
         sSystemCall += "-d " + self.sBoardType + " "
         sSystemCall += ">> " + sLogLocation 
         sSystemCall += self._testMethodName + "ManufacturingCreateResport.txt"
@@ -187,10 +188,9 @@ class TestStu(unittest.TestCase):
         tFile = open(sLogLocation + self._testMethodName + "ManufacturingCreateResport.txt", "r", encoding='utf-8')
         asData = tFile.readlines()
         tFile.close()
-        self.assertEqual("Overwriting file:", asData[-2][:17])
         self.assertEqual("DONE\n", asData[-1])
         sSystemCall = self.sSilabsCommander + " flash "
-        sSystemCall += self.sBuildLocation + "/manufacturing_imageStu" + TestConfig["sVersion"] + ".hex " 
+        sSystemCall += self.sBuildLocation + "/manufacturingImageStu" + sVersion + ".hex " 
         sSystemCall += "--address 0x0 "
         sSystemCall += "--serialno " + self.sAdapterSerialNo + " "
         sSystemCall += "-d " + self.sBoardType + " "
@@ -208,6 +208,68 @@ class TestStu(unittest.TestCase):
         self.assertEqual("range 0x0FE04000 - 0x0FE047FF (2 KB)\n", asData[-2][10:])  
         self.assertEqual("DONE\n", asData[-1])   
         time.sleep(4)
+        
+    """
+    Test the over the air update
+    """
+
+    def test0001OverTheAirUpdate(self):
+        iRuns = 4
+        iRuns += 1
+        try:
+            for i in range(1, iRuns):
+                os.remove(sLogLocation + "/test0001OverTheAirUpdateOta" + str(i) + ".txt")
+        except:
+            pass
+        
+        try:
+            os.remove(sLogLocation + self._testMethodName + "CreateReport.txt")                
+        except:
+            pass
+        try:
+            os.remove(self.sBuildLocation + "/OtaClient.gpl")                
+        except:
+            pass
+        try:
+            os.remove(self.sBuildLocation + "/OtaApploader.gpl")                
+        except:
+            pass
+        try:
+            os.remove(self.sBuildLocation + "/OtaApploaderClient.gpl")                
+        except:
+            pass
+
+        self._resetStu()
+        time.sleep(1)
+        sSystemCall = self.sHomeLocation + "/firmware_client/create_bl_files.bat "
+        sSystemCall += " -> " + sLogLocation
+        sSystemCall += self._testMethodName + "CreateReport.txt"
+        if os.name == 'nt':
+            sSystemCall = sSystemCall.replace("/", "\\")
+            os.system(sSystemCall)
+        # for mac and linux(here, os.name is 'posix')
+        else:
+            os.system(sSystemCall)
+        os.rename(self.sHomeLocation + "/firmware_client/output_gbl/application.gbl", self.sBuildLocation + "/OtaClient.gpl")
+        os.rename(self.sHomeLocation + "/firmware_client/output_gbl/apploader.gbl", self.sBuildLocation + "/OtaApploader.gpl")
+        os.rename(self.sHomeLocation + "/firmware_client/output_gbl/full.gbl", self.sBuildLocation + "/OtaApploaderClient.gpl")
+        for i in range(1, iRuns):
+            sSystemCall = self.sBuildLocation + "/ota-dfu.exe COM6 115200 "
+            sSystemCall += self.sBuildLocation + "/OtaClient.gpl "
+            sSystemCall += self.sStuAddr + " -> " + sLogLocation
+            sSystemCall += self._testMethodName + "Ota" + str(i) + ".txt"
+            if os.name == 'nt':
+                sSystemCall = sSystemCall.replace("/", "\\")
+                os.system(sSystemCall)
+            # for mac and linux(here, os.name is 'posix')
+            else:
+                os.system(sSystemCall)
+            tFile = open(sLogLocation + self._testMethodName + "Ota" + str(i) + ".txt", "r", encoding='utf-8')
+            asData = tFile.readlines()
+            tFile.close()
+            self.assertEqual("Finishing DFU block...OK\n", asData[-2])
+            self.assertEqual("Closing connection...OK\n", asData[-1])
+
         
     """
     Test Acknowledgement from STU. Write message and check identifier to be ack (No bError)
@@ -231,12 +293,13 @@ class TestStu(unittest.TestCase):
         self.assertEqual(hex(msgAckExpected.ID), hex(self.Can.getReadMessage(-1).ID))
         self.assertEqual(expectedData.asbyte, self.Can.getReadMessage(-1).DATA[0])
         
-    def test0006SthVersionNumber(self):
+    def test0006FirmwareVersion(self):
         iIndex = self.Can.cmdSend(MyToolItNetworkNr["STU1"], MyToolItBlock["ProductData"], MyToolItProductData["FirmwareVersion"], [])
-        au8Version = self.Can.getReadMessageData(iIndex)[-3:]
+        au8Version = self.Can.getReadMessageData(iIndex)
+        au8Version = au8Version[-3:]
         sVersionRead = "v" + str(au8Version[0]) + "." + str(au8Version[1]) + "." + str(au8Version[2])
         self.Can.Logger.Info("Version: " + sVersionRead)
-        self.assertEqual(TestConfig["sVersion"], sVersionRead)
+        self.assertEqual(sVersion, sVersionRead)
         
     """ Send Mutliple Frames without waiting for an ACK, do ACK after 100 times send flooding to check functionallity"""
 
@@ -403,10 +466,11 @@ class TestStu(unittest.TestCase):
     """ 
 
     def test0103BlueToothName(self):
-        self.Can.Logger.Info("Bluetooth name command")
+        self.Can.Logger.Info("Bluetooth name command to STH")
         for _i in range(0, 10):
             self.Can.Logger.Info("Loop Run: " + str(_i))
             self.vConnectSth1Dev0()
+            time.sleep(1)
             self.Can.Logger.Info("Write Walther0")
             self.Can.vBlueToothNameWrite(MyToolItNetworkNr["STH1"], 0, "Walther0")
             self.Can.Logger.Info("Check Walther0")
@@ -417,7 +481,8 @@ class TestStu(unittest.TestCase):
             Name = self.Can.BlueToothNameGet(MyToolItNetworkNr["STU1"], 0)
             self.Can.Logger.Info("Received Name: " + Name)
             self.assertEqual("Walther0", Name)
-            self.vConnectSth1Dev0()            
+            self.vConnectSth1Dev0()   
+            time.sleep(1)         
             self.Can.Logger.Info("Write " + TestConfig["HolderName"])
             self.Can.vBlueToothNameWrite(MyToolItNetworkNr["STH1"], 0, TestConfig["HolderName"])
             self.Can.Logger.Info("Check " + TestConfig["HolderName"])
@@ -563,6 +628,29 @@ class TestStu(unittest.TestCase):
         self.assertEqual(iAddressReadback, iAddress)  
         self.Can.bBlueToothCheckConnect(MyToolItNetworkNr["STU1"])     
         self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
+        
+        
+    """
+    Change Device Name of STU
+    """
+    def test113DeviceNameChangeSTU(self):
+        self.Can.Logger.Info("Bluetooth name command to STU")
+        for _i in range(0, 10):
+            self.Can.Logger.Info("Loop Run: " + str(_i))
+            self.Can.Logger.Info("Write Walther0")
+            self.Can.vBlueToothNameWrite(MyToolItNetworkNr["STU1"], BlueToothDeviceNr["Self"], "Walther0")
+            self.Can.Logger.Info("Check Walther0")
+            Name = self.Can.BlueToothNameGet(MyToolItNetworkNr["STU1"], BlueToothDeviceNr["Self"])
+            self.Can.Logger.Info("Received Name: " + Name)
+            self.assertEqual("Walther0", Name)
+            self.Can.Logger.Info("Write " + TestConfig["StuName"])
+            self.Can.vBlueToothNameWrite(MyToolItNetworkNr["STU1"], BlueToothDeviceNr["Self"], TestConfig["StuName"])
+            self.Can.Logger.Info("Check " + TestConfig["StuName"])
+            self._resetStu()
+            Name = self.Can.BlueToothNameGet(MyToolItNetworkNr["STU1"], BlueToothDeviceNr["Self"])
+            self.Can.Logger.Info("Received Name: " + Name)
+            self.assertEqual(TestConfig["StuName"] , Name)
+            time.sleep(1)
                     
     """
     Send Message to STH without connecting. Assumed result = not receiving anything. This especially tests the routing functionallity.
@@ -905,7 +993,10 @@ class TestStu(unittest.TestCase):
     """   
 
     def test0750StatisticPageWriteReadDeteministic(self):
-        # Store content
+        uLoopRuns = 25
+        time.sleep(2)
+        u32EepromWriteRequestCounterTestStart = self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STU1"])
+        self.Can.Logger.Info("Save up EEPROM content")
         startData = []
         for offset in range(0, 256, 4):
             index = self.Can.cmdSend(MyToolItNetworkNr["STU1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Read"], [EepromPage["Statistics"], 0xFF & offset, 4, 0, 0, 0, 0, 0])   
@@ -913,7 +1004,9 @@ class TestStu(unittest.TestCase):
             startData.extend(dataReadBack[4:])
             
         # Test it self
-        for _i in range(0, 25):
+        for _i in range(0, uLoopRuns):
+            self.Can.Logger.Info("Next Run 12 Writes and Reads")
+            self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STU1"])
             self.vEepromWritePage(EepromPage["Statistics"], 0xAA)
             self.vEepromReadPage(EepromPage["Statistics"], 0xAA)
             self.vEepromWritePage(EepromPage["Statistics"], 0xFF)
@@ -946,13 +1039,19 @@ class TestStu(unittest.TestCase):
             payload.extend(startData[offset:offset + 4])
             self.Can.cmdSend(MyToolItNetworkNr["STU1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Write"], payload)
         self.Can.Logger.Info("Page Write Time: " + str(self.Can.getTimeMs() - timeStamp) + "ms")   
-   
+        u32EepromWriteRequestCounterTestEnd = self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STU1"])
+        u32EepromWriteRequsts = u32EepromWriteRequestCounterTestEnd - u32EepromWriteRequestCounterTestStart
+        self.Can.Logger.Info("EEPROM Write Requests during tests: " + str(u32EepromWriteRequsts))
+        self.assertEqual(u32EepromWriteRequestCounterTestStart + 1, u32EepromWriteRequestCounterTestEnd)  # +1 due to incrementing at first write
+           
     """
     Check EEPROM Read/Write - Determistic data
     """   
 
     def test0751StatisticPageWriteReadRandom(self):
-        # Store content
+        uLoopRuns = 100       
+        u32EepromWriteRequestCounterTestStart = self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STU1"])
+        self.Can.Logger.Info("Save up EEPROM content")
         startData = []
         for offset in range(0, 256, 4):
             index = self.Can.cmdSend(MyToolItNetworkNr["STU1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Read"], [EepromPage["ProductData"], 0xFF & offset, 4, 0, 0, 0, 0, 0])   
@@ -960,7 +1059,9 @@ class TestStu(unittest.TestCase):
             startData.extend(dataReadBack[4:])
             
         # Test it self
-        for _i in range(0, 100):
+        for _i in range(0, uLoopRuns):
+            self.Can.Logger.Info("Next random Writes and Reads")
+            self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STU1"])
             au8ReadCheck = []
             for offset in range(0, 256, 4):
                 au8Content = []
@@ -975,7 +1076,9 @@ class TestStu(unittest.TestCase):
                 index = self.Can.cmdSend(MyToolItNetworkNr["STU1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Read"], au8Payload)   
                 dataReadBack = self.Can.getReadMessageData(index)     
                 self.assertEqual(dataReadBack[4:], au8ReadCheck[offset:offset + 4])
-                                      
+            self.Can.Logger.Info("Fin random Writes and Reads")
+            self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STU1"])
+                                                  
         # Write Back Page
         timeStamp = self.Can.getTimeMs()
         for offset in range(0, 256, 4):
@@ -983,7 +1086,58 @@ class TestStu(unittest.TestCase):
             payload.extend(startData[offset:offset + 4])
             self.Can.cmdSend(MyToolItNetworkNr["STU1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Write"], payload)
         self.Can.Logger.Info("Page Write Time: " + str(self.Can.getTimeMs() - timeStamp) + "ms")   
-        
+        self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STU1"])
+        u32EepromWriteRequestCounterTestEnd = self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STU1"])
+        u32EepromWriteRequsts = u32EepromWriteRequestCounterTestEnd - u32EepromWriteRequestCounterTestStart
+        self.Can.Logger.Info("EEPROM Write Requests during tests: " + str(u32EepromWriteRequsts))
+        self.assertEqual(u32EepromWriteRequestCounterTestStart + 1, u32EepromWriteRequestCounterTestEnd)  # +1 due to incrementing at first write
+
+    """
+    Check that page switched do not yield to Writing EEPROM
+    """
+
+    def test0753EepromWriteRequestCounterPageSwitches(self):        
+        time.sleep(1)
+        uLoopRuns = 5       
+        u32EepromWriteRequestCounterTestStart = self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STU1"])
+        for _i in range(0, uLoopRuns):
+            for sPage in EepromPage:
+                self.Can.Logger.Info("Next Page")
+                for offset in range(0, 256, 4):
+                    au8Payload = [EepromPage[sPage], 0xFF & offset, 4, 0, 0, 0, 0, 0]
+                    self.Can.cmdSend(MyToolItNetworkNr["STU1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Read"], au8Payload)
+        u32EepromWriteRequestCounterTestEnd = self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STU1"])
+        u32EepromWriteRequsts = u32EepromWriteRequestCounterTestEnd - u32EepromWriteRequestCounterTestStart
+        self.Can.Logger.Info("EEPROM Write Requests during tests: " + str(u32EepromWriteRequsts))
+        self.assertEqual(u32EepromWriteRequestCounterTestStart, u32EepromWriteRequestCounterTestEnd)  # +1 due to incrementing at first write
+
+    """
+    Check that page switched with previews writes yield into to Writing EEPROM with the correct number of wirtes
+    """
+
+    def test0754EepromWriteRequestCounterPageWriteSwitches(self):        
+        time.sleep(1)
+        uLoopRuns = 5 
+        uPageStart = 10   
+        uPageRuns = 6
+        u32EepromWriteRequestCounterTestStart = self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STU1"])
+        for _i in range(0, uLoopRuns):
+            for uPageOffset in range(0, uPageRuns):
+                self.Can.Logger.Info("Next Page")
+                self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STU1"])
+                uPage = uPageOffset + uPageStart
+                au8Payload = [uPage, 12, 4, 0, 0, 0, 0, 0]
+                self.Can.cmdSend(MyToolItNetworkNr["STU1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Write"], au8Payload, log=False)
+                uPage = uPageOffset + 2
+                uPage %= uPageRuns
+                uPage += uPageStart
+                au8Payload = [uPage, 12, 4, 0, 0, 0, 0, 0]
+                self.Can.cmdSend(MyToolItNetworkNr["STU1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Read"], au8Payload, log=False)
+        u32EepromWriteRequestCounterTestEnd = self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STU1"])
+        u32EepromWriteRequsts = u32EepromWriteRequestCounterTestEnd - u32EepromWriteRequestCounterTestStart
+        self.Can.Logger.Info("EEPROM Write Requests during tests: " + str(u32EepromWriteRequsts))
+        self.assertEqual(uPageRuns * uLoopRuns, u32EepromWriteRequsts)
+                        
     """
     Test that nothing happens when sinding Command 0x0000 to STU1
     """

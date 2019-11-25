@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ConfigKey>
     <lastRun>
-        <LogName />
-        <Product />
-        <Version />
-        <NetworkNumber />
+        <LogName>None</LogName>
+        <Product>STH</Product>
+        <Version>v2.1.6</Version>
+        <NetworkNumber>STH1</NetworkNumber>
         <SheetFile>None</SheetFile>
         <Setup>X</Setup>
     </lastRun>

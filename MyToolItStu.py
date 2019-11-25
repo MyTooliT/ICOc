@@ -2,18 +2,13 @@ import ctypes
 c_uint8 = ctypes.c_uint8
 c_uint32 = ctypes.c_uint32
 
-Version = {
-    "VersionMajor" : 2,
-    "VersionMinor" : 1,
-    "VersionBuild" : 1,
-    "Name" : "Valerie",
-}
 
 TestConfig = {
     "DevName" : "Valerie",
-    "sVersion" : "v2.1.6",
-    "ProductionDate" : "20192031",
+    "Version" : "v2.1.6",
+    "ProductionDate" : "20191106",
     "HolderName" : "Tanja",
+    "StuName" : "Valerie",
     }
 
 class StuErrorWordFlags(ctypes.LittleEndianStructure):
