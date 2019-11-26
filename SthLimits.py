@@ -4,12 +4,13 @@ PcbOnly = True
 bConnectedBattery = False
 
 
-def vSthLimitsConfig(iAxis, bPcbOnly):
+def vSthLimitsConfig(iAxis, bPcbOnly, bConnectedBatteryVar):
     global Axis
     global PcbOnly
+    global bConnectedBattery
     Axis = iAxis
     PcbOnly = bPcbOnly
-
+    bConnectedBattery = bConnectedBatteryVar
 
 # Calculated kx+d correction factors
 kAccX = 200 / (2 ** 16 - 1)
@@ -66,11 +67,11 @@ if True == bConnectedBattery:
     VoltRawMiddleBat = 11000 
     VoltRawToleranceBat = 300
 else:
-    VoltMiddleBat = 0.2
+    VoltMiddleBat = 0.15
     SigIndBatteryQ1 = 600         
     SigIndBatteryQ25 = 650       
-    SigIndBatteryMedL = 675        
-    SigIndBatteryMedH = 725    
+    SigIndBatteryMedL = 670        
+    SigIndBatteryMedH = 730    
     SigIndBatteryQ75 = 750     
     SigIndBatteryQ99 = 800     
     SigIndBatteryVar = 40000     

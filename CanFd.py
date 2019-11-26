@@ -17,10 +17,10 @@ class Logger():
 
     def __init__(self, fileName, fileNameError, FreshLog=False):
         self.ErrorFlag = False
-        self.startTime = int(round(time.time()* 1000))
+        self.startTime = int(round(time.time() * 1000))
         self.file = None
         self.fileName = None
-        self.vRename(fileName, fileNameError,FreshLog=FreshLog)
+        self.vRename(fileName, fileNameError, FreshLog=FreshLog)
         
     def __exit__(self):
         try:
@@ -32,7 +32,6 @@ class Logger():
                     os.rename(self.fileName, self.fileNameError)
         except:
             pass
-
 
     def getTimeStamp(self):     
         return int(round(time.time() * 1000)) - int(self.startTime)
@@ -144,7 +143,7 @@ class CanFd(object):
                     self.Logger.Error("Peak CAN Message Over Run")
                     self.bError = True
             self.Reset()   
-            self.tCanReadWriteMutex.acquire() # Insane 
+            self.tCanReadWriteMutex.acquire()  # Insane 
             self.m_objPCANBasic.Uninitialize(self.m_PcanHandle)
             self.tCanReadWriteMutex.release()
             time.sleep(1)
@@ -208,7 +207,7 @@ class CanFd(object):
         # Configure the maximum size of a trace file to 5 megabytes
         #
         iBuffer = 5
-        self.tCanReadWriteMutex.acquire() # More or less insane
+        self.tCanReadWriteMutex.acquire()  # More or less insane
         stsResult = self.m_objPCANBasic.SetValue(self.m_PcanHandle, PCAN_TRACE_SIZE, iBuffer)
         if stsResult != PCAN_ERROR_OK:
             print("Error while init Peak Can Basi Module while configurating Trace File: " + stsResult)
@@ -224,7 +223,6 @@ class CanFd(object):
         if stsResult != PCAN_ERROR_OK:
             print("Error while init Peak Can Basic Module while setting value in Trace File: " + stsResult)
         self.tCanReadWriteMutex.release()
-        
            
     def Reset(self):
         self.tCanReadWriteMutex.acquire()
@@ -390,11 +388,11 @@ class CanFd(object):
         except KeyboardInterrupt:
             self.RunReadThread = False
         
-    def cmdSend(self, receiver, blockCmd, subCmd, payload, log=True, retries=10, bErrorAck=False, printLog=False, bErrorExit=True):
+    def cmdSend(self, receiver, blockCmd, subCmd, payload, log=True, retries=10, bErrorAck=False, printLog=False, bErrorExit=True, notAckIdleWaitTimeMs=0.001):
         cmd = self.CanCmd(blockCmd, subCmd, 1, 0)
         message = self.CanMessage20(cmd, self.sender, receiver, payload)
         index = self.GetReadArrayIndex()
-        msgAck = self.tWriteFrameWaitAckRetries(message, retries=retries, waitMs=1000, bErrorAck=bErrorAck, printLog=printLog, bErrorExit=bErrorExit, notAckIdleWaitTimeMs=0.001)
+        msgAck = self.tWriteFrameWaitAckRetries(message, retries=retries, waitMs=1000, bErrorAck=bErrorAck, printLog=printLog, bErrorExit=bErrorExit, notAckIdleWaitTimeMs=notAckIdleWaitTimeMs)
         if msgAck != "Error" and False == bErrorExit:
             self.__exitError()
         if False != log:
@@ -404,12 +402,13 @@ class CanFd(object):
             else:
                 self.Logger.Info(MyToolItNetworkName[self.sender] + "->" + MyToolItNetworkName[receiver] + ": " + self.strCmdNrToCmdName(canCmd) + " - " + "Error")
             self.Logger.Info("Assumed receive message number: " + str(index))
-        #time.sleep(0.2)  # synch to read thread TODO: Really kick it out?
+        # time.sleep(0.2)  # synch to read thread TODO: Really kick it out?
         return index 
     
     """
     Send cmd and return Ack 
     """
+
     def cmdSendData(self, receiver, blockCmd, subCmd, payload, log=True, retries=10, bErrorAck=False, printLog=False, bErrorExit=True):
         cmd = self.CanCmd(blockCmd, subCmd, 1, 0)
         message = self.CanMessage20(cmd, self.sender, receiver, payload)
@@ -424,7 +423,7 @@ class CanFd(object):
             else:
                 self.Logger.Info(MyToolItNetworkName[self.sender] + "->" + MyToolItNetworkName[receiver] + ": " + self.strCmdNrToCmdName(canCmd) + " - " + "Error")
             self.Logger.Info("Assumed receive message number: " + str(index))
-        #time.sleep(0.2)  # synch to read thread TODO: Really kick it out?
+        # time.sleep(0.2)  # synch to read thread TODO: Really kick it out?
         return msgAck 
 
     def cmdReset(self, receiver, retries=5, log=True):
@@ -440,7 +439,7 @@ class CanFd(object):
     """
 
     def u32EepromWriteRequestCounter(self, receiver):
-        index = self.cmdSend(receiver, MyToolItBlock["Eeprom"], MyToolItEeprom["WriteRequest"], [0]*8)
+        index = self.cmdSend(receiver, MyToolItBlock["Eeprom"], MyToolItEeprom["WriteRequest"], [0] * 8)
         dataReadBack = self.getReadMessageData(index)[4:]
         u32WriteRequestCounter = iMessage2Value(dataReadBack)
         self.Logger.Info("EEPROM Write Request Counter: " + str(u32WriteRequestCounter))
@@ -497,7 +496,8 @@ class CanFd(object):
         return [array1, array2, array3]
     
     def singleValueArray(self, receiver, subCmd, b1, b2, b3, index):
-        messageIdFilter = self.CanCmd(MyToolItBlock["Streaming"], subCmd, 0, 0)
+        cmdFilter = self.CanCmd(MyToolItBlock["Streaming"], subCmd, 0, 0)
+        messageIdFilter = cmdFilter
         messageIdFilter = self.CanMessage20Id(messageIdFilter, receiver, self.sender)
         messageIdFilter = hex(messageIdFilter)
         data = self.getReadMessageData(index)
@@ -508,6 +508,15 @@ class CanFd(object):
         if messageId == messageIdFilter:
             self.ValueDataSet1(data, b1, b2, b3, array1, array2, array3)
         else:
+            cmdRec = self.CanMessage20GetFields(int(messageId, 16))[0]
+            cmdFiltered = self.CanMessage20GetFields(int(messageIdFilter, 16))[0]
+            receivedCmdBlk = self.CanCmdGetBlock(cmdRec)
+            receivedCmdSub = self.CanCmdGetBlockCmd(cmdRec)
+            filterCmdBlk = self.CanCmdGetBlock(cmdFiltered)
+            filterCmdSub = self.CanCmdGetBlockCmd(cmdFiltered)
+            self.Logger.Error("Assumed message ID: " + str(messageIdFilter) + "("+str(cmdRec) + "); Received message ID: " + str(messageId)+"("+str(cmdFiltered)+")")
+            self.Logger.Error("Assumed command block: " + str(filterCmdBlk) + "; Received command block: " + str(receivedCmdBlk))
+            self.Logger.Error("Assumed sub command: " + str(filterCmdSub) + "; Received sub command: " + str(receivedCmdSub))
             raise
         if 0 < len(array1):
             array1 = [array1[0]]
@@ -679,7 +688,6 @@ class CanFd(object):
                 momentOrder += Value
             momentOrder /= len(sortArray)
         return momentOrder
-    
     
     def streamingValueStatisticsValue(self, sortArray):
         statistics = {}
@@ -896,14 +904,14 @@ class CanFd(object):
         msgAck = self.cmdSendData(receiver, MyToolItBlock["StatisticalData"], subCmd, [], log=log, retries=retries, bErrorAck=bErrorAck, printLog=printLog)
         return msgAck["Payload"]
 
-    def statusWord0(self, receiver, payload=[0]*8):
+    def statusWord0(self, receiver, payload=[0] * 8):
         cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["StatusWord0"], 1, 0)
         msg = self.CanMessage20(cmd, self.sender, receiver, payload)
         psw0 = self.tWriteFrameWaitAckRetries(msg, retries=5)["Payload"]
         psw0 = AsciiStringWordBigEndian(psw0[0:4])
         return psw0
 
-    def statusWord1(self, receiver, payload=[0]*8):
+    def statusWord1(self, receiver, payload=[0] * 8):
         cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["StatusWord1"], 1, 0)
         msg = self.CanMessage20(cmd, self.sender, receiver, payload)
         psw1 = self.tWriteFrameWaitAckRetries(msg, retries=5)["Payload"]
@@ -1109,7 +1117,7 @@ class CanFd(object):
         self.tWriteFrameWaitAckRetries(message, retries=2)
         nameList = [0, 0, 0, 0, 0, 0]
         for i in range(6, len(Name)):
-            nameList[i-6] = ord(Name[i])
+            nameList[i - 6] = ord(Name[i])
         Payload = [SystemCommandBlueTooth["SetName2"], DeviceNr]
         Payload.extend(nameList)
         message = self.CanMessage20(cmd, self.sender, receiver, Payload)
@@ -1160,7 +1168,6 @@ class CanFd(object):
         ack = to8bitSigned(ack)
         return ack
     
-    
     """
     Connect to STH by connect to MAC Address command
     """
@@ -1174,7 +1181,7 @@ class CanFd(object):
         ack = self.tWriteFrameWaitAckRetries(message, retries=2)
         ack = ack["Payload"]
         ack = ack[2:]
-        iMacAddrReadBack = iMessage2Value(ack)#if not successfull this will be 0
+        iMacAddrReadBack = iMessage2Value(ack)  # if not successfull this will be 0
         if iMacAddrReadBack != iMacAddr:
             self.bConnected = False
         else:
@@ -1184,6 +1191,7 @@ class CanFd(object):
     """
     Connect to device via name
     """    
+
     def bBlueToothConnectPollingName(self, stuNr, sName, log=True):  
         self.sDevName = None
         endTime = time.time() + BluetoothTime["Connect"]
@@ -1203,7 +1211,7 @@ class CanFd(object):
                     while time.time() < endTime and False == self.bConnected:      
                         self.bBlueToothCheckConnect(stuNr)  
                     if False != self.bConnected and False != log:
-                        self.Logger.Info("Connected to: " + sBlueToothMacAddr(self.iAddress) + "("+self.sDevName + ")")
+                        self.Logger.Info("Connected to: " + sBlueToothMacAddr(self.iAddress) + "(" + self.sDevName + ")")
                     break
         if None == self.sDevName:
             if False != log:
@@ -1213,7 +1221,7 @@ class CanFd(object):
 
     def tDeviceList(self, stuNr, bLog=True):       
         devList = []        
-        self.vBlueToothConnectConnect(stuNr, log = False)
+        self.vBlueToothConnectConnect(stuNr, log=False)
         devAll = self.iBlueToothConnectTotalScannedDeviceNr(stuNr, log=bLog)
         for dev in range(0, devAll):
             endTime = time.time() + BluetoothTime["Connect"]
@@ -1320,7 +1328,7 @@ class CanFd(object):
         elif "SerialNumber" == name:
             aiSerialNumber = []
             for i in range(1, 5):
-                index = self.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["ProductData"], MyToolItProductData["SerialNumber"+str(i)], [])
+                index = self.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["ProductData"], MyToolItProductData["SerialNumber" + str(i)], [])
                 element = self.getReadMessageData(index)
                 aiSerialNumber.extend(element)
             try:
@@ -1330,7 +1338,7 @@ class CanFd(object):
         elif "Name" == name:
             aiName = []
             for i in range(1, 17):
-                index = self.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["ProductData"], MyToolItProductData["Name"+str(i)], [])
+                index = self.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["ProductData"], MyToolItProductData["Name" + str(i)], [])
                 element = self.getReadMessageData(index)
                 aiName.extend(element)                    
             try:
@@ -1340,14 +1348,12 @@ class CanFd(object):
         elif "OemFreeUse" == name:
             aiOemFreeUse = []
             for i in range(1, 9):
-                index = self.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["ProductData"], MyToolItProductData["OemFreeUse"+str(i)], [])
+                index = self.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["ProductData"], MyToolItProductData["OemFreeUse" + str(i)], [])
                 aiOemFreeUse.extend(self.getReadMessageData(index))
             sReturn = payload2Hex(aiOemFreeUse)       
         else:
             sReturn = "-1"
         return sReturn
-            
-        
 
     def BlueToothRssi(self, subscriber):
         cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0)

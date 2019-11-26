@@ -62,7 +62,7 @@ class TestSth(unittest.TestCase):
         self.sSilabsCommander = sSilabsCommanderLocation + "commander"
         self.sLogLocation = sLogLocation
         self.bError = False
-        vSthLimitsConfig(1, True)
+        vSthLimitsConfig(1, True, False)
         self.sBuildLocation = sBuildLocation + sVersion
         self.iTestNumber = int(self._testMethodName[4:8])
         self.fileName = self.sLogLocation + self._testMethodName + ".txt"
