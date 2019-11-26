@@ -47,6 +47,7 @@ class TestSth(unittest.TestCase):
         self.fileNameError = sLogLocation + "Error_" + self._testMethodName + ".txt"
         self.Can = CanFd.CanFd(CanFd.PCAN_BAUD_1M, self.fileName, self.fileNameError, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], AdcPrescalerReset, AdcAcquisitionTimeReset, AdcAcquisitionOverSamplingRateReset, FreshLog=True)
         self.Can.Logger.Info("TestCase: " + str(self._testMethodName))
+        self.vSilabsAdapterReset()
         if "test0000FirmwareFlash" != self._testMethodName:
             self.Can.CanTimeStampStart(self._resetStu()["CanTime"])  # This will also reset to STH
             self.Can.Logger.Info("Connect to STH")
@@ -528,6 +529,21 @@ class TestSth(unittest.TestCase):
             for dataByte in dataReadBack[4:]:
                 self.assertEqual(dataByte, value)
         self.Can.Logger.Info("Page Read Time: " + str(self.Can.getTimeMs() - timeStamp) + "ms")
+        
+    """
+    Reset the Silicion Laps Adapter
+    """
+    def vSilabsAdapterReset(self):
+        self.Can.Logger.Info("Reset Adapter "+ self.sAdapterSerialNo)
+        sSystemCall = self.sSilabsCommander + " adapter reset "
+        sSystemCall += "--serialno " + self.sAdapterSerialNo
+        sSystemCall += (">>" + sLogLocation + "AdapterReset.txt")
+        if os.name == 'nt':
+            sSystemCall = sSystemCall.replace("/", "\\")
+            os.system(sSystemCall)
+        # for mac and linux(here, os.name is 'posix')
+        else:
+            os.system(sSystemCall)
 
     """
     https://www.silabs.com/community/wireless/zigbee-and-thread/knowledge-base.entry.html/2017/12/28/building_firmwareim-1OPr
@@ -836,10 +852,56 @@ class TestSth(unittest.TestCase):
         self.test0011EnergySaveMode1()
 
     """
+    Power Consumption - Energy Save Mode Normal (Advertisement
+    """
+
+    def test0013PowerConsumptionNormal(self):
+        self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
+        time.sleep(2)
+        self.Can.Logger.Info("Measure Power Consumption for advertisement time 1000ms")
+        sSystemCall = self.sSilabsCommander + " aem measure --windowlength 60000 "
+        sSystemCall += "--serialno " + self.sAdapterSerialNo + " "
+        sSystemCall += "-d " + self.sBoardType + " "
+        sSystemCall += ">> " + self._testMethodName + "Aem.txt"
+        if os.name == 'nt':
+            sSystemCall = sSystemCall.replace("/", "\\")
+            os.system(sSystemCall)
+        # for mac and linux(here, os.name is 'posix')
+        else:
+            os.system(sSystemCall)
+        tFile = open(self._testMethodName + "Aem.txt", "r", encoding='utf-8')
+        asData = tFile.readlines()
+        tFile.close()
+        sCurrentAverage = asData[1][:-1]
+        sCurrentAverage = str(sCurrentAverage.split(":")[1][1:])
+        fCurrentAverage = float(sCurrentAverage)
+        sCurrentUnit = asData[1][:-1]
+        sCurrentUnit = sCurrentUnit.split("[")[1]
+        sCurrentUnit = sCurrentUnit.split("]")[0]
+        sVoltageAverage = asData[3][:-1]
+        sVoltageAverage = str(sVoltageAverage.split(":")[1][1:])
+        sVoltageUnit = asData[3][:-1]
+        sVoltageUnit = sVoltageUnit.split("[")[1]
+        sVoltageUnit = sVoltageUnit.split("]")[0]
+        self.Can.Logger.Info("Average Current: " + sCurrentAverage + sCurrentUnit)
+        self.Can.Logger.Info("Average Voltage: " + sVoltageAverage + sVoltageUnit)
+        if "mA" == sCurrentUnit:
+            fCurrentAverage = fCurrentAverage / 1000
+        if "uA" == sCurrentUnit:
+            fCurrentAverage = fCurrentAverage / (1000 * 1000)
+        fAccuHours = 0.18 / fCurrentAverage
+        fAccuDays = fAccuHours / 24
+        self.Can.Logger.Info("Batter Runtime for 180mA: " + str(fAccuHours) + " hours")
+        self.Can.Logger.Info("Batter Runtime for 180mA: " + str(fAccuDays) + " days")
+        self.assertLessEqual(float(sCurrentAverage), TestConfig["DisconnectedCurrentMax"])
+        self.assertEqual(sCurrentUnit, "mA")
+        self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
+
+    """
     Power Consumption - Energy Save Mode 1
     """
 
-    def test0013PowerConsumptionEnergySaveMode1(self):
+    def test0014PowerConsumptionEnergySaveMode1(self):
         try:
             os.remove(self._testMethodName + "Aem.txt")
         except:
@@ -883,6 +945,8 @@ class TestSth(unittest.TestCase):
         fAccuDays = fAccuHours / 24
         self.Can.Logger.Info("Batter Runtime for 180mA: " + str(fAccuHours) + " hours")
         self.Can.Logger.Info("Batter Runtime for 180mA: " + str(fAccuDays) + " days")
+        self.assertLessEqual(float(sCurrentAverage), TestConfig["EnergyMode1CurrentMax"])
+        self.assertEqual(sCurrentUnit, "mA")
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
         self.Can.BlueToothEnergyModeNr(SleepTime["Reset1"], SleepTime["AdvertisementReset1"], 1)
         self.Can.BlueToothEnergyModeNr(SleepTime["Reset2"], SleepTime["AdvertisementReset2"], 2)
@@ -891,7 +955,7 @@ class TestSth(unittest.TestCase):
     Power Consumption - Energy Save Mode 2
     """
 
-    def test0014PowerConsumptionEnergySaveMode2(self):
+    def test0015PowerConsumptionEnergySaveMode2(self):
         try:
             os.remove(self._testMethodName + "Aem.txt")
         except:
@@ -935,6 +999,8 @@ class TestSth(unittest.TestCase):
         fAccuDays = fAccuHours / 24
         self.Can.Logger.Info("Batter Runtime for 180mA: " + str(fAccuHours) + " hours")
         self.Can.Logger.Info("Batter Runtime for 180mA: " + str(fAccuDays) + " days")
+        self.assertLessEqual(float(sCurrentAverage), TestConfig["EnergyMode2CurrentMax"])
+        self.assertEqual(sCurrentUnit, "mA")
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
         self.Can.BlueToothEnergyModeNr(SleepTime["Reset1"], SleepTime["AdvertisementReset1"], 1)
         self.Can.BlueToothEnergyModeNr(SleepTime["Reset2"], SleepTime["AdvertisementReset2"], 2)
@@ -943,7 +1009,7 @@ class TestSth(unittest.TestCase):
     Power Consumption - Energy Save Mode Advertisment Time 4000ms
     """
 
-    def test0015PowerConsumptionEnergySaveModeAdv4000ms(self):
+    def test0016PowerConsumptionEnergySaveModeAdv4000ms(self):
         try:
             os.remove(self._testMethodName + "Aem.txt")
         except:
@@ -987,6 +1053,8 @@ class TestSth(unittest.TestCase):
         fAccuDays = fAccuHours / 24
         self.Can.Logger.Info("Batter Runtime for 180mA: " + str(fAccuHours) + " hours")
         self.Can.Logger.Info("Batter Runtime for 180mA: " + str(fAccuDays) + " days")
+        self.assertLessEqual(float(sCurrentAverage), TestConfig["EnergyModeMaxCurrentMax"])
+        self.assertEqual(sCurrentUnit, "mA")
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
         self.Can.BlueToothEnergyModeNr(SleepTime["Reset1"], SleepTime["AdvertisementReset1"], 1)
         self.Can.BlueToothEnergyModeNr(SleepTime["Reset2"], SleepTime["AdvertisementReset2"], 2)
@@ -995,7 +1063,7 @@ class TestSth(unittest.TestCase):
     Power Consumption - Connected
     """   
 
-    def test0016PowerConsumptionConnected(self):
+    def test0017PowerConsumptionConnected(self):
         try:
             os.remove(self._testMethodName + "Aem.txt")
         except:
@@ -1037,12 +1105,14 @@ class TestSth(unittest.TestCase):
         fAccuDays = fAccuHours / 24
         self.Can.Logger.Info("Batter Runtime for 180mA: " + str(fAccuHours) + " hours")
         self.Can.Logger.Info("Batter Runtime for 180mA: " + str(fAccuDays) + " days")
+        self.assertLessEqual(float(sCurrentAverage), TestConfig["EnergyConnectedCurrentMax"])
+        self.assertEqual(sCurrentUnit, "mA")
 
     """
     Power Consumption - Measuring at reset conditions
     """   
 
-    def test0017PowerConsumptionMeasuring(self):
+    def test0018PowerConsumptionMeasuring(self):
         try:
             os.remove(self._testMethodName + "Aem.txt")
         except:
@@ -1085,13 +1155,15 @@ class TestSth(unittest.TestCase):
         fAccuDays = fAccuHours / 24
         self.Can.Logger.Info("Batter Runtime for 180mA: " + str(fAccuHours) + " hours")
         self.Can.Logger.Info("Batter Runtime for 180mA: " + str(fAccuDays) + " days")
-        self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"])          
+        self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"])   
+        self.assertLessEqual(float(sCurrentAverage), TestConfig["EnergyMeasuringCurrentMax"])
+        self.assertEqual(sCurrentUnit, "mA")       
 
     """
     Power Consumption - Measuring at reset conditions - LED turned off
     """   
 
-    def test0018PowerConsumptionMeasuringLedOff(self):
+    def test0019PowerConsumptionMeasuringLedOff(self):
         try:
             os.remove(self._testMethodName + "Aem.txt")
         except:
@@ -1136,6 +1208,8 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("Batter Runtime for 180mA: " + str(fAccuHours) + " hours")
         self.Can.Logger.Info("Batter Runtime for 180mA: " + str(fAccuDays) + " days")
         self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"])  
+        self.assertLessEqual(float(sCurrentAverage), TestConfig["EnergyMeasuringLedOffCurrentMax"])
+        self.assertEqual(sCurrentUnit, "mA")       
                         
     """
     Test HMI
@@ -2974,14 +3048,14 @@ class TestSth(unittest.TestCase):
     """
 
     def test0514AdcAcquisitionMax(self):
-        self.SamplingRate(2, AdcOverSamplingRate[256], AdcOverSamplingRate[32], AdcReference["VDD"], b1=1, b2=0, b3=0, runTime=4000)
+        self.SamplingRate(2, AdcAcquisitionTime[256], AdcOverSamplingRate[32], AdcReference["VDD"], b1=1, b2=0, b3=0, runTime=4000)
 
     """
     Testing ADC Sampling Oversampling Rate Min
     """
 
     def test0515AdcOverSamplingRateMin(self):
-        self.SamplingRate(32, AdcOverSamplingRate[256], AdcOverSamplingRate[2], AdcReference["VDD"], b1=1, b2=0, b3=0, runTime=4000)
+        self.SamplingRate(32, AdcAcquisitionTime[256], AdcOverSamplingRate[2], AdcReference["VDD"], b1=1, b2=0, b3=0, runTime=4000)
 
     """
     Testing ADC Sampling Oversampling Rate Max
@@ -3024,7 +3098,7 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("STH bError Word Reserved: " + hex(ErrorWord.b.Reserved))
         self.Can.Logger.Info("STH bError Word bAdcOverRun: " + hex(ErrorWord.b.bAdcOverRun))
         self.Can.Logger.Info("STH bError Word bTxFail: " + hex(ErrorWord.b.bTxFail))
-        self.Can.Logger.Info("Trasnfered Bytes: " + str(BytesTransfered))
+        self.Can.Logger.Info("Transfered Bytes: " + str(BytesTransfered))
         self.assertLessEqual(BytesTransfered, 1000)
         self.assertEqual(ErrorWord.b.bAdcOverRun, 1)
         self._resetStu()

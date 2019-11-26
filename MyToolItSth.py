@@ -12,6 +12,13 @@ TestConfig = {
     "ConTimeSleep1MaxMs" : 6000,
     "ConTimeSleep2MaxMs" : 7000,
     "ConTimeMaximumMs" : 15000,
+    "DisconnectedCurrentMax" : 0.8,#in mA
+    "EnergyMode1CurrentMax" : 0.5,#in mA
+    "EnergyMode2CurrentMax" : 0.45,#in mA
+    "EnergyModeMaxCurrentMax" : 0.45,#in mA
+    "EnergyConnectedCurrentMax" : 9,#in mA
+    "EnergyMeasuringCurrentMax" : 15,#in mA
+    "EnergyMeasuringLedOffCurrentMax" : 14,#in mA
     }
 
 SleepTime = {

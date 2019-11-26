@@ -44,6 +44,7 @@ class TestStu(unittest.TestCase):
         self.bError = False
         self.Can = CanFd.CanFd(CanFd.PCAN_BAUD_1M, self.fileName, self.fileNameError, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], FreshLog=True)
         self.Can.Logger.Info("TestCase: " + str(self._testMethodName))
+        self.vSilabsAdapterReset()
         if "test0000FirmwareFlash" != self._testMethodName:        
             self.Can.CanTimeStampStart(self._resetStu()["CanTime"])
             self.sStuAddr = sBlueToothMacAddr(self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"]))
@@ -155,6 +156,21 @@ class TestStu(unittest.TestCase):
             if(False != self.Can.bBlueToothCheckConnect(MyToolItNetworkNr["STU1"])):
                 break
             time.sleep(1)
+
+    """
+    Reset the Silicion Laps Adapter
+    """
+    def vSilabsAdapterReset(self):
+        self.Can.Logger.Info("Reset Adapter "+ self.sAdapterSerialNo)
+        sSystemCall = self.sSilabsCommander + " adapter reset "
+        sSystemCall += "--serialno " + self.sAdapterSerialNo
+        sSystemCall += (">>" + sLogLocation + "AdapterReset.txt")
+        if os.name == 'nt':
+            sSystemCall = sSystemCall.replace("/", "\\")
+            os.system(sSystemCall)
+        # for mac and linux(here, os.name is 'posix')
+        else:
+            os.system(sSystemCall)
                 
     """
     https://www.silabs.com/community/wireless/zigbee-and-thread/knowledge-base.entry.html/2017/12/28/building_firmwareim-1OPr
