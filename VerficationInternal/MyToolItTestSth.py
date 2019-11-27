@@ -544,6 +544,7 @@ class TestSth(unittest.TestCase):
         # for mac and linux(here, os.name is 'posix')
         else:
             os.system(sSystemCall)
+        time.sleep(4)
 
     """
     https://www.silabs.com/community/wireless/zigbee-and-thread/knowledge-base.entry.html/2017/12/28/building_firmwareim-1OPr
@@ -553,26 +554,26 @@ class TestSth(unittest.TestCase):
 
     def test0000FirmwareFlash(self):
         try:
-            os.remove(sLogLocation + self._testMethodName + "ManufacturingCreateResport.txt")
+            os.remove(sLogLocation + "ManufacturingCreateResport.txt")
         except:
             pass
         try:
-            os.remove(sLogLocation + self._testMethodName + "ManufacturingFlashResport.txt")
+            os.remove(sLogLocation + "ManufacturingFlashResport.txt")
         except:
             pass
         try:
-            os.remove(sLogLocation + self._testMethodName + "ManufacturingDebugUnlock.txt")
+            os.remove(sLogLocation + "ManufacturingDebugUnlock.txt")
         except:
             pass
         try:
-            os.remove(sLogLocation + self._testMethodName + "DeviceInfo.txt")
+            os.remove(sLogLocation + "DeviceInfo.txt")
         except:
             pass
 
         sSystemCall = self.sSilabsCommander + " device lock –-debug disable --serialno " + self.sAdapterSerialNo
         sSystemCall += " -d " + self.sBoardType
         sSystemCall += ">> " + sLogLocation
-        sSystemCall += self._testMethodName + "ManufacturingDebugUnlock.txt"
+        sSystemCall += "ManufacturingDebugUnlock.txt"
         if os.name == 'nt':
             sSystemCall = sSystemCall.replace("/", "\\")
             os.system(sSystemCall)
@@ -584,14 +585,14 @@ class TestSth(unittest.TestCase):
         sSystemCall += "--serialno " + self.sAdapterSerialNo + " "
         sSystemCall += "-d " + self.sBoardType + " "
         sSystemCall += ">> " + sLogLocation
-        sSystemCall += self._testMethodName + "DeviceInfo.txt"
+        sSystemCall += "DeviceInfo.txt"
         if os.name == 'nt':
             sSystemCall = sSystemCall.replace("/", "\\")
             os.system(sSystemCall)
         # for mac and linux(here, os.name is 'posix')
         else:
             os.system(sSystemCall)
-        tFile = open(sLogLocation + self._testMethodName + "DeviceInfo.txt", "r", encoding='utf-8')
+        tFile = open(sLogLocation + "DeviceInfo.txt", "r", encoding='utf-8')
         asData = tFile.readlines()
         tFile.close()
         if "Unique ID" == asData[-2][:9]:
@@ -602,14 +603,14 @@ class TestSth(unittest.TestCase):
             sSystemCall += "-o " + self.sBuildLocation + "/manufacturingImageSth" + sVersion + ".hex "
             sSystemCall += "-d " + self.sBoardType + " "
             sSystemCall += ">> " + sLogLocation
-            sSystemCall += self._testMethodName + "ManufacturingCreateResport.txt"
+            sSystemCall += "ManufacturingCreateResport.txt"
             if os.name == 'nt':
                 sSystemCall = sSystemCall.replace("/", "\\")
                 os.system(sSystemCall)
             # for mac and linux(here, os.name is 'posix')
             else:
                 os.system(sSystemCall)
-            tFile = open(sLogLocation + self._testMethodName + "ManufacturingCreateResport.txt", "r", encoding='utf-8')
+            tFile = open(sLogLocation + "ManufacturingCreateResport.txt", "r", encoding='utf-8')
             asData = tFile.readlines()
             tFile.close()
             self.assertEqual("DONE\n", asData[-1])
@@ -619,14 +620,14 @@ class TestSth(unittest.TestCase):
             sSystemCall += "--serialno " + self.sAdapterSerialNo + " "
             sSystemCall += "-d " + self.sBoardType + " "
             sSystemCall += ">> " + sLogLocation
-            sSystemCall += self._testMethodName + "ManufacturingFlashResport.txt"
+            sSystemCall += "ManufacturingFlashResport.txt"
             if os.name == 'nt':
                 sSystemCall = sSystemCall.replace("/", "\\")
                 os.system(sSystemCall)
             # for mac and linux(here, os.name is 'posix')
             else:
                 os.system(sSystemCall)
-            tFile = open(sLogLocation + self._testMethodName + "ManufacturingFlashResport.txt", "r", encoding='utf-8')
+            tFile = open(sLogLocation + "ManufacturingFlashResport.txt", "r", encoding='utf-8')
             asData = tFile.readlines()
             tFile.close()
             self.assertEqual("range 0x0FE04000 - 0x0FE047FF (2 KB)\n", asData[-2][10:])
@@ -637,13 +638,17 @@ class TestSth(unittest.TestCase):
     """
 
     def test0001OverTheAirUpdate(self):
+        iRuns = 4
+        iRuns += 1
+        self._resetStu()
+        time.sleep(1)
         bCreate = os.path.isfile(self.sBuildLocation + "/OtaServer.gpl")
         bCreate = bCreate and os.path.isfile(self.sBuildLocation + "/OtaApploader.gpl") 
         bCreate = bCreate and os.path.isfile(self.sBuildLocation + "/OtaApploaderServer.gpl")
         bCreate = not bCreate
         if False != bCreate:
             try:
-                os.remove(sLogLocation + self._testMethodName + "CreateReport.txt")                
+                os.remove(sLogLocation + "CreateReport.txt")                
             except:
                 pass
             
@@ -659,13 +664,9 @@ class TestSth(unittest.TestCase):
                 os.remove(self.sBuildLocation + "/OtaApploaderServer.gpl")                
             except:
                 pass
-            iRuns = 4
-            iRuns += 1
-            self._resetStu()
-            time.sleep(1)
             sSystemCall = self.sHomeLocation + "firmware_server/create_bl_files.bat "
             sSystemCall += " -> " + sLogLocation
-            sSystemCall += self._testMethodName + "CreateReport.txt"
+            sSystemCall += "CreateReport.txt"
             if os.name == 'nt':
                 sSystemCall = sSystemCall.replace("/", "\\")
                 os.system(sSystemCall)
@@ -679,21 +680,18 @@ class TestSth(unittest.TestCase):
             sSystemCall = self.sBuildLocation + "/ota-dfu.exe COM6 115200 "
             sSystemCall += self.sBuildLocation + "/OtaServer.gpl "
             sSystemCall += self.sSthAddr + " -> " + sLogLocation
-            sSystemCall += self._testMethodName + "Ota" + str(i) + ".txt"
+            sSystemCall += "Ota" + str(i) + ".txt"
             if os.name == 'nt':
                 sSystemCall = sSystemCall.replace("/", "\\")
                 os.system(sSystemCall)
             # for mac and linux(here, os.name is 'posix')
             else:
                 os.system(sSystemCall)
-            tFile = open(sLogLocation + self._testMethodName + "Ota" + str(i) + ".txt", "r", encoding='utf-8')
+            tFile = open(sLogLocation + "Ota" + str(i) + ".txt", "r", encoding='utf-8')
             asData = tFile.readlines()
             tFile.close()
             self.assertEqual("Finishing DFU block...OK\n", asData[-2])
             self.assertEqual("Closing connection...OK\n", asData[-1])
-
-        for i in range(1, iRuns):
-            os.remove(sLogLocation + "/test0001OverTheAirUpdateOta" + str(i) + ".txt")
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
 
     """
@@ -903,7 +901,7 @@ class TestSth(unittest.TestCase):
 
     def test0014PowerConsumptionEnergySaveMode1(self):
         try:
-            os.remove(self._testMethodName + "Aem.txt")
+            os.remove("Aem1.txt")
         except:
             pass
         self.Can.BlueToothEnergyModeNr(SleepTime["Min"], SleepTime["AdvertisementReset1"], 1)
@@ -914,14 +912,14 @@ class TestSth(unittest.TestCase):
         sSystemCall = self.sSilabsCommander + " aem measure --windowlength 60000 "
         sSystemCall += "--serialno " + self.sAdapterSerialNo + " "
         sSystemCall += "-d " + self.sBoardType + " "
-        sSystemCall += ">> " + self._testMethodName + "Aem.txt"
+        sSystemCall += ">> " + "Aem1.txt"
         if os.name == 'nt':
             sSystemCall = sSystemCall.replace("/", "\\")
             os.system(sSystemCall)
         # for mac and linux(here, os.name is 'posix')
         else:
             os.system(sSystemCall)
-        tFile = open(self._testMethodName + "Aem.txt", "r", encoding='utf-8')
+        tFile = open("Aem1.txt", "r", encoding='utf-8')
         asData = tFile.readlines()
         tFile.close()
         sCurrentAverage = asData[1][:-1]
@@ -957,7 +955,7 @@ class TestSth(unittest.TestCase):
 
     def test0015PowerConsumptionEnergySaveMode2(self):
         try:
-            os.remove(self._testMethodName + "Aem.txt")
+            os.remove("Aem2.txt")
         except:
             pass
         self.Can.BlueToothEnergyModeNr(SleepTime["Min"], SleepTime["AdvertisementReset2"], 1)
@@ -968,14 +966,14 @@ class TestSth(unittest.TestCase):
         sSystemCall = self.sSilabsCommander + " aem measure --windowlength 60000 "
         sSystemCall += "--serialno " + self.sAdapterSerialNo + " "
         sSystemCall += "-d " + self.sBoardType + " "
-        sSystemCall += ">> " + self._testMethodName + "Aem.txt"
+        sSystemCall += ">> " + "Aem2.txt"
         if os.name == 'nt':
             sSystemCall = sSystemCall.replace("/", "\\")
             os.system(sSystemCall)
         # for mac and linux(here, os.name is 'posix')
         else:
             os.system(sSystemCall)
-        tFile = open(self._testMethodName + "Aem.txt", "r", encoding='utf-8')
+        tFile = open("Aem2.txt", "r", encoding='utf-8')
         asData = tFile.readlines()
         tFile.close()
         sCurrentAverage = asData[1][:-1]
@@ -1011,7 +1009,7 @@ class TestSth(unittest.TestCase):
 
     def test0016PowerConsumptionEnergySaveModeAdv4000ms(self):
         try:
-            os.remove(self._testMethodName + "Aem.txt")
+            os.remove("Aem3.txt")
         except:
             pass
         self.Can.BlueToothEnergyModeNr(SleepTime["Min"], SleepTime["AdvertisementMax"], 1)
@@ -1022,14 +1020,14 @@ class TestSth(unittest.TestCase):
         sSystemCall = self.sSilabsCommander + " aem measure --windowlength 60000 "
         sSystemCall += "--serialno " + self.sAdapterSerialNo + " "
         sSystemCall += "-d " + self.sBoardType + " "
-        sSystemCall += ">> " + self._testMethodName + "Aem.txt"
+        sSystemCall += ">> " + "Aem3.txt"
         if os.name == 'nt':
             sSystemCall = sSystemCall.replace("/", "\\")
             os.system(sSystemCall)
         # for mac and linux(here, os.name is 'posix')
         else:
             os.system(sSystemCall)
-        tFile = open(self._testMethodName + "Aem.txt", "r", encoding='utf-8')
+        tFile = open("Aem3.txt", "r", encoding='utf-8')
         asData = tFile.readlines()
         tFile.close()
         sCurrentAverage = asData[1][:-1]
@@ -1065,7 +1063,7 @@ class TestSth(unittest.TestCase):
 
     def test0017PowerConsumptionConnected(self):
         try:
-            os.remove(self._testMethodName + "Aem.txt")
+            os.remove("Aem4.txt")
         except:
             pass
         self.Can.Logger.Info("Measure Power Consumption for connected.") 
@@ -1074,14 +1072,14 @@ class TestSth(unittest.TestCase):
         sSystemCall = self.sSilabsCommander + " aem measure --windowlength 60000 "
         sSystemCall += "--serialno " + self.sAdapterSerialNo + " "
         sSystemCall += "-d " + self.sBoardType + " "
-        sSystemCall += ">> " + self._testMethodName + "Aem.txt"
+        sSystemCall += ">> " + "Aem4.txt"
         if os.name == 'nt':
             sSystemCall = sSystemCall.replace("/", "\\")
             os.system(sSystemCall)
         # for mac and linux(here, os.name is 'posix')
         else:
             os.system(sSystemCall)
-        tFile = open(self._testMethodName + "Aem.txt", "r", encoding='utf-8')
+        tFile = open("Aem4.txt", "r", encoding='utf-8')
         asData = tFile.readlines()
         tFile.close()
         sCurrentAverage = asData[1][:-1]
@@ -1114,7 +1112,7 @@ class TestSth(unittest.TestCase):
 
     def test0018PowerConsumptionMeasuring(self):
         try:
-            os.remove(self._testMethodName + "Aem.txt")
+            os.remove("Aem5.txt")
         except:
             pass
         self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0)
@@ -1124,14 +1122,14 @@ class TestSth(unittest.TestCase):
         sSystemCall = self.sSilabsCommander + " aem measure --windowlength 60000 "
         sSystemCall += "--serialno " + self.sAdapterSerialNo + " "
         sSystemCall += "-d " + self.sBoardType + " "
-        sSystemCall += ">> " + self._testMethodName + "Aem.txt"
+        sSystemCall += ">> "+ "Aem5.txt"
         if os.name == 'nt':
             sSystemCall = sSystemCall.replace("/", "\\")
             os.system(sSystemCall)
         # for mac and linux(here, os.name is 'posix')
         else:
             os.system(sSystemCall)
-        tFile = open(self._testMethodName + "Aem.txt", "r", encoding='utf-8')
+        tFile = open("Aem5.txt", "r", encoding='utf-8')
         asData = tFile.readlines()
         tFile.close()
         sCurrentAverage = asData[1][:-1]
@@ -1165,7 +1163,7 @@ class TestSth(unittest.TestCase):
 
     def test0019PowerConsumptionMeasuringLedOff(self):
         try:
-            os.remove(self._testMethodName + "Aem.txt")
+            os.remove("Aem6.txt")
         except:
             pass
         self.TurnOffLed()
@@ -1176,14 +1174,14 @@ class TestSth(unittest.TestCase):
         sSystemCall = self.sSilabsCommander + " aem measure --windowlength 60000 "
         sSystemCall += "--serialno " + self.sAdapterSerialNo + " "
         sSystemCall += "-d " + self.sBoardType + " "
-        sSystemCall += ">> " + self._testMethodName + "Aem.txt"
+        sSystemCall += ">> " + "Aem6.txt"
         if os.name == 'nt':
             sSystemCall = sSystemCall.replace("/", "\\")
             os.system(sSystemCall)
         # for mac and linux(here, os.name is 'posix')
         else:
             os.system(sSystemCall)
-        tFile = open(self._testMethodName + "Aem.txt", "r", encoding='utf-8')
+        tFile = open("Aem6.txt", "r", encoding='utf-8')
         asData = tFile.readlines()
         tFile.close()
         sCurrentAverage = asData[1][:-1]

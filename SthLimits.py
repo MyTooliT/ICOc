@@ -69,11 +69,11 @@ if True == bConnectedBattery:
 else:
     VoltMiddleBat = 0.15
     SigIndBatteryQ1 = 600         
-    SigIndBatteryQ25 = 650       
-    SigIndBatteryMedL = 670        
-    SigIndBatteryMedH = 730    
-    SigIndBatteryQ75 = 750     
-    SigIndBatteryQ99 = 800     
+    SigIndBatteryQ25 = 640       
+    SigIndBatteryMedL = 650        
+    SigIndBatteryMedH = 660    
+    SigIndBatteryQ75 = 670     
+    SigIndBatteryQ99 = 700     
     SigIndBatteryVar = 40000     
     SigIndBatterySkewness = 20   
     SigIndBatterySNR = 60 

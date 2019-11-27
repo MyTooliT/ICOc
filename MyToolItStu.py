@@ -5,7 +5,7 @@ c_uint32 = ctypes.c_uint32
 
 TestConfig = {
     "DevName" : "Valerie",
-    "Version" : "v2.1.6",
+    "Version" : "v2.1.7",
     "ProductionDate" : "20191106",
     "HolderName" : "Tanja",
     "StuName" : "Valerie",

@@ -49,6 +49,7 @@ class TestStu(unittest.TestCase):
             self.Can.CanTimeStampStart(self._resetStu()["CanTime"])
             self.sStuAddr = sBlueToothMacAddr(self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"]))
             self.Can.Logger.Info("STU BlueTooth Address: " + self.sStuAddr)
+            self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STU1"])
             self._statusWords()
             self._StuWDog()
         self.Can.Logger.Info("_______________________________________________________________________________________________________________")
@@ -58,6 +59,7 @@ class TestStu(unittest.TestCase):
         self.Can.Logger.Info("Fin")
         self.Can.Logger.Info("_______________________________________________________________________________________________________________")
         if False == self.Can.bError:
+            self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STU1"])
             if "test0000FirmwareFlash" == self._testMethodName:
                 self.sStuAddr = hex(self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"]))
                 self.Can.Logger.Info("STU BlueTooth Address: " + self.sStuAddr)
@@ -171,6 +173,7 @@ class TestStu(unittest.TestCase):
         # for mac and linux(here, os.name is 'posix')
         else:
             os.system(sSystemCall)
+        time.sleep(4)
                 
     """
     https://www.silabs.com/community/wireless/zigbee-and-thread/knowledge-base.entry.html/2017/12/28/building_firmwareim-1OPr
@@ -180,11 +183,11 @@ class TestStu(unittest.TestCase):
 
     def test0000FirmwareFlash(self):      
         try:
-            os.remove(sLogLocation + self._testMethodName + "ManufacturingCreateResport.txt")
+            os.remove(sLogLocation + "ManufacturingCreateResport.txt")
         except:
             pass
         try:
-            os.remove(sLogLocation + self._testMethodName + "ManufacturingFlashResport.txt")
+            os.remove(sLogLocation + "ManufacturingFlashResport.txt")
         except:
             pass
         sSystemCall = self.sSilabsCommander + " convert "
@@ -194,14 +197,14 @@ class TestStu(unittest.TestCase):
         sSystemCall += "-o " + self.sBuildLocation + "/manufacturingImageStu" + sVersion + ".hex " 
         sSystemCall += "-d " + self.sBoardType + " "
         sSystemCall += ">> " + sLogLocation 
-        sSystemCall += self._testMethodName + "ManufacturingCreateResport.txt"
+        sSystemCall += "ManufacturingCreateResport.txt"
         if os.name == 'nt': 
             sSystemCall = sSystemCall.replace("/", "\\")
             os.system(sSystemCall)
         # for mac and linux(here, os.name is 'posix') 
         else: 
             os.system(sSystemCall)
-        tFile = open(sLogLocation + self._testMethodName + "ManufacturingCreateResport.txt", "r", encoding='utf-8')
+        tFile = open(sLogLocation + "ManufacturingCreateResport.txt", "r", encoding='utf-8')
         asData = tFile.readlines()
         tFile.close()
         self.assertEqual("DONE\n", asData[-1])
@@ -211,14 +214,14 @@ class TestStu(unittest.TestCase):
         sSystemCall += "--serialno " + self.sAdapterSerialNo + " "
         sSystemCall += "-d " + self.sBoardType + " "
         sSystemCall += ">> " + sLogLocation 
-        sSystemCall += self._testMethodName + "ManufacturingFlashResport.txt"
+        sSystemCall += "ManufacturingFlashResport.txt"
         if os.name == 'nt': 
             sSystemCall = sSystemCall.replace("/", "\\")
             os.system(sSystemCall)
         # for mac and linux(here, os.name is 'posix') 
         else: 
             os.system(sSystemCall)    
-        tFile = open(sLogLocation + self._testMethodName + "ManufacturingFlashResport.txt", "r", encoding='utf-8')
+        tFile = open(sLogLocation + "ManufacturingFlashResport.txt", "r", encoding='utf-8')
         asData = tFile.readlines()
         tFile.close()
         self.assertEqual("range 0x0FE04000 - 0x0FE047FF (2 KB)\n", asData[-2][10:])  
@@ -230,57 +233,62 @@ class TestStu(unittest.TestCase):
     """
 
     def test0001OverTheAirUpdate(self):
-        iRuns = 4
-        iRuns += 1
-        try:
-            for i in range(1, iRuns):
-                os.remove(sLogLocation + "/test0001OverTheAirUpdateOta" + str(i) + ".txt")
-        except:
-            pass
-        
-        try:
-            os.remove(sLogLocation + self._testMethodName + "CreateReport.txt")                
-        except:
-            pass
-        try:
-            os.remove(self.sBuildLocation + "/OtaClient.gpl")                
-        except:
-            pass
-        try:
-            os.remove(self.sBuildLocation + "/OtaApploader.gpl")                
-        except:
-            pass
-        try:
-            os.remove(self.sBuildLocation + "/OtaApploaderClient.gpl")                
-        except:
-            pass
-
-        self._resetStu()
-        time.sleep(1)
-        sSystemCall = self.sHomeLocation + "/firmware_client/create_bl_files.bat "
-        sSystemCall += " -> " + sLogLocation
-        sSystemCall += self._testMethodName + "CreateReport.txt"
-        if os.name == 'nt':
-            sSystemCall = sSystemCall.replace("/", "\\")
-            os.system(sSystemCall)
-        # for mac and linux(here, os.name is 'posix')
-        else:
-            os.system(sSystemCall)
-        os.rename(self.sHomeLocation + "/firmware_client/output_gbl/application.gbl", self.sBuildLocation + "/OtaClient.gpl")
-        os.rename(self.sHomeLocation + "/firmware_client/output_gbl/apploader.gbl", self.sBuildLocation + "/OtaApploader.gpl")
-        os.rename(self.sHomeLocation + "/firmware_client/output_gbl/full.gbl", self.sBuildLocation + "/OtaApploaderClient.gpl")
-        for i in range(1, iRuns):
-            sSystemCall = self.sBuildLocation + "/ota-dfu.exe COM6 115200 "
-            sSystemCall += self.sBuildLocation + "/OtaClient.gpl "
-            sSystemCall += self.sStuAddr + " -> " + sLogLocation
-            sSystemCall += self._testMethodName + "Ota" + str(i) + ".txt"
+        bCreate = os.path.isfile(self.sBuildLocation + "/OtaServer.gpl")
+        bCreate = bCreate and os.path.isfile(self.sBuildLocation + "/OtaApploader.gpl") 
+        bCreate = bCreate and os.path.isfile(self.sBuildLocation + "/OtaApploaderServer.gpl")
+        bCreate = not bCreate
+        if False != bCreate:
+            iRuns = 4
+            iRuns += 1
+            try:
+                for i in range(1, iRuns):
+                    os.remove(sLogLocation + str(i) + ".txt")
+            except:
+                pass
+            
+            try:
+                os.remove(sLogLocation + "CreateReportOta.txt")                
+            except:
+                pass
+            try:
+                os.remove(self.sBuildLocation + "/OtaClient.gpl")                
+            except:
+                pass
+            try:
+                os.remove(self.sBuildLocation + "/OtaApploader.gpl")                
+            except:
+                pass
+            try:
+                os.remove(self.sBuildLocation + "/OtaApploaderClient.gpl")                
+            except:
+                pass
+    
+            self._resetStu()
+            time.sleep(1)
+            sSystemCall = self.sHomeLocation + "/firmware_client/create_bl_files.bat "
+            sSystemCall += " -> " + sLogLocation
+            sSystemCall += "CreateReportOta.txt"
             if os.name == 'nt':
                 sSystemCall = sSystemCall.replace("/", "\\")
                 os.system(sSystemCall)
             # for mac and linux(here, os.name is 'posix')
             else:
                 os.system(sSystemCall)
-            tFile = open(sLogLocation + self._testMethodName + "Ota" + str(i) + ".txt", "r", encoding='utf-8')
+            os.rename(self.sHomeLocation + "/firmware_client/output_gbl/application.gbl", self.sBuildLocation + "/OtaClient.gpl")
+            os.rename(self.sHomeLocation + "/firmware_client/output_gbl/apploader.gbl", self.sBuildLocation + "/OtaApploader.gpl")
+            os.rename(self.sHomeLocation + "/firmware_client/output_gbl/full.gbl", self.sBuildLocation + "/OtaApploaderClient.gpl")
+        for i in range(1, iRuns):
+            sSystemCall = self.sBuildLocation + "/ota-dfu.exe COM6 115200 "
+            sSystemCall += self.sBuildLocation + "/OtaClient.gpl "
+            sSystemCall += self.sStuAddr + " -> " + sLogLocation
+            sSystemCall += "Ota" + str(i) + ".txt"
+            if os.name == 'nt':
+                sSystemCall = sSystemCall.replace("/", "\\")
+                os.system(sSystemCall)
+            # for mac and linux(here, os.name is 'posix')
+            else:
+                os.system(sSystemCall)
+            tFile = open(sLogLocation + "Ota" + str(i) + ".txt", "r", encoding='utf-8')
             asData = tFile.readlines()
             tFile.close()
             self.assertEqual("Finishing DFU block...OK\n", asData[-2])
@@ -536,7 +544,7 @@ class TestStu(unittest.TestCase):
     Check that correct Bluetooth RSSIs are listed
     """    
 
-    def test105BluetoothRssi(self):
+    def test0105BluetoothRssi(self):
         for _i in range(0, 10):
             self.Can.vBlueToothConnectConnect(MyToolItNetworkNr["STU1"])
             endTime = time.time() + 5
@@ -553,7 +561,7 @@ class TestStu(unittest.TestCase):
     Check that correct Bluetooth RSSIs change
     """    
 
-    def test106BluetoothRssiChange(self):
+    def test0106BluetoothRssiChange(self):
         self.Can.vBlueToothConnectConnect(MyToolItNetworkNr["STU1"])
         endTime = time.time() + 5
         while 0 == self.Can.iBlueToothConnectTotalScannedDeviceNr(MyToolItNetworkNr["STU1"]):
@@ -573,7 +581,7 @@ class TestStu(unittest.TestCase):
     Check that correct Bluetooth name, addresses and RSSIs are (correctly) listed
     """   
 
-    def test107BluetoothNameAddressRssi(self):
+    def test0107BluetoothNameAddressRssi(self):
         self.Can.vBlueToothConnectConnect(MyToolItNetworkNr["STU1"])
         endTime = time.time() + 5
         while 0 == self.Can.iBlueToothConnectTotalScannedDeviceNr(MyToolItNetworkNr["STU1"]):
@@ -649,7 +657,7 @@ class TestStu(unittest.TestCase):
     """
     Change Device Name of STU
     """
-    def test113DeviceNameChangeSTU(self):
+    def test0113DeviceNameChangeSTU(self):
         self.Can.Logger.Info("Bluetooth name command to STU")
         for _i in range(0, 10):
             self.Can.Logger.Info("Loop Run: " + str(_i))
@@ -944,6 +952,7 @@ class TestStu(unittest.TestCase):
     """   
 
     def test0701StatisticsOperatingSeconds(self):
+        u32EepromWriteRequestCounterTestStart = self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STU1"])
         OperatingSeconds = self.Can.statisticalData(MyToolItNetworkNr["STU1"], MyToolItStatData["OperatingTime"])    
         SecondsReset1 = iMessage2Value(OperatingSeconds[:4])
         SecondsOveral1 = iMessage2Value(OperatingSeconds[4:])
@@ -955,7 +964,7 @@ class TestStu(unittest.TestCase):
         OperatingSeconds = self.Can.statisticalData(MyToolItNetworkNr["STU1"], MyToolItStatData["OperatingTime"])    
         SecondsReset3 = iMessage2Value(OperatingSeconds[:4])
         SecondsOveral3 = iMessage2Value(OperatingSeconds[4:])
-        time.sleep(60 * 31)
+        time.sleep(60 * 30)
         OperatingSeconds = self.Can.statisticalData(MyToolItNetworkNr["STU1"], MyToolItStatData["OperatingTime"])    
         SecondsReset4 = iMessage2Value(OperatingSeconds[:4])
         SecondsOveral4 = iMessage2Value(OperatingSeconds[4:])
@@ -967,6 +976,10 @@ class TestStu(unittest.TestCase):
         self.Can.Logger.Info("Operating Seconds since frist PowerOn(After Disconnect/Connect): " + str(SecondsOveral3))    
         self.Can.Logger.Info("Operating Seconds since Reset(+30 minutes): " + str(SecondsReset4))
         self.Can.Logger.Info("Operating Seconds since frist PowerOn(+30minutes): " + str(SecondsOveral4))  
+        u32EepromWriteRequestCounterTestEnd = self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STU1"])
+        u32EepromWriteRequsts = u32EepromWriteRequestCounterTestEnd - u32EepromWriteRequestCounterTestStart
+        self.Can.Logger.Info("EEPROM Write Requests during tests: " + str(u32EepromWriteRequsts))
+        self.assertEqual(1, u32EepromWriteRequsts)  # +1 due to operating seconds
         self.assertLess(SecondsReset1, 10)                
         self.assertGreater(SecondsReset2, 60)
         self.assertLess(SecondsReset2, 70)
