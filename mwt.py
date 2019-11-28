@@ -476,6 +476,106 @@ class mwt(myToolItWatch):
                 #TODO: Kill process
             self.Can = CanFd.CanFd(CanFd.PCAN_BAUD_1M, "init.txt", "initError.txt", MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"])
         return bContinue
+    
+    
+    def bTerminalUpdateConnectExecute(self, sAddr):
+        pass#TODO: Do it
+    
+    def bTerminalUpdateConnect(self, keyPress):
+        iNumber = int(keyPress - ord('0'))
+        keyPress = -1
+        bRun = True
+        bContinue = False
+        devList = None
+        sSthOta = ""
+        sStuOta = ""     
+        if "STH" == self.sProduct:
+            sSthOta = "OtaUpdates\\STH\\" + self.sConfig
+        elif "STU" == self.sProduct:
+            sStuOta = "OtaUpdates\\STU\\" + self.sConfig 
+        while False != bRun:
+            if ((False != os.path.isdir(sSthOta)) or (False != os.path.isdir(sStuOta))):
+                devList = self.tTerminalHeaderExtended()           
+            if False != os.path.isdir(sStuOta):
+                self.stdscr.addstr(str(BlueToothDeviceNr["Self"])+"(STU): " + self.sStuAddr + "("+self.Can.BlueToothNameGet(MyToolItNetworkNr["STU1"], BlueToothDeviceNr["Self"])+")\n")
+            self.stdscr.addstr(str(iNumber))
+            self.stdscr.refresh()
+            keyPress = self.stdscr.getch()
+            if ord('0') <= keyPress and ord('9') >= keyPress:         
+                iNumber = self.iTerminalInputNumber(iNumber, keyPress)   
+            elif 0x08 == keyPress:
+                if 1 < len(str(iNumber)):
+                    iNumber = int(str(iNumber)[:-1])
+                else:
+                    iNumber = 0
+            elif 0x0A == keyPress:
+                if 0 < iNumber:                    
+                    self.stdscr.addstr("\nTry to update " + str(iNumber) + "\n")
+                    self.stdscr.refresh()
+                    time.sleep(1)
+                    iNumber -= 1
+                    sAddr = ""
+                    if BlueToothDeviceNr["Self"] == iNumber:
+                        sAddr = self.sStuAddr
+                    else:
+                        for dev in devList:
+                            if dev["DeviceNumber"] == iNumber:
+                                sAddr = sBlueToothMacAddr(dev["Address"])
+                    if "" != sAddr:
+                        self.bTerminalUpdateConnectExecute(sAddr)
+                    else:
+                        self.stdscr.addstr("Device does not exist")
+                        self.stdscr.refresh()  
+                        time.sleep(2)  
+                else:
+                    bContinue = True
+                bRun = False
+            elif(0x03 == keyPress) or (ord('q') == keyPress):
+                bRun = False
+                bContinue = True
+            else:
+                devList = None
+            keyPress = -1
+        return bContinue
+    
+    def bTerminalUpdateKeyEval(self):
+        bRun = True
+        keyPress = self.stdscr.getch()
+        if ord('e') == keyPress:
+            bRun = False
+        elif 0x03 == keyPress:  # CTRL+C
+            bRun = False
+        elif ord('l') == keyPress:
+            atList = self.atTerminalXmlProductVersionList()
+            self.vTerminalXmlProductVersionChange(atList)
+        elif ord('1') <= keyPress and ord('9') >= keyPress:
+            bRun = self.bTerminalUpdateConnect(keyPress)
+        return bRun
+    
+    def bTerminalUpdate(self):
+        bRun = True
+        while False != bRun:
+            self.stdscr.clear()
+
+            sSthOta = ""
+            sStuOta = ""     
+            if "STH" == self.sProduct:
+                sSthOta = "OtaUpdates\\STH\\" + self.sConfig
+            elif "STU" == self.sProduct:
+                sStuOta = "OtaUpdates\\STU\\" + self.sConfig    
+           
+            if ((False != os.path.isdir(sSthOta)) or (False != os.path.isdir(sStuOta))):
+                devList = self.tTerminalHeaderExtended()           
+            if False != os.path.isdir(sStuOta):
+                self.stdscr.addstr(str(BlueToothDeviceNr["Self"])+"(STU): " + self.sStuAddr + "("+self.Can.BlueToothNameGet(MyToolItNetworkNr["STU1"], BlueToothDeviceNr["Self"])+")\n")
+            self.stdscr.addstr("Device: " + str(self.sProduct) + "\n")
+            self.stdscr.addstr("Version: " + str(self.sConfig) + "\n")
+            self.stdscr.addstr("\n")
+            self.stdscr.addstr("1-9: Update number (ENTER at input end)\n")
+            self.stdscr.addstr("e: Exit\n")
+            self.stdscr.addstr("l: List devices and versions (and change current device/product)\n")
+            bRun = self.bTerminalUpdateKeyEval()
+
            
     def vTerminalXmlProductVersionCreate(self, atList):
         self.stdscr.addstr("Device for deriving: ")
@@ -769,8 +869,8 @@ class mwt(myToolItWatch):
             if None != self.sSetupConfig:
                 self.stdscr.addstr("C: Create new Setup\n")
             self.stdscr.addstr("e: Exit\n")
-            self.stdscr.addstr("l: List devices and versions (an change current device/product)\n")
-            self.stdscr.addstr("L: List Setups (an change current device/product)\n")
+            self.stdscr.addstr("l: List devices and versions (and change current device/product)\n")
+            self.stdscr.addstr("L: List Setups (and change current device/product)\n")
             self.stdscr.addstr("r: Remove Version\n")
             self.stdscr.addstr("R: Remove Setup\n")
             if None != self.sSetupConfig:
@@ -826,7 +926,9 @@ class mwt(myToolItWatch):
                 self.stdscr.addstr("Device was not available\n")
                 self.stdscr.refresh()    
         elif ord('t') == keyPress:    
-            bRun = self.bTerminalTests()              
+            bRun = self.bTerminalTests()     
+        elif ord('u') == keyPress:    
+            bRun = self.bTerminalUpdate()           
         elif ord('x') == keyPress:    
             bRun = self.bTerminalXml()   
         return bRun 
@@ -840,6 +942,7 @@ class mwt(myToolItWatch):
         self.stdscr.addstr("l: Log File Name\n")
         self.stdscr.addstr("n: Change Device Name\n")
         self.stdscr.addstr("t: Test Menu\n")
+        self.stdscr.addstr("u: Update Menu\n")
         self.stdscr.addstr("x: Xml Data Base\n")        
         self.stdscr.refresh()
         return self.bTerminalMainMenuKeyEvaluation(devList)

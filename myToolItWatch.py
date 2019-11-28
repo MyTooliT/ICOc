@@ -72,6 +72,7 @@ class myToolItWatch():
         self.vDisplayTime(10)  
         self.vRunTime(0, 0)
         self.vGraphInit(Watch["DisplaySampleRateMs"], Watch["DisplayBlockSize"])
+        self.vStuAddr("")
         self.Can.readThreadStop()
             
     def __exit__(self):
@@ -336,6 +337,9 @@ class myToolItWatch():
         self.sMsgLoss = "Acceleration(" + str(format(0, '3.3f')) + "%)"
         self.GuiPackage = {"X":[], "Y" : [], "Z" : []}
         self.tSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        
+    def vStuAddr(self, sStuAddr):
+        self.sStuAddr = sStuAddr
                         
     def guiProcessStop(self):
         try:
@@ -515,6 +519,7 @@ class myToolItWatch():
             try:
                 self.Can.ReadThreadReset()
                 self.Can.cmdReset(MyToolItNetworkNr["STU1"])
+                self.vStuAddr(sBlueToothMacAddr(self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"])))
             except KeyboardInterrupt:
                 self.KeyBoadInterrupt = True
 
@@ -1150,7 +1155,7 @@ class myToolItWatch():
                 try:
                     worksheet['E' + str(i)] = str(value)
                 except:
-                	pass    
+                    pass    
                 iTotalLength += iLength
                 i += 1
             else:
