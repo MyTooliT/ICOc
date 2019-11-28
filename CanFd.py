@@ -69,6 +69,11 @@ class Logger():
             os.rename(self.fileName, fileName)
         self.fileName = fileName
         self.fileNameError = fileNameError
+        if [-1] != '/':
+            tPath = fileName.rsplit('/', 1)[0]
+        if False == os.path.isdir(tPath):
+            os.mkdir(tPath)
+    
         if False != FreshLog:
             self.file = open(fileName, "w", encoding='utf-8')
         else:
