@@ -27,6 +27,9 @@ sHomeLocation = "../../SimplicityStudio/v4_workspace/STH/"
 sSilabsCommanderLocation = "../../SimplicityStudio/SimplicityCommander/"
 sAdapterSerialNo = "440115849"
 sBoardType = "BGM113A256V2"
+iSensorAxis = 1
+bPcbOnly = True
+bBatteryExternalDcDc = True
 
 """
 This class is used for automated internal verification of the sensory tool holder
@@ -36,6 +39,7 @@ This class is used for automated internal verification of the sensory tool holde
 class TestSth(unittest.TestCase):
 
     def setUp(self):
+        vSthLimitsConfig(iSensorAxis, bPcbOnly, bBatteryExternalDcDc)
         self.sHomeLocation = sHomeLocation
         self.sBuildLocation = sHomeLocation + "builds/" + sVersion
         self.sBootloader = sHomeLocation + "builds/" + "BootloaderOtaBgm113.s37"
@@ -3808,6 +3812,7 @@ class TestSth(unittest.TestCase):
     """
 
     def test0603CalibrationMeasurementEjectInject(self):
+        global iSensorAxis
         kX1ack = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["Acc"], 1, AdcReference["VDD"])
         kX1 = iMessage2Value(kX1ack[4:])
         kY1ack = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["Acc"], 2, AdcReference["VDD"])
@@ -3905,7 +3910,7 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("k2-k1(assumed) Typical: " + str(SelfTestOutputChangemVTyp) + "mV")
         self.assertGreaterEqual(difKX, SelfTestOutputChangemVMin)
         self.assertLessEqual(difKX, SelfTestOutputChangemVTyp)
-        if 1 < Axis:
+        if 1 < iSensorAxis:
             self.assertGreaterEqual(difKY, SelfTestOutputChangemVMin)
             self.assertLowerEqual(difKY, SelfTestOutputChangemVTyp)
             self.assertGreaterEqual(difKZ, SelfTestOutputChangemVMin)

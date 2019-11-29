@@ -1,6 +1,7 @@
 import unittest
 import sys
 import os
+from array import array
 
 # Required to add peakcan
 sDirName = os.path.dirname('')
@@ -13,7 +14,7 @@ import CanFd
 from MyToolItNetworkNumbers import MyToolItNetworkNr
 from SthLimits import *
 import time
-from MyToolItSth import TestConfig, SthErrorWord, SleepTime
+from MyToolItSth import TestConfig, SthErrorWord, SleepTime, fAdcRawDat
 from MyToolItCommands import *
 
 sLogLocation = '../../Logs/STH/'
@@ -207,6 +208,66 @@ class TestSthManually(unittest.TestCase):
         input('Press any key to continue')
         print("Power off device for 1 minute(power consumpiton of the target is actually REALLY low)")
         input('Press any key to continue')    
+        
+    def vComapre(self, iCounterCompare, aiAccCounter, iIndex):
+        if iCounterCompare != aiAccCounter[iIndex]:
+            iErrorIndex = iIndex
+            self.Can.Logger.Error("Error starts at index: " + str(iIndex))
+            if 255 <= iIndex:
+                iIndex -= 255
+            else:
+                iIndex = 0
+            iIndexEnd = 255 * 4 + 1
+            while iIndex+iIndexEnd > len(aiAccCounter):
+                iIndexEnd -=1
+            for i in range(iIndex, iIndex+iIndexEnd):
+                self.Can.Logger.Error(str(aiAccCounter[i]))
+            self.assertEqual(iCounterCompare, aiAccCounter[iErrorIndex])
+        
+    """
+    Power Consumption - Energy Save Modes
+    """   
+
+    def testManually0300MeasuringInterference(self):
+        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], SamplingRateSingleMaxPrescaler, SamplingRateSingleMaxAcqTime, SamplingRateSingleMaxOverSamples, AdcReference["VDD"])
+        print("Please take a smartphone, start scanning Bluetooth devices and hold it over STU and STH alternately for 10s")
+        [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0, 30000)
+        [arrayAccX, arrayAccY, arrayAccZ] = self.Can.streamingValueArrayMessageCounters(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0, indexStart, indexEnd)
+        self.Can.ValueLog(arrayAccX, arrayAccY, arrayAccZ, fAdcRawDat, "AccMsgCounter", "")
+        self.assertEqual(0, len(arrayAccY))
+        self.assertEqual(0, len(arrayAccZ))
+        count = arrayAccX[0]
+        self.assertGreaterEqual(count, 0)
+        self.assertLessEqual(count, 255)
+        bNok = False
+        i = 0        
+        while i < int(len(arrayAccX) / 3):
+            if(count != arrayAccX[i]):
+                bNok = True
+            i += 1
+            if(count != arrayAccX[i]):
+                bNok = True
+            i += 1
+            if(count != arrayAccX[i]):
+                bNok = True
+            i += 1
+            count += 1
+            count %= 256
+        self.assertEqual(bNok, True)
+        
+        self.assertGreaterEqual(count, 0)
+        self.assertLessEqual(count, 255)
+        i = int(2*len(arrayAccX) / 3)        
+        while arrayAccX[i] != arrayAccX[i + 1] or arrayAccX[i] != arrayAccX[i + 2]:
+            i += 1
+        self.assertLess(i, int(2*len(arrayAccX) / 3)+3)
+        count = arrayAccX[i]
+        while i < len(arrayAccX) - 3:
+            for _j in range(0,3):
+                self.vComapre(count, arrayAccX, i)
+                i += 1
+            count += 1
+            count %= 256
                   
     """
     Under Voltage Counter

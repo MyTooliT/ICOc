@@ -479,7 +479,25 @@ class mwt(myToolItWatch):
     
     
     def bTerminalUpdateConnectExecute(self, sAddr):
-        pass#TODO: Do it
+        bDoIt = True
+        if "STH" == self.sProduct:
+            sSystemCall = "FirmwareUpdates/STH/" + self.sConfig + "/ota-dfu.exe COM6 115200 "
+            sSystemCall += "FirmwareUpdates/STH/" + self.sConfig + "/OtaServer.gpl "
+        elif "STU" == self.sProduct:
+            sSystemCall = "FirmwareUpdates/STU/" + self.sConfig + "/ota-dfu.exe COM6 115200 "
+            sSystemCall += "FirmwareUpdates/STU/" + self.sConfig + "/OtaClient.gpl "            
+        else:
+            bDoIt=False
+            
+        if False != bDoIt:
+            sSystemCall += sAddr + " -> updateLog.txt "
+            if os.name == 'nt':
+                sSystemCall = sSystemCall.replace("/", "\\")
+                os.system(sSystemCall)
+            # for mac and linux(here, os.name is 'posix')
+            else:
+                os.system(sSystemCall)
+        return bDoIt
     
     def bTerminalUpdateConnect(self, keyPress):
         iNumber = int(keyPress - ord('0'))
@@ -490,9 +508,9 @@ class mwt(myToolItWatch):
         sSthOta = ""
         sStuOta = ""     
         if "STH" == self.sProduct:
-            sSthOta = "OtaUpdates\\STH\\" + self.sConfig
+            sSthOta = "FirmwareUpdates\\STH\\" + self.sConfig
         elif "STU" == self.sProduct:
-            sStuOta = "OtaUpdates\\STU\\" + self.sConfig 
+            sStuOta = "FirmwareUpdates\\STU\\" + self.sConfig 
         while False != bRun:
             if ((False != os.path.isdir(sSthOta)) or (False != os.path.isdir(sStuOta))):
                 devList = self.tTerminalHeaderExtended()           
@@ -512,17 +530,22 @@ class mwt(myToolItWatch):
                 if 0 < iNumber:                    
                     self.stdscr.addstr("\nTry to update " + str(iNumber) + "\n")
                     self.stdscr.refresh()
-                    time.sleep(1)
-                    iNumber -= 1
+                    time.sleep(1)                    
                     sAddr = ""
                     if BlueToothDeviceNr["Self"] == iNumber:
                         sAddr = self.sStuAddr
                     else:
+                        iNumber -= 1
                         for dev in devList:
                             if dev["DeviceNumber"] == iNumber:
                                 sAddr = sBlueToothMacAddr(dev["Address"])
                     if "" != sAddr:
+                        if BlueToothDeviceNr["Self"] == iNumber:
+                            self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
                         self.bTerminalUpdateConnectExecute(sAddr)
+                        if BlueToothDeviceNr["Self"] == iNumber:
+                            self.Can.vBlueToothConnectConnect(MyToolItNetworkNr["STU1"])
+                            
                     else:
                         self.stdscr.addstr("Device does not exist")
                         self.stdscr.refresh()  
@@ -560,9 +583,9 @@ class mwt(myToolItWatch):
             sSthOta = ""
             sStuOta = ""     
             if "STH" == self.sProduct:
-                sSthOta = "OtaUpdates\\STH\\" + self.sConfig
+                sSthOta = "FirmwareUpdates\\STH\\" + self.sConfig
             elif "STU" == self.sProduct:
-                sStuOta = "OtaUpdates\\STU\\" + self.sConfig    
+                sStuOta = "FirmwareUpdates\\STU\\" + self.sConfig    
            
             if ((False != os.path.isdir(sSthOta)) or (False != os.path.isdir(sStuOta))):
                 devList = self.tTerminalHeaderExtended()           

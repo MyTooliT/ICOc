@@ -6,7 +6,7 @@ from MyToolItCommands import AdcMax
 
 TestConfig = {
     "DevName" : "Tanja",
-    "Version" : "v2.1.6",
+    "Version" : "v2.1.8",
     "AdcConfigAllPrescalerMax" : 4,
     "ConTimeNormalMaxMs" : 5000,
     "ConTimeSleep1MaxMs" : 6000,

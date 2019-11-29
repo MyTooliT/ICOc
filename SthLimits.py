@@ -1,15 +1,14 @@
 from MyToolItCommands import AdcAcquisitionTime, AdcOverSamplingRate, AdcReference
-Axis = 3
-PcbOnly = True
+iSensorAxis = 3
+bPcbOnly = True
 bConnectedBattery = False
 
-
-def vSthLimitsConfig(iAxis, bPcbOnly, bConnectedBatteryVar):
-    global Axis
-    global PcbOnly
+def vSthLimitsConfig(iSensorAxisVar, bPcbOnlyPar, bConnectedBatteryVar):
+    global iSensorAxis
+    global bPcbOnly
     global bConnectedBattery
-    Axis = iAxis
-    PcbOnly = bPcbOnly
+    iSensorAxis = iSensorAxisVar
+    bPcbOnly = bPcbOnlyPar
     bConnectedBattery = bConnectedBatteryVar
 
 # Calculated kx+d correction factors
@@ -69,11 +68,11 @@ if True == bConnectedBattery:
 else:
     VoltMiddleBat = 0.15
     SigIndBatteryQ1 = 600         
-    SigIndBatteryQ25 = 640       
-    SigIndBatteryMedL = 650        
-    SigIndBatteryMedH = 660    
-    SigIndBatteryQ75 = 670     
-    SigIndBatteryQ99 = 700     
+    SigIndBatteryQ25 = 630       
+    SigIndBatteryMedL = 640        
+    SigIndBatteryMedH = 670    
+    SigIndBatteryQ75 = 680     
+    SigIndBatteryQ99 = 710     
     SigIndBatteryVar = 40000     
     SigIndBatterySkewness = 20   
     SigIndBatterySNR = 60 
@@ -101,7 +100,7 @@ SigIndAccXQ99 = 2 ** 15 * 1.05
 SigIndAccXVar = 2000
 SigIndAccXSkewness = 0.9
 SigIndAccXSNR = 60
-if 1 == Axis:
+if 1 == iSensorAxis:
     AdcToleranceY = 200
     AdcToleranceZ = 200
     AdcRawMiddleY = 0
