@@ -36,6 +36,7 @@ def to8bitSigned(num):
         num = -((~int(num) + 1) & mask2s)  # 2's complement
     return num
 
+
 Watch = {
     "IntervalDimMinX" : 10,  # Minimum interval time in ms
     "DisplayTimeMax" : 10,  # Maximum Display Time in seconds
@@ -126,8 +127,8 @@ class myToolItWatch():
         self.Can.Logger.Info("BlueTooth Rssi(STU1): " + str(Rssi) + "dBm")
 
     def _RoutingInformationSthSend(self):
-        SendCounter = self.Can.RoutingInformationCmd(MyToolItNetworkNr["STH1"], SystemCommandRouting["SendCounter"], MyToolItNetworkNr["STU1"])
-        self.Can.Logger.Info("STH1 - Send Counter(Port STU1): " + str(SendCounter))
+        self.iSthSendCounter = self.Can.RoutingInformationCmd(MyToolItNetworkNr["STH1"], SystemCommandRouting["SendCounter"], MyToolItNetworkNr["STU1"])
+        self.Can.Logger.Info("STH1 - Send Counter(Port STU1): " + str(self.iSthSendCounter))
         SendCounter = self.Can.RoutingInformationCmd(MyToolItNetworkNr["STH1"], SystemCommandRouting["SendFailCounter"], MyToolItNetworkNr["STU1"])
         self.Can.Logger.Info("STH1 - Send Fail Counter(Port STU1): " + str(SendCounter))
         SendCounter = self.Can.RoutingInformationCmd(MyToolItNetworkNr["STH1"], SystemCommandRouting["SendLowLevelByteCounter"], MyToolItNetworkNr["STU1"])
@@ -148,8 +149,8 @@ class myToolItWatch():
         return ReceiveFailCounter
 
     def _RoutingInformationStuPortSpuSend(self):
-        SendCounter = self.Can.RoutingInformationCmd(MyToolItNetworkNr["STU1"], SystemCommandRouting["SendCounter"], MyToolItNetworkNr["SPU1"])
-        self.Can.Logger.Info("STU1 - Send Counter(Port SPU1): " + str(SendCounter))
+        self.iStuSendCounter = self.Can.RoutingInformationCmd(MyToolItNetworkNr["STU1"], SystemCommandRouting["SendCounter"], MyToolItNetworkNr["SPU1"])
+        self.Can.Logger.Info("STU1 - Send Counter(Port SPU1): " + str(self.iStuSendCounter))
         SendCounter = self.Can.RoutingInformationCmd(MyToolItNetworkNr["STU1"], SystemCommandRouting["SendFailCounter"], MyToolItNetworkNr["SPU1"])
         self.Can.Logger.Info("STU1 - Send Fail Counter(Port SPU1): " + str(SendCounter))
         SendCounter = self.Can.RoutingInformationCmd(MyToolItNetworkNr["STU1"], SystemCommandRouting["SendLowLevelByteCounter"], MyToolItNetworkNr["SPU1"])
@@ -170,8 +171,8 @@ class myToolItWatch():
         return ReceiveFailCounter
 
     def _RoutingInformationStuPortSthSend(self):
-        SendCounter = self.Can.RoutingInformationCmd(MyToolItNetworkNr["STU1"], SystemCommandRouting["SendCounter"], MyToolItNetworkNr["STH1"])
-        self.Can.Logger.Info("STU1 - Send Counter(Port STH1): " + str(SendCounter))
+        iStuSendCounter = self.Can.RoutingInformationCmd(MyToolItNetworkNr["STU1"], SystemCommandRouting["SendCounter"], MyToolItNetworkNr["STH1"])
+        self.Can.Logger.Info("STU1 - Send Counter(Port STH1): " + str(iStuSendCounter))
         SendCounter = self.Can.RoutingInformationCmd(MyToolItNetworkNr["STU1"], SystemCommandRouting["SendFailCounter"], MyToolItNetworkNr["STH1"])
         self.Can.Logger.Info("STU1 - Send Fail Counter(Port STH1): " + str(SendCounter))
         SendCounter = self.Can.RoutingInformationCmd(MyToolItNetworkNr["STU1"], SystemCommandRouting["SendLowLevelByteCounter"], MyToolItNetworkNr["STH1"])
@@ -195,11 +196,20 @@ class myToolItWatch():
         ReceiveFailCounter = self._RoutingInformationSth()
         ReceiveFailCounter += self._RoutingInformationStuPortSth()
         ReceiveFailCounter += self._RoutingInformationStuPortSpu()
+        iSendFail = self.iSthSendCounter - self.iStuSendCounter
+        if 0 > iSendFail:
+            iSendFail = 0
+        iSendFail = iSendFail/self.iSthSendCounter
+        iSendFail*=100
+        self.Can.Logger.Info("Send fail approximately: " + str(iSendFail)+"%")
+        if 0 < iSendFail:
+            print("Send fail approximately: " + str(iSendFail)+"%")
         return ReceiveFailCounter
 
     """
     version
     """
+
     def sVersion(self):
         return sMyToolItWatchVersion
     
@@ -470,7 +480,6 @@ class myToolItWatch():
                                 
         if None != self.args_dict['version']: 
             self.vConfigSet(self.args_dict['version'][0], self.args_dict['version'][1])
-
         
     def vParserConsoleArgumentsPass(self):  
         self.vParserConsoleArgumentsPassXml()    
@@ -522,7 +531,6 @@ class myToolItWatch():
                 self.vStuAddr(sBlueToothMacAddr(self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"])))
             except KeyboardInterrupt:
                 self.KeyBoadInterrupt = True
-
                
     def vDataAquisition(self):  
         if False == self.KeyBoadInterrupt:
@@ -909,6 +917,7 @@ class myToolItWatch():
     """
     Creats a new config
     """
+
     def newXmlVersion(self, product, productVersion, sVersion):
         cloneVersion = copy.deepcopy(productVersion)
         cloneVersion.set('name', sVersion) 
@@ -944,6 +953,7 @@ class myToolItWatch():
     """
     Write xml entry by Excel Sheet entry
     """
+
     def _vExcelProductVersion2XmlProductVersionEntry(self, tEntryXml, tWorkSheet, iEntryExcel):
         sExcelEntryName = str(tWorkSheet['A' + str(iEntryExcel)].value)
         if None != sExcelEntryName:
@@ -961,6 +971,7 @@ class myToolItWatch():
     """
     Create xml entry by Excel Sheet entry
     """
+
     def _tExcelProductVersion2XmlProductVersionEntryNew(self, atEntries):
             tEntry = self.tXmlChildNew(atEntries, 'entry')
             self.tXmlChildNew(tEntry, 'subAddress')
@@ -971,8 +982,6 @@ class myToolItWatch():
             self.tXmlChildNew(tEntry, 'format')
             self.tXmlChildNew(tEntry, 'description')             
             return tEntry
-        
-                
                        
     """
     Write xml definiton by Excel Sheet - Excel Page Entries
@@ -987,16 +996,17 @@ class myToolItWatch():
             else:                
                 tEntry = self._tExcelProductVersion2XmlProductVersionEntryNew(atXmlEntries)
             self._vExcelProductVersion2XmlProductVersionEntry(tEntry, tWorkSheet, iExcelRow)
-            iEntryChild+=1
-            iExcelRow+=1
-        #Remove Delete entries
+            iEntryChild += 1
+            iExcelRow += 1
+        # Remove Delete entries
         while iEntryChild < len(atXmlEntries):
             atXmlEntries.remove(atXmlEntries[iEntryChild])  
-            iEntryChild+=1
+            iEntryChild += 1
 
     """
     Write existing xml definiton by Excel Sheet - Excel Entries
     """
+
     def _bExcelProductVersion2XmlProductVersionPageExist(self, tWorkSheet, atProductPages, sName, sAddress):
         bFound = False
         for tPageDict in atProductPages:
@@ -1008,10 +1018,10 @@ class myToolItWatch():
                 break
         return bFound
     
-    
     """
     Create xml page by Excel Work Sheet
     """
+
     def _vExcelProductVersion2XmlProductVersionPageNew(self, sName, sAddress):
         if None != self.sProduct and None != self.sConfig:
             dataDef = self.root.find('Data')
@@ -1026,10 +1036,10 @@ class myToolItWatch():
                             self.tXmlChildNew(tPage, 'Entry')    
                             return
                     
-                    
     """
     Write xml definiton by Excel Sheet
     """
+
     def vExcelProductVersion2XmlProductVersionPage(self, tWorkbook):
         atProductPages = self.atProductPages()
         for tWorksheetName in tWorkbook.sheetnames:
@@ -1043,10 +1053,10 @@ class myToolItWatch():
                 if False == self._bExcelProductVersion2XmlProductVersionPageExist(tWorkSheet, atProductPages, sName, sAddress):
                     break
     
-    
     """
     Create xml page by Excel Work Sheet
     """
+
     def _vExcelProductVersion2XmlProductVersionXmlPageRemoveAction(self, sName):
         if None != self.sProduct and None != self.sConfig:
             dataDef = self.root.find('Data')
@@ -1059,12 +1069,12 @@ class myToolItWatch():
                                     version.find('Page').remove(page)
                             return
                         
-                        
     """
     Write xml definiton by Excel Sheet - Remove entries that are not part of an excel sheet
     """
+
     def _vExcelProductVersion2XmlProductVersionXmlPageRemove(self, tWorkbook):
-        atProductPages = self.atProductPages()#Reload to have up2Date Copy
+        atProductPages = self.atProductPages()  # Reload to have up2Date Copy
         for i in range(0, len(atProductPages)):
             tPageDict = atProductPages[i]
             sXmlName = tPageDict["Name"]
@@ -1083,6 +1093,7 @@ class myToolItWatch():
     """
     Write xml definiton by Excel Sheet and do checks
     """
+
     def vExcelProductVersion2XmlProductVersion(self):
         if None != self.sProduct and None != self.sConfig and None != self.sSheetFile:
             tWorkbook = openpyxl.load_workbook(self.sSheetFile)
@@ -1097,7 +1108,7 @@ class myToolItWatch():
                                     self.newXmlVersion(tProduct, tVersion, self.sConfig)
                                     self.xmlSave()
                                     self.vExcelProductVersion2XmlProductVersion() 
-                #Remove Deleted Pages
+                # Remove Deleted Pages
                 self._vExcelProductVersion2XmlProductVersionXmlPageRemove(tWorkbook)
                 self.xmlSave()                 
                     
@@ -1197,9 +1208,9 @@ class myToolItWatch():
                     pageContent = []
                     readLength = self.iExcelSheetPageLength(worksheet)
                     readLengthAlligned = readLength
-                    if 0 != readLengthAlligned%4:
-                        readLengthAlligned+=4
-                        readLengthAlligned-=(readLengthAlligned%4)
+                    if 0 != readLengthAlligned % 4:
+                        readLengthAlligned += 4
+                        readLengthAlligned -= (readLengthAlligned % 4)
                     for offset in range(0, readLengthAlligned, 4):
                         payload = [address, 0xFF & offset, 4, tEepromSpecialConfig.asbyte, 0, 0, 0, 0]
                         index = self.Can.cmdSend(iReceiver, MyToolItBlock["Eeprom"], MyToolItEeprom["Read"], payload, log=False)   
@@ -1335,7 +1346,7 @@ class myToolItWatch():
             if config.get('name') == self.sSetupConfig:
                 self.vDeviceNameSet(config.find('DeviceName').text)
                 self.vDeviceAddressSet(config.find('DeviceAddress').text)
-                if( ""!=self.sDevName or 0<self.iAddress):
+                if("" != self.sDevName or 0 < self.iAddress):
                     self.vSthAutoConnect(True)
                 samplePoints = config.find('Acc').text
                 bAccX = int(samplePoints[0])
@@ -1427,7 +1438,6 @@ class myToolItWatch():
             self.xmlPrintVersions()
         if False != self.args_dict['show_setups']:
             self.xmlPrintSetups()
-
         
     def clear(self): 
         # for windows 
