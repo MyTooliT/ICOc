@@ -2,8 +2,8 @@
 <ConfigKey>
     <lastRun>
         <LogName>None</LogName>
-        <Product>STU</Product>
-        <Version>v2.1.9</Version>
+        <Product>STH</Product>
+        <Version>v2.1.8</Version>
         <NetworkNumber>STU1</NetworkNumber>
         <SheetFile>None</SheetFile>
         <Setup>X</Setup>
