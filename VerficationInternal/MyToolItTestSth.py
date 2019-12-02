@@ -2553,7 +2553,7 @@ class TestSth(unittest.TestCase):
         overSamples = SamplingRateDoubleMaxOverSamples
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], prescaler, acqTime, overSamples, AdcReference["VDD"])
         self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 0)
-        time.sleep(1.1)
+        time.sleep(1.2)
         indexStart = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], 1, 0, 0)
         time.sleep(10)
         indexEnd = self.Can.GetReadArrayIndex()
@@ -2571,7 +2571,6 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("Accleration XY Sampling Points per seconds: " + str(samplingPointsAccX))
         calcRate = calcSamplingRate(prescaler, acqTime, overSamples)
         calcRate /= 2
-        calcRate *= 1.1
         self.Can.Logger.Info("Calculated Sampling Points per seconds: " + str(calcRate))
         self.assertLess(calcRate * SamplingToleranceLow, samplingPointsAccX)
         self.assertGreater(calcRate * SamplingToleranceHigh, samplingPointsAccX)
@@ -2587,7 +2586,7 @@ class TestSth(unittest.TestCase):
         overSamples = SamplingRateDoubleMaxOverSamples
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], prescaler, acqTime, overSamples, AdcReference["VDD"])
         self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 0, 1)
-        time.sleep(1.1)
+        time.sleep(1.25)
         indexStart = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], 1, 0, 0, DataSets[1])
         time.sleep(10)
         indexEnd = self.Can.GetReadArrayIndex()
@@ -2605,7 +2604,6 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("Accleration XZ Sampling Points per seconds: " + str(samplingPointsAccX))
         calcRate = calcSamplingRate(prescaler, acqTime, overSamples)
         calcRate /= 2
-        calcRate *= 1.1
         self.Can.Logger.Info("Calculated Sampling Points per seconds: " + str(calcRate))
         self.assertLess(calcRate * SamplingToleranceLow, samplingPointsAccX)
         self.assertGreater(calcRate * SamplingToleranceHigh, samplingPointsAccX)
@@ -2621,7 +2619,7 @@ class TestSth(unittest.TestCase):
         overSamples = SamplingRateDoubleMaxOverSamples
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], prescaler, acqTime, overSamples, AdcReference["VDD"])
         self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 0, 1, 1)
-        time.sleep(1.1)
+        time.sleep(1.25)
         indexStart = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], 1, 0, 0)
         time.sleep(10)
         indexEnd = self.Can.GetReadArrayIndex()
@@ -2639,7 +2637,6 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("Accleration YZ Sampling Points per seconds: " + str(samplingPointsAccY))
         calcRate = calcSamplingRate(prescaler, acqTime, overSamples)
         calcRate /= 2
-        calcRate *= 1.1
         self.Can.Logger.Info("Calculated Sampling Points per seconds: " + str(calcRate))
         self.assertLess(calcRate * SamplingToleranceLow, samplingPointsAccY)
         self.assertGreater(calcRate * SamplingToleranceHigh, samplingPointsAccY)
@@ -2651,7 +2648,7 @@ class TestSth(unittest.TestCase):
 
     def test0360StreamingAccXYZSingleBattery(self):
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 1)
-        time.sleep(1.1)
+        time.sleep(1.2)
         self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], 1, 0, 0)
         time.sleep(9)
         indexEnd = self.Can.GetReadArrayIndex()

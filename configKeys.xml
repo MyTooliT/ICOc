@@ -2,9 +2,9 @@
 <ConfigKey>
     <lastRun>
         <LogName>None</LogName>
-        <Product>STH</Product>
-        <Version>v2.1.8</Version>
-        <NetworkNumber>STU1</NetworkNumber>
+        <Product />
+        <Version />
+        <NetworkNumber />
         <SheetFile>None</SheetFile>
         <Setup>X</Setup>
     </lastRun>

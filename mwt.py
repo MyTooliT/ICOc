@@ -134,7 +134,7 @@ class mwt(myToolItWatch):
             if "y" == sYes:
                 self.Can.Standby(MyToolItNetworkNr["STH1"])
                 bRun = False
-                self.Can.bBlueToothDisconnect()
+                self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
                 bContinue = True
         elif ord('p') == keyPress:
             self.stdscr.clear()
