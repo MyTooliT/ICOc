@@ -22,6 +22,9 @@ additional Python Modules are requiered to support the frame work functionalliti
 |	Production Tests       |
 |______________________________|
 
+Any production Test may be called multiple times for the same STH/STU (PCB). Furthermore, the test results are stored by the Bluetooth Address and a consecutively run number. Thus the 
+PCBs may be checked, the assemled STH/STU may be checked and the potted STH may be tested in a row.
+
 The Production Tests are supported via:
 	* ProductionTests/Sth.py: Tests Sensory Tool Holder (STH) and STH print circuit boards (PCBs).
 	* ProductionTests/Stu.py: Tests Stationary Transceiver Unit(STU) and STU PCBs.
@@ -39,7 +42,9 @@ via opening the corresponding production Test script (Open directory in Liclipse
 	* mytoolitwatch\ProductionTests\Stu.py (STU production test), pressing CTRL + F9 (STRG + F9), selecting TestStu or any single test case or selecting partial test case and pressing ENTER.
 	* mytoolitwatch\ProductionTests\Sth.py (STH production test), pressing CTRL + F9 (STRG + F9), selecting TestSth or any single test case or selecting partial test case and pressing ENTER.
 Furthermore, Liclipse prints any negative result or nothing it the test was OK. Moreover, the logs as well as a test protocol are achieved in the 
-	  log location.
+	  log location. 
+
+
 
 	
 
