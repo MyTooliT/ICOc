@@ -84,7 +84,6 @@ class Logger():
                 self.file = open(fileName, "a", encoding='utf-8')
             except:
                 self.file = open(fileName, "x", encoding='utf-8')
-            
         
     def vDel(self):
         self.vClose()
@@ -526,7 +525,7 @@ class CanFd(object):
             receivedCmdSub = self.CanCmdGetBlockCmd(cmdRec)
             filterCmdBlk = self.CanCmdGetBlock(cmdFiltered)
             filterCmdSub = self.CanCmdGetBlockCmd(cmdFiltered)
-            self.Logger.Error("Assumed message ID: " + str(messageIdFilter) + "("+str(cmdRec) + "); Received message ID: " + str(messageId)+"("+str(cmdFiltered)+")")
+            self.Logger.Error("Assumed message ID: " + str(messageIdFilter) + "(" + str(cmdRec) + "); Received message ID: " + str(messageId) + "(" + str(cmdFiltered) + ")")
             self.Logger.Error("Assumed command block: " + str(filterCmdBlk) + "; Received command block: " + str(receivedCmdBlk))
             self.Logger.Error("Assumed sub command: " + str(filterCmdSub) + "; Received sub command: " + str(receivedCmdSub))
             raise
@@ -890,9 +889,10 @@ class CanFd(object):
         byte1.b.bReset = bReset
         byte1.b.u2Action = u2Action
         byte1.b.bSet = bSet
-        self.Logger.Info(CalibMeassurementActionName[u2Action])
-        self.Logger.Info(CalibMeassurementTypeName[signal] + str(dimension))
-        self.Logger.Info(VRefName[vRef])
+        if False != log:
+            self.Logger.Info(CalibMeassurementActionName[u2Action])
+            self.Logger.Info(CalibMeassurementTypeName[signal] + str(dimension))
+            self.Logger.Info(VRefName[vRef])
         calibPayload = [byte1.asbyte, signal, dimension, vRef, 0, 0, 0, 0]
         indexAssumed = self.cmdSend(receiver, MyToolItBlock["Configuration"], MyToolItConfiguration["CalibrateMeasurement"], calibPayload, log=log, retries=retries, bErrorAck=bErrorAck, printLog=printLog)
         indexRun = indexAssumed
@@ -1317,52 +1317,64 @@ class CanFd(object):
         index = self.cmdSend(receiver, MyToolItBlock["System"], MyToolItSystem["ActiveState"], [sendData.asbyte])        
         self.Logger.Info("Received Payload " + payload2Hex(self.getReadMessageData(index)))
     
-    def sProductData(self, name): 
+d    def sProductData(self, name, bLog=True): 
         sReturn = ""
         if "GTIN" == name:
-            index = self.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["ProductData"], MyToolItProductData["GTIN"], [])
+            index = self.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["ProductData"], MyToolItProductData["GTIN"], [], log=bLog)
             iGtin = iMessage2Value(self.getReadMessageData(index))
+            if False != bLog:
+                self.Logger.Info("GTIN: " + str(iGtin))
             sReturn = str(iGtin)      
         elif "HardwareRevision" == name:
-            index = self.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["ProductData"], MyToolItProductData["HardwareRevision"], [])
+            index = self.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["ProductData"], MyToolItProductData["HardwareRevision"], [], log=bLog)
             tHwRev = self.getReadMessageData(index)
-            self.Logger.Info("Hardware Revision: " + str(tHwRev))
+            if False != bLog:
+                self.Logger.Info("Hardware Revision: " + str(tHwRev))
             sReturn = str(tHwRev[5]) + "." + str(tHwRev[6]) + "." + str(tHwRev[7]) 
         elif "FirmwareVersion" == name:
-            index = self.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["ProductData"], MyToolItProductData["FirmwareVersion"], [])
+            index = self.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["ProductData"], MyToolItProductData["FirmwareVersion"], [], log=bLog)
             tFirmwareVersion = self.getReadMessageData(index)
-            self.Logger.Info("Firmware Version: " + str(tFirmwareVersion))
+            if False != bLog:
+                self.Logger.Info("Firmware Version: " + str(tFirmwareVersion))
             sReturn = str(tFirmwareVersion[5]) + "." + str(tFirmwareVersion[6]) + "." + str(tFirmwareVersion[7])         
         elif "ReleaseName" == name:
-            index = self.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["ProductData"], MyToolItProductData["ReleaseName"], [])
+            index = self.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["ProductData"], MyToolItProductData["ReleaseName"], [], log=bLog)
             aiName = self.getReadMessageData(index)
             sReturn = sArray2String(aiName)
+            if False != bLog:
+                self.Logger.Info("Release Name: " + str(sReturn))
         elif "SerialNumber" == name:
             aiSerialNumber = []
             for i in range(1, 5):
-                index = self.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["ProductData"], MyToolItProductData["SerialNumber" + str(i)], [])
+                index = self.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["ProductData"], MyToolItProductData["SerialNumber" + str(i)], [], log=bLog)
                 element = self.getReadMessageData(index)
                 aiSerialNumber.extend(element)
             try:
                 sReturn = array.array('b', bytearray(aiSerialNumber)).tostring().encode('utf-8')
             except:
                 sReturn = ""
+            if False != bLog:
+                self.Logger.Info("Serial Number: " + str(sReturn))
         elif "Name" == name:
             aiName = []
             for i in range(1, 17):
-                index = self.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["ProductData"], MyToolItProductData["Name" + str(i)], [])
+                index = self.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["ProductData"], MyToolItProductData["Name" + str(i)], [], log=bLog)
                 element = self.getReadMessageData(index)
                 aiName.extend(element)                    
             try:
                 sReturn = array.array('b', bytearray(aiName)).tostring().encode('utf-8')
             except:
                 sReturn = ""
+            if False != bLog:
+                self.Logger.Info("Name: " + str(sReturn))
         elif "OemFreeUse" == name:
             aiOemFreeUse = []
             for i in range(1, 9):
                 index = self.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["ProductData"], MyToolItProductData["OemFreeUse" + str(i)], [])
                 aiOemFreeUse.extend(self.getReadMessageData(index))
-            sReturn = payload2Hex(aiOemFreeUse)       
+            sReturn = payload2Hex(aiOemFreeUse)      
+            if False != bLog:
+                self.Logger.Info("OEM Free Use: " + str(sReturn)) 
         else:
             sReturn = "-1"
         return sReturn

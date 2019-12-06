@@ -65,7 +65,8 @@ class TestStu(unittest.TestCase):
                 self.Can.Logger.Info("STU BlueTooth Address: " + self.sStuAddr)
                 self._StuWDog()
             self._statusWords()
-            self.Can.Logger.Info("Test Time End Time Stamp")
+        self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
+        self.Can.Logger.Info("Test Time End Time Stamp")
         if False != self.Can.bError:
             self.bError = True
         self.Can.__exit__()
@@ -233,9 +234,9 @@ class TestStu(unittest.TestCase):
     """
 
     def test0001OverTheAirUpdate(self):
-        bCreate = os.path.isfile(self.sBuildLocation + "/OtaServer.gpl")
-        bCreate = bCreate and os.path.isfile(self.sBuildLocation + "/OtaApploader.gpl") 
-        bCreate = bCreate and os.path.isfile(self.sBuildLocation + "/OtaApploaderServer.gpl")
+        bCreate = os.path.isfile(self.sBuildLocation + "/OtaServer.gbl")
+        bCreate = bCreate and os.path.isfile(self.sBuildLocation + "/OtaApploader.gbl") 
+        bCreate = bCreate and os.path.isfile(self.sBuildLocation + "/OtaApploaderServer.gbl")
         bCreate = not bCreate
         if False != bCreate:
             iRuns = 4
@@ -251,15 +252,15 @@ class TestStu(unittest.TestCase):
             except:
                 pass
             try:
-                os.remove(self.sBuildLocation + "/OtaClient.gpl")                
+                os.remove(self.sBuildLocation + "/OtaClient.gbl")                
             except:
                 pass
             try:
-                os.remove(self.sBuildLocation + "/OtaApploader.gpl")                
+                os.remove(self.sBuildLocation + "/OtaApploader.gbl")                
             except:
                 pass
             try:
-                os.remove(self.sBuildLocation + "/OtaApploaderClient.gpl")                
+                os.remove(self.sBuildLocation + "/OtaApploaderClient.gbl")                
             except:
                 pass
     
@@ -274,12 +275,12 @@ class TestStu(unittest.TestCase):
             # for mac and linux(here, os.name is 'posix')
             else:
                 os.system(sSystemCall)
-            os.rename(self.sHomeLocation + "/firmware_client/output_gbl/application.gbl", self.sBuildLocation + "/OtaClient.gpl")
-            os.rename(self.sHomeLocation + "/firmware_client/output_gbl/apploader.gbl", self.sBuildLocation + "/OtaApploader.gpl")
-            os.rename(self.sHomeLocation + "/firmware_client/output_gbl/full.gbl", self.sBuildLocation + "/OtaApploaderClient.gpl")
+            os.rename(self.sHomeLocation + "/firmware_client/output_gbl/application.gbl", self.sBuildLocation + "/OtaClient.gbl")
+            os.rename(self.sHomeLocation + "/firmware_client/output_gbl/apploader.gbl", self.sBuildLocation + "/OtaApploader.gbl")
+            os.rename(self.sHomeLocation + "/firmware_client/output_gbl/full.gbl", self.sBuildLocation + "/OtaApploaderClient.gbl")
         for i in range(1, iRuns):
             sSystemCall = self.sBuildLocation + "/ota-dfu.exe COM6 115200 "
-            sSystemCall += self.sBuildLocation + "/OtaClient.gpl "
+            sSystemCall += self.sBuildLocation + "/OtaClient.gbl "
             sSystemCall += self.sStuAddr + " -> " + sLogLocation
             sSystemCall += "Ota" + str(i) + ".txt"
             if os.name == 'nt':

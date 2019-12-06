@@ -16,7 +16,7 @@ kAccX = 200 / (2 ** 16 - 1)
 dAccX = -100
 kBattery = (57 * 3.3) / (10 * 2 ** 16)
 
-RssiSthMin = -60  # dBm
+RssiSthMin = -75  # dBm
 
 # Recalculation Factors
 AccelerationToAccGravitity = 200
@@ -52,6 +52,8 @@ VoltRawOpa2Tolerance = 3
 VoltRawOpa3Middle = 0
 VoltRawOpa3Tolerance = 3
 VoltRawVssTolerance = 3
+VoltMiddleBatProduction=3.2
+VoltMiddleBatProductionMax=4.4
 if True == bConnectedBattery:
     VoltMiddleBat = 3.2
     SigIndBatteryQ1 = 8000         
@@ -69,7 +71,7 @@ else:
     VoltMiddleBat = 0.15
     SigIndBatteryQ1 = 600         
     SigIndBatteryQ25 = 630       
-    SigIndBatteryMedL = 640        
+    SigIndBatteryMedL = 633        
     SigIndBatteryMedH = 670    
     SigIndBatteryQ75 = 680     
     SigIndBatteryQ99 = 710     
@@ -89,7 +91,7 @@ AdcToleranceX = 3
 AdcRawMiddleX = 2 ** 15
 AdcRawToleranceX = 2048
 SelfTestOutputChangemVMin = 70
-SelfTestOutputChangemVTyp = 110
+SelfTestOutputChangemVTyp = 170
 
 SigIndAccXQ1 = 2 ** 15 * 0.95
 SigIndAccXQ25 = 2 ** 15 * 0.955

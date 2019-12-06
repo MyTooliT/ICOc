@@ -26,8 +26,6 @@ import struct
 HOST = 'localhost'  # The remote host
 PORT = 50007  # The same port as used by the server
 
-BlueToothDeviceListAquireTime = 5
-
 
 def to8bitSigned(num): 
     mask7 = 128  # Check 8th bit ~ 2^8
@@ -42,6 +40,7 @@ Watch = {
     "DisplayTimeMax" : 10,  # Maximum Display Time in seconds
     "DisplaySampleRateMs" : 1000,  # Maximum Display Time in ms
     "DisplayBlockSize" : 100,
+    "AliveTimeOutMs" : 4000,  # Time Out after receiving no data in acquiring mode
 }
 
     
@@ -199,11 +198,11 @@ class myToolItWatch():
         iSendFail = self.iSthSendCounter - self.iStuSendCounter
         if 0 > iSendFail:
             iSendFail = 0
-        iSendFail = iSendFail/self.iSthSendCounter
-        iSendFail*=100
-        self.Can.Logger.Info("Send fail approximately: " + str(iSendFail)+"%")
+        iSendFail = iSendFail / self.iSthSendCounter
+        iSendFail *= 100
+        self.Can.Logger.Info("Send fail approximately: " + str(iSendFail) + "%")
         if 0 < iSendFail:
-            print("Send fail approximately: " + str(iSendFail)+"%")
+            print("Send fail approximately: " + str(iSendFail) + "%")
         return ReceiveFailCounter
 
     """
@@ -539,7 +538,7 @@ class myToolItWatch():
                     self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], self.iPrescaler, self.iAquistionTime, self.iOversampling, AdcReference[self.sAdcRef])
                     self.Can.readThreadStop()     
                     self.guiProcessRestart()       
-                    self.Can.Logger.Info("Start")
+                    self.Can.Logger.Info("Start Acquiring Data")
                     self.vGetStreamingAccData()
                     self.Can.ReadThreadReset()
                     self.guiProcessStop()                    
@@ -558,13 +557,16 @@ class myToolItWatch():
         if 0 == self.iIntervalTime:
             iIntervalTime += (1 << 32)
         startTime = self.Can.getTimeMs()
+        tAliveTimeStamp = startTime
+        tTimeStamp = startTime
         try:
-            while(self.Can.getTimeMs() < self.aquireEndTime):
-                if (self.Can.getTimeMs() - startTime) >= iIntervalTime:
-                    startTime = self.Can.getTimeMs()
+            while(tTimeStamp < self.aquireEndTime):                
+                if (tTimeStamp - startTime) >= iIntervalTime:
+                    startTime = tTimeStamp
                     self.vLogCountInc()
                 ack = self.ReadMessage()
                 if(None != ack):
+                    tAliveTimeStamp = self.Can.getTimeMs()
                     if(self.AccAckExpected.ID != ack["CanMsg"].ID and self.VoltageAckExpected.ID != ack["CanMsg"].ID):
                         self.Can.Logger.Error("CanId bError: " + str(ack["CanMsg"].ID))
                     elif(self.AccAckExpected.DATA[0] != ack["CanMsg"].DATA[0] and self.VoltageAckExpected.DATA[0] != ack["CanMsg"].DATA[0])  :
@@ -574,55 +576,70 @@ class myToolItWatch():
                                    
                     else:
                         self.GetMessageVoltage(ack)     
+                else:
+                    tTimeStamp = self.Can.getTimeMs()
+                    if (tAliveTimeStamp + Watch["AliveTimeOutMs"]) < tTimeStamp:
+                        self.Can.bConnected = False
+                        self.aquireEndTime = tTimeStamp
+                        self.Can.Logger.Error("Not received any streaming package for 4s. Terminated program execution.")
+                        print("Not received any streaming package for 4s. Terminated program execution.")
+                
         except KeyboardInterrupt:
             self.KeyBoadInterrupt = True
             print("Data acquisition determined")
             self.__exit__()                 
     
     def vGetStreamingAccDataAccStart(self): 
-        accFormat = AtvcFormat()
-        accFormat.asbyte = 0
-        accFormat.b.bStreaming = 1
-        accFormat.b.bNumber1 = self.bAccX
-        accFormat.b.bNumber2 = self.bAccY
-        accFormat.b.bNumber3 = self.bAccZ
-        accFormat.b.u3DataSets = self.tAccDataFormat
-        cmd = self.Can.CanCmd(MyToolItBlock["Streaming"], MyToolItStreaming["Acceleration"], 0, 0)
-        self.AccAckExpected = self.Can.CanMessage20(cmd, MyToolItNetworkNr["STH1"], MyToolItNetworkNr["SPU1"], [accFormat.asbyte])
-        cmd = self.Can.CanCmd(MyToolItBlock["Streaming"], MyToolItStreaming["Acceleration"], 1, 0)
-        message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [accFormat.asbyte])
-        self.Can.Logger.Info("MsgId/Subpayload(Acc): " + hex(message.ID) + "/" + hex(accFormat.asbyte))
         ack = None
-        endTime = self.Can.getTimeMs() + 4000
-        while (None == ack) and (self.Can.getTimeMs() < endTime):
-            self.Can.WriteFrame(message)
-            readEndTime = self.Can.getTimeMs() + 500
-            while((None == ack) and  (self.Can.getTimeMs() < readEndTime)):
-                ack = self.ReadMessage()        
+        if False != self.bAccX or False != self.bAccY or False != self.bAccZ:
+            accFormat = AtvcFormat()
+            accFormat.asbyte = 0
+            accFormat.b.bStreaming = 1
+            accFormat.b.bNumber1 = self.bAccX
+            accFormat.b.bNumber2 = self.bAccY
+            accFormat.b.bNumber3 = self.bAccZ
+            accFormat.b.u3DataSets = self.tAccDataFormat
+            cmd = self.Can.CanCmd(MyToolItBlock["Streaming"], MyToolItStreaming["Acceleration"], 0, 0)
+            self.AccAckExpected = self.Can.CanMessage20(cmd, MyToolItNetworkNr["STH1"], MyToolItNetworkNr["SPU1"], [accFormat.asbyte])
+            cmd = self.Can.CanCmd(MyToolItBlock["Streaming"], MyToolItStreaming["Acceleration"], 1, 0)
+            message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [accFormat.asbyte])
+            self.Can.Logger.Info("MsgId/Subpayload(Acc): " + hex(message.ID) + "/" + hex(accFormat.asbyte))
+            endTime = self.Can.getTimeMs() + 4000
+            while (None == ack) and (self.Can.getTimeMs() < endTime):
+                self.Can.WriteFrame(message)
+                readEndTime = self.Can.getTimeMs() + 500
+                while((None == ack) and  (self.Can.getTimeMs() < readEndTime)):
+                    ack = self.ReadMessage()        
+        else:
+            ack = True 
         return ack
 
     def vGetStreamingAccDataVoltageStart(self): 
-        voltageFormat = AtvcFormat()
-        voltageFormat.asbyte = 0
-        voltageFormat.b.bStreaming = 1
-        voltageFormat.b.bNumber1 = self.bVoltageX
-        voltageFormat.b.bNumber2 = self.bVoltageY
-        voltageFormat.b.bNumber3 = self.bVoltageZ
-        voltageFormat.b.u3DataSets = self.tVoltageDataFormat
-        cmd = self.Can.CanCmd(MyToolItBlock["Streaming"], MyToolItStreaming["Voltage"], 0, 0)
-        self.VoltageAckExpected = self.Can.CanMessage20(cmd, MyToolItNetworkNr["STH1"], MyToolItNetworkNr["SPU1"], [voltageFormat.asbyte])
-        cmd = self.Can.CanCmd(MyToolItBlock["Streaming"], MyToolItStreaming["Voltage"], 1, 0)
-        message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [voltageFormat.asbyte])
-        self.Can.Logger.Info("MsgId/Subpayload(Voltage): " + hex(message.ID) + "/" + hex(voltageFormat.asbyte))
         ack = None
-        endTime = self.Can.getTimeMs() + 4000
-        while (None == ack) and (self.Can.getTimeMs() < endTime):
-            self.Can.WriteFrame(message)
-            readEndTime = self.Can.getTimeMs() + 500
-            while((None == ack) and  (self.Can.getTimeMs() < readEndTime)):
-                ack = self.ReadMessage()        
+        if False != self.bVoltageX or False != self.bVoltageY or False != self.bVoltageZ:
+            voltageFormat = AtvcFormat()
+            voltageFormat.asbyte = 0
+            voltageFormat.b.bStreaming = 1
+            voltageFormat.b.bNumber1 = self.bVoltageX
+            voltageFormat.b.bNumber2 = self.bVoltageY
+            voltageFormat.b.bNumber3 = self.bVoltageZ
+            voltageFormat.b.u3DataSets = self.tVoltageDataFormat
+            cmd = self.Can.CanCmd(MyToolItBlock["Streaming"], MyToolItStreaming["Voltage"], 0, 0)
+            self.VoltageAckExpected = self.Can.CanMessage20(cmd, MyToolItNetworkNr["STH1"], MyToolItNetworkNr["SPU1"], [voltageFormat.asbyte])
+            cmd = self.Can.CanCmd(MyToolItBlock["Streaming"], MyToolItStreaming["Voltage"], 1, 0)
+            message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [voltageFormat.asbyte])
+            self.Can.Logger.Info("MsgId/Subpayload(Voltage): " + hex(message.ID) + "/" + hex(voltageFormat.asbyte))
+            
+            endTime = self.Can.getTimeMs() + 4000
+            while (None == ack) and (self.Can.getTimeMs() < endTime):
+                self.Can.WriteFrame(message)
+                readEndTime = self.Can.getTimeMs() + 500
+                while((None == ack) and  (self.Can.getTimeMs() < readEndTime)):
+                    ack = self.ReadMessage()  
+        else:
+            ack = True      
         return ack
-                                 
+                                     
     def vGetStreamingAccData(self):  
         ack = self.vGetStreamingAccDataAccStart()
         if None != ack:
@@ -647,19 +664,19 @@ class myToolItWatch():
         canTimeStamp = round(canTimeStamp, 3)
         ackMsg = ("MsgCounter: " + str(format(canData[1], '3d')) + "; ")
         ackMsg += ("TimeStamp: " + format(canTimeStamp, '12.3f') + "ms; ")
-        ackMsg += (prefix + " ")
+        ackMsg += (prefix + ": ")
         ackMsg += str(format(p1, '5d'))
         ackMsg += "; "
         self.Can.Logger.Info(ackMsg)
         ackMsg = ("MsgCounter: " + str(format(canData[1], '3d')) + "; ")
         ackMsg += ("TimeStamp: " + format(canTimeStamp, '12.3f') + "ms; ")
-        ackMsg += (prefix + " ")
+        ackMsg += (prefix + ": ")
         ackMsg += str(format(p2, '5d'))
         ackMsg += "; "
         self.Can.Logger.Info(ackMsg)
         ackMsg = ("MsgCounter: " + str(format(canData[1], '3d')) + "; ")
         ackMsg += ("TimeStamp: " + format(canTimeStamp, '12.3f') + "ms; ")
-        ackMsg += (prefix + " ")
+        ackMsg += (prefix + ": ")
         ackMsg += str(format(p3, '5d'))
         ackMsg += "; "
         self.Can.Logger.Info(ackMsg)  
@@ -672,11 +689,11 @@ class myToolItWatch():
         p1_2 = iMessage2Value(canData[4:6])
         ackMsg = ("MsgCounter: " + str(format(canData[1], '3d')) + "; ")
         ackMsg += ("TimeStamp: " + format(canTimeStamp, '12.3f') + "ms; ")
-        ackMsg += (prefix1 + " ")
+        ackMsg += (prefix1 + ": ")
         ackMsg += str(format(p1_1, '5d'))
         ackMsg += "; "
         ackMsg += prefix2
-        ackMsg += " "
+        ackMsg += ": "
         ackMsg += str(format(p1_2, '5d'))
         ackMsg += "; "
         self.Can.Logger.Info(ackMsg) 
@@ -687,15 +704,15 @@ class myToolItWatch():
         canTimeStamp = round(canTimeStamp, 3)
         ackMsg = ("MsgCounter: " + str(format(canData[1], '3d')) + "; ")
         ackMsg += ("TimeStamp: " + format(canTimeStamp, '12.3f') + "ms; ")
-        ackMsg += (prefix1 + " ")
+        ackMsg += (prefix1 + ": ")
         ackMsg += str(format(iMessage2Value(canData[2:4]), '5d'))
         ackMsg += "; "
         ackMsg += prefix2
-        ackMsg += " "
+        ackMsg += ": "
         ackMsg += str(format(iMessage2Value(canData[4:6]), '5d'))
         ackMsg += "; "
         ackMsg += prefix3
-        ackMsg += " "
+        ackMsg += ": "
         ackMsg += str(format(iMessage2Value(canData[6:8]), '5d'))
         ackMsg += "; "
         self.Can.Logger.Info(ackMsg)                        

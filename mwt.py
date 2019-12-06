@@ -158,19 +158,19 @@ class mwt(myToolItWatch):
         return [bRun, bContinue]      
      
     def bTerminalHolderConnectCommandsShowDataValues(self):
-        sGtin = self.Can.sProductData("GTIN")  
-        sHwRev = self.Can.sProductData("HardwareRevision")  
-        sSwVersion = self.Can.sProductData("FirmwareVersion") 
-        sReleaseName = self.Can.sProductData("ReleaseName") 
-        sSerialNumber = self.Can.sProductData("SerialNumber")  
-        sName = self.Can.sProductData("Name")  
+        sGtin = self.Can.sProductData("GTIN", bLog=False)  
+        sHwRev = self.Can.sProductData("HardwareRevision", bLog=False)  
+        sSwVersion = self.Can.sProductData("FirmwareVersion", bLog=False) 
+        sReleaseName = self.Can.sProductData("ReleaseName", bLog=False) 
+        sSerialNumber = self.Can.sProductData("SerialNumber", bLog=False)  
+        sName = self.Can.sProductData("Name", bLog=False)  
         sSerial = str(sSerialNumber + "-" + sName)       
         self.stdscr.addstr("Global Trade Identifcation Number (GTIN): " + sGtin + "\n")
         self.stdscr.addstr("Hardware Revision(Major.Minor.Build): " + sHwRev + "\n")
         self.stdscr.addstr("Firmware Version(Major.Minor.Build): " + sSwVersion + "\n")
         self.stdscr.addstr("Firmware Release Name: " + sReleaseName + "\n")
         self.stdscr.addstr("Serial: " + sSerial + "\n\n") 
-        index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], 1, 0, 0)
+        index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], 1, 0, 0, log=False)
         iBatteryVoltage = iMessage2Value(self.Can.getReadMessageData(index)[2:4])
         if None != iBatteryVoltage:
             fBatteryVoltage = fVoltageBattery(iBatteryVoltage)
@@ -482,10 +482,10 @@ class mwt(myToolItWatch):
         bDoIt = True
         if "STH" == self.sProduct:
             sSystemCall = "FirmwareUpdates/STH/" + self.sConfig + "/ota-dfu.exe COM6 115200 "
-            sSystemCall += "FirmwareUpdates/STH/" + self.sConfig + "/OtaServer.gpl "
+            sSystemCall += "FirmwareUpdates/STH/" + self.sConfig + "/OtaServer.gbl "
         elif "STU" == self.sProduct:
             sSystemCall = "FirmwareUpdates/STU/" + self.sConfig + "/ota-dfu.exe COM6 115200 "
-            sSystemCall += "FirmwareUpdates/STU/" + self.sConfig + "/OtaClient.gpl "            
+            sSystemCall += "FirmwareUpdates/STU/" + self.sConfig + "/OtaClient.gbl "            
         else:
             bDoIt=False
             
@@ -1107,7 +1107,8 @@ class mwt(myToolItWatch):
         if False != self.bSthAutoConnect:
             self.vRunConsoleAutoConnect()
         else:
-            self.vTerminal()        
+            self.vTerminal()     
+        self.Can.ReadThreadReset()   
         self.close()        
 
            

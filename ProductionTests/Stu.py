@@ -23,10 +23,10 @@ from StuLimits import PcbOnly, RssiStuMin
 from MyToolItCommands import *
 from openpyxl.descriptors.base import DateTime
 
-sVersion = "v2.1.5"
+sVersion = "v2.1.10"
 sLogName = 'ProductionTestStu'
 sLogLocation = '../../Logs/ProductionTestStu/'
-sBuildLocation = "../../SimplicityStudio/v4_workspace/client_firmware/builds/"
+sBuildLocation = "../../SimplicityStudio/v4_workspace/STU/builds/"
 sSilabsCommanderLocation = "../../SimplicityStudio/SimplicityCommander/"
 sAdapterSerialNo = "440116697"
 sBoardType = "BGM111A256V2"
@@ -104,8 +104,8 @@ class TestStu(unittest.TestCase):
                 self.Can.Logger.Info("STU BlueTooth Address: " + self.sStuAddr)
                 self._statusWords()
                 self._SthWDog()
-        if False == self.Can.bError:  
-            self.Can.Logger.Info("Test Time End Time Stamp")
+        self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
+        self.Can.Logger.Info("Test Time End Time Stamp")
         self.Can.__exit__()
         if self._outcome.errors[1][1]:
             if False == bSkip:
@@ -485,27 +485,8 @@ class TestStu(unittest.TestCase):
         asData = tFile.readlines()
         tFile.close()            
         if "Unique ID" == asData[-2][:9]:          
-            sSystemCall = self.sSilabsCommander + " convert "
-            sSystemCall += self.sBootloader + " "
-            sSystemCall += self.sBuildLocation + "/Client.s37 "
-            sSystemCall += "--patch 0x0fe04000:0x00 --patch 0x0fe041F8:0xFD "
-            sSystemCall += "-o " + self.sBuildLocation + "/manufacturing_imageStu" + sVersion + ".hex " 
-            sSystemCall += "-d " + self.sBoardType + " "
-            sSystemCall += ">> " + self.sLogLocation 
-            sSystemCall += self._testMethodName + "ManufacturingCreateResport.txt"
-            if os.name == 'nt': 
-                sSystemCall = sSystemCall.replace("/", "\\")
-                os.system(sSystemCall)
-            # for mac and linux(here, os.name is 'posix') 
-            else: 
-                os.system(sSystemCall)
-            tFile = open(self.sLogLocation + self._testMethodName + "ManufacturingCreateResport.txt", "r", encoding='utf-8')
-            asData = tFile.readlines()
-            tFile.close()
-            self.assertEqual("Overwriting file:", asData[-2][:17])
-            self.assertEqual("DONE\n", asData[-1])
             sSystemCall = self.sSilabsCommander + " flash "
-            sSystemCall += self.sBuildLocation + "/manufacturing_imageStu" + sVersion + ".hex " 
+            sSystemCall += self.sBuildLocation + "/manufacturingImageStu" + sVersion + ".hex " 
             sSystemCall += "--address 0x0 "
             sSystemCall += "--serialno " + self.sAdapterSerialNo + " "
             sSystemCall += "-d " + self.sBoardType + " "

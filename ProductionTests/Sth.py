@@ -23,15 +23,17 @@ from StuLimits import RssiStuMin
 from MyToolItCommands import *
 from openpyxl.descriptors.base import DateTime
 
-sVersion = "v2.1.5"
+sVersion = "v2.1.9"
 sLogName = 'ProductionTestSth'
 sLogLocation = '../../Logs/ProductionTestSth/'
 sOtaComPort = 'COM6'
-sBuildLocation = "../../SimplicityStudio/v4_workspace/server_firmware/builds/"
+sBuildLocation = "../../SimplicityStudio/v4_workspace/STH/builds/"
 sSilabsCommanderLocation = "../../SimplicityStudio/SimplicityCommander/"
 sAdapterSerialNo = "440115849"
 sBoardType = "BGM113A256V2"
-
+iSensorAxis = 1
+bPcbOnly = True
+bBatteryExternalDcDc = True
 """
 Get serial number that is stored in the excel file
 """
@@ -55,6 +57,7 @@ class TestSth(unittest.TestCase):
 
     def setUp(self):
         global bSkip
+        vSthLimitsConfig(iSensorAxis, bPcbOnly, bBatteryExternalDcDc)
         self.sBuildLocation = sBuildLocation + sVersion
         self.sBootloader = sBuildLocation + "BootloaderOtaBgm113.s37"
         self.sAdapterSerialNo = sAdapterSerialNo
@@ -114,7 +117,7 @@ class TestSth(unittest.TestCase):
             self._statusWords()
             self._iSthAdcTemp()
             self.Can.Logger.Info("Test Time End Time Stamp")
-            self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
+        self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
         self.Can.__exit__()
         if self._outcome.errors[1][1]:
             if False == bSkip:
@@ -541,27 +544,8 @@ class TestSth(unittest.TestCase):
         asData = tFile.readlines()
         tFile.close()            
         if "Unique ID" == asData[-2][:9]:            
-            sSystemCall = self.sSilabsCommander + " convert "
-            sSystemCall += self.sBootloader + " "
-            sSystemCall += self.sBuildLocation + "/Server.s37 "
-            sSystemCall += "--patch 0x0fe04000:0x00 --patch 0x0fe041F8:0xFD "
-            sSystemCall += "-o " + self.sBuildLocation + "/manufacturing_imageSth" + sVersion + ".hex " 
-            sSystemCall += "-d " + self.sBoardType + " "
-            sSystemCall += ">> " + self.sLogLocation 
-            sSystemCall += self._testMethodName + "ManufacturingCreateResport.txt"
-            if os.name == 'nt': 
-                sSystemCall = sSystemCall.replace("/", "\\")
-                os.system(sSystemCall)
-            # for mac and linux(here, os.name is 'posix') 
-            else: 
-                os.system(sSystemCall)
-            tFile = open(self.sLogLocation + self._testMethodName + "ManufacturingCreateResport.txt", "r", encoding='utf-8')
-            asData = tFile.readlines()
-            tFile.close()
-            self.assertEqual("Overwriting file:", asData[-2][:17])
-            self.assertEqual("DONE\n", asData[-1])
             sSystemCall = self.sSilabsCommander + " flash "
-            sSystemCall += self.sBuildLocation + "/manufacturing_imageSth" + sVersion + ".hex " 
+            sSystemCall += self.sBuildLocation + "/manufacturingImageSth" + sVersion + ".hex " 
             sSystemCall += "--address 0x0 "
             sSystemCall += "--serialno " + self.sAdapterSerialNo + " "
             sSystemCall += "-d " + self.sBoardType + " "
@@ -588,7 +572,7 @@ class TestSth(unittest.TestCase):
         self._resetStu()
         time.sleep(1)
         sSystemCall = self.sBuildLocation + "/ota-dfu.exe COM6 115200 " 
-        sSystemCall += self.sBuildLocation + "/ServerApplication.gbl "
+        sSystemCall += self.sBuildLocation + "/OtaServer.gbl "
         sSystemCall += self.sSthAddr + " -> " + self.sLogLocation 
         sSystemCall += self._testMethodName + "Ota.txt"
         if os.name == 'nt': 
@@ -647,8 +631,8 @@ class TestSth(unittest.TestCase):
         iBatteryVoltage = iMessage2Value(self.Can.getReadMessageData(index)[2:4])
         fBatteryVoltage = fVoltageBattery(iBatteryVoltage)
         self.tWorkSheetWrite("E", "Accumulator Voltage: " + str(fBatteryVoltage) + "V")
-        self.assertGreaterEqual(VoltMiddleBat + VoltToleranceBat, fBatteryVoltage)
-        self.assertLessEqual(VoltMiddleBat - VoltToleranceBat, fBatteryVoltage)
+        self.assertGreaterEqual(VoltMiddleBatProductionMax + VoltToleranceBat, fBatteryVoltage)
+        self.assertLessEqual(VoltMiddleBatProduction - VoltToleranceBat, fBatteryVoltage)
         
     """
     Checks that correct Firmware Version has been installed
@@ -680,8 +664,8 @@ class TestSth(unittest.TestCase):
             self.tWorkSheetWrite("E", "OK")
         else:
             self.tWorkSheetWrite("E", "NOK")
-        self.assertGreaterEqual(VoltMiddleBat + VoltToleranceBat, fBatteryVoltage)
-        self.assertLessEqual(VoltMiddleBat - VoltToleranceBat, fBatteryVoltage)
+        self.assertGreaterEqual(VoltMiddleBatProductionMax + VoltToleranceBat, fBatteryVoltage)
+        self.assertLessEqual(VoltMiddleBatProduction - VoltToleranceBat, fBatteryVoltage)
         
     """
     Test that RSSI is good enough
@@ -769,14 +753,15 @@ class TestSth(unittest.TestCase):
         k3mVX = (50 * AdcReference["VDD"]) * kX3 / AdcMax
         self.tWorkSheetWrite("E", "k1 before self test: " + str(k1mVX) + "mV")
         self.tWorkSheetWrite("F", "k2 at self test: " + str(k2mVX) + "mV")
-        self.tWorkSheetWrite("G", "k3 at self test: " + str(k3mVX) + "mV")
+        self.tWorkSheetWrite("G", "k3 after self test: " + str(k3mVX) + "mV")
         iDelta = k2mVX - k1mVX
         self.assertGreater(k2mVX, k1mVX)
         self.assertGreater(k2mVX, k3mVX)  
         self.assertGreater(k1mVX + 20, k3mVX) 
         self.assertGreater(k3mVX + 20, k1mVX)    
         self.assertGreater(iDelta, 50) 
-        self.assertLess(iDelta, 150) 
+        self.assertGreaterEqual(iDelta, SelfTestOutputChangemVMin)
+        self.assertLessEqual(iDelta, SelfTestOutputChangemVTyp)
          
     """
     Voltage zero balance

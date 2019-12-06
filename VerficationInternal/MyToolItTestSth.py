@@ -92,11 +92,11 @@ class TestSth(unittest.TestCase):
             temp = self._SthAdcTemp()
             self.assertGreaterEqual(TempInternalMax, temp)
             self.assertLessEqual(TempInternalMin, temp)
-            self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STH1"])
-            self.Can.Logger.Info("Test Time End Time Stamp")
-            self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
+            self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STH1"])         
         else:
             ReceiveFailCounter = 0
+        self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
+        self.Can.Logger.Info("Test Time End Time Stamp")   
         if(0 < ReceiveFailCounter):
             self.bError = True
         if False != self.Can.bError:
@@ -646,9 +646,9 @@ class TestSth(unittest.TestCase):
         iRuns += 1
         self._resetStu()
         time.sleep(1)
-        bCreate = os.path.isfile(self.sBuildLocation + "/OtaServer.gpl")
-        bCreate = bCreate and os.path.isfile(self.sBuildLocation + "/OtaApploader.gpl") 
-        bCreate = bCreate and os.path.isfile(self.sBuildLocation + "/OtaApploaderServer.gpl")
+        bCreate = os.path.isfile(self.sBuildLocation + "/OtaServer.gbl")
+        bCreate = bCreate and os.path.isfile(self.sBuildLocation + "/OtaApploader.gbl") 
+        bCreate = bCreate and os.path.isfile(self.sBuildLocation + "/OtaApploaderServer.gbl")
         bCreate = not bCreate
         if False != bCreate:
             try:
@@ -657,15 +657,15 @@ class TestSth(unittest.TestCase):
                 pass
             
             try:
-                os.remove(self.sBuildLocation + "/OtaServer.gpl")                
+                os.remove(self.sBuildLocation + "/OtaServer.gbl")                
             except:
                 pass
             try:
-                os.remove(self.sBuildLocation + "/OtaApploader.gpl")                
+                os.remove(self.sBuildLocation + "/OtaApploader.gbl")                
             except:
                 pass
             try:
-                os.remove(self.sBuildLocation + "/OtaApploaderServer.gpl")                
+                os.remove(self.sBuildLocation + "/OtaApploaderServer.gbl")                
             except:
                 pass
             sSystemCall = self.sHomeLocation + "firmware_server/create_bl_files.bat "
@@ -677,12 +677,12 @@ class TestSth(unittest.TestCase):
             # for mac and linux(here, os.name is 'posix')
             else:
                 os.system(sSystemCall)
-            os.rename(self.sHomeLocation + "firmware_server/output_gbl/application.gbl", self.sBuildLocation + "/OtaServer.gpl")
-            os.rename(self.sHomeLocation + "firmware_server/output_gbl/apploader.gbl", self.sBuildLocation + "/OtaApploader.gpl")
-            os.rename(self.sHomeLocation + "firmware_server/output_gbl/full.gbl", self.sBuildLocation + "/OtaApploaderServer.gpl")
+            os.rename(self.sHomeLocation + "firmware_server/output_gbl/application.gbl", self.sBuildLocation + "/OtaServer.gbl")
+            os.rename(self.sHomeLocation + "firmware_server/output_gbl/apploader.gbl", self.sBuildLocation + "/OtaApploader.gbl")
+            os.rename(self.sHomeLocation + "firmware_server/output_gbl/full.gbl", self.sBuildLocation + "/OtaApploaderServer.gbl")
         for i in range(1, iRuns):
             sSystemCall = self.sBuildLocation + "/ota-dfu.exe COM6 115200 "
-            sSystemCall += self.sBuildLocation + "/OtaServer.gpl "
+            sSystemCall += self.sBuildLocation + "/OtaServer.gbl "
             sSystemCall += self.sSthAddr + " -> " + sLogLocation
             sSystemCall += "Ota" + str(i) + ".txt"
             if os.name == 'nt':
@@ -2711,6 +2711,7 @@ class TestSth(unittest.TestCase):
     def test0380GetStreamingTestLineAccX(self):
         [indexStart, indexEnd] = self.streamingTestSignalCollect(MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], TestCommandSignal["Line"], SthModule["Streaming"], 2 ** 15, DataSets[3], 1, 0, 0, 1000)
         [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0, indexStart, indexEnd)
+        array1 = array1[:-16]
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "TestLine(AccelerationX - " + str(2 ** 15) + ")", "")
         self.streamingValueCompare(array1, array2, array3, 2 ** 15, 0, 0, 0, 0, 0, fAdcRawDat)
         [indexStart, indexEnd] = self.streamingTestSignalCollect(MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], TestCommandSignal["Line"], SthModule["Streaming"], 2 ** 14, DataSets[3], 1, 0, 0, 1000)
@@ -2725,6 +2726,7 @@ class TestSth(unittest.TestCase):
     def test0381GetStreamingTestLineAccY(self):
         [indexStart, indexEnd] = self.streamingTestSignalCollect(MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], TestCommandSignal["Line"], SthModule["Streaming"], 2 ** 15, DataSets[3], 0, 1, 0, 1000)
         [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 1, 0, indexStart, indexEnd)
+        array2 = array2[:-16]
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "TestLine(AccelerationY - " + str(2 ** 15) + ")", "")
         self.streamingValueCompare(array1, array2, array3, 0, 0, 2 ** 15, 0, 0, 0, fAdcRawDat)
         [indexStart, indexEnd] = self.streamingTestSignalCollect(MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], TestCommandSignal["Line"], SthModule["Streaming"], 2 ** 14, DataSets[3], 0, 1, 0, 1000)
@@ -2739,6 +2741,7 @@ class TestSth(unittest.TestCase):
     def test0382GetStreamingTestLineAccZ(self):
         [indexStart, indexEnd] = self.streamingTestSignalCollect(MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], TestCommandSignal["Line"], SthModule["Streaming"], 2 ** 15, DataSets[3], 0, 0, 1, 1000)
         [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 0, 1, indexStart, indexEnd)
+        array3 = array3[:-16]
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "TestLine(AccelerationZ - " + str(2 ** 15) + ")", "")
         self.streamingValueCompare(array1, array2, array3, 0, 0, 0, 0, 2 ** 15, 0, fAdcRawDat)
         [indexStart, indexEnd] = self.streamingTestSignalCollect(MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], TestCommandSignal["Line"], SthModule["Streaming"], 2 ** 14, DataSets[3], 0, 0, 1, 1000)
@@ -2753,6 +2756,7 @@ class TestSth(unittest.TestCase):
     def test0383GetStreamingTestLineBattery(self):
         [indexStart, indexEnd] = self.streamingTestSignalCollect(MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], TestCommandSignal["Line"], SthModule["Streaming"], 2 ** 15, DataSets[3], 1, 0, 0, 1000)
         [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0, indexStart, indexEnd)
+        array1 = array1[:-16]
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "TestLine(Battery - " + str(2 ** 15) + ")", "")
         self.streamingValueCompare(array1, array2, array3, 2 ** 15, 0, 0, 0, 0, 0, fAdcRawDat)
         [indexStart, indexEnd] = self.streamingTestSignalCollect(MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], TestCommandSignal["Line"], SthModule["Streaming"], 2 ** 14, DataSets[3], 1, 0, 0, 1000)
@@ -2767,6 +2771,7 @@ class TestSth(unittest.TestCase):
     def test0384GetStreamingTestRampAccX(self):
         [indexStart, indexEnd] = self.streamingTestSignalCollect(MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], TestCommandSignal["Ramp"], SthModule["Streaming"], 2 ** 16 - 1, DataSets[3], 1, 0, 0, 1000)
         [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0, indexStart, indexEnd)
+        array1 = array1[:-16]
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "TestRamp(AccelerationX)", "")
         self.Can.Logger.Info("Find 0 to determine start point for comparing")
         startPoint = None
@@ -2786,6 +2791,7 @@ class TestSth(unittest.TestCase):
     def test0385GetStreamingTestRampAccY(self):
         [indexStart, indexEnd] = self.streamingTestSignalCollect(MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], TestCommandSignal["Ramp"], SthModule["Streaming"], 2 ** 16 - 1, DataSets[3], 0, 1, 0, 1000)
         [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 1, 0, indexStart, indexEnd)
+        array2 = array2[:-16]
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "TestRamp(AccelerationY)", "")
         self.Can.Logger.Info("Find 0 to determine start point for comparing")
         startPoint = None
@@ -2805,6 +2811,7 @@ class TestSth(unittest.TestCase):
     def test0386GetStreamingTestRampAccZ(self):
         [indexStart, indexEnd] = self.streamingTestSignalCollect(MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], TestCommandSignal["Ramp"], SthModule["Streaming"], 2 ** 16 - 1, DataSets[3], 0, 0, 1, 1000)
         [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 0, 1, indexStart, indexEnd)
+        array3 = array3[:-16]
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "TestRamp(AccelerationZ)", "")
         self.Can.Logger.Info("Find 0 to determine start point for comparing")
         startPoint = None
@@ -2824,6 +2831,7 @@ class TestSth(unittest.TestCase):
     def test0387GetStreamingTestRampBattery(self):
         [indexStart, indexEnd] = self.streamingTestSignalCollect(MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], TestCommandSignal["Ramp"], SthModule["Streaming"], 2 ** 16 - 1, DataSets[3], 1, 0, 0, 1000)
         [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0, indexStart, indexEnd)
+        array1 = array1[:-16]
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "TestRamp(Battery)", "")
         self.Can.Logger.Info("Find 0 to determine start point for comparing")
         startPoint = None
@@ -3902,7 +3910,7 @@ class TestSth(unittest.TestCase):
         difKZ = k2mVZ - k1mVZ
         self.Can.Logger.Info("Xk2-Xk1(measured): " + str(difKX) + "mV")
         self.Can.Logger.Info("Yk2-YXk1(measured): " + str(difKY) + "mV")
-        self.Can.Logger.Info("Yk2-Yk1(measured): " + str(difKZ) + "mV")
+        self.Can.Logger.Info("Zk2-Zk1(measured): " + str(difKZ) + "mV")
         self.Can.Logger.Info("k2-k1(assumed) Mininimum: " + str(SelfTestOutputChangemVMin) + "mV")
         self.Can.Logger.Info("k2-k1(assumed) Typical: " + str(SelfTestOutputChangemVTyp) + "mV")
         self.assertGreaterEqual(difKX, SelfTestOutputChangemVMin)
