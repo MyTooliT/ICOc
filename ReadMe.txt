@@ -17,17 +17,45 @@ This frame work runs under Microsoft Windows 10 and supports its features via co
 is an integrated development environment (IDE) and may be used to access the MyToolIt Test functionalities. Furthermore, Python 3.5 and 
 additional Python Modules are requiered to support the frame work functionallities.
 
- ______________________________
-|			       |
-|	Production Tests       |
-|______________________________|
+ _______________________________________
+|			       		|
+| 	IcoTronic System	   	|
+|_______________________________________|
+TODO
 
-Any production Test may be called multiple times for the same STH/STU (PCB). Furthermore, the test results are stored by the Bluetooth Address and a consecutively run number. Thus the 
-PCBs may be checked, the assemled STH/STU may be checked and the potted STH may be tested in a row.
+ _______________________________________
+|			       		|
+| 	Technical Requirements    	|
+|_______________________________________|
+Simplicity Commander...
+Todo
+
+ _______________________________________
+|			       		|
+| 	Image Locations		    	|
+|_______________________________________|
+
+ _______________________________________
+|			       		|
+|	Production Tests       		|
+|_______________________________________|
+
+Any production Test may be called multiple times for the same STH/STU (PCB). Furthermore, the test results are stored by the Bluetooth Address and a consecutively run number (file name). Thus a
+PCBs, aassemled STH/STU and a potted STH may be tested in a row.
 
 The Production Tests are supported via:
 	* ProductionTests/Sth.py: Tests Sensory Tool Holder (STH) and STH print circuit boards (PCBs).
 	* ProductionTests/Stu.py: Tests Stationary Transceiver Unit(STU) and STU PCBs.
+Moreover, the parameters may/must be changed inside the script if it runs via Liclipse and this is fullfilled via changing:
+	* sVersion = "v2.1.9" -> Related STH/STU Firmware Version.
+	* sLogName = 'ProductionTestStX' -> Related logFile.txt (X=U for STU or H for STH)
+	* sLogLocation = '../../Logs/ProductionTestStX/' -> Where the archieve logs and test protocol (X=U for STU or H for STH)
+	* sOtaComPort = 'COM6' ->  COM-Port of the Over-The-Air (OTA) programming board (Assembled with BGM111 module). Please, refer to chapter Over-The-Air (OTA) update.
+	* sBuildLocation = "../../SimplicityStudio/v4_workspace/STH/builds/" -> Location of the firmware builds, manufacturing images and the OTA Files. Please refer to the chapter 
+	  Image Locations.
+	* sSilabsCommanderLocation = "../../SimplicityStudio/SimplicityCommander/" -> Location of the Simplicity Command. Please refer to Technical Requirements.
+	* sAdapterSerialNo = "440115849" The number of the programming board. Please refer to the chapter technical requirements.
+	* sBoardType = "BGM113A256V2" -> Model Name of the assembled µC. Please refer to the chapter Icotronic system. 
 
 To run this via command prompt dir to the location of the procution test scripts. The production test scripts are located in the ProductionTests subfolder in 
 MyToolItWatch install directory. Furthermore, the scrips may be called via:
@@ -44,6 +72,10 @@ via opening the corresponding production Test script (Open directory in Liclipse
 Furthermore, Liclipse prints any negative result or nothing it the test was OK. Moreover, the logs as well as a test protocol are achieved in the 
 	  log location. 
 
+ _______________________________________
+|			       		|
+|	Over-The-Air (OTA) - Update     |
+|_______________________________________|
 
 
 	
