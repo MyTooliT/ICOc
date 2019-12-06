@@ -56,6 +56,9 @@ Moreover, the parameters may/must be changed inside the script if it runs via Li
 	* sSilabsCommanderLocation = "../../SimplicityStudio/SimplicityCommander/" -> Location of the Simplicity Command. Please refer to Technical Requirements.
 	* sAdapterSerialNo = "440115849" The number of the programming board. Please refer to the chapter technical requirements.
 	* sBoardType = "BGM113A256V2" -> Model Name of the assembled µC. Please refer to the chapter Icotronic system. 
+	* iSensorAxis = 1 -> STH only... 3 axis sensor or single axis sensor.
+	* bPcbOnly = True Testing PCB or assembled STH/STU or potted STH
+	* bBatteryExternalDcDc = True -> USB is connected to the 3V3 rail or connects to the DC/DC converted and the DC/DC converter supplies the 3V3 rail.
 
 To run this via command prompt dir to the location of the procution test scripts. The production test scripts are located in the ProductionTests subfolder in 
 MyToolItWatch install directory. Furthermore, the scrips may be called via:
