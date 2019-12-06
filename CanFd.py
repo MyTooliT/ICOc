@@ -1317,7 +1317,7 @@ class CanFd(object):
         index = self.cmdSend(receiver, MyToolItBlock["System"], MyToolItSystem["ActiveState"], [sendData.asbyte])        
         self.Logger.Info("Received Payload " + payload2Hex(self.getReadMessageData(index)))
     
-d    def sProductData(self, name, bLog=True): 
+    def sProductData(self, name, bLog=True): 
         sReturn = ""
         if "GTIN" == name:
             index = self.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["ProductData"], MyToolItProductData["GTIN"], [], log=bLog)
