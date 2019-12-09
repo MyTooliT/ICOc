@@ -848,10 +848,12 @@ class TestSth(unittest.TestCase):
         fK = float(self.tSthLimits.iAccX_K)
         fK = struct.unpack("f", struct.pack("f", fK))[0]
         sK = str(fK)
+        self.Can.Logger.Info("Total Range: " + str(self.tSthLimits.uAccelerationToAccGravitity)  + "g")
         self.Can.Logger.Info("k: " + sK)
         self.Can.Logger.Info("d: " + sD + "g")
-        self.tWorkSheetWrite("E", "k: " + sK)
-        self.tWorkSheetWrite("F", "d: " + sD + "g")
+        self.tWorkSheetWrite("E", "Total Range: " + str(self.tSthLimits.uAccelerationToAccGravitity)  + "g")        
+        self.tWorkSheetWrite("F", "k: " + sK)
+        self.tWorkSheetWrite("G", "d: " + sD + "g")
         self.vChangeExcelCell("Calibration0@0x8", "E2", sK)
         self.vChangeExcelCell("Calibration0@0x8", "E3", sD)
     
