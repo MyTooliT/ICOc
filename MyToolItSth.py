@@ -73,6 +73,5 @@ def fAdcRawDat(x):
     return x
 
 
-def fAcceleration(x):
-    return ((x / AdcMax - 1 / 2) * AccelerationToAccGravitity)
+
 

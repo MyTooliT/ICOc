@@ -1,168 +1,183 @@
-from MyToolItCommands import AdcAcquisitionTime, AdcOverSamplingRate, AdcReference
-iSensorAxis = 3
-bPcbOnly = True
-bConnectedBattery = False
+from MyToolItCommands import AdcAcquisitionTime, AdcOverSamplingRate, AdcReference, calcSamplingRate, AdcMax
 
-def vSthLimitsConfig(iSensorAxisVar, bPcbOnlyPar, bConnectedBatteryVar):
-    global iSensorAxis
-    global bPcbOnly
-    global bConnectedBattery
-    iSensorAxis = iSensorAxisVar
-    bPcbOnly = bPcbOnlyPar
-    bConnectedBattery = bConnectedBatteryVar
 
-# Calculated kx+d correction factors
-kAccX = 200 / (2 ** 16 - 1)
-dAccX = -100
-kBattery = (57 * 3.3) / (10 * 2 ** 16)
 
-RssiSthMin = -75  # dBm
+class SthLimits():
 
-# Recalculation Factors
-AccelerationToAccGravitity = 200
-SamplingRateVfsToleranceRation = 32
+    def __init__(self, iAccSensorAxis, bConnectedBattery, uAccelerationToAccGravitity, iRssiMin, iTemperatureInternalMin, iTemperatureInternalMax):
+        self.vBatteryParameters(bConnectedBattery)
+        self.vAccParameters(iAccSensorAxis, uAccelerationToAccGravitity)
+        self.vSamplingRate()
+        self.vRssiSthMin(iRssiMin) 
+        self.vStreaming()
+        self.vVoltageRaw()
+        self.vTemperature(iTemperatureInternalMin, iTemperatureInternalMax)
+        
+        
+    def vBatteryParameters(self, bConnectedBattery):
+        if False != bConnectedBattery:
+            self.uBatteryMiddle = 3.9
+            self.uBatteryQ1 = 8000         
+            self.uBatteryQ25 = 9000       
+            self.uBatteryMedL = 10000        
+            self.uBatteryMedH = 12000    
+            self.uBatteryQ75 = 13000     
+            self.uBatteryQ99 = 14000     
+            self.uBatteryVar = 40000     
+            self.uBatterySkewness = 20   
+            self.uBatterySNR = 60 
+            self.uBatteryMiddleRaw = 11000 
+            self.uBatteryToleranceRaw = 300
+        else:
+            self.uBatteryMiddle = 0.15
+            self.uBatteryQ1 = 600         
+            self.uBatteryQ25 = 630       
+            self.uBatteryMedL = 633        
+            self.uBatteryMedH = 670    
+            self.uBatteryQ75 = 680     
+            self.uBatteryQ99 = 710     
+            self.uBatteryVar = 40000     
+            self.uBatterySkewness = 20   
+            self.uBatteryMiddleRaw = 60 
+            self.VoltRawMiddleBat = 700 
+            self.uBatteryToleranceRaw = 200
+        self.uBatteryTolerance = 0.3      
+        self.iBatteryK = (57 * 3.3) / (10 * 2 ** 16)
+        
+    def vAccParameters(self, iAccSensorAxis, uAccelerationToAccGravitity):
+        self.uAccelerationToAccGravitity = uAccelerationToAccGravitity
+        self.iAdcAccXMiddle = 0
+        self.iAdcAccYMiddle = 0
+        self.iAdcAccZMiddle = 0
+        self.iAdcAccXTolerance = 3
+        self.iAdcAccXRawMiddle = 2 ** 15
+        self.iAdcAccXRawTolerance = 2048
+        self.uAccXQ1 = 2 ** 15 * 0.95
+        self.uAccXQ25 = 2 ** 15 * 0.955
+        self.uAccXMedL = 2 ** 15 * 0.97
+        self.uAccXMedH = 2 ** 15 * 1.03
+        self.uAccXQ75 = 2 ** 15 * 1.045
+        self.uAccXQ99 = 2 ** 15 * 1.05
+        self.uAccXVar = 2000
+        self.uAccXSkewness = 0.9
+        self.uAccXSNR = 60
+        if 1 == iAccSensorAxis:
+            self.iAdcAccYTolerance = 200
+            self.iAdcAccZTolerance = 200
+            self.iAdcAccYRawMiddle = 0
+            self.iAdcAccZRawMiddle = 0
+            self.iAdcAccYRawTolerance = 54000
+            self.iAdcAccZRawTolerance = 54000
+            self.uAccYQ1 = 0
+            self.uAccYQ25 = 1
+            self.uAccYMedL = 2
+            self.uAccYMedH = 2 ** 16 - 3
+            self.uAccYQ75 = 2 ** 16 - 2
+            self.uAccYQ99 = 2 ** 16 - 1
+            self.uAccYVar = 40000
+            self.uAccYSkewness = 20
+            self.uAccYSNR = 60
+            self.uAccZQ1 = 0
+            self.uAccZQ25 = 1
+            self.uAccZMedL = 2
+            self.uAccZMedH = 2 ** 16 - 3
+            self.uAccZQ75 = 2 ** 16 - 2
+            self.uAccZQ99 = 2 ** 16 - 1
+            self.uAccZVar = 40000
+            self.uAccZSkewness = 20
+            self.uAccZSNR = 60
+        else:
+            self.iAdcAccYTolerance = 3
+            self.iAdcAccZTolerance = 3
+            self.iAdcAccYRawMiddle = 2 ** 15
+            self.iAdcAccZRawMiddle = 2 ** 15
+            self.iAdcAccYRawTolerance = 2048
+            self.iAdcAccZRawTolerance = 2048    
+            self.uAccYQ1 = 2 ** 15 * 0.95
+            self.uAccYQ25 = 2 ** 15 * 0.955
+            self.uAccYMedL = 2 ** 15 * 0.97
+            self.uAccYMedH = 2 ** 15 * 1.03
+            self.uAccYQ75 = 2 ** 15 * 1.045
+            self.uAccYQ99 = 2 ** 15 * 1.05
+            self.uAccYVar = 2000
+            self.uAccYSkewness = 0.9
+            self.uAccYSNR = 60
+            self.uAccZQ1 = 2 ** 15 * 0.95
+            self.uAccZQ25 = 2 ** 15 * 0.955
+            self.uAccZMedL = 2 ** 15 * 0.97
+            self.uAccZMedH = 2 ** 15 * 1.03
+            self.uAccZQ75 = 2 ** 15 * 1.045
+            self.uAccZQ99 = 2 ** 15 * 1.05
+            self.uAccZVar = 2000
+            self.uAccZSkewness = 0.9
+            self.uAccZSNR = 60        
+        self.iSelfTestOutputChangemVMin = 70
+        self.iSelfTestOutputChangemVTyp = 170
+        self.iAccX_K = self.uAccelerationToAccGravitity / (2 ** 16 - 1)
+        self.iAccX_D = -(self.uAccelerationToAccGravitity/2)
+        
+    def auAccXStatistics(self):
+        return [self.uAccXQ1, self.uAccXQ25, self.uAccXMedL, self.uAccXMedH, self.uAccXQ75, self.uAccXQ99]
 
-SamplingRateMin = 150  # To check maximum frequencies to be max
-SamplingRateMax = 14000  # To check maximum frequencies to be max
-SamplingRateSingleMax = 9524
-SamplingRateSingleMaxPrescaler = 2
-SamplingRateSingleMaxAcqTime = AdcAcquisitionTime[8]
-SamplingRateSingleMaxOverSamples = AdcOverSamplingRate[64]
-SamplingRateDoubleMax = 6897
-SamplingRateDoubleMaxPrescaler = 2
-SamplingRateDoubleMaxAcqTime = AdcAcquisitionTime[16]
-SamplingRateDoubleMaxOverSamples = AdcOverSamplingRate[64]
-SamplingRateTrippleMax = 9524
-SamplingRateTrippleMaxPrescaler = SamplingRateSingleMaxPrescaler
-SamplingRateTrippleMaxAcqTime = SamplingRateSingleMaxAcqTime
-SamplingRateTrippleMaxOverSamples = SamplingRateSingleMaxOverSamples
-# Time Definition
-StreamingStartupTimeMs = 250
-StreamingStandardTestTimeMs = (10000)
+    def auAccYStatistics(self):
+        return [self.uAccYQ1, self.uAccYQ25, self.uAccYMedL, self.uAccYMedH, self.uAccYQ75, self.uAccYQ99]
 
-# Reset Values
-AdcPrescalerReset = 2
-AdcAcquisitionTimeReset = AdcAcquisitionTime[8]               
-AdcAcquisitionOverSamplingRateReset = AdcOverSamplingRate[64]             
+    def auAccZStatistics(self):
+        return [self.uAccZQ1, self.uAccZQ25, self.uAccZMedL, self.uAccZMedH, self.uAccZQ75, self.uAccZQ99] 
 
-# Limits
-# Voltage
-VoltRawOpa2Middle = 0
-VoltRawOpa2Tolerance = 3
-VoltRawOpa3Middle = 0
-VoltRawOpa3Tolerance = 3
-VoltRawVssTolerance = 3
-VoltMiddleBatProduction=3.2
-VoltMiddleBatProductionMax=4.4
-if True == bConnectedBattery:
-    VoltMiddleBat = 3.2
-    SigIndBatteryQ1 = 8000         
-    SigIndBatteryQ25 = 9000       
-    SigIndBatteryMedL = 10000        
-    SigIndBatteryMedH = 12000    
-    SigIndBatteryQ75 = 13000     
-    SigIndBatteryQ99 = 14000     
-    SigIndBatteryVar = 40000     
-    SigIndBatterySkewness = 20   
-    SigIndBatterySNR = 60 
-    VoltRawMiddleBat = 11000 
-    VoltRawToleranceBat = 300
-else:
-    VoltMiddleBat = 0.15
-    SigIndBatteryQ1 = 600         
-    SigIndBatteryQ25 = 630       
-    SigIndBatteryMedL = 633        
-    SigIndBatteryMedH = 670    
-    SigIndBatteryQ75 = 680     
-    SigIndBatteryQ99 = 710     
-    SigIndBatteryVar = 40000     
-    SigIndBatterySkewness = 20   
-    SigIndBatterySNR = 60 
-    VoltRawMiddleBat = 700 
-    VoltRawToleranceBat = 200
-VoltToleranceBat = 0.1  
-
+    def fAcceleration(self, x):
+        return ((x / AdcMax - 1 / 2) * self.uAccelerationToAccGravitity)      
+        
+    def vSamplingRate(self):
+        self.uSamplingRatePrescalerReset = 2
+        self.uSamplingRateAcqTimeReset = AdcAcquisitionTime[8]               
+        self.uSamplingRateOverSamplesReset = AdcOverSamplingRate[64]   
+        self.uSamplingRateMin = 150  # To check maximum frequencies to be max
+        self.uSamplingRateMax = 14000  # To check maximum frequencies to be max
+        self.uSamplingRateSinglePrescalerMax = 2
+        self.uSamplingRateSingleAcqTimeMax = AdcAcquisitionTime[8]
+        self.uSamplingRateSingleOverSamplesMax = AdcOverSamplingRate[64]
+        self.uSamplingRateDoublePrescalerMax = 2
+        self.uSamplingRateDoubleAcqTimeMax = AdcAcquisitionTime[16]
+        self.uSamplingRateDoubleOverSamplesMax = AdcOverSamplingRate[64]
+        self.uSamplingRateTripplePrescalerMax = 2
+        self.uSamplingRateTrippleAcqTimeMax = AdcAcquisitionTime[8]
+        self.uSamplingRateTrippleOverSamplesMax = AdcOverSamplingRate[64] 
+        self.uSamplingToleranceLow = 0.90
+        self.uSamplingToleranceHigh = 1.1
+          
+        
+    def uSamplingRateSingle(self):
+        return calcSamplingRate(self.uSamplingRateSinglePrescalerMax, self.uSamplingRateSingleAcqTimeMax, self.uSamplingRateSingleOverSamplesMax) 
     
-# Acceleration
-AdcMiddleX = 0
-AdcMiddleY = 0
-AdcMiddleZ = 0
-AdcToleranceX = 3
-AdcRawMiddleX = 2 ** 15
-AdcRawToleranceX = 2048
-SelfTestOutputChangemVMin = 70
-SelfTestOutputChangemVTyp = 170
+    def uSamplingRateDouble(self):
+        return calcSamplingRate(self.uSamplingRateDoublePrescalerMax, self.uSamplingRateDoubleAcqTimeMax, self.uSamplingRateDoubleOverSamplesMax)
+    
+    def uSamplingRateTripple(self):
+        return calcSamplingRate(self.uSamplingRateTripplePrescalerMax, self.uSamplingRateTrippleAcqTimeMax, self.uSamplingRateTrippleOverSamplesMax)
+    
+    
+    def vRssiSthMin(self, iRssiMin):
+        self.iRssiMin = iRssiMin
+        
+    def vStreaming(self):
+        self.uStartupTimeMs = 250
+        self.uStandardTestTimeMs = (10000)
+        
+    def vVoltageRaw(self):
+        self.uVoltRawOpa2Middle = 0
+        self.uVoltRawOpa2Tolerance = 3
+        self.uVoltRawOpa3Middle = 0
+        self.uVoltRawOpa3Tolerance = 3
+        self.uVoltRawVssTolerance = 3
+        self.uVoltMiddleBatProduction = 3.2
+        self.uVoltMiddleBatProductionMax = 4.4
 
-SigIndAccXQ1 = 2 ** 15 * 0.95
-SigIndAccXQ25 = 2 ** 15 * 0.955
-SigIndAccXMedL = 2 ** 15 * 0.97
-SigIndAccXMedH = 2 ** 15 * 1.03
-SigIndAccXQ75 = 2 ** 15 * 1.045
-SigIndAccXQ99 = 2 ** 15 * 1.05
-SigIndAccXVar = 2000
-SigIndAccXSkewness = 0.9
-SigIndAccXSNR = 60
-if 1 == iSensorAxis:
-    AdcToleranceY = 200
-    AdcToleranceZ = 200
-    AdcRawMiddleY = 0
-    AdcRawMiddleZ = 0
-    AdcRawToleranceY = 54000
-    AdcRawToleranceZ = 54000
-    SigIndAccYQ1 = 0
-    SigIndAccYQ25 = 1
-    SigIndAccYMedL = 2
-    SigIndAccYMedH = 2 ** 16 - 3
-    SigIndAccYQ75 = 2 ** 16 - 2
-    SigIndAccYQ99 = 2 ** 16 - 1
-    SigIndAccYVar = 40000
-    SigIndAccYSkewness = 20
-    SigIndAccYSNR = 60
-    SigIndAccZQ1 = 0
-    SigIndAccZQ25 = 1
-    SigIndAccZMedL = 2
-    SigIndAccZMedH = 2 ** 16 - 3
-    SigIndAccZQ75 = 2 ** 16 - 2
-    SigIndAccZQ99 = 2 ** 16 - 1
-    SigIndAccZVar = 40000
-    SigIndAccZSkewness = 20
-    SigIndAccZSNR = 60
-else:
-    AdcToleranceY = 3
-    AdcToleranceZ = 3
-    AdcRawMiddleY = 2 ** 15
-    AdcRawMiddleZ = 2 ** 15
-    AdcRawToleranceY = 2048
-    AdcRawToleranceZ = 2048    
-    SigIndAccYQ1 = 2 ** 15 * 0.95
-    SigIndAccYQ25 = 2 ** 15 * 0.955
-    SigIndAccYMedL = 2 ** 15 * 0.97
-    SigIndAccYMedH = 2 ** 15 * 1.03
-    SigIndAccYQ75 = 2 ** 15 * 1.045
-    SigIndAccYQ99 = 2 ** 15 * 1.05
-    SigIndAccYVar = 2000
-    SigIndAccYSkewness = 0.9
-    SigIndAccYSNR = 60
-    SigIndAccZQ1 = 2 ** 15 * 0.95
-    SigIndAccZQ25 = 2 ** 15 * 0.955
-    SigIndAccZMedL = 2 ** 15 * 0.97
-    SigIndAccZMedH = 2 ** 15 * 1.03
-    SigIndAccZQ75 = 2 ** 15 * 1.045
-    SigIndAccZQ99 = 2 ** 15 * 1.05
-    SigIndAccZVar = 2000
-    SigIndAccZSkewness = 0.9
-    SigIndAccZSNR = 60
+    def vTemperature(self, iTemperatureInternalMin, iTemperatureInternalMax):
+        self.uTemperatureInternal3V3Middle = 13000
+        self.uTemperatureInternal3V3Tolerance = 2000
+        self.iTemperatureInternalMin = iTemperatureInternalMin
+        self.iTemperatureInternalMax = iTemperatureInternalMax
 
-# Time
-SamplingToleranceLow = 0.90
-SamplingToleranceHigh = 1.1
-
-# Temperature
-TempInternal3V3Middle = 13000
-TempInternal3V3Tolerance = 2000
-TempInternalMin = 10.0
-TempInternalMax = 60.0
-TempInternalProductionTestMin = 20.0
-TempInternalProductionMax = 35.0
-# Reset States
-CalibrationMeassurementPayloadReset = [0, 0, 0, AdcReference["VDD"], 0, 0, 0, 0]
+    def vVirtualFullScale(self):
+        self.Vfs = 32
