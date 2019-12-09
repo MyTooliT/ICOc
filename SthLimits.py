@@ -37,12 +37,19 @@ class SthLimits():
             self.uBatteryQ75 = 680     
             self.uBatteryQ99 = 710     
             self.uBatteryVar = 40000     
-            self.uBatterySkewness = 20   
+            self.uBatterySkewness = 20 
+            self.uBatterySNR = 60   
             self.uBatteryMiddleRaw = 60 
             self.VoltRawMiddleBat = 700 
             self.uBatteryToleranceRaw = 200
         self.uBatteryTolerance = 0.3      
         self.iBatteryK = (57 * 3.3) / (10 * 2 ** 16)
+        
+    def auBatteryStatisticsHist(self):
+        return [self.uBatteryQ1, self.uBattery25, self.uBatteryMedL, self.uBatteryMedH, self.uBatteryQ75, self.uBatteryQ99]
+    
+    def auBatteryStatisticsMoment(self):
+        return [self.uBatteryVar, self.uBatterySkewness, self.uBatterySNR]
         
     def vAccParameters(self, iAccSensorAxis, uAccelerationToAccGravitity):
         self.uAccelerationToAccGravitity = uAccelerationToAccGravitity
@@ -116,14 +123,23 @@ class SthLimits():
         self.iAccX_K = self.uAccelerationToAccGravitity / (2 ** 16 - 1)
         self.iAccX_D = -(self.uAccelerationToAccGravitity/2)
         
-    def auAccXStatistics(self):
+    def auAccXStatisticsHist(self):
         return [self.uAccXQ1, self.uAccXQ25, self.uAccXMedL, self.uAccXMedH, self.uAccXQ75, self.uAccXQ99]
+    
+    def auAccXStatisticsMoment(self):
+        return [self.uAccXVar, self.uAccXSkewness, self.uAccXSNR]
 
-    def auAccYStatistics(self):
+    def auAccYStatisticsHist(self):
         return [self.uAccYQ1, self.uAccYQ25, self.uAccYMedL, self.uAccYMedH, self.uAccYQ75, self.uAccYQ99]
+    
+    def auAccYStatisticsMoment(self):
+        return [self.uAccYVar, self.uAccYSkewness, self.uAccYSNR]
 
-    def auAccZStatistics(self):
+    def auAccZStatisticsHist(self):
         return [self.uAccZQ1, self.uAccZQ25, self.uAccZMedL, self.uAccZMedH, self.uAccZQ75, self.uAccZQ99] 
+    
+    def auAccZStatisticsMoment(self):
+        return [self.uAccZVar, self.uAccZSkewness, self.uAccZSNR]
 
     def fAcceleration(self, x):
         return ((x / AdcMax - 1 / 2) * self.uAccelerationToAccGravitity)      
@@ -147,13 +163,13 @@ class SthLimits():
         self.uSamplingToleranceHigh = 1.1
           
         
-    def uSamplingRateSingle(self):
+    def uSamplingRateSingleMax(self):
         return calcSamplingRate(self.uSamplingRateSinglePrescalerMax, self.uSamplingRateSingleAcqTimeMax, self.uSamplingRateSingleOverSamplesMax) 
     
-    def uSamplingRateDouble(self):
+    def uSamplingRateDoubleMax(self):
         return calcSamplingRate(self.uSamplingRateDoublePrescalerMax, self.uSamplingRateDoubleAcqTimeMax, self.uSamplingRateDoubleOverSamplesMax)
     
-    def uSamplingRateTripple(self):
+    def uSamplingRateTrippleMax(self):
         return calcSamplingRate(self.uSamplingRateTripplePrescalerMax, self.uSamplingRateTrippleAcqTimeMax, self.uSamplingRateTrippleOverSamplesMax)
     
     
@@ -170,8 +186,6 @@ class SthLimits():
         self.uVoltRawOpa3Middle = 0
         self.uVoltRawOpa3Tolerance = 3
         self.uVoltRawVssTolerance = 3
-        self.uVoltMiddleBatProduction = 3.2
-        self.uVoltMiddleBatProductionMax = 4.4
 
     def vTemperature(self, iTemperatureInternalMin, iTemperatureInternalMax):
         self.uTemperatureInternal3V3Middle = 13000

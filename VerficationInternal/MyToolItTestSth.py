@@ -16,7 +16,7 @@ import CanFd
 import math
 from MyToolItNetworkNumbers import MyToolItNetworkNr
 import time
-from MyToolItSth import TestConfig, SthModule, SleepTime, SthErrorWord, SthStateWord, fVoltageBattery, fAdcRawDat, fAcceleration
+from MyToolItSth import TestConfig, SthModule, SleepTime, SthErrorWord, SthStateWord, fVoltageBattery, fAdcRawDat
 from MyToolItCommands import *
 from SthLimits import *
 from testSignal import *
@@ -28,9 +28,9 @@ sSilabsCommanderLocation = "../../SimplicityStudio/SimplicityCommander/"
 sAdapterSerialNo = "440115849"
 sBoardType = "BGM113A256V2"
 iSensorAxis = 1
-bPcbOnly = True
 bBatteryExternalDcDc = True
-
+uAdc2Acc = 100
+iRssiMin = -75
 """
 This class is used for automated internal verification of the sensory tool holder
 """
@@ -39,7 +39,7 @@ This class is used for automated internal verification of the sensory tool holde
 class TestSth(unittest.TestCase):
 
     def setUp(self):
-        vSthLimitsConfig(iSensorAxis, bPcbOnly, bBatteryExternalDcDc)
+        self.tSthLimits = SthLimits(iSensorAxis, bBatteryExternalDcDc, uAdc2Acc, iRssiMin, 20, 35)
         self.sHomeLocation = sHomeLocation
         self.sBuildLocation = sHomeLocation + "builds/" + sVersion
         self.sBootloader = sHomeLocation + "builds/" + "BootloaderOtaBgm113.s37"
@@ -49,7 +49,7 @@ class TestSth(unittest.TestCase):
         self.bError = False
         self.fileName = sLogLocation + self._testMethodName + ".txt"
         self.fileNameError = sLogLocation + "Error_" + self._testMethodName + ".txt"
-        self.Can = CanFd.CanFd(CanFd.PCAN_BAUD_1M, self.fileName, self.fileNameError, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], AdcPrescalerReset, AdcAcquisitionTimeReset, AdcAcquisitionOverSamplingRateReset, FreshLog=True)
+        self.Can = CanFd.CanFd(CanFd.PCAN_BAUD_1M, self.fileName, self.fileNameError, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], self.tSthLimits.uSamplingRatePrescalerReset, self.tSthLimits.uSamplingRateAcqTimeReset, self.tSthLimits.uSamplingRateOverSamplesReset, FreshLog=True)
         self.Can.Logger.Info("TestCase: " + str(self._testMethodName))
         self.vSilabsAdapterReset()
         if "test0000FirmwareFlash" != self._testMethodName:
@@ -69,8 +69,8 @@ class TestSth(unittest.TestCase):
             self.Can.Logger.Info("STH Operating Seconds: " + str(iOperatingSeconds))
             self._statusWords()
             temp = self._SthAdcTemp()
-            self.assertGreaterEqual(TempInternalMax, temp)
-            self.assertLessEqual(TempInternalMin, temp)
+            self.assertGreaterEqual(self.tSthLimits.iTemperatureInternalMax, temp)
+            self.assertLessEqual(self.tSthLimits.iTemperatureInternalMin, temp)
             self._SthWDog()
         self.Can.Logger.Info("_______________________________________________________________________________________________________________")
         self.Can.Logger.Info("Start")
@@ -90,8 +90,8 @@ class TestSth(unittest.TestCase):
             self.Can.Logger.Info("STH Operating Seconds: " + str(iOperatingSeconds))
             self._statusWords()
             temp = self._SthAdcTemp()
-            self.assertGreaterEqual(TempInternalMax, temp)
-            self.assertLessEqual(TempInternalMin, temp)
+            self.assertGreaterEqual(self.tSthLimits.iTemperatureInternalMax, temp)
+            self.assertLessEqual(self.tSthLimits.iTemperatureInternalMin, temp)
             self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STH1"])         
         else:
             ReceiveFailCounter = 0
@@ -331,7 +331,12 @@ class TestSth(unittest.TestCase):
     Config ADC and determine correct sampling rate
     """
 
-    def SamplingRate(self, prescaler, acquisitionTime, overSamplingRate, adcRef, b1=1, b2=0, b3=0, runTime=StreamingStandardTestTimeMs, compare=True, compareRate=True, log=True, startupTime=StreamingStartupTimeMs):
+    def SamplingRate(self, prescaler, acquisitionTime, overSamplingRate, adcRef, b1=1, b2=0, b3=0, runTime=None, compare=True, compareRate=True, log=True, startupTime=None):
+        if None == runTime:
+            runTime=self.tSthLimits.uStandardTestTimeMs
+        if None == startupTime:
+            startupTime=self.tSthLimits.uStartupTimeMs
+        
         Settings = self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], prescaler, acquisitionTime, overSamplingRate, adcRef, log=log)[1:]
         self.assertEqual(prescaler, Settings[0])
         self.assertEqual(acquisitionTime, Settings[1])
@@ -358,16 +363,16 @@ class TestSth(unittest.TestCase):
         ratM = AdcVRefValuemV[AdcReference["VDD"]] / AdcVRefValuemV[adcRef]
         ratT = 1
         if adcRef != AdcReference["VDD"]:
-            ratT = SamplingRateVfsToleranceRation
+            ratT = self.tSthLimits.Vfs
         if False != compare:
             if(1 != ratM):
                 self.Can.Logger.Info("Compare Ration to compensate not AVDD: " + str(ratM))
-            adcXMiddle = ratM * AdcRawMiddleX
-            adcYMiddle = ratM * AdcRawMiddleY
-            adcZMiddle = ratM * AdcRawMiddleZ
-            adcXTol = AdcRawToleranceX * ratT
-            adcYTol = AdcRawToleranceY * ratT
-            adcZTol = AdcRawToleranceZ * ratT
+            adcXMiddle = ratM * self.tSthLimits.iAdcAccXRawMiddle
+            adcYMiddle = ratM * self.tSthLimits.iAdcAccYRawMiddle
+            adcZMiddle = ratM * self.tSthLimits.iAdcAccZRawMiddle
+            adcXTol = self.tSthLimits.iAdcAccXTolerance * ratT
+            adcYTol = self.tSthLimits.iAdcAccYTolerance * ratT
+            adcZTol = self.tSthLimits.iAdcAccZTolerance * ratT
             if(16 > AdcOverSamplingRateReverse[overSamplingRate]):
                 self.Can.Logger.Info("Maximum ADC Value: " + str(AdcMax / 2 ** (5 - AdcOverSamplingRateReverse[overSamplingRate])))
                 adcXMiddle = adcXMiddle / 2 ** (5 - AdcOverSamplingRateReverse[overSamplingRate])
@@ -377,8 +382,8 @@ class TestSth(unittest.TestCase):
                 self.Can.Logger.Info("Maximum ADC Value: " + str(AdcMax))
             self.streamingValueCompare(array1, array2, array3, adcXMiddle, adcXTol, adcYMiddle, adcYTol, adcZMiddle, adcZTol, fAdcRawDat)
         if False != compareRate:
-            self.assertLess(runTime / 1000 * calcRate * SamplingToleranceLow, samplingPoints)
-            self.assertGreater(runTime / 1000 * calcRate * SamplingToleranceHigh, samplingPoints)
+            self.assertLess(runTime / 1000 * calcRate * self.tSthLimits.uSamplingToleranceLow, samplingPoints)
+            self.assertGreater(runTime / 1000 * calcRate * self.tSthLimits.uSamplingToleranceHigh, samplingPoints)
         result = {"SamplingRate" : calcRate, "Value1" : array1, "Value2" : array2, "Value3" : array3}
         return result
 
@@ -737,8 +742,8 @@ class TestSth(unittest.TestCase):
 
     def test0007SthTemperature(self):
         temp = self._SthAdcTemp()
-        self.assertGreaterEqual(TempInternalMax, temp)
-        self.assertLessEqual(TempInternalMin, temp)
+        self.assertGreaterEqual(self.tSthLimits.iTemperatureInternalMax, temp)
+        self.assertLessEqual(self.tSthLimits.iTemperatureInternalMin, temp)
 
     """
     Checks correct version number
@@ -1634,7 +1639,7 @@ class TestSth(unittest.TestCase):
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], 1, 0, 0)
         [val1, val2, val3] = self.Can.singleValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], 1, 0, 0, index)
         self.Can.ValueLog(val1, val2, val3, fVoltageBattery, "Battery Voltage", "V")
-        self.singleValueCompare(val1, val2, val3, VoltMiddleBat, VoltToleranceBat, 0, 0, 0, 0, fVoltageBattery)
+        self.singleValueCompare(val1, val2, val3, self.tSthLimits.uBatteryMiddle, self.tSthLimits.uBatteryTolerance, 0, 0, 0, 0, fVoltageBattery)
 
     """
     Test multi single battery meassurement
@@ -1645,7 +1650,7 @@ class TestSth(unittest.TestCase):
             index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], 1, 0, 0)
             [val1, val2, val3] = self.Can.singleValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], 1, 0, 0, index)
             self.Can.ValueLog(val1, val2, val3, fVoltageBattery, "Battery Voltage", "V")
-            self.singleValueCompare(val1, val2, val3, VoltMiddleBat, VoltToleranceBat, 0, 0, 0, 0, fVoltageBattery)
+            self.singleValueCompare(val1, val2, val3, self.tSthLimits.uBatteryMiddle, self.tSthLimits.uBatteryTolerance, 0, 0, 0, 0, fVoltageBattery)
 
     """
     Test single battery Acceleration X-Axis meassurement
@@ -1654,8 +1659,8 @@ class TestSth(unittest.TestCase):
     def test0302GetSingleAccX(self):
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], 1, 0, 0)
         [val1, val2, val3] = self.Can.singleValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], 1, 0, 0, index)
-        self.Can.ValueLog(val1, val2, val3, fAcceleration, "Acc", "g")
-        self.singleValueCompare(val1, val2, val3, AdcMiddleX, AdcToleranceX, 0, 0, 0, 0, fAcceleration)
+        self.Can.ValueLog(val1, val2, val3, self.tSthLimits.fAcceleration, "Acc", "g")
+        self.singleValueCompare(val1, val2, val3, self.tSthLimits.iAdcAccXMiddle, self.tSthLimits.iAdcAccXTolerance, 0, 0, 0, 0, self.tSthLimits.fAcceleration)
 
     """
     Test single battery Acceleration Y-Axis meassurement
@@ -1664,8 +1669,8 @@ class TestSth(unittest.TestCase):
     def test0303GetSingleAccY(self):
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], 0, 1, 0)
         [val1, val2, val3] = self.Can.singleValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], 0, 1, 0, index)
-        self.Can.ValueLog(val1, val2, val3, fAcceleration, "Acc", "g")
-        self.singleValueCompare(val1, val2, val3, 0, 0, AdcMiddleY, AdcToleranceY, 0, 0, fAcceleration)
+        self.Can.ValueLog(val1, val2, val3, self.tSthLimits.fAcceleration, "Acc", "g")
+        self.singleValueCompare(val1, val2, val3, 0, 0, self.tSthLimits.iAdcAccYMiddle, self.tSthLimits.iAdcAccYTolerance, 0, 0, self.tSthLimits.fAcceleration)
 
     """
     Test single battery Acceleration Z-Axis meassurement
@@ -1674,8 +1679,8 @@ class TestSth(unittest.TestCase):
     def test0304GetSingleAccZ(self):
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], 0, 0, 1)
         [val1, val2, val3] = self.Can.singleValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], 0, 0, 1, index)
-        self.Can.ValueLog(val1, val2, val3, fAcceleration, "Acc", "g")
-        self.singleValueCompare(val1, val2, val3, 0, 0, 0, 0, AdcMiddleZ, AdcToleranceZ, fAcceleration)
+        self.Can.ValueLog(val1, val2, val3, self.tSthLimits.fAcceleration, "Acc", "g")
+        self.singleValueCompare(val1, val2, val3, 0, 0, 0, 0, self.tSthLimits.iAdcAccZMiddle, self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
 
     """
     Test multi single X Acc meassurement
@@ -1685,8 +1690,8 @@ class TestSth(unittest.TestCase):
         for _i in range(0, 10):
             index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], 1, 0, 0)
             [val1, val2, val3] = self.Can.singleValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], 1, 0, 0, index)
-            self.Can.ValueLog(val1, val2, val3, fAcceleration, "Acc", "g")
-            self.singleValueCompare(val1, val2, val3, AdcMiddleX, AdcToleranceX, 0, 0, 0, 0, fAcceleration)
+            self.Can.ValueLog(val1, val2, val3, self.tSthLimits.fAcceleration, "Acc", "g")
+            self.singleValueCompare(val1, val2, val3, self.tSthLimits.iAdcAccXMiddle, self.tSthLimits.iAdcAccXTolerance, 0, 0, 0, 0, self.tSthLimits.fAcceleration)
 
     """
     Test multi single Y Acc meassurement
@@ -1696,8 +1701,8 @@ class TestSth(unittest.TestCase):
         for _i in range(0, 10):
             index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], 0, 1, 0)
             [val1, val2, val3] = self.Can.singleValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], 0, 1, 0, index)
-            self.Can.ValueLog(val1, val2, val3, fAcceleration, "Acc", "g")
-            self.singleValueCompare(val1, val2, val3, 0, 0, AdcMiddleY, AdcToleranceY, 0, 0, fAcceleration)
+            self.Can.ValueLog(val1, val2, val3, self.tSthLimits.fAcceleration, "Acc", "g")
+            self.singleValueCompare(val1, val2, val3, 0, 0, self.tSthLimits.iAdcAccYMiddle, self.tSthLimits.iAdcAccYTolerance, 0, 0, self.tSthLimits.fAcceleration)
 
     """
     Test multi single Z Acc meassurement
@@ -1707,8 +1712,8 @@ class TestSth(unittest.TestCase):
         for _i in range(0, 10):
             index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], 0, 0, 1)
             [val1, val2, val3] = self.Can.singleValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], 0, 0, 1, index)
-            self.Can.ValueLog(val1, val2, val3, fAcceleration, "Acc", "g")
-            self.singleValueCompare(val1, val2, val3, 0, 0, 0, 0, AdcMiddleZ, AdcToleranceZ, fAcceleration)
+            self.Can.ValueLog(val1, val2, val3, self.tSthLimits.fAcceleration, "Acc", "g")
+            self.singleValueCompare(val1, val2, val3, 0, 0, 0, 0, self.tSthLimits.iAdcAccZMiddle, self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
 
     """
     Test single XY-Axis meassurement
@@ -1717,8 +1722,8 @@ class TestSth(unittest.TestCase):
     def test0308GetSingleAccXY(self):
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], 1, 1, 0)
         [val1, val2, val3] = self.Can.singleValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], 1, 1, 0, index)
-        self.Can.ValueLog(val1, val2, val3, fAcceleration, "Acc", "g")
-        self.singleValueCompare(val1, val2, val3, AdcMiddleX, AdcToleranceX, AdcMiddleY, AdcToleranceY, 0, 0, fAcceleration)
+        self.Can.ValueLog(val1, val2, val3, self.tSthLimits.fAcceleration, "Acc", "g")
+        self.singleValueCompare(val1, val2, val3, self.tSthLimits.iAdcAccXMiddle, self.tSthLimits.iAdcAccXTolerance, self.tSthLimits.iAdcAccYMiddle, self.tSthLimits.iAdcAccYTolerance, 0, 0, self.tSthLimits.fAcceleration)
 
     """
     Test single XZ-Axis meassurement
@@ -1727,8 +1732,8 @@ class TestSth(unittest.TestCase):
     def test0309GetSingleAccXZ(self):
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], 1, 0, 1)
         [val1, val2, val3] = self.Can.singleValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], 1, 0, 1, index)
-        self.Can.ValueLog(val1, val2, val3, fAcceleration, "Acc", "g")
-        self.singleValueCompare(val1, val2, val3, AdcMiddleX, AdcToleranceX, 0, 0, AdcMiddleZ, AdcToleranceZ, fAcceleration)
+        self.Can.ValueLog(val1, val2, val3, self.tSthLimits.fAcceleration, "Acc", "g")
+        self.singleValueCompare(val1, val2, val3, self.tSthLimits.iAdcAccXMiddle, self.tSthLimits.iAdcAccXTolerance, 0, 0, self.tSthLimits.iAdcAccZMiddle, self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
 
     """
     Test single XYZ-Axis meassurement
@@ -1737,8 +1742,8 @@ class TestSth(unittest.TestCase):
     def test0310GetSingleAccXYZ(self):
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], 1, 1, 1)
         [val1, val2, val3] = self.Can.singleValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], 1, 1, 1, index)
-        self.Can.ValueLog(val1, val2, val3, fAcceleration, "Acc", "g")
-        self.singleValueCompare(val1, val2, val3, AdcMiddleX, AdcToleranceX, AdcMiddleY, AdcToleranceY, AdcMiddleZ, AdcToleranceZ, fAcceleration)
+        self.Can.ValueLog(val1, val2, val3, self.tSthLimits.fAcceleration, "Acc", "g")
+        self.singleValueCompare(val1, val2, val3, self.tSthLimits.iAdcAccXMiddle, self.tSthLimits.iAdcAccXTolerance, self.tSthLimits.iAdcAccYMiddle, self.tSthLimits.iAdcAccYTolerance, self.tSthLimits.iAdcAccZMiddle, self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
 
     """
     Test single YZ-Axis meassurement
@@ -1747,91 +1752,91 @@ class TestSth(unittest.TestCase):
     def test0310GetSingleAccYZ(self):
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], 0, 1, 1)
         [val1, val2, val3] = self.Can.singleValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], 0, 1, 1, index)
-        self.Can.ValueLog(val1, val2, val3, fAcceleration, "Acc", "g")
-        self.singleValueCompare(val1, val2, val3, 0, 0, AdcMiddleY, AdcToleranceY, AdcMiddleZ, AdcToleranceZ, fAcceleration)
+        self.Can.ValueLog(val1, val2, val3, self.tSthLimits.fAcceleration, "Acc", "g")
+        self.singleValueCompare(val1, val2, val3, 0, 0, self.tSthLimits.iAdcAccYMiddle, self.tSthLimits.iAdcAccYTolerance, self.tSthLimits.iAdcAccZMiddle, self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
 
     """
     Test streaming battery meassurement
     """
 
     def test0320GetStreamingVoltageBattery(self):
-        [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0, StreamingStandardTestTimeMs)
+        [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0, self.tSthLimits.uStandardTestTimeMs)
         [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0, indexStart, indexEnd)
         self.Can.ValueLog(array1, array2, array3, fVoltageBattery, "Voltage", "V",)
-        self.streamingValueCompare(array1, array2, array3, VoltMiddleBat, VoltToleranceBat, 0, 0, 0, 0, fVoltageBattery)
+        self.streamingValueCompare(array1, array2, array3, self.tSthLimits.uBatteryMiddle, self.tSthLimits.uBatteryTolerance, 0, 0, 0, 0, fVoltageBattery)
 
     """
     Test streaming x-Axis meassurement
     """
 
     def test0321GetStreamingAccX(self):
-        [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0, StreamingStandardTestTimeMs)
+        [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0, self.tSthLimits.uStandardTestTimeMs)
         [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0, indexStart, indexEnd)
-        self.Can.ValueLog(array1, array2, array3, fAcceleration, "Acc", "g",)
-        self.streamingValueCompare(array1, array2, array3, AdcMiddleX, AdcToleranceX, 0, 2 ** 32, 0, 2 ** 32, fAcceleration)
+        self.Can.ValueLog(array1, array2, array3, self.tSthLimits.fAcceleration, "Acc", "g",)
+        self.streamingValueCompare(array1, array2, array3, self.tSthLimits.iAdcAccXMiddle, self.tSthLimits.iAdcAccXTolerance, 0, 2 ** 32, 0, 2 ** 32, self.tSthLimits.fAcceleration)
 
     """
     Test streaming y-Axis meassurement
     """
 
     def test0322GetStreamingAccY(self):
-        [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 1, 0, StreamingStandardTestTimeMs)
+        [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 1, 0, self.tSthLimits.uStandardTestTimeMs)
         [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 1, 0, indexStart, indexEnd)
-        self.Can.ValueLog(array1, array2, array3, fAcceleration, "Acc", "g",)
-        self.streamingValueCompare(array1, array2, array3, 0, 2 ** 32, AdcMiddleY, AdcToleranceY, 0, 2 ** 32, fAcceleration)
+        self.Can.ValueLog(array1, array2, array3, self.tSthLimits.fAcceleration, "Acc", "g",)
+        self.streamingValueCompare(array1, array2, array3, 0, 2 ** 32, self.tSthLimits.iAdcAccYMiddle, self.tSthLimits.iAdcAccYTolerance, 0, 2 ** 32, self.tSthLimits.fAcceleration)
 
     """
     Test streaming z-Axis meassurement
     """
 
     def test0323GetStreamingAccZ(self):
-        [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 0, 1, StreamingStandardTestTimeMs)
+        [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 0, 1, self.tSthLimits.uStandardTestTimeMs)
         [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 0, 1, indexStart, indexEnd)
-        self.Can.ValueLog(array1, array2, array3, fAcceleration, "Acc", "g",)
-        self.streamingValueCompare(array1, array2, array3, 0, 2 ** 32, 0, 2 ** 32, AdcMiddleZ, AdcToleranceZ, fAcceleration)
+        self.Can.ValueLog(array1, array2, array3, self.tSthLimits.fAcceleration, "Acc", "g",)
+        self.streamingValueCompare(array1, array2, array3, 0, 2 ** 32, 0, 2 ** 32, self.tSthLimits.iAdcAccZMiddle, self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
 
     """
     Test streaming xyz-Axis meassurement
     """
 
     def test0324GetStreamingAccXYZ(self):
-        [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 1, StreamingStandardTestTimeMs)
+        [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 1, self.tSthLimits.uStandardTestTimeMs)
         [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 1, indexStart, indexEnd)
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Acc", "",)
-        self.streamingValueCompare(array1, array2, array3, AdcMiddleX, AdcToleranceX, AdcMiddleY, AdcToleranceY, AdcMiddleZ, AdcToleranceZ, fAcceleration)
+        self.streamingValueCompare(array1, array2, array3, self.tSthLimits.iAdcAccXMiddle, self.tSthLimits.iAdcAccXTolerance, self.tSthLimits.iAdcAccYMiddle, self.tSthLimits.iAdcAccYTolerance, self.tSthLimits.iAdcAccZMiddle, self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
 
     """
     Test streaming AccX+AccY meassurement
     """
 
     def test0325GetStreamingAccXY(self):
-        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], SamplingRateDoubleMaxPrescaler, SamplingRateDoubleMaxAcqTime, SamplingRateDoubleMaxOverSamples, AdcReference["VDD"])
+        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], self.tSthLimits.uSamplingRateDoublePrescalerMax, self.tSthLimits.uSamplingRateDoubleAcqTimeMax, self.tSthLimits.uSamplingRateDoubleOverSamplesMax, AdcReference["VDD"])
         [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 0, 1000)
         [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 0, indexStart, indexEnd)
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Acc", "",)
-        self.streamingValueCompare(array1, array2, array3, AdcMiddleX, AdcToleranceX, AdcMiddleY, AdcToleranceY, AdcMiddleZ, AdcToleranceZ, fAcceleration)
+        self.streamingValueCompare(array1, array2, array3, self.tSthLimits.iAdcAccXMiddle, self.tSthLimits.iAdcAccXTolerance, self.tSthLimits.iAdcAccYMiddle, self.tSthLimits.iAdcAccYTolerance, self.tSthLimits.iAdcAccZMiddle, self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
  
     """
     Test streaming AccX+AccZ meassurement
     """
 
     def test0326GetStreamingAccXZ(self):
-        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], SamplingRateDoubleMaxPrescaler, SamplingRateDoubleMaxAcqTime, SamplingRateDoubleMaxOverSamples, AdcReference["VDD"])
+        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], self.tSthLimits.uSamplingRateDoublePrescalerMax, self.tSthLimits.uSamplingRateDoubleAcqTimeMax, self.tSthLimits.uSamplingRateDoubleOverSamplesMax, AdcReference["VDD"])
         [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 0, 1, 1000)
         [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 0, 1, indexStart, indexEnd)
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Acc", "",)
-        self.streamingValueCompare(array1, array2, array3, AdcMiddleX, AdcToleranceX, AdcMiddleY, AdcToleranceY, AdcMiddleZ, AdcToleranceZ, fAcceleration)       
+        self.streamingValueCompare(array1, array2, array3, self.tSthLimits.iAdcAccXMiddle, self.tSthLimits.iAdcAccXTolerance, self.tSthLimits.iAdcAccYMiddle, self.tSthLimits.iAdcAccYTolerance, self.tSthLimits.iAdcAccZMiddle, self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)       
 
 
     """
     Test streaming AccY+AccZ meassurement
     """
     def test0327GetStreamingAccYZ(self):    
-        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], SamplingRateDoubleMaxPrescaler, SamplingRateDoubleMaxAcqTime, SamplingRateDoubleMaxOverSamples, AdcReference["VDD"]) 
+        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], self.tSthLimits.uSamplingRateDoublePrescalerMax, self.tSthLimits.uSamplingRateDoubleAcqTimeMax, self.tSthLimits.uSamplingRateDoubleOverSamplesMax, AdcReference["VDD"]) 
         [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 0, 1, 1, 1000)
         [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 0, 1, 1, indexStart, indexEnd)
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Acc", "",)
-        self.streamingValueCompare(array1, array2, array3, AdcMiddleX, AdcToleranceX, AdcMiddleY, AdcToleranceY, AdcMiddleZ, AdcToleranceZ, fAcceleration)
+        self.streamingValueCompare(array1, array2, array3, self.tSthLimits.iAdcAccXMiddle, self.tSthLimits.iAdcAccXTolerance, self.tSthLimits.iAdcAccYMiddle, self.tSthLimits.iAdcAccYTolerance, self.tSthLimits.iAdcAccZMiddle, self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
 
     """
     Test Signal-to-Noise Ration - x
@@ -1839,10 +1844,12 @@ class TestSth(unittest.TestCase):
 
     def test0330SignalIndicatorsAccX(self):
         self.TurnOffLed()
-        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], SamplingRateSingleMaxPrescaler, SamplingRateSingleMaxAcqTime, SamplingRateSingleMaxOverSamples, AdcReference["VDD"])
-        [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0, StreamingStandardTestTimeMs)
+        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], self.tSthLimits.uSamplingRateTripplePrescalerMax, self.tSthLimits.uSamplingRateTrippleAcqTimeMax, self.tSthLimits.uSamplingRateTrippleOverSamplesMax, AdcReference["VDD"])
+        [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0, self.tSthLimits.uStandardTestTimeMs)
         [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0, indexStart, indexEnd)
         statistics = self.Can.signalIndicators(array1, array2, array3)
+        [SigIndAccXQ1, SigIndAccXQ25, SigIndAccXMedL, SigIndAccXMedH, SigIndAccXQ75, SigIndAccXQ99] = self.tSthLimits.auAccXStatisticsHist()
+        [SigIndAccXVar, SigIndAccXSkewness, SigIndAccXSNR] = self.tSthLimits.auAccXStatisticsMoment()
         self.siginalIndicatorCheck("ADC X", statistics["Value1"], SigIndAccXQ1, SigIndAccXQ25, SigIndAccXMedL, SigIndAccXMedH, SigIndAccXQ75, SigIndAccXQ99, SigIndAccXVar, SigIndAccXSkewness, SigIndAccXSNR)
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Acc", "")
 
@@ -1852,10 +1859,12 @@ class TestSth(unittest.TestCase):
 
     def test0331SignalIndicatorsAccY(self):
         self.TurnOffLed()
-        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], SamplingRateSingleMaxPrescaler, SamplingRateSingleMaxAcqTime, SamplingRateSingleMaxOverSamples, AdcReference["VDD"])
-        [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 1, 0, StreamingStandardTestTimeMs)
+        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], self.tSthLimits.uSamplingRateTripplePrescalerMax, self.tSthLimits.uSamplingRateTrippleAcqTimeMax, self.tSthLimits.uSamplingRateTrippleOverSamplesMax, AdcReference["VDD"])
+        [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 1, 0, self.tSthLimits.uStandardTestTimeMs)
         [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 1, 0, indexStart, indexEnd)
         statistics = self.Can.signalIndicators(array1, array2, array3)
+        [SigIndAccYQ1, SigIndAccYQ25, SigIndAccYMedL, SigIndAccYMedH, SigIndAccYQ75, SigIndAccYQ99] = self.tSthLimits.auBatteryStatisticsHist()
+        [SigIndAccYVar, SigIndAccYSkewness, SigIndAccYSNR] = self.tSthLimits.auAccYStatisticsMoment()
         self.siginalIndicatorCheck("ADC Y", statistics["Value2"], SigIndAccYQ1, SigIndAccYQ25, SigIndAccYMedL, SigIndAccYMedH, SigIndAccYQ75, SigIndAccYQ99, SigIndAccYVar, SigIndAccYSkewness, SigIndAccYSNR)
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Acc", "")
 
@@ -1865,10 +1874,12 @@ class TestSth(unittest.TestCase):
 
     def test0332SignalIndicatorsAccZ(self):
         self.TurnOffLed()
-        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], SamplingRateSingleMaxPrescaler, SamplingRateSingleMaxAcqTime, SamplingRateSingleMaxOverSamples, AdcReference["VDD"])
-        [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 0, 1, StreamingStandardTestTimeMs)
+        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], self.tSthLimits.uSamplingRateTripplePrescalerMax, self.tSthLimits.uSamplingRateTrippleAcqTimeMax, self.tSthLimits.uSamplingRateTrippleOverSamplesMax, AdcReference["VDD"])
+        [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 0, 1, self.tSthLimits.uStandardTestTimeMs)
         [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 0, 1, indexStart, indexEnd)
         statistics = self.Can.signalIndicators(array1, array2, array3)
+        [SigIndAccZQ1, SigIndAccZQ25, SigIndAccZMedL, SigIndAccZMedH, SigIndAccZQ75, SigIndAccZQ99] = self.tSthLimits.auAccZStatisticsHist()
+        [SigIndAccZVar, SigIndAccZSkewness, SigIndAccZSNR] = self.tSthLimits.auAccZStatisticsMoment()
         self.siginalIndicatorCheck("ADC Z", statistics["Value3"], SigIndAccZQ1, SigIndAccZQ25, SigIndAccZMedL, SigIndAccZMedH, SigIndAccZQ75, SigIndAccZQ99, SigIndAccZVar, SigIndAccZSkewness, SigIndAccZSNR)
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Acc", "")
 
@@ -1878,10 +1889,12 @@ class TestSth(unittest.TestCase):
 
     def test0333SignalIndicatorsBattery(self):
         self.TurnOffLed()
-        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], SamplingRateSingleMaxPrescaler, SamplingRateSingleMaxAcqTime, SamplingRateSingleMaxOverSamples, AdcReference["VDD"])
-        [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0, StreamingStandardTestTimeMs)
+        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], self.tSthLimits.uSamplingRateTripplePrescalerMax, self.tSthLimits.uSamplingRateTrippleAcqTimeMax, self.tSthLimits.uSamplingRateTrippleOverSamplesMax, AdcReference["VDD"])
+        [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0, self.tSthLimits.uStandardTestTimeMs)
         [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0, indexStart, indexEnd)
         statistics = self.Can.signalIndicators(array1, array2, array3)
+        [SigIndBatteryQ1, SigIndBatteryQ25, SigIndBatteryMedL, SigIndBatteryMedH, SigIndBatteryQ75, SigIndBatteryQ99] = self.tSthLimits.auAccZStatisticsHist()
+        [SigIndBatteryVar, SigIndBatterySkewness, SigIndBatterySNR] = self.tSthLimits.auAccZStatisticsMoment()
         self.siginalIndicatorCheck("Battery", statistics["Value1"], SigIndBatteryQ1, SigIndBatteryQ25, SigIndBatteryMedL, SigIndBatteryMedH, SigIndBatteryQ75, SigIndBatteryQ99, SigIndBatteryVar, SigIndBatterySkewness, SigIndBatterySNR)
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Voltage", "")
 
@@ -1890,11 +1903,18 @@ class TestSth(unittest.TestCase):
     """
 
     def test0334SignalIndicatorsMulti(self):
+        [SigIndAccXQ1, SigIndAccXQ25, SigIndAccXMedL, SigIndAccXMedH, SigIndAccXQ75, SigIndAccXQ99] = self.tSthLimits.auAccXStatisticsHist()
+        [SigIndAccYQ1, SigIndAccYQ25, SigIndAccYMedL, SigIndAccYMedH, SigIndAccYQ75, SigIndAccYQ99] = self.tSthLimits.auBatteryStatisticsHist()
+        [SigIndAccZQ1, SigIndAccZQ25, SigIndAccZMedL, SigIndAccZMedH, SigIndAccZQ75, SigIndAccZQ99] = self.tSthLimits.auAccZStatisticsHist()
+        [SigIndAccXVar, SigIndAccXSkewness, SigIndAccXSNR] = self.tSthLimits.auAccXStatisticsMoment()
+        [SigIndAccYVar, SigIndAccYSkewness, SigIndAccYSNR] = self.tSthLimits.auAccYStatisticsMoment()
+        [SigIndAccZVar, SigIndAccZSkewness, SigIndAccZSNR] = self.tSthLimits.auAccZStatisticsMoment()
         self.TurnOffLed()
-        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], SamplingRateDoubleMaxPrescaler, SamplingRateDoubleMaxAcqTime, SamplingRateDoubleMaxOverSamples, AdcReference["VDD"])
+        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], self.tSthLimits.uSamplingRateDoublePrescalerMax, self.tSthLimits.uSamplingRateDoubleAcqTimeMax, self.tSthLimits.uSamplingRateDoubleOverSamplesMax, AdcReference["VDD"])
         [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 0, 1000)
         [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 0, indexStart, indexEnd)
         statistics = self.Can.signalIndicators(array1, array2, array3)
+
         self.siginalIndicatorCheck("ADC X", statistics["Value1"], SigIndAccXQ1, SigIndAccXQ25, SigIndAccXMedL, SigIndAccXMedH, SigIndAccXQ75, SigIndAccXQ99, SigIndAccXVar, SigIndAccXSkewness, SigIndAccXSNR)
         self.siginalIndicatorCheck("ADC Y", statistics["Value2"], SigIndAccYQ1, SigIndAccYQ25, SigIndAccYMedL, SigIndAccYMedH, SigIndAccYQ75, SigIndAccYQ99, SigIndAccYVar, SigIndAccYSkewness, SigIndAccYSNR)
         [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 0, 1, 1000)
@@ -1907,7 +1927,7 @@ class TestSth(unittest.TestCase):
         statistics = self.Can.signalIndicators(array1, array2, array3)
         self.siginalIndicatorCheck("ADC Y", statistics["Value2"], SigIndAccYQ1, SigIndAccYQ25, SigIndAccYMedL, SigIndAccYMedH, SigIndAccYQ75, SigIndAccYQ99, SigIndAccYVar, SigIndAccYSkewness, SigIndAccYSNR)
         self.siginalIndicatorCheck("ADC Z", statistics["Value3"], SigIndAccZQ1, SigIndAccZQ25, SigIndAccZMedL, SigIndAccZMedH, SigIndAccZQ75, SigIndAccZQ99, SigIndAccZVar, SigIndAccZSkewness, SigIndAccZSNR)
-        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], SamplingRateTrippleMaxPrescaler, SamplingRateTrippleMaxAcqTime, SamplingRateTrippleMaxOverSamples, AdcReference["VDD"])
+        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], self.tSthLimits.uSamplingRateTripplePrescalerMax, self.tSthLimits.uSamplingRateTrippleAcqTimeMax, self.tSthLimits.uSamplingRateTrippleOverSamplesMax, AdcReference["VDD"])
         [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 1, 1000)
         [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 1, indexStart, indexEnd)
         statistics = self.Can.signalIndicators(array1, array2, array3)
@@ -1924,22 +1944,22 @@ class TestSth(unittest.TestCase):
             [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0, 1000)
             [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0, indexStart, indexEnd)
             self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Voltage", "")
-            self.streamingValueCompare(array1, array2, array3, VoltMiddleBat, VoltToleranceBat, 0, 0, 0, 0, fVoltageBattery)
+            self.streamingValueCompare(array1, array2, array3, self.tSthLimits.uBatteryMiddle, self.tSthLimits.uBatteryTolerance, 0, 0, 0, 0, fVoltageBattery)
         for _i in range(0, 3):
             [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0, 1000)
             [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0, indexStart, indexEnd)
             self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Acc", "")
-            self.streamingValueCompare(array1, array2, array3, AdcMiddleX, AdcToleranceX, AdcMiddleY, AdcToleranceY, AdcMiddleZ, AdcToleranceZ, fAcceleration)
+            self.streamingValueCompare(array1, array2, array3, self.tSthLimits.iAdcAccXMiddle, self.tSthLimits.iAdcAccXTolerance, self.tSthLimits.iAdcAccYMiddle, self.tSthLimits.iAdcAccYTolerance, self.tSthLimits.iAdcAccZMiddle, self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
         for _i in range(0, 3):
             [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 1, 0, 1000)
             [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 1, 0, indexStart, indexEnd)
             self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Acc", "")
-            self.streamingValueCompare(array1, array2, array3, AdcMiddleX, AdcToleranceX, AdcMiddleY, AdcToleranceY, AdcMiddleZ, AdcToleranceZ, fAcceleration)
+            self.streamingValueCompare(array1, array2, array3, self.tSthLimits.iAdcAccXMiddle, self.tSthLimits.iAdcAccXTolerance, self.tSthLimits.iAdcAccYMiddle, self.tSthLimits.iAdcAccYTolerance, self.tSthLimits.iAdcAccZMiddle, self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
         for _i in range(0, 3):
             [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 0, 1, 1000)
             [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 0, 1, indexStart, indexEnd)
             self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Acc", "")
-            self.streamingValueCompare(array1, array2, array3, AdcMiddleX, AdcToleranceX, AdcMiddleY, AdcToleranceY, AdcMiddleZ, AdcToleranceZ, fAcceleration)
+            self.streamingValueCompare(array1, array2, array3, self.tSthLimits.iAdcAccXMiddle, self.tSthLimits.iAdcAccXTolerance, self.tSthLimits.iAdcAccYMiddle, self.tSthLimits.iAdcAccYTolerance, self.tSthLimits.iAdcAccZMiddle, self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
 
     """
     Test multiple config battery, x, y, z
@@ -1949,19 +1969,19 @@ class TestSth(unittest.TestCase):
         [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0, 1000)
         [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0, indexStart, indexEnd)
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Voltage", "")
-        self.streamingValueCompare(array1, array2, array3, VoltMiddleBat, VoltToleranceBat, 0, 0, 0, 0, fVoltageBattery)
+        self.streamingValueCompare(array1, array2, array3, self.tSthLimits.uBatteryMiddle, self.tSthLimits.uBatteryTolerance, 0, 0, 0, 0, fVoltageBattery)
         [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0, 1000)
         [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0, indexStart, indexEnd)
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Acc", "")
-        self.streamingValueCompare(array1, array2, array3, AdcMiddleX, AdcToleranceX, AdcMiddleY, AdcToleranceY, AdcMiddleZ, AdcToleranceZ, fAcceleration)
+        self.streamingValueCompare(array1, array2, array3, self.tSthLimits.iAdcAccXMiddle, self.tSthLimits.iAdcAccXTolerance, self.tSthLimits.iAdcAccYMiddle, self.tSthLimits.iAdcAccYTolerance, self.tSthLimits.iAdcAccZMiddle, self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
         [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 1, 0, 1000)
         [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 1, 0, indexStart, indexEnd)
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Acc", "")
-        self.streamingValueCompare(array1, array2, array3, AdcMiddleX, AdcToleranceX, AdcMiddleY, AdcToleranceY, AdcMiddleZ, AdcToleranceZ, fAcceleration)
+        self.streamingValueCompare(array1, array2, array3, self.tSthLimits.iAdcAccXMiddle, self.tSthLimits.iAdcAccXTolerance, self.tSthLimits.iAdcAccYMiddle, self.tSthLimits.iAdcAccYTolerance, self.tSthLimits.iAdcAccZMiddle, self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
         [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 0, 1, 1000)
         [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 0, 1, indexStart, indexEnd)
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Acc", "")
-        self.streamingValueCompare(array1, array2, array3, AdcMiddleX, AdcToleranceX, AdcMiddleY, AdcToleranceY, AdcMiddleZ, AdcToleranceZ, fAcceleration)
+        self.streamingValueCompare(array1, array2, array3, self.tSthLimits.iAdcAccXMiddle, self.tSthLimits.iAdcAccXTolerance, self.tSthLimits.iAdcAccYMiddle, self.tSthLimits.iAdcAccYTolerance, self.tSthLimits.iAdcAccZMiddle, self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
 
     """
     Test multiple config x-xyz-x
@@ -1983,7 +2003,7 @@ class TestSth(unittest.TestCase):
     """
 
     def test0338StreamingHeavyDuty(self):
-        self.SamplingRate(SamplingRateSingleMaxPrescaler, SamplingRateSingleMaxAcqTime, SamplingRateSingleMaxOverSamples, AdcReference["VDD"], runTime=1200000)
+        self.SamplingRate(self.tSthLimits.uSamplingRateTripplePrescalerMax, self.tSthLimits.uSamplingRateTrippleAcqTimeMax, self.tSthLimits.uSamplingRateTrippleOverSamplesMax, AdcReference["VDD"], runTime=1200000)
 
     """
     Mixed Streaming - AccX + VoltageBattery
@@ -1992,20 +2012,20 @@ class TestSth(unittest.TestCase):
     def test0339MixedStreamingAccXVoltBat(self):
         self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0)
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0)
-        time.sleep(StreamingStandardTestTimeMs / 1000)
+        time.sleep(self.tSthLimits.uStandardTestTimeMs / 1000)
         indexEnd = self.Can.GetReadArrayIndex() - 1
         self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"])
         self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"])
         time.sleep(1)
         countDel = 0
-        while StreamingStandardTestTimeMs < self.Can.getReadMessageTimeMs(indexStart, indexEnd) - 0.5:
+        while self.tSthLimits.uStandardTestTimeMs < self.Can.getReadMessageTimeMs(indexStart, indexEnd) - 0.5:
             countDel += 1
             indexEnd -= 1
-        self.Can.Logger.Info("Deleted Messages do achieve " + str(StreamingStandardTestTimeMs) + "ms: " + str(countDel + 180))
+        self.Can.Logger.Info("Deleted Messages do achieve " + str(self.tSthLimits.uStandardTestTimeMs) + "ms: " + str(countDel + 180))
         self.Can.Logger.Info("indexStart: " + str(indexStart))
         self.Can.Logger.Info("indexEnd: " + str(indexEnd))
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Can.Logger.Warning("Deleted Messages do achieve " + str(StreamingStandardTestTimeMs) + "ms: " + str(countDel + 180))
+            self.Can.Logger.Warning("Deleted Messages do achieve " + str(self.tSthLimits.uStandardTestTimeMs) + "ms: " + str(countDel + 180))
         [arrayBat, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0, indexStart, indexEnd)
         self.assertEqual(0, len(array2))
         self.assertEqual(0, len(array3))
@@ -2016,8 +2036,8 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("Acceleration Sampling Points: " + str(len(arrayAccX)))
         self.Can.ValueLog(arrayBat, array2, array3, fAdcRawDat, "Voltage", "")
         self.Can.ValueLog(arrayAccX, array2, array3, fAdcRawDat, "Acc", "")
-        self.streamingValueCompare(arrayBat, array2, array3, VoltMiddleBat, VoltToleranceBat, 0, 0, 0, 0, fVoltageBattery)
-        self.streamingValueCompare(arrayAccX, array2, array3, AdcMiddleX, AdcToleranceX, 0, 0, 0, 0, fAcceleration)
+        self.streamingValueCompare(arrayBat, array2, array3, self.tSthLimits.uBatteryMiddle, self.tSthLimits.uBatteryTolerance, 0, 0, 0, 0, fVoltageBattery)
+        self.streamingValueCompare(arrayAccX, array2, array3, self.tSthLimits.iAdcAccXMiddle, self.tSthLimits.iAdcAccXTolerance, 0, 0, 0, 0, self.tSthLimits.fAcceleration)
 
     """
     Mixed Streaming - AccX + VoltageBattery; Requesting Reverse
@@ -2026,20 +2046,20 @@ class TestSth(unittest.TestCase):
     def test0340MixedStreamingAccXVoltBatInverse(self):
         self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0)
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0)
-        time.sleep(StreamingStandardTestTimeMs / 1000)
+        time.sleep(self.tSthLimits.uStandardTestTimeMs / 1000)
         indexEnd = self.Can.GetReadArrayIndex() - 1
         self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"])
         self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"])
         time.sleep(1)
         countDel = 0
-        while StreamingStandardTestTimeMs < self.Can.getReadMessageTimeMs(indexStart, indexEnd) - 0.5:
+        while self.tSthLimits.uStandardTestTimeMs < self.Can.getReadMessageTimeMs(indexStart, indexEnd) - 0.5:
             countDel += 1
             indexEnd -= 1
-        self.Can.Logger.Info("Deleted Messages do achieve " + str(StreamingStandardTestTimeMs) + "ms: " + str(countDel + 180))
+        self.Can.Logger.Info("Deleted Messages do achieve " + str(self.tSthLimits.uStandardTestTimeMs) + "ms: " + str(countDel + 180))
         self.Can.Logger.Info("indexStart: " + str(indexStart))
         self.Can.Logger.Info("indexEnd: " + str(indexEnd))
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Can.Logger.Warning("Deleted Messages do achieve " + str(StreamingStandardTestTimeMs) + "ms: " + str(countDel + 180))
+            self.Can.Logger.Warning("Deleted Messages do achieve " + str(self.tSthLimits.uStandardTestTimeMs) + "ms: " + str(countDel + 180))
         [arrayBat, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0, indexStart, indexEnd)
         self.assertEqual(0, len(array2))
         self.assertEqual(0, len(array3))
@@ -2050,8 +2070,8 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("Acceleration Sampling Points: " + str(len(arrayAccX)))
         self.Can.ValueLog(arrayBat, array2, array3, fAdcRawDat, "Voltage", "")
         self.Can.ValueLog(arrayAccX, array2, array3, fAdcRawDat, "Acc", "")
-        self.streamingValueCompare(arrayBat, array2, array3, VoltMiddleBat, VoltToleranceBat, 0, 0, 0, 0, fVoltageBattery)
-        self.streamingValueCompare(arrayAccX, array2, array3, AdcMiddleX, AdcToleranceX, 0, 0, 0, 0, fAcceleration)
+        self.streamingValueCompare(arrayBat, array2, array3, self.tSthLimits.uBatteryMiddle, self.tSthLimits.uBatteryTolerance, 0, 0, 0, 0, fVoltageBattery)
+        self.streamingValueCompare(arrayAccX, array2, array3, self.tSthLimits.iAdcAccXMiddle, self.tSthLimits.iAdcAccXTolerance, 0, 0, 0, 0, self.tSthLimits.fAcceleration)
 
     """
     Mixed Streaming - AccY + VoltageBattery
@@ -2060,20 +2080,20 @@ class TestSth(unittest.TestCase):
     def test0341MixedStreamingAccYVoltBat(self):
         self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0)
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 1, 0)
-        time.sleep(StreamingStandardTestTimeMs / 1000)
+        time.sleep(self.tSthLimits.uStandardTestTimeMs / 1000)
         indexEnd = self.Can.GetReadArrayIndex() - 1
         self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"])
         self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"])
         time.sleep(1)
         countDel = 0
-        while StreamingStandardTestTimeMs < self.Can.getReadMessageTimeMs(indexStart, indexEnd) - 0.5:
+        while self.tSthLimits.uStandardTestTimeMs < self.Can.getReadMessageTimeMs(indexStart, indexEnd) - 0.5:
             countDel += 1
             indexEnd -= 1
-        self.Can.Logger.Info("Deleted Messages do achieve " + str(StreamingStandardTestTimeMs) + "ms: " + str(countDel + 180))
+        self.Can.Logger.Info("Deleted Messages do achieve " + str(self.tSthLimits.uStandardTestTimeMs) + "ms: " + str(countDel + 180))
         self.Can.Logger.Info("indexStart: " + str(indexStart))
         self.Can.Logger.Info("indexEnd: " + str(indexEnd))
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Can.Logger.Warning("Deleted Messages do achieve " + str(StreamingStandardTestTimeMs) + "ms: " + str(countDel + 180))
+            self.Can.Logger.Warning("Deleted Messages do achieve " + str(self.tSthLimits.uStandardTestTimeMs) + "ms: " + str(countDel + 180))
         [arrayBat, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0, indexStart, indexEnd)
         self.assertEqual(0, len(array2))
         self.assertEqual(0, len(array3))
@@ -2084,8 +2104,8 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("Acceleration Sampling Points: " + str(len(arrayAccY)))
         self.Can.ValueLog(arrayBat, array2, array3, fAdcRawDat, "Voltage", "")
         self.Can.ValueLog(array1, arrayAccY, array3, fAdcRawDat, "Acc", "")
-        self.streamingValueCompare(arrayBat, array2, array3, VoltMiddleBat, VoltToleranceBat, 0, 0, 0, 0, fVoltageBattery)
-        self.streamingValueCompare(array1, arrayAccY, array3, 0, 0, AdcMiddleY, AdcToleranceY, 0, 0, fAcceleration)
+        self.streamingValueCompare(arrayBat, array2, array3, self.tSthLimits.uBatteryMiddle, self.tSthLimits.uBatteryTolerance, 0, 0, 0, 0, fVoltageBattery)
+        self.streamingValueCompare(array1, arrayAccY, array3, 0, 0, self.tSthLimits.iAdcAccYMiddle, self.tSthLimits.iAdcAccYTolerance, 0, 0, self.tSthLimits.fAcceleration)
 
     """
     Mixed Streaming - AccZ + VoltageBattery
@@ -2094,20 +2114,20 @@ class TestSth(unittest.TestCase):
     def test0342MixedStreamingAccZVoltBat(self):
         self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0)
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 0, 1)
-        time.sleep(StreamingStandardTestTimeMs / 1000)
+        time.sleep(self.tSthLimits.uStandardTestTimeMs / 1000)
         indexEnd = self.Can.GetReadArrayIndex() - 1
         self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"])
         self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"])
         time.sleep(1)
         countDel = 0
-        while StreamingStandardTestTimeMs < self.Can.getReadMessageTimeMs(indexStart, indexEnd) - 0.5:
+        while self.tSthLimits.uStandardTestTimeMs < self.Can.getReadMessageTimeMs(indexStart, indexEnd) - 0.5:
             countDel += 1
             indexEnd -= 1
-        self.Can.Logger.Info("Deleted Messages do achieve " + str(StreamingStandardTestTimeMs) + "ms: " + str(countDel + 180))
+        self.Can.Logger.Info("Deleted Messages do achieve " + str(self.tSthLimits.uStandardTestTimeMs) + "ms: " + str(countDel + 180))
         self.Can.Logger.Info("indexStart: " + str(indexStart))
         self.Can.Logger.Info("indexEnd: " + str(indexEnd))
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Can.Logger.Warning("Deleted Messages do achieve " + str(StreamingStandardTestTimeMs) + "ms: " + str(countDel + 180))
+            self.Can.Logger.Warning("Deleted Messages do achieve " + str(self.tSthLimits.uStandardTestTimeMs) + "ms: " + str(countDel + 180))
         [arrayBat, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0, indexStart, indexEnd)
         self.assertEqual(0, len(array2))
         self.assertEqual(0, len(array3))
@@ -2118,34 +2138,34 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("Acceleration Sampling Points: " + str(len(arrayAccZ)))
         self.Can.ValueLog(arrayBat, array2, array3, fAdcRawDat, "Voltage", "")
         self.Can.ValueLog(array1, array2, arrayAccZ, fAdcRawDat, "Acc", "")
-        self.streamingValueCompare(arrayBat, array2, array3, VoltMiddleBat, VoltToleranceBat, 0, 0, 0, 0, fVoltageBattery)
-        self.streamingValueCompare(array1, array2, arrayAccZ, 0, 0, 0, 0, AdcMiddleZ, AdcToleranceZ, fAcceleration)
+        self.streamingValueCompare(arrayBat, array2, array3, self.tSthLimits.uBatteryMiddle, self.tSthLimits.uBatteryTolerance, 0, 0, 0, 0, fVoltageBattery)
+        self.streamingValueCompare(array1, array2, arrayAccZ, 0, 0, 0, 0, self.tSthLimits.iAdcAccZMiddle, self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
 
     """
     Mixed Streaming - AccX + AccZ + VoltageBattery
     """
 
     def test0343MixedStreamingAccXZVoltBat(self):
-        prescaler = SamplingRateDoubleMaxPrescaler
-        acqTime = SamplingRateDoubleMaxAcqTime
-        overSamples = SamplingRateDoubleMaxOverSamples
+        prescaler = self.tSthLimits.uSamplingRateDoublePrescalerMax
+        acqTime = self.tSthLimits.uSamplingRateDoubleAcqTimeMax
+        overSamples = self.tSthLimits.uSamplingRateDoubleOverSamplesMax
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], prescaler, acqTime, overSamples, AdcReference["VDD"])
         self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0)
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 0, 1)
-        time.sleep(StreamingStandardTestTimeMs / 1000)
+        time.sleep(self.tSthLimits.uStandardTestTimeMs / 1000)
         indexEnd = self.Can.GetReadArrayIndex() - 1
         self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"])
         self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"])
         time.sleep(1)
         countDel = 0
-        while StreamingStandardTestTimeMs < self.Can.getReadMessageTimeMs(indexStart, indexEnd) - 0.5:
+        while self.tSthLimits.uStandardTestTimeMs < self.Can.getReadMessageTimeMs(indexStart, indexEnd) - 0.5:
             countDel += 1
             indexEnd -= 1
-        self.Can.Logger.Info("Deleted Messages do achieve " + str(StreamingStandardTestTimeMs) + "ms: " + str(countDel + 180))
+        self.Can.Logger.Info("Deleted Messages do achieve " + str(self.tSthLimits.uStandardTestTimeMs) + "ms: " + str(countDel + 180))
         self.Can.Logger.Info("indexStart: " + str(indexStart))
         self.Can.Logger.Info("indexEnd: " + str(indexEnd))
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Can.Logger.Warning("Deleted Messages do achieve " + str(StreamingStandardTestTimeMs) + "ms: " + str(countDel + 180))
+            self.Can.Logger.Warning("Deleted Messages do achieve " + str(self.tSthLimits.uStandardTestTimeMs) + "ms: " + str(countDel + 180))
         [arrayBat, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0, indexStart, indexEnd)
         self.assertEqual(0, len(array2))
         self.assertEqual(0, len(array3))
@@ -2155,34 +2175,34 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("Acceleration Sampling Points: " + str(len(arrayAccZ)))
         self.Can.ValueLog(arrayBat, array2, array3, fAdcRawDat, "Voltage", "")
         self.Can.ValueLog(arrayAccX, array2, arrayAccZ, fAdcRawDat, "Acc", "")
-        self.streamingValueCompare(arrayBat, array2, array3, VoltMiddleBat, VoltToleranceBat, 0, 0, 0, 0, fVoltageBattery)
-        self.streamingValueCompare(arrayAccX, array2, arrayAccZ, AdcMiddleX, AdcToleranceX, 0, 0, AdcMiddleZ, AdcToleranceZ, fAcceleration)
+        self.streamingValueCompare(arrayBat, array2, array3, self.tSthLimits.uBatteryMiddle, self.tSthLimits.uBatteryTolerance, 0, 0, 0, 0, fVoltageBattery)
+        self.streamingValueCompare(arrayAccX, array2, arrayAccZ, self.tSthLimits.iAdcAccXMiddle, self.tSthLimits.iAdcAccXTolerance, 0, 0, self.tSthLimits.iAdcAccZMiddle, self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
 
     """
     Mixed Streaming - AccX + AccY + VoltageBattery
     """
 
     def test0344MixedStreamingAccXYVoltBat(self):
-        prescaler = SamplingRateDoubleMaxPrescaler
-        acqTime = SamplingRateDoubleMaxAcqTime
-        overSamples = SamplingRateDoubleMaxOverSamples
+        prescaler = self.tSthLimits.uSamplingRateDoublePrescalerMax
+        acqTime = self.tSthLimits.uSamplingRateDoubleAcqTimeMax
+        overSamples = self.tSthLimits.uSamplingRateDoubleOverSamplesMax
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], prescaler, acqTime, overSamples, AdcReference["VDD"])
         self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 0)
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0)
-        time.sleep(StreamingStandardTestTimeMs / 1000)
+        time.sleep(self.tSthLimits.uStandardTestTimeMs / 1000)
         indexEnd = self.Can.GetReadArrayIndex() - 1
         self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"])
         self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"])
         time.sleep(1)
         countDel = 0
-        while StreamingStandardTestTimeMs < self.Can.getReadMessageTimeMs(indexStart, indexEnd) - 0.5:
+        while self.tSthLimits.uStandardTestTimeMs < self.Can.getReadMessageTimeMs(indexStart, indexEnd) - 0.5:
             countDel += 1
             indexEnd -= 1
-        self.Can.Logger.Info("Deleted Messages do achieve " + str(StreamingStandardTestTimeMs) + "ms: " + str(countDel + 180))
+        self.Can.Logger.Info("Deleted Messages do achieve " + str(self.tSthLimits.uStandardTestTimeMs) + "ms: " + str(countDel + 180))
         self.Can.Logger.Info("indexStart: " + str(indexStart))
         self.Can.Logger.Info("indexEnd: " + str(indexEnd))
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Can.Logger.Warning("Deleted Messages do achieve " + str(StreamingStandardTestTimeMs) + "ms: " + str(countDel + 180))
+            self.Can.Logger.Warning("Deleted Messages do achieve " + str(self.tSthLimits.uStandardTestTimeMs) + "ms: " + str(countDel + 180))
         [arrayBat, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0, indexStart, indexEnd)
         self.assertEqual(0, len(array2))
         self.assertEqual(0, len(array3))
@@ -2192,37 +2212,37 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("Acceleration Sampling Points: " + str(len(arrayAccY)))
         self.Can.ValueLog(arrayBat, array2, array3, fAdcRawDat, "Voltage", "")
         self.Can.ValueLog(arrayAccX, arrayAccY, array3, fAdcRawDat, "Acc", "")
-        self.streamingValueCompare(arrayBat, array2, array3, VoltMiddleBat, VoltToleranceBat, 0, 0, 0, 0, fVoltageBattery)
-        self.streamingValueCompare(arrayAccX, arrayAccY, array3, AdcMiddleX, AdcToleranceX, AdcMiddleY, AdcToleranceY, 0, 0, fAcceleration)
+        self.streamingValueCompare(arrayBat, array2, array3, self.tSthLimits.uBatteryMiddle, self.tSthLimits.uBatteryTolerance, 0, 0, 0, 0, fVoltageBattery)
+        self.streamingValueCompare(arrayAccX, arrayAccY, array3, self.tSthLimits.iAdcAccXMiddle, self.tSthLimits.iAdcAccXTolerance, self.tSthLimits.iAdcAccYMiddle, self.tSthLimits.iAdcAccYTolerance, 0, 0, self.tSthLimits.fAcceleration)
 
     """
     Mixed Streaming - AccY + AccZ + VoltageBattery
     """
 
     def test0345MixedStreamingAccYZVoltBat(self):
-        prescaler = SamplingRateDoubleMaxPrescaler
-        acqTime = SamplingRateDoubleMaxAcqTime
-        overSamples = SamplingRateDoubleMaxOverSamples
+        prescaler = self.tSthLimits.uSamplingRateDoublePrescalerMax
+        acqTime = self.tSthLimits.uSamplingRateDoubleAcqTimeMax
+        overSamples = self.tSthLimits.uSamplingRateDoubleOverSamplesMax
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], prescaler, acqTime, overSamples, AdcReference["VDD"])
         self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0)
         self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 0)
-        time.sleep(StreamingStandardTestTimeMs / 1000)
+        time.sleep(self.tSthLimits.uStandardTestTimeMs / 1000)
         self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0)
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 0, 1, 1)
-        time.sleep(StreamingStandardTestTimeMs / 1000)
+        time.sleep(self.tSthLimits.uStandardTestTimeMs / 1000)
         indexEnd = self.Can.GetReadArrayIndex() - 1
         self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"])
         self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"])
         time.sleep(1)
         countDel = 0
-        while StreamingStandardTestTimeMs < self.Can.getReadMessageTimeMs(indexStart, indexEnd) - 0.5:
+        while self.tSthLimits.uStandardTestTimeMs < self.Can.getReadMessageTimeMs(indexStart, indexEnd) - 0.5:
             countDel += 1
             indexEnd -= 1
-        self.Can.Logger.Info("Deleted Messages do achieve " + str(StreamingStandardTestTimeMs) + "ms: " + str(countDel + 180))
+        self.Can.Logger.Info("Deleted Messages do achieve " + str(self.tSthLimits.uStandardTestTimeMs) + "ms: " + str(countDel + 180))
         self.Can.Logger.Info("indexStart: " + str(indexStart))
         self.Can.Logger.Info("indexEnd: " + str(indexEnd))
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Can.Logger.Warning("Deleted Messages do achieve " + str(StreamingStandardTestTimeMs) + "ms: " + str(countDel + 180))
+            self.Can.Logger.Warning("Deleted Messages do achieve " + str(self.tSthLimits.uStandardTestTimeMs) + "ms: " + str(countDel + 180))
         [arrayBat, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0, indexStart, indexEnd)
         self.assertEqual(0, len(array2))
         self.assertEqual(0, len(array3))
@@ -2232,8 +2252,8 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("Acceleration Sampling Points: " + str(len(arrayAccY)))
         self.Can.ValueLog(arrayBat, array2, array3, fAdcRawDat, "Voltage", "")
         self.Can.ValueLog(array1, arrayAccY, arrayAccZ, fAdcRawDat, "Acc", "")
-        self.streamingValueCompare(arrayBat, array2, array3, VoltMiddleBat, VoltToleranceBat, 0, 0, 0, 0, fVoltageBattery)
-        self.streamingValueCompare(array1, arrayAccY, arrayAccZ, 0, 0, AdcMiddleY, AdcToleranceY, AdcMiddleZ, AdcToleranceZ, fAcceleration)
+        self.streamingValueCompare(arrayBat, array2, array3, self.tSthLimits.uBatteryMiddle, self.tSthLimits.uBatteryTolerance, 0, 0, 0, 0, fVoltageBattery)
+        self.streamingValueCompare(array1, arrayAccY, arrayAccZ, 0, 0, self.tSthLimits.iAdcAccYMiddle, self.tSthLimits.iAdcAccYTolerance, self.tSthLimits.iAdcAccZMiddle, self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
 
     """
     Mixed Streaming - AccX + AccY + AccZ + VoltageBattery
@@ -2242,20 +2262,20 @@ class TestSth(unittest.TestCase):
     def test0346MixedStreamingAccXYZVoltBat(self):
         self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0)
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 1)
-        time.sleep(StreamingStandardTestTimeMs / 1000)
+        time.sleep(self.tSthLimits.uStandardTestTimeMs / 1000)
         indexEnd = self.Can.GetReadArrayIndex() - 1
         self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"])
         self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"])
         time.sleep(1)
         countDel = 0
-        while StreamingStandardTestTimeMs < self.Can.getReadMessageTimeMs(indexStart, indexEnd) - 0.5:
+        while self.tSthLimits.uStandardTestTimeMs < self.Can.getReadMessageTimeMs(indexStart, indexEnd) - 0.5:
             countDel += 1
             indexEnd -= 1
-        self.Can.Logger.Info("Deleted Messages do achieve " + str(StreamingStandardTestTimeMs) + "ms: " + str(countDel + 180))
+        self.Can.Logger.Info("Deleted Messages do achieve " + str(self.tSthLimits.uStandardTestTimeMs) + "ms: " + str(countDel + 180))
         self.Can.Logger.Info("indexStart: " + str(indexStart))
         self.Can.Logger.Info("indexEnd: " + str(indexEnd))
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Can.Logger.Warning("Deleted Messages do achieve " + str(StreamingStandardTestTimeMs) + "ms: " + str(countDel + 180))
+            self.Can.Logger.Warning("Deleted Messages do achieve " + str(self.tSthLimits.uStandardTestTimeMs) + "ms: " + str(countDel + 180))
         [arrayBat, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0, indexStart, indexEnd)
         self.assertEqual(0, len(array2))
         self.assertEqual(0, len(array3))
@@ -2264,8 +2284,8 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("Acceleration Sampling Points: " + str(len(arrayAccZ)))
         self.Can.ValueLog(arrayBat, array2, array3, fAdcRawDat, "Voltage", "")
         self.Can.ValueLog(arrayAccX, arrayAccY, arrayAccZ, fAdcRawDat, "Acc", "")
-        self.streamingValueCompare(arrayBat, array2, array3, VoltMiddleBat, VoltToleranceBat, 0, 0, 0, 0, fVoltageBattery)
-        self.streamingValueCompare(arrayAccX, array2, arrayAccZ, AdcMiddleX, AdcToleranceX, AdcMiddleY, AdcToleranceY, AdcMiddleZ, AdcToleranceZ, fAcceleration)
+        self.streamingValueCompare(arrayBat, array2, array3, self.tSthLimits.uBatteryMiddle, self.tSthLimits.uBatteryTolerance, 0, 0, 0, 0, fVoltageBattery)
+        self.streamingValueCompare(arrayAccX, array2, arrayAccZ, self.tSthLimits.iAdcAccXMiddle, self.tSthLimits.iAdcAccXTolerance, self.tSthLimits.iAdcAccYMiddle, self.tSthLimits.iAdcAccYTolerance, self.tSthLimits.iAdcAccZMiddle, self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
 
     """
     Stream Acceleration(X) and receive single sampling point for Battery
@@ -2287,12 +2307,12 @@ class TestSth(unittest.TestCase):
         self.assertEqual(0, len(voltage3Array))
         samplingPointsAccX = len(AccArray1) / 10
         self.Can.Logger.Info("Battery Voltage Raw: " + str(voltage1Array[0]))
-        self.singleValueCompare(voltage1Array, voltage2Array, voltage3Array, VoltMiddleBat, VoltToleranceBat, 0, 0, 0, 0, fVoltageBattery)
+        self.singleValueCompare(voltage1Array, voltage2Array, voltage3Array, self.tSthLimits.uBatteryMiddle, self.tSthLimits.uBatteryTolerance, 0, 0, 0, 0, fVoltageBattery)
         self.Can.Logger.Info("Accleration X Sampling Points per seconds: " + str(samplingPointsAccX))
-        calcRate = calcSamplingRate(AdcPrescalerReset, AdcAcquisitionTimeReset, AdcAcquisitionOverSamplingRateReset)
+        calcRate = calcSamplingRate(self.tSthLimits.uSamplingRatePrescalerReset, self.tSthLimits.uSamplingRateAcqTimeReset, self.tSthLimits.uSamplingRateOverSamplesReset)
         self.Can.Logger.Info("Calculated Sampling Points per seconds: " + str(calcRate))
-        self.assertLess(calcRate * SamplingToleranceLow, samplingPointsAccX)
-        self.assertGreater(calcRate * SamplingToleranceHigh, samplingPointsAccX)
+        self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow, samplingPointsAccX)
+        self.assertGreater(calcRate * self.tSthLimits.uSamplingToleranceHigh, samplingPointsAccX)
 
     """
     Stream Acceleration(Y) and receive single sampling point for Battery
@@ -2314,12 +2334,12 @@ class TestSth(unittest.TestCase):
         self.assertEqual(0, len(voltage3Array))
         samplingPointsAccY = len(AccArray2) / 10
         self.Can.Logger.Info("Battery Voltage Raw: " + str(voltage1Array[0]))
-        self.singleValueCompare(voltage1Array, voltage2Array, voltage3Array, VoltMiddleBat, VoltToleranceBat, 0, 0, 0, 0, fVoltageBattery)
+        self.singleValueCompare(voltage1Array, voltage2Array, voltage3Array, self.tSthLimits.uBatteryMiddle, self.tSthLimits.uBatteryTolerance, 0, 0, 0, 0, fVoltageBattery)
         self.Can.Logger.Info("Accleration Y Sampling Points per seconds: " + str(samplingPointsAccY))
-        calcRate = calcSamplingRate(AdcPrescalerReset, AdcAcquisitionTimeReset, AdcAcquisitionOverSamplingRateReset)
+        calcRate = calcSamplingRate(self.tSthLimits.uSamplingRatePrescalerReset, self.tSthLimits.uSamplingRateAcqTimeReset, self.tSthLimits.uSamplingRateOverSamplesReset)
         self.Can.Logger.Info("Calculated Sampling Points per seconds: " + str(calcRate))
-        self.assertLess(calcRate * SamplingToleranceLow, samplingPointsAccY)
-        self.assertGreater(calcRate * SamplingToleranceHigh, samplingPointsAccY)
+        self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow, samplingPointsAccY)
+        self.assertGreater(calcRate * self.tSthLimits.uSamplingToleranceHigh, samplingPointsAccY)
 
     """
     Stream Acceleration(Z) and receive single sampling point for Battery
@@ -2341,12 +2361,12 @@ class TestSth(unittest.TestCase):
         self.assertEqual(0, len(voltage3Array))
         samplingPointsAccZ = len(AccArray3) / 10
         self.Can.Logger.Info("Battery Voltage Raw: " + str(voltage1Array[0]))
-        self.singleValueCompare(voltage1Array, voltage2Array, voltage3Array, VoltMiddleBat, VoltToleranceBat, 0, 0, 0, 0, fVoltageBattery)
+        self.singleValueCompare(voltage1Array, voltage2Array, voltage3Array, self.tSthLimits.uBatteryMiddle, self.tSthLimits.uBatteryTolerance, 0, 0, 0, 0, fVoltageBattery)
         self.Can.Logger.Info("Accleration Z Sampling Points per seconds: " + str(samplingPointsAccZ))
-        calcRate = calcSamplingRate(AdcPrescalerReset, AdcAcquisitionTimeReset, AdcAcquisitionOverSamplingRateReset)
+        calcRate = calcSamplingRate(self.tSthLimits.uSamplingRatePrescalerReset, self.tSthLimits.uSamplingRateAcqTimeReset, self.tSthLimits.uSamplingRateOverSamplesReset)
         self.Can.Logger.Info("Calculated Sampling Points per seconds: " + str(calcRate))
-        self.assertLess(calcRate * SamplingToleranceLow, samplingPointsAccZ)
-        self.assertGreater(calcRate * SamplingToleranceHigh, samplingPointsAccZ)
+        self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow, samplingPointsAccZ)
+        self.assertGreater(calcRate * self.tSthLimits.uSamplingToleranceHigh, samplingPointsAccZ)
 
     """
     Stream Battery and receive single sampling point for AccX
@@ -2369,12 +2389,12 @@ class TestSth(unittest.TestCase):
             self.assertEqual(0, len(voltage3Array))
             samplingPointsBattery = len(voltage1Array) / 10
             self.Can.Logger.Info("AccX Raw: " + str(AccArray1[0]))
-            self.singleValueCompare(AccArray1, AccArray2, AccArray3, AdcRawMiddleX, AdcRawToleranceX, AdcRawMiddleY, AdcRawToleranceY, AdcRawMiddleZ, AdcRawToleranceZ, fAdcRawDat)
+            self.singleValueCompare(AccArray1, AccArray2, AccArray3, self.tSthLimits.iAdcAccXRawMiddle, self.tSthLimits.iAdcAccXTolerance, self.tSthLimits.iAdcAccYRawMiddle, self.tSthLimits.iAdcAccYTolerance, self.tSthLimits.iAdcAccZRawMiddle, self.tSthLimits.iAdcAccZTolerance, fAdcRawDat)
             self.Can.Logger.Info("Battery Sampling Points per seconds: " + str(samplingPointsBattery))
-            calcRate = calcSamplingRate(AdcPrescalerReset, AdcAcquisitionTimeReset, AdcAcquisitionOverSamplingRateReset)
+            calcRate = calcSamplingRate(self.tSthLimits.uSamplingRatePrescalerReset, self.tSthLimits.uSamplingRateAcqTimeReset, self.tSthLimits.uSamplingRateOverSamplesReset)
             self.Can.Logger.Info("Calculated Sampling Points per seconds: " + str(calcRate))
-            self.assertLess(calcRate * SamplingToleranceLow, samplingPointsBattery)
-            self.assertGreater(calcRate * SamplingToleranceHigh, samplingPointsBattery)
+            self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow, samplingPointsBattery)
+            self.assertGreater(calcRate * self.tSthLimits.uSamplingToleranceHigh, samplingPointsBattery)
 
     """
     Stream Battery and receive single sampling point for AccY
@@ -2396,12 +2416,12 @@ class TestSth(unittest.TestCase):
         self.assertEqual(0, len(voltage3Array))
         samplingPointsBattery = len(voltage1Array) / 10
         self.Can.Logger.Info("AccY Raw: " + str(AccArray2[0]))
-        self.singleValueCompare(AccArray1, AccArray2, AccArray3, AdcRawMiddleX, AdcRawToleranceX, AdcRawMiddleY, AdcRawToleranceY, AdcRawMiddleZ, AdcRawToleranceZ, fAdcRawDat)
+        self.singleValueCompare(AccArray1, AccArray2, AccArray3, self.tSthLimits.iAdcAccXRawMiddle, self.tSthLimits.iAdcAccXTolerance, self.tSthLimits.iAdcAccYRawMiddle, self.tSthLimits.iAdcAccYTolerance, self.tSthLimits.iAdcAccZRawMiddle, self.tSthLimits.iAdcAccZTolerance, fAdcRawDat)
         self.Can.Logger.Info("Battery Sampling Points per seconds: " + str(samplingPointsBattery))
-        calcRate = calcSamplingRate(AdcPrescalerReset, AdcAcquisitionTimeReset, AdcAcquisitionOverSamplingRateReset)
+        calcRate = calcSamplingRate(self.tSthLimits.uSamplingRatePrescalerReset, self.tSthLimits.uSamplingRateAcqTimeReset, self.tSthLimits.uSamplingRateOverSamplesReset)
         self.Can.Logger.Info("Calculated Sampling Points per seconds: " + str(calcRate))
-        self.assertLess(calcRate * SamplingToleranceLow, samplingPointsBattery)
-        self.assertGreater(calcRate * SamplingToleranceHigh, samplingPointsBattery)
+        self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow, samplingPointsBattery)
+        self.assertGreater(calcRate * self.tSthLimits.uSamplingToleranceHigh, samplingPointsBattery)
 
     """
     Stream Battery and receive single sampling point for AccZ
@@ -2423,12 +2443,12 @@ class TestSth(unittest.TestCase):
         self.assertEqual(0, len(voltage3Array))
         samplingPointsBattery = len(voltage1Array) / 10
         self.Can.Logger.Info("AccZ Raw: " + str(AccArray3[0]))
-        self.singleValueCompare(AccArray1, AccArray2, AccArray3, AdcRawMiddleX, AdcRawToleranceX, AdcRawMiddleY, AdcRawToleranceY, AdcRawMiddleZ, AdcRawToleranceZ, fAdcRawDat)
+        self.singleValueCompare(AccArray1, AccArray2, AccArray3, self.tSthLimits.iAdcAccXRawMiddle, self.tSthLimits.iAdcAccXTolerance, self.tSthLimits.iAdcAccYRawMiddle, self.tSthLimits.iAdcAccYTolerance, self.tSthLimits.iAdcAccZRawMiddle, self.tSthLimits.iAdcAccZTolerance, fAdcRawDat)
         self.Can.Logger.Info("Battery Sampling Points per seconds: " + str(samplingPointsBattery))
-        calcRate = calcSamplingRate(AdcPrescalerReset, AdcAcquisitionTimeReset, AdcAcquisitionOverSamplingRateReset)
+        calcRate = calcSamplingRate(self.tSthLimits.uSamplingRatePrescalerReset, self.tSthLimits.uSamplingRateAcqTimeReset, self.tSthLimits.uSamplingRateOverSamplesReset)
         self.Can.Logger.Info("Calculated Sampling Points per seconds: " + str(calcRate))
-        self.assertLess(calcRate * SamplingToleranceLow, samplingPointsBattery)
-        self.assertGreater(calcRate * SamplingToleranceHigh, samplingPointsBattery)
+        self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow, samplingPointsBattery)
+        self.assertGreater(calcRate * self.tSthLimits.uSamplingToleranceHigh, samplingPointsBattery)
 
     """
     Stream Battery and receive single sampling point for AccYZ
@@ -2451,12 +2471,12 @@ class TestSth(unittest.TestCase):
         samplingPointsBattery = len(voltage1Array) / 10
         self.Can.Logger.Info("AccY Raw: " + str(AccArray2[0]))
         self.Can.Logger.Info("AccZ Raw: " + str(AccArray3[0]))
-        self.singleValueCompare(AccArray1, AccArray2, AccArray3, AdcRawMiddleX, AdcRawToleranceX, AdcRawMiddleY, AdcRawToleranceY, AdcRawMiddleZ, AdcRawToleranceZ, fAdcRawDat)
+        self.singleValueCompare(AccArray1, AccArray2, AccArray3, self.tSthLimits.iAdcAccXRawMiddle, self.tSthLimits.iAdcAccXTolerance, self.tSthLimits.iAdcAccYRawMiddle, self.tSthLimits.iAdcAccYTolerance, self.tSthLimits.iAdcAccZRawMiddle, self.tSthLimits.iAdcAccZTolerance, fAdcRawDat)
         self.Can.Logger.Info("Battery Sampling Points per seconds: " + str(samplingPointsBattery))
-        calcRate = calcSamplingRate(AdcPrescalerReset, AdcAcquisitionTimeReset, AdcAcquisitionOverSamplingRateReset)
+        calcRate = calcSamplingRate(self.tSthLimits.uSamplingRatePrescalerReset, self.tSthLimits.uSamplingRateAcqTimeReset, self.tSthLimits.uSamplingRateOverSamplesReset)
         self.Can.Logger.Info("Calculated Sampling Points per seconds: " + str(calcRate))
-        self.assertLess(calcRate * SamplingToleranceLow, samplingPointsBattery)
-        self.assertGreater(calcRate * SamplingToleranceHigh, samplingPointsBattery)
+        self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow, samplingPointsBattery)
+        self.assertGreater(calcRate * self.tSthLimits.uSamplingToleranceHigh, samplingPointsBattery)
 
     """
     Stream Battery and receive single sampling point for AccXZ
@@ -2479,12 +2499,12 @@ class TestSth(unittest.TestCase):
         samplingPointsBattery = len(voltage1Array) / 10
         self.Can.Logger.Info("AccX Raw: " + str(AccArray1[0]))
         self.Can.Logger.Info("AccZ Raw: " + str(AccArray3[0]))
-        self.singleValueCompare(AccArray1, AccArray2, AccArray3, AdcRawMiddleX, AdcRawToleranceX, AdcRawMiddleY, AdcRawToleranceY, AdcRawMiddleZ, AdcRawToleranceZ, fAdcRawDat)
+        self.singleValueCompare(AccArray1, AccArray2, AccArray3, self.tSthLimits.iAdcAccXRawMiddle, self.tSthLimits.iAdcAccXTolerance, self.tSthLimits.iAdcAccYRawMiddle, self.tSthLimits.iAdcAccYTolerance, self.tSthLimits.iAdcAccZRawMiddle, self.tSthLimits.iAdcAccZTolerance, fAdcRawDat)
         self.Can.Logger.Info("Battery Sampling Points per seconds: " + str(samplingPointsBattery))
-        calcRate = calcSamplingRate(AdcPrescalerReset, AdcAcquisitionTimeReset, AdcAcquisitionOverSamplingRateReset)
+        calcRate = calcSamplingRate(self.tSthLimits.uSamplingRatePrescalerReset, self.tSthLimits.uSamplingRateAcqTimeReset, self.tSthLimits.uSamplingRateOverSamplesReset)
         self.Can.Logger.Info("Calculated Sampling Points per seconds: " + str(calcRate))
-        self.assertLess(calcRate * SamplingToleranceLow, samplingPointsBattery)
-        self.assertGreater(calcRate * SamplingToleranceHigh, samplingPointsBattery)
+        self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow, samplingPointsBattery)
+        self.assertGreater(calcRate * self.tSthLimits.uSamplingToleranceHigh, samplingPointsBattery)
 
     """
     Stream Battery and receive single sampling point for AccXY
@@ -2507,12 +2527,12 @@ class TestSth(unittest.TestCase):
         samplingPointsBattery = len(voltage1Array) / 10
         self.Can.Logger.Info("AccX Raw: " + str(AccArray1[0]))
         self.Can.Logger.Info("AccY Raw: " + str(AccArray2[0]))
-        self.singleValueCompare(AccArray1, AccArray2, AccArray3, AdcRawMiddleX, AdcRawToleranceX, AdcRawMiddleY, AdcRawToleranceY, AdcRawMiddleZ, AdcRawToleranceZ, fAdcRawDat)
+        self.singleValueCompare(AccArray1, AccArray2, AccArray3, self.tSthLimits.iAdcAccXRawMiddle, self.tSthLimits.iAdcAccXTolerance, self.tSthLimits.iAdcAccYRawMiddle, self.tSthLimits.iAdcAccYTolerance, self.tSthLimits.iAdcAccZRawMiddle, self.tSthLimits.iAdcAccZTolerance, fAdcRawDat)
         self.Can.Logger.Info("Battery Sampling Points per seconds: " + str(samplingPointsBattery))
-        calcRate = calcSamplingRate(AdcPrescalerReset, AdcAcquisitionTimeReset, AdcAcquisitionOverSamplingRateReset)
+        calcRate = calcSamplingRate(self.tSthLimits.uSamplingRatePrescalerReset, self.tSthLimits.uSamplingRateAcqTimeReset, self.tSthLimits.uSamplingRateOverSamplesReset)
         self.Can.Logger.Info("Calculated Sampling Points per seconds: " + str(calcRate))
-        self.assertLess(calcRate * SamplingToleranceLow, samplingPointsBattery)
-        self.assertGreater(calcRate * SamplingToleranceHigh, samplingPointsBattery)
+        self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow, samplingPointsBattery)
+        self.assertGreater(calcRate * self.tSthLimits.uSamplingToleranceHigh, samplingPointsBattery)
 
     """
     Stream Battery and receive single sampling point for AccXYZ
@@ -2536,21 +2556,21 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("AccX Raw: " + str(AccArray1[0]))
         self.Can.Logger.Info("AccY Raw: " + str(AccArray2[0]))
         self.Can.Logger.Info("AccZ Raw: " + str(AccArray2[0]))
-        self.singleValueCompare(AccArray1, AccArray2, AccArray3, AdcRawMiddleX, AdcRawToleranceX, AdcRawMiddleY, AdcRawToleranceY, AdcRawMiddleZ, AdcRawToleranceZ, fAdcRawDat)
+        self.singleValueCompare(AccArray1, AccArray2, AccArray3, self.tSthLimits.iAdcAccXRawMiddle, self.tSthLimits.iAdcAccXTolerance, self.tSthLimits.iAdcAccYRawMiddle, self.tSthLimits.iAdcAccYTolerance, self.tSthLimits.iAdcAccZRawMiddle, self.tSthLimits.iAdcAccZTolerance, fAdcRawDat)
         self.Can.Logger.Info("Battery Sampling Points per seconds: " + str(samplingPointsBattery))
-        calcRate = calcSamplingRate(AdcPrescalerReset, AdcAcquisitionTimeReset, AdcAcquisitionOverSamplingRateReset)
+        calcRate = calcSamplingRate(self.tSthLimits.uSamplingRatePrescalerReset, self.tSthLimits.uSamplingRateAcqTimeReset, self.tSthLimits.uSamplingRateOverSamplesReset)
         self.Can.Logger.Info("Calculated Sampling Points per seconds: " + str(calcRate))
-        self.assertLess(calcRate * SamplingToleranceLow, samplingPointsBattery)
-        self.assertGreater(calcRate * SamplingToleranceHigh, samplingPointsBattery)
+        self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow, samplingPointsBattery)
+        self.assertGreater(calcRate * self.tSthLimits.uSamplingToleranceHigh, samplingPointsBattery)
 
     """
     Stream AccXY and receive single sampling point for Battery
     """
 
     def test0357StreamingAccXYSingleBattery(self):
-        prescaler = SamplingRateDoubleMaxPrescaler
-        acqTime = SamplingRateDoubleMaxAcqTime
-        overSamples = SamplingRateDoubleMaxOverSamples
+        prescaler = self.tSthLimits.uSamplingRateDoublePrescalerMax
+        acqTime = self.tSthLimits.uSamplingRateDoubleAcqTimeMax
+        overSamples = self.tSthLimits.uSamplingRateDoubleOverSamplesMax
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], prescaler, acqTime, overSamples, AdcReference["VDD"])
         self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 0)
         time.sleep(1.2)
@@ -2567,13 +2587,13 @@ class TestSth(unittest.TestCase):
         samplingPointsAccX = len(AccArray1) / 10
         samplingPointsAccY = len(AccArray2) / 10
         self.Can.Logger.Info("Battery Voltage Raw: " + str(voltage1Array[0]))
-        self.singleValueCompare(voltage1Array, voltage2Array, voltage3Array, VoltMiddleBat, VoltToleranceBat, 0, 0, 0, 0, fVoltageBattery)
+        self.singleValueCompare(voltage1Array, voltage2Array, voltage3Array, self.tSthLimits.uBatteryMiddle, self.tSthLimits.uBatteryTolerance, 0, 0, 0, 0, fVoltageBattery)
         self.Can.Logger.Info("Accleration XY Sampling Points per seconds: " + str(samplingPointsAccX))
         calcRate = calcSamplingRate(prescaler, acqTime, overSamples)
         calcRate /= 2
         self.Can.Logger.Info("Calculated Sampling Points per seconds: " + str(calcRate))
-        self.assertLess(calcRate * SamplingToleranceLow, samplingPointsAccX)
-        self.assertGreater(calcRate * SamplingToleranceHigh, samplingPointsAccX)
+        self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow, samplingPointsAccX)
+        self.assertGreater(calcRate * self.tSthLimits.uSamplingToleranceHigh, samplingPointsAccX)
         self.assertEqual(samplingPointsAccX, samplingPointsAccY)
 
     """
@@ -2581,9 +2601,9 @@ class TestSth(unittest.TestCase):
     """
 
     def test0358StreamingAccXZSingleBattery(self):
-        prescaler = SamplingRateDoubleMaxPrescaler
-        acqTime = SamplingRateDoubleMaxAcqTime
-        overSamples = SamplingRateDoubleMaxOverSamples
+        prescaler = self.tSthLimits.uSamplingRateDoublePrescalerMax
+        acqTime = self.tSthLimits.uSamplingRateDoubleAcqTimeMax
+        overSamples = self.tSthLimits.uSamplingRateDoubleOverSamplesMax
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], prescaler, acqTime, overSamples, AdcReference["VDD"])
         self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 0, 1)
         time.sleep(1.25)
@@ -2600,13 +2620,13 @@ class TestSth(unittest.TestCase):
         samplingPointsAccX = len(AccArray1) / 10
         samplingPointsAccZ = len(AccArray3) / 10
         self.Can.Logger.Info("Battery Voltage Raw: " + str(voltage1Array[0]))
-        self.singleValueCompare(voltage1Array, voltage2Array, voltage3Array, VoltMiddleBat, VoltToleranceBat, 0, 0, 0, 0, fVoltageBattery)
+        self.singleValueCompare(voltage1Array, voltage2Array, voltage3Array, self.tSthLimits.uBatteryMiddle, self.tSthLimits.uBatteryTolerance, 0, 0, 0, 0, fVoltageBattery)
         self.Can.Logger.Info("Accleration XZ Sampling Points per seconds: " + str(samplingPointsAccX))
         calcRate = calcSamplingRate(prescaler, acqTime, overSamples)
         calcRate /= 2
         self.Can.Logger.Info("Calculated Sampling Points per seconds: " + str(calcRate))
-        self.assertLess(calcRate * SamplingToleranceLow, samplingPointsAccX)
-        self.assertGreater(calcRate * SamplingToleranceHigh, samplingPointsAccX)
+        self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow, samplingPointsAccX)
+        self.assertGreater(calcRate * self.tSthLimits.uSamplingToleranceHigh, samplingPointsAccX)
         self.assertEqual(samplingPointsAccX, samplingPointsAccZ)
 
     """
@@ -2614,9 +2634,9 @@ class TestSth(unittest.TestCase):
     """
 
     def test0359StreamingAccYZSingleBattery(self):
-        prescaler = SamplingRateDoubleMaxPrescaler
-        acqTime = SamplingRateDoubleMaxAcqTime
-        overSamples = SamplingRateDoubleMaxOverSamples
+        prescaler = self.tSthLimits.uSamplingRateDoublePrescalerMax
+        acqTime = self.tSthLimits.uSamplingRateDoubleAcqTimeMax
+        overSamples = self.tSthLimits.uSamplingRateDoubleOverSamplesMax
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], prescaler, acqTime, overSamples, AdcReference["VDD"])
         self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 0, 1, 1)
         time.sleep(1.25)
@@ -2633,13 +2653,13 @@ class TestSth(unittest.TestCase):
         samplingPointsAccY = len(AccArray2) / 10
         samplingPointsAccZ = len(AccArray3) / 10
         self.Can.Logger.Info("Battery Voltage Raw: " + str(voltage1Array[0]))
-        self.singleValueCompare(voltage1Array, voltage2Array, voltage3Array, VoltMiddleBat, VoltToleranceBat, 0, 0, 0, 0, fVoltageBattery)
+        self.singleValueCompare(voltage1Array, voltage2Array, voltage3Array, self.tSthLimits.uBatteryMiddle, self.tSthLimits.uBatteryTolerance, 0, 0, 0, 0, fVoltageBattery)
         self.Can.Logger.Info("Accleration YZ Sampling Points per seconds: " + str(samplingPointsAccY))
         calcRate = calcSamplingRate(prescaler, acqTime, overSamples)
         calcRate /= 2
         self.Can.Logger.Info("Calculated Sampling Points per seconds: " + str(calcRate))
-        self.assertLess(calcRate * SamplingToleranceLow, samplingPointsAccY)
-        self.assertGreater(calcRate * SamplingToleranceHigh, samplingPointsAccY)
+        self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow, samplingPointsAccY)
+        self.assertGreater(calcRate * self.tSthLimits.uSamplingToleranceHigh, samplingPointsAccY)
         self.assertEqual(samplingPointsAccY, samplingPointsAccZ)
 
     """
@@ -2662,13 +2682,13 @@ class TestSth(unittest.TestCase):
         samplingPointsAccY = len(AccArray2) / 10
         samplingPointsAccZ = len(AccArray3) / 10
         self.Can.Logger.Info("Battery Voltage Raw: " + str(voltage1Array[0]))
-        self.singleValueCompare(voltage1Array, voltage2Array, voltage3Array, VoltMiddleBat, VoltToleranceBat, 0, 0, 0, 0, fVoltageBattery)
+        self.singleValueCompare(voltage1Array, voltage2Array, voltage3Array, self.tSthLimits.uBatteryMiddle, self.tSthLimits.uBatteryTolerance, 0, 0, 0, 0, fVoltageBattery)
         self.Can.Logger.Info("Accleration XYZ Sampling Points per seconds: " + str(samplingPointsAccY))
-        calcRate = calcSamplingRate(AdcPrescalerReset, AdcAcquisitionTimeReset, AdcAcquisitionOverSamplingRateReset)
+        calcRate = calcSamplingRate(self.tSthLimits.uSamplingRatePrescalerReset, self.tSthLimits.uSamplingRateAcqTimeReset, self.tSthLimits.uSamplingRateOverSamplesReset)
         calcRate /= 3
         self.Can.Logger.Info("Calculated Sampling Points per seconds: " + str(calcRate))
-        self.assertLess(calcRate * SamplingToleranceLow, samplingPointsAccY)
-        self.assertGreater(calcRate * SamplingToleranceHigh, samplingPointsAccY)
+        self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow, samplingPointsAccY)
+        self.assertGreater(calcRate * self.tSthLimits.uSamplingToleranceHigh, samplingPointsAccY)
         self.assertEqual(samplingPointsAccY, samplingPointsAccZ)
         self.assertEqual(samplingPointsAccX, samplingPointsAccZ)
 
@@ -2685,7 +2705,7 @@ class TestSth(unittest.TestCase):
 
         # single stream, data set 1
         for _i in range(0, _runs):
-            self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], SamplingRateSingleMaxPrescaler, SamplingRateSingleMaxAcqTime, SamplingRateSingleMaxOverSamples + 2, AdcReference["VDD"])
+            self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], self.tSthLimits.uSamplingRateTripplePrescalerMax, self.tSthLimits.uSamplingRateTrippleAcqTimeMax, self.tSthLimits.uSamplingRateTrippleOverSamplesMax + 2, AdcReference["VDD"])
             self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 0, 0)
             self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"])
 
@@ -2698,7 +2718,7 @@ class TestSth(unittest.TestCase):
 
         # multi stream, data set 1
         for _i in range(0, _runs):
-            self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], SamplingRateSingleMaxPrescaler, SamplingRateSingleMaxAcqTime, SamplingRateSingleMaxOverSamples + 2, AdcReference["VDD"])
+            self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], self.tSthLimits.uSamplingRateTripplePrescalerMax, self.tSthLimits.uSamplingRateTrippleAcqTimeMax, self.tSthLimits.uSamplingRateTrippleOverSamplesMax + 2, AdcReference["VDD"])
             self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 1)
             self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[1], 1, 0, 0)
             self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"])
@@ -2849,27 +2869,27 @@ class TestSth(unittest.TestCase):
     """
 
     def test0500SamplingRateReset(self):
-        [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0, StreamingStandardTestTimeMs)
+        [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0, self.tSthLimits.uStandardTestTimeMs)
         [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0, indexStart, indexEnd)
-        calcRate = calcSamplingRate(AdcPrescalerReset, AdcAcquisitionTimeReset, AdcAcquisitionOverSamplingRateReset)
+        calcRate = calcSamplingRate(self.tSthLimits.uSamplingRatePrescalerReset, self.tSthLimits.uSamplingRateAcqTimeReset, self.tSthLimits.uSamplingRateOverSamplesReset)
         samplingPoints = self.Can.samplingPoints(array1, array2, array3)
-        self.Can.Logger.Info("Running Time: " + str(StreamingStandardTestTimeMs) + "ms")
-        self.Can.Logger.Info("Startup Time: " + str(StreamingStartupTimeMs) + "ms")
+        self.Can.Logger.Info("Running Time: " + str(self.tSthLimits.uStandardTestTimeMs) + "ms")
+        self.Can.Logger.Info("Startup Time: " + str(self.tSthLimits.uStartupTimeMs) + "ms")
         self.Can.Logger.Info("Assumed Sampling Points/s: " + str(calcRate))
-        samplingRateDet = 1000 * samplingPoints / (StreamingStandardTestTimeMs)
+        samplingRateDet = 1000 * samplingPoints / (self.tSthLimits.uStandardTestTimeMs)
         self.Can.Logger.Info("Determined Sampling Points/s: " + str(samplingRateDet))
         self.Can.Logger.Info("Difference: " + str((100 * samplingRateDet - calcRate) / calcRate) + "%")
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Acc", "")
-        self.streamingValueCompare(array1, array2, array3, AdcRawMiddleX, AdcRawToleranceX, AdcRawMiddleY, AdcRawToleranceY, AdcRawMiddleZ, AdcRawToleranceZ, fAdcRawDat)
-        self.assertLess(StreamingStandardTestTimeMs / 1000 * calcRate * SamplingToleranceLow, samplingPoints)
-        self.assertGreater(StreamingStandardTestTimeMs / 1000 * calcRate * SamplingToleranceHigh, samplingPoints)
+        self.streamingValueCompare(array1, array2, array3, self.tSthLimits.iAdcAccXRawMiddle, self.tSthLimits.iAdcAccXTolerance, self.tSthLimits.iAdcAccYRawMiddle, self.tSthLimits.iAdcAccYTolerance, self.tSthLimits.iAdcAccZRawMiddle, self.tSthLimits.iAdcAccZTolerance, fAdcRawDat)
+        self.assertLess(self.tSthLimits.uStandardTestTimeMs / 1000 * calcRate * self.tSthLimits.uSamplingToleranceLow, samplingPoints)
+        self.assertGreater(self.tSthLimits.uStandardTestTimeMs / 1000 * calcRate * self.tSthLimits.uSamplingToleranceHigh, samplingPoints)
 
     """
     Testing ADC Sampling Rate - Prescaler
     """
 
     def test0501SamplingRatePreq(self):
-        self.SamplingRate(5, SamplingRateSingleMaxAcqTime, SamplingRateSingleMaxOverSamples, AdcReference["VDD"])
+        self.SamplingRate(5, self.tSthLimits.uSamplingRateTrippleAcqTimeMax, self.tSthLimits.uSamplingRateTrippleOverSamplesMax, AdcReference["VDD"])
 
     """
     Testing ADC Sampling Rate - Acquisiton Time
@@ -2890,21 +2910,21 @@ class TestSth(unittest.TestCase):
     """
 
     def test0504SamplingRateDataSingleMax(self):
-        self.SamplingRate(SamplingRateSingleMaxPrescaler, SamplingRateSingleMaxAcqTime, SamplingRateSingleMaxOverSamples, AdcReference["VDD"], runTime=10000)["SamplingRate"]
+        self.SamplingRate(self.tSthLimits.uSamplingRateTripplePrescalerMax, self.tSthLimits.uSamplingRateTrippleAcqTimeMax, self.tSthLimits.uSamplingRateTrippleOverSamplesMax, AdcReference["VDD"], runTime=10000)["SamplingRate"]
 
     """
     Testing ADC Sampling Rate - Maximum(Double Data)
     """
 
     def test0505SamplingRateDataDoubleMax(self):
-        self.SamplingRate(SamplingRateDoubleMaxPrescaler, SamplingRateDoubleMaxAcqTime, SamplingRateDoubleMaxOverSamples, AdcReference["VDD"], b1=1, b2=1, b3=0, runTime=10000)["SamplingRate"]
+        self.SamplingRate(self.tSthLimits.uSamplingRateDoublePrescalerMax, self.tSthLimits.uSamplingRateDoubleAcqTimeMax, self.tSthLimits.uSamplingRateDoubleOverSamplesMax, AdcReference["VDD"], b1=1, b2=1, b3=0, runTime=10000)["SamplingRate"]
 
     """
     Testing ADC Sampling Rate - Maximum(Tripple Data)
     """
 
     def test0506SamplingRateDataTrippleMax(self):
-        self.SamplingRate(SamplingRateTrippleMaxPrescaler, SamplingRateTrippleMaxAcqTime, SamplingRateTrippleMaxOverSamples, AdcReference["VDD"], b1=1, b2=1, b3=1, runTime=10000)["SamplingRate"]
+        self.SamplingRate(self.tSthLimits.uSamplingRateTripplePrescalerMax, self.tSthLimits.uSamplingRateTrippleAcqTimeMax, self.tSthLimits.uSamplingRateTrippleOverSamplesMax, AdcReference["VDD"], b1=1, b2=1, b3=1, runTime=10000)["SamplingRate"]
 
     """
     Testing ADC Reference voltagegs
@@ -2912,10 +2932,10 @@ class TestSth(unittest.TestCase):
 
     def test0507VRef(self):
         self.Can.Logger.Info("Warm Up")
-        self.SamplingRate(SamplingRateTrippleMaxPrescaler, SamplingRateTrippleMaxAcqTime, SamplingRateTrippleMaxOverSamples, AdcReference["VDD"], b1=1, b2=1, b3=1, runTime=5000)
+        self.SamplingRate(self.tSthLimits.uSamplingRateTripplePrescalerMax, self.tSthLimits.uSamplingRateTrippleAcqTimeMax, self.tSthLimits.uSamplingRateTrippleOverSamplesMax, AdcReference["VDD"], b1=1, b2=1, b3=1, runTime=5000)
         for _vRefkey, vRefVal in AdcReference.items():
             self.Can.Logger.Info("Using Voltage Reference: " + VRefName[vRefVal])
-            self.SamplingRate(SamplingRateTrippleMaxPrescaler, SamplingRateTrippleMaxAcqTime, SamplingRateTrippleMaxOverSamples, vRefVal, b1=1, b2=1, b3=1, runTime=5000, compare=(AdcReference["Vfs1V65"] <= vRefVal), startupTime=False)
+            self.SamplingRate(self.tSthLimits.uSamplingRateTripplePrescalerMax, self.tSthLimits.uSamplingRateTrippleAcqTimeMax, self.tSthLimits.uSamplingRateTrippleOverSamplesMax, vRefVal, b1=1, b2=1, b3=1, runTime=5000, compare=(AdcReference["Vfs1V65"] <= vRefVal), startupTime=False)
 
     """
     ADC Configuration Combine all possible settings - Single Axis (but only for prescaler 2)
@@ -2929,7 +2949,7 @@ class TestSth(unittest.TestCase):
         for acquisitionTimeKey, acquisitionTimeValue in AdcAcquisitionTime.items():
             for overSamplingKey, overSamplingVal in AdcOverSamplingRate.items():
                 samplingRate = int(calcSamplingRate(prescaler, acquisitionTimeValue, overSamplingVal))
-                if SamplingRateSingleMax >= samplingRate and SamplingRateMin <= samplingRate:
+                if self.tSthLimits.uSamplingRateSingleMax() >= samplingRate and self.tSthLimits.uSamplingRateMin <= samplingRate:
                     self.Can.Logger.Info("Sampling Rate: " + str(samplingRate))
                     self.Can.Logger.Info("Prescaler: " + str(prescaler))
                     self.Can.Logger.Info("Acquisition Time: " + AdcAcquisitionTimeName[acquisitionTimeValue])
@@ -2938,9 +2958,9 @@ class TestSth(unittest.TestCase):
                         result = self.SamplingRate(prescaler, acquisitionTimeValue, overSamplingVal, vRefVal, b1=1, b2=0, b3=0, runTime=1000, compare=False, compareRate=False, log=False)
                         samplingPointsDet = self.Can.samplingPoints(result["Value1"], result["Value2"], result["Value3"])
                         self.Can.Logger.Info("Sampling Rate Determined: " + str(samplingPointsDet))
-                        if samplingRate > SamplingToleranceHigh * samplingPointsDet:
+                        if samplingRate > self.tSthLimits.uSamplingToleranceHigh * samplingPointsDet:
                             break
-                    self.assertGreaterEqual(samplingRate, SamplingToleranceLow * result["SamplingRate"])
+                    self.assertGreaterEqual(samplingRate, self.tSthLimits.uSamplingToleranceLow * result["SamplingRate"])
                     if SamplingRateMaxDet < samplingRate:
                         aquisitionTime = acquisitionTimeKey
                         overSamples = overSamplingKey
@@ -2952,7 +2972,7 @@ class TestSth(unittest.TestCase):
                     self.Can.Logger.Info("Connect to STH")
                     self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
         self.Can.Logger.Info("Maximum Single Sampling Rate: " + str(SamplingRateMaxDet) + "(" + str(prescaler) + "/" + str(aquisitionTime) + "/" + str(overSamples) + ")")
-        self.assertEqual(SamplingRateMaxDet, SamplingRateSingleMax)
+        self.assertEqual(SamplingRateMaxDet, self.tSthLimits.uSamplingRateSingleMax())
 
     """
     Combine all possible settings - Double Axis (but only for prescaler 3)
@@ -2960,13 +2980,13 @@ class TestSth(unittest.TestCase):
 
     def test0509AdcConfigDouble(self):
         SamplingRateMaxDet = 0
-        prescaler = SamplingRateDoubleMaxPrescaler
+        prescaler = self.tSthLimits.uSamplingRateDoublePrescalerMax
         aquisitionTime = 0
         overSamples = 0
         for acquisitionTimeKey, acquisitionTimeValue in AdcAcquisitionTime.items():
             for overSamplingKey, overSamplingVal in AdcOverSamplingRate.items():
                 samplingRate = int(calcSamplingRate(prescaler, acquisitionTimeValue, overSamplingVal))
-                if SamplingRateDoubleMax >= samplingRate and SamplingRateMin <= samplingRate:
+                if self.tSthLimits.uSamplingRateDoubleMax() >= samplingRate and self.tSthLimits.uSamplingRateMin <= samplingRate:
                     self.Can.Logger.Info("Sampling Rate: " + str(samplingRate))
                     self.Can.Logger.Info("Prescaer: " + str(prescaler))
                     self.Can.Logger.Info("Acquisition Time: " + AdcAcquisitionTimeName[acquisitionTimeValue])
@@ -2975,9 +2995,9 @@ class TestSth(unittest.TestCase):
                         result = self.SamplingRate(prescaler, acquisitionTimeValue, overSamplingVal, vRefVal, b1=1, b2=1, b3=0, runTime=1000, compare=False, compareRate=False, log=False)
                         samplingPointsDet = self.Can.samplingPoints(result["Value1"], result["Value2"], result["Value3"])
                         self.Can.Logger.Info("Sampling Rate Determined: " + str(samplingPointsDet))
-                        if samplingRate > SamplingToleranceHigh * samplingPointsDet:
+                        if samplingRate > self.tSthLimits.uSamplingToleranceHigh * samplingPointsDet:
                             break
-                    self.assertGreaterEqual(samplingRate, SamplingToleranceLow * result["SamplingRate"])
+                    self.assertGreaterEqual(samplingRate, self.tSthLimits.uSamplingToleranceLow * result["SamplingRate"])
                     if SamplingRateMaxDet < samplingRate:
                         aquisitionTime = acquisitionTimeKey
                         overSamples = overSamplingKey
@@ -2989,7 +3009,7 @@ class TestSth(unittest.TestCase):
                     self.Can.Logger.Info("Connect to STH")
                     self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
         self.Can.Logger.Info("Maximum Double Sampling Rate: " + str(SamplingRateMaxDet) + "(" + str(prescaler) + "/" + str(aquisitionTime) + "/" + str(overSamples) + ")")
-        self.assertEqual(SamplingRateMaxDet, SamplingRateDoubleMax)
+        self.assertEqual(SamplingRateMaxDet, self.tSthLimits.uSamplingRateDoubleMax())
 
     """
     Combine all possible settings - Tripple Axis (but only for prescaler 2)
@@ -3003,7 +3023,7 @@ class TestSth(unittest.TestCase):
         for acquisitionTimeKey, acquisitionTimeValue in AdcAcquisitionTime.items():
             for overSamplingKey, overSamplingVal in AdcOverSamplingRate.items():
                 samplingRate = int(calcSamplingRate(prescaler, acquisitionTimeValue, overSamplingVal))
-                if SamplingRateTrippleMax >= samplingRate and SamplingRateMin <= samplingRate:
+                if self.tSthLimits.uSamplingRateTrippleMax() >= samplingRate and self.tSthLimits.uSamplingRateMin <= samplingRate:
                     self.Can.Logger.Info("Sampling Rate: " + str(samplingRate))
                     self.Can.Logger.Info("Prescaer: " + str(prescaler))
                     self.Can.Logger.Info("Acquisition Time: " + AdcAcquisitionTimeName[acquisitionTimeValue])
@@ -3012,9 +3032,9 @@ class TestSth(unittest.TestCase):
                         result = self.SamplingRate(prescaler, acquisitionTimeValue, overSamplingVal, vRefVal, b1=1, b2=1, b3=1, runTime=1000, compare=False, compareRate=False, log=False)
                         samplingPointsDet = self.Can.samplingPoints(result["Value1"], result["Value2"], result["Value3"])
                         self.Can.Logger.Info("Sampling Rate Determined: " + str(samplingPointsDet))
-                        if samplingRate > SamplingToleranceHigh * samplingPointsDet:
+                        if samplingRate > self.tSthLimits.uSamplingToleranceHigh * samplingPointsDet:
                             break
-                    self.assertGreaterEqual(samplingRate, SamplingToleranceLow * result["SamplingRate"])
+                    self.assertGreaterEqual(samplingRate, self.tSthLimits.uSamplingToleranceLow * result["SamplingRate"])
                     if SamplingRateMaxDet < samplingRate:
                         aquisitionTime = acquisitionTimeKey
                         overSamples = overSamplingKey
@@ -3027,14 +3047,14 @@ class TestSth(unittest.TestCase):
                     self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
         self.Can.Logger.Info("Maximum Tripple Sampling Rate: " + str(SamplingRateMaxDet))
         self.Can.Logger.Info("Maximum Tripple Sampling Rate: " + str(SamplingRateMaxDet) + "(" + str(prescaler) + "/" + str(aquisitionTime) + "/" + str(overSamples) + ")")
-        self.assertEqual(SamplingRateMaxDet, SamplingRateTrippleMax)
+        self.assertEqual(SamplingRateMaxDet, self.tSthLimits.uSamplingRateTrippleMax())
 
     """
     Testing ADC Sampling Prescaler Min
     """
 
     def test0511AdcPrescalerMin(self):
-        self.SamplingRate(Prescaler["Min"], SamplingRateSingleMaxAcqTime, SamplingRateSingleMaxOverSamples, AdcReference["VDD"], b1=1, b2=0, b3=0, runTime=4000)
+        self.SamplingRate(Prescaler["Min"], self.tSthLimits.uSamplingRateTrippleAcqTimeMax, self.tSthLimits.uSamplingRateTrippleOverSamplesMax, AdcReference["VDD"], b1=1, b2=0, b3=0, runTime=4000)
 
     """
     Testing ADC Sampling Prescaler Min/Max
@@ -3116,9 +3136,9 @@ class TestSth(unittest.TestCase):
     """
 
     def test0519SamplingRateMixedStreamingAccXBat(self):
-        prescaler = SamplingRateSingleMaxPrescaler
-        acquisitionTime = SamplingRateSingleMaxAcqTime
-        overSamplingRate = SamplingRateSingleMaxOverSamples
+        prescaler = self.tSthLimits.uSamplingRateTripplePrescalerMax
+        acquisitionTime = self.tSthLimits.uSamplingRateTrippleAcqTimeMax
+        overSamplingRate = self.tSthLimits.uSamplingRateTrippleOverSamplesMax
         adcRef = AdcReference["VDD"]
         Settings = self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], prescaler, acquisitionTime, overSamplingRate, adcRef)[1:]
         self.assertEqual(prescaler, Settings[0])
@@ -3128,20 +3148,20 @@ class TestSth(unittest.TestCase):
         calcRate = calcSamplingRate(prescaler, acquisitionTime, overSamplingRate)
         self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0)
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0)
-        time.sleep(StreamingStandardTestTimeMs / 1000)
+        time.sleep(self.tSthLimits.uStandardTestTimeMs / 1000)
         indexEnd = self.Can.GetReadArrayIndex() - 1
         self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"])
         self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"])
         time.sleep(1)
         countDel = 0
-        while StreamingStandardTestTimeMs < self.Can.getReadMessageTimeMs(indexStart, indexEnd) - 0.5:
+        while self.tSthLimits.uStandardTestTimeMs < self.Can.getReadMessageTimeMs(indexStart, indexEnd) - 0.5:
             countDel += 1
             indexEnd -= 1
-        self.Can.Logger.Info("Deleted Messages do achieve " + str(StreamingStandardTestTimeMs) + "ms: " + str(countDel + 180))
+        self.Can.Logger.Info("Deleted Messages do achieve " + str(self.tSthLimits.uStandardTestTimeMs) + "ms: " + str(countDel + 180))
         self.Can.Logger.Info("indexStart: " + str(indexStart))
         self.Can.Logger.Info("indexEnd: " + str(indexEnd))
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Can.Logger.Warning("Deleted Messages do achieve " + str(StreamingStandardTestTimeMs) + "ms: " + str(countDel + 180))
+            self.Can.Logger.Warning("Deleted Messages do achieve " + str(self.tSthLimits.uStandardTestTimeMs) + "ms: " + str(countDel + 180))
         [arrayBat, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0, indexStart, indexEnd)
         self.assertEqual(0, len(array2))
         self.assertEqual(0, len(array3))
@@ -3155,19 +3175,19 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("Total Sampling Rate(Calulated): " + str(calcRate))
         calcRate = calcRate / 2
         self.Can.Logger.Info("Sampling Rate per Channel: " + str(int(calcRate)))
-        self.assertLess(calcRate * SamplingToleranceLow, samplePointsVoltage)
-        self.assertGreater(calcRate * SamplingToleranceHigh, samplePointsVoltage)
-        self.assertLess(calcRate * SamplingToleranceLow, samplePointsAcceleration)
-        self.assertGreater(calcRate * SamplingToleranceHigh, samplePointsAcceleration)
+        self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow, samplePointsVoltage)
+        self.assertGreater(calcRate * self.tSthLimits.uSamplingToleranceHigh, samplePointsVoltage)
+        self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow, samplePointsAcceleration)
+        self.assertGreater(calcRate * self.tSthLimits.uSamplingToleranceHigh, samplePointsAcceleration)
 
     """
     Mixed Streaming - AccXY + VoltageBattery
     """
 
     def test0520SamplingRateMixedStreamingAccXYBat(self):
-        prescaler = SamplingRateDoubleMaxPrescaler
-        acquisitionTime = SamplingRateDoubleMaxAcqTime
-        overSamplingRate = SamplingRateDoubleMaxOverSamples
+        prescaler = self.tSthLimits.uSamplingRateDoublePrescalerMax
+        acquisitionTime = self.tSthLimits.uSamplingRateDoubleAcqTimeMax
+        overSamplingRate = self.tSthLimits.uSamplingRateDoubleOverSamplesMax
         adcRef = AdcReference["VDD"]
         Settings = self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], prescaler, acquisitionTime, overSamplingRate, adcRef)[1:]
         self.assertEqual(prescaler, Settings[0])
@@ -3177,21 +3197,21 @@ class TestSth(unittest.TestCase):
         calcRate = calcSamplingRate(prescaler, acquisitionTime, overSamplingRate)
         self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0)
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 0)
-        time.sleep(StreamingStandardTestTimeMs / 1000 + 0.25)
+        time.sleep(self.tSthLimits.uStandardTestTimeMs / 1000 + 0.25)
         indexEnd = self.Can.GetReadArrayIndex() - 1
         self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"])
         self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"])
 
         time.sleep(1)
         countDel = 0
-        while StreamingStandardTestTimeMs + 0.25 < self.Can.getReadMessageTimeMs(indexStart, indexEnd) - 0.5:
+        while self.tSthLimits.uStandardTestTimeMs + 0.25 < self.Can.getReadMessageTimeMs(indexStart, indexEnd) - 0.5:
             countDel += 1
             indexEnd -= 1
-        self.Can.Logger.Info("Deleted Messages do achieve " + str(StreamingStandardTestTimeMs) + "ms: " + str(countDel + 180))
+        self.Can.Logger.Info("Deleted Messages do achieve " + str(self.tSthLimits.uStandardTestTimeMs) + "ms: " + str(countDel + 180))
         self.Can.Logger.Info("indexStart: " + str(indexStart))
         self.Can.Logger.Info("indexEnd: " + str(indexEnd))
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Can.Logger.Warning("Deleted Messages do achieve " + str(StreamingStandardTestTimeMs) + "ms: " + str(countDel + 180))
+            self.Can.Logger.Warning("Deleted Messages do achieve " + str(self.tSthLimits.uStandardTestTimeMs) + "ms: " + str(countDel + 180))
         [arrayBat, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0, indexStart, indexEnd)
         self.assertEqual(0, len(array2))
         self.assertEqual(0, len(array3))
@@ -3206,21 +3226,21 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("Total Sampling Rate(Calulated): " + str(int(calcRate)))
         calcRate = calcRate / 3
         self.Can.Logger.Info("Sampling Rate per Channel: " + str(int(calcRate)))
-        self.assertLess(calcRate * SamplingToleranceLow, samplePointsVoltage)
-        self.assertGreater(calcRate * SamplingToleranceHigh, samplePointsVoltage)
-        self.assertLess(calcRate * SamplingToleranceLow, samplePointsXAcceleration)
-        self.assertGreater(calcRate * SamplingToleranceHigh, samplePointsXAcceleration)
-        self.assertLess(calcRate * SamplingToleranceLow, samplePointsYAcceleration)
-        self.assertGreater(calcRate * SamplingToleranceHigh, samplePointsYAcceleration)
+        self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow, samplePointsVoltage)
+        self.assertGreater(calcRate * self.tSthLimits.uSamplingToleranceHigh, samplePointsVoltage)
+        self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow, samplePointsXAcceleration)
+        self.assertGreater(calcRate * self.tSthLimits.uSamplingToleranceHigh, samplePointsXAcceleration)
+        self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow, samplePointsYAcceleration)
+        self.assertGreater(calcRate * self.tSthLimits.uSamplingToleranceHigh, samplePointsYAcceleration)
 
     """
     Mixed Streaming - AccXYZ + VoltageBattery
     """
 
     def test0521SamplingRateMixedStreamingAccXYZBat(self):
-        prescaler = SamplingRateSingleMaxPrescaler
-        acquisitionTime = SamplingRateSingleMaxAcqTime
-        overSamplingRate = SamplingRateSingleMaxOverSamples
+        prescaler = self.tSthLimits.uSamplingRateTripplePrescalerMax
+        acquisitionTime = self.tSthLimits.uSamplingRateTrippleAcqTimeMax
+        overSamplingRate = self.tSthLimits.uSamplingRateTrippleOverSamplesMax
         adcRef = AdcReference["VDD"]
         Settings = self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], prescaler, acquisitionTime, overSamplingRate, adcRef)[1:]
         self.assertEqual(prescaler, Settings[0])
@@ -3230,20 +3250,20 @@ class TestSth(unittest.TestCase):
         calcRate = calcSamplingRate(prescaler, acquisitionTime, overSamplingRate)
         self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0)
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 1)
-        time.sleep(StreamingStandardTestTimeMs / 1000 + 0.25)
+        time.sleep(self.tSthLimits.uStandardTestTimeMs / 1000 + 0.25)
         indexEnd = self.Can.GetReadArrayIndex() - 1
         self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"])
         self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"])
         time.sleep(1)
         countDel = 0
-        while StreamingStandardTestTimeMs + 0.25 < self.Can.getReadMessageTimeMs(indexStart, indexEnd) - 0.5:
+        while self.tSthLimits.uStandardTestTimeMs + 0.25 < self.Can.getReadMessageTimeMs(indexStart, indexEnd) - 0.5:
             countDel += 1
             indexEnd -= 1
-        self.Can.Logger.Info("Deleted Messages do achieve " + str(StreamingStandardTestTimeMs) + "ms: " + str(countDel + 180))
+        self.Can.Logger.Info("Deleted Messages do achieve " + str(self.tSthLimits.uStandardTestTimeMs) + "ms: " + str(countDel + 180))
         self.Can.Logger.Info("indexStart: " + str(indexStart))
         self.Can.Logger.Info("indexEnd: " + str(indexEnd))
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Can.Logger.Warning("Deleted Messages do achieve " + str(StreamingStandardTestTimeMs) + "ms: " + str(countDel + 180))
+            self.Can.Logger.Warning("Deleted Messages do achieve " + str(self.tSthLimits.uStandardTestTimeMs) + "ms: " + str(countDel + 180))
         [arrayBat, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0, indexStart, indexEnd)
         self.assertEqual(0, len(array2))
         self.assertEqual(0, len(array3))
@@ -3259,23 +3279,23 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("Total Sampling Rate(Calulated): " + str(int(calcRate)))
         calcRate = calcRate / 4
         self.Can.Logger.Info("Sampling Rate per Channel: " + str(int(calcRate)))
-        self.assertLess(calcRate * SamplingToleranceLow, samplePointsVoltage)
-        self.assertGreater(calcRate * SamplingToleranceHigh, samplePointsVoltage)
-        self.assertLess(calcRate * SamplingToleranceLow, samplePointsXAcceleration)
-        self.assertGreater(calcRate * SamplingToleranceHigh, samplePointsXAcceleration)
-        self.assertLess(calcRate * SamplingToleranceLow, samplePointsYAcceleration)
-        self.assertGreater(calcRate * SamplingToleranceHigh, samplePointsYAcceleration)
-        self.assertLess(calcRate * SamplingToleranceLow, samplePointsZAcceleration)
-        self.assertGreater(calcRate * SamplingToleranceHigh, samplePointsZAcceleration)
+        self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow, samplePointsVoltage)
+        self.assertGreater(calcRate * self.tSthLimits.uSamplingToleranceHigh, samplePointsVoltage)
+        self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow, samplePointsXAcceleration)
+        self.assertGreater(calcRate * self.tSthLimits.uSamplingToleranceHigh, samplePointsXAcceleration)
+        self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow, samplePointsYAcceleration)
+        self.assertGreater(calcRate * self.tSthLimits.uSamplingToleranceHigh, samplePointsYAcceleration)
+        self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow, samplePointsZAcceleration)
+        self.assertGreater(calcRate * self.tSthLimits.uSamplingToleranceHigh, samplePointsZAcceleration)
 
     """
     Message Counters Mixed Signals
     """
 
     def test0522MessageCountersMixerdSignals(self):
-        prescaler = SamplingRateSingleMaxPrescaler
-        acquisitionTime = SamplingRateSingleMaxAcqTime
-        overSamplingRate = SamplingRateSingleMaxOverSamples
+        prescaler = self.tSthLimits.uSamplingRateTripplePrescalerMax
+        acquisitionTime = self.tSthLimits.uSamplingRateTrippleAcqTimeMax
+        overSamplingRate = self.tSthLimits.uSamplingRateTrippleOverSamplesMax
         adcRef = AdcReference["VDD"]
         Settings = self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], prescaler, acquisitionTime, overSamplingRate, adcRef)[1:]
         self.assertEqual(prescaler, Settings[0])
@@ -3285,20 +3305,20 @@ class TestSth(unittest.TestCase):
         calcSamplingRate(prescaler, acquisitionTime, overSamplingRate)
         self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0)
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 1)
-        time.sleep(StreamingStandardTestTimeMs / 1000 + 0.25)
+        time.sleep(self.tSthLimits.uStandardTestTimeMs / 1000 + 0.25)
         indexEnd = self.Can.GetReadArrayIndex() - 1
         self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"])
         self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"])
         time.sleep(1)
         countDel = 0
-        while StreamingStandardTestTimeMs + 0.25 < self.Can.getReadMessageTimeMs(indexStart, indexEnd) - 0.5:
+        while self.tSthLimits.uStandardTestTimeMs + 0.25 < self.Can.getReadMessageTimeMs(indexStart, indexEnd) - 0.5:
             countDel += 1
             indexEnd -= 1
-        self.Can.Logger.Info("Deleted Messages do achieve " + str(StreamingStandardTestTimeMs) + "ms: " + str(countDel + 180))
+        self.Can.Logger.Info("Deleted Messages do achieve " + str(self.tSthLimits.uStandardTestTimeMs) + "ms: " + str(countDel + 180))
         self.Can.Logger.Info("indexStart: " + str(indexStart))
         self.Can.Logger.Info("indexEnd: " + str(indexEnd))
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Can.Logger.Warning("Deleted Messages do achieve " + str(StreamingStandardTestTimeMs) + "ms: " + str(countDel + 180))
+            self.Can.Logger.Warning("Deleted Messages do achieve " + str(self.tSthLimits.uStandardTestTimeMs) + "ms: " + str(countDel + 180))
         [arrayBat, array2, array3] = self.Can.streamingValueArrayMessageCounters(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0, indexStart, indexEnd)
         self.assertEqual(0, len(array2))
         self.assertEqual(0, len(array3))
@@ -3335,7 +3355,7 @@ class TestSth(unittest.TestCase):
     """
 
     def test0523MessageCounterAccX(self):
-        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], SamplingRateSingleMaxPrescaler, SamplingRateSingleMaxAcqTime, SamplingRateSingleMaxOverSamples, AdcReference["VDD"])
+        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], self.tSthLimits.uSamplingRateTripplePrescalerMax, self.tSthLimits.uSamplingRateTrippleAcqTimeMax, self.tSthLimits.uSamplingRateTrippleOverSamplesMax, AdcReference["VDD"])
         [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0, 10000)
         [arrayAccX, arrayAccY, arrayAccZ] = self.Can.streamingValueArrayMessageCounters(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0, indexStart, indexEnd)
         self.assertEqual(0, len(arrayAccY))
@@ -3360,7 +3380,7 @@ class TestSth(unittest.TestCase):
     """
 
     def test0524MessageCounterAccY(self):
-        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], SamplingRateSingleMaxPrescaler, SamplingRateSingleMaxAcqTime, SamplingRateSingleMaxOverSamples, AdcReference["VDD"])
+        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], self.tSthLimits.uSamplingRateTripplePrescalerMax, self.tSthLimits.uSamplingRateTrippleAcqTimeMax, self.tSthLimits.uSamplingRateTrippleOverSamplesMax, AdcReference["VDD"])
         [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 1, 0, 1000)
         [arrayAccX, arrayAccY, arrayAccZ] = self.Can.streamingValueArrayMessageCounters(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 1, 0, indexStart, indexEnd)
         self.assertEqual(0, len(arrayAccX))
@@ -3385,7 +3405,7 @@ class TestSth(unittest.TestCase):
     """
 
     def test0525MessageCounterAccZ(self):
-        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], SamplingRateSingleMaxPrescaler, SamplingRateSingleMaxAcqTime, SamplingRateSingleMaxOverSamples, AdcReference["VDD"])
+        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], self.tSthLimits.uSamplingRateTripplePrescalerMax, self.tSthLimits.uSamplingRateTrippleAcqTimeMax, self.tSthLimits.uSamplingRateTrippleOverSamplesMax, AdcReference["VDD"])
         [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 0, 1, 1000)
         [arrayAccX, arrayAccY, arrayAccZ] = self.Can.streamingValueArrayMessageCounters(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 0, 1, indexStart, indexEnd)
         self.assertEqual(0, len(arrayAccX))
@@ -3410,7 +3430,7 @@ class TestSth(unittest.TestCase):
     """
 
     def test0526MessageCounterAccXY(self):
-        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], SamplingRateDoubleMaxPrescaler, SamplingRateDoubleMaxAcqTime, SamplingRateDoubleMaxOverSamples, AdcReference["VDD"])
+        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], self.tSthLimits.uSamplingRateDoublePrescalerMax, self.tSthLimits.uSamplingRateDoubleAcqTimeMax, self.tSthLimits.uSamplingRateDoubleOverSamplesMax, AdcReference["VDD"])
         [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 0, 1000)
         [arrayAccX, arrayAccY, arrayAccZ] = self.Can.streamingValueArrayMessageCounters(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 0, indexStart, indexEnd)
         self.assertEqual(0, len(arrayAccZ))
@@ -3431,7 +3451,7 @@ class TestSth(unittest.TestCase):
     """
 
     def test0527MessageCounterAccXZ(self):
-        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], SamplingRateDoubleMaxPrescaler, SamplingRateDoubleMaxAcqTime, SamplingRateDoubleMaxOverSamples, AdcReference["VDD"])
+        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], self.tSthLimits.uSamplingRateDoublePrescalerMax, self.tSthLimits.uSamplingRateDoubleAcqTimeMax, self.tSthLimits.uSamplingRateDoubleOverSamplesMax, AdcReference["VDD"])
         [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 0, 1, 1000)
         [arrayAccX, arrayAccY, arrayAccZ] = self.Can.streamingValueArrayMessageCounters(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 0, 1, indexStart, indexEnd)
         self.assertEqual(0, len(arrayAccY))
@@ -3452,7 +3472,7 @@ class TestSth(unittest.TestCase):
     """
 
     def test0528MessageCounterAccYZ(self):
-        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], SamplingRateDoubleMaxPrescaler, SamplingRateDoubleMaxAcqTime, SamplingRateDoubleMaxOverSamples, AdcReference["VDD"])
+        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], self.tSthLimits.uSamplingRateDoublePrescalerMax, self.tSthLimits.uSamplingRateDoubleAcqTimeMax, self.tSthLimits.uSamplingRateDoubleOverSamplesMax, AdcReference["VDD"])
         [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 0, 1, 1, 1000)
         [arrayAccX, arrayAccY, arrayAccZ] = self.Can.streamingValueArrayMessageCounters(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 0, 1, 1, indexStart, indexEnd)
         self.assertEqual(0, len(arrayAccX))
@@ -3473,7 +3493,7 @@ class TestSth(unittest.TestCase):
     """
 
     def test0529MessageCounterAccXYZ(self):
-        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], SamplingRateTrippleMaxPrescaler, SamplingRateTrippleMaxAcqTime, SamplingRateTrippleMaxOverSamples, AdcReference["VDD"])
+        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], self.tSthLimits.uSamplingRateTripplePrescalerMax, self.tSthLimits.uSamplingRateTrippleAcqTimeMax, self.tSthLimits.uSamplingRateTrippleOverSamplesMax, AdcReference["VDD"])
         [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 1, 1000)
         [arrayAccX, arrayAccY, arrayAccZ] = self.Can.streamingValueArrayMessageCounters(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 1, indexStart, indexEnd)
         self.Can.ValueLog(arrayAccX, arrayAccY, arrayAccZ, fAdcRawDat, "AccMsgCounter", "")
@@ -3494,9 +3514,9 @@ class TestSth(unittest.TestCase):
     """
 
     def test0530MessageCountersAccXBattery(self):
-        prescaler = SamplingRateSingleMaxPrescaler
-        acquisitionTime = SamplingRateSingleMaxAcqTime
-        overSamplingRate = SamplingRateSingleMaxOverSamples
+        prescaler = self.tSthLimits.uSamplingRateTripplePrescalerMax
+        acquisitionTime = self.tSthLimits.uSamplingRateTrippleAcqTimeMax
+        overSamplingRate = self.tSthLimits.uSamplingRateTrippleOverSamplesMax
         adcRef = AdcReference["VDD"]
         Settings = self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], prescaler, acquisitionTime, overSamplingRate, adcRef)[1:]
         self.assertEqual(prescaler, Settings[0])
@@ -3506,20 +3526,20 @@ class TestSth(unittest.TestCase):
         calcSamplingRate(prescaler, acquisitionTime, overSamplingRate)
         self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0)
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0)
-        time.sleep(StreamingStandardTestTimeMs / 1000 + 0.25)
+        time.sleep(self.tSthLimits.uStandardTestTimeMs / 1000 + 0.25)
         indexEnd = self.Can.GetReadArrayIndex() - 1
         self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"])
         self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"])
         time.sleep(1)
         countDel = 0
-        while StreamingStandardTestTimeMs + 0.25 < self.Can.getReadMessageTimeMs(indexStart, indexEnd) - 0.5:
+        while self.tSthLimits.uStandardTestTimeMs + 0.25 < self.Can.getReadMessageTimeMs(indexStart, indexEnd) - 0.5:
             countDel += 1
             indexEnd -= 1
-        self.Can.Logger.Info("Deleted Messages do achieve " + str(StreamingStandardTestTimeMs) + "ms: " + str(countDel + 180))
+        self.Can.Logger.Info("Deleted Messages do achieve " + str(self.tSthLimits.uStandardTestTimeMs) + "ms: " + str(countDel + 180))
         self.Can.Logger.Info("indexStart: " + str(indexStart))
         self.Can.Logger.Info("indexEnd: " + str(indexEnd))
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Can.Logger.Warning("Deleted Messages do achieve " + str(StreamingStandardTestTimeMs) + "ms: " + str(countDel + 180))
+            self.Can.Logger.Warning("Deleted Messages do achieve " + str(self.tSthLimits.uStandardTestTimeMs) + "ms: " + str(countDel + 180))
         [arrayBat, array2, array3] = self.Can.streamingValueArrayMessageCounters(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0, indexStart, indexEnd)
         self.assertEqual(0, len(array2))
         self.assertEqual(0, len(array3))
@@ -3560,9 +3580,9 @@ class TestSth(unittest.TestCase):
     """
 
     def test0531MessageCountersAccYBattery(self):
-        prescaler = SamplingRateSingleMaxPrescaler
-        acquisitionTime = SamplingRateSingleMaxAcqTime
-        overSamplingRate = SamplingRateSingleMaxOverSamples
+        prescaler = self.tSthLimits.uSamplingRateTripplePrescalerMax
+        acquisitionTime = self.tSthLimits.uSamplingRateTrippleAcqTimeMax
+        overSamplingRate = self.tSthLimits.uSamplingRateTrippleOverSamplesMax
         adcRef = AdcReference["VDD"]
         Settings = self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], prescaler, acquisitionTime, overSamplingRate, adcRef)[1:]
         self.assertEqual(prescaler, Settings[0])
@@ -3572,20 +3592,20 @@ class TestSth(unittest.TestCase):
         calcSamplingRate(prescaler, acquisitionTime, overSamplingRate)
         self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0)
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 1, 0)
-        time.sleep(StreamingStandardTestTimeMs / 1000 + 0.25)
+        time.sleep(self.tSthLimits.uStandardTestTimeMs / 1000 + 0.25)
         indexEnd = self.Can.GetReadArrayIndex() - 1
         self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"])
         self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"])
         time.sleep(1)
         countDel = 0
-        while StreamingStandardTestTimeMs + 0.25 < self.Can.getReadMessageTimeMs(indexStart, indexEnd) - 0.5:
+        while self.tSthLimits.uStandardTestTimeMs + 0.25 < self.Can.getReadMessageTimeMs(indexStart, indexEnd) - 0.5:
             countDel += 1
             indexEnd -= 1
-        self.Can.Logger.Info("Deleted Messages do achieve " + str(StreamingStandardTestTimeMs) + "ms: " + str(countDel + 180))
+        self.Can.Logger.Info("Deleted Messages do achieve " + str(self.tSthLimits.uStandardTestTimeMs) + "ms: " + str(countDel + 180))
         self.Can.Logger.Info("indexStart: " + str(indexStart))
         self.Can.Logger.Info("indexEnd: " + str(indexEnd))
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Can.Logger.Warning("Deleted Messages do achieve " + str(StreamingStandardTestTimeMs) + "ms: " + str(countDel + 180))
+            self.Can.Logger.Warning("Deleted Messages do achieve " + str(self.tSthLimits.uStandardTestTimeMs) + "ms: " + str(countDel + 180))
         [arrayBat, array2, array3] = self.Can.streamingValueArrayMessageCounters(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0, indexStart, indexEnd)
         self.assertEqual(0, len(array2))
         self.assertEqual(0, len(array3))
@@ -3626,9 +3646,9 @@ class TestSth(unittest.TestCase):
     """
 
     def test0532MessageCountersAccZBattery(self):
-        prescaler = SamplingRateSingleMaxPrescaler
-        acquisitionTime = SamplingRateSingleMaxAcqTime
-        overSamplingRate = SamplingRateSingleMaxOverSamples
+        prescaler = self.tSthLimits.uSamplingRateTripplePrescalerMax
+        acquisitionTime = self.tSthLimits.uSamplingRateTrippleAcqTimeMax
+        overSamplingRate = self.tSthLimits.uSamplingRateTrippleOverSamplesMax
         adcRef = AdcReference["VDD"]
         Settings = self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], prescaler, acquisitionTime, overSamplingRate, adcRef)[1:]
         self.assertEqual(prescaler, Settings[0])
@@ -3638,20 +3658,20 @@ class TestSth(unittest.TestCase):
         calcSamplingRate(prescaler, acquisitionTime, overSamplingRate)
         self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0)
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 0, 0, 1)
-        time.sleep(StreamingStandardTestTimeMs / 1000 + 0.25)
+        time.sleep(self.tSthLimits.uStandardTestTimeMs / 1000 + 0.25)
         indexEnd = self.Can.GetReadArrayIndex() - 1
         self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"])
         self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"])
         time.sleep(1)
         countDel = 0
-        while StreamingStandardTestTimeMs + 0.25 < self.Can.getReadMessageTimeMs(indexStart, indexEnd) - 0.5:
+        while self.tSthLimits.uStandardTestTimeMs + 0.25 < self.Can.getReadMessageTimeMs(indexStart, indexEnd) - 0.5:
             countDel += 1
             indexEnd -= 1
-        self.Can.Logger.Info("Deleted Messages do achieve " + str(StreamingStandardTestTimeMs) + "ms: " + str(countDel + 180))
+        self.Can.Logger.Info("Deleted Messages do achieve " + str(self.tSthLimits.uStandardTestTimeMs) + "ms: " + str(countDel + 180))
         self.Can.Logger.Info("indexStart: " + str(indexStart))
         self.Can.Logger.Info("indexEnd: " + str(indexEnd))
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Can.Logger.Warning("Deleted Messages do achieve " + str(StreamingStandardTestTimeMs) + "ms: " + str(countDel + 180))
+            self.Can.Logger.Warning("Deleted Messages do achieve " + str(self.tSthLimits.uStandardTestTimeMs) + "ms: " + str(countDel + 180))
         [arrayBat, array2, array3] = self.Can.streamingValueArrayMessageCounters(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[3], 1, 0, 0, indexStart, indexEnd)
         self.assertEqual(0, len(array2))
         self.assertEqual(0, len(array3))
@@ -3717,7 +3737,7 @@ class TestSth(unittest.TestCase):
     """
 
     def test0534MessageCounterAccBatteryDataSetSingle(self):
-        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], SamplingRateSingleMaxPrescaler, SamplingRateSingleMaxAcqTime, SamplingRateSingleMaxOverSamples + 2, AdcReference["VDD"])
+        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], self.tSthLimits.uSamplingRateTripplePrescalerMax, self.tSthLimits.uSamplingRateTrippleAcqTimeMax, self.tSthLimits.uSamplingRateTrippleOverSamplesMax + 2, AdcReference["VDD"])
         [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[1], 1, 0, 0, 1000)
         [arrayBattery, array2, array3] = self.Can.streamingValueArrayMessageCounters(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[1], 1, 0, 0, indexStart, indexEnd)
         self.Can.ValueLog(arrayBattery, array2, array3, fAdcRawDat, "BatteryMsgCounter", "")
@@ -3742,33 +3762,33 @@ class TestSth(unittest.TestCase):
         ret = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["Acc"], 1, AdcReference["VDD"])
         result = iMessage2Value(ret[4:])
         self.Can.Logger.Info("Calibration Result AccX: " + str(result))
-        self.assertLessEqual(AdcRawMiddleX - AdcRawToleranceX, result)
-        self.assertGreaterEqual(AdcRawMiddleX + AdcRawToleranceX, result)
+        self.assertLessEqual(self.tSthLimits.iAdcAccXRawMiddle - self.tSthLimits.iAdcAccXTolerance, result)
+        self.assertGreaterEqual(self.tSthLimits.iAdcAccXRawMiddle + self.tSthLimits.iAdcAccXTolerance, result)
         ret = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["Acc"], 2, AdcReference["VDD"])
         result = iMessage2Value(ret[4:])
         self.Can.Logger.Info("Calibration Result AccY: " + str(result))
-        self.assertLessEqual(AdcRawMiddleY - AdcRawToleranceY, result)
-        self.assertGreaterEqual(AdcRawMiddleY + AdcRawToleranceY, result)
+        self.assertLessEqual(self.tSthLimits.iAdcAccYRawMiddle - self.tSthLimits.iAdcAccYTolerance, result)
+        self.assertGreaterEqual(self.tSthLimits.iAdcAccYRawMiddle + self.tSthLimits.iAdcAccYTolerance, result)
         ret = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["Acc"], 3, AdcReference["VDD"])
         result = iMessage2Value(ret[4:])
         self.Can.Logger.Info("Calibration Result AccZ: " + str(result))
-        self.assertLessEqual(AdcRawMiddleZ - AdcRawToleranceZ, result)
-        self.assertGreaterEqual(AdcRawMiddleZ + AdcRawToleranceZ, result)
+        self.assertLessEqual(self.tSthLimits.iAdcAccZRawMiddle - self.tSthLimits.iAdcAccZTolerance, result)
+        self.assertGreaterEqual(self.tSthLimits.iAdcAccZRawMiddle + self.tSthLimits.iAdcAccZTolerance, result)
         ret = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["Temp"], 1, AdcReference["VDD"])
         result = iMessage2Value(ret[4:])
         self.Can.Logger.Info("Calibration Result Temperature: " + str(result))
-        self.assertLessEqual(TempInternal3V3Middle - TempInternal3V3Tolerance, result)
-        self.assertGreaterEqual(TempInternal3V3Middle + TempInternal3V3Tolerance, result)
+        self.assertLessEqual(self.tSthLimits.uTemperatureInternal3V3Middle - self.tSthLimits.uTemperatureInternal3V3Tolerance, result)
+        self.assertGreaterEqual(self.tSthLimits.uTemperatureInternal3V3Middle + self.tSthLimits.uTemperatureInternal3V3Tolerance, result)
         ret = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["Voltage"], 1, AdcReference["VDD"])
         result = iMessage2Value(ret[4:])
         self.Can.Logger.Info("Calibration Result Voltage: " + str(result))
-        self.assertLessEqual(VoltRawMiddleBat - VoltRawToleranceBat, result)
-        self.assertGreaterEqual(VoltRawMiddleBat + VoltRawToleranceBat, result)
+        self.assertLessEqual(self.tSthLimits.VoltRawMiddleBat - self.tSthLimits.uBatteryToleranceRaw, result)
+        self.assertGreaterEqual(self.tSthLimits.VoltRawMiddleBat + self.tSthLimits.uBatteryToleranceRaw, result)
         ret = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["Vss"], 1, AdcReference["VDD"])
         result = iMessage2Value(ret[4:])
         self.Can.Logger.Info("Calibration Result VSS(Ground): " + str(result))
         self.assertLessEqual(0, result)
-        self.assertGreaterEqual(VoltRawVssTolerance, result)
+        self.assertGreaterEqual(self.tSthLimits.uVoltRawVssTolerance, result)
         ret = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["Avdd"], 1, AdcReference["VDD"])
         result = iMessage2Value(ret[4:])
         self.Can.Logger.Info("Calibration Result AVDD(3V3): " + str(result))
@@ -3776,13 +3796,13 @@ class TestSth(unittest.TestCase):
         ret = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["OpvOutput"], 1, AdcReference["VDD"])
         result = iMessage2Value(ret[4:])
         self.Can.Logger.Info("Calibration Result OPA2: " + str(result))
-        self.assertLessEqual(VoltRawOpa2Middle - VoltRawOpa2Tolerance, result)
-        self.assertGreaterEqual(VoltRawOpa2Middle + VoltRawOpa2Tolerance, result)
+        self.assertLessEqual(self.tSthLimits.uVoltRawOpa2Middle - self.tSthLimits.uVoltRawOpa2Tolerance, result)
+        self.assertGreaterEqual(self.tSthLimits.uVoltRawOpa2Middle + self.tSthLimits.uVoltRawOpa2Tolerance, result)
         ret = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["OpvOutput"], 2, AdcReference["VDD"])
         result = iMessage2Value(ret[4:])
         self.Can.Logger.Info("Calibration Result OPA3: " + str(result))
-        self.assertLessEqual(VoltRawOpa3Middle - VoltRawOpa3Tolerance, result)
-        self.assertGreaterEqual(VoltRawOpa3Middle + VoltRawOpa3Tolerance, result)
+        self.assertLessEqual(self.tSthLimits.uVoltRawOpa3Middle - self.tSthLimits.uVoltRawOpa3Tolerance, result)
+        self.assertGreaterEqual(self.tSthLimits.uVoltRawOpa3Middle + self.tSthLimits.uVoltRawOpa3Tolerance, result)
 
     """
     Calibration - Check On-Die Temperature
@@ -3793,8 +3813,8 @@ class TestSth(unittest.TestCase):
         result = float(iMessage2Value(ret[4:]))
         result /= 1000
         self.Can.Logger.Info("Temperature(Chip): " + str(result) + "°C")
-        self.assertLessEqual(result, TempInternalMax)
-        self.assertGreaterEqual(result, TempInternalMin)
+        self.assertLessEqual(result, self.tSthLimits.iTemperatureInternalMax)
+        self.assertGreaterEqual(result, self.tSthLimits.iTemperatureInternalMin)
 
     """
     Calibration - Check all VRef combinations
@@ -3809,8 +3829,8 @@ class TestSth(unittest.TestCase):
                 self.Can.Logger.Info("ADC Value: " + str(result))
                 result = result * ((vRefValue) / (AdcReference["VDD"]))
                 self.Can.Logger.Info("Recalculated value(result*" + str(vRefValue * 50) + "/" + str(AdcReference["VDD"] * 50) + "): " + str(result))
-                self.assertLessEqual(AdcRawMiddleX - AdcRawToleranceX, result * SamplingToleranceHigh)
-                self.assertGreaterEqual(AdcRawMiddleX + AdcRawToleranceX, result * SamplingToleranceLow)
+                self.assertLessEqual(self.tSthLimits.iAdcAccXRawMiddle - self.tSthLimits.iAdcAccXTolerance, result * self.tSthLimits.uSamplingToleranceHigh)
+                self.assertGreaterEqual(self.tSthLimits.iAdcAccXRawMiddle + self.tSthLimits.iAdcAccXTolerance, result * self.tSthLimits.uSamplingToleranceLow)
 
     """
     Calibration - Check Injection and Ejection
@@ -3911,15 +3931,15 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("Xk2-Xk1(measured): " + str(difKX) + "mV")
         self.Can.Logger.Info("Yk2-YXk1(measured): " + str(difKY) + "mV")
         self.Can.Logger.Info("Zk2-Zk1(measured): " + str(difKZ) + "mV")
-        self.Can.Logger.Info("k2-k1(assumed) Mininimum: " + str(SelfTestOutputChangemVMin) + "mV")
-        self.Can.Logger.Info("k2-k1(assumed) Typical: " + str(SelfTestOutputChangemVTyp) + "mV")
-        self.assertGreaterEqual(difKX, SelfTestOutputChangemVMin)
-        self.assertLessEqual(difKX, SelfTestOutputChangemVTyp)
+        self.Can.Logger.Info("k2-k1(assumed) Mininimum: " + str(self.tSthLimits.iSelfTestOutputChangemVMin) + "mV")
+        self.Can.Logger.Info("k2-k1(assumed) Typical: " + str(self.tSthLimits.iSelfTestOutputChangemVTyp) + "mV")
+        self.assertGreaterEqual(difKX, self.tSthLimits.iSelfTestOutputChangemVMin)
+        self.assertLessEqual(difKX, self.tSthLimits.iSelfTestOutputChangemVTyp)
         if 1 < iSensorAxis:
-            self.assertGreaterEqual(difKY, SelfTestOutputChangemVMin)
-            self.assertLowerEqual(difKY, SelfTestOutputChangemVTyp)
-            self.assertGreaterEqual(difKZ, SelfTestOutputChangemVMin)
-            self.assertLowerEqual(difKZ, SelfTestOutputChangemVTyp)
+            self.assertGreaterEqual(difKY, self.tSthLimits.iSelfTestOutputChangemVMin)
+            self.assertLowerEqual(difKY, self.tSthLimits.iSelfTestOutputChangemVTyp)
+            self.assertGreaterEqual(difKZ, self.tSthLimits.iSelfTestOutputChangemVMin)
+            self.assertLowerEqual(difKZ, self.tSthLimits.iSelfTestOutputChangemVTyp)
         # Inject State Check
         self.assertEqual(ackInjectX[0], 0xa0)
         self.assertEqual(ackInjectY[0], 0xa0)
