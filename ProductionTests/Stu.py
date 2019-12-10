@@ -11,7 +11,7 @@ import time
 import array
 import openpyxl
 import struct
-import SthLimits
+from SthLimits import SthLimits
 import MyToolItSth
 from datetime import date
 from shutil import copyfile
@@ -19,7 +19,7 @@ from openpyxl.styles import Font
 from MyToolItNetworkNumbers import MyToolItNetworkNr 
 from MyToolItStu import TestConfig, StuErrorWord
 
-from StuLimits import PcbOnly, RssiStuMin
+from StuLimits import StuLimits
 from MyToolItCommands import *
 from openpyxl.descriptors.base import DateTime
 
@@ -43,6 +43,11 @@ def sSerialNumber(sExcelFileName):
 
 
 bSkip = False
+iSensorAxis = 1
+bBatteryExternalDcDc = True
+uAdc2Acc = 100
+iRssiMin = -75
+
 
 """
 This class supports the production test of the Stationary Transceiving Unit (STU)
@@ -53,6 +58,7 @@ class TestStu(unittest.TestCase):
 
     def setUp(self):
         global bSkip
+        self.tSthLimits = SthLimits(iSensorAxis, bBatteryExternalDcDc, uAdc2Acc, iRssiMin, 20, 35)
         self.sBuildLocation = sBuildLocation + sVersion
         self.sBootloader = sBuildLocation + "BootloaderOtaBgm111.s37"
         self.sAdapterSerialNo = sAdapterSerialNo
@@ -586,9 +592,9 @@ class TestStu(unittest.TestCase):
         self.tWorkSheetWrite("E", "RSSI @ STH: " + str(iRssiSth) + "dBm")
         self.tWorkSheetWrite("F", "RSSI @ STU: " + str(iRssiStu) + "dBm")
         self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
-        self.assertGreater(iRssiSth, SthLimits.RssiSthMin)
+        self.assertGreater(iRssiSth, self.tSthLimits.iRssiMin)
         self.assertLess(iRssiSth, -20)
-        self.assertGreater(iRssiStu, RssiStuMin)
+        self.assertGreater(iRssiStu, self.tStuLimits.iRssiMin)
         self.assertLess(iRssiStu, -20)
          
     """

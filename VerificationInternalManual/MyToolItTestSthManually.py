@@ -12,12 +12,18 @@ sys.path.append(sDirName)
                 
 import CanFd
 from MyToolItNetworkNumbers import MyToolItNetworkNr
-from SthLimits import *
+from SthLimits import SthLimits
 import time
 from MyToolItSth import TestConfig, SthErrorWord, SleepTime, fAdcRawDat
 from MyToolItCommands import *
 
 sLogLocation = '../../Logs/STH/'
+
+
+iSensorAxis = 1
+bBatteryExternalDcDc = True
+uAdc2Acc = 100
+iRssiMin = -75
 
 """
 This class supports a manual tests of the Sensory Tool Holder (STH)
@@ -29,9 +35,10 @@ class TestSthManually(unittest.TestCase):
     def setUp(self):
         print("TestCase: ", self._testMethodName)
         input('Press Any Key to Continue')
+        self.tSthLimits = SthLimits(iSensorAxis, bBatteryExternalDcDc, uAdc2Acc, iRssiMin, 20, 35)
         self.fileName = sLogLocation + self._testMethodName + ".txt"
         self.fileNameError = sLogLocation + "Error_" + self._testMethodName + ".txt"
-        self.Can = CanFd.CanFd(CanFd.PCAN_BAUD_1M, self.fileName, self.fileNameError, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], AdcPrescalerReset, AdcAcquisitionTimeReset, AdcAcquisitionOverSamplingRateReset, FreshLog=True)
+        self.Can = CanFd.CanFd(CanFd.PCAN_BAUD_1M, self.fileName, self.fileNameError, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], self.tSthLimits.uSamplingRatePrescalerReset, self.tSthLimits.uSamplingRateAcqTimeReset, self.tSthLimits.uSamplingRateOverSamplesReset, FreshLog=True)
         self.Can.Logger.Info("TestCase: " + str(self._testMethodName))
         self._resetStu()
         self.Can.Logger.Info("Connect to STH")
@@ -44,8 +51,8 @@ class TestSthManually(unittest.TestCase):
         self.Can.Logger.Info("STH BlueTooth Address: " + hex(self.Can.BlueToothAddress(MyToolItNetworkNr["STH1"])))
         self._statusWords()
         temp = self._SthAdcTemp()
-        self.assertGreaterEqual(TempInternalMax, temp)
-        self.assertLessEqual(TempInternalMin, temp)
+        self.assertGreaterEqual(self.tSthLimits.iTemperatureInternalMax, temp)
+        self.assertLessEqual(self.tSthLimits.iTemperatureInternalMin, temp)
         print("Start")
         self.Can.Logger.Info("Start")
 
@@ -229,7 +236,7 @@ class TestSthManually(unittest.TestCase):
     """   
 
     def testManually0300MeasuringInterference(self):
-        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], SamplingRateSingleMaxPrescaler, SamplingRateSingleMaxAcqTime, SamplingRateSingleMaxOverSamples, AdcReference["VDD"])
+        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], self.tSthLimits.uSamplingRatePrescalerReset, self.tSthLimits.uSamplingRateAcqTimeReset, self.tSthLimits.uSamplingRateOverSamplesReset, AdcReference["VDD"])
         print("Please take a smartphone, start scanning Bluetooth devices and hold it over STU and STH alternately for 10s")
         [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0, 30000)
         [arrayAccX, arrayAccY, arrayAccZ] = self.Can.streamingValueArrayMessageCounters(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0, indexStart, indexEnd)

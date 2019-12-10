@@ -16,9 +16,9 @@ import CanFd
 import math
 from MyToolItNetworkNumbers import MyToolItNetworkNr
 import time
-from MyToolItSth import TestConfig, SthModule, SleepTime, SthErrorWord, SthStateWord, fVoltageBattery, fAdcRawDat, fAcceleration
+from MyToolItSth import TestConfig, SthModule, SleepTime, SthErrorWord, SthStateWord, fVoltageBattery, fAdcRawDat
 from MyToolItCommands import *
-from SthLimits import *
+from SthLimits import SthLimits
 from testSignal import *
 
 sVersion = TestConfig["Version"]
@@ -27,9 +27,11 @@ sHomeLocation = "../../SimplicityStudio/v4_workspace/STH/"
 sSilabsCommanderLocation = "../../SimplicityStudio/SimplicityCommander/"
 sAdapterSerialNo = "440115849"
 sBoardType = "BGM113A256V2"
-iAccAxis = 3
-bPcbOnly = True
+iSensorAxis = 1
 bBatteryExternalDcDc = True
+uAdc2Acc = 100
+iRssiMin = -75
+bStuPcbOnly = True
 
 """
 This class is used for automated internal verification of the sensory tool holder
@@ -39,7 +41,8 @@ This class is used for automated internal verification of the sensory tool holde
 class TestSth(unittest.TestCase):
 
     def setUp(self):
-        vSthLimitsConfig(iAccAxis, bPcbOnly, bBatteryExternalDcDc)
+        self.tSthLimits = SthLimits()
+        SthLimits(iSensorAxis, bBatteryExternalDcDc, uAdc2Acc, iRssiMin, 20, 35)
         self.sHomeLocation = sHomeLocation
         self.sBuildLocation = sHomeLocation + "builds/" + sVersion
         self.sBootloader = sHomeLocation + "builds/" + "BootloaderOtaBgm113.s37"
@@ -49,7 +52,7 @@ class TestSth(unittest.TestCase):
         self.bError = False
         self.fileName = sLogLocation + self._testMethodName + ".txt"
         self.fileNameError = sLogLocation + "Error_" + self._testMethodName + ".txt"
-        self.Can = CanFd.CanFd(CanFd.PCAN_BAUD_1M, self.fileName, self.fileNameError, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], AdcPrescalerReset, AdcAcquisitionTimeReset, AdcAcquisitionOverSamplingRateReset, FreshLog=True)
+        self.Can = CanFd.CanFd(CanFd.PCAN_BAUD_1M, self.fileName, self.fileNameError, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], self.tSthLimits.uSamplingRatePrescalerReset, self.tSthLimits.uSamplingRateAcqTimeReset, self.tSthLimits.uSamplingRateOverSamplesReset, FreshLog=True)
         self.Can.Logger.Info("TestCase: " + str(self._testMethodName))
         self.vSilabsAdapterReset()
         self.Can.CanTimeStampStart(self._resetStu()["CanTime"])  # This will also reset to STH
@@ -68,8 +71,8 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("STH Operating Seconds: " + str(iOperatingSeconds))
         self._statusWords()
         temp = self._SthAdcTemp()
-        self.assertGreaterEqual(TempInternalMax, temp)
-        self.assertLessEqual(TempInternalMin, temp)
+        self.assertGreaterEqual(self.tSthLimits.iTemperatureInternalMax, temp)
+        self.assertLessEqual(self.tSthLimits.iTemperatureInternalMin, temp)
         self._SthWDog()
 
         self.Can.Logger.Info("_______________________________________________________________________________________________________________")
@@ -90,8 +93,8 @@ class TestSth(unittest.TestCase):
             self.Can.Logger.Info("STH Operating Seconds: " + str(iOperatingSeconds))
             self._statusWords()
             temp = self._SthAdcTemp()
-            self.assertGreaterEqual(TempInternalMax, temp)
-            self.assertLessEqual(TempInternalMin, temp)
+            self.assertGreaterEqual(self.tSthLimits.iTemperatureInternalMax, temp)
+            self.assertLessEqual(self.tSthLimits.iTemperatureInternalMin, temp)
             self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STH1"])
             self.Can.Logger.Info("Test Time End Time Stamp")
             self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
@@ -331,7 +334,13 @@ class TestSth(unittest.TestCase):
     Config ADC and determine correct sampling rate
     """
 
-    def SamplingRate(self, prescaler, acquisitionTime, overSamplingRate, adcRef, b1=1, b2=0, b3=0, runTime=StreamingStandardTestTimeMs, compare=True, compareRate=True, log=True, startupTime=StreamingStartupTimeMs):
+    def SamplingRate(self, prescaler, acquisitionTime, overSamplingRate, adcRef, b1=1, b2=0, b3=0, runTime=None, compare=True, compareRate=True, log=True, startupTime=None):
+        if None == runTime:
+            runTime = self.tSthLimits.uStandardTestTimeMs
+            
+        if None == startupTime:
+            startupTime = self.tSthLimits.uStartupTimeMs
+
         Settings = self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], prescaler, acquisitionTime, overSamplingRate, adcRef, log=log)[1:]
         self.assertEqual(prescaler, Settings[0])
         self.assertEqual(acquisitionTime, Settings[1])
@@ -358,16 +367,16 @@ class TestSth(unittest.TestCase):
         ratM = AdcVRefValuemV[AdcReference["VDD"]] / AdcVRefValuemV[adcRef]
         ratT = 1
         if adcRef != AdcReference["VDD"]:
-            ratT = SamplingRateVfsToleranceRation
+            ratT = self.tSthLimits.Vfs
         if False != compare:
             if(1 != ratM):
                 self.Can.Logger.Info("Compare Ration to compensate not AVDD: " + str(ratM))
-            adcXMiddle = ratM * AdcRawMiddleX
-            adcYMiddle = ratM * AdcRawMiddleY
-            adcZMiddle = ratM * AdcRawMiddleZ
-            adcXTol = AdcRawToleranceX * ratT
-            adcYTol = AdcRawToleranceY * ratT
-            adcZTol = AdcRawToleranceZ * ratT
+            adcXMiddle = ratM * self.tSthLimits.iAdcAccXRawMiddle
+            adcYMiddle = ratM * self.tSthLimits.iAdcAccYRawMiddle
+            adcZMiddle = ratM * self.tSthLimits.iAdcAccZRawMiddle
+            adcXTol = self.tSthLimits.iAdcAccXRawTolerance * ratT
+            adcYTol = self.tSthLimits.iAdcAccYRawTolerance * ratT
+            adcZTol = self.tSthLimits.iAdcAccZRawTolerance * ratT
             if(16 > AdcOverSamplingRateReverse[overSamplingRate]):
                 self.Can.Logger.Info("Maximum ADC Value: " + str(AdcMax / 2 ** (5 - AdcOverSamplingRateReverse[overSamplingRate])))
                 adcXMiddle = adcXMiddle / 2 ** (5 - AdcOverSamplingRateReverse[overSamplingRate])
@@ -377,8 +386,8 @@ class TestSth(unittest.TestCase):
                 self.Can.Logger.Info("Maximum ADC Value: " + str(AdcMax))
             self.streamingValueCompare(array1, array2, array3, adcXMiddle, adcXTol, adcYMiddle, adcYTol, adcZMiddle, adcZTol, fAdcRawDat)
         if False != compareRate:
-            self.assertLess(runTime / 1000 * calcRate * SamplingToleranceLow, samplingPoints)
-            self.assertGreater(runTime / 1000 * calcRate * SamplingToleranceHigh, samplingPoints)
+            self.assertLess(runTime / 1000 * calcRate * self.tSthLimits.uSamplingToleranceLow, samplingPoints)
+            self.assertGreater(runTime / 1000 * calcRate * self.tSthLimits.uSamplingToleranceHigh, samplingPoints)
         result = {"SamplingRate" : calcRate, "Value1" : array1, "Value2" : array2, "Value3" : array3}
         return result
 
@@ -559,8 +568,9 @@ class TestSth(unittest.TestCase):
         for _i in range(0, uLoopRuns):
             index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], 1, 1, 1)
             [val1, val2, val3] = self.Can.singleValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], 1, 1, 1, index)
-            self.Can.ValueLog(val1, val2, val3, fAcceleration, "Acc", "g")
-            self.singleValueCompare(val1, val2, val3, AdcMiddleX, AdcToleranceX, AdcMiddleY, AdcToleranceY, AdcMiddleZ, AdcToleranceZ, fAcceleration)
+            self.Can.ValueLog(val1, val2, val3, self.tSthLimits.fAcceleration, "Acc", "g")
+            
+            self.singleValueCompare(val1, val2, val3, self.tSthLimits.iAdcAccXMiddle, self.tSthLimits.iAdcAccXTolerance, self.tSthLimits.iAdcAccYMiddle, self.tSthLimits.iAdcAccYTolerance, self.tSthLimits.iAdcAccZMiddle, self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
 
 
 if __name__ == "__main__":

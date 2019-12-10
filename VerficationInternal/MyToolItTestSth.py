@@ -18,7 +18,7 @@ from MyToolItNetworkNumbers import MyToolItNetworkNr
 import time
 from MyToolItSth import TestConfig, SthModule, SleepTime, SthErrorWord, SthStateWord, fVoltageBattery, fAdcRawDat
 from MyToolItCommands import *
-from SthLimits import *
+from SthLimits import SthLimits
 from testSignal import *
 
 sVersion = TestConfig["Version"]

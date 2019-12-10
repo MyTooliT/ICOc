@@ -18,8 +18,8 @@ from openpyxl.styles import Font
 from MyToolItNetworkNumbers import MyToolItNetworkNr 
 from MyToolItSth import TestConfig, SthErrorWord, fVoltageBattery
 from MyToolItStu import StuErrorWord
-from SthLimits import *
-from StuLimits import RssiStuMin
+from SthLimits import SthLimits
+from StuLimits import StuLimits
 from MyToolItCommands import *
 from openpyxl.descriptors.base import DateTime
 
@@ -35,6 +35,7 @@ iSensorAxis = 1
 bBatteryExternalDcDc = True
 uAdc2Acc = 100
 iRssiMin = -75
+bStuPcbOnly = True
 """
 Get serial number that is stored in the excel file
 """
@@ -61,6 +62,7 @@ class TestSth(unittest.TestCase):
         global bSkip
         global sHolderNameInput
         self.tSthLimits = SthLimits(iSensorAxis, bBatteryExternalDcDc, uAdc2Acc, iRssiMin, 20, 35)
+        self.tStuLimits = StuLimits(bStuPcbOnly, iRssiMin)
         self.sBuildLocation = sBuildLocation + sVersion
         self.sBootloader = sBuildLocation + "BootloaderOtaBgm113.s37"
         self.sAdapterSerialNo = sAdapterSerialNo
@@ -713,7 +715,7 @@ class TestSth(unittest.TestCase):
         self.tWorkSheetWrite("F", "RSSI @ STU: " + str(iRssiStu) + "dBm")
         self.assertGreater(iRssiSth, self.tSthLimits.iRssiMin)
         self.assertLess(iRssiSth, -20)
-        self.assertGreater(iRssiStu, RssiStuMin)
+        self.assertGreater(iRssiStu, self.tStuLimits.iRssiMin)
         self.assertLess(iRssiStu, -20)
         
     """
