@@ -41,7 +41,7 @@ Todo
 |_______________________________________|
 
 Any production Test may be called multiple times for the same STH/STU (PCB). Furthermore, the test results are stored by the Bluetooth Address and a consecutively run number (file name). Thus a
-PCBs, aassemled STH/STU and a potted STH may be tested in a row.
+PCBs, assemled STHs/STUs and a potted STHs may be tested in a row.
 
 The Production Tests are supported via:
 	* ProductionTests/Sth.py: Tests Sensory Tool Holder (STH) and STH print circuit boards (PCBs).
