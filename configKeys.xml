@@ -2,8 +2,8 @@
 <ConfigKey>
     <lastRun>
         <LogName>Walther</LogName>
-        <Product>STU</Product>
-        <Version>v2.1.11</Version>
+        <Product>STH</Product>
+        <Version>v2.1.10_50g</Version>
         <NetworkNumber>STH1</NetworkNumber>
         <SheetFile>Sth</SheetFile>
         <Setup>X</Setup>
@@ -1852,7 +1852,7 @@
                                     <subAddress>23</subAddress>
                                     <length>1</length>
                                     <readOnly>True</readOnly>
-                                    <value>6</value>
+                                    <value>10</value>
                                     <unit />
                                     <format>unsigned</format>
                                     <description>Firmware Version Number - Build</description>
@@ -1934,7 +1934,7 @@
                                     <format>unsigned</format>
                                     <description>Counts of under voltages that yields into turn off state(Brown Out)</description>
                                     </entry>
-                                <entry name="Watchdog Reset Counter "><subAddress>16</subAddress><length>4</length><readOnly>True</readOnly><value>0</value><unit /><format>unsigned</format><description>Watchdog Resets since first power on</description></entry><entry name="Production Date"><subAddress>20</subAddress><length>8</length><readOnly>True</readOnly><value>20191111</value><unit>date</unit><format>ASCII</format><description>Production Date (EEPROM Production Write) in the format yyyymmdd (year month day)</description></entry><entry name="Batch Number"><subAddress>28</subAddress><length>4</length><readOnly>True</readOnly><value>1</value><unit /><format>unsigned</format><description>Consecutive number for manufactured devices</description></entry><entry name="Bluetooth Address"><subAddress>32</subAddress><length>6</length><readOnly>True</readOnly><value>0</value><unit /><format>unsigned</format><description>Bluetooth address at production (will not change)</description></entry></Entry>
+                                <entry name="Watchdog Reset Counter "><subAddress>16</subAddress><length>4</length><readOnly>True</readOnly><value>0</value><unit /><format>unsigned</format><description>Watchdog Resets since first power on</description></entry><entry name="Production Date"><subAddress>20</subAddress><length>8</length><readOnly>True</readOnly><value>20191112</value><unit>date</unit><format>ASCII</format><description>Production Date (EEPROM Production Write) in the format yyyymmdd (year month day)</description></entry><entry name="Batch Number"><subAddress>28</subAddress><length>4</length><readOnly>True</readOnly><value>1</value><unit /><format>unsigned</format><description>Consecutive number for manufactured devices</description></entry><entry name="Bluetooth Address"><subAddress>32</subAddress><length>6</length><readOnly>True</readOnly><value>0</value><unit /><format>unsigned</format><description>Bluetooth address at production (will not change)</description></entry></Entry>
                             </page>
                             <page name="Calibration0">
                                 <pageAddress>8</pageAddress>
@@ -2245,7 +2245,7 @@
                                     <subAddress>23</subAddress>
                                     <length>1</length>
                                     <readOnly>True</readOnly>
-                                    <value>6</value>
+                                    <value>10</value>
                                     <unit />
                                     <format>unsigned</format>
                                     <description>Firmware Version Number - Build</description>
