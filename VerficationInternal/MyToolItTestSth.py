@@ -2932,10 +2932,10 @@ class TestSth(unittest.TestCase):
 
     def test0507VRef(self):
         self.Can.Logger.Info("Warm Up")
-        self.SamplingRate(self.tSthLimits.uSamplingRateDoublePrescalerMax, self.tSthLimits.uSamplingRateDoubleAcqTimeMax, self.tSthLimits.uSamplingRateDoubleOverSamplesMax, AdcReference["VDD"], b1=1, b2=1, b3=1, runTime=5000)
+        self.SamplingRate(self.tSthLimits.uSamplingRateTripplePrescalerMax, self.tSthLimits.uSamplingRateTrippleAcqTimeMax, self.tSthLimits.uSamplingRateTrippleOverSamplesMax, AdcReference["VDD"], b1=1, b2=1, b3=1, runTime=5000)
         for _vRefkey, vRefVal in AdcReference.items():
             self.Can.Logger.Info("Using Voltage Reference: " + VRefName[vRefVal])
-            self.SamplingRate(self.tSthLimits.uSamplingRateDoublePrescalerMax, self.tSthLimits.uSamplingRateDoubleAcqTimeMax, self.tSthLimits.uSamplingRateDoubleOverSamplesMax, vRefVal, b1=1, b2=1, b3=1, runTime=5000, compare=(AdcReference["Vfs1V65"] <= vRefVal), startupTime=False)
+            self.SamplingRate(self.tSthLimits.uSamplingRateTripplePrescalerMax, self.tSthLimits.uSamplingRateTrippleAcqTimeMax, self.tSthLimits.uSamplingRateTrippleOverSamplesMax, vRefVal, b1=1, b2=1, b3=1, runTime=5000, compare=(AdcReference["Vfs1V65"] <= vRefVal), startupTime=False)
 
     """
     ADC Configuration Combine all possible settings - Single Axis (but only for prescaler 2)
@@ -3737,7 +3737,7 @@ class TestSth(unittest.TestCase):
     """
 
     def test0534MessageCounterAccBatteryDataSetSingle(self):
-        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], self.tSthLimits.uSamplingRateSinglePrescalerMax, self.tSthLimits.uSamplingRateSingleAcqTimeMax, self.tSthLimits.uSamplingRateSingleOverSamplesMax + 2, AdcReference["VDD"])
+        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], self.tSthLimits.uSamplingRateDoublePrescalerMax, self.tSthLimits.uSamplingRateDoubleAcqTimeMax, self.tSthLimits.uSamplingRateDoubleOverSamplesMax + 2, AdcReference["VDD"])
         [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[1], 1, 0, 0, 1000)
         [arrayBattery, array2, array3] = self.Can.streamingValueArrayMessageCounters(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], DataSets[1], 1, 0, 0, indexStart, indexEnd)
         self.Can.ValueLog(arrayBattery, array2, array3, fAdcRawDat, "BatteryMsgCounter", "")
