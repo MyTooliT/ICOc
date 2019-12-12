@@ -47,7 +47,7 @@ iSensorAxis = 1
 bBatteryExternalDcDc = True
 uAdc2Acc = 100
 iRssiMin = -75
-
+bStuPcbOnly = True
 
 """
 This class supports the production test of the Stationary Transceiving Unit (STU)
@@ -59,6 +59,7 @@ class TestStu(unittest.TestCase):
     def setUp(self):
         global bSkip
         self.tSthLimits = SthLimits(iSensorAxis, bBatteryExternalDcDc, uAdc2Acc, iRssiMin, 20, 35)
+        self.tStuLimits = StuLimits(bStuPcbOnly, iRssiMin)
         self.sBuildLocation = sBuildLocation + sVersion
         self.sBootloader = sBuildLocation + "BootloaderOtaBgm111.s37"
         self.sAdapterSerialNo = sAdapterSerialNo
@@ -79,8 +80,8 @@ class TestStu(unittest.TestCase):
             if "test0000FirmwareFlash" != self._testMethodName:    
                 self.Can.CanTimeStampStart(self._resetStu()["CanTime"])  # This will also reset to STH
                 self.sStuAddr = sBlueToothMacAddr(self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"]))
-                self.sTestReport = sLogName + "_" + self.sSerialNumber + "_" + self.sStuAddr.replace(":", "#")
-                sStoreFileName = "./ResultsStu/OK_" + self.sTestReport + "_nr0.xlsx"
+                self.sTestReport =  self.sSerialNumber + "_" +  sLogName
+#                 sStoreFileName = "./ResultsStu/OK_" + self.sTestReport + "_nr0.xlsx"
                 if "test0005Ack" == self._testMethodName:
                     batchFile = open("BatchNumberStu.txt", "w")
                     iBatchNr = int(self.sBatchNumber)
@@ -402,7 +403,7 @@ class TestStu(unittest.TestCase):
     Check that written is equal to read (excel format)
     """
 
-    def tCompareEerpomWriteRead(self):
+    def tCompareEepromWriteRead(self):
         tWorkSheetNameError = None
         sCellNumberError = None
         tWorkbookReadBack = openpyxl.load_workbook(self.sExcelEepromContentReadBackFileName)
@@ -509,7 +510,38 @@ class TestStu(unittest.TestCase):
             tFile.close()
             self.assertEqual("range 0x0FE04000 - 0x0FE047FF (2 KB)\n", asData[-2][10:])   
             self.assertEqual("DONE\n", asData[-1])    
-                       
+
+
+    """
+    Tests over the air (OTA) update
+    """    
+
+    def test0001OverTheAirUpdate(self):
+        global sHolderName
+        self.tWorkSheetWrite("D", "Test the over the air update bootloader functionallity")
+        self._resetStu()
+        time.sleep(1)
+        sSystemCall = self.sBuildLocation + "/ota-dfu.exe COM6 115200 " 
+        sSystemCall += self.sBuildLocation + "/OtaClient.gbl "
+        sSystemCall += self.sStuAddr + " -> " + self.sLogLocation 
+        sSystemCall += self._testMethodName + "Ota.txt"
+        if os.name == 'nt': 
+            sSystemCall = sSystemCall.replace("/", "\\")
+            os.system(sSystemCall)
+        # for mac and linux(here, os.name is 'posix') 
+        else: 
+            os.system(sSystemCall)            
+        tFile = open(self.sLogLocation + self._testMethodName + "Ota.txt", "r", encoding='utf-8')
+        asData = tFile.readlines()
+        self.tWorkSheetWrite("E", asData[-2])
+        self.tWorkSheetWrite("F", asData[-1])
+        self.assertEqual("Finishing DFU block...OK\n", asData[-2])
+        self.assertEqual("Closing connection...OK\n", asData[-1])
+        time.sleep(2)
+        self._resetStu()
+
+        
+                               
     """
     Test Acknowledgement from STH. Write message and check identifier to be ack (No bError)
     """
@@ -533,7 +565,15 @@ class TestStu(unittest.TestCase):
         self.tWorkSheetWrite("E", "Test failed")
         self.assertEqual(hex(msgAckExpected.ID), hex(self.Can.getReadMessage(-1).ID))
         self.assertEqual(expectedData.asbyte, self.Can.getReadMessage(-1).DATA[0])
+        self.Can.Logger.Info("Test OK")
         self.tWorkSheetWrite("E", "Test OK")
+        
+    def test0030BluetoohAddress(self):
+        self.tWorkSheetWrite("D", "Archive Bluetooth Address")
+        self.tWorkSheetWrite("E", "Bluetooth Address: " + str(self.sStuAddr))
+        self.Can.Logger.Info("Bluetooth Address: " + str(self.sStuAddr)) 
+        self.vChangeExcelCell("Statistics@0x5", "E9", str(int(self.sStuAddr, 16)))
+        
         
     """
     Checks that correct Firmware Version has been installed
@@ -544,10 +584,15 @@ class TestStu(unittest.TestCase):
         iIndex = self.Can.cmdSend(MyToolItNetworkNr["STU1"], MyToolItBlock["ProductData"], MyToolItProductData["FirmwareVersion"], [])
         au8Version = self.Can.getReadMessageData(iIndex)[-3:]
         sVersionRead = "v" + str(au8Version[0]) + "." + str(au8Version[1]) + "." + str(au8Version[2])
+        self.tWorkSheetWrite("E", sVersion)
+        self.Can.Logger.Info(sVersion)
         if sVersionRead == sVersion:
-            self.tWorkSheetWrite("E", "OK")
+            self.tWorkSheetWrite("F", "OK")
+            self.Can.Logger.Info("Test OK")
         else:
-            self.tWorkSheetWrite("E", "NOK")
+            self.tWorkSheetWrite("F", "NOK")
+            self.Can.Logger.Info("Test NOK")
+        
         self.assertEqual(sVersionRead, sVersion)
     
     """
@@ -575,6 +620,7 @@ class TestStu(unittest.TestCase):
         self.assertEqual(hex(msgAckExpected.ID), hex(self.Can.getReadMessage(-1).ID))
         self.assertEqual(expectedData.asbyte, self.Can.getReadMessage(-1).DATA[0])
         self.tWorkSheetWrite("E", "Test OK")
+        self.Can.Logger.Info("Test OK")
         
     """
     Test that RSSI is good enough
@@ -591,6 +637,8 @@ class TestStu(unittest.TestCase):
         iRssiStu = int(self.Can.BlueToothRssi(MyToolItNetworkNr["STU1"]))
         self.tWorkSheetWrite("E", "RSSI @ STH: " + str(iRssiSth) + "dBm")
         self.tWorkSheetWrite("F", "RSSI @ STU: " + str(iRssiStu) + "dBm")
+        self.Can.Logger.Info("RSSI @ STH: " + str(iRssiSth) + "dBm")
+        self.Can.Logger.Info("RSSI @ STU: " + str(iRssiStu) + "dBm")
         self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
         self.assertGreater(iRssiSth, self.tSthLimits.iRssiMin)
         self.assertLess(iRssiSth, -20)
@@ -628,9 +676,11 @@ class TestStu(unittest.TestCase):
             sError = self.sExcelSheetRead(pageName, MyToolItNetworkNr["STU1"])
             if None != sError:
                 break
-        [tWorkSheetNameError, sCellNumberError] = self.tCompareEerpomWriteRead()
+        [tWorkSheetNameError, sCellNumberError] = self.tCompareEepromWriteRead()
         self.tWorkSheetWrite("E", "Error Worksheet: " + str(tWorkSheetNameError))
         self.tWorkSheetWrite("F", "Error Cell: " + str(sCellNumberError))
+        self.Can.Logger.Info("Error Worksheet: " + str(tWorkSheetNameError))
+        self.Can.Logger.Info("Error Cell: " + str(sCellNumberError))
         self.assertEqual(tWorkSheetNameError, None)
                 
     """
@@ -652,17 +702,19 @@ class TestStu(unittest.TestCase):
             os.remove(self.sExcelEepromContentReadBackFileName)
         if False != bSkip:
             self.tWorkSheetWrite("E", "NOK")   
+            self.Can.Logger.Error("NOK")
             self.tWorkbook.save(self.sTestReport + ".xlsx")  
             for i in range(0, 100):
-                sStoreFileName = self.sLogLocation + "/ResultsStu/NOK_" + self.sTestReport + "_nr" + str(i) + ".xlsx"
+                sStoreFileName = self.sLogLocation + "/ResultsStu/" + self.sTestReport + "_nr" + str(i) + "_NOK.xlsx"
                 if False == os.path.isfile(sStoreFileName):
                     os.rename(self.sTestReport + ".xlsx", sStoreFileName)    
                     break                
         else:
             self.tWorkSheetWrite("E", "OK")
+            self.Can.Logger.Info("OK")
             self.tWorkbook.save(self.sTestReport + ".xlsx")
             for i in range(0, 100):
-                sStoreFileName = self.sLogLocation + "/ResultsStu/OK_" + self.sTestReport + "_nr" + str(i) + ".xlsx"
+                sStoreFileName = self.sLogLocation + "/ResultsStu/" + self.sTestReport + "_nr" + str(i) + "_OK.xlsx"
                 if False == os.path.isfile(sStoreFileName):
                     os.rename(self.sTestReport + ".xlsx", sStoreFileName) 
                     break

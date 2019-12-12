@@ -32,10 +32,11 @@ sSilabsCommanderLocation = "../../SimplicityStudio/SimplicityCommander/"
 sAdapterSerialNo = "440115849"
 sBoardType = "BGM113A256V2"
 iSensorAxis = 1
-bBatteryExternalDcDc = True
-uAdc2Acc = 100
+bConnectedBattery = True
+uAdc2Acc = 200
 iRssiMin = -75
 bStuPcbOnly = True
+
 """
 Get serial number that is stored in the excel file
 """
@@ -61,7 +62,7 @@ class TestSth(unittest.TestCase):
     def setUp(self):
         global bSkip
         global sHolderNameInput
-        self.tSthLimits = SthLimits(iSensorAxis, bBatteryExternalDcDc, uAdc2Acc, iRssiMin, 20, 35)
+        self.tSthLimits = SthLimits(iSensorAxis, bConnectedBattery, uAdc2Acc, iRssiMin, 20, 35)
         self.tStuLimits = StuLimits(bStuPcbOnly, iRssiMin)
         self.sBuildLocation = sBuildLocation + sVersion
         self.sBootloader = sBuildLocation + "BootloaderOtaBgm113.s37"
@@ -665,6 +666,8 @@ class TestSth(unittest.TestCase):
         self.tWorkSheetWrite("D", "Archive Bluetooth Address")
         self.tWorkSheetWrite("E", "Bluetooth Address: " + str(self.sSthAddr))
         self.Can.Logger.Info("Bluetooth Address: " + str(self.sSthAddr)) 
+        sSthAddr = self.sSthAddr.replace(":", "")
+        self.vChangeExcelCell("Statistics@0x5", "E9", str(int(sSthAddr, 16)))
           
     """
     Checks that correct Firmware Version has been installed
@@ -676,10 +679,11 @@ class TestSth(unittest.TestCase):
         au8Version = self.Can.getReadMessageData(iIndex)[-3:]
         sVersionRead = "v" + str(au8Version[0]) + "." + str(au8Version[1]) + "." + str(au8Version[2])
         self.Can.Logger.Info("Version: " + sVersionRead) 
+        self.tWorkSheetWrite("E", sVersionRead)
         if sVersionRead == sVersion:
-            self.tWorkSheetWrite("E", "OK")
+            self.tWorkSheetWrite("F", "OK")
         else:
-            self.tWorkSheetWrite("E", "NOK")
+            self.tWorkSheetWrite("F", "NOK")
         self.assertEqual(sVersionRead, sVersion)
     
     """
