@@ -825,7 +825,7 @@ class myToolItWatch():
                 tPageDict = {}
                 tPageDict["Name"] = str(page.get('name'))
                 tPageDict["Address"] = int(page.find('pageAddress').text)
-                tPageDict["Entry"] = page.find('Entry')
+                tPageDict["Entry"] = page.find('Entry')                 
                 atPageList.append(tPageDict)
         return atPageList
 
@@ -1048,22 +1048,29 @@ class myToolItWatch():
                         if version.get('name') == self.sConfig:
                             tPage = self.tXmlChildNew(version.find('Page'), 'page')
                             tPage.set('name', sName)
-                            self.tXmlChildNew(tPage, 'Address')
-                            tPage.find('Address').text = sAddress
-                            self.tXmlChildNew(tPage, 'Entry')    
-                            return
+                            self.tXmlChildNew(tPage, 'pageAddress')
+                            pageAddress = str(int(sAddress, 16))
+                            tPage.find('pageAddress').text = pageAddress
+                            self.tXmlChildNew(tPage, 'Entry')  
+                            ET.dump(version.find('Page'))
+                            self.xmlSave()
+                            break
                     
     """
     Write xml definiton by Excel Sheet
     """
 
-    def vExcelProductVersion2XmlProductVersionPage(self, tWorkbook):
-        atProductPages = self.atProductPages()
+    def vExcelProductVersion2XmlProductVersionPage(self, tWorkbook):            
         for tWorksheetName in tWorkbook.sheetnames:
             sName = str(tWorksheetName).split('@')
             sAddress = sName[1] 
             sName = sName[0]
             tWorkSheet = tWorkbook.get_sheet_by_name(tWorksheetName)
+            try:
+                atProductPages = self.atProductPages()
+            except:
+                self._vExcelProductVersion2XmlProductVersionPageNew(sName, sAddress)
+                atProductPages = self.atProductPages()
             if False == self._bExcelProductVersion2XmlProductVersionPageExist(tWorkSheet, atProductPages, sName, sAddress):
                 self._vExcelProductVersion2XmlProductVersionPageNew(sName, sAddress)
                 atProductPages = self.atProductPages()
@@ -1111,11 +1118,16 @@ class myToolItWatch():
     Write xml definiton by Excel Sheet and do checks
     """
 
-    def vExcelProductVersion2XmlProductVersion(self):
+    def vExcelProductVersion2XmlProductVersion(self):        
         if None != self.sProduct and None != self.sConfig and None != self.sSheetFile:
             tWorkbook = openpyxl.load_workbook(self.sSheetFile)
             if tWorkbook:
-                if 0 < len(self.atProductPages()):
+                try:
+                    uLength = len(self.atProductPages())
+                except:
+                    self.vExcelProductVersion2XmlProductVersionPage(tWorkbook)
+                    uLength = len(self.atProductPages())
+                if 0 < uLength:
                     self.vExcelProductVersion2XmlProductVersionPage(tWorkbook)
                 else:
                     for tProduct in self.root.find('Data').find('Product'):

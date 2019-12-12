@@ -5,7 +5,7 @@ c_uint32 = ctypes.c_uint32
 
 TestConfig = {
     "DevName" : "Tanja",
-    "Version" : "v2.1.9",
+    "Version" : "v2.1.10",
     "AdcConfigAllPrescalerMax" : 4,
     "ConTimeNormalMaxMs" : 5000,
     "ConTimeSleep1MaxMs" : 6000,

@@ -1,7 +1,6 @@
 from MyToolItCommands import AdcAcquisitionTime, AdcOverSamplingRate, AdcReference, calcSamplingRate, AdcMax
 
 
-
 class SthLimits():
 
     def __init__(self, iAccSensorAxis, bConnectedBattery, uAccelerationToAccGravitity, iRssiMin, iTemperatureInternalMin, iTemperatureInternalMax):
@@ -12,7 +11,8 @@ class SthLimits():
         self.vStreaming()
         self.vVoltageRaw()
         self.vTemperature(iTemperatureInternalMin, iTemperatureInternalMax)
-        
+        self.vVirtualFullScale()
+        self.vAdcBuffer(3, 24)
         
     def vBatteryParameters(self, bConnectedBattery):
         if False != bConnectedBattery:
@@ -46,7 +46,7 @@ class SthLimits():
         self.iBatteryK = (57 * 3.3) / (10 * 2 ** 16)
         
     def auBatteryStatisticsHist(self):
-        return [self.uBatteryQ1, self.uBattery25, self.uBatteryMedL, self.uBatteryMedH, self.uBatteryQ75, self.uBatteryQ99]
+        return [self.uBatteryQ1, self.uBatteryQ25, self.uBatteryMedL, self.uBatteryMedH, self.uBatteryQ75, self.uBatteryQ99]
     
     def auBatteryStatisticsMoment(self):
         return [self.uBatteryVar, self.uBatterySkewness, self.uBatterySNR]
@@ -121,7 +121,7 @@ class SthLimits():
         self.iSelfTestOutputChangemVMin = 70
         self.iSelfTestOutputChangemVTyp = 170
         self.iAccX_K = self.uAccelerationToAccGravitity / (2 ** 16 - 1)
-        self.iAccX_D = -(self.uAccelerationToAccGravitity/2)
+        self.iAccX_D = -(self.uAccelerationToAccGravitity / 2)
         
     def auAccXStatisticsHist(self):
         return [self.uAccXQ1, self.uAccXQ25, self.uAccXMedL, self.uAccXMedH, self.uAccXQ75, self.uAccXQ99]
@@ -161,7 +161,6 @@ class SthLimits():
         self.uSamplingRateTrippleOverSamplesMax = AdcOverSamplingRate[64] 
         self.uSamplingToleranceLow = 0.90
         self.uSamplingToleranceHigh = 1.1
-          
         
     def uSamplingRateSingleMax(self):
         return calcSamplingRate(self.uSamplingRateSinglePrescalerMax, self.uSamplingRateSingleAcqTimeMax, self.uSamplingRateSingleOverSamplesMax) 
@@ -172,7 +171,6 @@ class SthLimits():
     def uSamplingRateTrippleMax(self):
         return calcSamplingRate(self.uSamplingRateTripplePrescalerMax, self.uSamplingRateTrippleAcqTimeMax, self.uSamplingRateTrippleOverSamplesMax)
     
-    
     def vRssiSthMin(self, iRssiMin):
         self.iRssiMin = iRssiMin
         
@@ -182,10 +180,10 @@ class SthLimits():
         
     def vVoltageRaw(self):
         self.uVoltRawOpa2Middle = 0
-        self.uVoltRawOpa2Tolerance = 3
+        self.uVoltRawOpa2Tolerance = 8
         self.uVoltRawOpa3Middle = 0
-        self.uVoltRawOpa3Tolerance = 3
-        self.uVoltRawVssTolerance = 3
+        self.uVoltRawOpa3Tolerance = 8
+        self.uVoltRawVssTolerance = 8
 
     def vTemperature(self, iTemperatureInternalMin, iTemperatureInternalMax):
         self.uTemperatureInternal3V3Middle = 13000
@@ -195,3 +193,11 @@ class SthLimits():
 
     def vVirtualFullScale(self):
         self.Vfs = 32
+        
+    def vAdcBuffer(self, sizeX, sizeY):
+        self.uAdcSizeX = sizeX
+        self.uAdcSizeY = sizeY
+        
+    def uAdcBufferSizeBytes(self):
+        return (self.uAdcSizeX * self.uAdcSizeY)    
+    
