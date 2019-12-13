@@ -56,7 +56,7 @@ class SthLimits():
         self.iAdcAccXMiddle = 0
         self.iAdcAccYMiddle = 0
         self.iAdcAccZMiddle = 0
-        self.iAdcAccXTolerance = 3
+        self.iAdcAccXTolerance = 3.5
         self.iAdcAccXRawMiddle = 2 ** 15
         self.iAdcAccXRawTolerance = 2048
         self.uAccXQ1 = 2 ** 15 * 0.95
@@ -159,8 +159,8 @@ class SthLimits():
         self.uSamplingRateTripplePrescalerMax = 2
         self.uSamplingRateTrippleAcqTimeMax = AdcAcquisitionTime[8]
         self.uSamplingRateTrippleOverSamplesMax = AdcOverSamplingRate[64] 
-        self.uSamplingToleranceLow = 0.90
-        self.uSamplingToleranceHigh = 1.1
+        self.uSamplingToleranceLow = 0.97
+        self.uSamplingToleranceHigh = 1.03
         
     def uSamplingRateSingleMax(self):
         return calcSamplingRate(self.uSamplingRateSinglePrescalerMax, self.uSamplingRateSingleAcqTimeMax, self.uSamplingRateSingleOverSamplesMax) 

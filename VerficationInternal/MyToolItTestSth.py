@@ -2932,10 +2932,10 @@ class TestSth(unittest.TestCase):
 
     def test0507VRef(self):
         self.Can.Logger.Info("Warm Up")
-        self.SamplingRate(self.tSthLimits.uSamplingRateTripplePrescalerMax, self.tSthLimits.uSamplingRateTrippleAcqTimeMax, self.tSthLimits.uSamplingRateTrippleOverSamplesMax, AdcReference["VDD"], b1=1, b2=1, b3=1, runTime=5000)
+        self.SamplingRate(self.tSthLimits.uSamplingRateTripplePrescalerMax, self.tSthLimits.uSamplingRateTrippleAcqTimeMax, self.tSthLimits.uSamplingRateTrippleOverSamplesMax, AdcReference["VDD"], b1=1, b2=1, b3=1, runTime=self.tSthLimits.uStandardTestTimeMs)
         for _vRefkey, vRefVal in AdcReference.items():
             self.Can.Logger.Info("Using Voltage Reference: " + VRefName[vRefVal])
-            self.SamplingRate(self.tSthLimits.uSamplingRateTripplePrescalerMax, self.tSthLimits.uSamplingRateTrippleAcqTimeMax, self.tSthLimits.uSamplingRateTrippleOverSamplesMax, vRefVal, b1=1, b2=1, b3=1, runTime=5000, compare=(AdcReference["Vfs1V65"] <= vRefVal), startupTime=False)
+            self.SamplingRate(self.tSthLimits.uSamplingRateTripplePrescalerMax, self.tSthLimits.uSamplingRateTrippleAcqTimeMax, self.tSthLimits.uSamplingRateTrippleOverSamplesMax, vRefVal, b1=1, b2=1, b3=1, runTime=self.tSthLimits.uStandardTestTimeMs, compare=(AdcReference["Vfs1V65"] <= vRefVal), startupTime=False)
 
     """
     ADC Configuration Combine all possible settings - Single Axis (but only for prescaler 2)
@@ -3054,42 +3054,48 @@ class TestSth(unittest.TestCase):
     """
 
     def test0511AdcPrescalerMin(self):
-        self.SamplingRate(Prescaler["Min"], self.tSthLimits.uSamplingRateSingleAcqTimeMax, self.tSthLimits.uSamplingRateSingleOverSamplesMax, AdcReference["VDD"], b1=1, b2=0, b3=0, runTime=4000)
+        self.SamplingRate(Prescaler["Min"], self.tSthLimits.uSamplingRateSingleAcqTimeMax, self.tSthLimits.uSamplingRateSingleOverSamplesMax, AdcReference["VDD"], b1=1, b2=0, b3=0, runTime=self.tSthLimits.uStandardTestTimeMs)
 
     """
     Testing ADC Sampling Prescaler Min/Max
     """
 
     def test0512AdcPrescalerMax(self):
-        self.SamplingRate(Prescaler["Max"], AdcAcquisitionTime[1], AdcOverSamplingRate[32], AdcReference["VDD"], b1=1, b2=0, b3=0, runTime=10000)
+        self.SamplingRate(Prescaler["Max"], AdcAcquisitionTime[1], AdcOverSamplingRate[32], AdcReference["VDD"], b1=1, b2=0, b3=0, runTime=30000)
 
     """
     Testing ADC Sampling Acquisition Min
     """
 
     def test0513AdcAcquisitionMin(self):
-        self.SamplingRate(2, AdcAcquisitionTime[1], AdcOverSamplingRate[128], AdcReference["VDD"], b1=1, b2=0, b3=0, runTime=4000)
+        self.SamplingRate(2, AdcAcquisitionTime[1], AdcOverSamplingRate[128], AdcReference["VDD"], b1=1, b2=0, b3=0, runTime=self.tSthLimits.uStandardTestTimeMs)
 
     """
     Testing ADC Sampling Acquisition Max
     """
 
     def test0514AdcAcquisitionMax(self):
-        self.SamplingRate(2, AdcAcquisitionTime[256], AdcOverSamplingRate[32], AdcReference["VDD"], b1=1, b2=0, b3=0, runTime=4000)
+        self.SamplingRate(2, AdcAcquisitionTime[256], AdcOverSamplingRate[32], AdcReference["VDD"], b1=1, b2=0, b3=0, runTime=self.tSthLimits.uStandardTestTimeMs)
 
     """
     Testing ADC Sampling Oversampling Rate Min
     """
 
     def test0515AdcOverSamplingRateMin(self):
-        self.SamplingRate(32, AdcAcquisitionTime[256], AdcOverSamplingRate[2], AdcReference["VDD"], b1=1, b2=0, b3=0, runTime=4000)
+        self.SamplingRate(32, AdcAcquisitionTime[256], AdcOverSamplingRate[2], AdcReference["VDD"], b1=1, b2=0, b3=0, runTime=self.tSthLimits.uStandardTestTimeMs)
 
     """
     Testing ADC Sampling Oversampling Rate Max
     """
 
-    def test0516AdcOverSamplingRateMax(self):
-        self.SamplingRate(2, AdcAcquisitionTime[1], AdcOverSamplingRate[4096], AdcReference["VDD"], b1=1, b2=0, b3=0, runTime=30000)
+    def test0516AdcOverSamplingRateMax(self):   
+        prescaler = 2
+        acquisitionTime = AdcAcquisitionTime[1]
+        overSamplingRate = AdcOverSamplingRate[4096]
+        result = self.SamplingRate(prescaler, acquisitionTime, overSamplingRate, AdcReference["VDD"], b1=1, b2=0, b3=0, compareRate = False, runTime=self.tSthLimits.uStandardTestTimeMs)
+        calcRate = calcSamplingRate(prescaler, acquisitionTime, overSamplingRate)
+        self.assertLess(calcRate * 0.9, result["SamplingRate"])# Sampling Rate of 220 is very imprecise
+        self.assertGreater(calcRate * 1.1, result["SamplingRate"])# Sampling Rate of 220 is very imprecise
 
     """
     Testing ADC Sampling Oversampling Rate None
@@ -3829,8 +3835,8 @@ class TestSth(unittest.TestCase):
                 self.Can.Logger.Info("ADC Value: " + str(result))
                 result = result * ((vRefValue) / (AdcReference["VDD"]))
                 self.Can.Logger.Info("Recalculated value(result*" + str(vRefValue * 50) + "/" + str(AdcReference["VDD"] * 50) + "): " + str(result))
-                self.assertLessEqual(self.tSthLimits.iAdcAccXRawMiddle - self.tSthLimits.iAdcAccXTolerance, result * self.tSthLimits.uSamplingToleranceHigh)
-                self.assertGreaterEqual(self.tSthLimits.iAdcAccXRawMiddle + self.tSthLimits.iAdcAccXTolerance, result * self.tSthLimits.uSamplingToleranceLow)
+                self.assertLessEqual(self.tSthLimits.iAdcAccXRawMiddle - self.tSthLimits.iAdcAccXRawTolerance, result * self.tSthLimits.uSamplingToleranceHigh)
+                self.assertGreaterEqual(self.tSthLimits.iAdcAccXRawMiddle + self.tSthLimits.iAdcAccXRawTolerance, result * self.tSthLimits.uSamplingToleranceLow)
 
     """
     Calibration - Check Injection and Ejection
