@@ -698,7 +698,9 @@ class TestSth(unittest.TestCase):
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], 1, 0, 0)
         iBatteryVoltage = iMessage2Value(self.Can.getReadMessageData(index)[2:4])
         fBatteryVoltage = fVoltageBattery(iBatteryVoltage)
-        if 3 < fBatteryVoltage:
+        bOk = ((self.tSthLimits.uBatteryMiddle - self.tSthLimits.uBatteryTolerance) >= fBatteryVoltage)
+        bOk &= ((self.tSthLimits.uBatteryMiddle + self.tSthLimits.uBatteryTolerance) <= fBatteryVoltage)
+        if False != bOk:
             self.tWorkSheetWrite("E", "OK")
         else:
             self.tWorkSheetWrite("E", "NOK")

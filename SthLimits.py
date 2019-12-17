@@ -67,7 +67,7 @@ class SthLimits():
         self.uAccXQ99 = 2 ** 15 * 1.05
         self.uAccXVar = 2000
         self.uAccXSkewness = 0.9
-        self.uAccXSNR = -55
+        self.uAccXSNR = -60
         if 1 == iAccSensorAxis:
             self.iAdcAccYTolerance = 200
             self.iAdcAccZTolerance = 200
