@@ -5,7 +5,7 @@ import subprocess
 import sys
 import os
 
-asModuleList = ["openpyxl", "matplotlib", "windows-curses"]
+asModuleList = ["openpyxl", "matplotlib", "windows-curses", "mysql-connector", "dnspython"]
 
 def bModuleExists(sModuleName):
     spam_spec = util.find_spec(sModuleName)
