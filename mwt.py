@@ -1,4 +1,3 @@
-
 from myToolItWatch import myToolItWatch
 from MyToolItCommands import *
 from MyToolItNetworkNumbers import *
@@ -20,6 +19,8 @@ class mwt(myToolItWatch):
         self.vNetworkNumberSet(None)
         
     def close(self):
+        if False == self.bExit:
+            self.bExit = True
         if None != self.process:
             self.process.terminate()
         self.vCloseSaveStoreLastConfig()
@@ -36,7 +37,7 @@ class mwt(myToolItWatch):
                     
     def vOpenLastConfig(self):
         if False != self.bLastConfig():
-            lastRun = self.tree.find('lastRun')
+            lastRun = self.tXmlConfig.tree.find('lastRun')
             self.bLogSet(str(lastRun.find('LogName').text) + ".txt")
             self.vConfigSet(str(lastRun.find('Product').text), str(lastRun.find('Version').text))
             self.vNetworkNumberSet(str(lastRun.find('NetworkNumber').text))
@@ -45,7 +46,7 @@ class mwt(myToolItWatch):
             self.bSampleSetupSet(str(lastRun.find('Setup').text)) 
                       
     def vCloseSaveStoreLastConfig(self):
-        lastRun = self.tree.find('lastRun')
+        lastRun = self.tXmlConfig.tree.find('lastRun')
         sLogName = self.Can.Logger.fileName.split('_')[0]
         sLogName = sLogName.split('.')[0]  # Just to be sure
         lastRun.find('LogName').text = str(sLogName)
@@ -103,6 +104,13 @@ class mwt(myToolItWatch):
         self.stdscr.refresh()            
         iIntervalTime = self.iTerminalInputNumberIn() 
         self.vRunTime(iRunTime, iIntervalTime)
+        
+    def vTerminalHolderConnectCommandsRunTimeDisplayTime(self):
+        self.stdscr.clear()
+        self.stdscr.addstr("Display Time(1-10s, 0=Off): ")
+        self.stdscr.refresh()            
+        iDisplayTime = self.iTerminalInputNumberIn()   
+        self.vDisplayTime(iDisplayTime)
     
     def tTerminalHolderConnectCommandsKeyEvaluation(self):
         keyPress = self.stdscr.getch()
@@ -112,6 +120,8 @@ class mwt(myToolItWatch):
             bRun = False
         elif ord('a') == keyPress:
             self.vTerminalHolderConnectCommandsAdcConfig()
+        elif ord('d') == keyPress:
+            self.vTerminalHolderConnectCommandsRunTimeDisplayTime()
         elif ord('e') == keyPress:
             bRun = False
             bContinue = True 
@@ -154,7 +164,7 @@ class mwt(myToolItWatch):
                 except KeyboardInterrupt:
                     self.KeyBoadInterrupt = True
                     self.__exit__()
-            bRun = False           
+                bRun = False           
         return [bRun, bContinue]      
      
     def bTerminalHolderConnectCommandsShowDataValues(self):
@@ -196,6 +206,7 @@ class mwt(myToolItWatch):
             self.stdscr.addstr("Acc Config(XYZ/DataSets): " + str(int(self.bAccX)) + str(int(self.bAccY)) + str(int(self.bAccZ)) + "/" + str(DataSetsReverse[self.tAccDataFormat]) + "\n")
             self.stdscr.addstr("\n")
             self.stdscr.addstr("a: Config ADC\n")
+            self.stdscr.addstr("d: Display Time\n")
             self.stdscr.addstr("e: Exit and disconnect from holder\n")
             self.stdscr.addstr("f: OEM Free Use\n")
             self.stdscr.addstr("n: Set Device Name\n")
@@ -204,12 +215,12 @@ class mwt(myToolItWatch):
             self.stdscr.addstr("r: Config run time and interval time\n")
             self.stdscr.addstr("s: Start Data Aquisition\n")
             self.stdscr.refresh()
-            [bRun, bContinue] = self.tTerminalHolderConnectCommandsKeyEvaluation()
+            [bRun, bContinue] = self.tTerminalHolderConnectCommandsKeyEvaluation()             
         return bContinue
                                 
-    def bTerminalHolderConnect(self, keyPress):
-        iNumber = int(keyPress - ord('0'))
-        keyPress = -1
+    def bTerminalHolderConnect(self, iKeyPress):
+        iNumber = int(iKeyPress - ord('0'))
+        iKeyPress = -1
         bRun = True
         bContinue = False
         devList = None
@@ -217,15 +228,15 @@ class mwt(myToolItWatch):
             devList = self.tTerminalHeaderExtended(devList)
             self.stdscr.addstr(str(iNumber))
             self.stdscr.refresh()
-            keyPress = self.stdscr.getch()
-            if ord('0') <= keyPress and ord('9') >= keyPress:         
-                iNumber = self.iTerminalInputNumber(iNumber, keyPress)   
-            elif 0x08 == keyPress:
+            iKeyPress = self.stdscr.getch()
+            if ord('0') <= iKeyPress and ord('9') >= iKeyPress:         
+                iNumber = self.iTerminalInputNumber(iNumber, iKeyPress)   
+            elif 0x08 == iKeyPress:
                 if 1 < len(str(iNumber)):
                     iNumber = int(str(iNumber)[:-1])
                 else:
                     iNumber = 0
-            elif 0x0A == keyPress:
+            elif 0x0A == iKeyPress or 459 == iKeyPress:
                 if 0 < iNumber:                    
                     self.stdscr.addstr("\nTry to connect to device number " + str(iNumber) + "\n")
                     self.stdscr.refresh()
@@ -240,12 +251,12 @@ class mwt(myToolItWatch):
                 else:
                     bContinue = True
                 bRun = False
-            elif(0x03 == keyPress) or (ord('q') == keyPress):
+            elif(0x03 == iKeyPress) or (ord('q') == iKeyPress):
                 bRun = False
                 bContinue = True
             else:
                 devList = None
-            keyPress = -1
+            iKeyPress = -1        
         return bContinue
     
     def vTerminalEepromChange(self):
@@ -499,9 +510,9 @@ class mwt(myToolItWatch):
                 os.system(sSystemCall)
         return bDoIt
     
-    def bTerminalUpdateConnect(self, keyPress):
-        iNumber = int(keyPress - ord('0'))
-        keyPress = -1
+    def bTerminalUpdateConnect(self, iKeyPress):
+        iNumber = int(iKeyPress - ord('0'))
+        iKeyPress = -1
         bRun = True
         bContinue = False
         devList = None
@@ -518,15 +529,15 @@ class mwt(myToolItWatch):
                 self.stdscr.addstr(str(BlueToothDeviceNr["Self"])+"(STU): " + self.sStuAddr + "("+self.Can.BlueToothNameGet(MyToolItNetworkNr["STU1"], BlueToothDeviceNr["Self"])+")\n")
             self.stdscr.addstr(str(iNumber))
             self.stdscr.refresh()
-            keyPress = self.stdscr.getch()
-            if ord('0') <= keyPress and ord('9') >= keyPress:         
-                iNumber = self.iTerminalInputNumber(iNumber, keyPress)   
-            elif 0x08 == keyPress:
+            iKeyPress = self.stdscr.getch()
+            if ord('0') <= iKeyPress and ord('9') >= iKeyPress:         
+                iNumber = self.iTerminalInputNumber(iNumber, iKeyPress)   
+            elif 0x08 == iKeyPress:
                 if 1 < len(str(iNumber)):
                     iNumber = int(str(iNumber)[:-1])
                 else:
                     iNumber = 0
-            elif 0x0A == keyPress:
+            elif 0x0A == iKeyPress or 459 == iKeyPress:
                 if 0 < iNumber:                    
                     self.stdscr.addstr("\nTry to update " + str(iNumber) + "\n")
                     self.stdscr.refresh()
@@ -553,12 +564,12 @@ class mwt(myToolItWatch):
                 else:
                     bContinue = True
                 bRun = False
-            elif(0x03 == keyPress) or (ord('q') == keyPress):
+            elif(0x03 == iKeyPress) or (ord('q') == iKeyPress):
                 bRun = False
                 bContinue = True
             else:
                 devList = None
-            keyPress = -1
+            iKeyPress = -1
         return bContinue
     
     def bTerminalUpdateKeyEval(self):
@@ -996,9 +1007,12 @@ class mwt(myToolItWatch):
             self.stdscr.addstr(cursorYPos, cursorXPos, sString)
             self.stdscr.refresh()
             iKeyPress = self.stdscr.getch()
+            
             if 0x03 == iKeyPress:  # CTRL+C
                 bRun = False       
-            elif 0x0A == iKeyPress:
+            elif 0x0A == iKeyPress or 459 == iKeyPress:
+                bRun = False
+            elif 0x0B == iKeyPress:
                 bRun = False
             elif (ord(' ') <= iKeyPress and ord('~') >= iKeyPress):                
                 sString = sString + chr(iKeyPress)
@@ -1013,6 +1027,7 @@ class mwt(myToolItWatch):
                 self.stdscr.refresh()
             else:
                 pass
+
         self.stdscr.addstr("\n")
         self.stdscr.refresh()
         return sString         
@@ -1030,7 +1045,7 @@ class mwt(myToolItWatch):
                 bRun = False
             elif 0x03 == iKeyPress:  # CTRL+C
                 bRun = False       
-            elif 0x0A == iKeyPress:
+            elif 0x0A == iKeyPress or 459 == iKeyPress:
                 bRun = False
             elif ord('0') <= iKeyPress and ord('9') >= iKeyPress:                
                 iNumber = self.iTerminalInputNumber(iNumber, iKeyPress)
@@ -1065,7 +1080,7 @@ class mwt(myToolItWatch):
                 bRun = self.bTerminalMainMenu()
             except KeyboardInterrupt:
                 self.KeyBoadInterrupt = True
-                break
+                break        
        
     def tTerminalHeaderExtended(self, devList=None):
         self.vTerminalHeader()
@@ -1107,9 +1122,9 @@ class mwt(myToolItWatch):
         if False != self.bSthAutoConnect:
             self.vRunConsoleAutoConnect()
         else:
-            self.vTerminal()     
-        self.Can.ReadThreadReset()   
+            self.vTerminal()             
         self.close()        
+         
 
            
 if __name__ == "__main__":
@@ -1117,3 +1132,4 @@ if __name__ == "__main__":
     mwt.vParserInit()
     mwt.vParserConsoleArgumentsPass()
     mwt.vRunConsole()
+

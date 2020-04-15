@@ -3,11 +3,10 @@ from MyToolItCommands import AdcAcquisitionTime, AdcOverSamplingRate, AdcReferen
 
 class SthLimits():
 
-    def __init__(self, iAccSensorAxis, bConnectedBattery, uAccelerationToAccGravitity, iRssiMin, iTemperatureInternalMin, iTemperatureInternalMax):
-        self.vBatteryParameters(bConnectedBattery)
+    def __init__(self, iAccSensorAxis, uAccelerationToAccGravitity, iTemperatureInternalMin, iTemperatureInternalMax):
+        self.vBatteryParameters(True)
         self.vAccParameters(iAccSensorAxis, uAccelerationToAccGravitity)
         self.vSamplingRate()
-        self.vRssiSthMin(iRssiMin) 
         self.vStreaming()
         self.vVoltageRaw()
         self.vTemperature(iTemperatureInternalMin, iTemperatureInternalMax)
@@ -29,7 +28,7 @@ class SthLimits():
             self.uBatteryMiddleRaw = 11000 
             self.uBatteryToleranceRaw = 300
         else:
-            self.uBatteryMiddle = 0.15
+            self.uBatteryMiddle = 3.3
             self.uBatteryQ1 = 600         
             self.uBatteryQ25 = 630       
             self.uBatteryMedL = 633        
@@ -170,10 +169,7 @@ class SthLimits():
     
     def uSamplingRateTrippleMax(self):
         return calcSamplingRate(self.uSamplingRateTripplePrescalerMax, self.uSamplingRateTrippleAcqTimeMax, self.uSamplingRateTrippleOverSamplesMax)
-    
-    def vRssiSthMin(self, iRssiMin):
-        self.iRssiMin = iRssiMin
-        
+            
     def vStreaming(self):
         self.uStartupTimeMs = 250
         self.uStandardTestTimeMs = (10000)

@@ -2,9 +2,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import socket
 import json
-
-HOST = ''  # Symbolic name meaning all available interfaces
-PORT = 50007  # Arbitrary non-privileged port
+from configKeys import ConfigKeys
+from time import time
 
 cDict = {
     "Run" : True,
@@ -25,6 +24,7 @@ cDict = {
     "zAccPoints" : None,
     "Socket" : None,
     "Connection" : None,
+    "TimeOutMs" : 1500,
 }
 
 def tArray2Binary(array):
@@ -84,13 +84,13 @@ def tPlotterInit():
     return [line1, line2, line3]
 
 
-def vPloterSocketInit():
+def vPloterSocketInit(iSocketPort):
     global cDict
+    
     cDict["Socket"] = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    cDict["Socket"].bind((HOST, PORT))
+    cDict["Socket"].bind(('', iSocketPort))
     cDict["Socket"].listen(1)
     cDict["Connection"], addr = cDict["Socket"].accept()
-    print("Client connected to Plotter with address: " + str(addr))
 
      
 def vPlotterCommand(command, value):
@@ -124,9 +124,9 @@ def vPlotterCommand(command, value):
         cDict["yAccPoints"] = np.linspace(2 ** 15, 2 ** 15, dataPoints)
         cDict["zAccPoints"] = np.linspace(2 ** 15, 2 ** 15, dataPoints)
          
-def vPlotter():
+def vPlotter(iSocketPort):
     global cDict
-    vPloterSocketInit()
+    vPloterSocketInit(iSocketPort)    
     while False != cDict["Run"] and False == cDict["Plot"]:
         cmd = cDict["Connection"].recv(2**10)
         if None != cmd: 
@@ -140,13 +140,15 @@ def vPlotter():
     [line1, line2, line3] = tPlotterInit()
     
     pauseTime = (1 / cDict["sampleInterval"]) / 4
+    tLastTick = int(round(time()))
     while False != cDict["Run"]:
             cmd = cDict["Connection"].recv(2**16)
             if None != cmd:
+                tLastTick = int(round(time() * 1000))
                 cmd = tBinary2Array(cmd)
+                value = cmd[1]
                 if None != cmd: 
                     if "data" == cmd[0]:
-                        value = cmd[1]   
                         cDict["xAccPoints"] = cDict["xAccPoints"][cDict["dataBlockSize"]:]
                         cDict["yAccPoints"] = cDict["yAccPoints"][cDict["dataBlockSize"]:]
                         cDict["zAccPoints"] = cDict["zAccPoints"][cDict["dataBlockSize"]:]
@@ -155,12 +157,14 @@ def vPlotter():
                         cDict["zAccPoints"] = np.hstack([cDict["zAccPoints"], value["Z"]])
                         [line1, line2, line3] = vlivePlot(cDict["xAccPoints"], cDict["yAccPoints"], cDict["zAccPoints"], line1, line2, line3, pauseTime)
                     else:
-                        command = cmd[0]
-                        value = cmd[1]
                         vPlotterCommand(command, value)
                         cDict["Connection"].sendall(tArray2Binary([command, value]))
+            else:
+                if cDict["TimeOutMs"] < (int(round(time())) - tLastTick()):
+                    cDict["Run"] = False
+                    
+                    
     cDict["Connection"].close()
-    print("Gui display closed")
 
         
 def vlivePlot(yX_data, yY_data, yZ_data, line1, line2, line3, pause_time):

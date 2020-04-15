@@ -1,5 +1,3 @@
-#
-
 import sys
 import os
 from version import sMyToolItWatchVersion
@@ -12,6 +10,13 @@ from time import sleep, time
 from random import randint
 from MyToolItSth import *
 from datetime import datetime
+from configKeys import ConfigKeys
+sDirName = os.path.dirname('')
+sys.path.append(sDirName)
+file_path = 'DataBase/'
+sDirName = os.path.dirname(file_path)
+sys.path.append(sDirName)
+from MyToolItDb import MyToolItDb, Eeprom
 import getopt
 import openpyxl
 from openpyxl.styles import Font
@@ -22,9 +27,6 @@ from Plotter import vPlotter, tArray2Binary
 import socket
 import array
 import struct
-
-HOST = 'localhost'  # The remote host
-PORT = 50007  # The same port as used by the server
 
 
 def to8bitSigned(num): 
@@ -46,11 +48,15 @@ Watch = {
     
 class myToolItWatch():
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
+        self.vXmlConfigSet('configKeys.xml')
+        dDict = self.tXmlConfig.atConfigKeyDataBase("sth")#Todo Data Base Schemata for this... Thinking before doing
+        self.tDb = MyToolItDb(dDict["sHost"], dDict["sUser"], dDict["sPassword"], dDict["sName"])
         self.KeyBoadInterrupt = False  
         self.bEepromIgnoreReadErrors = False
         self.bError = False     
         self.bClose = True          
+        self.bExit = False
         self.iMsgLoss = 0
         self.iMsgsTotal = 0
         self.iMsgCounterLast = 0
@@ -59,7 +65,6 @@ class myToolItWatch():
         self.vSthAutoConnect(False)
         self.Can.Logger.Info("Start Time: " + self.sDateClock())
         self.bLogSet("init.txt")
-        self.vConfigFileSet('configKeys.xml')
         self.bSampleSetupSet(None)
         self.vConfigSet(None, None)
         self.vSheetFileSet(None)
@@ -74,32 +79,53 @@ class myToolItWatch():
         self.vGraphInit(Watch["DisplaySampleRateMs"], Watch["DisplayBlockSize"])
         self.vStuAddr("")
         self.Can.readThreadStop()
+        self.vXmlConfigurationPlotterHost()
             
     def __exit__(self):
-        self.guiProcessStop()
-        self.Can.ReadThreadReset()
-        if False != self.Can.bConnected:
-            self._BlueToothStatistics()
-            ReceiveFailCounter = self._RoutingInformation()
-            self._statusWords()
-            if(0 < ReceiveFailCounter):
-                self.bError = True
-        self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
-        if False != self.Can.bConnected:
-            self.Can.readThreadStop()
-        self.Can.Logger.Info("End Time Stamp")
-        
-        if(False != self.bError):
-            self.Can.Logger.Info("!!!!Error!!!!")
-            print("!!!!Error!!!!")
-        else:
-            self.Can.Logger.Info("Fin")
-        self.Can.__exit__()  
-        if(False != self.bError):
-            raise
-        if False != self.bSave:
-            self.xmlSave()
+        if False == self.bExit:
+            self.bExit = True
+            self.guiProcessStop()
+            self.Can.ReadThreadReset()
+            if False != self.Can.bConnected:
+                self._BlueToothStatistics()
+                ReceiveFailCounter = self._RoutingInformation()
+                self._statusWords()
+                if(0 < ReceiveFailCounter):
+                    self.bError = True
+                self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
+            if False != self.Can.bConnected:
+                self.Can.readThreadStop()
+            self.Can.Logger.Info("End Time Stamp")
+            
+            if(False != self.bError):
+                self.Can.Logger.Info("!!!!Error!!!!")
+                print("!!!!Error!!!!")
+            else:
+                self.Can.Logger.Info("Fin")
+            self.Can.__exit__()  
+            if(False != self.bError):
+                raise
+            if False != self.bSave:
+                self.xmlSave()
+   
 
+    def vXmlConfigSet(self, sXmlFileName):
+        try:
+            self.tXmlConfig.close()
+        except:
+            pass
+        self.sXmlFileName = sXmlFileName
+        self.tXmlConfig = ConfigKeys(self.sXmlFileName)
+
+    """
+    Load xml Configuration for Plotter i.e. host and port for socket
+    @return Nothing
+    """
+    def vXmlConfigurationPlotterHost(self):
+        atPloterSocket = self.tXmlConfig.atPlotterSocket("standard")
+        self.sPloterSocketHost = atPloterSocket["sHost"]
+        self.iPloterSocketPort = atPloterSocket["iPort"]
+    
     def _statusWords(self):
         ErrorWord = SthErrorWord()
         psw0 = self.Can.statusWord0(MyToolItNetworkNr["STH1"])
@@ -216,12 +242,7 @@ class myToolItWatch():
 
     def vSave2Xml(self, bSave):
         self.bSave = bSave
-        
-    def vConfigFileSet(self, sfileName):
-        self.sXmlFileName = sfileName
-        self.tree = ET.parse(self.sXmlFileName)
-        self.root = self.tree.getroot()
-        
+               
     def vConfigSet(self, product, sConfig):
         self.sProduct = None
         self.sConfig = None
@@ -237,12 +258,12 @@ class myToolItWatch():
     def bSampleSetupSet(self, sSetup):
         bReturn = False
         self.sSetupConfig = sSetup
-        for config in self.tree.find('Config'):
+        for config in self.tXmlConfig.tree.find('Config'):
             if self.sSetupConfig == config.get('name'):
                 bReturn = True
                 break
         return bReturn
-        
+ 
     def bLogSet(self, sLogLocation):
         bOk = False
         if -1 != sLogLocation.rfind('.'):
@@ -353,7 +374,8 @@ class myToolItWatch():
     def guiProcessStop(self):
         try:
             self.vGraphSend(["Run", False])
-            self.tSocket.close()     
+            self.tSocket.close()    
+            self.guiProcess.terminate() 
             self.guiProcess.join()
         except:
             pass
@@ -368,13 +390,14 @@ class myToolItWatch():
             if None != ack:
                 if data == ack:
                     bSend = False
-                     
+
+
     def guiProcessRestart(self):
         self.guiProcessStop()       
         if 0 < self.iDisplayTime:   
-            self.guiProcess = multiprocessing.Process(target=vPlotter)
+            self.guiProcess = multiprocessing.Process(target=vPlotter, args=(self.iPloterSocketPort,))
             self.guiProcess.start()
-            self.tSocket.connect((HOST, PORT))
+            self.tSocket.connect((self.sPloterSocketHost, self.iPloterSocketPort))
             self.vGraphSend(["dataBlockSize", self.iGraphBlockSize])
             self.vGraphSend(["sampleInterval", self.iGraphSampleInterval])
             self.vGraphSend(["xDim", self.iDisplayTime])
@@ -467,16 +490,13 @@ class myToolItWatch():
             print("You can't use sample setup and product/version simultaneously")
             self.Can.vLogDel()
             self.__exit__()     
-                       
-        self.vConfigFileSet(self.args_dict['xml_file_name'][0])
-                  
+        self.vXmlConfigSet(self.args_dict['xml_file_name'][0])       
         if False != self.args_dict['save']:
             self.vSave2Xml(True)      
         if None != self.args_dict['sample_setup']: 
             sSetup = self.args_dict['sample_setup'][0]
             if False != self.bSampleSetupSet(sSetup):
-                self.vGetXmlSetup()
-                                
+                self.vGetXmlSetup()                     
         if None != self.args_dict['version']: 
             self.vConfigSet(self.args_dict['version'][0], self.args_dict['version'][1])
         
@@ -528,6 +548,7 @@ class myToolItWatch():
                 self.Can.ReadThreadReset()
                 self.Can.cmdReset(MyToolItNetworkNr["STU1"])
                 self.vStuAddr(sBlueToothMacAddr(self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"])))
+                self.guiProcessStop()  
             except KeyboardInterrupt:
                 self.KeyBoadInterrupt = True
                
@@ -539,16 +560,15 @@ class myToolItWatch():
                     self.Can.readThreadStop()     
                     self.guiProcessRestart()       
                     self.Can.Logger.Info("Start Acquiring Data")
-                    self.vGetStreamingAccData()
-                    self.Can.ReadThreadReset()
-                    self.guiProcessStop()                    
+                    self.vGetStreamingAccData()                          
                 else: 
                     self.Can.Logger.Error("Device not allocable")     
             except KeyboardInterrupt:
                 self.KeyBoadInterrupt = True
-                self.__exit__()
+            self.__exit__()
+            
                 
-    def close(self):          
+    def close(self):    
         if False != self.Can.RunReadThread:
             self.__exit__()  
 
@@ -560,30 +580,32 @@ class myToolItWatch():
         tAliveTimeStamp = startTime
         tTimeStamp = startTime
         try:
-            while(tTimeStamp < self.aquireEndTime):                
-                if (tTimeStamp - startTime) >= iIntervalTime:
-                    startTime = tTimeStamp
-                    self.vLogCountInc()
-                ack = self.ReadMessage()
-                if(None != ack):
-                    tAliveTimeStamp = self.Can.getTimeMs()
-                    if(self.AccAckExpected.ID != ack["CanMsg"].ID and self.VoltageAckExpected.ID != ack["CanMsg"].ID):
-                        self.Can.Logger.Error("CanId bError: " + str(ack["CanMsg"].ID))
-                    elif(self.AccAckExpected.DATA[0] != ack["CanMsg"].DATA[0] and self.VoltageAckExpected.DATA[0] != ack["CanMsg"].DATA[0])  :
-                        self.Can.Logger.Error("Wrong Subheader-Format(Acceleration Format): " + str(ack["CanMsg"].ID))
-                    elif self.AccAckExpected.ID == ack["CanMsg"].ID:
-                        self.GetMessageAcc(ack)
-                                   
+            while(tTimeStamp < self.aquireEndTime):    
+                try:            
+                    if (tTimeStamp - startTime) >= iIntervalTime:
+                        startTime = tTimeStamp
+                        self.vLogCountInc()
+                    ack = self.ReadMessage()
+                    if(None != ack):
+                        tAliveTimeStamp = self.Can.getTimeMs()
+                        if(self.AccAckExpected.ID != ack["CanMsg"].ID and self.VoltageAckExpected.ID != ack["CanMsg"].ID):
+                            self.Can.Logger.Error("CanId bError: " + str(ack["CanMsg"].ID))
+                        elif(self.AccAckExpected.DATA[0] != ack["CanMsg"].DATA[0] and self.VoltageAckExpected.DATA[0] != ack["CanMsg"].DATA[0]):
+                            self.Can.Logger.Error("Wrong Subheader-Format(Acceleration Format): " + str(ack["CanMsg"].ID))
+                        elif self.AccAckExpected.ID == ack["CanMsg"].ID:
+                            self.GetMessageAcc(ack)
+                        else:
+                            self.GetMessageVoltage(ack)     
                     else:
-                        self.GetMessageVoltage(ack)     
-                else:
-                    tTimeStamp = self.Can.getTimeMs()
-                    if (tAliveTimeStamp + Watch["AliveTimeOutMs"]) < tTimeStamp:
-                        self.Can.bConnected = False
-                        self.aquireEndTime = tTimeStamp
-                        self.Can.Logger.Error("Not received any streaming package for 4s. Terminated program execution.")
-                        print("Not received any streaming package for 4s. Terminated program execution.")
-                
+                        tTimeStamp = self.Can.getTimeMs()
+                        if (tAliveTimeStamp + Watch["AliveTimeOutMs"]) < tTimeStamp:
+                            self.Can.bConnected = False
+                            self.aquireEndTime = tTimeStamp
+                            self.Can.Logger.Error("Not received any streaming package for 4s. Terminated program execution.")
+                            print("Not received any streaming package for 4s. Terminated program execution.")     
+                except KeyboardInterrupt:
+                    pass
+            self.__exit__()                       
         except KeyboardInterrupt:
             self.KeyBoadInterrupt = True
             print("Data acquisition determined")
@@ -783,7 +805,7 @@ class myToolItWatch():
         return message
 
     def atXmlProductVersion(self):
-        dataDef = self.root.find('Data')               
+        dataDef = self.tXmlConfig.root.find('Data')               
         atProducts = {}
         iProduct = 1
         for product in dataDef.find('Product'):
@@ -849,7 +871,7 @@ class myToolItWatch():
     def atProductPages(self):
         atPageList = []
         if None != self.sProduct:
-            dataDef = self.root.find('Data')
+            dataDef = self.tXmlConfig.root.find('Data')
             for product in dataDef.find('Product'):
                 if product.get('name') == self.sProduct:
                     atPageList = self.atProductPagesProduct(product)
@@ -926,7 +948,7 @@ class myToolItWatch():
     """
 
     def _XmlWriteEndoding(self):
-        xml = (bytes('<?xml version="1.0" encoding="UTF-8"?>\n', encoding='utf-8') + ET.tostring(self.root))
+        xml = (bytes('<?xml version="1.0" encoding="UTF-8"?>\n', encoding='utf-8') + ET.tostring(self.tXmlConfig.root))
         xml = xml.decode('utf-8')
         with open(self.sXmlFileName, "w", encoding='utf-8') as f:
             f.write(xml)   
@@ -947,10 +969,10 @@ class myToolItWatch():
     """
 
     def xmlSave(self):
-        self.tree.write(self.sXmlFileName)
+        self.tXmlConfig.tree.write(self.sXmlFileName)
         self._XmlWriteEndoding()   
-        del self.tree
-        self.vConfigFileSet(self.sXmlFileName)
+        del self.tXmlConfig
+        self.tXmlConfig = ConfigKeys(self.args_dict['xml_file_name'][0])
         
     """
     Removes a config
@@ -961,7 +983,7 @@ class myToolItWatch():
         self.xmlSave()
 
     def xmlPrintVersions(self):
-        dataDef = self.root.find('Data')
+        dataDef = self.tXmlConfig.root.find('Data')
         for product in dataDef.find('Product'):
             print(product.get('name') + ":")
             for version in product.find('Version'):
@@ -1041,7 +1063,7 @@ class myToolItWatch():
 
     def _vExcelProductVersion2XmlProductVersionPageNew(self, sName, sAddress):
         if None != self.sProduct and None != self.sConfig:
-            dataDef = self.root.find('Data')
+            dataDef = self.tXmlConfig.root.find('Data')
             for product in dataDef.find('Product'):
                 if product.get('name') == self.sProduct:
                     for version in product.find('Version'):
@@ -1083,7 +1105,7 @@ class myToolItWatch():
 
     def _vExcelProductVersion2XmlProductVersionXmlPageRemoveAction(self, sName):
         if None != self.sProduct and None != self.sConfig:
-            dataDef = self.root.find('Data')
+            dataDef = self.tXmlConfig.root.find('Data')
             for product in dataDef.find('Product'):
                 if product.get('name') == self.sProduct:
                     for version in product.find('Version'):
@@ -1091,8 +1113,7 @@ class myToolItWatch():
                             for page in version.find('Page'):
                                 if page.get('name') == sName:
                                     version.find('Page').remove(page)
-                            return
-                        
+                                                    
     """
     Write xml definiton by Excel Sheet - Remove entries that are not part of an excel sheet
     """
@@ -1130,7 +1151,7 @@ class myToolItWatch():
                 if 0 < uLength:
                     self.vExcelProductVersion2XmlProductVersionPage(tWorkbook)
                 else:
-                    for tProduct in self.root.find('Data').find('Product'):
+                    for tProduct in self.tXmlConfig.root.find('Data').find('Product'):
                         if tProduct.get('name') == self.sProduct:
                             for tVersion in tProduct.find('Version'):
                                 if tVersion.get('name') == self.sConfig:
@@ -1347,13 +1368,13 @@ class myToolItWatch():
     def atXmlSetup(self):           
         asSetups = {}
         iSetup = 1
-        for setup in self.tree.find('Config'):
+        for setup in self.tXmlConfig.tree.find('Config'):
             asSetups[iSetup] = setup      
             iSetup += 1   
         return asSetups  
     
     def vSetXmlSetup(self):
-        for config in self.tree.find('Config'):
+        for config in self.tXmlConfig.tree.find('Config'):
             if config.get('name') == self.sSetupConfig:        
                 config.find('DeviceName').text = str(self.sDevName)
                 config.find('DeviceAddress').text = str(self.iAddress)
@@ -1371,7 +1392,7 @@ class myToolItWatch():
                 break
                             
     def vGetXmlSetup(self):
-        for config in self.tree.find('Config'):
+        for config in self.tXmlConfig.tree.find('Config'):
             if config.get('name') == self.sSetupConfig:
                 self.vDeviceNameSet(config.find('DeviceName').text)
                 self.vDeviceAddressSet(config.find('DeviceAddress').text)
@@ -1397,13 +1418,13 @@ class myToolItWatch():
     def removeXmlSetup(self, setup):
         if(setup.get('name') == self.sSetupConfig):
             self.bSampleSetupSet(None)
-        self.tree.find('Config').remove(setup)  
+        self.tXmlConfig.tree.find('Config').remove(setup)  
         self.xmlSave()     
                 
     def newXmlSetup(self, setup, sConfig):
         cloneVersion = copy.deepcopy(setup)
         cloneVersion.set('name', sConfig) 
-        self.tree.find('Config').append(cloneVersion)
+        self.tXmlConfig.tree.find('Config').append(cloneVersion)
         self.xmlSave()
         self.bSampleSetupSet(sConfig)
 
@@ -1412,7 +1433,7 @@ class myToolItWatch():
         return new
         
     def xmlPrintSetups(self):
-        for setup in self.tree.find('Config'):
+        for setup in self.tXmlConfig.tree.find('Config'):
             print(setup.get('name'))
             print("    Device Name: " + setup.find('DeviceName').text)
             print("    Acc: " + setup.find('Acc').text)

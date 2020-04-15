@@ -16,6 +16,7 @@ from MyToolItNetworkNumbers import MyToolItNetworkNr, MyToolItNetworkName
 class Logger():
 
     def __init__(self, fileName, fileNameError, FreshLog=False):
+        self.bFileOpen = False
         self.ErrorFlag = False
         self.startTime = int(round(time.time() * 1000))
         self.file = None
@@ -24,6 +25,7 @@ class Logger():
         
     def __exit__(self):
         try:
+            self.bFileOpen = False
             self.file.close()
             if False != self.ErrorFlag:
                 if os.path.isfile(self.fileNameError) and os.path.isfile(self.fileName):
@@ -37,28 +39,31 @@ class Logger():
         return int(round(time.time() * 1000)) - int(self.startTime)
                             
     def Info(self, message):
-        self.file.write("[I](")
-        self.file.write(str(self.getTimeStamp()))
-        self.file.write("ms): ")
-        self.file.write(message)
-        self.file.write("\n")
-        self.file.flush()
+        if False != self.bFileOpen:
+            self.file.write("[I](")
+            self.file.write(str(self.getTimeStamp()))
+            self.file.write("ms): ")
+            self.file.write(message)
+            self.file.write("\n")
+            self.file.flush()
         
     def Error(self, message):
-        self.file.write("[E](")
-        self.file.write(str(self.getTimeStamp()))
-        self.file.write("ms): ")
-        self.file.write(message)
-        self.file.write("\n")
-        self.file.flush()
+        if False != self.bFileOpen:
+            self.file.write("[E](")
+            self.file.write(str(self.getTimeStamp()))
+            self.file.write("ms): ")
+            self.file.write(message)
+            self.file.write("\n")
+            self.file.flush()
         
     def Warning(self, message):
-        self.file.write("[W](")
-        self.file.write(str(self.getTimeStamp()))
-        self.file.write("ms): ")
-        self.file.write(message)
-        self.file.write("\n")
-        self.file.flush()
+        if False != self.bFileOpen:
+            self.file.write("[W](")
+            self.file.write(str(self.getTimeStamp()))
+            self.file.write("ms): ")
+            self.file.write(message)
+            self.file.write("\n")
+            self.file.flush()
         
     def vRename(self, fileName, fileNameError, FreshLog=False):
         if None != self.file:
@@ -73,7 +78,7 @@ class Logger():
             tPath = fileName.rsplit('/', 1)[0]
             if False == os.path.isdir(tPath):
                 os.mkdir(tPath)
-    
+        self.bFileOpen = True
         if False != FreshLog:
             try:
                 self.file = open(fileName, "w", encoding='utf-8')
@@ -165,14 +170,15 @@ class CanFd(object):
         except:
             pass
             
-    def __exitError(self):
+    def __exitError(self, sErrorMessage):
         try:
             self.Logger.ErrorFlag = True
             self.__exit__()
             self.bError = True
-        except:
-            pass
-        raise
+        except Exception:
+            self.m_objPCANBasic.Uninitialize(self.m_PcanHandle)
+            print("Error: " + sErrorMessage)
+        raise Exception(sErrorMessage)
     
     def __close__(self):
         try:
@@ -196,7 +202,8 @@ class CanFd(object):
     def readThreadStop(self):
         try:
             if False != self.RunReadThread:
-                self.RunReadThread = False            
+                self.RunReadThread = False 
+                self.readThread.terminate()           
                 self.readThread.join()
         except:
             pass
@@ -299,7 +306,7 @@ class CanFd(object):
                 print("WriteFrame bError: " + hex(returnMessage))
                 self.Logger.Info("WriteFrame bError: " + hex(returnMessage))
                 returnMessage = "Error"    
-                self.__exitError()
+                self.__exitError("Driver Problems or Physical Layer Problems")
         return returnMessage
 
     def WriteFrameWaitAckOk(self, message):      
@@ -336,7 +343,7 @@ class CanFd(object):
       
     def tWriteFrameWaitAck(self, CanMsg, waitMs=1000, currentIndex=None, printLog=False, assumedPayload=None, bError=False, sendTime=None, notAckIdleWaitTimeMs=0.001):
         if 200 > waitMs:
-            self.__exitError()  
+            self.__exitError("Meantime between send retry to low(" + str(waitMs) + "ms)")  
         if None == sendTime:
             sendTime = self.getTimeMs()
         if None == currentIndex:
@@ -393,7 +400,7 @@ class CanFd(object):
                     if False != printLog:
                         print("Message Request Failed: " + cmdBlockName + " - " + cmdName + "(" + senderName + "->" + receiverName + ")" + "; Payload - " + payload2Hex(CanMsg.DATA))
                     if False != bErrorExit:
-                        self.__exitError()
+                        self.__exitError("To many retries(" + str(retries) + ")")
             time.sleep(0.01)
             return returnMessage
         except KeyboardInterrupt:
@@ -405,7 +412,7 @@ class CanFd(object):
         index = self.GetReadArrayIndex()
         msgAck = self.tWriteFrameWaitAckRetries(message, retries=retries, waitMs=1000, bErrorAck=bErrorAck, printLog=printLog, bErrorExit=bErrorExit, notAckIdleWaitTimeMs=notAckIdleWaitTimeMs)
         if msgAck != "Error" and False == bErrorExit:
-            self.__exitError()
+            self.__exitError("Command was not send able")
         if False != log:
             canCmd = self.CanCmd(blockCmd, subCmd, 1, 0)
             if "Error" != msgAck:
@@ -426,7 +433,7 @@ class CanFd(object):
         index = self.GetReadArrayIndex()
         msgAck = self.tWriteFrameWaitAckRetries(message, retries=retries, waitMs=1000, bErrorAck=bErrorAck, printLog=printLog, bErrorExit=bErrorExit)
         if msgAck != "Error" and False == bErrorExit:
-            self.__exitError()
+            self.__exitError("Retries exceeded(" + str(retries) + " Retries)")
         if False != log:
             canCmd = self.CanCmd(blockCmd, subCmd, 1, 0)
             if "Error" != msgAck:
@@ -528,7 +535,7 @@ class CanFd(object):
             self.Logger.Error("Assumed message ID: " + str(messageIdFilter) + "(" + str(cmdRec) + "); Received message ID: " + str(messageId) + "(" + str(cmdFiltered) + ")")
             self.Logger.Error("Assumed command block: " + str(filterCmdBlk) + "; Received command block: " + str(receivedCmdBlk))
             self.Logger.Error("Assumed sub command: " + str(filterCmdSub) + "; Received sub command: " + str(receivedCmdSub))
-            raise
+            self.__exitError("Wrong Filter ID")
         if 0 < len(array1):
             array1 = [array1[0]]
         if 0 < len(array2):
@@ -577,7 +584,7 @@ class CanFd(object):
                 elif DataSets[3] == dataSets:
                     [array1, array2, array3] = self.ValueDataSet3(data, b1, b2, b3, array1, array2, array3)
                 else:
-                    raise
+                    self.__exitError("Wrong Data Set(:" + str(dataSets) + ")")
             runIndex += 1
         return [array1, array2, array3]
 
@@ -622,7 +629,7 @@ class CanFd(object):
                 elif DataSets[3] == dataSets:
                     [array1, array2, array3] = self.ValueDataSet3MsgCounter(data, b1, b2, b3, array1, array2, array3)
                 else:
-                    raise
+                    self.__exitError("Data Sets not available(Data Sets: " + str(dataSets) + ")")
             runIndex += 1
         return [array1, array2, array3]
     
@@ -834,7 +841,7 @@ class CanFd(object):
             self.VoltageConfig.b.u3DataSets = dataSets
             streamingFormat = self.VoltageConfig
         else:
-            self.__exitError()
+            self.__exitError("Streaming unknown at streaming start: + (" + str(subCmd) + ")")
         if False != log:
             self.Logger.Info("Can Bandwitdh(Lowest, may be more): " + str(self.canBandwith()) + "bit/s")
             self.Logger.Info("Bluetooth Bandwitdh(Lowest, may be more): " + str(self.bluetoothBandwidth()) + "bit/s")
@@ -861,7 +868,7 @@ class CanFd(object):
             self.VoltageConfig.b.u3DataSets = DataSets[0]
             streamingFormat = self.VoltageConfig
         else:
-            self.__exitError()
+            self.__exitError("Streaming unknown at streaming stop: + (" + str(subCmd) + ")")
         cmd = self.CanCmd(MyToolItBlock["Streaming"], subCmd, 1, 0)
         message = self.CanMessage20(cmd, self.sender, receiver, [streamingFormat.asbyte])
         self.Logger.Info("_____________________________________________________________")
@@ -1032,20 +1039,20 @@ class CanFd(object):
         return [iDs, cmds]
             
     def ReadMessage(self):
-        try:
             while False != self.RunReadThread:
-                self.tCanReadWriteMutex.acquire()
-                result = self.m_objPCANBasic.Read(self.m_PcanHandle)
-                self.tCanReadWriteMutex.release()
-                if result[0] == PCAN_ERROR_OK:
-                    peakCanTimeStamp = result[2].millis_overflow * (2 ** 32) + result[2].millis + result[2].micros / 1000
-                    self.readArray.append({"CanMsg" : result[1], "PcTime" : self.getTimeMs(), "PeakCanTime" : peakCanTimeStamp})                
-                elif result[0] == PCAN_ERROR_QOVERRUN:
-                    self.Logger.Error("RxOverRun")
-                    print("RxOverRun")
+                try:
+                    self.tCanReadWriteMutex.acquire()
+                    result = self.m_objPCANBasic.Read(self.m_PcanHandle)
+                    self.tCanReadWriteMutex.release()
+                    if result[0] == PCAN_ERROR_OK:
+                        peakCanTimeStamp = result[2].millis_overflow * (2 ** 32) + result[2].millis + result[2].micros / 1000
+                        self.readArray.append({"CanMsg" : result[1], "PcTime" : self.getTimeMs(), "PeakCanTime" : peakCanTimeStamp})                
+                    elif result[0] == PCAN_ERROR_QOVERRUN:
+                        self.Logger.Error("RxOverRun")
+                        print("RxOverRun")
+                        self.RunReadThread = False
+                except KeyboardInterrupt:
                     self.RunReadThread = False
-        except KeyboardInterrupt:
-            self.RunReadThread = False
     
     def getReadMessage(self, element):
         return self.readArray[element]["CanMsg"]
@@ -1103,8 +1110,8 @@ class CanFd(object):
         self.bConnected = bool(0 != connectToDevice)
         return self.bConnected
 
-    def bBlueToothDisconnect(self, stuNr, log=True):
-        if False != log:
+    def bBlueToothDisconnect(self, stuNr, bLog=True):
+        if False != bLog:
             self.Logger.Info("Bluetooth disconnect")
         cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0)
         message = self.CanMessage20(cmd, self.sender, stuNr, [SystemCommandBlueTooth["Disconnect"], 0, 0, 0, 0, 0, 0, 0])
@@ -1228,7 +1235,7 @@ class CanFd(object):
         if None == self.sDevName:
             if False != log:
                 self.Logger.Info("Available Devices: " + str(devList))
-            self.__exitError()
+            self.__exitError("Connecting to device")
         return self.bConnected
 
     def tDeviceList(self, stuNr, bLog=True):       
@@ -1275,7 +1282,7 @@ class CanFd(object):
                         self.Logger.Info("Connected to: " + self.iAddress)
         if None == self.sDevName:
             self.Logger.Info("Available Devices: " + str(dev))
-            self.__exitError()
+            self.__exitError("No Device Name was available")
         return self.bConnected
 
     def BlueToothEnergyModeNr(self, Sleep1TimeReset, Sleep1AdvertisementTimeReset, modeNr):
@@ -1422,5 +1429,5 @@ class CanFd(object):
         elif 3 >= count:
             dataSets = DataSets[1]
         else:
-            self.__exitError()  
+            self.__exitError("No valid CAN20 message (Data Set: " + str("Sampling Points: ") + str(count) + ")")
         return dataSets  

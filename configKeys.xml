@@ -3,11 +3,96 @@
     <lastRun>
         <LogName>Walther</LogName>
         <Product>STH</Product>
-        <Version>v2.1.10_50g</Version>
+        <Version>v2.1.7</Version>
         <NetworkNumber>STH1</NetworkNumber>
         <SheetFile>Sth</SheetFile>
         <Setup>X</Setup>
     </lastRun>
+    <DataBase>
+        <dataBase name="sth">
+            <Host>localhost</Host>
+            <User>root</User>
+            <Password>icotronic</Password>
+            <name>sth</name>
+		</dataBase>
+        <dataBase name="stu">
+            <Host>localhost</Host>
+            <User>root</User>
+            <Password>icotronic</Password>
+            <name>stu</name>
+        </dataBase>
+    </DataBase>
+    <Plotter>
+        <plotter name="standard">
+            <Host>localhost</Host>
+            <Port>50007</Port>
+        </plotter>
+    </Plotter>
+    <Setup>
+        <setup name="ProductionSth">
+            <VerificationInternal>
+                <LogLocation>./Logs/STH/</LogLocation>
+            </VerificationInternal>
+            <usedHw>1.3.3</usedHw>
+            <usedHwSub>v2.1.10_Adxl100_200g</usedHwSub>
+            <HwRev>
+                <hwRev name="1.3.3">
+                    <HwRevSub>
+                        <hwRevSub name="v2.1.10_Adxl100_200g">
+                            <Version>v2.1.9</Version>
+                            <LogName>Sth</LogName>
+                            <LogLocation>./Logs/Sth/</LogLocation>
+                            <OtaComPort>COM6</OtaComPort>
+                            <BuildLocation>../../SimplicityStudio/v4_workspace/STH/builds/</BuildLocation>
+                            <SilabsCommanderLocaton>../../SimplicityStudio/SimplicityCommander/</SilabsCommanderLocaton>
+                            <AdapterSerialNo>440115849</AdapterSerialNo>
+                            <BoardType>BGM113A256V2</BoardType>
+                            <SensorAxis>1</SensorAxis>
+							<Adc2Acc>200</Adc2Acc>
+                            <Key>v2.1.10_Adxl100_100g</Key>
+                        </hwRevSub>
+                        <hwRevSub name="v2.1.10_Adxl100_100g">
+                            <Version>v2.1.9</Version>
+                            <LogName>Sth</LogName>
+                            <LogLocation>./Logs/Sth/</LogLocation>
+                            <OtaComPort>COM6</OtaComPort>
+                            <BuildLocation>../../SimplicityStudio/v4_workspace/STH/builds/</BuildLocation>
+                            <SilabsCommanderLocaton>../../SimplicityStudio/SimplicityCommander/</SilabsCommanderLocaton>
+                            <AdapterSerialNo>440115849</AdapterSerialNo>
+                            <BoardType>BGM113A256V2</BoardType>
+                            <SensorAxis>1</SensorAxis>
+                            <Key>v2.1.10_Adxl100_100g</Key>
+                        </hwRevSub>
+                    </HwRevSub>
+                </hwRev>            
+            </HwRev>
+        </setup>
+        <setup name="ProductionStu">
+            <VerificationInternal>
+                <LogLocation>./Logs/STU/</LogLocation>
+            </VerificationInternal>
+            <usedHw>1.3.1</usedHw>
+            <usedHwSub>v2.1.10_Standard</usedHwSub>
+            <HwRev>
+                <hwRev name="1.3.1">
+                    <HwRevSub>
+                        <hwRevSub name="v2.1.10_Standard">
+                            <Version>v2.1.10</Version>
+                            <PcbOnly>True</PcbOnly>
+                            <LogName>ProductionTestStu</LogName>
+                            <LogLocation>./Logs/ProductionTestStu/</LogLocation>
+                            <BuildLocation>../../SimplicityStudio/v4_workspace/STU/builds/</BuildLocation>
+                            <SilabsCommanderLocation>../../SimplicityStudio/SimplicityCommander/</SilabsCommanderLocation>
+                            <AdapterSerialNo>440116697</AdapterSerialNo>
+                            <BoardType>440116697</BoardType>
+                            <RssiMin>-75</RssiMin>
+                            <Key>v2.1.10_Standard</Key>
+                        </hwRevSub>
+                    </HwRevSub>
+                </hwRev>            
+            </HwRev>     
+        </setup>
+    </Setup>
     <Config>
         <config name="X">
                 <DeviceName>Tanja</DeviceName>
@@ -18,7 +103,7 @@
                 <Prescaler>2</Prescaler>
                 <AcquisitionTime>8</AcquisitionTime>
                 <OverSamples>64</OverSamples>
-                <LogName>../Logs/Watch/AccX12k5</LogName>
+                <LogName>./Logs/Watch/AccX12k5</LogName>
                 <DisplayTime>10</DisplayTime>
                 <IntervalTime>0</IntervalTime>
                 <RunTime>0</RunTime>
@@ -32,7 +117,7 @@
                 <Prescaler>2</Prescaler>
                 <AcquisitionTime>8</AcquisitionTime>
                 <OverSamples>64</OverSamples>        
-                <LogName>../Logs/Watch/AccY12k5</LogName>
+                <LogName>./Logs/Watch/AccY12k5</LogName>
                 <DisplayTime>10</DisplayTime>
                 <IntervalTime>0</IntervalTime>
                 <RunTime>0</RunTime>
@@ -46,7 +131,7 @@
                 <Prescaler>2</Prescaler>
                 <AcquisitionTime>8</AcquisitionTime>
                 <OverSamples>64</OverSamples>
-                <LogName>../Logs/Watch/AccZ12k5</LogName>
+                <LogName>./Logs/Watch/AccZ12k5</LogName>
                 <DisplayTime>10</DisplayTime>
                 <IntervalTime>0</IntervalTime>
                 <RunTime>0</RunTime>
@@ -60,7 +145,7 @@
                 <Prescaler>2</Prescaler>
                 <AcquisitionTime>8</AcquisitionTime>
                 <OverSamples>64</OverSamples>
-                <LogName>../Logs/Watch/AccXY12k5</LogName>
+                <LogName>./Logs/Watch/AccXY12k5</LogName>
                 <DisplayTime>10</DisplayTime>
                 <IntervalTime>0</IntervalTime>
                 <RunTime>0</RunTime>
@@ -74,7 +159,7 @@
                 <Prescaler>2</Prescaler>
                 <AcquisitionTime>8</AcquisitionTime>
                 <OverSamples>64</OverSamples>
-                <LogName>../Logs/Watch/AccYZ12k5</LogName>
+                <LogName>./Logs/Watch/AccYZ12k5</LogName>
                 <DisplayTime>10</DisplayTime>
                 <IntervalTime>0</IntervalTime>
                 <RunTime>0</RunTime>
@@ -88,7 +173,7 @@
                 <Prescaler>2</Prescaler>
                 <AcquisitionTime>8</AcquisitionTime>
                 <OverSamples>64</OverSamples>
-                <LogName>../Logs/Watch/AccXYZ12k5</LogName>
+                <LogName>./Logs/Watch/AccXYZ12k5</LogName>
                 <DisplayTime>10</DisplayTime>
                 <IntervalTime>0</IntervalTime>
                 <RunTime>0</RunTime>
@@ -102,7 +187,7 @@
                 <Prescaler>2</Prescaler>
                 <AcquisitionTime>1</AcquisitionTime>
                 <OverSamples>256</OverSamples>
-                <LogName>../Logs/Watch/AccX2k4</LogName>
+                <LogName>./Logs/Watch/AccX2k4</LogName>
                 <DisplayTime>10</DisplayTime>
                 <IntervalTime>0</IntervalTime>
                 <RunTime>0</RunTime>
@@ -116,7 +201,7 @@
                 <Prescaler>2</Prescaler>
                 <AcquisitionTime>1</AcquisitionTime>
                 <OverSamples>256</OverSamples>
-                <LogName>../Logs/Watch/AccY2k4</LogName>
+                <LogName>./Logs/Watch/AccY2k4</LogName>
                 <DisplayTime>10</DisplayTime>
                 <IntervalTime>0</IntervalTime>
                 <RunTime>0</RunTime>
@@ -130,7 +215,7 @@
                 <Prescaler>2</Prescaler>
                 <AcquisitionTime>1</AcquisitionTime>
                 <OverSamples>256</OverSamples>
-                <LogName>../Logs/Watch/AccZ2k4</LogName>
+                <LogName>./Logs/Watch/AccZ2k4</LogName>
                 <DisplayTime>10</DisplayTime>
                 <IntervalTime>0</IntervalTime>
                 <RunTime>0</RunTime>
