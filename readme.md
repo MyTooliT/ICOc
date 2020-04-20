@@ -98,7 +98,7 @@ JP4 needs to be connected in order to activate the +5V supply. Be aware that the
 
 JP1 and JP2 need to be connected to terminate the CAN Bus inside the adapter. This is highly recommended as the cable is not terminated externally in most cases.
 
-![1557746065070](assets\1557746065070.png)
+![1557746065070](assets/1557746065070.png)
 
 ### Connectors
 
