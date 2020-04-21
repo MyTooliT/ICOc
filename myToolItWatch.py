@@ -383,7 +383,7 @@ class myToolItWatch():
         data = tArray2Binary(data)
         while False != bSend:
             self.tSocket.sendall(data)
-            #sleep(0.1)
+            sleep(0.1)
             ack = self.tSocket.recv(2 ** 10)   
             if None != ack:
                 if data == ack:

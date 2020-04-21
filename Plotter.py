@@ -4,6 +4,7 @@ import socket
 import json
 from configKeys import ConfigKeys
 from time import time
+from Logger import Logger
 
 HOST = ''  # Symbolic name meaning all available interfaces
 PORT = 50007  # Arbitrary non-privileged port to define standard port for this application
@@ -128,7 +129,10 @@ def vPlotterCommand(command, value):
 def vPlotter(iSocketPort):
     global cDict
     
+    tLogger = Logger("Plotter.txt", "PlotterError.txt", True)
+    tLogger.Info("Application started")    
     vPloterSocketInit(iSocketPort)    
+    tLogger.Info("Socket Initialized")
     while False != cDict["Run"] and False == cDict["Plot"]:
         cmd = cDict["Connection"].recv(2**10)
         if None != cmd: 
@@ -136,13 +140,15 @@ def vPlotter(iSocketPort):
             if None != cmd: 
                 sCommand = cmd[0]
                 atValue = cmd[1]
+                tLogger.Info("Initialization command: " + sCommand)
                 vPlotterCommand(sCommand, atValue)
                 cDict["Connection"].sendall(tArray2Binary([sCommand, atValue]))
-         
+    tLogger.Info("Configuration set")     
     [line1, line2, line3] = tPlotterInit()
-    
+    tLogger.Info("Configured")
     pauseTime = (1 / cDict["sampleInterval"]) / 4
     tLastTick = int(round(time()))
+    tLogger.Info("Drawing started")
     while False != cDict["Run"]:
             cmd = cDict["Connection"].recv(2**16)
             if None != cmd:
@@ -160,14 +166,18 @@ def vPlotter(iSocketPort):
                         cDict["zAccPoints"] = np.hstack([cDict["zAccPoints"], atValue["Z"]])
                         [line1, line2, line3] = vlivePlot(cDict["xAccPoints"], cDict["yAccPoints"], cDict["zAccPoints"], line1, line2, line3, pauseTime)
                     else:
+                        tLogger.Info("Execute none data command: " + sCommand)
                         vPlotterCommand(sCommand, atValue)
                     cDict["Connection"].sendall(tArray2Binary([sCommand, atValue]))
             else:
                 if cDict["TimeOutMs"] < (int(round(time())) - tLastTick()):
+                    tLogger.Error("Client time out")
                     cDict["Run"] = False
-                    
-                    
+    
+    tLogger.Info("Closing connection ...")
     cDict["Connection"].close()
+    tLogger.Info("Connection closed")
+    tLogger.__exit__()
 
         
 def vlivePlot(yX_data, yY_data, yZ_data, line1, line2, line3, pause_time):
