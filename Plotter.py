@@ -5,6 +5,8 @@ import json
 from configKeys import ConfigKeys
 from time import time
 
+HOST = ''  # Symbolic name meaning all available interfaces
+PORT = 50007  # Arbitrary non-privileged port to define standard port for this application
 cDict = {
     "Run" : True,
     "Plot": False,
@@ -87,7 +89,7 @@ def tPlotterInit():
 def vPloterSocketInit(iSocketPort):
     global cDict
     cDict["Socket"] = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    cDict["Socket"].bind(('', iSocketPort))
+    cDict["Socket"].bind((HOST, iSocketPort))
     cDict["Socket"].listen(1)
     cDict["Connection"], addr = cDict["Socket"].accept()
 
@@ -132,10 +134,10 @@ def vPlotter(iSocketPort):
         if None != cmd: 
             cmd = tBinary2Array(cmd)
             if None != cmd: 
-                command = cmd[0]
-                value = cmd[1]
-                vPlotterCommand(command, value)
-                cDict["Connection"].sendall(tArray2Binary([command, value]))
+                sCommand = cmd[0]
+                atValue = cmd[1]
+                vPlotterCommand(sCommand, atValue)
+                cDict["Connection"].sendall(tArray2Binary([sCommand, atValue]))
          
     [line1, line2, line3] = tPlotterInit()
     
@@ -146,19 +148,20 @@ def vPlotter(iSocketPort):
             if None != cmd:
                 tLastTick = int(round(time() * 1000))
                 cmd = tBinary2Array(cmd)
-                value = cmd[1]
+                sCommand = cmd[0]
+                atValue = cmd[1]
                 if None != cmd: 
                     if "data" == cmd[0]:
                         cDict["xAccPoints"] = cDict["xAccPoints"][cDict["dataBlockSize"]:]
                         cDict["yAccPoints"] = cDict["yAccPoints"][cDict["dataBlockSize"]:]
                         cDict["zAccPoints"] = cDict["zAccPoints"][cDict["dataBlockSize"]:]
-                        cDict["xAccPoints"] = np.hstack([cDict["xAccPoints"], value["X"]])
-                        cDict["yAccPoints"] = np.hstack([cDict["yAccPoints"], value["Y"]])
-                        cDict["zAccPoints"] = np.hstack([cDict["zAccPoints"], value["Z"]])
+                        cDict["xAccPoints"] = np.hstack([cDict["xAccPoints"], atValue["X"]])
+                        cDict["yAccPoints"] = np.hstack([cDict["yAccPoints"], atValue["Y"]])
+                        cDict["zAccPoints"] = np.hstack([cDict["zAccPoints"], atValue["Z"]])
                         [line1, line2, line3] = vlivePlot(cDict["xAccPoints"], cDict["yAccPoints"], cDict["zAccPoints"], line1, line2, line3, pauseTime)
                     else:
-                        vPlotterCommand(command, value)
-                        cDict["Connection"].sendall(tArray2Binary([command, value]))
+                        vPlotterCommand(sCommand, atValue)
+                    cDict["Connection"].sendall(tArray2Binary([sCommand, atValue]))
             else:
                 if cDict["TimeOutMs"] < (int(round(time())) - tLastTick()):
                     cDict["Run"] = False

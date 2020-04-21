@@ -1,108 +1,16 @@
 from PCANBasic import *
-import threading
-import time 
-import os
+import threading 
 import array
 import math
+from MyToolItCommands import *
+from MyToolItNetworkNumbers import MyToolItNetworkNr, MyToolItNetworkName
+from Logger import Logger
+
 
 PeakCanIoPort = 0x2A0
 PeakCanInterrupt = 11
 PeakCanBitrateFd = "f_clock_mhz=20, nom_brp=5, nom_tseg1=2, nom_tseg2=1, nom_sjw=1, data_brp=2, data_tseg1=3, data_tseg2=1, data_sjw=1"
-
-from MyToolItCommands import *
-from MyToolItNetworkNumbers import MyToolItNetworkNr, MyToolItNetworkName
-
-           
-class Logger():
-
-    def __init__(self, fileName, fileNameError, FreshLog=False):
-        self.bFileOpen = False
-        self.ErrorFlag = False
-        self.startTime = int(round(time.time() * 1000))
-        self.file = None
-        self.fileName = None
-        self.vRename(fileName, fileNameError, FreshLog=FreshLog)
-        
-    def __exit__(self):
-        try:
-            self.bFileOpen = False
-            self.file.close()
-            if False != self.ErrorFlag:
-                if os.path.isfile(self.fileNameError) and os.path.isfile(self.fileName):
-                    os.remove(self.fileNameError)
-                if os.path.isfile(self.fileName):
-                    os.rename(self.fileName, self.fileNameError)
-        except:
-            pass
-
-    def getTimeStamp(self):     
-        return int(round(time.time() * 1000)) - int(self.startTime)
-                            
-    def Info(self, message):
-        if False != self.bFileOpen:
-            self.file.write("[I](")
-            self.file.write(str(self.getTimeStamp()))
-            self.file.write("ms): ")
-            self.file.write(message)
-            self.file.write("\n")
-            self.file.flush()
-        
-    def Error(self, message):
-        if False != self.bFileOpen:
-            self.file.write("[E](")
-            self.file.write(str(self.getTimeStamp()))
-            self.file.write("ms): ")
-            self.file.write(message)
-            self.file.write("\n")
-            self.file.flush()
-        
-    def Warning(self, message):
-        if False != self.bFileOpen:
-            self.file.write("[W](")
-            self.file.write(str(self.getTimeStamp()))
-            self.file.write("ms): ")
-            self.file.write(message)
-            self.file.write("\n")
-            self.file.flush()
-        
-    def vRename(self, fileName, fileNameError, FreshLog=False):
-        if None != self.file:
-            self.vClose()
-        if not os.path.exists(os.path.dirname(fileName)) and os.path.isdir(os.path.dirname(fileName)):
-            os.makedirs(os.path.dirname(fileName))
-        if None != self.fileName:
-            os.rename(self.fileName, fileName)
-        self.fileName = fileName
-        self.fileNameError = fileNameError
-        if '/' in fileName:
-            tPath = fileName.rsplit('/', 1)[0]
-            if False == os.path.isdir(tPath):
-                os.mkdir(tPath)
-        self.bFileOpen = True
-        if False != FreshLog:
-            try:
-                self.file = open(fileName, "w", encoding='utf-8')
-            except:
-                self.file = open(fileName, "x", encoding='utf-8')                
-        else:
-            try:
-                self.file = open(fileName, "a", encoding='utf-8')
-            except:
-                self.file = open(fileName, "x", encoding='utf-8')
-        
-    def vDel(self):
-        self.vClose()
-        if os.path.isfile(self.fileName):
-            os.remove(self.fileName)
-        elif os.path.isfile(self.fileNameError):
-            os.remove(self.fileNameError)
-            
-    def vClose(self):
-        try:
-            self.__exit__()
-        except:
-            pass
-        
+             
         
 class CanFd(object):
 
