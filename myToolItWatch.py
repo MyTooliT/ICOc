@@ -56,7 +56,6 @@ class myToolItWatch():
         self.bEepromIgnoreReadErrors = False
         self.bError = False     
         self.bClose = True          
-        self.bExit = False
         self.iMsgLoss = 0
         self.iMsgsTotal = 0
         self.iMsgCounterLast = 0
@@ -82,31 +81,30 @@ class myToolItWatch():
         self.vXmlConfigurationPlotterHost()
             
     def __exit__(self):
-        if False == self.bExit:
-            self.bExit = True
-            self.guiProcessStop()
-            self.Can.ReadThreadReset()
-            if False != self.Can.bConnected:
-                self._BlueToothStatistics()
-                ReceiveFailCounter = self._RoutingInformation()
-                self._statusWords()
-                if(0 < ReceiveFailCounter):
-                    self.bError = True
-                self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
-            if False != self.Can.bConnected:
-                self.Can.readThreadStop()
-            self.Can.Logger.Info("End Time Stamp")
-            
-            if(False != self.bError):
-                self.Can.Logger.Info("!!!!Error!!!!")
-                print("!!!!Error!!!!")
-            else:
-                self.Can.Logger.Info("Fin")
-            self.Can.__exit__()  
-            if(False != self.bError):
-                raise
-            if False != self.bSave:
-                self.xmlSave()
+        self.guiProcessStop()
+        self.Can.ReadThreadReset()
+        if False != self.Can.bConnected:
+            self._BlueToothStatistics()
+            ReceiveFailCounter = self._RoutingInformation()
+            self._statusWords()
+            if(0 < ReceiveFailCounter):
+                self.bError = True
+            self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
+        if False != self.Can.bConnected:
+            self.Can.readThreadStop()
+        self.Can.Logger.Info("End Time Stamp")
+        
+        if(False != self.bError):
+            self.Can.Logger.Info("!!!!Error!!!!")
+            print("!!!!Error!!!!")
+        else:
+            self.Can.Logger.Info("Fin")
+        self.Can.__exit__()  
+        if(False != self.bError):
+            raise
+        if False != self.bSave:
+            self.xmlSave()
+
    
 
     def vXmlConfigSet(self, sXmlFileName):
@@ -385,7 +383,7 @@ class myToolItWatch():
         data = tArray2Binary(data)
         while False != bSend:
             self.tSocket.sendall(data)
-            sleep(0.1)
+            #sleep(0.1)
             ack = self.tSocket.recv(2 ** 10)   
             if None != ack:
                 if data == ack:

@@ -19,8 +19,6 @@ class mwt(myToolItWatch):
         self.vNetworkNumberSet(None)
         
     def close(self):
-        if False == self.bExit:
-            self.bExit = True
         if None != self.process:
             self.process.terminate()
         self.vCloseSaveStoreLastConfig()

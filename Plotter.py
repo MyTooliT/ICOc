@@ -86,7 +86,6 @@ def tPlotterInit():
 
 def vPloterSocketInit(iSocketPort):
     global cDict
-    
     cDict["Socket"] = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     cDict["Socket"].bind(('', iSocketPort))
     cDict["Socket"].listen(1)
@@ -126,6 +125,7 @@ def vPlotterCommand(command, value):
          
 def vPlotter(iSocketPort):
     global cDict
+    
     vPloterSocketInit(iSocketPort)    
     while False != cDict["Run"] and False == cDict["Plot"]:
         cmd = cDict["Connection"].recv(2**10)
