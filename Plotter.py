@@ -28,6 +28,7 @@ cDict = {
     "Socket" : None,
     "Connection" : None,
     "TimeOutMs" : 1500,
+    "addr" : None,
 }
 
 def tArray2Binary(array):
@@ -87,12 +88,20 @@ def tPlotterInit():
     return [line1, line2, line3]
 
 
-def vPloterSocketInit(iSocketPort):
+"""
+Init Server Socket such that Clients may connect
+
+@param iSocketPort Socket Port to be opened
+
+@return 
+"""
+def sPloterSocketInit(iSocketPort):
     global cDict
     cDict["Socket"] = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     cDict["Socket"].bind((HOST, iSocketPort))
     cDict["Socket"].listen(1)
-    cDict["Connection"], addr = cDict["Socket"].accept()
+    cDict["Connection"], cDict["add"] = cDict["Socket"].accept()
+    return cDict["add"]
 
      
 def vPlotterCommand(command, value):
@@ -131,7 +140,7 @@ def vPlotter(iSocketPort):
     
     tLogger = Logger("Plotter.txt", "PlotterError.txt", True)
     tLogger.Info("Application started")    
-    vPloterSocketInit(iSocketPort)    
+    sPloterSocketInit(iSocketPort)    
     tLogger.Info("Socket Initialized")
     while False != cDict["Run"] and False == cDict["Plot"]:
         cmd = cDict["Connection"].recv(2**10)
@@ -139,10 +148,10 @@ def vPlotter(iSocketPort):
             cmd = tBinary2Array(cmd)
             if None != cmd: 
                 sCommand = cmd[0]
-                atValue = cmd[1]
-                tLogger.Info("Initialization command: " + sCommand)
-                vPlotterCommand(sCommand, atValue)
-                cDict["Connection"].sendall(tArray2Binary([sCommand, atValue]))
+                tValue = cmd[1]
+                tLogger.Info("Initialization command: " + sCommand + "; value: " + str(tValue))
+                vPlotterCommand(sCommand, tValue)
+                cDict["Connection"].sendall(tArray2Binary([sCommand, tValue]))
     tLogger.Info("Configuration set")     
     [line1, line2, line3] = tPlotterInit()
     tLogger.Info("Configured")
@@ -155,20 +164,20 @@ def vPlotter(iSocketPort):
                 tLastTick = int(round(time() * 1000))
                 cmd = tBinary2Array(cmd)
                 sCommand = cmd[0]
-                atValue = cmd[1]
+                tValue = cmd[1]
                 if None != cmd: 
                     if "data" == cmd[0]:
                         cDict["xAccPoints"] = cDict["xAccPoints"][cDict["dataBlockSize"]:]
                         cDict["yAccPoints"] = cDict["yAccPoints"][cDict["dataBlockSize"]:]
                         cDict["zAccPoints"] = cDict["zAccPoints"][cDict["dataBlockSize"]:]
-                        cDict["xAccPoints"] = np.hstack([cDict["xAccPoints"], atValue["X"]])
-                        cDict["yAccPoints"] = np.hstack([cDict["yAccPoints"], atValue["Y"]])
-                        cDict["zAccPoints"] = np.hstack([cDict["zAccPoints"], atValue["Z"]])
+                        cDict["xAccPoints"] = np.hstack([cDict["xAccPoints"], tValue["X"]])
+                        cDict["yAccPoints"] = np.hstack([cDict["yAccPoints"], tValue["Y"]])
+                        cDict["zAccPoints"] = np.hstack([cDict["zAccPoints"], tValue["Z"]])
                         [line1, line2, line3] = vlivePlot(cDict["xAccPoints"], cDict["yAccPoints"], cDict["zAccPoints"], line1, line2, line3, pauseTime)
                     else:
-                        tLogger.Info("Execute none data command: " + sCommand)
-                        vPlotterCommand(sCommand, atValue)
-                    cDict["Connection"].sendall(tArray2Binary([sCommand, atValue]))
+                        tLogger.Info("Execute none data command: " + sCommand + "; value: " + str(tValue))
+                        vPlotterCommand(sCommand, tValue)
+                    cDict["Connection"].sendall(tArray2Binary([sCommand, tValue]))
             else:
                 if cDict["TimeOutMs"] < (int(round(time())) - tLastTick()):
                     tLogger.Error("Client time out")
