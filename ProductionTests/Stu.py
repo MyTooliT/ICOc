@@ -206,7 +206,7 @@ class TestStu(unittest.TestCase):
         self.tWorkSheet[sCol + str(self.iTestRow + 1)].font = tFont
 
     """
-    Transform excel value by format to byte arry for STU
+    Transform excel value by format to byte array for STU
     """
 
     def au8excelValueToByteArray(self, worksheet, iIndex):
@@ -252,7 +252,7 @@ class TestStu(unittest.TestCase):
         return byteArray
 
     """
-    Get Byte length of excell sheet entries
+    Get Byte length of Excel sheet entries
     """
 
     def iExcelSheetPageLength(self, worksheet):
@@ -518,7 +518,7 @@ class TestStu(unittest.TestCase):
 
     def test0001OverTheAirUpdate(self):
         global sHolderName
-        self.tWorkSheetWrite("D", "Test the over the air update bootloader functionallity")
+        self.tWorkSheetWrite("D", "Test the over the air update bootloader functionality")
         self._resetStu()
         time.sleep(1)
         sSystemCall = self.sBuildLocation + "/ota-dfu.exe COM6 115200 "

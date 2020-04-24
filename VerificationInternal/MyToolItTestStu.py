@@ -95,7 +95,7 @@ class TestStu(unittest.TestCase):
         return self.Can.cmdReset(MyToolItNetworkNr["STU1"], retries=retries, log=log)
 
     """
-    Retrieve Watchdog COunter of ST
+    Retrieve Watchdog Counter of ST
     """
 
     def _StuWDog(self):
@@ -161,7 +161,7 @@ class TestStu(unittest.TestCase):
             time.sleep(1)
 
     """
-    Reset the Silicion Laps Adapter
+    Reset the Silicon Laps Adapter
     """
     def vSilabsAdapterReset(self):
         self.Can.Logger.Info("Reset Adapter "+ self.sAdapterSerialNo)
@@ -326,7 +326,7 @@ class TestStu(unittest.TestCase):
         self.Can.Logger.Info("Version: " + sVersionRead)
         self.assertEqual(sVersion, sVersionRead)
 
-    """ Send Mutliple Frames without waiting for an ACK, do ACK after 100 times send flooding to check functionallity"""
+    """ Send Multiple Frames without waiting for an ACK, do ACK after 100 times send flooding to check functionality"""
 
     def test0052MultiSend(self):
         self.Can.Logger.Info("Send command 100 times, check number of write/reads and do ack test at the end; do that for 100 times")
@@ -344,7 +344,7 @@ class TestStu(unittest.TestCase):
             time.sleep(0.5)
             self.Can.tWriteFrameWaitAckRetries(message, retries=0)
 
-    """ Send Mutliple Frames with waiting for an ACK: Send->Ack->Send->Ack"""
+    """ Send Multiple Frames with waiting for an ACK: Send->Ack->Send->Ack"""
 
     def test0053MultiSendAck(self):
         self.Can.Logger.Info("Send and get ACK for 1000 times AND do it with two messages randomly ")
@@ -360,7 +360,7 @@ class TestStu(unittest.TestCase):
             self.assertNotEqual("bError", self.Can.tWriteFrameWaitAck(msg))
         self.test0005Ack()  # Test that it still works
 
-    """ Send Mutliple Frames with waiting for an ACK: Send->Ack->Send->Ack, this also do a retry, tests the test framework - Multiple Messages"""
+    """ Send Multiple Frames with waiting for an ACK: Send->Ack->Send->Ack, this also do a retry, tests the test framework - Multiple Messages"""
 
     def test0054MultiSendMultiAckRetries(self):
         self.Can.Logger.Info("Send and get ACK for 1000 times AND do it with two messages randomly ")
@@ -376,7 +376,7 @@ class TestStu(unittest.TestCase):
             self.assertNotEqual("bError", self.Can.tWriteFrameWaitAckRetries(msg, retries=3))
         self.test0005Ack()  # Test that it still works
 
-        """ Send Mutliple Frames with waiting for an ACK: Send->Ack->Send->Ack, this also do a retry, tests the test framework - Single Message"""
+        """ Send Multiple Frames with waiting for an ACK: Send->Ack->Send->Ack, this also do a retry, tests the test framework - Single Message"""
 
     def test0055MultiSendSingleAckRetries(self):
         self.Can.Logger.Info("Send and get ACK for 1000 times AND do it with two messages randomly ")
@@ -678,7 +678,7 @@ class TestStu(unittest.TestCase):
             time.sleep(1)
 
     """
-    Send Message to STH without connecting. Assumed result = not receiving anything. This especially tests the routing functionallity.
+    Send Message to STH without connecting. Assumed result = not receiving anything. This especially tests the routing functionality.
     """
 
     def test0201MyToolItTestNotConnectedAck(self):
@@ -692,7 +692,7 @@ class TestStu(unittest.TestCase):
         self.assertEqual(self.Can.GetReadArrayIndex(), lastIndex)
 
     """
-    Send Message to STH with connecting. Assumed result = receive correct ack. This especially tests the routing functionallity.
+    Send Message to STH with connecting. Assumed result = receive correct ack. This especially tests the routing functionality.
     """
 
     def test0202MyToolItTestAck(self):
@@ -719,7 +719,7 @@ class TestStu(unittest.TestCase):
         self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
 
     """
-    Send Message to STH with connecting. Assumed result = receive correct ack. This especially tests the routing functionallity.
+    Send Message to STH with connecting. Assumed result = receive correct ack. This especially tests the routing functionality.
     """
 
     def test0203MyToolItTestWrongReceiver(self):
@@ -746,7 +746,7 @@ class TestStu(unittest.TestCase):
         msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [0])
         self.Can.tWriteFrameWaitAckRetries(msg, retries=0)
 
-    """ Send Mutliple Frames without waiting for an ACK via routing, do ACK after 100 times send flooding to check functionallity"""
+    """ Send Multiple Frames without waiting for an ACK via routing, do ACK after 100 times send flooding to check functionality"""
 
     def test0204RoutingMultiSend(self):
         self.Can.Logger.Info("Send command 100 times over STU to STH, check number of write/reads and do ack test at the end; do that for 1000 times")
@@ -777,7 +777,7 @@ class TestStu(unittest.TestCase):
             time.sleep(0.25)
             self.Can.tWriteFrameWaitAckRetries(message, retries=0)
 
-    """ Send Mutliple Frames with waiting for an ACK with routing: Send->Ack->Send->Ack"""
+    """ Send Multiple Frames with waiting for an ACK with routing: Send->Ack->Send->Ack"""
 
     def test0205RoutingMultiSendAck(self):
         self.Can.Logger.Info("Send and get ACK for 10000 times AND do it with two messages randomly ")
@@ -804,7 +804,7 @@ class TestStu(unittest.TestCase):
                 msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [0, 0, 0, 0, 0, 0, 0, 0])
             self.assertNotEqual("bError", self.Can.tWriteFrameWaitAck(msg))
 
-    """ Send Mutliple Frames with waiting for an ACK: Send->Ack->Send->Ack with routing, this also do a retry, tests the test framework - Multiple Messages"""
+    """ Send Multiple Frames with waiting for an ACK: Send->Ack->Send->Ack with routing, this also do a retry, tests the test framework - Multiple Messages"""
 
     def test0206RoutingMultiSendAckRetries(self):
         self.Can.Logger.Info("Send and get ACK for 10000 times AND do it with two messages randomly ")
@@ -831,7 +831,7 @@ class TestStu(unittest.TestCase):
                 msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [0, 0, 0, 0, 0, 0, 0, 0])
             self.assertNotEqual("bError", self.Can.tWriteFrameWaitAckRetries(msg, retries=0))
 
-        """ Send Mutliple Frames with waiting for an ACK: Send->Ack->Send->Ack with routing, this also do a retry, tests the test framework - Single Message"""
+        """ Send Multiple Frames with waiting for an ACK: Send->Ack->Send->Ack with routing, this also do a retry, tests the test framework - Single Message"""
 
     def test0207RoutingMultiSendSingleAckRetries(self):
         self.Can.Logger.Info("Send and get ACK for 10000 times AND do it with two messages randomly ")
@@ -1019,7 +1019,7 @@ class TestStu(unittest.TestCase):
         self.assertEqual(TestConfig["ProductionDate"], sProductionDate)
 
     """
-    Check EEPROM Read/Write - Determistic data
+    Check EEPROM Read/Write - Deterministic data
     """
 
     def test0750StatisticPageWriteReadDeteministic(self):
@@ -1075,7 +1075,7 @@ class TestStu(unittest.TestCase):
         self.assertEqual(u32EepromWriteRequestCounterTestStart + 1, u32EepromWriteRequestCounterTestEnd)  # +1 due to incrementing at first write
 
     """
-    Check EEPROM Read/Write - Determistic data
+    Check EEPROM Read/Write - Deterministic data
     """
 
     def test0751StatisticPageWriteReadRandom(self):
@@ -1169,7 +1169,7 @@ class TestStu(unittest.TestCase):
         self.assertEqual(uPageRuns * uLoopRuns, u32EepromWriteRequsts)
 
     """
-    Test that nothing happens when sinding Command 0x0000 to STU1
+    Test that nothing happens when sending Command 0x0000 to STU1
     """
 
     def test0900ErrorCmdVerbotenStu1(self):
@@ -1191,7 +1191,7 @@ class TestStu(unittest.TestCase):
         self.assertEqual("Error", msgAck)
 
     """
-    Test that nothing happens when sinding Reqest(1) and Error(1) to STU1
+    Test that nothing happens when sending Request(1) and Error(1) to STU1
     """
 
     def test0901ErrorRequestErrorStu1(self):

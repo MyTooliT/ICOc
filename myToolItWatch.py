@@ -942,7 +942,7 @@ class myToolItWatch():
             entry.find(key).text = str(value)
 
     """
-    Set endoding
+    Set encoding
     """
 
     def _XmlWriteEndoding(self):
@@ -952,7 +952,7 @@ class myToolItWatch():
             f.write(xml)   
      
     """
-    Creats a new config
+    Creates a new config
     """
 
     def newXmlVersion(self, product, productVersion, sVersion):
@@ -1021,7 +1021,7 @@ class myToolItWatch():
             return tEntry
                        
     """
-    Write xml definiton by Excel Sheet - Excel Page Entries
+    Write xml definition by Excel Sheet - Excel Page Entries
     """
 
     def _vExcelProductVersion2XmlProductVersionPageEntries(self, tWorkSheet, atXmlEntries):
@@ -1041,7 +1041,7 @@ class myToolItWatch():
             iEntryChild += 1
 
     """
-    Write existing xml definiton by Excel Sheet - Excel Entries
+    Write existing xml definition by Excel Sheet - Excel Entries
     """
 
     def _bExcelProductVersion2XmlProductVersionPageExist(self, tWorkSheet, atProductPages, sName, sAddress):
@@ -1077,7 +1077,7 @@ class myToolItWatch():
                             break
                     
     """
-    Write xml definiton by Excel Sheet
+    Write xml definition by Excel Sheet
     """
 
     def vExcelProductVersion2XmlProductVersionPage(self, tWorkbook):            
@@ -1113,7 +1113,7 @@ class myToolItWatch():
                                     version.find('Page').remove(page)
                                                     
     """
-    Write xml definiton by Excel Sheet - Remove entries that are not part of an excel sheet
+    Write xml definition by Excel Sheet - Remove entries that are not part of an excel sheet
     """
 
     def _vExcelProductVersion2XmlProductVersionXmlPageRemove(self, tWorkbook):
@@ -1134,7 +1134,7 @@ class myToolItWatch():
                 self._vExcelProductVersion2XmlProductVersionXmlPageRemoveAction(sXmlName)
                     
     """
-    Write xml definiton by Excel Sheet and do checks
+    Write xml definition by Excel Sheet and do checks
     """
 
     def vExcelProductVersion2XmlProductVersion(self):        

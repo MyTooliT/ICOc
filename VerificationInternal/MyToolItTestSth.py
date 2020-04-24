@@ -540,7 +540,7 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("Page Read Time: " + str(self.Can.getTimeMs() - timeStamp) + "ms")
 
     """
-    Reset the Silicion Laps Adapter
+    Reset the Silicon Laps Adapter
     """
     def vSilabsAdapterReset(self):
         self.Can.Logger.Info("Reset Adapter "+ self.sAdapterSerialNo)
@@ -1013,7 +1013,7 @@ class TestSth(unittest.TestCase):
         self.Can.BlueToothEnergyModeNr(SleepTime["Reset2"], SleepTime["AdvertisementReset2"], 2)
 
     """
-    Power Consumption - Energy Save Mode Advertisment Time 4000ms
+    Power Consumption - Energy Save Mode Advertisement Time 4000ms
     """
 
     def test0016PowerConsumptionEnergySaveModeAdv4000ms(self):
@@ -1125,7 +1125,7 @@ class TestSth(unittest.TestCase):
         except:
             pass
         self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0)
-        self.Can.Logger.Info("Measure Power Consumption for meassuring.")
+        self.Can.Logger.Info("Measure Power Consumption for measuring.")
         time.sleep(2 + SleepTime["Min"] / 1000)
         self.Can.Logger.Info("Measure Power Consumption for advertisement time " + str(SleepTime["AdvertisementMax"]) + "ms")
         sSystemCall = self.sSilabsCommander + " aem measure --windowlength 60000 "
@@ -1177,7 +1177,7 @@ class TestSth(unittest.TestCase):
             pass
         self.TurnOffLed()
         self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0)
-        self.Can.Logger.Info("Measure Power Consumption for meassuring with turned off LED.")
+        self.Can.Logger.Info("Measure Power Consumption for measuring with turned off LED.")
         time.sleep(2 + SleepTime["Min"] / 1000)
         self.Can.Logger.Info("Measure Power Consumption for advertisement time " + str(SleepTime["AdvertisementMax"]) + "ms")
         sSystemCall = self.sSilabsCommander + " aem measure --windowlength 60000 "
@@ -1378,7 +1378,7 @@ class TestSth(unittest.TestCase):
                 self.assertEqual(readD[7], 0)
 
     """
-    Write all calibraton factors and read them afterwards
+    Write all calibration factors and read them afterwards
     """
 
     def test0032CalibrationFactorsKDWriteThenRead(self):
@@ -1479,7 +1479,7 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("BlueTooth Address: " + hex(iAddress))
 
     """
-    Check Bluetooth connectablity for standard settings with minimimum sleep time
+    Check Bluetooth connectivity for standard settings with minimum sleep time
     """
 
     def test0105BlueToothConnectStandard(self):
@@ -1523,7 +1523,7 @@ class TestSth(unittest.TestCase):
         self.assertLess(timeAverageSleep2, TestConfig["ConTimeSleep2MaxMs"])
 
     """
-    Check Bluetooth connectablity for maximum values
+    Check Bluetooth connectivity for maximum values
     """
 
     def test0106BlueToothConnectMax(self):
@@ -1549,7 +1549,7 @@ class TestSth(unittest.TestCase):
         self.assertLess(timeAverageSleep2, TestConfig["ConTimeMaximumMs"])
 
     """
-    Check Bluetooth connectablity for Minimum values (Standard Setting at start, not configuratble, 50ms atm)
+    Check Bluetooth connectivity for Minimum values (Standard Setting at start, not configurable, 50ms atm)
     """
 
     def test0107BlueToothConnectMin(self):
@@ -1642,7 +1642,7 @@ class TestSth(unittest.TestCase):
         self.singleValueCompare(val1, val2, val3, self.tSthLimits.uBatteryMiddle, self.tSthLimits.uBatteryTolerance, 0, 0, 0, 0, fVoltageBattery)
 
     """
-    Test multi single battery meassurement
+    Test multi single battery measurement
     """
 
     def test0301GetSingleVoltageBatteryMultipleTimes(self):
@@ -1653,7 +1653,7 @@ class TestSth(unittest.TestCase):
             self.singleValueCompare(val1, val2, val3, self.tSthLimits.uBatteryMiddle, self.tSthLimits.uBatteryTolerance, 0, 0, 0, 0, fVoltageBattery)
 
     """
-    Test single battery Acceleration X-Axis meassurement
+    Test single battery Acceleration X-Axis measurement
     """
 
     def test0302GetSingleAccX(self):
@@ -1663,7 +1663,7 @@ class TestSth(unittest.TestCase):
         self.singleValueCompare(val1, val2, val3, self.tSthLimits.iAdcAccXMiddle, self.tSthLimits.iAdcAccXTolerance, 0, 0, 0, 0, self.tSthLimits.fAcceleration)
 
     """
-    Test single battery Acceleration Y-Axis meassurement
+    Test single battery Acceleration Y-Axis measurement
     """
 
     def test0303GetSingleAccY(self):
@@ -1673,7 +1673,7 @@ class TestSth(unittest.TestCase):
         self.singleValueCompare(val1, val2, val3, 0, 0, self.tSthLimits.iAdcAccYMiddle, self.tSthLimits.iAdcAccYTolerance, 0, 0, self.tSthLimits.fAcceleration)
 
     """
-    Test single battery Acceleration Z-Axis meassurement
+    Test single battery Acceleration Z-Axis measurement
     """
 
     def test0304GetSingleAccZ(self):
@@ -1683,7 +1683,7 @@ class TestSth(unittest.TestCase):
         self.singleValueCompare(val1, val2, val3, 0, 0, 0, 0, self.tSthLimits.iAdcAccZMiddle, self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
 
     """
-    Test multi single X Acc meassurement
+    Test multi single X Acc measurement
     """
 
     def test0305GetSingleSingleAccXMultipleTimes(self):
@@ -1694,7 +1694,7 @@ class TestSth(unittest.TestCase):
             self.singleValueCompare(val1, val2, val3, self.tSthLimits.iAdcAccXMiddle, self.tSthLimits.iAdcAccXTolerance, 0, 0, 0, 0, self.tSthLimits.fAcceleration)
 
     """
-    Test multi single Y Acc meassurement
+    Test multi single Y Acc measurement
     """
 
     def test0306GetSingleSingleAccYMultipleTimes(self):
@@ -1705,7 +1705,7 @@ class TestSth(unittest.TestCase):
             self.singleValueCompare(val1, val2, val3, 0, 0, self.tSthLimits.iAdcAccYMiddle, self.tSthLimits.iAdcAccYTolerance, 0, 0, self.tSthLimits.fAcceleration)
 
     """
-    Test multi single Z Acc meassurement
+    Test multi single Z Acc measurement
     """
 
     def test0307GetSingleSingleAccZMultipleTimes(self):
@@ -1716,7 +1716,7 @@ class TestSth(unittest.TestCase):
             self.singleValueCompare(val1, val2, val3, 0, 0, 0, 0, self.tSthLimits.iAdcAccZMiddle, self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
 
     """
-    Test single XY-Axis meassurement
+    Test single XY-Axis measurement
     """
 
     def test0308GetSingleAccXY(self):
@@ -1726,7 +1726,7 @@ class TestSth(unittest.TestCase):
         self.singleValueCompare(val1, val2, val3, self.tSthLimits.iAdcAccXMiddle, self.tSthLimits.iAdcAccXTolerance, self.tSthLimits.iAdcAccYMiddle, self.tSthLimits.iAdcAccYTolerance, 0, 0, self.tSthLimits.fAcceleration)
 
     """
-    Test single XZ-Axis meassurement
+    Test single XZ-Axis measurement
     """
 
     def test0309GetSingleAccXZ(self):
@@ -1736,7 +1736,7 @@ class TestSth(unittest.TestCase):
         self.singleValueCompare(val1, val2, val3, self.tSthLimits.iAdcAccXMiddle, self.tSthLimits.iAdcAccXTolerance, 0, 0, self.tSthLimits.iAdcAccZMiddle, self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
 
     """
-    Test single XYZ-Axis meassurement
+    Test single XYZ-Axis measurement
     """
 
     def test0310GetSingleAccXYZ(self):
@@ -1746,7 +1746,7 @@ class TestSth(unittest.TestCase):
         self.singleValueCompare(val1, val2, val3, self.tSthLimits.iAdcAccXMiddle, self.tSthLimits.iAdcAccXTolerance, self.tSthLimits.iAdcAccYMiddle, self.tSthLimits.iAdcAccYTolerance, self.tSthLimits.iAdcAccZMiddle, self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
 
     """
-    Test single YZ-Axis meassurement
+    Test single YZ-Axis measurement
     """
 
     def test0310GetSingleAccYZ(self):
@@ -1756,7 +1756,7 @@ class TestSth(unittest.TestCase):
         self.singleValueCompare(val1, val2, val3, 0, 0, self.tSthLimits.iAdcAccYMiddle, self.tSthLimits.iAdcAccYTolerance, self.tSthLimits.iAdcAccZMiddle, self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
 
     """
-    Test streaming battery meassurement
+    Test streaming battery measurement
     """
 
     def test0320GetStreamingVoltageBattery(self):
@@ -1766,7 +1766,7 @@ class TestSth(unittest.TestCase):
         self.streamingValueCompare(array1, array2, array3, self.tSthLimits.uBatteryMiddle, self.tSthLimits.uBatteryTolerance, 0, 0, 0, 0, fVoltageBattery)
 
     """
-    Test streaming x-Axis meassurement
+    Test streaming x-Axis measurement
     """
 
     def test0321GetStreamingAccX(self):
@@ -1776,7 +1776,7 @@ class TestSth(unittest.TestCase):
         self.streamingValueCompare(array1, array2, array3, self.tSthLimits.iAdcAccXMiddle, self.tSthLimits.iAdcAccXTolerance, 0, 2 ** 32, 0, 2 ** 32, self.tSthLimits.fAcceleration)
 
     """
-    Test streaming y-Axis meassurement
+    Test streaming y-Axis measurement
     """
 
     def test0322GetStreamingAccY(self):
@@ -1786,7 +1786,7 @@ class TestSth(unittest.TestCase):
         self.streamingValueCompare(array1, array2, array3, 0, 2 ** 32, self.tSthLimits.iAdcAccYMiddle, self.tSthLimits.iAdcAccYTolerance, 0, 2 ** 32, self.tSthLimits.fAcceleration)
 
     """
-    Test streaming z-Axis meassurement
+    Test streaming z-Axis measurement
     """
 
     def test0323GetStreamingAccZ(self):
@@ -1796,7 +1796,7 @@ class TestSth(unittest.TestCase):
         self.streamingValueCompare(array1, array2, array3, 0, 2 ** 32, 0, 2 ** 32, self.tSthLimits.iAdcAccZMiddle, self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
 
     """
-    Test streaming xyz-Axis meassurement
+    Test streaming xyz-Axis measurement
     """
 
     def test0324GetStreamingAccXYZ(self):
@@ -1806,7 +1806,7 @@ class TestSth(unittest.TestCase):
         self.streamingValueCompare(array1, array2, array3, self.tSthLimits.iAdcAccXMiddle, self.tSthLimits.iAdcAccXTolerance, self.tSthLimits.iAdcAccYMiddle, self.tSthLimits.iAdcAccYTolerance, self.tSthLimits.iAdcAccZMiddle, self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
 
     """
-    Test streaming AccX+AccY meassurement
+    Test streaming AccX+AccY measurement
     """
 
     def test0325GetStreamingAccXY(self):
@@ -1817,7 +1817,7 @@ class TestSth(unittest.TestCase):
         self.streamingValueCompare(array1, array2, array3, self.tSthLimits.iAdcAccXMiddle, self.tSthLimits.iAdcAccXTolerance, self.tSthLimits.iAdcAccYMiddle, self.tSthLimits.iAdcAccYTolerance, self.tSthLimits.iAdcAccZMiddle, self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
 
     """
-    Test streaming AccX+AccZ meassurement
+    Test streaming AccX+AccZ measurement
     """
 
     def test0326GetStreamingAccXZ(self):
@@ -1829,7 +1829,7 @@ class TestSth(unittest.TestCase):
 
 
     """
-    Test streaming AccY+AccZ meassurement
+    Test streaming AccY+AccZ measurement
     """
     def test0327GetStreamingAccYZ(self):
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], self.tSthLimits.uSamplingRateDoublePrescalerMax, self.tSthLimits.uSamplingRateDoubleAcqTimeMax, self.tSthLimits.uSamplingRateDoubleOverSamplesMax, AdcReference["VDD"])
@@ -2892,7 +2892,7 @@ class TestSth(unittest.TestCase):
         self.SamplingRate(5, self.tSthLimits.uSamplingRateSingleAcqTimeMax, self.tSthLimits.uSamplingRateSingleOverSamplesMax, AdcReference["VDD"])
 
     """
-    Testing ADC Sampling Rate - Acquisiton Time
+    Testing ADC Sampling Rate - Acquisition Time
     """
 
     def test0502SamplingRateAqu(self):
@@ -3105,7 +3105,7 @@ class TestSth(unittest.TestCase):
         self.SamplingRate(64, AdcAcquisitionTime[256], AdcOverSamplingRate[1], AdcReference["VDD"], b1=1, b2=0, b3=0, runTime=4000)
 
     """
-    Inject oversampling Rate fault. See that error status word is set correctly and tha the system still works
+    Inject oversampling Rate fault. See that error status word is set correctly and that the system still works
     """
 
     def test0518AdcSamplingRateOverdrive(self):
@@ -4219,7 +4219,7 @@ class TestSth(unittest.TestCase):
         self.assertEqual(sArray2String(au8ProductionDate), sProductionDate)
 
     """
-    Check EEPROM Read/Write - Determistic data
+    Check EEPROM Read/Write - Deterministic data
     """
 
     def test0750StatisticPageWriteReadDeteministic(self):
@@ -4277,7 +4277,7 @@ class TestSth(unittest.TestCase):
         self.assertEqual(u32EepromWriteRequestCounterTestStart + 1, u32EepromWriteRequestCounterTestEnd)  # +1 due to incrementing at first write
 
     """
-    Check EEPROM Read/Write - Determistic data
+    Check EEPROM Read/Write - Deterministic data
     """
 
     def test0751StatisticPageWriteReadRandom(self):
@@ -4357,7 +4357,7 @@ class TestSth(unittest.TestCase):
         self.assertEqual(u32EepromWriteRequestCounterTestStart, u32EepromWriteRequestCounterTestEnd)  # +1 due to incrementing at first write
 
     """
-    Check that page switched with previews writes yield into to Writing EEPROM with the correct number of wirtes
+    Check that page switched with previews writes yield into to Writing EEPROM with the correct number of writes
     """
 
     def test0754EepromWriteRequestCounterPageWriteSwitches(self):
@@ -4562,7 +4562,7 @@ class TestSth(unittest.TestCase):
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], TestConfig["DevName"])
 
     """
-    Test that nothing happens when sinding Command 0x0000 to STH1
+    Test that nothing happens when sending Command 0x0000 to STH1
     """
 
     def test0900ErrorCmdVerbotenSth1(self):
@@ -4584,7 +4584,7 @@ class TestSth(unittest.TestCase):
         self.assertEqual("Error", msgAck)
 
     """
-    Test that nothing happens when sinding Reqest(1) and bError(1) to STH1
+    Test that nothing happens when sending Request(1) and bError(1) to STH1
     """
 
     def test0901ErrorRequestErrorSth1(self):

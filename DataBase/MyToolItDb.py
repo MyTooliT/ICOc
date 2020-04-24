@@ -53,7 +53,7 @@ class ConstantsStu():
     uProductionTestLimitTable = 0
 
 """
-This class hanldes the prodution test tables
+This class handles the production test tables
 
 """
 
@@ -227,8 +227,8 @@ class MyToolItDb(MyToolItDbTables):
             self.vTableCreate(sTable, "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), result boolean DEFAULT false")
 
     """
-    This creats the limit tables for the STH. Please note that the last
-    production stage limit are equally to the service limits.
+    This creates the limit tables for the STH. Please note that the last
+    production stage limit are equal to the service limits.
     """
 
     def vSthTablesOverallLimits(self):
@@ -692,7 +692,7 @@ class MyToolItDb(MyToolItDbTables):
 
     """
     This creates the limit tables for the STU. Please note that the
-    production limit are equally to the service limits.
+    production limit are equal to the service limits.
     """
 
     def vStuTablesOverallLimits(self):
@@ -817,7 +817,7 @@ class MyToolItDb(MyToolItDbTables):
 
     """
     Use this to file a single STU test results.
-    @param iTestStage Serivce or Production Test
+    @param iTestStage Service or Production Test
     @param sTest Which test
     @param sBluetoothAddress Bluetooth address of tested STU
     @param sColumn Variable to set

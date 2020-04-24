@@ -142,9 +142,9 @@ class CanFd(object):
 
         # Configure the way how trace files are created: 
         # * Standard name is used
-        # * Existing file is ovewritten, 
+        # * Existing file is overwritten,
         # * Only one file is created.
-        # * Recording stopts when the file size reaches 5 megabytes.
+        # * Recording stops when the file size reaches 5 megabytes.
         #
         iBuffer = TRACE_FILE_SINGLE | TRACE_FILE_OVERWRITE
         stsResult = self.m_objPCANBasic.SetValue(self.m_PcanHandle, PCAN_TRACE_CONFIGURE, iBuffer)        
@@ -1110,7 +1110,7 @@ class CanFd(object):
         ack = self.tWriteFrameWaitAckRetries(message, retries=2)
         ack = ack["Payload"]
         ack = ack[2:]
-        iMacAddrReadBack = iMessage2Value(ack)  # if not successfull this will be 0
+        iMacAddrReadBack = iMessage2Value(ack)  # if not successful this will be 0
         if iMacAddrReadBack != iMacAddr:
             self.bConnected = False
         else:

@@ -84,7 +84,7 @@ class TestSth(unittest.TestCase):
             self.Can = CanFd.CanFd(CanFd.PCAN_BAUD_1M, self.fileName, self.fileNameError, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], self.tSthLimits.uSamplingRatePrescalerReset, self.tSthLimits.uSamplingRateAcqTimeReset, self.tSthLimits.uSamplingRateOverSamplesReset, FreshLog=True)
             self.Can.Logger.Info("TestCase: " + str(self._testMethodName))
             self.sSerialNumber = sSerialNumber(self.sExcelEepromContentFileName)
-            self.Can.CanTimeStampStart(self._resetStu()["CanTime"])  # This will also reset to STH
+            self.Can.CanTimeStampStart(self._resetStu()["CanTime"])  # This will also reset the STH
 
             if "test0000FirmwareFlash" != self._testMethodName:
                 self.Can.Logger.Info("Connect to STH")
@@ -185,7 +185,7 @@ class TestSth(unittest.TestCase):
         return self.Can.cmdReset(MyToolItNetworkNr["STH1"], retries=retries, log=log)
 
     """
-    Get internal BGM113 Chip Temeprature in °C of STH
+    Get internal BGM113 Chip Temperature in °C of STH
     """
 
     def _iSthAdcTemp(self):
@@ -593,7 +593,7 @@ class TestSth(unittest.TestCase):
 
     def test0001OverTheAirUpdate(self):
         global sHolderName
-        self.tWorkSheetWrite("D", "Test the over the air update bootloader functionallity")
+        self.tWorkSheetWrite("D", "Test the over the air update bootloader functionality")
         self._resetStu()
         time.sleep(1)
         sSystemCall = self.sBuildLocation + "/ota-dfu.exe COM6 115200 "
@@ -648,7 +648,7 @@ class TestSth(unittest.TestCase):
         self.assertLessEqual(self.tSthLimits.iTemperatureInternalMin, iTemperature)
 
     """
-    Tests batery voltage
+    Tests battery voltage
     """
 
     def test0020SthAccumulatorVoltage(self):
@@ -776,7 +776,7 @@ class TestSth(unittest.TestCase):
 #         self.assertGreaterEqual(abs(NonShakingAccZSnrRaw), abs(SigIndAccZSNR))
 
     """
-    Determine correct meassuring via self test
+    Determine correct measuring via self test
     """
 
     def test0220AccSelfTest(self):
