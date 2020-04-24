@@ -223,7 +223,7 @@ Open a command prompt (console) and navigate to the software project folder(loca
 The sampling rate is achieved via the following formula:
 
 $$
-f_{sampling} = \frac{38,4MHz}{((Prescaler+1)\cdot(AquisationTime +13)\cdot OversamplingRate)}
+f_{sampling} = \frac{38,4MHz}{(Prescaler+1)\cdot(AquisationTime +13)\cdot OversamplingRate}
 $$
 
 We should mention that continuous measurements will be sent in data triples and a CAN20 message contains in a such case a data triple. Moreover, other formats (e.g. AccX, AccY and AccZ as a vector) are a data points and a CAN 20 message contains such a data point. Note, that the performance of the computer system is limited and an overload causes lost messages. Please check the data log for the Error Status Word of the Stationary Transceiver Holder (STU).
