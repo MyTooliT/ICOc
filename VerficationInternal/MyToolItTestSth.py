@@ -92,11 +92,11 @@ class TestSth(unittest.TestCase):
             temp = self._SthAdcTemp()
             self.assertGreaterEqual(self.tSthLimits.iTemperatureInternalMax, temp)
             self.assertLessEqual(self.tSthLimits.iTemperatureInternalMin, temp)
-            self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STH1"])         
+            self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STH1"])
         else:
             ReceiveFailCounter = 0
         self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
-        self.Can.Logger.Info("Test Time End Time Stamp")   
+        self.Can.Logger.Info("Test Time End Time Stamp")
         if(0 < ReceiveFailCounter):
             self.bError = True
         if False != self.Can.bError:
@@ -123,7 +123,7 @@ class TestSth(unittest.TestCase):
     """
     Reset STU
     """
-    
+
     def _resetStu(self, retries=5, log=True):
         self.Can.bConnected = False
         return self.Can.cmdReset(MyToolItNetworkNr["STU1"], retries=retries, log=log)
@@ -138,7 +138,7 @@ class TestSth(unittest.TestCase):
 
     """
     Retrieve BGM113 internal Chip Temperature from the STH
-    """    
+    """
 
     def _SthAdcTemp(self):
         au8TempReturn = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["Temp"], 1, AdcReference["1V25"], log=False)
@@ -175,7 +175,7 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("STU Error Word: " + hex(ErrorWord.asword))
 
     """
-    Stop any streaming 
+    Stop any streaming
     """
 
     def _streamingStop(self):
@@ -203,7 +203,7 @@ class TestSth(unittest.TestCase):
     """
     Routing information of STH send ports
     """
-    
+
     def _RoutingInformationSthSend(self):
         SendCounter = self.Can.RoutingInformationCmd(MyToolItNetworkNr["STH1"], SystemCommandRouting["SendCounter"], MyToolItNetworkNr["STU1"])
         self.Can.Logger.Info("STH1 - Send Counter(Port STU1): " + str(SendCounter))
@@ -336,7 +336,7 @@ class TestSth(unittest.TestCase):
             runTime=self.tSthLimits.uStandardTestTimeMs
         if None == startupTime:
             startupTime=self.tSthLimits.uStartupTimeMs
-        
+
         Settings = self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], prescaler, acquisitionTime, overSamplingRate, adcRef, log=log)[1:]
         self.assertEqual(prescaler, Settings[0])
         self.assertEqual(acquisitionTime, Settings[1])
@@ -538,7 +538,7 @@ class TestSth(unittest.TestCase):
             for dataByte in dataReadBack[4:]:
                 self.assertEqual(dataByte, value)
         self.Can.Logger.Info("Page Read Time: " + str(self.Can.getTimeMs() - timeStamp) + "ms")
-        
+
     """
     Reset the Silicion Laps Adapter
     """
@@ -652,25 +652,25 @@ class TestSth(unittest.TestCase):
         self._resetStu()
         time.sleep(1)
         bCreate = os.path.isfile(self.sBuildLocation + "/OtaServer.gbl")
-        bCreate = bCreate and os.path.isfile(self.sBuildLocation + "/OtaApploader.gbl") 
+        bCreate = bCreate and os.path.isfile(self.sBuildLocation + "/OtaApploader.gbl")
         bCreate = bCreate and os.path.isfile(self.sBuildLocation + "/OtaApploaderServer.gbl")
         bCreate = not bCreate
         if False != bCreate:
             try:
-                os.remove(sLogLocation + "CreateReport.txt")                
+                os.remove(sLogLocation + "CreateReport.txt")
             except:
                 pass
-            
+
             try:
-                os.remove(self.sBuildLocation + "/OtaServer.gbl")                
-            except:
-                pass
-            try:
-                os.remove(self.sBuildLocation + "/OtaApploader.gbl")                
+                os.remove(self.sBuildLocation + "/OtaServer.gbl")
             except:
                 pass
             try:
-                os.remove(self.sBuildLocation + "/OtaApploaderServer.gbl")                
+                os.remove(self.sBuildLocation + "/OtaApploader.gbl")
+            except:
+                pass
+            try:
+                os.remove(self.sBuildLocation + "/OtaApploaderServer.gbl")
             except:
                 pass
             sSystemCall = self.sHomeLocation + "firmware_server/create_bl_files.bat "
@@ -1068,14 +1068,14 @@ class TestSth(unittest.TestCase):
 
     """
     Power Consumption - Connected
-    """   
+    """
 
     def test0017PowerConsumptionConnected(self):
         try:
             os.remove("Aem4.txt")
         except:
             pass
-        self.Can.Logger.Info("Measure Power Consumption for connected.") 
+        self.Can.Logger.Info("Measure Power Consumption for connected.")
         time.sleep(2 + SleepTime["Min"] / 1000)
         self.Can.Logger.Info("Measure Power Consumption for advertisement time " + str(SleepTime["AdvertisementMax"]) + "ms")
         sSystemCall = self.sSilabsCommander + " aem measure --windowlength 60000 "
@@ -1117,7 +1117,7 @@ class TestSth(unittest.TestCase):
 
     """
     Power Consumption - Measuring at reset conditions
-    """   
+    """
 
     def test0018PowerConsumptionMeasuring(self):
         try:
@@ -1125,7 +1125,7 @@ class TestSth(unittest.TestCase):
         except:
             pass
         self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0)
-        self.Can.Logger.Info("Measure Power Consumption for meassuring.") 
+        self.Can.Logger.Info("Measure Power Consumption for meassuring.")
         time.sleep(2 + SleepTime["Min"] / 1000)
         self.Can.Logger.Info("Measure Power Consumption for advertisement time " + str(SleepTime["AdvertisementMax"]) + "ms")
         sSystemCall = self.sSilabsCommander + " aem measure --windowlength 60000 "
@@ -1162,13 +1162,13 @@ class TestSth(unittest.TestCase):
         fAccuDays = fAccuHours / 24
         self.Can.Logger.Info("Batter Runtime for 180mA: " + str(fAccuHours) + " hours")
         self.Can.Logger.Info("Batter Runtime for 180mA: " + str(fAccuDays) + " days")
-        self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"])   
+        self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"])
         self.assertLessEqual(float(sCurrentAverage), TestConfig["EnergyMeasuringCurrentMax"])
-        self.assertEqual(sCurrentUnit, "mA")       
+        self.assertEqual(sCurrentUnit, "mA")
 
     """
     Power Consumption - Measuring at reset conditions - LED turned off
-    """   
+    """
 
     def test0019PowerConsumptionMeasuringLedOff(self):
         try:
@@ -1177,7 +1177,7 @@ class TestSth(unittest.TestCase):
             pass
         self.TurnOffLed()
         self.Can.streamingStart(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[3], 1, 0, 0)
-        self.Can.Logger.Info("Measure Power Consumption for meassuring with turned off LED.") 
+        self.Can.Logger.Info("Measure Power Consumption for meassuring with turned off LED.")
         time.sleep(2 + SleepTime["Min"] / 1000)
         self.Can.Logger.Info("Measure Power Consumption for advertisement time " + str(SleepTime["AdvertisementMax"]) + "ms")
         sSystemCall = self.sSilabsCommander + " aem measure --windowlength 60000 "
@@ -1214,10 +1214,10 @@ class TestSth(unittest.TestCase):
         fAccuDays = fAccuHours / 24
         self.Can.Logger.Info("Batter Runtime for 180mA: " + str(fAccuHours) + " hours")
         self.Can.Logger.Info("Batter Runtime for 180mA: " + str(fAccuDays) + " days")
-        self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"])  
+        self.Can.streamingStop(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"])
         self.assertLessEqual(float(sCurrentAverage), TestConfig["EnergyMeasuringLedOffCurrentMax"])
-        self.assertEqual(sCurrentUnit, "mA")       
-                        
+        self.assertEqual(sCurrentUnit, "mA")
+
     """
     Test HMI
     """
@@ -1815,7 +1815,7 @@ class TestSth(unittest.TestCase):
         [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 1, 0, indexStart, indexEnd)
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Acc", "",)
         self.streamingValueCompare(array1, array2, array3, self.tSthLimits.iAdcAccXMiddle, self.tSthLimits.iAdcAccXTolerance, self.tSthLimits.iAdcAccYMiddle, self.tSthLimits.iAdcAccYTolerance, self.tSthLimits.iAdcAccZMiddle, self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
- 
+
     """
     Test streaming AccX+AccZ meassurement
     """
@@ -1825,14 +1825,14 @@ class TestSth(unittest.TestCase):
         [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 0, 1, 1000)
         [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 1, 0, 1, indexStart, indexEnd)
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Acc", "",)
-        self.streamingValueCompare(array1, array2, array3, self.tSthLimits.iAdcAccXMiddle, self.tSthLimits.iAdcAccXTolerance, self.tSthLimits.iAdcAccYMiddle, self.tSthLimits.iAdcAccYTolerance, self.tSthLimits.iAdcAccZMiddle, self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)       
+        self.streamingValueCompare(array1, array2, array3, self.tSthLimits.iAdcAccXMiddle, self.tSthLimits.iAdcAccXTolerance, self.tSthLimits.iAdcAccYMiddle, self.tSthLimits.iAdcAccYTolerance, self.tSthLimits.iAdcAccZMiddle, self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
 
 
     """
     Test streaming AccY+AccZ meassurement
     """
-    def test0327GetStreamingAccYZ(self):    
-        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], self.tSthLimits.uSamplingRateDoublePrescalerMax, self.tSthLimits.uSamplingRateDoubleAcqTimeMax, self.tSthLimits.uSamplingRateDoubleOverSamplesMax, AdcReference["VDD"]) 
+    def test0327GetStreamingAccYZ(self):
+        self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], self.tSthLimits.uSamplingRateDoublePrescalerMax, self.tSthLimits.uSamplingRateDoubleAcqTimeMax, self.tSthLimits.uSamplingRateDoubleOverSamplesMax, AdcReference["VDD"])
         [indexStart, indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 0, 1, 1, 1000)
         [array1, array2, array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"], DataSets[1], 0, 1, 1, indexStart, indexEnd)
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Acc", "",)
@@ -3088,7 +3088,7 @@ class TestSth(unittest.TestCase):
     Testing ADC Sampling Oversampling Rate Max
     """
 
-    def test0516AdcOverSamplingRateMax(self):   
+    def test0516AdcOverSamplingRateMax(self):
         prescaler = 2
         acquisitionTime = AdcAcquisitionTime[1]
         overSamplingRate = AdcOverSamplingRate[4096]
@@ -4147,7 +4147,7 @@ class TestSth(unittest.TestCase):
         OperatingSeconds = self.Can.statisticalData(MyToolItNetworkNr["STH1"], MyToolItStatData["OperatingTime"])
         SecondsReset3 = iMessage2Value(OperatingSeconds[:4])
         SecondsOveral3 = iMessage2Value(OperatingSeconds[4:])
-        time.sleep(60 * 30) 
+        time.sleep(60 * 30)
         OperatingSeconds = self.Can.statisticalData(MyToolItNetworkNr["STH1"], MyToolItStatData["OperatingTime"])
         SecondsReset4 = iMessage2Value(OperatingSeconds[:4])
         SecondsOveral4 = iMessage2Value(OperatingSeconds[4:])
@@ -4262,8 +4262,8 @@ class TestSth(unittest.TestCase):
             self.vEepromWritePage(EepromPage["Statistics"], 0x55)
             self.vEepromReadPage(EepromPage["Statistics"], 0x55)
             self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STH1"])
-            self.Can.Logger.Info("Fin Run 12 Writes and Reads")    
-            
+            self.Can.Logger.Info("Fin Run 12 Writes and Reads")
+
         self.Can.Logger.Info("Write back EEPROM content")
         timeStamp = self.Can.getTimeMs()
         for offset in range(0, 256, 4):
@@ -4275,13 +4275,13 @@ class TestSth(unittest.TestCase):
         u32EepromWriteRequsts = u32EepromWriteRequestCounterTestEnd - u32EepromWriteRequestCounterTestStart
         self.Can.Logger.Info("EEPROM Write Requests during tests: " + str(u32EepromWriteRequsts))
         self.assertEqual(u32EepromWriteRequestCounterTestStart + 1, u32EepromWriteRequestCounterTestEnd)  # +1 due to incrementing at first write
-        
+
     """
     Check EEPROM Read/Write - Determistic data
     """
 
     def test0751StatisticPageWriteReadRandom(self):
-        uLoopRuns = 100       
+        uLoopRuns = 100
         u32EepromWriteRequestCounterTestStart = self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STH1"])
         self.Can.Logger.Info("Save up EEPROM content")
         startData = []
@@ -4289,7 +4289,7 @@ class TestSth(unittest.TestCase):
             index = self.Can.cmdSend(MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"], MyToolItEeprom["Read"], [EepromPage["ProductData"], 0xFF & offset, 4, 0, 0, 0, 0, 0])
             dataReadBack = self.Can.getReadMessageData(index)
             startData.extend(dataReadBack[4:])
-        
+
         # Test it self
         for _i in range(0, uLoopRuns):
             self.Can.Logger.Info("Next random Writes and Reads")
@@ -4323,7 +4323,7 @@ class TestSth(unittest.TestCase):
         u32EepromWriteRequsts = u32EepromWriteRequestCounterTestEnd - u32EepromWriteRequestCounterTestStart
         self.Can.Logger.Info("EEPROM Write Requests during tests: " + str(u32EepromWriteRequsts))
         self.assertEqual(u32EepromWriteRequestCounterTestStart + 1, u32EepromWriteRequestCounterTestEnd)  # +1 due to incrementing at first write
-        
+
     """
     Check single Write access at startup and off (Power On Counter and Power Off Counter)
     """
@@ -4336,14 +4336,14 @@ class TestSth(unittest.TestCase):
         time.sleep(1)
         u32EepromWriteRequestCounterTestEnd = self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STH1"])
         self.assertEqual(u32EepromWriteRequestCounterTestStart + 2, u32EepromWriteRequestCounterTestEnd)
-        
+
     """
     Check that page switched do not yield to Writing EEPROM
     """
 
-    def test0753EepromWriteRequestCounterPageSwitches(self):        
+    def test0753EepromWriteRequestCounterPageSwitches(self):
         time.sleep(1)
-        uLoopRuns = 5       
+        uLoopRuns = 5
         u32EepromWriteRequestCounterTestStart = self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STH1"])
         for _i in range(0, uLoopRuns):
             for sPage in EepromPage:
@@ -4360,10 +4360,10 @@ class TestSth(unittest.TestCase):
     Check that page switched with previews writes yield into to Writing EEPROM with the correct number of wirtes
     """
 
-    def test0754EepromWriteRequestCounterPageWriteSwitches(self):        
+    def test0754EepromWriteRequestCounterPageWriteSwitches(self):
         time.sleep(2)
-        uLoopRuns = 5 
-        uPageStart = 10   
+        uLoopRuns = 5
+        uPageStart = 10
         uPageRuns=6
         u32EepromWriteRequestCounterTestStart = self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STH1"])
         for _i in range(0, uLoopRuns):
@@ -4382,7 +4382,7 @@ class TestSth(unittest.TestCase):
         u32EepromWriteRequsts = u32EepromWriteRequestCounterTestEnd - u32EepromWriteRequestCounterTestStart
         self.Can.Logger.Info("EEPROM Write Requests during tests: " + str(u32EepromWriteRequsts))
         self.assertEqual(uPageRuns * uLoopRuns, u32EepromWriteRequsts)
-        
+
     """
     Status Word after Reset
     """

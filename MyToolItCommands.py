@@ -23,7 +23,7 @@ class ActiveStateFlags(ctypes.BigEndianStructure):
 class ActiveState(ctypes.Union):
     _fields_ = [("b", ActiveStateFlags),
                 ("asbyte", c_uint8)]
-    
+
 
 class AtvcFormatFlags(ctypes.BigEndianStructure):
     _fields_ = [
@@ -49,23 +49,23 @@ class CalibrationMeassurementFormatFlags(ctypes.BigEndianStructure):
             ("Reserved", c_uint8, 4),
             ]
 
- 
+
 class CalibrationMeassurement(ctypes.Union):
     _fields_ = [("b", CalibrationMeassurementFormatFlags),
-                ("asbyte", c_uint8)]  
-    
+                ("asbyte", c_uint8)]
+
 
 class EepromSpecialConfigFlags(ctypes.BigEndianStructure):
     _fields_ = [
             ("bIgnoreErrors", c_uint8, 1),
             ("Reserved", c_uint8, 7),
-            ] 
-    
+            ]
+
 class EepromSpecialConfig(ctypes.Union):
     _fields_ = [("b", EepromSpecialConfigFlags),
-                ("asbyte", c_uint8)]  
+                ("asbyte", c_uint8)]
 
-    
+
 MyToolItBlock = {
     "System" : 0x00,
     "Streaming" : 0x04,
@@ -436,7 +436,7 @@ AdcOverSamplingRateName = {
     AdcOverSamplingRate[4096] : "ADC Over Sampling Rate - 4096"
 }
 
-AdcReference = {     
+AdcReference = {
     "1V25" : 25,
     "Vfs1V65" : 33,
     "Vfs1V8" : 36,
@@ -558,7 +558,7 @@ def to8bitSigned(num):
 def iMessage2Value(m):
     iValue = 0
     for i in range(0, len(m)):
-        iValue |= ((0xFF & int(m[i])) << (i*8)) 
+        iValue |= ((0xFF & int(m[i])) << (i*8))
     return iValue
 
 def au8ChangeEndianOrder(m):
@@ -567,7 +567,7 @@ def au8ChangeEndianOrder(m):
     for i in range(0, len(m)):
         au8InverseEndian[i] = m[iLength-i-1]
     return au8InverseEndian
-        
+
 def au8Value2Array(iValue, iLength):
     au8Array = [0]*iLength
     for i in range(0, iLength, 1):
@@ -576,7 +576,7 @@ def au8Value2Array(iValue, iLength):
         au8Array[i] = 0xff&u8Value
     return au8Array
 
-   
+
 def calcSamplingRate(prescaler, acquisitionTime, OverSamplingRate):
     acquTime = AdcAcquisitionTimeReverse[acquisitionTime]
     samplingRate = AdcOverSamplingRateReverse[OverSamplingRate]

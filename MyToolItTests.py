@@ -17,12 +17,12 @@ class Test(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    print(sys.version)    
+    print(sys.version)
     if not os.path.exists(os.path.dirname(sLogLocation + sLogFile)):
         os.makedirs(os.path.dirname(sLogLocation + sLogFile))
     f = open(sLogLocation + sLogFile, "w")
     loader = unittest.TestLoader()
-    
+
     suite = loader.discover(testFileDir)
     runner = unittest.TextTestRunner(f)
     unittest.main(suite)

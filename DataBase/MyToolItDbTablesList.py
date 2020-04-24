@@ -1,5 +1,5 @@
 """
-This Lists contains the list for all STH production tests run 
+This Lists contains the list for all STH production tests run
 """
 
 """
@@ -25,17 +25,17 @@ asTestTableSthList = [
 
 asProductionTableVariableDefSthList = {
 "Flash" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), result boolean DEFAULT false",  # "Flash"
-"Ota" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), result boolean DEFAULT false",  # "Ota"                         
-"Ack" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), result boolean DEFAULT false",  # "Ack"               
-"Temperature" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), result float (5, 2)",  # "Temperature"  
-"AccumulatorVoltage" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), result float (5, 2)     ",  # "AccumulatorVoltage"         
-"Version" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), result boolean DEFAULT false, version VARCHAR(18)",  # "Version"                
-"Reset" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), result boolean DEFAULT false",  # "Reset"                         
-"Rssi" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), sth INT, stu INT",  # "Rssi"                             
-"ApparentGravity" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), x float (5, 2), y float (5, 2), z float (5, 2)",  # "ApparentGravity"             
-"Snr" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), x float (5, 2), y float (5, 2), z float (5, 2)",  # "Snr" 
-"SelfTest" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), x float (7, 4), y float (7, 4), z float (7, 4)",  # "SelfTest"                          
-"CalibrationVoltage" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), k float (30, 20), d float (30, 20)",  # "CalibrationVoltage"       
+"Ota" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), result boolean DEFAULT false",  # "Ota"
+"Ack" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), result boolean DEFAULT false",  # "Ack"
+"Temperature" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), result float (5, 2)",  # "Temperature"
+"AccumulatorVoltage" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), result float (5, 2)     ",  # "AccumulatorVoltage"
+"Version" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), result boolean DEFAULT false, version VARCHAR(18)",  # "Version"
+"Reset" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), result boolean DEFAULT false",  # "Reset"
+"Rssi" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), sth INT, stu INT",  # "Rssi"
+"ApparentGravity" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), x float (5, 2), y float (5, 2), z float (5, 2)",  # "ApparentGravity"
+"Snr" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), x float (5, 2), y float (5, 2), z float (5, 2)",  # "Snr"
+"SelfTest" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), x float (7, 4), y float (7, 4), z float (7, 4)",  # "SelfTest"
+"CalibrationVoltage" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), k float (30, 20), d float (30, 20)",  # "CalibrationVoltage"
 "CalibrationAcceleration" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), k float (30, 20), d float (30, 20)",  # "CalibrationAcceleration"
 "Eeprom" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), result boolean DEFAULT false",  # "Eeprom" ]
 }
@@ -73,11 +73,11 @@ asTestTableStuList = [
 
 asProductionTableVariableDefStuList = {
 "Flash" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), result boolean DEFAULT false",  # "Flash"
-"Ota" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), result boolean DEFAULT false",  # "Ota"                         
-"Ack" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), result boolean DEFAULT false",  # "Ack"               
-"Version" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), result boolean DEFAULT false, version VARCHAR(18)",  # "Version"                
-"Reset" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), result boolean DEFAULT false",  # "Reset"                         
-"Rssi" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), sth INT, stu INT",  # "Rssi"                             
+"Ota" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), result boolean DEFAULT false",  # "Ota"
+"Ack" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), result boolean DEFAULT false",  # "Ack"
+"Version" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), result boolean DEFAULT false, version VARCHAR(18)",  # "Version"
+"Reset" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), result boolean DEFAULT false",  # "Reset"
+"Rssi" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), sth INT, stu INT",  # "Rssi"
 "Eeprom" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), result boolean DEFAULT false",  # "Eeprom" ]
 }
 
@@ -96,7 +96,7 @@ General EEPROM Page Data
 """
 asProductData = [
 "Gtin",
-"HardwareRevision",    
+"HardwareRevision",
 "FirmwareVersion",
 "ReleaseName",
 "SerialNumber",
@@ -111,5 +111,5 @@ asStatistics = [
 "UnderVoltageCounter",
 "WatchdogResetCounter",
 "ProductionDate",
-"BatchNumber",    
+"BatchNumber",
 ]
