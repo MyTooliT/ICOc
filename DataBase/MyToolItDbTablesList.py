@@ -37,7 +37,7 @@ asProductionTableVariableDefSthList = {
 "SelfTest" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), x float (7, 4), y float (7, 4), z float (7, 4)",  # "SelfTest"
 "CalibrationVoltage" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), k float (30, 20), d float (30, 20)",  # "CalibrationVoltage"
 "CalibrationAcceleration" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), k float (30, 20), d float (30, 20)",  # "CalibrationAcceleration"
-"Eeprom" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), result boolean DEFAULT false",  # "Eeprom" ]
+"Eeprom" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), result boolean DEFAULT false",  # "Eeprom"
 }
 
 asProductionTableVariableInitSthList = {
@@ -78,7 +78,7 @@ asProductionTableVariableDefStuList = {
 "Version" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), result boolean DEFAULT false, version VARCHAR(18)",  # "Version"
 "Reset" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), result boolean DEFAULT false",  # "Reset"
 "Rssi" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), sth INT, stu INT",  # "Rssi"
-"Eeprom" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), result boolean DEFAULT false",  # "Eeprom" ]
+"Eeprom" : "BlueToothAddress VARCHAR(18), dateTime VARCHAR(255), result boolean DEFAULT false",  # "Eeprom"
 }
 
 asProductionTableVariableInitStuList = {
