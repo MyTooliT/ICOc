@@ -2308,7 +2308,7 @@ class TestSth(unittest.TestCase):
         samplingPointsAccX = len(AccArray1) / 10
         self.Can.Logger.Info("Battery Voltage Raw: " + str(voltage1Array[0]))
         self.singleValueCompare(voltage1Array, voltage2Array, voltage3Array, self.tSthLimits.uBatteryMiddle, self.tSthLimits.uBatteryTolerance, 0, 0, 0, 0, fVoltageBattery)
-        self.Can.Logger.Info("Accleration X Sampling Points per seconds: " + str(samplingPointsAccX))
+        self.Can.Logger.Info("Acceleration X Sampling Points per seconds: " + str(samplingPointsAccX))
         calcRate = calcSamplingRate(self.tSthLimits.uSamplingRatePrescalerReset, self.tSthLimits.uSamplingRateAcqTimeReset, self.tSthLimits.uSamplingRateOverSamplesReset)
         self.Can.Logger.Info("Calculated Sampling Points per seconds: " + str(calcRate))
         self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow, samplingPointsAccX)
@@ -2335,7 +2335,7 @@ class TestSth(unittest.TestCase):
         samplingPointsAccY = len(AccArray2) / 10
         self.Can.Logger.Info("Battery Voltage Raw: " + str(voltage1Array[0]))
         self.singleValueCompare(voltage1Array, voltage2Array, voltage3Array, self.tSthLimits.uBatteryMiddle, self.tSthLimits.uBatteryTolerance, 0, 0, 0, 0, fVoltageBattery)
-        self.Can.Logger.Info("Accleration Y Sampling Points per seconds: " + str(samplingPointsAccY))
+        self.Can.Logger.Info("Acceleration Y Sampling Points per seconds: " + str(samplingPointsAccY))
         calcRate = calcSamplingRate(self.tSthLimits.uSamplingRatePrescalerReset, self.tSthLimits.uSamplingRateAcqTimeReset, self.tSthLimits.uSamplingRateOverSamplesReset)
         self.Can.Logger.Info("Calculated Sampling Points per seconds: " + str(calcRate))
         self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow, samplingPointsAccY)
@@ -2362,7 +2362,7 @@ class TestSth(unittest.TestCase):
         samplingPointsAccZ = len(AccArray3) / 10
         self.Can.Logger.Info("Battery Voltage Raw: " + str(voltage1Array[0]))
         self.singleValueCompare(voltage1Array, voltage2Array, voltage3Array, self.tSthLimits.uBatteryMiddle, self.tSthLimits.uBatteryTolerance, 0, 0, 0, 0, fVoltageBattery)
-        self.Can.Logger.Info("Accleration Z Sampling Points per seconds: " + str(samplingPointsAccZ))
+        self.Can.Logger.Info("Acceleration Z Sampling Points per seconds: " + str(samplingPointsAccZ))
         calcRate = calcSamplingRate(self.tSthLimits.uSamplingRatePrescalerReset, self.tSthLimits.uSamplingRateAcqTimeReset, self.tSthLimits.uSamplingRateOverSamplesReset)
         self.Can.Logger.Info("Calculated Sampling Points per seconds: " + str(calcRate))
         self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow, samplingPointsAccZ)
@@ -2588,7 +2588,7 @@ class TestSth(unittest.TestCase):
         samplingPointsAccY = len(AccArray2) / 10
         self.Can.Logger.Info("Battery Voltage Raw: " + str(voltage1Array[0]))
         self.singleValueCompare(voltage1Array, voltage2Array, voltage3Array, self.tSthLimits.uBatteryMiddle, self.tSthLimits.uBatteryTolerance, 0, 0, 0, 0, fVoltageBattery)
-        self.Can.Logger.Info("Accleration XY Sampling Points per seconds: " + str(samplingPointsAccX))
+        self.Can.Logger.Info("Acceleration XY Sampling Points per seconds: " + str(samplingPointsAccX))
         calcRate = calcSamplingRate(prescaler, acqTime, overSamples)
         calcRate /= 2
         self.Can.Logger.Info("Calculated Sampling Points per seconds: " + str(calcRate))
@@ -2621,7 +2621,7 @@ class TestSth(unittest.TestCase):
         samplingPointsAccZ = len(AccArray3) / 10
         self.Can.Logger.Info("Battery Voltage Raw: " + str(voltage1Array[0]))
         self.singleValueCompare(voltage1Array, voltage2Array, voltage3Array, self.tSthLimits.uBatteryMiddle, self.tSthLimits.uBatteryTolerance, 0, 0, 0, 0, fVoltageBattery)
-        self.Can.Logger.Info("Accleration XZ Sampling Points per seconds: " + str(samplingPointsAccX))
+        self.Can.Logger.Info("Acceleration XZ Sampling Points per seconds: " + str(samplingPointsAccX))
         calcRate = calcSamplingRate(prescaler, acqTime, overSamples)
         calcRate /= 2
         self.Can.Logger.Info("Calculated Sampling Points per seconds: " + str(calcRate))
@@ -2654,7 +2654,7 @@ class TestSth(unittest.TestCase):
         samplingPointsAccZ = len(AccArray3) / 10
         self.Can.Logger.Info("Battery Voltage Raw: " + str(voltage1Array[0]))
         self.singleValueCompare(voltage1Array, voltage2Array, voltage3Array, self.tSthLimits.uBatteryMiddle, self.tSthLimits.uBatteryTolerance, 0, 0, 0, 0, fVoltageBattery)
-        self.Can.Logger.Info("Accleration YZ Sampling Points per seconds: " + str(samplingPointsAccY))
+        self.Can.Logger.Info("Acceleration YZ Sampling Points per seconds: " + str(samplingPointsAccY))
         calcRate = calcSamplingRate(prescaler, acqTime, overSamples)
         calcRate /= 2
         self.Can.Logger.Info("Calculated Sampling Points per seconds: " + str(calcRate))
@@ -2683,7 +2683,7 @@ class TestSth(unittest.TestCase):
         samplingPointsAccZ = len(AccArray3) / 10
         self.Can.Logger.Info("Battery Voltage Raw: " + str(voltage1Array[0]))
         self.singleValueCompare(voltage1Array, voltage2Array, voltage3Array, self.tSthLimits.uBatteryMiddle, self.tSthLimits.uBatteryTolerance, 0, 0, 0, 0, fVoltageBattery)
-        self.Can.Logger.Info("Accleration XYZ Sampling Points per seconds: " + str(samplingPointsAccY))
+        self.Can.Logger.Info("Acceleration XYZ Sampling Points per seconds: " + str(samplingPointsAccY))
         calcRate = calcSamplingRate(self.tSthLimits.uSamplingRatePrescalerReset, self.tSthLimits.uSamplingRateAcqTimeReset, self.tSthLimits.uSamplingRateOverSamplesReset)
         calcRate /= 3
         self.Can.Logger.Info("Calculated Sampling Points per seconds: " + str(calcRate))
@@ -2965,7 +2965,7 @@ class TestSth(unittest.TestCase):
                         aquisitionTime = acquisitionTimeKey
                         overSamples = overSamplingKey
                         SamplingRateMaxDet = samplingRate
-                    self.Can.Logger.Info("Prescaer - Proved: " + str(prescaler))
+                    self.Can.Logger.Info("Prescaler - Proved: " + str(prescaler))
                     self.Can.Logger.Info("Acquisition Time - Proved: " + AdcAcquisitionTimeName[acquisitionTimeValue])
                     self.Can.Logger.Info("Oversampling Rate - Proved: " + AdcOverSamplingRateName[overSamplingVal])
                     self._resetStu()
@@ -2988,7 +2988,7 @@ class TestSth(unittest.TestCase):
                 samplingRate = int(calcSamplingRate(prescaler, acquisitionTimeValue, overSamplingVal))
                 if self.tSthLimits.uSamplingRateDoubleMax() >= samplingRate and self.tSthLimits.uSamplingRateMin <= samplingRate:
                     self.Can.Logger.Info("Sampling Rate: " + str(samplingRate))
-                    self.Can.Logger.Info("Prescaer: " + str(prescaler))
+                    self.Can.Logger.Info("Prescaler: " + str(prescaler))
                     self.Can.Logger.Info("Acquisition Time: " + AdcAcquisitionTimeName[acquisitionTimeValue])
                     self.Can.Logger.Info("Oversampling Rate: " + AdcOverSamplingRateName[overSamplingVal])
                     for _vRefkey, vRefVal in AdcReference.items():
@@ -3002,7 +3002,7 @@ class TestSth(unittest.TestCase):
                         aquisitionTime = acquisitionTimeKey
                         overSamples = overSamplingKey
                         SamplingRateMaxDet = samplingRate
-                    self.Can.Logger.Info("Prescaer - Proved: " + str(prescaler))
+                    self.Can.Logger.Info("Prescaler - Proved: " + str(prescaler))
                     self.Can.Logger.Info("Acquisition Time - Proved: " + AdcAcquisitionTimeName[acquisitionTimeValue])
                     self.Can.Logger.Info("Oversampling Rate - Proved: " + AdcOverSamplingRateName[overSamplingVal])
                     self._resetStu()
@@ -3025,7 +3025,7 @@ class TestSth(unittest.TestCase):
                 samplingRate = int(calcSamplingRate(prescaler, acquisitionTimeValue, overSamplingVal))
                 if self.tSthLimits.uSamplingRateTrippleMax() >= samplingRate and self.tSthLimits.uSamplingRateMin <= samplingRate:
                     self.Can.Logger.Info("Sampling Rate: " + str(samplingRate))
-                    self.Can.Logger.Info("Prescaer: " + str(prescaler))
+                    self.Can.Logger.Info("Prescaler: " + str(prescaler))
                     self.Can.Logger.Info("Acquisition Time: " + AdcAcquisitionTimeName[acquisitionTimeValue])
                     self.Can.Logger.Info("Oversampling Rate: " + AdcOverSamplingRateName[overSamplingVal])
                     for _vRefkey, vRefVal in AdcReference.items():
@@ -3039,7 +3039,7 @@ class TestSth(unittest.TestCase):
                         aquisitionTime = acquisitionTimeKey
                         overSamples = overSamplingKey
                         SamplingRateMaxDet = samplingRate
-                    self.Can.Logger.Info("Prescaer - Proved: " + str(prescaler))
+                    self.Can.Logger.Info("Prescaler - Proved: " + str(prescaler))
                     self.Can.Logger.Info("Acquisition Time - Proved: " + AdcAcquisitionTimeName[acquisitionTimeValue])
                     self.Can.Logger.Info("Oversampling Rate - Proved: " + AdcOverSamplingRateName[overSamplingVal])
                     self._resetStu()
@@ -3131,7 +3131,7 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("STH bError Word Reserved: " + hex(ErrorWord.b.Reserved))
         self.Can.Logger.Info("STH bError Word bAdcOverRun: " + hex(ErrorWord.b.bAdcOverRun))
         self.Can.Logger.Info("STH bError Word bTxFail: " + hex(ErrorWord.b.bTxFail))
-        self.Can.Logger.Info("Transfered Bytes: " + str(BytesTransfered))
+        self.Can.Logger.Info("Transferred Bytes: " + str(BytesTransfered))
         self.assertLessEqual(BytesTransfered, 1000)
         self.assertEqual(ErrorWord.b.bAdcOverRun, 1)
         self._resetStu()
@@ -3178,7 +3178,7 @@ class TestSth(unittest.TestCase):
         samplePointsAcceleration = len(arrayAccX) / 10
         self.Can.Logger.Info("Voltage Sampling Points: " + str(samplePointsVoltage))
         self.Can.Logger.Info("Acceleration Sampling Points: " + str(samplePointsAcceleration))
-        self.Can.Logger.Info("Total Sampling Rate(Calulated): " + str(calcRate))
+        self.Can.Logger.Info("Total Sampling Rate(Calculated): " + str(calcRate))
         calcRate = calcRate / 2
         self.Can.Logger.Info("Sampling Rate per Channel: " + str(int(calcRate)))
         self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow, samplePointsVoltage)
@@ -3229,7 +3229,7 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("Voltage Sampling Points: " + str(samplePointsVoltage))
         self.Can.Logger.Info("AccelerationX Sampling Points: " + str(samplePointsXAcceleration))
         self.Can.Logger.Info("AccelerationY Sampling Points: " + str(samplePointsYAcceleration))
-        self.Can.Logger.Info("Total Sampling Rate(Calulated): " + str(int(calcRate)))
+        self.Can.Logger.Info("Total Sampling Rate(Calculated): " + str(int(calcRate)))
         calcRate = calcRate / 3
         self.Can.Logger.Info("Sampling Rate per Channel: " + str(int(calcRate)))
         self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow, samplePointsVoltage)
@@ -3282,7 +3282,7 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("AccelerationX Sampling Points: " + str(samplePointsXAcceleration))
         self.Can.Logger.Info("AccelerationY Sampling Points: " + str(samplePointsYAcceleration))
         self.Can.Logger.Info("AccelerationY Sampling Points: " + str(samplePointsZAcceleration))
-        self.Can.Logger.Info("Total Sampling Rate(Calulated): " + str(int(calcRate)))
+        self.Can.Logger.Info("Total Sampling Rate(Calculated): " + str(int(calcRate)))
         calcRate = calcRate / 4
         self.Can.Logger.Info("Sampling Rate per Channel: " + str(int(calcRate)))
         self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow, samplePointsVoltage)
@@ -3937,7 +3937,7 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("Xk2-Xk1(measured): " + str(difKX) + "mV")
         self.Can.Logger.Info("Yk2-YXk1(measured): " + str(difKY) + "mV")
         self.Can.Logger.Info("Zk2-Zk1(measured): " + str(difKZ) + "mV")
-        self.Can.Logger.Info("k2-k1(assumed) Mininimum: " + str(self.tSthLimits.iSelfTestOutputChangemVMin) + "mV")
+        self.Can.Logger.Info("k2-k1(assumed) Minimum: " + str(self.tSthLimits.iSelfTestOutputChangemVMin) + "mV")
         self.Can.Logger.Info("k2-k1(assumed) Typical: " + str(self.tSthLimits.iSelfTestOutputChangemVTyp) + "mV")
         self.assertGreaterEqual(difKX, self.tSthLimits.iSelfTestOutputChangemVMin)
         self.assertLessEqual(difKX, self.tSthLimits.iSelfTestOutputChangemVTyp)
