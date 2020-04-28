@@ -46,7 +46,7 @@ class CanFd(object):
         else:
             result = self.m_objPCANBasic.Initialize(self.m_PcanHandle, baudrate, self.hwtype, self.ioport, self.interrupt)
         if result != PCAN_ERROR_OK:
-            # the tCanReadWriteMutex will be unavailable, so continuing is useless: throw exeption
+            # the tCanReadWriteMutex will be unavailable, so continuing is useless: throw exception
             # @dev: if you got here but don't strictly need the CAN adapter, make its init go away ;)
             raise Exception("no Peak Can Basic Module connected / Driver failed to load. Code: " + str(result))
         else:
@@ -138,7 +138,7 @@ class CanFd(object):
         self.tCanReadWriteMutex.acquire()  # More or less insane
         stsResult = self.m_objPCANBasic.SetValue(self.m_PcanHandle, PCAN_TRACE_SIZE, iBuffer)
         if stsResult != PCAN_ERROR_OK:
-            print("Error while init Peak Can Basi Module while configurating Trace File: " + stsResult)
+            print("Error while init Peak Can Basic Module while configuring Trace File: " + stsResult)
 
         # Configure the way how trace files are created: 
         # * Standard name is used
