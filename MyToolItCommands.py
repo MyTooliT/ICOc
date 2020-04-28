@@ -247,7 +247,7 @@ CommandBlockStatisticalData = {
     MyToolItStatData["OperatingTime"] : "Statistical Data Command Operating Time",
     MyToolItStatData["Uvc"] : "Statistical Data Command Undervoltage Counter",
     MyToolItStatData["Wdog"] : "Statistical Data Command Watchdog Counter",
-    MyToolItStatData["ProductionDate"] : "Statistical Data Command Producation Date",
+    MyToolItStatData["ProductionDate"] : "Statistical Data Command Production Date",
     MyToolItStatData["MeasurementInterval"] : "Statistical Data Command Measurement Interval",
     MyToolItStatData["QuantityInterval"] : "Statistical Data Command Quantity Interval",
     MyToolItStatData["Energy"] : "Statistical Data Command Energy",
