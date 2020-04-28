@@ -64,7 +64,7 @@
                             <Key>v2.1.10_Adxl100_100g</Key>
                         </hwRevSub>
                     </HwRevSub>
-                </hwRev>            
+                </hwRev>
             </HwRev>
         </setup>
         <setup name="ProductionStu">
@@ -89,8 +89,8 @@
                             <Key>v2.1.10_Standard</Key>
                         </hwRevSub>
                     </HwRevSub>
-                </hwRev>            
-            </HwRev>     
+                </hwRev>
+            </HwRev>
         </setup>
     </Setup>
     <Config>
@@ -116,7 +116,7 @@
                 <AdcRef>VDD</AdcRef>
                 <Prescaler>2</Prescaler>
                 <AcquisitionTime>8</AcquisitionTime>
-                <OverSamples>64</OverSamples>        
+                <OverSamples>64</OverSamples>
                 <LogName>./Logs/Watch/AccY12k5</LogName>
                 <DisplayTime>10</DisplayTime>
                 <IntervalTime>0</IntervalTime>
