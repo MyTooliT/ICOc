@@ -438,10 +438,10 @@ class mwt(myToolItWatch):
         bContinue = True
         self.tTerminalHeaderExtended()
         pyFiles = []
-        for file in glob.glob("./VerficationInternal/*.py"):
+        for file in glob.glob("./VerificationInternal/*.py"):
             file = file.split("\\")
             pyFiles.append(file[-1])
-        self.stdscr.addstr("\nVerficationInternal: \n")
+        self.stdscr.addstr("\nVerificationInternal: \n")
         iTestNumber = 1
         for i in range(0, len(pyFiles)):
             self.stdscr.addstr("    " + str(iTestNumber) + ": " + pyFiles[i] + "\n")
@@ -453,7 +453,7 @@ class mwt(myToolItWatch):
         if 0 < iTestNumberRun and iTestNumberRun < iTestNumber:
             self.Can.__exit__()
             sDirPath = os.path.dirname(os.path.realpath(pyFiles[iTestNumberRun - 1]))
-            sDirPath += "\\VerficationInternal\\"
+            sDirPath += "\\VerificationInternal\\"
             sDirPath += pyFiles[iTestNumberRun - 1]
             try:
                 sString = ""
