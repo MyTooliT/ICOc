@@ -75,7 +75,7 @@ class mwt(myToolItWatch):
         self.stdscr.addstr("Prescaler(2-127): ")
         self.stdscr.refresh()
         iPrescaler = self.iTerminalInputNumberIn()
-        self.stdscr.addstr("Aquisition Time")
+        self.stdscr.addstr("Acquisition Time")
         self.vListKeys(AdcAcquisitionTime)
         self.stdscr.refresh()
         iAquisitionTime = self.iTerminalInputNumberIn()
@@ -173,7 +173,7 @@ class mwt(myToolItWatch):
         sSerialNumber = self.Can.sProductData("SerialNumber", bLog=False)
         sName = self.Can.sProductData("Name", bLog=False)
         sSerial = str(sSerialNumber + "-" + sName)
-        self.stdscr.addstr("Global Trade Identifcation Number (GTIN): " + sGtin + "\n")
+        self.stdscr.addstr("Global Trade Identification Number (GTIN): " + sGtin + "\n")
         self.stdscr.addstr("Hardware Revision(Major.Minor.Build): " + sHwRev + "\n")
         self.stdscr.addstr("Firmware Version(Major.Minor.Build): " + sSwVersion + "\n")
         self.stdscr.addstr("Firmware Release Name: " + sReleaseName + "\n")
@@ -199,7 +199,7 @@ class mwt(myToolItWatch):
             self.stdscr.addstr(sBlueToothMacAddr(int(self.iAddress, 16)) +"(" + str(self.sDevName) + ")\n")
             self.bTerminalHolderConnectCommandsShowDataValues()
             self.stdscr.addstr("Run Time: " + str(self.iRunTime) + "s\n")
-            self.stdscr.addstr("Inteval Time: " + str(self.iIntervalTime) + "s\n")
+            self.stdscr.addstr("Interval Time: " + str(self.iIntervalTime) + "s\n")
             self.stdscr.addstr("Adc Prescaler/AcquisitionTime/OversamplingRate/Reference(Samples/s): " + str(self.iPrescaler) + "/" + str(AdcAcquisitionTimeReverse[self.iAquistionTime]) + "/" + str(AdcOverSamplingRateReverse[self.iOversampling]) + "/" + str(self.sAdcRef) + "(" + str(self.samplingRate) + ")\n")
             self.stdscr.addstr("Acc Config(XYZ/DataSets): " + str(int(self.bAccX)) + str(int(self.bAccY)) + str(int(self.bAccZ)) + "/" + str(DataSetsReverse[self.tAccDataFormat]) + "\n")
             self.stdscr.addstr("\n")
@@ -211,7 +211,7 @@ class mwt(myToolItWatch):
             self.stdscr.addstr("O: Off(Standby)\n")
             self.stdscr.addstr("p: Config Acceleration Points(XYZ)\n")
             self.stdscr.addstr("r: Config run time and interval time\n")
-            self.stdscr.addstr("s: Start Data Aquisition\n")
+            self.stdscr.addstr("s: Start Data Acquisition\n")
             self.stdscr.refresh()
             [bRun, bContinue] = self.tTerminalHolderConnectCommandsKeyEvaluation()
         return bContinue
@@ -671,7 +671,7 @@ class mwt(myToolItWatch):
             iAcquisitionTime = AdcAcquisitionTime[int(tSetup.find('AcquisitionTime').text)]
             iOversampling = AdcOverSamplingRate[int(tSetup.find('OverSamples').text)]
             samplingRate = int(calcSamplingRate(int(tSetup.find('Prescaler').text), iAcquisitionTime, iOversampling) + 0.5)
-            self.stdscr.addstr("Derived samplring rate from upper three parameters: " + str(samplingRate) + "\n")
+            self.stdscr.addstr("Derived sampling rate from upper three parameters: " + str(samplingRate) + "\n")
             self.stdscr.addstr("ADC Reference Voltage: " + tSetup.find('AdcRef').text + "\n")
             self.stdscr.addstr("Log Name: " + tSetup.find('LogName').text + "\n")
             self.stdscr.addstr("RunTime/IntervalTime: " + tSetup.find('RunTime').text + "/" + tSetup.find('DisplayTime').text + "\n")
@@ -727,7 +727,7 @@ class mwt(myToolItWatch):
         iPrescaler = self.iTerminalInputNumberIn()
         self.stdscr.addstr("Please Type in new acquisition time: ")
         iAcquisitionTime = self.iTerminalInputNumberIn()
-        self.stdscr.addstr("Please Type in new overer sampling rate: ")
+        self.stdscr.addstr("Please Type in new over sampling rate: ")
         iOversamples = self.iTerminalInputNumberIn()
         self.vAdcConfig(iPrescaler, iAcquisitionTime, iOversamples)
 
