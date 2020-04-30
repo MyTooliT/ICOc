@@ -195,7 +195,7 @@ The correct use of this command will yield into an automatic start of the data a
 Open a command prompt (console) and navigate to the software project folder(location of mytoolitwatch.py). To execute the program call mwt.py with the corresponding arguments to configure ADC settings.
 
 ```
- python mwt.py -x configKeys.xml additionalArguments
+python mwt.py -x configKeys.xml additionalArguments
 ```
 
 | argument                                      | meaning/Example                                                                                                                                                                          |
