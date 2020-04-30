@@ -49,7 +49,7 @@ Furthermore, the main system services may be divided as follows:
 
   - Time
   - Standby
-  - Meta communication information e.g. number of send Bytes for a communication port like CAN
+  - Meta communication information e.g. number of sent Bytes for a communication port like CAN
 
 - Test Functionality
   - Test Signals
