@@ -136,13 +136,16 @@ This chapter describes how to setup/execute the required software for acquiring 
 
 ## Python Interpreter and Python packages
 
-The required Python interpreter version is Python 3.5.4. Python 3.5.4 is supported at https://www.python.org/downloads/release/python-354/ . Furthermore, do not forgot to set the environment variables such that python interpreter runs are executed without the absolute Python path. Note that there will be missing python packages and its required to install theme via "python -m pip install packageName" and missing packages are listed at the program start of MyToolIt Watch and MyToolIt Watch Terminal.
+The required Python interpreter version is Python 3.5.4. 
+Python module installation: "python -m pip install packageName", also see anaconda-shell.bat and installModules.py
 
-It is recommended to use the anaconda installer to get python and an editor. (<https://www.anaconda.com/>)
+It is recommended to use the anaconda installer for getting python and an editor, like spyder3. (<https://www.anaconda.com/>)
+
+
 
 ## Download the program
 
-Please clone https://teckubtib@bitbucket.org/mytoolit/acquiredata.git (master) to a folder of your choice.
+Please clone git clone https://$username@bitbucket.org/mytoolit/mytoolitwatch.git (master) to a folder of your choice.
 
 This contains everything necessary to connect to an STU via CAN and pull data from the attached STHs.
 
