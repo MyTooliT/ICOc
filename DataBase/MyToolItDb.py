@@ -1004,6 +1004,7 @@ class MyToolItDb(MyToolItDbTables):
         
             
 if __name__ == "__main__":
-    mdb = MyToolItDb("localhost", "root", "MRh12JG&is", "icoTronic")
+    #mdb = MyToolItDb("localhost", "root", "MRh12JG&is", "icoTronic")
+    mdb = MyToolItDb("localhost", "root", "icotronic", "icoTronic") # (sHost, sUser, sPassWord, sDataBase):
     mdb.vTablesCreate()
     mdb.vShowDataBases()
