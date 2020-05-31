@@ -692,7 +692,7 @@ class MyToolItDb(MyToolItDbTables):
 
     """
     This creates the limit tables for the STU. Please note that the
-    production limit are equal to the service limits.
+    production limits are equal to the service limits.
     """
 
     def vStuTablesOverallLimits(self):
