@@ -137,12 +137,10 @@ This chapter describes how to setup/execute the required software for acquiring 
 
 ## Python Interpreter and Python packages
 
-The required Python interpreter version is Python 3.5.4. 
+The required Python interpreter version is Python 3.5.4.
 Python module installation: "python -m pip install packageName", also see anaconda-shell.bat and installModules.py
 
 It is recommended to use the anaconda installer for getting python and an editor, like spyder3. (<https://www.anaconda.com/>)
-
-
 
 ## Download the program
 
