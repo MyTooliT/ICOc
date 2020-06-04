@@ -381,12 +381,11 @@ class myToolItWatch():
     def vGraphSend(self, data):
         bSend = True
         data = tArray2Binary(data)
-        while False != bSend:
+        while bSend == True:
             self.tSocket.sendall(data)
             sleep(0.1)
             ack = self.tSocket.recv(2 ** 10)   
-            if None != ack:
-                if data == ack:
+            if ack != None and ack == data:
                     bSend = False
 
 

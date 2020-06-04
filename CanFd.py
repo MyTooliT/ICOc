@@ -111,9 +111,9 @@ class CanFd(object):
         
     def readThreadStop(self):
         try:
-            if False != self.RunReadThread:
-                self.RunReadThread = False 
-                self.readThread.terminate()           
+            if self.RunReadThread == True:
+                self.RunReadThread = False
+                self.readThread.terminate()
                 self.readThread.join()
         except:
             pass
