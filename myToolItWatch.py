@@ -461,7 +461,7 @@ class myToolItWatch():
         return DataClockTimeStamp
 
     def vParserInit(self):
-        self.parser = argparse.ArgumentParser(description='Command Line Oprtions')
+        self.parser = argparse.ArgumentParser(description='Command Line Options')
         self.parser.add_argument('-a', '--adc', dest='adc_config', action='store', nargs=3, type=int, required=False, help='Prescaler AcquisitionTime OversamplingRate (3 inputs required in that order e.g. 2 8 64) - Note that acceleration and battery voltage measurements share a single ADC that samples up to 4 channels)')
         self.parser.add_argument('-b', '--bluetooth_connect', dest='bluetooth_connect', action='store', nargs=1, type=str, required=False, help='Connect to device specified by Bluetooth address and starts sampling as configured')
         self.parser.add_argument('-d, --gui_dim', dest='gui_dim', action='store', nargs=1, type=int, required=False, help='Length of visualization interval in ms for the graphical acceleration view . Value below 10 turns it off')
@@ -473,7 +473,7 @@ class myToolItWatch():
         self.parser.add_argument('-r', '--run_time', dest='run_time', action='store', nargs=1, type=int, required=False, help='Sets RunTime in seconds. Below 10 specifies infinity')
         self.parser.add_argument('-s', '--sample_setup', dest='sample_setup', action='store', nargs=1, type=str, required=False, help='Starts sampling with configuration as given including additional command line arguments')
         self.parser.add_argument('-v', '--version', dest='version', action='store', nargs=2, type=str, required=False, help='Chooses product with version for handling Table Calculation Files (e.g. STH v2.1.2)')
-        self.parser.add_argument('-x', '--xml', dest='xml_file_name', action='store', nargs=1, type=str, required=True, help='Selects xml configuration/data base file')
+        self.parser.add_argument('-x', '--xml', dest='xml_file_name', action='store', nargs=1, type=str, required=True, help='Selects xml configuration/data base file', default='configKeys.xml')
         self.parser.add_argument('--refv', dest='refv', action='store', nargs=1, type=str, required=False, help='ADC\'s Reference voltage, VDD=Standard')
         self.parser.add_argument('--save', dest='save', action='store_true', required=False, help='Saves a device configuration or sample setup in the xml file)')
         self.parser.add_argument('--show_config', dest='show_config', action='store_true', required=False, help='Shows current configuration (including command line arguments)')
