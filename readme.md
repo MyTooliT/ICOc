@@ -218,12 +218,12 @@ python mwt.py -x configKeys.xml additionalArguments
 | --show_config                                 | Shows current configuration after loading xml data base and passing additional arguments.<br />                                                                                          |
 | --voltage_points xyz                          | Turn on battery voltage streaming(100) or turns off battery voltage streaming(000)                                                                                                       |
 
-##### Prescaler AcquisationTime and OversamplingRate
+##### Prescaler AcquisitionTime and OversamplingRate
 
 The sampling rate is achieved via the following formula:
 
 $$
-f_{sampling} = \frac{38,4MHz}{(Prescaler+1)\cdot(AquisationTime +13)\cdot OversamplingRate}
+f_{sampling} = \frac{38,4MHz}{(Prescaler+1)\cdot(AcquisitionTime +13)\cdot OversamplingRate}
 $$
 
 We should mention that continuous measurements will be sent in data triples and a CAN 2.0 message contains in a such case a data triple. Moreover, other formats (e.g. AccX, AccY and AccZ as a vector) are a data points and a CAN 20 message contains such a data point. Note, that the performance of the computer system is limited and an overload causes lost messages. Please check the data log for the Error Status Word of the Stationary Transceiver Holder (STU).
