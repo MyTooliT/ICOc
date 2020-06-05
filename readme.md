@@ -135,12 +135,25 @@ compile the firmware
 
 This chapter describes how to setup/execute the required software for acquiring data.
 
-## Python Interpreter and Python packages
+## Python
 
-The required Python interpreter version is Python 3.5.4.
-Python module installation: "python -m pip install packageName", also see anaconda-shell.bat and installModules.py
+### Interpreter
 
-It is recommended to use the anaconda installer for getting python and an editor, like spyder3. (<https://www.anaconda.com/>)
+MyToolIt Watch requires at least Python `3.5.4`. Later versions should work too. You can download Python [here](https://www.python.org/downloads).
+
+When you install the package downloaded above, please do not forget to enable the checkbox “Add Python to PATH” in the setup window of the installer.
+
+If you want to also install additional tools, such as the IDE [Spyder](https://www.spyder-ide.org), we recommend you use [Anaconda](https://www.anaconda.com) – instead of the official Python installer – to install Python on your machine.
+
+### Packages
+
+Since MyToolIt Watch requires additional Python packages you need to install them too. You can do that using the following command inside PowerShell or the old Windows command line interface `cmd.exe`:
+
+```sh
+pip install matplotlib mysql-connector openpyxl windows-curses
+```
+
+For more information regarding the package installation, please take a look at [`anaconda-shell.bat`](anaconda-shell.bat) and [`installModules.py`](installModules.py).
 
 ## Download the program
 
