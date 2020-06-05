@@ -155,11 +155,17 @@ pip install matplotlib mysql-connector openpyxl windows-curses
 
 For more information regarding the package installation, please take a look at [`anaconda-shell.bat`](anaconda-shell.bat) and [`installModules.py`](installModules.py).
 
-## Download the program
+## MyToolIt Watch
 
-Please clone git clone https://$username@bitbucket.org/mytoolit/mytoolitwatch.git (master) to a folder of your choice.
+Please clone this repository (`git@bitbucket.org:mytoolit/mytoolitwatch.git`) to a folder of your choice. You can either use the [command line tool `git`](https://git-scm.com/downloads):
 
-This contains everything necessary to connect to an STU via CAN and pull data from the attached STHs.
+```
+git clone git@bitbucket.org:mytoolit/mytoolitwatch.git
+```
+
+or one of the many available [graphical user interfaces for Git](https://git-scm.com/downloads/guis) to do that.
+
+The repository contains everything necessary to connect to an STU via CAN and pull data from the attached STHs.
 
 ## Program Execution
 
