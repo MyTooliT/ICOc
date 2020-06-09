@@ -62,7 +62,7 @@ class TestSth(unittest.TestCase):
         global bSkip
         global sHolderNameInput
         self.tSthLimits = SthLimits(iSensorAxis, uAdc2Acc, 20, 35)
-        self.tStuLimits = StuLimits(bStuPcbOnly, iRssiMin)
+        self.tStuLimits = StuLimits(bStuPcbOnly)
         self.sBuildLocation = sBuildLocation + sVersion
         self.sBootloader = sBuildLocation + "BootloaderOtaBgm113.s37"
         self.sAdapterSerialNo = sAdapterSerialNo
