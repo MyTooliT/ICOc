@@ -32,7 +32,6 @@ sSilabsCommanderLocation = "../../SimplicityStudio/SimplicityCommander/"
 sAdapterSerialNo = "440115849"
 sBoardType = "BGM113A256V2"
 iSensorAxis = 1
-bConnectedBattery = True
 uAdc2Acc = 200
 iRssiMin = -75
 bStuPcbOnly = True
@@ -62,7 +61,7 @@ class TestSth(unittest.TestCase):
     def setUp(self):
         global bSkip
         global sHolderNameInput
-        self.tSthLimits = SthLimits(iSensorAxis, bConnectedBattery, uAdc2Acc, iRssiMin, 20, 35)
+        self.tSthLimits = SthLimits(iSensorAxis, uAdc2Acc, 20, 35)
         self.tStuLimits = StuLimits(bStuPcbOnly, iRssiMin)
         self.sBuildLocation = sBuildLocation + sVersion
         self.sBootloader = sBuildLocation + "BootloaderOtaBgm113.s37"
