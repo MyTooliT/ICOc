@@ -995,7 +995,7 @@ class CanFd(object):
             
     def vBlueToothConnectConnect(self, receiver, log=True):
         if False != log:
-            self.Logger.Info("Bluetoot connect")
+            self.Logger.Info("Bluetooth connect")
         cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0)
         message = self.CanMessage20(cmd, self.sender, receiver, [SystemCommandBlueTooth["Connect"], 0, 0, 0, 0, 0, 0, 0])
         self.tWriteFrameWaitAckRetries(message, retries=2)            
