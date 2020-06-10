@@ -1001,7 +1001,7 @@ class CanFd(object):
         self.tWriteFrameWaitAckRetries(message, retries=2)            
         
     def iBlueToothConnectTotalScannedDeviceNr(self, receiver, log=True):
-        if False != log:
+        if log:
             self.Logger.Info("Get number of available devices")
         cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0)
         message = self.CanMessage20(cmd, self.sender, receiver, [SystemCommandBlueTooth["GetNumberAvailableDevices"], 0, 0, 0, 0, 0, 0, 0])
@@ -1139,7 +1139,7 @@ class CanFd(object):
                     self.bBlueToothConnectDeviceConnect(stuNr, self.DeviceNr)  
                     while time.time() < endTime and False == self.bConnected:      
                         self.bBlueToothCheckConnect(stuNr)  
-                    if False != self.bConnected and False != log:
+                    if self.bConnected and log:
                         self.Logger.Info("Connected to: " + sBlueToothMacAddr(self.iAddress) + "(" + self.sDevName + ")")
                     break
         if None == self.sDevName:
