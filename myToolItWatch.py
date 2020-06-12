@@ -1459,7 +1459,7 @@ class myToolItWatch():
         print("Bluetooth address(to be connected): " + str(self.iAddress))  # Todo machen
         print("AutoConnect?: " + str(self.bSthAutoConnect))
         print("Run Time: " + str(self.iRunTime) + "s")
-        print("Inteval Time: " + str(self.iIntervalTime) + "s")
+        print("Interval Time: " + str(self.iIntervalTime) + "s")
         print("Display Time: " + str(self.iDisplayTime) + "s")
         print("Adc Prescaler/AcquisitionTime/OversamplingRate/Reference(Samples/s): " + str(self.iPrescaler) + "/" + str(AdcAcquisitionTimeReverse[self.iAquistionTime]) + "/" + str(AdcOverSamplingRateReverse[self.iOversampling]) + "/" + str(self.sAdcRef) + "(" + str(self.samplingRate) + ")")
         print("Acc Config(XYZ/DataSets): " + str(int(self.bAccX)) + str(int(self.bAccY)) + str(int(self.bAccZ)) + "/" + str(DataSetsReverse[self.tAccDataFormat]))
@@ -1476,7 +1476,7 @@ class myToolItWatch():
         self.Can.Logger.Info("Bluetooth address(to be connected): " + str(self.iAddress))  # Todo machen
         self.Can.Logger.Info("AutoConnect?: " + str(self.bSthAutoConnect))
         self.Can.Logger.Info("Run Time: " + str(self.iRunTime) + "s")
-        self.Can.Logger.Info("Inteval Time: " + str(self.iIntervalTime) + "s")
+        self.Can.Logger.Info("Interval Time: " + str(self.iIntervalTime) + "s")
         self.Can.Logger.Info("Display Time: " + str(self.iDisplayTime) + "ms")
         self.Can.Logger.Info("Adc Prescaler/AcquisitionTime/OversamplingRate/Reference(Samples/s): " + str(self.iPrescaler) + "/" + str(AdcAcquisitionTimeReverse[self.iAquistionTime]) + "/" + str(AdcOverSamplingRateReverse[self.iOversampling]) + "/" + str(self.sAdcRef) + "(" + str(self.samplingRate) + ")")
         self.Can.Logger.Info("Acc Config(XYZ/DataSets): " + str(int(self.bAccX)) + str(int(self.bAccY)) + str(int(self.bAccZ)) + "/" + str(DataSetsReverse[self.tAccDataFormat]))
