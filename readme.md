@@ -198,6 +198,10 @@ or one of the many available [graphical user interfaces for Git](https://git-scm
 
 The repository contains everything necessary to connect to an STU via CAN and pull data from the attached STHs.
 
+#### Simplicity Studio
+
+For the tests that require a firmware flash, such as the [production tests](ProductionTests) you need to [install Simplicity Studio](https://www.silabs.com/products/development-tools/software/simplicity-studio).
+
 ## Program Execution
 
 MyToolIt Watch supports a program library, console access and a terminal that access the Watch program library. Thus, MyToolIt Watch may be embedded in another application or used standalone.
