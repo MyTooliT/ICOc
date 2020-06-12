@@ -135,9 +135,11 @@ compile the firmware
 
 This chapter describes how to setup/execute the required software for acquiring data.
 
-## Python
+## Requirements
 
-### Interpreter
+### Python
+
+#### Interpreter
 
 MyToolIt Watch requires at least Python `3.5.4`. Later versions should work too. You can download Python [here](https://www.python.org/downloads).
 
@@ -145,7 +147,7 @@ When you install the package downloaded above, please do not forget to enable th
 
 If you want to also install additional tools, such as the IDE [Spyder](https://www.spyder-ide.org), we recommend you use [Anaconda](https://www.anaconda.com) – instead of the official Python installer – to install Python on your machine.
 
-### Packages
+#### Packages
 
 Since MyToolIt Watch requires additional Python packages you need to install them too. You can do that using the following command inside PowerShell or the old Windows command line interface `cmd.exe`:
 
@@ -155,7 +157,7 @@ pip install matplotlib mysql-connector openpyxl windows-curses
 
 For more information regarding the package installation, please take a look at [`anaconda-shell.bat`](anaconda-shell.bat) and [`installModules.py`](installModules.py).
 
-## MySQL
+### MySQL
 
 MyToolIt Watch requires a running MySQL database. To download MySQL, please visit the [official web page](https://dev.mysql.com/downloads/installer). The smaller “web” installer should be sufficient for our needs.
 
@@ -176,7 +178,7 @@ MyToolIt Watch requires a running MySQL database. To download MySQL, please visi
    5. Windows Service: Proceed with the standard options
    6. Apply Configuration: Press “Execute”
 
-### Configuration
+#### Configuration
 
 Please open the MySQL Command Line Client and execute the following command:
 
@@ -184,7 +186,7 @@ Please open the MySQL Command Line Client and execute the following command:
 create database sth;
 ```
 
-## MyToolIt Watch
+### MyToolIt Watch
 
 Please clone this repository (`git@bitbucket.org:mytoolit/mytoolitwatch.git`) to a folder of your choice. You can either use the [command line tool `git`](https://git-scm.com/downloads):
 
