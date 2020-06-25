@@ -419,7 +419,14 @@ MyToolItWatch install directory. Furthermore, the scrips may be called via:
 
 - Opening a command prompt
 - Navigate to mytoolitwatch/ProductionTests (cd ..\mytoolitwatch\ProductionTests)
-- Type "python Sth.py loglocation temporaryLogName VERSION e.g. python Sth.py ../../Logs/ProductionTestSth/ LogsSth.txt v2.1.10 or type python Stu.py LogLocation temporaryLogName VERSION e.g. python Stu.py ../../Logs/ProductionTestStu/ LogsStu.txt v2.1.9
+- Type "python Sth.py loglocation temporaryLogName VERSION e.g.
+
+  ```sh
+  python Sth.py ../../Logs/ProductionTestSth/ LogsSth.txt v2.1.10
+  ```
+
+  or type python Stu.py LogLocation temporaryLogName VERSION e.g. python Stu.py ../../Logs/ProductionTestStu/ LogsStu.txt v2.1.9
+
 - The console prints any negative result or nothing it the test was OK. Moreover, the logs as well as a test protocol are archived at the
   log location.
 
