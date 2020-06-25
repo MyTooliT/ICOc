@@ -120,7 +120,7 @@ class TestSth(unittest.TestCase):
                 self._SthWDog()
                 self.Can.Logger.Info("STH BlueTooth Address: " + self.sSthAddr)
             else:
-                sHolderNameInput = input("Holder Name: ")
+                sHolderNameInput = "Blubb"
                 if 8 < len(sHolderNameInput):
                     sHolderNameInput = sHolderName[:8]
             self.sStuAddr = sBlueToothMacAddr(self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"]))
