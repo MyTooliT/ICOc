@@ -541,7 +541,7 @@ class TestSth(unittest.TestCase):
         except:
             pass
 
-        sSystemCall = self.sSilabsCommander + " device lock –-debug disable --serialno " + self.sAdapterSerialNo
+        sSystemCall = self.sSilabsCommander + " device unlock --serialno " + self.sAdapterSerialNo
         sSystemCall += " -d " + self.sBoardType
         sSystemCall += ">> " + self.sLogLocation
         sSystemCall += self._testMethodName + "ManufacturingDebugUnlock.txt"
