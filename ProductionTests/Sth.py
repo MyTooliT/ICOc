@@ -1140,5 +1140,4 @@ if __name__ == "__main__":
     if not os.path.exists(sDirName):
         os.makedirs(sDirName)
     with open(sLogFileLocation, "w") as f:
-        runner = unittest.TextTestRunner(f)
-        unittest.main(argv=['first-arg-is-ignored'], testRunner=runner)
+        unittest.main(argv=['first-arg-is-ignored'])
