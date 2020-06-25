@@ -22,6 +22,8 @@ from SthLimits import SthLimits
 from StuLimits import StuLimits
 from MyToolItCommands import *
 from openpyxl.descriptors.base import DateTime
+from re import search
+from subprocess import run
 
 sVersion = "v2.1.9"
 sLogName = 'ProductionTestSth'
@@ -605,25 +607,23 @@ class TestSth(unittest.TestCase):
             pass
         try:
             os.remove(self.sLogLocation + self._testMethodName +
-                      "ManufacturingDebugUnlock.txt")
-        except:
-            pass
-        try:
-            os.remove(self.sLogLocation + self._testMethodName +
                       "DeviceInfo.txt")
         except:
             pass
 
-        sSystemCall = self.sSilabsCommander + " device unlock --serialno " + self.sAdapterSerialNo
-        sSystemCall += " -d " + self.sBoardType
-        sSystemCall += ">> " + self.sLogLocation
-        sSystemCall += self._testMethodName + "ManufacturingDebugUnlock.txt"
+        # Unlock debug access
+        unlock_command = (f"{self.sSilabsCommander} device unlock " +
+                          f"--serialno {self.sAdapterSerialNo} " +
+                          f"-d {self.sBoardType}")
         if os.name == 'nt':
-            sSystemCall = sSystemCall.replace("/", "\\")
-            os.system(sSystemCall)
-        # for mac and linux(here, os.name is 'posix')
-        else:
-            os.system(sSystemCall)
+            unlock_command = unlock_command.replace('/', '\\')
+        status = run(unlock_command, capture_output=True, text=True)
+
+        self.assertEqual(
+            status.returncode, 0,
+            f"Unlock command returned non-zero exit code {status.returncode}")
+        self.assertRegex(status.stdout, "Chip successfully unlocked",
+                         "Unable to unlock debug access of chip")
 
         sSystemCall = self.sSilabsCommander + " device info "
         sSystemCall += "--serialno " + self.sAdapterSerialNo + " "
