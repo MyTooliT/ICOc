@@ -591,16 +591,6 @@ class TestSth(unittest.TestCase):
 
     def test0000FirmwareFlash(self):
         """Upload bootloader into STH"""
-        try:
-            os.remove(self.sLogLocation + self._testMethodName +
-                      "ManufacturingCreateResport.txt")
-        except:
-            pass
-        try:
-            os.remove(self.sLogLocation + self._testMethodName +
-                      "ManufacturingFlashResport.txt")
-        except:
-            pass
 
         identification_arguments = (f"--serialno {self.sAdapterSerialNo} " +
                                     f"-d {self.sBoardType}")
