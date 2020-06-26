@@ -18,7 +18,6 @@ from os.path import abspath, isfile, join
 from re import escape, search
 from subprocess import run
 
-sVersion = "v2.1.9"
 sLogName = 'ProductionTestSth'
 sLogLocation = '../../Logs/ProductionTestSth/'
 sOtaComPort = 'COM6'
