@@ -611,14 +611,16 @@ class TestSth(unittest.TestCase):
         except:
             pass
 
+        identification_arguments = (f"--serialno {self.sAdapterSerialNo} " +
+                                    f"-d {self.sBoardType}")
+
         # Unlock debug access
-        unlock_command = (f"{self.sSilabsCommander} device unlock " +
-                          f"--serialno {self.sAdapterSerialNo} " +
-                          f"-d {self.sBoardType}")
+        unlock_command = (
+            f"{self.sSilabsCommander} device unlock {identification_arguments}"
+        )
         if os.name == 'nt':
             unlock_command = unlock_command.replace('/', '\\')
         status = run(unlock_command, capture_output=True, text=True)
-
         self.assertEqual(
             status.returncode, 0,
             f"Unlock command returned non-zero exit code {status.returncode}")
