@@ -19,12 +19,10 @@ from MyToolItCommands import *
 
 bSkip = False
 sHolderNameInput = None
-"""
-This class supports a production test of the Sensory Tool Holder (STH)
-"""
 
 
 class TestSth(unittest.TestCase):
+    """Production test for the Sensory Tool Holder (STH)"""
     def setUp(self):
         global bSkip
         global sHolderNameInput
