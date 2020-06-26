@@ -44,7 +44,7 @@ Get serial number that is stored in the excel file
 
 def sSerialNumber(sExcelFileName):
     tWorkbook = openpyxl.load_workbook(sExcelFileName)
-    tWorkSheet = tWorkbook.get_sheet_by_name("Product Data@0x4")
+    tWorkSheet = tWorkbook["Product Data@0x4"]
     value = tWorkSheet['E12'].value
     sSerial = str(value)
     return sSerial
