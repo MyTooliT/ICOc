@@ -589,13 +589,8 @@ class TestSth(unittest.TestCase):
         worksheet[sCellName] = sContent
         workbook.save(self.sExcelEepromContentFileName)
 
-    """
-    https://www.silabs.com/community/wireless/zigbee-and-thread/knowledge-base.entry.html/2017/12/28/building_firmwareim-1OPr
-    commander.exe convert ..\v4_workspace\server_firmware\builds\BootloaderOtaBgm113.s37 ..\v4_workspace\server_firmware\builds\v2.1.5\Server.s37 --patch 0x0fe04000:0x00 --patch 0x0fe041F8:0xFD -o manufacturing_image.hex -d BGM113A256V2
-    commander flash manufacturing_image.hex --address 0x0 --serialno 440116697 -d BGM113A256V2
-    """
-
     def test0000FirmwareFlash(self):
+        """Upload bootloader into STH"""
         try:
             os.remove(self.sLogLocation + self._testMethodName +
                       "ManufacturingCreateResport.txt")
