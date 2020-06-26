@@ -652,7 +652,6 @@ class TestSth(unittest.TestCase):
         if os.name == 'nt':
             flash_command = flash_command.replace('/', '\\')
         status = run(flash_command, capture_output=True, text=True)
-        print(status.stdout)
         self.assertEqual(
             status.returncode, 0,
             "Flash program command returned non-zero exit code " +
