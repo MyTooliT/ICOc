@@ -206,16 +206,6 @@ class TestSth(unittest.TestCase):
                                  log=log)
 
     """
-    Resets STH
-    """
-
-    def _resetSth(self, retries=5, log=True):
-        self.Can.bConnected = False
-        return self.Can.cmdReset(MyToolItNetworkNr["STH1"],
-                                 retries=retries,
-                                 log=log)
-
-    """
     Get internal BGM113 Chip Temperature in °C of STH
     """
 
@@ -266,19 +256,6 @@ class TestSth(unittest.TestCase):
                                      MyToolItStatData["Wdog"])[:4])
         self.Can.Logger.Info("WatchDog Counter: " + str(WdogCounter))
         return WdogCounter
-
-    """
-    Turn off LED of STH
-    """
-
-    def TurnOffLed(self):
-        self.Can.Logger.Info("Turn Off LED")
-        cmd = self.Can.CanCmd(MyToolItBlock["Configuration"],
-                              MyToolItConfiguration["Hmi"], 1, 0)
-        message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
-                                        MyToolItNetworkNr["STH1"],
-                                        [129, 1, 2, 0, 0, 0, 0, 0])
-        self.Can.tWriteFrameWaitAckRetries(message)
 
     """
     Try to open Excel Sheet. If not able to open, then create a new one
@@ -539,55 +516,6 @@ class TestSth(unittest.TestCase):
                     e)
                 self.Can.Logger.Info(sError)
         return sError
-
-    """
-    Compare Written to Read (both Excel)
-    """
-
-    def tCompareEerpomWriteRead(self):
-        tWorkSheetNameError = None
-        sCellNumberError = None
-        tWorkbookReadBack = openpyxl.load_workbook(
-            self.sExcelEepromContentReadBackFileName)
-        tWorkbookWrite = openpyxl.load_workbook(
-            self.sExcelEepromContentFileName)
-        if tWorkbookReadBack and tWorkbookWrite:
-            for worksheetName in tWorkbookWrite.sheetnames:
-                tWorkSheedReadBack = tWorkbookReadBack.get_sheet_by_name(
-                    worksheetName)
-                tWorkSheedWrite = tWorkbookWrite.get_sheet_by_name(
-                    worksheetName)
-                for i in range(2, 2 + 256):
-                    if None != tWorkSheedWrite['A' + str(i)].value:
-                        if str(tWorkSheedWrite['E' + str(i)].value) != str(
-                                tWorkSheedReadBack['E' + str(i)].value):
-                            tWorkSheetNameError = worksheetName
-                            sCellNumberError = 'E' + str(i)
-                            break
-                    else:
-                        if None != tWorkSheedReadBack['A' + str(i)].value:
-                            tWorkSheetNameError = worksheetName
-                            sCellNumberError = 'A' + str(i)
-                        break
-
-        return [tWorkSheetNameError, sCellNumberError]
-
-    """
-    Change a specific content of an ExcelCell
-    """
-
-    def vChangeExcelCell(self, sWorkSheetName, sCellName, sContent):
-        workSheetNames = []
-        workbook = openpyxl.load_workbook(self.sExcelEepromContentFileName)
-        if workbook:
-            for worksheetName in workbook.sheetnames:
-                sName = str(worksheetName).split('@')
-                _sAddress = sName[1]
-                sName = sName[0]
-                workSheetNames.append(sName)
-        worksheet = workbook.get_sheet_by_name(sWorkSheetName)
-        worksheet[sCellName] = sContent
-        workbook.save(self.sExcelEepromContentFileName)
 
     def test0000FirmwareFlash(self):
         """Upload bootloader into STH"""
