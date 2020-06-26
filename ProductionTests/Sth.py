@@ -20,7 +20,6 @@ from MyToolItCommands import *
 sBuildLocation = "../../STH/builds/"
 sSilabsCommanderLocation = "C:/SiliconLabs/SimplicityStudio/v4/developer/adapter_packs/commander/"
 sAdapterSerialNo = "440120910"
-sBoardType = "BGM113A256V2"
 iSensorAxis = 1
 uAdc2Acc = 200
 bStuPcbOnly = True
@@ -41,7 +40,7 @@ class TestSth(unittest.TestCase):
         self.sBuildLocation = sBuildLocation + sVersion
         self.sBootloader = sBuildLocation + "BootloaderOtaBgm113.s37"
         self.sAdapterSerialNo = sAdapterSerialNo
-        self.sBoardType = sBoardType
+        self.sBoardType = "BGM113A256V2"
         self.sSilabsCommander = sSilabsCommanderLocation + "commander"
         self.bError = False
         self.sBuildLocation = sBuildLocation + sVersion
