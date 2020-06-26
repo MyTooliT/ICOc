@@ -46,9 +46,8 @@ class TestSth(unittest.TestCase):
         self.bError = False
         self.sBuildLocation = sBuildLocation + sVersion
         self.iTestNumber = int(self._testMethodName[4:8])
-        sLogLocation = '../../Logs/ProductionTestSth/'
-        self.fileName = self.sLogLocation + self._testMethodName + ".txt"
-        self.fileNameError = self.sLogLocation + "Error_" + self._testMethodName + ".txt"
+        self.fileName = f"{self._testMethodName}.txt"
+        self.fileNameError = f"{self._testMethodName}_Error.txt"
 
         if False != bSkip and "test9999StoreTestResults" != self._testMethodName:
             self.skipTest("At least some previous test failed")
