@@ -1,22 +1,21 @@
 import unittest
 import os
 import sys
-sDirName = os.path.dirname('')
-sys.path.append(sDirName)
-file_path = '../'
-sDirName = os.path.dirname(file_path)
-sys.path.append(sDirName)
-import CanFd
 import time
+from os.path import abspath, isfile, join
+from re import escape, search
+from subprocess import run
+
+from os import sys, path
+# Add path for custom libraries
+sys.path.insert(1, path.dirname(path.dirname(path.abspath(__file__))))
+import CanFd
 from MyToolItNetworkNumbers import MyToolItNetworkNr
 from MyToolItSth import TestConfig, SthErrorWord
 from MyToolItStu import StuErrorWord
 from SthLimits import SthLimits
 from StuLimits import StuLimits
 from MyToolItCommands import *
-from os.path import abspath, isfile, join
-from re import escape, search
-from subprocess import run
 
 sLogLocation = '../../Logs/ProductionTestSth/'
 sBuildLocation = "../../STH/builds/"
