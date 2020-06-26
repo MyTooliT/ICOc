@@ -302,17 +302,5 @@ class TestSth(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    sLogLocation = sys.argv[1]
-    sLogFile = sys.argv[2]
-    if '/' != sLogLocation[-1]:
-        sLogLocation += '/'
-    sLogFileLocation = sLogLocation + sLogFile
-    sLogLocation = sLogLocation
-    sVersion = sys.argv[3]
-    sDirName = os.path.dirname(sLogFileLocation)
-    sys.path.append(sDirName)
-
-    if not os.path.exists(sDirName):
-        os.makedirs(sDirName)
-    with open(sLogFileLocation, "w") as f:
-        unittest.main(argv=['first-arg-is-ignored'])
+    sVersion = sys.argv[1]
+    unittest.main(argv=['first-arg-is-ignored'])
