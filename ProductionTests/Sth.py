@@ -18,7 +18,6 @@ from StuLimits import StuLimits
 from MyToolItCommands import *
 
 uAdc2Acc = 200
-bStuPcbOnly = True
 
 bSkip = False
 sHolderNameInput = None
@@ -32,6 +31,7 @@ class TestSth(unittest.TestCase):
         global bSkip
         global sHolderNameInput
         self.tSthLimits = SthLimits(1, uAdc2Acc, 20, 35)
+        bStuPcbOnly = True
         self.tStuLimits = StuLimits(bStuPcbOnly)
         sBuildLocation = "../../STH/builds/"
         self.sBuildLocation = sBuildLocation + sVersion
