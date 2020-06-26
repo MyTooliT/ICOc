@@ -17,7 +17,6 @@ from SthLimits import SthLimits
 from StuLimits import StuLimits
 from MyToolItCommands import *
 
-sSilabsCommanderLocation = "C:/SiliconLabs/SimplicityStudio/v4/developer/adapter_packs/commander/"
 sAdapterSerialNo = "440120910"
 iSensorAxis = 1
 uAdc2Acc = 200
@@ -41,7 +40,10 @@ class TestSth(unittest.TestCase):
         self.sBootloader = sBuildLocation + "BootloaderOtaBgm113.s37"
         self.sAdapterSerialNo = sAdapterSerialNo
         self.sBoardType = "BGM113A256V2"
-        self.sSilabsCommander = sSilabsCommanderLocation + "commander"
+        simplicity_studio_path = "C:/SiliconLabs/SimplicityStudio"
+        self.sSilabsCommander = join(
+            simplicity_studio_path,
+            "v4/developer/adapter_packs/commander/commander")
         self.bError = False
         self.sBuildLocation = sBuildLocation + sVersion
         self.iTestNumber = int(self._testMethodName[4:8])
