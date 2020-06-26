@@ -22,14 +22,15 @@ from SthLimits import SthLimits
 from StuLimits import StuLimits
 from MyToolItCommands import *
 from openpyxl.descriptors.base import DateTime
-from re import search
+from os.path import abspath, isfile, join
+from re import escape, search
 from subprocess import run
 
 sVersion = "v2.1.9"
 sLogName = 'ProductionTestSth'
 sLogLocation = '../../Logs/ProductionTestSth/'
 sOtaComPort = 'COM6'
-sBuildLocation = "../Build/"
+sBuildLocation = "../../STH/builds/"
 sSilabsCommanderLocation = "C:/SiliconLabs/SimplicityStudio/v4/developer/adapter_packs/commander/"
 sAdapterSerialNo = "440120910"
 sBoardType = "BGM113A256V2"
@@ -637,29 +638,35 @@ class TestSth(unittest.TestCase):
         self.assertIsNotNone(id_match, "Unable to determine unique ID of chip")
         unique_id = id_match['id']
 
-        if "Unique ID" == asData[-2][:9]:
-            sSystemCall = self.sSilabsCommander + " flash "
-            sSystemCall += self.sBuildLocation + "/manufacturingImageSth" + sVersion + ".hex "
-            sSystemCall += "--address 0x0 "
-            sSystemCall += "--serialno " + self.sAdapterSerialNo + " "
-            sSystemCall += "-d " + self.sBoardType + " "
-            sSystemCall += ">> " + self.sLogLocation
-            sSystemCall += self._testMethodName + "ManufacturingFlashResport.txt"
-            if os.name == 'nt':
-                sSystemCall = sSystemCall.replace("/", "\\")
-                os.system(sSystemCall)
-            # for mac and linux(here, os.name is 'posix')
-            else:
-                os.system(sSystemCall)
-            tFile = open(self.sLogLocation + self._testMethodName +
-                         "ManufacturingFlashResport.txt",
-                         "r",
-                         encoding='utf-8')
-            asData = tFile.readlines()
-            tFile.close()
-            self.assertEqual("range 0x0FE04000 - 0x0FE047FF (2 KB)\n",
-                             asData[-2][10:])
-            self.assertEqual("DONE\n", asData[-1])
+        # Upload bootloader data
+        bootloader_filepath = abspath(
+            join(sBuildLocation, sVersion,
+                 f"manufacturingImageSth{sVersion}.hex"))
+        self.assertTrue(
+            isfile(bootloader_filepath),
+            f"Bootloader file {bootloader_filepath} does not exist")
+
+        flash_command = (
+            f"{self.sSilabsCommander} flash {bootloader_filepath} " +
+            f"--address 0x0 {identification_arguments}")
+        if os.name == 'nt':
+            flash_command = flash_command.replace('/', '\\')
+        status = run(flash_command, capture_output=True, text=True)
+        print(status.stdout)
+        self.assertEqual(
+            status.returncode, 0,
+            "Flash program command returned non-zero exit code " +
+            f"{status.returncode}")
+        expected_output = "range 0x0FE04000 - 0x0FE047FF (2 KB)"
+        self.assertRegex(
+            status.stdout, escape(expected_output),
+            f"Flash output did not contain expected output “{expected_output}”"
+        )
+        expected_output = "DONE"
+        self.assertRegex(
+            status.stdout, expected_output,
+            f"Flash output did not contain expected output “{expected_output}”"
+        )
 
     """
     Tests over the air (OTA) update
