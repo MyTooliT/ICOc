@@ -605,11 +605,6 @@ class TestSth(unittest.TestCase):
                       "ManufacturingFlashResport.txt")
         except:
             pass
-        try:
-            os.remove(self.sLogLocation + self._testMethodName +
-                      "DeviceInfo.txt")
-        except:
-            pass
 
         identification_arguments = (f"--serialno {self.sAdapterSerialNo} " +
                                     f"-d {self.sBoardType}")
@@ -627,23 +622,21 @@ class TestSth(unittest.TestCase):
         self.assertRegex(status.stdout, "Chip successfully unlocked",
                          "Unable to unlock debug access of chip")
 
-        sSystemCall = self.sSilabsCommander + " device info "
-        sSystemCall += "--serialno " + self.sAdapterSerialNo + " "
-        sSystemCall += "-d " + self.sBoardType + " "
-        sSystemCall += ">> " + self.sLogLocation
-        sSystemCall += self._testMethodName + "DeviceInfo.txt"
+        # Retrieve device id
+        info_command = (
+            f"{self.sSilabsCommander} device info {identification_arguments}")
         if os.name == 'nt':
-            sSystemCall = sSystemCall.replace("/", "\\")
-            os.system(sSystemCall)
-        # for mac and linux(here, os.name is 'posix')
-        else:
-            os.system(sSystemCall)
-        tFile = open(self.sLogLocation + self._testMethodName +
-                     "DeviceInfo.txt",
-                     "r",
-                     encoding='utf-8')
-        asData = tFile.readlines()
-        tFile.close()
+            info_command = info_command.replace('/', '\\')
+        status = run(info_command, capture_output=True, text=True)
+        self.assertEqual(
+            status.returncode, 0,
+            "Device information command returned non-zero exit code " +
+            f"{status.returncode}")
+        id_match = search("Unique ID\s*:\s*(?P<id>[0-9A-Fa-f]+)",
+                          status.stdout)
+        self.assertIsNotNone(id_match, "Unable to determine unique ID of chip")
+        unique_id = id_match['id']
+
         if "Unique ID" == asData[-2][:9]:
             sSystemCall = self.sSilabsCommander + " flash "
             sSystemCall += self.sBuildLocation + "/manufacturingImageSth" + sVersion + ".hex "
