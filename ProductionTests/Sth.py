@@ -17,7 +17,6 @@ from SthLimits import SthLimits
 from StuLimits import StuLimits
 from MyToolItCommands import *
 
-sLogLocation = '../../Logs/ProductionTestSth/'
 sBuildLocation = "../../STH/builds/"
 sSilabsCommanderLocation = "C:/SiliconLabs/SimplicityStudio/v4/developer/adapter_packs/commander/"
 sAdapterSerialNo = "440120910"
@@ -44,10 +43,10 @@ class TestSth(unittest.TestCase):
         self.sAdapterSerialNo = sAdapterSerialNo
         self.sBoardType = sBoardType
         self.sSilabsCommander = sSilabsCommanderLocation + "commander"
-        self.sLogLocation = sLogLocation
         self.bError = False
         self.sBuildLocation = sBuildLocation + sVersion
         self.iTestNumber = int(self._testMethodName[4:8])
+        sLogLocation = '../../Logs/ProductionTestSth/'
         self.fileName = self.sLogLocation + self._testMethodName + ".txt"
         self.fileNameError = self.sLogLocation + "Error_" + self._testMethodName + ".txt"
 
