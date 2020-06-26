@@ -8,13 +8,8 @@ sDirName = os.path.dirname(file_path)
 sys.path.append(sDirName)
 import CanFd
 import time
-import array
-import math
-import struct
-from datetime import date
-from shutil import copyfile
 from MyToolItNetworkNumbers import MyToolItNetworkNr
-from MyToolItSth import TestConfig, SthErrorWord, fVoltageBattery
+from MyToolItSth import TestConfig, SthErrorWord
 from MyToolItStu import StuErrorWord
 from SthLimits import SthLimits
 from StuLimits import StuLimits
