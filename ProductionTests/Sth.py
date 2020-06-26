@@ -19,14 +19,12 @@ from re import escape, search
 from subprocess import run
 
 sLogLocation = '../../Logs/ProductionTestSth/'
-sOtaComPort = 'COM6'
 sBuildLocation = "../../STH/builds/"
 sSilabsCommanderLocation = "C:/SiliconLabs/SimplicityStudio/v4/developer/adapter_packs/commander/"
 sAdapterSerialNo = "440120910"
 sBoardType = "BGM113A256V2"
 iSensorAxis = 1
 uAdc2Acc = 200
-iRssiMin = -75
 bStuPcbOnly = True
 
 bSkip = False
