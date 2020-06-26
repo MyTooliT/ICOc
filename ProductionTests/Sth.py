@@ -18,7 +18,6 @@ from os.path import abspath, isfile, join
 from re import escape, search
 from subprocess import run
 
-sLogName = 'ProductionTestSth'
 sLogLocation = '../../Logs/ProductionTestSth/'
 sOtaComPort = 'COM6'
 sBuildLocation = "../../STH/builds/"
@@ -54,7 +53,6 @@ class TestSth(unittest.TestCase):
         self.iTestNumber = int(self._testMethodName[4:8])
         self.fileName = self.sLogLocation + self._testMethodName + ".txt"
         self.fileNameError = self.sLogLocation + "Error_" + self._testMethodName + ".txt"
-        self.sExcelEepromContentFileName = "Sth" + sVersion + ".xlsx"
 
         if False != bSkip and "test9999StoreTestResults" != self._testMethodName:
             self.skipTest("At least some previous test failed")
@@ -96,8 +94,6 @@ class TestSth(unittest.TestCase):
                 time.sleep(2)
                 self.sSthAddr = sBlueToothMacAddr(
                     self.Can.BlueToothAddress(MyToolItNetworkNr["STH1"]))
-                self.sTestReport = sHolderNameInput + "_" + sLogName
-                sStoreFileName = "./ResultsSth/OK_" + self.sTestReport + "_nr0.xlsx"
                 if False == os.path.isfile(
                         sStoreFileName
                 ) and "test0001OverTheAirUpdate" == self._testMethodName:
@@ -129,8 +125,6 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info(
             "_______________________________________________________________________________________________________________"
         )
-        if "test9999StoreTestResults" != self._testMethodName and "test0000FirmwareFlash" != self._testMethodName:
-            self.tWorkbook.save(self.sTestReport + ".xlsx")
         if "test0000FirmwareFlash" != self._testMethodName and "test9999StoreTestResults" != self._testMethodName:
             self.Can.streamingStop(MyToolItNetworkNr["STH1"],
                                    MyToolItStreaming["Acceleration"])
