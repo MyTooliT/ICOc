@@ -17,8 +17,6 @@ from SthLimits import SthLimits
 from StuLimits import StuLimits
 from MyToolItCommands import *
 
-uAdc2Acc = 200
-
 bSkip = False
 sHolderNameInput = None
 """
@@ -30,6 +28,7 @@ class TestSth(unittest.TestCase):
     def setUp(self):
         global bSkip
         global sHolderNameInput
+        uAdc2Acc = 200
         self.tSthLimits = SthLimits(1, uAdc2Acc, 20, 35)
         bStuPcbOnly = True
         self.tStuLimits = StuLimits(bStuPcbOnly)
