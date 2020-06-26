@@ -17,7 +17,6 @@ from SthLimits import SthLimits
 from StuLimits import StuLimits
 from MyToolItCommands import *
 
-iSensorAxis = 1
 uAdc2Acc = 200
 bStuPcbOnly = True
 
@@ -32,7 +31,7 @@ class TestSth(unittest.TestCase):
     def setUp(self):
         global bSkip
         global sHolderNameInput
-        self.tSthLimits = SthLimits(iSensorAxis, uAdc2Acc, 20, 35)
+        self.tSthLimits = SthLimits(1, uAdc2Acc, 20, 35)
         self.tStuLimits = StuLimits(bStuPcbOnly)
         sBuildLocation = "../../STH/builds/"
         self.sBuildLocation = sBuildLocation + sVersion
