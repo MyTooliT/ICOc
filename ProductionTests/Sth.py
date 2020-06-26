@@ -17,7 +17,6 @@ from SthLimits import SthLimits
 from StuLimits import StuLimits
 from MyToolItCommands import *
 
-sBuildLocation = "../../STH/builds/"
 sSilabsCommanderLocation = "C:/SiliconLabs/SimplicityStudio/v4/developer/adapter_packs/commander/"
 sAdapterSerialNo = "440120910"
 iSensorAxis = 1
@@ -37,6 +36,7 @@ class TestSth(unittest.TestCase):
         global sHolderNameInput
         self.tSthLimits = SthLimits(iSensorAxis, uAdc2Acc, 20, 35)
         self.tStuLimits = StuLimits(bStuPcbOnly)
+        sBuildLocation = "../../STH/builds/"
         self.sBuildLocation = sBuildLocation + sVersion
         self.sBootloader = sBuildLocation + "BootloaderOtaBgm113.s37"
         self.sAdapterSerialNo = sAdapterSerialNo
@@ -255,8 +255,7 @@ class TestSth(unittest.TestCase):
 
         # Upload bootloader data
         bootloader_filepath = abspath(
-            join(sBuildLocation, sVersion,
-                 f"manufacturingImageSth{sVersion}.hex"))
+            join(self.sBuildLocation, f"manufacturingImageSth{sVersion}.hex"))
         self.assertTrue(
             isfile(bootloader_filepath),
             f"Bootloader file {bootloader_filepath} does not exist")
