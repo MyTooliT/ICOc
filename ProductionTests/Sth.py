@@ -23,15 +23,19 @@ sHolderNameInput = None
 
 class TestSth(unittest.TestCase):
     """Production test for the Sensory Tool Holder (STH)"""
+    @classmethod
+    def setUpClass(cls):
+        "Initialize data for whole test"
+        build_location = f"../../STH/builds/{version}"
+        cls.bootloader_filepath = abspath(
+            join(build_location, f"manufacturingImageSth{version}.hex"))
+
     def setUp(self):
         global sHolderNameInput
         uAdc2Acc = 200
         self.tSthLimits = SthLimits(1, uAdc2Acc, 20, 35)
         bStuPcbOnly = True
         self.tStuLimits = StuLimits(bStuPcbOnly)
-        sBuildLocation = "../../STH/builds/"
-        self.sBuildLocation = sBuildLocation + version
-        self.sBootloader = sBuildLocation + "BootloaderOtaBgm113.s37"
         self.sAdapterSerialNo = "440120910"
         self.sBoardType = "BGM113A256V2"
         simplicity_studio_path = "C:/SiliconLabs/SimplicityStudio"
@@ -39,7 +43,6 @@ class TestSth(unittest.TestCase):
             simplicity_studio_path,
             "v4/developer/adapter_packs/commander/commander")
         self.bError = False
-        self.sBuildLocation = sBuildLocation + version
         self.iTestNumber = int(self._testMethodName[4:8])
         self.fileName = f"{self._testMethodName}.txt"
         self.fileNameError = f"{self._testMethodName}_Error.txt"
@@ -226,8 +229,7 @@ class TestSth(unittest.TestCase):
         unique_id = id_match['id']
 
         # Upload bootloader data
-        bootloader_filepath = abspath(
-            join(self.sBuildLocation, f"manufacturingImageSth{version}.hex"))
+        bootloader_filepath = type(self).bootloader_filepath
         self.assertTrue(
             isfile(bootloader_filepath),
             f"Bootloader file {bootloader_filepath} does not exist")
