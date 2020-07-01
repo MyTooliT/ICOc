@@ -31,8 +31,6 @@ class TestSth(unittest.TestCase):
         cls.adapter_serial_number = "440120910"
 
     def setUp(self):
-        uAdc2Acc = 200
-        self.tSthLimits = SthLimits(1, uAdc2Acc, 20, 35)
         simplicity_studio_path = "C:/SiliconLabs/SimplicityStudio"
         self.sSilabsCommander = join(
             simplicity_studio_path,
@@ -41,14 +39,16 @@ class TestSth(unittest.TestCase):
         log_filepath = f"{self._testMethodName}.txt"
         log_filepath_error = f"{self._testMethodName}_Error.txt"
 
+        uAdc2Acc = 200
+        sth_limits = SthLimits(1, uAdc2Acc, 20, 35)
         self.Can = CanFd.CanFd(CanFd.PCAN_BAUD_1M,
                                log_filepath,
                                log_filepath_error,
                                MyToolItNetworkNr["SPU1"],
                                MyToolItNetworkNr["STH1"],
-                               self.tSthLimits.uSamplingRatePrescalerReset,
-                               self.tSthLimits.uSamplingRateAcqTimeReset,
-                               self.tSthLimits.uSamplingRateOverSamplesReset,
+                               sth_limits.uSamplingRatePrescalerReset,
+                               sth_limits.uSamplingRateAcqTimeReset,
+                               sth_limits.uSamplingRateOverSamplesReset,
                                FreshLog=True)
         self.Can.Logger.Info("TestCase: " + str(self._testMethodName))
         self.Can.CanTimeStampStart(
