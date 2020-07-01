@@ -1,6 +1,5 @@
 from unittest import TestCase, main
 from os import environ, pathsep
-from os import name as os_name
 from os.path import abspath, dirname, isfile, join, sep
 from re import escape, search
 from subprocess import run
@@ -139,8 +138,6 @@ class TestSth(TestCase):
         # Unlock debug access
         unlock_command = (
             f"commander device unlock {identification_arguments}")
-        if os_name == 'nt':
-            unlock_command = unlock_command.replace('/', '\\')
         status = run(unlock_command, capture_output=True, text=True)
         self.assertEqual(
             status.returncode, 0,
@@ -150,8 +147,6 @@ class TestSth(TestCase):
 
         # Retrieve device id
         info_command = (f"commander device info {identification_arguments}")
-        if os_name == 'nt':
-            info_command = info_command.replace('/', '\\')
         status = run(info_command, capture_output=True, text=True)
         self.assertEqual(
             status.returncode, 0,
@@ -170,8 +165,6 @@ class TestSth(TestCase):
 
         flash_command = (f"commander flash {bootloader_filepath} " +
                          f"--address 0x0 {identification_arguments}")
-        if os_name == 'nt':
-            flash_command = flash_command.replace('/', '\\')
         status = run(flash_command, capture_output=True, text=True)
         self.assertEqual(
             status.returncode, 0,
