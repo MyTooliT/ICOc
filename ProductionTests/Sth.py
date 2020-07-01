@@ -74,13 +74,6 @@ class TestSth(unittest.TestCase):
         self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
         self.Can.__exit__()
 
-    def run(self, result=None):
-        batchFile = open("BatchNumberSth.txt")
-        sBatchData = batchFile.readlines()
-        self.sBatchNumber = sBatchData[0]
-        batchFile.close()
-        super(TestSth, self).run(result)
-
     """
     Reset STU
     """
