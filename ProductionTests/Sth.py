@@ -27,6 +27,7 @@ class TestSth(unittest.TestCase):
         build_location = f"../../STH/builds/{version}"
         cls.bootloader_filepath = abspath(
             join(build_location, f"manufacturingImageSth{version}.hex"))
+        cls.board_type = "BGM113A256V2"
 
     def setUp(self):
         uAdc2Acc = 200
@@ -34,7 +35,6 @@ class TestSth(unittest.TestCase):
         bStuPcbOnly = True
         self.tStuLimits = StuLimits(bStuPcbOnly)
         self.sAdapterSerialNo = "440120910"
-        self.sBoardType = "BGM113A256V2"
         simplicity_studio_path = "C:/SiliconLabs/SimplicityStudio"
         self.sSilabsCommander = join(
             simplicity_studio_path,
@@ -140,7 +140,7 @@ class TestSth(unittest.TestCase):
         """Upload bootloader into STH"""
 
         identification_arguments = (f"--serialno {self.sAdapterSerialNo} " +
-                                    f"-d {self.sBoardType}")
+                                    f"-d {type(self).board_type}")
 
         # Unlock debug access
         unlock_command = (
