@@ -10,10 +10,7 @@ from sys import path as module_path
 module_path.insert(1, dirname(dirname(abspath(__file__))))
 import CanFd
 from MyToolItNetworkNumbers import MyToolItNetworkNr
-from MyToolItSth import SthErrorWord
-from MyToolItStu import StuErrorWord
 from SthLimits import SthLimits
-from MyToolItCommands import *
 
 
 class TestSth(TestCase):
@@ -53,14 +50,6 @@ class TestSth(TestCase):
 
     def tearDown(self):
         self.Can.Logger.Info("> Tear Down")
-        if "test0000FirmwareFlash" != self._testMethodName and "test9999StoreTestResults" != self._testMethodName:
-            self.Can.streamingStop(MyToolItNetworkNr["STH1"],
-                                   MyToolItStreaming["Acceleration"])
-            self.Can.streamingStop(MyToolItNetworkNr["STH1"],
-                                   MyToolItStreaming["Voltage"])
-            self._statusWords()
-            self._iSthAdcTemp()
-            self.Can.Logger.Info("Test Time End Time Stamp")
         self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
         self.Can.__exit__()
 
@@ -73,58 +62,6 @@ class TestSth(TestCase):
         return self.Can.cmdReset(MyToolItNetworkNr["STU1"],
                                  retries=retries,
                                  log=log)
-
-    """
-    Get internal BGM113 Chip Temperature in °C of STH
-    """
-
-    def _iSthAdcTemp(self):
-        ret = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"],
-                                        CalibMeassurementActionNr["Measure"],
-                                        CalibMeassurementTypeNr["Temp"],
-                                        1,
-                                        AdcReference["1V25"],
-                                        log=False)
-        result = float(iMessage2Value(ret[4:]))
-        result /= 1000
-        self.Can.Logger.Info("Temperature(Chip): " + str(result) + "°C")
-        self.Can.calibMeasurement(MyToolItNetworkNr["STH1"],
-                                  CalibMeassurementActionNr["None"],
-                                  CalibMeassurementTypeNr["Temp"],
-                                  1,
-                                  AdcReference["VDD"],
-                                  log=False,
-                                  bReset=True)
-        return result
-
-    """
-    Get all status words of STH and STU
-    """
-
-    def _statusWords(self):
-        ErrorWordSth = SthErrorWord()
-        ErrorWordStu = StuErrorWord()
-        psw0 = self.Can.statusWord0(MyToolItNetworkNr["STH1"])
-        self.Can.Logger.Info("STH Status Word: " + hex(psw0))
-        psw0 = self.Can.statusWord0(MyToolItNetworkNr["STU1"])
-        self.Can.Logger.Info("STU Status Word: " + hex(psw0))
-        ErrorWordSth.asword = self.Can.statusWord1(MyToolItNetworkNr["STH1"])
-        if True == ErrorWordSth.b.bAdcOverRun:
-            self.bError = True
-        self.Can.Logger.Info("STH Error Word: " + hex(ErrorWordSth.asword))
-        ErrorWordStu.asword = self.Can.statusWord1(MyToolItNetworkNr["STU1"])
-        self.Can.Logger.Info("STU Error Word: " + hex(ErrorWordStu.asword))
-
-    """
-    Retrieve STH Watchdog counter
-    """
-
-    def _SthWDog(self):
-        WdogCounter = iMessage2Value(
-            self.Can.statisticalData(MyToolItNetworkNr["STH1"],
-                                     MyToolItStatData["Wdog"])[:4])
-        self.Can.Logger.Info("WatchDog Counter: " + str(WdogCounter))
-        return WdogCounter
 
     def test0000FirmwareFlash(self):
         """Upload bootloader into STH"""
