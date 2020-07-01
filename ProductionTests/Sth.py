@@ -10,10 +10,9 @@ from sys import path as module_path
 module_path.insert(1, dirname(dirname(abspath(__file__))))
 import CanFd
 from MyToolItNetworkNumbers import MyToolItNetworkNr
-from MyToolItSth import TestConfig, SthErrorWord
+from MyToolItSth import SthErrorWord
 from MyToolItStu import StuErrorWord
 from SthLimits import SthLimits
-from StuLimits import StuLimits
 from MyToolItCommands import *
 
 
