@@ -53,10 +53,7 @@ class TestSth(TestCase):
             self._resetStu()["CanTime"])  # This will also reset the STH
 
     def tearDown(self):
-        self.Can.Logger.Info("Fin")
-        self.Can.Logger.Info(
-            "_______________________________________________________________________________________________________________"
-        )
+        self.Can.Logger.Info("> Tear Down")
         if "test0000FirmwareFlash" != self._testMethodName and "test9999StoreTestResults" != self._testMethodName:
             self.Can.streamingStop(MyToolItNetworkNr["STH1"],
                                    MyToolItStreaming["Acceleration"])
