@@ -23,7 +23,7 @@ class TestSth(TestCase):
 
         build_location = join(dirname(repository_root),
                               f"STH/builds/{version}")
-        cls.bootloader_filepath = abspath(
+        cls.complete_image_filepath = abspath(
             join(build_location, f"manufacturingImageSth{version}.hex"))
         cls.board_type = "BGM113A256V2"
         cls.adapter_serial_number = "440120910"
@@ -85,12 +85,11 @@ class TestSth(TestCase):
                          "Unable to unlock debug access of chip")
 
         # Upload bootloader data
-        bootloader_filepath = type(self).bootloader_filepath
-        self.assertTrue(
-            isfile(bootloader_filepath),
-            f"Bootloader file {bootloader_filepath} does not exist")
+        image_filepath = type(self).complete_image_filepath
+        self.assertTrue(isfile(image_filepath),
+                        f"Bootloader file {image_filepath} does not exist")
 
-        flash_command = (f"commander flash {bootloader_filepath} " +
+        flash_command = (f"commander flash {image_filepath} " +
                          f"--address 0x0 {identification_arguments}")
         status = run(flash_command, capture_output=True, text=True)
         self.assertEqual(
