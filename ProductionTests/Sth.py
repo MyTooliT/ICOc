@@ -46,22 +46,18 @@ class TestSth(TestCase):
                                FreshLog=True)
         self.Can.Logger.Info("TestCase: " + str(self._testMethodName))
         self.Can.CanTimeStampStart(
-            self._resetStu()["CanTime"])  # This will also reset the STH
+            self.__reset_stu()["CanTime"])  # This will also reset the STH
 
     def tearDown(self):
         self.Can.Logger.Info("> Tear Down")
         self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
         self.Can.__exit__()
 
-    """
-    Reset STU
-    """
+    def __reset_stu(self):
+        """Reset STU"""
 
-    def _resetStu(self, retries=5, log=True):
         self.Can.bConnected = False
-        return self.Can.cmdReset(MyToolItNetworkNr["STU1"],
-                                 retries=retries,
-                                 log=log)
+        return self.Can.cmdReset(MyToolItNetworkNr["STU1"])
 
     def test0000FirmwareFlash(self):
         """Upload bootloader into STH"""
