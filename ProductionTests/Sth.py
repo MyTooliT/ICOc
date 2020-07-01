@@ -18,14 +18,12 @@ from SthLimits import SthLimits
 from StuLimits import StuLimits
 from MyToolItCommands import *
 
-bSkip = False
 sHolderNameInput = None
 
 
 class TestSth(unittest.TestCase):
     """Production test for the Sensory Tool Holder (STH)"""
     def setUp(self):
-        global bSkip
         global sHolderNameInput
         uAdc2Acc = 200
         self.tSthLimits = SthLimits(1, uAdc2Acc, 20, 35)
@@ -46,73 +44,69 @@ class TestSth(unittest.TestCase):
         self.fileName = f"{self._testMethodName}.txt"
         self.fileNameError = f"{self._testMethodName}_Error.txt"
 
-        if False != bSkip and "test9999StoreTestResults" != self._testMethodName:
-            self.skipTest("At least some previous test failed")
-        else:
-            self.sDateClock = sDateClock()
-            self.Can = CanFd.CanFd(
-                CanFd.PCAN_BAUD_1M,
-                self.fileName,
-                self.fileNameError,
-                MyToolItNetworkNr["SPU1"],
-                MyToolItNetworkNr["STH1"],
-                self.tSthLimits.uSamplingRatePrescalerReset,
-                self.tSthLimits.uSamplingRateAcqTimeReset,
-                self.tSthLimits.uSamplingRateOverSamplesReset,
-                FreshLog=True)
-            self.Can.Logger.Info("TestCase: " + str(self._testMethodName))
-            self.Can.CanTimeStampStart(
-                self._resetStu()["CanTime"])  # This will also reset the STH
+        self.sDateClock = sDateClock()
+        self.Can = CanFd.CanFd(CanFd.PCAN_BAUD_1M,
+                               self.fileName,
+                               self.fileNameError,
+                               MyToolItNetworkNr["SPU1"],
+                               MyToolItNetworkNr["STH1"],
+                               self.tSthLimits.uSamplingRatePrescalerReset,
+                               self.tSthLimits.uSamplingRateAcqTimeReset,
+                               self.tSthLimits.uSamplingRateOverSamplesReset,
+                               FreshLog=True)
+        self.Can.Logger.Info("TestCase: " + str(self._testMethodName))
+        self.Can.CanTimeStampStart(
+            self._resetStu()["CanTime"])  # This will also reset the STH
 
-            if "test0000FirmwareFlash" != self._testMethodName:
-                self.Can.Logger.Info("Connect to STH")
-                self.sHolderName = TestConfig["DevName"]
-                if None != self.sHolderName:
-                    if "test0001OverTheAirUpdate" == self._testMethodName:
-                        for _i in range(0, 2):
-                            atDevList = self.Can.tDeviceList(
-                                MyToolItNetworkNr["STU1"])
-                            for tDev in atDevList:
-                                if tDev["Name"] == sHolderNameInput:
-                                    self.sHolderName = sHolderNameInput
-                                    break
-                            if self.sHolderName == sHolderNameInput:
+        if "test0000FirmwareFlash" != self._testMethodName:
+            self.Can.Logger.Info("Connect to STH")
+            self.sHolderName = TestConfig["DevName"]
+            if None != self.sHolderName:
+                if "test0001OverTheAirUpdate" == self._testMethodName:
+                    for _i in range(0, 2):
+                        atDevList = self.Can.tDeviceList(
+                            MyToolItNetworkNr["STU1"])
+                        for tDev in atDevList:
+                            if tDev["Name"] == sHolderNameInput:
+                                self.sHolderName = sHolderNameInput
                                 break
-                            time.sleep(2)
-                    else:
-                        self.sHolderName = sHolderNameInput
-                self.Can.bBlueToothConnectPollingName(
-                    MyToolItNetworkNr["STU1"], self.sHolderName, log=False)
-                time.sleep(2)
-                self.sSthAddr = sBlueToothMacAddr(
-                    self.Can.BlueToothAddress(MyToolItNetworkNr["STH1"]))
-                if False == os.path.isfile(
-                        sStoreFileName
-                ) and "test0001OverTheAirUpdate" == self._testMethodName:
-                    batchFile = open("BatchNumberSth.txt", "w")
-                    iBatchNr = int(self.sBatchNumber)
-                    iBatchNr += 1
-                    self.sBatchNumber = str(iBatchNr)
-                    batchFile.write(self.sBatchNumber)
-                    batchFile.close()
-                self._statusWords()
-                self._iSthAdcTemp()
-                self._SthWDog()
-                self.Can.Logger.Info("STH BlueTooth Address: " + self.sSthAddr)
-            else:
-                sHolderNameInput = "Blubb"
-                if 8 < len(sHolderNameInput):
-                    sHolderNameInput = sHolderName[:8]
-            self.sStuAddr = sBlueToothMacAddr(
-                self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"]))
-            self.Can.Logger.Info("STU BlueTooth Address: " + self.sStuAddr)
-            self.Can.Logger.Info(
-                "_______________________________________________________________________________________________________________"
-            )
-            self.Can.Logger.Info("Start")
+                        if self.sHolderName == sHolderNameInput:
+                            break
+                        time.sleep(2)
+                else:
+                    self.sHolderName = sHolderNameInput
+            self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
+                                                  self.sHolderName,
+                                                  log=False)
+            time.sleep(2)
+            self.sSthAddr = sBlueToothMacAddr(
+                self.Can.BlueToothAddress(MyToolItNetworkNr["STH1"]))
+            if False == os.path.isfile(
+                    sStoreFileName
+            ) and "test0001OverTheAirUpdate" == self._testMethodName:
+                batchFile = open("BatchNumberSth.txt", "w")
+                iBatchNr = int(self.sBatchNumber)
+                iBatchNr += 1
+                self.sBatchNumber = str(iBatchNr)
+                batchFile.write(self.sBatchNumber)
+                batchFile.close()
+            self._statusWords()
+            self._iSthAdcTemp()
+            self._SthWDog()
+            self.Can.Logger.Info("STH BlueTooth Address: " + self.sSthAddr)
+        else:
+            sHolderNameInput = "Blubb"
+            if 8 < len(sHolderNameInput):
+                sHolderNameInput = sHolderName[:8]
+        self.sStuAddr = sBlueToothMacAddr(
+            self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"]))
+        self.Can.Logger.Info("STU BlueTooth Address: " + self.sStuAddr)
+        self.Can.Logger.Info(
+            "_______________________________________________________________________________________________________________"
+        )
+        self.Can.Logger.Info("Start")
 
     def tearDown(self):
-        global bSkip
         self.Can.Logger.Info("Fin")
         self.Can.Logger.Info(
             "_______________________________________________________________________________________________________________"
@@ -127,33 +121,13 @@ class TestSth(unittest.TestCase):
             self.Can.Logger.Info("Test Time End Time Stamp")
         self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
         self.Can.__exit__()
-        if self._outcome.errors[1][1]:
-            if False == bSkip:
-                print("Error! Please put red point on it(" +
-                      self.sBatchNumber + ")")
-            bSkip = True
-        if False != self.bError:
-            if False == bSkip:
-                print("Error! Please put red point on it(" +
-                      self.sBatchNumber + ")")
-            bSkip = True
 
     def run(self, result=None):
-        global bSkip
         batchFile = open("BatchNumberSth.txt")
         sBatchData = batchFile.readlines()
         self.sBatchNumber = sBatchData[0]
         batchFile.close()
-        """ Stop after first error """
-        if not result.errors:
-            super(TestSth, self).run(result)
-        else:
-            if False == bSkip:
-                print("Error! Please put red point on it(" +
-                      self.sBatchNumber + ")")
-            bSkip = True
-            if "test9999StoreTestResults" == self._testMethodName:
-                super(TestSth, self).run(result)
+        super(TestSth, self).run(result)
 
     """
     Reset STU
@@ -282,4 +256,4 @@ class TestSth(unittest.TestCase):
 
 if __name__ == "__main__":
     version = argv[1] if len(argv) > 1 else 'v2.1.10'
-    unittest.main(argv=['first-arg-is-ignored'])
+    unittest.main(argv=['first-arg-is-ignored'], failfast=True)
