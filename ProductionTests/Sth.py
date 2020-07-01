@@ -68,7 +68,7 @@ class TestSth(TestCase):
         return self.Can.cmdReset(MyToolItNetworkNr["STU1"])
 
     def test0000FirmwareFlash(self):
-        """Upload bootloader into STH"""
+        """Upload bootloader and application into STH"""
 
         identification_arguments = (
             f"--serialno {type(self).adapter_serial_number} " +
@@ -84,10 +84,10 @@ class TestSth(TestCase):
         self.assertRegex(status.stdout, "Chip successfully unlocked",
                          "Unable to unlock debug access of chip")
 
-        # Upload bootloader data
+        # Upload bootloader and application data
         image_filepath = type(self).complete_image_filepath
         self.assertTrue(isfile(image_filepath),
-                        f"Bootloader file {image_filepath} does not exist")
+                        f"Firmware file {image_filepath} does not exist")
 
         flash_command = (f"commander flash {image_filepath} " +
                          f"--address 0x0 {identification_arguments}")
