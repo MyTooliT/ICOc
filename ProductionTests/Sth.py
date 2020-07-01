@@ -1,5 +1,5 @@
 import unittest
-import os
+from os import name as os_name
 from os.path import abspath, dirname, isfile, join
 from re import escape, search
 from subprocess import run
@@ -141,7 +141,7 @@ class TestSth(unittest.TestCase):
         unlock_command = (
             f"{self.sSilabsCommander} device unlock {identification_arguments}"
         )
-        if os.name == 'nt':
+        if os_name == 'nt':
             unlock_command = unlock_command.replace('/', '\\')
         status = run(unlock_command, capture_output=True, text=True)
         self.assertEqual(
@@ -153,7 +153,7 @@ class TestSth(unittest.TestCase):
         # Retrieve device id
         info_command = (
             f"{self.sSilabsCommander} device info {identification_arguments}")
-        if os.name == 'nt':
+        if os_name == 'nt':
             info_command = info_command.replace('/', '\\')
         status = run(info_command, capture_output=True, text=True)
         self.assertEqual(
@@ -174,7 +174,7 @@ class TestSth(unittest.TestCase):
         flash_command = (
             f"{self.sSilabsCommander} flash {bootloader_filepath} " +
             f"--address 0x0 {identification_arguments}")
-        if os.name == 'nt':
+        if os_name == 'nt':
             flash_command = flash_command.replace('/', '\\')
         status = run(flash_command, capture_output=True, text=True)
         self.assertEqual(
