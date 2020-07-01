@@ -15,10 +15,12 @@ from SthLimits import SthLimits
 
 
 class TestSth(TestCase):
-    """Production test for the Sensory Tool Holder (STH)"""
+    """This class contains tests for the Sensory Tool Holder (STH)"""
+
     @classmethod
     def setUpClass(cls):
         """Initialize data for whole test"""
+
         build_location = join(dirname(repository_root),
                               f"STH/builds/{version}")
         cls.bootloader_filepath = abspath(
@@ -32,6 +34,8 @@ class TestSth(TestCase):
         environ["PATH"] += pathsep + commander_path
 
     def setUp(self):
+        """Set up hardware before a single test case"""
+
         self.bError = False
         log_filepath = f"{self._testMethodName}.txt"
         log_filepath_error = f"{self._testMethodName}_Error.txt"
@@ -51,6 +55,8 @@ class TestSth(TestCase):
             self.__reset_stu()["CanTime"])  # This will also reset the STH
 
     def tearDown(self):
+        """Clean up after single test case"""
+
         self.Can.Logger.Info("> Tear Down")
         self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
         self.Can.__exit__()
