@@ -1,6 +1,7 @@
 from unittest import TestCase, main
+from os import environ, pathsep
 from os import name as os_name
-from os.path import abspath, dirname, isfile, join
+from os.path import abspath, dirname, isfile, join, sep
 from re import escape, search
 from subprocess import run
 from sys import argv
@@ -27,12 +28,13 @@ class TestSth(TestCase):
             join(build_location, f"manufacturingImageSth{version}.hex"))
         cls.board_type = "BGM113A256V2"
         cls.adapter_serial_number = "440120910"
+        commander_path = sep.join([
+            'C:', 'SiliconLabs', 'SimplicityStudio', 'v4', 'developer',
+            'adapter_packs', 'commander'
+        ])
+        environ["PATH"] += pathsep + commander_path
 
     def setUp(self):
-        simplicity_studio_path = "C:/SiliconLabs/SimplicityStudio"
-        self.sSilabsCommander = join(
-            simplicity_studio_path,
-            "v4/developer/adapter_packs/commander/commander")
         self.bError = False
         log_filepath = f"{self._testMethodName}.txt"
         log_filepath_error = f"{self._testMethodName}_Error.txt"
@@ -136,8 +138,7 @@ class TestSth(TestCase):
 
         # Unlock debug access
         unlock_command = (
-            f"{self.sSilabsCommander} device unlock {identification_arguments}"
-        )
+            f"commander device unlock {identification_arguments}")
         if os_name == 'nt':
             unlock_command = unlock_command.replace('/', '\\')
         status = run(unlock_command, capture_output=True, text=True)
@@ -148,8 +149,7 @@ class TestSth(TestCase):
                          "Unable to unlock debug access of chip")
 
         # Retrieve device id
-        info_command = (
-            f"{self.sSilabsCommander} device info {identification_arguments}")
+        info_command = (f"commander device info {identification_arguments}")
         if os_name == 'nt':
             info_command = info_command.replace('/', '\\')
         status = run(info_command, capture_output=True, text=True)
@@ -168,9 +168,8 @@ class TestSth(TestCase):
             isfile(bootloader_filepath),
             f"Bootloader file {bootloader_filepath} does not exist")
 
-        flash_command = (
-            f"{self.sSilabsCommander} flash {bootloader_filepath} " +
-            f"--address 0x0 {identification_arguments}")
+        flash_command = (f"commander flash {bootloader_filepath} " +
+                         f"--address 0x0 {identification_arguments}")
         if os_name == 'nt':
             flash_command = flash_command.replace('/', '\\')
         status = run(flash_command, capture_output=True, text=True)
