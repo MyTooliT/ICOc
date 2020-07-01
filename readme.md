@@ -387,7 +387,7 @@ Error Status Word of the STU and this <u>**Error Status Word must be 0.**</u>
 To run the production tests for the STH, please execute the following command in the root of the repository:
 
 ```sh
-python ProductionTests/STH.py
+python 'Production Tests/STH.py'
 ```
 
 Please note that this test currently only checks that flashing the device with the programming board works as expected.
