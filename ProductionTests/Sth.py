@@ -1,4 +1,4 @@
-import unittest
+from unittest import TestCase, main
 from os import name as os_name
 from os.path import abspath, dirname, isfile, join
 from re import escape, search
@@ -17,7 +17,7 @@ from StuLimits import StuLimits
 from MyToolItCommands import *
 
 
-class TestSth(unittest.TestCase):
+class TestSth(TestCase):
     """Production test for the Sensory Tool Holder (STH)"""
     @classmethod
     def setUpClass(cls):
@@ -195,4 +195,4 @@ class TestSth(unittest.TestCase):
 
 if __name__ == "__main__":
     version = argv[1] if len(argv) > 1 else 'v2.1.10'
-    unittest.main(argv=['first-arg-is-ignored'], failfast=True)
+    main(argv=['first-arg-is-ignored'], failfast=True)
