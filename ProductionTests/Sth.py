@@ -61,54 +61,6 @@ class TestSth(unittest.TestCase):
         self.Can.CanTimeStampStart(
             self._resetStu()["CanTime"])  # This will also reset the STH
 
-        if "test0000FirmwareFlash" != self._testMethodName:
-            self.Can.Logger.Info("Connect to STH")
-            self.sHolderName = TestConfig["DevName"]
-            if None != self.sHolderName:
-                if "test0001OverTheAirUpdate" == self._testMethodName:
-                    for _i in range(0, 2):
-                        atDevList = self.Can.tDeviceList(
-                            MyToolItNetworkNr["STU1"])
-                        for tDev in atDevList:
-                            if tDev["Name"] == sHolderNameInput:
-                                self.sHolderName = sHolderNameInput
-                                break
-                        if self.sHolderName == sHolderNameInput:
-                            break
-                        time.sleep(2)
-                else:
-                    self.sHolderName = sHolderNameInput
-            self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
-                                                  self.sHolderName,
-                                                  log=False)
-            time.sleep(2)
-            self.sSthAddr = sBlueToothMacAddr(
-                self.Can.BlueToothAddress(MyToolItNetworkNr["STH1"]))
-            if False == os.path.isfile(
-                    sStoreFileName
-            ) and "test0001OverTheAirUpdate" == self._testMethodName:
-                batchFile = open("BatchNumberSth.txt", "w")
-                iBatchNr = int(self.sBatchNumber)
-                iBatchNr += 1
-                self.sBatchNumber = str(iBatchNr)
-                batchFile.write(self.sBatchNumber)
-                batchFile.close()
-            self._statusWords()
-            self._iSthAdcTemp()
-            self._SthWDog()
-            self.Can.Logger.Info("STH BlueTooth Address: " + self.sSthAddr)
-        else:
-            sHolderNameInput = "Blubb"
-            if 8 < len(sHolderNameInput):
-                sHolderNameInput = sHolderName[:8]
-        self.sStuAddr = sBlueToothMacAddr(
-            self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"]))
-        self.Can.Logger.Info("STU BlueTooth Address: " + self.sStuAddr)
-        self.Can.Logger.Info(
-            "_______________________________________________________________________________________________________________"
-        )
-        self.Can.Logger.Info("Start")
-
     def tearDown(self):
         self.Can.Logger.Info("Fin")
         self.Can.Logger.Info(
