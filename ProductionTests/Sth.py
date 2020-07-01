@@ -37,8 +37,7 @@ class TestSth(TestCase):
         log_filepath = f"{self._testMethodName}.txt"
         log_filepath_error = f"{self._testMethodName}_Error.txt"
 
-        uAdc2Acc = 200
-        sth_limits = SthLimits(1, uAdc2Acc, 20, 35)
+        sth_limits = SthLimits(1, 200, 20, 35)
         self.Can = CanFd.CanFd(CanFd.PCAN_BAUD_1M,
                                log_filepath,
                                log_filepath_error,
