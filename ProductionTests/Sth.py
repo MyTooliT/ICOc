@@ -1,10 +1,10 @@
-from unittest import TestCase, main
 from os import environ, pathsep
 from os.path import abspath, dirname, isfile, join, sep
 from re import escape
 from subprocess import run
 from sys import argv
 from sys import path as module_path
+from unittest import TestCase, main
 
 # Add path for custom libraries
 repository_root = dirname(dirname(abspath(__file__)))
