@@ -5,6 +5,7 @@ import time
 from os.path import abspath, isfile, join
 from re import escape, search
 from subprocess import run
+from sys import argv
 
 from os import sys, path
 # Add path for custom libraries
@@ -31,7 +32,7 @@ class TestSth(unittest.TestCase):
         bStuPcbOnly = True
         self.tStuLimits = StuLimits(bStuPcbOnly)
         sBuildLocation = "../../STH/builds/"
-        self.sBuildLocation = sBuildLocation + sVersion
+        self.sBuildLocation = sBuildLocation + version
         self.sBootloader = sBuildLocation + "BootloaderOtaBgm113.s37"
         self.sAdapterSerialNo = "440120910"
         self.sBoardType = "BGM113A256V2"
@@ -40,7 +41,7 @@ class TestSth(unittest.TestCase):
             simplicity_studio_path,
             "v4/developer/adapter_packs/commander/commander")
         self.bError = False
-        self.sBuildLocation = sBuildLocation + sVersion
+        self.sBuildLocation = sBuildLocation + version
         self.iTestNumber = int(self._testMethodName[4:8])
         self.fileName = f"{self._testMethodName}.txt"
         self.fileNameError = f"{self._testMethodName}_Error.txt"
@@ -252,7 +253,7 @@ class TestSth(unittest.TestCase):
 
         # Upload bootloader data
         bootloader_filepath = abspath(
-            join(self.sBuildLocation, f"manufacturingImageSth{sVersion}.hex"))
+            join(self.sBuildLocation, f"manufacturingImageSth{version}.hex"))
         self.assertTrue(
             isfile(bootloader_filepath),
             f"Bootloader file {bootloader_filepath} does not exist")
@@ -280,5 +281,5 @@ class TestSth(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    sVersion = sys.argv[1]
+    version = argv[1] if len(argv) > 1 else 'v2.1.10'
     unittest.main(argv=['first-arg-is-ignored'])
