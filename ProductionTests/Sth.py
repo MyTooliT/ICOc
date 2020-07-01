@@ -33,18 +33,14 @@ class TestSth(unittest.TestCase):
     def setUp(self):
         uAdc2Acc = 200
         self.tSthLimits = SthLimits(1, uAdc2Acc, 20, 35)
-        bStuPcbOnly = True
-        self.tStuLimits = StuLimits(bStuPcbOnly)
         simplicity_studio_path = "C:/SiliconLabs/SimplicityStudio"
         self.sSilabsCommander = join(
             simplicity_studio_path,
             "v4/developer/adapter_packs/commander/commander")
         self.bError = False
-        self.iTestNumber = int(self._testMethodName[4:8])
         self.fileName = f"{self._testMethodName}.txt"
         self.fileNameError = f"{self._testMethodName}_Error.txt"
 
-        self.sDateClock = sDateClock()
         self.Can = CanFd.CanFd(CanFd.PCAN_BAUD_1M,
                                self.fileName,
                                self.fileNameError,
