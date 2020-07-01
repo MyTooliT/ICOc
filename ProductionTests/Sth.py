@@ -17,7 +17,7 @@ class TestSth(TestCase):
     """Production test for the Sensory Tool Holder (STH)"""
     @classmethod
     def setUpClass(cls):
-        "Initialize data for whole test"
+        """Initialize data for whole test"""
         build_location = f"../../STH/builds/{version}"
         cls.bootloader_filepath = abspath(
             join(build_location, f"manufacturingImageSth{version}.hex"))
