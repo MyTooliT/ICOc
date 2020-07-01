@@ -18,8 +18,6 @@ from SthLimits import SthLimits
 from StuLimits import StuLimits
 from MyToolItCommands import *
 
-sHolderNameInput = None
-
 
 class TestSth(unittest.TestCase):
     """Production test for the Sensory Tool Holder (STH)"""
@@ -31,7 +29,6 @@ class TestSth(unittest.TestCase):
             join(build_location, f"manufacturingImageSth{version}.hex"))
 
     def setUp(self):
-        global sHolderNameInput
         uAdc2Acc = 200
         self.tSthLimits = SthLimits(1, uAdc2Acc, 20, 35)
         bStuPcbOnly = True
