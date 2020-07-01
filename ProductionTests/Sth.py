@@ -1,7 +1,5 @@
 import unittest
 import os
-import sys
-import time
 from os.path import abspath, dirname, isfile, join
 from re import escape, search
 from subprocess import run
