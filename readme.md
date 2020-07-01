@@ -382,58 +382,12 @@ Error Status Word of the STU and this <u>**Error Status Word must be 0.**</u>
 
 # Production Tests
 
-Any production Test may be called multiple times for the same STH/STU (PCB). Furthermore, the test results are stored by the Bluetooth Address and a consecutively run number (file name). Thus a
-PCBs, assembled STHs/STUs and a potted STHs may be tested in a row.
+## STH
 
-The Production Tests are supported via:
+To run the production tests for the STH, please execute the following command in the root of the repository:
 
-- ProductionTests/Sth.py: Tests Sensory Tool Holder (STH) and STH print circuit boards (PCBs).
-  - sVersion: "v2.1.10" -> Related STU Firmware Version.
-  - sLogName: 'ProductionTestStu' -> Related logFile.txt
-  - sBuildLocation = "../../SimplicityStudio/v4_workspace/STU/builds/" -> Location of the firmware builds, manufacturing images and the OTA Files. Please refer to the chapter
-    Image Locations.
-  - sSilabsCommanderLocation = "../../SimplicityStudio/SimplicityCommander/" -> Location of the Simplicity Command. Please refer to Technical Requirements.
-  - sAdapterSerialNo = "440116697" The number of the programming board. Please refer to the chapter technical requirements.
-  - sBoardType = "BGM111A256V2" -> Model Name of the assembled µC. Please refer to the chapter Icotronic system.
-- ProductionTests/Stu.py: Tests Stationary Transceiver Unit(STU) and STU PCBs.
-  Moreover, the parameters may/must be changed inside the script if it runs via Liclipse and this is fulfilled via changing:
-  - sVersion = "v2.1.9" -> Related STH Firmware Version.
-  - sLogName = 'ProductionTestSth' -> Related logFile.txt
-  - sLogLocation = '../../Logs/ProductionTestSth/' -> Where to archive logs and test protocol
-  - sOtaComPort = 'COM6' -> COM-Port of the Over-The-Air (OTA) programming board (Assembled with BGM111 module). Please, refer to chapter Over-The-Air (OTA) update.
-  - sBuildLocation = "../../SimplicityStudio/v4_workspace/STH/builds/" -> Location of the firmware builds, manufacturing images and the OTA Files. Please refer to the chapter
-    Image Locations.
-  - sSilabsCommanderLocation = "../../SimplicityStudio/SimplicityCommander/" -> Location of the Simplicity Command. Please refer to Technical Requirements.
-  - sAdapterSerialNo = "440115849" The number of the programming board. Please refer to the chapter technical requirements.
-  - sBoardType = "BGM113A256V2" -> Model Name of the assembled µC. Please refer to the chapter Icotronic system.
-  - iSensorAxis = 1 -> STH only... 3 axis sensor or single axis sensor.
-  - bConnectedBattery= True Testing PCB or assembled/potted STH/STU
-  - uAdc2Acc: Total range of acceleration sensor in g
-  - iRssiMin: Minimum RSSI for STH and STU
-  - bStuPcbOnly: STU is not assembled
+```sh
+python ProductionTests/STH.py
+```
 
-## How to run
-
-To run this via command prompt dir to the location of the production test scripts. The production test scripts are located in the ProductionTests subfolder in
-MyToolItWatch install directory. Furthermore, the scrips may be called via:
-
-- Opening a command prompt
-- Navigate to mytoolitwatch/ProductionTests (cd ..\mytoolitwatch\ProductionTests)
-- Type "python Sth.py VERSION e.g.
-
-  ```sh
-  python Sth.py v2.1.10
-  ```
-
-  or type python Stu.py LogLocation temporaryLogName VERSION e.g. python Stu.py ../../Logs/ProductionTestStu/ LogsStu.txt v2.1.9
-
-- The console prints any negative result or nothing it the test was OK. Moreover, the logs as well as a test protocol are archived at the
-  log location.
-
-Additionally, the production test may be called via Licpse. Liclipse supports complete test runs, single test runs or partially test runs. Test Runs may be called
-via opening the corresponding production Test script (Open directory in Liclipse and double click on the file):
-
-- mytoolitwatch\ProductionTests\Stu.py (STU production test), pressing CTRL + F9 (STRG + F9), selecting TestStu or any single test case or selecting partial test case and pressing ENTER.
-- mytoolitwatch\ProductionTests\Sth.py (STH production test), pressing CTRL + F9 (STRG + F9), selecting TestSth or any single test case or selecting partial test case and pressing ENTER.
-  Furthermore, Liclipse prints any negative result or nothing it the test was OK. Moreover, the logs as well as a test protocol are archived at the
-  log location.
+Please note that this test currently only checks that flashing the device with the programming board works as expected.
