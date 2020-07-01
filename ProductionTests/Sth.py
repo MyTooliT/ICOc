@@ -1,7 +1,7 @@
 from unittest import TestCase, main
 from os import environ, pathsep
 from os.path import abspath, dirname, isfile, join, sep
-from re import escape, search
+from re import escape
 from subprocess import run
 from sys import argv
 from sys import path as module_path
@@ -143,18 +143,6 @@ class TestSth(TestCase):
             f"Unlock command returned non-zero exit code {status.returncode}")
         self.assertRegex(status.stdout, "Chip successfully unlocked",
                          "Unable to unlock debug access of chip")
-
-        # Retrieve device id
-        info_command = (f"commander device info {identification_arguments}")
-        status = run(info_command, capture_output=True, text=True)
-        self.assertEqual(
-            status.returncode, 0,
-            "Device information command returned non-zero exit code " +
-            f"{status.returncode}")
-        id_match = search("Unique ID\s*:\s*(?P<id>[0-9A-Fa-f]+)",
-                          status.stdout)
-        self.assertIsNotNone(id_match, "Unable to determine unique ID of chip")
-        unique_id = id_match['id']
 
         # Upload bootloader data
         bootloader_filepath = type(self).bootloader_filepath
