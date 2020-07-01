@@ -38,12 +38,12 @@ class TestSth(unittest.TestCase):
             simplicity_studio_path,
             "v4/developer/adapter_packs/commander/commander")
         self.bError = False
-        self.fileName = f"{self._testMethodName}.txt"
-        self.fileNameError = f"{self._testMethodName}_Error.txt"
+        log_filepath = f"{self._testMethodName}.txt"
+        log_filepath_error = f"{self._testMethodName}_Error.txt"
 
         self.Can = CanFd.CanFd(CanFd.PCAN_BAUD_1M,
-                               self.fileName,
-                               self.fileNameError,
+                               log_filepath,
+                               log_filepath_error,
                                MyToolItNetworkNr["SPU1"],
                                MyToolItNetworkNr["STH1"],
                                self.tSthLimits.uSamplingRatePrescalerReset,
