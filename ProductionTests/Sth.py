@@ -2,14 +2,14 @@ import unittest
 import os
 import sys
 import time
-from os.path import abspath, isfile, join
+from os.path import abspath, dirname, isfile, join
 from re import escape, search
 from subprocess import run
 from sys import argv
+from sys import path as module_path
 
-from os import sys, path
 # Add path for custom libraries
-sys.path.insert(1, path.dirname(path.dirname(path.abspath(__file__))))
+module_path.insert(1, dirname(dirname(abspath(__file__))))
 import CanFd
 from MyToolItNetworkNumbers import MyToolItNetworkNr
 from MyToolItSth import TestConfig, SthErrorWord
