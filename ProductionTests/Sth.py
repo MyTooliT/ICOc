@@ -7,7 +7,8 @@ from sys import argv
 from sys import path as module_path
 
 # Add path for custom libraries
-module_path.insert(1, dirname(dirname(abspath(__file__))))
+repository_root = dirname(dirname(abspath(__file__)))
+module_path.insert(1, repository_root)
 import CanFd
 from MyToolItNetworkNumbers import MyToolItNetworkNr
 from SthLimits import SthLimits
@@ -18,7 +19,8 @@ class TestSth(TestCase):
     @classmethod
     def setUpClass(cls):
         """Initialize data for whole test"""
-        build_location = f"../../STH/builds/{version}"
+        build_location = join(dirname(repository_root),
+                              f"STH/builds/{version}")
         cls.bootloader_filepath = abspath(
             join(build_location, f"manufacturingImageSth{version}.hex"))
         cls.board_type = "BGM113A256V2"
