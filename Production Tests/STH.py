@@ -9,6 +9,7 @@ from unittest import TestCase, main
 # Add path for custom libraries
 repository_root = dirname(dirname(abspath(__file__)))
 module_path.append(repository_root)
+module_path.append(join(repository_root, "Configuration"))
 
 from config import settings
 
