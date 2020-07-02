@@ -1,3 +1,14 @@
+Commands:
+  Path:
+    # The keys below this key should contain the path to Simplicity Commander
+    # (`commander`) for different operating systems. If the list for the current
+    # OS does not do that, then the STH test will fail, unless `commander` is
+    # already accessible via the path environment variable (`$Env:Path` in
+    # Windows or `$PATH` in Unix).
+    Windows:
+      # This is the default install location of `commander` in Windows
+      - C:\SiliconLabs\SimplicityStudio\v4\developer\adapter_packs\commander
+
 STH:
   Programming Board:
     Serial Number:

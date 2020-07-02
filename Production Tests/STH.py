@@ -30,11 +30,8 @@ class TestSth(TestCase):
         cls.complete_image_filepath = abspath(
             join(build_location, f"manufacturingImageSth{version}.hex"))
         cls.board_type = "BGM113A256V2"
-        commander_path = sep.join([
-            'C:', 'SiliconLabs', 'SimplicityStudio', 'v4', 'developer',
-            'adapter_packs', 'commander'
-        ])
-        environ["PATH"] += pathsep + commander_path
+        environ["PATH"] += (pathsep +
+                            pathsep.join(settings.Commands.Path.Windows))
 
     def setUp(self):
         """Set up hardware before a single test case"""
