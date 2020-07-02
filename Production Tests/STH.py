@@ -44,8 +44,9 @@ class TestSth(TestCase):
                          sth_limits.uSamplingRateOverSamplesReset,
                          FreshLog=True)
         self.Can.Logger.Info("TestCase: " + str(self._testMethodName))
-        self.Can.CanTimeStampStart(
-            self.__reset_stu()["CanTime"])  # This will also reset the STH
+        # Reset STU (and STH)
+        return_message = self.__reset_stu()
+        self.Can.CanTimeStampStart(return_message["CanTime"])
 
     def tearDown(self):
         """Clean up after single test case"""
