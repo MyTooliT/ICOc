@@ -8,7 +8,7 @@ from unittest import TestCase, main
 
 # Add path for custom libraries
 repository_root = dirname(dirname(abspath(__file__)))
-module_path.insert(1, repository_root)
+module_path.append(repository_root)
 import CanFd
 from MyToolItNetworkNumbers import MyToolItNetworkNr
 from SthLimits import SthLimits
