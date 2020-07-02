@@ -24,7 +24,6 @@ class TestSth(TestCase):
     @classmethod
     def setUpClass(cls):
         """Initialize data for whole test"""
-        cls.board_type = "BGM113A256V2"
         environ["PATH"] += (pathsep +
                             pathsep.join(settings.Commands.Path.Windows))
 
@@ -66,7 +65,7 @@ class TestSth(TestCase):
 
         identification_arguments = (
             f"--serialno {settings.STH.Programming_Board.Serial_Number} " +
-            f"-d {type(self).board_type}")
+            f"-d BGM113A256V2")
 
         # Unlock debug access
         unlock_command = (
