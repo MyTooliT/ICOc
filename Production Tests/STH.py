@@ -12,7 +12,7 @@ module_path.append(repository_root)
 
 from config import settings
 
-import CanFd
+from CanFd import CanFd, PCAN_BAUD_1M
 from MyToolItNetworkNumbers import MyToolItNetworkNr
 from SthLimits import SthLimits
 
@@ -42,15 +42,15 @@ class TestSth(TestCase):
         log_filepath_error = f"{self._testMethodName}_Error.txt"
 
         sth_limits = SthLimits(1, 200, 20, 35)
-        self.Can = CanFd.CanFd(CanFd.PCAN_BAUD_1M,
-                               log_filepath,
-                               log_filepath_error,
-                               MyToolItNetworkNr["SPU1"],
-                               MyToolItNetworkNr["STH1"],
-                               sth_limits.uSamplingRatePrescalerReset,
-                               sth_limits.uSamplingRateAcqTimeReset,
-                               sth_limits.uSamplingRateOverSamplesReset,
-                               FreshLog=True)
+        self.Can = CanFd(PCAN_BAUD_1M,
+                         log_filepath,
+                         log_filepath_error,
+                         MyToolItNetworkNr["SPU1"],
+                         MyToolItNetworkNr["STH1"],
+                         sth_limits.uSamplingRatePrescalerReset,
+                         sth_limits.uSamplingRateAcqTimeReset,
+                         sth_limits.uSamplingRateOverSamplesReset,
+                         FreshLog=True)
         self.Can.Logger.Info("TestCase: " + str(self._testMethodName))
         self.Can.CanTimeStampStart(
             self.__reset_stu()["CanTime"])  # This will also reset the STH
