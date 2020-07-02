@@ -9,6 +9,9 @@ from unittest import TestCase, main
 # Add path for custom libraries
 repository_root = dirname(dirname(abspath(__file__)))
 module_path.append(repository_root)
+
+from config import settings
+
 import CanFd
 from MyToolItNetworkNumbers import MyToolItNetworkNr
 from SthLimits import SthLimits
@@ -26,7 +29,6 @@ class TestSth(TestCase):
         cls.complete_image_filepath = abspath(
             join(build_location, f"manufacturingImageSth{version}.hex"))
         cls.board_type = "BGM113A256V2"
-        cls.adapter_serial_number = "440120910"
         commander_path = sep.join([
             'C:', 'SiliconLabs', 'SimplicityStudio', 'v4', 'developer',
             'adapter_packs', 'commander'
@@ -70,7 +72,7 @@ class TestSth(TestCase):
         """Upload bootloader and application into STH"""
 
         identification_arguments = (
-            f"--serialno {type(self).adapter_serial_number} " +
+            f"--serialno {settings.STH.Programming_Board.Serial_Number} " +
             f"-d {type(self).board_type}")
 
         # Unlock debug access

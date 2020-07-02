@@ -1,0 +1,8 @@
+STH:
+  Programming Board:
+    Serial Number:
+      # Please store the serial number of the programming board that is
+      # connected to the STH here. This number should be displayed in the
+      # right bottom corner of the LC display, after you connect the programmer
+      # to a power source
+      440120910
