@@ -17,3 +17,7 @@ STH:
       # right bottom corner of the LC display, after you connect the programmer
       # to a power source
       440120910
+  Firmware:
+    # This value should contain the path to a complete image (bootloader and
+    # application).
+    Location: ../STH/builds/v2.1.10/manufacturingImageSthv2.1.10.hex

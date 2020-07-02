@@ -24,11 +24,6 @@ class TestSth(TestCase):
     @classmethod
     def setUpClass(cls):
         """Initialize data for whole test"""
-
-        build_location = join(dirname(repository_root),
-                              f"STH/builds/{version}")
-        cls.complete_image_filepath = abspath(
-            join(build_location, f"manufacturingImageSth{version}.hex"))
         cls.board_type = "BGM113A256V2"
         environ["PATH"] += (pathsep +
                             pathsep.join(settings.Commands.Path.Windows))
@@ -84,7 +79,7 @@ class TestSth(TestCase):
                          "Unable to unlock debug access of chip")
 
         # Upload bootloader and application data
-        image_filepath = type(self).complete_image_filepath
+        image_filepath = settings.STH.Firmware.Location
         self.assertTrue(isfile(image_filepath),
                         f"Firmware file {image_filepath} does not exist")
 
@@ -108,5 +103,4 @@ class TestSth(TestCase):
 
 
 if __name__ == "__main__":
-    version = argv[1] if len(argv) > 1 else 'v2.1.10'
-    main(argv=['first-arg-is-ignored'], failfast=True)
+    main(failfast=True)
