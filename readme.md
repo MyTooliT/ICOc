@@ -390,10 +390,14 @@ To run the production tests for the STH, please execute the following command in
 python 'Production Tests/STH.py'
 ```
 
+### Verbose Output
+
 The default output of the test is quite sparse. If you want additional information about the currently running test, you can add the verbose option (`-v`) at the end of the command:
 
 ```sh
 python 'Production Tests/STH.py' -v
 ```
 
-Please note that this test currently only checks that flashing the device with the programming board works as expected.
+### Status
+
+Please note that the test currently only checks that flashing the device with the programming board works as expected.
