@@ -60,8 +60,12 @@ class TestSth(TestCase):
         self.Can.bConnected = False
         return self.Can.cmdReset(MyToolItNetworkNr["STU1"])
 
-    def test0000FirmwareFlash(self):
-        """Upload bootloader and application into STH"""
+    def test__firmware_flash(self):
+        """Upload bootloader and application into STH.
+
+        Please note the additional underscore in the method name that makes
+        sure this test case is executed before all other test cases.
+        """
 
         identification_arguments = (
             f"--serialno {settings.STH.Programming_Board.Serial_Number} " +
