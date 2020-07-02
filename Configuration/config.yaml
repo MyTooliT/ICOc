@@ -1,3 +1,5 @@
+# Currently only the production tests of the STH use the following config file.
+
 Commands:
   Path:
     # The keys below this key should contain the path to Simplicity Commander
