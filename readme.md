@@ -398,6 +398,14 @@ The default output of the test is quite sparse. If you want additional informati
 python 'Production Tests/STH.py' -v
 ```
 
+### Specific Test Case
+
+To only run a single test case you need the specify its name. For example, to run the test case `test__firmware_flash` you can use the following command:
+
+```sh
+python -m unittest 'Production Tests.STH.TestSth.test__firmware_flash'
+```
+
 ### Status
 
 Please note that the test currently only checks that flashing the device with the programming board works as expected.
