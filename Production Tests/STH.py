@@ -36,7 +36,6 @@ class TestSth(TestCase):
     def setUp(self):
         """Set up hardware before a single test case"""
 
-        self.bError = False
         log_filepath = f"{self._testMethodName}.txt"
         log_filepath_error = f"{self._testMethodName}_Error.txt"
 
