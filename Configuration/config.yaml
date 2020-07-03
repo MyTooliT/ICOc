@@ -12,6 +12,10 @@ Commands:
       - C:\SiliconLabs\SimplicityStudio\v4\developer\adapter_packs\commander
 
 STH:
+  Name:
+    # This value specifies the current name of the STH unit
+    Blubb
+
   Programming Board:
     Serial Number:
       # Please store the serial number of the programming board that is
