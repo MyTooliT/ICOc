@@ -1,8 +1,7 @@
 from os import environ, pathsep
-from os.path import abspath, dirname, isfile, join, sep
+from os.path import abspath, dirname, isfile, join
 from re import escape
 from subprocess import run
-from sys import argv
 from sys import path as module_path
 from unittest import TestCase, main
 
