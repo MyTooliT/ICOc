@@ -20,11 +20,6 @@ from SthLimits import SthLimits
 class TestSth(TestCase):
     """This class contains tests for the Sensory Tool Holder (STH)"""
 
-    @classmethod
-    def setUpClass(cls):
-        """Initialize data for whole test"""
-        environ["PATH"] += (pathsep +
-                            pathsep.join(settings.Commands.Path.Windows))
 
     def test__firmware_flash(self):
         """Upload bootloader and application into STH.
@@ -32,6 +27,10 @@ class TestSth(TestCase):
         Please note the additional underscore in the method name that makes
         sure this test case is executed before all other test cases.
         """
+
+        # Add path to Simplicity Commander
+        environ["PATH"] += (pathsep +
+                            pathsep.join(settings.Commands.Path.Windows))
 
         identification_arguments = (
             f"--serialno {settings.STH.Programming_Board.Serial_Number} " +
