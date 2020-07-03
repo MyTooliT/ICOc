@@ -27,40 +27,6 @@ class TestSth(TestCase):
         environ["PATH"] += (pathsep +
                             pathsep.join(settings.Commands.Path.Windows))
 
-    def setUp(self):
-        """Set up hardware before a single test case"""
-
-        log_filepath = f"{self._testMethodName}.txt"
-        log_filepath_error = f"{self._testMethodName}_Error.txt"
-
-        sth_limits = SthLimits(1, 200, 20, 35)
-        self.Can = CanFd(PCAN_BAUD_1M,
-                         log_filepath,
-                         log_filepath_error,
-                         MyToolItNetworkNr["SPU1"],
-                         MyToolItNetworkNr["STH1"],
-                         sth_limits.uSamplingRatePrescalerReset,
-                         sth_limits.uSamplingRateAcqTimeReset,
-                         sth_limits.uSamplingRateOverSamplesReset,
-                         FreshLog=True)
-        self.Can.Logger.Info("TestCase: " + str(self._testMethodName))
-        # Reset STU (and STH)
-        return_message = self.__reset_stu()
-        self.Can.CanTimeStampStart(return_message["CanTime"])
-
-    def tearDown(self):
-        """Clean up after single test case"""
-
-        self.Can.Logger.Info("> Tear Down")
-        self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
-        self.Can.__exit__()
-
-    def __reset_stu(self):
-        """Reset STU"""
-
-        self.Can.bConnected = False
-        return self.Can.cmdReset(MyToolItNetworkNr["STU1"])
-
     def test__firmware_flash(self):
         """Upload bootloader and application into STH.
 
