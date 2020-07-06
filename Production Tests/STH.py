@@ -17,12 +17,28 @@ from mytoolit.identifier import Identifier
 from CanFd import CanFd, PCAN_BAUD_1M
 from MyToolItNetworkNumbers import MyToolItNetworkNr
 from MyToolItCommands import (ActiveState, MyToolItBlock, MyToolItSystem, Node,
-                              NetworkState)
+                              NetworkState, sBlueToothMacAddr)
 from SthLimits import SthLimits
 
 
 class TestSth(TestCase):
     """This class contains tests for the Sensory Tool Holder (STH)"""
+
+    @classmethod
+    def tearDownClass(cls):
+        """Print attributes of tested STH after all successful test cases"""
+
+        # It is possible the Bluetooth address is undefined, if connecting
+        # to the STH failed
+        try:
+            # Do not print anything, if MAC address is undefined
+            mac_address_sth = cls.bluetooth_mac
+            print("\n\nTest Data")
+            print("—————————")
+            print(f"STH Bluetooth address: {mac_address_sth}")
+            print()
+        except NameError:
+            pass
 
     def setUp(self):
         """Set up hardware before a single test case"""
@@ -70,6 +86,8 @@ class TestSth(TestCase):
                                               settings.STH.Name,
                                               log=False)
         sleep(2)
+        type(self).bluetooth_mac = sBlueToothMacAddr(
+            self.Can.BlueToothAddress(MyToolItNetworkNr["STH1"]))
 
     def __disconnect(self):
         """Tear down connection to STH"""
