@@ -151,18 +151,18 @@ class TestSth(TestCase):
         sleep(0.2)
 
         # Receive message from STH
-        command = self.Can.CanCmd(MyToolItBlock['System'],
-                                  MyToolItSystem['ActiveState'],
-                                  request=False)
-        expected_message = self.Can.CanMessage20(command,
-                                                 MyToolItNetworkNr['STH1'],
-                                                 MyToolItNetworkNr['SPU1'],
-                                                 [0])
         received_message = self.Can.getReadMessage(-1)
 
         # Check for equivalence of message content
-        expected_id = expected_message.ID
+        command = self.Can.CanCmd(MyToolItBlock['System'],
+                                  MyToolItSystem['ActiveState'],
+                                  request=False)
+        expected_id = (self.Can.CanMessage20(command,
+                                             MyToolItNetworkNr['STH1'],
+                                             MyToolItNetworkNr['SPU1'],
+                                             [0])).ID
         received_id = received_message.ID
+
         self.assertEqual(
             expected_id, received_id,
             f"Expected CAN identifier {Identifier(expected_id)} does not " +
