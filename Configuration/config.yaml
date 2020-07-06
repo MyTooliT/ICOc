@@ -12,6 +12,10 @@ Commands:
       - C:\SiliconLabs\SimplicityStudio\v4\developer\adapter_packs\commander
 
 STH:
+  Battery Voltage:
+    Average: 3.2 # Expected value of power source voltage in Volt
+    Tolerance: 0.3 # Tolerance for expected power source voltage in Volt
+
   Name:
     # This value specifies the current name of the STH unit
     Blubb

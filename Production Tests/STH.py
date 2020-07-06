@@ -17,7 +17,9 @@ from mytoolit.identifier import Identifier
 from CanFd import CanFd, PCAN_BAUD_1M
 from MyToolItNetworkNumbers import MyToolItNetworkNr
 from MyToolItCommands import (ActiveState, MyToolItBlock, MyToolItSystem, Node,
-                              NetworkState, sBlueToothMacAddr)
+                              iMessage2Value, NetworkState, sBlueToothMacAddr,
+                              MyToolItStreaming)
+from MyToolItSth import fVoltageBattery
 from SthLimits import SthLimits
 
 
@@ -193,6 +195,40 @@ class TestSth(TestCase):
             f"Expected data “{expected_data_byte}” does not match " +
             f"received data “{received_data_byte}”")
 
+    def test_battery_voltage(self):
+        """Test voltage of STH power source"""
 
-if __name__ == "__main__":
-    main(failfast=True)
+        index = self.Can.singleValueCollect(
+            MyToolItNetworkNr["STH1"],
+            MyToolItStreaming["Voltage"],
+            # Read voltage 1
+            1,
+            # Do not read voltage 2
+            0,
+            # Do not read voltage 3
+            0,
+            log=False)
+        battery_voltage_raw = iMessage2Value(
+            self.Can.getReadMessageData(index)[2:4])
+        self.assertIsNotNone(battery_voltage_raw,
+                             "Unable to read battery voltage")
+
+        expected_voltage = settings.STH.Battery_Voltage.Average
+        tolerance_voltage = settings.STH.Battery_Voltage.Tolerance
+        expected_minimum_voltage = expected_voltage - tolerance_voltage
+        expected_maximum_voltage = expected_voltage + tolerance_voltage
+
+        battery_voltage = fVoltageBattery(battery_voltage_raw)
+
+        self.assertGreaterEqual(
+            battery_voltage, expected_minimum_voltage,
+            f"STH power source voltage of {battery_voltage:.3f} V is lower " +
+            f"than expected minimum voltage of {expected_minimum_voltage} V")
+        self.assertLessEqual(
+            battery_voltage, expected_maximum_voltage,
+            f"STH power source voltage of {battery_voltage:.3f} V is " +
+            "greater than expected maximum voltage of " +
+            f"{expected_minimum_voltage} V")
+
+    if __name__ == "__main__":
+        main(failfast=True)
