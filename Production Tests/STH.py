@@ -132,8 +132,11 @@ class TestSth(TestCase):
         contains the same data as the sent message (, except for switched
         sender/receiver and flipped acknowledgment bit).
         """
+
+        # Send message to STH
         command = self.Can.CanCmd(MyToolItBlock['System'],
-                                  MyToolItSystem['ActiveState'], 1, 0)
+                                  MyToolItSystem['ActiveState'],
+                                  request=True)
         expected_data = ActiveState()
         expected_data.asbyte = 0
         expected_data.b.u2NodeState = Node['Application']
@@ -145,14 +148,18 @@ class TestSth(TestCase):
         self.Can.WriteFrame(message)
         self.Can.Logger.Info('Wait 200ms')
         sleep(0.2)
+
+        # Receive message from STH
         command = self.Can.CanCmd(MyToolItBlock['System'],
-                                  MyToolItSystem['ActiveState'], 0, 0)
+                                  MyToolItSystem['ActiveState'],
+                                  request=False)
         expected_message = self.Can.CanMessage20(command,
                                                  MyToolItNetworkNr['STH1'],
                                                  MyToolItNetworkNr['SPU1'],
                                                  [0])
         received_message = self.Can.getReadMessage(-1)
 
+        # Check for equivalence of message content
         expected_id = hex(expected_message.ID)
         received_id = hex(received_message.ID)
         self.assertEqual(
