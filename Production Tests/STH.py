@@ -125,8 +125,13 @@ class TestSth(TestCase):
         )
 
     def test_connection(self):
-        """Check connection to STH"""
+        """Check connection to STH
 
+        This tests sends a command from the STU (with the identifier of SPU1)
+        to the STH and checks if the acknowledgment message from the STH
+        contains the same data as the sent message (, except for switched
+        sender/receiver and flipped acknowledgment bit).
+        """
         command = self.Can.CanCmd(MyToolItBlock['System'],
                                   MyToolItSystem['ActiveState'], 1, 0)
         expected_data = ActiveState()
