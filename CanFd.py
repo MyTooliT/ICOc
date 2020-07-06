@@ -1232,6 +1232,30 @@ class CanFd(object):
         return self.CanMessage20(ackCmd, fields[2], fields[1], data)
 
     def CanCmd(self, block, cmd, request, error):
+        """Return the binary representation of a MyTooliT CAN command
+
+        Parameters
+        ----------
+
+        block:
+            The block that contains the command
+        cmd:
+            The command inside the block that should be issued
+        request:
+            Specifies if you want to request (`1`) or acknowledge (`0`) the
+            command
+        error:
+            Specifies if you want to set the error bit (`0`) or not (`1`).
+            Please note that the values have these values according to the
+            documentation. According to the usage in the tool, it would make
+            more sense that these value are swapped, since most calls of this
+            function use `0` as argument for the error value.
+
+        Returns
+        -------
+
+        A 16 bit integer number representing the requested command
+        """
         block = block & 0x3F
         cmd = cmd & 0xFF
         request = request & 1
