@@ -13,6 +13,7 @@ module_path.append(join(repository_root, "Configuration"))
 
 from config import settings
 
+from mytoolit.identifier import Identifier
 from CanFd import CanFd, PCAN_BAUD_1M
 from MyToolItNetworkNumbers import MyToolItNetworkNr
 from MyToolItCommands import (ActiveState, MyToolItBlock, MyToolItSystem, Node,
@@ -160,12 +161,12 @@ class TestSth(TestCase):
         received_message = self.Can.getReadMessage(-1)
 
         # Check for equivalence of message content
-        expected_id = hex(expected_message.ID)
-        received_id = hex(received_message.ID)
+        expected_id = expected_message.ID
+        received_id = received_message.ID
         self.assertEqual(
             expected_id, received_id,
-            f"Expected ID “{expected_id}” does not match " +
-            f"received ID “{received_id}”")
+            f"Expected CAN identifier {Identifier(expected_id)} does not " +
+            f"match received CAN identifier {Identifier(received_id)}")
 
         expected_data_byte = expected_data.asbyte
         received_data_byte = received_message.DATA[0]
