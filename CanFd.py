@@ -1256,6 +1256,10 @@ class CanFd(object):
 
         A 16 bit integer number representing the requested command
         """
+
+        # TODO: This method does not use `self` at all. Maybe it makes sense to
+        # remove this code from the class and use a standalone function
+        # instead.
         block = block & 0x3F
         cmd = cmd & 0xFF
         request = request & 1
