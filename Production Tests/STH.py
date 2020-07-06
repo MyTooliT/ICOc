@@ -98,7 +98,7 @@ class TestSth(TestCase):
         self.Can.__exit__()
 
     def test__firmware_flash(self):
-        """Upload bootloader and application into STH.
+        """Upload bootloader and application into STH
 
         Please note the additional underscore in the method name that makes
         sure this test case is executed before all other test cases.
