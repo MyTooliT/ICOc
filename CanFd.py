@@ -2,6 +2,8 @@ from PCANBasic import *
 import threading
 import array
 import math
+from sys import stderr
+
 from MyToolItCommands import *
 from MyToolItNetworkNumbers import MyToolItNetworkNr, MyToolItNetworkName
 from Logger import Logger
@@ -51,17 +53,21 @@ class CanFd(object):
                                       IOPort=0x2A0,
                                       Interrupt=self.interrupt)
         if result != PCAN_ERROR_OK:
-            raise Exception("Unable to initialize CAN hardware: " +
-                            self.pcan.GetErrorText(result)[1].decode())
+            raise Exception(
+                self.__get_error_message("Unable to initialize CAN hardware",
+                                         result))
         else:
             # Prepares the PCAN-Basic's PCAN-Trace file
             #
             self.tCanReadWriteMutex = threading.Lock()
+            # Reset the CAN controller if a bus-off state is detected
             result = self.pcan.SetValue(self.m_PcanHandle,
                                         PCAN_BUSOFF_AUTORESET,
                                         PCAN_PARAMETER_ON)
             if result != PCAN_ERROR_OK:
-                print("Error while setting PCAN_BUSOFF_AUTORESET")
+                print(self.__get_error_message(
+                    "Unable to set auto reset on CAN bus-off state", result),
+                      file=stderr)
             self.ConfigureTraceFile()
             self.Reset()
             self.ReadThreadReset()
@@ -103,6 +109,27 @@ class CanFd(object):
             self.__exit__()
         except:
             pass
+
+    def __get_error_message(self, description, error_code):
+        """Return an error message for a given error code
+
+        Parameters
+        ----------
+
+        description:
+            A textual description of the current error condition
+        error_code:
+            A PCAN error code
+
+        Returns:
+        --------
+
+        A error message consisting of description and the textual
+        representation of the given error code
+        """
+
+        translated_error_code = self.pcan.GetErrorText(error_code)[1].decode()
+        return f"{description}: {translated_error_code}"
 
     def vLogNameChange(self, testMethodName, testMethodNameError):
         self.Logger.vRename(testMethodName, testMethodNameError)
@@ -151,12 +178,12 @@ class CanFd(object):
         #
         iBuffer = 5
         self.tCanReadWriteMutex.acquire()  # More or less insane
-        stsResult = self.pcan.SetValue(self.m_PcanHandle, PCAN_TRACE_SIZE,
-                                       iBuffer)
-        if stsResult != PCAN_ERROR_OK:
-            print(
-                "Error while init Peak Can Basic Module while configuring Trace File: "
-                + stsResult)
+        result = self.pcan.SetValue(self.m_PcanHandle, PCAN_TRACE_SIZE,
+                                    iBuffer)
+        if result != PCAN_ERROR_OK:
+            print(self.__get_error_message("Unable to set size of trace file",
+                                           result),
+                  file=stderr)
 
         # Configure the way how trace files are created:
         # * Standard name is used
@@ -165,12 +192,12 @@ class CanFd(object):
         # * Recording stops when the file size reaches 5 megabytes.
         #
         iBuffer = TRACE_FILE_SINGLE | TRACE_FILE_OVERWRITE
-        stsResult = self.pcan.SetValue(self.m_PcanHandle, PCAN_TRACE_CONFIGURE,
-                                       iBuffer)
-        if stsResult != PCAN_ERROR_OK:
-            print(
-                "Error while init Peak Can Basic Module while setting value in Trace File: "
-                + stsResult)
+        result = self.pcan.SetValue(self.m_PcanHandle, PCAN_TRACE_CONFIGURE,
+                                    iBuffer)
+        if result != PCAN_ERROR_OK:
+            print(self.__get_error_message(
+                "Unable to set trace file parameters", result),
+                  file=stderr)
         self.tCanReadWriteMutex.release()
 
     def Reset(self):
