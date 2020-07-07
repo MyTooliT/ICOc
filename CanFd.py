@@ -51,11 +51,9 @@ class CanFd(object):
                                                 IOPort=0x2A0,
                                                 Interrupt=self.interrupt)
         if result != PCAN_ERROR_OK:
-            # the tCanReadWriteMutex will be unavailable, so continuing is useless: throw exception
-            # @dev: if you got here but don't strictly need the CAN adapter, make its init go away ;)
             raise Exception(
-                "no Peak Can Basic Module connected / Driver failed to load. Code: "
-                + str(result))
+                "Unable to initialize CAN hardware: " +
+                self.m_objPCANBasic.GetErrorText(result)[1].decode())
         else:
             # Prepares the PCAN-Basic's PCAN-Trace file
             #
