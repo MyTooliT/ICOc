@@ -94,11 +94,7 @@ class TestSth(TestCase):
                                               log=False)
         sleep(2)
         if not type(self).read_attributes:
-            type(self).bluetooth_mac = sBlueToothMacAddr(
-                self.Can.BlueToothAddress(MyToolItNetworkNr["STH1"]))
-            type(self).bluetooth_rssi = self.Can.BlueToothRssi(
-                MyToolItNetworkNr['STH1'])
-
+            self.__read_data()
             type(self).read_attributes = True
 
     def __disconnect(self):
@@ -106,6 +102,14 @@ class TestSth(TestCase):
 
         self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
         self.Can.__exit__()
+
+    def __read_data(self):
+        """Read data from connected STH"""
+
+        type(self).bluetooth_mac = sBlueToothMacAddr(
+            self.Can.BlueToothAddress(MyToolItNetworkNr["STH1"]))
+        type(self).bluetooth_rssi = self.Can.BlueToothRssi(
+            MyToolItNetworkNr['STH1'])
 
     def test__firmware_flash(self):
         """Upload bootloader and application into STH
