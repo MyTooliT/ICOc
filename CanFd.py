@@ -6,7 +6,6 @@ from MyToolItCommands import *
 from MyToolItNetworkNumbers import MyToolItNetworkNr, MyToolItNetworkName
 from Logger import Logger
 
-PeakCanIoPort = 0x2A0
 PeakCanInterrupt = 11
 PeakCanBitrateFd = "f_clock_mhz=20, nom_brp=5, nom_tseg1=2, nom_tseg2=1, nom_sjw=1, data_brp=2, data_tseg1=3, data_tseg2=1, data_sjw=1"
 
@@ -31,7 +30,6 @@ class CanFd(object):
         self.startTime = int(round(time.time() * 1000))
         self.m_objPCANBasic = PCANBasic()
         self.hwtype = PCAN_TYPE_ISA
-        self.ioport = PeakCanIoPort
         self.interrupt = PeakCanInterrupt
         self.m_PcanHandle = PCAN_USBBUS1
         self.bError = False
@@ -50,8 +48,8 @@ class CanFd(object):
         self.VoltageConfig.b.bStreaming = 1
         result = self.m_objPCANBasic.Initialize(self.m_PcanHandle,
                                                 PCAN_BAUD_1M, self.hwtype,
-                                                self.ioport,
-                                                self.interrupt)
+                                                IOPort=0x2A0,
+                                                Interrupt=self.interrupt)
         if result != PCAN_ERROR_OK:
             # the tCanReadWriteMutex will be unavailable, so continuing is useless: throw exception
             # @dev: if you got here but don't strictly need the CAN adapter, make its init go away ;)
