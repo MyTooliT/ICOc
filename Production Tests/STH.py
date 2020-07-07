@@ -23,7 +23,7 @@ from MyToolItSth import fVoltageBattery
 from SthLimits import SthLimits
 
 
-class TestSth(TestCase):
+class TestSTH(TestCase):
     """This class contains tests for the Sensory Tool Holder (STH)"""
 
     @classmethod

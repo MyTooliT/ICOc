@@ -403,7 +403,7 @@ python 'Production Tests/STH.py' -v
 To only run a single test case you need the specify its name. For example, to run the test case `test__firmware_flash` you can use the following command:
 
 ```sh
-python -m unittest 'Production Tests.STH.TestSth.test__firmware_flash'
+python -m unittest 'Production Tests.STH.TestSTH.test__firmware_flash'
 ```
 
 ### Status
