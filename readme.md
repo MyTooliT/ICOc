@@ -387,7 +387,7 @@ Error Status Word of the STU and this <u>**Error Status Word must be 0.**</u>
 To run the production tests for the STH, please execute the following command in the root of the repository:
 
 ```sh
-python 'Production Tests/STH.py'
+python 'Production Tests/test_sth.py'
 ```
 
 ### Verbose Output
@@ -395,7 +395,7 @@ python 'Production Tests/STH.py'
 The default output of the test is quite sparse. If you want additional information about the currently running test, you can add the verbose option (`-v`) at the end of the command:
 
 ```sh
-python 'Production Tests/STH.py' -v
+python 'Production Tests/test_sth.py' -v
 ```
 
 ### Specific Test Case
@@ -403,7 +403,7 @@ python 'Production Tests/STH.py' -v
 To only run a single test case you need the specify its name. For example, to run the test case `test__firmware_flash` you can use the following command:
 
 ```sh
-python -m unittest 'Production Tests.STH.TestSTH.test__firmware_flash'
+python -m unittest 'Production Tests.test_sth.TestSTH.test__firmware_flash'
 ```
 
 ### Status
