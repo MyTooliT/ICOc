@@ -72,8 +72,8 @@ class CanFd(object):
 
     def __exit__(self):
         try:
-            if False == self.bError:
-                if False != self.RunReadThread:
+            if not self.bError:
+                if self.RunReadThread:
                     self.readThreadStop()
                 else:
                     self.Logger.Error("Peak CAN Message Over Run")
