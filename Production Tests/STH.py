@@ -18,7 +18,7 @@ from CanFd import CanFd, PCAN_BAUD_1M
 from MyToolItNetworkNumbers import MyToolItNetworkNr
 from MyToolItCommands import (ActiveState, MyToolItBlock, MyToolItSystem, Node,
                               iMessage2Value, NetworkState, sBlueToothMacAddr,
-                              MyToolItStreaming)
+                              MyToolItProductData, MyToolItStreaming)
 from MyToolItSth import fVoltageBattery
 from SthLimits import SthLimits
 
@@ -43,8 +43,9 @@ class TestSth(TestCase):
             # Do not print anything, if MAC address is undefined
             print("\n\nTest Data")
             print("—————————")
-            print(f"STH Bluetooth address: {cls.bluetooth_mac}")
-            print(f"STH RSSI: {cls.bluetooth_rssi} dBm")
+            print(f"Bluetooth address: {cls.bluetooth_mac}")
+            print(f"RSSI:              {cls.bluetooth_rssi} dBm")
+            print(f"Firmware Version:  {cls.firmware_version}")
             print()
 
     def setUp(self):
@@ -106,10 +107,18 @@ class TestSth(TestCase):
     def __read_data(self):
         """Read data from connected STH"""
 
-        type(self).bluetooth_mac = sBlueToothMacAddr(
+        cls = type(self)
+
+        cls.bluetooth_mac = sBlueToothMacAddr(
             self.Can.BlueToothAddress(MyToolItNetworkNr["STH1"]))
-        type(self).bluetooth_rssi = self.Can.BlueToothRssi(
-            MyToolItNetworkNr['STH1'])
+        cls.bluetooth_rssi = self.Can.BlueToothRssi(MyToolItNetworkNr['STH1'])
+
+        index = self.Can.cmdSend(MyToolItNetworkNr["STH1"],
+                                 MyToolItBlock["ProductData"],
+                                 MyToolItProductData["FirmwareVersion"], [])
+        version = self.Can.getReadMessageData(index)[-3:]
+
+        cls.firmware_version = '.'.join(map(str, version))
 
     def test__firmware_flash(self):
         """Upload bootloader and application into STH
