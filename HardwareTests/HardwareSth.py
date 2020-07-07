@@ -52,7 +52,7 @@ class TestSth(unittest.TestCase):
         self.bError = False
         self.fileName = sLogLocation + self._testMethodName + ".txt"
         self.fileNameError = sLogLocation + "Error_" + self._testMethodName + ".txt"
-        self.Can = CanFd.CanFd(CanFd.PCAN_BAUD_1M, self.fileName, self.fileNameError, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], self.tSthLimits.uSamplingRatePrescalerReset, self.tSthLimits.uSamplingRateAcqTimeReset, self.tSthLimits.uSamplingRateOverSamplesReset, FreshLog=True)
+        self.Can = CanFd.CanFd(self.fileName, self.fileNameError, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], self.tSthLimits.uSamplingRatePrescalerReset, self.tSthLimits.uSamplingRateAcqTimeReset, self.tSthLimits.uSamplingRateOverSamplesReset, FreshLog=True)
         self.Can.Logger.Info("TestCase: " + str(self._testMethodName))
         self.vSilabsAdapterReset()
         self.Can.CanTimeStampStart(self._resetStu()["CanTime"])  # This will also reset to STH

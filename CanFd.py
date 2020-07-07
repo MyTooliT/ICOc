@@ -13,7 +13,6 @@ PeakCanBitrateFd = "f_clock_mhz=20, nom_brp=5, nom_tseg1=2, nom_tseg2=1, nom_sjw
 
 class CanFd(object):
     def __init__(self,
-                 baudrate,
                  testMethodName,
                  testMethodNameError,
                  sender,
@@ -31,7 +30,6 @@ class CanFd(object):
         self.Logger.Info(str(sDateClock()))
         self.startTime = int(round(time.time() * 1000))
         self.m_objPCANBasic = PCANBasic()
-        self.baudrate = baudrate
         self.hwtype = PCAN_TYPE_ISA
         self.ioport = PeakCanIoPort
         self.interrupt = PeakCanInterrupt
@@ -50,18 +48,10 @@ class CanFd(object):
         self.VoltageConfig = AtvcFormat()
         self.VoltageConfig.asbyte = 0
         self.VoltageConfig.b.bStreaming = 1
-        if 0 == baudrate:
-            self.m_IsFD = True
-        else:
-            self.m_IsFD = False
-        if self.m_IsFD:
-            result = self.m_objPCANBasic.InitializeFD(self.m_PcanHandle,
-                                                      PeakCanBitrateFd)
-        else:
-            result = self.m_objPCANBasic.Initialize(self.m_PcanHandle,
-                                                    baudrate, self.hwtype,
-                                                    self.ioport,
-                                                    self.interrupt)
+        result = self.m_objPCANBasic.Initialize(self.m_PcanHandle,
+                                                PCAN_BAUD_1M, self.hwtype,
+                                                self.ioport,
+                                                self.interrupt)
         if result != PCAN_ERROR_OK:
             # the tCanReadWriteMutex will be unavailable, so continuing is useless: throw exception
             # @dev: if you got here but don't strictly need the CAN adapter, make its init go away ;)

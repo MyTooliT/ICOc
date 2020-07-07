@@ -73,7 +73,7 @@ class TestStu(unittest.TestCase):
         if False != bSkip and "test9999StoreTestResults" != self._testMethodName:
             self.skipTest("At least some previous test failed")
         else:
-            self.Can = CanFd.CanFd(CanFd.PCAN_BAUD_1M, self.fileName, self.fileNameError, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], 0, 0, 0, FreshLog=True)
+            self.Can = CanFd.CanFd(self.fileName, self.fileNameError, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], 0, 0, 0, FreshLog=True)
             self.sSerialNumber = sSerialNumber(self.sExcelEepromContentFileName)
             self.sDateClock = sDateClock()
             self.Can.Logger.Info("TestCase: " + str(self._testMethodName))

@@ -59,7 +59,7 @@ class myToolItWatch():
         self.iMsgLoss = 0
         self.iMsgsTotal = 0
         self.iMsgCounterLast = 0
-        self.Can = CanFd.CanFd(CanFd.PCAN_BAUD_1M, "init.txt", "initError.txt", MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"])
+        self.Can = CanFd.CanFd("init.txt", "initError.txt", MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"])
         self.vSave2Xml(False)
         self.vSthAutoConnect(False)
         self.Can.Logger.Info("Start Time: " + self.sDateClock())

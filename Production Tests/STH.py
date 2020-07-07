@@ -14,7 +14,7 @@ module_path.append(join(repository_root, "Configuration"))
 from config import settings
 
 from mytoolit.identifier import Identifier
-from CanFd import CanFd, PCAN_BAUD_1M
+from CanFd import CanFd
 from MyToolItNetworkNumbers import MyToolItNetworkNr
 from MyToolItCommands import (ActiveState, MyToolItBlock, MyToolItSystem, Node,
                               iMessage2Value, NetworkState, sBlueToothMacAddr,
@@ -82,8 +82,7 @@ class TestSth(TestCase):
             20,
             # maximum temperature
             35)
-        self.Can = CanFd(PCAN_BAUD_1M,
-                         log_filepath,
+        self.Can = CanFd(log_filepath,
                          log_filepath_error,
                          MyToolItNetworkNr["SPU1"],
                          MyToolItNetworkNr["STH1"],

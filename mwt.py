@@ -483,7 +483,7 @@ class mwt(myToolItWatch):
             except KeyboardInterrupt:
                 pass
                 #TODO: Kill process
-            self.Can = CanFd.CanFd(CanFd.PCAN_BAUD_1M, "init.txt", "initError.txt", MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"])
+            self.Can = CanFd.CanFd("init.txt", "initError.txt", MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"])
         return bContinue
 
 

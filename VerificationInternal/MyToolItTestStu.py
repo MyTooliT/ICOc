@@ -42,7 +42,7 @@ class TestStu(unittest.TestCase):
         self.fileName = sLogLocation + self._testMethodName + ".txt"
         self.fileNameError = sLogLocation + "Error_" + self._testMethodName + ".txt"
         self.bError = False
-        self.Can = CanFd.CanFd(CanFd.PCAN_BAUD_1M, self.fileName, self.fileNameError, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], FreshLog=True)
+        self.Can = CanFd.CanFd(self.fileName, self.fileNameError, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], FreshLog=True)
         self.Can.Logger.Info("TestCase: " + str(self._testMethodName))
         self.vSilabsAdapterReset()
         if "test0000FirmwareFlash" != self._testMethodName:
