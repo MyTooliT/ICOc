@@ -29,7 +29,6 @@ class CanFd(object):
         self.Logger.Info(str(sDateClock()))
         self.startTime = int(round(time.time() * 1000))
         self.m_objPCANBasic = PCANBasic()
-        self.hwtype = PCAN_TYPE_ISA
         self.interrupt = PeakCanInterrupt
         self.m_PcanHandle = PCAN_USBBUS1
         self.bError = False
@@ -47,7 +46,8 @@ class CanFd(object):
         self.VoltageConfig.asbyte = 0
         self.VoltageConfig.b.bStreaming = 1
         result = self.m_objPCANBasic.Initialize(self.m_PcanHandle,
-                                                PCAN_BAUD_1M, self.hwtype,
+                                                PCAN_BAUD_1M,
+                                                HwType=PCAN_TYPE_ISA,
                                                 IOPort=0x2A0,
                                                 Interrupt=self.interrupt)
         if result != PCAN_ERROR_OK:
