@@ -82,7 +82,7 @@ class TestSth(TestCase):
             20,
             # maximum temperature
             35)
-        self.Can = CanFd(log_filepath,
+        self.can = CanFd(log_filepath,
                          log_filepath_error,
                          MyToolItNetworkNr["SPU1"],
                          MyToolItNetworkNr["STH1"],
@@ -92,12 +92,12 @@ class TestSth(TestCase):
                          FreshLog=True)
 
         # Reset STU (and STH)
-        self.Can.bConnected = False
-        return_message = self.Can.cmdReset(MyToolItNetworkNr["STU1"])
-        self.Can.CanTimeStampStart(return_message["CanTime"])
+        self.can.bConnected = False
+        return_message = self.can.cmdReset(MyToolItNetworkNr["STU1"])
+        self.can.CanTimeStampStart(return_message["CanTime"])
 
         # Connect to STH
-        self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
+        self.can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
                                               settings.STH.Name,
                                               log=False)
         sleep(2)
@@ -108,8 +108,8 @@ class TestSth(TestCase):
     def __disconnect(self):
         """Tear down connection to STH"""
 
-        self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
-        self.Can.__exit__()
+        self.can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
+        self.can.__exit__()
 
     def __read_data(self):
         """Read data from connected STH"""
@@ -117,13 +117,13 @@ class TestSth(TestCase):
         cls = type(self)
 
         cls.bluetooth_mac = sBlueToothMacAddr(
-            self.Can.BlueToothAddress(MyToolItNetworkNr["STH1"]))
-        cls.bluetooth_rssi = self.Can.BlueToothRssi(MyToolItNetworkNr['STH1'])
+            self.can.BlueToothAddress(MyToolItNetworkNr["STH1"]))
+        cls.bluetooth_rssi = self.can.BlueToothRssi(MyToolItNetworkNr['STH1'])
 
-        index = self.Can.cmdSend(MyToolItNetworkNr["STH1"],
+        index = self.can.cmdSend(MyToolItNetworkNr["STH1"],
                                  MyToolItBlock["ProductData"],
                                  MyToolItProductData["FirmwareVersion"], [])
-        version = self.Can.getReadMessageData(index)[-3:]
+        version = self.can.getReadMessageData(index)[-3:]
 
         cls.firmware_version = '.'.join(map(str, version))
 
@@ -185,29 +185,29 @@ class TestSth(TestCase):
         """
 
         # Send message to STH
-        command = self.Can.CanCmd(MyToolItBlock['System'],
+        command = self.can.CanCmd(MyToolItBlock['System'],
                                   MyToolItSystem['ActiveState'],
                                   request=True)
         expected_data = ActiveState()
         expected_data.asbyte = 0
         expected_data.b.u2NodeState = Node['Application']
         expected_data.b.u3NetworkState = NetworkState['Operating']
-        message = self.Can.CanMessage20(command, MyToolItNetworkNr['SPU1'],
+        message = self.can.CanMessage20(command, MyToolItNetworkNr['SPU1'],
                                         MyToolItNetworkNr['STH1'],
                                         [expected_data.asbyte])
-        self.Can.Logger.Info('Write message')
-        self.Can.WriteFrame(message)
-        self.Can.Logger.Info('Wait 200ms')
+        self.can.Logger.Info('Write message')
+        self.can.WriteFrame(message)
+        self.can.Logger.Info('Wait 200ms')
         sleep(0.2)
 
         # Receive message from STH
-        received_message = self.Can.getReadMessage(-1)
+        received_message = self.can.getReadMessage(-1)
 
         # Check for equivalence of message content
-        command = self.Can.CanCmd(MyToolItBlock['System'],
+        command = self.can.CanCmd(MyToolItBlock['System'],
                                   MyToolItSystem['ActiveState'],
                                   request=False)
-        expected_id = (self.Can.CanMessage20(command,
+        expected_id = (self.can.CanMessage20(command,
                                              MyToolItNetworkNr['STH1'],
                                              MyToolItNetworkNr['SPU1'],
                                              [0])).ID
@@ -229,7 +229,7 @@ class TestSth(TestCase):
         """Test voltage of STH power source"""
 
         # Read 2 byte voltage format
-        index = self.Can.singleValueCollect(
+        index = self.can.singleValueCollect(
             MyToolItNetworkNr["STH1"],
             MyToolItStreaming["Voltage"],
             # Read voltage 1
@@ -240,7 +240,7 @@ class TestSth(TestCase):
             0,
             log=False)
 
-        message = self.Can.getReadMessageData(index)
+        message = self.can.getReadMessageData(index)
         self.assertEqual(len(message), 8,
                          "Unable to read battery voltage data")
         voltage_index_start = 2
