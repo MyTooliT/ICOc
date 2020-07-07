@@ -794,7 +794,7 @@ class myToolItWatch():
             
     def ReadMessage(self):
         message = None
-        result = self.Can.m_objPCANBasic.Read(self.Can.m_PcanHandle)
+        result = self.Can.pcan.Read(self.Can.m_PcanHandle)
         if result[0] == CanFd.PCAN_ERROR_OK:
             peakCanTimeStamp = result[2].millis_overflow * (2 ** 32) + result[2].millis + result[2].micros / 1000
             message = {"CanMsg" : result[1], "PcTime" : self.Can.getTimeMs(), "PeakCanTime" : peakCanTimeStamp}   

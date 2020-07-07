@@ -28,7 +28,7 @@ class CanFd(object):
                              FreshLog=FreshLog)
         self.Logger.Info(str(sDateClock()))
         self.startTime = int(round(time.time() * 1000))
-        self.m_objPCANBasic = PCANBasic()
+        self.pcan = PCANBasic()
         self.interrupt = PeakCanInterrupt
         self.m_PcanHandle = PCAN_USBBUS1
         self.bError = False
@@ -45,22 +45,21 @@ class CanFd(object):
         self.VoltageConfig = AtvcFormat()
         self.VoltageConfig.asbyte = 0
         self.VoltageConfig.b.bStreaming = 1
-        result = self.m_objPCANBasic.Initialize(self.m_PcanHandle,
-                                                PCAN_BAUD_1M,
-                                                HwType=PCAN_TYPE_ISA,
-                                                IOPort=0x2A0,
-                                                Interrupt=self.interrupt)
+        result = self.pcan.Initialize(self.m_PcanHandle,
+                                      PCAN_BAUD_1M,
+                                      HwType=PCAN_TYPE_ISA,
+                                      IOPort=0x2A0,
+                                      Interrupt=self.interrupt)
         if result != PCAN_ERROR_OK:
-            raise Exception(
-                "Unable to initialize CAN hardware: " +
-                self.m_objPCANBasic.GetErrorText(result)[1].decode())
+            raise Exception("Unable to initialize CAN hardware: " +
+                            self.pcan.GetErrorText(result)[1].decode())
         else:
             # Prepares the PCAN-Basic's PCAN-Trace file
             #
             self.tCanReadWriteMutex = threading.Lock()
-            result = self.m_objPCANBasic.SetValue(self.m_PcanHandle,
-                                                  PCAN_BUSOFF_AUTORESET,
-                                                  PCAN_PARAMETER_ON)
+            result = self.pcan.SetValue(self.m_PcanHandle,
+                                        PCAN_BUSOFF_AUTORESET,
+                                        PCAN_PARAMETER_ON)
             if result != PCAN_ERROR_OK:
                 print("Error while setting PCAN_BUSOFF_AUTORESET")
             self.ConfigureTraceFile()
@@ -77,7 +76,7 @@ class CanFd(object):
                     self.bError = True
             self.Reset()
             self.tCanReadWriteMutex.acquire()  # Insane
-            self.m_objPCANBasic.Uninitialize(self.m_PcanHandle)
+            self.pcan.Uninitialize(self.m_PcanHandle)
             self.tCanReadWriteMutex.release()
             time.sleep(1)
             [_iDs, cmds] = self.ReadMessageStatistics()
@@ -95,7 +94,7 @@ class CanFd(object):
             self.__exit__()
             self.bError = True
         except Exception:
-            self.m_objPCANBasic.Uninitialize(self.m_PcanHandle)
+            self.pcan.Uninitialize(self.m_PcanHandle)
             print("Error: " + sErrorMessage)
         raise Exception(sErrorMessage)
 
@@ -152,8 +151,8 @@ class CanFd(object):
         #
         iBuffer = 5
         self.tCanReadWriteMutex.acquire()  # More or less insane
-        stsResult = self.m_objPCANBasic.SetValue(self.m_PcanHandle,
-                                                 PCAN_TRACE_SIZE, iBuffer)
+        stsResult = self.pcan.SetValue(self.m_PcanHandle, PCAN_TRACE_SIZE,
+                                       iBuffer)
         if stsResult != PCAN_ERROR_OK:
             print(
                 "Error while init Peak Can Basic Module while configuring Trace File: "
@@ -166,8 +165,8 @@ class CanFd(object):
         # * Recording stops when the file size reaches 5 megabytes.
         #
         iBuffer = TRACE_FILE_SINGLE | TRACE_FILE_OVERWRITE
-        stsResult = self.m_objPCANBasic.SetValue(self.m_PcanHandle,
-                                                 PCAN_TRACE_CONFIGURE, iBuffer)
+        stsResult = self.pcan.SetValue(self.m_PcanHandle, PCAN_TRACE_CONFIGURE,
+                                       iBuffer)
         if stsResult != PCAN_ERROR_OK:
             print(
                 "Error while init Peak Can Basic Module while setting value in Trace File: "
@@ -177,7 +176,7 @@ class CanFd(object):
     def Reset(self):
         self.tCanReadWriteMutex.acquire()
         try:
-            self.m_objPCANBasic.Reset(self.m_PcanHandle)
+            self.pcan.Reset(self.m_PcanHandle)
         except:
             pass
         self.tCanReadWriteMutex.release()
@@ -232,8 +231,7 @@ class CanFd(object):
         returnMessage = CanMsg
         if "Error" != returnMessage:
             self.tCanReadWriteMutex.acquire()
-            returnMessage = self.m_objPCANBasic.Write(self.m_PcanHandle,
-                                                      CanMsg)
+            returnMessage = self.pcan.Write(self.m_PcanHandle, CanMsg)
             self.tCanReadWriteMutex.release()
             if (PCAN_ERROR_OK != returnMessage):
                 print("WriteFrame bError: " + hex(returnMessage))
@@ -1294,7 +1292,7 @@ class CanFd(object):
         while False != self.RunReadThread:
             try:
                 self.tCanReadWriteMutex.acquire()
-                result = self.m_objPCANBasic.Read(self.m_PcanHandle)
+                result = self.pcan.Read(self.m_PcanHandle)
                 self.tCanReadWriteMutex.release()
                 if result[0] == PCAN_ERROR_OK:
                     peakCanTimeStamp = result[2].millis_overflow * (
