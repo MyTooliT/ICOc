@@ -144,7 +144,7 @@ class CanFd(object):
 
     def readThreadStop(self):
         try:
-            if self.RunReadThread == True:
+            if self.RunReadThread:
                 self.RunReadThread = False
                 self.readThread.terminate()
                 self.readThread.join()
@@ -1314,7 +1314,7 @@ class CanFd(object):
         return [iDs, cmds]
 
     def ReadMessage(self):
-        while False != self.RunReadThread:
+        while self.RunReadThread:
             try:
                 self.tCanReadWriteMutex.acquire()
                 result = self.pcan.Read(self.m_PcanHandle)
