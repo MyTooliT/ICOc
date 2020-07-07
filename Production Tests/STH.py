@@ -44,6 +44,7 @@ class TestSth(TestCase):
             print("\n\nTest Data")
             print("—————————")
             print(f"STH Bluetooth address: {cls.bluetooth_mac}")
+            print(f"STH RSSI: {cls.bluetooth_rssi} dBm")
             print()
 
     def setUp(self):
@@ -95,6 +96,8 @@ class TestSth(TestCase):
         if not type(self).read_attributes:
             type(self).bluetooth_mac = sBlueToothMacAddr(
                 self.Can.BlueToothAddress(MyToolItNetworkNr["STH1"]))
+            type(self).bluetooth_rssi = self.Can.BlueToothRssi(
+                MyToolItNetworkNr['STH1'])
 
             type(self).read_attributes = True
 
@@ -241,11 +244,6 @@ class TestSth(TestCase):
             f"STH power source voltage of {battery_voltage:.3f} V is " +
             "greater than expected maximum voltage of " +
             f"{expected_minimum_voltage} V")
-
-    def test_bluetooth_rssi(self):
-        """Test Bluetooth RSSI"""
-
-        print(f"RSSI STH: {self.Can.BlueToothRssi(MyToolItNetworkNr['STH1'])}")
 
     if __name__ == "__main__":
         main(failfast=True)
