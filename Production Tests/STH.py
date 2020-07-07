@@ -27,20 +27,24 @@ class TestSth(TestCase):
     """This class contains tests for the Sensory Tool Holder (STH)"""
 
     @classmethod
+    def setUpClass(cls):
+        """Set up data for whole test"""
+
+        # We store attributes related to the connection, such as MAC address
+        # and RSSI only once. To do that we set `read_attributes` to true after
+        # the test class gathered the relevant data.
+        cls.read_attributes = False
+
+    @classmethod
     def tearDownClass(cls):
         """Print attributes of tested STH after all successful test cases"""
 
-        # It is possible the Bluetooth address is undefined, if connecting
-        # to the STH failed
-        try:
+        if cls.read_attributes:
             # Do not print anything, if MAC address is undefined
-            mac_address_sth = cls.bluetooth_mac
             print("\n\nTest Data")
             print("—————————")
-            print(f"STH Bluetooth address: {mac_address_sth}")
+            print(f"STH Bluetooth address: {cls.bluetooth_mac}")
             print()
-        except NameError:
-            pass
 
     def setUp(self):
         """Set up hardware before a single test case"""
@@ -88,8 +92,11 @@ class TestSth(TestCase):
                                               settings.STH.Name,
                                               log=False)
         sleep(2)
-        type(self).bluetooth_mac = sBlueToothMacAddr(
-            self.Can.BlueToothAddress(MyToolItNetworkNr["STH1"]))
+        if not type(self).read_attributes:
+            type(self).bluetooth_mac = sBlueToothMacAddr(
+                self.Can.BlueToothAddress(MyToolItNetworkNr["STH1"]))
+
+            type(self).read_attributes = True
 
     def __disconnect(self):
         """Tear down connection to STH"""
@@ -234,6 +241,11 @@ class TestSth(TestCase):
             f"STH power source voltage of {battery_voltage:.3f} V is " +
             "greater than expected maximum voltage of " +
             f"{expected_minimum_voltage} V")
+
+    def test_bluetooth_rssi(self):
+        """Test Bluetooth RSSI"""
+
+        print(f"RSSI STH: {self.Can.BlueToothRssi(MyToolItNetworkNr['STH1'])}")
 
     if __name__ == "__main__":
         main(failfast=True)
