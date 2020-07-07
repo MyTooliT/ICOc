@@ -198,6 +198,7 @@ class TestSth(TestCase):
     def test_battery_voltage(self):
         """Test voltage of STH power source"""
 
+        # Read 2 byte voltage format
         index = self.Can.singleValueCollect(
             MyToolItNetworkNr["STH1"],
             MyToolItStreaming["Voltage"],
@@ -208,10 +209,14 @@ class TestSth(TestCase):
             # Do not read voltage 3
             0,
             log=False)
-        battery_voltage_raw = iMessage2Value(
-            self.Can.getReadMessageData(index)[2:4])
-        self.assertIsNotNone(battery_voltage_raw,
-                             "Unable to read battery voltage")
+
+        message = self.Can.getReadMessageData(index)
+        self.assertEqual(len(message), 8,
+                         "Unable to read battery voltage data")
+        voltage_index_start = 2
+        voltage_index_end = voltage_index_start + 1
+        voltage_bytes = message[voltage_index_start:voltage_index_end + 1]
+        battery_voltage_raw = iMessage2Value(voltage_bytes)
 
         expected_voltage = settings.STH.Battery_Voltage.Average
         tolerance_voltage = settings.STH.Battery_Voltage.Tolerance
