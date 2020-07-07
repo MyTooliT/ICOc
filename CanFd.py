@@ -8,7 +8,6 @@ from MyToolItCommands import *
 from MyToolItNetworkNumbers import MyToolItNetworkNr, MyToolItNetworkName
 from Logger import Logger
 
-PeakCanInterrupt = 11
 PeakCanBitrateFd = "f_clock_mhz=20, nom_brp=5, nom_tseg1=2, nom_tseg2=1, nom_sjw=1, data_brp=2, data_tseg1=3, data_tseg2=1, data_sjw=1"
 
 
@@ -31,7 +30,6 @@ class CanFd(object):
         self.Logger.Info(str(sDateClock()))
         self.startTime = int(round(time.time() * 1000))
         self.pcan = PCANBasic()
-        self.interrupt = PeakCanInterrupt
         self.m_PcanHandle = PCAN_USBBUS1
         self.bError = False
         self.RunReadThread = False
@@ -51,7 +49,7 @@ class CanFd(object):
                                       PCAN_BAUD_1M,
                                       HwType=PCAN_TYPE_ISA,
                                       IOPort=0x2A0,
-                                      Interrupt=self.interrupt)
+                                      Interrupt=11)
         if result != PCAN_ERROR_OK:
             raise Exception(
                 self.__get_error_message("Unable to initialize CAN hardware",
