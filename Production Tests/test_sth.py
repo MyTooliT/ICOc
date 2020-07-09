@@ -57,6 +57,8 @@ class TestSTH(TestCase):
     def setUp(self):
         """Set up hardware before a single test case"""
 
+        type(self).report.add_test(self._testMethodName)
+
         # We do not need a CAN connection for the firmware flash test
         if self._testMethodName == 'test__firmware_flash':
             return
