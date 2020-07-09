@@ -17,6 +17,7 @@ class Report:
 
         self.canvas.setAuthor("MyTooliT")
         self.canvas.setTitle("Test Report")
+        self.canvas.setSubject("Sensory Tool Holder Test")
 
         self.canvas.drawString(100, 100, "MyTooliT Report")
 
