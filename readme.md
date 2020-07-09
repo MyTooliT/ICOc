@@ -152,7 +152,7 @@ If you want to also install additional tools, such as the IDE [Spyder](https://w
 Since MyToolIt Watch requires additional Python packages you need to install them too. You can do that using the following command inside PowerShell or the old Windows command line interface `cmd.exe`:
 
 ```sh
-pip install dynaconf matplotlib mysql-connector openpyxl windows-curses
+pip install dynaconf matplotlib mysql-connector openpyxl reportlab windows-curses
 ```
 
 For more information regarding the package installation, please take a look at [`anaconda-shell.bat`](anaconda-shell.bat) and [`installModules.py`](installModules.py).
