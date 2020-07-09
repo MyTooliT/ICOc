@@ -12,6 +12,16 @@ PeakCanBitrateFd = "f_clock_mhz=20, nom_brp=5, nom_tseg1=2, nom_tseg2=1, nom_sjw
 
 
 class CanFd(object):
+    """A class used to communicate over CAN
+
+    Objects of this class will create a thread that reads data from the CAN
+    bus. The thread will store the read data into a list, appending the latest
+    data at the end.
+
+    Unlike it name suggests, this class does currently not offer support for
+    CAN FD.
+    """
+
     def __init__(self,
                  testMethodName,
                  testMethodNameError,
