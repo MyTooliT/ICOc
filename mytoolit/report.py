@@ -16,6 +16,7 @@ class Report:
         self.width, self.height = A4
 
         self.canvas.setAuthor("MyTooliT")
+        self.canvas.setTitle("Test Report")
 
         self.canvas.drawString(100, 100, "MyTooliT Report")
 
