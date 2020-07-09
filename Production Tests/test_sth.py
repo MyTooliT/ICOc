@@ -14,6 +14,7 @@ module_path.append(join(repository_root, "Configuration"))
 from config import settings
 
 from mytoolit.can.identifier import Identifier
+from mytoolit.report import Report
 from CanFd import CanFd
 from MyToolItNetworkNumbers import MyToolItNetworkNr
 from MyToolItCommands import (ActiveState, MyToolItBlock, MyToolItSystem, Node,
@@ -30,6 +31,9 @@ class TestSTH(TestCase):
     def setUpClass(cls):
         """Set up data for whole test"""
 
+        # Initialize report
+        cls.report = Report()
+
         # We store attributes related to the connection, such as MAC address
         # and RSSI only once. To do that we set `read_attributes` to true after
         # the test class gathered the relevant data.
@@ -38,6 +42,8 @@ class TestSTH(TestCase):
     @classmethod
     def tearDownClass(cls):
         """Print attributes of tested STH after all successful test cases"""
+
+        cls.report.__exit__()
 
         if cls.read_attributes:
             # Do not print anything, if MAC address is undefined
