@@ -1,7 +1,26 @@
 # -- Imports ------------------------------------------------------------------
 
-from reportlab.lib.pagesizes import A4
-from reportlab.pdfgen.canvas import Canvas
+from reportlab.lib.units import cm
+from reportlab.platypus import SimpleDocTemplate, Spacer
+from reportlab.rl_config import defaultPageSize
+
+# -- Functions ----------------------------------------------------------------
+
+
+# noinspection PyUnusedLocal
+def _first_page(canvas, document):
+    """Define the style of the first page of the report"""
+
+    canvas.saveState()
+
+    page_height = defaultPageSize[1]
+    page_width = defaultPageSize[0]
+    canvas.setFont("Helvetica", 20)
+    canvas.drawCentredString(page_width / 2.0, page_height - 108,
+                             "MyTooliT Report")
+
+    canvas.restoreState()
+
 
 # -- Class --------------------------------------------------------------------
 
@@ -12,17 +31,13 @@ class Report:
     def __init__(self):
         """Initialize the report"""
 
-        self.canvas = Canvas('report.pdf', bottomup=0, pagesize=A4)
-        self.width, self.height = A4
-
-        self.canvas.setAuthor("MyTooliT")
-        self.canvas.setTitle("Test Report")
-        self.canvas.setSubject("Sensory Tool Holder Test")
-
-        self.canvas.drawString(100, 100, "MyTooliT Report")
+        self.document = SimpleDocTemplate('Report.pdf',
+                                          author='MyTooliT',
+                                          title='Test Report',
+                                          subject='Sensory Tool Holder Test')
+        self.story = [Spacer(1, 2 * cm)]
 
     def __exit__(self):
         """Store the PDF report"""
 
-        self.canvas.save()
-        self.canvas.showPage()
+        self.document.build(self.story, onFirstPage=_first_page)
