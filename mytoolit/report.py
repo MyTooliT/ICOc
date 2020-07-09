@@ -1,7 +1,8 @@
 # -- Imports ------------------------------------------------------------------
 
+from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import cm
-from reportlab.platypus import SimpleDocTemplate, Spacer
+from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer
 from reportlab.rl_config import defaultPageSize
 
 # -- Functions ----------------------------------------------------------------
@@ -36,6 +37,14 @@ class Report:
                                           title='Test Report',
                                           subject='Sensory Tool Holder Test')
         self.story = [Spacer(1, 2 * cm)]
+        self.style = getSampleStyleSheet()['Normal']
+
+    def add_test(self, name):
+        """Add information about a single test to the report"""
+
+        self.story.append(Spacer(1, 1 * cm))
+        # noinspection PyTypeChecker
+        self.story.append(Paragraph(name, self.style))
 
     def __exit__(self):
         """Store the PDF report"""
