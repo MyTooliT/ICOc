@@ -348,7 +348,7 @@ class CanFd(object):
             currentIndex = self.GetReadArrayIndex() - 1
         message = self.readArray[currentIndex]
 
-        if (False != printLog):
+        if printLog:
             print("Message ID Send: " + hex(CanMsg.ID))
             print("Message DATA Send: " + payload2Hex(CanMsg.DATA))
         returnMessage = self.WriteFrame(CanMsg)
