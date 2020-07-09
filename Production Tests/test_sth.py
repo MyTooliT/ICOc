@@ -84,8 +84,8 @@ class TestSTH(TestCase):
             35)
         self.can = CanFd(log_filepath,
                          log_filepath_error,
-                         MyToolItNetworkNr["SPU1"],
-                         MyToolItNetworkNr["STH1"],
+                         MyToolItNetworkNr['SPU1'],
+                         MyToolItNetworkNr['STH1'],
                          sth_limits.uSamplingRatePrescalerReset,
                          sth_limits.uSamplingRateAcqTimeReset,
                          sth_limits.uSamplingRateOverSamplesReset,
@@ -93,11 +93,11 @@ class TestSTH(TestCase):
 
         # Reset STU (and STH)
         self.can.bConnected = False
-        return_message = self.can.cmdReset(MyToolItNetworkNr["STU1"])
-        self.can.CanTimeStampStart(return_message["CanTime"])
+        return_message = self.can.cmdReset(MyToolItNetworkNr['STU1'])
+        self.can.CanTimeStampStart(return_message['CanTime'])
 
         # Connect to STH
-        self.can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
+        self.can.bBlueToothConnectPollingName(MyToolItNetworkNr['STU1'],
                                               settings.STH.Name,
                                               log=False)
         sleep(2)
@@ -108,7 +108,7 @@ class TestSTH(TestCase):
     def __disconnect(self):
         """Tear down connection to STH"""
 
-        self.can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
+        self.can.bBlueToothDisconnect(MyToolItNetworkNr['STU1'])
         self.can.__exit__()
 
     def __read_data(self):
@@ -117,12 +117,12 @@ class TestSTH(TestCase):
         cls = type(self)
 
         cls.bluetooth_mac = sBlueToothMacAddr(
-            self.can.BlueToothAddress(MyToolItNetworkNr["STH1"]))
+            self.can.BlueToothAddress(MyToolItNetworkNr['STH1']))
         cls.bluetooth_rssi = self.can.BlueToothRssi(MyToolItNetworkNr['STH1'])
 
-        index = self.can.cmdSend(MyToolItNetworkNr["STH1"],
-                                 MyToolItBlock["ProductData"],
-                                 MyToolItProductData["FirmwareVersion"], [])
+        index = self.can.cmdSend(MyToolItNetworkNr['STH1'],
+                                 MyToolItBlock['ProductData'],
+                                 MyToolItProductData['FirmwareVersion'], [])
         version = self.can.getReadMessageData(index)[-3:]
 
         cls.firmware_version = '.'.join(map(str, version))
@@ -135,7 +135,7 @@ class TestSTH(TestCase):
         """
 
         # Add path to Simplicity Commander
-        environ["PATH"] += (pathsep +
+        environ['PATH'] += (pathsep +
                             pathsep.join(settings.Commands.Path.Windows))
 
         identification_arguments = (
@@ -230,8 +230,8 @@ class TestSTH(TestCase):
 
         # Read 2 byte voltage format
         index = self.can.singleValueCollect(
-            MyToolItNetworkNr["STH1"],
-            MyToolItStreaming["Voltage"],
+            MyToolItNetworkNr['STH1'],
+            MyToolItStreaming['Voltage'],
             # Read voltage 1
             1,
             # Do not read voltage 2
