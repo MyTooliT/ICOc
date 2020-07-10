@@ -2,7 +2,8 @@
 
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import cm
-from reportlab.platypus import Flowable, Paragraph, SimpleDocTemplate, Spacer
+from reportlab.platypus import (Flowable, Paragraph, SimpleDocTemplate, Spacer,
+                                Table)
 from reportlab.rl_config import defaultPageSize
 from typing import List
 
@@ -42,19 +43,22 @@ class Report:
                                           subject='Sensory Tool Holder Test')
         self.story = [Spacer(1, 3 * cm)]
         self.style = getSampleStyleSheet()['Normal']
+        self.test_table = []
 
-    def add_test_result(self, name, result):
+    def add_test_result(self, description, result):
         """Add information about a single test result to the report"""
 
         result_text = 'Error' if result.errors else (
             'Failure' if result.failures else 'Ok')
 
-        self.story.append(
-            Paragraph(f"{name}: <b>{result_text}</b>",
-                      self.style,
-                      bulletText='•'))
+        self.test_table.append([
+            description,
+            Paragraph(f"<b>{result_text}</b>", style=self.style)
+        ])
 
     def __exit__(self):
         """Store the PDF report"""
+
+        self.story.append(Table(self.test_table))
 
         self.document.build(self.story, onFirstPage=_first_page)
