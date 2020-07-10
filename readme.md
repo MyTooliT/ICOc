@@ -398,15 +398,15 @@ The default output of the test is quite sparse. If you want additional informati
 python 'Production Tests/test_sth.py' -v
 ```
 
-### Specific Test Case
+### Specific Tests
 
-To only run a single test case you need the specify its name. For example, to run the test case `test__firmware_flash` you can use the following command:
+To only run a single test you need the specify its name. For example, to run the test `test__firmware_flash` you can use the following command:
 
 ```sh
 python -m unittest 'Production Tests.test_sth.TestSTH.test__firmware_flash'
 ```
 
-You can also run specific test cases using pattern matching. To do that use the command line option `-k`. For example to run the firmware flash and the connection test you can use the command:
+You can also run specific tests using pattern matching. To do that use the command line option `-k`. For example to run the firmware flash and the connection test you can use the command:
 
 ```sh
 python -m unittest 'Production Tests.test_sth' -k 'flash' -k 'connection'
