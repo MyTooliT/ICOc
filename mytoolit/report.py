@@ -2,8 +2,9 @@
 
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import cm
-from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer
+from reportlab.platypus import Flowable, Paragraph, SimpleDocTemplate, Spacer
 from reportlab.rl_config import defaultPageSize
+from typing import List
 
 # -- Functions ----------------------------------------------------------------
 
@@ -30,6 +31,8 @@ def _first_page(canvas, document):
 class Report:
     """Generate test reports using ReportLab"""
 
+    story: List[Flowable]  # Improve happiness of PyCharm type checker
+
     def __init__(self):
         """Initialize the report"""
 
@@ -46,7 +49,6 @@ class Report:
         result_text = 'Error' if result.errors else (
             'Failure' if result.failures else 'Ok')
 
-        # noinspection PyTypeChecker
         self.story.append(
             Paragraph(f"• {name}: <b>{result_text}</b>", self.style))
 
