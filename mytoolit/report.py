@@ -47,7 +47,8 @@ class Report:
             'Failure' if result.failures else 'Ok')
 
         # noinspection PyTypeChecker
-        self.story.append(Paragraph(f"• {name}: {result_text}", self.style))
+        self.story.append(
+            Paragraph(f"• {name}: <b>{result_text}</b>", self.style))
 
     def __exit__(self):
         """Store the PDF report"""
