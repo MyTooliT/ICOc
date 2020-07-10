@@ -406,6 +406,14 @@ To only run a single test case you need the specify its name. For example, to ru
 python -m unittest 'Production Tests.test_sth.TestSTH.test__firmware_flash'
 ```
 
+You can also run specific test cases using pattern matching. To do that use the command line option `-k`. For example to run the firmware flash and the connection test you can use the command:
+
+```sh
+python -m unittest 'Production Tests.test_sth' -k 'flash' -k 'connection'
+```
+
+, which executes all tests that contain the text `flash` or `connection`.
+
 ### Status
 
 Please note that the test currently only checks that flashing the device with the programming board works as expected.
