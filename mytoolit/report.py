@@ -50,7 +50,9 @@ class Report:
             'Failure' if result.failures else 'Ok')
 
         self.story.append(
-            Paragraph(f"• {name}: <b>{result_text}</b>", self.style))
+            Paragraph(f"{name}: <b>{result_text}</b>",
+                      self.style,
+                      bulletText='•'))
 
     def __exit__(self):
         """Store the PDF report"""
