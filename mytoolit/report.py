@@ -36,7 +36,7 @@ class Report:
                                           author='MyTooliT',
                                           title='Test Report',
                                           subject='Sensory Tool Holder Test')
-        self.story = [Spacer(1, 2 * cm)]
+        self.story = [Spacer(1, 3 * cm)]
         self.style = getSampleStyleSheet()['Normal']
 
     def add_test_result(self, name, result):
