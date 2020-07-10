@@ -66,13 +66,20 @@ class TestSTH(TestCase):
     def tearDown(self):
         """Clean up after single test case"""
 
-        type(self).report.add_test(self.shortDescription())
-
         # The firmware flash test does not require cleanup
         if self._testMethodName == 'test__firmware_flash':
             return
 
         self.__disconnect()
+
+    def run(self, result=None):
+        """Execute a single test
+
+        We override this method to store data about the test outcome.
+        """
+
+        super().run(result)
+        type(self).report.add_test_result(self.shortDescription(), result)
 
     def __connect(self):
         """Create a connection to the STH"""

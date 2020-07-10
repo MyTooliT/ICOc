@@ -39,12 +39,14 @@ class Report:
         self.story = [Spacer(1, 2 * cm)]
         self.style = getSampleStyleSheet()['Normal']
 
-    def add_test(self, name):
-        """Add information about a single test to the report"""
+    def add_test_result(self, name, result):
+        """Add information about a single test result to the report"""
 
-        self.story.append(Spacer(1, 1 * cm))
+        result_text = 'Error' if result.errors else (
+            'Failure' if result.failures else 'Ok')
+
         # noinspection PyTypeChecker
-        self.story.append(Paragraph(name, self.style))
+        self.story.append(Paragraph(f"• {name}: {result_text}", self.style))
 
     def __exit__(self):
         """Store the PDF report"""
