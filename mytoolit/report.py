@@ -16,7 +16,8 @@ def _first_page(canvas, document):
 
     page_height = defaultPageSize[1]
     page_width = defaultPageSize[0]
-    canvas.setFont("Helvetica", 20)
+    style = getSampleStyleSheet()['Heading1']
+    canvas.setFont(style.fontName, style.fontSize)
     canvas.drawCentredString(page_width / 2.0, page_height - 108,
                              "MyTooliT Report")
 
