@@ -9,12 +9,10 @@ from unittest import TestCase, main
 # Add path for custom libraries
 repository_root = dirname(dirname(abspath(__file__)))
 module_path.append(repository_root)
-module_path.append(join(repository_root, "Configuration"))
-
-from config import settings
 
 from mytoolit.can.identifier import Identifier
 from mytoolit.report.report import Report
+from mytoolit.configuration.config import settings
 from CanFd import CanFd
 from MyToolItNetworkNumbers import MyToolItNetworkNr
 from MyToolItCommands import (ActiveState, MyToolItBlock, MyToolItSystem, Node,
