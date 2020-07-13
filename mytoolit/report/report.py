@@ -56,7 +56,7 @@ class Report:
         self.story = [Spacer(1, 5 * cm)]
         self.style = getSampleStyleSheet()['Normal']
         self.attributes = []
-        self.test_table = []
+        self.tests = []
 
     def add_attribute(self, name, value):
         """Add information about an STH attribute to the report
@@ -87,7 +87,7 @@ class Report:
         result_text = 'Error' if result.errors else (
             'Failure' if result.failures else 'Ok')
 
-        self.test_table.append([
+        self.tests.append([
             description,
             Paragraph(f"<b>{result_text}</b>", style=self.style)
         ])
@@ -99,6 +99,6 @@ class Report:
             self.story.append(Table(self.attributes))
             self.story.append(Spacer(1, 2 * cm))
 
-        self.story.append(Table(self.test_table))
+        self.story.append(Table(self.tests))
 
         self.document.build(self.story, onFirstPage=_first_page)
