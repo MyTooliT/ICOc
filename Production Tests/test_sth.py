@@ -14,7 +14,7 @@ module_path.append(join(repository_root, "Configuration"))
 from config import settings
 
 from mytoolit.can.identifier import Identifier
-from mytoolit.report import Report
+from mytoolit.report.report import Report
 from CanFd import CanFd
 from MyToolItNetworkNumbers import MyToolItNetworkNr
 from MyToolItCommands import (ActiveState, MyToolItBlock, MyToolItSystem, Node,
