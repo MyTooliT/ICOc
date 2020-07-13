@@ -58,7 +58,16 @@ class Report:
         self.test_table = []
 
     def add_test_result(self, description, result):
-        """Add information about a single test result to the report"""
+        """Add information about a single test result to the report
+
+        Parameters
+        ----------
+
+        description:
+            A textual description of the test
+        result:
+            The unit test result of the test
+        """
 
         result_text = 'Error' if result.errors else (
             'Failure' if result.failures else 'Ok')
