@@ -55,7 +55,22 @@ class Report:
                                           subject='Sensory Tool Holder Test')
         self.story = [Spacer(1, 5 * cm)]
         self.style = getSampleStyleSheet()['Normal']
+        self.attributes = []
         self.test_table = []
+
+    def add_attribute(self, name, value):
+        """Add information about an STH attribute to the report
+
+        Parameters
+        ----------
+
+        name:
+            The name of the STH attribute
+        value:
+            The value of the STH attribute
+        """
+
+        self.attributes.append([name, value])
 
     def add_test_result(self, description, result):
         """Add information about a single test result to the report
@@ -79,6 +94,10 @@ class Report:
 
     def __exit__(self):
         """Store the PDF report"""
+
+        if len(self.attributes) > 0:
+            self.story.append(Table(self.attributes))
+            self.story.append(Spacer(1, 2 * cm))
 
         self.story.append(Table(self.test_table))
 

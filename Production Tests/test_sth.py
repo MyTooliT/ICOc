@@ -43,16 +43,22 @@ class TestSTH(TestCase):
     def tearDownClass(cls):
         """Print attributes of tested STH after all successful test cases"""
 
-        cls.report.__exit__()
-
         if cls.read_attributes:
             # Do not print anything, if MAC address is undefined
             print("\n\nTest Data")
             print("—————————")
-            print(f"Bluetooth address: {cls.bluetooth_mac}")
-            print(f"RSSI:              {cls.bluetooth_rssi} dBm")
-            print(f"Firmware Version:  {cls.firmware_version}")
+
+            attributes = [["Bluetooth Address", cls.bluetooth_mac],
+                          ["RSSI", f"{cls.bluetooth_rssi} dBm"],
+                          ["Firmware Version", cls.firmware_version]]
+
+            for description, value in attributes:
+                print(f"{description}: {value}")
+                cls.report.add_attribute(description, value)
+
             print()
+
+        cls.report.__exit__()
 
     def setUp(self):
         """Set up hardware before a single test case"""
