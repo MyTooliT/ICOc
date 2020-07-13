@@ -20,24 +20,7 @@ class ConfigKeys():
         self.tree.close()
 
     """
-    Load Data Base access data
-    @param sDataBaseName Data Base to use e.g. icotronic
-    @return Dict with mySql connection data
-    """
-
-    def atConfigKeyDataBase(self, sDataBaseName):
-        atDbData = {}
-        for tDataBase in self.root.find('DataBase'):
-            if sDataBaseName == tDataBase.get('name'):
-                atDbData["sHost"] = str(tDataBase.find('Host').text)
-                atDbData["sUser"] = str(tDataBase.find('User').text)
-                atDbData["sPassword"] = str(tDataBase.find('Password').text)
-                atDbData["sName"] = str(tDataBase.find('name').text)
-        return atDbData
-
-    """
     Load STH configuration out of xml file
-    @return Dict with mySql connection data
     @return Nothing
     """
 
@@ -81,7 +64,6 @@ class ConfigKeys():
 
     """
     Load STU configuration out of xml file
-    @return Dict with mySql connection data
     """
 
     def atXmlConfigurationStu(self):
@@ -118,11 +100,6 @@ class ConfigKeys():
                                     tHwRevSub.find('Key').text)
         return atDbData
 
-    """
-    Load Data Base access data
-    @param sDataBaseName Data Base to use e.g. icotronic
-    @return Dict with mySql connection data
-    """
 
     def atPlotterSocket(self, sSocketName):
         atSocketData = {}

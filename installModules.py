@@ -5,16 +5,7 @@ import subprocess
 import sys
 import os
 
-asModuleList = [
-    "openpyxl", "matplotlib", "windows-curses", "mysql-connector", "dnspython"
-]
-# anaconda notes: mysql-connector-python
-# (dnspython: for what?)
-# install mysql from here (~30MB): https://dev.mysql.com/downloads/installer/
-# install with user and pw acc to configKeys.xml
-# open mysql command line
-# * create database sth;
-# * create database stu;
+asModuleList = ["openpyxl", "matplotlib", "windows-curses", "dnspython"]
 
 
 def bModuleExists(sModuleName):

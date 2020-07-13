@@ -8,20 +8,6 @@
         <SheetFile>Sth</SheetFile>
         <Setup>X</Setup>
     </lastRun>
-    <DataBase>
-        <dataBase name="sth">
-            <Host>localhost</Host>
-            <User>root</User>
-            <Password>icotronic</Password>
-            <name>sth</name>
-		</dataBase>
-        <dataBase name="stu">
-            <Host>localhost</Host>
-            <User>root</User>
-            <Password>icotronic</Password>
-            <name>stu</name>
-        </dataBase>
-    </DataBase>
     <Plotter>
         <plotter name="standard">
             <Host>localhost</Host>

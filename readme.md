@@ -152,39 +152,10 @@ If you want to also install additional tools, such as the IDE [Spyder](https://w
 Since MyToolIt Watch requires additional Python packages you need to install them too. You can do that using the following command inside PowerShell or the old Windows command line interface `cmd.exe`:
 
 ```sh
-pip install dynaconf matplotlib mysql-connector openpyxl pdfrw reportlab windows-curses
+pip install dynaconf matplotlib openpyxl pdfrw reportlab windows-curses
 ```
 
 For more information regarding the package installation, please take a look at [`anaconda-shell.bat`](anaconda-shell.bat) and [`installModules.py`](installModules.py).
-
-### MySQL
-
-MyToolIt Watch requires a running MySQL database. To download MySQL, please visit the [official web page](https://dev.mysql.com/downloads/installer). The smaller “web” installer should be sufficient for our needs.
-
-1. In the setup screen of the installer, please choose the option “Server only”
-2. Check Requirements:
-   - Click on the entry “MySQL server” an press “Execute” to install the required software
-3. Installation:
-   - Choose “MySQL server” an press “Execute” to download MySQL server
-4. Product Configuration:
-
-   1. High Availability: Choose “Standalone MySQL server”
-   2. Type and Networking: Proceed with the standard options
-   3. Authentication Method: Use Legacy Authentication Method
-   4. Accounts and Rules:
-
-      - Password: icotronic
-
-   5. Windows Service: Proceed with the standard options
-   6. Apply Configuration: Press “Execute”
-
-#### Configuration
-
-Please open the MySQL Command Line Client and execute the following command:
-
-```sql
-create database sth;
-```
 
 ### MyToolIt Watch
 

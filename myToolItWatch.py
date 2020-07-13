@@ -13,10 +13,6 @@ from datetime import datetime
 from configKeys import ConfigKeys
 sDirName = os.path.dirname('')
 sys.path.append(sDirName)
-file_path = 'DataBase/'
-sDirName = os.path.dirname(file_path)
-sys.path.append(sDirName)
-from MyToolItDb import MyToolItDb, Eeprom
 import getopt
 import openpyxl
 from openpyxl.styles import Font
@@ -50,10 +46,6 @@ Watch = {
 class myToolItWatch():
     def __init__(self, *args, **kwargs):
         self.vXmlConfigSet('configKeys.xml')
-        dDict = self.tXmlConfig.atConfigKeyDataBase(
-            "sth")  #Todo Data Base Schemata for this... Thinking before doing
-        self.tDb = MyToolItDb(dDict["sHost"], dDict["sUser"],
-                              dDict["sPassword"], dDict["sName"])
         self.KeyBoadInterrupt = False
         self.bEepromIgnoreReadErrors = False
         self.bError = False
