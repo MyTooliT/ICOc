@@ -284,5 +284,6 @@ class TestSTH(TestCase):
             "greater than expected maximum voltage of " +
             f"{expected_minimum_voltage} V")
 
-    if __name__ == "__main__":
-        main(failfast=True)
+
+if __name__ == "__main__":
+    main(failfast=True)
