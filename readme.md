@@ -358,7 +358,7 @@ Error Status Word of the STU and this <u>**Error Status Word must be 0.**</u>
 To run the production tests for the STH, please execute the following command in the root of the repository:
 
 ```sh
-python 'Production Tests/test_sth.py'
+python 'mytoolit/test/production/sth.py'
 ```
 
 ### Verbose Output
@@ -366,7 +366,7 @@ python 'Production Tests/test_sth.py'
 The default output of the test is quite sparse. If you want additional information about the currently running test, you can add the verbose option (`-v`) at the end of the command:
 
 ```sh
-python 'Production Tests/test_sth.py' -v
+python 'mytoolit/test/production/sth.py' -v
 ```
 
 ### Specific Tests
@@ -374,13 +374,13 @@ python 'Production Tests/test_sth.py' -v
 To only run a single test you need the specify its name. For example, to run the test `test__firmware_flash` you can use the following command:
 
 ```sh
-python -m unittest 'Production Tests.test_sth.TestSTH.test__firmware_flash'
+python -m unittest 'mytoolit.test.production.sth.TestSTH.test__firmware_flash'
 ```
 
 You can also run specific tests using pattern matching. To do that use the command line option `-k`. For example to run the firmware flash and the connection test you can use the command:
 
 ```sh
-python -m unittest 'Production Tests.test_sth' -k 'flash' -k 'connection'
+python -m unittest 'mytoolit.test.production.sth' -k 'flash' -k 'connection'
 ```
 
 , which executes all tests that contain the text `flash` or `connection`.
