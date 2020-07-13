@@ -102,7 +102,9 @@ class Report:
 
         if len(self.attributes) > 0:
             add_header("Attributes")
-            self.story.append(Table(self.attributes))
+            attributes = Table(self.attributes)
+            attributes.hAlign = 'LEFT'
+            self.story.append(attributes)
 
         add_header("Test Results")
         self.story.append(Table(self.tests))
