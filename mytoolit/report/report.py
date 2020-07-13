@@ -1,11 +1,14 @@
 # -- Imports ------------------------------------------------------------------
 
+from os.path import join
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import cm
 from reportlab.platypus import (Flowable, Paragraph, SimpleDocTemplate, Spacer,
                                 Table)
 from reportlab.rl_config import defaultPageSize
 from typing import List
+
+from .pdf import PDFImage
 
 # -- Functions ----------------------------------------------------------------
 
@@ -16,12 +19,21 @@ def _first_page(canvas, document):
 
     canvas.saveState()
 
-    page_height = defaultPageSize[1]
     page_width = defaultPageSize[0]
+    page_height = defaultPageSize[1]
+    logo_width = 370
+    logo_height = 75
+    logo_offset = 50
+    title_offset = logo_offset + logo_height + 20
+
+    PDFImage(join('assets', 'MyTooliT.pdf'), logo_width,
+             logo_height).drawOn(canvas, (page_width - logo_width) / 2,
+                                 page_height - logo_offset - logo_height)
+
     style = getSampleStyleSheet()['Heading1']
     canvas.setFont(style.fontName, style.fontSize)
-    canvas.drawCentredString(page_width / 2.0, page_height - 108,
-                             "MyTooliT Report")
+    canvas.drawCentredString(page_width / 2, page_height - title_offset,
+                             "STH Test Report")
 
     canvas.restoreState()
 
@@ -41,7 +53,7 @@ class Report:
                                           author='MyTooliT',
                                           title='Test Report',
                                           subject='Sensory Tool Holder Test')
-        self.story = [Spacer(1, 3 * cm)]
+        self.story = [Spacer(1, 5 * cm)]
         self.style = getSampleStyleSheet()['Normal']
         self.test_table = []
 
