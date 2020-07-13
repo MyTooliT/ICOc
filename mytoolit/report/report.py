@@ -53,8 +53,8 @@ class Report:
                                           author='MyTooliT',
                                           title='Test Report',
                                           subject='Sensory Tool Holder Test')
-        self.story = [Spacer(1, 5 * cm)]
-        self.style = getSampleStyleSheet()['Normal']
+        self.story = [Spacer(1, 3 * cm)]
+        self.styles = getSampleStyleSheet()
         self.attributes = []
         self.tests = []
 
@@ -95,10 +95,16 @@ class Report:
     def __exit__(self):
         """Store the PDF report"""
 
-        if len(self.attributes) > 0:
-            self.story.append(Table(self.attributes))
-            self.story.append(Spacer(1, 2 * cm))
+        def add_header(header):
+            self.story.append(Spacer(1, 0.2 * cm))
+            self.story.append(Paragraph(header, style=self.styles['Heading2']))
+            self.story.append(Spacer(1, 0.5 * cm))
 
+        if len(self.attributes) > 0:
+            add_header("Attributes")
+            self.story.append(Table(self.attributes))
+
+        add_header("Test Results")
         self.story.append(Table(self.tests))
 
         self.document.build(self.story, onFirstPage=_first_page)
