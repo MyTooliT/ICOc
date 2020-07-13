@@ -87,9 +87,10 @@ class Report:
         result_text = 'Error' if result.errors else (
             'Failure' if result.failures else 'Ok')
 
+        normal = self.styles['Normal']
         self.tests.append([
-            description,
-            Paragraph(f"<b>{result_text}</b>", style=self.style)
+            Paragraph(description, style=normal),
+            Paragraph(f"<b>{result_text}</b>", style=normal)
         ])
 
     def __exit__(self):
@@ -107,6 +108,8 @@ class Report:
             self.story.append(attributes)
 
         add_header("Test Results")
-        self.story.append(Table(self.tests))
+        tests = Table(self.tests, colWidths=[8 * cm, 1 * cm])
+        tests.hAlign = 'LEFT'
+        self.story.append(tests)
 
         self.document.build(self.story, onFirstPage=_first_page)
