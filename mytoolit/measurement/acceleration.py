@@ -7,7 +7,7 @@ from sys import path as module_path
 repository_root = dirname(dirname(abspath(__file__)))
 module_path.append(repository_root)
 
-from mytoolit.configuration.config import settings
+from mytoolit.config import settings
 
 # -- Functions ----------------------------------------------------------------
 

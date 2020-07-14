@@ -13,7 +13,7 @@ module_path.append(repository_root)
 from mytoolit.can.identifier import Identifier
 from mytoolit.measurement.acceleration import convert_acceleration_raw_to_g
 from mytoolit.report.report import Report
-from mytoolit.configuration.config import settings
+from mytoolit.config import settings
 
 from CanFd import CanFd
 from MyToolItNetworkNumbers import MyToolItNetworkNr
