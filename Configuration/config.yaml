@@ -12,6 +12,13 @@ Commands:
       - C:\SiliconLabs\SimplicityStudio\v4\developer\adapter_packs\commander
 
 STH:
+  Acceleration Sensor:
+    # Maximum Acceleration of sensor in multiples of g₀ (= 9.807 m/s²)
+    Maximum Acceleration: 200
+    # Tolerance to expected (stationary) acceleration value (of 0 m/s²) in
+    # multiples of g₀
+    Acceleration Tolerance: 3
+
   Battery Voltage:
     Average: 3.2 # Expected value of power source voltage in Volt
     Tolerance: 0.3 # Tolerance for expected power source voltage in Volt

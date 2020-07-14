@@ -11,8 +11,10 @@ repository_root = dirname(dirname(dirname(dirname(abspath(__file__)))))
 module_path.append(repository_root)
 
 from mytoolit.can.identifier import Identifier
+from mytoolit.measurement.acceleration import convert_acceleration_raw_to_g
 from mytoolit.report.report import Report
 from mytoolit.configuration.config import settings
+
 from CanFd import CanFd
 from MyToolItNetworkNumbers import MyToolItNetworkNr
 from MyToolItCommands import (ActiveState, MyToolItBlock, MyToolItSystem, Node,
@@ -283,6 +285,40 @@ class TestSTH(TestCase):
             f"STH power source voltage of {battery_voltage:.3f} V is " +
             "greater than expected maximum voltage of " +
             f"{expected_minimum_voltage} V")
+
+    def test_acceleration(self):
+        """Test stationary acceleration value"""
+
+        # Read acceleration at x-axis
+        index = self.can.singleValueCollect(MyToolItNetworkNr['STH1'],
+                                            MyToolItStreaming['Acceleration'],
+                                            1, 0, 0)
+        acceleration_raw, _, _ = self.can.singleValueArray(
+            MyToolItNetworkNr['STH1'], MyToolItStreaming['Acceleration'], 1, 0,
+            0, index)
+        acceleration_value_raw = acceleration_raw[0]
+        acceleration = convert_acceleration_raw_to_g(acceleration_value_raw)
+
+        # We expect a stationary acceleration of the standard gravity
+        # (1 g₀ = 9.807 m/s²)
+        expected_acceleration = 1
+        tolerance_acceleration = (
+            settings.STH.Acceleration_Sensor.Acceleration_Tolerance)
+        expected_minimum_acceleration = (expected_acceleration -
+                                         tolerance_acceleration)
+        expected_maximum_acceleration = (expected_acceleration +
+                                         tolerance_acceleration)
+
+        self.assertGreaterEqual(
+            acceleration, expected_minimum_acceleration,
+            f"Measured acceleration {acceleration:.3f} g₀ is lower " +
+            "than expected minimum acceleration " +
+            f"{expected_minimum_acceleration} g₀")
+        self.assertLessEqual(
+            acceleration, expected_maximum_acceleration,
+            f"Measured acceleration {acceleration:.3f} g₀ is greater " +
+            "than expected maximum acceleration " +
+            f"{expected_maximum_acceleration} g₀")
 
 
 if __name__ == "__main__":
