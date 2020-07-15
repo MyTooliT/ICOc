@@ -13,7 +13,7 @@ from mytoolit.config import settings
 # -- Functions ----------------------------------------------------------------
 
 
-def convert_acceleration_raw_to_g(acceleration_raw):
+def convert_acceleration_adc_to_g(acceleration_raw):
     """Convert an acceleration value sent by the STH into a factor
 
     The factor measures the amount of the gravitational force

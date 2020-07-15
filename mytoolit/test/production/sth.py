@@ -11,7 +11,7 @@ repository_root = dirname(dirname(dirname(dirname(abspath(__file__)))))
 module_path.append(repository_root)
 
 from mytoolit.can.identifier import Identifier
-from mytoolit.measurement.acceleration import (convert_acceleration_raw_to_g,
+from mytoolit.measurement.acceleration import (convert_acceleration_adc_to_g,
                                                signal_noise_ratio)
 from mytoolit.report.report import Report
 from mytoolit.config import settings
@@ -303,7 +303,7 @@ class TestSTH(TestCase):
             MyToolItNetworkNr['STH1'], MyToolItStreaming['Acceleration'], 1, 0,
             0, index)
         acceleration_value_raw = acceleration_raw[0]
-        acceleration = convert_acceleration_raw_to_g(acceleration_value_raw)
+        acceleration = convert_acceleration_adc_to_g(acceleration_value_raw)
 
         # We expect a stationary acceleration of the standard gravity
         # (1 g₀ = 9.807 m/s²)
