@@ -309,7 +309,7 @@ class TestSTH(TestCase):
         # (1 g₀ = 9.807 m/s²)
         expected_acceleration = 1
         tolerance_acceleration = (
-            settings.STH.Acceleration_Sensor.Acceleration_Tolerance)
+            settings.STH.Acceleration_Sensor.Acceleration.Tolerance)
         expected_minimum_acceleration = (expected_acceleration -
                                          tolerance_acceleration)
         expected_maximum_acceleration = (expected_acceleration +
@@ -345,7 +345,8 @@ class TestSTH(TestCase):
         cls = type(self)
         cls.snr = signal_noise_ratio(expected_acceleration_adc, array1)
 
-        expected_minimum_snr = settings.STH.Acceleration_Sensor.Minimum_SNR
+        expected_minimum_snr = (
+            settings.STH.Acceleration_Sensor.Acceleration.Minimum_SNR)
         self.assertGreaterEqual(
             cls.snr, expected_minimum_snr,
             f"Measured signal to noise ratio {cls.snr} dB is lower " +

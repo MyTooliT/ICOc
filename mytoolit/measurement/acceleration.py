@@ -33,7 +33,7 @@ def convert_acceleration_adc_to_g(acceleration_raw):
 
     max_value_adc = 0xffff
     acceleration_to_gravity = (
-        settings.STH.Acceleration_Sensor.Maximum_Acceleration)
+        settings.STH.Acceleration_Sensor.Acceleration.Maximum)
 
     # The code (probably) subtracts 1/2 from the computed value, since the STH
     # linearly maps the maximum negative acceleration to 0 and the maximum

@@ -13,14 +13,15 @@ Commands:
 
 STH:
   Acceleration Sensor:
-    # Maximum Acceleration of sensor in multiples of g₀ (= 9.807 m/s²)
-    Maximum Acceleration: 200
-    # Tolerance to expected (stationary) acceleration value (of 0 m/s²) in
-    # multiples of g₀
-    Acceleration Tolerance: 3
-    # Minimum signal to noise ratio (SNR) in dB. If the measured SNR
-    # is below this level, then the tested STH will be considered faulty.
-    Minimum SNR: 20
+    Acceleration:
+      # Maximum Acceleration of sensor in multiples of g₀ (= 9.807 m/s²)
+      Maximum: 200
+      # Tolerance to expected (stationary) acceleration value (of 0 m/s²) in
+      # multiples of g₀
+      Tolerance: 3
+      # Minimum signal to noise ratio (SNR) in dB. If the measured SNR
+      # is below this level, then the tested STH will be considered faulty.
+      Minimum SNR: 20
 
   Battery Voltage:
     Average: 3.2 # Expected value of power source voltage in Volt
