@@ -11,14 +11,16 @@ repository_root = dirname(dirname(dirname(dirname(abspath(__file__)))))
 module_path.append(repository_root)
 
 from mytoolit.can.identifier import Identifier
-from mytoolit.measurement.acceleration import convert_acceleration_raw_to_g
+from mytoolit.measurement.acceleration import (convert_acceleration_raw_to_g,
+                                               signal_noise_ratio)
 from mytoolit.report.report import Report
 from mytoolit.config import settings
 
 from CanFd import CanFd
 from MyToolItNetworkNumbers import MyToolItNetworkNr
-from MyToolItCommands import (ActiveState, MyToolItBlock, MyToolItSystem, Node,
-                              iMessage2Value, NetworkState, sBlueToothMacAddr,
+from MyToolItCommands import (ActiveState, DataSets, MyToolItBlock,
+                              MyToolItSystem, Node, iMessage2Value,
+                              NetworkState, sBlueToothMacAddr,
                               MyToolItProductData, MyToolItStreaming)
 from MyToolItSth import fVoltageBattery
 from SthLimits import SthLimits
@@ -51,6 +53,10 @@ class TestSTH(TestCase):
             attributes = [["Bluetooth Address", cls.bluetooth_mac],
                           ["RSSI", f"{cls.bluetooth_rssi} dBm"],
                           ["Firmware Version", cls.firmware_version]]
+
+            if hasattr(cls, 'snr'):
+                attributes.append(
+                    ["Signal to Noise Ratio", f"{cls.snr:.3f} dB"])
 
             for description, value in attributes:
                 print(f"{description}: {value}")
@@ -319,6 +325,32 @@ class TestSTH(TestCase):
             f"Measured acceleration {acceleration:.3f} g₀ is greater " +
             "than expected maximum acceleration " +
             f"{expected_maximum_acceleration} g₀")
+
+    def test_acceleration_snr(self):
+        """Test signal to noise ratio of sensor"""
+
+        # Read x-acceleration values in single data sets for 4
+        # seconds
+        index_start, index_end = self.can.streamingValueCollect(
+            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
+            DataSets[1], 1, 0, 0, 4000)
+
+        [array1, array2, array3] = self.can.streamingValueArray(
+            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
+            DataSets[1], 1, 0, 0, index_start, index_end)
+
+        # We expect an acceleration of zero (half of the 16 Bit maximum ADC
+        # value)
+        expected_acceleration_adc = 2**15
+        cls = type(self)
+        cls.snr = signal_noise_ratio(expected_acceleration_adc, array1)
+
+        expected_minimum_snr = settings.STH.Acceleration_Sensor.Minimum_SNR
+        self.assertGreaterEqual(
+            cls.snr, expected_minimum_snr,
+            f"Measured signal to noise ratio {cls.snr} dB is lower " +
+            "than expected minimum signal to noise ratio " +
+            f"{expected_minimum_snr} dB")
 
 
 if __name__ == "__main__":

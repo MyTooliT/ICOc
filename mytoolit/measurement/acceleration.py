@@ -1,6 +1,7 @@
 # -- Imports ------------------------------------------------------------------
 
 from os.path import abspath, dirname
+from math import log
 from sys import path as module_path
 
 # Add path for custom libraries
@@ -40,3 +41,26 @@ def convert_acceleration_raw_to_g(acceleration_raw):
     acceleration_in_g = (acceleration_raw / max_value_adc -
                          1 / 2) * acceleration_to_gravity
     return acceleration_in_g
+
+
+def signal_noise_ratio(expected_value, values):
+    """Calculate the signal to noise ratio in dB
+
+    Parameters
+    ----------
+
+    expected_value:
+        A single value that represents the expected value of the signal
+    values:
+        An iterable object that stores a series of measured values
+        (signal value + noise)
+
+    Returns
+    -------
+
+    The signal to noise ratio of the measured values in dB
+    """
+
+    noise = [abs(expected_value - value) for value in values]
+    average_noise = sum(noise) / len(noise)
+    return 10 * log(expected_value / average_noise, 10)
