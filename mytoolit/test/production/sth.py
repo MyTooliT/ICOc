@@ -18,10 +18,22 @@ from mytoolit.config import settings
 
 from CanFd import CanFd
 from MyToolItNetworkNumbers import MyToolItNetworkNr
-from MyToolItCommands import (ActiveState, DataSets, MyToolItBlock,
-                              MyToolItSystem, Node, iMessage2Value,
-                              NetworkState, sBlueToothMacAddr,
-                              MyToolItProductData, MyToolItStreaming)
+from MyToolItCommands import (
+    ActiveState,
+    AdcMax,
+    AdcReference,
+    CalibMeassurementActionNr,
+    CalibMeassurementTypeNr,
+    DataSets,
+    iMessage2Value,
+    MyToolItBlock,
+    MyToolItProductData,
+    MyToolItStreaming,
+    MyToolItSystem,
+    NetworkState,
+    Node,
+    sBlueToothMacAddr,
+)
 from MyToolItSth import fVoltageBattery
 from SthLimits import SthLimits
 
@@ -352,6 +364,71 @@ class TestSTH(TestCase):
             f"Measured signal to noise ratio {cls.snr} dB is lower " +
             "than expected minimum signal to noise ratio " +
             f"{expected_minimum_snr} dB")
+
+    def test_acceleration_selftest(self):
+        """Execute self test of accelerometer"""
+
+        def measure_voltage():
+            """Measure the accelerometer voltage in mV"""
+            response = self.can.calibMeasurement(
+                MyToolItNetworkNr['STH1'],
+                CalibMeassurementActionNr['Measure'],
+                CalibMeassurementTypeNr['Acc'],
+                # Measure x-dimension
+                1,
+                AdcReference['VDD'])
+            index_result = 4
+            adc_value = iMessage2Value(response[index_result:])
+            return 100 * AdcReference['VDD'] * adc_value / AdcMax
+
+        voltage_before_test = measure_voltage()
+
+        # Turn on self test and wait for activation
+        self.can.calibMeasurement(MyToolItNetworkNr['STH1'],
+                                  CalibMeassurementActionNr['Inject'],
+                                  CalibMeassurementTypeNr['Acc'], 1,
+                                  AdcReference['VDD'])
+        sleep(0.1)
+
+        # Turn off self test and wait for deactivation
+        voltage_at_test = measure_voltage()
+        self.can.calibMeasurement(MyToolItNetworkNr['STH1'],
+                                  CalibMeassurementActionNr['Eject'],
+                                  CalibMeassurementTypeNr['Acc'], 1,
+                                  AdcReference['VDD'])
+        sleep(0.1)
+
+        voltage_after_test = measure_voltage()
+
+        voltage_diff = voltage_at_test - voltage_before_test
+
+        voltage_diff_expected = (
+            settings.STH.Acceleration_Sensor.Self_Test.Voltage.Difference)
+        voltage_diff_tolerance = (
+            settings.STH.Acceleration_Sensor.Self_Test.Voltage.Tolerance)
+
+        voltage_diff_minimum = voltage_diff_expected - voltage_diff_tolerance
+        voltage_diff_maximum = voltage_diff_expected + voltage_diff_tolerance
+
+        self.assertLess(
+            voltage_before_test, voltage_at_test,
+            f"Self test voltage of {voltage_at_test:.0f} mV was lower " +
+            f"than voltage before test {voltage_before_test:.0f} mv")
+        self.assertLess(
+            voltage_after_test, voltage_at_test,
+            f"Self test voltage of {voltage_at_test:.0f} mV was lower " +
+            f"than voltage after test {voltage_before_test:.0f} mv")
+
+        self.assertGreaterEqual(
+            voltage_diff, voltage_diff_minimum,
+            f"Measured voltage difference of {voltage_diff:.0f} mV is lower " +
+            "than expected minimum voltage difference of " +
+            f"{voltage_diff_minimum:.0f} mV")
+        self.assertLessEqual(
+            voltage_diff, voltage_diff_maximum,
+            f"Measured voltage difference of {voltage_diff:.0f} mV is " +
+            "greater than expected minimum voltage difference of " +
+            f"{voltage_diff_maximum:.0f} mV")
 
 
 if __name__ == "__main__":
