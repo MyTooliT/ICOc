@@ -63,4 +63,4 @@ def signal_noise_ratio(expected_value, values):
 
     noise = [abs(expected_value - value) for value in values]
     average_noise = sum(noise) / len(noise)
-    return 10 * log(expected_value / average_noise, 10)
+    return 20 * log(expected_value / average_noise, 10)
