@@ -335,7 +335,7 @@ class TestSTH(TestCase):
             MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
             DataSets[1], 1, 0, 0, 4000)
 
-        [array1, array2, array3] = self.can.streamingValueArray(
+        acceleration, _, _ = self.can.streamingValueArray(
             MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
             DataSets[1], 1, 0, 0, index_start, index_end)
 
@@ -343,7 +343,7 @@ class TestSTH(TestCase):
         # value)
         expected_acceleration_adc = 2**15
         cls = type(self)
-        cls.snr = signal_noise_ratio(expected_acceleration_adc, array1)
+        cls.snr = signal_noise_ratio(expected_acceleration_adc, acceleration)
 
         expected_minimum_snr = (
             settings.STH.Acceleration_Sensor.Acceleration.Minimum_SNR)
