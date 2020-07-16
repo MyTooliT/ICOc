@@ -292,7 +292,7 @@ class TestSTH(TestCase):
             "greater than expected maximum voltage of " +
             f"{expected_minimum_voltage} V")
 
-    def test_acceleration(self):
+    def test_acceleration_single_value(self):
         """Test stationary acceleration value"""
 
         # Read acceleration at x-axis
