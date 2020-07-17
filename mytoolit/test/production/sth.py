@@ -4,6 +4,7 @@ from re import escape
 from subprocess import run
 from sys import path as module_path
 from time import sleep
+from types import SimpleNamespace
 from unittest import TestCase, main
 
 # Add path for custom libraries
@@ -57,20 +58,35 @@ class TestSTH(TestCase):
     def tearDownClass(cls):
         """Print attributes of tested STH after all successful test cases"""
 
-        if cls.read_attributes:
-            # Do not print anything, if MAC address is undefined
+        # Check available read hardware attributes
+        possible_attributes = [
+            SimpleNamespace(name='bluetooth_mac',
+                            description="Bluetooth Address",
+                            value="{cls.bluetooth_mac}"),
+            SimpleNamespace(name='bluetooth_rssi',
+                            description="RSSI",
+                            value="{cls.bluetooth_rssi} dBm"),
+            SimpleNamespace(name='firmware_version',
+                            description="Firmware Version",
+                            value="{cls.firmware_version}"),
+            SimpleNamespace(name='snr',
+                            description="Signal to Noise Ratio",
+                            value="{cls.snr:.3f} dB")
+        ]
+
+        attributes = [
+            attribute for attribute in possible_attributes
+            if hasattr(cls, attribute.name)
+        ]
+
+        # Only print something, if at least one attribute was read
+        if attributes:
             print("\n\nTest Data")
             print("—————————")
 
-            attributes = [["Bluetooth Address", cls.bluetooth_mac],
-                          ["RSSI", f"{cls.bluetooth_rssi} dBm"],
-                          ["Firmware Version", cls.firmware_version]]
-
-            if hasattr(cls, 'snr'):
-                attributes.append(
-                    ["Signal to Noise Ratio", f"{cls.snr:.3f} dB"])
-
-            for description, value in attributes:
+            for attribute in attributes:
+                description = attribute.description
+                value = attribute.value.format(cls=cls)
                 print(f"{description}: {value}")
                 cls.report.add_attribute(description, value)
 
