@@ -3,8 +3,8 @@
 from os.path import join
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import cm
-from reportlab.platypus import (Flowable, Paragraph, SimpleDocTemplate, Spacer,
-                                Table)
+from reportlab.platypus import (Flowable, ListFlowable, ListItem, Paragraph,
+                                SimpleDocTemplate, Spacer, Table)
 from reportlab.rl_config import defaultPageSize
 from typing import List
 
@@ -88,10 +88,10 @@ class Report:
             'Failure' if result.failures else 'Ok')
 
         normal = self.styles['Normal']
-        self.tests.append([
-            Paragraph(description, style=normal),
-            Paragraph(f"<b>{result_text}</b>", style=normal)
-        ])
+        self.tests.append(
+            ListItem(
+                Paragraph(f"{description}: <b>{result_text}</b>",
+                          style=normal)))
 
     def __exit__(self):
         """Store the PDF report"""
@@ -108,8 +108,7 @@ class Report:
             self.story.append(attributes)
 
         add_header("Test Results")
-        tests = Table(self.tests, colWidths=[8 * cm, 2 * cm])
-        tests.hAlign = 'LEFT'
+        tests = ListFlowable(self.tests, bulletType='bullet')
         self.story.append(tests)
 
         self.document.build(self.story, onFirstPage=_first_page)
