@@ -108,7 +108,7 @@ class Report:
             self.story.append(attributes)
 
         add_header("Test Results")
-        tests = Table(self.tests, colWidths=[8 * cm, 1 * cm])
+        tests = Table(self.tests, colWidths=[8 * cm, 2 * cm])
         tests.hAlign = 'LEFT'
         self.story.append(tests)
 
