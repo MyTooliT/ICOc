@@ -1,5 +1,5 @@
 from os import environ, pathsep
-from os.path import abspath, dirname, isfile, join
+from os.path import abspath, dirname, isfile
 from re import escape
 from subprocess import run
 from sys import path as module_path
