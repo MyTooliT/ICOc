@@ -46,7 +46,7 @@ STH:
     Location: ../STH/builds/v2.1.10/manufacturingImageSthv2.1.10.hex
 
   # This value specifies the current name of the STH unit
-  Name: Blubb
+  Name: 01:de:81
 
   Programming Board:
     # Please store the serial number of the programming board that is connected
