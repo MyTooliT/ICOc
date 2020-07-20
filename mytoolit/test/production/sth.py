@@ -28,6 +28,7 @@ from MyToolItCommands import (
     DataSets,
     iMessage2Value,
     MyToolItBlock,
+    MyToolItEeprom,
     MyToolItProductData,
     MyToolItStreaming,
     MyToolItSystem,
@@ -445,6 +446,91 @@ class TestSTH(TestCase):
             f"Measured voltage difference of {voltage_diff:.0f} mV is " +
             "greater than expected minimum voltage difference of " +
             f"{voltage_diff_maximum:.0f} mV")
+
+    def test_eeprom(self):
+        """Test if reading and writing the EEPROM works"""
+
+        def read_eeprom(address, offset, length):
+            """Read EEPROM data at a specific address"""
+
+            read_data = []
+            reserved = [0] * 5
+            data_start = 4  # Start index of data in response message
+
+            while length > 0:
+                # Write at most 4 bytes of data at once
+                read_length = 4 if length > 4 else length
+                payload = [address, offset, read_length, *reserved]
+                index = self.can.cmdSend(MyToolItNetworkNr['STH1'],
+                                         MyToolItBlock['Eeprom'],
+                                         MyToolItEeprom['Read'],
+                                         payload,
+                                         log=False)
+                response = self.can.getReadMessageData(index)
+                data_end = data_start + read_length
+                read_data.extend(response[data_start:data_end])
+                length -= read_length
+                offset += read_length
+
+            return read_data
+
+        def read_eeprom_text(address, offset, length):
+            """Read EEPROM data in UTT8 format"""
+
+            data = read_eeprom(address, offset, length)
+            return "".join(map(chr, data))
+
+        def write_eeprom(address, offset, data, length=None):
+            """Write EEPROM data at the specified address"""
+
+            # Change data, if
+            # - only a subset, or
+            # - additional data
+            # should be written to the EEPROM.
+            if length:
+                # Cut off additional data bytes
+                data = data[:length]
+                # Fill up additional data bytes
+                data.extend([0] * (length - len(data)))
+
+            while data:
+                write_data = data[:4]  # Maximum of 4 bytes per message
+                write_length = len(write_data)
+                # Use zeroes to fill up missing data bytes
+                write_data.extend([0] * (4 - write_length))
+
+                reserved = [0] * 1
+                payload = [
+                    address, offset, write_length, *reserved, *write_data
+                ]
+                self.can.cmdSend(MyToolItNetworkNr['STH1'],
+                                 MyToolItBlock['Eeprom'],
+                                 MyToolItEeprom['Write'],
+                                 payload,
+                                 log=False)
+                data = data[4:]
+                offset += write_length
+
+        def write_eeprom_text(address, offset, text, length=None):
+            """Write a string at the specified EEPROM address"""
+
+            data = list(map(ord, list(text)))
+            write_eeprom(address, offset, data, length)
+
+        def read_name():
+            return read_eeprom_text(address=0, offset=1, length=8)
+
+        def write_name(text):
+            write_eeprom_text(address=0, offset=1, text=text, length=8)
+
+        cls = type(self)
+        name = cls.bluetooth_mac[-8:]  # Use last part of MAC as identifier
+        write_name(name)
+        read_name = read_name()
+
+        self.assertEqual(
+            name, read_name,
+            f"Written name “{name}” does not match read name “{read_name}”")
 
 
 if __name__ == "__main__":
