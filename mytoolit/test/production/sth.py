@@ -381,7 +381,7 @@ class TestSTH(TestCase):
             "than expected minimum signal to noise ratio " +
             f"{expected_minimum_snr} dB")
 
-    def test_acceleration_selftest(self):
+    def test_acceleration_self_test(self):
         """Execute self test of accelerometer"""
 
         def measure_voltage():
