@@ -84,8 +84,9 @@ class Report:
             The unit test result of the test
         """
 
-        result_text = 'Error' if result.errors else (
-            'Failure' if result.failures else 'Ok')
+        result_text = "<font color='red'>Error</font>" if result.errors else (
+            "<font color='orange'>Failure</font>"
+            if result.failures else "<font color='green'>Ok</font>")
 
         normal = self.styles['Normal']
         result_text = f"{description}: <b>{result_text}</b>"
