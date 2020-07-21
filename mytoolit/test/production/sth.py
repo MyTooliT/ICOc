@@ -40,6 +40,16 @@ from MyToolItSth import fVoltageBattery
 from SthLimits import SthLimits
 
 
+class ExtendedTestRunner(TextTestRunner):
+    """Extend default test runner to change result class"""
+
+    def __init__(self, *arguments, **keyword_arguments):
+        """Initialize the test runner"""
+
+        keyword_arguments['resultclass'] = ExtendedTestResult
+        super().__init__(*arguments, **keyword_arguments)
+
+
 class ExtendedTestResult(TextTestResult):
     """Store data about the result of a test"""
 
@@ -577,5 +587,4 @@ class TestSTH(TestCase):
 
 
 if __name__ == "__main__":
-    test_runner = TextTestRunner(resultclass=ExtendedTestResult)
-    main(failfast=True, testRunner=test_runner)
+    main(failfast=True, testRunner=ExtendedTestRunner)
