@@ -361,14 +361,6 @@ To run the production tests for the STH, please execute the following command in
 python 'mytoolit/test/production/sth.py'
 ```
 
-### Verbose Output
-
-The default output of the test is quite sparse. If you want additional information about the currently running test, you can add the verbose option (`-v`) at the end of the command:
-
-```sh
-python 'mytoolit/test/production/sth.py' -v
-```
-
 ### Specific Tests
 
 To only run a single test you need the specify its name. For example, to run the test `test__firmware_flash` you can use the following command:
