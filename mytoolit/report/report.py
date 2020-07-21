@@ -84,14 +84,14 @@ class Report:
             The unit test result of the test
         """
 
-        result_text = "<font color='red'>Error</font>" if result.errors else (
-            "<font color='orange'>Failure</font>"
-            if result.failures else "<font color='green'>Ok</font>")
+        result_text = ("<font color='orange'>Failure</font>"
+                       if result.failure_message else
+                       "<font color='green'>Ok</font>")
 
         normal = self.styles['Normal']
         result_text = f"{description}: <b>{result_text}</b>"
-        if result.failures:
-            result_text += f"<br/><br/>{result.message}"
+        if result.failure_message:
+            result_text += f"<br/><br/>{result.failure_message}<br/><br/>"
         paragraph_result = Paragraph(result_text, style=normal)
         self.tests.append(paragraph_result)
 

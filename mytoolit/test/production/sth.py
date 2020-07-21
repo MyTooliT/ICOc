@@ -44,7 +44,7 @@ class ExtendedTestResult(TextTestResult):
     """Store data about the result of a test"""
 
     def addFailure(self, test, error):
-        """Store the message of a failed assertion
+        """Add information about the latest failure
 
         Arguments
         ---------
@@ -58,12 +58,29 @@ class ExtendedTestResult(TextTestResult):
         """
 
         super().addFailure(test, error)
+
+        # Store message for latest failure
         failure_message = str(error[1])
         # Only store custom message added to assertion, since it should be more
         # readable for a person. If there was no custom message, then the
         # object stores the auto-generated message.
         custom_failure_message = failure_message.split(" : ")[-1]
-        self.message = custom_failure_message
+        self.failure_message = custom_failure_message
+
+    def addSuccess(self, test):
+        """Add information about latest successful test
+
+        Arguments
+        ---------
+
+        test:
+            The successful test
+        """
+
+        super().addSuccess(test)
+        # Store nothing in failure message, so we can distinguish, if the
+        # latest test was successful or failed
+        self.failure_message = ""
 
 
 class TestSTH(TestCase):
