@@ -90,8 +90,9 @@ class Report:
 
         normal = self.styles['Normal']
         result_text = f"{description}: <b>{result_text}</b>"
-        if result.failure_message:
-            result_text += f"<br/><br/>{result.failure_message}<br/><br/>"
+        failure_message = result.failure_message
+        if failure_message:
+            result_text += f"<br/><br/><b>{failure_message}</b><br/><br/>"
         paragraph_result = Paragraph(result_text, style=normal)
         self.tests.append(paragraph_result)
 
