@@ -366,13 +366,13 @@ python 'mytoolit/test/production/sth.py'
 To only run a single test you need the specify its name. For example, to run the test `test__firmware_flash` you can use the following command:
 
 ```sh
-python -m unittest 'mytoolit.test.production.sth.TestSTH.test__firmware_flash'
+python 'mytoolit/test/production/sth.py' STH.test__firmware_flash
 ```
 
 You can also run specific tests using pattern matching. To do that use the command line option `-k`. For example to run the firmware flash and the connection test you can use the command:
 
 ```sh
-python -m unittest 'mytoolit.test.production.sth' -k 'flash' -k 'connection'
+python 'mytoolit/test/production/sth.py' -k 'flash' -k 'connection'
 ```
 
 , which executes all tests that contain the text `flash` or `connection`.
