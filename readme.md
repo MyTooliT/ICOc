@@ -376,7 +376,3 @@ python -m unittest 'mytoolit.test.production.sth' -k 'flash' -k 'connection'
 ```
 
 , which executes all tests that contain the text `flash` or `connection`.
-
-### Status
-
-Please note that the test currently only checks that flashing the device with the programming board works as expected.
