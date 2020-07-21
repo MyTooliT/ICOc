@@ -96,7 +96,7 @@ class Report:
         paragraph_result = Paragraph(result_text, style=normal)
         self.tests.append(paragraph_result)
 
-    def __exit__(self):
+    def build(self):
         """Store the PDF report"""
 
         def add_header(header):

@@ -136,7 +136,7 @@ class TestSTH(TestCase):
 
             print()
 
-        cls.report.__exit__()
+        cls.report.build()
 
     def setUp(self):
         """Set up hardware before a single test case"""
