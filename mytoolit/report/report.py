@@ -51,7 +51,10 @@ class Report:
     def __init__(self):
         """Initialize the report"""
 
-        self.document = SimpleDocTemplate('Report.pdf',
+        repository_root = dirname(dirname(dirname(abspath(__file__))))
+        filepath = join(repository_root, 'Report.pdf')
+
+        self.document = SimpleDocTemplate(filepath,
                                           author='MyTooliT',
                                           title='Test Report',
                                           subject='Sensory Tool Holder Test')
