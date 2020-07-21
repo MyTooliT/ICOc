@@ -1,6 +1,6 @@
 # -- Imports ------------------------------------------------------------------
 
-from os.path import join
+from os.path import abspath, join, dirname
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import cm
 from reportlab.platypus import (Flowable, ListFlowable, ListItem, Paragraph,
@@ -26,7 +26,9 @@ def _first_page(canvas, document):
     logo_offset = 50
     title_offset = logo_offset + logo_height + 20
 
-    PDFImage(join('assets', 'MyTooliT.pdf'), logo_width,
+    repository_root = dirname(dirname(dirname(abspath(__file__))))
+
+    PDFImage(join(repository_root, join('assets', 'MyTooliT.pdf')), logo_width,
              logo_height).drawOn(canvas, (page_width - logo_width) / 2,
                                  page_height - logo_offset - logo_height)
 
