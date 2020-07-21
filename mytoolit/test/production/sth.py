@@ -5,7 +5,7 @@ from subprocess import run
 from sys import path as module_path
 from time import sleep
 from types import SimpleNamespace
-from unittest import TestCase, main
+from unittest import TestCase, TextTestResult, TextTestRunner, main
 
 # Add path for custom libraries
 repository_root = dirname(dirname(dirname(dirname(abspath(__file__)))))
@@ -38,6 +38,32 @@ from MyToolItCommands import (
 )
 from MyToolItSth import fVoltageBattery
 from SthLimits import SthLimits
+
+
+class ExtendedTestResult(TextTestResult):
+    """Store data about the result of a test"""
+
+    def addFailure(self, test, error):
+        """Store the message of a failed assertion
+
+        Arguments
+        ---------
+
+        test:
+            The test case that produced the failure
+
+        error:
+            A tuple of the form returned by `sys.exc_info()`:
+            (type, value, traceback)
+        """
+
+        super().addFailure(test, error)
+        failure_message = str(error[1])
+        # Only store custom message added to assertion, since it should be more
+        # readable for a person. If there was no custom message, then the
+        # object stores the auto-generated message.
+        custom_failure_message = failure_message.split(" : ")[-1]
+        self.message = custom_failure_message
 
 
 class TestSTH(TestCase):
@@ -534,4 +560,5 @@ class TestSTH(TestCase):
 
 
 if __name__ == "__main__":
-    main(failfast=True)
+    test_runner = TextTestRunner(resultclass=ExtendedTestResult)
+    main(failfast=True, testRunner=test_runner)

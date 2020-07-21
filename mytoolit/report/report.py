@@ -88,10 +88,11 @@ class Report:
             'Failure' if result.failures else 'Ok')
 
         normal = self.styles['Normal']
-        self.tests.append(
-            ListItem(
-                Paragraph(f"{description}: <b>{result_text}</b>",
-                          style=normal)))
+        result_text = f"{description}: <b>{result_text}</b>"
+        if result.failures:
+            result_text += f"<br/><br/>{result.message}"
+        paragraph_result = Paragraph(result_text, style=normal)
+        self.tests.append(paragraph_result)
 
     def __exit__(self):
         """Store the PDF report"""
