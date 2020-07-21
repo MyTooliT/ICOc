@@ -1,5 +1,5 @@
 from os import environ, pathsep
-from os.path import abspath, dirname, isfile
+from os.path import abspath, dirname, isfile, join
 from re import escape
 from subprocess import run
 from sys import path as module_path
@@ -262,7 +262,7 @@ class TestSTH(TestCase):
                          "Unable to unlock debug access of chip")
 
         # Upload bootloader and application data
-        image_filepath = settings.STH.Firmware.Location
+        image_filepath = join(repository_root, settings.STH.Firmware.Location)
         self.assertTrue(isfile(image_filepath),
                         f"Firmware file {image_filepath} does not exist")
 
