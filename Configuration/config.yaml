@@ -11,6 +11,10 @@ Commands:
       # This is the default install location of `commander` in Windows
       - C:\SiliconLabs\SimplicityStudio\v4\developer\adapter_packs\commander
 
+Operator:
+  # The name of the operator that executes the hardware tests
+  Name: "Dummy User"
+
 STH:
   Acceleration Sensor:
     Acceleration:

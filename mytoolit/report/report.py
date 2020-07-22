@@ -7,9 +7,15 @@ from reportlab.lib.units import cm
 from reportlab.platypus import (Flowable, ListFlowable, ListItem, Paragraph,
                                 SimpleDocTemplate, Spacer, Table)
 from reportlab.rl_config import defaultPageSize
+from sys import path as module_path
 from typing import List
 
+# Add path for custom libraries
+repository_root = dirname(dirname(dirname(abspath(__file__))))
+module_path.append(repository_root)
+
 from .pdf import PDFImage
+from mytoolit.config import settings
 
 # -- Functions ----------------------------------------------------------------
 
@@ -71,8 +77,10 @@ class Report:
         now = datetime.now()
         date = now.strftime('%Y-%m-%d')
         time = now.strftime("%H:%M:%S")
+        operator = settings.Operator.Name
         self.__add_header("General")
-        self.__add_table([["Date", date], ["Time", time]])
+        self.__add_table([["Date", date], ["Time", time],
+                          ["Operator", operator]])
 
         self.attributes = []
         self.tests = []
