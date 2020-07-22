@@ -1,5 +1,6 @@
 # -- Imports ------------------------------------------------------------------
 
+from datetime import datetime
 from os.path import abspath, join, dirname
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import cm
@@ -25,6 +26,7 @@ def _first_page(canvas, document):
     logo_height = 75
     logo_offset = 50
     title_offset = logo_offset + logo_height + 20
+    date_offset = title_offset + 20
 
     repository_root = dirname(dirname(dirname(abspath(__file__))))
 
@@ -32,10 +34,20 @@ def _first_page(canvas, document):
              logo_height).drawOn(canvas, (page_width - logo_width) / 2,
                                  page_height - logo_offset - logo_height)
 
-    style = getSampleStyleSheet()['Heading1']
-    canvas.setFont(style.fontName, style.fontSize)
-    canvas.drawCentredString(page_width / 2, page_height - title_offset,
+    style = getSampleStyleSheet()
+
+    center_width = page_width / 2
+
+    heading1 = style['Heading1']
+    canvas.setFont(heading1.fontName, heading1.fontSize)
+    canvas.drawCentredString(center_width, page_height - title_offset,
                              "STH Test Report")
+
+    heading2 = style['Heading2']
+    now = datetime.now()
+    canvas.setFont(heading2.fontName, heading2.fontSize)
+    canvas.drawCentredString(center_width, page_height - date_offset,
+                             now.strftime('%Y-%m-%d'))
 
     canvas.restoreState()
 
