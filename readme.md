@@ -358,7 +358,31 @@ Error Status Word of the STU and this <u>**Error Status Word must be 0.**</u>
 To run the production tests for the STH, please execute the following command in the root of the repository:
 
 ```sh
-python 'mytoolit/test/production/sth.py'
+python mytoolit/test/production/sth.py
+```
+
+If you change the current working directory to the test directory:
+
+```sh
+cd mytoolit/test/production
+```
+
+then you can invoke the command directly via
+
+```sh
+python sth.py
+```
+
+Depending on your environment, using `py` instead of `python` might also work:
+
+```sh
+py sth.py
+```
+
+For a list of available command line options, please use the option `-h`:
+
+```sh
+python sth.py -h
 ```
 
 ### Specific Tests
@@ -366,13 +390,13 @@ python 'mytoolit/test/production/sth.py'
 To only run a single test you need the specify its name. For example, to run the test `test__firmware_flash` you can use the following command:
 
 ```sh
-python 'mytoolit/test/production/sth.py' STH.test__firmware_flash
+python sth.py TestSTH.test__firmware_flash
 ```
 
 You can also run specific tests using pattern matching. To do that use the command line option `-k`. For example to run the firmware flash and the connection test you can use the command:
 
 ```sh
-python 'mytoolit/test/production/sth.py' -k 'flash' -k 'connection'
+python sth.py -k flash -k connection
 ```
 
 , which executes all tests that contain the text `flash` or `connection`.
