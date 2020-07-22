@@ -43,12 +43,6 @@ def _first_page(canvas, document):
     canvas.drawCentredString(center_width, page_height - title_offset,
                              "STH Test Report")
 
-    heading2 = style['Heading2']
-    now = datetime.now()
-    canvas.setFont(heading2.fontName, heading2.fontSize)
-    canvas.drawCentredString(center_width, page_height - date_offset,
-                             now.strftime('%Y-%m-%d'))
-
     canvas.restoreState()
 
 
@@ -72,8 +66,41 @@ class Report:
                                           subject='Sensory Tool Holder Test')
         self.story = [Spacer(1, 3 * cm)]
         self.styles = getSampleStyleSheet()
+
+        # Add general information
+        self.__add_header("General")
+        self.__add_table([["Date", datetime.now().strftime('%Y-%m-%d')]])
+
         self.attributes = []
         self.tests = []
+
+    def __add_header(self, text):
+        """Add a header at the current position in the document
+
+        Parameters
+        ----------
+
+        text:
+            The text of the heading
+        """
+
+        self.story.append(Spacer(1, 0.2 * cm))
+        self.story.append(Paragraph(text, style=self.styles['Heading2']))
+        self.story.append(Spacer(1, 0.5 * cm))
+
+    def __add_table(self, data):
+        """Add a table at the current position in the document
+
+        Parameters
+        ----------
+
+        data:
+            The data that should be stored in the table
+        """
+
+        table = Table(data)
+        table.hAlign = 'LEFT'
+        self.story.append(table)
 
     def add_attribute(self, name, value):
         """Add information about an STH attribute to the report
@@ -116,18 +143,11 @@ class Report:
     def build(self):
         """Store the PDF report"""
 
-        def add_header(header):
-            self.story.append(Spacer(1, 0.2 * cm))
-            self.story.append(Paragraph(header, style=self.styles['Heading2']))
-            self.story.append(Spacer(1, 0.5 * cm))
-
         if len(self.attributes) > 0:
-            add_header("Attributes")
-            attributes = Table(self.attributes)
-            attributes.hAlign = 'LEFT'
-            self.story.append(attributes)
+            self.__add_header("Attributes")
+            self.__add_table(self.attributes)
 
-        add_header("Test Results")
+        self.__add_header("Test Results")
         tests = ListFlowable(self.tests, bulletType='bullet')
         self.story.append(tests)
 
