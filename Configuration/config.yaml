@@ -42,7 +42,7 @@ STH:
 
   Firmware:
     # This value should contain the path to a complete image (bootloader and
-    # application). Relative paths will be interpreted in relation to the
+    # application). This path will be interpreted in relation to the
     # root of the repository.
     Location: ../STH/builds/v2.1.10/manufacturingImageSthv2.1.10.hex
 
