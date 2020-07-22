@@ -68,8 +68,11 @@ class Report:
         self.styles = getSampleStyleSheet()
 
         # Add general information
+        now = datetime.now()
+        date = now.strftime('%Y-%m-%d')
+        time = now.strftime("%H:%M:%S")
         self.__add_header("General")
-        self.__add_table([["Date", datetime.now().strftime('%Y-%m-%d')]])
+        self.__add_table([["Date", date], ["Time", time]])
 
         self.attributes = []
         self.tests = []
