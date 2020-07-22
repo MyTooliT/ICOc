@@ -584,4 +584,4 @@ class TestSTH(TestCase):
 
 
 if __name__ == "__main__":
-    main(failfast=True, testRunner=ExtendedTestRunner)
+    main(testRunner=ExtendedTestRunner)
