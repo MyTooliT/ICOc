@@ -219,6 +219,9 @@ class TestSTH(TestCase):
 
         # Check available read hardware attributes
         possible_attributes = [
+            SimpleNamespace(name='name',
+                            description="Name",
+                            value="{cls.name}"),
             SimpleNamespace(name='bluetooth_mac',
                             description="Bluetooth Address",
                             value="{cls.bluetooth_mac}"),
@@ -340,6 +343,11 @@ class TestSTH(TestCase):
         version = self.can.getReadMessageData(index)[-3:]
 
         cls.firmware_version = '.'.join(map(str, version))
+
+        # This is more or less placeholder code, until we handle the naming
+        # process gracefully. Currently the whole test requires that we know
+        # the name of the STH in advance.
+        cls.name = settings.STH.Name
 
     def test__firmware_flash(self):
         """Upload bootloader and application into STH
