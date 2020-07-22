@@ -1,7 +1,8 @@
 # -- Imports ------------------------------------------------------------------
 
 from os.path import abspath, dirname
-from math import log
+from math import log, sqrt
+from statistics import pvariance
 from sys import path as module_path
 
 # Add path for custom libraries
@@ -43,24 +44,23 @@ def convert_acceleration_adc_to_g(acceleration_raw):
     return acceleration_in_g
 
 
-def signal_noise_ratio(expected_value, values):
-    """Calculate the signal to noise ratio in dB
+def ratio_noise_max(values):
+    """Calculate the ratio noise to max ADC amplitude in dB
 
     Parameters
     ----------
 
-    expected_value:
-        A single value that represents the expected value of the signal
     values:
-        An iterable object that stores a series of measured values
-        (signal value + noise)
+        An iterable object that stores a series of measured (acceleration)
+        values
 
     Returns
     -------
 
-    The signal to noise ratio of the measured values in dB
+    The ratio of the average noise to the highest possible measured value
     """
 
-    noise = [abs(expected_value - value) for value in values]
-    average_noise = sum(noise) / len(noise)
-    return 20 * log(expected_value / average_noise, 10)
+    adc_max = 0xffff
+    max_value = adc_max / 2
+    standard_deviation = sqrt(pvariance(values))
+    return 20 * log(standard_deviation / max_value, 10)

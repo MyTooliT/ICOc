@@ -13,7 +13,7 @@ module_path.append(repository_root)
 
 from mytoolit.can.identifier import Identifier
 from mytoolit.measurement.acceleration import (convert_acceleration_adc_to_g,
-                                               signal_noise_ratio)
+                                               ratio_noise_max)
 from mytoolit.report.report import Report
 from mytoolit.config import settings
 
@@ -123,9 +123,9 @@ class TestSTH(TestCase):
             SimpleNamespace(name='firmware_version',
                             description="Firmware Version",
                             value="{cls.firmware_version}"),
-            SimpleNamespace(name='snr',
-                            description="Signal to Noise Ratio",
-                            value="{cls.snr:.3f} dB")
+            SimpleNamespace(name='ratio_noise_max',
+                            description="Ration Noise Maximum",
+                            value="{cls.ratio_noise_max:.3f} dB")
         ]
 
         attributes = [
@@ -408,8 +408,8 @@ class TestSTH(TestCase):
             "than expected maximum acceleration " +
             f"{expected_maximum_acceleration} g₀")
 
-    def test_acceleration_snr(self):
-        """Test signal to noise ratio of sensor"""
+    def test_acceleration_noise(self):
+        """Test ratio of noise to maximal possible measurement value"""
 
         # Read x-acceleration values in single data sets for 4
         # seconds
@@ -421,19 +421,16 @@ class TestSTH(TestCase):
             MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
             DataSets[1], 1, 0, 0, index_start, index_end)
 
-        # We expect an acceleration of zero (half of the 16 Bit maximum ADC
-        # value)
-        expected_acceleration_adc = 2**15
         cls = type(self)
-        cls.snr = signal_noise_ratio(expected_acceleration_adc, acceleration)
+        cls.ratio_noise_max = ratio_noise_max(acceleration)
 
-        expected_minimum_snr = (
-            settings.STH.Acceleration_Sensor.Acceleration.Minimum_SNR)
-        self.assertGreaterEqual(
-            cls.snr, expected_minimum_snr,
-            f"Measured signal to noise ratio {cls.snr} dB is lower " +
-            "than expected minimum signal to noise ratio " +
-            f"{expected_minimum_snr} dB")
+        maximum_ratio_allowed = (settings.STH.Acceleration_Sensor.Acceleration.
+                                 Ratio_Noise_To_Max_Value)
+        self.assertLessEqual(
+            cls.ratio_noise_max, maximum_ratio_allowed,
+            "The ratio noise to possible maximum measured value of " +
+            f"{cls.ratio_noise_max} dB is higher than the maximum allowed " +
+            f"level of {maximum_ratio_allowed} dB")
 
     def test_acceleration_self_test(self):
         """Execute self test of accelerometer"""
