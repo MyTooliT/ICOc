@@ -1,3 +1,5 @@
+# -- Imports ------------------------------------------------------------------
+
 from enum import Enum
 from os import environ, pathsep
 from os.path import abspath, dirname, isfile, join
@@ -39,6 +41,8 @@ from MyToolItCommands import (
 )
 from MyToolItSth import fVoltageBattery
 from SthLimits import SthLimits
+
+# -- Classes ------------------------------------------------------------------
 
 
 class ExtendedTestRunner(TextTestRunner):
