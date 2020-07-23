@@ -243,7 +243,7 @@ class TestSTH(TestCase):
                              "Firmware Revision",
                              pdf=False),
             create_attribute('release_name', "Release Name", pdf=False),
-            create_attribute('ratio_noise_max', "Ration Noise Maximum",
+            create_attribute('ratio_noise_max', "Ratio Noise Maximum",
                              "{cls.ratio_noise_max:.3f} dB"),
             create_attribute('sleep_time1',
                              "Sleep Time 1",
