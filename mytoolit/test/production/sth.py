@@ -217,32 +217,28 @@ class TestSTH(TestCase):
     def tearDownClass(cls):
         """Print attributes of tested STH after all successful test cases"""
 
+        def create_attribute(name, description, value=None, pdf=True):
+            """Create a simple object that stores test attributes"""
+
+            value = f"{{cls.{name}}}" if not value else value
+            return SimpleNamespace(name=name,
+                                   description=description,
+                                   value=value,
+                                   pdf=pdf)
+
         # Check available read hardware attributes
         possible_attributes = [
-            SimpleNamespace(name='name',
-                            description="Name",
-                            value="{cls.name}",
-                            pdf=True),
-            SimpleNamespace(name='bluetooth_mac',
-                            description="Bluetooth Address",
-                            value="{cls.bluetooth_mac}",
-                            pdf=True),
-            SimpleNamespace(name='bluetooth_rssi',
-                            description="RSSI",
-                            value="{cls.bluetooth_rssi} dBm",
-                            pdf=True),
-            SimpleNamespace(name='firmware_version',
-                            description="Firmware Version",
-                            value="{cls.firmware_version}",
-                            pdf=True),
-            SimpleNamespace(name='ratio_noise_max',
-                            description="Ration Noise Maximum",
-                            value="{cls.ratio_noise_max:.3f} dB",
-                            pdf=True),
-            SimpleNamespace(name='sleep_time1',
-                            description="Sleep Time 1",
-                            value="{cls.sleep_time1} ms",
-                            pdf=False)
+            create_attribute('name', "Name"),
+            create_attribute('bluetooth_mac', "Bluetooth Address"),
+            create_attribute('bluetooth_rssi', "RSSI",
+                             "{cls.bluetooth_rssi} dBm"),
+            create_attribute('firmware_version', "Firmware Version"),
+            create_attribute('ratio_noise_max', "Ration Noise Maximum",
+                             "{cls.ratio_noise_max:.3f} dB"),
+            create_attribute('sleep_time1',
+                             "Sleep Time 1",
+                             "{cls.sleep_time1} ms",
+                             pdf=False),
         ]
 
         attributes = [
