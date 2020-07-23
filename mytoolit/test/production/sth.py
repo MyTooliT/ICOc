@@ -285,8 +285,9 @@ class TestSTH(TestCase):
             max_length_value = max(
                 [len(attribute.value) for attribute in attributes])
 
-            print("\n\nTest Data")
-            print("—————————")
+            print("\n")
+            print("Attributes")
+            print("——————————")
 
             # Print attributes to standard output
             for attribute in attributes:
