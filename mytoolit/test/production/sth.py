@@ -229,6 +229,7 @@ class TestSTH(TestCase):
         # Check available read hardware attributes
         possible_attributes = [
             create_attribute('name', "Name"),
+            create_attribute('production_date', "Production Date", pdf=False),
             create_attribute('product_name', "Product Name", pdf=False),
             create_attribute('serial_number', "Serial Number", pdf=False),
             create_attribute('bluetooth_mac', "Bluetooth Address"),
@@ -770,6 +771,9 @@ class TestSTH(TestCase):
         def read_product_name():
             return read_eeprom_text(address=4, offset=64, length=128)
 
+        def read_production_date():
+            return read_eeprom_text(address=5, offset=20, length=8)
+
         cls = type(self)
         name = cls.bluetooth_mac[-8:]  # Use last part of MAC as identifier
         write_name(name)
@@ -789,6 +793,8 @@ class TestSTH(TestCase):
         cls.release_name = read_release_name()
         cls.serial_number = read_serial_number()
         cls.product_name = read_product_name()
+
+        cls.production_date = read_production_date()
 
 if __name__ == "__main__":
     main(testRunner=ExtendedTestRunner)
