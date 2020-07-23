@@ -221,24 +221,37 @@ class TestSTH(TestCase):
         possible_attributes = [
             SimpleNamespace(name='name',
                             description="Name",
-                            value="{cls.name}"),
+                            value="{cls.name}",
+                            pdf=True),
             SimpleNamespace(name='bluetooth_mac',
                             description="Bluetooth Address",
-                            value="{cls.bluetooth_mac}"),
+                            value="{cls.bluetooth_mac}",
+                            pdf=True),
             SimpleNamespace(name='bluetooth_rssi',
                             description="RSSI",
-                            value="{cls.bluetooth_rssi} dBm"),
+                            value="{cls.bluetooth_rssi} dBm",
+                            pdf=True),
             SimpleNamespace(name='firmware_version',
                             description="Firmware Version",
-                            value="{cls.firmware_version}"),
+                            value="{cls.firmware_version}",
+                            pdf=True),
             SimpleNamespace(name='ratio_noise_max',
                             description="Ration Noise Maximum",
-                            value="{cls.ratio_noise_max:.3f} dB")
+                            value="{cls.ratio_noise_max:.3f} dB",
+                            pdf=True),
+            SimpleNamespace(name='sleep_time1',
+                            description="Sleep Time 1",
+                            value="{cls.sleep_time1} ms",
+                            pdf=False)
         ]
 
         attributes = [
             attribute for attribute in possible_attributes
             if hasattr(cls, attribute.name)
+        ]
+
+        attributes_pdf = [
+            attribute for attribute in attributes if attribute.pdf
         ]
 
         # Only print something, if at least one attribute was read
@@ -256,14 +269,16 @@ class TestSTH(TestCase):
             print("\n\nTest Data")
             print("—————————")
 
+            # Print attributes to standard output
             for attribute in attributes:
-                description = attribute.description
-                value = attribute.value
-                print(f"{description:{max_length_description}} " +
-                      f"{value:>{max_length_value}}")
-                cls.report.add_attribute(description, value)
-
+                print(f"{attribute.description:{max_length_description}} " +
+                      f"{attribute.value:>{max_length_value}}")
             print()
+
+            # Add attributes to PDF
+            for attribute in attributes_pdf:
+                cls.report.add_attribute(attribute.description,
+                                         attribute.value)
 
         cls.report.build()
 
@@ -654,6 +669,11 @@ class TestSTH(TestCase):
             data = read_eeprom(address, offset, length)
             return "".join(map(chr, data))
 
+        def read_eeprom_unsigned(address, offset, length):
+            """Read EEPROM data in unsigned format"""
+
+            return iMessage2Value(read_eeprom(address, offset, length))
+
         def write_eeprom(address, offset, data, length=None):
             """Write EEPROM data at the specified address"""
 
@@ -697,6 +717,9 @@ class TestSTH(TestCase):
         def write_name(text):
             write_eeprom_text(address=0, offset=1, text=text, length=8)
 
+        def read_sleep_time1():
+            return read_eeprom_unsigned(address=0, offset=9, length=4)
+
         cls = type(self)
         name = cls.bluetooth_mac[-8:]  # Use last part of MAC as identifier
         write_name(name)
@@ -705,6 +728,8 @@ class TestSTH(TestCase):
         self.assertEqual(
             name, read_name,
             f"Written name “{name}” does not match read name “{read_name}”")
+
+        cls.sleep_time1 = read_sleep_time1()
 
 
 if __name__ == "__main__":
