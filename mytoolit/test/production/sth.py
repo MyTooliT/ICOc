@@ -243,16 +243,24 @@ class TestSTH(TestCase):
 
         # Only print something, if at least one attribute was read
         if attributes:
+
+            # Insert variables into value format strings
+            for attribute in attributes:
+                attribute.value = attribute.value.format(cls=cls)
+
             max_length_description = max(
                 [len(attribute.description) for attribute in attributes])
+            max_length_value = max(
+                [len(attribute.value) for attribute in attributes])
 
             print("\n\nTest Data")
             print("—————————")
 
             for attribute in attributes:
                 description = attribute.description
-                value = attribute.value.format(cls=cls)
-                print(f"{description:{max_length_description}} {value}")
+                value = attribute.value
+                print(f"{description:{max_length_description}} " +
+                      f"{value:>{max_length_value}}")
                 cls.report.add_attribute(description, value)
 
             print()
