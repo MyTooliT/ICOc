@@ -681,7 +681,13 @@ class TestSTH(TestCase):
             """Read EEPROM data in UTT8 format"""
 
             data = read_eeprom(address, offset, length)
-            return "".join(map(chr, data))
+            data_without_null = []
+            for byte in data:
+                if byte == 0:
+                    break
+                data_without_null.append(byte)
+
+            return "".join(map(chr, data_without_null))
 
         def read_eeprom_unsigned(address, offset, length):
             """Read EEPROM data in unsigned format"""
