@@ -226,7 +226,6 @@ class TestSTH(TestCase):
                                    value=value,
                                    pdf=pdf)
 
-        # Check available read hardware attributes
         possible_attributes = [
             create_attribute('name', "Name"),
             create_attribute('production_date', "Production Date", pdf=False),
@@ -264,6 +263,7 @@ class TestSTH(TestCase):
                              pdf=False),
         ]
 
+        # Check available read hardware attributes
         attributes = [
             attribute for attribute in possible_attributes
             if hasattr(cls, attribute.name)
