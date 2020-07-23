@@ -243,13 +243,16 @@ class TestSTH(TestCase):
 
         # Only print something, if at least one attribute was read
         if attributes:
+            max_length_description = max(
+                [len(attribute.description) for attribute in attributes])
+
             print("\n\nTest Data")
             print("—————————")
 
             for attribute in attributes:
                 description = attribute.description
                 value = attribute.value.format(cls=cls)
-                print(f"{description}: {value}")
+                print(f"{description:{max_length_description}} {value}")
                 cls.report.add_attribute(description, value)
 
             print()
