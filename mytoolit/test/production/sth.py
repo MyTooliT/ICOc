@@ -239,6 +239,18 @@ class TestSTH(TestCase):
                              "Sleep Time 1",
                              "{cls.sleep_time1} ms",
                              pdf=False),
+            create_attribute('advertisement_time1',
+                             "Advertisement Time 1",
+                             "{cls.advertisement_time1} ms",
+                             pdf=False),
+            create_attribute('sleep_time2',
+                             "Sleep Time 2",
+                             "{cls.sleep_time2} ms",
+                             pdf=False),
+            create_attribute('advertisement_time2',
+                             "Advertisement Time 2",
+                             "{cls.advertisement_time2} ms",
+                             pdf=False),
         ]
 
         attributes = [
@@ -716,6 +728,15 @@ class TestSTH(TestCase):
         def read_sleep_time1():
             return read_eeprom_unsigned(address=0, offset=9, length=4)
 
+        def read_advertisement_time1():
+            return read_eeprom_unsigned(address=0, offset=13, length=2)
+
+        def read_sleep_time2():
+            return read_eeprom_unsigned(address=0, offset=15, length=4)
+
+        def read_advertisement_time2():
+            return read_eeprom_unsigned(address=0, offset=19, length=2)
+
         cls = type(self)
         name = cls.bluetooth_mac[-8:]  # Use last part of MAC as identifier
         write_name(name)
@@ -726,6 +747,9 @@ class TestSTH(TestCase):
             f"Written name “{name}” does not match read name “{read_name}”")
 
         cls.sleep_time1 = read_sleep_time1()
+        cls.advertisement_time1 = read_advertisement_time1()
+        cls.sleep_time2 = read_sleep_time2()
+        cls.advertisement_time2 = read_advertisement_time2()
 
 
 if __name__ == "__main__":
