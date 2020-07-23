@@ -232,7 +232,13 @@ class TestSTH(TestCase):
             create_attribute('bluetooth_mac', "Bluetooth Address"),
             create_attribute('bluetooth_rssi', "RSSI",
                              "{cls.bluetooth_rssi} dBm"),
+            create_attribute('hardware_revision',
+                             "Hardware Revision",
+                             pdf=False),
             create_attribute('firmware_version', "Firmware Version"),
+            create_attribute('firmware_revision',
+                             "Firmware Revision",
+                             pdf=False),
             create_attribute('ratio_noise_max', "Ration Noise Maximum",
                              "{cls.ratio_noise_max:.3f} dB"),
             create_attribute('sleep_time1',
@@ -737,6 +743,13 @@ class TestSTH(TestCase):
         def read_advertisement_time2():
             return read_eeprom_unsigned(address=0, offset=19, length=2)
 
+        def read_hardware_revision():
+            major, minor, build = read_eeprom(address=4, offset=13, length=3)
+            return f"{major}.{minor}.{build}"
+
+        def read_firmware_revision():
+            major, minor, build = read_eeprom(address=4, offset=21, length=3)
+            return f"{major}.{minor}.{build}"
         cls = type(self)
         name = cls.bluetooth_mac[-8:]  # Use last part of MAC as identifier
         write_name(name)
@@ -751,6 +764,8 @@ class TestSTH(TestCase):
         cls.sleep_time2 = read_sleep_time2()
         cls.advertisement_time2 = read_advertisement_time2()
 
+        cls.firmware_revision = read_firmware_revision()
+        cls.hardware_revision = read_hardware_revision()
 
 if __name__ == "__main__":
     main(testRunner=ExtendedTestRunner)
