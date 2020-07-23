@@ -232,6 +232,7 @@ class TestSTH(TestCase):
             create_attribute('production_date', "Production Date", pdf=False),
             create_attribute('product_name', "Product Name", pdf=False),
             create_attribute('serial_number', "Serial Number", pdf=False),
+            create_attribute('batch_number', "Batch Number", pdf=False),
             create_attribute('bluetooth_mac', "Bluetooth Address"),
             create_attribute('bluetooth_rssi', "RSSI",
                              "{cls.bluetooth_rssi} dBm"),
@@ -774,6 +775,9 @@ class TestSTH(TestCase):
         def read_production_date():
             return read_eeprom_text(address=5, offset=20, length=8)
 
+        def read_batch_number():
+            return read_eeprom_unsigned(address=5, offset=28, length=4)
+
         cls = type(self)
         name = cls.bluetooth_mac[-8:]  # Use last part of MAC as identifier
         write_name(name)
@@ -795,6 +799,8 @@ class TestSTH(TestCase):
         cls.product_name = read_product_name()
 
         cls.production_date = read_production_date()
+        cls.batch_number = read_batch_number()
+
 
 if __name__ == "__main__":
     main(testRunner=ExtendedTestRunner)
