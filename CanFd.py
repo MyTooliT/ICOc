@@ -1563,7 +1563,7 @@ class CanFd(object):
         if None == self.sDevName:
             if False != log:
                 self.Logger.Info("Available Devices: " + str(devList))
-            self.__exitError("Connecting to device")
+            self.__exitError("Unable to connect to device")
         return self.bConnected
 
     def tDeviceList(self, stuNr, bLog=True):
