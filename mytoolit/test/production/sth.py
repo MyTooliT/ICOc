@@ -239,6 +239,7 @@ class TestSTH(TestCase):
             create_attribute('firmware_revision',
                              "Firmware Revision",
                              pdf=False),
+            create_attribute('release_name', "Release Name", pdf=False),
             create_attribute('ratio_noise_max', "Ration Noise Maximum",
                              "{cls.ratio_noise_max:.3f} dB"),
             create_attribute('sleep_time1',
@@ -756,6 +757,10 @@ class TestSTH(TestCase):
         def read_firmware_revision():
             major, minor, build = read_eeprom(address=4, offset=21, length=3)
             return f"{major}.{minor}.{build}"
+
+        def read_release_name():
+            return read_eeprom_text(address=4, offset=24, length=8)
+
         cls = type(self)
         name = cls.bluetooth_mac[-8:]  # Use last part of MAC as identifier
         write_name(name)
@@ -772,6 +777,7 @@ class TestSTH(TestCase):
 
         cls.firmware_revision = read_firmware_revision()
         cls.hardware_revision = read_hardware_revision()
+        cls.release_name = read_release_name()
 
 if __name__ == "__main__":
     main(testRunner=ExtendedTestRunner)
