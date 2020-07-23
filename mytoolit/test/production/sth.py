@@ -802,5 +802,7 @@ class TestSTH(TestCase):
         cls.batch_number = read_batch_number()
 
 
+# -- Main ---------------------------------------------------------------------
+
 if __name__ == "__main__":
     main(testRunner=ExtendedTestRunner)
