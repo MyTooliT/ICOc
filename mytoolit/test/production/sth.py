@@ -217,6 +217,13 @@ class TestSTH(TestCase):
     def tearDownClass(cls):
         """Print attributes of tested STH after all successful test cases"""
 
+        cls.__output_sth_data()
+        cls.report.build()
+
+    @classmethod
+    def __output_sth_data(cls):
+        """Print STH information in output and add it to PDF report"""
+
         def create_attribute(name, description, value=None, pdf=True):
             """Create a simple object that stores test attributes"""
 
@@ -300,8 +307,6 @@ class TestSTH(TestCase):
             for attribute in attributes_pdf:
                 cls.report.add_attribute(attribute.description,
                                          attribute.value)
-
-        cls.report.build()
 
     def setUp(self):
         """Set up hardware before a single test case"""
