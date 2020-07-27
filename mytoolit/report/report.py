@@ -1,6 +1,5 @@
 # -- Imports ------------------------------------------------------------------
 
-from datetime import datetime
 from os.path import abspath, join, dirname
 from sys import path as module_path
 from typing import List
@@ -16,7 +15,6 @@ repository_root = dirname(dirname(dirname(abspath(__file__))))
 module_path.append(repository_root)
 
 from .pdf import PDFImage
-from mytoolit import __version__
 from mytoolit.config import settings
 
 # -- Functions ----------------------------------------------------------------
@@ -75,27 +73,6 @@ class Report:
         self.general = []
         self.attributes = []
         self.tests = []
-
-        self.__add_gerneral_information()
-
-    def __add_gerneral_information(self):
-        """Add a table containing general information to PDF"""
-
-        now = datetime.now()
-        date = now.strftime('%Y-%m-%d')
-        time = now.strftime("%H:%M:%S")
-
-        operator = settings.Operator.Name
-
-        attributes = [
-            ["ICOc Version", __version__],
-            ["Date", date],
-            ["Time", time],
-            ["Operator", operator],
-        ]
-
-        for name, value in attributes:
-            self.add_attribute(name, value, sth_attribute=False)
 
     def __add_header(self, text):
         """Add a header at the current position in the document

@@ -1,5 +1,6 @@
 # -- Imports ------------------------------------------------------------------
 
+from datetime import datetime
 from enum import Enum
 from os import environ, pathsep
 from os.path import abspath, dirname, isfile, join
@@ -14,6 +15,7 @@ from unittest import TestCase, TextTestResult, TextTestRunner, main
 repository_root = dirname(dirname(dirname(dirname(abspath(__file__)))))
 module_path.append(repository_root)
 
+from mytoolit import __version__
 from mytoolit.can.identifier import Identifier
 from mytoolit.measurement.acceleration import (convert_acceleration_adc_to_g,
                                                ratio_noise_max)
@@ -68,7 +70,7 @@ def create_attribute(description, value, pdf=True):
     A simple namespace object that stores the specified data
     """
 
-    return SimpleNamespace(description=description, value=value, pdf=pdf)
+    return SimpleNamespace(description=description, value=str(value), pdf=pdf)
 
 
 # -- Classes ------------------------------------------------------------------
@@ -246,8 +248,28 @@ class TestSTH(TestCase):
     def tearDownClass(cls):
         """Print attributes of tested STH after all successful test cases"""
 
+        cls.__output_general_data()
         cls.__output_sth_data()
         cls.report.build()
+
+    @classmethod
+    def __output_general_data(cls):
+        """Print general information and add it to PDF report"""
+
+        now = datetime.now()
+        date = now.strftime('%Y-%m-%d')
+        time = now.strftime("%H:%M:%S")
+
+        operator = settings.Operator.Name
+
+        attributes = [
+            create_attribute("ICOc Version", __version__),
+            create_attribute("Date", date),
+            create_attribute("Time", time),
+            create_attribute("Operator", operator),
+        ]
+
+        cls.__output_data(attributes, sth_data=False)
 
     @classmethod
     def __output_sth_data(cls):
@@ -337,8 +359,9 @@ class TestSTH(TestCase):
 
         # Print attributes to standard output
         print("\n")
-        print("Attributes")
-        print("——————————")
+        header = "Attributes" if sth_data else "General"
+        print(header)
+        print("—" * len(header))
 
         for attribute in attributes:
             print(f"{attribute.description:{max_length_description}} " +
@@ -350,7 +373,8 @@ class TestSTH(TestCase):
             attribute for attribute in attributes if attribute.pdf
         ]
         for attribute in attributes_pdf:
-            cls.report.add_attribute(attribute.description, attribute.value)
+            cls.report.add_attribute(attribute.description, attribute.value,
+                                     sth_data)
 
     def setUp(self):
         """Set up hardware before a single test case"""
