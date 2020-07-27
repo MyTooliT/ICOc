@@ -35,8 +35,6 @@ def _first_page(canvas, document):
     title_offset = logo_offset + logo_height + 20
     date_offset = title_offset + 20
 
-    repository_root = dirname(dirname(dirname(abspath(__file__))))
-
     PDFImage(join(repository_root, join('assets', 'MyTooliT.pdf')), logo_width,
              logo_height).drawOn(canvas, (page_width - logo_width) / 2,
                                  page_height - logo_offset - logo_height)
@@ -64,7 +62,6 @@ class Report:
     def __init__(self):
         """Initialize the report"""
 
-        repository_root = dirname(dirname(dirname(abspath(__file__))))
         filepath = join(repository_root, 'Report.pdf')
 
         self.document = SimpleDocTemplate(filepath,
