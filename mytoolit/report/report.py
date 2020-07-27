@@ -2,13 +2,14 @@
 
 from datetime import datetime
 from os.path import abspath, join, dirname
-from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.lib.units import cm
-from reportlab.platypus import (Flowable, ListFlowable, ListItem, Paragraph,
-                                SimpleDocTemplate, Spacer, Table)
-from reportlab.rl_config import defaultPageSize
 from sys import path as module_path
 from typing import List
+
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.units import cm
+from reportlab.platypus import (Flowable, ListFlowable, Paragraph,
+                                SimpleDocTemplate, Spacer, Table)
+from reportlab.rl_config import defaultPageSize
 
 # Add path for custom libraries
 repository_root = dirname(dirname(dirname(abspath(__file__))))
