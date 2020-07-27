@@ -73,17 +73,23 @@ class Report:
         self.story = [Spacer(1, 3 * cm)]
         self.styles = getSampleStyleSheet()
 
-        # Add general information
+        self.attributes = []
+        self.tests = []
+
+        self.__add_gerneral_information()
+
+    def __add_gerneral_information(self):
+        """Add a table containing general information to PDF"""
+
         now = datetime.now()
         date = now.strftime('%Y-%m-%d')
         time = now.strftime("%H:%M:%S")
+
         operator = settings.Operator.Name
+
         self.__add_header("General")
         self.__add_table([["Date", date], ["Time", time],
                           ["Operator", operator]])
-
-        self.attributes = []
-        self.tests = []
 
     def __add_header(self, text):
         """Add a header at the current position in the document
