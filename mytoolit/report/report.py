@@ -72,6 +72,7 @@ class Report:
         self.story = [Spacer(1, 3 * cm)]
         self.styles = getSampleStyleSheet()
 
+        self.general = []
         self.attributes = []
         self.tests = []
 
@@ -86,13 +87,15 @@ class Report:
 
         operator = settings.Operator.Name
 
-        self.__add_header("General")
-        self.__add_table([
+        attributes = [
             ["ICOc Version", __version__],
             ["Date", date],
             ["Time", time],
             ["Operator", operator],
-        ])
+        ]
+
+        for name, value in attributes:
+            self.add_attribute(name, value, sth_attribute=False)
 
     def __add_header(self, text):
         """Add a header at the current position in the document
@@ -122,19 +125,23 @@ class Report:
         table.hAlign = 'LEFT'
         self.story.append(table)
 
-    def add_attribute(self, name, value):
-        """Add information about an STH attribute to the report
+    def add_attribute(self, name, value, sth_attribute=True):
+        """Add information about an attribute to the report
 
         Parameters
         ----------
 
         name:
-            The name of the STH attribute
+            The name of the attribute
         value:
-            The value of the STH attribute
+            The value of the attribute
+        sth_attribute
+            Specifies if the specified name and value stores STH specific data
+            or general data
         """
 
-        self.attributes.append([name, value])
+        table = self.attributes if sth_attribute else self.general
+        table.append([name, value])
 
     def add_test_result(self, description, result):
         """Add information about a single test result to the report
@@ -162,6 +169,9 @@ class Report:
 
     def build(self):
         """Store the PDF report"""
+
+        self.__add_header("General")
+        self.__add_table(self.general)
 
         if len(self.attributes) > 0:
             self.__add_header("Attributes")
