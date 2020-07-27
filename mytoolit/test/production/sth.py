@@ -42,6 +42,35 @@ from MyToolItCommands import (
 from MyToolItSth import fVoltageBattery
 from SthLimits import SthLimits
 
+# -- Functions ----------------------------------------------------------------
+
+
+def create_attribute(description, value, pdf=True):
+    """Create a simple object that stores test attributes
+
+
+    Parameters
+    ----------
+
+    description:
+        The description (name) of the attribute
+
+    value:
+        The value of the attribute
+
+    pdf:
+        True if the attribute should be added to the PDF report
+
+
+    Returns
+    -------
+
+    A simple namespace object that stores the specified data
+    """
+
+    return SimpleNamespace(description=description, value=value, pdf=pdf)
+
+
 # -- Classes ------------------------------------------------------------------
 
 
@@ -222,91 +251,106 @@ class TestSTH(TestCase):
 
     @classmethod
     def __output_sth_data(cls):
-        """Print STH information in output and add it to PDF report"""
+        """Print STH information and add it to PDF report"""
 
-        def create_attribute(name, description, value=None, pdf=True):
-            """Create a simple object that stores test attributes"""
+        attributes = cls.__collect_sth_data()
+        cls.__output_data(attributes)
 
-            value = f"{{cls.{name}}}" if not value else value
-            return SimpleNamespace(name=name,
-                                   description=description,
-                                   value=value,
-                                   pdf=pdf)
+    @classmethod
+    def __collect_sth_data(cls):
+        """Collect data about STH
 
-        cls.status = settings.STH.Status
+
+        Returns
+        -------
+
+        An iterable of defined STH attributes stored in simple name space
+        objects
+        """
 
         possible_attributes = [
-            create_attribute('name', "Name"),
-            create_attribute('status', "Status"),
-            create_attribute('production_date', "Production Date", pdf=False),
-            create_attribute('product_name', "Product Name", pdf=False),
-            create_attribute('serial_number', "Serial Number", pdf=False),
-            create_attribute('batch_number', "Batch Number", pdf=False),
-            create_attribute('bluetooth_mac', "Bluetooth Address"),
-            create_attribute('bluetooth_rssi', "RSSI",
-                             "{cls.bluetooth_rssi} dBm"),
-            create_attribute('hardware_revision', "Hardware Revision"),
-            create_attribute('firmware_version', "Firmware Version"),
-            create_attribute('firmware_revision',
-                             "Firmware Revision",
+            create_attribute("Name", "{cls.name}"),
+            create_attribute("Status", settings.STH.Status),
+            create_attribute("Production Date",
+                             "{cls.production_date}",
                              pdf=False),
-            create_attribute('release_name', "Release Name", pdf=False),
-            create_attribute('ratio_noise_max', "Ratio Noise Maximum",
+            create_attribute("Product Name", "{cls.product_name}", pdf=False),
+            create_attribute("Serial Number", "{cls.serial_number}",
+                             pdf=False),
+            create_attribute("Batch Number", "{cls.batch_number}", pdf=False),
+            create_attribute("Bluetooth Address", "{cls.bluetooth_mac}"),
+            create_attribute("RSSI", "{cls.bluetooth_rssi} dBm"),
+            create_attribute("Hardware Revision", "{cls.hardware_revision}"),
+            create_attribute("Firmware Version", "{cls.firmware_version}"),
+            create_attribute("Firmware Revision",
+                             "{cls.firmware_revision}",
+                             pdf=False),
+            create_attribute("Release Name", "{cls.release_name}", pdf=False),
+            create_attribute("Ratio Noise Maximum",
                              "{cls.ratio_noise_max:.3f} dB"),
-            create_attribute('sleep_time1',
-                             "Sleep Time 1",
-                             "{cls.sleep_time1} ms",
+            create_attribute("Sleep Time 1", "{cls.sleep_time1} ms",
                              pdf=False),
-            create_attribute('advertisement_time1',
-                             "Advertisement Time 1",
+            create_attribute("Advertisement Time 1",
                              "{cls.advertisement_time1} ms",
                              pdf=False),
-            create_attribute('sleep_time2',
-                             "Sleep Time 2",
-                             "{cls.sleep_time2} ms",
+            create_attribute("Sleep Time 2", "{cls.sleep_time2} ms",
                              pdf=False),
-            create_attribute('advertisement_time2',
-                             "Advertisement Time 2",
+            create_attribute("Advertisement Time 2",
                              "{cls.advertisement_time2} ms",
                              pdf=False),
         ]
 
         # Check available read hardware attributes
-        attributes = [
-            attribute for attribute in possible_attributes
-            if hasattr(cls, attribute.name)
-        ]
+        attributes = []
+        for attribute in possible_attributes:
+            try:
+                attribute.value = str(attribute.value).format(cls=cls)
+                attributes.append(attribute)
+            except AttributeError:
+                pass
 
+        return attributes
+
+    @classmethod
+    def __output_data(cls, attributes, sth_data=True):
+        """Output data to standard output and PDF report
+
+        Parameters
+        ----------
+
+        attributes:
+            An iterable that stores simple name space objects created via
+            ``create_attribute``
+
+        sth_data:
+            Specifies if this method outputs STH or general data
+        """
+
+        # Only output something, if there is at least one attribute
+        if not attributes:
+            return
+
+        max_length_description = max(
+            [len(attribute.description) for attribute in attributes])
+        max_length_value = max(
+            [len(attribute.value) for attribute in attributes])
+
+        # Print attributes to standard output
+        print("\n")
+        print("Attributes")
+        print("——————————")
+
+        for attribute in attributes:
+            print(f"{attribute.description:{max_length_description}} " +
+                  f"{attribute.value:>{max_length_value}}")
+        print()
+
+        # Add attributes to PDF
         attributes_pdf = [
             attribute for attribute in attributes if attribute.pdf
         ]
-
-        # Only print something, if at least one attribute was read
-        if attributes:
-
-            # Insert variables into value format strings
-            for attribute in attributes:
-                attribute.value = attribute.value.format(cls=cls)
-
-            max_length_description = max(
-                [len(attribute.description) for attribute in attributes])
-            max_length_value = max(
-                [len(attribute.value) for attribute in attributes])
-
-            print("\n")
-            print("Attributes")
-            print("——————————")
-
-            # Print attributes to standard output
-            for attribute in attributes:
-                print(f"{attribute.description:{max_length_description}} " +
-                      f"{attribute.value:>{max_length_value}}")
-            print()
-
-            # Add attributes to PDF
-            for attribute in attributes_pdf:
-                cls.report.add_attribute(attribute.description,
-                                         attribute.value)
+        for attribute in attributes_pdf:
+            cls.report.add_attribute(attribute.description, attribute.value)
 
     def setUp(self):
         """Set up hardware before a single test case"""
