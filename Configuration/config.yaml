@@ -59,3 +59,9 @@ STH:
     # corner of the LC display, after you connect the programmer to a power
     # source
     Serial Number: 440120910
+
+
+  Status:
+    # Describe the status of the current STH hardware. This scalar should either
+    # store the value `Bare BCP` or `Epoxied`.
+    Bare BCP

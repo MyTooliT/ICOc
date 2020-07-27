@@ -226,8 +226,11 @@ class TestSTH(TestCase):
                                    value=value,
                                    pdf=pdf)
 
+        cls.status = settings.STH.Status
+
         possible_attributes = [
             create_attribute('name', "Name"),
+            create_attribute('status', "Status"),
             create_attribute('production_date', "Production Date", pdf=False),
             create_attribute('product_name', "Product Name", pdf=False),
             create_attribute('serial_number', "Serial Number", pdf=False),
