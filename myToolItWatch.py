@@ -1,6 +1,6 @@
 import sys
 import os
-from version import sMyToolItWatchVersion
+from mytoolit import __version__
 import xml.etree.ElementTree as ET
 import CanFd
 from CanFd import rreplace
@@ -301,7 +301,7 @@ class myToolItWatch():
     """
 
     def sVersion(self):
-        return sMyToolItWatchVersion
+        return __version__
 
 
 # Setter Methods
