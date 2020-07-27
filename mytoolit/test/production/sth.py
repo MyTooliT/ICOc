@@ -366,7 +366,6 @@ class TestSTH(TestCase):
         for attribute in attributes:
             print(f"{attribute.description:{max_length_description}} " +
                   f"{attribute.value:>{max_length_value}}")
-        print()
 
         # Add attributes to PDF
         attributes_pdf = [
