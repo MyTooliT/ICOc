@@ -15,6 +15,7 @@ repository_root = dirname(dirname(dirname(abspath(__file__))))
 module_path.append(repository_root)
 
 from .pdf import PDFImage
+from mytoolit import __version__
 from mytoolit.config import settings
 
 # -- Functions ----------------------------------------------------------------
@@ -88,8 +89,12 @@ class Report:
         operator = settings.Operator.Name
 
         self.__add_header("General")
-        self.__add_table([["Date", date], ["Time", time],
-                          ["Operator", operator]])
+        self.__add_table([
+            ["ICOc Version", __version__],
+            ["Date", date],
+            ["Time", time],
+            ["Operator", operator],
+        ])
 
     def __add_header(self, text):
         """Add a header at the current position in the document
