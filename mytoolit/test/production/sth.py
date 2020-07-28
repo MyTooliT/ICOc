@@ -304,9 +304,6 @@ class TestSTH(TestCase):
             create_attribute("RSSI", "{cls.bluetooth_rssi} dBm"),
             create_attribute("Hardware Revision", "{cls.hardware_revision}"),
             create_attribute("Firmware Version", "{cls.firmware_version}"),
-            create_attribute("Firmware Revision",
-                             "{cls.firmware_revision}",
-                             pdf=False),
             create_attribute("Release Name", "{cls.release_name}", pdf=False),
             create_attribute("Ratio Noise Maximum",
                              "{cls.ratio_noise_max:.3f} dB"),
@@ -881,9 +878,15 @@ class TestSTH(TestCase):
                          length=3,
                          data=[major, minor, build])
 
-        def read_firmware_revision():
+        def read_firmware_version():
             major, minor, build = read_eeprom(address=4, offset=21, length=3)
             return f"{major}.{minor}.{build}"
+
+        def write_firmware_version(major, minor, build):
+            write_eeprom(address=4,
+                         offset=21,
+                         length=3,
+                         data=[major, minor, build])
 
         def read_release_name():
             return read_eeprom_text(address=4, offset=24, length=8)
@@ -939,7 +942,16 @@ class TestSTH(TestCase):
             description="Advertisement Time 2",
             miliseconds=settings.STH.Bluetooth.Advertisement_Time_2)
 
-        cls.firmware_revision = read_firmware_revision()
+        # The STH seems to define two different firmware version numbers. We
+        # overwrite the version stored in the EEPROM with the one read, when
+        # the test connected to the STH.
+        major, minor, build = map(int, cls.firmware_version.split('.'))
+        write_firmware_version(major, minor, build)
+        firmware_version = read_firmware_version()
+        self.assertEqual(
+            cls.firmware_version, firmware_version,
+            f"Written firmware version “{cls.firmware_version}” does not " +
+            f"match read firmware version “{firmware_version}”")
 
         hardware_revision = settings.STH.Hardware_Revision
         major, minor, build = map(int, hardware_revision.split('.'))
