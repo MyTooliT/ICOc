@@ -291,6 +291,7 @@ class TestSTH(TestCase):
         """
 
         possible_attributes = [
+            create_attribute("EEPROM Init", "{cls.init}", pdf=False),
             create_attribute("Name", "{cls.name}"),
             create_attribute("Status", settings.STH.Status),
             create_attribute("Production Date",
@@ -815,6 +816,9 @@ class TestSTH(TestCase):
             data = list(value.to_bytes(length, byteorder='little'))
             write_eeprom(address, offset, data)
 
+        def read_init():
+            return read_eeprom(address=0, offset=0, length=1).pop()
+
         def read_name():
             return read_eeprom_text(address=0, offset=1, length=8)
 
@@ -907,11 +911,22 @@ class TestSTH(TestCase):
         def read_batch_number():
             return read_eeprom_unsigned(address=5, offset=28, length=4)
 
+        cls = type(self)
+
+        # ========
+        # = Init =
+        # ========
+
+        init = read_init()
+        initialized = 0xac
+        locked = 0xca
+        cls.init = "Initialized" if init == initialized else (
+            "Locked" if init == locked else f"Undefined ({hex(init)})")
+
         # ========
         # = Name =
         # ========
 
-        cls = type(self)
         name = cls.bluetooth_mac[-8:]  # Use last part of MAC as identifier
         write_name(name)
         read_name = read_name()
