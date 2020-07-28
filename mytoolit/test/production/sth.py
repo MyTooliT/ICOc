@@ -973,6 +973,19 @@ class TestSTH(TestCase):
             miliseconds=settings.STH.Bluetooth.Advertisement_Time_2)
 
         # ============
+        # = Hardware =
+        # ============
+
+        hardware_revision = settings.STH.Hardware_Revision
+        major, minor, build = map(int, hardware_revision.split('.'))
+        write_hardware_revision(major, minor, build)
+        cls.hardware_revision = read_hardware_revision()
+        self.assertEqual(
+            hardware_revision, cls.hardware_revision,
+            f"Written hardware revision “{hardware_revision}” does not " +
+            f"match read hardware revision “{cls.hardware_revision}”")
+
+        # ============
         # = Firmware =
         # ============
 
@@ -986,19 +999,6 @@ class TestSTH(TestCase):
             cls.firmware_version, firmware_version,
             f"Written firmware version “{cls.firmware_version}” does not " +
             f"match read firmware version “{firmware_version}”")
-
-        # ============
-        # = Hardware =
-        # ============
-
-        hardware_revision = settings.STH.Hardware_Revision
-        major, minor, build = map(int, hardware_revision.split('.'))
-        write_hardware_revision(major, minor, build)
-        cls.hardware_revision = read_hardware_revision()
-        self.assertEqual(
-            hardware_revision, cls.hardware_revision,
-            f"Written hardware revision “{hardware_revision}” does not " +
-            f"match read hardware revision “{cls.hardware_revision}”")
 
         # ================
         # = Release Name =
