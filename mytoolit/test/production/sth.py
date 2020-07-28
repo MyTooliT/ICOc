@@ -321,6 +321,7 @@ class TestSTH(TestCase):
             create_attribute("Advertisement Time 2",
                              "{cls.advertisement_time_2} ms",
                              pdf=False),
+            create_attribute("OEM Data", "{cls.oem_data}", pdf=False),
         ]
 
         # Check available read hardware attributes
@@ -921,6 +922,13 @@ class TestSTH(TestCase):
         def write_product_name(text):
             write_eeprom_text(address=4, offset=64, length=128, text=text)
 
+        def read_oem_data():
+            # We currently read the data in text format, to improve the
+            # readability of null bytes in the shell. Please notice, that this
+            # will not always work (depending on the binary data stored in
+            # EEPROM region).
+            return read_eeprom_text(address=4, offset=192, length=64)
+
         def read_production_date():
             date = read_eeprom_text(address=5, offset=20, length=8)
             year = date[0:4]
@@ -1051,6 +1059,12 @@ class TestSTH(TestCase):
             product_name, cls.product_name,
             f"Written product name “{product_name}” does not " +
             f"match read product name “{cls.product_name}”")
+
+        # ============
+        # = OEM Data =
+        # ============
+
+        cls.oem_data = read_oem_data()
 
         # ===================
         # = Production Date =
