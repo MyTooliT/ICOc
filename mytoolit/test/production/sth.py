@@ -925,6 +925,9 @@ class TestSTH(TestCase):
         def read_batch_number():
             return read_eeprom_unsigned(address=5, offset=28, length=4)
 
+        def write_batch_number(value):
+            write_eeprom_unsigned(address=5, offset=28, length=4, value=value)
+
         cls = type(self)
 
         # ========
@@ -1040,7 +1043,17 @@ class TestSTH(TestCase):
             f"Written production date “{production_date}” does not match " +
             f"read production date “{cls.production_date}”")
 
+        # ================
+        # = Batch Number =
+        # ================
+
+        batch_number = settings.STH.Batch_Number
+        write_batch_number(batch_number)
         cls.batch_number = read_batch_number()
+        self.assertEqual(
+            batch_number, cls.batch_number,
+            f"Written batch “{batch_number}” does not match " +
+            f"read batch number “{cls.batch_number}”")
 
         # ========
         # = Init =

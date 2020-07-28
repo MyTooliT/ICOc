@@ -40,6 +40,10 @@ STH:
         # Tolerance to the expected voltage difference in mV
         Tolerance: 30
 
+  # An ever increasing (32 bit unsigned) number that describes the current
+  # batch that this STH was a part of.
+  Batch Number: 200
+
   Battery Voltage:
     Average: 3.2 # Expected value of power source voltage in Volt
     Tolerance: 0.3 # Tolerance for expected power source voltage in Volt
