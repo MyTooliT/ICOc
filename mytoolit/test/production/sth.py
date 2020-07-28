@@ -923,11 +923,10 @@ class TestSTH(TestCase):
             write_eeprom_text(address=4, offset=64, length=128, text=text)
 
         def read_oem_data():
-            # We currently read the data in text format, to improve the
-            # readability of null bytes in the shell. Please notice, that this
-            # will not always work (depending on the binary data stored in
-            # EEPROM region).
-            return read_eeprom_text(address=4, offset=192, length=64)
+            return read_eeprom(address=4, offset=192, length=64)
+
+        def write_oem_data(data):
+            return write_eeprom(address=4, offset=192, length=64, data=data)
 
         def read_production_date():
             date = read_eeprom_text(address=5, offset=20, length=8)
@@ -1064,7 +1063,18 @@ class TestSTH(TestCase):
         # = OEM Data =
         # ============
 
+        oem_data = settings.STH.OEM_Data
+        write_oem_data(oem_data)
         cls.oem_data = read_oem_data()
+        self.assertListEqual(
+            oem_data, cls.oem_data,
+            f"Written OEM data “{oem_data}” does not " +
+            f"match read OEM data “{cls.oem_data}”")
+        # We currently store the data in text format, to improve the
+        # readability of null bytes in the shell. Please notice, that this will
+        # not always work (depending on the binary data stored in EEPROM
+        # region).
+        cls.oem_data = ''.join(map(chr, cls.oem_data)).replace('\x00', '')
 
         # ===================
         # = Production Date =
