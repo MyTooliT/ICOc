@@ -310,15 +310,17 @@ class TestSTH(TestCase):
             create_attribute("Release Name", "{cls.release_name}", pdf=False),
             create_attribute("Ratio Noise Maximum",
                              "{cls.ratio_noise_max:.3f} dB"),
-            create_attribute("Sleep Time 1", "{cls.sleep_time1} ms",
+            create_attribute("Sleep Time 1",
+                             "{cls.sleep_time_1} ms",
                              pdf=False),
             create_attribute("Advertisement Time 1",
-                             "{cls.advertisement_time1} ms",
+                             "{cls.advertisement_time_1} ms",
                              pdf=False),
-            create_attribute("Sleep Time 2", "{cls.sleep_time2} ms",
+            create_attribute("Sleep Time 2",
+                             "{cls.sleep_time_2} ms",
                              pdf=False),
             create_attribute("Advertisement Time 2",
-                             "{cls.advertisement_time2} ms",
+                             "{cls.advertisement_time_2} ms",
                              pdf=False),
         ]
 
@@ -833,37 +835,37 @@ class TestSTH(TestCase):
                 f"{description} {miliseconds_read} ms does not match " +
                 f" written value of {miliseconds} ms")
 
-        def read_sleep_time1():
+        def read_sleep_time_1():
             return read_eeprom_unsigned(address=0, offset=9, length=4)
 
-        def write_sleep_time1(miliseconds):
+        def write_sleep_time_1(miliseconds):
             write_eeprom_unsigned(address=0,
                                   offset=9,
                                   value=miliseconds,
                                   length=4)
 
-        def read_advertisement_time1():
+        def read_advertisement_time_1():
             return read_eeprom_unsigned(address=0, offset=13, length=2)
 
-        def write_advertisement_time1(miliseconds):
+        def write_advertisement_time_1(miliseconds):
             write_eeprom_unsigned(address=0,
                                   offset=13,
                                   value=miliseconds,
                                   length=2)
 
-        def read_sleep_time2():
+        def read_sleep_time_2():
             return read_eeprom_unsigned(address=0, offset=15, length=4)
 
-        def write_sleep_time2(miliseconds):
+        def write_sleep_time_2(miliseconds):
             write_eeprom_unsigned(address=0,
                                   offset=15,
                                   value=miliseconds,
                                   length=4)
 
-        def read_advertisement_time2():
+        def read_advertisement_time_2():
             return read_eeprom_unsigned(address=0, offset=19, length=2)
 
-        def write_advertisement_time2(miliseconds):
+        def write_advertisement_time_2(miliseconds):
             write_eeprom_unsigned(address=0,
                                   offset=19,
                                   value=miliseconds,
@@ -902,29 +904,29 @@ class TestSTH(TestCase):
             name, read_name,
             f"Written name “{name}” does not match read name “{read_name}”")
 
-        read_write_time(read_function=read_sleep_time1,
-                        write_function=write_sleep_time1,
-                        name='sleep_time1',
+        read_write_time(read_function=read_sleep_time_1,
+                        write_function=write_sleep_time_1,
+                        name='sleep_time_1',
                         description="Sleep Time 1",
                         miliseconds=settings.STH.Bluetooth.Sleep_Time_1)
 
         read_write_time(
-            read_function=read_advertisement_time1,
-            write_function=write_advertisement_time1,
-            name='advertisement_time1',
+            read_function=read_advertisement_time_1,
+            write_function=write_advertisement_time_1,
+            name='advertisement_time_1',
             description="Advertisement Time 1",
             miliseconds=settings.STH.Bluetooth.Advertisement_Time_1)
 
-        read_write_time(read_function=read_sleep_time2,
-                        write_function=write_sleep_time2,
-                        name='sleep_time2',
+        read_write_time(read_function=read_sleep_time_2,
+                        write_function=write_sleep_time_2,
+                        name='sleep_time_2',
                         description="Sleep Time 2",
                         miliseconds=settings.STH.Bluetooth.Sleep_Time_2)
 
         read_write_time(
-            read_function=read_advertisement_time2,
-            write_function=write_advertisement_time2,
-            name='advertisement_time2',
+            read_function=read_advertisement_time_2,
+            write_function=write_advertisement_time_2,
+            name='advertisement_time_2',
             description="Advertisement Time 2",
             miliseconds=settings.STH.Bluetooth.Advertisement_Time_2)
 
