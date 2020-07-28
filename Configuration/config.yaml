@@ -75,6 +75,8 @@ STH:
     # source
     Serial Number: 440120910
 
+  # Serial number for the manufacturer (maximum of 32 byte UTF-8 encoded text)
+  Serial Number: 0
 
   Status:
     # Describe the status of the current STH hardware. This scalar should either

@@ -902,6 +902,9 @@ class TestSTH(TestCase):
             serial_number = read_eeprom_text(address=4, offset=32, length=32)
             return serial_number
 
+        def write_serial_number(text):
+            write_eeprom_text(address=4, offset=32, length=32, text=text)
+
         def read_product_name():
             return read_eeprom_text(address=4, offset=64, length=128)
 
@@ -997,7 +1000,13 @@ class TestSTH(TestCase):
         # = Serial Number =
         # =================
 
+        serial_number = str(settings.STH.Serial_Number)
+        write_serial_number(serial_number)
         cls.serial_number = read_serial_number()
+        self.assertEqual(
+            serial_number, cls.serial_number,
+            f"Written serial number “{serial_number}” does not " +
+            f"match read serial number “{cls.serial_number}”")
 
         # ================
         # = Product Name =
