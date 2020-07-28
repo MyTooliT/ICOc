@@ -822,6 +822,17 @@ class TestSTH(TestCase):
         def write_name(text):
             write_eeprom_text(address=0, offset=1, text=text, length=8)
 
+        def read_write_time(read_function, write_function, name, description,
+                            miliseconds):
+            write_function(miliseconds)
+            miliseconds_read = read_function()
+            cls = type(self)
+            setattr(cls, name, miliseconds_read)
+            self.assertEqual(
+                miliseconds_read, miliseconds,
+                f"{description} {miliseconds_read} ms does not match " +
+                f" written value of {miliseconds} ms")
+
         def read_sleep_time1():
             return read_eeprom_unsigned(address=0, offset=9, length=4)
 
@@ -879,21 +890,18 @@ class TestSTH(TestCase):
             name, read_name,
             f"Written name “{name}” does not match read name “{read_name}”")
 
-        sleep_time_1 = settings.STH.Bluetooth.Sleep_Time_1
-        write_sleep_time1(miliseconds=sleep_time_1)
-        cls.sleep_time1 = read_sleep_time1()
-        self.assertEqual(
-            cls.sleep_time1, sleep_time_1,
-            f"Sleep time 1 {cls.sleep_time1} ms does not match written " +
-            f"value of {sleep_time_1} ms")
+        read_write_time(read_function=read_sleep_time1,
+                        write_function=write_sleep_time1,
+                        name='sleep_time1',
+                        description="Sleep Time 1",
+                        miliseconds=settings.STH.Bluetooth.Sleep_Time_1)
 
-        advertisement_time_1 = settings.STH.Bluetooth.Advertisement_Time_1
-        write_advertisement_time1(miliseconds=advertisement_time_1)
-        cls.advertisement_time1 = read_advertisement_time1()
-        self.assertEqual(
-            cls.advertisement_time1, advertisement_time_1,
-            f"Advertisement time 1 {cls.advertisement_time1} ms does not " +
-            f"match written value of {advertisement_time_1} ms")
+        read_write_time(
+            read_function=read_advertisement_time1,
+            write_function=write_advertisement_time1,
+            name='advertisement_time1',
+            description="Advertisement Time 1",
+            miliseconds=settings.STH.Bluetooth.Advertisement_Time_1)
 
         cls.sleep_time2 = read_sleep_time2()
         cls.advertisement_time2 = read_advertisement_time2()
