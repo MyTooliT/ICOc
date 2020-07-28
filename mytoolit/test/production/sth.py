@@ -912,9 +912,14 @@ class TestSTH(TestCase):
             write_eeprom_text(address=4, offset=64, length=128, text=text)
 
         def read_production_date():
-            return read_eeprom_text(address=5, offset=20, length=8)
+            date = read_eeprom_text(address=5, offset=20, length=8)
+            year = date[0:4]
+            month = date[4:6]
+            day = date[6:8]
+            return f"{year}-{month}-{day}"
 
-        def write_production_date(date="19701231"):
+        def write_production_date(date="1970-12-31"):
+            date = date.replace("-", "")
             write_eeprom_text(address=5, offset=20, length=8, text=date)
 
         def read_batch_number():

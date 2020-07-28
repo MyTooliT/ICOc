@@ -65,8 +65,8 @@ STH:
   # This value specifies the current name of the STH unit
   Name: 01:de:81
 
-  # The production date of the STH PCB in the format “yyyymmdd”
-  Production Date: 20190703
+  # The production date of the STH PCB in the format YYYY-MM-DD
+  Production Date: 2019-07-03
 
   # Product name for the  manufacturer (maximum of 64 byte UTF-8 encoded text)
   Product Name: 0
