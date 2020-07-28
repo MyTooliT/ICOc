@@ -68,6 +68,9 @@ STH:
   # The production date of the STH PCB in the format “yyyymmdd”
   Production Date: 20190703
 
+  # Product name for the  manufacturer (maximum of 64 byte UTF-8 encoded text)
+  Product Name: 0
+
   Programming Board:
     # Please store the serial number of the programming board that is connected
     # to the STH here. This number should be displayed in the right bottom

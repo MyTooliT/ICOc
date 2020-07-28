@@ -908,6 +908,9 @@ class TestSTH(TestCase):
         def read_product_name():
             return read_eeprom_text(address=4, offset=64, length=128)
 
+        def write_product_name(text):
+            write_eeprom_text(address=4, offset=64, length=128, text=text)
+
         def read_production_date():
             return read_eeprom_text(address=5, offset=20, length=8)
 
@@ -1012,7 +1015,13 @@ class TestSTH(TestCase):
         # = Product Name =
         # ================
 
+        product_name = str(settings.STH.Product_Name)
+        write_product_name(product_name)
         cls.product_name = read_product_name()
+        self.assertEqual(
+            product_name, cls.product_name,
+            f"Written product name “{product_name}” does not " +
+            f"match read product name “{cls.product_name}”")
 
         # ===================
         # = Production Date =
