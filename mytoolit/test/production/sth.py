@@ -892,6 +892,9 @@ class TestSTH(TestCase):
         def read_production_date():
             return read_eeprom_text(address=5, offset=20, length=8)
 
+        def write_production_date(date="19701231"):
+            write_eeprom_text(address=5, offset=20, length=8, text=date)
+
         def read_batch_number():
             return read_eeprom_unsigned(address=5, offset=28, length=4)
 
@@ -936,7 +939,14 @@ class TestSTH(TestCase):
         cls.serial_number = read_serial_number()
         cls.product_name = read_product_name()
 
+        production_date = str(settings.STH.Production_Date)
+        write_production_date(production_date)
         cls.production_date = read_production_date()
+        self.assertEqual(
+            production_date, cls.production_date,
+            f"Written production date “{production_date}” does not match " +
+            f"read production date “{cls.production_date}”")
+
         cls.batch_number = read_batch_number()
 
 

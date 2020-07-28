@@ -62,6 +62,9 @@ STH:
   # This value specifies the current name of the STH unit
   Name: 01:de:81
 
+  # The production date of the STH PCB in the format “yyyymmdd”
+  Production Date: 20190703
+
   Programming Board:
     # Please store the serial number of the programming board that is connected
     # to the STH here. This number should be displayed in the right bottom
