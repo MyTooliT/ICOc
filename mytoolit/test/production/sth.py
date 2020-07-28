@@ -875,6 +875,12 @@ class TestSTH(TestCase):
             major, minor, build = read_eeprom(address=4, offset=13, length=3)
             return f"{major}.{minor}.{build}"
 
+        def write_hardware_revision(major, minor, build):
+            write_eeprom(address=4,
+                         offset=13,
+                         length=3,
+                         data=[major, minor, build])
+
         def read_firmware_revision():
             major, minor, build = read_eeprom(address=4, offset=21, length=3)
             return f"{major}.{minor}.{build}"
@@ -934,7 +940,16 @@ class TestSTH(TestCase):
             miliseconds=settings.STH.Bluetooth.Advertisement_Time_2)
 
         cls.firmware_revision = read_firmware_revision()
+
+        hardware_revision = settings.STH.Hardware_Revision
+        major, minor, build = map(int, hardware_revision.split('.'))
+        write_hardware_revision(major, minor, build)
         cls.hardware_revision = read_hardware_revision()
+        self.assertEqual(
+            hardware_revision, cls.hardware_revision,
+            f"Written hardware revision “{hardware_revision}” does not " +
+            f"match read hardware revision “{cls.hardware_revision}”")
+
         cls.release_name = read_release_name()
         cls.serial_number = read_serial_number()
         cls.product_name = read_product_name()

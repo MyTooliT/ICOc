@@ -59,6 +59,9 @@ STH:
     # root of the repository.
     Location: ../STH/builds/v2.1.10/manufacturingImageSthv2.1.10.hex
 
+  # The current version of the PCB design
+  Hardware Revision: 1.3.5
+
   # This value specifies the current name of the STH unit
   Name: 01:de:81
 
