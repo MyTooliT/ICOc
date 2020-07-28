@@ -297,6 +297,7 @@ class TestSTH(TestCase):
             create_attribute("Production Date",
                              "{cls.production_date}",
                              pdf=False),
+            create_attribute("GTIN", "{cls.gtin}", pdf=False),
             create_attribute("Product Name", "{cls.product_name}", pdf=False),
             create_attribute("Serial Number", "{cls.serial_number}",
                              pdf=False),
@@ -875,6 +876,9 @@ class TestSTH(TestCase):
                                   value=miliseconds,
                                   length=2)
 
+        def read_gtin():
+            return read_eeprom_unsigned(address=4, offset=0, length=8)
+
         def read_hardware_revision():
             major, minor, build = read_eeprom(address=4, offset=13, length=3)
             return f"{major}.{minor}.{build}"
@@ -971,6 +975,12 @@ class TestSTH(TestCase):
             name='advertisement_time_2',
             description="Advertisement Time 2",
             miliseconds=settings.STH.Bluetooth.Advertisement_Time_2)
+
+        # ========
+        # = GTIN =
+        # ========
+
+        cls.gtin = read_gtin()
 
         # ============
         # = Hardware =
