@@ -907,6 +907,10 @@ class TestSTH(TestCase):
         def read_batch_number():
             return read_eeprom_unsigned(address=5, offset=28, length=4)
 
+        # ========
+        # = Name =
+        # ========
+
         cls = type(self)
         name = cls.bluetooth_mac[-8:]  # Use last part of MAC as identifier
         write_name(name)
@@ -915,6 +919,10 @@ class TestSTH(TestCase):
         self.assertEqual(
             name, read_name,
             f"Written name “{name}” does not match read name “{read_name}”")
+
+        # =========================
+        # = Sleep & Advertisement =
+        # =========================
 
         read_write_time(read_function=read_sleep_time_1,
                         write_function=write_sleep_time_1,
@@ -942,6 +950,10 @@ class TestSTH(TestCase):
             description="Advertisement Time 2",
             miliseconds=settings.STH.Bluetooth.Advertisement_Time_2)
 
+        # ============
+        # = Firmware =
+        # ============
+
         # The STH seems to define two different firmware version numbers. We
         # overwrite the version stored in the EEPROM with the one read, when
         # the test connected to the STH.
@@ -952,6 +964,10 @@ class TestSTH(TestCase):
             cls.firmware_version, firmware_version,
             f"Written firmware version “{cls.firmware_version}” does not " +
             f"match read firmware version “{firmware_version}”")
+
+        # ============
+        # = Hardware =
+        # ============
 
         hardware_revision = settings.STH.Hardware_Revision
         major, minor, build = map(int, hardware_revision.split('.'))
