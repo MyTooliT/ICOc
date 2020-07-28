@@ -863,6 +863,12 @@ class TestSTH(TestCase):
         def read_advertisement_time2():
             return read_eeprom_unsigned(address=0, offset=19, length=2)
 
+        def write_advertisement_time2(miliseconds):
+            write_eeprom_unsigned(address=0,
+                                  offset=19,
+                                  value=miliseconds,
+                                  length=2)
+
         def read_hardware_revision():
             major, minor, build = read_eeprom(address=4, offset=13, length=3)
             return f"{major}.{minor}.{build}"
@@ -915,7 +921,12 @@ class TestSTH(TestCase):
                         description="Sleep Time 2",
                         miliseconds=settings.STH.Bluetooth.Sleep_Time_2)
 
-        cls.advertisement_time2 = read_advertisement_time2()
+        read_write_time(
+            read_function=read_advertisement_time2,
+            write_function=write_advertisement_time2,
+            name='advertisement_time2',
+            description="Advertisement Time 2",
+            miliseconds=settings.STH.Bluetooth.Advertisement_Time_2)
 
         cls.firmware_revision = read_firmware_revision()
         cls.hardware_revision = read_hardware_revision()

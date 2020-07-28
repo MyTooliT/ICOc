@@ -46,6 +46,8 @@ STH:
   Bluetooth:
     # Advertisement time 1 in ms
     Advertisement Time 1: 2000
+    # Advertisement time 2 in ms
+    Advertisement Time 2: 4000
     # Time to from disconnect or power on to sleep mode 1 in ms
     Sleep Time 1: 300000
     # Time to/from entering sleep mode 1 to sleep mode 2 in ms
