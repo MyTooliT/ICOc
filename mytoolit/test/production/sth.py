@@ -819,6 +819,9 @@ class TestSTH(TestCase):
         def read_init():
             return read_eeprom(address=0, offset=0, length=1).pop()
 
+        def write_init(value):
+            write_eeprom_unsigned(address=0, offset=0, length=1, value=value)
+
         def read_name():
             return read_eeprom_text(address=0, offset=1, length=8)
 
@@ -914,16 +917,6 @@ class TestSTH(TestCase):
         cls = type(self)
 
         # ========
-        # = Init =
-        # ========
-
-        init = read_init()
-        initialized = 0xac
-        locked = 0xca
-        cls.init = "Initialized" if init == initialized else (
-            "Locked" if init == locked else f"Undefined ({hex(init)})")
-
-        # ========
         # = Name =
         # ========
 
@@ -1006,6 +999,22 @@ class TestSTH(TestCase):
             f"read production date “{cls.production_date}”")
 
         cls.batch_number = read_batch_number()
+
+        # ========
+        # = Init =
+        # ========
+
+        initialized = 0xac
+        locked = 0xca
+        write_init(initialized)
+        init = read_init()
+        cls.init = "Initialized" if init == initialized else (
+            "Locked" if init == locked else f"Undefined ({hex(init)})")
+        self.assertEqual(
+            cls.init, "Initialized",
+            f"Setting EEPROM init value to “Initialized ({initialized})” "
+            "failed. EEPROM init value currently stores the value "
+            f"“{cls.init}”")
 
 
 # -- Main ---------------------------------------------------------------------
