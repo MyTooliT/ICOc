@@ -810,6 +810,12 @@ class TestSTH(TestCase):
             data = list(map(ord, list(text)))
             write_eeprom(address, offset, data, length)
 
+        def write_eeprom_unsigned(address, offset, value, length):
+            """Write an unsigned integer at the specified EEPROM address"""
+
+            data = list(value.to_bytes(length, byteorder='little'))
+            write_eeprom(address, offset, data)
+
         def read_name():
             return read_eeprom_text(address=0, offset=1, length=8)
 
@@ -818,6 +824,12 @@ class TestSTH(TestCase):
 
         def read_sleep_time1():
             return read_eeprom_unsigned(address=0, offset=9, length=4)
+
+        def write_sleep_time1(miliseconds):
+            write_eeprom_unsigned(address=0,
+                                  offset=9,
+                                  value=miliseconds,
+                                  length=4)
 
         def read_advertisement_time1():
             return read_eeprom_unsigned(address=0, offset=13, length=2)
@@ -861,7 +873,14 @@ class TestSTH(TestCase):
             name, read_name,
             f"Written name “{name}” does not match read name “{read_name}”")
 
+        sleep_time_1 = settings.STH.Bluetooth.Sleep_Time_1
+        write_sleep_time1(miliseconds=sleep_time_1)
         cls.sleep_time1 = read_sleep_time1()
+        self.assertEqual(
+            cls.sleep_time1, sleep_time_1,
+            f"Sleep time 1 {cls.sleep_time1} ms does not match written " +
+            f"value of {sleep_time_1} ms")
+
         cls.advertisement_time1 = read_advertisement_time1()
         cls.sleep_time2 = read_sleep_time2()
         cls.advertisement_time2 = read_advertisement_time2()
