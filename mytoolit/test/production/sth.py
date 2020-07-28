@@ -879,6 +879,12 @@ class TestSTH(TestCase):
         def read_gtin():
             return read_eeprom_unsigned(address=4, offset=0, length=8)
 
+        def write_gtin(value):
+            return write_eeprom_unsigned(address=4,
+                                         offset=0,
+                                         length=8,
+                                         value=value)
+
         def read_hardware_revision():
             major, minor, build = read_eeprom(address=4, offset=13, length=3)
             return f"{major}.{minor}.{build}"
@@ -980,7 +986,12 @@ class TestSTH(TestCase):
         # = GTIN =
         # ========
 
+        gtin = settings.STH.GTIN
+        write_gtin(gtin)
         cls.gtin = read_gtin()
+        self.assertEqual(
+            gtin, cls.gtin,
+            f"Written GTIN “{gtin}” does not match read GTIN “{cls.gtin}”")
 
         # ============
         # = Hardware =
