@@ -986,9 +986,28 @@ class TestSTH(TestCase):
             f"Written hardware revision “{hardware_revision}” does not " +
             f"match read hardware revision “{cls.hardware_revision}”")
 
+        # ================
+        # = Release Name =
+        # ================
+
+        # We assume the firmware sets the release name itself
         cls.release_name = read_release_name()
+
+        # =================
+        # = Serial Number =
+        # =================
+
         cls.serial_number = read_serial_number()
+
+        # ================
+        # = Product Name =
+        # ================
+
         cls.product_name = read_product_name()
+
+        # ===================
+        # = Production Date =
+        # ===================
 
         production_date = str(settings.STH.Production_Date)
         write_production_date(production_date)
