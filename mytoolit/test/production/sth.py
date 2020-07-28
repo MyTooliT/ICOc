@@ -834,6 +834,12 @@ class TestSTH(TestCase):
         def read_advertisement_time1():
             return read_eeprom_unsigned(address=0, offset=13, length=2)
 
+        def write_advertisement_time1(miliseconds):
+            write_eeprom_unsigned(address=0,
+                                  offset=13,
+                                  value=miliseconds,
+                                  length=2)
+
         def read_sleep_time2():
             return read_eeprom_unsigned(address=0, offset=15, length=4)
 
@@ -881,7 +887,14 @@ class TestSTH(TestCase):
             f"Sleep time 1 {cls.sleep_time1} ms does not match written " +
             f"value of {sleep_time_1} ms")
 
+        advertisement_time_1 = settings.STH.Bluetooth.Advertisement_Time_1
+        write_advertisement_time1(miliseconds=advertisement_time_1)
         cls.advertisement_time1 = read_advertisement_time1()
+        self.assertEqual(
+            cls.advertisement_time1, advertisement_time_1,
+            f"Advertisement time 1 {cls.advertisement_time1} ms does not " +
+            f"match written value of {advertisement_time_1} ms")
+
         cls.sleep_time2 = read_sleep_time2()
         cls.advertisement_time2 = read_advertisement_time2()
 
