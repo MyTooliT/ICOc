@@ -328,6 +328,9 @@ class TestSTH(TestCase):
             create_attribute("Power Off Cycles",
                              "{cls.power_off_cycles}",
                              pdf=False),
+            create_attribute("Operating Time",
+                             "{cls.operating_time} s",
+                             pdf=False),
         ]
 
         # Check available read hardware attributes
@@ -953,6 +956,9 @@ class TestSTH(TestCase):
         def write_power_off_cycles(times):
             write_eeprom_unsigned(address=5, offset=4, length=4, value=times)
 
+        def read_operating_time():
+            return read_eeprom_unsigned(address=5, offset=8, length=4)
+
         def write_production_date(date="1970-12-31"):
             date = date.replace("-", "")
             write_eeprom_text(address=5, offset=20, length=8, text=date)
@@ -1100,6 +1106,12 @@ class TestSTH(TestCase):
 
         cls.power_on_cycles = read_power_on_cycles()
         cls.power_off_cycles = read_power_off_cycles()
+
+        # ==================
+        # = Operating Time =
+        # ==================
+
+        cls.operating_time = read_operating_time()
 
         # ===================
         # = Production Date =
