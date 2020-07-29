@@ -843,50 +843,50 @@ class TestSTH(TestCase):
             write_eeprom_text(address=0, offset=1, text=text, length=8)
 
         def read_write_time(read_function, write_function, name, description,
-                            miliseconds):
-            write_function(miliseconds)
-            miliseconds_read = read_function()
+                            milliseconds):
+            write_function(milliseconds)
+            milliseconds_read = read_function()
             cls = type(self)
-            setattr(cls, name, miliseconds_read)
+            setattr(cls, name, milliseconds_read)
             self.assertEqual(
-                miliseconds_read, miliseconds,
-                f"{description} {miliseconds_read} ms does not match " +
-                f" written value of {miliseconds} ms")
+                milliseconds_read, milliseconds,
+                f"{description} {milliseconds_read} ms does not match " +
+                f" written value of {milliseconds} ms")
 
         def read_sleep_time_1():
             return read_eeprom_unsigned(address=0, offset=9, length=4)
 
-        def write_sleep_time_1(miliseconds):
+        def write_sleep_time_1(milliseconds):
             write_eeprom_unsigned(address=0,
                                   offset=9,
-                                  value=miliseconds,
+                                  value=milliseconds,
                                   length=4)
 
         def read_advertisement_time_1():
             return read_eeprom_unsigned(address=0, offset=13, length=2)
 
-        def write_advertisement_time_1(miliseconds):
+        def write_advertisement_time_1(milliseconds):
             write_eeprom_unsigned(address=0,
                                   offset=13,
-                                  value=miliseconds,
+                                  value=milliseconds,
                                   length=2)
 
         def read_sleep_time_2():
             return read_eeprom_unsigned(address=0, offset=15, length=4)
 
-        def write_sleep_time_2(miliseconds):
+        def write_sleep_time_2(milliseconds):
             write_eeprom_unsigned(address=0,
                                   offset=15,
-                                  value=miliseconds,
+                                  value=milliseconds,
                                   length=4)
 
         def read_advertisement_time_2():
             return read_eeprom_unsigned(address=0, offset=19, length=2)
 
-        def write_advertisement_time_2(miliseconds):
+        def write_advertisement_time_2(milliseconds):
             write_eeprom_unsigned(address=0,
                                   offset=19,
-                                  value=miliseconds,
+                                  value=milliseconds,
                                   length=2)
 
         def read_gtin():
@@ -1003,27 +1003,27 @@ class TestSTH(TestCase):
                         write_function=write_sleep_time_1,
                         name='sleep_time_1',
                         description="Sleep Time 1",
-                        miliseconds=settings.STH.Bluetooth.Sleep_Time_1)
+                        milliseconds=settings.STH.Bluetooth.Sleep_Time_1)
 
         read_write_time(
             read_function=read_advertisement_time_1,
             write_function=write_advertisement_time_1,
             name='advertisement_time_1',
             description="Advertisement Time 1",
-            miliseconds=settings.STH.Bluetooth.Advertisement_Time_1)
+            milliseconds=settings.STH.Bluetooth.Advertisement_Time_1)
 
         read_write_time(read_function=read_sleep_time_2,
                         write_function=write_sleep_time_2,
                         name='sleep_time_2',
                         description="Sleep Time 2",
-                        miliseconds=settings.STH.Bluetooth.Sleep_Time_2)
+                        milliseconds=settings.STH.Bluetooth.Sleep_Time_2)
 
         read_write_time(
             read_function=read_advertisement_time_2,
             write_function=write_advertisement_time_2,
             name='advertisement_time_2',
             description="Advertisement Time 2",
-            miliseconds=settings.STH.Bluetooth.Advertisement_Time_2)
+            milliseconds=settings.STH.Bluetooth.Advertisement_Time_2)
 
         # ========
         # = GTIN =
