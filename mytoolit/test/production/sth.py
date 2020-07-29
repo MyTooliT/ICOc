@@ -341,6 +341,9 @@ class TestSTH(TestCase):
             create_attribute("Acceleration Slope",
                              "{cls.acceleration_slope:.5f}",
                              pdf=False),
+            create_attribute("Acceleration Offset",
+                             "{cls.acceleration_offset:.3f}",
+                             pdf=False),
         ]
 
         # Check available read hardware attributes
@@ -1013,6 +1016,9 @@ class TestSTH(TestCase):
         def write_acceleration_slope(slope):
             write_eeprom_float(address=8, offset=0, value=slope)
 
+        def read_acceleration_offset():
+            return read_eeprom_float(address=8, offset=4)
+
         cls = type(self)
 
         # ========
@@ -1191,9 +1197,9 @@ class TestSTH(TestCase):
             f"Written batch “{batch_number}” does not match " +
             f"read batch number “{cls.batch_number}”")
 
-        # ===============
-        # = Calibration =
-        # ===============
+        # ================
+        # = Acceleration =
+        # ================
 
         acceleration_max = (
             settings.STH.Acceleration_Sensor.Acceleration.Maximum)
@@ -1207,6 +1213,8 @@ class TestSTH(TestCase):
             msg=f"Written acceleration slope “{acceleration_slope:.5f}” " +
             "does not match read acceleration slope " +
             f"“{cls.acceleration_slope:.5f}”")
+
+        cls.acceleration_offset = read_acceleration_offset()
 
         # ========
         # = Init =
