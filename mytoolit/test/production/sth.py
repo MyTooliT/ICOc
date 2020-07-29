@@ -328,6 +328,9 @@ class TestSTH(TestCase):
             create_attribute("Power Off Cycles",
                              "{cls.power_off_cycles}",
                              pdf=False),
+            create_attribute("Under Voltage Counter",
+                             "{cls.under_voltage_counter}",
+                             pdf=False),
             create_attribute("Operating Time",
                              "{cls.operating_time} s",
                              pdf=False),
@@ -962,6 +965,9 @@ class TestSTH(TestCase):
         def write_operating_time(seconds):
             write_eeprom_unsigned(address=5, offset=8, length=4, value=seconds)
 
+        def read_under_voltage_counter():
+            return read_eeprom_unsigned(address=5, offset=12, length=4)
+
         def write_production_date(date="1970-12-31"):
             date = date.replace("-", "")
             write_eeprom_text(address=5, offset=20, length=8, text=date)
@@ -1115,6 +1121,12 @@ class TestSTH(TestCase):
         # ==================
 
         cls.operating_time = read_operating_time()
+
+        # =========================
+        # = Under Voltage Counter =
+        # =========================
+
+        cls.under_voltage_counter = read_under_voltage_counter()
 
         # ===================
         # = Production Date =
