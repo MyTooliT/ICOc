@@ -338,6 +338,9 @@ class TestSTH(TestCase):
             create_attribute("Operating Time",
                              "{cls.operating_time} s",
                              pdf=False),
+            create_attribute("Acceleration Factor Slope",
+                             "{cls.acceleration_factor_slope:.5f}",
+                             pdf=False),
         ]
 
         # Check available read hardware attributes
@@ -998,6 +1001,9 @@ class TestSTH(TestCase):
         def write_batch_number(value):
             write_eeprom_unsigned(address=5, offset=28, length=4, value=value)
 
+        def read_acceleration_factor_slope():
+            return read_eeprom_float(address=8, offset=0)
+
         cls = type(self)
 
         # ========
@@ -1175,6 +1181,12 @@ class TestSTH(TestCase):
             batch_number, cls.batch_number,
             f"Written batch “{batch_number}” does not match " +
             f"read batch number “{cls.batch_number}”")
+
+        # ===============
+        # = Calibration =
+        # ===============
+
+        cls.acceleration_factor_slope = read_acceleration_factor_slope()
 
         # ========
         # = Init =
