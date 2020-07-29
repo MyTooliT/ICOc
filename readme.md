@@ -147,13 +147,19 @@ If you want to also install additional tools, such as the IDE [Spyder](https://w
 
 #### Packages
 
-Since MyToolIt Watch requires additional Python packages you need to install them too. You can do that using the following command inside PowerShell or the old Windows command line interface `cmd.exe`:
+Since MyToolIt Watch requires additional Python packages you need to install them too. You can do that using the following command inside PowerShell or the old Windows command line interface `cmd.exe` in the _root of this repository_:
+
+```sh
+pip install -r requirements.txt
+```
+
+The command above will read the file [requirement.txt](requirement.txt) and install all the packages listed in this file.
+
+If you want to manually install the required Python libraries you can use the following command instead:
 
 ```sh
 pip install dynaconf matplotlib openpyxl pdfrw reportlab windows-curses
 ```
-
-For more information regarding the package installation, please take a look at [`anaconda-shell.bat`](anaconda-shell.bat) and [`installModules.py`](installModules.py).
 
 ### MyToolIt Watch
 
