@@ -1010,6 +1010,9 @@ class TestSTH(TestCase):
         def read_acceleration_factor_slope():
             return read_eeprom_float(address=8, offset=0)
 
+        def write_acceleration_factor_slope(slope):
+            write_eeprom_float(address=8, offset=0, value=slope)
+
         cls = type(self)
 
         # ========
@@ -1192,7 +1195,18 @@ class TestSTH(TestCase):
         # = Calibration =
         # ===============
 
+        acceleration_max = (
+            settings.STH.Acceleration_Sensor.Acceleration.Maximum)
+        adc_max = 0xffff
+        acceleration_slope = acceleration_max / adc_max
+        write_acceleration_factor_slope(acceleration_slope)
         cls.acceleration_factor_slope = read_acceleration_factor_slope()
+        self.assertAlmostEqual(
+            acceleration_slope,
+            cls.acceleration_factor_slope,
+            msg=f"Written acceleration factor “{acceleration_slope:.5f}” " +
+            "does not match read acceleration factor " +
+            f"“{cls.acceleration_factor_slope:.5f}”")
 
         # ========
         # = Init =
