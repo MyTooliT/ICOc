@@ -1204,8 +1204,8 @@ class TestSTH(TestCase):
         self.assertAlmostEqual(
             acceleration_slope,
             cls.acceleration_slope,
-            msg=f"Written acceleration factor “{acceleration_slope:.5f}” " +
-            "does not match read acceleration factor " +
+            msg=f"Written acceleration slope “{acceleration_slope:.5f}” " +
+            "does not match read acceleration slope " +
             f"“{cls.acceleration_slope:.5f}”")
 
         # ========
