@@ -7,6 +7,7 @@ from os.path import abspath, dirname, isfile, join
 from re import escape
 from subprocess import run
 from sys import path as module_path
+from struct import unpack
 from time import sleep
 from types import SimpleNamespace
 from unittest import TestCase, TextTestResult, TextTestRunner, main
@@ -789,6 +790,10 @@ class TestSTH(TestCase):
             """Read EEPROM data in unsigned format"""
 
             return iMessage2Value(read_eeprom(address, offset, length))
+
+        def read_eeprom_float(address, offset):
+            data = read_eeprom(address, offset, length=4)
+            return unpack('f', bytearray(data))[0]
 
         def write_eeprom(address, offset, data, length=None):
             """Write EEPROM data at the specified address"""
