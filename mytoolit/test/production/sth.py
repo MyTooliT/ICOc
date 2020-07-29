@@ -322,6 +322,12 @@ class TestSTH(TestCase):
                              "{cls.advertisement_time_2} ms",
                              pdf=False),
             create_attribute("OEM Data", "{cls.oem_data}", pdf=False),
+            create_attribute("Power On Cycles",
+                             "{cls.power_on_cycles}",
+                             pdf=False),
+            create_attribute("Power Off Cycles",
+                             "{cls.power_off_cycles}",
+                             pdf=False),
         ]
 
         # Check available read hardware attributes
@@ -935,6 +941,12 @@ class TestSTH(TestCase):
             day = date[6:8]
             return f"{year}-{month}-{day}"
 
+        def read_power_on_cycles():
+            return read_eeprom_unsigned(address=5, offset=0, length=4)
+
+        def read_power_off_cycles():
+            return read_eeprom_unsigned(address=5, offset=4, length=4)
+
         def write_production_date(date="1970-12-31"):
             date = date.replace("-", "")
             write_eeprom_text(address=5, offset=20, length=8, text=date)
@@ -1075,6 +1087,13 @@ class TestSTH(TestCase):
         # not always work (depending on the binary data stored in EEPROM
         # region).
         cls.oem_data = ''.join(map(chr, cls.oem_data)).replace('\x00', '')
+
+        # =======================
+        # = Power On/Off Cycles =
+        # =======================
+
+        cls.power_on_cycles = read_power_on_cycles()
+        cls.power_off_cycles = read_power_off_cycles()
 
         # ===================
         # = Production Date =
