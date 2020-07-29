@@ -163,10 +163,10 @@ pip install dynaconf matplotlib openpyxl pdfrw reportlab windows-curses
 
 ### MyToolIt Watch
 
-Please clone this repository (`git@bitbucket.org:mytoolit/mytoolitwatch.git`) to a folder of your choice. You can either use the [command line tool `git`](https://git-scm.com/downloads):
+Please clone this repository (`git@github.com:MyTooliT/ICOc.git`) to a folder of your choice. You can either use the [command line tool `git`](https://git-scm.com/downloads):
 
 ```
-git clone git@bitbucket.org:mytoolit/mytoolitwatch.git
+git clone git@github.com:MyTooliT/ICOc.git
 ```
 
 or one of the many available [graphical user interfaces for Git](https://git-scm.com/downloads/guis) to do that.
