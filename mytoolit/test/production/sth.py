@@ -338,8 +338,8 @@ class TestSTH(TestCase):
             create_attribute("Operating Time",
                              "{cls.operating_time} s",
                              pdf=False),
-            create_attribute("Acceleration Factor Slope",
-                             "{cls.acceleration_factor_slope:.5f}",
+            create_attribute("Acceleration Slope",
+                             "{cls.acceleration_slope:.5f}",
                              pdf=False),
         ]
 
@@ -1007,10 +1007,10 @@ class TestSTH(TestCase):
         def write_batch_number(value):
             write_eeprom_unsigned(address=5, offset=28, length=4, value=value)
 
-        def read_acceleration_factor_slope():
+        def read_acceleration_slope():
             return read_eeprom_float(address=8, offset=0)
 
-        def write_acceleration_factor_slope(slope):
+        def write_acceleration_slope(slope):
             write_eeprom_float(address=8, offset=0, value=slope)
 
         cls = type(self)
@@ -1199,14 +1199,14 @@ class TestSTH(TestCase):
             settings.STH.Acceleration_Sensor.Acceleration.Maximum)
         adc_max = 0xffff
         acceleration_slope = acceleration_max / adc_max
-        write_acceleration_factor_slope(acceleration_slope)
-        cls.acceleration_factor_slope = read_acceleration_factor_slope()
+        write_acceleration_slope(acceleration_slope)
+        cls.acceleration_slope = read_acceleration_slope()
         self.assertAlmostEqual(
             acceleration_slope,
-            cls.acceleration_factor_slope,
+            cls.acceleration_slope,
             msg=f"Written acceleration factor “{acceleration_slope:.5f}” " +
             "does not match read acceleration factor " +
-            f"“{cls.acceleration_factor_slope:.5f}”")
+            f"“{cls.acceleration_slope:.5f}”")
 
         # ========
         # = Init =
