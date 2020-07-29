@@ -1,5 +1,3 @@
-[TOC]
-
 # MyToolIt Watch
 
 The MyToolIt Watch system supports Sensory Tool Holder Data and additional services like serial numbers or statistics to the users:
