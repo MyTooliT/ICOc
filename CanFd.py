@@ -129,8 +129,8 @@ class CanFd(object):
         error_code:
             A PCAN error code
 
-        Returns:
-        --------
+        Returns
+        -------
 
         A error message consisting of description and the textual
         representation of the given error code
