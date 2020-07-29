@@ -968,6 +968,9 @@ class TestSTH(TestCase):
         def read_under_voltage_counter():
             return read_eeprom_unsigned(address=5, offset=12, length=4)
 
+        def write_under_voltage_counter(times):
+            write_eeprom_unsigned(address=5, offset=12, length=4, value=times)
+
         def write_production_date(date="1970-12-31"):
             date = date.replace("-", "")
             write_eeprom_text(address=5, offset=20, length=8, text=date)
