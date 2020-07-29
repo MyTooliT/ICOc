@@ -1019,6 +1019,9 @@ class TestSTH(TestCase):
         def read_acceleration_offset():
             return read_eeprom_float(address=8, offset=4)
 
+        def write_acceleration_offset(offset):
+            write_eeprom_float(address=8, offset=4, value=offset)
+
         cls = type(self)
 
         # ========
@@ -1214,7 +1217,15 @@ class TestSTH(TestCase):
             "does not match read acceleration slope " +
             f"“{cls.acceleration_slope:.5f}”")
 
+        acceleration_offset = -(acceleration_max / 2)
+        write_acceleration_offset(acceleration_offset)
         cls.acceleration_offset = read_acceleration_offset()
+        self.assertAlmostEqual(
+            acceleration_offset,
+            cls.acceleration_offset,
+            msg=f"Written acceleration offset “{acceleration_offset:.3f}” " +
+            "does not match read acceleration offset " +
+            f"“{cls.acceleration_offset:.3f}”")
 
         # ========
         # = Init =
