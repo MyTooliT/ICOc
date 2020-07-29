@@ -11,7 +11,7 @@ The MyToolIt Watch system supports Sensory Tool Holder Data and additional servi
 - MyToolItTerminal: Terminal program that supports MyToolItWatch functionality
 
 This framework runs under Microsoft Windows 10 and supports its features via console (Microsoft Command Promt) and Liclipse. Liclipse (Version 5.1.3.201811082122)
-is an integrated development environment (IDE) and may be used to access the MyToolIt Test functionalities. Furthermore, Python 3.5 and
+is an integrated development environment (IDE) and may be used to access the MyToolIt Test functionalities. Furthermore, Python 3.6 and
 additional Python Modules are required to support the framework.
 
 ## System diagram
@@ -139,7 +139,7 @@ This chapter describes how to setup/execute the required software for acquiring 
 
 #### Interpreter
 
-MyToolIt Watch requires at least Python `3.5.4`. Later versions should work too. You can download Python [here](https://www.python.org/downloads).
+MyToolIt Watch requires at least Python `3.6`. Later versions should work too. You can download Python [here](https://www.python.org/downloads).
 
 When you install the package downloaded above, please do not forget to enable the checkbox “Add Python to PATH” in the setup window of the installer.
 
