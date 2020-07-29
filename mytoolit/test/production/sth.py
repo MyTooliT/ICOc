@@ -959,6 +959,9 @@ class TestSTH(TestCase):
         def read_operating_time():
             return read_eeprom_unsigned(address=5, offset=8, length=4)
 
+        def write_operating_time(seconds):
+            write_eeprom_unsigned(address=5, offset=8, length=4, value=seconds)
+
         def write_production_date(date="1970-12-31"):
             date = date.replace("-", "")
             write_eeprom_text(address=5, offset=20, length=8, text=date)
