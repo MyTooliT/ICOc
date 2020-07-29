@@ -944,8 +944,14 @@ class TestSTH(TestCase):
         def read_power_on_cycles():
             return read_eeprom_unsigned(address=5, offset=0, length=4)
 
+        def write_power_on_cycles(times):
+            write_eeprom_unsigned(address=5, offset=0, length=4, value=times)
+
         def read_power_off_cycles():
             return read_eeprom_unsigned(address=5, offset=4, length=4)
+
+        def write_power_off_cycles(times):
+            write_eeprom_unsigned(address=5, offset=4, length=4, value=times)
 
         def write_production_date(date="1970-12-31"):
             date = date.replace("-", "")
