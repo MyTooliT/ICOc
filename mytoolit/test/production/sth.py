@@ -842,12 +842,11 @@ class TestSTH(TestCase):
         def write_name(text):
             write_eeprom_text(address=0, offset=1, text=text, length=8)
 
-        def read_write_time(read_function, write_function, name, description,
-                            milliseconds):
+        def read_write_time(read_function, write_function, variable,
+                            description, milliseconds):
             write_function(milliseconds)
             milliseconds_read = read_function()
-            cls = type(self)
-            setattr(cls, name, milliseconds_read)
+            setattr(type(self), variable, milliseconds_read)
             self.assertEqual(
                 milliseconds_read, milliseconds,
                 f"{description} {milliseconds_read} ms does not match " +
@@ -899,31 +898,30 @@ class TestSTH(TestCase):
                                          value=value)
 
         def read_hardware_revision():
-            major, minor, build = read_eeprom(address=4, offset=13, length=3)
-            return f"{major}.{minor}.{build}"
+            return "{}.{}.{}".format(
+                *read_eeprom(address=4, offset=13, length=3))
 
-        def write_hardware_revision(major, minor, build):
+        def write_hardware_revision(version):
             write_eeprom(address=4,
                          offset=13,
                          length=3,
-                         data=[major, minor, build])
+                         data=list(map(int, version.split("."))))
 
         def read_firmware_version():
-            major, minor, build = read_eeprom(address=4, offset=21, length=3)
-            return f"{major}.{minor}.{build}"
+            return "{}.{}.{}".format(
+                *read_eeprom(address=4, offset=21, length=3))
 
-        def write_firmware_version(major, minor, build):
+        def write_firmware_version(version):
             write_eeprom(address=4,
                          offset=21,
                          length=3,
-                         data=[major, minor, build])
+                         data=list(map(int, version.split("."))))
 
         def read_release_name():
             return read_eeprom_text(address=4, offset=24, length=8)
 
         def read_serial_number():
-            serial_number = read_eeprom_text(address=4, offset=32, length=32)
-            return serial_number
+            return read_eeprom_text(address=4, offset=32, length=32)
 
         def write_serial_number(text):
             write_eeprom_text(address=4, offset=32, length=32, text=text)
@@ -950,24 +948,28 @@ class TestSTH(TestCase):
         def read_power_on_cycles():
             return read_eeprom_unsigned(address=5, offset=0, length=4)
 
+        # noinspection PyUnusedLocal
         def write_power_on_cycles(times):
             write_eeprom_unsigned(address=5, offset=0, length=4, value=times)
 
         def read_power_off_cycles():
             return read_eeprom_unsigned(address=5, offset=4, length=4)
 
+        # noinspection PyUnusedLocal
         def write_power_off_cycles(times):
             write_eeprom_unsigned(address=5, offset=4, length=4, value=times)
 
         def read_operating_time():
             return read_eeprom_unsigned(address=5, offset=8, length=4)
 
+        # noinspection PyUnusedLocal
         def write_operating_time(seconds):
             write_eeprom_unsigned(address=5, offset=8, length=4, value=seconds)
 
         def read_under_voltage_counter():
             return read_eeprom_unsigned(address=5, offset=12, length=4)
 
+        # noinspection PyUnusedLocal
         def write_under_voltage_counter(times):
             write_eeprom_unsigned(address=5, offset=12, length=4, value=times)
 
@@ -1001,27 +1003,27 @@ class TestSTH(TestCase):
 
         read_write_time(read_function=read_sleep_time_1,
                         write_function=write_sleep_time_1,
-                        name='sleep_time_1',
+                        variable='sleep_time_1',
                         description="Sleep Time 1",
                         milliseconds=settings.STH.Bluetooth.Sleep_Time_1)
 
         read_write_time(
             read_function=read_advertisement_time_1,
             write_function=write_advertisement_time_1,
-            name='advertisement_time_1',
+            variable='advertisement_time_1',
             description="Advertisement Time 1",
             milliseconds=settings.STH.Bluetooth.Advertisement_Time_1)
 
         read_write_time(read_function=read_sleep_time_2,
                         write_function=write_sleep_time_2,
-                        name='sleep_time_2',
+                        variable='sleep_time_2',
                         description="Sleep Time 2",
                         milliseconds=settings.STH.Bluetooth.Sleep_Time_2)
 
         read_write_time(
             read_function=read_advertisement_time_2,
             write_function=write_advertisement_time_2,
-            name='advertisement_time_2',
+            variable='advertisement_time_2',
             description="Advertisement Time 2",
             milliseconds=settings.STH.Bluetooth.Advertisement_Time_2)
 
@@ -1041,8 +1043,7 @@ class TestSTH(TestCase):
         # ============
 
         hardware_revision = settings.STH.Hardware_Revision
-        major, minor, build = map(int, hardware_revision.split('.'))
-        write_hardware_revision(major, minor, build)
+        write_hardware_revision(hardware_revision)
         cls.hardware_revision = read_hardware_revision()
         self.assertEqual(
             hardware_revision, cls.hardware_revision,
@@ -1056,8 +1057,7 @@ class TestSTH(TestCase):
         # The STH seems to define two different firmware version numbers. We
         # overwrite the version stored in the EEPROM with the one read, when
         # the test connected to the STH.
-        major, minor, build = map(int, cls.firmware_version.split('.'))
-        write_firmware_version(major, minor, build)
+        write_firmware_version(cls.firmware_version)
         firmware_version = read_firmware_version()
         self.assertEqual(
             cls.firmware_version, firmware_version,
