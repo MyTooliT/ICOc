@@ -7,7 +7,7 @@ from os.path import abspath, dirname, isfile, join
 from re import escape
 from subprocess import run
 from sys import path as module_path
-from struct import unpack
+from struct import pack, unpack
 from time import sleep
 from types import SimpleNamespace
 from unittest import TestCase, TextTestResult, TextTestRunner, main
@@ -839,6 +839,12 @@ class TestSTH(TestCase):
             """Write an unsigned integer at the specified EEPROM address"""
 
             data = list(value.to_bytes(length, byteorder='little'))
+            write_eeprom(address, offset, data)
+
+        def write_eeprom_float(address, offset, value):
+            """Write a float value at the specified EEPROM address"""
+
+            data = list(pack('f', value))
             write_eeprom(address, offset, data)
 
         def read_init():
