@@ -311,15 +311,15 @@ A single vector fits into a single CAN 2.0 message. A CAN message contains a mes
 
 In this example 3 CAN messages are received and these messages contains 3 vectors(x,y, z-dimension in that case). Each CAN message keeps a message counter value(197,198, 199) and the message jitter is 172µs-170µs -> 2µs for that interval.
 
-### BlueTooth Send Counter
+### Bluetooth Send Counter
 
 Number of send Bluetooth Frames. Note that multiple MyToolIt messages are put into a single Bluetooth frame.
 
-### BlueTooth Receive Counter
+### Bluetooth Receive Counter
 
 Number of received Bluetooth Frames. Note that multiple MyToolIt messages are put into a single Bluetooth frame.
 
-### BlueTooth Rssi
+### Bluetooth RSSI
 
 The Receive Signal Strength Indicator determines (approximately) the received signal power. Note that a RSSI over -70dBm determines a good signal quality and below -90dBm determines a poor signal quality. Please mention that this value is taken at the end of the log once (but may be supported during measuring).
 
