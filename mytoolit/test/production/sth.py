@@ -500,10 +500,6 @@ class TestSTH(TestCase):
         sure this test case is executed before all other test cases.
         """
 
-        # Add path to Simplicity Commander
-        environ['PATH'] += (pathsep +
-                            pathsep.join(settings.Commands.Path.Windows))
-
         identification_arguments = (
             f"--serialno {settings.STH.Programming_Board.Serial_Number} " +
             f"-d BGM113A256V2")
@@ -1257,4 +1253,9 @@ class TestSTH(TestCase):
 # -- Main ---------------------------------------------------------------------
 
 if __name__ == "__main__":
+    # Add path to Simplicity Commander (`commander`) — We do this to ensure,
+    # that we can call the command directly, without adding the path before
+    # the tool’s name.
+    environ['PATH'] += (pathsep + pathsep.join(settings.Commands.Path.Windows))
+
     main(testRunner=ExtendedTestRunner)
