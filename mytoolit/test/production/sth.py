@@ -292,7 +292,8 @@ class TestSTH(TestCase):
         """
 
         possible_attributes = [
-            create_attribute("EEPROM Init", "{cls.init}", pdf=False),
+            create_attribute("EEPROM Status", "{cls.eeprom_status}",
+                             pdf=False),
             create_attribute("Name", "{cls.name}"),
             create_attribute("Status", settings.STH.Status),
             create_attribute("Production Date",
@@ -850,10 +851,10 @@ class TestSTH(TestCase):
             data = list(pack('f', value))
             write_eeprom(address, offset, data)
 
-        def read_init():
+        def read_eeprom_status():
             return read_eeprom(address=0, offset=0, length=1).pop()
 
-        def write_init(value):
+        def write_eeprom_status(value):
             write_eeprom_unsigned(address=0, offset=0, length=1, value=value)
 
         def read_name():
@@ -1227,21 +1228,21 @@ class TestSTH(TestCase):
             "does not match read acceleration offset " +
             f"“{cls.acceleration_offset:.3f}”")
 
-        # ========
-        # = Init =
-        # ========
+        # =================
+        # = EEPROM Status =
+        # =================
 
         initialized = 0xac
         locked = 0xca
-        write_init(initialized)
-        init = read_init()
-        cls.init = "Initialized" if init == initialized else (
+        write_eeprom_status(initialized)
+        init = read_eeprom_status()
+        cls.eeprom_status = "Initialized" if init == initialized else (
             "Locked" if init == locked else f"Undefined ({hex(init)})")
         self.assertEqual(
-            cls.init, "Initialized",
-            f"Setting EEPROM init value to “Initialized ({initialized})” "
-            "failed. EEPROM init value currently stores the value "
-            f"“{cls.init}”")
+            cls.eeprom_status, "Initialized",
+            f"Setting EEPROM status to “Initialized ({initialized})” "
+            "failed. EEPROM status value currently stores the value "
+            f"“{cls.eeprom_status}”")
 
 
 # -- Main ---------------------------------------------------------------------
