@@ -508,6 +508,15 @@ class TestSTH(TestCase):
             f"--serialno {settings.STH.Programming_Board.Serial_Number} " +
             f"-d BGM113A256V2")
 
+        # Set debug mode to out, to make sure we flash the STH (connected via
+        # debug cable) and not another microcontroller connected to the
+        # programmer board.
+        change_mode_command = (
+            f"commander adapter dbgmode OUT {identification_arguments}")
+        status = run(change_mode_command, capture_output=True, text=True)
+        self.assertEqual(status.returncode, 0,
+                         f"Unable to change debug mode of programming board")
+
         # Unlock debug access
         unlock_command = (
             f"commander device unlock {identification_arguments}")
