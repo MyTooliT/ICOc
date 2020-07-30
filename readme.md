@@ -76,16 +76,6 @@ In order to setup a test-bench you need:
 
 Download the driver installer for your operating system (https://www.peak-system.com/PCAN-USB-FD.365.0.html) and include the PCAN-Basic option in your install to get the Python interface.
 
-### Install the Peak-Basic API
-
-does not work, download PCAN-Basic API separately. This provides a zip folder that needs to be in:
-
-```
-C:\Program Files\PEAK-System\PCAN-Basic API\
-```
-
-So that acqAcc.py can locate the driver.
-
 ### Check/Configure your hardware
 
 Check if you Peak adapter's hardware is configured correctly
