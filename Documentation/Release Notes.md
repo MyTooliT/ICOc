@@ -7,6 +7,7 @@
 ## Scripts
 
 - Add a simple wrapper script for the STH test. If you add its parent folder to your path you will be able to execute the test regardless of your current path. For more information, please take a look at the [ReadMe](../readme.md).
+- We added a simple wrapper script for [`mwt.py`](../mwt.py). For more information, please take a look [here](../Scripts/ReadMe.md).
 
 # Version 1.0.3
 
