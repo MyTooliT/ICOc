@@ -524,7 +524,8 @@ class TestSTH(TestCase):
                          "Unable to unlock debug access of chip")
 
         # Upload bootloader and application data
-        image_filepath = join(repository_root, settings.STH.Firmware.Location)
+        image_filepath = join(repository_root,
+                              settings.STH.Firmware.Location.Flash)
         self.assertTrue(isfile(image_filepath),
                         f"Firmware file {image_filepath} does not exist")
 

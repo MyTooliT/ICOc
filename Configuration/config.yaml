@@ -58,10 +58,11 @@ STH:
     Sleep Time 2: 259200000
 
   Firmware:
-    # This value should contain the path to a complete image (bootloader and
-    # application). This path will be interpreted in relation to the
-    # root of the repository.
-    Location: ../STH/builds/v2.1.10/manufacturingImageSthv2.1.10.hex
+    Location:
+      # This value should contain the path to a complete image (bootloader and
+      # application). This path will be interpreted in relation to the root of
+      # the repository.
+      Flash: ../STH/builds/v2.1.10/manufacturingImageSthv2.1.10.hex
 
   # Global Trade Item Number
   GTIN: 0
