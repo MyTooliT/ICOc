@@ -91,4 +91,4 @@ Initial Release:
 - Support graphical visualization in real time: Plotter.py
 """
 
-__version__ = "1.0.2"
+__version__ = "1.0.3"
