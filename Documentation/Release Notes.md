@@ -25,7 +25,7 @@
 - You can now install the required Python packages using the command
 
   ```sh
-   pip install -r requirements.txt
+  pip install -r requirements.txt
   ```
 
   in the root of the repository.
