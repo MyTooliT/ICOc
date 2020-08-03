@@ -61,7 +61,6 @@ class CanFd(object):
                 self.__get_error_message("Unable to initialize CAN hardware",
                                          result))
 
-        # Prepares the PCAN-Basic's PCAN-Trace file
         self.tCanReadWriteMutex = threading.Lock()
         # Reset the CAN controller if a bus-off state is detected
         result = self.pcan.SetValue(self.m_PcanHandle, PCAN_BUSOFF_AUTORESET,
@@ -70,7 +69,6 @@ class CanFd(object):
             print(self.__get_error_message(
                 "Unable to set auto reset on CAN bus-off state", result),
                   file=stderr)
-        self.ConfigureTraceFile()
         self.Reset()
         self.ReadThreadReset()
 
@@ -174,33 +172,6 @@ class CanFd(object):
             time.sleep(0.2)
         except:
             pass
-
-    def ConfigureTraceFile(self):
-        # Configure the maximum size of a trace file to 5 megabytes
-        #
-        iBuffer = 5
-        self.tCanReadWriteMutex.acquire()  # More or less insane
-        result = self.pcan.SetValue(self.m_PcanHandle, PCAN_TRACE_SIZE,
-                                    iBuffer)
-        if result != PCAN_ERROR_OK:
-            print(self.__get_error_message("Unable to set size of trace file",
-                                           result),
-                  file=stderr)
-
-        # Configure the way how trace files are created:
-        # * Standard name is used
-        # * Existing file is overwritten,
-        # * Only one file is created.
-        # * Recording stops when the file size reaches 5 megabytes.
-        #
-        iBuffer = TRACE_FILE_SINGLE | TRACE_FILE_OVERWRITE
-        result = self.pcan.SetValue(self.m_PcanHandle, PCAN_TRACE_CONFIGURE,
-                                    iBuffer)
-        if result != PCAN_ERROR_OK:
-            print(self.__get_error_message(
-                "Unable to set trace file parameters", result),
-                  file=stderr)
-        self.tCanReadWriteMutex.release()
 
     def Reset(self):
         self.tCanReadWriteMutex.acquire()
