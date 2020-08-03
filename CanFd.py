@@ -55,11 +55,7 @@ class CanFd(object):
         self.VoltageConfig = AtvcFormat()
         self.VoltageConfig.asbyte = 0
         self.VoltageConfig.b.bStreaming = 1
-        result = self.pcan.Initialize(self.m_PcanHandle,
-                                      PCAN_BAUD_1M,
-                                      HwType=PCAN_TYPE_ISA,
-                                      IOPort=0x2A0,
-                                      Interrupt=11)
+        result = self.pcan.Initialize(self.m_PcanHandle, PCAN_BAUD_1M)
         if result != PCAN_ERROR_OK:
             raise Exception(
                 self.__get_error_message("Unable to initialize CAN hardware",
