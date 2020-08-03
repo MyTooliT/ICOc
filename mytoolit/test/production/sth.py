@@ -4,7 +4,7 @@ from datetime import datetime
 from enum import Enum
 from os import environ, pathsep
 from os.path import abspath, dirname, isfile, join
-from re import escape
+from re import escape, search
 from subprocess import run
 from sys import path as module_path
 from struct import pack, unpack
@@ -412,8 +412,9 @@ class TestSTH(TestCase):
     def tearDown(self):
         """Clean up after single test case"""
 
-        # The firmware flash test does not require cleanup
-        if self._testMethodName == 'test__firmware_flash':
+        # The firmware flash does not initiate a connection. The over the air
+        # update already terminates the connection itself.
+        if search("flash|ota", self._testMethodName):
             return
 
         self.__disconnect()
@@ -546,6 +547,36 @@ class TestSTH(TestCase):
             status.stdout, expected_output,
             f"Flash output did not contain expected output “{expected_output}”"
         )
+
+    def test_ota_update(self):
+        """Test if updating the firmware via Bluetooth works correctly"""
+
+        # We opened a connection to the STH to retrieve the MAC address in the
+        # test setup phase. We need to terminate the connection now, before we
+        # initiate the over the air update.
+        self.__disconnect()
+
+        firmware_location = join(repository_root,
+                                 settings.STH.Firmware.Location.OTA)
+        self.assertTrue(isfile(firmware_location),
+                        f"Firmware file {firmware_location} does not exist")
+
+        mac_address = type(self).bluetooth_mac
+        com_interface = settings.STH.Programming_Board.COM_Interface
+        ota_command = (f"ota-dfu {com_interface} 115200 " +
+                       f"{firmware_location} {mac_address}")
+        status = run(ota_command, capture_output=True, text=True, timeout=90)
+
+        self.assertEqual(
+            status.returncode, 0,
+            "Over the air updated command returned non-zero exit code " +
+            f"{status.returncode}")
+
+        expected_output = "Finishing DFU block...OK"
+        self.assertRegex(
+            status.stdout, escape(expected_output),
+            f"Over the air update output did not contain expected output "
+            "“{expected_output}”")
 
     def test_connection(self):
         """Check connection to STH
