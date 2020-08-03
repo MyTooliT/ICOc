@@ -1,4 +1,4 @@
-from PCANBasic import *
+from can.interfaces.pcan.basic import *
 import threading
 import array
 import math

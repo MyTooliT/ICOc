@@ -4,5 +4,6 @@ dynaconf
 matplotlib
 openpyxl
 pdfrw
+python-can
 reportlab
 windows-curses

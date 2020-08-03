@@ -148,7 +148,7 @@ The command above will read the file [requirement.txt](requirement.txt) and inst
 If you want to manually install the required Python libraries you can use the following command instead:
 
 ```sh
-pip install dynaconf matplotlib openpyxl pdfrw reportlab windows-curses
+pip install dynaconf matplotlib openpyxl pdfrw python-can reportlab windows-curses
 ```
 
 ### MyToolIt Watch

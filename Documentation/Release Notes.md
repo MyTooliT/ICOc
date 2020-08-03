@@ -7,6 +7,7 @@
 ## Install
 
 - We forgot to add the [requirements file](../requirements.txt) for pip in the last release. This problem should now be fixed.
+- We now use the [Python CAN package](https://python-can.readthedocs.io) to access the PCAN-Basic API instead of including a copy of the Python API file in the repository.
 
 ## Scripts
 
