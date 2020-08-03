@@ -1,2 +1,3 @@
 # Ignore log files in repository root
 /*.txt
+!/requirements.txt
