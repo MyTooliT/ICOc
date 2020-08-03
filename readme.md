@@ -18,7 +18,7 @@ additional Python Modules are required to support the framework.
 
 The following figure describes the overall system.
 
-![ADC](assets/ADC.png)
+![ADC](Documentation/Pictures/ADC.png)
 
 The Icotronic System consists of the Stationary Transceiver Unit(STU), the Sensory Tool Holder(STH) and a subscriber that uses STH and STU via the MyToolIt Protocol. The MyToolIt Protocol is a network protocol that exchanges information between subscribers and therefor MyToolIt access Controller Area Network and Bluetooth to transport information. This Information transport is used to provide services to the user. A user service may be collecting data, request serial numbers, operating time, etc. Note that the MyToolIt Protocol is expendable for other underlaying data link layer protocols such as e.g. Wireless LAN. Thus the STU is accessible by CAN 2.0, Bluetooth and other data link layer protocols.
 
@@ -82,17 +82,17 @@ Check if you Peak adapter's hardware is configured correctly
 
 JP4 needs to be connected in order to activate the +5V supply. Be aware that the adapter can only supply 10mA of current. This is far too little for this application. However, it can be used as active signal.
 
-![PCAN Adapter - JP1 & JP2](assets/PCAN Adapter - JP1 & JP2.png)
+![PCAN Adapter - JP1 & JP2](Documentation/Pictures/PCAN Adapter - JP1 & JP2.png)
 
 JP1 and JP2 need to be connected to terminate the CAN Bus inside the adapter. This is highly recommended as the cable is not terminated externally in most cases.
 
-![PCAN Adapter - JP4](assets/PCAN Adapter - JP4.png)
+![PCAN Adapter - JP4](Documentation/Pictures/PCAN Adapter - JP4.png)
 
 ### Connectors
 
 The pinout of Peak-CAN
 
-![PCAN Adapter - Pins](assets/PCAN Adapter - Pins.png)
+![PCAN Adapter - Pins](Documentation/Pictures/PCAN Adapter - Pins.png)
 
 Adapter cable's pinout
 
