@@ -952,7 +952,7 @@ class TestStu(unittest.TestCase):
                                                     MyToolItNetworkNr["STH1"],
                                                     [0, 0, 0, 0, 0, 0, 0, 0])
                 self.Can.WriteFrame(message)
-            self.Can.Reset()
+            self.Can.reset()
             time.sleep(0.25)
             self.Can.tWriteFrameWaitAckRetries(message, retries=0)
 

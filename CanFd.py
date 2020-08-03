@@ -67,7 +67,7 @@ class CanFd(object):
             print(self.__get_error_message(
                 "Unable to set auto reset on CAN bus-off state", result),
                   file=stderr)
-        self.Reset()
+        self.reset()
         self.ReadThreadReset()
 
     def __exit__(self):
@@ -78,7 +78,7 @@ class CanFd(object):
                 else:
                     self.Logger.Error("Peak CAN Message Over Run")
                     self.bError = True
-            self.Reset()
+            self.reset()
             self.tCanReadWriteMutex.acquire()  # Insane
             self.pcan.Uninitialize(self.m_PcanHandle)
             self.tCanReadWriteMutex.release()
@@ -166,18 +166,14 @@ class CanFd(object):
             self.readThread = threading.Thread(target=self.ReadMessage,
                                                name="CanReadThread")
             self.readThread.start()
-            self.Reset()
+            self.reset()
             time.sleep(0.2)
         except:
             pass
 
-    def Reset(self):
-        self.tCanReadWriteMutex.acquire()
-        try:
+    def reset(self):
+        with self.tCanReadWriteMutex:
             self.pcan.Reset(self.m_PcanHandle)
-        except:
-            pass
-        self.tCanReadWriteMutex.release()
 
     def CanTimeStampStart(self, CanTimeStampStart):
         self.PeakCanTimeStampStart = CanTimeStampStart
