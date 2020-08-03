@@ -1,0 +1,8 @@
+# Required Modules
+
+dynaconf
+matplotlib
+openpyxl
+pdfrw
+reportlab
+windows-curses

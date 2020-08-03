@@ -4,6 +4,10 @@
 
 - We moved the release notes from the init code of the [`mytoolit` package](../mytoolit) into this file.
 
+## Install
+
+- We forgot to add the [requirements file](../requirements.txt) for pip in the last release. This problem should now be fixed.
+
 ## Scripts
 
 - Add a simple wrapper script for the STH test. If you add its parent folder to your path you will be able to execute the test regardless of your current path. For more information, please take a look at the [ReadMe](../readme.md).
