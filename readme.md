@@ -399,7 +399,7 @@ python sth.py -k flash -k connection
 
 We provide a very simple wrapper script for the STH test called [`Test-STH.ps1`](../Scripts/Test-STH.ps1). This script just executes the script `sth.py` with the current Python interpreter forwarding the given command line arguments in the process. If you add the [Scripts](../Scripts) folder to your Windows path variable, you can call the wrapper script (and hence the STH test) regardless of the current path. For example, to execute the EEPROM test just call
 
-```ps
+```sh
 Test-STH -k eeprom
 ```
 
