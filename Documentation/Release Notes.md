@@ -3,6 +3,7 @@
 ## Documentation
 
 - We moved the release notes from the init code of the [`mytoolit` package](../mytoolit) into this file.
+- We added an [FAQ](FAQ.md) text that should answer questions not covered by the main ReadMe.
 
 ## Install
 
