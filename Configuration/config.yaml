@@ -72,8 +72,8 @@ STH:
       # This value should contain the path to a complete image (bootloader and
       # application). This path will be interpreted in relation to the root of
       # the repository.
-      Flash: ../STH/builds/v2.1.10/manufacturingImageSthv2.1.10.hex
-      OTA:   ../STH/builds/v2.1.10/OtaServer.gbl
+      Flash: ../STH/builds/manufacturingImageSthv2.1.10.hex
+      OTA:   ../STH/builds/OtaServer.gbl
 
   # Global Trade Item Number
   GTIN: 0
