@@ -10,7 +10,7 @@ from sys import path as module_path
 from struct import pack, unpack
 from time import sleep
 from types import SimpleNamespace
-from unittest import TestCase, TextTestResult, TextTestRunner, main
+from unittest import TestCase, TextTestResult, TextTestRunner, main, skip
 
 # Add path for custom libraries
 repository_root = dirname(dirname(dirname(dirname(abspath(__file__)))))
@@ -548,6 +548,7 @@ class TestSTH(TestCase):
             f"Flash output did not contain expected output “{expected_output}”"
         )
 
+    @skip("requires ota-dfu command")
     def test_ota_update(self):
         """Test if updating the firmware via Bluetooth works correctly"""
 
