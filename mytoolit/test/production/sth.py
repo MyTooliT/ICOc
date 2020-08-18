@@ -1075,6 +1075,10 @@ class TestSTH(TestCase):
             name, read_name,
             f"Written name “{name}” does not match read name “{read_name}”")
 
+        # Please note that the chip will only use the new name after a reset.
+        # Unfortunately at the moment this reset needs to be executed manually.
+        cls.name = read_name
+
         # =========================
         # = Sleep & Advertisement =
         # =========================
