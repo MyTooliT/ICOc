@@ -403,4 +403,4 @@ We provide a very simple wrapper script for the STH test called [`Test-STH.ps1`]
 Test-STH -k eeprom
 ```
 
-inside the Terminal.
+inside the Terminal. If this command shows an execution policy error, then please read the section “How Can I Fix Execution Policy Errors?” in the [FAQ](Documentation/FAQ.md).

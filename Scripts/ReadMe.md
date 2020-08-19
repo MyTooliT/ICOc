@@ -10,4 +10,6 @@ This folder contains various helper scripts that should make working with ICOc e
 
 - `Test-STH`: This wrapper executes the tests for the STH ([`sth.py`][]). All command line arguments of the wrapper will be forwarded to [`sth.py`][].
 
+If one of the above command fails with an execution policy error, then please read the section “How Can I Fix Execution Policy Errors?” in the [FAQ](Documentation/FAQ.md).
+
 [`sth.py`]: ../mytoolit/test/production/sth.py
