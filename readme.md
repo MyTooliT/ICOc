@@ -140,16 +140,17 @@ will show the measured acceleration. To stop the data acquisition, click the clo
 
 ## Logging
 
-Each log entry is time stamped and tagged. Tags are separated into Information [I], Warnings [W] and Errors [E]. Furthermore, the time stamp is put into the log at logging time and this time stamp has an accuracy of 500ms or better (The operating system and the python interpreter are not real time capable). Not that the common accuracy is usually about 5ms or better.
+The ICOc script writes measured acceleration values and other data into log files at the root of the repository. Each log entry is time stamped and tagged.
 
-### Measuring Entry
+Tags are separated into
 
-Each data points gets logged into the log file. Note that AccX stands for acceleration point X, AccY stands for the acceleration point y and AccZ stands for the acceleration point z.
+- information `[I]`,
+- warnings `[W]`,
+- and errors `[E]`.
 
-#### Single Measurements
+For example, the following log entries
 
-Three measuring points are stored into a single CAN 2.0 message. A CAN message contains a message counter that cyclically increments from 0-255. Thus each message generates three entries in the log with the same message counter (MsgCounter). Moreover, at a reception of a CAN message generates a time stamp (Time Stamp) . Time Stamps in reference to the message counters may be used to determine the correct sampling frequency, message losses and to determine the message jitter (Maximum-Minimums Time determines a jitter). Furthermore, the message value represents the ADC value from the conversion from a sensor voltage to a sensor value. The sensory value transforms to the calibrated International System of Unit (SI) by processing kx+d and the corresponding k and d may be taken from the EEPROM by the configuration commands 0x60(Calibration Factor k) and 0x61(Calibration Factor d). Please see the following example:
-
+```
 [I](2937092ms): MsgCounter: 8; TimeStamp: 236265914.467ms; AccX 32658;
 [I](2937092ms): MsgCounter: 8; TimeStamp: 236265914.467ms; AccX 32668;
 [I](2937092ms): MsgCounter: 8; TimeStamp: 236265914.467ms; AccX 32671;
@@ -159,62 +160,33 @@ Three measuring points are stored into a single CAN 2.0 message. A CAN message c
 [I](2937092ms): MsgCounter: 10; TimeStamp: 236265914.857ms; AccX 32698;
 [I](2937092ms): MsgCounter: 10; TimeStamp: 236265914.857ms; AccX 32670;
 [I](2937092ms): MsgCounter: 10; TimeStamp: 236265914.857ms; AccX 32578;
+```
 
-In this example 3 CAN messages are received and these messages contain 9 data points (x-dimension in that case). Each CAN message keeps a message counter value(8,9, 10) and the message jitter is 198µs-192µs -> 6µs for that interval.
+show you data for 3 CAN messages (with message counter 8, 9 and 10) that the software received 2937092 milliseconds after the ICOc script started. As you can see every CAN message contains three acceleration values. Please note that
 
-#### Double and Triple Measurements
+- `AccX` specifies the acceleration in x direction,
+- `AccY` specifies the acceleration in y direction, and
+- `AccZ` specifies the acceleration in z direction.
 
-A single vector fits into a single CAN 2.0 message. A CAN message contains a message counter that cyclically increments from 0-255. Thus each vector generates a single entry that contains a message counter value(MsgCounter). Moreover, each received CAN message gets time stamped (Time Stamp). Time Stamps in reference to the message counters may be used to determine the correct sampling frequency, message losses and to determine the message jitter (Maximum-Minimums Time determines a jitter). Furthermore, the message value represents the ADC value from the conversion from a sensor voltage to a sensor value. Each sensory value transforms to the calibrated International System of Unit (SI) by processing kx+d and the corresponding k and d may be taken from the EEPROM by the configuration commands 0x60(Calibration Factor k) and 0x61(Calibration Factor d). Please see the following example:
+In our example ICOc only measured the acceleration in the x direction. The measured acceleration values around `32578` and `32698` show you that the sensor was probably in a stationary position. This assumption is based on the fact that a value of 0 represents the maximum negative acceleration value and the maximum ADC value (usually 2¹⁶-1 for a 16 bit ADC) represents the maximum positive acceleration value. For a 16 bit ADC, an acceleration of 0 m/s is represented by an value of about (2¹⁶-1)/2 ≅ 65535.
 
+The time stamp inside the CAN message (`TimeStamp`) together with the cyclically incrementing message counter (0-255) may be used to determine
+
+- the correct sampling frequency,
+- message loss, and
+- the message jitter.
+
+For our example, the message jitter (maximum time - minimum time between messages) for our example data is 6µs (198µs-192µs).
+
+Currently most of the STHs (or SHAs) only measure the acceleration in the x direction. For those that measure the acceleration in different directions, the log format for the acceleration is a little bit different. For example, a sensor that measures the acceleration in all three directions produces log entries that look like this:
+
+```
 [I](1076702ms): MsgCounter: 197; TimeStamp: 238783540.943ms; AccX 32682; AccY 10904; AccZ 10957;
 [I](1076703ms): MsgCounter: 198; TimeStamp: 238783541.115ms; AccX 32654; AccY 10984; AccZ 10972;
 [I](1076703ms): MsgCounter: 199; TimeStamp: 238783541.285ms; AccX 32683; AccY 11006; AccZ 10902;
+```
 
-In this example 3 CAN messages are received and these messages contains 3 vectors(x,y, z-dimension in that case). Each CAN message keeps a message counter value(197,198, 199) and the message jitter is 172µs-170µs -> 2µs for that interval.
-
-### Bluetooth Send Counter
-
-Number of send Bluetooth Frames. Note that multiple MyToolIt messages are put into a single Bluetooth frame.
-
-### Bluetooth Receive Counter
-
-Number of received Bluetooth Frames. Note that multiple MyToolIt messages are put into a single Bluetooth frame.
-
-### Bluetooth RSSI
-
-The Receive Signal Strength Indicator determines (approximately) the received signal power. Note that a RSSI over -70dBm determines a good signal quality and below -90dBm determines a poor signal quality. Please mention that this value is taken at the end of the log once (but may be supported during measuring).
-
-### Send Counter
-
-Number of sent messages to a port e.g. STH to STU
-
-### Send Fail Counter
-
-Number of trashed messages at a port. A send message may get trashed in overload cases.
-
-### Send Byte Counter
-
-Number of send bytes at a port. This number correlates to the Send Counter and is determined approximately.
-
-### Receive Counter
-
-Number of received messages from a port e.g. STU to STH
-
-### Receive Fail Counter
-
-Number of dropped messages. This must not happen at all and determines and overloaded computer system.
-
-### Receive Byte Counter
-
-Number of received bytes at a port. This number correlates to the Send Counter and is determined approximately.
-
-### Status Word
-
-The log show the status word of the STU. Please do not take any information out of this log entry.
-
-### Error Word
-
-Error Status Word of the STU and this <u>**Error Status Word must be 0.**</u>
+As you can see instead of transmitting three x acceleration values, the STH instead stores one acceleration value in x, y and z direction.
 
 ## Production Tests
 
