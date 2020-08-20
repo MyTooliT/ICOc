@@ -34,8 +34,6 @@ MyToolIt Watch requires at least Python `3.6`. Later versions should work too. Y
 
 When you install the package downloaded above, please do not forget to enable the checkbox “Add Python to PATH” in the setup window of the installer.
 
-If you want to also install additional tools, such as the IDE [Spyder](https://www.spyder-ide.org), we recommend you use [Anaconda](https://www.anaconda.com) – instead of the official Python installer – to install Python on your machine.
-
 ##### Packages
 
 Since MyToolIt Watch requires additional Python packages you need to install them too. You can do that using the following command inside PowerShell or the old Windows command line interface `cmd.exe` in the _root of this repository_:
