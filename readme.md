@@ -14,32 +14,21 @@ The framework currently requires
 
 For more information about other required software components, please read the subsection “Software” in this document.
 
-# Getting started
-
-In order to setup a test-bench you need:
-
-- CAN-Adapter
-  - Peak-Tech (Including driver)
-- STU
-- STH
-- Python (See Software)
-- Additional python packages (See Software)
-
-## Peak-Tech
-
-### Download the driver
-
-Download the driver installer for your operating system (https://www.peak-system.com/PCAN-USB-FD.365.0.html) and include the PCAN-Basic option in your install to get the Python interface.
-
-# Software
-
-This chapter describes how to setup/execute the required software for acquiring data.
-
 ## Requirements
 
-### Python
+### Hardware
 
-#### Interpreter
+In order to setup a test bench you need at least:
+
+- a [PCAN adapter](https://www.peak-system.com),
+- a [Sensory Holder Assembly or Sensory Tool Holder](https://www.mytoolit.com/ICOtronic/),
+- a [Stationary Transceiver Unit](https://www.mytoolit.com/ICOtronic/).
+
+### Software
+
+#### Python
+
+##### Interpreter
 
 MyToolIt Watch requires at least Python `3.6`. Later versions should work too. You can download Python [here](https://www.python.org/downloads).
 
@@ -47,7 +36,7 @@ When you install the package downloaded above, please do not forget to enable th
 
 If you want to also install additional tools, such as the IDE [Spyder](https://www.spyder-ide.org), we recommend you use [Anaconda](https://www.anaconda.com) – instead of the official Python installer – to install Python on your machine.
 
-#### Packages
+##### Packages
 
 Since MyToolIt Watch requires additional Python packages you need to install them too. You can do that using the following command inside PowerShell or the old Windows command line interface `cmd.exe` in the _root of this repository_:
 
@@ -63,9 +52,9 @@ If you want to manually install the required Python libraries you can use the fo
 pip install dynaconf matplotlib openpyxl pdfrw python-can reportlab windows-curses
 ```
 
-### MyToolIt Watch
+#### ICOc
 
-Please clone this repository (`git@github.com:MyTooliT/ICOc.git`) to a folder of your choice. You can either use the [command line tool `git`](https://git-scm.com/downloads):
+Please clone this repository (`git@github.com:MyTooliT/ICOc.git`) to a directory of your choice. You can either use the [command line tool `git`](https://git-scm.com/downloads):
 
 ```
 git clone git@github.com:MyTooliT/ICOc.git
