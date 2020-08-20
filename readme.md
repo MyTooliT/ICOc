@@ -52,7 +52,7 @@ pip install dynaconf matplotlib openpyxl pdfrw python-can reportlab windows-curs
 
 #### ICOc
 
-Please clone this repository (`git@github.com:MyTooliT/ICOc.git`) to a directory of your choice. You can either use the [command line tool `git`](https://git-scm.com/downloads):
+Please clone [this repository](https://github.com/MyTooliT/ICOc) to a directory of your choice. You can either use the [command line tool `git`](https://git-scm.com/downloads):
 
 ```
 git clone https://github.com/MyTooliT/ICOc.git
