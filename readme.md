@@ -66,7 +66,7 @@ The repository contains everything necessary to connect to an STU via CAN and pu
 
 #### Simplicity Studio
 
-For the tests that require a firmware flash, such as the [production tests](mytoolit/test/production) you need to [install Simplicity Studio](https://www.silabs.com/products/development-tools/software/simplicity-studio).
+For the tests that require a firmware flash, such as the [production tests](mytoolit/test/production) you need to [install Simplicity Studio](https://www.silabs.com/products/development-tools/software/simplicity-studio). Please also make sure to install the Simplicity Commander tool inside Simplicity Studio.
 
 ## Program Execution
 
