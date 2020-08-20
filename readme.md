@@ -68,6 +68,76 @@ The repository contains everything necessary to connect to an STU via CAN and pu
 
 For the tests that require a firmware flash, such as the [production tests](mytoolit/test/production) you need to [install Simplicity Studio](https://www.silabs.com/products/development-tools/software/simplicity-studio). Please also make sure to install the Simplicity Commander tool inside Simplicity Studio.
 
+## Usage
+
+We recommend that you add the [scripts directory](Scripts) to your path environment variable. Afterwards you can use all [the scripts in this folder](Scripts/ReadMe.md) directly in your Terminal application of choice, without the need to change the current working directory.
+
+### Control and Data Acquirement
+
+#### Start the Program
+
+The `ICOc` script can be used to control an STH (or SHA). After you enter the command
+
+```sh
+ICOc
+```
+
+in your terminal, a text based interface shows you the currently available options. For example, the text
+
+```
+MyToolIt Terminal
+
+1: 08:6b:d7:01:de:81(Blubb)@-52dBm
+
+q: Quit program
+1-9: Connect to STH number (ENTER at input end)
+E: EEPROM (Permanent Storage)
+l: Log File Name
+n: Change Device Name
+t: Test Menu
+u: Update Menu
+x: Xml Data Base
+```
+
+shows that currently one STH was detected. The Bluetooth MAC address of the STH is `08:6b:d7:01:de:81`, while its advertisement name is “Blubb”. The last value after the `@` character shows the current received signal strength indication (RSSI). You can exit the program using the interface using the key <kbd>q</kbd>.
+
+#### Read Acceleration Data
+
+To read data from an STH (or SHA), start the ICOc script, and connect to an STH. To do that, enter the number of the detected STH and use the return key <kbd>⮐</kbd> to confirm your selection. The text based interface will now show you something like this:
+
+```
+08:6b:d7:01:de:81(Tanja)
+Global Trade Identification Number (GTIN): 0
+Hardware Revision(Major.Minor.Build): 1.3.5
+Firmware Version(Major.Minor.Build): 2.1.10
+Firmware Release Name: Tanja
+Serial: -
+
+Battery Voltage: 3.05V
+Internal Chip Temperature: 29.6°C
+
+Run Time: 0s
+Interval Time: 0s
+Adc Prescaler/AcquisitionTime/OversamplingRate/Reference(Samples/s): 2/8/64/VDD(9524)
+Acc Config(XYZ/DataSets): 100/3
+
+a: Config ADC
+d: Display Time
+e: Exit and disconnect from holder
+f: OEM Free Use
+n: Set Device Name
+O: Off(Standby)
+p: Config Acceleration Points(XYZ)
+r: Config run time and interval time
+s: Start Data Acquisition
+```
+
+To start the data acquisition press the key <kbd>s</kbd>. Afterwards a graphical window
+
+![Acceleration](Documentation/Pictures/Acceleration.png)
+
+will show the measured acceleration. To stop the data acquisition, click the close button on the top of the graph.
+
 ## Program Execution
 
 MyToolIt Watch supports a program library, console access and a terminal that access the Watch program library. Thus, MyToolIt Watch may be embedded in another application or used standalone.
