@@ -14,51 +14,6 @@ The framework currently requires
 
 For more information about other required software components, please read the subsection “Software” in this document.
 
-## System diagram
-
-The following figure describes the overall system.
-
-![ADC](Documentation/Pictures/ADC.png)
-
-The Icotronic System consists of the Stationary Transceiver Unit(STU), the Sensory Tool Holder(STH) and a subscriber that uses STH and STU via the MyToolIt Protocol. The MyToolIt Protocol is a network protocol that exchanges information between subscribers and therefor MyToolIt access Controller Area Network and Bluetooth to transport information. This Information transport is used to provide services to the user. A user service may be collecting data, request serial numbers, operating time, etc. Note that the MyToolIt Protocol is expendable for other underlaying data link layer protocols such as e.g. Wireless LAN. Thus the STU is accessible by CAN 2.0, Bluetooth and other data link layer protocols.
-
-Furthermore, the main system services may be divided as follows:
-
-- Data Collection
-
-  - Acceleration Sensor Data
-  - Voltage Measurement
-  - Temperature measurement of the electronics
-  - User specific signals
-
-- Storage Requests
-
-  - Statistical Data
-  - Production Data e.g. Serial Numbers
-  - Parameters e.g. Bluetooth advertisement time
-  - Calibration Factors (kx+d)
-
-- Configuration
-  - Analog Digital Converter (ADC) - The ADC converts e.g. voltages from sensors to sensory signals
-  - Communication Parameters e.g. Bluetooth Advertisement Name
-  - EEPROM Lock Status
-  - Human Machine Interface (HMI)
-- Remaining Services
-
-  - Time
-  - Standby
-  - Meta communication information e.g. number of sent Bytes for a communication port like CAN
-
-- Test Functionality
-  - Test Signals
-  - Production Tests
-  - Hardware Test
-  - Internal Verification
-
-## Data Acquisition
-
-The data acquisition subsystem consists of input pins to measure sensory data like acceleration (physical values corresponds to voltages) and these input pins may be multiplexed to achieve a vector e.g. acceleration in x, y and z dimension. Furthermore, input values are filtered via an Anti-Aliasing Filter (AAF). This AAF is not configurable and required due to the Nyquist–Shannon sampling theorem. Moreover, the sample and hold (S&H) part converts a time continuous signal into a time discrete signal such that the converter proper translate a continues value into a discrete value. This time discrete and value discrete value may be processed in a digital processing system to e.g. do averaging. Note that the part from AAF to DSP is the Analog to Digital Converter Part that must be clocked by a clock frequency and a prescaler. Furthermore, the MyToolIt protocol transports the digital value to the personal computer and this data is stored in a log file. Note that Controller Area Network (CAN) is the interface between the Personal Computer and the Sensory System and the Personal Computer connects to CAN via the PEAK CAN-USB adapter.
-
 # Getting started
 
 In order to setup a test-bench you need:
