@@ -31,35 +31,6 @@ In order to setup a test-bench you need:
 
 Download the driver installer for your operating system (https://www.peak-system.com/PCAN-USB-FD.365.0.html) and include the PCAN-Basic option in your install to get the Python interface.
 
-### Check/Configure your hardware
-
-Check if you Peak adapter's hardware is configured correctly
-
-JP4 needs to be connected in order to activate the +5V supply. Be aware that the adapter can only supply 10mA of current. This is far too little for this application. However, it can be used as active signal.
-
-![PCAN Adapter - JP1 & JP2](Documentation/Pictures/PCAN Adapter - JP1 & JP2.png)
-
-JP1 and JP2 need to be connected to terminate the CAN Bus inside the adapter. This is highly recommended as the cable is not terminated externally in most cases.
-
-![PCAN Adapter - JP4](Documentation/Pictures/PCAN Adapter - JP4.png)
-
-### Connectors
-
-The pinout of Peak-CAN
-
-![PCAN Adapter - Pins](Documentation/Pictures/PCAN Adapter - Pins.png)
-
-Adapter cable's pinout
-
-| X301 pin | signal      | wire color | XLR pin | sub-D pin |
-| :------- | ----------- | ---------- | ------- | --------- |
-| 1        | +5V         | red        |         |           |
-| 2        | EXT\_!Reset | orange     |         | NC        |
-| 3        | CAN_H       | yellow     |         | 7         |
-| 4        | CAN_L       | green      |         | 2         |
-| 5        | NC          | brown      |         | NC        |
-| 6        | GND         | black      |         | 3         |
-
 # test/flash the firmware
 
 how can we test the firmware installed on a STH or STU?
