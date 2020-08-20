@@ -31,20 +31,6 @@ In order to setup a test-bench you need:
 
 Download the driver installer for your operating system (https://www.peak-system.com/PCAN-USB-FD.365.0.html) and include the PCAN-Basic option in your install to get the Python interface.
 
-# test/flash the firmware
-
-how can we test the firmware installed on a STH or STU?
-
-how can we test for bootloader
-
-set the debug to out
-
-clone the repo
-
-flash the firmware
-
-compile the firmware
-
 # Software
 
 This chapter describes how to setup/execute the required software for acquiring data.
