@@ -1,18 +1,18 @@
-# MyToolIt Watch
+# ICOc
 
-The MyToolIt Watch system supports Sensory Tool Holder Data and additional services like serial numbers or statistics to the users:
+The ICOc software is a collection of tools and scripts for the [ICOtronic system](https://www.mytoolit.com/ICOtronic/). Currently the main purpose of the software is
 
-- MyToolIt Protocol: Protocol to communicate via Bluetooth and CAN. Prepared for CAN-FD too.
-  Extendable for other Logical Link Layer protocols
-- MyToolIt PeakCanFd driver: Driver to interact via Peak CAN with CAN 2.0. Prepared for CAN-FD.
-- MyToolIt Production Tests: Production tests for quality management.
-- MyToolIt Verification: Verifications for Firmware and Hardware.
-- MyToolItWatch: Supports high level MyToolIt functionality. May be integrated in alien frame works and/or software
-- MyToolItTerminal: Terminal program that supports MyToolItWatch functionality
+- data collection (via [`mwt.py`](mwt.py) or the [ICOc script](Scripts/ReadMe.md))
+- and testing the functionality of the Sensory Holder Assembly (SHA) and Sensory Tool Holder (STH).
 
-This framework runs under Microsoft Windows 10 and supports its features via console (Microsoft Command Promt) and Liclipse. Liclipse (Version 5.1.3.201811082122)
-is an integrated development environment (IDE) and may be used to access the MyToolIt Test functionalities. Furthermore, Python 3.6 and
-additional Python Modules are required to support the framework.
+For these purposes the software reads data from the Stationary Transceiver Unit (STU) via CAN using the MyTooliT protocol. The STU itself reads from and writes data to the SHA/STH via Bluetooth.
+
+The framework currently requires
+
+- [Microsoft Windows 10](https://microsoft.com/windows), and
+- [Python 3.6](https://www.python.org) or newer.
+
+For more information about other required software components, please read the subsection “Software” in this document.
 
 ## System diagram
 
