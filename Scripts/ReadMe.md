@@ -2,7 +2,7 @@
 
 This folder contains various helper scripts that should make working with ICOc easier. We recommend that you add this folder to your path variable so you can execute the scripts, regardless of the current working path.
 
-**Note:** If one of the following command fails with an execution policy error, then please read the section “How Can I Fix Execution Policy Errors?” in the [FAQ](Documentation/FAQ.md).
+**Note:** If one of the following command fails with an execution policy error, then please read the section “How Can I Fix Execution Policy Errors?” in the [FAQ](../Documentation/FAQ.md).
 
 ## ICOc
 
