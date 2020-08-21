@@ -22,6 +22,7 @@
 
 - We added a test that checks, if updating the over the air update via the [ota-dfu](https://www.silabs.com/documents/public/application-notes/an1086-gecko-bootloader-bluetooth.pdf) command line application works correctly. Currently this test is not activated by default, since it requires that the operator compiles the `ota-dfu` application.
 - The test now uses the Base64 encoded version of the MAC address as default name. The rationale behind this update was that the name we used until now was not unique for a certain STH (or SHA). For more information, please take a look [here](https://github.com/MyTooliT/ICOc/issues/1).
+- The EEPROM test now resets the STH at the end. This way the STH will already use the Base64 encoded MAC address as name after the test was executed. Before this update we had to do a manual reset for the name change to take place.
 
 # Version 1.0.3
 

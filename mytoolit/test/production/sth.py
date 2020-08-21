@@ -1290,6 +1290,11 @@ class TestSTH(TestCase):
             "failed. EEPROM status value currently stores the value "
             f"“{cls.eeprom_status}”")
 
+        # Reset STH to make make the name change at the beginning of the
+        # test permanent. Without this code, we would need to reset the STH
+        # manually.
+        self.can.cmdReset(MyToolItNetworkNr['STH1'])
+
 
 # -- Main ---------------------------------------------------------------------
 
