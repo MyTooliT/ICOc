@@ -23,6 +23,7 @@ from mytoolit.measurement.acceleration import (convert_acceleration_adc_to_g,
                                                ratio_noise_max)
 from mytoolit.report.report import Report
 from mytoolit.config import settings
+from mytoolit.utility import convert_mac_base64
 
 from CanFd import CanFd
 from MyToolItNetworkNumbers import MyToolItNetworkNr
@@ -1069,7 +1070,7 @@ class TestSTH(TestCase):
         # ========
 
         mac = [int(byte, 16) for byte in cls.bluetooth_mac.split(":")]
-        name = b64encode(bytes(mac).decode())
+        name = convert_mac_base64(mac)
 
         write_name(name)
         read_name = read_name()
