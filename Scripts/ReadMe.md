@@ -12,15 +12,20 @@ The command `ICOc` is a wrapper around `mwt.py`. The script executes `mwyt.py` w
 ICOc -n 01:de:81 -r 10
 ```
 
-## Convert-MAC-Base64
+## MAC Address Conversion
 
-The utility `Convert-MAC-Base64` returns the Base64 encoded version of a MAC address. We use the encoded addresses as unique Bluetooth advertisement name for the STH (or SHA). Unfortunately we can not use the MAC address directly because the maximum length of the name is limited to 8 characters.
+The utility `Convert-MAC-Base64` returns the Base64 encoded version of a MAC address. We use the encoded addresses as unique Bluetooth advertisement name for the STH (or SHA). Unfortunately we can not use the MAC address directly because the maximum length of the name is limited to 8 characters. To decode the Base64 name back into a Bluetooth address you can use the script `Convert-Base64-MAC`.
 
-### Example
+### Examples
 
 ```sh
+# Convert a MAC address into an 8 character name
 Convert-MAC-Base64 08:6b:d7:01:de:81
 #> CGvXAd6B
+
+# Convert the Base64 encoded name back into a MAC address
+Convert-Base64-MAC CGvXAd6B
+#> 08:6b:d7:01:de:81
 ```
 
 ## Test-STH
