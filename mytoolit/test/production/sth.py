@@ -664,12 +664,13 @@ class TestSTH(TestCase):
         self.assertGreaterEqual(
             battery_voltage, expected_minimum_voltage,
             f"STH power source voltage of {battery_voltage:.3f} V is lower " +
-            f"than expected minimum voltage of {expected_minimum_voltage} V")
+            "than expected minimum voltage of" +
+            "{expected_minimum_voltage:.3f} V")
         self.assertLessEqual(
             battery_voltage, expected_maximum_voltage,
             f"STH power source voltage of {battery_voltage:.3f} V is " +
             "greater than expected maximum voltage of " +
-            f"{expected_minimum_voltage} V")
+            f"{expected_minimum_voltage:.3f} V")
 
     def test_acceleration_single_value(self):
         """Test stationary acceleration value"""
