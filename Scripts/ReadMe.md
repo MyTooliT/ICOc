@@ -12,6 +12,17 @@ The command `ICOc` is a wrapper around `mwt.py`. The script executes `mwyt.py` w
 ICOc -n 01:de:81 -r 10
 ```
 
+## Convert-MAC-Base64
+
+The utility `Convert-MAC-Base64` returns the Base64 encoded version of a MAC address. We use the encoded addresses as unique Bluetooth advertisement name for the STH (or SHA). Unfortunately we can not use the MAC address directly because the maximum length of the name is limited to 8 characters.
+
+### Example
+
+```sh
+Convert-MAC-Base64 08:6b:d7:01:de:81
+#> CGvXAd6B
+```
+
 ## Test-STH
 
 The command `Test-STH` is a wrapper that executes the tests for the STH ([`sth.py`][]). All command line arguments of the wrapper will be forwarded to [`sth.py`][].
