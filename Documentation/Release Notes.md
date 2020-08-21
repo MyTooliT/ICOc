@@ -5,6 +5,7 @@
 - We moved the release notes from the init code of the [`mytoolit` package](../mytoolit) into this file.
 - We added an [FAQ](FAQ.md) text that should answer questions not covered by the main ReadMe.
 - We rewrote the main readme file. The document should now contain more information that is relevant for the typical user of ICOc. Before this update the text contained more technical information that is only interesting for developers of the ICOc application, such as ADC settings and hardware configuration steps.
+- We added a [tutorial](../Documentation/Tutorials/Testing.md) that shows you how to test an STH (or SHA).
 
 ## Install
 
