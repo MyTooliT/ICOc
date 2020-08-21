@@ -18,6 +18,7 @@
 ## STH Test
 
 - We added a test that checks, if updating the over the air update via the [ota-dfu](https://www.silabs.com/documents/public/application-notes/an1086-gecko-bootloader-bluetooth.pdf) command line application works correctly.
+- The test now uses the Base64 encoded version of the MAC address as default name. The rationale behind this update was that the name we used until now was not unique for a certain STH (or SHA). For more information, please take a look [here](https://github.com/MyTooliT/ICOc/issues/1).
 
 # Version 1.0.3
 

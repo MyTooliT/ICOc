@@ -1,5 +1,6 @@
 # -- Imports ------------------------------------------------------------------
 
+from base64 import b64encode
 from datetime import datetime
 from enum import Enum
 from os import environ, pathsep
@@ -1067,7 +1068,9 @@ class TestSTH(TestCase):
         # = Name =
         # ========
 
-        name = cls.bluetooth_mac[-8:]  # Use last part of MAC as identifier
+        mac = [int(byte, 16) for byte in cls.bluetooth_mac.split(":")]
+        name = b64encode(bytes(mac).decode())
+
         write_name(name)
         read_name = read_name()
 
