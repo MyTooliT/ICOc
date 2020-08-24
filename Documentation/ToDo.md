@@ -7,4 +7,4 @@
   - Sleep Mode 2
   - Active
   - Streaming
-- Format whole code base with code formatter (e.g. [YAPF](https://github.com/google/yapf)). We probably could use [Restyled](https://restyled.io) to do that, after we open the source code.
+- Use [Restyled](https://restyled.io) to keep the style of the code base intact.

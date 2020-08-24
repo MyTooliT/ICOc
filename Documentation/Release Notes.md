@@ -19,6 +19,10 @@
 - We added a simple wrapper script for [`mwt.py`](../mwt.py). For more information, please take a look [here](../Scripts/ReadMe.md).
 - The new scripts [`Convert-MAC-Base64`](../Scripts/ReadMe.md) and [`Convert-Base64-MAC`](../Scripts/ReadMe.md) convert a MAC address (e.g. `08:6b:d7:01:de:81`) into a Base64 encoded (8 character long) text (e.g. `CGvXAd6B`) and back. We use the Base64 encoded MAC address as Bluetooth advertisement name to uniquely identify a STH (or SHA).
 
+## Style
+
+- We formatted the code base with [YAPF](https://github.com/google/yapf).
+
 ## STH Test
 
 - We added a test that checks, if updating the over the air update via the [ota-dfu](https://www.silabs.com/documents/public/application-notes/an1086-gecko-bootloader-bluetooth.pdf) command line application works correctly. Currently this test is not activated by default, since it requires that the operator compiles the `ota-dfu` application.
