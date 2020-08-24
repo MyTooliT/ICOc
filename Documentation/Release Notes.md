@@ -17,7 +17,7 @@
 
 - Add a simple wrapper script for the STH test. If you add its parent folder to your path you will be able to execute the test regardless of your current path. For more information, please take a look at the [ReadMe](../readme.md).
 - We added a simple wrapper script for [`mwt.py`](../mwt.py). For more information, please take a look [here](../Scripts/ReadMe.md).
-- The new scripts [`Convert-MAC-Base64`](../Scripts/ReadMe.md) and [`Convert-Base64-MAC`](../Scripts/ReadMe.md) convert a MAC addresse (e.g. `08:6b:d7:01:de:81`) into a Base64 encoded (8 character long) text (e.g. `CGvXAd6B`) and back. We use the Base64 encoded MAC address as Bluetooth advertisement name to uniquely identify a STH (or SHA).
+- The new scripts [`Convert-MAC-Base64`](../Scripts/ReadMe.md) and [`Convert-Base64-MAC`](../Scripts/ReadMe.md) convert a MAC address (e.g. `08:6b:d7:01:de:81`) into a Base64 encoded (8 character long) text (e.g. `CGvXAd6B`) and back. We use the Base64 encoded MAC address as Bluetooth advertisement name to uniquely identify a STH (or SHA).
 
 ## STH Test
 
