@@ -1,12 +1,11 @@
 import os
 import time
-
 """
 Logger Classe is used to create Logs (in a .txt format)
-""" 
+"""
+
 
 class Logger():
-
     def __init__(self, fileName, fileNameError, FreshLog=False):
         self.bFileOpen = False
         self.ErrorFlag = False
@@ -14,22 +13,23 @@ class Logger():
         self.file = None
         self.fileName = None
         self.vRename(fileName, fileNameError, FreshLog=FreshLog)
-        
+
     def __exit__(self):
         try:
             self.bFileOpen = False
             self.file.close()
             if False != self.ErrorFlag:
-                if os.path.isfile(self.fileNameError) and os.path.isfile(self.fileName):
+                if os.path.isfile(self.fileNameError) and os.path.isfile(
+                        self.fileName):
                     os.remove(self.fileNameError)
                 if os.path.isfile(self.fileName):
                     os.rename(self.fileName, self.fileNameError)
         except:
             pass
 
-    def getTimeStamp(self):     
+    def getTimeStamp(self):
         return int(round(time.time() * 1000)) - int(self.startTime)
-                            
+
     def Info(self, message):
         if False != self.bFileOpen:
             self.file.write("[I](")
@@ -38,7 +38,7 @@ class Logger():
             self.file.write(message)
             self.file.write("\n")
             self.file.flush()
-        
+
     def Error(self, message):
         if False != self.bFileOpen:
             self.file.write("[E](")
@@ -47,7 +47,7 @@ class Logger():
             self.file.write(message)
             self.file.write("\n")
             self.file.flush()
-        
+
     def Warning(self, message):
         if False != self.bFileOpen:
             self.file.write("[W](")
@@ -56,11 +56,12 @@ class Logger():
             self.file.write(message)
             self.file.write("\n")
             self.file.flush()
-        
+
     def vRename(self, fileName, fileNameError, FreshLog=False):
         if None != self.file:
             self.vClose()
-        if not os.path.exists(os.path.dirname(fileName)) and os.path.isdir(os.path.dirname(fileName)):
+        if not os.path.exists(os.path.dirname(fileName)) and os.path.isdir(
+                os.path.dirname(fileName)):
             os.makedirs(os.path.dirname(fileName))
         if None != self.fileName:
             os.rename(self.fileName, fileName)
@@ -75,20 +76,20 @@ class Logger():
             try:
                 self.file = open(fileName, "w", encoding='utf-8')
             except:
-                self.file = open(fileName, "x", encoding='utf-8')                
+                self.file = open(fileName, "x", encoding='utf-8')
         else:
             try:
                 self.file = open(fileName, "a", encoding='utf-8')
             except:
                 self.file = open(fileName, "x", encoding='utf-8')
-        
+
     def vDel(self):
         self.vClose()
         if os.path.isfile(self.fileName):
             os.remove(self.fileName)
         elif os.path.isfile(self.fileNameError):
             os.remove(self.fileNameError)
-            
+
     def vClose(self):
         try:
             self.__exit__()

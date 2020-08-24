@@ -10,7 +10,6 @@ module_path.append(repository_root)
 
 from mytoolit.utility import convert_mac_base64
 
-
 # -- Functions ----------------------------------------------------------------
 
 

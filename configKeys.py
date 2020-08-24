@@ -100,7 +100,6 @@ class ConfigKeys():
                                     tHwRevSub.find('Key').text)
         return atDbData
 
-
     def atPlotterSocket(self, sSocketName):
         atSocketData = {}
         for tSocketData in self.root.find('Plotter'):

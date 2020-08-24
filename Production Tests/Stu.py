@@ -30,10 +30,11 @@ sBuildLocation = "../../SimplicityStudio/v4_workspace/STU/builds/"
 sSilabsCommanderLocation = "../../SimplicityStudio/SimplicityCommander/"
 sAdapterSerialNo = "440116697"
 sBoardType = "BGM111A256V2"
-
 """
 Get serial number of STU Excel Sheet
 """
+
+
 def sSerialNumber(sExcelFileName):
     tWorkbook = openpyxl.load_workbook(sExcelFileName)
     tWorkSheet = tWorkbook.get_sheet_by_name("Product Data@0x4")
@@ -48,17 +49,16 @@ bBatteryExternalDcDc = True
 uAdc2Acc = 100
 iRssiMin = -75
 bStuPcbOnly = True
-
 """
 This class supports the production test of the Stationary Transceiving Unit (STU)
 """
 
 
 class TestStu(unittest.TestCase):
-
     def setUp(self):
         global bSkip
-        self.tSthLimits = SthLimits(iSensorAxis, bBatteryExternalDcDc, uAdc2Acc, iRssiMin, 20, 35)
+        self.tSthLimits = SthLimits(iSensorAxis, bBatteryExternalDcDc,
+                                    uAdc2Acc, iRssiMin, 20, 35)
         self.tStuLimits = StuLimits(bStuPcbOnly, iRssiMin)
         self.sBuildLocation = sBuildLocation + sVersion
         self.sBootloader = sBuildLocation + "BootloaderOtaBgm111.s37"
@@ -73,15 +73,25 @@ class TestStu(unittest.TestCase):
         if False != bSkip and "test9999StoreTestResults" != self._testMethodName:
             self.skipTest("At least some previous test failed")
         else:
-            self.Can = CanFd.CanFd(self.fileName, self.fileNameError, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], 0, 0, 0, FreshLog=True)
-            self.sSerialNumber = sSerialNumber(self.sExcelEepromContentFileName)
+            self.Can = CanFd.CanFd(self.fileName,
+                                   self.fileNameError,
+                                   MyToolItNetworkNr["SPU1"],
+                                   MyToolItNetworkNr["STU1"],
+                                   0,
+                                   0,
+                                   0,
+                                   FreshLog=True)
+            self.sSerialNumber = sSerialNumber(
+                self.sExcelEepromContentFileName)
             self.sDateClock = sDateClock()
             self.Can.Logger.Info("TestCase: " + str(self._testMethodName))
             if "test0000FirmwareFlash" != self._testMethodName:
-                self.Can.CanTimeStampStart(self._resetStu()["CanTime"])  # This will also reset to STH
-                self.sStuAddr = sBlueToothMacAddr(self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"]))
-                self.sTestReport =  self.sSerialNumber + "_" +  sLogName
-#                 sStoreFileName = "./ResultsStu/OK_" + self.sTestReport + "_nr0.xlsx"
+                self.Can.CanTimeStampStart(
+                    self._resetStu()["CanTime"])  # This will also reset to STH
+                self.sStuAddr = sBlueToothMacAddr(
+                    self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"]))
+                self.sTestReport = self.sSerialNumber + "_" + sLogName
+                #                 sStoreFileName = "./ResultsStu/OK_" + self.sTestReport + "_nr0.xlsx"
                 if "test0005Ack" == self._testMethodName:
                     batchFile = open("BatchNumberStu.txt", "w")
                     iBatchNr = int(self.sBatchNumber)
@@ -90,11 +100,14 @@ class TestStu(unittest.TestCase):
                     batchFile.write(self.sBatchNumber)
                     batchFile.close()
                 self.tWorkbookOpenCreate()
-                self.sExcelEepromContentReadBackFileName = sLogName + "_" + self.sSerialNumber + "_" + self.sStuAddr.replace(":", "#") + "_ReadBack.xlsx"
+                self.sExcelEepromContentReadBackFileName = sLogName + "_" + self.sSerialNumber + "_" + self.sStuAddr.replace(
+                    ":", "#") + "_ReadBack.xlsx"
                 self.Can.Logger.Info("STU BlueTooth Address: " + self.sStuAddr)
                 self._statusWords()
                 self._SthWDog()
-            self.Can.Logger.Info("_______________________________________________________________________________________________________________")
+            self.Can.Logger.Info(
+                "_______________________________________________________________________________________________________________"
+            )
             self.Can.Logger.Info("Start")
 
     def tearDown(self):
@@ -103,11 +116,15 @@ class TestStu(unittest.TestCase):
             self.tWorkbook.save(self.sTestReport + ".xlsx")
         if False == self.Can.bError:
             self.Can.Logger.Info("Fin")
-            self.Can.Logger.Info("_______________________________________________________________________________________________________________")
+            self.Can.Logger.Info(
+                "_______________________________________________________________________________________________________________"
+            )
         if "test0000FirmwareFlash" == self._testMethodName:
             if False == self.Can.bError:
-                self.Can.CanTimeStampStart(self._resetStu()["CanTime"])  # This will also reset to STH
-                self.sStuAddr = sBlueToothMacAddr(self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"]))
+                self.Can.CanTimeStampStart(
+                    self._resetStu()["CanTime"])  # This will also reset to STH
+                self.sStuAddr = sBlueToothMacAddr(
+                    self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"]))
                 self.Can.Logger.Info("STU BlueTooth Address: " + self.sStuAddr)
                 self._statusWords()
                 self._SthWDog()
@@ -116,7 +133,8 @@ class TestStu(unittest.TestCase):
         self.Can.__exit__()
         if self._outcome.errors[1][1]:
             if False == bSkip:
-                print("Error! Please put red point on it(" + self.sBatchNumber + ")")
+                print("Error! Please put red point on it(" +
+                      self.sBatchNumber + ")")
             bSkip = True
 
     def run(self, result=None):
@@ -130,7 +148,8 @@ class TestStu(unittest.TestCase):
             super(TestStu, self).run(result)
         else:
             if False == bSkip:
-                print("Error! Please put red point on it(" + self.sBatchNumber + ")")
+                print("Error! Please put red point on it(" +
+                      self.sBatchNumber + ")")
             bSkip = True
             if "test9999StoreTestResults" == self._testMethodName:
                 super(TestStu, self).run(result)
@@ -141,7 +160,9 @@ class TestStu(unittest.TestCase):
 
     def _resetStu(self, retries=5, log=True):
         self.Can.bConnected = False
-        return self.Can.cmdReset(MyToolItNetworkNr["STU1"], retries=retries, log=log)
+        return self.Can.cmdReset(MyToolItNetworkNr["STU1"],
+                                 retries=retries,
+                                 log=log)
 
     """
     Get the Status Words of the STU
@@ -159,7 +180,9 @@ class TestStu(unittest.TestCase):
     """
 
     def _SthWDog(self):
-        WdogCounter = iMessage2Value(self.Can.statisticalData(MyToolItNetworkNr["STU1"], MyToolItStatData["Wdog"])[:4])
+        WdogCounter = iMessage2Value(
+            self.Can.statisticalData(MyToolItNetworkNr["STU1"],
+                                     MyToolItStatData["Wdog"])[:4])
         self.Can.Logger.Info("WatchDog Counter: " + str(WdogCounter))
         return WdogCounter
 
@@ -172,8 +195,10 @@ class TestStu(unittest.TestCase):
             self.tWorkbook = openpyxl.load_workbook(self.sTestReport + ".xlsx")
         except:
             self.tWorkbook = openpyxl.Workbook()
-            self.tWorkbook.remove_sheet(self.tWorkbook.get_sheet_by_name('Sheet'))
-            self.tWorkSheet = self.tWorkbook.create_sheet(self.sStuAddr.replace(":", "#"))
+            self.tWorkbook.remove_sheet(
+                self.tWorkbook.get_sheet_by_name('Sheet'))
+            self.tWorkSheet = self.tWorkbook.create_sheet(
+                self.sStuAddr.replace(":", "#"))
             tFont = Font(bold=True, size=20)
             self.tWorkSheet['A1'] = 'Test Batch Number'
             self.tWorkSheet['A1'].font = tFont
@@ -184,13 +209,15 @@ class TestStu(unittest.TestCase):
             self.tWorkSheet['D1'] = 'Description'
             self.tWorkSheet['D1'].font = tFont
             for i in range(0, 16):
-                self.tWorkSheet[chr(0x45 + i) + "1"].value = 'Test Case Report ' + str(i)
+                self.tWorkSheet[chr(0x45 + i) +
+                                "1"].value = 'Test Case Report ' + str(i)
                 self.tWorkSheet[chr(0x45 + i) + "1"].font = tFont
             self.tWorkbook.save(self.sTestReport + ".xlsx")
             self.tWorkbook = openpyxl.load_workbook(self.sTestReport + ".xlsx")
-        self.tWorkSheet = self.tWorkbook.get_sheet_by_name(self.sStuAddr.replace(":", "#"))
+        self.tWorkSheet = self.tWorkbook.get_sheet_by_name(
+            self.sStuAddr.replace(":", "#"))
         self.iTestRow = 1
-        while(None != self.tWorkSheet['A' + str(self.iTestRow + 1)].value):
+        while (None != self.tWorkSheet['A' + str(self.iTestRow + 1)].value):
             self.iTestRow += 1
         self.tWorkSheetWrite("A", self.iTestRow)
         self.tWorkSheetWrite("B", self._testMethodName)
@@ -280,9 +307,11 @@ class TestStu(unittest.TestCase):
                     iByteIndex = 0
                     for i in range(2, 256 + 2, 1):
                         if None != worksheet['A' + str(i)].value:
-                            au8ElementData = self.au8excelValueToByteArray(worksheet, i)
+                            au8ElementData = self.au8excelValueToByteArray(
+                                worksheet, i)
                             for j in range(0, len(au8ElementData), 1):
-                                au8WriteData[iByteIndex + j] = au8ElementData[j]
+                                au8WriteData[iByteIndex +
+                                             j] = au8ElementData[j]
                             iLength = int(worksheet['C' + str(i)].value)
                             iByteIndex += iLength
                         else:
@@ -292,12 +321,17 @@ class TestStu(unittest.TestCase):
                         iWriteLength += 4
                         iWriteLength -= (iWriteLength % 4)
                     au8WriteData = au8WriteData[0:iWriteLength]
-                    self.Can.Logger.Info("Write Content: " + payload2Hex(au8WriteData))
+                    self.Can.Logger.Info("Write Content: " +
+                                         payload2Hex(au8WriteData))
                     for offset in range(0, iWriteLength, 4):
                         au8WritePackage = au8WriteData[offset:offset + 4]
                         au8Payload = [address, 0xFF & offset, 4, 0]
                         au8Payload.extend(au8WritePackage)
-                        self.Can.cmdSend(iReceiver, MyToolItBlock["Eeprom"], MyToolItEeprom["Write"], au8Payload, log=False)
+                        self.Can.cmdSend(iReceiver,
+                                         MyToolItBlock["Eeprom"],
+                                         MyToolItEeprom["Write"],
+                                         au8Payload,
+                                         log=False)
             try:
                 workbook.close()
             except Exception as e:
@@ -310,7 +344,7 @@ class TestStu(unittest.TestCase):
     """
 
     def vUnicodeIllegalRemove(self, value, character):
-        while(True):
+        while (True):
             try:
                 value.remove(character)
             except:
@@ -332,7 +366,8 @@ class TestStu(unittest.TestCase):
                     try:
                         value = self.vUnicodeIllegalRemove(value, 0)
                         value = self.vUnicodeIllegalRemove(value, 255)
-                        value = array.array('b', value).tostring().decode('utf-8', 'replace')
+                        value = array.array('b', value).tostring().decode(
+                            'utf-8', 'replace')
                     except Exception as e:
                         self.Can.Logger.Info(str(e))
                         value = ""
@@ -370,7 +405,8 @@ class TestStu(unittest.TestCase):
 
     def sExcelSheetRead(self, namePage, iReceiver):
         sError = None
-        workbook = openpyxl.load_workbook(self.sExcelEepromContentReadBackFileName)
+        workbook = openpyxl.load_workbook(
+            self.sExcelEepromContentReadBackFileName)
         if workbook:
             for worksheetName in workbook.sheetnames:
                 name = str(worksheetName).split('@')
@@ -386,16 +422,22 @@ class TestStu(unittest.TestCase):
                         readLengthAlligned -= (readLengthAlligned % 4)
                     for offset in range(0, readLengthAlligned, 4):
                         payload = [address, 0xFF & offset, 4, 0, 0, 0, 0, 0]
-                        index = self.Can.cmdSend(iReceiver, MyToolItBlock["Eeprom"], MyToolItEeprom["Read"], payload, log=False)
+                        index = self.Can.cmdSend(iReceiver,
+                                                 MyToolItBlock["Eeprom"],
+                                                 MyToolItEeprom["Read"],
+                                                 payload,
+                                                 log=False)
                         readBackFrame = self.Can.getReadMessageData(index)[4:]
                         pageContent.extend(readBackFrame)
                     pageContent = pageContent[0:readLength]
-                    self.Can.Logger.Info("Read Data: " + payload2Hex(pageContent))
+                    self.Can.Logger.Info("Read Data: " +
+                                         payload2Hex(pageContent))
                     self.iExcelSheetPageValue(worksheet, pageContent)
             try:
                 workbook.save(self.sExcelEepromContentReadBackFileName)
             except Exception as e:
-                sError = "Could not save file(Opened by another application?): " + str(e)
+                sError = "Could not save file(Opened by another application?): " + str(
+                    e)
                 self.Can.Logger.Info(sError)
         return sError
 
@@ -406,15 +448,20 @@ class TestStu(unittest.TestCase):
     def tCompareEepromWriteRead(self):
         tWorkSheetNameError = None
         sCellNumberError = None
-        tWorkbookReadBack = openpyxl.load_workbook(self.sExcelEepromContentReadBackFileName)
-        tWorkbookWrite = openpyxl.load_workbook(self.sExcelEepromContentFileName)
+        tWorkbookReadBack = openpyxl.load_workbook(
+            self.sExcelEepromContentReadBackFileName)
+        tWorkbookWrite = openpyxl.load_workbook(
+            self.sExcelEepromContentFileName)
         if tWorkbookReadBack and tWorkbookWrite:
             for worksheetName in tWorkbookWrite.sheetnames:
-                tWorkSheedReadBack = tWorkbookReadBack.get_sheet_by_name(worksheetName)
-                tWorkSheedWrite = tWorkbookWrite.get_sheet_by_name(worksheetName)
+                tWorkSheedReadBack = tWorkbookReadBack.get_sheet_by_name(
+                    worksheetName)
+                tWorkSheedWrite = tWorkbookWrite.get_sheet_by_name(
+                    worksheetName)
                 for i in range(2, 2 + 256):
                     if None != tWorkSheedWrite['A' + str(i)].value:
-                        if str(tWorkSheedWrite['E' + str(i)].value) != str(tWorkSheedReadBack['E' + str(i)].value):
+                        if str(tWorkSheedWrite['E' + str(i)].value) != str(
+                                tWorkSheedReadBack['E' + str(i)].value):
                             tWorkSheetNameError = worksheetName
                             sCellNumberError = 'E' + str(i)
                             break
@@ -451,19 +498,23 @@ class TestStu(unittest.TestCase):
 
     def test0000FirmwareFlash(self):
         try:
-            os.remove(self.sLogLocation + self._testMethodName + "ManufacturingCreateResport.txt")
+            os.remove(self.sLogLocation + self._testMethodName +
+                      "ManufacturingCreateResport.txt")
         except:
             pass
         try:
-            os.remove(self.sLogLocation + self._testMethodName + "ManufacturingFlashResport.txt")
+            os.remove(self.sLogLocation + self._testMethodName +
+                      "ManufacturingFlashResport.txt")
         except:
             pass
         try:
-            os.remove(self.sLogLocation + self._testMethodName + "ManufacturingDebugUnlock.txt")
+            os.remove(self.sLogLocation + self._testMethodName +
+                      "ManufacturingDebugUnlock.txt")
         except:
             pass
         try:
-            os.remove(self.sLogLocation + self._testMethodName + "DeviceInfo.txt")
+            os.remove(self.sLogLocation + self._testMethodName +
+                      "DeviceInfo.txt")
         except:
             pass
 
@@ -488,7 +539,10 @@ class TestStu(unittest.TestCase):
         # for mac and linux(here, os.name is 'posix')
         else:
             os.system(sSystemCall)
-        tFile = open(self.sLogLocation + self._testMethodName + "DeviceInfo.txt", "r", encoding='utf-8')
+        tFile = open(self.sLogLocation + self._testMethodName +
+                     "DeviceInfo.txt",
+                     "r",
+                     encoding='utf-8')
         asData = tFile.readlines()
         tFile.close()
         if "Unique ID" == asData[-2][:9]:
@@ -505,12 +559,15 @@ class TestStu(unittest.TestCase):
             # for mac and linux(here, os.name is 'posix')
             else:
                 os.system(sSystemCall)
-            tFile = open(self.sLogLocation + self._testMethodName + "ManufacturingFlashResport.txt", "r", encoding='utf-8')
+            tFile = open(self.sLogLocation + self._testMethodName +
+                         "ManufacturingFlashResport.txt",
+                         "r",
+                         encoding='utf-8')
             asData = tFile.readlines()
             tFile.close()
-            self.assertEqual("range 0x0FE04000 - 0x0FE047FF (2 KB)\n", asData[-2][10:])
+            self.assertEqual("range 0x0FE04000 - 0x0FE047FF (2 KB)\n",
+                             asData[-2][10:])
             self.assertEqual("DONE\n", asData[-1])
-
 
     """
     Tests over the air (OTA) update
@@ -518,7 +575,8 @@ class TestStu(unittest.TestCase):
 
     def test0001OverTheAirUpdate(self):
         global sHolderName
-        self.tWorkSheetWrite("D", "Test the over the air update bootloader functionality")
+        self.tWorkSheetWrite(
+            "D", "Test the over the air update bootloader functionality")
         self._resetStu()
         time.sleep(1)
         sSystemCall = self.sBuildLocation + "/ota-dfu.exe COM6 115200 "
@@ -531,7 +589,9 @@ class TestStu(unittest.TestCase):
         # for mac and linux(here, os.name is 'posix')
         else:
             os.system(sSystemCall)
-        tFile = open(self.sLogLocation + self._testMethodName + "Ota.txt", "r", encoding='utf-8')
+        tFile = open(self.sLogLocation + self._testMethodName + "Ota.txt",
+                     "r",
+                     encoding='utf-8')
         asData = tFile.readlines()
         self.tWorkSheetWrite("E", asData[-2])
         self.tWorkSheetWrite("F", asData[-1])
@@ -540,31 +600,42 @@ class TestStu(unittest.TestCase):
         time.sleep(2)
         self._resetStu()
 
-
-
     """
     Test Acknowledgement from STH. Write message and check identifier to be ack (No bError)
     """
 
     def test0005Ack(self):
-        self.tWorkSheetWrite("D", "This test case checks the ability to communicate with the STU")
-        cmd = self.Can.CanCmd(MyToolItBlock["System"], MyToolItSystem["ActiveState"], 1, 0)
+        self.tWorkSheetWrite(
+            "D",
+            "This test case checks the ability to communicate with the STU")
+        cmd = self.Can.CanCmd(MyToolItBlock["System"],
+                              MyToolItSystem["ActiveState"], 1, 0)
         expectedData = ActiveState()
         expectedData.asbyte = 0
         expectedData.b.u2NodeState = Node["Application"]
         expectedData.b.u3NetworkState = NetworkState["Operating"]
-        msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [expectedData.asbyte])
+        msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
+                                    MyToolItNetworkNr["STU1"],
+                                    [expectedData.asbyte])
         self.Can.Logger.Info("Write Message")
         self.Can.WriteFrame(msg)
         self.Can.Logger.Info("Wait 200ms")
         time.sleep(0.2)
-        cmd = self.Can.CanCmd(MyToolItBlock["System"], MyToolItSystem["ActiveState"], 0, 0)
-        msgAckExpected = self.Can.CanMessage20(cmd, MyToolItNetworkNr["STU1"], MyToolItNetworkNr["SPU1"], [0])
-        self.Can.Logger.Info("Send ID: " + hex(msg.ID) + "; Expected ID: " + hex(msgAckExpected.ID) + "; Received ID: " + hex(self.Can.getReadMessage(-1).ID))
-        self.Can.Logger.Info("Send Data: " + hex(0) + "; Expected Data: " + hex(expectedData.asbyte) + "; Received Data: " + hex(self.Can.getReadMessage(-1).DATA[0]))
+        cmd = self.Can.CanCmd(MyToolItBlock["System"],
+                              MyToolItSystem["ActiveState"], 0, 0)
+        msgAckExpected = self.Can.CanMessage20(cmd, MyToolItNetworkNr["STU1"],
+                                               MyToolItNetworkNr["SPU1"], [0])
+        self.Can.Logger.Info("Send ID: " + hex(msg.ID) + "; Expected ID: " +
+                             hex(msgAckExpected.ID) + "; Received ID: " +
+                             hex(self.Can.getReadMessage(-1).ID))
+        self.Can.Logger.Info("Send Data: " + hex(0) + "; Expected Data: " +
+                             hex(expectedData.asbyte) + "; Received Data: " +
+                             hex(self.Can.getReadMessage(-1).DATA[0]))
         self.tWorkSheetWrite("E", "Test failed")
-        self.assertEqual(hex(msgAckExpected.ID), hex(self.Can.getReadMessage(-1).ID))
-        self.assertEqual(expectedData.asbyte, self.Can.getReadMessage(-1).DATA[0])
+        self.assertEqual(hex(msgAckExpected.ID),
+                         hex(self.Can.getReadMessage(-1).ID))
+        self.assertEqual(expectedData.asbyte,
+                         self.Can.getReadMessage(-1).DATA[0])
         self.Can.Logger.Info("Test OK")
         self.tWorkSheetWrite("E", "Test OK")
 
@@ -572,18 +643,22 @@ class TestStu(unittest.TestCase):
         self.tWorkSheetWrite("D", "Archive Bluetooth Address")
         self.tWorkSheetWrite("E", "Bluetooth Address: " + str(self.sStuAddr))
         self.Can.Logger.Info("Bluetooth Address: " + str(self.sStuAddr))
-        self.vChangeExcelCell("Statistics@0x5", "E9", str(int(self.sStuAddr, 16)))
-
+        self.vChangeExcelCell("Statistics@0x5", "E9",
+                              str(int(self.sStuAddr, 16)))
 
     """
     Checks that correct Firmware Version has been installed
     """
 
     def test0040Version(self):
-        self.tWorkSheetWrite("D", "Check that the correct firmware version has been installed")
-        iIndex = self.Can.cmdSend(MyToolItNetworkNr["STU1"], MyToolItBlock["ProductData"], MyToolItProductData["FirmwareVersion"], [])
+        self.tWorkSheetWrite(
+            "D", "Check that the correct firmware version has been installed")
+        iIndex = self.Can.cmdSend(MyToolItNetworkNr["STU1"],
+                                  MyToolItBlock["ProductData"],
+                                  MyToolItProductData["FirmwareVersion"], [])
         au8Version = self.Can.getReadMessageData(iIndex)[-3:]
-        sVersionRead = "v" + str(au8Version[0]) + "." + str(au8Version[1]) + "." + str(au8Version[2])
+        sVersionRead = "v" + str(au8Version[0]) + "." + str(
+            au8Version[1]) + "." + str(au8Version[2])
         self.tWorkSheetWrite("E", sVersion)
         self.Can.Logger.Info(sVersion)
         if sVersionRead == sVersion:
@@ -602,23 +677,34 @@ class TestStu(unittest.TestCase):
     def test0099Reset(self):
         self.tWorkSheetWrite("D", "Tests Reset Command")
         self._resetStu()
-        cmd = self.Can.CanCmd(MyToolItBlock["System"], MyToolItSystem["ActiveState"], 1, 0)
+        cmd = self.Can.CanCmd(MyToolItBlock["System"],
+                              MyToolItSystem["ActiveState"], 1, 0)
         expectedData = ActiveState()
         expectedData.asbyte = 0
         expectedData.b.u2NodeState = Node["Application"]
         expectedData.b.u3NetworkState = NetworkState["Operating"]
-        msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [expectedData.asbyte])
+        msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
+                                    MyToolItNetworkNr["STU1"],
+                                    [expectedData.asbyte])
         self.Can.Logger.Info("Write Message")
         self.Can.WriteFrame(msg)
         self.Can.Logger.Info("Wait 200ms")
         time.sleep(0.2)
-        cmd = self.Can.CanCmd(MyToolItBlock["System"], MyToolItSystem["ActiveState"], 0, 0)
-        msgAckExpected = self.Can.CanMessage20(cmd, MyToolItNetworkNr["STU1"], MyToolItNetworkNr["SPU1"], [0])
-        self.Can.Logger.Info("Send ID: " + hex(msg.ID) + "; Expected ID: " + hex(msgAckExpected.ID) + "; Received ID: " + hex(self.Can.getReadMessage(-1).ID))
-        self.Can.Logger.Info("Send Data: " + hex(0) + "; Expected Data: " + hex(expectedData.asbyte) + "; Received Data: " + hex(self.Can.getReadMessage(-1).DATA[0]))
+        cmd = self.Can.CanCmd(MyToolItBlock["System"],
+                              MyToolItSystem["ActiveState"], 0, 0)
+        msgAckExpected = self.Can.CanMessage20(cmd, MyToolItNetworkNr["STU1"],
+                                               MyToolItNetworkNr["SPU1"], [0])
+        self.Can.Logger.Info("Send ID: " + hex(msg.ID) + "; Expected ID: " +
+                             hex(msgAckExpected.ID) + "; Received ID: " +
+                             hex(self.Can.getReadMessage(-1).ID))
+        self.Can.Logger.Info("Send Data: " + hex(0) + "; Expected Data: " +
+                             hex(expectedData.asbyte) + "; Received Data: " +
+                             hex(self.Can.getReadMessage(-1).DATA[0]))
         self.tWorkSheetWrite("E", "Test failed")
-        self.assertEqual(hex(msgAckExpected.ID), hex(self.Can.getReadMessage(-1).ID))
-        self.assertEqual(expectedData.asbyte, self.Can.getReadMessage(-1).DATA[0])
+        self.assertEqual(hex(msgAckExpected.ID),
+                         hex(self.Can.getReadMessage(-1).ID))
+        self.assertEqual(expectedData.asbyte,
+                         self.Can.getReadMessage(-1).DATA[0])
         self.tWorkSheetWrite("E", "Test OK")
         self.Can.Logger.Info("Test OK")
 
@@ -628,10 +714,15 @@ class TestStu(unittest.TestCase):
 
     def test0100Rssi(self):
         self.tWorkSheetWrite("D", "Tests RSSI")
-        self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"], MyToolItSth.TestConfig["DevName"], log=False)
+        self.Can.bBlueToothConnectPollingName(
+            MyToolItNetworkNr["STU1"],
+            MyToolItSth.TestConfig["DevName"],
+            log=False)
         time.sleep(2)
-        self.sStuAddr = sBlueToothMacAddr(self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"]))
-        self.sSthAddr = sBlueToothMacAddr(self.Can.BlueToothAddress(MyToolItNetworkNr["STH1"]))
+        self.sStuAddr = sBlueToothMacAddr(
+            self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"]))
+        self.sSthAddr = sBlueToothMacAddr(
+            self.Can.BlueToothAddress(MyToolItNetworkNr["STH1"]))
         self.Can.Logger.Info("STH BlueTooth Address: " + self.sSthAddr)
         iRssiSth = int(self.Can.BlueToothRssi(MyToolItNetworkNr["STH1"]))
         iRssiStu = int(self.Can.BlueToothRssi(MyToolItNetworkNr["STU1"]))
@@ -651,7 +742,8 @@ class TestStu(unittest.TestCase):
 
     def test0399Eerpom(self):
         self._resetStu()
-        self.tWorkSheetWrite("D", "Write EEPROM with data and check that by read")
+        self.tWorkSheetWrite("D",
+                             "Write EEPROM with data and check that by read")
         self.vChangeExcelCell("Statistics@0x5", "E8", self.sBatchNumber)
         # Write
         workSheetNames = []
@@ -671,13 +763,16 @@ class TestStu(unittest.TestCase):
                 break
         # Read Back
         sError = None
-        copyfile(self.sExcelEepromContentFileName, self.sExcelEepromContentReadBackFileName)
+        copyfile(self.sExcelEepromContentFileName,
+                 self.sExcelEepromContentReadBackFileName)
         for pageName in workSheetNames:
             sError = self.sExcelSheetRead(pageName, MyToolItNetworkNr["STU1"])
             if None != sError:
                 break
-        [tWorkSheetNameError, sCellNumberError] = self.tCompareEepromWriteRead()
-        self.tWorkSheetWrite("E", "Error Worksheet: " + str(tWorkSheetNameError))
+        [tWorkSheetNameError,
+         sCellNumberError] = self.tCompareEepromWriteRead()
+        self.tWorkSheetWrite("E",
+                             "Error Worksheet: " + str(tWorkSheetNameError))
         self.tWorkSheetWrite("F", "Error Cell: " + str(sCellNumberError))
         self.Can.Logger.Info("Error Worksheet: " + str(tWorkSheetNameError))
         self.Can.Logger.Info("Error Cell: " + str(sCellNumberError))
@@ -691,10 +786,12 @@ class TestStu(unittest.TestCase):
         global bSkip
         self.tWorkSheetWrite("D", "Store Results")
         if False != os.path.isfile(self.sExcelEepromContentReadBackFileName):
-            tWorkbookContent = openpyxl.load_workbook(self.sExcelEepromContentReadBackFileName)
+            tWorkbookContent = openpyxl.load_workbook(
+                self.sExcelEepromContentReadBackFileName)
             for worksheetName in tWorkbookContent.sheetnames:
                 tWorkSheet = self.tWorkbook.create_sheet(worksheetName)
-                tWorkSheetContent = tWorkbookContent.get_sheet_by_name(worksheetName)
+                tWorkSheetContent = tWorkbookContent.get_sheet_by_name(
+                    worksheetName)
                 for row in tWorkSheetContent:
                     for cell in row:
                         tWorkSheet[cell.coordinate].value = cell.value
@@ -705,7 +802,8 @@ class TestStu(unittest.TestCase):
             self.Can.Logger.Error("NOK")
             self.tWorkbook.save(self.sTestReport + ".xlsx")
             for i in range(0, 100):
-                sStoreFileName = self.sLogLocation + "/ResultsStu/" + self.sTestReport + "_nr" + str(i) + "_NOK.xlsx"
+                sStoreFileName = self.sLogLocation + "/ResultsStu/" + self.sTestReport + "_nr" + str(
+                    i) + "_NOK.xlsx"
                 if False == os.path.isfile(sStoreFileName):
                     os.rename(self.sTestReport + ".xlsx", sStoreFileName)
                     break
@@ -714,7 +812,8 @@ class TestStu(unittest.TestCase):
             self.Can.Logger.Info("OK")
             self.tWorkbook.save(self.sTestReport + ".xlsx")
             for i in range(0, 100):
-                sStoreFileName = self.sLogLocation + "/ResultsStu/" + self.sTestReport + "_nr" + str(i) + "_OK.xlsx"
+                sStoreFileName = self.sLogLocation + "/ResultsStu/" + self.sTestReport + "_nr" + str(
+                    i) + "_OK.xlsx"
                 if False == os.path.isfile(sStoreFileName):
                     os.rename(self.sTestReport + ".xlsx", sStoreFileName)
                     break

@@ -11,7 +11,6 @@ import subprocess
 
 
 class mwt(myToolItWatch):
-
     def __init__(self):
         myToolItWatch.__init__(self)
         self.process = None
@@ -37,7 +36,8 @@ class mwt(myToolItWatch):
         if False != self.bLastConfig():
             lastRun = self.tXmlConfig.tree.find('lastRun')
             self.bLogSet(str(lastRun.find('LogName').text) + ".txt")
-            self.vConfigSet(str(lastRun.find('Product').text), str(lastRun.find('Version').text))
+            self.vConfigSet(str(lastRun.find('Product').text),
+                            str(lastRun.find('Version').text))
             self.vNetworkNumberSet(str(lastRun.find('NetworkNumber').text))
             sFileName = str(lastRun.find('SheetFile').text) + ".xlsx"
             self.vSheetFileSet(sFileName)
@@ -146,7 +146,8 @@ class mwt(myToolItWatch):
                 bContinue = True
         elif ord('p') == keyPress:
             self.stdscr.clear()
-            self.stdscr.addstr("New sample axis (xyz; 0=off, 1=on; e.g. 100): ")
+            self.stdscr.addstr(
+                "New sample axis (xyz; 0=off, 1=on; e.g. 100): ")
             iPoints = self.iTerminalInputNumberIn()
             bZ = bool(iPoints & 1)
             bY = bool((iPoints >> 1) & 1)
@@ -173,22 +174,45 @@ class mwt(myToolItWatch):
         sSerialNumber = self.Can.sProductData("SerialNumber", bLog=False)
         sName = self.Can.sProductData("Name", bLog=False)
         sSerial = str(sSerialNumber + "-" + sName)
-        self.stdscr.addstr("Global Trade Identification Number (GTIN): " + sGtin + "\n")
-        self.stdscr.addstr("Hardware Revision(Major.Minor.Build): " + sHwRev + "\n")
-        self.stdscr.addstr("Firmware Version(Major.Minor.Build): " + sSwVersion + "\n")
+        self.stdscr.addstr("Global Trade Identification Number (GTIN): " +
+                           sGtin + "\n")
+        self.stdscr.addstr("Hardware Revision(Major.Minor.Build): " + sHwRev +
+                           "\n")
+        self.stdscr.addstr("Firmware Version(Major.Minor.Build): " +
+                           sSwVersion + "\n")
         self.stdscr.addstr("Firmware Release Name: " + sReleaseName + "\n")
         self.stdscr.addstr("Serial: " + sSerial + "\n\n")
-        index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"], 1, 0, 0, log=False)
-        iBatteryVoltage = iMessage2Value(self.Can.getReadMessageData(index)[2:4])
+        index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
+                                            MyToolItStreaming["Voltage"],
+                                            1,
+                                            0,
+                                            0,
+                                            log=False)
+        iBatteryVoltage = iMessage2Value(
+            self.Can.getReadMessageData(index)[2:4])
         if None != iBatteryVoltage:
             fBatteryVoltage = fVoltageBattery(iBatteryVoltage)
-            self.stdscr.addstr("Battery Voltage: " + '{:02.2f}'.format(fBatteryVoltage) + "V\n")
-        au8TempReturn = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"], CalibMeassurementTypeNr["Temp"], 1, AdcReference["1V25"], log=False)
+            self.stdscr.addstr("Battery Voltage: " +
+                               '{:02.2f}'.format(fBatteryVoltage) + "V\n")
+        au8TempReturn = self.Can.calibMeasurement(
+            MyToolItNetworkNr["STH1"],
+            CalibMeassurementActionNr["Measure"],
+            CalibMeassurementTypeNr["Temp"],
+            1,
+            AdcReference["1V25"],
+            log=False)
         iTemperature = float(iMessage2Value(au8TempReturn[4:]))
         iTemperature /= 1000
-        self.Can.calibMeasurement(MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["None"], CalibMeassurementTypeNr["Temp"], 1, AdcReference["VDD"], log=False, bReset=True)
+        self.Can.calibMeasurement(MyToolItNetworkNr["STH1"],
+                                  CalibMeassurementActionNr["None"],
+                                  CalibMeassurementTypeNr["Temp"],
+                                  1,
+                                  AdcReference["VDD"],
+                                  log=False,
+                                  bReset=True)
         if None != iTemperature:
-            self.stdscr.addstr("Internal Chip Temperature: " + '{:02.1f}'.format(iTemperature) + "°C\n\n")
+            self.stdscr.addstr("Internal Chip Temperature: " +
+                               '{:02.1f}'.format(iTemperature) + "°C\n\n")
 
     def bTerminalHolderConnectCommands(self):
         bContinue = True
@@ -196,12 +220,24 @@ class mwt(myToolItWatch):
         self.vDisplayTime(10)
         while False != bRun:
             self.stdscr.clear()
-            self.stdscr.addstr(sBlueToothMacAddr(int(self.iAddress, 16)) +"(" + str(self.sDevName) + ")\n")
+            self.stdscr.addstr(
+                sBlueToothMacAddr(int(self.iAddress, 16)) + "(" +
+                str(self.sDevName) + ")\n")
             self.bTerminalHolderConnectCommandsShowDataValues()
             self.stdscr.addstr("Run Time: " + str(self.iRunTime) + "s\n")
-            self.stdscr.addstr("Interval Time: " + str(self.iIntervalTime) + "s\n")
-            self.stdscr.addstr("Adc Prescaler/AcquisitionTime/OversamplingRate/Reference(Samples/s): " + str(self.iPrescaler) + "/" + str(AdcAcquisitionTimeReverse[self.iAquistionTime]) + "/" + str(AdcOverSamplingRateReverse[self.iOversampling]) + "/" + str(self.sAdcRef) + "(" + str(self.samplingRate) + ")\n")
-            self.stdscr.addstr("Acc Config(XYZ/DataSets): " + str(int(self.bAccX)) + str(int(self.bAccY)) + str(int(self.bAccZ)) + "/" + str(DataSetsReverse[self.tAccDataFormat]) + "\n")
+            self.stdscr.addstr("Interval Time: " + str(self.iIntervalTime) +
+                               "s\n")
+            self.stdscr.addstr(
+                "Adc Prescaler/AcquisitionTime/OversamplingRate/Reference(Samples/s): "
+                + str(self.iPrescaler) + "/" +
+                str(AdcAcquisitionTimeReverse[self.iAquistionTime]) + "/" +
+                str(AdcOverSamplingRateReverse[self.iOversampling]) + "/" +
+                str(self.sAdcRef) + "(" + str(self.samplingRate) + ")\n")
+            self.stdscr.addstr("Acc Config(XYZ/DataSets): " +
+                               str(int(self.bAccX)) + str(int(self.bAccY)) +
+                               str(int(self.bAccZ)) + "/" +
+                               str(DataSetsReverse[self.tAccDataFormat]) +
+                               "\n")
             self.stdscr.addstr("\n")
             self.stdscr.addstr("a: Config ADC\n")
             self.stdscr.addstr("d: Display Time\n")
@@ -213,7 +249,8 @@ class mwt(myToolItWatch):
             self.stdscr.addstr("r: Config run time and interval time\n")
             self.stdscr.addstr("s: Start Data Acquisition\n")
             self.stdscr.refresh()
-            [bRun, bContinue] = self.tTerminalHolderConnectCommandsKeyEvaluation()
+            [bRun,
+             bContinue] = self.tTerminalHolderConnectCommandsKeyEvaluation()
         return bContinue
 
     def bTerminalHolderConnect(self, iKeyPress):
@@ -236,20 +273,25 @@ class mwt(myToolItWatch):
                     iNumber = 0
             elif 0x0A == iKeyPress or 459 == iKeyPress:
                 if 0 < iNumber:
-                    self.stdscr.addstr("\nTry to connect to device number " + str(iNumber) + "\n")
+                    self.stdscr.addstr("\nTry to connect to device number " +
+                                       str(iNumber) + "\n")
                     self.stdscr.refresh()
                     iNumber -= 1
                     for dev in devList:
                         if dev["DeviceNumber"] == iNumber:
                             self.vDeviceAddressSet(hex(dev["Address"]))
-                            self.stdscr.addstr("Connect to " + hex(dev["Address"]) + "(" + str(dev["Name"]) + ")\n")
+                            self.stdscr.addstr("Connect to " +
+                                               hex(dev["Address"]) + "(" +
+                                               str(dev["Name"]) + ")\n")
                             self.stdscr.refresh()
-                            if False != self.Can.bBlueToothConnectPollingAddress(MyToolItNetworkNr["STU1"], self.iAddress):
-                                bContinue = self.bTerminalHolderConnectCommands()
+                            if False != self.Can.bBlueToothConnectPollingAddress(
+                                    MyToolItNetworkNr["STU1"], self.iAddress):
+                                bContinue = self.bTerminalHolderConnectCommands(
+                                )
                 else:
                     bContinue = True
                 bRun = False
-            elif(0x03 == iKeyPress) or (ord('q') == iKeyPress):
+            elif (0x03 == iKeyPress) or (ord('q') == iKeyPress):
                 bRun = False
                 bContinue = True
             else:
@@ -258,7 +300,9 @@ class mwt(myToolItWatch):
         return bContinue
 
     def vTerminalEepromChange(self):
-        self.stdscr.addstr("Please enter Excel File name for new Excel Sheet(.xlsx will be added): ")
+        self.stdscr.addstr(
+            "Please enter Excel File name for new Excel Sheet(.xlsx will be added): "
+        )
         sFileName = self.sTerminalInputStringIn()
         if "" != sFileName:
             sFileName += ".xlsx"
@@ -316,7 +360,9 @@ class mwt(myToolItWatch):
                     self.vExcelSheetCreate()
                     atExcelName = self.atExcelSheetNames()
                 except:
-                    self.stdscr.addstr("Please close opened Excel File. Can create fresh one(different device)\n")
+                    self.stdscr.addstr(
+                        "Please close opened Excel File. Can create fresh one(different device)\n"
+                    )
                     self.stdscr.refresh()
                     sleep(5)
         return atExcelName
@@ -347,36 +393,47 @@ class mwt(myToolItWatch):
             self.tTerminalEepromCreateOpenExcelSheet()
         elif ord('R') == keyPress:
             bShowReadWrite = (None != self.sSheetFile)
-            bShowReadWrite = bShowReadWrite and ("STU" == self.sProduct or "STH" == self.sProduct)
+            bShowReadWrite = bShowReadWrite and ("STU" == self.sProduct
+                                                 or "STH" == self.sProduct)
             bShowReadWrite = bShowReadWrite and (None != self.sConfig)
             bShowReadWrite = bShowReadWrite and (None != self.sNetworkNumber)
             if False != bShowReadWrite:
                 if False != os.path.isfile(self.sSheetFile):
                     iReceiver = MyToolItNetworkNr[self.sNetworkNumber]
-                    if MyToolItNetworkNr["STH1"] <= iReceiver and MyToolItNetworkNr["STH14"] >= iReceiver:
+                    if MyToolItNetworkNr[
+                            "STH1"] <= iReceiver and MyToolItNetworkNr[
+                                "STH14"] >= iReceiver:
                         self.stdscr.clear()
                         self.vConnect()
                     if None != self.process:
                         self.process.terminate()
-                    if False != self.Can.bConnected or MyToolItNetworkNr["STU1"] <= iReceiver:
+                    if False != self.Can.bConnected or MyToolItNetworkNr[
+                            "STU1"] <= iReceiver:
                         if False != self.bTerminalEepromRead(iReceiver):
-                            self.process = subprocess.Popen(['excel', self.sSheetFile], stdout=subprocess.PIPE)
+                            self.process = subprocess.Popen(
+                                ['excel', self.sSheetFile],
+                                stdout=subprocess.PIPE)
         elif ord('W') == keyPress:
             bShowReadWrite = (None != self.sSheetFile)
-            bShowReadWrite = bShowReadWrite and ("STU" == self.sProduct or "STH" == self.sProduct)
+            bShowReadWrite = bShowReadWrite and ("STU" == self.sProduct
+                                                 or "STH" == self.sProduct)
             bShowReadWrite = bShowReadWrite and (None != self.sConfig)
             bShowReadWrite = bShowReadWrite and (None != self.sNetworkNumber)
             if False != bShowReadWrite:
                 if False != os.path.isfile(self.sSheetFile):
                     iReceiver = MyToolItNetworkNr[self.sNetworkNumber]
-                    if MyToolItNetworkNr["STH1"] <= iReceiver and MyToolItNetworkNr["STH14"] >= iReceiver:
+                    if MyToolItNetworkNr[
+                            "STH1"] <= iReceiver and MyToolItNetworkNr[
+                                "STH14"] >= iReceiver:
                         self.stdscr.clear()
                         self.vConnect()
-                    if False != self.Can.bConnected or MyToolItNetworkNr["STU1"] <= iReceiver:
+                    if False != self.Can.bConnected or MyToolItNetworkNr[
+                            "STU1"] <= iReceiver:
                         self.bTerminalEepromWrite(iReceiver)
         elif ord('I') == keyPress:
             bShowReadWrite = (None != self.sSheetFile)
-            bShowReadWrite = bShowReadWrite and ("STU" == self.sProduct or "STH" == self.sProduct)
+            bShowReadWrite = bShowReadWrite and ("STU" == self.sProduct
+                                                 or "STH" == self.sProduct)
             bShowReadWrite = bShowReadWrite and (None != self.sConfig)
             bShowReadWrite = bShowReadWrite and (None != self.sNetworkNumber)
             if False != bShowReadWrite:
@@ -394,19 +451,25 @@ class mwt(myToolItWatch):
         while False != bRun:
             self.stdscr.clear()
             if False != self.Can.bConnected:
-                self.stdscr.addstr("Connected: " + str(self.Can.iAddress) + "(" + str(self.Can.sDevName) + ")" + "\n")
+                self.stdscr.addstr("Connected: " + str(self.Can.iAddress) +
+                                   "(" + str(self.Can.sDevName) + ")" + "\n")
                 self.stdscr.addstr("d: Disconnect from device\n")
             self.stdscr.addstr("Device: " + str(self.sProduct) + "\n")
             self.stdscr.addstr("Version: " + str(self.sConfig) + "\n")
-            self.stdscr.addstr("Network Number: " + str(self.sNetworkNumber) + "\n")
-            self.stdscr.addstr("Excel Sheet Name: " + str(self.sSheetFile) + "\n")
+            self.stdscr.addstr("Network Number: " + str(self.sNetworkNumber) +
+                               "\n")
+            self.stdscr.addstr("Excel Sheet Name: " + str(self.sSheetFile) +
+                               "\n")
             if False != self.bEepromIgnoreReadErrors:
                 self.stdscr.addstr("EEPROM Read Errors will be ignored\n")
             self.stdscr.addstr("e: Escape this menu\n")
-            self.stdscr.addstr("l: List devices and versions (an change current device/product)\n")
+            self.stdscr.addstr(
+                "l: List devices and versions (an change current device/product)\n"
+            )
             self.stdscr.addstr("x: Chance Excel Sheet Name(.xlsx)\n")
             bShowReadWrite = (None != self.sSheetFile)
-            bShowReadWrite = bShowReadWrite and ("STU" == self.sProduct or "STH" == self.sProduct)
+            bShowReadWrite = bShowReadWrite and ("STU" == self.sProduct
+                                                 or "STH" == self.sProduct)
             bShowReadWrite = bShowReadWrite and (None != self.sConfig)
             bShowReadWrite = bShowReadWrite and (None != self.sNetworkNumber)
             if False != bShowReadWrite:
@@ -418,7 +481,8 @@ class mwt(myToolItWatch):
         return bContinue
 
     def vTerminalLogFileName(self):
-        self.stdscr.addstr("Log File Name(" + self.Can.Logger.fileName[0:-4] + "): ")
+        self.stdscr.addstr("Log File Name(" + self.Can.Logger.fileName[0:-4] +
+                           "): ")
         sLogFileName = self.sTerminalInputStringIn()
         if "" != sLogFileName:
             self.bLogSet(sLogFileName + '.txt')
@@ -444,15 +508,19 @@ class mwt(myToolItWatch):
         self.stdscr.addstr("\nVerificationInternal: \n")
         iTestNumber = 1
         for i in range(0, len(pyFiles)):
-            self.stdscr.addstr("    " + str(iTestNumber) + ": " + pyFiles[i] + "\n")
+            self.stdscr.addstr("    " + str(iTestNumber) + ": " + pyFiles[i] +
+                               "\n")
             iTestNumber += 1
         self.stdscr.refresh()
-        self.stdscr.addstr("Attention! If you want to kill the test press CTRL+Break(STRG+Pause)\n")
+        self.stdscr.addstr(
+            "Attention! If you want to kill the test press CTRL+Break(STRG+Pause)\n"
+        )
         self.stdscr.addstr("Please pick a test number or 0 to escape: ")
         iTestNumberRun = self.iTerminalInputNumberIn()
         if 0 < iTestNumberRun and iTestNumberRun < iTestNumber:
             self.Can.__exit__()
-            sDirPath = os.path.dirname(os.path.realpath(pyFiles[iTestNumberRun - 1]))
+            sDirPath = os.path.dirname(
+                os.path.realpath(pyFiles[iTestNumberRun - 1]))
             sDirPath += "\\VerificationInternal\\"
             sDirPath += pyFiles[iTestNumberRun - 1]
             try:
@@ -462,30 +530,37 @@ class mwt(myToolItWatch):
                 if -1 != sDirPath.find("Sth"):
                     for key in atList[1]["Versions"]:
                         version = atList[1]["Versions"][key]
-                        self.stdscr.addstr(str(key) + ": " + str(version.get('name')) + "\n")
+                        self.stdscr.addstr(
+                            str(key) + ": " + str(version.get('name')) + "\n")
                         self.stdscr.refresh()
                     iVersion = self.iTerminalInputNumberIn()
                     if iVersion in atList[1]["Versions"] or True:
                         version = atList[1]["Versions"][iVersion]
-                        sString = "python " + str(sDirPath) + " ../Logs/STH SthAuto.txt " + str(version.get('name'))
+                        sString = "python " + str(
+                            sDirPath) + " ../Logs/STH SthAuto.txt " + str(
+                                version.get('name'))
                 else:
                     for key in atList[2]["Versions"]:
                         version = atList[2]["Versions"][key]
-                        self.stdscr.addstr(str(key) + ": " + str(version.get('name')) + "\n")
+                        self.stdscr.addstr(
+                            str(key) + ": " + str(version.get('name')) + "\n")
                         self.stdscr.refresh()
                     iVersion = self.iTerminalInputNumberIn()
                     if iVersion in atList[2]["Versions"] or True:
                         version = atList[2]["Versions"][iVersion]
-                    sString = "python " + str(sDirPath) + " ../Logs/STU StuAuto.txt " + str(version.get('name'))
+                    sString = "python " + str(
+                        sDirPath) + " ../Logs/STU StuAuto.txt " + str(
+                            version.get('name'))
                 if "" != sString:
                     os.system(sString)
                     self.iTerminalInputNumberIn()
             except KeyboardInterrupt:
                 pass
                 #TODO: Kill process
-            self.Can = CanFd.CanFd("init.txt", "initError.txt", MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"])
+            self.Can = CanFd.CanFd("init.txt", "initError.txt",
+                                   MyToolItNetworkNr["SPU1"],
+                                   MyToolItNetworkNr["STH1"])
         return bContinue
-
 
     def bTerminalUpdateConnectExecute(self, sAddr):
         bDoIt = True
@@ -496,7 +571,7 @@ class mwt(myToolItWatch):
             sSystemCall = "FirmwareUpdates/STU/" + self.sConfig + "/ota-dfu.exe COM6 115200 "
             sSystemCall += "FirmwareUpdates/STU/" + self.sConfig + "/OtaClient.gbl "
         else:
-            bDoIt=False
+            bDoIt = False
 
         if False != bDoIt:
             sSystemCall += sAddr + " -> updateLog.txt "
@@ -521,10 +596,15 @@ class mwt(myToolItWatch):
         elif "STU" == self.sProduct:
             sStuOta = "FirmwareUpdates\\STU\\" + self.sConfig
         while False != bRun:
-            if ((False != os.path.isdir(sSthOta)) or (False != os.path.isdir(sStuOta))):
+            if ((False != os.path.isdir(sSthOta))
+                    or (False != os.path.isdir(sStuOta))):
                 devList = self.tTerminalHeaderExtended()
             if False != os.path.isdir(sStuOta):
-                self.stdscr.addstr(str(BlueToothDeviceNr["Self"])+"(STU): " + self.sStuAddr + "("+self.Can.BlueToothNameGet(MyToolItNetworkNr["STU1"], BlueToothDeviceNr["Self"])+")\n")
+                self.stdscr.addstr(
+                    str(BlueToothDeviceNr["Self"]) + "(STU): " +
+                    self.sStuAddr + "(" + self.Can.BlueToothNameGet(
+                        MyToolItNetworkNr["STU1"], BlueToothDeviceNr["Self"]) +
+                    ")\n")
             self.stdscr.addstr(str(iNumber))
             self.stdscr.refresh()
             iKeyPress = self.stdscr.getch()
@@ -537,7 +617,8 @@ class mwt(myToolItWatch):
                     iNumber = 0
             elif 0x0A == iKeyPress or 459 == iKeyPress:
                 if 0 < iNumber:
-                    self.stdscr.addstr("\nTry to update " + str(iNumber) + "\n")
+                    self.stdscr.addstr("\nTry to update " + str(iNumber) +
+                                       "\n")
                     self.stdscr.refresh()
                     time.sleep(1)
                     sAddr = ""
@@ -550,10 +631,12 @@ class mwt(myToolItWatch):
                                 sAddr = sBlueToothMacAddr(dev["Address"])
                     if "" != sAddr:
                         if BlueToothDeviceNr["Self"] == iNumber:
-                            self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
+                            self.Can.bBlueToothDisconnect(
+                                MyToolItNetworkNr["STU1"])
                         self.bTerminalUpdateConnectExecute(sAddr)
                         if BlueToothDeviceNr["Self"] == iNumber:
-                            self.Can.vBlueToothConnectConnect(MyToolItNetworkNr["STU1"])
+                            self.Can.vBlueToothConnectConnect(
+                                MyToolItNetworkNr["STU1"])
 
                     else:
                         self.stdscr.addstr("Device does not exist")
@@ -562,7 +645,7 @@ class mwt(myToolItWatch):
                 else:
                     bContinue = True
                 bRun = False
-            elif(0x03 == iKeyPress) or (ord('q') == iKeyPress):
+            elif (0x03 == iKeyPress) or (ord('q') == iKeyPress):
                 bRun = False
                 bContinue = True
             else:
@@ -596,18 +679,24 @@ class mwt(myToolItWatch):
             elif "STU" == self.sProduct:
                 sStuOta = "FirmwareUpdates\\STU\\" + self.sConfig
 
-            if ((False != os.path.isdir(sSthOta)) or (False != os.path.isdir(sStuOta))):
+            if ((False != os.path.isdir(sSthOta))
+                    or (False != os.path.isdir(sStuOta))):
                 devList = self.tTerminalHeaderExtended()
             if False != os.path.isdir(sStuOta):
-                self.stdscr.addstr(str(BlueToothDeviceNr["Self"])+"(STU): " + self.sStuAddr + "("+self.Can.BlueToothNameGet(MyToolItNetworkNr["STU1"], BlueToothDeviceNr["Self"])+")\n")
+                self.stdscr.addstr(
+                    str(BlueToothDeviceNr["Self"]) + "(STU): " +
+                    self.sStuAddr + "(" + self.Can.BlueToothNameGet(
+                        MyToolItNetworkNr["STU1"], BlueToothDeviceNr["Self"]) +
+                    ")\n")
             self.stdscr.addstr("Device: " + str(self.sProduct) + "\n")
             self.stdscr.addstr("Version: " + str(self.sConfig) + "\n")
             self.stdscr.addstr("\n")
             self.stdscr.addstr("1-9: Update number (ENTER at input end)\n")
             self.stdscr.addstr("e: Exit\n")
-            self.stdscr.addstr("l: List devices and versions (and change current device/product)\n")
+            self.stdscr.addstr(
+                "l: List devices and versions (and change current device/product)\n"
+            )
             bRun = self.bTerminalUpdateKeyEval()
-
 
     def vTerminalXmlProductVersionCreate(self, atList):
         self.stdscr.addstr("Device for deriving: ")
@@ -618,7 +707,9 @@ class mwt(myToolItWatch):
             if iVersion in atList[iProduct]["Versions"]:
                 self.stdscr.addstr("New Version Name: ")
                 sVersionName = self.sTerminalInputStringIn()
-                self.newXmlVersion(atList[iProduct]["Product"], atList[iProduct]["Versions"][iVersion], sVersionName)
+                self.newXmlVersion(atList[iProduct]["Product"],
+                                   atList[iProduct]["Versions"][iVersion],
+                                   sVersionName)
 
     def vTerminalXmlSetupCreate(self, atList):
         self.stdscr.addstr("Version for deriving: ")
@@ -637,7 +728,9 @@ class mwt(myToolItWatch):
             self.stdscr.refresh()
             iVersion = self.iTerminalInputNumberIn()
             if iVersion in atList[iProduct]["Versions"]:
-                self.vConfigSet(atList[iProduct]["Product"].get('name'), atList[iProduct]["Versions"][iVersion].get('name'))
+                self.vConfigSet(
+                    atList[iProduct]["Product"].get('name'),
+                    atList[iProduct]["Versions"][iVersion].get('name'))
 
     def atTerminalXmlProductVersionList(self):
         self.stdscr.clear()
@@ -645,10 +738,12 @@ class mwt(myToolItWatch):
         self.stdscr.refresh()
         for key in atList.keys():
             product = atList[key]
-            self.stdscr.addstr("Device " + str(key) + ": " + str(product["Product"].get('name')) + "\n")
+            self.stdscr.addstr("Device " + str(key) + ": " +
+                               str(product["Product"].get('name')) + "\n")
             for key in product["Versions"].keys():
                 version = product["Versions"][key]
-                self.stdscr.addstr("         " + str(key) + ": " + str(version.get('name')) + "\n")
+                self.stdscr.addstr("         " + str(key) + ": " +
+                                   str(version.get('name')) + "\n")
         self.stdscr.refresh()
         return atList
 
@@ -656,26 +751,43 @@ class mwt(myToolItWatch):
         self.stdscr.clear()
         atSetups = self.atXmlSetup()
         for key in atSetups.keys():
-            self.stdscr.addstr(str(key) + ": " + atSetups[key].get('name') + "\n")
+            self.stdscr.addstr(
+                str(key) + ": " + atSetups[key].get('name') + "\n")
 
         self.stdscr.addstr("Choose device to show settings or 0 to escape: ")
         self.stdscr.refresh()
         iSetup = self.iTerminalInputNumberIn()
         if iSetup in atSetups:
             tSetup = atSetups[iSetup]
-            self.stdscr.addstr("Device Name: " + tSetup.find('DeviceName').text + "\n")
-            self.stdscr.addstr("Acceleration Points(X/Y/Z): " + tSetup.find('Acc').text + "\n")
-            self.stdscr.addstr("Prescaler: " + tSetup.find('Prescaler').text + "\n")
-            self.stdscr.addstr("Acquisition Time: " + tSetup.find('AcquisitionTime').text + "\n")
-            self.stdscr.addstr("Oversampling Rate: " + tSetup.find('OverSamples').text + "\n")
-            iAcquisitionTime = AdcAcquisitionTime[int(tSetup.find('AcquisitionTime').text)]
-            iOversampling = AdcOverSamplingRate[int(tSetup.find('OverSamples').text)]
-            samplingRate = int(calcSamplingRate(int(tSetup.find('Prescaler').text), iAcquisitionTime, iOversampling) + 0.5)
-            self.stdscr.addstr("Derived sampling rate from upper three parameters: " + str(samplingRate) + "\n")
-            self.stdscr.addstr("ADC Reference Voltage: " + tSetup.find('AdcRef').text + "\n")
-            self.stdscr.addstr("Log Name: " + tSetup.find('LogName').text + "\n")
-            self.stdscr.addstr("RunTime/IntervalTime: " + tSetup.find('RunTime').text + "/" + tSetup.find('DisplayTime').text + "\n")
-            self.stdscr.addstr("Display Time: " + tSetup.find('DisplayTime').text + "\n")
+            self.stdscr.addstr("Device Name: " +
+                               tSetup.find('DeviceName').text + "\n")
+            self.stdscr.addstr("Acceleration Points(X/Y/Z): " +
+                               tSetup.find('Acc').text + "\n")
+            self.stdscr.addstr("Prescaler: " + tSetup.find('Prescaler').text +
+                               "\n")
+            self.stdscr.addstr("Acquisition Time: " +
+                               tSetup.find('AcquisitionTime').text + "\n")
+            self.stdscr.addstr("Oversampling Rate: " +
+                               tSetup.find('OverSamples').text + "\n")
+            iAcquisitionTime = AdcAcquisitionTime[int(
+                tSetup.find('AcquisitionTime').text)]
+            iOversampling = AdcOverSamplingRate[int(
+                tSetup.find('OverSamples').text)]
+            samplingRate = int(
+                calcSamplingRate(int(tSetup.find('Prescaler').text),
+                                 iAcquisitionTime, iOversampling) + 0.5)
+            self.stdscr.addstr(
+                "Derived sampling rate from upper three parameters: " +
+                str(samplingRate) + "\n")
+            self.stdscr.addstr("ADC Reference Voltage: " +
+                               tSetup.find('AdcRef').text + "\n")
+            self.stdscr.addstr("Log Name: " + tSetup.find('LogName').text +
+                               "\n")
+            self.stdscr.addstr("RunTime/IntervalTime: " +
+                               tSetup.find('RunTime').text + "/" +
+                               tSetup.find('DisplayTime').text + "\n")
+            self.stdscr.addstr("Display Time: " +
+                               tSetup.find('DisplayTime').text + "\n")
             self.stdscr.refresh()
         return atSetups
 
@@ -686,7 +798,8 @@ class mwt(myToolItWatch):
             self.stdscr.addstr("Version to remove: ")
             iVersion = self.iTerminalInputNumberIn()
             if iVersion in atList[iProduct]["Versions"]:
-                self.removeXmlVersion(atList[iProduct]["Product"], atList[iProduct]["Versions"][iVersion])
+                self.removeXmlVersion(atList[iProduct]["Product"],
+                                      atList[iProduct]["Versions"][iVersion])
 
     def vTerminalXmlSetupRemove(self, atList):
         self.stdscr.addstr("Chose setup to remove: ")
@@ -746,7 +859,7 @@ class mwt(myToolItWatch):
     def vTerminalXmlSetupModifyLogName(self):
         self.vTerminalLogFileName()
 
-    def vTerminalXmlSetupModifyRunIntervalTime (self):
+    def vTerminalXmlSetupModifyRunIntervalTime(self):
         self.stdscr.addstr("Please Type in new Run Time: ")
         iRunTime = self.iTerminalInputNumberIn()
         self.stdscr.addstr("Please Type in new Interval Time: ")
@@ -806,28 +919,67 @@ class mwt(myToolItWatch):
                         self.stdscr.clear()
                         self.stdscr.addstr(self.sSetupConfig + "\n\n")
                         self.stdscr.addstr("0: Exit\n")
-                        self.stdscr.addstr("1 : Device Name: " + self.sDevName + "\n")
-                        self.stdscr.addstr(" : XML Device Name: " + setup.find('DeviceName').text + "\n")
-                        self.stdscr.addstr("2: Acceleration Points(X/Y/Z): " + str(int(self.bAccX)) + str(int(self.bAccY)) + str(int(self.bAccZ)) + "\n")
-                        self.stdscr.addstr(" : XML Acceleration Points(X/Y/Z): " + setup.find('Acc').text + "\n")
-                        self.stdscr.addstr("3: Voltage Points(X/Y/Z): " + str(int(self.bVoltageX)) + str(int(self.bVoltageY)) + str(int(self.bVoltageZ)) + "\n")
-                        self.stdscr.addstr(" : XML Voltage Points(X/Y/Z): " + setup.find('Voltage').text + "\n")
-                        iAcquisitionTime = AdcAcquisitionTimeReverse[self.iAquistionTime]
-                        iOversampling = AdcOverSamplingRateReverse[self.iOversampling]
-                        self.stdscr.addstr("4: Prescaler/AcquisitionTime/OversamplingRate(samples/s): " + str(self.iPrescaler) + "/" + str(iAcquisitionTime) + "/" + str(iOversampling) + "(" + str(self.samplingRate) + ")\n")
+                        self.stdscr.addstr("1 : Device Name: " +
+                                           self.sDevName + "\n")
+                        self.stdscr.addstr(" : XML Device Name: " +
+                                           setup.find('DeviceName').text +
+                                           "\n")
+                        self.stdscr.addstr("2: Acceleration Points(X/Y/Z): " +
+                                           str(int(self.bAccX)) +
+                                           str(int(self.bAccY)) +
+                                           str(int(self.bAccZ)) + "\n")
+                        self.stdscr.addstr(
+                            " : XML Acceleration Points(X/Y/Z): " +
+                            setup.find('Acc').text + "\n")
+                        self.stdscr.addstr("3: Voltage Points(X/Y/Z): " +
+                                           str(int(self.bVoltageX)) +
+                                           str(int(self.bVoltageY)) +
+                                           str(int(self.bVoltageZ)) + "\n")
+                        self.stdscr.addstr(" : XML Voltage Points(X/Y/Z): " +
+                                           setup.find('Voltage').text + "\n")
+                        iAcquisitionTime = AdcAcquisitionTimeReverse[
+                            self.iAquistionTime]
+                        iOversampling = AdcOverSamplingRateReverse[
+                            self.iOversampling]
+                        self.stdscr.addstr(
+                            "4: Prescaler/AcquisitionTime/OversamplingRate(samples/s): "
+                            + str(self.iPrescaler) + "/" +
+                            str(iAcquisitionTime) + "/" + str(iOversampling) +
+                            "(" + str(self.samplingRate) + ")\n")
                         iPrescaler = int(setup.find('Prescaler').text)
-                        iAcquisitionTime = int(setup.find('AcquisitionTime').text)
+                        iAcquisitionTime = int(
+                            setup.find('AcquisitionTime').text)
                         iOversampling = int(setup.find('OverSamples').text)
-                        iSamplingRate = int(calcSamplingRate(int(setup.find('Prescaler').text), AdcAcquisitionTime[iAcquisitionTime], AdcOverSamplingRate[iOversampling]) + 0.5)
-                        self.stdscr.addstr(" : XML Prescaler/AcquisitionTime/OversamplingRate(samples/s): " + str(iPrescaler) + "/" + str(iAcquisitionTime) + "/" + str(iOversampling) + "(" + str(iSamplingRate) + ")\n")
-                        self.stdscr.addstr("5: ADC Reference Voltage: " + self.sAdcRef + "\n")
-                        self.stdscr.addstr(" : XML ADC Reference Voltage: " + setup.find('AdcRef').text + "\n")
-                        self.stdscr.addstr("6: Log Name: " + self.Can.Logger.fileName + "\n")
-                        self.stdscr.addstr(" : XML Log Name: " + setup.find('LogName').text + "\n")
-                        self.stdscr.addstr("7: RunTime/IntervalTime: " + str(self.iRunTime) + "/" + str(self.iIntervalTime) + "\n")
-                        self.stdscr.addstr(" : XML RunTime/IntervalTime: " + setup.find('RunTime').text + "/" + setup.find('DisplayTime').text + "\n")
-                        self.stdscr.addstr("8: Display Time: " + str(self.iDisplayTime) + "\n")
-                        self.stdscr.addstr(" : XML Display Time: " + setup.find('DisplayTime').text + "\n")
+                        iSamplingRate = int(
+                            calcSamplingRate(
+                                int(setup.find('Prescaler').text),
+                                AdcAcquisitionTime[iAcquisitionTime],
+                                AdcOverSamplingRate[iOversampling]) + 0.5)
+                        self.stdscr.addstr(
+                            " : XML Prescaler/AcquisitionTime/OversamplingRate(samples/s): "
+                            + str(iPrescaler) + "/" + str(iAcquisitionTime) +
+                            "/" + str(iOversampling) + "(" +
+                            str(iSamplingRate) + ")\n")
+                        self.stdscr.addstr("5: ADC Reference Voltage: " +
+                                           self.sAdcRef + "\n")
+                        self.stdscr.addstr(" : XML ADC Reference Voltage: " +
+                                           setup.find('AdcRef').text + "\n")
+                        self.stdscr.addstr("6: Log Name: " +
+                                           self.Can.Logger.fileName + "\n")
+                        self.stdscr.addstr(" : XML Log Name: " +
+                                           setup.find('LogName').text + "\n")
+                        self.stdscr.addstr("7: RunTime/IntervalTime: " +
+                                           str(self.iRunTime) + "/" +
+                                           str(self.iIntervalTime) + "\n")
+                        self.stdscr.addstr(" : XML RunTime/IntervalTime: " +
+                                           setup.find('RunTime').text + "/" +
+                                           setup.find('DisplayTime').text +
+                                           "\n")
+                        self.stdscr.addstr("8: Display Time: " +
+                                           str(self.iDisplayTime) + "\n")
+                        self.stdscr.addstr(" : XML Display Time: " +
+                                           setup.find('DisplayTime').text +
+                                           "\n")
                         self.stdscr.addstr("99: Save to xml File\n")
                         self.stdscr.addstr("Your selection: ")
                         self.stdscr.refresh()
@@ -881,9 +1033,12 @@ class mwt(myToolItWatch):
                     if None != self.process:
                         self.process.terminate()
                     self.vExcelSheetCreate()
-                    self.process = subprocess.Popen(['excel', self.sSheetFile], stdout=subprocess.PIPE)
+                    self.process = subprocess.Popen(['excel', self.sSheetFile],
+                                                    stdout=subprocess.PIPE)
                 except:
-                    self.stdscr.addstr("Please close opened Excel File. Can create fresh one(different device)\n")
+                    self.stdscr.addstr(
+                        "Please close opened Excel File. Can create fresh one(different device)\n"
+                    )
                     self.stdscr.refresh()
                     sleep(5)
         return [bRun, bContinue]
@@ -894,19 +1049,25 @@ class mwt(myToolItWatch):
             self.stdscr.clear()
             self.stdscr.addstr("Device: " + str(self.sProduct) + "\n")
             self.stdscr.addstr("Version: " + str(self.sConfig) + "\n")
-            self.stdscr.addstr("Excel Sheet Name: " + str(self.sSheetFile) + "\n")
-            self.stdscr.addstr("Predefined Setup: " + str(self.sSetupConfig) + "\n")
+            self.stdscr.addstr("Excel Sheet Name: " + str(self.sSheetFile) +
+                               "\n")
+            self.stdscr.addstr("Predefined Setup: " + str(self.sSetupConfig) +
+                               "\n")
             if None != self.sProduct and None != self.sConfig:
                 self.stdscr.addstr("c: Create new Version\n")
             if None != self.sSetupConfig:
                 self.stdscr.addstr("C: Create new Setup\n")
             self.stdscr.addstr("e: Exit\n")
-            self.stdscr.addstr("l: List devices and versions (and change current device/product)\n")
-            self.stdscr.addstr("L: List Setups (and change current device/product)\n")
+            self.stdscr.addstr(
+                "l: List devices and versions (and change current device/product)\n"
+            )
+            self.stdscr.addstr(
+                "L: List Setups (and change current device/product)\n")
             self.stdscr.addstr("r: Remove Version\n")
             self.stdscr.addstr("R: Remove Setup\n")
             if None != self.sSetupConfig:
-                self.stdscr.addstr("S: Modify current selected predefined setup\n")
+                self.stdscr.addstr(
+                    "S: Modify current selected predefined setup\n")
             if None != self.sProduct and None != self.sConfig and None != self.sSheetFile:
                 self.stdscr.addstr("W: Write Excel Sheet to Product-Version\n")
             self.stdscr.addstr("x: Chance Excel Sheet Name(.xlsx)\n")
@@ -918,9 +1079,13 @@ class mwt(myToolItWatch):
 
     def vConnect(self, devList=None):
         if None == devList:
-            devList = self.Can.tDeviceList(MyToolItNetworkNr["STU1"], bLog=False)
+            devList = self.Can.tDeviceList(MyToolItNetworkNr["STU1"],
+                                           bLog=False)
             for dev in devList:
-                self.stdscr.addstr(str(dev["DeviceNumber"] + 1) + ": " + sBlueToothMacAddr(dev["Address"]) + "(" + str(dev["Name"]) + ")@" + str(dev["RSSI"]) + "dBm\n")
+                self.stdscr.addstr(
+                    str(dev["DeviceNumber"] + 1) + ": " +
+                    sBlueToothMacAddr(dev["Address"]) + "(" +
+                    str(dev["Name"]) + ")@" + str(dev["RSSI"]) + "dBm\n")
         if False == self.Can.bConnected:
             self.stdscr.addstr("Pick a device number from the list: ")
             self.stdscr.refresh()
@@ -931,9 +1096,12 @@ class mwt(myToolItWatch):
                     iDevNumber = int(dev["DeviceNumber"])
                     if iDevNumber == iDevice:
                         self.vDeviceAddressSet(str(dev["Address"]))
-                        self.stdscr.addstr("Connect to " + hex(dev["Address"]) + "(" + str(dev["Name"]) + ")\n")
+                        self.stdscr.addstr("Connect to " +
+                                           hex(dev["Address"]) + "(" +
+                                           str(dev["Name"]) + ")\n")
                         self.stdscr.refresh()
-                        self.Can.bBlueToothConnectPollingAddress(MyToolItNetworkNr["STU1"], self.iAddress)
+                        self.Can.bBlueToothConnectPollingAddress(
+                            MyToolItNetworkNr["STU1"], self.iAddress)
                         time.sleep(1)
 
     def bTerminalMainMenuKeyEvaluation(self, devList):
@@ -1083,9 +1251,13 @@ class mwt(myToolItWatch):
     def tTerminalHeaderExtended(self, devList=None):
         self.vTerminalHeader()
         if None == devList:
-            devList = self.Can.tDeviceList(MyToolItNetworkNr["STU1"], bLog=False)
+            devList = self.Can.tDeviceList(MyToolItNetworkNr["STU1"],
+                                           bLog=False)
         for dev in devList:
-            self.stdscr.addstr(str(dev["DeviceNumber"] + 1) + ": " + sBlueToothMacAddr(dev["Address"]) + "(" + str(dev["Name"]) + ")@" + str(dev["RSSI"]) + "dBm\n")
+            self.stdscr.addstr(
+                str(dev["DeviceNumber"] + 1) + ": " +
+                sBlueToothMacAddr(dev["Address"]) + "(" + str(dev["Name"]) +
+                ")@" + str(dev["RSSI"]) + "dBm\n")
         return devList
 
     def vTerminalHeader(self):
@@ -1124,10 +1296,8 @@ class mwt(myToolItWatch):
         self.close()
 
 
-
 if __name__ == "__main__":
     mwt = mwt()
     mwt.vParserInit()
     mwt.vParserConsoleArgumentsPass()
     mwt.vRunConsole()
-
