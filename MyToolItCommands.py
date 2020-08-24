@@ -24,6 +24,41 @@ class ActiveState(ctypes.Union):
 
 
 class AtvcFormatFlags(ctypes.BigEndianStructure):
+    """Byte format for streaming data
+
+    bStreaming: Streaming or single data transmission
+        - 0: Streaming
+        - 1: Single request
+
+    bDataSetBytes: Number of bytes per data set
+        - 0: 2 Bytes
+        - 1: 3 Bytes
+
+    bNumber1: Collect first part of streaming data (e.g. x-axis, temperature 1)
+        - 0: Disable data collection
+        - 1: Activate data collection
+
+    bNumber2: Collect second part of streaming data (e.g. y-axis,
+              temperature 2)
+        - 0: Disable data collection
+        - 1: Activate data collection
+
+    bNumber3: Collect third part of streaming data (e.g. z-axis,
+              temperature 3)
+        - 0: Disable data collection
+        - 1: Activate data collection
+
+    u3DataSets: Number of collected data sets
+        - 0: Stop (stream)
+        - 1: 1 Data sets (x, y, z, x-y-z, x-y, x-z or y-z)
+        - 2: 3 Data sets
+        - 3: 6 Data sets
+        - 4: 10 Data sets
+        - 5: 15 Data sets
+        - 6: 20 Data sets
+        - 7: 30 Data sets (x, y, or z)
+    """
+
     _fields_ = [
         ("bStreaming", c_uint8, 1),
         ("bDataSetBytes", c_uint8, 1),
