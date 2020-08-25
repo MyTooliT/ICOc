@@ -38,7 +38,6 @@ class Identifier:
         """
 
         receiver = self.value & 0x1F
-        sender = (self.value >> 6) & 0x1F
         command = (self.value >> 12) & 0xFFFF
         number = command >> 2
         group = number >> 8
@@ -47,11 +46,16 @@ class Identifier:
         error = not (command & 1)
 
         return '[' + ', '.join([
-            f"{MyToolItNetworkName[sender]} -> " +
+            f"{MyToolItNetworkName[self.sender()]} -> " +
             f"{MyToolItNetworkName[receiver]}", f"Group: {group}",
             f"Command: {cmd}", "Request" if request else "Acknowledge",
             "Error" if error else ""
         ]) + ']'
+
+    def sender(self):
+        """Return the sender of the message"""
+
+        return self.value >> 6 & 0x1F
 
 
 # -- Main ---------------------------------------------------------------------
