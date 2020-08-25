@@ -163,7 +163,8 @@ class CanFd(object):
             self.readArray = [{
                 "CanMsg":
                 self.CanMessage20(0, 0, 0, [0, 0, 0, 0, 0, 0, 0, 0]),
-                "PcTime": (1 << 64),
+                "PcTime":
+                1 << 64,
                 "PeakCanTime":
                 0
             }]
