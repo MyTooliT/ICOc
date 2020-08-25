@@ -1161,29 +1161,25 @@ class CanFd(object):
         return int(round(time.time() * 1000)) - int(self.startTime)
 
     def CanMessage20(self, command, sender, receiver, data):
-        # We create a TPCANMsg message structure
-        #
-        msgLen = len(data)
-
-        if (8 >= msgLen):
-            CANMsg = TPCANMsg()
-            command = command & 0xFFFF
-            sender = sender & 0x1F
-            receiver = receiver & 0x1F
-            CANMsg.ID = (command << 12)
-            CANMsg.ID |= (sender << 6)
-            CANMsg.ID |= receiver
-            CANMsg.LEN = len(data)
-            CANMsg.MSGTYPE = PCAN_MESSAGE_EXTENDED
-
-            for i in range(CANMsg.LEN):
-                CANMsg.DATA[i] = int(data[i])
-
-            # The message is sent to the configured hardware
-            #
-            return CANMsg
-        else:
+        if len(data) > 8:
             return "Error "
+
+        # We create a TPCANMsg message structure
+        CANMsg = TPCANMsg()
+        command = command & 0xFFFF
+        sender = sender & 0x1F
+        receiver = receiver & 0x1F
+        CANMsg.ID = (command << 12)
+        CANMsg.ID |= (sender << 6)
+        CANMsg.ID |= receiver
+        CANMsg.LEN = len(data)
+        CANMsg.MSGTYPE = PCAN_MESSAGE_EXTENDED
+
+        for i in range(CANMsg.LEN):
+            CANMsg.DATA[i] = int(data[i])
+
+        # The message is sent to the configured hardware
+        return CANMsg
 
     def CanCmdGetBlock(self, command):
         return 0x3F & (command >> 10)
