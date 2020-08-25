@@ -223,11 +223,11 @@ class CanFd(object):
 
     def WriteFrame(self, CanMsg):
         returnMessage = CanMsg
-        if "Error" != returnMessage:
+        if returnMessage != "Error":
             self.tCanReadWriteMutex.acquire()
             returnMessage = self.pcan.Write(self.m_PcanHandle, CanMsg)
             self.tCanReadWriteMutex.release()
-            if (PCAN_ERROR_OK != returnMessage):
+            if returnMessage != PCAN_ERROR_OK:
                 print("WriteFrame bError: " + hex(returnMessage))
                 self.Logger.Info("WriteFrame bError: " + hex(returnMessage))
                 returnMessage = "Error"
