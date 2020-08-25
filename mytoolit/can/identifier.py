@@ -31,7 +31,7 @@ class Identifier:
 
         receiver = self.value & 0x1F
         sender = (self.value >> 6) & 0x1F
-        command = (self.value >> 12) & 0xFF
+        command = (self.value >> 12) & 0xFFFF
         command_number = (command >> 2)
         request = (command >> 1) & 1
         error = command & 1
