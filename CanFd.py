@@ -65,7 +65,6 @@ class CanFd(object):
                 self.__get_error_message("Unable to initialize CAN hardware",
                                          result))
 
-        self.tCanReadWriteMutex = threading.Lock()
         # Reset the CAN controller if a bus-off state is detected
         result = self.pcan.SetValue(self.m_PcanHandle, PCAN_BUSOFF_AUTORESET,
                                     PCAN_PARAMETER_ON)
@@ -73,6 +72,7 @@ class CanFd(object):
             print(self.__get_error_message(
                 "Unable to set auto reset on CAN bus-off state", result),
                   file=stderr)
+        self.tCanReadWriteMutex = threading.Lock()
         self.reset()
         self.ReadThreadReset()
 
