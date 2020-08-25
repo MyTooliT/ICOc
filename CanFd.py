@@ -208,13 +208,6 @@ class CanFd(object):
             cmdNrName = CommandBlockTest[cmdNr]
         return cmdNrName
 
-    def PeakCanPayload2Array(self, message):
-        payload = []
-        if None != message:
-            for item in message.DATA:
-                payload.append(item)
-        return payload
-
     def ComparePayloadEqual(self, payload1, payload2):
         bEqual = False
         if None != payload1 and None != payload2:
@@ -242,7 +235,7 @@ class CanFd(object):
         return returnMessage
 
     def WriteFrameWaitAckOk(self, message):
-        payload = self.PeakCanPayload2Array(message["CanMsg"])
+        payload = list(message["CanMsg"].DATA)
         returnMessage = {
             "ID": hex(message["CanMsg"].ID),
             "Payload": payload,
@@ -335,8 +328,7 @@ class CanFd(object):
                     message = self.readArray[0]
                 elif CanMsgAck.ID == message[
                         "CanMsg"].ID and self.ComparePayloadEqual(
-                            self.PeakCanPayload2Array(message["CanMsg"]),
-                            assumedPayload):
+                            list(message["CanMsg"].DATA), assumedPayload):
                     returnMessage = self.WriteFrameWaitAckOk(message)
                 elif CanMsgAckError.ID == message["CanMsg"].ID:
                     returnMessage = self.WriteFrameWaitAckError(
