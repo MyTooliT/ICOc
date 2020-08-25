@@ -27,7 +27,15 @@ class Identifier:
         self.value = identifier
 
     def __repr__(self):
-        """Return the string representation of the current identifier"""
+        """Return the string representation of the current identifier
+
+
+        Example:
+
+                         V  group   number A E R send. R rec.
+        >>> Identifier(0b0_000011_00000000_0_0_0_00001_0_00010)
+        [STH1 -> STH2, Group: 3, Command: 0, Acknowledge, Error]
+        """
 
         receiver = self.value & 0x1F
         sender = (self.value >> 6) & 0x1F
@@ -44,3 +52,11 @@ class Identifier:
             f"Command: {cmd}", "Request" if request else "Acknowledge",
             "Error" if error else ""
         ]) + ']'
+
+
+# -- Main ---------------------------------------------------------------------
+
+if __name__ == '__main__':
+
+    from doctest import testmod
+    testmod()
