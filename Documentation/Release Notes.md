@@ -1,3 +1,9 @@
+# Version 1.0.5
+
+## Documentation
+
+- We documented how to execute the [automatic tests](Guidelines/Test.md) for software.
+
 # Version 1.0.4
 
 ## Documentation

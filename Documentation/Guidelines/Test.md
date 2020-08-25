@@ -2,11 +2,29 @@
 
 The following text describes some of the measures we should take to keep the software stable.
 
-- Please only push your changes to the `master` branch, if you think there are no new bugs or regressions. The `master` branch **should always contain a working version of the software**.
+Please only push your changes to the `master` branch, if you think there are no new bugs or regressions. The `master` branch **should always contain a working version of the software**. Please **always run the automatic and manual tests** described below before you push to the `master` branch.
+
+## Automatic Tests
+
+### Requirements
+
+Please install the [nose testing module](https://nose.readthedocs.io):
+
+```sh
+pip install nose
+```
+
+#### Usage
+
+Please run the following command in the root of the repository:
+
+```sh
+nosetests --with-doctest --traverse-namespace mytoolit
+```
+
+and make sure that it reports no test failures.
 
 ## Manual Tests
-
-Please run the following tests before you push to the `master` branch.
 
 ### ICOc
 

@@ -9,10 +9,6 @@
 
 - Use [Restyled](https://restyled.io) to keep the style of the code base intact.
 
-## Tests
-
-- Add test script for automated tests
-
 ## STH Test
 
 - Add power usage test for different phases of STH:
