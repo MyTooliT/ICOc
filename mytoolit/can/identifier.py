@@ -32,12 +32,15 @@ class Identifier:
         receiver = self.value & 0x1F
         sender = (self.value >> 6) & 0x1F
         command = (self.value >> 12) & 0xFFFF
-        command_number = (command >> 2)
+        number = command >> 2
+        group = number >> 8
+        cmd = number & 0xFF
         request = (command >> 1) & 1
-        error = command & 1
+        error = not (command & 1)
 
         return '[' + ', '.join([
             f"{MyToolItNetworkName[sender]} -> " +
-            f"{MyToolItNetworkName[receiver]}", f"Command: {command_number}",
-            "Request" if request else "Acknowledge", f"Error: {error}"
+            f"{MyToolItNetworkName[receiver]}", f"Group: {group}",
+            f"Command: {cmd}", "Request" if request else "Acknowledge",
+            "Error" if error else ""
         ]) + ']'
