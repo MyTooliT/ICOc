@@ -7,7 +7,7 @@ from sys import path as module_path
 repository_root = dirname(dirname(dirname(abspath(__file__))))
 module_path.append(repository_root)
 
-from MyToolItCommands import MyToolItBlock
+from MyToolItCommands import blocknumber_to_commands, MyToolItBlock
 from MyToolItNetworkNumbers import MyToolItNetworkName
 
 # -- Class --------------------------------------------------------------------
@@ -35,11 +35,11 @@ class Identifier:
 
                          V  block   number A E R send. R rec.
         >>> Identifier(0b0_000000_00000000_0_0_0_00001_0_00010)
-        [STH1 -> STH2, Block: System, Command: 0, Acknowledge, Error]
+        [STH1 -> STH2, Block: System, Command: Verboten, Acknowledge, Error]
 
                          V  block   number A E R send. R rec.
-        >>> Identifier(0b0_000100_00000010_1_1_0_00010_0_00011)
-        [STH2 -> STH3, Block: Streaming, Command: 2, Request]
+        >>> Identifier(0b0_000100_00000001_1_1_0_00010_0_00011)
+        [STH2 -> STH3, Block: Streaming, Command: Temperature, Request]
         """
 
         receiver = self.value & 0x1F
@@ -53,7 +53,8 @@ class Identifier:
         attributes = filter(None, [
             f"{MyToolItNetworkName[self.sender()]} -> " +
             f"{MyToolItNetworkName[receiver]}",
-            f"Block: {MyToolItBlock.inverse[group]}", f"Command: {cmd}",
+            f"Block: {MyToolItBlock.inverse[group]}",
+            f"Command: {blocknumber_to_commands[group].inverse[cmd]}",
             "Request" if request else "Acknowledge", "Error" if error else None
         ])
 

@@ -109,7 +109,7 @@ MyToolItBlock = bidict({
     "Test": 0x3F,
 })
 
-MyToolItSystem = {
+MyToolItSystem = bidict({
     "Verboten": 0x00,
     "Reset": 0x01,
     "ActiveState": 0x02,
@@ -123,7 +123,7 @@ MyToolItSystem = {
     "Log": 0x0A,
     "Bluetooth": 0x0B,
     "Routing": 0x0C,
-}
+})
 
 SystemCommandBlueTooth = {
     "Reserved": 0,
@@ -167,14 +167,14 @@ SystemCommandRouting = {
     "ReceiveLowLevelByteCounter": 6,
 }
 
-MyToolItStreaming = {
+MyToolItStreaming = bidict({
     "Acceleration": 0x00,
     "Temperature": 0x01,
     "Voltage": 0x20,
     "Current": 0x40,
-}
+})
 
-MyToolItStatData = {
+MyToolItStatData = bidict({
     "PocPof": 0x00,
     "OperatingTime": 0x01,
     "Uvc": 0x02,
@@ -183,9 +183,9 @@ MyToolItStatData = {
     "MeasurementInterval": 0x40,
     "QuantityInterval": 0x41,
     "Energy": 0x80,
-}
+})
 
-MyToolItConfiguration = {
+MyToolItConfiguration = bidict({
     "Acceleration": 0x00,
     "Temperature": 0x01,
     "Voltage": 0x20,
@@ -195,11 +195,11 @@ MyToolItConfiguration = {
     "CalibrateMeasurement": 0x62,
     "Alarm": 0x80,
     "Hmi": 0xC0
-}
+})
 
-MyToolItEeprom = {"Read": 0x00, "Write": 0x01, "WriteRequest": 0x20}
+MyToolItEeprom = bidict({"Read": 0x00, "Write": 0x01, "WriteRequest": 0x20})
 
-MyToolItProductData = {
+MyToolItProductData = bidict({
     "GTIN": 0x00,
     "HardwareRevision": 0x01,
     "FirmwareVersion": 0x02,
@@ -232,10 +232,20 @@ MyToolItProductData = {
     "OemFreeUse6": 0x1D,
     "OemFreeUse7": 0x1E,
     "OemFreeUse8": 0x1F,
-}
+})
 
-MyToolItTest = {
+MyToolItTest = bidict({
     "Signal": 0x01,
+})
+
+blocknumber_to_commands = {
+    MyToolItBlock["System"]: MyToolItSystem,
+    MyToolItBlock["Streaming"]: MyToolItStreaming,
+    MyToolItBlock["StatisticalData"]: MyToolItStatData,
+    MyToolItBlock["Configuration"]: MyToolItConfiguration,
+    MyToolItBlock["Eeprom"]: MyToolItEeprom,
+    MyToolItBlock["ProductData"]: MyToolItProductData,
+    MyToolItBlock["Test"]: MyToolItTest,
 }
 
 CommandBlock = {
