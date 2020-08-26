@@ -52,7 +52,7 @@ class Identifier:
         [STH2 -> STH3, Block: Unknown, Command: Unknown, Request]
         """
 
-        command_field = (self.value >> 12) & 0xFFFF
+        command_field = self.command()
         request = (command_field >> 1) & 1
         error = not (command_field & 1)
 
@@ -65,6 +65,31 @@ class Identifier:
         ])
 
         return '[' + ', '.join(attributes) + ']'
+
+    def command(self):
+        """Get the command part of the identifier
+
+        Returns
+        -------
+
+        The whole command including
+
+        - group,
+        - number,
+        - acknowledge bit, and
+        - error bit
+
+        for the current identifier
+
+        Example
+        -------
+
+                             V  block   number A E R send. R rec.
+        >>> bin(Identifier(0b0_000011_00000000_0_1_0_00111_0_00010).command())
+        '0b110000000001'
+        """
+
+        return (self.value >> 12) & 0xffff
 
     def block(self):
         """Get the block number
