@@ -60,7 +60,7 @@ class Identifier:
             f"{self.sender_description()} -> " +
             f"{self.receiver_description()}",
             f"Block: {self.block_description()}",
-            f"Command: {self.command_description()}",
+            f"Command: {self.number_description()}",
             "Request" if request else "Acknowledge", "Error" if error else None
         ])
 
@@ -108,8 +108,8 @@ class Identifier:
 
         return MyToolItBlock.inverse.get(self.block(), "Unknown")
 
-    def command(self):
-        """Get the command number
+    def number(self):
+        """Get the (command) number
 
         Returns
         -------
@@ -120,14 +120,14 @@ class Identifier:
         -------
 
                          V  block   number A E R send. R rec.
-        >>> Identifier(0b0_000011_00001000_0_0_0_00111_0_00010).command()
+        >>> Identifier(0b0_000011_00001000_0_0_0_00111_0_00010).number()
         8
         """
 
         return (self.value >> 14) & 0xff
 
-    def command_description(self):
-        """Return a textual description of the command
+    def number_description(self):
+        """Return a textual description of the (command) number
 
         Returns
         -------
@@ -140,13 +140,12 @@ class Identifier:
 
                          V  block   number A E R send. R rec.
         >>> Identifier(0b0_000000_00000000_0_0_0_00101_0_00010
-        ...           ).command_description()
+        ...           ).number_description()
         'Verboten'
         """
 
         try:
-            return blocknumber_to_commands[self.block()].inverse[
-                self.command()]
+            return blocknumber_to_commands[self.block()].inverse[self.number()]
         except KeyError:
             return "Unknown"
 
