@@ -43,7 +43,7 @@ class Identifier:
 
                          V  block   number A E R send. R rec.
         >>> Identifier(0b0_010101_10000001_1_1_0_00010_0_00011)
-        [STH2 -> STH3, Block: Undefined, Command: Undefined, Request]
+        [STH2 -> STH3, Block: Unknown, Command: Unknown, Request]
         """
 
         receiver = self.value & 0x1F
@@ -60,9 +60,9 @@ class Identifier:
             command_description = blocknumber_to_commands[block].inverse[
                 command]
         except KeyError:
-            command_description = "Undefined"
+            command_description = "Unknown"
 
-        block_description = MyToolItBlock.inverse.get(block, "Undefined")
+        block_description = MyToolItBlock.inverse.get(block, "Unknown")
 
         attributes = filter(None, [
             f"{self.sender_description()} -> " +
