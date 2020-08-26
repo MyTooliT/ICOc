@@ -52,7 +52,6 @@ class Identifier:
         [STH2 -> STH3, Block: Unknown, Command: Unknown, Request]
         """
 
-        receiver = self.value & 0x1F
         command_field = (self.value >> 12) & 0xFFFF
 
         request = (command_field >> 1) & 1
@@ -60,7 +59,7 @@ class Identifier:
 
         attributes = filter(None, [
             f"{self.sender_description()} -> " +
-            f"{MyToolItNetworkName[receiver]}",
+            f"{MyToolItNetworkName[self.receiver()]}",
             f"Block: {self.block_description()}",
             f"Command: {self.command_description()}",
             "Request" if request else "Acknowledge", "Error" if error else None
@@ -188,6 +187,24 @@ class Identifier:
         """
 
         return MyToolItNetworkName[self.sender()]
+
+    def receiver(self):
+        """Get the receiver of the message
+
+        Returns
+        -------
+
+        A number that specifies the receiver of the message
+
+        Example
+        -------
+
+                         V  block   number A E R send. R rec.
+        >>> Identifier(0b0_000000_00000000_0_0_0_00111_0_00010).receiver()
+        2
+        """
+
+        return self.value & 0x1f
 
 
 # -- Main ---------------------------------------------------------------------
