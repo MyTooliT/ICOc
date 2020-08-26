@@ -62,11 +62,10 @@ class Identifier:
         except KeyError:
             command_description = "Unknown"
 
-        block_description = MyToolItBlock.inverse.get(block, "Unknown")
-
         attributes = filter(None, [
             f"{self.sender_description()} -> " +
-            f"{MyToolItNetworkName[receiver]}", f"Block: {block_description}",
+            f"{MyToolItNetworkName[receiver]}",
+            f"Block: {self.block_description()}",
             f"Command: {command_description}",
             "Request" if request else "Acknowledge", "Error" if error else None
         ])
@@ -84,6 +83,24 @@ class Identifier:
         """
 
         return (self.value >> 22) & 0b111111
+
+    def block_description(self):
+        """Return a textual description for the block
+
+        Example:
+
+                         V  block   number A E R send. R rec.
+        >>> Identifier(0b0_000011_00000000_0_0_0_00111_0_00010
+        ...           ).block_description()
+        'Unknown'
+
+                         V  block   number A E R send. R rec.
+        >>> Identifier(0b0_000100_00000000_0_0_0_00111_0_00010
+        ...           ).block_description()
+        'Streaming'
+        """
+
+        return MyToolItBlock.inverse.get(self.block(), "Unknown")
 
     def sender(self):
         """Return the sender of the message
