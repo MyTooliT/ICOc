@@ -74,7 +74,14 @@ class Identifier:
         return '[' + ', '.join(attributes) + ']'
 
     def sender(self):
-        """Return the sender of the message"""
+        """Return the sender of the message
+
+        Example:
+
+                         V  block   number A E R send. R rec.
+        >>> Identifier(0b0_000000_00000000_0_0_0_00111_0_00010).sender()
+        7
+        """
 
         return self.value >> 6 & 0x1F
 
