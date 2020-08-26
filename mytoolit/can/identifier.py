@@ -43,18 +43,20 @@ class Identifier:
         """
 
         receiver = self.value & 0x1F
-        command = (self.value >> 12) & 0xFFFF
-        number = command >> 2
-        group = number >> 8
-        cmd = number & 0xFF
-        request = (command >> 1) & 1
-        error = not (command & 1)
+        command_field = (self.value >> 12) & 0xFFFF
+
+        number = command_field >> 2
+        block = number >> 8
+        command = number & 0xFF
+
+        request = (command_field >> 1) & 1
+        error = not (command_field & 1)
 
         attributes = filter(None, [
             f"{MyToolItNetworkName[self.sender()]} -> " +
             f"{MyToolItNetworkName[receiver]}",
-            f"Block: {MyToolItBlock.inverse[group]}",
-            f"Command: {blocknumber_to_commands[group].inverse[cmd]}",
+            f"Block: {MyToolItBlock.inverse[block]}",
+            f"Command: {blocknumber_to_commands[block].inverse[command]}",
             "Request" if request else "Acknowledge", "Error" if error else None
         ])
 
