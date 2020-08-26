@@ -65,7 +65,7 @@ class Identifier:
         block_description = MyToolItBlock.inverse.get(block, "Undefined")
 
         attributes = filter(None, [
-            f"{MyToolItNetworkName[self.sender()]} -> " +
+            f"{self.sender_description()} -> " +
             f"{MyToolItNetworkName[receiver]}", f"Block: {block_description}",
             f"Command: {command_description}",
             "Request" if request else "Acknowledge", "Error" if error else None
@@ -84,6 +84,19 @@ class Identifier:
         """
 
         return self.value >> 6 & 0x1F
+
+    def sender_description(self):
+        """Return a textual description of the sender of a message
+
+        Example:
+
+                         V  block   number A E R send. R rec.
+        >>> Identifier(0b0_000000_00000000_0_0_0_00101_0_00010
+        ...           ).sender_description()
+        'STH5'
+        """
+
+        return MyToolItNetworkName[self.sender()]
 
 
 # -- Main ---------------------------------------------------------------------
