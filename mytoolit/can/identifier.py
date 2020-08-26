@@ -30,11 +30,15 @@ class Identifier:
         """Return the string representation of the current identifier
 
 
-        Example:
+        Examples:
 
                          V  group   number A E R send. R rec.
         >>> Identifier(0b0_000011_00000000_0_0_0_00001_0_00010)
         [STH1 -> STH2, Group: 3, Command: 0, Acknowledge, Error]
+
+                         V  group   number A E R send. R rec.
+        >>> Identifier(0b0_000101_00000010_1_1_0_00010_0_00011)
+        [STH2 -> STH3, Group: 5, Command: 2, Request]
         """
 
         receiver = self.value & 0x1F
@@ -45,12 +49,14 @@ class Identifier:
         request = (command >> 1) & 1
         error = not (command & 1)
 
-        return '[' + ', '.join([
+        attributes = filter(None, [
             f"{MyToolItNetworkName[self.sender()]} -> " +
             f"{MyToolItNetworkName[receiver]}", f"Group: {group}",
             f"Command: {cmd}", "Request" if request else "Acknowledge",
-            "Error" if error else ""
-        ]) + ']'
+            "Error" if error else None
+        ])
+
+        return '[' + ', '.join(attributes) + ']'
 
     def sender(self):
         """Return the sender of the message"""
