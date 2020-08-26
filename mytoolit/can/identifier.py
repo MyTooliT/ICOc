@@ -31,7 +31,13 @@ class Identifier:
         """Return the string representation of the current identifier
 
 
-        Examples:
+        Returns
+        -------
+
+        A string that describes the various attributes of the identifier
+
+        Examples
+        --------
 
                          V  block   number A E R send. R rec.
         >>> Identifier(0b0_000000_00000000_0_0_0_00001_0_00010)
@@ -72,9 +78,15 @@ class Identifier:
         return '[' + ', '.join(attributes) + ']'
 
     def block(self):
-        """Return the block number
+        """Get the block number
 
-        Example:
+        Returns
+        -------
+
+        The block (aka group) number for the current identifier
+
+        Example
+        -------
 
                          V  block   number A E R send. R rec.
         >>> Identifier(0b0_000011_00000000_0_0_0_00111_0_00010).block()
@@ -84,9 +96,15 @@ class Identifier:
         return (self.value >> 22) & 0b111111
 
     def block_description(self):
-        """Return a textual description for the block
+        """Get a textual description of the command block
 
-        Example:
+        Returns
+        -------
+
+        A short textual description of the command block of the identifier
+
+        Examples
+        --------
 
                          V  block   number A E R send. R rec.
         >>> Identifier(0b0_000011_00000000_0_0_0_00111_0_00010
@@ -102,9 +120,15 @@ class Identifier:
         return MyToolItBlock.inverse.get(self.block(), "Unknown")
 
     def command(self):
-        """Return the command number
+        """Get the command number
 
-        Example:
+        Returns
+        -------
+
+        The command number (part of the command field) of the identifier
+
+        Example
+        -------
 
                          V  block   number A E R send. R rec.
         >>> Identifier(0b0_000011_00001000_0_0_0_00111_0_00010).command()
@@ -114,9 +138,15 @@ class Identifier:
         return (self.value >> 14) & 0xff
 
     def sender(self):
-        """Return the sender of the message
+        """Get the sender of the message
 
-        Example:
+        Returns
+        -------
+
+        A number that specifies the sender of the message
+
+        Example
+        -------
 
                          V  block   number A E R send. R rec.
         >>> Identifier(0b0_000000_00000000_0_0_0_00111_0_00010).sender()
@@ -126,9 +156,15 @@ class Identifier:
         return self.value >> 6 & 0x1F
 
     def sender_description(self):
-        """Return a textual description of the sender of a message
+        """Get a textual description of the sender of a message
 
-        Example:
+        Returns
+        -------
+
+        A text that describes the sender
+
+        Example
+        -------
 
                          V  block   number A E R send. R rec.
         >>> Identifier(0b0_000000_00000000_0_0_0_00101_0_00010
