@@ -40,6 +40,10 @@ class Identifier:
                          V  block   number A E R send. R rec.
         >>> Identifier(0b0_000100_00000001_1_1_0_00010_0_00011)
         [STH2 -> STH3, Block: Streaming, Command: Temperature, Request]
+
+                         V  block   number A E R send. R rec.
+        >>> Identifier(0b0_010101_10000001_1_1_0_00010_0_00011)
+        [STH2 -> STH3, Block: Undefined, Command: Undefined, Request]
         """
 
         receiver = self.value & 0x1F
@@ -52,11 +56,18 @@ class Identifier:
         request = (command_field >> 1) & 1
         error = not (command_field & 1)
 
+        try:
+            command_description = blocknumber_to_commands[block].inverse[
+                command]
+        except KeyError:
+            command_description = "Undefined"
+
+        block_description = MyToolItBlock.inverse.get(block, "Undefined")
+
         attributes = filter(None, [
             f"{MyToolItNetworkName[self.sender()]} -> " +
-            f"{MyToolItNetworkName[receiver]}",
-            f"Block: {MyToolItBlock.inverse[block]}",
-            f"Command: {blocknumber_to_commands[block].inverse[command]}",
+            f"{MyToolItNetworkName[receiver]}", f"Block: {block_description}",
+            f"Command: {command_description}",
             "Request" if request else "Acknowledge", "Error" if error else None
         ])
 
