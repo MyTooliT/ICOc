@@ -1,5 +1,6 @@
 # Required Modules
 
+bidict
 dynaconf
 matplotlib
 openpyxl

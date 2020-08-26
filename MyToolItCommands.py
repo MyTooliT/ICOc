@@ -1,3 +1,5 @@
+from bidict import bidict
+
 import ctypes
 c_uint8 = ctypes.c_uint8
 
@@ -97,7 +99,7 @@ class EepromSpecialConfig(ctypes.Union):
     _fields_ = [("b", EepromSpecialConfigFlags), ("asbyte", c_uint8)]
 
 
-MyToolItBlock = {
+MyToolItBlock = bidict({
     "System": 0x00,
     "Streaming": 0x04,
     "StatisticalData": 0x08,
@@ -105,7 +107,7 @@ MyToolItBlock = {
     "Eeprom": 0x3D,
     "ProductData": 0x3E,
     "Test": 0x3F,
-}
+})
 
 MyToolItSystem = {
     "Verboten": 0x00,

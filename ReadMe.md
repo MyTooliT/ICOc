@@ -44,12 +44,6 @@ pip install -r requirements.txt
 
 The command above will read the file [requirement.txt](requirement.txt) and install all the packages listed in this file.
 
-If you want to manually install the required Python libraries you can use the following command instead:
-
-```sh
-pip install dynaconf matplotlib openpyxl pdfrw python-can reportlab windows-curses
-```
-
 #### ICOc
 
 Please clone [this repository](https://github.com/MyTooliT/ICOc) to a directory of your choice. You can either use the [command line tool `git`](https://git-scm.com/downloads):
