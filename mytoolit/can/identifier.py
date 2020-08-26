@@ -50,7 +50,7 @@ class Identifier:
         command_field = (self.value >> 12) & 0xFFFF
 
         number = command_field >> 2
-        block = number >> 8
+        block = self.block()
         command = number & 0xFF
 
         request = (command_field >> 1) & 1
@@ -72,6 +72,18 @@ class Identifier:
         ])
 
         return '[' + ', '.join(attributes) + ']'
+
+    def block(self):
+        """Return the block number
+
+        Example:
+
+                         V  block   number A E R send. R rec.
+        >>> Identifier(0b0_000011_00000000_0_0_0_00111_0_00010).block()
+        3
+        """
+
+        return (self.value >> 22) & 0b111111
 
     def sender(self):
         """Return the sender of the message
