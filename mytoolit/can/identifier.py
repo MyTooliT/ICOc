@@ -55,9 +55,6 @@ class Identifier:
         receiver = self.value & 0x1F
         command_field = (self.value >> 12) & 0xFFFF
 
-        number = command_field >> 2
-        block = self.block()
-
         request = (command_field >> 1) & 1
         error = not (command_field & 1)
 
