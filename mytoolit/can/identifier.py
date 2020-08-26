@@ -53,13 +53,12 @@ class Identifier:
         """
 
         command_field = (self.value >> 12) & 0xFFFF
-
         request = (command_field >> 1) & 1
         error = not (command_field & 1)
 
         attributes = filter(None, [
             f"{self.sender_description()} -> " +
-            f"{MyToolItNetworkName[self.receiver()]}",
+            f"{self.receiver_description()}",
             f"Block: {self.block_description()}",
             f"Command: {self.command_description()}",
             "Request" if request else "Acknowledge", "Error" if error else None
@@ -205,6 +204,25 @@ class Identifier:
         """
 
         return self.value & 0x1f
+
+    def receiver_description(self):
+        """Get a textual description of the receiver of a message
+
+        Returns
+        -------
+
+        A text that describes the receiver
+
+        Example
+        -------
+
+                         V  block   number A E R send. R rec.
+        >>> Identifier(0b0_000000_00000000_0_0_0_00101_0_01110
+        ...           ).receiver_description()
+        'STH14'
+        """
+
+        return MyToolItNetworkName[self.receiver()]
 
 
 # -- Main ---------------------------------------------------------------------
