@@ -51,14 +51,13 @@ class Identifier:
 
         number = command_field >> 2
         block = self.block()
-        command = number & 0xFF
 
         request = (command_field >> 1) & 1
         error = not (command_field & 1)
 
         try:
             command_description = blocknumber_to_commands[block].inverse[
-                command]
+                self.command()]
         except KeyError:
             command_description = "Unknown"
 
@@ -101,6 +100,18 @@ class Identifier:
         """
 
         return MyToolItBlock.inverse.get(self.block(), "Unknown")
+
+    def command(self):
+        """Return the command number
+
+        Example:
+
+                         V  block   number A E R send. R rec.
+        >>> Identifier(0b0_000011_00001000_0_0_0_00111_0_00010).command()
+        8
+        """
+
+        return (self.value >> 14) & 0xff
 
     def sender(self):
         """Return the sender of the message
