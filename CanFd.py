@@ -191,7 +191,7 @@ class CanFd(object):
         return CommandBlock[self.CanCmdGetBlock(cmd)]
 
     def strCmdNrToCmdName(self, cmd):
-        return Identifier(command=cmd).number_description()
+        return Identifier(command=cmd).number_name()
 
     def ComparePayloadEqual(self, payload1, payload2):
         bEqual = False

@@ -123,10 +123,8 @@ class Identifier:
         error = not (command_field & 1)
 
         attributes = filter(None, [
-            f"{self.sender_description()} -> " +
-            f"{self.receiver_description()}",
-            f"Block: {self.block_description()}",
-            f"Command: {self.number_description()}",
+            f"{self.sender_name()} -> " + f"{self.receiver_name()}",
+            f"Block: {self.block_name()}", f"Command: {self.number_name()}",
             "Request" if request else "Acknowledge", "Error" if error else None
         ])
 
@@ -175,8 +173,8 @@ class Identifier:
 
         return (self.value >> 22) & 0b111111
 
-    def block_description(self):
-        """Get a textual description of the command block
+    def block_name(self):
+        """Get the name of the command block
 
         Returns
         -------
@@ -188,12 +186,12 @@ class Identifier:
 
                          V  block   number A E R send. R rec.
         >>> Identifier(0b0_000011_00000000_0_0_0_00111_0_00010
-        ...           ).block_description()
+        ...           ).block_name()
         'Unknown'
 
                          V  block   number A E R send. R rec.
         >>> Identifier(0b0_000100_00000000_0_0_0_00111_0_00010
-        ...           ).block_description()
+        ...           ).block_name()
         'Streaming'
         """
 
@@ -217,8 +215,8 @@ class Identifier:
 
         return (self.value >> 14) & 0xff
 
-    def number_description(self):
-        """Return a textual description of the (command) number
+    def number_name(self):
+        """Get the name of the (command) number
 
         Returns
         -------
@@ -231,7 +229,7 @@ class Identifier:
 
                          V  block   number A E R send. R rec.
         >>> Identifier(0b0_000000_00000000_0_0_0_00101_0_00010
-        ...           ).number_description()
+        ...           ).number_name()
         'Verboten'
         """
 
@@ -258,8 +256,8 @@ class Identifier:
 
         return self.value >> 6 & 0x1F
 
-    def sender_description(self):
-        """Get a textual description of the sender of a message
+    def sender_name(self):
+        """Get the name of the sender of a message
 
         Returns
         -------
@@ -271,7 +269,7 @@ class Identifier:
 
                          V  block   number A E R send. R rec.
         >>> Identifier(0b0_000000_00000000_0_0_0_00101_0_00010
-        ...           ).sender_description()
+        ...           ).sender_name()
         'STH5'
         """
 
@@ -295,8 +293,8 @@ class Identifier:
 
         return self.value & 0x1f
 
-    def receiver_description(self):
-        """Get a textual description of the receiver of a message
+    def receiver_name(self):
+        """Get the name of the receiver of a message
 
         Returns
         -------
@@ -308,7 +306,7 @@ class Identifier:
 
                          V  block   number A E R send. R rec.
         >>> Identifier(0b0_000000_00000000_0_0_0_00101_0_01110
-        ...           ).receiver_description()
+        ...           ).receiver_name()
         'STH14'
         """
 
