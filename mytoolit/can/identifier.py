@@ -124,7 +124,8 @@ class Identifier:
 
         attributes = filter(None, [
             f"{self.sender_name()} -> " + f"{self.receiver_name()}",
-            f"Block: {self.block_name()}", f"Command: {self.number_name()}",
+            f"Block: {self.block_name()}",
+            f"Command: {self.block_command_name()}",
             "Request" if request else "Acknowledge", "Error" if error else None
         ])
 
@@ -155,8 +156,8 @@ class Identifier:
 
         return (self.value >> 12) & 0xffff
 
-    def blocknumber(self):
-        """Get the block and (command) number part of the identifier
+    def command_number(self):
+        """Get the block and block command part of the identifier
 
         Returns
         -------
@@ -168,7 +169,7 @@ class Identifier:
 
                              V  block   number A E R send. R rec.
         >>> bin(Identifier(0b0_100011_11000001_0_1_0_00111_0_00010
-        ...    ).blocknumber())
+        ...    ).command_number())
         '0b10001111000001'
         """
 
@@ -216,44 +217,44 @@ class Identifier:
 
         return MyToolItBlock.inverse.get(self.block(), "Unknown")
 
-    def number(self):
-        """Get the (command) number
+    def block_command(self):
+        """Get the block command
 
         Returns
         -------
 
-        The command number (part of the command field) of the identifier
+        The block number (part of the command number) of the identifier
 
         Example
         -------
 
                          V  block   number A E R send. R rec.
-        >>> Identifier(0b0_000011_00001000_0_0_0_00111_0_00010).number()
+        >>> Identifier(0b0_000011_00001000_0_0_0_00111_0_00010).block_command()
         8
         """
 
         return (self.value >> 14) & 0xff
 
-    def number_name(self):
-        """Get the name of the (command) number
+    def block_command_name(self):
+        """Get the name of the block command
 
         Returns
         -------
 
-        A short textual description of the command (in the current command
-        group)
+        A short textual description of the command (in the current block)
 
         Example
         -------
 
                          V  block   number A E R send. R rec.
         >>> Identifier(0b0_000000_00000000_0_0_0_00101_0_00010
-        ...           ).number_name()
+        ...           ).block_command_name()
         'Verboten'
         """
 
         try:
-            return blocknumber_to_commands[self.block()].inverse[self.number()]
+            return blocknumber_to_commands[self.block()].inverse[
+                self.block_command()]
         except KeyError:
             return "Unknown"
 

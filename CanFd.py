@@ -188,7 +188,7 @@ class CanFd(object):
         self.PeakCanTimeStampStart = CanTimeStampStart
 
     def strCmdNrToCmdName(self, cmd):
-        return Identifier(command=cmd).number_name()
+        return Identifier(command=cmd).block_command_name()
 
     def ComparePayloadEqual(self, payload1, payload2):
         bEqual = False
@@ -228,7 +228,7 @@ class CanFd(object):
     def WriteFrameWaitAckError(self, message, bError, printLog):
         identifier = Identifier(message["CanMsg"].ID)
         cmdBlockName = identifier.block_name()
-        cmdName = identifier.number_name()
+        cmdName = identifier.block_command_name()
         senderName = identifier.sender_name()
         receiverName = identifier.receiver_name()
         if False != bError:
@@ -254,7 +254,7 @@ class CanFd(object):
     def WriteFrameWaitAckTimeOut(self, CanMsg, printLog):
         identifier = Identifier(CanMsg.ID)
         cmdBlockName = identifier.block_name()
-        cmdName = identifier.number_name()
+        cmdName = identifier.block_command_name()
         senderName = identifier.sender_name()
         receiverName = identifier.receiver_name()
         self.Logger.Warning("No (Error) Ack Received(" + senderName + "->" +
@@ -348,7 +348,7 @@ class CanFd(object):
                 elif (retries - 1) == i:
                     identifier = Identifier(CanMsg.ID)
                     cmdBlockName = identifier.block_name()
-                    cmdName = identifier.number_name()
+                    cmdName = identifier.block_command_name()
                     senderName = identifier.sender_name()
                     receiverName = identifier.receiver_name()
                     self.Logger.Error("Message Request Failed: " +
@@ -562,9 +562,9 @@ class CanFd(object):
             cmdFiltered = identifier_filtered.command()
 
             receivedCmdBlk = identifier_received.block()
-            receivedCmdSub = identifier_received.blocknumber()
+            receivedCmdSub = identifier_received.command_number()
             filterCmdBlk = identifier_filtered.block()
-            filterCmdSub = identifier_filtered.blocknumber()
+            filterCmdSub = identifier_filtered.command_number()
             self.Logger.Error("Assumed message ID: " + str(messageIdFilter) +
                               "(" + str(cmdRec) + "); Received message ID: " +
                               str(messageId) + "(" + str(cmdFiltered) + ")")
