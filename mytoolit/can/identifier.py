@@ -16,16 +16,83 @@ from MyToolItNetworkNumbers import MyToolItNetworkName
 class Identifier:
     """This class represents a CAN identifier of the MyTooliT protocol"""
 
-    def __init__(self, identifier):
+    def __init__(
+            self,
+            *identifier,
+            command=None,
+            sender=None,
+            receiver=None,
+    ):
         """Create a new identifier from a given integer
+
+        Usually you will either specify the identifier number directly, or
+        provide command, sender and receiver. If, you decide to specify both
+        the identifier value and one of the keyword arguments, then the
+        keyword arguments will be used to overwrite specific parts of the
+        identifier. For more information, please take a look at the examples.
 
         Parameters
         ----------
 
         identifier:
             A extended CAN identifier (29 bit number)
+
+        command:
+            The whole command including group, number, error bit, and
+            acknowledgement bit
+
+        sender:
+            The sender of the message
+
+        receiver:
+            The receiver of the message
+
+        Examples
+        -------
+
+        >>> Identifier().value
+        0
+
+                                      V  block   number A E R send. R rec.
+        >>> identifier = Identifier(0b0_000000_00000000_0_0_0_10000_0_00110,
+        ...                         command=1337)
+        >>> identifier.command()
+        1337
+        >>> identifier.receiver()
+        6
+        >>> identifier.sender()
+        16
+
+        >>> identifier = Identifier(command=512, sender=1, receiver=2)
+        >>> identifier.sender()
+        1
+        >>> identifier.receiver()
+        2
+        >>> identifier.command()
+        512
         """
-        self.value = identifier
+
+        def set_part(start, width, number):
+            """Store bit pattern number at bit start of the identifier"""
+
+            identifier_ones = 0b11111_11111111_11111111_11111111
+            mask = 2**width - 1
+
+            # Set all bits for targeted part to 0
+            self.value &= (mask << start) ^ identifier_ones
+            # Make sure we use the correct number of bits for number
+            number = number & mask
+            # Set command bits to given value
+            self.value |= number << start
+
+        self.value = identifier[0] if identifier else 0
+
+        if command:
+            set_part(start=12, width=16, number=command)
+        if sender:
+            set_part(start=6, width=5, number=sender)
+        if receiver:
+            set_part(start=0, width=5, number=receiver)
 
     def __repr__(self):
         """Return the string representation of the current identifier
