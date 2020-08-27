@@ -1138,12 +1138,9 @@ class CanFd(object):
 
         # We create a TPCANMsg message structure
         CANMsg = TPCANMsg()
-        command = command & 0xFFFF
-        sender = sender & 0x1F
-        receiver = receiver & 0x1F
-        CANMsg.ID = (command << 12)
-        CANMsg.ID |= (sender << 6)
-        CANMsg.ID |= receiver
+        CANMsg.ID = Identifier(command=command,
+                               sender=sender,
+                               receiver=receiver).value
         CANMsg.LEN = len(data)
         CANMsg.MSGTYPE = PCAN_MESSAGE_EXTENDED
 
