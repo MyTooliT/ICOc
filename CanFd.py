@@ -558,19 +558,21 @@ class CanFd(object):
         if messageId == messageIdFilter:
             self.ValueDataSet1(data, b1, b2, b3, array1, array2, array3)
         else:
-            cmdRec = self.CanMessage20GetFields(int(messageId, 16))[0]
-            cmdFiltered = self.CanMessage20GetFields(int(messageIdFilter,
-                                                         16))[0]
-            receivedCmdBlk = self.CanCmdGetBlock(cmdRec)
-            receivedCmdSub = self.CanCmdGetBlockCmd(cmdRec)
-            filterCmdBlk = self.CanCmdGetBlock(cmdFiltered)
-            filterCmdSub = self.CanCmdGetBlockCmd(cmdFiltered)
+            identifier_received = Identifier(command=int(messageId, 16))
+            identifier_filtered = Identifier(command=int(messageIdFilter, 16))
+
+            cmdRec = identifier_received.command()
+            cmdFiltered = identifier_filtered.command()
+
+            receivedCmdBlk = identifier_received.block()
+            receivedCmdSub = identifier_received.blocknumber()
+            filterCmdBlk = identifier_filtered.block()
+            filterCmdSub = identifier_filtered.blocknumber()
             self.Logger.Error("Assumed message ID: " + str(messageIdFilter) +
                               "(" + str(cmdRec) + "); Received message ID: " +
                               str(messageId) + "(" + str(cmdFiltered) + ")")
             self.Logger.Error("Assumed command block: " + str(filterCmdBlk) +
-                              "; Received command block: " +
-                              str(receivedCmdBlk))
+                              f"; Received command block: {receivedCmdBlk}")
             self.Logger.Error("Assumed sub command: " + str(filterCmdSub) +
                               "; Received sub command: " + str(receivedCmdSub))
             self.__exitError("Wrong Filter ID")
