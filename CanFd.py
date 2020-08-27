@@ -187,9 +187,6 @@ class CanFd(object):
     def CanTimeStampStart(self, CanTimeStampStart):
         self.PeakCanTimeStampStart = CanTimeStampStart
 
-    def strCmdNrToBlockName(self, cmd):
-        return CommandBlock[self.CanCmdGetBlock(cmd)]
-
     def strCmdNrToCmdName(self, cmd):
         return Identifier(command=cmd).number_name()
 
