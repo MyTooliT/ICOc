@@ -4,6 +4,8 @@ import array
 import math
 from sys import stderr
 
+from mytoolit.can.identifier import Identifier
+
 from MyToolItCommands import *
 from MyToolItNetworkNumbers import MyToolItNetworkNr, MyToolItNetworkName
 from Logger import Logger
@@ -189,24 +191,7 @@ class CanFd(object):
         return CommandBlock[self.CanCmdGetBlock(cmd)]
 
     def strCmdNrToCmdName(self, cmd):
-        cmdBlock = self.CanCmdGetBlock(cmd)
-        cmdNr = self.CanCmdGetBlockCmd(cmd)
-        cmdNrName = "Unknown"
-        if MyToolItBlock["System"] == cmdBlock:
-            cmdNrName = CommandBlockSystem[cmdNr]
-        elif MyToolItBlock["Streaming"] == cmdBlock:
-            cmdNrName = CommandBlockStreaming[cmdNr]
-        elif MyToolItBlock["StatisticalData"] == cmdBlock:
-            cmdNrName = CommandBlockStatisticalData[cmdNr]
-        elif MyToolItBlock["Configuration"] == cmdBlock:
-            cmdNrName = CommandBlockConfiguration[cmdNr]
-        elif MyToolItBlock["Eeprom"] == cmdBlock:
-            cmdNrName = CommandBlockEeprom[cmdNr]
-        elif MyToolItBlock["ProductData"] == cmdBlock:
-            cmdNrName = CommandBlockProductData[cmdNr]
-        elif MyToolItBlock["Test"] == cmdBlock:
-            cmdNrName = CommandBlockTest[cmdNr]
-        return cmdNrName
+        return Identifier(command=cmd).number_description()
 
     def ComparePayloadEqual(self, payload1, payload2):
         bEqual = False
