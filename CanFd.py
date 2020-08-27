@@ -94,8 +94,8 @@ class CanFd(object):
             [_iDs, cmds] = self.ReadMessageStatistics()
             for cmd, value in cmds.items():
                 self.Logger.Info(
-                    self.strCmdNrToCmdName(cmd) + " received " + str(value) +
-                    " times")
+                    Identifier(command=cmd).block_command_name() +
+                    " received " + str(value) + " times")
             self.Logger.__exit__()
         except:
             pass
@@ -186,9 +186,6 @@ class CanFd(object):
 
     def CanTimeStampStart(self, CanTimeStampStart):
         self.PeakCanTimeStampStart = CanTimeStampStart
-
-    def strCmdNrToCmdName(self, cmd):
-        return Identifier(command=cmd).block_command_name()
 
     def ComparePayloadEqual(self, payload1, payload2):
         bEqual = False
@@ -396,18 +393,18 @@ class CanFd(object):
         if False != log:
             canCmd = self.CanCmd(blockCmd, subCmd, 1, 0)
             if "Error" != msgAck:
-                self.Logger.Info(MyToolItNetworkName[self.sender] + "->" +
-                                 MyToolItNetworkName[receiver] +
-                                 "(CanTimeStamp: " +
-                                 str(msgAck["CanTime"] -
-                                     self.PeakCanTimeStampStart) + "ms): " +
-                                 self.strCmdNrToCmdName(canCmd) + " - " +
-                                 payload2Hex(payload))
+                self.Logger.Info(
+                    MyToolItNetworkName[self.sender] + "->" +
+                    MyToolItNetworkName[receiver] + "(CanTimeStamp: " +
+                    str(msgAck["CanTime"] - self.PeakCanTimeStampStart) +
+                    "ms): " + Identifier(command=canCmd).block_command_name() +
+                    " - " + payload2Hex(payload))
             else:
                 self.Logger.Info(MyToolItNetworkName[self.sender] + "->" +
                                  MyToolItNetworkName[receiver] + ": " +
-                                 self.strCmdNrToCmdName(canCmd) + " - " +
-                                 "Error")
+                                 Identifier(
+                                     command=canCmd).block_command_name() +
+                                 " - " + "Error")
             self.Logger.Info("Assumed receive message number: " + str(index))
         # time.sleep(0.2)  # synch to read thread TODO: Really kick it out?
         return index
@@ -440,18 +437,18 @@ class CanFd(object):
         if False != log:
             canCmd = self.CanCmd(blockCmd, subCmd, 1, 0)
             if "Error" != msgAck:
-                self.Logger.Info(MyToolItNetworkName[self.sender] + "->" +
-                                 MyToolItNetworkName[receiver] +
-                                 "(CanTimeStamp: " +
-                                 str(msgAck["CanTime"] -
-                                     self.PeakCanTimeStampStart) + "ms): " +
-                                 self.strCmdNrToCmdName(canCmd) + " - " +
-                                 payload2Hex(payload))
+                self.Logger.Info(
+                    MyToolItNetworkName[self.sender] + "->" +
+                    MyToolItNetworkName[receiver] + "(CanTimeStamp: " +
+                    str(msgAck["CanTime"] - self.PeakCanTimeStampStart) +
+                    "ms): " + Identifier(command=canCmd).block_command_name() +
+                    " - " + payload2Hex(payload))
             else:
                 self.Logger.Info(MyToolItNetworkName[self.sender] + "->" +
                                  MyToolItNetworkName[receiver] + ": " +
-                                 self.strCmdNrToCmdName(canCmd) + " - " +
-                                 "Error")
+                                 Identifier(
+                                     command=canCmd).block_command_name() +
+                                 " - " + "Error")
             self.Logger.Info("Assumed receive message number: " + str(index))
         # time.sleep(0.2)  # synch to read thread TODO: Really kick it out?
         return msgAck
@@ -969,7 +966,7 @@ class CanFd(object):
         if False != log:
             canCmd = self.CanCmd(MyToolItBlock["Streaming"], subCmd, 1, 0)
             self.Logger.Info("Start sending  " +
-                             self.strCmdNrToCmdName(canCmd) +
+                             Identifier(command=canCmd).block_command_name() +
                              "; Subpayload: " + hex(streamingFormat.asbyte))
 
         indexStart = self.GetReadArrayIndex()
@@ -999,7 +996,8 @@ class CanFd(object):
                                     [streamingFormat.asbyte])
         self.Logger.Info(
             "_____________________________________________________________")
-        self.Logger.Info("Stop Streaming - " + self.strCmdNrToCmdName(cmd))
+        self.Logger.Info("Stop Streaming - " +
+                         Identifier(command=cmd).block_command_name())
         ack = self.tWriteFrameWaitAckRetries(
             message,
             retries=20,
