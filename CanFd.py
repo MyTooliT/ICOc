@@ -163,12 +163,9 @@ class CanFd(object):
         try:
             self.readThreadStop()
             self.readArray = [{
-                "CanMsg":
-                self.CanMessage20(0, 0, 0, [0, 0, 0, 0, 0, 0, 0, 0]),
-                "PcTime":
-                1 << 64,
-                "PeakCanTime":
-                0
+                "CanMsg": self.CanMessage20(data=[0] * 8),
+                "PcTime": 1 << 64,
+                "PeakCanTime": 0
             }]
             time.sleep(0.2)
             self.RunReadThread = True
@@ -1132,7 +1129,7 @@ class CanFd(object):
     def getTimeMs(self):
         return int(round(time.time() * 1000)) - int(self.startTime)
 
-    def CanMessage20(self, command, sender, receiver, data):
+    def CanMessage20(self, command=0, sender=0, receiver=0, data=[]):
         if len(data) > 8:
             return "Error "
 
