@@ -93,9 +93,8 @@ class CanFd(object):
             time.sleep(1)
             [_iDs, cmds] = self.ReadMessageStatistics()
             for cmd, value in cmds.items():
-                self.Logger.Info(
-                    Identifier(command=cmd).block_command_name() +
-                    " received " + str(value) + " times")
+                block_command = Identifier(command=cmd).block_command_name()
+                self.Logger.Info(f"{block_command} received {value} times")
             self.Logger.__exit__()
         except:
             pass
