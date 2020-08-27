@@ -155,8 +155,27 @@ class Identifier:
 
         return (self.value >> 12) & 0xffff
 
+    def blocknumber(self):
+        """Get the block and (command) number part of the identifier
+
+        Returns
+        -------
+
+        The command without the error and acknowledge bits
+
+        Example
+        -------
+
+                             V  block   number A E R send. R rec.
+        >>> bin(Identifier(0b0_100011_11000001_0_1_0_00111_0_00010
+        ...    ).blocknumber())
+        '0b10001111000001'
+        """
+
+        return (self.value >> 14) & 0b111111_11111111
+
     def block(self):
-        """Get the block number
+        """Get the block
 
         Returns
         -------
