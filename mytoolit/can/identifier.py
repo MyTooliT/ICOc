@@ -97,7 +97,6 @@ class Identifier:
     def __repr__(self):
         """Return the string representation of the current identifier
 
-
         Returns
         -------
 
