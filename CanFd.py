@@ -229,12 +229,11 @@ class CanFd(object):
         return returnMessage
 
     def WriteFrameWaitAckError(self, message, bError, printLog):
-        [command, sender,
-         receiver] = self.CanMessage20GetFields(message["CanMsg"].ID)
-        cmdBlockName = self.strCmdNrToBlockName(command)
-        cmdName = self.strCmdNrToCmdName(command)
-        senderName = MyToolItNetworkName[sender]
-        receiverName = MyToolItNetworkName[receiver]
+        identifier = Identifier(message["CanMsg"].ID)
+        cmdBlockName = identifier.block_name()
+        cmdName = identifier.number_name()
+        senderName = identifier.sender_name()
+        receiverName = identifier.receiver_name()
         if False != bError:
             self.Logger.Error("Error Ack Received: " + cmdBlockName + " - " +
                               cmdName + "(" + senderName + "->" +
@@ -256,11 +255,11 @@ class CanFd(object):
         return self.WriteFrameWaitAckOk(message)
 
     def WriteFrameWaitAckTimeOut(self, CanMsg, printLog):
-        [command, sender, receiver] = self.CanMessage20GetFields(CanMsg.ID)
-        cmdBlockName = self.strCmdNrToBlockName(command)
-        cmdName = self.strCmdNrToCmdName(command)
-        senderName = MyToolItNetworkName[sender]
-        receiverName = MyToolItNetworkName[receiver]
+        identifier = Identifier(CanMsg.ID)
+        cmdBlockName = identifier.block_name()
+        cmdName = identifier.number_name()
+        senderName = identifier.sender_name()
+        receiverName = identifier.receiver_name()
         self.Logger.Warning("No (Error) Ack Received(" + senderName + "->" +
                             receiverName + "): " + cmdBlockName + " - " +
                             cmdName + "; Payload - " +
@@ -350,12 +349,11 @@ class CanFd(object):
                 if "Error" != returnMessage:
                     break
                 elif (retries - 1) == i:
-                    [command, sender,
-                     receiver] = self.CanMessage20GetFields(CanMsg.ID)
-                    cmdBlockName = self.strCmdNrToBlockName(command)
-                    cmdName = self.strCmdNrToCmdName(command)
-                    senderName = MyToolItNetworkName[sender]
-                    receiverName = MyToolItNetworkName[receiver]
+                    identifier = Identifier(CanMsg.ID)
+                    cmdBlockName = identifier.block_name()
+                    cmdName = identifier.number_name()
+                    senderName = identifier.sender_name()
+                    receiverName = identifier.receiver_name()
                     self.Logger.Error("Message Request Failed: " +
                                       cmdBlockName + " - " + cmdName + "(" +
                                       senderName + "->" + receiverName + ")" +
