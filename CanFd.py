@@ -307,23 +307,14 @@ class CanFd(object):
                     break
                 elif i == retries - 1:
                     identifier = Identifier(CanMsg.ID)
-                    cmdBlockName = identifier.block_name()
-                    cmdName = identifier.block_command_name()
-                    senderName = identifier.sender_name()
-                    receiverName = identifier.receiver_name()
-                    self.Logger.Error("Message Request Failed: " +
-                                      cmdBlockName + " - " + cmdName + "(" +
-                                      senderName + "->" + receiverName + ")" +
-                                      "; Payload - " +
-                                      payload2Hex(CanMsg.DATA))
+                    payload = payload2Hex(CanMsg.DATA)
+                    text = (f"Message request failed: {identifier}; " +
+                            f"Payload: {payload}")
+                    self.Logger.Error(text)
                     if printLog:
-                        print("Message Request Failed: " + cmdBlockName +
-                              " - " + cmdName + "(" + senderName + "->" +
-                              receiverName + ")" + "; Payload - " +
-                              payload2Hex(CanMsg.DATA))
+                        print(text)
                     if bErrorExit:
-                        self.__exitError("To many retries(" + str(retries) +
-                                         ")")
+                        self.__exitError(f"To many retries({retries})")
             time.sleep(0.01)
             return returnMessage
         except KeyboardInterrupt:
