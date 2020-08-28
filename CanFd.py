@@ -294,7 +294,7 @@ class CanFd(object):
             currentIndex = self.GetReadArrayIndex() - 1
             sendTime = self.getTimeMs()
             for i in range(0, retries):
-                [returnMessage, currentIndex] = self.tWriteFrameWaitAck(
+                returnMessage, currentIndex = self.tWriteFrameWaitAck(
                     CanMsg,
                     waitMs=waitMs,
                     currentIndex=currentIndex,
