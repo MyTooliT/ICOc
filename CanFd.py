@@ -219,18 +219,12 @@ class CanFd(object):
 
     def WriteFrameWaitAckTimeOut(self, CanMsg, printLog):
         identifier = Identifier(CanMsg.ID)
-        cmdBlockName = identifier.block_name()
-        cmdName = identifier.block_command_name()
-        senderName = identifier.sender_name()
-        receiverName = identifier.receiver_name()
-        self.Logger.Warning("No (Error) Ack Received(" + senderName + "->" +
-                            receiverName + "): " + cmdBlockName + " - " +
-                            cmdName + "; Payload - " +
-                            payload2Hex(CanMsg.DATA))
-        if False != printLog:
-            print("No (Error) Ack Received: " + cmdBlockName + " - " +
-                  cmdName + "(" + senderName + "->" + receiverName + ")" +
-                  "; Payload - " + str(CanMsg.DATA))
+        payload = payload2Hex(CanMsg.DATA)
+        message = (f"No (error) acknowledgement received: {identifier}; " +
+                   f"Payload: {payload}")
+        self.Logger.Warning(message)
+        if printLog:
+            print(message)
         return "Error"
 
     def tWriteFrameWaitAck(self,
