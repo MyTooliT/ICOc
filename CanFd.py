@@ -211,12 +211,12 @@ class CanFd(object):
         cmdName = identifier.block_command_name()
         senderName = identifier.sender_name()
         receiverName = identifier.receiver_name()
-        if False != bError:
+        if bError:
             self.Logger.Error("Error Ack Received: " + cmdBlockName + " - " +
                               cmdName + "(" + senderName + "->" +
                               receiverName + ")" + "; Payload - " +
                               payload2Hex(message["CanMsg"].DATA))
-            if False != printLog:
+            if printLog:
                 print("Error Ack Received: " + cmdBlockName + " - " + cmdName +
                       "(" + senderName + "->" + receiverName + ")" +
                       "; Payload - " + payload2Hex(message["CanMsg"].DATA))
@@ -225,7 +225,7 @@ class CanFd(object):
                               " - " + cmdName + "(" + senderName + "->" +
                               receiverName + ")" + "; Payload - " +
                               payload2Hex(message["CanMsg"].DATA))
-            if False != printLog:
+            if printLog:
                 print("Ack Received(bError assumed): " + cmdBlockName + " - " +
                       cmdName + "(" + senderName + "->" + receiverName + ")" +
                       "; Payload - " + payload2Hex(message["CanMsg"].DATA))
