@@ -493,9 +493,9 @@ class CanFd(object):
 
     def singleValueArray(self, receiver, subCmd, b1, b2, b3, index):
         cmdFilter = self.CanCmd(MyToolItBlock["Streaming"], subCmd, 0, 0)
-        messageIdFilter = cmdFilter
-        messageIdFilter = self.CanMessage20Id(messageIdFilter, receiver,
-                                              self.sender)
+        messageIdFilter = Identifier(command=cmdFilter,
+                                     sender=receiver,
+                                     receiver=self.sender).value
         messageIdFilter = hex(messageIdFilter)
         data = self.getReadMessageData(index)
         messageId = self.getReadMessageId(index)
@@ -576,8 +576,9 @@ class CanFd(object):
                             indexStart, indexEnd):
         messageIdFilter = self.CanCmd(MyToolItBlock["Streaming"], streamingCmd,
                                       0, 0)
-        messageIdFilter = self.CanMessage20Id(messageIdFilter, receiver,
-                                              self.sender)
+        messageIdFilter = Identifier(command=messageIdFilter,
+                                     sender=receiver,
+                                     receiver=self.sender).value
         messageIdFilter = hex(messageIdFilter)
         runIndex = indexStart
         array1 = []
@@ -631,8 +632,9 @@ class CanFd(object):
                                            indexEnd):
         messageIdFilter = self.CanCmd(MyToolItBlock["Streaming"], streamingCmd,
                                       0, 0)
-        messageIdFilter = self.CanMessage20Id(messageIdFilter, receiver,
-                                              self.sender)
+        messageIdFilter = Identifier(command=messageIdFilter,
+                                     sender=receiver,
+                                     receiver=self.sender).value
         messageIdFilter = hex(messageIdFilter)
         runIndex = indexStart
         array1 = []
@@ -1006,8 +1008,9 @@ class CanFd(object):
             MyToolItBlock["Configuration"],
             MyToolItConfiguration["CalibrateMeasurement"], 0,
             bErrorAck != False)
-        messageIdFilter = self.CanMessage20Id(messageIdFilter, receiver,
-                                              self.sender)
+        messageIdFilter = Identifier(command=messageIdFilter,
+                                     sender=receiver,
+                                     receiver=self.sender).value
         messageIdFilter = hex(messageIdFilter)
         byte1 = CalibrationMeassurement()
         byte1.asbyte = 0
@@ -1054,8 +1057,9 @@ class CanFd(object):
                         printLog=False):
         messageIdFilter = self.CanCmd(MyToolItBlock["StatisticalData"], subCmd,
                                       0, bErrorAck != False)
-        messageIdFilter = self.CanMessage20Id(messageIdFilter, receiver,
-                                              self.sender)
+        messageIdFilter = Identifier(command=messageIdFilter,
+                                     sender=receiver,
+                                     receiver=self.sender).value
         messageIdFilter = hex(messageIdFilter)
         msgAck = self.cmdSendData(receiver,
                                   MyToolItBlock["StatisticalData"],
@@ -1171,12 +1175,6 @@ class CanFd(object):
         CanCmd |= request << 1
         CanCmd |= error
         return CanCmd
-
-    def CanMessage20Id(self, command, sender, receiver):
-        ID = (command << 12)
-        ID |= (sender << 6)
-        ID |= receiver
-        return ID
 
     def cTypesArrayToArray(self, dataArray, Offset, end):
         counter = 0
