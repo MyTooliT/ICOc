@@ -236,12 +236,12 @@ class CanFd(object):
                            bError=False,
                            sendTime=None,
                            notAckIdleWaitTimeMs=0.001):
-        if 200 > waitMs:
+        if waitMs < 200:
             self.__exitError("Meantime between send retry to low(" +
                              str(waitMs) + "ms)")
-        if None == sendTime:
+        if sendTime is None:
             sendTime = self.getTimeMs()
-        if None == currentIndex:
+        if currentIndex is None:
             currentIndex = self.GetReadArrayIndex()
         if currentIndex >= self.GetReadArrayIndex():
             currentIndex = self.GetReadArrayIndex() - 1
@@ -251,17 +251,17 @@ class CanFd(object):
             print("Message ID Send: " + hex(CanMsg.ID))
             print("Message DATA Send: " + payload2Hex(CanMsg.DATA))
         returnMessage = self.WriteFrame(CanMsg)
-        if "Error" != returnMessage:
+        if returnMessage != "Error":
             waitTimeMax = self.getTimeMs() + waitMs
-            if False != bError:
+            if bError:
                 CanMsgAckError = self.CanMessage20Ack(CanMsg)
                 CanMsgAck = self.CanMessage20AckError(CanMsg)
             else:
                 CanMsgAck = self.CanMessage20Ack(CanMsg)
                 CanMsgAckError = self.CanMessage20AckError(CanMsg)
             returnMessage = "Run"
-            while "Run" == returnMessage:
-                if (waitTimeMax < self.getTimeMs()):
+            while returnMessage == "Run":
+                if waitTimeMax < self.getTimeMs():
                     returnMessage = self.WriteFrameWaitAckTimeOut(
                         CanMsg, printLog)
                 elif sendTime > message["PcTime"]:
@@ -273,7 +273,7 @@ class CanFd(object):
                 elif CanMsgAckError.ID == message["CanMsg"].ID:
                     returnMessage = self.WriteFrameWaitAckError(
                         message, bError, printLog)
-                elif currentIndex < (self.GetReadArrayIndex() - 1):
+                elif currentIndex < self.GetReadArrayIndex() - 1:
                     currentIndex += 1
                     message = self.readArray[currentIndex]
                 else:
