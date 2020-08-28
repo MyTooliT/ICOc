@@ -183,19 +183,6 @@ class CanFd(object):
     def CanTimeStampStart(self, CanTimeStampStart):
         self.PeakCanTimeStampStart = CanTimeStampStart
 
-    def ComparePayloadEqual(self, payload1, payload2):
-        bEqual = False
-        if None != payload1 and None != payload2:
-            if len(payload1) == len(payload2):
-                bEqual = True
-                for i in range(0, len(payload1)):
-                    if payload1[i] != payload2[i]:
-                        bEqual = False
-                        break
-        else:
-            bEqual = True
-        return bEqual
-
     def WriteFrame(self, CanMsg):
         returnMessage = CanMsg
         if returnMessage != "Error":
@@ -299,9 +286,9 @@ class CanFd(object):
                         CanMsg, printLog)
                 elif sendTime > message["PcTime"]:
                     message = self.readArray[0]
-                elif CanMsgAck.ID == message[
-                        "CanMsg"].ID and self.ComparePayloadEqual(
-                            list(message["CanMsg"].DATA), assumedPayload):
+                elif CanMsgAck.ID == message["CanMsg"].ID and (
+                        assumedPayload is None
+                        or list(message["CanMsg"].DATA) == assumedPayload):
                     returnMessage = self.WriteFrameWaitAckOk(message)
                 elif CanMsgAckError.ID == message["CanMsg"].ID:
                     returnMessage = self.WriteFrameWaitAckError(
