@@ -303,9 +303,9 @@ class CanFd(object):
                     bError=bErrorAck,
                     sendTime=sendTime,
                     notAckIdleWaitTimeMs=notAckIdleWaitTimeMs)
-                if "Error" != returnMessage:
+                if returnMessage != "Error":
                     break
-                elif (retries - 1) == i:
+                elif i == retries - 1:
                     identifier = Identifier(CanMsg.ID)
                     cmdBlockName = identifier.block_name()
                     cmdName = identifier.block_command_name()
@@ -316,12 +316,12 @@ class CanFd(object):
                                       senderName + "->" + receiverName + ")" +
                                       "; Payload - " +
                                       payload2Hex(CanMsg.DATA))
-                    if False != printLog:
+                    if printLog:
                         print("Message Request Failed: " + cmdBlockName +
                               " - " + cmdName + "(" + senderName + "->" +
                               receiverName + ")" + "; Payload - " +
                               payload2Hex(CanMsg.DATA))
-                    if False != bErrorExit:
+                    if bErrorExit:
                         self.__exitError("To many retries(" + str(retries) +
                                          ")")
             time.sleep(0.01)
