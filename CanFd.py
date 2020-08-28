@@ -342,11 +342,11 @@ class CanFd(object):
             printLog=printLog,
             bErrorExit=bErrorExit,
             notAckIdleWaitTimeMs=notAckIdleWaitTimeMs)
-        if msgAck != "Error" and False == bErrorExit:
+        if msgAck != "Error" and not bErrorExit:
             self.__exitError("Command was not send able")
-        if False != log:
+        if log:
             canCmd = self.CanCmd(blockCmd, subCmd, 1, 0)
-            if "Error" != msgAck:
+            if msgAck != "Error":
                 self.Logger.Info(
                     MyToolItNetworkName[self.sender] + "->" +
                     MyToolItNetworkName[receiver] + "(CanTimeStamp: " +
