@@ -1149,7 +1149,7 @@ class CanFd(object):
             command
         error:
             Specifies if you want to set the error bit (`0`) or not (`1`).
-            Please note that the values have these values according to the
+            Please note that the values above are correct according to the
             documentation. According to the usage in the tool, it would make
             more sense that these value are swapped, since most calls of this
             function use `0` as argument for the error value.
