@@ -208,19 +208,13 @@ class CanFd(object):
     def WriteFrameWaitAckError(self, message, bError, printLog):
         identifier = Identifier(message["CanMsg"].ID)
         payload = payload2Hex(message["CanMsg"].DATA)
-        if bError:
-            info = (f"Error acknowledgement received: {identifier}; " +
-                    f"Payload: {payload}")
-            self.Logger.Error(info)
-            if printLog:
-                print(info)
-        else:
-            info = (
-                f"Acknowledgement received (error assumed): {identifier}; " +
-                f"Payload: {payload}")
-            self.Logger.Error(info)
-            if printLog:
-                print(info)
+        info = (f"Error acknowledgement received: {identifier}; "
+                if bError else
+                f"Acknowledgement received (error assumed): {identifier}; ")
+        info += f"Payload: {payload}"
+        self.Logger.Error(info)
+        if printLog:
+            print(info)
         return self.WriteFrameWaitAckOk(message)
 
     def WriteFrameWaitAckTimeOut(self, CanMsg, printLog):
