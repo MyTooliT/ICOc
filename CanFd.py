@@ -207,28 +207,20 @@ class CanFd(object):
 
     def WriteFrameWaitAckError(self, message, bError, printLog):
         identifier = Identifier(message["CanMsg"].ID)
-        cmdBlockName = identifier.block_name()
-        cmdName = identifier.block_command_name()
-        senderName = identifier.sender_name()
-        receiverName = identifier.receiver_name()
+        payload = payload2Hex(message["CanMsg"].DATA)
         if bError:
-            self.Logger.Error("Error Ack Received: " + cmdBlockName + " - " +
-                              cmdName + "(" + senderName + "->" +
-                              receiverName + ")" + "; Payload - " +
-                              payload2Hex(message["CanMsg"].DATA))
+            info = (f"Error acknowledgement received: {identifier}; " +
+                    f"Payload: {payload}")
+            self.Logger.Error(info)
             if printLog:
-                print("Error Ack Received: " + cmdBlockName + " - " + cmdName +
-                      "(" + senderName + "->" + receiverName + ")" +
-                      "; Payload - " + payload2Hex(message["CanMsg"].DATA))
+                print(info)
         else:
-            self.Logger.Error("Ack Received(bError assumed): " + cmdBlockName +
-                              " - " + cmdName + "(" + senderName + "->" +
-                              receiverName + ")" + "; Payload - " +
-                              payload2Hex(message["CanMsg"].DATA))
+            info = (
+                f"Acknowledgement received (error assumed): {identifier}; " +
+                f"Payload: {payload}")
+            self.Logger.Error(info)
             if printLog:
-                print("Ack Received(bError assumed): " + cmdBlockName + " - " +
-                      cmdName + "(" + senderName + "->" + receiverName + ")" +
-                      "; Payload - " + payload2Hex(message["CanMsg"].DATA))
+                print(info)
         return self.WriteFrameWaitAckOk(message)
 
     def WriteFrameWaitAckTimeOut(self, CanMsg, printLog):
