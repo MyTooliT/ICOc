@@ -363,10 +363,6 @@ class CanFd(object):
         # time.sleep(0.2)  # synch to read thread TODO: Really kick it out?
         return index
 
-    """
-    Send cmd and return Ack
-    """
-
     def cmdSendData(self,
                     receiver,
                     blockCmd,
@@ -377,6 +373,9 @@ class CanFd(object):
                     bErrorAck=False,
                     printLog=False,
                     bErrorExit=True):
+        """
+        Send cmd and return Ack
+        """
         cmd = self.CanCmd(blockCmd, subCmd, 1, 0)
         message = self.CanMessage20(cmd, self.sender, receiver, payload)
         index = self.GetReadArrayIndex()
@@ -418,11 +417,11 @@ class CanFd(object):
         time.sleep(2)
         return retMsg
 
-    """
-    Get EEPROM Write Request Counter, please note that the count start is power on
-    """
-
     def u32EepromWriteRequestCounter(self, receiver):
+        """
+        Get EEPROM Write Request Counter, please note that the count start is
+        power on
+        """
         index = self.cmdSend(receiver, MyToolItBlock["Eeprom"],
                              MyToolItEeprom["WriteRequest"], [0] * 8)
         dataReadBack = self.getReadMessageData(index)[4:]
@@ -1315,11 +1314,10 @@ class CanFd(object):
         self.bConnected = (0 < self.bBlueToothCheckConnect(stuNr))
         return self.bConnected
 
-    """
-    Write name and get name (bluetooth command)
-    """
-
     def vBlueToothNameWrite(self, receiver, DeviceNr, Name):
+        """
+        Write name and get name (bluetooth command)
+        """
         cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"],
                           1, 0)
         nameList = [0, 0, 0, 0, 0, 0]
@@ -1339,11 +1337,10 @@ class CanFd(object):
         message = self.CanMessage20(cmd, self.sender, receiver, Payload)
         self.tWriteFrameWaitAckRetries(message, retries=2)
 
-    """
-    Get name (bluetooth command)
-    """
-
     def BlueToothNameGet(self, receiver, DeviceNr):
+        """
+        Get name (bluetooth command)
+        """
         cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"],
                           1, 0)
         payload = [
@@ -1363,11 +1360,10 @@ class CanFd(object):
         Name = sArray2String(Name)
         return Name
 
-    """
-    Get address (bluetooth command)
-    """
-
     def BlueToothAddressGet(self, receiver, DeviceNr):
+        """
+        Get address (bluetooth command)
+        """
         cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"],
                           1, 0)
         payload = [
@@ -1379,11 +1375,10 @@ class CanFd(object):
         Address = Address[2:]
         return iMessage2Value(Address)
 
-    """
-    Get RSSI (Bluetooth command)
-    """
-
     def BlueToothRssiGet(self, receiver, DeviceNr):
+        """
+        Get RSSI (Bluetooth command)
+        """
         cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"],
                           1, 0)
         message = self.CanMessage20(
@@ -1395,11 +1390,10 @@ class CanFd(object):
         ack = to8bitSigned(ack)
         return ack
 
-    """
-    Connect to STH by connect to MAC Address command
-    """
-
     def iBlueToothConnect2MacAddr(self, receiver, iMacAddr):
+        """
+        Connect to STH by connect to MAC Address command
+        """
         cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"],
                           1, 0)
         au8Payload = [SystemCommandBlueTooth["DeviceConnectMacAddr"], 0]
@@ -1417,11 +1411,10 @@ class CanFd(object):
             self.bConnected = True
         return iMacAddrReadBack
 
-    """
-    Connect to device via name
-    """
-
     def bBlueToothConnectPollingName(self, stuNr, sName, log=True):
+        """
+        Connect to device via name
+        """
         self.sDevName = None
         endTime = time.time() + BluetoothTime["Connect"]
         self.Logger.Info("Try to connect to Device Name: " + sName)
@@ -1476,11 +1469,10 @@ class CanFd(object):
             })
         return devList
 
-    """
-    Connect to device via Bluetooth Address
-    """
-
     def bBlueToothConnectPollingAddress(self, stuNr, iAddress, bLog=True):
+        """
+        Connect to device via Bluetooth Address
+        """
         endTime = time.time() + BluetoothTime["Connect"]
         self.Logger.Info("Try to connect to Test Device Address: " +
                          str(iAddress))
