@@ -1168,8 +1168,8 @@ class CanFd(object):
         request = request & 1
         error = error & 1
         CanCmd = block << 10
-        CanCmd |= (cmd << 2)
-        CanCmd |= (request << 1)
+        CanCmd |= cmd << 2
+        CanCmd |= request << 1
         CanCmd |= error
         return CanCmd
 
