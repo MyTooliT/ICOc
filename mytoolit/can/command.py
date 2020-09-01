@@ -88,6 +88,33 @@ class Command:
         if error:
             set_part(start=0, width=1, number=int(not (error)))
 
+    def __repr__(self):
+        """Get a textual representation of the command
+
+        Returns
+        -------
+
+        A string that describes the various attributes of the command
+
+        Example
+        -------
+
+                      block   command A E
+        >>> Command(0b001000_00000100_0_1)
+        Block: StatisticalData, Command: ProductionDate, Request, Error
+        """
+
+        request = (self.value >> 1) & 1
+        error = not (self.value & 1)
+
+        attributes = filter(None, [
+            f"Block: {self.block_name()}",
+            f"Command: {self.block_command_name()}",
+            "Request" if request else "Acknowledge", "Error" if error else None
+        ])
+
+        return ', '.join(attributes)
+
     def block(self):
         """Get the block
 
