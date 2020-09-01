@@ -76,3 +76,22 @@ class Command:
 
         if error:
             set_part(start=0, width=1, number=int(not (error)))
+
+    def block(self):
+        """Get the block
+
+        Returns
+        -------
+
+        The block number of the command
+
+        Example
+        -------
+
+                      block   command A E
+        >>> Command(0b000011_00000000_0_0).block()
+        3
+        """
+
+        return (self.value >> 10) & 0b111111
+
