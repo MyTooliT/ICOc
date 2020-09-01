@@ -28,8 +28,8 @@ class Message:
         -------
 
         >>> message = Message(TPCANMsg())
-
         """
+
         self.pcan_message = pcan_message
 
     def __repr__(self):
@@ -49,6 +49,7 @@ class Message:
         >>> Message(pcan_message)
         [STH1 → STH14, Block: System, Command: Verboten, Acknowledge, Error]
         """
+
         return repr(Identifier(self.pcan_message.ID))
 
 
