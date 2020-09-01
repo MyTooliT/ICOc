@@ -95,6 +95,24 @@ class Command:
 
         return (self.value >> 10) & 0b111111
 
+    def block_command(self):
+        """Get the block command number
+
+        Returns
+        -------
+
+        The block command number of the command
+
+        Example
+        -------
+
+                      block   command A E
+        >>> Command(0b001000_00000100_0_0).block_command()
+        4
+        """
+
+        return (self.value >> 2) & 0xff
+
 
 # -- Main ---------------------------------------------------------------------
 
