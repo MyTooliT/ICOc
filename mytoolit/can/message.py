@@ -44,10 +44,11 @@ class Message:
         -------
 
         >>> pcan_message = TPCANMsg()
-        >>> pcan_message.ID = Identifier(command=0, sender=1, receiver=14
-        ...                             ).value
+        >>> pcan_message.ID = Identifier(block=0, block_command=1,
+        ...                             request= True, error=False,
+        ...                             sender=1, receiver=14).value
         >>> Message(pcan_message)
-        [STH1 → STH14, Block: System, Command: Verboten, Acknowledge, Error]
+        [STH1 → STH14, Block: System, Command: Reset, Request]
         """
 
         return repr(Identifier(self.pcan_message.ID))
