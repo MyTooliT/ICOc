@@ -1,3 +1,14 @@
+# -- Imports ------------------------------------------------------------------
+
+from os.path import abspath, dirname
+from sys import path as module_path
+
+# Add path for custom libraries
+repository_root = dirname(dirname(dirname(abspath(__file__))))
+module_path.append(repository_root)
+
+from MyToolItCommands import MyToolItBlock
+
 # -- Class --------------------------------------------------------------------
 
 
@@ -94,6 +105,27 @@ class Command:
         """
 
         return (self.value >> 10) & 0b111111
+
+    def block_name(self):
+        """Get a short description of the block
+
+        Returns
+        -------
+
+        A short textual representation of the block number
+
+        Examples
+        --------
+                      block   command A E
+        >>> Command(0b101000_00000010_0_0).block_name()
+        'Configuration'
+
+                      block   command A E
+        >>> Command(0b111101_00000010_0_0).block_name()
+        'EEPROM'
+        """
+
+        return MyToolItBlock.inverse.get(self.block(), "Unknown")
 
     def block_command(self):
         """Get the block command number
