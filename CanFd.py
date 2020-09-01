@@ -422,7 +422,7 @@ class CanFd(object):
         Get EEPROM Write Request Counter, please note that the count start is
         power on
         """
-        index = self.cmdSend(receiver, MyToolItBlock["Eeprom"],
+        index = self.cmdSend(receiver, MyToolItBlock["EEPROM"],
                              MyToolItEeprom["WriteRequest"], [0] * 8)
         dataReadBack = self.getReadMessageData(index)[4:]
         u32WriteRequestCounter = iMessage2Value(dataReadBack)

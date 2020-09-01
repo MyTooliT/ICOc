@@ -810,7 +810,7 @@ class TestSTH(TestCase):
                 read_length = 4 if length > 4 else length
                 payload = [address, offset, read_length, *reserved]
                 index = self.can.cmdSend(MyToolItNetworkNr['STH1'],
-                                         MyToolItBlock['Eeprom'],
+                                         MyToolItBlock['EEPROM'],
                                          MyToolItEeprom['Read'],
                                          payload,
                                          log=False)
@@ -867,7 +867,7 @@ class TestSTH(TestCase):
                     address, offset, write_length, *reserved, *write_data
                 ]
                 self.can.cmdSend(MyToolItNetworkNr['STH1'],
-                                 MyToolItBlock['Eeprom'],
+                                 MyToolItBlock['EEPROM'],
                                  MyToolItEeprom['Write'],
                                  payload,
                                  log=False)

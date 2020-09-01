@@ -104,7 +104,7 @@ MyToolItBlock = bidict({
     "Streaming": 0x04,
     "StatisticalData": 0x08,
     "Configuration": 0x28,
-    "Eeprom": 0x3D,
+    "EEPROM": 0x3D,
     "ProductData": 0x3E,
     "Test": 0x3F,
 })
@@ -243,7 +243,7 @@ blocknumber_to_commands = {
     MyToolItBlock["Streaming"]: MyToolItStreaming,
     MyToolItBlock["StatisticalData"]: MyToolItStatData,
     MyToolItBlock["Configuration"]: MyToolItConfiguration,
-    MyToolItBlock["Eeprom"]: MyToolItEeprom,
+    MyToolItBlock["EEPROM"]: MyToolItEeprom,
     MyToolItBlock["ProductData"]: MyToolItProductData,
     MyToolItBlock["Test"]: MyToolItTest,
 }
@@ -253,7 +253,7 @@ CommandBlock = {
     MyToolItBlock["Streaming"]: "Command Block Streaming",
     MyToolItBlock["StatisticalData"]: "Command Block Statistical Data",
     MyToolItBlock["Configuration"]: "Command Block Configuration",
-    MyToolItBlock["Eeprom"]: "Command Block EEPROM",
+    MyToolItBlock["EEPROM"]: "Command Block EEPROM",
     MyToolItBlock["ProductData"]: "Command Block Product Data",
     MyToolItBlock["Test"]: "Command Block Test",
 }

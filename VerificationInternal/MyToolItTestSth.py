@@ -742,7 +742,7 @@ class TestSth(unittest.TestCase):
         for offset in range(0, 256, 4):
             au8Payload = [iPage, 0xFF & offset, 4, 0] + au8Content
             self.Can.cmdSend(MyToolItNetworkNr["STH1"],
-                             MyToolItBlock["Eeprom"], MyToolItEeprom["Write"],
+                             MyToolItBlock["EEPROM"], MyToolItEeprom["Write"],
                              au8Payload)
         self.Can.Logger.Info("Page Write Time: " +
                              str(self.Can.getTimeMs() - timeStamp) + "ms")
@@ -756,7 +756,7 @@ class TestSth(unittest.TestCase):
         for offset in range(0, 256, 4):
             au8Payload = [iPage, 0xFF & offset, 4, 0, 0, 0, 0, 0]
             index = self.Can.cmdSend(MyToolItNetworkNr["STH1"],
-                                     MyToolItBlock["Eeprom"],
+                                     MyToolItBlock["EEPROM"],
                                      MyToolItEeprom["Read"], au8Payload)
             dataReadBack = self.Can.getReadMessageData(index)
             for dataByte in dataReadBack[4:]:
@@ -6706,14 +6706,14 @@ class TestSth(unittest.TestCase):
         au8Payload = [5, 20, 4, 0]
         au8Payload.extend(au8ProductionDate[:4])
         self.Can.cmdSend(MyToolItNetworkNr["STH1"],
-                         MyToolItBlock["Eeprom"],
+                         MyToolItBlock["EEPROM"],
                          MyToolItEeprom["Write"],
                          au8Payload,
                          log=False)
         au8Payload = [5, 24, 4, 0]
         au8Payload.extend(au8ProductionDate[4:])
         self.Can.cmdSend(MyToolItNetworkNr["STH1"],
-                         MyToolItBlock["Eeprom"],
+                         MyToolItBlock["EEPROM"],
                          MyToolItEeprom["Write"],
                          au8Payload,
                          log=False)
@@ -6736,7 +6736,7 @@ class TestSth(unittest.TestCase):
         startData = []
         for offset in range(0, 256, 4):
             index = self.Can.cmdSend(
-                MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"],
+                MyToolItNetworkNr["STH1"], MyToolItBlock["EEPROM"],
                 MyToolItEeprom["Read"],
                 [EepromPage["Statistics"], 0xFF & offset, 4, 0, 0, 0, 0, 0])
             dataReadBack = self.Can.getReadMessageData(index)
@@ -6779,7 +6779,7 @@ class TestSth(unittest.TestCase):
             payload = [EepromPage["Statistics"], 0xFF & offset, 4, 0]
             payload.extend(startData[offset:offset + 4])
             self.Can.cmdSend(MyToolItNetworkNr["STH1"],
-                             MyToolItBlock["Eeprom"], MyToolItEeprom["Write"],
+                             MyToolItBlock["EEPROM"], MyToolItEeprom["Write"],
                              payload)
         self.Can.Logger.Info("Page Write Time: " +
                              str(self.Can.getTimeMs() - timeStamp) + "ms")
@@ -6804,7 +6804,7 @@ class TestSth(unittest.TestCase):
         startData = []
         for offset in range(0, 256, 4):
             index = self.Can.cmdSend(
-                MyToolItNetworkNr["STH1"], MyToolItBlock["Eeprom"],
+                MyToolItNetworkNr["STH1"], MyToolItBlock["EEPROM"],
                 MyToolItEeprom["Read"],
                 [EepromPage["ProductData"], 0xFF & offset, 4, 0, 0, 0, 0, 0])
             dataReadBack = self.Can.getReadMessageData(index)
@@ -6824,14 +6824,14 @@ class TestSth(unittest.TestCase):
                 au8Payload = [EepromPage["ProductData"], 0xFF & offset, 4, 0
                               ] + au8Content
                 self.Can.cmdSend(MyToolItNetworkNr["STH1"],
-                                 MyToolItBlock["Eeprom"],
+                                 MyToolItBlock["EEPROM"],
                                  MyToolItEeprom["Write"], au8Payload)
             for offset in range(0, 256, 4):
                 au8Payload = [
                     EepromPage["ProductData"], 0xFF & offset, 4, 0, 0, 0, 0, 0
                 ]
                 index = self.Can.cmdSend(MyToolItNetworkNr["STH1"],
-                                         MyToolItBlock["Eeprom"],
+                                         MyToolItBlock["EEPROM"],
                                          MyToolItEeprom["Read"], au8Payload)
                 dataReadBack = self.Can.getReadMessageData(index)
                 self.assertEqual(dataReadBack[4:],
@@ -6845,7 +6845,7 @@ class TestSth(unittest.TestCase):
             payload = [EepromPage["ProductData"], 0xFF & offset, 4, 0]
             payload.extend(startData[offset:offset + 4])
             self.Can.cmdSend(MyToolItNetworkNr["STH1"],
-                             MyToolItBlock["Eeprom"], MyToolItEeprom["Write"],
+                             MyToolItBlock["EEPROM"], MyToolItEeprom["Write"],
                              payload)
         self.Can.Logger.Info("Page Write Time: " +
                              str(self.Can.getTimeMs() - timeStamp) + "ms")
@@ -6893,7 +6893,7 @@ class TestSth(unittest.TestCase):
                         EepromPage[sPage], 0xFF & offset, 4, 0, 0, 0, 0, 0
                     ]
                     self.Can.cmdSend(MyToolItNetworkNr["STH1"],
-                                     MyToolItBlock["Eeprom"],
+                                     MyToolItBlock["EEPROM"],
                                      MyToolItEeprom["Read"], au8Payload)
         u32EepromWriteRequestCounterTestEnd = self.Can.u32EepromWriteRequestCounter(
             MyToolItNetworkNr["STH1"])
@@ -6923,7 +6923,7 @@ class TestSth(unittest.TestCase):
                 uPage = uPageOffset + uPageStart
                 au8Payload = [uPage, 12, 4, 0, 0, 0, 0, 0]
                 self.Can.cmdSend(MyToolItNetworkNr["STH1"],
-                                 MyToolItBlock["Eeprom"],
+                                 MyToolItBlock["EEPROM"],
                                  MyToolItEeprom["Write"],
                                  au8Payload,
                                  log=False)
@@ -6932,7 +6932,7 @@ class TestSth(unittest.TestCase):
                 uPage += uPageStart
                 au8Payload = [uPage, 12, 4, 0, 0, 0, 0, 0]
                 self.Can.cmdSend(MyToolItNetworkNr["STH1"],
-                                 MyToolItBlock["Eeprom"],
+                                 MyToolItBlock["EEPROM"],
                                  MyToolItEeprom["Read"],
                                  au8Payload,
                                  log=False)

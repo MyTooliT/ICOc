@@ -1585,7 +1585,7 @@ class myToolItWatch():
                             tEepromSpecialConfig.asbyte, 0, 0, 0, 0
                         ]
                         index = self.Can.cmdSend(iReceiver,
-                                                 MyToolItBlock["Eeprom"],
+                                                 MyToolItBlock["EEPROM"],
                                                  MyToolItEeprom["Read"],
                                                  payload,
                                                  log=False)
@@ -1688,7 +1688,7 @@ class myToolItWatch():
                         au8Payload = [address, 0xFF & offset, 4, 0]
                         au8Payload.extend(au8WritePackage)
                         self.Can.cmdSend(iReceiver,
-                                         MyToolItBlock["Eeprom"],
+                                         MyToolItBlock["EEPROM"],
                                          MyToolItEeprom["Write"],
                                          au8Payload,
                                          log=False)

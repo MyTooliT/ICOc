@@ -742,7 +742,7 @@ class TestSth(unittest.TestCase):
         for offset in range(0, 256, 4):
             au8Payload = [iPage, 0xFF & offset, 4, 0] + au8Content
             self.Can.cmdSend(MyToolItNetworkNr["STH1"],
-                             MyToolItBlock["Eeprom"], MyToolItEeprom["Write"],
+                             MyToolItBlock["EEPROM"], MyToolItEeprom["Write"],
                              au8Payload)
         self.Can.Logger.Info("Page Write Time: " +
                              str(self.Can.getTimeMs() - timeStamp) + "ms")
@@ -756,7 +756,7 @@ class TestSth(unittest.TestCase):
         for offset in range(0, 256, 4):
             au8Payload = [iPage, 0xFF & offset, 4, 0, 0, 0, 0, 0]
             index = self.Can.cmdSend(MyToolItNetworkNr["STH1"],
-                                     MyToolItBlock["Eeprom"],
+                                     MyToolItBlock["EEPROM"],
                                      MyToolItEeprom["Read"], au8Payload)
             dataReadBack = self.Can.getReadMessageData(index)
             for dataByte in dataReadBack[4:]:

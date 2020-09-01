@@ -328,7 +328,7 @@ class TestStu(unittest.TestCase):
                         au8Payload = [address, 0xFF & offset, 4, 0]
                         au8Payload.extend(au8WritePackage)
                         self.Can.cmdSend(iReceiver,
-                                         MyToolItBlock["Eeprom"],
+                                         MyToolItBlock["EEPROM"],
                                          MyToolItEeprom["Write"],
                                          au8Payload,
                                          log=False)
@@ -423,7 +423,7 @@ class TestStu(unittest.TestCase):
                     for offset in range(0, readLengthAlligned, 4):
                         payload = [address, 0xFF & offset, 4, 0, 0, 0, 0, 0]
                         index = self.Can.cmdSend(iReceiver,
-                                                 MyToolItBlock["Eeprom"],
+                                                 MyToolItBlock["EEPROM"],
                                                  MyToolItEeprom["Read"],
                                                  payload,
                                                  log=False)
