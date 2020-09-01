@@ -7,6 +7,8 @@ from sys import path as module_path
 repository_root = dirname(dirname(dirname(abspath(__file__))))
 module_path.append(repository_root)
 
+from mytoolit.can.command import Command
+
 from MyToolItCommands import blocknumber_to_commands, MyToolItBlock
 from MyToolItNetworkNumbers import MyToolItNetworkName
 
@@ -88,7 +90,10 @@ class Identifier:
         self.value = identifier[0] if identifier else 0
 
         if command:
-            set_part(start=12, width=16, number=command)
+            # A Command can be both a number or a `Command` object
+            command_as_number = command if isinstance(command,
+                                                      int) else command.value
+            set_part(start=12, width=16, number=command_as_number)
         if sender:
             set_part(start=6, width=5, number=sender)
         if receiver:
@@ -118,18 +123,8 @@ class Identifier:
         [STH2 → STH3, Block: Unknown, Command: Unknown, Request]
         """
 
-        command_field = self.command()
-        request = (command_field >> 1) & 1
-        error = not (command_field & 1)
-
-        attributes = filter(None, [
-            f"{self.sender_name()} → " + f"{self.receiver_name()}",
-            f"Block: {self.block_name()}",
-            f"Command: {self.block_command_name()}",
-            "Request" if request else "Acknowledge", "Error" if error else None
-        ])
-
-        return '[' + ', '.join(attributes) + ']'
+        return (f"[{self.sender_name()} → {self.receiver_name()}, " +
+                f"{Command(self.command())}]")
 
     def command(self):
         """Get the command part of the identifier
@@ -173,7 +168,7 @@ class Identifier:
         '0b10001111000001'
         """
 
-        return (self.value >> 14) & 0b111111_11111111
+        return Command(self.command()).value >> 2
 
     def block(self):
         """Get the block
@@ -191,7 +186,7 @@ class Identifier:
         3
         """
 
-        return (self.value >> 22) & 0b111111
+        return Command(self.command()).block()
 
     def block_name(self):
         """Get the name of the command block
@@ -215,7 +210,7 @@ class Identifier:
         'Streaming'
         """
 
-        return MyToolItBlock.inverse.get(self.block(), "Unknown")
+        return Command(self.command()).block_name()
 
     def block_command(self):
         """Get the block command
@@ -233,7 +228,7 @@ class Identifier:
         8
         """
 
-        return (self.value >> 14) & 0xff
+        return Command(self.command()).block_command()
 
     def block_command_name(self):
         """Get the name of the block command
@@ -252,11 +247,7 @@ class Identifier:
         'Verboten'
         """
 
-        try:
-            return blocknumber_to_commands[self.block()].inverse[
-                self.block_command()]
-        except KeyError:
-            return "Unknown"
+        return Command(self.command()).block_command_name()
 
     def sender(self):
         """Get the sender of the message
