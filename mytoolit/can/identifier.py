@@ -22,6 +22,10 @@ class Identifier:
             self,
             *identifier,
             command=None,
+            block=None,
+            block_command=None,
+            error=None,
+            request=None,
             sender=None,
             receiver=None,
     ):
@@ -31,7 +35,14 @@ class Identifier:
         provide command, sender and receiver. If, you decide to specify both
         the identifier value and one of the keyword arguments, then the
         keyword arguments will be used to overwrite specific parts of the
-        identifier. For more information, please take a look at the examples.
+        identifier.
+
+        Smaller parts (smaller bit width) will overwrite larger parts. For
+        example, if you decide to both specify the command and the block
+        (which is part of the command), then the block bits will be used to
+        overwrite the block bits in the specified command.
+
+        For more information, please take a look at the examples.
 
         Parameters
         ----------
@@ -42,6 +53,20 @@ class Identifier:
         command:
             The whole command including group, number, error bit, and
             acknowledgement bit
+
+        block:
+            The block of the command (part of the command)
+
+        block_command:
+            The block command (part of the command)
+
+        request:
+            A boolean value that specifies if the identifier represents an
+            request (or an acknowledgement)
+
+        error:
+            A boolean value that specifies if the identifier represents an
+            error or not (part of the command)
 
         sender:
             The sender of the message
@@ -73,13 +98,12 @@ class Identifier:
         >>> identifier.command()
         512
 
-        >>> command = Command(block=0, block_command=1, request=False,
-        ...                   error=False)
-        >>> identifier = Identifier(command=command, sender=31, receiver=1)
+        >>> identifier = Identifier(block=4, block_command=1, request=False,
+        ...                         error=False, sender=31, receiver=1)
         >>> identifier.block_name()
-        'System'
+        'Streaming'
         >>> identifier.block_command_name()
-        'Reset'
+        'Temperature'
         """
 
         def set_part(start, width, number):
@@ -102,6 +126,14 @@ class Identifier:
             command_as_number = command if isinstance(command,
                                                       int) else command.value
             set_part(start=12, width=16, number=command_as_number)
+        if list(filter(None, [block, block_command, request, error])):
+            set_part(start=12,
+                     width=16,
+                     number=Command((self.value >> 12) & 0xffff,
+                                    block=block,
+                                    block_command=block_command,
+                                    request=request,
+                                    error=error).value)
         if sender:
             set_part(start=6, width=5, number=sender)
         if receiver:
