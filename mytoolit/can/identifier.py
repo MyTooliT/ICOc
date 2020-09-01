@@ -72,6 +72,14 @@ class Identifier:
         2
         >>> identifier.command()
         512
+
+        >>> command = Command(block=0, block_command=1, request=False,
+        ...                   error=False)
+        >>> identifier = Identifier(command=command, sender=31, receiver=1)
+        >>> identifier.block_name()
+        'System'
+        >>> identifier.block_command_name()
+        'Reset'
         """
 
         def set_part(start, width, number):
