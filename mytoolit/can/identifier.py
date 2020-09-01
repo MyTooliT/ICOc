@@ -107,15 +107,15 @@ class Identifier:
 
                          V  block   number A E R send. R rec.
         >>> Identifier(0b0_000000_00000000_0_0_0_00001_0_00010)
-        [STH1 -> STH2, Block: System, Command: Verboten, Acknowledge, Error]
+        [STH1 → STH2, Block: System, Command: Verboten, Acknowledge, Error]
 
                          V  block   number A E R send. R rec.
         >>> Identifier(0b0_000100_00000001_1_1_0_00010_0_00011)
-        [STH2 -> STH3, Block: Streaming, Command: Temperature, Request]
+        [STH2 → STH3, Block: Streaming, Command: Temperature, Request]
 
                          V  block   number A E R send. R rec.
         >>> Identifier(0b0_010101_10000001_1_1_0_00010_0_00011)
-        [STH2 -> STH3, Block: Unknown, Command: Unknown, Request]
+        [STH2 → STH3, Block: Unknown, Command: Unknown, Request]
         """
 
         command_field = self.command()
@@ -123,7 +123,7 @@ class Identifier:
         error = not (command_field & 1)
 
         attributes = filter(None, [
-            f"{self.sender_name()} -> " + f"{self.receiver_name()}",
+            f"{self.sender_name()} → " + f"{self.receiver_name()}",
             f"Block: {self.block_name()}",
             f"Command: {self.block_command_name()}",
             "Request" if request else "Acknowledge", "Error" if error else None

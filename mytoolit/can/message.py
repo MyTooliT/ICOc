@@ -42,7 +42,7 @@ class Message:
         >>> pcan_message.ID = Identifier(command=0, sender=1, receiver=14
         ...                             ).value
         >>> Message(pcan_message)
-        [STH1 -> STH14, Block: System, Command: Verboten, Acknowledge, Error]
+        [STH1 → STH14, Block: System, Command: Verboten, Acknowledge, Error]
         """
         return repr(Identifier(self.pcan_message.ID))
 
