@@ -7,7 +7,7 @@ from sys import path as module_path
 repository_root = dirname(dirname(dirname(abspath(__file__))))
 module_path.append(repository_root)
 
-from MyToolItCommands import MyToolItBlock
+from MyToolItCommands import MyToolItBlock, blocknumber_to_commands
 
 # -- Class --------------------------------------------------------------------
 
@@ -144,6 +144,32 @@ class Command:
         """
 
         return (self.value >> 2) & 0xff
+
+    def block_command_name(self):
+        """Get the name of the block command
+
+        Returns
+        -------
+
+        A short textual representation of the block command
+
+        Examples
+        --------
+
+                      block   command A E
+        >>> Command(0b101000_00000000_0_0).block_command_name()
+        'Acceleration'
+
+                      block   command A E
+        >>> Command(0b000000_00001011_0_0).block_command_name()
+        'Bluetooth'
+        """
+
+        try:
+            return blocknumber_to_commands[self.block()].inverse[
+                self.block_command()]
+        except KeyError:
+            return "Unknown"
 
 
 # -- Main ---------------------------------------------------------------------
