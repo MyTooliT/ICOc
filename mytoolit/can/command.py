@@ -102,14 +102,17 @@ class Command:
 
         A string that describes the various attributes of the command
 
-        Example
-        -------
+        Examples
+        --------
 
                       block   command A E
-        >>> Command(0b001000_00000100_0_1)
-        Block: StatisticalData, Command: ProductionDate, Request, Error
-        """
+        >>> Command(0b001000_00000100_0_0)
+        Block: StatisticalData, Command: ProductionDate, Acknowledge, Error
 
+                      block   command A E
+        >>> Command(block=0, block_command=0x0c, request=True, error=False)
+        Block: System, Command: Routing, Request
+        """
         request = (self.value >> 1) & 1
         error = not (self.value & 1)
 
