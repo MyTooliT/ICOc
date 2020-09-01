@@ -20,7 +20,7 @@ class Command:
             *command,
             block=None,
             block_command=None,
-            request=True,
+            request=None,
             error=None,
     ):
         """Create a new command from the given arguments
@@ -57,7 +57,13 @@ class Command:
         Examples
         --------
 
-        >>> command = Command(block=0, block_command=0)
+        >>> Command(block=0, block_command=0).value
+        0
+
+                        block   command A E
+        >>> command = 0b001000_00000100_0_0
+        >>> bin(Command(command).value)
+        '0b10000000010000'
 
         """
 
@@ -76,16 +82,16 @@ class Command:
 
         self.value = command[0] if command else 0
 
-        if block:
+        if block is not None:
             set_part(start=10, width=6, number=block)
 
-        if block_command:
+        if block_command is not None:
             set_part(start=2, width=8, number=block_command)
 
-        if request:
+        if request is not None:
             set_part(start=1, width=1, number=int(bool(request)))
 
-        if error:
+        if error is not None:
             set_part(start=0, width=1, number=int(not (error)))
 
     def __repr__(self):
