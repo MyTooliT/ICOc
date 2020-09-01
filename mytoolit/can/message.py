@@ -47,11 +47,19 @@ class Message:
         >>> pcan_message.ID = Identifier(block=0, block_command=1,
         ...                             request= True, error=False,
         ...                             sender=1, receiver=14).value
+        >>> pcan_message.DATA[0] = 0xfe
+        >>> pcan_message.DATA[1] = 0xfe
+        >>> pcan_message.LEN = 2
         >>> Message(pcan_message)
-        [STH1 → STH14, Block: System, Command: Reset, Request]
+        [STH1 → STH14, Block: System, Command: Reset, Request] 0xfe, 0xfe
         """
 
-        return repr(Identifier(self.pcan_message.ID))
+        representation = ", ".join([
+            hex(self.pcan_message.DATA[byte])
+            for byte in range(self.pcan_message.LEN)
+        ])
+
+        return f"{Identifier(self.pcan_message.ID)} {representation}"
 
 
 # -- Main ---------------------------------------------------------------------
