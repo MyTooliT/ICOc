@@ -2,6 +2,11 @@
 
 from can.interfaces.pcan.basic import TPCANMsg
 
+# Add current path for doctest execution
+from os.path import abspath, dirname
+from sys import path as module_path
+module_path.append(dirname(abspath(__file__)))
+
 from identifier import Identifier
 
 # -- Class --------------------------------------------------------------------
