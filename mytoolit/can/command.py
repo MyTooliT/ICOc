@@ -95,3 +95,9 @@ class Command:
 
         return (self.value >> 10) & 0b111111
 
+
+# -- Main ---------------------------------------------------------------------
+
+if __name__ == '__main__':
+    from doctest import testmod
+    testmod()
