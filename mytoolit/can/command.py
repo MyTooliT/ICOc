@@ -92,7 +92,7 @@ class Command:
             set_part(start=1, width=1, number=int(bool(request)))
 
         if error is not None:
-            set_part(start=0, width=1, number=int(not (error)))
+            set_part(start=0, width=1, number=int(bool(error)))
 
     def __repr__(self):
         """Get a textual representation of the command
@@ -107,14 +107,14 @@ class Command:
 
                       block   command A E
         >>> Command(0b001000_00000100_0_0)
-        Block: StatisticalData, Command: ProductionDate, Acknowledge, Error
+        Block: StatisticalData, Command: ProductionDate, Acknowledge
 
                       block   command A E
         >>> Command(block=0, block_command=0x0c, request=True, error=False)
         Block: System, Command: Routing, Request
         """
         request = (self.value >> 1) & 1
-        error = not (self.value & 1)
+        error = self.value & 1
 
         attributes = filter(None, [
             f"Block: {self.block_name()}",

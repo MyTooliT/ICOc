@@ -52,7 +52,7 @@ class Message:
         >>> pcan_message.LEN = 2
         >>> Message(pcan_message) # doctest:+NORMALIZE_WHITESPACE
         [STH1 → STH14, Block: System, Command: Reset, Request]
-        0b111000001001110 2 0xfe 0xfe
+        0b110000001001110 2 0xfe 0xfe
         """
 
         identifier = Identifier(self.pcan_message.ID)
