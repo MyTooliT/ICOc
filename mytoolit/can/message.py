@@ -52,7 +52,7 @@ class Message:
         >>> pcan_message.LEN = 2
         >>> Message(pcan_message) # doctest:+NORMALIZE_WHITESPACE
         [STH1 → STH14, Block: System, Command: Reset, Request]
-        0b110000001001110 2 0xfe 0xfe
+        0b00000000000000110000001001110 2 0xfe 0xfe
         """
 
         identifier = Identifier(self.pcan_message.ID)
@@ -62,7 +62,7 @@ class Message:
             for byte in range(self.pcan_message.LEN)
         ])
         bit_representation = " ".join([
-            bin(identifier.value),
+            f"0b{identifier.value:029b}",
             str(self.pcan_message.LEN), payload_representation
         ])
 
