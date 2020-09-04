@@ -35,7 +35,7 @@ def to8bitSigned(num):
 
 Watch = {
     "IntervalDimMinX": 10,  # Minimum interval time in ms
-    "DisplayTimeMax": 10,  # Maximum Display Time in seconds
+    "DisplayTimeMax": 10,  # Maximum display time of graphical plot in seconds
     "DisplaySampleRateMs": 1000,  # Maximum Display Time in ms
     "DisplayBlockSize": 100,
     "AliveTimeOutMs":
@@ -410,7 +410,8 @@ class myToolItWatch():
         self.sAdcRef = sAdcRef
 
     def vDisplayTime(self, iDisplayTime):
-        if Watch["DisplayTimeMax"] < iDisplayTime:
+        """Set the length of the graphical plot in seconds"""
+        if iDisplayTime > Watch["DisplayTimeMax"]:
             iDisplayTime = Watch["DisplayTimeMax"]
         self.iDisplayTime = int(iDisplayTime)
 
