@@ -71,7 +71,7 @@ class Command:
             """Store bit pattern number at bit start of the identifier"""
 
             command_ones = 0xffff
-            mask = 2**width - 1
+            mask = (1 << width) - 1
 
             # Set all bits for targeted part to 0
             self.value &= (mask << start) ^ command_ones
