@@ -21,6 +21,10 @@ Commands:
          \\gecko_sdk_suite\\v2.7\\app\\bluetooth\\examples_ncp_host\
          \\ota_dfu\\exe"
 
+GUI:
+  HOST: localhost # Socket address of Matplotlib GUI
+  PORT: 50007 # Port of Matplotlib GUI
+
 Operator:
   # The name of the operator that executes the hardware tests
   Name: "Dummy User"

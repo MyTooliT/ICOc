@@ -1,5 +1,9 @@
 # Version 1.0.5
 
+## Configuration
+
+- We moved the host and port configuration values of the [Matplotlib](https://matplotlib.org) GUI from the XML configuration file into the [YAML configuration](../Configuration/config.yaml).
+
 ## Documentation
 
 - We documented how to execute the [automatic tests](Guidelines/Test.md) for software.

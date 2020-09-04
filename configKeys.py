@@ -99,11 +99,3 @@ class ConfigKeys():
                                 atDbData["sKeyStu"] = str(
                                     tHwRevSub.find('Key').text)
         return atDbData
-
-    def atPlotterSocket(self, sSocketName):
-        atSocketData = {}
-        for tSocketData in self.root.find('Plotter'):
-            if sSocketName == tSocketData.get('name'):
-                atSocketData["sHost"] = str(tSocketData.find('Host').text)
-                atSocketData["iPort"] = int(tSocketData.find('Port').text)
-        return atSocketData

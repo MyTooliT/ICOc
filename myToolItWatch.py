@@ -24,6 +24,8 @@ import socket
 import array
 import struct
 
+from mytoolit.config import settings
+
 
 def to8bitSigned(num):
     mask7 = 128  # Check 8th bit ~ 2^8
@@ -110,13 +112,9 @@ class myToolItWatch():
         self.tXmlConfig = ConfigKeys(self.sXmlFileName)
 
     def vXmlConfigurationPlotterHost(self):
-        """
-        Load xml Configuration for Plotter i.e. host and port for socket
-        @return Nothing
-        """
-        atPloterSocket = self.tXmlConfig.atPlotterSocket("standard")
-        self.sPloterSocketHost = atPloterSocket["sHost"]
-        self.iPloterSocketPort = atPloterSocket["iPort"]
+        """Set Matplotlib GUI host and port"""
+        self.sPloterSocketHost = settings.GUI.Host
+        self.iPloterSocketPort = settings.GUI.Port
 
     def _statusWords(self):
         ErrorWord = SthErrorWord()
