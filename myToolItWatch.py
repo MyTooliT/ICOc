@@ -397,17 +397,14 @@ class myToolItWatch():
         try:
             iAcquisitionTime = AdcAcquisitionTime[iAquistionTime]
             iOversampling = AdcOverSamplingRate[iOversampling]
-            bTakeIt = True
-        except:
-            bTakeIt = False
-
-        if False != bTakeIt:
             self.samplingRate = int(
                 calcSamplingRate(iPrescaler, iAcquisitionTime, iOversampling) +
                 0.5)
             self.iPrescaler = iPrescaler
             self.iAquistionTime = iAcquisitionTime
             self.iOversampling = iOversampling
+        except:
+            pass
 
     def vAdcRefVConfig(self, sAdcRef):
         self.sAdcRef = sAdcRef
