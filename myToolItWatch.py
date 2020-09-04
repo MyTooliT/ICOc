@@ -79,26 +79,26 @@ class myToolItWatch():
     def __exit__(self):
         self.guiProcessStop()
         self.Can.ReadThreadReset()
-        if False != self.Can.bConnected:
+        if self.Can.bConnected:
             self._BlueToothStatistics()
             ReceiveFailCounter = self._RoutingInformation()
             self._statusWords()
-            if (0 < ReceiveFailCounter):
+            if ReceiveFailCounter > 0:
                 self.bError = True
             self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
-        if False != self.Can.bConnected:
+        if self.Can.bConnected:
             self.Can.readThreadStop()
         self.Can.Logger.Info("End Time Stamp")
 
-        if (False != self.bError):
+        if self.bError:
             self.Can.Logger.Info("!!!!Error!!!!")
             print("!!!!Error!!!!")
         else:
             self.Can.Logger.Info("Fin")
         self.Can.__exit__()
-        if (False != self.bError):
+        if self.bError:
             raise
-        if False != self.bSave:
+        if self.bSave:
             self.xmlSave()
 
     def vXmlConfigSet(self, sXmlFileName):
