@@ -1121,13 +1121,13 @@ class CanFd(object):
         return [command, sender, receiver]
 
     def CanMessage20Ack(self, CANMsg):
-        fields = self.CanMessage20GetFields(CANMsg.ID)
-        ackCmd = self.CanCmd(self.CanCmdGetBlock(fields[0]),
-                             self.CanCmdGetBlockCmd(fields[0]), 0, 0)
+        command, sender, receiver = self.CanMessage20GetFields(CANMsg.ID)
+        ackCmd = self.CanCmd(self.CanCmdGetBlock(command),
+                             self.CanCmdGetBlockCmd(command), 0, 0)
         data = []
         for i in range(CANMsg.LEN):
             data.append(int(CANMsg.DATA[i]))
-        return self.CanMessage20(ackCmd, fields[2], fields[1], data)
+        return self.CanMessage20(ackCmd, receiver, sender, data)
 
     def CanMessage20AckError(self, CANMsg):
         fields = self.CanMessage20GetFields(CANMsg.ID)
