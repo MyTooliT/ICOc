@@ -1137,7 +1137,7 @@ class CanFd(object):
             data.append(int(CANMsg.DATA[i]))
         return self.CanMessage20(ackCmd, fields[2], fields[1], data)
 
-    def CanCmd(self, block, cmd, request, error=0):
+    def CanCmd(self, block, cmd, request=1, error=0):
         """Return the binary representation of a MyTooliT CAN command
 
         Parameters
