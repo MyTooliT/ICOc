@@ -308,6 +308,39 @@ class Identifier:
 
         return Command(self.command()).is_acknowledgment()
 
+    def set_acknowledgment(self, value=True):
+        """Set the acknowledgment bit to the given value
+
+        Arguments
+        ---------
+
+        value:
+            A boolean that specifies if this identifier should represent an
+            acknowledgment or not
+
+        Examples
+        --------
+
+                                      V  block   number A E R send. R rec.
+        >>> identifier = Identifier(0b0_000011_00001000_0_0_0_00111_0_00010)
+        >>> identifier.is_acknowledgment()
+        True
+        >>> identifier.set_acknowledgment(False).is_acknowledgment()
+        False
+
+        >>> identifier.set_acknowledgment(True).is_acknowledgment()
+        True
+
+        Returns
+        -------
+
+        The modified identifier object
+        """
+
+        command = Command(self.command()).set_acknowledgment(value)
+        self.value = Identifier(self.value, command=command).value
+        return self
+
     def sender(self):
         """Get the sender of the message
 
