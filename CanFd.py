@@ -1151,11 +1151,11 @@ class CanFd(object):
             Specifies if you want to request (`1`) or acknowledge (`0`) the
             command
         error:
-            Specifies if you want to set the error bit (`0`) or not (`1`).
-            Please note that the values above are correct according to the
-            documentation. According to the usage in the tool, it would make
-            more sense that these value are swapped, since most calls of this
-            function use `0` as argument for the error value.
+            Specifies if you want to set the error bit (`1`) or not (`0`).
+            Please note that the values above are swapped according to the old
+            documentation. According to the usage in the tool, it makes sense
+            that the value are correct, since most calls of this function use
+            `0` as argument for the error value.
 
         Returns
         -------
