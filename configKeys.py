@@ -12,10 +12,6 @@ class ConfigKeys():
         self.tree = ET.parse(self.sXmlFileName)
         self.root = self.tree.getroot()
 
-    """
-
-    """
-
     def close(self):
         self.tree.close()
 
