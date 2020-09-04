@@ -365,7 +365,7 @@ class myToolItWatch():
         self.bVoltageY = bool(bY)
         self.bVoltageZ = bool(bZ)
 
-        if (dataSets in DataSets):
+        if dataSets in DataSets:
             self.tVoltageDataFormat = DataSets[dataSets]
         else:
             dataSets = self.Can.dataSetsCan20(bX, bY, bZ)
