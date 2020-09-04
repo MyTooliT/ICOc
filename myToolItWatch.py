@@ -49,7 +49,6 @@ class myToolItWatch():
         self.KeyBoardInterrupt = False
         self.bEepromIgnoreReadErrors = False
         self.bError = False
-        self.bClose = True
         self.iMsgLoss = 0
         self.iMsgsTotal = 0
         self.iMsgCounterLast = 0
