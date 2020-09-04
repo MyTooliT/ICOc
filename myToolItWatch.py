@@ -411,9 +411,7 @@ class myToolItWatch():
 
     def vDisplayTime(self, iDisplayTime):
         """Set the length of the graphical plot in seconds"""
-        if iDisplayTime > Watch["DisplayTimeMax"]:
-            iDisplayTime = Watch["DisplayTimeMax"]
-        self.iDisplayTime = int(iDisplayTime)
+        self.iDisplayTime = int(min(iDisplayTime, Watch["DisplayTimeMax"]))
 
     def vRunTime(self, runTime, intervalTime):
         self.iIntervalTime = int(intervalTime)
