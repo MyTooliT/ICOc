@@ -113,13 +113,13 @@ class Command:
         >>> Command(block=0, block_command=0x0c, request=True, error=False)
         Block: System, Command: Routing, Request
         """
-        request = (self.value >> 1) & 1
         error = self.value & 1
 
         attributes = filter(None, [
             f"Block: {self.block_name()}",
             f"Command: {self.block_command_name()}",
-            "Request" if request else "Acknowledge", "Error" if error else None
+            "Acknowledge" if self.is_acknowledgment() else "Request",
+            "Error" if error else None
         ])
 
         return ', '.join(attributes)
@@ -206,6 +206,27 @@ class Command:
                 self.block_command()]
         except KeyError:
             return "Unknown"
+
+    def is_acknowledgment(self):
+        """Checks if this command represents an acknowledgment
+
+        Returns
+        -------
+
+        True if the command is for an acknowledgement, or false otherwise
+
+        Examples
+        --------
+
+                      block   command A E
+        >>> Command(0b101000_00000000_0_0).is_acknowledgment()
+        True
+
+        >>> Command(request=True).is_acknowledgment()
+        False
+        """
+
+        return bool((self.value >> 1) & 1 == 0)
 
 
 # -- Main ---------------------------------------------------------------------
