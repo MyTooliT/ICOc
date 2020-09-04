@@ -109,12 +109,11 @@ class myToolItWatch():
         self.sXmlFileName = sXmlFileName
         self.tXmlConfig = ConfigKeys(self.sXmlFileName)
 
-    """
-    Load xml Configuration for Plotter i.e. host and port for socket
-    @return Nothing
-    """
-
     def vXmlConfigurationPlotterHost(self):
+        """
+        Load xml Configuration for Plotter i.e. host and port for socket
+        @return Nothing
+        """
         atPloterSocket = self.tXmlConfig.atPlotterSocket("standard")
         self.sPloterSocketHost = atPloterSocket["sHost"]
         self.iPloterSocketPort = atPloterSocket["iPort"]
