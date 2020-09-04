@@ -110,7 +110,7 @@ class Identifier:
             """Store bit pattern number at bit start of the identifier"""
 
             identifier_ones = 0b11111_11111111_11111111_11111111
-            mask = 2**width - 1
+            mask = (1 << width) - 1
 
             # Set all bits for targeted part to 0
             self.value &= (mask << start) ^ identifier_ones
