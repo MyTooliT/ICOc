@@ -228,6 +228,45 @@ class Command:
 
         return bool((self.value >> 1) & 1 == 0)
 
+    def set_acknowledgment(self, value=True):
+        """Set the acknowledgment bit to the given value
+
+        Arguments
+        ---------
+
+        value:
+            A boolean that specifies if the command represents an
+            acknowledgment or not
+
+        Examples
+        --------
+
+        >>> Command().set_acknowledgment().is_acknowledgment()
+        True
+
+        >>> Command().set_acknowledgment(True).is_acknowledgment()
+        True
+
+        >>> Command().set_acknowledgment(False).is_acknowledgment()
+        False
+
+        Returns
+        -------
+
+        The modified command object
+        """
+
+        request = not value
+        request_bit = 1 << 1
+
+        if request:
+            self.value |= request_bit
+        else:
+            command_ones = 0xff
+            self.value &= request_bit ^ command_ones
+
+        return self
+
 
 # -- Main ---------------------------------------------------------------------
 
