@@ -381,6 +381,7 @@ class myToolItWatch():
         self.iDevNr = None
 
     def vDeviceAddressSet(self, iAddress):
+        """Set bluetooth device address"""
         iAddress = int(iAddress, base=0)
         if 0 < iAddress and (2**48 - 1) > iAddress:
             iAddress = hex(iAddress)
