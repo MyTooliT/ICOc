@@ -314,11 +314,10 @@ class myToolItWatch():
         if "STH" == product:
             self.sProduct = "STH"
             self.Can.vSetReceiver(MyToolItNetworkNr["STH1"])
-            self.sConfig = sConfig
         elif "STU" == product:
             self.sProduct = "STU"
             self.Can.vSetReceiver(MyToolItNetworkNr["STU1"])
-            self.sConfig = sConfig
+        self.sConfig = sConfig
 
     def bSampleSetupSet(self, sSetup):
         bReturn = False
