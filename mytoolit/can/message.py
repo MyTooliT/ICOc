@@ -15,8 +15,14 @@ from identifier import Identifier
 class Message:
     """Wrapper class for CAN messages"""
 
-    def __init__(self, pcan_message):
-        """Create a new message based on the data of a PCAN message
+    def __init__(self, *pcan_message, identifier=None, payload=None):
+        """Create a new message based on the given attributes
+
+        Usually you will either specify the Peak CAN message directly, or
+        provide identifier and payload. If, you decide to specify both
+        the Peak CAN message and one of the keyword arguments, then the
+        keyword arguments will be used to overwrite specific parts of the
+        Peak CAN message.
 
         Parameters
         ----------
@@ -24,13 +30,33 @@ class Message:
         pcan_message:
             A PCAN message structure as used by the PCAN Basic API
 
-        Example
-        -------
+        identifier:
+            A 29 bit CAN identifier
+
+        payload:
+            An iterable over 8 bit values that stores the payload of the
+            message
+
+        Examples
+        --------
 
         >>> message = Message(TPCANMsg())
-        """
 
-        self.pcan_message = pcan_message
+        >>> identifier = Identifier(block=0, block_command=1)
+        >>> payload = [0xab, 0xcd]
+        >>> message = Message(identifier=identifier, payload=payload)
+
+        """
+        self.pcan_message = pcan_message[0] if pcan_message else TPCANMsg()
+
+        if identifier:
+            self.pcan_message.ID = identifier if isinstance(
+                identifier, int) else identifier.value
+
+        if payload:
+            for byte, data in enumerate(payload):
+                self.pcan_message.DATA[byte] = data
+            self.pcan_message.LEN = len(payload)
 
     def __repr__(self):
         """Get a textual representation of the current message
