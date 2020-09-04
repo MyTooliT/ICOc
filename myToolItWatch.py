@@ -1818,10 +1818,10 @@ class myToolItWatch():
             str(self.sAdcRef) + "(" + str(self.samplingRate) + ")")
         print("Acc Config(XYZ/DataSets): " + str(int(self.bAccX)) +
               str(int(self.bAccY)) + str(int(self.bAccZ)) + "/" +
-              str(DataSetsReverse[self.tAccDataFormat]))
+              str(DataSets.inverse[self.tAccDataFormat]))
         print("Voltage Config(XYZ/DataSets): " + str(int(self.bVoltageX)) +
               str(int(self.bVoltageY)) + str(int(self.bVoltageZ)) + "/" +
-              str(DataSetsReverse[self.tAccDataFormat]) + ("(X=Battery)"))
+              str(DataSets.inverse[self.tAccDataFormat]) + ("(X=Battery)"))
 
     def _vRunConsoleStartupLoggerPrint(self):
         self.Can.Logger.Info("XML File: " + str(self.sXmlFileName))
@@ -1848,12 +1848,12 @@ class myToolItWatch():
         self.Can.Logger.Info("Acc Config(XYZ/DataSets): " +
                              str(int(self.bAccX)) + str(int(self.bAccY)) +
                              str(int(self.bAccZ)) + "/" +
-                             str(DataSetsReverse[self.tAccDataFormat]))
+                             str(DataSets.inverse[self.tAccDataFormat]))
         self.Can.Logger.Info("Voltage Config(XYZ/DataSets): " +
                              str(int(self.bVoltageX)) +
                              str(int(self.bVoltageY)) +
                              str(int(self.bVoltageZ)) + "/" +
-                             str(DataSetsReverse[self.tAccDataFormat]) +
+                             str(DataSets.inverse[self.tAccDataFormat]) +
                              ("(X=Battery)"))
 
     def _vRunConsoleStartup(self):

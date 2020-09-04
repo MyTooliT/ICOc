@@ -537,7 +537,7 @@ AdcVRefValuemV = {
     AdcReference["6V6"]: 6000
 }
 
-DataSets = {
+DataSets = bidict({
     0: 0,
     1: 1,
     3: 2,
@@ -546,18 +546,7 @@ DataSets = {
     15: 5,
     20: 6,
     30: 7,
-}
-
-DataSetsReverse = {
-    0: 0,
-    1: 1,
-    2: 3,
-    3: 6,
-    4: 10,
-    5: 15,
-    6: 20,
-    7: 30,
-}
+})
 
 TestCommandSignal = {
     "Line": 1,

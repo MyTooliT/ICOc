@@ -236,7 +236,7 @@ class mwt(myToolItWatch):
             self.stdscr.addstr("Acc Config(XYZ/DataSets): " +
                                str(int(self.bAccX)) + str(int(self.bAccY)) +
                                str(int(self.bAccZ)) + "/" +
-                               str(DataSetsReverse[self.tAccDataFormat]) +
+                               str(DataSets.inverse[self.tAccDataFormat]) +
                                "\n")
             self.stdscr.addstr("\n")
             self.stdscr.addstr("a: Config ADC\n")
