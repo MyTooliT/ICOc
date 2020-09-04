@@ -289,6 +289,25 @@ class Identifier:
 
         return Command(self.command()).block_command_name()
 
+    def is_acknowledgment(self):
+        """Checks if the identifier represents an acknowledgment
+
+        Returns
+        -------
+
+        True if the identifier is for an acknowledgement, or false otherwise
+
+        Example
+        -------
+
+                         V  block   number A E R send. R rec.
+        >>> Identifier(0b0_000000_00000000_1_0_0_00101_0_00010
+        ...           ).is_acknowledgment()
+        False
+        """
+
+        return Command(self.command()).is_acknowledgment()
+
     def sender(self):
         """Get the sender of the message
 
