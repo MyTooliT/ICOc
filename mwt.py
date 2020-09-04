@@ -157,11 +157,11 @@ class mwt(myToolItWatch):
             self.vTerminalHolderConnectCommandsRunTimeIntervalTime()
         elif ord('s') == keyPress:
             self.stdscr.clear()
-            if False == self.KeyBoadInterrupt:
+            if False == self.KeyBoardInterrupt:
                 try:
                     self.vDataAquisition()
                 except KeyboardInterrupt:
-                    self.KeyBoadInterrupt = True
+                    self.KeyBoardInterrupt = True
                     self.__exit__()
                 bRun = False
         return [bRun, bContinue]
@@ -1245,7 +1245,7 @@ class mwt(myToolItWatch):
             try:
                 bRun = self.bTerminalMainMenu()
             except KeyboardInterrupt:
-                self.KeyBoadInterrupt = True
+                self.KeyBoardInterrupt = True
                 break
 
     def tTerminalHeaderExtended(self, devList=None):

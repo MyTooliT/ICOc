@@ -46,7 +46,7 @@ Watch = {
 class myToolItWatch():
     def __init__(self, *args, **kwargs):
         self.vXmlConfigSet('configKeys.xml')
-        self.KeyBoadInterrupt = False
+        self.KeyBoardInterrupt = False
         self.bEepromIgnoreReadErrors = False
         self.bError = False
         self.bClose = True
@@ -780,7 +780,7 @@ class myToolItWatch():
             self.vVoltageSet(bX, bY, bZ, -1)
 
     def reset(self):
-        if False == self.KeyBoadInterrupt:
+        if False == self.KeyBoardInterrupt:
             try:
                 self.Can.ReadThreadReset()
                 self.Can.cmdReset(MyToolItNetworkNr["STU1"])
@@ -789,10 +789,10 @@ class myToolItWatch():
                         self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"])))
                 self.guiProcessStop()
             except KeyboardInterrupt:
-                self.KeyBoadInterrupt = True
+                self.KeyBoardInterrupt = True
 
     def vDataAquisition(self):
-        if False == self.KeyBoadInterrupt:
+        if False == self.KeyBoardInterrupt:
             try:
                 if False != self.Can.bConnected:
                     self.Can.ConfigAdc(MyToolItNetworkNr["STH1"],
@@ -806,7 +806,7 @@ class myToolItWatch():
                 else:
                     self.Can.Logger.Error("Device not allocable")
             except KeyboardInterrupt:
-                self.KeyBoadInterrupt = True
+                self.KeyBoardInterrupt = True
             self.__exit__()
 
     def close(self):
@@ -861,7 +861,7 @@ class myToolItWatch():
                     pass
             self.__exit__()
         except KeyboardInterrupt:
-            self.KeyBoadInterrupt = True
+            self.KeyBoardInterrupt = True
             print("Data acquisition determined")
             self.__exit__()
 
