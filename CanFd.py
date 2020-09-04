@@ -5,6 +5,7 @@ import math
 from sys import stderr
 
 from mytoolit.can.identifier import Identifier
+from mytoolit.can.command import Command
 
 from MyToolItCommands import *
 from MyToolItNetworkNumbers import MyToolItNetworkNr, MyToolItNetworkName
@@ -1166,15 +1167,10 @@ class CanFd(object):
         # TODO: This method does not use `self` at all. Maybe it makes sense to
         # remove this code from the class and use a standalone function
         # instead.
-        block = block & 0x3F
-        cmd = cmd & 0xFF
-        request = request & 1
-        error = error & 1
-        CanCmd = block << 10
-        CanCmd |= cmd << 2
-        CanCmd |= request << 1
-        CanCmd |= error
-        return CanCmd
+        return Command(block=block,
+                       block_command=cmd,
+                       request=request,
+                       error=error).value
 
     def cTypesArrayToArray(self, dataArray, Offset, end):
         counter = 0
