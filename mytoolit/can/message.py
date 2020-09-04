@@ -1,6 +1,6 @@
 # -- Imports ------------------------------------------------------------------
 
-from can.interfaces.pcan.basic import TPCANMsg
+from can.interfaces.pcan.basic import PCAN_MESSAGE_EXTENDED, TPCANMsg
 
 # Add current path for doctest execution
 from os.path import abspath, dirname
@@ -48,6 +48,7 @@ class Message:
 
         """
         self.pcan_message = pcan_message[0] if pcan_message else TPCANMsg()
+        self.pcan_message.MSGTYPE = PCAN_MESSAGE_EXTENDED
 
         if identifier:
             self.pcan_message.ID = identifier if isinstance(
