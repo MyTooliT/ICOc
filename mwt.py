@@ -230,7 +230,7 @@ class mwt(myToolItWatch):
             self.stdscr.addstr(
                 "Adc Prescaler/AcquisitionTime/OversamplingRate/Reference(Samples/s): "
                 + str(self.iPrescaler) + "/" +
-                str(AdcAcquisitionTimeReverse[self.iAquistionTime]) + "/" +
+                str(AdcAcquisitionTime.inverse[self.iAquistionTime]) + "/" +
                 str(AdcOverSamplingRateReverse[self.iOversampling]) + "/" +
                 str(self.sAdcRef) + "(" + str(self.samplingRate) + ")\n")
             self.stdscr.addstr("Acc Config(XYZ/DataSets): " +
@@ -937,7 +937,7 @@ class mwt(myToolItWatch):
                                            str(int(self.bVoltageZ)) + "\n")
                         self.stdscr.addstr(" : XML Voltage Points(X/Y/Z): " +
                                            setup.find('Voltage').text + "\n")
-                        iAcquisitionTime = AdcAcquisitionTimeReverse[
+                        iAcquisitionTime = AdcAcquisitionTime.inverse[
                             self.iAquistionTime]
                         iOversampling = AdcOverSamplingRateReverse[
                             self.iOversampling]

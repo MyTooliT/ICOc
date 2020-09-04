@@ -411,7 +411,7 @@ CalibMeassurementTypeName = {
     "Calibration Measurement Type - OPV Output",
 }
 
-AdcAcquisitionTime = {
+AdcAcquisitionTime = bidict({
     1: 0,
     2: 1,
     3: 2,
@@ -422,20 +422,7 @@ AdcAcquisitionTime = {
     64: 7,
     128: 8,
     256: 9,
-}
-
-AdcAcquisitionTimeReverse = {
-    0: 1,
-    1: 2,
-    2: 3,
-    3: 4,
-    4: 8,
-    5: 16,
-    6: 32,
-    7: 64,
-    8: 128,
-    9: 256,
-}
+})
 
 AdcAcquisitionTimeName = {
     AdcAcquisitionTime[1]: "ADC Acquisition Time - 1 Cycle",
@@ -631,7 +618,7 @@ def au8Value2Array(iValue, iLength):
 
 
 def calcSamplingRate(prescaler, acquisitionTime, OverSamplingRate):
-    acquTime = AdcAcquisitionTimeReverse[acquisitionTime]
+    acquTime = AdcAcquisitionTime.inverse[acquisitionTime]
     samplingRate = AdcOverSamplingRateReverse[OverSamplingRate]
     return int(38400000 / ((prescaler + 1) * (acquTime + 13) * samplingRate) +
                0.5)

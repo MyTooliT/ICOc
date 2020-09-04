@@ -1718,7 +1718,7 @@ class myToolItWatch():
                     int(self.bVoltageY)) + str(int(self.bVoltageZ))
                 config.find('Prescaler').text = str(self.iPrescaler)
                 config.find('AcquisitionTime').text = str(
-                    AdcAcquisitionTimeReverse[self.iAquistionTime])
+                    AdcAcquisitionTime.inverse[self.iAquistionTime])
                 config.find('OverSamples').text = str(
                     AdcOverSamplingRateReverse[self.iOversampling])
                 config.find('AdcRef').text = str(self.sAdcRef)
@@ -1814,7 +1814,7 @@ class myToolItWatch():
         print(
             "Adc Prescaler/AcquisitionTime/OversamplingRate/Reference(Samples/s): "
             + str(self.iPrescaler) + "/" +
-            str(AdcAcquisitionTimeReverse[self.iAquistionTime]) + "/" +
+            str(AdcAcquisitionTime.inverse[self.iAquistionTime]) + "/" +
             str(AdcOverSamplingRateReverse[self.iOversampling]) + "/" +
             str(self.sAdcRef) + "(" + str(self.samplingRate) + ")")
         print("Acc Config(XYZ/DataSets): " + str(int(self.bAccX)) +
@@ -1843,7 +1843,7 @@ class myToolItWatch():
         self.Can.Logger.Info(
             "Adc Prescaler/AcquisitionTime/OversamplingRate/Reference(Samples/s): "
             + str(self.iPrescaler) + "/" +
-            str(AdcAcquisitionTimeReverse[self.iAquistionTime]) + "/" +
+            str(AdcAcquisitionTime.inverse[self.iAquistionTime]) + "/" +
             str(AdcOverSamplingRateReverse[self.iOversampling]) + "/" +
             str(self.sAdcRef) + "(" + str(self.samplingRate) + ")")
         self.Can.Logger.Info("Acc Config(XYZ/DataSets): " +
