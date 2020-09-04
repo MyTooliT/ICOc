@@ -419,11 +419,10 @@ class myToolItWatch():
             self.iIntervalTime = 0
         self.iRunTime = int(runTime)
 
-    """
-    sampleInterval in ms
-    """
-
     def vGraphInit(self, sampleInterval=200, blockSize=10):
+        """
+        sampleInterval in ms
+        """
         self.tDataPointTimeStamp = 0
         self.iPacketLossTimeStamp = 0
         self.iGraphBlockSize = blockSize
