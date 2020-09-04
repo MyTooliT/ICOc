@@ -415,7 +415,7 @@ class myToolItWatch():
 
     def vRunTime(self, runTime, intervalTime):
         self.iIntervalTime = int(intervalTime)
-        if Watch["IntervalDimMinX"] > self.iIntervalTime:
+        if self.iIntervalTime <= Watch["IntervalDimMinX"]:
             self.iIntervalTime = 0
         self.iRunTime = int(runTime)
 
