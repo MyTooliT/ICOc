@@ -6,6 +6,7 @@ from sys import stderr
 
 from mytoolit.can.identifier import Identifier
 from mytoolit.can.command import Command
+from mytoolit.can.message import Message
 
 from MyToolItCommands import *
 from MyToolItNetworkNumbers import MyToolItNetworkNr, MyToolItNetworkName
@@ -1094,19 +1095,10 @@ class CanFd(object):
         if len(data) > 8:
             return "Error "
 
-        # We create a TPCANMsg message structure
-        CANMsg = TPCANMsg()
-        CANMsg.ID = Identifier(command=command,
-                               sender=sender,
-                               receiver=receiver).value
-        CANMsg.LEN = len(data)
-        CANMsg.MSGTYPE = PCAN_MESSAGE_EXTENDED
-
-        for i in range(CANMsg.LEN):
-            CANMsg.DATA[i] = int(data[i])
-
-        # The message is sent to the configured hardware
-        return CANMsg
+        identifier = Identifier(command=command,
+                                sender=sender,
+                                receiver=receiver)
+        return Message(identifier=identifier, payload=data).pcan_message
 
     def CanCmdGetBlock(self, command):
         return 0x3F & (command >> 10)
