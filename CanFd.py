@@ -1075,11 +1075,15 @@ class CanFd(object):
                                   printLog=printLog)
         return msgAck["Payload"]
 
-    def statusWord0(self, receiver, payload=[0] * 8):
-        cmd = self.CanCmd(MyToolItBlock["System"],
-                          MyToolItSystem["StatusWord0"], 1, 0)
-        msg = self.CanMessage20(cmd, self.sender, receiver, payload)
-        psw0 = self.tWriteFrameWaitAckRetries(msg, retries=5)["Payload"]
+    def statusWord0(self, receiver):
+        message = Message(identifier=Identifier(block='System',
+                                                block_command='StatusWord0',
+                                                request=True,
+                                                sender=self.sender,
+                                                receiver=receiver),
+                          payload=[0] * 8)
+        psw0 = self.tWriteFrameWaitAckRetries(message.pcan_message,
+                                              retries=5)["Payload"]
         psw0 = AsciiStringWordBigEndian(psw0[0:4])
         return psw0
 
