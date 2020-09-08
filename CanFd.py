@@ -1106,12 +1106,6 @@ class CanFd(object):
     def CanCmdGetBlockCmd(self, command):
         return 0xFF & (command >> 2)
 
-    def CanMessage20GetFields(self, CANMsgId):
-        command = 0xFFFF & (CANMsgId >> 12)
-        sender = 0x3F & (CANMsgId >> 6)
-        receiver = 0x3F & (CANMsgId >> 0)
-        return [command, sender, receiver]
-
     def CanMessage20Ack(self, CANMsg):
         return Message(CANMsg).acknowledge().pcan_message
 
@@ -1175,7 +1169,7 @@ class CanFd(object):
                 iDs[msg.ID] = 1
 
         for iD in iDs:
-            [command, _sender, _receiver] = self.CanMessage20GetFields(iD)
+            command = Identifier(iD).command()
             cmds[command] = iDs[iD]
 
         return [iDs, cmds]
