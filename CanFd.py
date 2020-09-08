@@ -1103,9 +1103,6 @@ class CanFd(object):
     def CanCmdGetBlock(self, command):
         return 0x3F & (command >> 10)
 
-    def CanCmdGetBlockCmd(self, command):
-        return 0xFF & (command >> 2)
-
     def CanMessage20Ack(self, CANMsg):
         return Message(CANMsg).acknowledge().pcan_message
 
