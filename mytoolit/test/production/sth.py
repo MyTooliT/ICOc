@@ -1,14 +1,13 @@
 # -- Imports ------------------------------------------------------------------
 
-from base64 import b64encode
 from datetime import datetime
 from enum import Enum
 from os import environ, pathsep
 from os.path import abspath, dirname, isfile, join
 from re import escape, search
+from struct import pack, unpack
 from subprocess import run
 from sys import path as module_path
-from struct import pack, unpack
 from time import sleep
 from types import SimpleNamespace
 from unittest import TestCase, TextTestResult, TextTestRunner, main, skip
