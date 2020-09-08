@@ -1039,7 +1039,6 @@ class TestSTH(TestCase):
         def read_watchdog_reset_counter():
             return read_eeprom_unsigned(address=5, offset=16, length=4)
 
-        # noinspection PyUnusedLocal
         def write_watchdog_reset_counter(times):
             write_eeprom_unsigned(address=5, offset=16, length=4, value=times)
 
@@ -1238,7 +1237,14 @@ class TestSTH(TestCase):
         # = Watchdog Reset Counter =
         # ==========================
 
+        watchdog_reset_counter = 0
+        write_watchdog_reset_counter(watchdog_reset_counter)
         cls.watchdog_reset_counter = read_watchdog_reset_counter()
+        self.assertEqual(
+            watchdog_reset_counter, cls.watchdog_reset_counter,
+            f"Written watchdog reset counter value " +
+            f"“{watchdog_reset_counter} does not match read watchdog reset " +
+            f"counter value “{cls.watchdog_reset_counter}”")
 
         # ===================
         # = Production Date =
