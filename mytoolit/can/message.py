@@ -98,6 +98,43 @@ class Message:
 
         return f"{identifier}\n{bit_representation}"
 
+    def acknowledge(self, error=False):
+        """Returns an acknowledgment message object for this message
+
+        In the acknowledgment message receiver and sender will be swapped and
+        the request (acknowledge) bit will be set to 0 (acknowledge). The
+        payload of the acknowledgment message will be empty.
+
+        Returns
+        -------
+
+        An acknowledgment message for the current message
+
+        Example
+        -------
+
+        >>> identifier = Identifier(block=0, block_command=1, sender=5,
+        ...                         receiver=10)
+        >>> message = Message(identifier=identifier, payload=[0xaa])
+        >>> message.acknowledge()
+        [STH10 → STH5, Block: System, Command: Reset, Acknowledge]
+        0b00000000000000100001010000101 0
+        """
+
+        identifier = Identifier(self.pcan_message.ID)
+        block = identifier.block()
+        block_command = identifier.block_command()
+        sender = identifier.receiver()
+        receiver = identifier.sender()
+        acknowledgment_identifier = Identifier(block=block,
+                                               block_command=block_command,
+                                               request=False,
+                                               error=error,
+                                               sender=sender,
+                                               receiver=receiver)
+
+        return Message(identifier=acknowledgment_identifier, payload=[])
+
 
 # -- Main ---------------------------------------------------------------------
 
