@@ -1113,13 +1113,7 @@ class CanFd(object):
         return [command, sender, receiver]
 
     def CanMessage20Ack(self, CANMsg):
-        command, sender, receiver = self.CanMessage20GetFields(CANMsg.ID)
-        ackCmd = self.CanCmd(self.CanCmdGetBlock(command),
-                             self.CanCmdGetBlockCmd(command), 0, 0)
-        data = []
-        for i in range(CANMsg.LEN):
-            data.append(int(CANMsg.DATA[i]))
-        return self.CanMessage20(ackCmd, receiver, sender, data)
+        return Message(CANMsg).acknowledge().pcan_message
 
     def CanMessage20AckError(self, CANMsg):
         fields = self.CanMessage20GetFields(CANMsg.ID)
