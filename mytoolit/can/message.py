@@ -88,10 +88,13 @@ class Message:
             hex(self.pcan_message.DATA[byte])
             for byte in range(self.pcan_message.LEN)
         ])
-        bit_representation = " ".join([
+        bit_values = [
             f"0b{identifier.value:029b}",
             str(self.pcan_message.LEN), payload_representation
-        ])
+        ]
+        # Filter empty string, since otherwise there might be an additional
+        # space at the end of the representation for empty payloads
+        bit_representation = " ".join(filter(None, bit_values))
 
         return f"{identifier}\n{bit_representation}"
 
