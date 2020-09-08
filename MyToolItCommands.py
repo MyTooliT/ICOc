@@ -316,9 +316,9 @@ CommandBlockConfiguration = {
 }
 
 CommandBlockEeprom = {
-    MyToolItEeprom["Read"]: "Eeprom Command Read",
-    MyToolItEeprom["Write"]: "Eeprom Command Write",
-    MyToolItEeprom["WriteRequest"]: "Eeprom Command Write Request Counter",
+    MyToolItEeprom["Read"]: "EEPROM Command Read",
+    MyToolItEeprom["Write"]: "EEPROM Command Write",
+    MyToolItEeprom["WriteRequest"]: "EEPROM Command Write Request Counter",
 }
 
 CommandBlockProductData = {
