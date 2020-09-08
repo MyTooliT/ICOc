@@ -41,7 +41,7 @@ class Command:
             and error bits (16 bit)
 
         block:
-            A 6 bit number that specifies the block of the command
+            A 6 bit number or string that specifies the block of the command
 
         block_command:
             A 8 bit number that stores the number of the command in the
@@ -65,6 +65,9 @@ class Command:
         >>> bin(Command(command).value)
         '0b10000000010000'
 
+        >>> command = Command(block='System')
+        >>> command.block_name()
+        'System'
         """
 
         def set_part(start, width, number):
@@ -81,6 +84,12 @@ class Command:
             self.value |= number << start
 
         self.value = command[0] if command else 0
+
+        if isinstance(block, str):
+            try:
+                block = MyToolItBlock[block]
+            except KeyError:
+                raise ValueError(f"Unknown block: {block}")
 
         if block is not None:
             set_part(start=10, width=6, number=block)
