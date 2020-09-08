@@ -11,6 +11,7 @@
 ## STH Test
 
 - The EEPROM tests now also writes the firmware release name (`STH` → `Firmware` → `Release Name` in the [configuration](../Configuration/config.yaml)) into the EEPROM.
+- The EEPROM test now resets the under voltage counter to `0`.
 
 # Version 1.0.4
 

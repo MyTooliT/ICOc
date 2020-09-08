@@ -1033,7 +1033,6 @@ class TestSTH(TestCase):
         def read_under_voltage_counter():
             return read_eeprom_unsigned(address=5, offset=12, length=4)
 
-        # noinspection PyUnusedLocal
         def write_under_voltage_counter(times):
             write_eeprom_unsigned(address=5, offset=12, length=4, value=times)
 
@@ -1226,7 +1225,14 @@ class TestSTH(TestCase):
         # = Under Voltage Counter =
         # =========================
 
+        under_voltage_counter = 0
+        write_under_voltage_counter(under_voltage_counter)
         cls.under_voltage_counter = read_under_voltage_counter()
+        self.assertEqual(
+            under_voltage_counter, cls.under_voltage_counter,
+            f"Written under voltage counter value “{under_voltage_counter}” " +
+            "does not match read under voltage counter value " +
+            f"“{cls.under_voltage_counter}”")
 
         # ==========================
         # = Watchdog Reset Counter =
