@@ -72,7 +72,7 @@ class Message:
 
         >>> pcan_message = TPCANMsg()
         >>> pcan_message.ID = Identifier(block=0, block_command=1,
-        ...                             request= True, error=False,
+        ...                             request=True, error=False,
         ...                             sender=1, receiver=14).value
         >>> pcan_message.DATA[0] = 0xfe
         >>> pcan_message.DATA[1] = 0xfe
