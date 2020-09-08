@@ -68,6 +68,11 @@ class Command:
         >>> command = Command(block='System')
         >>> command.block_name()
         'System'
+
+        >>> Command(block='Does Not Exist')
+        Traceback (most recent call last):
+            ...
+        ValueError: Unknown block: Does Not Exist
         """
 
         def set_part(start, width, number):
