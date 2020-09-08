@@ -44,8 +44,7 @@ class Command:
             A 6 bit number or string that specifies the block of the command
 
         block_command:
-            A 8 bit number that stores the number of the command in the
-            specified block
+            A 8 bit number or string that specifies the block command
 
         request:
             A boolean value that specifies if the command is for a request or
@@ -73,6 +72,15 @@ class Command:
         Traceback (most recent call last):
             ...
         ValueError: Unknown block: Does Not Exist
+
+        >>> command = Command(block='Streaming', block_command='Acceleration')
+        >>> command.block_command_name()
+        'Acceleration'
+
+        >>> Command(block='Streaming', block_command='Does Not Exist')
+        Traceback (most recent call last):
+            ...
+        ValueError: Unknown block command: Does Not Exist
         """
 
         def set_part(start, width, number):
@@ -98,6 +106,17 @@ class Command:
 
         if block is not None:
             set_part(start=10, width=6, number=block)
+
+        if isinstance(block_command, str):
+            try:
+                block_command_names = blocknumber_to_commands[block]
+            except KeyError:
+                raise ValueError(f"Unknown block number: {block}")
+            else:
+                try:
+                    block_command = block_command_names[block_command]
+                except KeyError:
+                    raise ValueError(f"Unknown block command: {block_command}")
 
         if block_command is not None:
             set_part(start=2, width=8, number=block_command)
