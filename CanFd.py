@@ -1116,13 +1116,7 @@ class CanFd(object):
         return Message(CANMsg).acknowledge().pcan_message
 
     def CanMessage20AckError(self, CANMsg):
-        fields = self.CanMessage20GetFields(CANMsg.ID)
-        ackCmd = self.CanCmd(self.CanCmdGetBlock(fields[0]),
-                             self.CanCmdGetBlockCmd(fields[0]), 0, 1)
-        data = []
-        for i in range(CANMsg.LEN):
-            data.append(int(CANMsg.DATA[i]))
-        return self.CanMessage20(ackCmd, fields[2], fields[1], data)
+        return Message(CANMsg).acknowledge(error=True).pcan_message
 
     def CanCmd(self, block, cmd, request=1, error=0):
         """Return the binary representation of a MyTooliT CAN command
