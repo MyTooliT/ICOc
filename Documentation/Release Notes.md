@@ -8,6 +8,10 @@
 
 - We documented how to execute the [automatic tests](Guidelines/Test.md) for software.
 
+## STH Test
+
+- The EEPROM tests now also writes the firmware release name (`STH` → `Firmware` → `Release Name` in the [configuration](../Configuration/config.yaml)) into the EEPROM.
+
 # Version 1.0.4
 
 ## Documentation

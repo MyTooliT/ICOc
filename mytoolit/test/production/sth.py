@@ -982,6 +982,9 @@ class TestSTH(TestCase):
         def read_release_name():
             return read_eeprom_text(address=4, offset=24, length=8)
 
+        def write_release_name(text):
+            return write_eeprom_text(address=4, offset=24, length=8, text=text)
+
         def read_serial_number():
             return read_eeprom_text(address=4, offset=32, length=32)
 
@@ -1155,8 +1158,16 @@ class TestSTH(TestCase):
         # = Release Name =
         # ================
 
-        # We assume the firmware sets the release name itself
+        # Originally we assumed that this value would be set by the firmware
+        # itself. However, according to tests with SHAs with an empty EEPROM
+        # this is not the case.
+        release_name = settings.STH.Firmware.Release_Name
+        write_release_name(release_name)
         cls.release_name = read_release_name()
+        self.assertEqual(
+            release_name, cls.release_name,
+            f"Written firmware release name “{release_name}” does not " +
+            f"match read firmware release name “{cls.release_name}”")
 
         # =================
         # = Serial Number =

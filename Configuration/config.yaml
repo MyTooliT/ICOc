@@ -78,6 +78,8 @@ STH:
       # the repository.
       Flash: ../STH/builds/manufacturingImageSthv2.1.10.hex
       OTA:   ../STH/builds/OtaServer.gbl
+    # Code name of the current firmware release
+    Release Name: Tanja
 
   # Global Trade Item Number
   GTIN: 0
