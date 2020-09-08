@@ -409,15 +409,18 @@ class CanFd(object):
         return msgAck
 
     def cmdReset(self, receiver, retries=5, log=True):
-        if False != log:
-            self.Logger.Info("Reset " + MyToolItNetworkName[receiver])
-        cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Reset"], 1,
-                          0)
-        retMsg = self.tWriteFrameWaitAckRetries(self.CanMessage20(
-            cmd, self.sender, receiver, []),
-                                                retries=retries)
+        identifier = Identifier(block='System',
+                                block_command='Reset',
+                                sender=self.sender,
+                                receiver=receiver,
+                                request=True)
+        if log:
+            self.Logger.Info(f"Reset {identifier.receiver_name()}")
+
+        return_message = self.tWriteFrameWaitAckRetries(
+            Message(identifier=identifier).pcan_message, retries=retries)
         time.sleep(2)
-        return retMsg
+        return return_message
 
     def u32EepromWriteRequestCounter(self, receiver):
         """
