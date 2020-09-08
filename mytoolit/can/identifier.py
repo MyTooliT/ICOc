@@ -104,6 +104,13 @@ class Identifier:
         'Streaming'
         >>> identifier.block_command_name()
         'Temperature'
+
+        >>> identifier = Identifier(block='EEPROM',
+        ...                         block_command='Read')
+        >>> identifier.block_name()
+        'EEPROM'
+        >>> identifier.block_command_name()
+        'Read'
         """
 
         def set_part(start, width, number):
