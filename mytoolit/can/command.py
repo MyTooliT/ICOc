@@ -96,7 +96,15 @@ class Command:
             # Set command bits to given value
             self.value |= number << start
 
+        # ===========
+        # = Command =
+        # ===========
+
         self.value = command[0] if command else 0
+
+        # =========
+        # = Block =
+        # =========
 
         if isinstance(block, str):
             try:
@@ -106,6 +114,10 @@ class Command:
 
         if block is not None:
             set_part(start=10, width=6, number=block)
+
+        # =================
+        # = Block Command =
+        # =================
 
         if isinstance(block_command, str):
             try:
@@ -120,6 +132,10 @@ class Command:
 
         if block_command is not None:
             set_part(start=2, width=8, number=block_command)
+
+        # ===================
+        # = Request & Error =
+        # ===================
 
         if request is not None:
             set_part(start=1, width=1, number=int(bool(request)))
