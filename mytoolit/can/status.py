@@ -1,3 +1,14 @@
+# -- Imports ------------------------------------------------------------------
+
+from os.path import abspath, dirname
+from sys import path as module_path
+
+# Add path for custom libraries
+repository_root = dirname(dirname(dirname(abspath(__file__))))
+module_path.append(repository_root)
+
+from MyToolItCommands import NetworkStateName
+
 # -- Class --------------------------------------------------------------------
 
 
@@ -24,14 +35,24 @@ class StatusWord0:
 
         A string that describes the attributes of the status word
 
-        Example
-        -------
+        Examples
+        --------
 
-        >>> StatusWord0(10)
-        10
+        >>> StatusWord0(0b1010)
+        State: Network State Operating, No Error
+
+        >>> StatusWord0(0b1)
+        State: Network State Failure, Error
         """
 
-        return repr(self.value)
+        error = self.value & 1
+        state = (self.value >> 1) & 0b111
+        state_name = NetworkStateName[state]
+
+        description = ", ".join(
+            [f"State: {state_name}", f"{'' if error else 'No '}Error"])
+
+        return description
 
 
 # -- Main ---------------------------------------------------------------------
