@@ -47,6 +47,25 @@ class SthErrorWord(ctypes.Union):
 
 
 class SthStateWordFlags(ctypes.LittleEndianStructure):
+    """Format for status word 0 of the STH/SHA
+
+    bError: Error bit
+        - 0: No Error
+        - 1: Error
+
+    u3NetworkState: Current network state of STH
+        - 0: Failure
+        - 1: Error
+        - 2: Standby
+        - 3: Graceful Degradation 2
+        - 4: Graceful Degradation 1
+        - 5: Operating
+        - 6: Startup
+        - 7: No Change
+
+    Reserved: Reserved bits
+    """
+
     _fields_ = [
         ("bError", c_uint32, 1),
         ("u3NetworkState", c_uint32, 3),
