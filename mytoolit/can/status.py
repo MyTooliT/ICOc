@@ -69,10 +69,10 @@ class StatusWord0:
         """
 
         error = self.value & 1
-        state = (self.value >> 1) & 0b111
-        state_name = NetworkStateName[state]
 
-        attributes = [f"State: {state_name}", f"{'' if error else 'No '}Error"]
+        attributes = [
+            f"State: {self.state_name()}", f"{'' if error else 'No '}Error"
+        ]
 
         if self.type == NodeType.STU:
             radio_port_enabled = self.value >> 4 & 1
@@ -111,6 +111,27 @@ class StatusWord0:
         """
 
         return bool(self.value & 1)
+
+    def state_name(self):
+        """Get the name of the state represented by the status word
+
+        Returns
+        -------
+
+        A textual representation of the current node state
+
+        Examples
+        --------
+
+        >>> StatusWord0(0b1010).state_name()
+        'Network State Operating'
+
+        >>> StatusWord0(0b1110).state_name()
+        'Network State NoChange'
+        """
+
+        state = (self.value >> 1) & 0b111
+        return NetworkStateName[state]
 
 
 # -- Main ---------------------------------------------------------------------
