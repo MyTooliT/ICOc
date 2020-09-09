@@ -92,6 +92,26 @@ class StatusWord0:
 
         return description
 
+    def error(self):
+        """Retrieve the status of the error bit
+
+        Returns
+        -------
+
+        True if the error bit was set or False otherwise
+
+        Examples
+        --------
+
+        >>> StatusWord0(0b0).error()
+        False
+
+        >>> StatusWord0(0b1).error()
+        True
+        """
+
+        return bool(self.value & 1)
+
 
 # -- Main ---------------------------------------------------------------------
 
