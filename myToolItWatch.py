@@ -25,6 +25,7 @@ import array
 import struct
 
 from mytoolit.config import settings
+from mytoolit.can.status import StatusWord0
 
 
 def to8bitSigned(num):
@@ -118,8 +119,9 @@ class myToolItWatch():
 
     def _statusWords(self):
         ErrorWord = SthErrorWord()
-        psw0 = self.Can.statusWord0(MyToolItNetworkNr["STH1"])
-        self.Can.Logger.Info("STH Status Word: " + hex(psw0))
+        sth_status_0 = StatusWord0(
+            self.Can.statusWord0(MyToolItNetworkNr["STH1"]))
+        self.Can.Logger.Info(f"STH Status Word: {sth_status_0}")
         psw0 = self.Can.statusWord0(MyToolItNetworkNr["STU1"])
         self.Can.Logger.Info("STU Status Word: " + hex(psw0))
         ErrorWord.asword = self.Can.statusWord1(MyToolItNetworkNr["STH1"])
