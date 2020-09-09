@@ -77,7 +77,7 @@ class Message:
         >>> pcan_message.DATA[0] = 0xfe
         >>> pcan_message.DATA[1] = 0xfe
         >>> pcan_message.LEN = 2
-        >>> Message(pcan_message) # doctest:+NORMALIZE_WHITESPACE
+        >>> Message(pcan_message)
         [STH1 → STH14, Block: System, Command: Reset, Request]
         0b00000000000000110000001001110 2 0xfe 0xfe
         """
