@@ -22,10 +22,13 @@ class StatusWord0:
         --------
 
         value:
-            A 32 bit integer that specifies the value of the status word
+            A 32 bit integer or list of bytes that specifies the value of the
+            status word
         """
 
-        self.value = value
+        # Currently only the first byte (of the little endian version) of
+        # status word 0 contains (non-reserved) data
+        self.value = value if isinstance(value, int) else value[0]
 
     def __repr__(self):
         """Retrieve the textual representation of the status word
@@ -39,6 +42,9 @@ class StatusWord0:
         --------
 
         >>> StatusWord0(0b1010)
+        State: Network State Operating, No Error
+
+        >>> StatusWord0([0b1010, 0, 0, 0])
         State: Network State Operating, No Error
 
         >>> StatusWord0(0b1)
