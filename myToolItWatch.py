@@ -118,12 +118,12 @@ class myToolItWatch():
         self.iPloterSocketPort = settings.GUI.Port
 
     def _statusWords(self):
+        self.Can.Logger.Info("STH Status Word: {}".format(
+            self.Can.statusWord0(MyToolItNetworkNr["STH1"])))
+        self.Can.Logger.Info("STU Status Word: {}".format(
+            self.Can.statusWord0(MyToolItNetworkNr["STU1"])))
+
         ErrorWord = SthErrorWord()
-        sth_status_0 = StatusWord0(
-            self.Can.statusWord0(MyToolItNetworkNr["STH1"]))
-        self.Can.Logger.Info(f"STH Status Word: {sth_status_0}")
-        psw0 = self.Can.statusWord0(MyToolItNetworkNr["STU1"])
-        self.Can.Logger.Info("STU Status Word: " + hex(psw0))
         ErrorWord.asword = self.Can.statusWord1(MyToolItNetworkNr["STH1"])
         if True == ErrorWord.b.bAdcOverRun:
             self.bError = True

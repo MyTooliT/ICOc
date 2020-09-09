@@ -210,10 +210,12 @@ class TestSth(unittest.TestCase):
 
     def _statusWords(self):
         ErrorWord = SthErrorWord()
-        psw0 = self.Can.statusWord0(MyToolItNetworkNr["STH1"])
-        self.Can.Logger.Info("STH Status Word: " + hex(psw0))
-        psw0 = self.Can.statusWord0(MyToolItNetworkNr["STU1"])
-        self.Can.Logger.Info("STU Status Word: " + hex(psw0))
+
+        self.Can.Logger.Info("STH Status Word: {}".format(
+            self.Can.statusWord0(MyToolItNetworkNr["STH1"])))
+        self.Can.Logger.Info("STU Status Word: {}".format(
+            self.Can.statusWord0(MyToolItNetworkNr["STU1"])))
+
         ErrorWord.asword = self.Can.statusWord1(MyToolItNetworkNr["STH1"])
         if True == ErrorWord.b.bAdcOverRun:
             self.bError = True
@@ -222,7 +224,7 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("STU Error Word: " + hex(ErrorWord.asword))
 
     """
-    Stop any streaming 
+    Stop any streaming
     """
 
     def _streamingStop(self):

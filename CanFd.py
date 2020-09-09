@@ -7,6 +7,7 @@ from sys import stderr
 from mytoolit.can.identifier import Identifier
 from mytoolit.can.command import Command
 from mytoolit.can.message import Message
+from mytoolit.can.status import StatusWord0, NodeType
 
 from MyToolItCommands import *
 from MyToolItNetworkNumbers import MyToolItNetworkNr, MyToolItNetworkName
@@ -1084,8 +1085,10 @@ class CanFd(object):
                           payload=[0] * 8)
         psw0 = self.tWriteFrameWaitAckRetries(message.pcan_message,
                                               retries=5)["Payload"]
-        psw0 = AsciiStringWordBigEndian(psw0[0:4])
-        return psw0
+        node_type = (NodeType.STH
+                     if MyToolItNetworkNr.inverse[receiver].startswith('STH')
+                     else NodeType.STU)
+        return StatusWord0(psw0[0:4], node_type)
 
     def statusWord1(self, receiver, payload=[0] * 8):
         cmd = self.CanCmd(MyToolItBlock["System"],

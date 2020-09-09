@@ -211,10 +211,12 @@ class TestSth(unittest.TestCase):
 
     def _statusWords(self):
         ErrorWord = SthErrorWord()
-        psw0 = self.Can.statusWord0(MyToolItNetworkNr["STH1"])
-        self.Can.Logger.Info("STH Status Word: " + hex(psw0))
-        psw0 = self.Can.statusWord0(MyToolItNetworkNr["STU1"])
-        self.Can.Logger.Info("STU Status Word: " + hex(psw0))
+
+        self.Can.Logger.Info("STH Status Word: {}".format(
+            self.Can.statusWord0(MyToolItNetworkNr["STH1"])))
+        self.Can.Logger.Info("STU Status Word: {}".format(
+            self.Can.statusWord0(MyToolItNetworkNr["STU1"])))
+
         ErrorWord.asword = self.Can.statusWord1(MyToolItNetworkNr["STH1"])
         if True == ErrorWord.b.bAdcOverRun:
             self.bError = True
@@ -6948,15 +6950,11 @@ class TestSth(unittest.TestCase):
     """
 
     def test0800StatusWords0Reset(self):
-        StateWord = SthStateWord()
-        StateWord.asword = self.Can.statusWord0(MyToolItNetworkNr["STH1"])
-        self.Can.Logger.Info("STH State Word: " + hex(StateWord.asword))
-        self.Can.Logger.Info("STH State Word - bError: " +
-                             str(StateWord.b.bError))
-        self.Can.Logger.Info("STH State Word - " +
-                             NetworkStateName[StateWord.b.u3NetworkState])
-        self.assertEqual(StateWord.b.bError, 0)
-        self.assertEqual(StateWord.b.u3NetworkState, NetworkState["Operating"])
+        status0 = self.Can.statusWord0(MyToolItNetworkNr["STH1"])
+        self.Can.Logger.Info(f"STH Status Word: {status0}")
+
+        self.assertEqual(status0.error(), False)
+        self.assertEqual(status0.state_name(), 'Operating')
 
     """
     Status Word in ADC overrun error case

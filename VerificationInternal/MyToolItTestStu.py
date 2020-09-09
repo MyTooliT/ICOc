@@ -121,9 +121,9 @@ class TestStu(unittest.TestCase):
     """
 
     def _statusWords(self):
+        self.Can.Logger.Info("STU Status Word: {}".format(
+            self.Can.statusWord0(MyToolItNetworkNr["STU1"])))
         ErrorWord = StuErrorWord()
-        psw0 = self.Can.statusWord0(MyToolItNetworkNr["STU1"])
-        self.Can.Logger.Info("STU Status Word: " + hex(psw0))
         ErrorWord.asword = self.Can.statusWord1(MyToolItNetworkNr["STU1"])
         self.Can.Logger.Info("STU bError Word: " + hex(ErrorWord.asword))
 

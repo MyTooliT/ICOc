@@ -1,4 +1,6 @@
-MyToolItNetworkNr = {
+from bidict import bidict
+
+MyToolItNetworkNr = bidict({
     "BroadCast": 0,
     "STH1": 1,
     "STH2": 2,
@@ -31,7 +33,7 @@ MyToolItNetworkNr = {
     "STU13": 29,
     "STU14": 30,
     "BroadCastNoAck": 31
-}
+})
 
 MyToolItNetworkName = {
     MyToolItNetworkNr["BroadCast"]: "Broadcast with ACK",
