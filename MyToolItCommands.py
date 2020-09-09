@@ -564,14 +564,14 @@ NetworkState = {
 }
 
 NetworkStateName = {
-    0: "Network State Failure",
-    1: "Network State Error",
-    2: "Network State Standby",
-    3: "Network State GracefulDegration2",
-    4: "Network State GracefulDegration1",
-    5: "Network State Operating",
-    6: "Network State Startup",
-    7: "Network State NoChange",
+    0: "Failure",
+    1: "Error",
+    2: "Standby",
+    3: "Graceful Degradation 2",
+    4: "Graceful Degradation 1",
+    5: "Operating",
+    6: "Startup",
+    7: "No Change",
 }
 
 CalibrationFactor = {

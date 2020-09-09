@@ -54,17 +54,17 @@ class StatusWord0:
         --------
 
         >>> StatusWord0(0b1010)
-        State: Network State Operating, No Error
+        State: Operating, No Error
 
         >>> StatusWord0([0b1010, 0, 0, 0])
-        State: Network State Operating, No Error
+        State: Operating, No Error
 
         >>> StatusWord0(0b1, NodeType.STH)
-        State: Network State Failure, Error
+        State: Failure, Error
 
         >>> StatusWord0(0b1101010,
         ...             NodeType.STU) # doctest:+NORMALIZE_WHITESPACE
-        State: Network State Operating, No Error, Radio Port Disabled,
+        State: Operating, No Error, Radio Port Disabled,
         CAN Port Enabled, Bluetooth Connected
         """
 
@@ -124,10 +124,10 @@ class StatusWord0:
         --------
 
         >>> StatusWord0(0b1010).state_name()
-        'Network State Operating'
+        'Operating'
 
         >>> StatusWord0(0b1110).state_name()
-        'Network State NoChange'
+        'No Change'
         """
 
         state = (self.value >> 1) & 0b111
