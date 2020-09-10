@@ -25,7 +25,6 @@ import array
 import struct
 
 from mytoolit.config import settings
-from mytoolit.can.status import StatusWord0
 
 
 def to8bitSigned(num):
