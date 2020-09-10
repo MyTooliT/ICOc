@@ -212,9 +212,9 @@ class TestSth(unittest.TestCase):
         ErrorWord = SthErrorWord()
 
         self.Can.Logger.Info("STH Status Word: {}".format(
-            self.Can.statusWord0(MyToolItNetworkNr["STH1"])))
+            self.Can.node_status(MyToolItNetworkNr["STH1"])))
         self.Can.Logger.Info("STU Status Word: {}".format(
-            self.Can.statusWord0(MyToolItNetworkNr["STU1"])))
+            self.Can.node_status(MyToolItNetworkNr["STU1"])))
 
         status = self.Can.statusWord1(MyToolItNetworkNr["STH1"])
         if status.adc_overrun():

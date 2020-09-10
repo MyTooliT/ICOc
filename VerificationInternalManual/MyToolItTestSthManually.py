@@ -139,9 +139,9 @@ class TestSthManually(unittest.TestCase):
 
     def _statusWords(self):
         ErrorWord = SthErrorWord()
-        psw0 = self.Can.statusWord0(MyToolItNetworkNr["STH1"])
+        psw0 = self.Can.node_status(MyToolItNetworkNr["STH1"])
         self.Can.Logger.Info("STH Status Word: " + hex(psw0))
-        psw0 = self.Can.statusWord0(MyToolItNetworkNr["STU1"])
+        psw0 = self.Can.node_status(MyToolItNetworkNr["STU1"])
         self.Can.Logger.Info("STU Status Word: " + hex(psw0))
 
         status = self.Can.statusWord1(MyToolItNetworkNr["STH1"])

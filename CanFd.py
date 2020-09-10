@@ -1077,7 +1077,7 @@ class CanFd(object):
                                   printLog=printLog)
         return msgAck["Payload"]
 
-    def statusWord0(self, receiver):
+    def node_status(self, receiver):
         message = Message(identifier=Identifier(block='System',
                                                 block_command='StatusWord0',
                                                 request=True,

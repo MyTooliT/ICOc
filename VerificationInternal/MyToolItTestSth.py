@@ -213,9 +213,9 @@ class TestSth(unittest.TestCase):
         ErrorWord = SthErrorWord()
 
         self.Can.Logger.Info("STH Status Word: {}".format(
-            self.Can.statusWord0(MyToolItNetworkNr["STH1"])))
+            self.Can.node_status(MyToolItNetworkNr["STH1"])))
         self.Can.Logger.Info("STU Status Word: {}".format(
-            self.Can.statusWord0(MyToolItNetworkNr["STU1"])))
+            self.Can.node_status(MyToolItNetworkNr["STU1"])))
 
         status = self.Can.statusWord1(MyToolItNetworkNr["STH1"])
         if status.adc_overrun():
@@ -6947,7 +6947,7 @@ class TestSth(unittest.TestCase):
     """
 
     def test0800StatusWords0Reset(self):
-        status0 = self.Can.statusWord0(MyToolItNetworkNr["STH1"])
+        status0 = self.Can.node_status(MyToolItNetworkNr["STH1"])
         self.Can.Logger.Info(f"STH Status Word: {status0}")
 
         self.assertEqual(status0.error(), False)
@@ -6978,7 +6978,7 @@ class TestSth(unittest.TestCase):
                                      bErrorExit=False)
         self.assertNotEqual("Error", ack)
         StateWord = SthStateWord()
-        StateWord.asword = self.Can.statusWord0(MyToolItNetworkNr["STH1"])
+        StateWord.asword = self.Can.node_status(MyToolItNetworkNr["STH1"])
         self.Can.Logger.Info("STH State Word: " + hex(StateWord.asword))
         self.Can.Logger.Info("STH State Word - bError: " +
                              str(StateWord.b.bError))

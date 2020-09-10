@@ -122,7 +122,7 @@ class TestStu(unittest.TestCase):
 
     def _statusWords(self):
         self.Can.Logger.Info("STU Status Word: {}".format(
-            self.Can.statusWord0(MyToolItNetworkNr["STU1"])))
+            self.Can.node_status(MyToolItNetworkNr["STU1"])))
         self.Can.Logger.Info("STU Error Word: {}".format(
             self.Can.statusWord1(MyToolItNetworkNr["STU1"])))
 

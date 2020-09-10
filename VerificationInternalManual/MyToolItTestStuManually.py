@@ -75,7 +75,7 @@ class TestSthManually(unittest.TestCase):
     """
 
     def _statusWords(self):
-        psw0 = self.Can.statusWord0(MyToolItNetworkNr["STU1"])
+        psw0 = self.Can.node_status(MyToolItNetworkNr["STU1"])
         self.Can.Logger.Info("STU Status Word: " + hex(psw0))
         self.Can.Logger.Info("STU Error Word: {}".format(
             self.Can.statusWord1(MyToolItNetworkNr["STU1"])))
