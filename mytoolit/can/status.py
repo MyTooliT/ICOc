@@ -184,22 +184,22 @@ class NodeStatusSTU(NodeStatus):
         return ", ".join(attributes)
 
 
-class StatusWord1:
-    """Wrapper class for status word 1
+class ErrorStatus:
+    """Wrapper class for the error status word
 
     Please do not use this class directly, but instead use one of the
-    two specific status word classes for the STH and STU.
+    two specific error status classes for the STH and STU.
     """
 
     def __init__(self, value):
-        """Initialize the status word using the given arguments
+        """Initialize the error status word using the given arguments
 
         Arguments
         ---------
 
         value:
             A 32 bit integer or list of bytes that specifies the value of the
-            status word
+            error status word
         """
 
         # Currently only the first byte (of the little endian version) of
@@ -217,49 +217,49 @@ class StatusWord1:
         Examples
         --------
 
-        >>> StatusWord1(0b0).transmission_error()
+        >>> ErrorStatus(0b0).transmission_error()
         False
 
-        >>> StatusWord1(0b1).transmission_error()
+        >>> ErrorStatus(0b1).transmission_error()
         True
         """
 
         return bool(self.value & 1)
 
 
-class StatusWord1STH(StatusWord1):
-    """Wrapper class for status word 1 of the STH"""
+class ErrorStatusSTH(ErrorStatus):
+    """Wrapper class for error status word 1 of the STH"""
 
     def __init__(self, value):
-        """Initialize the status word using the given arguments
+        """Initialize the error status word using the given arguments
 
         Arguments
         ---------
 
         value:
             A 32 bit integer or list of bytes that specifies the value of the
-            status word
+            error status word
         """
         super().__init__(value)
 
     def __repr__(self):
-        """Retrieve the textual representation of the status word
+        """Retrieve the textual representation of the error status word
 
         Returns
         -------
 
-        A string that describes the attributes of the status word
+        A string that describes the attributes of the error status word
 
         Examples
         --------
 
-        >>> StatusWord1STH(0b0)
+        >>> ErrorStatusSTH(0b0)
         No Error
 
-        >>> StatusWord1STH(0b11)
+        >>> ErrorStatusSTH(0b11)
         Bluetooth Transmission Error, ADC Overrun Error
 
-        >>> StatusWord1STH(0b10)
+        >>> ErrorStatusSTH(0b10)
         ADC Overrun Error
         """
 
@@ -287,49 +287,49 @@ class StatusWord1STH(StatusWord1):
         Examples
         --------
 
-        >>> StatusWord1STH(0b10).adc_overrun()
+        >>> ErrorStatusSTH(0b10).adc_overrun()
         True
 
-        >>> StatusWord1STH(0b11).adc_overrun()
+        >>> ErrorStatusSTH(0b11).adc_overrun()
         True
 
-        >>> StatusWord1STH(0b01).adc_overrun()
+        >>> ErrorStatusSTH(0b01).adc_overrun()
         False
         """
 
         return bool((self.value >> 1) & 1)
 
 
-class StatusWord1STU(StatusWord1):
-    """Wrapper class for status word 1 of the STH"""
+class ErrorStatusSTU(ErrorStatus):
+    """Wrapper class for error status word 1 of the STH"""
 
     def __init__(self, value):
-        """Initialize the status word using the given arguments
+        """Initialize the error status word using the given arguments
 
         Arguments
         ---------
 
         value:
             A 32 bit integer or list of bytes that specifies the value of the
-            status word
+            error status word
         """
         super().__init__(value)
 
     def __repr__(self):
-        """Retrieve the textual representation of the status word
+        """Retrieve the textual representation of the error status word
 
         Returns
         -------
 
-        A string that describes the attributes of the status word
+        A string that describes the attributes of the error status word
 
         Examples
         --------
 
-        >>> StatusWord1STU(0b0)
+        >>> ErrorStatusSTU(0b0)
         No Error
 
-        >>> StatusWord1STU(0b1)
+        >>> ErrorStatusSTU(0b1)
         CAN Transmission Error
         """
 

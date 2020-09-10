@@ -7,8 +7,8 @@ from sys import stderr
 from mytoolit.can.identifier import Identifier
 from mytoolit.can.command import Command
 from mytoolit.can.message import Message
-from mytoolit.can.status import (NodeStatusSTH, NodeStatusSTU,
-                                 StatusWord1STH, StatusWord1STU)
+from mytoolit.can.status import (NodeStatusSTH, NodeStatusSTU, ErrorStatusSTH,
+                                 ErrorStatusSTU)
 
 from MyToolItCommands import *
 from MyToolItNetworkNumbers import MyToolItNetworkNr, MyToolItNetworkName
@@ -1103,8 +1103,8 @@ class CanFd(object):
                                                  retries=5)["Payload"]
         status_word_1_bytes = payload[0:4]
         if MyToolItNetworkNr.inverse[receiver].startswith('STH'):
-            return StatusWord1STH(status_word_1_bytes)
-        return StatusWord1STU(status_word_1_bytes)
+            return ErrorStatusSTH(status_word_1_bytes)
+        return ErrorStatusSTU(status_word_1_bytes)
 
     def getTimeMs(self):
         return int(round(time.time() * 1000)) - int(self.startTime)
