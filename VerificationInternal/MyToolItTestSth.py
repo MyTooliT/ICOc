@@ -217,13 +217,13 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("STU Status Word: {}".format(
             self.Can.node_status(MyToolItNetworkNr["STU1"])))
 
-        status = self.Can.statusWord1(MyToolItNetworkNr["STH1"])
+        status = self.Can.error_status(MyToolItNetworkNr["STH1"])
         if status.adc_overrun():
             self.bError = True
         self.Can.Logger.Info(f"STH Error Word: {status}")
 
         self.Can.Logger.Info("STU Error Word: {}".format(
-            self.Can.statusWord1(MyToolItNetworkNr["STU1"])))
+            self.Can.error_status(MyToolItNetworkNr["STU1"])))
 
     """
     Stop any streaming
@@ -5045,7 +5045,7 @@ class TestSth(unittest.TestCase):
         BytesTransfered *= 8
         self.assertNotEqual("Error", ack)
 
-        status = self.Can.statusWord1(MyToolItNetworkNr["STH1"])
+        status = self.Can.error_status(MyToolItNetworkNr["STH1"])
         self.Can.Logger.Info("Reset bError Status Word")
         self.Can.Logger.Info(f"STH Error Word: {status}")
 
@@ -6995,7 +6995,7 @@ class TestSth(unittest.TestCase):
     """
 
     def test0820StatusWords1Reset(self):
-        status = self.Can.statusWord1(MyToolItNetworkNr["STH1"])
+        status = self.Can.error_status(MyToolItNetworkNr["STH1"])
         self.Can.Logger.Info(f"STH Error Word: {status}")
         self.assertEqual(status.value, 0)
 
@@ -7019,7 +7019,7 @@ class TestSth(unittest.TestCase):
                                 1, 0, 0)
         time.sleep(1)
 
-        status = self.Can.statusWord1(MyToolItNetworkNr["STH1"])
+        status = self.Can.error_status(MyToolItNetworkNr["STH1"])
         self.Can.Logger.Info(f"STH Error Word: {status}")
         self.assertEqual(status.adc_overrun(), True)
 
@@ -7047,7 +7047,7 @@ class TestSth(unittest.TestCase):
                                 1, 0, 0)
         time.sleep(10)
 
-        status = self.Can.statusWord1(MyToolItNetworkNr["STH1"])
+        status = self.Can.error_status(MyToolItNetworkNr["STH1"])
         self.Can.Logger.Info(f"STH Error Word: {status}")
         self.assertEqual(status.adc_overrun(), False)
         self.assertEqual(status.transmission_error(), True)

@@ -122,13 +122,13 @@ class myToolItWatch():
         self.Can.Logger.Info("STU Status Word: {}".format(
             self.Can.node_status(MyToolItNetworkNr["STU1"])))
 
-        status = self.Can.statusWord1(MyToolItNetworkNr["STH1"])
+        status = self.Can.error_status(MyToolItNetworkNr["STH1"])
         if status.adc_overrun():
             self.bError = True
         self.Can.Logger.Info(f"STH Error Word: {status}")
 
         self.Can.Logger.Info("STU Error Word: {}".format(
-            self.Can.statusWord1(MyToolItNetworkNr["STU1"])))
+            self.Can.error_status(MyToolItNetworkNr["STU1"])))
 
     def _BlueToothStatistics(self):
         SendCounter = self.Can.BlueToothCmd(

@@ -1091,7 +1091,7 @@ class CanFd(object):
             return NodeStatusSTH(psw0[0:4])
         return NodeStatusSTU(psw0[0:4])
 
-    def statusWord1(self, receiver):
+    def error_status(self, receiver):
         message = Message(identifier=Identifier(block='System',
                                                 block_command='StatusWord1',
                                                 request=True,
