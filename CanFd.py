@@ -1093,7 +1093,7 @@ class CanFd(object):
 
     def error_status(self, receiver):
         message = Message(identifier=Identifier(block='System',
-                                                block_command='StatusWord1',
+                                                block_command='Error Status',
                                                 request=True,
                                                 sender=self.sender,
                                                 receiver=receiver),
