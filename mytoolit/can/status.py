@@ -134,6 +134,68 @@ class StatusWord0:
         return NetworkStateName[state]
 
 
+class StatusWord1:
+    """Wrapper class for status word 1"""
+
+    def __init__(self, value, node=NodeType.STH):
+        """Initialize the status word using the given arguments
+
+        Arguments
+        ---------
+
+        value:
+            A 32 bit integer or list of bytes that specifies the value of the
+            status word
+
+        node:
+            Specifies the network unit the status word belongs to
+        """
+
+        # Currently only the first byte (of the little endian version) of
+        # status word contains (non-reserved) data
+        self.value = value if isinstance(value, int) else value[0]
+
+        self.type = node
+
+    def __repr__(self):
+        """Retrieve the textual representation of the status word
+
+        Returns
+        -------
+
+        A string that describes the attributes of the status word
+
+        Examples
+        --------
+
+        >>> StatusWord1(0b0)
+        No Error
+
+        >>> StatusWord1(0b11)
+        Bluetooth Transmission Error, ADC Overrun Error
+
+        >>> StatusWord1(0b01, node=NodeType.STU)
+        CAN Transmission Error
+        """
+
+        errors = []
+
+        transmission_error = self.value & 1
+        if transmission_error:
+            errors.append("{} Transmission Error".format(
+                "Bluetooth" if self.type == NodeType.STH else "CAN"))
+
+        if self.type == NodeType.STH:
+            adc_overrun_error = (self.value >> 1) & 1
+            if adc_overrun_error:
+                errors.append("ADC Overrun Error")
+
+        if not errors:
+            return "No Error"
+
+        return ", ".join(errors)
+
+
 # -- Main ---------------------------------------------------------------------
 
 if __name__ == '__main__':
