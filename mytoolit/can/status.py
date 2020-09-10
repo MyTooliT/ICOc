@@ -13,22 +13,22 @@ from MyToolItCommands import NetworkStateName
 # -- Classes ------------------------------------------------------------------
 
 
-class StatusWord0:
-    """Wrapper class for status word 0
+class NodeStatus:
+    """Wrapper class for the node status word
 
     Please do not use this class directly, but instead use one of the
-    two specific status word classes for the STH and STU.
+    two specific status classes for the STH and STU.
     """
 
     def __init__(self, value):
-        """Initialize the status word using the given arguments
+        """Initialize the node status word using the given arguments
 
         Arguments
         ---------
 
         value:
             A 32 bit integer or list of bytes that specifies the value of the
-            status word
+            node status word
         """
 
         # Currently only the first byte (of the little endian version) of
@@ -36,23 +36,23 @@ class StatusWord0:
         self.value = value if isinstance(value, int) else value[0]
 
     def __repr__(self):
-        """Retrieve the textual representation of the status word
+        """Retrieve the textual representation of the node status word
 
         Returns
         -------
 
-        A string that describes the attributes of the status word
+        A string that describes the attributes of the node status word
 
         Examples
         --------
 
-        >>> StatusWord0(0b1010)
+        >>> NodeStatus(0b1010)
         State: Operating, No Error
 
-        >>> StatusWord0([0b1010, 0, 0, 0])
+        >>> NodeStatus([0b1010, 0, 0, 0])
         State: Operating, No Error
 
-        >>> StatusWord0(0b1)
+        >>> NodeStatus(0b1)
         State: Failure, Error
         """
 
@@ -74,17 +74,17 @@ class StatusWord0:
         Examples
         --------
 
-        >>> StatusWord0(0b0).error()
+        >>> NodeStatus(0b0).error()
         False
 
-        >>> StatusWord0(0b1).error()
+        >>> NodeStatus(0b1).error()
         True
         """
 
         return bool(self.value & 1)
 
     def state_name(self):
-        """Get the name of the state represented by the status word
+        """Get the name of the state represented by the node status word
 
         Returns
         -------
@@ -94,10 +94,10 @@ class StatusWord0:
         Examples
         --------
 
-        >>> StatusWord0(0b1010).state_name()
+        >>> NodeStatus(0b1010).state_name()
         'Operating'
 
-        >>> StatusWord0(0b1110).state_name()
+        >>> NodeStatus(0b1110).state_name()
         'No Change'
         """
 
@@ -105,64 +105,64 @@ class StatusWord0:
         return NetworkStateName[state]
 
 
-class StatusWord0STH(StatusWord0):
+class NodeStatusSTH(NodeStatus):
     def __init__(self, value):
-        """Initialize the status word using the given arguments
+        """Initialize the node status word using the given arguments
 
         Arguments
         ---------
 
         value:
             A 32 bit integer or list of bytes that specifies the value of the
-            status word
+            node status word
         """
 
         super().__init__(value)
 
     def __repr__(self):
-        """Retrieve the textual representation of the status word
+        """Retrieve the textual representation of the node status word
 
         Returns
         -------
 
-        A string that describes the attributes of the status word
+        A string that describes the attributes of the node status word
 
         Examples
         --------
 
-        >>> StatusWord0STH(0b0100)
+        >>> NodeStatusSTH(0b0100)
         State: Standby, No Error
         """
 
         return super().__repr__()
 
 
-class StatusWord0STU(StatusWord0):
+class NodeStatusSTU(NodeStatus):
     def __init__(self, value):
-        """Initialize the status word using the given arguments
+        """Initialize the node status word using the given arguments
 
         Arguments
         ---------
 
         value:
             A 32 bit integer or list of bytes that specifies the value of the
-            status word
+            node status word
         """
 
         super().__init__(value)
 
     def __repr__(self):
-        """Retrieve the textual representation of the status word
+        """Retrieve the textual representation of the node status word
 
         Returns
         -------
 
-        A string that describes the attributes of the status word
+        A string that describes the attributes of the node status word
 
         Example
         -------
 
-        >>> StatusWord0STU(0b1101010) # doctest:+NORMALIZE_WHITESPACE
+        >>> NodeStatusSTU(0b1101010) # doctest:+NORMALIZE_WHITESPACE
         State: Operating, No Error, Radio Port Disabled,
         CAN Port Enabled, Bluetooth Connected
         """

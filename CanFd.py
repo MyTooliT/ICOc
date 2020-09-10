@@ -7,7 +7,7 @@ from sys import stderr
 from mytoolit.can.identifier import Identifier
 from mytoolit.can.command import Command
 from mytoolit.can.message import Message
-from mytoolit.can.status import (StatusWord0STH, StatusWord0STU,
+from mytoolit.can.status import (NodeStatusSTH, NodeStatusSTU,
                                  StatusWord1STH, StatusWord1STU)
 
 from MyToolItCommands import *
@@ -1088,8 +1088,8 @@ class CanFd(object):
                                               retries=5)["Payload"]
 
         if MyToolItNetworkNr.inverse[receiver].startswith('STH'):
-            return StatusWord0STH(psw0[0:4])
-        return StatusWord0STU(psw0[0:4])
+            return NodeStatusSTH(psw0[0:4])
+        return NodeStatusSTU(psw0[0:4])
 
     def statusWord1(self, receiver):
         message = Message(identifier=Identifier(block='System',
