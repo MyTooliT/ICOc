@@ -216,6 +216,45 @@ class StatusWord1:
         return bool(self.value & 1)
 
 
+class StatusWord1STH(StatusWord1):
+    """Wrapper class for status word 1 of the STH"""
+
+    def __init__(self, value):
+        """Initialize the status word using the given arguments
+
+        Arguments
+        ---------
+
+        value:
+            A 32 bit integer or list of bytes that specifies the value of the
+            status word
+        """
+        super().__init__(value, node=NodeType.STH)
+
+    def adc_overrun(self):
+        """Retrieve the status of the ADC overrun bit
+
+        Returns
+        -------
+
+        True if the ADC overrun error bit is set or False otherwise
+
+        Examples
+        --------
+
+        >>> StatusWord1STH(0b10).adc_overrun()
+        True
+
+        >>> StatusWord1STH(0b11).adc_overrun()
+        True
+
+        >>> StatusWord1STH(0b01).adc_overrun()
+        False
+        """
+
+        return bool((self.value >> 1) & 1)
+
+
 # -- Main ---------------------------------------------------------------------
 
 if __name__ == '__main__':
