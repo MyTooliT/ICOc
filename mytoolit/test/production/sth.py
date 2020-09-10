@@ -1024,7 +1024,6 @@ class TestSTH(TestCase):
         def read_operating_time():
             return read_eeprom_unsigned(address=5, offset=8, length=4)
 
-        # noinspection PyUnusedLocal
         def write_operating_time(seconds):
             write_eeprom_unsigned(address=5, offset=8, length=4, value=seconds)
 
@@ -1231,7 +1230,13 @@ class TestSTH(TestCase):
         # = Operating Time =
         # ==================
 
+        operating_time = 0
+        write_operating_time(operating_time)
         cls.operating_time = read_operating_time()
+        self.assertEqual(
+            operating_time, cls.operating_time,
+            f"Written operating time “{operating_time}” " +
+            "does not match read operating time “{cls.operating_time}”")
 
         # =========================
         # = Under Voltage Counter =
