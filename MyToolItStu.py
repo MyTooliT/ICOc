@@ -9,14 +9,3 @@ TestConfig = {
     "HolderName": "Tanja",
     "StuName": "Valerie",
 }
-
-
-class StuErrorWordFlags(ctypes.LittleEndianStructure):
-    _fields_ = [
-        ("bTxFail", c_uint32, 1),
-        ("Reserved", c_uint32, 31),
-    ]
-
-
-class StuErrorWord(ctypes.Union):
-    _fields_ = [("b", StuErrorWordFlags), ("asword", c_uint32)]

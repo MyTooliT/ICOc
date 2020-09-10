@@ -11,7 +11,6 @@ sys.path.append(sDirName)
 import CanFd
 from MyToolItNetworkNumbers import MyToolItNetworkNr
 import time
-from MyToolItStu import StuErrorWord
 from MyToolItCommands import *
 
 sLogLocation = '../../Logs/STU/'
@@ -76,11 +75,10 @@ class TestSthManually(unittest.TestCase):
     """
 
     def _statusWords(self):
-        ErrorWord = StuErrorWord()
         psw0 = self.Can.statusWord0(MyToolItNetworkNr["STU1"])
         self.Can.Logger.Info("STU Status Word: " + hex(psw0))
-        ErrorWord.asword = self.Can.statusWord1(MyToolItNetworkNr["STU1"])
-        self.Can.Logger.Info("STU bError Word: " + hex(ErrorWord.asword))
+        self.Can.Logger.Info("STU Error Word: {}".format(
+            self.Can.statusWord1(MyToolItNetworkNr["STU1"])))
 
     """
     Test Acknowledgement from STH. Write message and check identifier to be ack (No bError)

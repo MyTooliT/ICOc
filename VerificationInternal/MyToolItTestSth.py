@@ -217,12 +217,13 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("STU Status Word: {}".format(
             self.Can.statusWord0(MyToolItNetworkNr["STU1"])))
 
-        ErrorWord.asword = self.Can.statusWord1(MyToolItNetworkNr["STH1"])
-        if True == ErrorWord.b.bAdcOverRun:
+        status = self.Can.statusWord1(MyToolItNetworkNr["STH1"])
+        if status.adc_overrun():
             self.bError = True
-        self.Can.Logger.Info("STH Error Word: " + hex(ErrorWord.asword))
-        ErrorWord.asword = self.Can.statusWord1(MyToolItNetworkNr["STU1"])
-        self.Can.Logger.Info("STU Error Word: " + hex(ErrorWord.asword))
+        self.Can.Logger.Info(f"STH Error Word: {status}")
+
+        self.Can.Logger.Info("STU Error Word: {}".format(
+            self.Can.statusWord1(MyToolItNetworkNr["STU1"])))
 
     """
     Stop any streaming
@@ -5043,18 +5044,14 @@ class TestSth(unittest.TestCase):
         BytesTransfered = indexStop - indexStart
         BytesTransfered *= 8
         self.assertNotEqual("Error", ack)
-        ErrorWord = SthErrorWord()
-        ErrorWord.asword = self.Can.statusWord1(MyToolItNetworkNr["STH1"])
+
+        status = self.Can.statusWord1(MyToolItNetworkNr["STH1"])
         self.Can.Logger.Info("Reset bError Status Word")
-        self.Can.Logger.Info("STH bError Word Reserved: " +
-                             hex(ErrorWord.b.Reserved))
-        self.Can.Logger.Info("STH bError Word bAdcOverRun: " +
-                             hex(ErrorWord.b.bAdcOverRun))
-        self.Can.Logger.Info("STH bError Word bTxFail: " +
-                             hex(ErrorWord.b.bTxFail))
+        self.Can.Logger.Info(f"STH Error Word: {status}")
+
         self.Can.Logger.Info("Transferred Bytes: " + str(BytesTransfered))
         self.assertLessEqual(BytesTransfered, 1000)
-        self.assertEqual(ErrorWord.b.bAdcOverRun, 1)
+        self.assertEqual(status.adc_overrun(), True)
         self._resetStu()
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
                                               TestConfig["DevName"])
@@ -6998,16 +6995,9 @@ class TestSth(unittest.TestCase):
     """
 
     def test0820StatusWords1Reset(self):
-        ErrorWord = SthErrorWord()
-        ErrorWord.asword = self.Can.statusWord1(MyToolItNetworkNr["STH1"])
-        self.Can.Logger.Info("STH bError Word: " + hex(ErrorWord.asword))
-        self.Can.Logger.Info("STH bError Word Reserved: " +
-                             hex(ErrorWord.b.Reserved))
-        self.Can.Logger.Info("STH bError Word bAdcOverRun: " +
-                             hex(ErrorWord.b.bAdcOverRun))
-        self.Can.Logger.Info("STH bError Word bTxFail: " +
-                             hex(ErrorWord.b.bTxFail))
-        self.assertEqual(ErrorWord.asword, 0)
+        status = self.Can.statusWord1(MyToolItNetworkNr["STH1"])
+        self.Can.Logger.Info(f"STH Error Word: {status}")
+        self.assertEqual(status.value, 0)
 
     """
     Status Word after ADC Overrun
@@ -7028,16 +7018,11 @@ class TestSth(unittest.TestCase):
                                 MyToolItStreaming["Acceleration"], DataSets[3],
                                 1, 0, 0)
         time.sleep(1)
-        ErrorWord = SthErrorWord()
-        ErrorWord.asword = self.Can.statusWord1(MyToolItNetworkNr["STH1"])
-        self.Can.Logger.Info("STH bError Word: " + hex(ErrorWord.asword))
-        self.Can.Logger.Info("STH bError Word Reserved: " +
-                             hex(ErrorWord.b.Reserved))
-        self.Can.Logger.Info("STH bError Word bAdcOverRun: " +
-                             hex(ErrorWord.b.bAdcOverRun))
-        self.Can.Logger.Info("STH bError Word bTxFail: " +
-                             hex(ErrorWord.b.bTxFail))
-        self.assertEqual(ErrorWord.b.bAdcOverRun, 1)
+
+        status = self.Can.statusWord1(MyToolItNetworkNr["STH1"])
+        self.Can.Logger.Info(f"STH Error Word: {status}")
+        self.assertEqual(status.adc_overrun(), True)
+
         self._resetStu()
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
                                               TestConfig["DevName"])
@@ -7061,17 +7046,12 @@ class TestSth(unittest.TestCase):
                                 MyToolItStreaming["Acceleration"], DataSets[3],
                                 1, 0, 0)
         time.sleep(10)
-        ErrorWord = SthErrorWord()
-        ErrorWord.asword = self.Can.statusWord1(MyToolItNetworkNr["STH1"])
-        self.Can.Logger.Info("STH bError Word: " + hex(ErrorWord.asword))
-        self.Can.Logger.Info("STH bError Word Reserved: " +
-                             hex(ErrorWord.b.Reserved))
-        self.Can.Logger.Info("STH bError Word bAdcOverRun: " +
-                             hex(ErrorWord.b.bAdcOverRun))
-        self.Can.Logger.Info("STH bError Word bTxFail: " +
-                             hex(ErrorWord.b.bTxFail))
-        self.assertEqual(ErrorWord.b.bAdcOverRun, 0)
-        self.assertEqual(ErrorWord.b.bTxFail, 1)
+
+        status = self.Can.statusWord1(MyToolItNetworkNr["STH1"])
+        self.Can.Logger.Info(f"STH Error Word: {status}")
+        self.assertEqual(status.adc_overrun(), False)
+        self.assertEqual(status.transmission_error(), True)
+
         self._resetStu()
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
                                               TestConfig["DevName"])

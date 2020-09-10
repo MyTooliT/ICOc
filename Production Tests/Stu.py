@@ -17,7 +17,7 @@ from datetime import date
 from shutil import copyfile
 from openpyxl.styles import Font
 from MyToolItNetworkNumbers import MyToolItNetworkNr
-from MyToolItStu import TestConfig, StuErrorWord
+from MyToolItStu import TestConfig
 
 from StuLimits import StuLimits
 from MyToolItCommands import *
@@ -169,11 +169,10 @@ class TestStu(unittest.TestCase):
     """
 
     def _statusWords(self):
-        ErrorWord = StuErrorWord()
         self.Can.Logger.Info("STU Status Word: {}".format(
             self.Can.statusWord0(MyToolItNetworkNr["STU1"])))
-        ErrorWord.asword = self.Can.statusWord1(MyToolItNetworkNr["STU1"])
-        self.Can.Logger.Info("STU Error Word: " + hex(ErrorWord.asword))
+        self.Can.Logger.Info("STU Error Word: {}".format(
+            self.Can.statusWord1(MyToolItNetworkNr["STU1"])))
 
     """
     Get Watchdog Reset Counter

@@ -15,7 +15,7 @@ from MyToolItNetworkNumbers import MyToolItNetworkNr
 from MyToolItCommands import *
 from random import randint
 import time
-from MyToolItStu import TestConfig, StuErrorWord
+from MyToolItStu import TestConfig
 
 sVersion = TestConfig["Version"]
 sLogFile = 'TestStu.txt'
@@ -123,9 +123,8 @@ class TestStu(unittest.TestCase):
     def _statusWords(self):
         self.Can.Logger.Info("STU Status Word: {}".format(
             self.Can.statusWord0(MyToolItNetworkNr["STU1"])))
-        ErrorWord = StuErrorWord()
-        ErrorWord.asword = self.Can.statusWord1(MyToolItNetworkNr["STU1"])
-        self.Can.Logger.Info("STU bError Word: " + hex(ErrorWord.asword))
+        self.Can.Logger.Info("STU Error Word: {}".format(
+            self.Can.statusWord1(MyToolItNetworkNr["STU1"])))
 
     """
     Write Page by value
