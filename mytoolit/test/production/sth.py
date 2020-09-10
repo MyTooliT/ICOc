@@ -1019,7 +1019,6 @@ class TestSTH(TestCase):
         def read_power_off_cycles():
             return read_eeprom_unsigned(address=5, offset=4, length=4)
 
-        # noinspection PyUnusedLocal
         def write_power_off_cycles(times):
             write_eeprom_unsigned(address=5, offset=4, length=4, value=times)
 
@@ -1212,7 +1211,15 @@ class TestSTH(TestCase):
         # =======================
 
         cls.power_on_cycles = read_power_on_cycles()
+
+        power_off_cycles = 0
+        write_power_off_cycles(power_off_cycles)
         cls.power_off_cycles = read_power_off_cycles()
+        self.assertEqual(
+            power_off_cycles, cls.power_off_cycles,
+            f"Written power off cycle value “{power_off_cycles}” " +
+            "does not match read power off cycle value " +
+            f"“{cls.power_off_cycles}”")
 
         # ==================
         # = Operating Time =
