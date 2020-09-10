@@ -945,7 +945,7 @@ class TestStu(unittest.TestCase):
                                                     [0])
                 else:
                     cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                                          MyToolItSystem["StatusWord0"], 1, 0)
+                                          MyToolItSystem["Node Status"], 1, 0)
                     message = self.Can.CanMessage20(cmd,
                                                     MyToolItNetworkNr["SPU1"],
                                                     MyToolItNetworkNr["STH1"],
@@ -986,7 +986,7 @@ class TestStu(unittest.TestCase):
                                             MyToolItNetworkNr["STH1"], [0])
             else:
                 cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                                      MyToolItSystem["StatusWord0"], 1, 0)
+                                      MyToolItSystem["Node Status"], 1, 0)
                 msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
                                             MyToolItNetworkNr["STH1"],
                                             [0, 0, 0, 0, 0, 0, 0, 0])
@@ -1023,7 +1023,7 @@ class TestStu(unittest.TestCase):
                                             MyToolItNetworkNr["STH1"], [0])
             else:
                 cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                                      MyToolItSystem["StatusWord0"], 1, 0)
+                                      MyToolItSystem["Node Status"], 1, 0)
                 msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
                                             MyToolItNetworkNr["STH1"],
                                             [0, 0, 0, 0, 0, 0, 0, 0])
@@ -1054,7 +1054,7 @@ class TestStu(unittest.TestCase):
                                  str(self.Can.GetReadArrayIndex()))
             self.Can.Logger.Info("Run: " + str(i))
             cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                                  MyToolItSystem["StatusWord0"], 1, 0)
+                                  MyToolItSystem["Node Status"], 1, 0)
             msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
                                         MyToolItNetworkNr["STH1"],
                                         [0, 0, 0, 0, 0, 0, 0, 0])

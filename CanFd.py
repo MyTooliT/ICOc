@@ -1079,7 +1079,7 @@ class CanFd(object):
 
     def node_status(self, receiver):
         message = Message(identifier=Identifier(block='System',
-                                                block_command='StatusWord0',
+                                                block_command='Node Status',
                                                 request=True,
                                                 sender=self.sender,
                                                 receiver=receiver),
