@@ -13,6 +13,7 @@
 - The EEPROM tests now also writes the firmware release name (`STH` → `Firmware` → `Release Name` in the [configuration](../Configuration/config.yaml)) into the EEPROM.
 - The EEPROM test now sets the
 
+  - power on cycles,
   - power off cycles,
   - under voltage counter, and the
   - watchdog reset counter
