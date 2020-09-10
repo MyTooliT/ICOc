@@ -135,9 +135,13 @@ class StatusWord0:
 
 
 class StatusWord1:
-    """Wrapper class for status word 1"""
+    """Wrapper class for status word 1
 
-    def __init__(self, value, node=NodeType.STH):
+    Please do not use this class directly, but instead use one of the
+    two specific status word classes for the STH and STU.
+    """
+
+    def __init__(self, value):
         """Initialize the status word using the given arguments
 
         Arguments
@@ -146,54 +150,11 @@ class StatusWord1:
         value:
             A 32 bit integer or list of bytes that specifies the value of the
             status word
-
-        node:
-            Specifies the network unit the status word belongs to
         """
 
         # Currently only the first byte (of the little endian version) of
         # status word contains (non-reserved) data
         self.value = value if isinstance(value, int) else value[0]
-
-        self.type = node
-
-    def __repr__(self):
-        """Retrieve the textual representation of the status word
-
-        Returns
-        -------
-
-        A string that describes the attributes of the status word
-
-        Examples
-        --------
-
-        >>> StatusWord1(0b0)
-        No Error
-
-        >>> StatusWord1(0b11)
-        Bluetooth Transmission Error, ADC Overrun Error
-
-        >>> StatusWord1(0b01, node=NodeType.STU)
-        CAN Transmission Error
-        """
-
-        errors = []
-
-        transmission_error = self.value & 1
-        if transmission_error:
-            errors.append("{} Transmission Error".format(
-                "Bluetooth" if self.type == NodeType.STH else "CAN"))
-
-        if self.type == NodeType.STH:
-            adc_overrun_error = (self.value >> 1) & 1
-            if adc_overrun_error:
-                errors.append("ADC Overrun Error")
-
-        if not errors:
-            return "No Error"
-
-        return ", ".join(errors)
 
     def transmission_error(self):
         """Retrieve the status of the transmission error bit
@@ -206,10 +167,10 @@ class StatusWord1:
         Examples
         --------
 
-        >>> StatusWord0(0b0).error()
+        >>> StatusWord1(0b0).transmission_error()
         False
 
-        >>> StatusWord0(0b1).error()
+        >>> StatusWord1(0b1).transmission_error()
         True
         """
 
@@ -229,7 +190,41 @@ class StatusWord1STH(StatusWord1):
             A 32 bit integer or list of bytes that specifies the value of the
             status word
         """
-        super().__init__(value, node=NodeType.STH)
+        super().__init__(value)
+
+    def __repr__(self):
+        """Retrieve the textual representation of the status word
+
+        Returns
+        -------
+
+        A string that describes the attributes of the status word
+
+        Examples
+        --------
+
+        >>> StatusWord1STH(0b0)
+        No Error
+
+        >>> StatusWord1STH(0b11)
+        Bluetooth Transmission Error, ADC Overrun Error
+
+        >>> StatusWord1STH(0b10)
+        ADC Overrun Error
+        """
+
+        errors = []
+
+        if self.transmission_error():
+            errors.append("Bluetooth Transmission Error")
+
+        if self.adc_overrun():
+            errors.append("ADC Overrun Error")
+
+        if not errors:
+            return "No Error"
+
+        return ", ".join(errors)
 
     def adc_overrun(self):
         """Retrieve the status of the ADC overrun bit
@@ -253,6 +248,45 @@ class StatusWord1STH(StatusWord1):
         """
 
         return bool((self.value >> 1) & 1)
+
+
+class StatusWord1STU(StatusWord1):
+    """Wrapper class for status word 1 of the STH"""
+
+    def __init__(self, value):
+        """Initialize the status word using the given arguments
+
+        Arguments
+        ---------
+
+        value:
+            A 32 bit integer or list of bytes that specifies the value of the
+            status word
+        """
+        super().__init__(value)
+
+    def __repr__(self):
+        """Retrieve the textual representation of the status word
+
+        Returns
+        -------
+
+        A string that describes the attributes of the status word
+
+        Examples
+        --------
+
+        >>> StatusWord1STU(0b0)
+        No Error
+
+        >>> StatusWord1STU(0b1)
+        CAN Transmission Error
+        """
+
+        if self.transmission_error():
+            return "CAN Transmission Error"
+
+        return "No Error"
 
 
 # -- Main ---------------------------------------------------------------------
