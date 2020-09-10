@@ -195,6 +195,26 @@ class StatusWord1:
 
         return ", ".join(errors)
 
+    def transmission_error(self):
+        """Retrieve the status of the transmission error bit
+
+        Returns
+        -------
+
+        True if the error bit was set or False otherwise
+
+        Examples
+        --------
+
+        >>> StatusWord0(0b0).error()
+        False
+
+        >>> StatusWord0(0b1).error()
+        True
+        """
+
+        return bool(self.value & 1)
+
 
 # -- Main ---------------------------------------------------------------------
 
