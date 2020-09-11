@@ -2,6 +2,8 @@ from can.interfaces.pcan.basic import *
 import threading
 import array
 import math
+
+from ctypes import c_byte
 from sys import stderr
 
 from mytoolit.can.identifier import Identifier
@@ -1367,7 +1369,7 @@ class CanFd(object):
         ack = self.tWriteFrameWaitAckRetries(message, retries=2)
         ack = ack["Payload"]
         ack = ack[2]
-        ack = to8bitSigned(ack)
+        ack = c_byte(ack).value  # Convert to signed value
         return ack
 
     def iBlueToothConnect2MacAddr(self, receiver, iMacAddr):
@@ -1616,7 +1618,7 @@ class CanFd(object):
         ]
         message = self.CanMessage20(cmd, self.sender, subscriber, payload)
         ack = self.tWriteFrameWaitAckRetries(message, retries=2)["Payload"][2]
-        ack = to8bitSigned(ack)
+        ack = c_byte(ack).value  # Convert to signed value
         return ack
 
     def BlueToothAddress(self, subscriber):

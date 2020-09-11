@@ -26,15 +26,6 @@ import struct
 
 from mytoolit.config import settings
 
-
-def to8bitSigned(num):
-    mask7 = 128  # Check 8th bit ~ 2^8
-    mask2s = 127  # Keep first 7 bits
-    if (mask7 & num == 128):  # Check Sign (8th bit)
-        num = -((~int(num) + 1) & mask2s)  # 2's complement
-    return num
-
-
 Watch = {
     "IntervalDimMinX": 10,  # Minimum interval time in ms
     "DisplayTimeMax": 10,  # Maximum display time of graphical plot in seconds
