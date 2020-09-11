@@ -1111,7 +1111,7 @@ class CanFd(object):
 
     def CanMessage20(self, command=0, sender=0, receiver=0, data=[]):
         if len(data) > 8:
-            return "Error "
+            return "Error"
 
         identifier = Identifier(command=command,
                                 sender=sender,
