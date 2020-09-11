@@ -1175,7 +1175,10 @@ class CanFd(object):
     def ReadMessageStatistics(self):
         iDs = {}
         cmds = {}
-        for i in range(0, self.GetReadArrayIndex()):
+
+        # We start at index 1, since the first entry contains a spurious
+        # message inserted by the method `ReadThreadReset`
+        for i in range(1, self.GetReadArrayIndex()):
             msg = self.readArray[i]["CanMsg"]
             if msg.ID in iDs:
                 iDs[msg.ID] += 1
