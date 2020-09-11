@@ -352,7 +352,7 @@ class myToolItWatch():
         self.bAccY = bool(bY)
         self.bAccZ = bool(bZ)
 
-        if (dataSets in DataSets):
+        if dataSets in DataSets:
             self.tAccDataFormat = DataSets[dataSets]
         else:
             dataSets = self.Can.dataSetsCan20(bX, bY, bZ)
