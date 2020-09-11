@@ -1,0 +1,24 @@
+# Release
+
+1. Make sure that **none** of the [tests](Test.md) fail
+2. Change the [`__version__`](../../mytoolit/__init__.py) number inside the [`mytoolit`](../../mytoolit) package
+3. Push the commit that changes the version number
+4. Create a new release [here](https://github.com/MyTooliT/ICOc/releases/new)
+
+   1. Copy the [release notes](../Release Notes.md) for the latest version
+   2. Paste them into the main text
+   3. Decrease the header level of each section by one
+   4. Replace links with a permanent version:
+
+      For example instead of
+
+      - `../something.txt` use
+      - `https://github.com/MyTooliT/ICOc/blob/REVISION/something.txt`,
+
+      where `REVISION` is the latest version of the master branch (e.g. `8568893f` for version `1.0.5`)
+
+   5. Check that all links work correctly
+
+5. Insert the version number (e.g. `1.0.5`) into the tag field
+6. For the release title use “Version VERSION”, where `VERSION` specifies the version number (e.g. “Version 1.0.5”)
+7. Click on “Publish Release”
