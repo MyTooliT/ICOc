@@ -59,8 +59,8 @@ STH:
   Batch Number: 200
 
   Battery Voltage:
-    Average: 3.2 # Expected value of power source voltage in Volt
-    Tolerance: 0.3 # Tolerance for expected power source voltage in Volt
+    Average: 3.6 # Expected value of power source voltage in Volt
+    Tolerance: 0.6 # Tolerance for expected power source voltage in Volt
   Bluetooth:
     # Advertisement time 1 in ms
     Advertisement Time 1: 2000
