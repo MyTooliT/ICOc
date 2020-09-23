@@ -29,6 +29,7 @@ from MyToolItNetworkNumbers import MyToolItNetworkNr
 from MyToolItCommands import (
     ActiveState,
     AdcMax,
+    AdcOverSamplingRate,
     AdcReference,
     CalibMeassurementActionNr,
     CalibMeassurementTypeNr,
@@ -436,23 +437,11 @@ class TestSTH(TestCase):
         log_filepath = f"{self._testMethodName}.txt"
         log_filepath_error = f"{self._testMethodName}_Error.txt"
 
-        sth_limits = SthLimits(
-            # number of axes
-            1,
-            # maximum acceleration
-            200,
-            # minimum temperature
-            20,
-            # maximum temperature
-            35)
         self.can = CanFd(log_filepath,
                          log_filepath_error,
                          MyToolItNetworkNr['SPU1'],
                          MyToolItNetworkNr['STH1'],
-                         sth_limits.uSamplingRatePrescalerReset,
-                         sth_limits.uSamplingRateAcqTimeReset,
-                         sth_limits.uSamplingRateOverSamplesReset,
-                         FreshLog=True)
+                         oversampling=AdcOverSamplingRate[64])
 
         # Reset STU (and STH)
         self.can.bConnected = False
