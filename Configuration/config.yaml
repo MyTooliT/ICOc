@@ -23,6 +23,16 @@ Commands:
          \\gecko_sdk_suite\\v2.7\\app\\bluetooth\\examples_ncp_host\
          \\ota_dfu\\exe"
 
+Logger:
+  CAN:
+    # The value below specifies the minimum level of messages logged to
+    # `can.log`. Currently the logger only writes debug messages, which means
+    # ICOc will write CAN messages to `can.log`, if you specify the value
+    # `DEBUG`. If you use a different allowed value, such as `INFO` or `WARNING`
+    # no messages will be logged.
+    Level:
+      DEBUG
+
 GUI:
   HOST: localhost # Socket address of Matplotlib GUI
   PORT: 50007 # Port of Matplotlib GUI

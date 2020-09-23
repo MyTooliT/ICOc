@@ -5,12 +5,14 @@ import math
 
 from ctypes import c_byte
 from sys import stderr
+from logging import getLogger, FileHandler, DEBUG
 
 from mytoolit.can.identifier import Identifier
 from mytoolit.can.command import Command
 from mytoolit.can.message import Message
 from mytoolit.can.status import (NodeStatusSTH, NodeStatusSTU, ErrorStatusSTH,
                                  ErrorStatusSTU)
+from mytoolit.config import settings
 
 from MyToolItCommands import *
 from MyToolItNetworkNumbers import MyToolItNetworkNr, MyToolItNetworkName
@@ -83,6 +85,11 @@ class CanFd(object):
         self.tCanReadWriteMutex = threading.Lock()
         self.reset()
         self.ReadThreadReset()
+
+        logger = getLogger('can')
+        logger.setLevel(settings.Logger.CAN.Level)
+        handler = FileHandler('can.log', 'w', 'utf-8')
+        logger.addHandler(handler)
 
     def __exit__(self):
         try:
@@ -199,6 +206,8 @@ class CanFd(object):
                 self.Logger.Info("WriteFrame bError: " + hex(returnMessage))
                 returnMessage = "Error"
                 self.__exitError("Driver Problems or Physical Layer Problems")
+            else:
+                getLogger('can').debug(f"{Message(CanMsg)}")
         return returnMessage
 
     def WriteFrameWaitAckOk(self, message):
@@ -1205,6 +1214,7 @@ class CanFd(object):
                         "PcTime": self.getTimeMs(),
                         "PeakCanTime": peakCanTimeStamp
                     })
+                    getLogger('can').debug(f"{Message(result[1])}")
                 elif result[0] == PCAN_ERROR_QOVERRUN:
                     self.Logger.Error("RxOverRun")
                     print("RxOverRun")
