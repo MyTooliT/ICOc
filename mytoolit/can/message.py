@@ -77,9 +77,9 @@ class Message:
         >>> pcan_message.DATA[0] = 0xfe
         >>> pcan_message.DATA[1] = 0xfe
         >>> pcan_message.LEN = 2
-        >>> Message(pcan_message)
-        [STH1 → STH14, Block: System, Command: Reset, Request]
+        >>> Message(pcan_message) # doctest:+NORMALIZE_WHITESPACE
         0b00000000000000110000001001110 2 0xfe 0xfe
+        # [STH1 → STH14, Block: System, Command: Reset, Request]
         """
 
         identifier = Identifier(self.pcan_message.ID)
@@ -96,7 +96,7 @@ class Message:
         # space at the end of the representation for empty payloads
         bit_representation = " ".join(filter(None, bit_values))
 
-        return f"{identifier}\n{bit_representation}"
+        return f"{bit_representation} # {identifier}"
 
     def acknowledge(self, error=False):
         """Returns an acknowledgment message object for this message
@@ -116,9 +116,9 @@ class Message:
         >>> identifier = Identifier(block=0, block_command=1, sender=5,
         ...                         receiver=10)
         >>> message = Message(identifier=identifier, payload=[0xaa])
-        >>> message.acknowledge()
-        [STH10 → STH5, Block: System, Command: Reset, Acknowledge]
+        >>> message.acknowledge() # doctest:+NORMALIZE_WHITESPACE
         0b00000000000000100001010000101 0
+        # [STH10 → STH5, Block: System, Command: Reset, Acknowledge]
         """
 
         identifier = Identifier(self.pcan_message.ID)
