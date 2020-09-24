@@ -5,7 +5,7 @@ import math
 
 from ctypes import c_byte
 from sys import stderr
-from logging import getLogger, FileHandler, DEBUG
+from logging import getLogger, FileHandler, Formatter, DEBUG
 
 from mytoolit.can.identifier import Identifier
 from mytoolit.can.command import Command
@@ -89,6 +89,7 @@ class CanFd(object):
         logger = getLogger('can')
         logger.setLevel(settings.Logger.CAN.Level)
         handler = FileHandler('can.log', 'w', 'utf-8')
+        handler.setFormatter(Formatter('{asctime} {message}', style='{'))
         logger.addHandler(handler)
 
     def __exit__(self):
