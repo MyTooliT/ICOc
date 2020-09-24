@@ -1,5 +1,9 @@
 # Version 1.0.6
 
+## Logging
+
+- The [main CAN class](../CanFd.py) now logs the received CAN messages in a file called `can.log`, if you specify the level `DEBUG` in the [configuration file](../Configuration/config.yaml).
+
 ## Documentation
 
 - We added a [tutorial](Tutorials/Release.md) that explains the necessary steps for releasing a new version of ICOc
