@@ -31,7 +31,7 @@ Logger:
     # `DEBUG`. If you use a different allowed value, such as `INFO` or `WARNING`
     # no messages will be logged.
     Level:
-      DEBUG
+      INFO
 
 GUI:
   HOST: localhost # Socket address of Matplotlib GUI
