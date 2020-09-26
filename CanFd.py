@@ -1,7 +1,18 @@
-from can.interfaces.pcan.basic import *
+#from can.interfaces.pcan.basic import *
+import can
+from pprint import pprint
+#can.rc['interface'] = 'socketcan'#linux only
+can.rc['interface'] = 'socketcan'#linux only
+can.rc['channel'] = 'usb2can'#channel should work on windows thouth, not ifup can0
+can.rc['bitrate'] = 1000000
+# OSERROR NO SUCH DEVICE - either not connected or no permissions
+# i.e. not sudo or no udevadm rules in etc-udef-rules.d
+################### also heavy mod to socketcan.py dunno whether that did anything in the end
 import threading
 import array
 import math
+import os 
+import time
 
 from ctypes import c_byte
 from sys import stderr
@@ -47,8 +58,19 @@ class CanFd(object):
                              FreshLog=FreshLog)
         self.Logger.Info(str(sDateClock()))
         self.startTime = int(round(time.time() * 1000))
-        self.pcan = PCANBasic()
-        self.m_PcanHandle = PCAN_USBBUS1
+        #PCAN_BAUD_1M = 1000000
+        #bus = can.interfaces.usb2can.Usb2CanAbstractionLayer.get_version()
+        #print(bus)
+        #bus = can.interface.Bus()#(bitrate=PCAN_BAUD_1M)
+        
+        #do yourself
+        #os.system('sudo ip link set can0 type can bitrate 1000000')
+        #os.system('sudo ifconfig can0 up')
+
+        can0 = can.interface.Bus(channel = 'can0', bustype = 'socketcan_ctypes')
+        self.pcan = can0#PCANBasic()
+        
+        #self.m_PcanHandle = PCAN_USBBUS1
         self.bError = False
         self.RunReadThread = False
         self.CanTimeStampStart(0)
@@ -69,20 +91,12 @@ class CanFd(object):
         self.VoltageConfig = AtvcFormat()
         self.VoltageConfig.asbyte = 0
         self.VoltageConfig.b.bStreaming = 1
-        result = self.pcan.Initialize(self.m_PcanHandle, PCAN_BAUD_1M)
-        if result != PCAN_ERROR_OK:
-            raise Exception(
-                self.__get_error_message("Unable to initialize CAN hardware",
-                                         result))
+        #result = self.pcan.Initialize(self.m_PcanHandle, PCAN_BAUD_1M)
+    
 
         # Reset the CAN controller if a bus-off state is detected
-        result = self.pcan.SetValue(self.m_PcanHandle, PCAN_BUSOFF_AUTORESET,
-                                    PCAN_PARAMETER_ON)
-        if result != PCAN_ERROR_OK:
-            print(self.__get_error_message(
-                "Unable to set auto reset on CAN bus-off state", result),
-                  file=stderr)
-        self.tCanReadWriteMutex = threading.Lock()
+
+       
         self.reset()
         self.ReadThreadReset()
 
@@ -101,9 +115,9 @@ class CanFd(object):
                     self.Logger.Error("Peak CAN Message Over Run")
                     self.bError = True
             self.reset()
-            self.tCanReadWriteMutex.acquire()  # Insane
-            self.pcan.Uninitialize(self.m_PcanHandle)
-            self.tCanReadWriteMutex.release()
+            #self.tCanReadWriteMutex.acquire()  # Insane
+            #self.pcan.Uninitialize(self.m_PcanHandle)
+            #self.tCanReadWriteMutex.release()
             time.sleep(1)
             [_iDs, cmds] = self.ReadMessageStatistics()
             for cmd, value in cmds.items():
@@ -119,7 +133,7 @@ class CanFd(object):
             self.__exit__()
             self.bError = True
         except Exception:
-            self.pcan.Uninitialize(self.m_PcanHandle)
+            #self.pcan.Uninitialize(self.m_PcanHandle)
             print("Error: " + sErrorMessage)
         raise Exception(sErrorMessage)
 
@@ -147,8 +161,8 @@ class CanFd(object):
         representation of the given error code
         """
 
-        translated_error_code = self.pcan.GetErrorText(error_code)[1].decode()
-        return f"{description}: {translated_error_code}"
+        #translated_error_code = self.pcan.GetErrorText(error_code)[1].decode()
+        return "hirschi says sorry"
 
     def vLogNameChange(self, testMethodName, testMethodNameError):
         self.Logger.vRename(testMethodName, testMethodNameError)
@@ -191,8 +205,9 @@ class CanFd(object):
             pass
 
     def reset(self):
-        with self.tCanReadWriteMutex:
-            self.pcan.Reset(self.m_PcanHandle)
+        pass
+        #with self.tCanReadWriteMutex:
+         #   self.pcan.Reset(self.m_PcanHandle)
 
     def CanTimeStampStart(self, CanTimeStampStart):
         self.PeakCanTimeStampStart = CanTimeStampStart
@@ -200,22 +215,27 @@ class CanFd(object):
     def WriteFrame(self, CanMsg):
         returnMessage = CanMsg
         if returnMessage != "Error":
-            with self.tCanReadWriteMutex:
-                returnMessage = self.pcan.Write(self.m_PcanHandle, CanMsg)
-            if returnMessage != PCAN_ERROR_OK:
-                print("WriteFrame bError: " + hex(returnMessage))
-                self.Logger.Info("WriteFrame bError: " + hex(returnMessage))
-                returnMessage = "Error"
-                self.__exitError("Driver Problems or Physical Layer Problems")
-            else:
-                getLogger('can').debug(f"{Message(CanMsg)}")
-        return returnMessage
+            #with self.tCanReadWriteMutex:
+                try:
+                #print(CanMsg)
+                    self.pcan.send(CanMsg)
+                    returnMessage=None
+                    while(returnMessage==None):
+                        
+                        returnMessage = self.pcan.recv(10.0)
+                        time.sleep(0.01)
+                    return returnMessage
+                except Exception as e:
+                    print("whoops write")
+                    print(e)
+                    pass
+                    return 0
 
     def WriteFrameWaitAckOk(self, message):
         payload = list(message["CanMsg"].DATA)
         returnMessage = {
-            "ID": hex(message["CanMsg"].ID),
-            "Payload": payload,
+            "arbitration_id": hex(message["CanMsg"].ID),
+            "data": payload,
             "PcTime": message["PcTime"],
             "CanTime": message["PeakCanTime"]
         }
@@ -305,36 +325,49 @@ class CanFd(object):
                                   assumedPayload=None,
                                   bErrorExit=True,
                                   notAckIdleWaitTimeMs=0.001):
-        try:
-            retries += 1
-            currentIndex = self.GetReadArrayIndex() - 1
-            sendTime = self.getTimeMs()
-            for i in range(0, retries):
-                returnMessage, currentIndex = self.tWriteFrameWaitAck(
-                    CanMsg,
-                    waitMs=waitMs,
-                    currentIndex=currentIndex,
-                    printLog=printLog,
-                    assumedPayload=assumedPayload,
-                    bError=bErrorAck,
-                    sendTime=sendTime,
-                    notAckIdleWaitTimeMs=notAckIdleWaitTimeMs)
-                if returnMessage != "Error":
-                    break
-                elif i == retries - 1:
-                    identifier = Identifier(CanMsg.ID)
-                    payload = payload2Hex(CanMsg.DATA)
-                    text = (f"Message request failed: {identifier}; " +
-                            f"Payload: {payload}")
-                    self.Logger.Error(text)
-                    if printLog:
-                        print(text)
-                    if bErrorExit:
-                        self.__exitError(f"To many retries({retries})")
-            time.sleep(0.01)
-            return returnMessage
-        except KeyboardInterrupt:
-            self.RunReadThread = False
+        print("sending msg with attributes")
+        #print(CanMsg)
+        #print(CanMsg.__dict__)
+        pprint(vars(CanMsg))
+        if (len(CanMsg.__dict__)<1):
+            print("walther's very short..")
+            dummy={}
+            dummy["Payload"]=[0,0,0]
+            print("how about read")
+            result = self.pcan.recv(1.0)
+            print(result)
+            return dummy
+        else:
+            try:
+                retries += 1
+                currentIndex = self.GetReadArrayIndex() - 1
+                sendTime = self.getTimeMs()
+                for i in range(0, retries):
+                    returnMessage, currentIndex = self.tWriteFrameWaitAck(
+                        CanMsg,
+                        waitMs=waitMs,
+                        currentIndex=currentIndex,
+                        printLog=printLog,
+                        assumedPayload=assumedPayload,
+                        bError=bErrorAck,
+                        sendTime=sendTime,
+                        notAckIdleWaitTimeMs=notAckIdleWaitTimeMs)
+                    if returnMessage != "Error":
+                        break
+                    elif i == retries - 1:
+                        identifier = Identifier(CanMsg.ID)
+                        payload = payload2Hex(CanMsg.DATA)
+                        text = (f"Message request failed: {identifier}; " +
+                                f"Payload: {payload}")
+                        self.Logger.Error(text)
+                        if printLog:
+                            print(text)
+                        if bErrorExit:
+                            self.__exitError(f"To many retries({retries})")
+                time.sleep(0.01)
+                return returnMessage
+            except KeyboardInterrupt:
+                self.RunReadThread = False
 
     def cmdSend(self,
                 receiver,
@@ -348,6 +381,8 @@ class CanFd(object):
                 bErrorExit=True,
                 notAckIdleWaitTimeMs=0.001):
         cmd = self.CanCmd(blockCmd, subCmd, 1, 0)
+        print("want to send")
+        print(blockCmd)
         message = self.CanMessage20(cmd, self.sender, receiver, payload)
         index = self.GetReadArrayIndex()
         msgAck = self.tWriteFrameWaitAckRetries(
@@ -972,6 +1007,7 @@ class CanFd(object):
             "_____________________________________________________________")
         self.Logger.Info("Stop Streaming - " +
                          Identifier(command=cmd).block_command_name())
+        print("stopping stream")
         ack = self.tWriteFrameWaitAckRetries(
             message,
             retries=20,
@@ -1204,24 +1240,18 @@ class CanFd(object):
     def ReadMessage(self):
         while self.RunReadThread:
             try:
-                self.tCanReadWriteMutex.acquire()
-                result = self.pcan.Read(self.m_PcanHandle)
-                self.tCanReadWriteMutex.release()
-                if result[0] == PCAN_ERROR_OK:
-                    peakCanTimeStamp = result[2].millis_overflow * (
-                        2**32) + result[2].millis + result[2].micros / 1000
-                    self.readArray.append({
-                        "CanMsg": result[1],
-                        "PcTime": self.getTimeMs(),
-                        "PeakCanTime": peakCanTimeStamp
-                    })
-                    getLogger('can').debug(f"{Message(result[1])}")
-                elif result[0] == PCAN_ERROR_QOVERRUN:
-                    self.Logger.Error("RxOverRun")
-                    print("RxOverRun")
-                    self.RunReadThread = False
-            except KeyboardInterrupt:
-                self.RunReadThread = False
+                #self.tCanReadWriteMutex.acquire()
+                result = self.pcan.recv()
+                
+                self.readArray.append({
+                    "CanMsg": result[1],
+                    "PcTime": self.getTimeMs(),
+                    "PeakCanTime": peakCanTimeStamp
+                })
+            except Exception as e:
+                print("read whoopsies")
+                print(e)
+                pass
 
     def getReadMessage(self, element):
         return self.readArray[element]["CanMsg"]
@@ -1265,7 +1295,7 @@ class CanFd(object):
             [SystemCommandBlueTooth["Connect"], 0, 0, 0, 0, 0, 0, 0])
         self.tWriteFrameWaitAckRetries(message, retries=2)
 
-    def iBlueToothConnectTotalScannedDeviceNr(self, receiver, log=True):
+    def iBlueToothConnectTotalScannedDeviceNr(self, receiver, log=True): #mwt startup called
         if log:
             self.Logger.Info("Get number of available devices")
         cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"],
@@ -1275,7 +1305,15 @@ class CanFd(object):
             0, 0
         ])
         msg = self.tWriteFrameWaitAckRetries(message, retries=2)
-        return (int(sArray2String(msg["Payload"][2:])))
+        
+        try:
+            
+            res = (int(sArray2String(msg["payload"][2:])))
+            return res
+        except:
+            print("nothing found")
+            return 0
+        
 
     def bBlueToothConnectDeviceConnect(self, receiver, iDeviceNr):
         cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"],
@@ -1439,7 +1477,7 @@ class CanFd(object):
             self.__exitError("Unable to connect to device")
         return self.bConnected
 
-    def tDeviceList(self, stuNr, bLog=True):
+    def tDeviceList(self, stuNr, bLog=True): # mwt startup
         devList = []
         self.vBlueToothConnectConnect(stuNr, log=False)
         devAll = self.iBlueToothConnectTotalScannedDeviceNr(stuNr, log=bLog)
