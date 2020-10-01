@@ -88,7 +88,7 @@ class CanFd(object):
 
         logger = getLogger('can')
         logger.setLevel(settings.Logger.CAN.Level)
-        handler = FileHandler('can.log', 'w', 'utf-8')
+        handler = FileHandler('can.log', 'w', 'utf-8', delay=True)
         handler.setFormatter(Formatter('{asctime} {message}', style='{'))
         logger.addHandler(handler)
 
