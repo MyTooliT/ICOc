@@ -560,7 +560,7 @@ class TestSTH(TestCase):
 
         self.assertEqual(
             status.returncode, 0,
-            "Over the air updated command returned non-zero exit code " +
+            "Over the air update command returned non-zero exit code " +
             f"{status.returncode}")
 
         expected_output = "Finishing DFU block...OK"
