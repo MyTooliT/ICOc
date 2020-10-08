@@ -253,8 +253,8 @@ class CanFd(object):
                            sendTime=None,
                            notAckIdleWaitTimeMs=0.001):
         if waitMs < 200:
-            self.__exitError("Meantime between send retry to low(" +
-                             str(waitMs) + "ms)")
+            self.__exitError(
+                f"Meantime between send retry to low ({waitMs} ms)")
         if sendTime is None:
             sendTime = self.getTimeMs()
         if currentIndex is None:
@@ -264,8 +264,8 @@ class CanFd(object):
         message = self.readArray[currentIndex]
 
         if printLog:
-            print("Message ID Send: " + hex(CanMsg.ID))
-            print("Message DATA Send: " + payload2Hex(CanMsg.DATA))
+            print(f"Message ID Send: {hex(CanMsg.ID)}")
+            print(f"Message DATA Send: {payload2Hex(CanMsg.DATA)}")
         returnMessage = self.WriteFrame(CanMsg)
         if returnMessage != "Error":
             waitTimeMax = self.getTimeMs() + waitMs
