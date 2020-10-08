@@ -1,8 +1,10 @@
-# Version 1.0.6
+# Version 1.0.7
 
 ## Logging
 
 - The [main CAN class](../CanFd.py) now logs the received CAN messages in a file called `can.log`, if you specify the level `DEBUG` in the [configuration file](../Configuration/config.yaml).
+
+# Version 1.0.6
 
 ## Documentation
 
