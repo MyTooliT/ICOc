@@ -129,7 +129,7 @@ class Identifier:
         self.value = identifier[0] if identifier else 0
 
         if command:
-            # A Command can be both a number or a `Command` object
+            # A command can be a number or a `Command` object
             command_as_number = command if isinstance(command,
                                                       int) else command.value
             set_part(start=12, width=16, number=command_as_number)
