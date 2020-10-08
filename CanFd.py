@@ -274,10 +274,11 @@ class CanFd(object):
         waitTimeMax = self.getTimeMs() + waitMs
         if bError:
             CanMsgAckError = Message(CanMsg).acknowledge().pcan_message
-            CanMsgAck = self.CanMessage20AckError(CanMsg)
+            CanMsgAck = Message(CanMsg).acknowledge(error=True).pcan_message
         else:
             CanMsgAck = Message(CanMsg).acknowledge().pcan_message
-            CanMsgAckError = self.CanMessage20AckError(CanMsg)
+            CanMsgAckError = Message(CanMsg).acknowledge(
+                error=True).pcan_message
         returnMessage = "Run"
         while returnMessage == "Run":
             if waitTimeMax < self.getTimeMs():
@@ -1132,9 +1133,6 @@ class CanFd(object):
                                 sender=sender,
                                 receiver=receiver)
         return Message(identifier=identifier, payload=data).pcan_message
-
-    def CanMessage20AckError(self, CANMsg):
-        return Message(CANMsg).acknowledge(error=True).pcan_message
 
     def CanCmd(self, block, cmd, request=1, error=0):
         """Return the binary representation of a MyTooliT CAN command
