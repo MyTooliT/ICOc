@@ -75,7 +75,7 @@ class Identifier:
             The receiver of the message
 
         Examples
-        -------
+        --------
 
         >>> Identifier().value
         0
