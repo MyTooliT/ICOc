@@ -205,12 +205,13 @@ class CanFd(object):
         with self.tCanReadWriteMutex:
             returnMessage = self.pcan.Write(self.m_PcanHandle, CanMsg)
         if returnMessage != PCAN_ERROR_OK:
-            print("WriteFrame bError: " + hex(returnMessage))
-            self.Logger.Info("WriteFrame bError: " + hex(returnMessage))
-            returnMessage = "Error"
-            self.__exitError("Driver Problems or Physical Layer Problems")
-        else:
-            getLogger('can').debug(f"{Message(CanMsg)}")
+            error_message = self.__get_error_message(
+                "Unable to write CAN message", returnMessage)
+            self.Logger.Error(error_message)
+            self.__exitError(error_message)
+
+        # Only log message, if writing was successful
+        getLogger('can').debug(f"{Message(CanMsg)}")
 
         return returnMessage
 
