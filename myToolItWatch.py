@@ -766,7 +766,7 @@ class myToolItWatch():
         if False == self.KeyBoardInterrupt:
             try:
                 self.Can.ReadThreadReset()
-                self.Can.reset_node(MyToolItNetworkNr["STU1"])
+                self.Can.reset_node("STU1")
                 self.vStuAddr(
                     sBlueToothMacAddr(
                         self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"])))

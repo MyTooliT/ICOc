@@ -66,7 +66,7 @@ class TestSthManually(unittest.TestCase):
     """
 
     def _resetStu(self, retries=5, log=True):
-        return self.Can.reset_node(MyToolItNetworkNr["STU1"],
+        return self.Can.reset_node("STU1",
                                  retries=retries,
                                  log=log)
 

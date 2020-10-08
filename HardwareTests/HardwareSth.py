@@ -155,9 +155,7 @@ class TestSth(unittest.TestCase):
 
     def _resetStu(self, retries=5, log=True):
         self.Can.bConnected = False
-        return self.Can.reset_node(MyToolItNetworkNr["STU1"],
-                                 retries=retries,
-                                 log=log)
+        return self.Can.reset_node("STU1", retries=retries, log=log)
 
     """
     Reset STH
@@ -165,9 +163,9 @@ class TestSth(unittest.TestCase):
 
     def _resetSth(self, retries=5, log=True):
         self.Can.bConnected = False
-        return self.Can.reset_node(MyToolItNetworkNr["STH1"],
-                                 retries=retries,
-                                 log=log)
+        return self.Can.reset_node("STH1",
+                                   retries=retries,
+                                   log=log)
 
     """
     Retrieve BGM113 internal Chip Temperature from the STH
