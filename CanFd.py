@@ -267,33 +267,36 @@ class CanFd(object):
             print(f"Message ID Send: {hex(CanMsg.ID)}")
             print(f"Message DATA Send: {payload2Hex(CanMsg.DATA)}")
         returnMessage = self.WriteFrame(CanMsg)
-        if returnMessage != "Error":
-            waitTimeMax = self.getTimeMs() + waitMs
-            if bError:
-                CanMsgAckError = self.CanMessage20Ack(CanMsg)
-                CanMsgAck = self.CanMessage20AckError(CanMsg)
+
+        if returnMessage == "Error":
+            return [returnMessage, currentIndex]
+
+        waitTimeMax = self.getTimeMs() + waitMs
+        if bError:
+            CanMsgAckError = self.CanMessage20Ack(CanMsg)
+            CanMsgAck = self.CanMessage20AckError(CanMsg)
+        else:
+            CanMsgAck = self.CanMessage20Ack(CanMsg)
+            CanMsgAckError = self.CanMessage20AckError(CanMsg)
+        returnMessage = "Run"
+        while returnMessage == "Run":
+            if waitTimeMax < self.getTimeMs():
+                returnMessage = self.WriteFrameWaitAckTimeOut(CanMsg, printLog)
+            elif sendTime > message["PcTime"]:
+                message = self.readArray[0]
+            elif CanMsgAck.ID == message["CanMsg"].ID and (
+                    assumedPayload is None
+                    or list(message["CanMsg"].DATA) == assumedPayload):
+                returnMessage = self.WriteFrameWaitAckOk(message)
+            elif CanMsgAckError.ID == message["CanMsg"].ID:
+                returnMessage = self.WriteFrameWaitAckError(
+                    message, bError, printLog)
+            elif currentIndex < self.GetReadArrayIndex() - 1:
+                currentIndex += 1
+                message = self.readArray[currentIndex]
             else:
-                CanMsgAck = self.CanMessage20Ack(CanMsg)
-                CanMsgAckError = self.CanMessage20AckError(CanMsg)
-            returnMessage = "Run"
-            while returnMessage == "Run":
-                if waitTimeMax < self.getTimeMs():
-                    returnMessage = self.WriteFrameWaitAckTimeOut(
-                        CanMsg, printLog)
-                elif sendTime > message["PcTime"]:
-                    message = self.readArray[0]
-                elif CanMsgAck.ID == message["CanMsg"].ID and (
-                        assumedPayload is None
-                        or list(message["CanMsg"].DATA) == assumedPayload):
-                    returnMessage = self.WriteFrameWaitAckOk(message)
-                elif CanMsgAckError.ID == message["CanMsg"].ID:
-                    returnMessage = self.WriteFrameWaitAckError(
-                        message, bError, printLog)
-                elif currentIndex < self.GetReadArrayIndex() - 1:
-                    currentIndex += 1
-                    message = self.readArray[currentIndex]
-                else:
-                    time.sleep(notAckIdleWaitTimeMs)
+                time.sleep(notAckIdleWaitTimeMs)
+
         return [returnMessage, currentIndex]
 
     def tWriteFrameWaitAckRetries(self,
