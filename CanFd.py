@@ -430,7 +430,7 @@ class CanFd(object):
         # time.sleep(0.2)  # synch to read thread TODO: Really kick it out?
         return msgAck
 
-    def cmdReset(self, receiver, retries=5, log=True):
+    def reset_node(self, receiver, retries=5, log=True):
         identifier = Identifier(block='System',
                                 block_command='Reset',
                                 sender=self.sender,

@@ -445,7 +445,7 @@ class TestSTH(TestCase):
 
         # Reset STU (and STH)
         self.can.bConnected = False
-        return_message = self.can.cmdReset(MyToolItNetworkNr['STU1'])
+        return_message = self.can.reset_node(MyToolItNetworkNr['STU1'])
         self.can.CanTimeStampStart(return_message['CanTime'])
 
         # Connect to STH
@@ -1323,7 +1323,7 @@ class TestSTH(TestCase):
         # Reset STH to make make the name change at the beginning of the
         # test permanent. Without this code, we would need to reset the STH
         # manually.
-        self.can.cmdReset(MyToolItNetworkNr['STH1'])
+        self.can.reset_node(MyToolItNetworkNr['STH1'])
 
 
 # -- Main ---------------------------------------------------------------------

@@ -156,7 +156,7 @@ class TestSth(unittest.TestCase):
 
     def _resetStu(self, retries=5, log=True):
         self.Can.bConnected = False
-        return self.Can.cmdReset(MyToolItNetworkNr["STU1"],
+        return self.Can.reset_node(MyToolItNetworkNr["STU1"],
                                  retries=retries,
                                  log=log)
 
@@ -166,7 +166,7 @@ class TestSth(unittest.TestCase):
 
     def _resetSth(self, retries=5, log=True):
         self.Can.bConnected = False
-        return self.Can.cmdReset(MyToolItNetworkNr["STH1"],
+        return self.Can.reset_node(MyToolItNetworkNr["STH1"],
                                  retries=retries,
                                  log=log)
 
