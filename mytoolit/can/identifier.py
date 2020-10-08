@@ -10,7 +10,7 @@ module_path.append(repository_root)
 from mytoolit.can.command import Command
 
 from MyToolItCommands import blocknumber_to_commands, MyToolItBlock
-from MyToolItNetworkNumbers import MyToolItNetworkName
+from MyToolItNetworkNumbers import MyToolItNetworkName, MyToolItNetworkNr
 
 # -- Class --------------------------------------------------------------------
 
@@ -90,7 +90,7 @@ class Identifier:
         >>> identifier.sender()
         16
 
-        >>> identifier = Identifier(command=512, sender=1, receiver=2)
+        >>> identifier = Identifier(command=512, sender='STH 1', receiver=2)
         >>> identifier.sender()
         1
         >>> identifier.receiver()
@@ -142,7 +142,10 @@ class Identifier:
                                     request=request,
                                     error=error).value)
         if sender:
-            set_part(start=6, width=5, number=sender)
+            # A sender can be either an integer or a string like object
+            sender_number = sender if isinstance(
+                sender, int) else MyToolItNetworkNr[sender.replace(" ", "")]
+            set_part(start=6, width=5, number=sender_number)
         if receiver:
             set_part(start=0, width=5, number=receiver)
 
