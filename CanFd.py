@@ -273,10 +273,10 @@ class CanFd(object):
 
         waitTimeMax = self.getTimeMs() + waitMs
         if bError:
-            CanMsgAckError = self.CanMessage20Ack(CanMsg)
+            CanMsgAckError = Message(CanMsg).acknowledge().pcan_message
             CanMsgAck = self.CanMessage20AckError(CanMsg)
         else:
-            CanMsgAck = self.CanMessage20Ack(CanMsg)
+            CanMsgAck = Message(CanMsg).acknowledge().pcan_message
             CanMsgAckError = self.CanMessage20AckError(CanMsg)
         returnMessage = "Run"
         while returnMessage == "Run":
@@ -1132,9 +1132,6 @@ class CanFd(object):
                                 sender=sender,
                                 receiver=receiver)
         return Message(identifier=identifier, payload=data).pcan_message
-
-    def CanMessage20Ack(self, CANMsg):
-        return Message(CANMsg).acknowledge().pcan_message
 
     def CanMessage20AckError(self, CANMsg):
         return Message(CANMsg).acknowledge(error=True).pcan_message
