@@ -98,6 +98,9 @@ class Identifier:
         >>> identifier.command()
         512
 
+        >>> Identifier(receiver='SPU 1').receiver()
+        15
+
         >>> identifier = Identifier(block=4, block_command=1, request=False,
         ...                         error=False, sender=31, receiver=1)
         >>> identifier.block_name()
@@ -141,13 +144,17 @@ class Identifier:
                                     block_command=block_command,
                                     request=request,
                                     error=error).value)
+
+        # Sender and receiver can be either an integer or a string like object
         if sender:
-            # A sender can be either an integer or a string like object
             sender_number = sender if isinstance(
                 sender, int) else MyToolItNetworkNr[sender.replace(" ", "")]
             set_part(start=6, width=5, number=sender_number)
         if receiver:
-            set_part(start=0, width=5, number=receiver)
+            receiver_number = receiver if isinstance(
+                receiver, int) else MyToolItNetworkNr[receiver.replace(
+                    " ", "")]
+            set_part(start=0, width=5, number=receiver_number)
 
     def __repr__(self):
         """Return the string representation of the current identifier
