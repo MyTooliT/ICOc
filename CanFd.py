@@ -1033,8 +1033,7 @@ class CanFd(object):
                          printLog=False):
         messageIdFilter = self.CanCmd(
             MyToolItBlock["Configuration"],
-            MyToolItConfiguration["CalibrateMeasurement"], 0,
-            bErrorAck != False)
+            MyToolItConfiguration["CalibrateMeasurement"], 0, bErrorAck)
         messageIdFilter = Identifier(command=messageIdFilter,
                                      sender=receiver,
                                      receiver=self.sender).value
@@ -1083,7 +1082,7 @@ class CanFd(object):
                         bErrorAck=False,
                         printLog=False):
         messageIdFilter = self.CanCmd(MyToolItBlock["StatisticalData"], subCmd,
-                                      0, bErrorAck != False)
+                                      0, bErrorAck)
         messageIdFilter = Identifier(command=messageIdFilter,
                                      sender=receiver,
                                      receiver=self.sender).value
