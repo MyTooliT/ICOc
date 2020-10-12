@@ -96,9 +96,7 @@ class TestSthManually(unittest.TestCase):
 
     def _resetStu(self, retries=5, log=True):
         self.Can.bConnected = False
-        return self.Can.reset_node("STU1",
-                                 retries=retries,
-                                 log=log)
+        return self.Can.reset_node("STU1", retries=retries, log=log)
 
     """
     Reset the STH
@@ -106,9 +104,7 @@ class TestSthManually(unittest.TestCase):
 
     def _resetSth(self, retries=5, log=True):
         self.Can.bConnected = False
-        return self.Can.reset_node("STH1",
-                                 retries=retries,
-                                 log=log)
+        return self.Can.reset_node("STH1", retries=retries, log=log)
 
     """
     Get the internal BGM113 Chip temeprature in °C

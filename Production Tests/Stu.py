@@ -74,13 +74,13 @@ class TestStu(unittest.TestCase):
             self.skipTest("At least some previous test failed")
         else:
             self.Can = CAN.CAN(self.fileName,
-                                   self.fileNameError,
-                                   MyToolItNetworkNr["SPU1"],
-                                   MyToolItNetworkNr["STU1"],
-                                   0,
-                                   0,
-                                   0,
-                                   FreshLog=True)
+                               self.fileNameError,
+                               MyToolItNetworkNr["SPU1"],
+                               MyToolItNetworkNr["STU1"],
+                               0,
+                               0,
+                               0,
+                               FreshLog=True)
             self.sSerialNumber = sSerialNumber(
                 self.sExcelEepromContentFileName)
             self.sDateClock = sDateClock()

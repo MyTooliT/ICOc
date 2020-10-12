@@ -52,13 +52,13 @@ class TestSth(unittest.TestCase):
         self.fileName = sLogLocation + self._testMethodName + ".txt"
         self.fileNameError = sLogLocation + "Error_" + self._testMethodName + ".txt"
         self.Can = CAN.CAN(self.fileName,
-                               self.fileNameError,
-                               MyToolItNetworkNr["SPU1"],
-                               MyToolItNetworkNr["STH1"],
-                               self.tSthLimits.uSamplingRatePrescalerReset,
-                               self.tSthLimits.uSamplingRateAcqTimeReset,
-                               self.tSthLimits.uSamplingRateOverSamplesReset,
-                               FreshLog=True)
+                           self.fileNameError,
+                           MyToolItNetworkNr["SPU1"],
+                           MyToolItNetworkNr["STH1"],
+                           self.tSthLimits.uSamplingRatePrescalerReset,
+                           self.tSthLimits.uSamplingRateAcqTimeReset,
+                           self.tSthLimits.uSamplingRateOverSamplesReset,
+                           FreshLog=True)
         self.Can.Logger.Info("TestCase: " + str(self._testMethodName))
         self.vSilabsAdapterReset()
         self.Can.CanTimeStampStart(
@@ -163,9 +163,7 @@ class TestSth(unittest.TestCase):
 
     def _resetSth(self, retries=5, log=True):
         self.Can.bConnected = False
-        return self.Can.reset_node("STH1",
-                                   retries=retries,
-                                   log=log)
+        return self.Can.reset_node("STH1", retries=retries, log=log)
 
     """
     Retrieve BGM113 internal Chip Temperature from the STH
@@ -746,7 +744,8 @@ class TestSth(unittest.TestCase):
                              MyToolItBlock["EEPROM"], MyToolItEeprom["Write"],
                              au8Payload)
         self.Can.Logger.Info("Page Write Time: " +
-                             str(self.Can.get_elapsed_time() - timeStamp) + "ms")
+                             str(self.Can.get_elapsed_time() - timeStamp) +
+                             "ms")
 
     """
     Read page and check content
@@ -763,7 +762,8 @@ class TestSth(unittest.TestCase):
             for dataByte in dataReadBack[4:]:
                 self.assertEqual(dataByte, value)
         self.Can.Logger.Info("Page Read Time: " +
-                             str(self.Can.get_elapsed_time() - timeStamp) + "ms")
+                             str(self.Can.get_elapsed_time() - timeStamp) +
+                             "ms")
 
     """
     Reset the Silicion Laps Adapter

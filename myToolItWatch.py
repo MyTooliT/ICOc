@@ -874,7 +874,8 @@ class myToolItWatch():
             while (None == ack) and (self.Can.get_elapsed_time() < endTime):
                 self.Can.WriteFrame(message)
                 readEndTime = self.Can.get_elapsed_time() + 500
-                while ((None == ack) and (self.Can.get_elapsed_time() < readEndTime)):
+                while ((None == ack)
+                       and (self.Can.get_elapsed_time() < readEndTime)):
                     ack = self.ReadMessage()
         else:
             ack = True
@@ -908,7 +909,8 @@ class myToolItWatch():
             while (None == ack) and (self.Can.get_elapsed_time() < endTime):
                 self.Can.WriteFrame(message)
                 readEndTime = self.Can.get_elapsed_time() + 500
-                while ((None == ack) and (self.Can.get_elapsed_time() < readEndTime)):
+                while ((None == ack)
+                       and (self.Can.get_elapsed_time() < readEndTime)):
                     ack = self.ReadMessage()
         else:
             ack = True

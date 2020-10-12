@@ -137,7 +137,8 @@ class TestStu(unittest.TestCase):
                              MyToolItBlock["EEPROM"], MyToolItEeprom["Write"],
                              au8Payload)
         self.Can.Logger.Info("Page Write Time: " +
-                             str(self.Can.get_elapsed_time() - timeStamp) + "ms")
+                             str(self.Can.get_elapsed_time() - timeStamp) +
+                             "ms")
 
     """
     Read page and check content
@@ -154,7 +155,8 @@ class TestStu(unittest.TestCase):
             for dataByte in dataReadBack[4:]:
                 self.assertEqual(dataByte, value)
         self.Can.Logger.Info("Page Read Time: " +
-                             str(self.Can.get_elapsed_time() - timeStamp) + "ms")
+                             str(self.Can.get_elapsed_time() - timeStamp) +
+                             "ms")
 
     """
     Connect to STH1 by device number 1
@@ -1332,7 +1334,8 @@ class TestStu(unittest.TestCase):
                              MyToolItBlock["EEPROM"], MyToolItEeprom["Write"],
                              payload)
         self.Can.Logger.Info("Page Write Time: " +
-                             str(self.Can.get_elapsed_time() - timeStamp) + "ms")
+                             str(self.Can.get_elapsed_time() - timeStamp) +
+                             "ms")
         u32EepromWriteRequestCounterTestEnd = self.Can.u32EepromWriteRequestCounter(
             MyToolItNetworkNr["STU1"])
         u32EepromWriteRequsts = u32EepromWriteRequestCounterTestEnd - u32EepromWriteRequestCounterTestStart
@@ -1398,7 +1401,8 @@ class TestStu(unittest.TestCase):
                              MyToolItBlock["EEPROM"], MyToolItEeprom["Write"],
                              payload)
         self.Can.Logger.Info("Page Write Time: " +
-                             str(self.Can.get_elapsed_time() - timeStamp) + "ms")
+                             str(self.Can.get_elapsed_time() - timeStamp) +
+                             "ms")
         self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STU1"])
         u32EepromWriteRequestCounterTestEnd = self.Can.u32EepromWriteRequestCounter(
             MyToolItNetworkNr["STU1"])
