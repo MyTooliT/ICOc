@@ -46,7 +46,7 @@ class CanFd(object):
                              testMethodNameError,
                              FreshLog=FreshLog)
         self.Logger.Info(str(sDateClock()))
-        self.startTime = int(round(time.time() * 1000))
+        self.start_time = int(round(time.time() * 1000))
         self.pcan = PCANBasic()
         self.m_PcanHandle = PCAN_USBBUS1
         self.bError = False
@@ -1114,7 +1114,7 @@ class CanFd(object):
         return ErrorStatusSTU(status_word_1_bytes)
 
     def getTimeMs(self):
-        return int(round(time.time() * 1000)) - int(self.startTime)
+        return int(round(time.time() * 1000)) - int(self.start_time)
 
     def CanMessage20(self, command=0, sender=0, receiver=0, data=[]):
         if len(data) > 8:
