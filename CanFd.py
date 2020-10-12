@@ -6,6 +6,7 @@ import math
 from ctypes import c_byte
 from sys import stderr
 from logging import getLogger, FileHandler, Formatter, DEBUG
+from time import time, sleep
 
 from mytoolit.can.identifier import Identifier
 from mytoolit.can.command import Command
@@ -46,7 +47,7 @@ class CanFd(object):
                              testMethodNameError,
                              FreshLog=FreshLog)
         self.Logger.Info(str(sDateClock()))
-        self.start_time = int(round(time.time() * 1000))
+        self.start_time = int(round(time() * 1000))
         self.pcan = PCANBasic()
         self.m_PcanHandle = PCAN_USBBUS1
         self.bError = False
@@ -104,7 +105,7 @@ class CanFd(object):
             self.tCanReadWriteMutex.acquire()  # Insane
             self.pcan.Uninitialize(self.m_PcanHandle)
             self.tCanReadWriteMutex.release()
-            time.sleep(1)
+            sleep(1)
             [_iDs, cmds] = self.ReadMessageStatistics()
             for cmd, value in cmds.items():
                 block_command = Identifier(command=cmd).block_command_name()
@@ -180,13 +181,13 @@ class CanFd(object):
                 "PcTime": 1 << 64,
                 "PeakCanTime": 0
             }]
-            time.sleep(0.2)
+            sleep(0.2)
             self.RunReadThread = True
             self.readThread = threading.Thread(target=self.ReadMessage,
                                                name="CanReadThread")
             self.readThread.start()
             self.reset()
-            time.sleep(0.2)
+            sleep(0.2)
         except:
             pass
 
@@ -300,7 +301,7 @@ class CanFd(object):
                 currentIndex += 1
                 message = self.readArray[currentIndex]
             else:
-                time.sleep(notAckIdleWaitTimeMs)
+                sleep(notAckIdleWaitTimeMs)
 
         return [returnMessage, currentIndex]
 
@@ -339,7 +340,7 @@ class CanFd(object):
                         print(text)
                     if bErrorExit:
                         self.__exitError(f"To many retries({retries})")
-            time.sleep(0.01)
+            sleep(0.01)
             return returnMessage
         except KeyboardInterrupt:
             self.RunReadThread = False
@@ -378,7 +379,7 @@ class CanFd(object):
             log_message = f"{prefix}{message} (CAN time: {can_time_stamp})"
             self.Logger.Info(log_message)
             self.Logger.Info(f"Assumed receive message number: {index}")
-        # time.sleep(0.2)  # synch to read thread TODO: Really kick it out?
+        # sleep(0.2)  # synch to read thread TODO: Really kick it out?
         return index
 
     def cmdSendData(self,
@@ -421,7 +422,7 @@ class CanFd(object):
                                      command=canCmd).block_command_name() +
                                  " - " + "Error")
             self.Logger.Info("Assumed receive message number: " + str(index))
-        # time.sleep(0.2)  # synch to read thread TODO: Really kick it out?
+        # sleep(0.2)  # synch to read thread TODO: Really kick it out?
         return msgAck
 
     def reset_node(self, receiver, retries=5, log=True):
@@ -435,7 +436,7 @@ class CanFd(object):
 
         return_message = self.tWriteFrameWaitAckRetries(
             Message(identifier=identifier).pcan_message, retries=retries)
-        time.sleep(2)
+        sleep(2)
         return return_message
 
     def u32EepromWriteRequestCounter(self, receiver):
@@ -574,9 +575,9 @@ class CanFd(object):
         if False != log:
             self.Logger.Info("indexStart: " + str(indexStart))
         testTimeMs += StartupTimeMs
-        time.sleep(testTimeMs / 1000)
+        sleep(testTimeMs / 1000)
         self.streamingStop(receiver, subCmd)
-        time.sleep(2)  # synch to read thread
+        sleep(2)  # synch to read thread
         indexEnd = self.GetReadArrayIndex() - 180  # do not catch stop command
         countDel = 0
         while testTimeMs < self.getReadMessageTimeMs(indexStart,
@@ -1114,7 +1115,7 @@ class CanFd(object):
         return ErrorStatusSTU(status_word_1_bytes)
 
     def getTimeMs(self):
-        return int(round(time.time() * 1000)) - int(self.start_time)
+        return int(round(time() * 1000)) - int(self.start_time)
 
     def CanMessage20(self, command=0, sender=0, receiver=0, data=[]):
         if len(data) > 8:
@@ -1401,21 +1402,21 @@ class CanFd(object):
         Connect to device via name
         """
         self.sDevName = None
-        endTime = time.time() + BluetoothTime["Connect"]
+        endTime = time() + BluetoothTime["Connect"]
         self.Logger.Info("Try to connect to Device Name: " + sName)
         dev = None
         devList = None
-        while time.time() < endTime and False == self.bConnected:
+        while time() < endTime and False == self.bConnected:
             devList = self.tDeviceList(stuNr)
             for dev in devList:
                 if sName == dev["Name"]:
                     self.iAddress = dev["Address"]
                     self.sDevName = dev["Name"]
                     self.DeviceNr = dev["DeviceNumber"]
-                    currentTime = time.time()
+                    currentTime = time()
                     endTime = currentTime + BluetoothTime["Connect"]
                     self.bBlueToothConnectDeviceConnect(stuNr, self.DeviceNr)
-                    while time.time() < endTime and False == self.bConnected:
+                    while time() < endTime and False == self.bConnected:
                         self.bBlueToothCheckConnect(stuNr)
                     if self.bConnected and log:
                         self.Logger.Info("Connected to: " +
@@ -1433,18 +1434,18 @@ class CanFd(object):
         self.vBlueToothConnectConnect(stuNr, log=False)
         devAll = self.iBlueToothConnectTotalScannedDeviceNr(stuNr, log=bLog)
         for dev in range(0, devAll):
-            endTime = time.time() + BluetoothTime["Connect"]
+            endTime = time() + BluetoothTime["Connect"]
             name = ''
             nameOld = None
-            while nameOld != name and time.time() < endTime:
+            while nameOld != name and time() < endTime:
                 nameOld = name
                 name = self.BlueToothNameGet(stuNr, dev)[0:8]
-            endTime = time.time() + BluetoothTime["Connect"]
+            endTime = time() + BluetoothTime["Connect"]
             address = 0
-            while 0 == address and time.time() < endTime:
+            while 0 == address and time() < endTime:
                 address = self.BlueToothAddressGet(stuNr, dev)
             rssi = 0
-            while 0 == rssi and time.time() < endTime:
+            while 0 == rssi and time() < endTime:
                 rssi = self.BlueToothRssiGet(stuNr, dev)
             devList.append({
                 "DeviceNumber": dev,
@@ -1458,20 +1459,20 @@ class CanFd(object):
         """
         Connect to device via Bluetooth Address
         """
-        endTime = time.time() + BluetoothTime["Connect"]
+        endTime = time() + BluetoothTime["Connect"]
         self.Logger.Info("Try to connect to Test Device Address: " +
                          str(iAddress))
-        while time.time() < endTime and False == self.bConnected:
+        while time() < endTime and False == self.bConnected:
             devList = self.tDeviceList(stuNr)
             for dev in devList:
                 if iAddress == hex(dev["Address"]):
                     self.iAddress = iAddress
                     self.sDevName = dev["Name"]
                     self.DeviceNr = dev["DeviceNumber"]
-                    currentTime = time.time()
+                    currentTime = time()
                     endTime = currentTime + BluetoothTime["Connect"]
                     self.bBlueToothConnectDeviceConnect(stuNr, self.DeviceNr)
-                    while time.time() < endTime and False == self.bConnected:
+                    while time() < endTime and False == self.bConnected:
                         self.bBlueToothCheckConnect(stuNr)
                     if False != self.bConnected and False != bLog:
                         self.Logger.Info("Connected to: " + self.iAddress)
@@ -1495,7 +1496,7 @@ class CanFd(object):
             self.Logger.Info("Setting Bluetooth Energy Mode 1")
             modeNr = SystemCommandBlueTooth["EnergyModeReducedWrite"]
         Payload = [modeNr, self.DeviceNr, S1B0, S1B1, S1B2, S1B3, A1B0, A1B1]
-        time.sleep(0.1)
+        sleep(0.1)
         [timeReset, timeAdvertisement] = self.BlueToothEnergyMode(Payload)
         self.Logger.Info("Energy Mode ResetTime/AdvertisementTime: " +
                          str(timeReset) + "/" + str(timeAdvertisement))
