@@ -370,7 +370,7 @@ class CanFd(object):
             printLog=printLog,
             bErrorExit=bErrorExit,
             notAckIdleWaitTimeMs=notAckIdleWaitTimeMs)
-        if msgAck != "Error" and not bErrorExit:
+        if msgAck == "Error" and bErrorExit:
             self.__exitError("Unable to send command")
         if log:
             canCmd = self.CanCmd(blockCmd, subCmd, 1, 0)
