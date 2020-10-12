@@ -1115,6 +1115,14 @@ class CanFd(object):
         return ErrorStatusSTU(status_word_1_bytes)
 
     def get_elapsed_time(self):
+        """Return the time since the initialization of the CAN object
+
+        Returns
+        -------
+
+        The time in milliseconds since the initialization
+        """
+
         return int(round(time() * 1000)) - int(self.start_time)
 
     def CanMessage20(self, command=0, sender=0, receiver=0, data=[]):
