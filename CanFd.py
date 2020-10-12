@@ -355,8 +355,12 @@ class CanFd(object):
                 printLog=False,
                 bErrorExit=True,
                 notAckIdleWaitTimeMs=0.001):
-        cmd = self.CanCmd(blockCmd, subCmd, 1, 0)
-        message = self.CanMessage20(cmd, self.sender, receiver, payload)
+        message = Message(identifier=Identifier(block=blockCmd,
+                                                block_command=subCmd,
+                                                request=True,
+                                                sender=self.sender,
+                                                receiver=receiver),
+                          payload=payload).pcan_message
         index = self.GetReadArrayIndex()
         msgAck = self.tWriteFrameWaitAckRetries(
             message,
