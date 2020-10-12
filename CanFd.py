@@ -1031,13 +1031,13 @@ class CanFd(object):
                          bErrorAck=False,
                          bReset=False,
                          printLog=False):
-        messageIdFilter = self.CanCmd(
-            MyToolItBlock["Configuration"],
-            MyToolItConfiguration["CalibrateMeasurement"], 0, bErrorAck)
-        messageIdFilter = Identifier(command=messageIdFilter,
-                                     sender=receiver,
-                                     receiver=self.sender).value
-        messageIdFilter = hex(messageIdFilter)
+
+        messageIdFilter = hex(
+            Identifier(command=Command(block="Configuration",
+                                       block_command="CalibrateMeasurement",
+                                       error=bErrorAck),
+                       sender=receiver,
+                       receiver=self.sender).value)
         byte1 = CalibrationMeassurement()
         byte1.asbyte = 0
         byte1.b.bReset = bReset
