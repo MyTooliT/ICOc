@@ -19,7 +19,7 @@ pip install nose
 Please run the following command in the root of the repository:
 
 ```sh
-nosetests --with-doctest --traverse-namespace mytoolit
+nosetests --with-doctest --traverse-namespace mytoolit CAN
 ```
 
 and make sure that it reports no test failures.
