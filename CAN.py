@@ -20,7 +20,7 @@ from MyToolItNetworkNumbers import MyToolItNetworkNr, MyToolItNetworkName
 from Logger import Logger
 
 
-class CanFd(object):
+class CAN(object):
     """A class used to communicate over CAN
 
     Objects of this class will create a thread that reads data from the CAN

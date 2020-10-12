@@ -12,7 +12,7 @@ file_path = '../'
 sDirName = os.path.dirname(file_path)
 sys.path.append(sDirName)
 
-import CanFd
+import CAN
 import math
 from MyToolItNetworkNumbers import MyToolItNetworkNr
 import time
@@ -51,7 +51,7 @@ class TestSth(unittest.TestCase):
         self.bError = False
         self.fileName = sLogLocation + self._testMethodName + ".txt"
         self.fileNameError = sLogLocation + "Error_" + self._testMethodName + ".txt"
-        self.Can = CanFd.CanFd(self.fileName,
+        self.Can = CAN.CAN(self.fileName,
                                self.fileNameError,
                                MyToolItNetworkNr["SPU1"],
                                MyToolItNetworkNr["STH1"],

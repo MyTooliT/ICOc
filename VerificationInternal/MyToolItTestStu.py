@@ -10,7 +10,7 @@ sDirName = os.path.dirname(file_path)
 sys.path.append(sDirName)
 
 # from PCANBasic import *
-import CanFd
+import CAN
 from MyToolItNetworkNumbers import MyToolItNetworkNr
 from MyToolItCommands import *
 from random import randint
@@ -40,7 +40,7 @@ class TestStu(unittest.TestCase):
         self.fileName = sLogLocation + self._testMethodName + ".txt"
         self.fileNameError = sLogLocation + "Error_" + self._testMethodName + ".txt"
         self.bError = False
-        self.Can = CanFd.CanFd(self.fileName,
+        self.Can = CAN.CAN(self.fileName,
                                self.fileNameError,
                                MyToolItNetworkNr["SPU1"],
                                MyToolItNetworkNr["STU1"],

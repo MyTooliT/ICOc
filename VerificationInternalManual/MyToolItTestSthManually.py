@@ -10,7 +10,7 @@ file_path = '../'
 sDirName = os.path.dirname(file_path)
 sys.path.append(sDirName)
 
-import CanFd
+import CAN
 from MyToolItNetworkNumbers import MyToolItNetworkNr
 from SthLimits import SthLimits
 import time
@@ -36,7 +36,7 @@ class TestSthManually(unittest.TestCase):
                                     uAdc2Acc, iRssiMin, 20, 35)
         self.fileName = sLogLocation + self._testMethodName + ".txt"
         self.fileNameError = sLogLocation + "Error_" + self._testMethodName + ".txt"
-        self.Can = CanFd.CanFd(self.fileName,
+        self.Can = CAN.CAN(self.fileName,
                                self.fileNameError,
                                MyToolItNetworkNr["SPU1"],
                                MyToolItNetworkNr["STH1"],

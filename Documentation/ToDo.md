@@ -2,7 +2,7 @@
 
 ## General
 
-- The [CAN communication class](../CanFd.py) should support different CAN controllers. For that to work we should use the general purpose interface of the [Python CAN library](https://python-can.readthedocs.io/).
+- The [CAN communication class](../CAN.py) should support different CAN controllers. For that to work we should use the general purpose interface of the [Python CAN library](https://python-can.readthedocs.io/).
 - Add GUI for data collection
 
 ## Style

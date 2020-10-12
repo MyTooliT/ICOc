@@ -6,7 +6,7 @@ from time import sleep
 import glob
 import curses
 import os
-import CanFd
+import CAN
 import subprocess
 
 
@@ -557,7 +557,7 @@ class mwt(myToolItWatch):
             except KeyboardInterrupt:
                 pass
                 #TODO: Kill process
-            self.Can = CanFd.CanFd("init.txt", "initError.txt",
+            self.Can = CAN.CAN("init.txt", "initError.txt",
                                    MyToolItNetworkNr["SPU1"],
                                    MyToolItNetworkNr["STH1"])
         return bContinue

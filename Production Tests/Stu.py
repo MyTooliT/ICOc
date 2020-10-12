@@ -6,7 +6,7 @@ sys.path.append(sDirName)
 file_path = '../'
 sDirName = os.path.dirname(file_path)
 sys.path.append(sDirName)
-import CanFd
+import CAN
 import time
 import array
 import openpyxl
@@ -73,7 +73,7 @@ class TestStu(unittest.TestCase):
         if False != bSkip and "test9999StoreTestResults" != self._testMethodName:
             self.skipTest("At least some previous test failed")
         else:
-            self.Can = CanFd.CanFd(self.fileName,
+            self.Can = CAN.CAN(self.fileName,
                                    self.fileNameError,
                                    MyToolItNetworkNr["SPU1"],
                                    MyToolItNetworkNr["STU1"],
