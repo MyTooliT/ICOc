@@ -1081,12 +1081,6 @@ class CanFd(object):
                         retries=3,
                         bErrorAck=False,
                         printLog=False):
-        messageIdFilter = self.CanCmd(MyToolItBlock["StatisticalData"], subCmd,
-                                      0, bErrorAck)
-        messageIdFilter = Identifier(command=messageIdFilter,
-                                     sender=receiver,
-                                     receiver=self.sender).value
-        messageIdFilter = hex(messageIdFilter)
         msgAck = self.cmdSendData(receiver,
                                   MyToolItBlock["StatisticalData"],
                                   subCmd, [],
