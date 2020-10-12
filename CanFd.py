@@ -373,21 +373,11 @@ class CanFd(object):
         if msgAck == "Error" and bErrorExit:
             self.__exitError("Unable to send command")
         if log:
-            canCmd = self.CanCmd(blockCmd, subCmd, 1, 0)
-            if msgAck != "Error":
-                self.Logger.Info(
-                    MyToolItNetworkName[self.sender] + "->" +
-                    MyToolItNetworkName[receiver] + "(CanTimeStamp: " +
-                    str(msgAck["CanTime"] - self.PeakCanTimeStampStart) +
-                    "ms): " + Identifier(command=canCmd).block_command_name() +
-                    " - " + payload2Hex(payload))
-            else:
-                self.Logger.Info(MyToolItNetworkName[self.sender] + "->" +
-                                 MyToolItNetworkName[receiver] + ": " +
-                                 Identifier(
-                                     command=canCmd).block_command_name() +
-                                 " - " + "Error")
-            self.Logger.Info("Assumed receive message number: " + str(index))
+            can_time_stamp = msgAck["CanTime"] - self.PeakCanTimeStampStart
+            prefix = "Unable to send message: " if msgAck == "Error" else ""
+            log_message = f"{prefix}{message} (CAN time: {can_time_stamp})"
+            self.Logger.Info(log_message)
+            self.Logger.Info(f"Assumed receive message number: {index}")
         # time.sleep(0.2)  # synch to read thread TODO: Really kick it out?
         return index
 
