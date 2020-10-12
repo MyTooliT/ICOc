@@ -32,10 +32,10 @@ class CanFd(object):
     """
 
     def __init__(self,
-                 testMethodName,
-                 testMethodNameError,
-                 sender,
-                 receiver,
+                 testMethodName='unknown_test_method',
+                 testMethodNameError='unknown_test_method_error',
+                 sender=MyToolItNetworkNr['SPU1'],
+                 receiver=MyToolItNetworkNr['STH1'],
                  prescaler=2,
                  acquisition=8,
                  oversampling=64,
