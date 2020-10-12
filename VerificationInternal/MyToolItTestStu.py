@@ -10,7 +10,7 @@ sDirName = os.path.dirname(file_path)
 sys.path.append(sDirName)
 
 # from PCANBasic import *
-import CAN
+from network import Network
 from MyToolItNetworkNumbers import MyToolItNetworkNr
 from MyToolItCommands import *
 from random import randint
@@ -40,11 +40,11 @@ class TestStu(unittest.TestCase):
         self.fileName = sLogLocation + self._testMethodName + ".txt"
         self.fileNameError = sLogLocation + "Error_" + self._testMethodName + ".txt"
         self.bError = False
-        self.Can = CAN.CAN(self.fileName,
-                               self.fileNameError,
-                               MyToolItNetworkNr["SPU1"],
-                               MyToolItNetworkNr["STU1"],
-                               FreshLog=True)
+        self.Can = Network(self.fileName,
+                           self.fileNameError,
+                           MyToolItNetworkNr["SPU1"],
+                           MyToolItNetworkNr["STU1"],
+                           FreshLog=True)
         self.Can.Logger.Info("TestCase: " + str(self._testMethodName))
         self.vSilabsAdapterReset()
         if "test0000FirmwareFlash" != self._testMethodName:

@@ -24,7 +24,7 @@ from mytoolit.report.report import Report
 from mytoolit.config import settings
 from mytoolit.utility import convert_mac_base64
 
-from CAN import CAN
+from network import Network
 from MyToolItNetworkNumbers import MyToolItNetworkNr
 from MyToolItCommands import (
     ActiveState,
@@ -437,11 +437,11 @@ class TestSTH(TestCase):
         log_filepath = f"{self._testMethodName}.txt"
         log_filepath_error = f"{self._testMethodName}_Error.txt"
 
-        self.can = CAN(log_filepath,
-                       log_filepath_error,
-                       MyToolItNetworkNr['SPU1'],
-                       MyToolItNetworkNr['STH1'],
-                       oversampling=AdcOverSamplingRate[64])
+        self.can = Network(log_filepath,
+                           log_filepath_error,
+                           MyToolItNetworkNr['SPU1'],
+                           MyToolItNetworkNr['STH1'],
+                           oversampling=AdcOverSamplingRate[64])
 
         # Reset STU (and STH)
         self.can.bConnected = False

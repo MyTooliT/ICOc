@@ -20,7 +20,7 @@ from MyToolItNetworkNumbers import MyToolItNetworkNr, MyToolItNetworkName
 from Logger import Logger
 
 
-class CAN(object):
+class Network(object):
     """A class used to communicate over CAN
 
     Objects of this class will create a thread that reads data from the CAN
@@ -1125,7 +1125,7 @@ class CAN(object):
         Example
         -------
 
-        >>> network = CAN()
+        >>> network = Network()
         >>> elapsed_time = network.get_elapsed_time()
         >>> elapsed_time < 5000
         True

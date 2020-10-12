@@ -6,7 +6,7 @@ from time import sleep
 import glob
 import curses
 import os
-import CAN
+from network import Network
 import subprocess
 
 
@@ -557,9 +557,9 @@ class mwt(myToolItWatch):
             except KeyboardInterrupt:
                 pass
                 #TODO: Kill process
-            self.Can = CAN.CAN("init.txt", "initError.txt",
-                                   MyToolItNetworkNr["SPU1"],
-                                   MyToolItNetworkNr["STH1"])
+            self.Can = Network("init.txt", "initError.txt",
+                               MyToolItNetworkNr["SPU1"],
+                               MyToolItNetworkNr["STH1"])
         return bContinue
 
     def bTerminalUpdateConnectExecute(self, sAddr):

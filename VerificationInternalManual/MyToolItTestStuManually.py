@@ -8,7 +8,7 @@ sys.path.append(sDirName)
 file_path = '../'
 sDirName = os.path.dirname(file_path)
 sys.path.append(sDirName)
-import CAN
+from network import Network
 from MyToolItNetworkNumbers import MyToolItNetworkNr
 import time
 from MyToolItCommands import *
@@ -25,9 +25,9 @@ class TestSthManually(unittest.TestCase):
         input('Press Any Key to Continue')
         self.fileName = sLogLocation + self._testMethodName + ".txt"
         self.fileNameError = sLogLocation + "Error_" + self._testMethodName + ".txt"
-        self.Can = CAN.CAN(self.fileName, self.fileNameError,
-                               MyToolItNetworkNr["SPU1"],
-                               MyToolItNetworkNr["STH1"])
+        self.Can = Network(self.fileName, self.fileNameError,
+                           MyToolItNetworkNr["SPU1"],
+                           MyToolItNetworkNr["STH1"])
         self.Can.Logger.Info("TestCase: " + str(self._testMethodName))
         self._resetStu()
         self.bError = False

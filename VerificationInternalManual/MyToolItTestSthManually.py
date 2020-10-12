@@ -10,7 +10,7 @@ file_path = '../'
 sDirName = os.path.dirname(file_path)
 sys.path.append(sDirName)
 
-import CAN
+from network import Network
 from MyToolItNetworkNumbers import MyToolItNetworkNr
 from SthLimits import SthLimits
 import time
@@ -36,14 +36,14 @@ class TestSthManually(unittest.TestCase):
                                     uAdc2Acc, iRssiMin, 20, 35)
         self.fileName = sLogLocation + self._testMethodName + ".txt"
         self.fileNameError = sLogLocation + "Error_" + self._testMethodName + ".txt"
-        self.Can = CAN.CAN(self.fileName,
-                               self.fileNameError,
-                               MyToolItNetworkNr["SPU1"],
-                               MyToolItNetworkNr["STH1"],
-                               self.tSthLimits.uSamplingRatePrescalerReset,
-                               self.tSthLimits.uSamplingRateAcqTimeReset,
-                               self.tSthLimits.uSamplingRateOverSamplesReset,
-                               FreshLog=True)
+        self.Can = Network(self.fileName,
+                           self.fileNameError,
+                           MyToolItNetworkNr["SPU1"],
+                           MyToolItNetworkNr["STH1"],
+                           self.tSthLimits.uSamplingRatePrescalerReset,
+                           self.tSthLimits.uSamplingRateAcqTimeReset,
+                           self.tSthLimits.uSamplingRateOverSamplesReset,
+                           FreshLog=True)
         self.Can.Logger.Info("TestCase: " + str(self._testMethodName))
         self._resetStu()
         self.Can.Logger.Info("Connect to STH")

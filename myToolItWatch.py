@@ -2,8 +2,8 @@ import sys
 import os
 from mytoolit import __version__
 import xml.etree.ElementTree as ET
-import CAN
-from CAN import rreplace
+from can.interfaces.pcan.basic import PCAN_ERROR_OK, PCAN_ERROR_QOVERRUN
+from network import rreplace, Network
 from MyToolItNetworkNumbers import *
 from MyToolItCommands import *
 from time import sleep, time
@@ -45,9 +45,9 @@ class myToolItWatch():
         self.iMsgLoss = 0
         self.iMsgsTotal = 0
         self.iMsgCounterLast = 0
-        self.Can = CAN.CAN("init.txt", "initError.txt",
-                               MyToolItNetworkNr["SPU1"],
-                               MyToolItNetworkNr["STH1"])
+        self.Can = Network("init.txt", "initError.txt",
+                           MyToolItNetworkNr["SPU1"],
+                           MyToolItNetworkNr["STH1"])
         self.vSave2Xml(False)
         self.vSthAutoConnect(False)
         self.Can.Logger.Info("Start Time: " + self.sDateClock())
@@ -1058,7 +1058,7 @@ class myToolItWatch():
     def ReadMessage(self):
         message = None
         result = self.Can.pcan.Read(self.Can.m_PcanHandle)
-        if result[0] == CAN.PCAN_ERROR_OK:
+        if result[0] == PCAN_ERROR_OK:
             peakCanTimeStamp = result[2].millis_overflow * (
                 2**32) + result[2].millis + result[2].micros / 1000
             message = {
@@ -1066,7 +1066,7 @@ class myToolItWatch():
                 "PcTime": self.Can.get_elapsed_time(),
                 "PeakCanTime": peakCanTimeStamp
             }
-        elif result[0] == CAN.PCAN_ERROR_QOVERRUN:
+        elif result[0] == PCAN_ERROR_QOVERRUN:
             self.Logger.bError("RxOverRun")
             print("RxOverRun")
             raise
