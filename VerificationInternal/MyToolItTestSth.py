@@ -635,10 +635,10 @@ class TestSth(unittest.TestCase):
         self.Can.WriteFrame(message)
         time.sleep(0.5)
         indexStart = self.Can.GetReadArrayIndex()
-        timeEnd = self.Can.getTimeMs() + testTimeMs
+        timeEnd = self.Can.get_elapsed_time() + testTimeMs
         if False != log:
             self.Can.Logger.Info("indexStart: " + str(indexStart))
-        while self.Can.getTimeMs() < timeEnd:
+        while self.Can.get_elapsed_time() < timeEnd:
             pass
         self.Can.streamingStop(MyToolItNetworkNr["STH1"], subCmd)
         time.sleep(0.2)  # synch to read thread
@@ -739,21 +739,21 @@ class TestSth(unittest.TestCase):
 
     def vEepromWritePage(self, iPage, value):
         au8Content = [value] * 4
-        timeStamp = self.Can.getTimeMs()
+        timeStamp = self.Can.get_elapsed_time()
         for offset in range(0, 256, 4):
             au8Payload = [iPage, 0xFF & offset, 4, 0] + au8Content
             self.Can.cmdSend(MyToolItNetworkNr["STH1"],
                              MyToolItBlock["EEPROM"], MyToolItEeprom["Write"],
                              au8Payload)
         self.Can.Logger.Info("Page Write Time: " +
-                             str(self.Can.getTimeMs() - timeStamp) + "ms")
+                             str(self.Can.get_elapsed_time() - timeStamp) + "ms")
 
     """
     Read page and check content
     """
 
     def vEepromReadPage(self, iPage, value):
-        timeStamp = self.Can.getTimeMs()
+        timeStamp = self.Can.get_elapsed_time()
         for offset in range(0, 256, 4):
             au8Payload = [iPage, 0xFF & offset, 4, 0, 0, 0, 0, 0]
             index = self.Can.cmdSend(MyToolItNetworkNr["STH1"],
@@ -763,7 +763,7 @@ class TestSth(unittest.TestCase):
             for dataByte in dataReadBack[4:]:
                 self.assertEqual(dataByte, value)
         self.Can.Logger.Info("Page Read Time: " +
-                             str(self.Can.getTimeMs() - timeStamp) + "ms")
+                             str(self.Can.get_elapsed_time() - timeStamp) + "ms")
 
     """
     Reset the Silicon Laps Adapter
@@ -6771,7 +6771,7 @@ class TestSth(unittest.TestCase):
             self.Can.Logger.Info("Fin Run 12 Writes and Reads")
 
         self.Can.Logger.Info("Write back EEPROM content")
-        timeStamp = self.Can.getTimeMs()
+        timeStamp = self.Can.get_elapsed_time()
         for offset in range(0, 256, 4):
             payload = [EepromPage["Statistics"], 0xFF & offset, 4, 0]
             payload.extend(startData[offset:offset + 4])
@@ -6779,7 +6779,7 @@ class TestSth(unittest.TestCase):
                              MyToolItBlock["EEPROM"], MyToolItEeprom["Write"],
                              payload)
         self.Can.Logger.Info("Page Write Time: " +
-                             str(self.Can.getTimeMs() - timeStamp) + "ms")
+                             str(self.Can.get_elapsed_time() - timeStamp) + "ms")
         u32EepromWriteRequestCounterTestEnd = self.Can.u32EepromWriteRequestCounter(
             MyToolItNetworkNr["STH1"])
         u32EepromWriteRequsts = u32EepromWriteRequestCounterTestEnd - u32EepromWriteRequestCounterTestStart
@@ -6837,7 +6837,7 @@ class TestSth(unittest.TestCase):
             self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STH1"])
 
         # Write Back Page
-        timeStamp = self.Can.getTimeMs()
+        timeStamp = self.Can.get_elapsed_time()
         for offset in range(0, 256, 4):
             payload = [EepromPage["ProductData"], 0xFF & offset, 4, 0]
             payload.extend(startData[offset:offset + 4])
@@ -6845,7 +6845,7 @@ class TestSth(unittest.TestCase):
                              MyToolItBlock["EEPROM"], MyToolItEeprom["Write"],
                              payload)
         self.Can.Logger.Info("Page Write Time: " +
-                             str(self.Can.getTimeMs() - timeStamp) + "ms")
+                             str(self.Can.get_elapsed_time() - timeStamp) + "ms")
         self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STH1"])
         u32EepromWriteRequestCounterTestEnd = self.Can.u32EepromWriteRequestCounter(
             MyToolItNetworkNr["STH1"])

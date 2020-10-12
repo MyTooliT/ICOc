@@ -485,7 +485,7 @@ class myToolItWatch():
                             pass
                         self.GuiPackage = {"X": [], "Y": [], "Z": []}
             else:
-                self.aquireEndTime = self.Can.getTimeMs()
+                self.aquireEndTime = self.Can.get_elapsed_time()
 
     def vGraphPacketLossUpdate(self, msgCounter):
         if 0 < self.iDisplayTime:
@@ -800,7 +800,7 @@ class myToolItWatch():
         iIntervalTime = self.iIntervalTime * 1000
         if 0 == self.iIntervalTime:
             iIntervalTime += (1 << 32)
-        startTime = self.Can.getTimeMs()
+        startTime = self.Can.get_elapsed_time()
         tAliveTimeStamp = startTime
         tTimeStamp = startTime
         try:
@@ -811,7 +811,7 @@ class myToolItWatch():
                         self.vLogCountInc()
                     ack = self.ReadMessage()
                     if (None != ack):
-                        tAliveTimeStamp = self.Can.getTimeMs()
+                        tAliveTimeStamp = self.Can.get_elapsed_time()
                         if (self.AccAckExpected.ID != ack["CanMsg"].ID
                                 and self.VoltageAckExpected.ID !=
                                 ack["CanMsg"].ID):
@@ -829,7 +829,7 @@ class myToolItWatch():
                         else:
                             self.GetMessageVoltage(ack)
                     else:
-                        tTimeStamp = self.Can.getTimeMs()
+                        tTimeStamp = self.Can.get_elapsed_time()
                         if (tAliveTimeStamp +
                                 Watch["AliveTimeOutMs"]) < tTimeStamp:
                             self.Can.bConnected = False
@@ -870,11 +870,11 @@ class myToolItWatch():
                                             [accFormat.asbyte])
             self.Can.Logger.Info("MsgId/Subpayload(Acc): " + hex(message.ID) +
                                  "/" + hex(accFormat.asbyte))
-            endTime = self.Can.getTimeMs() + 4000
-            while (None == ack) and (self.Can.getTimeMs() < endTime):
+            endTime = self.Can.get_elapsed_time() + 4000
+            while (None == ack) and (self.Can.get_elapsed_time() < endTime):
                 self.Can.WriteFrame(message)
-                readEndTime = self.Can.getTimeMs() + 500
-                while ((None == ack) and (self.Can.getTimeMs() < readEndTime)):
+                readEndTime = self.Can.get_elapsed_time() + 500
+                while ((None == ack) and (self.Can.get_elapsed_time() < readEndTime)):
                     ack = self.ReadMessage()
         else:
             ack = True
@@ -904,11 +904,11 @@ class myToolItWatch():
                                  hex(message.ID) + "/" +
                                  hex(voltageFormat.asbyte))
 
-            endTime = self.Can.getTimeMs() + 4000
-            while (None == ack) and (self.Can.getTimeMs() < endTime):
+            endTime = self.Can.get_elapsed_time() + 4000
+            while (None == ack) and (self.Can.get_elapsed_time() < endTime):
                 self.Can.WriteFrame(message)
-                readEndTime = self.Can.getTimeMs() + 500
-                while ((None == ack) and (self.Can.getTimeMs() < readEndTime)):
+                readEndTime = self.Can.get_elapsed_time() + 500
+                while ((None == ack) and (self.Can.get_elapsed_time() < readEndTime)):
                     ack = self.ReadMessage()
         else:
             ack = True
@@ -918,7 +918,7 @@ class myToolItWatch():
         ack = self.vGetStreamingAccDataAccStart()
         if None != ack:
             ack = self.vGetStreamingAccDataVoltageStart()
-        currentTime = self.Can.getTimeMs()
+        currentTime = self.Can.get_elapsed_time()
         if None == ack:
             self.Can.Logger.Error("No Ack received from Device: " +
                                   str(self.iDevNr))
@@ -1063,7 +1063,7 @@ class myToolItWatch():
                 2**32) + result[2].millis + result[2].micros / 1000
             message = {
                 "CanMsg": result[1],
-                "PcTime": self.Can.getTimeMs(),
+                "PcTime": self.Can.get_elapsed_time(),
                 "PeakCanTime": peakCanTimeStamp
             }
         elif result[0] == CanFd.PCAN_ERROR_QOVERRUN:

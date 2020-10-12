@@ -261,7 +261,7 @@ class CanFd(object):
             self.__exitError(
                 f"Meantime between send retry to low ({waitMs} ms)")
         if sendTime is None:
-            sendTime = self.getTimeMs()
+            sendTime = self.get_elapsed_time()
         if currentIndex is None:
             currentIndex = self.GetReadArrayIndex()
         if currentIndex >= self.GetReadArrayIndex():
@@ -276,7 +276,7 @@ class CanFd(object):
         if returnMessage == "Error":
             return [returnMessage, currentIndex]
 
-        waitTimeMax = self.getTimeMs() + waitMs
+        waitTimeMax = self.get_elapsed_time() + waitMs
         if bError:
             CanMsgAckError = Message(CanMsg).acknowledge().pcan_message
             CanMsgAck = Message(CanMsg).acknowledge(error=True).pcan_message
@@ -286,7 +286,7 @@ class CanFd(object):
                 error=True).pcan_message
         returnMessage = "Run"
         while returnMessage == "Run":
-            if waitTimeMax < self.getTimeMs():
+            if waitTimeMax < self.get_elapsed_time():
                 returnMessage = self.WriteFrameWaitAckTimeOut(CanMsg, printLog)
             elif sendTime > message["PcTime"]:
                 message = self.readArray[0]
@@ -317,7 +317,7 @@ class CanFd(object):
         try:
             retries += 1
             currentIndex = self.GetReadArrayIndex() - 1
-            sendTime = self.getTimeMs()
+            sendTime = self.get_elapsed_time()
             for i in range(0, retries):
                 returnMessage, currentIndex = self.tWriteFrameWaitAck(
                     CanMsg,
@@ -1114,7 +1114,7 @@ class CanFd(object):
             return ErrorStatusSTH(status_word_1_bytes)
         return ErrorStatusSTU(status_word_1_bytes)
 
-    def getTimeMs(self):
+    def get_elapsed_time(self):
         return int(round(time() * 1000)) - int(self.start_time)
 
     def CanMessage20(self, command=0, sender=0, receiver=0, data=[]):
@@ -1202,7 +1202,7 @@ class CanFd(object):
                         2**32) + result[2].millis + result[2].micros / 1000
                     self.readArray.append({
                         "CanMsg": result[1],
-                        "PcTime": self.getTimeMs(),
+                        "PcTime": self.get_elapsed_time(),
                         "PeakCanTime": peakCanTimeStamp
                     })
                     getLogger('can').debug(f"{Message(result[1])}")
