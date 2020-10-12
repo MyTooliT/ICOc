@@ -32,8 +32,8 @@ class CAN(object):
     """
 
     def __init__(self,
-                 testMethodName='unknown_test_method',
-                 testMethodNameError='unknown_test_method_error',
+                 testMethodName='unknown_test_method.txt',
+                 testMethodNameError='unknown_test_method_error.txt',
                  sender=MyToolItNetworkNr['SPU1'],
                  receiver=MyToolItNetworkNr['STH1'],
                  prescaler=2,
