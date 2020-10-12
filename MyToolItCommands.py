@@ -3,7 +3,7 @@ from bidict import bidict
 import ctypes
 c_uint8 = ctypes.c_uint8
 
-import time
+from time import time
 from datetime import datetime
 
 Config = {"DeviceNumberMax": 32}
@@ -673,5 +673,5 @@ def rreplace(s, old, new):
 
 def sDateClock():
     DataClockTimeStamp = datetime.fromtimestamp(
-        time.time()).strftime('%Y-%m-%d_%H:%M:%S')
+        time()).strftime('%Y-%m-%d_%H:%M:%S')
     return DataClockTimeStamp
