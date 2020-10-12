@@ -1127,7 +1127,7 @@ class Network(object):
 
         >>> network = Network()
         >>> elapsed_time = network.get_elapsed_time()
-        >>> elapsed_time < 5000
+        >>> elapsed_time < 1000
         True
         >>> network.__exit__()
         """
