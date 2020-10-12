@@ -1121,6 +1121,15 @@ class CAN(object):
         -------
 
         The time in milliseconds since the initialization
+
+        Example
+        -------
+
+        >>> network = CAN()
+        >>> elapsed_time = network.get_elapsed_time()
+        >>> elapsed_time < 5000
+        True
+        >>> network.__exit__()
         """
 
         return int(round(time() * 1000)) - int(self.start_time)
@@ -1677,3 +1686,10 @@ class CAN(object):
             self.__exitError("No valid CAN20 message (Data Set: " +
                              str("Sampling Points: ") + str(count) + ")")
         return dataSets
+
+
+# -- Main ---------------------------------------------------------------------
+
+if __name__ == '__main__':
+    from doctest import testmod
+    testmod()
