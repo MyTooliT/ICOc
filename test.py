@@ -25,11 +25,15 @@ def create_id(block,
 
 
 def create_connection_network():
+    # Configure the CAN hardware
     network = Network()
+
+    # Reset STU (and STH)
     return_message = network.reset_node("STU 1")
     identifier = Identifier(int(return_message['ID'], 16))
     print(f"Reset STU 1: {identifier}")
     sleep(1)  # Wait until reset was executed
+
     network.__exit__()  # Cleanup resources (read thread)
 
 
