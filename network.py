@@ -1270,7 +1270,7 @@ class Network(object):
         message = self.CanMessage20(
             cmd, self.sender, receiver,
             [SystemCommandBlueTooth["Connect"], 0, 0, 0, 0, 0, 0, 0])
-        self.tWriteFrameWaitAckRetries(message, retries=2)
+        return self.tWriteFrameWaitAckRetries(message, retries=2)
 
     def iBlueToothConnectTotalScannedDeviceNr(self, receiver, log=True):
         if log:
