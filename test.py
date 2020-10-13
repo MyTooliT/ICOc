@@ -2,7 +2,9 @@ from can.interface import Bus
 from can import CanError, Message
 from mytoolit.can.identifier import Identifier
 from time import sleep
+
 from network import Network
+from MyToolItNetworkNumbers import MyToolItNetworkNr
 
 
 def send_message(bus, identifier, data=None):
@@ -29,10 +31,15 @@ def create_connection_network():
     network = Network()
 
     # Reset STU (and STH)
-    return_message = network.reset_node("STU 1")
-    identifier = Identifier(int(return_message['ID'], 16))
+    message = network.reset_node("STU 1")
+    identifier = Identifier(int(message['ID'], 16))
     print(f"Reset STU 1: {identifier}")
     sleep(1)  # Wait until reset was executed
+
+    # Bluetooth Connect
+    message = network.vBlueToothConnectConnect(MyToolItNetworkNr['STU1'])
+    identifier = Identifier(int(message['ID'], 16))
+    print(f"Bluetooth Connect STU 1: {identifier}")
 
     network.__exit__()  # Cleanup resources (read thread)
 
@@ -47,6 +54,13 @@ def create_connection_bus():
     print(f"Reset STU 1: {Identifier(message.arbitration_id)}")
     sleep(1)  # Wait until reset was executed
 
+    # Bluetooth Connect
+    send_message(bus, create_id('System', 'Bluetooth'), data=[1] + 7 * [0])
+    message = bus.recv(2)
+    print(f"Bluetooth Connect STU 1: {Identifier(message.arbitration_id)}")
+
 
 if __name__ == '__main__':
+    create_connection_network()
+    print("————")
     create_connection_bus()
