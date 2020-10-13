@@ -14,7 +14,7 @@ def send_message(bus, identifier, data=None):
 def create_id(block,
               block_command,
               sender='SPU 1',
-              receiver='STH 1',
+              receiver='STU 1',
               request=True):
     return Identifier(block=block,
                       block_command=block_command,
@@ -28,6 +28,6 @@ if __name__ == '__main__':
     bus = Bus(bustype='pcan', channel='PCAN_USBBUS1', bitrate=1000000)
 
     # Reset STU (and STH)
-    send_message(bus, create_id('System', 'Reset', receiver='STU 1'))
+    send_message(bus, create_id('System', 'Reset'))
     message = bus.recv(2)
     print(f"Reset Acknowledgment: {Identifier(message.arbitration_id)}")
