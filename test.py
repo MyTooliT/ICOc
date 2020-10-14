@@ -1,6 +1,7 @@
 from can.interface import Bus
 from can import CanError, Message
 from mytoolit.can.identifier import Identifier
+from platform import system
 from time import sleep, time
 
 from network import Network
@@ -63,7 +64,9 @@ def create_connection_network():
 
 def create_connection_bus():
     # Configure the CAN hardware
-    bus = Bus(bustype='pcan', channel='PCAN_USBBUS1', bitrate=1000000)
+    bus = Bus(bustype='socketcan', channel='can0',
+              bitrate=1000000) if system() == "Linux" else Bus(
+                  bustype='pcan', channel='PCAN_USBBUS1', bitrate=1000000)
 
     # Reset STU (and STH)
     send_message(bus, create_id('System', 'Reset'))
