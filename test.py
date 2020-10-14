@@ -27,7 +27,7 @@ def create_id(block,
 
 
 def bytearray_to_text(data):
-    return bytearray(filter(None, bytearray(data))).decode('ASCII')
+    return data.decode('ASCII').rstrip('\x00')
 
 
 def create_connection_network():
