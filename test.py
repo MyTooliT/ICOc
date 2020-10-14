@@ -67,6 +67,12 @@ def create_connection_network():
         print(f"Name of device {device_number}: {name}")
         names.append(name)
 
+    # Connect to first available device
+    device_number = 0
+    acknowledgment_data = network.bBlueToothConnectDeviceConnect(
+        'STU1', device_number)
+    print(f"Connection message data: {acknowledgment_data}")
+
     network.__exit__()  # Cleanup resources (read thread)
 
 
@@ -119,6 +125,12 @@ def create_connection_bus():
         name = name_part_1 + name_part_2
         print(f"Name of device {device_number}: {name}")
         names.append(name)
+
+    # Connect to first available device
+    device_number = 0
+    send_message(bus, create_id('System', 'Bluetooth'), data=[7] + 7 * [0])
+    message = bus.recv(2)
+    print(f"Connection message data: {bool(message.data[2])}")
 
 
 if __name__ == '__main__':
