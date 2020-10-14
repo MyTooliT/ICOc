@@ -59,6 +59,12 @@ def create_connection_network():
 
     if available_devices <= 0:
         return
+
+    # Get name of available devices
+    for device_number in range(0, available_devices):
+        name = network.BlueToothNameGet('STU1', device_number)
+        print(f"Name of device {device_number}: {name}")
+
     network.__exit__()  # Cleanup resources (read thread)
 
 
@@ -92,6 +98,23 @@ def create_connection_bus():
           "" if available_devices == 1 else "s")
     if available_devices <= 0:
         return
+
+    # Get name of available devices
+    for device_number in range(0, available_devices):
+        # Get first part of name
+        send_message(bus,
+                     create_id('System', 'Bluetooth'),
+                     data=[5, device_number] + 6 * [0])
+        message = bus.recv(2)
+        name_part_1 = bytearray_to_text(message.data[2:])
+        # Get second part of name
+        send_message(bus,
+                     create_id('System', 'Bluetooth'),
+                     data=[6, device_number] + 6 * [0])
+        message = bus.recv(2)
+        name_part_2 = bytearray_to_text(message.data[2:])
+        name = name_part_1 + name_part_2
+        print(f"Name of device {device_number}: {name}")
 
 
 if __name__ == '__main__':
