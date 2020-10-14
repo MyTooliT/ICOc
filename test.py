@@ -1,7 +1,7 @@
 from can.interface import Bus
 from can import CanError, Message
 from mytoolit.can.identifier import Identifier
-from time import sleep
+from time import sleep, time
 
 from network import Network
 from MyToolItNetworkNumbers import MyToolItNetworkNr
@@ -26,6 +26,10 @@ def create_id(block,
                       request=request)
 
 
+def bytearray_to_text(data):
+    return bytearray(filter(None, bytearray(data))).decode('ASCII')
+
+
 def create_connection_network():
     # Configure the CAN hardware
     network = Network()
@@ -41,6 +45,19 @@ def create_connection_network():
     identifier = Identifier(int(message['ID'], 16))
     print(f"Bluetooth Connect STU 1: {identifier}")
 
+    # Scan for available devices
+    timeout = time() + 10
+    available_devices = 0
+    while time() < timeout and available_devices == 0:
+        available_devices = network.iBlueToothConnectTotalScannedDeviceNr(
+            'STU1')
+        sleep(0.05)
+
+    print(f"Found {available_devices} available device" +
+          "" if available_devices == 1 else "s")
+
+    if available_devices <= 0:
+        return
     network.__exit__()  # Cleanup resources (read thread)
 
 
@@ -58,6 +75,20 @@ def create_connection_bus():
     send_message(bus, create_id('System', 'Bluetooth'), data=[1] + 7 * [0])
     message = bus.recv(2)
     print(f"Bluetooth Connect STU 1: {Identifier(message.arbitration_id)}")
+
+    # Scan for available devices
+    timeout = time() + 10
+    available_devices = 0
+    while time() < timeout and available_devices == 0:
+        send_message(bus, create_id('System', 'Bluetooth'), data=[2] + 7 * [0])
+        message = bus.recv(2)
+        available_devices = int(bytearray_to_text(message.data[2:]))
+        sleep(0.05)
+
+    print(f"Found {available_devices} available device" +
+          "" if available_devices == 1 else "s")
+    if available_devices <= 0:
+        return
 
 
 if __name__ == '__main__':
