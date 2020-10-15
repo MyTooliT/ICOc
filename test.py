@@ -154,6 +154,7 @@ def create_connection_bus():
 
 
 if __name__ == '__main__':
-    create_connection_network()
-    print("————")
+    if system() == "Windows":
+        create_connection_network()
+        print("————")
     create_connection_bus()
