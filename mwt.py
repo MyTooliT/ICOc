@@ -221,7 +221,7 @@ class mwt(myToolItWatch):
         while False != bRun:
             self.stdscr.clear()
             self.stdscr.addstr(
-                sBlueToothMacAddr(int(self.iAddress, 16)) + "(" +
+                int_to_mac_address(int(self.iAddress, 16)) + "(" +
                 str(self.sDevName) + ")\n")
             self.bTerminalHolderConnectCommandsShowDataValues()
             self.stdscr.addstr("Run Time: " + str(self.iRunTime) + "s\n")
@@ -628,7 +628,7 @@ class mwt(myToolItWatch):
                         iNumber -= 1
                         for dev in devList:
                             if dev["DeviceNumber"] == iNumber:
-                                sAddr = sBlueToothMacAddr(dev["Address"])
+                                sAddr = int_to_mac_address(dev["Address"])
                     if "" != sAddr:
                         if BlueToothDeviceNr["Self"] == iNumber:
                             self.Can.bBlueToothDisconnect(
@@ -1084,7 +1084,7 @@ class mwt(myToolItWatch):
             for dev in devList:
                 self.stdscr.addstr(
                     str(dev["DeviceNumber"] + 1) + ": " +
-                    sBlueToothMacAddr(dev["Address"]) + "(" +
+                    int_to_mac_address(dev["Address"]) + "(" +
                     str(dev["Name"]) + ")@" + str(dev["RSSI"]) + "dBm\n")
         if False == self.Can.bConnected:
             self.stdscr.addstr("Pick a device number from the list: ")
@@ -1256,7 +1256,7 @@ class mwt(myToolItWatch):
         for dev in devList:
             self.stdscr.addstr(
                 str(dev["DeviceNumber"] + 1) + ": " +
-                sBlueToothMacAddr(dev["Address"]) + "(" + str(dev["Name"]) +
+                int_to_mac_address(dev["Address"]) + "(" + str(dev["Name"]) +
                 ")@" + str(dev["RSSI"]) + "dBm\n")
         return devList
 

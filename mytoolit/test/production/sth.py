@@ -42,7 +42,7 @@ from MyToolItCommands import (
     MyToolItSystem,
     NetworkState,
     Node,
-    sBlueToothMacAddr,
+    int_to_mac_address,
 )
 from MyToolItSth import fVoltageBattery
 from SthLimits import SthLimits
@@ -468,7 +468,7 @@ class TestSTH(TestCase):
 
         cls = type(self)
 
-        cls.bluetooth_mac = sBlueToothMacAddr(
+        cls.bluetooth_mac = int_to_mac_address(
             self.can.BlueToothAddress(MyToolItNetworkNr['STH1']))
         cls.bluetooth_rssi = self.can.BlueToothRssi(MyToolItNetworkNr['STH1'])
 

@@ -66,9 +66,9 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("Connect to STH")
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
                                               TestConfig["DevName"])
-        self.sStuAddr = sBlueToothMacAddr(
+        self.sStuAddr = int_to_mac_address(
             self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"]))
-        self.sSthAddr = sBlueToothMacAddr(
+        self.sSthAddr = int_to_mac_address(
             self.Can.BlueToothAddress(MyToolItNetworkNr["STH1"]))
         self.Can.Logger.Info("STU BlueTooth Address: " + self.sStuAddr)
         self.Can.Logger.Info("STH BlueTooth Address: " + self.sSthAddr)

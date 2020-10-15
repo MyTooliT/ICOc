@@ -634,7 +634,7 @@ def sArray2String(Name):
     return Name
 
 
-def sBlueToothMacAddr(iAddr):
+def int_to_mac_address(iAddr):
     return ":".join(f"{byte:02x}"
                     for byte in int_to_byte_list(iAddr, 6, 'big'))
 

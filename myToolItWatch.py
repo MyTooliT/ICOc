@@ -744,9 +744,9 @@ class myToolItWatch():
             self.vDeviceNameSet(self.args_dict['name_connect'][0])
             self.vSthAutoConnect(True)
         elif None != self.args_dict['bluetooth_connect']:
-            sBlueToothMacAddr = str(
+            int_to_mac_address = str(
                 iBlueToothMacAddr(self.args_dict['bluetooth_connect'][0]))
-            self.vDeviceAddressSet(sBlueToothMacAddr)
+            self.vDeviceAddressSet(int_to_mac_address)
             self.vSthAutoConnect(True)
 
         if None != self.args_dict['points']:
@@ -768,7 +768,7 @@ class myToolItWatch():
                 self.Can.ReadThreadReset()
                 self.Can.reset_node("STU1")
                 self.vStuAddr(
-                    sBlueToothMacAddr(
+                    int_to_mac_address(
                         self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"])))
                 self.guiProcessStop()
             except KeyboardInterrupt:

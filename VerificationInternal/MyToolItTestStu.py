@@ -49,7 +49,7 @@ class TestStu(unittest.TestCase):
         self.vSilabsAdapterReset()
         if "test0000FirmwareFlash" != self._testMethodName:
             self.Can.CanTimeStampStart(self._resetStu()["CanTime"])
-            self.sStuAddr = sBlueToothMacAddr(
+            self.sStuAddr = int_to_mac_address(
                 self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"]))
             self.Can.Logger.Info("STU BlueTooth Address: " + self.sStuAddr)
             self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STU1"])

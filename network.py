@@ -1437,7 +1437,7 @@ class Network(object):
                         self.bBlueToothCheckConnect(stuNr)
                     if self.bConnected and log:
                         self.Logger.Info("Connected to: " +
-                                         sBlueToothMacAddr(self.iAddress) +
+                                         int_to_mac_address(self.iAddress) +
                                          "(" + self.sDevName + ")")
                     break
         if None == self.sDevName:

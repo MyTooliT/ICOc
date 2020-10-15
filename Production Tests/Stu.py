@@ -88,7 +88,7 @@ class TestStu(unittest.TestCase):
             if "test0000FirmwareFlash" != self._testMethodName:
                 self.Can.CanTimeStampStart(
                     self._resetStu()["CanTime"])  # This will also reset to STH
-                self.sStuAddr = sBlueToothMacAddr(
+                self.sStuAddr = int_to_mac_address(
                     self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"]))
                 self.sTestReport = self.sSerialNumber + "_" + sLogName
                 #                 sStoreFileName = "./ResultsStu/OK_" + self.sTestReport + "_nr0.xlsx"
@@ -123,7 +123,7 @@ class TestStu(unittest.TestCase):
             if False == self.Can.bError:
                 self.Can.CanTimeStampStart(
                     self._resetStu()["CanTime"])  # This will also reset to STH
-                self.sStuAddr = sBlueToothMacAddr(
+                self.sStuAddr = int_to_mac_address(
                     self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"]))
                 self.Can.Logger.Info("STU BlueTooth Address: " + self.sStuAddr)
                 self._statusWords()
@@ -716,9 +716,9 @@ class TestStu(unittest.TestCase):
             MyToolItSth.TestConfig["DevName"],
             log=False)
         time.sleep(2)
-        self.sStuAddr = sBlueToothMacAddr(
+        self.sStuAddr = int_to_mac_address(
             self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"]))
-        self.sSthAddr = sBlueToothMacAddr(
+        self.sSthAddr = int_to_mac_address(
             self.Can.BlueToothAddress(MyToolItNetworkNr["STH1"]))
         self.Can.Logger.Info("STH BlueTooth Address: " + self.sSthAddr)
         iRssiSth = int(self.Can.BlueToothRssi(MyToolItNetworkNr["STH1"]))
