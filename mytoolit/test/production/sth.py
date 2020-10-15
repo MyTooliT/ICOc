@@ -34,7 +34,7 @@ from MyToolItCommands import (
     CalibMeassurementActionNr,
     CalibMeassurementTypeNr,
     DataSets,
-    iMessage2Value,
+    byte_list_to_int,
     MyToolItBlock,
     MyToolItEeprom,
     MyToolItProductData,
@@ -640,7 +640,7 @@ class TestSTH(TestCase):
         voltage_index_start = 2
         voltage_index_end = voltage_index_start + 1
         voltage_bytes = message[voltage_index_start:voltage_index_end + 1]
-        battery_voltage_raw = iMessage2Value(voltage_bytes)
+        battery_voltage_raw = byte_list_to_int(voltage_bytes)
 
         expected_voltage = settings.STH.Battery_Voltage.Average
         tolerance_voltage = settings.STH.Battery_Voltage.Tolerance
@@ -731,7 +731,7 @@ class TestSTH(TestCase):
                 1,
                 AdcReference['VDD'])
             index_result = 4
-            adc_value = iMessage2Value(response[index_result:])
+            adc_value = byte_list_to_int(response[index_result:])
             return 100 * AdcReference['VDD'] * adc_value / AdcMax
 
         voltage_before_test = measure_voltage()
@@ -825,7 +825,7 @@ class TestSTH(TestCase):
         def read_eeprom_unsigned(address, offset, length):
             """Read EEPROM data in unsigned format"""
 
-            return iMessage2Value(read_eeprom(address, offset, length))
+            return byte_list_to_int(read_eeprom(address, offset, length))
 
         def read_eeprom_float(address, offset):
             data = read_eeprom(address, offset, length=4)

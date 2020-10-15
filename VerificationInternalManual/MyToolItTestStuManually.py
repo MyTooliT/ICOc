@@ -117,8 +117,8 @@ class TestSthManually(unittest.TestCase):
     def testManually0700PowerOnOffCounter(self):
         PowerOnOff1 = self.Can.statisticalData(MyToolItNetworkNr["STU1"],
                                                MyToolItStatData["PocPof"])
-        PowerOn1 = iMessage2Value(PowerOnOff1[:4])
-        PowerOff1 = iMessage2Value(PowerOnOff1[4:])
+        PowerOn1 = byte_list_to_int(PowerOnOff1[:4])
+        PowerOff1 = byte_list_to_int(PowerOnOff1[4:])
         self.Can.Logger.Info("Power On Counter since first Power On: " +
                              str(PowerOn1))
         self.Can.Logger.Info("Power Off Counter since first Power On: " +
@@ -128,8 +128,8 @@ class TestSthManually(unittest.TestCase):
         )
         PowerOnOff2 = self.Can.statisticalData(MyToolItNetworkNr["STU1"],
                                                MyToolItStatData["PocPof"])
-        PowerOn2 = iMessage2Value(PowerOnOff2[:4])
-        PowerOff2 = iMessage2Value(PowerOnOff2[4:])
+        PowerOn2 = byte_list_to_int(PowerOnOff2[:4])
+        PowerOff2 = byte_list_to_int(PowerOnOff2[4:])
         self.Can.Logger.Info("Power On Counter since first Power On: " +
                              str(PowerOn2))
         self.Can.Logger.Info("Power Off Counter since first Power On: " +

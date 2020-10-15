@@ -585,7 +585,7 @@ BlueToothDeviceNr = {
 }
 
 
-def iMessage2Value(m):
+def byte_list_to_int(m):
     return int.from_bytes(m, 'little')
 
 
@@ -641,7 +641,7 @@ def iBlueToothMacAddr(sAddr):
     au8Addr = au8Addr.reverse()
     for i in range(0, len(au8Addr)):
         au8Addr[i] = int(au8Addr[i], 16)
-    iAddr = iMessage2Value(au8Addr)
+    iAddr = byte_list_to_int(au8Addr)
     return iAddr
 
 

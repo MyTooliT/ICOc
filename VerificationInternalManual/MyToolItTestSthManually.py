@@ -117,7 +117,7 @@ class TestSthManually(unittest.TestCase):
                                         1,
                                         AdcReference["1V25"],
                                         log=False)
-        result = float(iMessage2Value(ret[4:]))
+        result = float(byte_list_to_int(ret[4:]))
         result /= 1000
         self.Can.Logger.Info("Temperature(Chip): " + str(result) + "°C")
         self.Can.calibMeasurement(MyToolItNetworkNr["STH1"],
@@ -355,7 +355,7 @@ class TestSthManually(unittest.TestCase):
         UnderVoltage1 = self.Can.statisticalData(MyToolItNetworkNr["STH1"],
                                                  MyToolItStatData["Uvc"],
                                                  printLog=True)
-        UnderVoltagePowerOnFirst1 = iMessage2Value(UnderVoltage1[:4])
+        UnderVoltagePowerOnFirst1 = byte_list_to_int(UnderVoltage1[:4])
         self.Can.Logger.Info("Under Voltage Counter since first Power On: " +
                              payload2Hex(UnderVoltage1))
         self.Can.Logger.Info("Under Voltage Counter since first Power On: " +
@@ -368,7 +368,7 @@ class TestSthManually(unittest.TestCase):
         UnderVoltage2 = self.Can.statisticalData(MyToolItNetworkNr["STH1"],
                                                  MyToolItStatData["Uvc"],
                                                  printLog=True)
-        UnderVoltagePowerOnFirst2 = iMessage2Value(UnderVoltage2[:4])
+        UnderVoltagePowerOnFirst2 = byte_list_to_int(UnderVoltage2[:4])
         self.Can.Logger.Info("Under Voltage Counter since first Power On: " +
                              payload2Hex(UnderVoltage2))
         self.Can.Logger.Info("Under Voltage Counter since first Power On: " +

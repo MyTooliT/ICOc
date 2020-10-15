@@ -75,12 +75,12 @@ class TestSth(unittest.TestCase):
         self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STH1"])
         iOperatingSeconds = self.Can.statisticalData(
             MyToolItNetworkNr["STU1"], MyToolItStatData["OperatingTime"])[4:]
-        iOperatingSeconds = iMessage2Value(iOperatingSeconds)
+        iOperatingSeconds = byte_list_to_int(iOperatingSeconds)
         self.Can.Logger.Info("STU Operating Seconds: " +
                              str(iOperatingSeconds))
         iOperatingSeconds = self.Can.statisticalData(
             MyToolItNetworkNr["STH1"], MyToolItStatData["OperatingTime"])[4:]
-        iOperatingSeconds = iMessage2Value(iOperatingSeconds)
+        iOperatingSeconds = byte_list_to_int(iOperatingSeconds)
         self.Can.Logger.Info("STH Operating Seconds: " +
                              str(iOperatingSeconds))
         self._statusWords()
@@ -106,13 +106,13 @@ class TestSth(unittest.TestCase):
             iOperatingSeconds = self.Can.statisticalData(
                 MyToolItNetworkNr["STU1"],
                 MyToolItStatData["OperatingTime"])[4:]
-            iOperatingSeconds = iMessage2Value(iOperatingSeconds)
+            iOperatingSeconds = byte_list_to_int(iOperatingSeconds)
             self.Can.Logger.Info("STU Operating Seconds: " +
                                  str(iOperatingSeconds))
             iOperatingSeconds = self.Can.statisticalData(
                 MyToolItNetworkNr["STH1"],
                 MyToolItStatData["OperatingTime"])[4:]
-            iOperatingSeconds = iMessage2Value(iOperatingSeconds)
+            iOperatingSeconds = byte_list_to_int(iOperatingSeconds)
             self.Can.Logger.Info("STH Operating Seconds: " +
                                  str(iOperatingSeconds))
             self._statusWords()
@@ -177,7 +177,7 @@ class TestSth(unittest.TestCase):
             1,
             AdcReference["1V25"],
             log=False)
-        iTemperature = float(iMessage2Value(au8TempReturn[4:]))
+        iTemperature = float(byte_list_to_int(au8TempReturn[4:]))
         iTemperature /= 1000
         self.Can.Logger.Info("Temperature(Chip): " + str(iTemperature) + "°C")
         self.Can.calibMeasurement(MyToolItNetworkNr["STH1"],
@@ -194,7 +194,7 @@ class TestSth(unittest.TestCase):
     """
 
     def _SthWDog(self):
-        WdogCounter = iMessage2Value(
+        WdogCounter = byte_list_to_int(
             self.Can.statisticalData(MyToolItNetworkNr["STH1"],
                                      MyToolItStatData["Wdog"])[:4])
         self.Can.Logger.Info("WatchDog Counter: " + str(WdogCounter))

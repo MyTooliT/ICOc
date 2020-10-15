@@ -447,7 +447,7 @@ class Network(object):
         index = self.cmdSend(receiver, MyToolItBlock["EEPROM"],
                              MyToolItEeprom["WriteRequest"], [0] * 8)
         dataReadBack = self.getReadMessageData(index)[4:]
-        u32WriteRequestCounter = iMessage2Value(dataReadBack)
+        u32WriteRequestCounter = byte_list_to_int(dataReadBack)
         self.Logger.Info("EEPROM Write Request Counter: " +
                          str(u32WriteRequestCounter))
         return u32WriteRequestCounter
@@ -475,30 +475,30 @@ class Network(object):
     def ValueDataSet1(self, data, b1, b2, b3, array1, array2, array3):
         count = 0
         if False != b1:
-            Acc = iMessage2Value(data[2:4])
+            Acc = byte_list_to_int(data[2:4])
             array1.append(Acc)
             count += 1
         if False != b2:
             if 0 == count:
-                Acc = iMessage2Value(data[2:4])
+                Acc = byte_list_to_int(data[2:4])
             else:
-                Acc = iMessage2Value(data[4:6])
+                Acc = byte_list_to_int(data[4:6])
             array2.append(Acc)
             count += 1
         if False != b3:
             if 0 == count:
-                Acc = iMessage2Value(data[2:4])
+                Acc = byte_list_to_int(data[2:4])
             elif 1 == count:
-                Acc = iMessage2Value(data[4:6])
+                Acc = byte_list_to_int(data[4:6])
             else:
-                Acc = iMessage2Value(data[6:8])
+                Acc = byte_list_to_int(data[6:8])
             array3.append(Acc)
         return [array1, array2, array3]
 
     def ValueDataSet3(self, data, b1, b2, b3, array1, array2, array3):
-        Acc1 = iMessage2Value(data[2:4])
-        Acc2 = iMessage2Value(data[4:6])
-        Acc3 = iMessage2Value(data[6:8])
+        Acc1 = byte_list_to_int(data[2:4])
+        Acc2 = byte_list_to_int(data[4:6])
+        Acc3 = byte_list_to_int(data[6:8])
         if False != b1:
             array1.append(Acc1)
             array1.append(Acc2)
@@ -1376,7 +1376,7 @@ class Network(object):
         Address = self.tWriteFrameWaitAckRetries(message, retries=2)
         Address = Address["Payload"]
         Address = Address[2:]
-        return iMessage2Value(Address)
+        return byte_list_to_int(Address)
 
     def BlueToothRssiGet(self, receiver, DeviceNr):
         """
@@ -1406,7 +1406,7 @@ class Network(object):
         ack = self.tWriteFrameWaitAckRetries(message, retries=2)
         ack = ack["Payload"]
         ack = ack[2:]
-        iMacAddrReadBack = iMessage2Value(
+        iMacAddrReadBack = byte_list_to_int(
             ack)  # if not successful this will be 0
         if iMacAddrReadBack != iMacAddr:
             self.bConnected = False
@@ -1527,8 +1527,8 @@ class Network(object):
             message, retries=2)["Payload"][2:]
         timeReset = EnergyModeReduced[:4]
         timeAdvertisement = EnergyModeReduced[4:]
-        timeReset = iMessage2Value(timeReset)
-        timeAdvertisement = iMessage2Value(timeAdvertisement)
+        timeReset = byte_list_to_int(timeReset)
+        timeAdvertisement = byte_list_to_int(timeAdvertisement)
         return [timeReset, timeAdvertisement]
 
     def Standby(self, receiver):
@@ -1550,7 +1550,7 @@ class Network(object):
                                  MyToolItBlock["ProductData"],
                                  MyToolItProductData["GTIN"], [],
                                  log=bLog)
-            iGtin = iMessage2Value(self.getReadMessageData(index))
+            iGtin = byte_list_to_int(self.getReadMessageData(index))
             if False != bLog:
                 self.Logger.Info("GTIN: " + str(iGtin))
             sReturn = str(iGtin)
@@ -1651,7 +1651,7 @@ class Network(object):
         ]
         message = self.CanMessage20(cmd, self.sender, subscriber, payload)
         ack = self.tWriteFrameWaitAckRetries(message, retries=2)["Payload"][2:]
-        ack = iMessage2Value(ack)
+        ack = byte_list_to_int(ack)
         return ack
 
     def RoutingInformationCmd(self, receiver, subCmd, port):

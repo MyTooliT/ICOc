@@ -933,9 +933,9 @@ class myToolItWatch():
 
     def GetMessageSingle(self, prefix, canMsg):
         canData = canMsg["CanMsg"].DATA
-        p1 = iMessage2Value(canData[2:4])
-        p2 = iMessage2Value(canData[6:8])
-        p3 = iMessage2Value(canData[4:6])
+        p1 = byte_list_to_int(canData[2:4])
+        p2 = byte_list_to_int(canData[6:8])
+        p3 = byte_list_to_int(canData[4:6])
 
         canTimeStamp = canMsg["PeakCanTime"]
         canTimeStamp = round(canTimeStamp, 3)
@@ -962,8 +962,8 @@ class myToolItWatch():
         canData = canMsg["CanMsg"].DATA
         canTimeStamp = canMsg["PeakCanTime"]
         canTimeStamp = round(canTimeStamp, 3)
-        p1_1 = iMessage2Value(canData[2:4])
-        p1_2 = iMessage2Value(canData[4:6])
+        p1_1 = byte_list_to_int(canData[2:4])
+        p1_2 = byte_list_to_int(canData[4:6])
         ackMsg = ("MsgCounter: " + str(format(canData[1], '3d')) + "; ")
         ackMsg += ("TimeStamp: " + format(canTimeStamp, '12.3f') + "ms; ")
         ackMsg += (prefix1 + ": ")
@@ -982,15 +982,15 @@ class myToolItWatch():
         ackMsg = ("MsgCounter: " + str(format(canData[1], '3d')) + "; ")
         ackMsg += ("TimeStamp: " + format(canTimeStamp, '12.3f') + "ms; ")
         ackMsg += (prefix1 + ": ")
-        ackMsg += str(format(iMessage2Value(canData[2:4]), '5d'))
+        ackMsg += str(format(byte_list_to_int(canData[2:4]), '5d'))
         ackMsg += "; "
         ackMsg += prefix2
         ackMsg += ": "
-        ackMsg += str(format(iMessage2Value(canData[4:6]), '5d'))
+        ackMsg += str(format(byte_list_to_int(canData[4:6]), '5d'))
         ackMsg += "; "
         ackMsg += prefix3
         ackMsg += ": "
-        ackMsg += str(format(iMessage2Value(canData[6:8]), '5d'))
+        ackMsg += str(format(byte_list_to_int(canData[6:8]), '5d'))
         ackMsg += "; "
         self.Can.Logger.Info(ackMsg)
 
@@ -1003,33 +1003,33 @@ class myToolItWatch():
             if (False != self.bAccX) and (False != self.bAccY) and (
                     False == self.bAccZ):
                 self.GetMessageDouble("AccX", "AccY", canData)
-                self.vGraphPointNext(iMessage2Value(data[2:4]),
-                                     iMessage2Value(data[4:6]), 0)
+                self.vGraphPointNext(byte_list_to_int(data[2:4]),
+                                     byte_list_to_int(data[4:6]), 0)
             elif (False != self.bAccX) and (False == self.bAccY) and (
                     False != self.bAccZ):
                 self.GetMessageDouble("AccX", "AccZ", canData)
-                self.vGraphPointNext(iMessage2Value(data[2:4]), 0,
-                                     iMessage2Value(data[4:6]))
+                self.vGraphPointNext(byte_list_to_int(data[2:4]), 0,
+                                     byte_list_to_int(data[4:6]))
             elif (False == self.bAccX) and (False != self.bAccY) and (
                     False != self.bAccZ):
                 self.GetMessageDouble("AccY", "AccZ", canData)
-                self.vGraphPointNext(0, iMessage2Value(data[2:4]),
-                                     iMessage2Value(data[4:6]))
+                self.vGraphPointNext(0, byte_list_to_int(data[2:4]),
+                                     byte_list_to_int(data[4:6]))
             else:
                 self.GetMessageTripple("AccX", "AccY", "AccZ", canData)
-                self.vGraphPointNext(iMessage2Value(data[2:4]),
-                                     iMessage2Value(data[4:6]),
-                                     iMessage2Value(data[6:8]))
+                self.vGraphPointNext(byte_list_to_int(data[2:4]),
+                                     byte_list_to_int(data[4:6]),
+                                     byte_list_to_int(data[6:8]))
         elif self.tAccDataFormat == DataSets[3]:
             if False != self.bAccX:
                 self.GetMessageSingle("AccX", canData)
-                self.vGraphPointNext(iMessage2Value(data[2:4]), 0, 0)
+                self.vGraphPointNext(byte_list_to_int(data[2:4]), 0, 0)
             elif False != self.bAccY:
                 self.GetMessageSingle("AccY", canData)
-                self.vGraphPointNext(0, iMessage2Value(data[2:4]), 0)
+                self.vGraphPointNext(0, byte_list_to_int(data[2:4]), 0)
             elif False != self.bAccZ:
                 self.GetMessageSingle("AccZ", canData)
-                self.vGraphPointNext(0, 0, iMessage2Value(data[2:4]))
+                self.vGraphPointNext(0, 0, byte_list_to_int(data[2:4]))
         else:
             self.Can.Logger.Error("Wrong Ack format")
 
@@ -1500,7 +1500,7 @@ class myToolItWatch():
                 elif "ASCII" == worksheet['G' + str(i)].value:
                     value = sArray2String(value)
                 elif "unsigned" == worksheet['G' + str(i)].value:
-                    value = str(iMessage2Value(value))
+                    value = str(byte_list_to_int(value))
                 elif "float" == worksheet['G' + str(i)].value:
                     if None != value:
                         pass

@@ -108,7 +108,7 @@ class TestStu(unittest.TestCase):
     """
 
     def _StuWDog(self):
-        WdogCounter = iMessage2Value(
+        WdogCounter = byte_list_to_int(
             self.Can.statisticalData(MyToolItNetworkNr["STU1"],
                                      MyToolItStatData["Wdog"])[:4])
         self.Can.Logger.Info("WatchDog Counter: " + str(WdogCounter))
@@ -1163,13 +1163,13 @@ class TestStu(unittest.TestCase):
     def test0700StatisticsPowerOnCounterPowerOffCounter(self):
         PowerOnOff1 = self.Can.statisticalData(MyToolItNetworkNr["STU1"],
                                                MyToolItStatData["PocPof"])
-        PowerOn1 = iMessage2Value(PowerOnOff1[:4])
-        PowerOff1 = iMessage2Value(PowerOnOff1[4:])
+        PowerOn1 = byte_list_to_int(PowerOnOff1[:4])
+        PowerOff1 = byte_list_to_int(PowerOnOff1[4:])
         self._resetStu()
         PowerOnOff2 = self.Can.statisticalData(MyToolItNetworkNr["STU1"],
                                                MyToolItStatData["PocPof"])
-        PowerOn2 = iMessage2Value(PowerOnOff2[:4])
-        PowerOff2 = iMessage2Value(PowerOnOff2[4:])
+        PowerOn2 = byte_list_to_int(PowerOnOff2[:4])
+        PowerOff2 = byte_list_to_int(PowerOnOff2[4:])
         self.Can.Logger.Info("PowerOnOff Payload before STU Reset: " +
                              payload2Hex(PowerOnOff1))
         self.Can.Logger.Info("Power On Counter before STU Reset: " +
@@ -1194,23 +1194,23 @@ class TestStu(unittest.TestCase):
             MyToolItNetworkNr["STU1"])
         OperatingSeconds = self.Can.statisticalData(
             MyToolItNetworkNr["STU1"], MyToolItStatData["OperatingTime"])
-        SecondsReset1 = iMessage2Value(OperatingSeconds[:4])
-        SecondsOveral1 = iMessage2Value(OperatingSeconds[4:])
+        SecondsReset1 = byte_list_to_int(OperatingSeconds[:4])
+        SecondsOveral1 = byte_list_to_int(OperatingSeconds[4:])
         time.sleep(60)
         OperatingSeconds = self.Can.statisticalData(
             MyToolItNetworkNr["STU1"], MyToolItStatData["OperatingTime"])
-        SecondsReset2 = iMessage2Value(OperatingSeconds[:4])
-        SecondsOveral2 = iMessage2Value(OperatingSeconds[4:])
+        SecondsReset2 = byte_list_to_int(OperatingSeconds[:4])
+        SecondsOveral2 = byte_list_to_int(OperatingSeconds[4:])
         self._resetStu()
         OperatingSeconds = self.Can.statisticalData(
             MyToolItNetworkNr["STU1"], MyToolItStatData["OperatingTime"])
-        SecondsReset3 = iMessage2Value(OperatingSeconds[:4])
-        SecondsOveral3 = iMessage2Value(OperatingSeconds[4:])
+        SecondsReset3 = byte_list_to_int(OperatingSeconds[:4])
+        SecondsOveral3 = byte_list_to_int(OperatingSeconds[4:])
         time.sleep(60 * 31)
         OperatingSeconds = self.Can.statisticalData(
             MyToolItNetworkNr["STU1"], MyToolItStatData["OperatingTime"])
-        SecondsReset4 = iMessage2Value(OperatingSeconds[:4])
-        SecondsOveral4 = iMessage2Value(OperatingSeconds[4:])
+        SecondsReset4 = byte_list_to_int(OperatingSeconds[:4])
+        SecondsOveral4 = byte_list_to_int(OperatingSeconds[4:])
         self.Can.Logger.Info("Operating Seconds since Reset: " +
                              str(SecondsReset1))
         self.Can.Logger.Info("Operating Seconds since frist PowerOn: " +

@@ -75,13 +75,13 @@ class TestSth(unittest.TestCase):
             iOperatingSeconds = self.Can.statisticalData(
                 MyToolItNetworkNr["STU1"],
                 MyToolItStatData["OperatingTime"])[4:]
-            iOperatingSeconds = iMessage2Value(iOperatingSeconds)
+            iOperatingSeconds = byte_list_to_int(iOperatingSeconds)
             self.Can.Logger.Info("STU Operating Seconds: " +
                                  str(iOperatingSeconds))
             iOperatingSeconds = self.Can.statisticalData(
                 MyToolItNetworkNr["STH1"],
                 MyToolItStatData["OperatingTime"])[4:]
-            iOperatingSeconds = iMessage2Value(iOperatingSeconds)
+            iOperatingSeconds = byte_list_to_int(iOperatingSeconds)
             self.Can.Logger.Info("STH Operating Seconds: " +
                                  str(iOperatingSeconds))
             self._statusWords()
@@ -107,13 +107,13 @@ class TestSth(unittest.TestCase):
             iOperatingSeconds = self.Can.statisticalData(
                 MyToolItNetworkNr["STU1"],
                 MyToolItStatData["OperatingTime"])[4:]
-            iOperatingSeconds = iMessage2Value(iOperatingSeconds)
+            iOperatingSeconds = byte_list_to_int(iOperatingSeconds)
             self.Can.Logger.Info("STU Operating Seconds: " +
                                  str(iOperatingSeconds))
             iOperatingSeconds = self.Can.statisticalData(
                 MyToolItNetworkNr["STH1"],
                 MyToolItStatData["OperatingTime"])[4:]
-            iOperatingSeconds = iMessage2Value(iOperatingSeconds)
+            iOperatingSeconds = byte_list_to_int(iOperatingSeconds)
             self.Can.Logger.Info("STH Operating Seconds: " +
                                  str(iOperatingSeconds))
             self._statusWords()
@@ -178,7 +178,7 @@ class TestSth(unittest.TestCase):
             1,
             AdcReference["1V25"],
             log=False)
-        iTemperature = float(iMessage2Value(au8TempReturn[4:]))
+        iTemperature = float(byte_list_to_int(au8TempReturn[4:]))
         iTemperature /= 1000
         self.Can.Logger.Info("Temperature(Chip): " + str(iTemperature) + "°C")
         self.Can.calibMeasurement(MyToolItNetworkNr["STH1"],
@@ -195,7 +195,7 @@ class TestSth(unittest.TestCase):
     """
 
     def _SthWDog(self):
-        WdogCounter = iMessage2Value(
+        WdogCounter = byte_list_to_int(
             self.Can.statisticalData(MyToolItNetworkNr["STH1"],
                                      MyToolItStatData["Wdog"])[:4])
         self.Can.Logger.Info("WatchDog Counter: " + str(WdogCounter))
@@ -5959,7 +5959,7 @@ class TestSth(unittest.TestCase):
                                         CalibMeassurementActionNr["Measure"],
                                         CalibMeassurementTypeNr["Acc"], 1,
                                         AdcReference["VDD"])
-        result = iMessage2Value(ret[4:])
+        result = byte_list_to_int(ret[4:])
         self.Can.Logger.Info("Calibration Result AccX: " + str(result))
         self.assertLessEqual(
             self.tSthLimits.iAdcAccXRawMiddle -
@@ -5971,7 +5971,7 @@ class TestSth(unittest.TestCase):
                                         CalibMeassurementActionNr["Measure"],
                                         CalibMeassurementTypeNr["Acc"], 2,
                                         AdcReference["VDD"])
-        result = iMessage2Value(ret[4:])
+        result = byte_list_to_int(ret[4:])
         self.Can.Logger.Info("Calibration Result AccY: " + str(result))
         self.assertLessEqual(
             self.tSthLimits.iAdcAccYRawMiddle -
@@ -5983,7 +5983,7 @@ class TestSth(unittest.TestCase):
                                         CalibMeassurementActionNr["Measure"],
                                         CalibMeassurementTypeNr["Acc"], 3,
                                         AdcReference["VDD"])
-        result = iMessage2Value(ret[4:])
+        result = byte_list_to_int(ret[4:])
         self.Can.Logger.Info("Calibration Result AccZ: " + str(result))
         self.assertLessEqual(
             self.tSthLimits.iAdcAccZRawMiddle -
@@ -5995,7 +5995,7 @@ class TestSth(unittest.TestCase):
                                         CalibMeassurementActionNr["Measure"],
                                         CalibMeassurementTypeNr["Temp"], 1,
                                         AdcReference["VDD"])
-        result = iMessage2Value(ret[4:])
+        result = byte_list_to_int(ret[4:])
         self.Can.Logger.Info("Calibration Result Temperature: " + str(result))
         self.assertLessEqual(
             self.tSthLimits.uTemperatureInternal3V3Middle -
@@ -6007,7 +6007,7 @@ class TestSth(unittest.TestCase):
                                         CalibMeassurementActionNr["Measure"],
                                         CalibMeassurementTypeNr["Voltage"], 1,
                                         AdcReference["VDD"])
-        result = iMessage2Value(ret[4:])
+        result = byte_list_to_int(ret[4:])
         self.Can.Logger.Info("Calibration Result Voltage: " + str(result))
         self.assertLessEqual(
             self.tSthLimits.VoltRawMiddleBat -
@@ -6019,7 +6019,7 @@ class TestSth(unittest.TestCase):
                                         CalibMeassurementActionNr["Measure"],
                                         CalibMeassurementTypeNr["Vss"], 1,
                                         AdcReference["VDD"])
-        result = iMessage2Value(ret[4:])
+        result = byte_list_to_int(ret[4:])
         self.Can.Logger.Info("Calibration Result VSS(Ground): " + str(result))
         self.assertLessEqual(0, result)
         self.assertGreaterEqual(self.tSthLimits.uVoltRawVssTolerance, result)
@@ -6027,14 +6027,14 @@ class TestSth(unittest.TestCase):
                                         CalibMeassurementActionNr["Measure"],
                                         CalibMeassurementTypeNr["Avdd"], 1,
                                         AdcReference["VDD"])
-        result = iMessage2Value(ret[4:])
+        result = byte_list_to_int(ret[4:])
         self.Can.Logger.Info("Calibration Result AVDD(3V3): " + str(result))
         self.assertLessEqual(2 ^ 16 - 100, result)
         ret = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"],
                                         CalibMeassurementActionNr["Measure"],
                                         CalibMeassurementTypeNr["OpvOutput"],
                                         1, AdcReference["VDD"])
-        result = iMessage2Value(ret[4:])
+        result = byte_list_to_int(ret[4:])
         self.Can.Logger.Info("Calibration Result OPA2: " + str(result))
         self.assertLessEqual(
             self.tSthLimits.uVoltRawOpa2Middle -
@@ -6046,7 +6046,7 @@ class TestSth(unittest.TestCase):
                                         CalibMeassurementActionNr["Measure"],
                                         CalibMeassurementTypeNr["OpvOutput"],
                                         2, AdcReference["VDD"])
-        result = iMessage2Value(ret[4:])
+        result = byte_list_to_int(ret[4:])
         self.Can.Logger.Info("Calibration Result OPA3: " + str(result))
         self.assertLessEqual(
             self.tSthLimits.uVoltRawOpa3Middle -
@@ -6066,7 +6066,7 @@ class TestSth(unittest.TestCase):
                                         1,
                                         AdcReference["1V25"],
                                         log=False)
-        result = float(iMessage2Value(ret[4:]))
+        result = float(byte_list_to_int(ret[4:]))
         result /= 1000
         self.Can.Logger.Info("Temperature(Chip): " + str(result) + "°C")
         self.assertLessEqual(result, self.tSthLimits.iTemperatureInternalMax)
@@ -6085,7 +6085,7 @@ class TestSth(unittest.TestCase):
                     MyToolItNetworkNr["STH1"],
                     CalibMeassurementActionNr["Measure"],
                     CalibMeassurementTypeNr["Acc"], 1, vRefValue)
-                result = iMessage2Value(ret[4:])
+                result = byte_list_to_int(ret[4:])
                 self.Can.Logger.Info("ADC Value: " + str(result))
                 result = result * ((vRefValue) / (AdcReference["VDD"]))
                 self.Can.Logger.Info("Recalculated value(result*" +
@@ -6110,15 +6110,15 @@ class TestSth(unittest.TestCase):
         kX1ack = self.Can.calibMeasurement(
             MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"],
             CalibMeassurementTypeNr["Acc"], 1, AdcReference["VDD"])
-        kX1 = iMessage2Value(kX1ack[4:])
+        kX1 = byte_list_to_int(kX1ack[4:])
         kY1ack = self.Can.calibMeasurement(
             MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"],
             CalibMeassurementTypeNr["Acc"], 2, AdcReference["VDD"])
-        kY1 = iMessage2Value(kY1ack[4:])
+        kY1 = byte_list_to_int(kY1ack[4:])
         kZ1ack = self.Can.calibMeasurement(
             MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"],
             CalibMeassurementTypeNr["Acc"], 3, AdcReference["VDD"])
-        kZ1 = iMessage2Value(kZ1ack[4:])
+        kZ1 = byte_list_to_int(kZ1ack[4:])
         ackInjectX = self.Can.calibMeasurement(
             MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"],
             CalibMeassurementTypeNr["Acc"], 1, AdcReference["VDD"])
@@ -6153,15 +6153,15 @@ class TestSth(unittest.TestCase):
         kX2ack = self.Can.calibMeasurement(
             MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"],
             CalibMeassurementTypeNr["Acc"], 1, AdcReference["VDD"])
-        kX2 = iMessage2Value(kX2ack[4:])
+        kX2 = byte_list_to_int(kX2ack[4:])
         kY2ack = self.Can.calibMeasurement(
             MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"],
             CalibMeassurementTypeNr["Acc"], 2, AdcReference["VDD"])
-        kY2 = iMessage2Value(kY2ack[4:])
+        kY2 = byte_list_to_int(kY2ack[4:])
         kZ2ack = self.Can.calibMeasurement(
             MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"],
             CalibMeassurementTypeNr["Acc"], 3, AdcReference["VDD"])
-        kZ2 = iMessage2Value(kZ2ack[4:])
+        kZ2 = byte_list_to_int(kZ2ack[4:])
         ackEjectX = self.Can.calibMeasurement(
             MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Eject"],
             CalibMeassurementTypeNr["Acc"], 1, AdcReference["VDD"])
@@ -6195,27 +6195,27 @@ class TestSth(unittest.TestCase):
         kX3ack = self.Can.calibMeasurement(
             MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"],
             CalibMeassurementTypeNr["Acc"], 1, AdcReference["VDD"])
-        kX3 = iMessage2Value(kX3ack[4:])
+        kX3 = byte_list_to_int(kX3ack[4:])
         kY3ack = self.Can.calibMeasurement(
             MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"],
             CalibMeassurementTypeNr["Acc"], 2, AdcReference["VDD"])
-        kY3 = iMessage2Value(kY3ack[4:])
+        kY3 = byte_list_to_int(kY3ack[4:])
         kZ3ack = self.Can.calibMeasurement(
             MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"],
             CalibMeassurementTypeNr["Acc"], 3, AdcReference["VDD"])
-        kZ3 = iMessage2Value(kZ3ack[4:])
+        kZ3 = byte_list_to_int(kZ3ack[4:])
         kX4ack = self.Can.calibMeasurement(
             MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"],
             CalibMeassurementTypeNr["Acc"], 1, AdcReference["VDD"])
-        kX4 = iMessage2Value(kX4ack[4:])
+        kX4 = byte_list_to_int(kX4ack[4:])
         kY4ack = self.Can.calibMeasurement(
             MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"],
             CalibMeassurementTypeNr["Acc"], 2, AdcReference["VDD"])
-        kY4 = iMessage2Value(kY4ack[4:])
+        kY4 = byte_list_to_int(kY4ack[4:])
         kZ4ack = self.Can.calibMeasurement(
             MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"],
             CalibMeassurementTypeNr["Acc"], 3, AdcReference["VDD"])
-        kZ4 = iMessage2Value(kZ4ack[4:])
+        kZ4 = byte_list_to_int(kZ4ack[4:])
         self.Can.Logger.Info("ackInjectX: " + payload2Hex(ackInjectX))
         self.Can.Logger.Info("stateInjectX: " + payload2Hex(stateInjectX))
         self.Can.Logger.Info("ackInjectY: " + payload2Hex(ackInjectY))
@@ -6537,29 +6537,29 @@ class TestSth(unittest.TestCase):
     def test0700StatisticsPowerOnCounterPowerOffCounter(self):
         PowerOnOff1 = self.Can.statisticalData(MyToolItNetworkNr["STH1"],
                                                MyToolItStatData["PocPof"])
-        PowerOn1 = iMessage2Value(PowerOnOff1[:4])
-        PowerOff1 = iMessage2Value(PowerOnOff1[4:])
+        PowerOn1 = byte_list_to_int(PowerOnOff1[:4])
+        PowerOff1 = byte_list_to_int(PowerOnOff1[4:])
         self._resetSth()
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
                                               TestConfig["DevName"])
         PowerOnOff2 = self.Can.statisticalData(MyToolItNetworkNr["STH1"],
                                                MyToolItStatData["PocPof"])
-        PowerOn2 = iMessage2Value(PowerOnOff2[:4])
-        PowerOff2 = iMessage2Value(PowerOnOff2[4:])
+        PowerOn2 = byte_list_to_int(PowerOnOff2[:4])
+        PowerOff2 = byte_list_to_int(PowerOnOff2[4:])
         self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
                                               TestConfig["DevName"])
         PowerOnOff3 = self.Can.statisticalData(MyToolItNetworkNr["STH1"],
                                                MyToolItStatData["PocPof"])
-        PowerOn3 = iMessage2Value(PowerOnOff3[:4])
-        PowerOff3 = iMessage2Value(PowerOnOff3[4:])
+        PowerOn3 = byte_list_to_int(PowerOnOff3[:4])
+        PowerOff3 = byte_list_to_int(PowerOnOff3[4:])
         self._resetStu()
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
                                               TestConfig["DevName"])
         PowerOnOff4 = self.Can.statisticalData(MyToolItNetworkNr["STH1"],
                                                MyToolItStatData["PocPof"])
-        PowerOn4 = iMessage2Value(PowerOnOff4[:4])
-        PowerOff4 = iMessage2Value(PowerOnOff4[4:])
+        PowerOn4 = byte_list_to_int(PowerOnOff4[:4])
+        PowerOff4 = byte_list_to_int(PowerOnOff4[4:])
         self.Can.Logger.Info("PowerOnOff Payload before STH Reset: " +
                              payload2Hex(PowerOnOff1))
         self.Can.Logger.Info("Power On Counter before STH Reset: " +
@@ -6605,25 +6605,25 @@ class TestSth(unittest.TestCase):
             MyToolItNetworkNr["STH1"])
         OperatingSeconds = self.Can.statisticalData(
             MyToolItNetworkNr["STH1"], MyToolItStatData["OperatingTime"])
-        SecondsReset1 = iMessage2Value(OperatingSeconds[:4])
-        SecondsOveral1 = iMessage2Value(OperatingSeconds[4:])
+        SecondsReset1 = byte_list_to_int(OperatingSeconds[:4])
+        SecondsOveral1 = byte_list_to_int(OperatingSeconds[4:])
         time.sleep(60)
         OperatingSeconds = self.Can.statisticalData(
             MyToolItNetworkNr["STH1"], MyToolItStatData["OperatingTime"])
-        SecondsReset2 = iMessage2Value(OperatingSeconds[:4])
-        SecondsOveral2 = iMessage2Value(OperatingSeconds[4:])
+        SecondsReset2 = byte_list_to_int(OperatingSeconds[:4])
+        SecondsOveral2 = byte_list_to_int(OperatingSeconds[4:])
         self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
                                               TestConfig["DevName"])
         OperatingSeconds = self.Can.statisticalData(
             MyToolItNetworkNr["STH1"], MyToolItStatData["OperatingTime"])
-        SecondsReset3 = iMessage2Value(OperatingSeconds[:4])
-        SecondsOveral3 = iMessage2Value(OperatingSeconds[4:])
+        SecondsReset3 = byte_list_to_int(OperatingSeconds[:4])
+        SecondsOveral3 = byte_list_to_int(OperatingSeconds[4:])
         time.sleep(60 * 30)
         OperatingSeconds = self.Can.statisticalData(
             MyToolItNetworkNr["STH1"], MyToolItStatData["OperatingTime"])
-        SecondsReset4 = iMessage2Value(OperatingSeconds[:4])
-        SecondsOveral4 = iMessage2Value(OperatingSeconds[4:])
+        SecondsReset4 = byte_list_to_int(OperatingSeconds[:4])
+        SecondsOveral4 = byte_list_to_int(OperatingSeconds[4:])
         self.Can.Logger.Info("Operating Seconds since Reset: " +
                              str(SecondsReset1))
         self.Can.Logger.Info("Operating Seconds since frist PowerOn: " +

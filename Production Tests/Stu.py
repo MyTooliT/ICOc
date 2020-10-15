@@ -177,7 +177,7 @@ class TestStu(unittest.TestCase):
     """
 
     def _SthWDog(self):
-        WdogCounter = iMessage2Value(
+        WdogCounter = byte_list_to_int(
             self.Can.statisticalData(MyToolItNetworkNr["STU1"],
                                      MyToolItStatData["Wdog"])[:4])
         self.Can.Logger.Info("WatchDog Counter: " + str(WdogCounter))
@@ -371,7 +371,7 @@ class TestStu(unittest.TestCase):
                 elif "ASCII" == worksheet['G' + str(i)].value:
                     value = sArray2String(value)
                 elif "unsigned" == worksheet['G' + str(i)].value:
-                    value = str(iMessage2Value(value))
+                    value = str(byte_list_to_int(value))
                 elif "float" == worksheet['G' + str(i)].value:
                     if None != value:
                         pass

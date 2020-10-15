@@ -188,7 +188,7 @@ class mwt(myToolItWatch):
                                             0,
                                             0,
                                             log=False)
-        iBatteryVoltage = iMessage2Value(
+        iBatteryVoltage = byte_list_to_int(
             self.Can.getReadMessageData(index)[2:4])
         if None != iBatteryVoltage:
             fBatteryVoltage = fVoltageBattery(iBatteryVoltage)
@@ -201,7 +201,7 @@ class mwt(myToolItWatch):
             1,
             AdcReference["1V25"],
             log=False)
-        iTemperature = float(iMessage2Value(au8TempReturn[4:]))
+        iTemperature = float(byte_list_to_int(au8TempReturn[4:]))
         iTemperature /= 1000
         self.Can.calibMeasurement(MyToolItNetworkNr["STH1"],
                                   CalibMeassurementActionNr["None"],
