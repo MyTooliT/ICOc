@@ -150,7 +150,9 @@ def create_connection_bus():
 
     # Connect to first available device
     device_number = 0
-    send_message(bus, create_id('System', 'Bluetooth'), data=[7] + 7 * [0])
+    send_message(bus,
+                 create_id('System', 'Bluetooth'),
+                 data=[7, device_number] + 6 * [0])
     bus.recv(2)
 
     # Check connection to device
