@@ -6,6 +6,7 @@ from time import sleep, time
 
 from network import Network
 from MyToolItNetworkNumbers import MyToolItNetworkNr
+from MyToolItCommands import int_to_mac_address
 
 
 def send_message(bus, identifier, data=None):
@@ -89,6 +90,11 @@ def create_connection_network():
         return
     print(f"Connected to {name}")
 
+    # Read MAC address of device
+    address = int_to_mac_address(
+        network.BlueToothAddress(MyToolItNetworkNr['STH1']))
+    print(f"Bluetooth MAC address of {name}: {address}")
+
     # Disconnect Bluetooth
     connected = network.bBlueToothDisconnect(MyToolItNetworkNr['STU1'])
     if connected:
@@ -164,6 +170,15 @@ def create_connection_bus():
     if not connected:
         return
     print(f"Connected to {name}")
+
+    # Read MAC address of device
+    self_addressing = 0xff
+    send_message(bus,
+                 create_id('System', 'Bluetooth', receiver='STH 1'),
+                 data=[17, self_addressing] + 6 * [0])
+    bytes_address = reversed(bus.recv(2).data[2:])
+    address = ":".join(f"{byte:02x}" for byte in bytes_address)
+    print(f"Bluetooth MAC address of {name}: {address}")
 
     # Disconnect Bluetooth
     send_message(bus, create_id('System', 'Bluetooth'), data=[9] + 7 * [0])
