@@ -601,12 +601,7 @@ def au8ChangeEndianOrder(m):
 
 
 def au8Value2Array(iValue, iLength):
-    au8Array = [0] * iLength
-    for i in range(0, iLength, 1):
-        iShiftBits = 8 * (i)
-        u8Value = (iValue >> iShiftBits)
-        au8Array[i] = 0xff & u8Value
-    return au8Array
+    return list(iValue.to_bytes(iLength, 'little'))
 
 
 def calcSamplingRate(prescaler, acquisitionTime, OverSamplingRate):
