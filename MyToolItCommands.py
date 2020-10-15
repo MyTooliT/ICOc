@@ -586,10 +586,7 @@ BlueToothDeviceNr = {
 
 
 def iMessage2Value(m):
-    iValue = 0
-    for i in range(0, len(m)):
-        iValue |= ((0xFF & int(m[i])) << (i * 8))
-    return iValue
+    return int.from_bytes(m, 'little')
 
 
 def int_to_byte_list(iValue, iLength, byte_order='little'):
