@@ -635,14 +635,7 @@ def sArray2String(Name):
 
 
 def sBlueToothMacAddr(iAddr):
-    au8Value = au8Value2Array(iAddr, 6, 'big')
-    sAddr = ""
-    for element in au8Value:
-        if 16 > element:
-            sAddr += "0"
-        sAddr += hex(element)[2:] + ":"
-    sAddr = sAddr[:-1]
-    return sAddr
+    return ":".join(f"{byte:02x}" for byte in au8Value2Array(iAddr, 6, 'big'))
 
 
 def iBlueToothMacAddr(sAddr):
