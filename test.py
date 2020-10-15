@@ -31,6 +31,13 @@ def bytearray_to_text(data):
     return data.decode('ASCII').rstrip('\x00')
 
 
+def check_bluetooth_connection(bus):
+    send_message(bus, create_id('System', 'Bluetooth'), data=[8] + 7 * [0])
+    message = bus.recv(2)
+    connected = bool(message.data[2])
+    return connected
+
+
 def create_connection_network():
     # Configure the CAN hardware
     network = Network()
@@ -81,6 +88,12 @@ def create_connection_network():
     if not connected:
         return
     print(f"Connected to {name}")
+
+    # Disconnect Bluetooth
+    connected = network.bBlueToothDisconnect(MyToolItNetworkNr['STU1'])
+    if connected:
+        return
+    print(f"Disconnected Bluetooth of STU 1")
 
     network.__exit__()  # Cleanup resources (read thread)
 
@@ -144,13 +157,19 @@ def create_connection_bus():
     timeout = time() + 10
     connected = False
     while time() < timeout and not connected:
-        send_message(bus, create_id('System', 'Bluetooth'), data=[8] + 7 * [0])
-        message = bus.recv(2)
-        connected = bool(message.data[2])
+        connected = check_bluetooth_connection(bus)
         sleep(0.05)
     if not connected:
         return
     print(f"Connected to {name}")
+
+    # Disconnect Bluetooth
+    send_message(bus, create_id('System', 'Bluetooth'), data=[9] + 7 * [0])
+    message = bus.recv(2)
+    connected = check_bluetooth_connection(bus)
+    if connected:
+        return
+    print(f"Disconnected Bluetooth of STU 1")
 
 
 if __name__ == '__main__':
