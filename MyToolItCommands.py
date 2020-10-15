@@ -592,16 +592,8 @@ def iMessage2Value(m):
     return iValue
 
 
-def au8ChangeEndianOrder(m):
-    iLength = len(m)
-    au8InverseEndian = [0] * iLength
-    for i in range(0, len(m)):
-        au8InverseEndian[i] = m[iLength - i - 1]
-    return au8InverseEndian
-
-
-def au8Value2Array(iValue, iLength):
-    return list(iValue.to_bytes(iLength, 'little'))
+def au8Value2Array(iValue, iLength, byte_order='little'):
+    return list(iValue.to_bytes(iLength, byte_order))
 
 
 def calcSamplingRate(prescaler, acquisitionTime, OverSamplingRate):
@@ -643,7 +635,7 @@ def sArray2String(Name):
 
 
 def sBlueToothMacAddr(iAddr):
-    au8Value = au8ChangeEndianOrder(au8Value2Array(iAddr, 6))
+    au8Value = au8Value2Array(iAddr, 6, 'big')
     sAddr = ""
     for element in au8Value:
         if 16 > element:
@@ -655,7 +647,7 @@ def sBlueToothMacAddr(iAddr):
 
 def iBlueToothMacAddr(sAddr):
     au8Addr = sAddr.split(":")
-    au8Addr = au8ChangeEndianOrder(au8Addr)
+    au8Addr = au8Addr.reverse()
     for i in range(0, len(au8Addr)):
         au8Addr[i] = int(au8Addr[i], 16)
     iAddr = iMessage2Value(au8Addr)
