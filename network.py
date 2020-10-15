@@ -1400,7 +1400,7 @@ class Network(object):
         cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"],
                           1, 0)
         au8Payload = [SystemCommandBlueTooth["DeviceConnectMacAddr"], 0]
-        au8MacAddr = au8Value2Array(int(iMacAddr), 6)
+        au8MacAddr = int_to_byte_list(int(iMacAddr), 6)
         au8Payload.extend(au8MacAddr)
         message = self.CanMessage20(cmd, self.sender, receiver, au8Payload)
         ack = self.tWriteFrameWaitAckRetries(message, retries=2)

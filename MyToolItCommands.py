@@ -592,7 +592,7 @@ def iMessage2Value(m):
     return iValue
 
 
-def au8Value2Array(iValue, iLength, byte_order='little'):
+def int_to_byte_list(iValue, iLength, byte_order='little'):
     return list(iValue.to_bytes(iLength, byte_order))
 
 
@@ -635,7 +635,8 @@ def sArray2String(Name):
 
 
 def sBlueToothMacAddr(iAddr):
-    return ":".join(f"{byte:02x}" for byte in au8Value2Array(iAddr, 6, 'big'))
+    return ":".join(f"{byte:02x}"
+                    for byte in int_to_byte_list(iAddr, 6, 'big'))
 
 
 def iBlueToothMacAddr(sAddr):

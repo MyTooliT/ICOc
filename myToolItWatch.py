@@ -1617,12 +1617,12 @@ class myToolItWatch():
                 for i in range(0, iCopyLength):
                     byteArray[i] = value[i]
             elif "unsigned" == worksheet['G' + str(iIndex)].value:
-                byteArray = au8Value2Array(int(value), iLength)
+                byteArray = int_to_byte_list(int(value), iLength)
             elif "float" == worksheet['G' + str(iIndex)].value:
                 value = float(value)
                 value = struct.pack('f', value)
                 value = int.from_bytes(value, byteorder='little')
-                byteArray = au8Value2Array(int(value), 4)
+                byteArray = int_to_byte_list(int(value), 4)
             else:
                 if "0" == value or 0 == value:
                     value = "[0x0]"
