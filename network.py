@@ -563,7 +563,7 @@ class Network(object):
                               testTimeMs,
                               log=True,
                               StartupTimeMs=0):
-        if False != log:
+        if log:
             self.Logger.Info("Test Time: " + str(testTimeMs) + "ms")
         indexStart = self.streamingStart(receiver,
                                          subCmd,
@@ -572,7 +572,7 @@ class Network(object):
                                          b2,
                                          b3,
                                          log=log)
-        if False != log:
+        if log:
             self.Logger.Info("indexStart: " + str(indexStart))
         testTimeMs += StartupTimeMs
         sleep(testTimeMs / 1000)
@@ -584,7 +584,7 @@ class Network(object):
                                                      indexEnd) - 0.5:
             countDel += 1
             indexEnd -= 1
-        if False != log:
+        if log:
             self.Logger.Info("Deleted Messages do achieve " + str(testTimeMs) +
                              "ms: " + str(countDel + 180))
             self.Logger.Info("indexEnd: " + str(indexEnd))
