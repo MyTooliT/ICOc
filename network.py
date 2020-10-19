@@ -932,9 +932,9 @@ class Network(object):
             self.__exitError("Streaming unknown at streaming start: + (" +
                              str(subCmd) + ")")
         if False != log:
-            self.Logger.Info("Can Bandwitdh(Lowest, may be more): " +
+            self.Logger.Info("Can Bandwidth(Lowest, may be more): " +
                              str(self.canBandwith()) + "bit/s")
-            self.Logger.Info("Bluetooth Bandwitdh(Lowest, may be more): " +
+            self.Logger.Info("Bluetooth Bandwidth(Lowest, may be more): " +
                              str(self.bluetoothBandwidth()) + "bit/s")
 
         cmd = self.CanCmd(MyToolItBlock["Streaming"], subCmd, 1, 0)
