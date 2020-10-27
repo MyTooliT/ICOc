@@ -182,7 +182,7 @@ As you can see instead of transmitting three x acceleration values, the STH inst
 
 ## Production Tests
 
-## STH
+### STH
 
 To run the production tests for the STH, please execute the following command in the root of the repository:
 
@@ -214,7 +214,7 @@ For a list of available command line options, please use the option `-h`:
 python sth.py -h
 ```
 
-### Specific Tests
+#### Specific Tests
 
 To only run a single test you need the specify its name. For example, to run the test `test__firmware_flash` you can use the following command:
 
@@ -230,7 +230,7 @@ python sth.py -k flash -k connection
 
 , which executes all tests that contain the text `flash` or `connection`.
 
-### Wrapper Script
+#### Wrapper Script
 
 We provide a very simple wrapper script for the STH test called [`Test-STH.ps1`](../Scripts/Test-STH.ps1). This script just executes the script `sth.py` with the current Python interpreter forwarding the given command line arguments in the process. If you add the [Scripts](../Scripts) folder to your Windows path variable, you can call the wrapper script (and hence the STH test) regardless of the current path. For example, to execute the EEPROM test just call
 
