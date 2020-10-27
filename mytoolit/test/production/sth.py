@@ -281,20 +281,7 @@ class TestSTH(TestNode):
     def __connect(self):
         """Create a connection to the STH"""
 
-        # Initialize CAN bus
-        log_filepath = f"{self._testMethodName}.txt"
-        log_filepath_error = f"{self._testMethodName}_Error.txt"
-
-        self.can = Network(log_filepath,
-                           log_filepath_error,
-                           MyToolItNetworkNr['SPU1'],
-                           MyToolItNetworkNr['STH1'],
-                           oversampling=AdcOverSamplingRate[64])
-
-        # Reset STU (and STH)
-        self.can.bConnected = False
-        return_message = self.can.reset_node("STU 1")
-        self.can.CanTimeStampStart(return_message['CanTime'])
+        super()._connect()
 
         # Connect to STH
         self.can.bBlueToothConnectPollingName(MyToolItNetworkNr['STU1'],
@@ -309,7 +296,8 @@ class TestSTH(TestNode):
         """Tear down connection to STH"""
 
         self.can.bBlueToothDisconnect(MyToolItNetworkNr['STU1'])
-        self.can.__exit__()
+
+        super()._disconnect()
 
     def __read_data(self):
         """Read data from connected STH"""
