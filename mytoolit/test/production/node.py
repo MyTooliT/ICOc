@@ -206,9 +206,8 @@ class TestNode(TestCase):
     def setUp(self):
         """Set up hardware before a single test case"""
 
-        # The firmware flash does not initiate a connection. The over the air
-        # update already terminates the connection itself.
-        if search("flash|ota", self._testMethodName):
+        # We do not need a CAN connection for the firmware flash test
+        if self._testMethodName == 'test__firmware_flash':
             return
 
         self._connect()
@@ -221,5 +220,10 @@ class TestNode(TestCase):
 
     def tearDown(self):
         """Clean up after single test case"""
+
+        # The firmware flash does not initiate a connection. The over the air
+        # update already terminates the connection itself.
+        if search("flash|ota", self._testMethodName):
+            return
 
         self._disconnect()
