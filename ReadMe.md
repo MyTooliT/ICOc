@@ -239,3 +239,11 @@ Test-STH -k eeprom
 ```
 
 inside the Terminal. If this command shows an execution policy error, then please read the section “How Can I Fix Execution Policy Errors?” in the [FAQ](Documentation/FAQ.md).
+
+### STU
+
+The explanation for the STH test apply also for the STU tests. Please just replace `STH` (or `sth`) in the previous section with the term `STU` (respective `stu`). For example, to execute all tests for the STU you can use the following command:
+
+```sh
+Test-STU
+```
