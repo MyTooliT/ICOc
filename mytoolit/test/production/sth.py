@@ -250,25 +250,6 @@ class TestSTH(TestNode):
             cls.report.add_attribute(attribute.description, attribute.value,
                                      sth_data)
 
-    def setUp(self):
-        """Set up hardware before a single test case"""
-
-        # We do not need a CAN connection for the firmware flash test
-        if self._testMethodName == 'test__firmware_flash':
-            return
-
-        self.__connect()
-
-    def tearDown(self):
-        """Clean up after single test case"""
-
-        # The firmware flash does not initiate a connection. The over the air
-        # update already terminates the connection itself.
-        if search("flash|ota", self._testMethodName):
-            return
-
-        self.__disconnect()
-
     def run(self, result=None):
         """Execute a single test
 
@@ -278,9 +259,10 @@ class TestSTH(TestNode):
         super().run(result)
         type(self).report.add_test_result(self.shortDescription(), result)
 
-    def __connect(self):
+    def _connect(self):
         """Create a connection to the STH"""
 
+        # Connect to STU
         super()._connect()
 
         # Connect to STH
@@ -292,11 +274,13 @@ class TestSTH(TestNode):
             self.__read_data()
             type(self).read_attributes = True
 
-    def __disconnect(self):
+    def _disconnect(self):
         """Tear down connection to STH"""
 
+        # Disconnect from STH
         self.can.bBlueToothDisconnect(MyToolItNetworkNr['STU1'])
 
+        # Disconnect from STU
         super()._disconnect()
 
     def __read_data(self):

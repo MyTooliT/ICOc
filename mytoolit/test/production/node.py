@@ -1,5 +1,6 @@
 # -- Imports ------------------------------------------------------------------
 
+from re import search
 from unittest import TestCase
 
 from network import Network
@@ -34,3 +35,18 @@ class TestNode(TestCase):
         """Tear down connection to STU"""
 
         self.can.__exit__()
+
+    def setUp(self):
+        """Set up hardware before a single test case"""
+
+        # The firmware flash does not initiate a connection. The over the air
+        # update already terminates the connection itself.
+        if search("flash|ota", self._testMethodName):
+            return
+
+        self._connect()
+
+    def tearDown(self):
+        """Clean up after single test case"""
+
+        self._disconnect()
