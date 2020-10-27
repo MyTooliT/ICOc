@@ -8,7 +8,8 @@ from unittest import main
 repository_root = dirname(dirname(dirname(dirname(abspath(__file__)))))
 module_path.append(repository_root)
 
-from mytoolit.test.production import TestNode, create_attribute
+from mytoolit.test.production import (TestNode, create_attribute,
+                                      filter_undefined_attributes)
 from mytoolit.unittest import ExtendedTestRunner
 
 from MyToolItNetworkNumbers import MyToolItNetworkNr
@@ -35,16 +36,7 @@ class TestSTU(TestNode):
             create_attribute("Bluetooth Address", "{cls.bluetooth_mac}"),
         ]
 
-        # Check available read hardware attributes
-        attributes = []
-        for attribute in possible_attributes:
-            try:
-                attribute.value = str(attribute.value).format(cls=cls)
-                attributes.append(attribute)
-            except AttributeError:
-                pass
-
-        return attributes
+        return filter_undefined_attributes(cls, possible_attributes)
 
     def _read_data(self):
         """Read data from connected STU"""
@@ -53,6 +45,9 @@ class TestSTU(TestNode):
 
         cls.bluetooth_mac = int_to_mac_address(
             self.can.BlueToothAddress(MyToolItNetworkNr['STU1']))
+
+    def test_test(self):
+        pass
 
 
 # -- Main ---------------------------------------------------------------------

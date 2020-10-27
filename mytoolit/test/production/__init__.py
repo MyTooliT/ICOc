@@ -1,4 +1,3 @@
 # -- Exports ------------------------------------------------------------------
 
-from .node import TestNode
-from .node import create_attribute
+from .node import TestNode, create_attribute, filter_undefined_attributes

@@ -21,7 +21,8 @@ from mytoolit.measurement.acceleration import (convert_acceleration_adc_to_g,
                                                ratio_noise_max)
 from mytoolit.report import Report
 from mytoolit.config import settings
-from mytoolit.test.production import TestNode, create_attribute
+from mytoolit.test.production import (TestNode, create_attribute,
+                                      filter_undefined_attributes)
 from mytoolit.unittest import ExtendedTestRunner
 from mytoolit.utility import convert_mac_base64
 
@@ -121,16 +122,7 @@ class TestSTH(TestNode):
                              pdf=False),
         ]
 
-        # Check available read hardware attributes
-        attributes = []
-        for attribute in possible_attributes:
-            try:
-                attribute.value = str(attribute.value).format(cls=cls)
-                attributes.append(attribute)
-            except AttributeError:
-                pass
-
-        return attributes
+        return filter_undefined_attributes(cls, possible_attributes)
 
     def _connect(self):
         """Create a connection to the STH"""
