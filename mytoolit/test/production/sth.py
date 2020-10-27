@@ -21,6 +21,7 @@ from mytoolit.measurement.acceleration import (convert_acceleration_adc_to_g,
                                                ratio_noise_max)
 from mytoolit.report import Report
 from mytoolit.config import settings
+from mytoolit.test.production import TestNode
 from mytoolit.unittest import ExtendedTestRunner, ExtendedTestResult
 from mytoolit.utility import convert_mac_base64
 
@@ -79,7 +80,7 @@ def create_attribute(description, value, pdf=True):
 # -- Classes ------------------------------------------------------------------
 
 
-class TestSTH(TestCase):
+class TestSTH(TestNode):
     """This class contains tests for the Sensory Tool Holder (STH)"""
 
     @classmethod
