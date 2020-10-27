@@ -21,7 +21,7 @@ from mytoolit.measurement.acceleration import (convert_acceleration_adc_to_g,
                                                ratio_noise_max)
 from mytoolit.report import Report
 from mytoolit.config import settings
-from mytoolit.test.production import TestNode
+from mytoolit.test.production import TestNode, create_attribute
 from mytoolit.unittest import ExtendedTestRunner
 from mytoolit.utility import convert_mac_base64
 
@@ -48,35 +48,6 @@ from MyToolItCommands import (
 from MyToolItSth import fVoltageBattery
 from SthLimits import SthLimits
 
-# -- Functions ----------------------------------------------------------------
-
-
-def create_attribute(description, value, pdf=True):
-    """Create a simple object that stores test attributes
-
-
-    Parameters
-    ----------
-
-    description:
-        The description (name) of the attribute
-
-    value:
-        The value of the attribute
-
-    pdf:
-        True if the attribute should be added to the PDF report
-
-
-    Returns
-    -------
-
-    A simple namespace object that stores the specified data
-    """
-
-    return SimpleNamespace(description=description, value=str(value), pdf=pdf)
-
-
 # -- Classes ------------------------------------------------------------------
 
 
@@ -84,55 +55,8 @@ class TestSTH(TestNode):
     """This class contains tests for the Sensory Tool Holder (STH)"""
 
     @classmethod
-    def setUpClass(cls):
-        """Set up data for whole test"""
-
-        # Initialize report
-        cls.report = Report()
-
-        # We store attributes related to the connection, such as MAC address
-        # and RSSI only once. To do that we set `read_attributes` to true after
-        # the test class gathered the relevant data.
-        cls.read_attributes = False
-
-    @classmethod
-    def tearDownClass(cls):
-        """Print attributes of tested STH after all successful test cases"""
-
-        cls.__output_general_data()
-        cls.__output_sth_data()
-        cls.report.build()
-
-    @classmethod
-    def __output_general_data(cls):
-        """Print general information and add it to PDF report"""
-
-        now = datetime.now()
-        date = now.strftime('%Y-%m-%d')
-        time = now.strftime("%H:%M:%S")
-
-        operator = settings.Operator.Name
-
-        attributes = [
-            create_attribute("ICOc Version", __version__),
-            create_attribute("Date", date),
-            create_attribute("Time", time),
-            create_attribute("Operator", operator),
-        ]
-
-        cls.__output_data(attributes, sth_data=False)
-
-    @classmethod
-    def __output_sth_data(cls):
-        """Print STH information and add it to PDF report"""
-
-        attributes = cls.__collect_sth_data()
-        cls.__output_data(attributes)
-
-    @classmethod
-    def __collect_sth_data(cls):
+    def _collect_node_data(cls):
         """Collect data about STH
-
 
         Returns
         -------
@@ -208,57 +132,6 @@ class TestSTH(TestNode):
 
         return attributes
 
-    @classmethod
-    def __output_data(cls, attributes, sth_data=True):
-        """Output data to standard output and PDF report
-
-        Parameters
-        ----------
-
-        attributes:
-            An iterable that stores simple name space objects created via
-            ``create_attribute``
-
-        sth_data:
-            Specifies if this method outputs STH or general data
-        """
-
-        # Only output something, if there is at least one attribute
-        if not attributes:
-            return
-
-        max_length_description = max(
-            [len(attribute.description) for attribute in attributes])
-        max_length_value = max(
-            [len(attribute.value) for attribute in attributes])
-
-        # Print attributes to standard output
-        print("\n")
-        header = "Attributes" if sth_data else "General"
-        print(header)
-        print("—" * len(header))
-
-        for attribute in attributes:
-            print(f"{attribute.description:{max_length_description}} " +
-                  f"{attribute.value:>{max_length_value}}")
-
-        # Add attributes to PDF
-        attributes_pdf = [
-            attribute for attribute in attributes if attribute.pdf
-        ]
-        for attribute in attributes_pdf:
-            cls.report.add_attribute(attribute.description, attribute.value,
-                                     sth_data)
-
-    def run(self, result=None):
-        """Execute a single test
-
-        We override this method to store data about the test outcome.
-        """
-
-        super().run(result)
-        type(self).report.add_test_result(self.shortDescription(), result)
-
     def _connect(self):
         """Create a connection to the STH"""
 
@@ -270,9 +143,6 @@ class TestSTH(TestNode):
                                               settings.STH.Name,
                                               log=False)
         sleep(2)
-        if not type(self).read_attributes:
-            self.__read_data()
-            type(self).read_attributes = True
 
     def _disconnect(self):
         """Tear down connection to STH"""
@@ -283,7 +153,7 @@ class TestSTH(TestNode):
         # Disconnect from STU
         super()._disconnect()
 
-    def __read_data(self):
+    def _read_data(self):
         """Read data from connected STH"""
 
         cls = type(self)
