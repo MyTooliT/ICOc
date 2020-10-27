@@ -36,6 +36,7 @@ class TestSTU(TestNode):
         possible_attributes = [
             create_attribute("Bluetooth Address", "{cls.bluetooth_mac}"),
             create_attribute("Firmware Version", "{cls.firmware_version}"),
+            create_attribute("Release Name", "{cls.release_name}", pdf=False),
         ]
 
         return filter_undefined_attributes(cls, possible_attributes)
@@ -53,6 +54,8 @@ class TestSTU(TestNode):
                                  MyToolItProductData['FirmwareVersion'], [])
         version = self.can.getReadMessageData(index)[-3:]
         cls.firmware_version = '.'.join(map(str, version))
+
+        cls.release_name = self.can.get_node_release_name('STU1')
 
     def test_test(self):
         pass

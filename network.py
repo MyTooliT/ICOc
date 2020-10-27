@@ -1687,6 +1687,27 @@ class Network(object):
                              str("Sampling Points: ") + str(count) + ")")
         return dataSets
 
+    def get_node_release_name(self, node='STH1'):
+        """Retrieve the software release name of a certain node
+
+        Parameters
+        ----------
+
+        node:
+            A textual description that identifies the node
+
+        Returns
+        -------
+
+        The name of the software release running on the specified node
+        """
+
+        index = self.cmdSend(MyToolItNetworkNr[node],
+                             MyToolItBlock["ProductData"],
+                             MyToolItProductData["ReleaseName"], [])
+        aiName = self.getReadMessageData(index)
+        return sArray2String(aiName)
+
 
 # -- Main ---------------------------------------------------------------------
 
