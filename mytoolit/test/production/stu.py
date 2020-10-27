@@ -13,7 +13,8 @@ from mytoolit.test.production import (TestNode, create_attribute,
 from mytoolit.unittest import ExtendedTestRunner
 
 from MyToolItNetworkNumbers import MyToolItNetworkNr
-from MyToolItCommands import int_to_mac_address
+from MyToolItCommands import (int_to_mac_address, MyToolItBlock,
+                              MyToolItProductData)
 
 # -- Class --------------------------------------------------------------------
 
@@ -34,6 +35,7 @@ class TestSTU(TestNode):
 
         possible_attributes = [
             create_attribute("Bluetooth Address", "{cls.bluetooth_mac}"),
+            create_attribute("Firmware Version", "{cls.firmware_version}"),
         ]
 
         return filter_undefined_attributes(cls, possible_attributes)
@@ -45,6 +47,12 @@ class TestSTU(TestNode):
 
         cls.bluetooth_mac = int_to_mac_address(
             self.can.BlueToothAddress(MyToolItNetworkNr['STU1']))
+
+        index = self.can.cmdSend(MyToolItNetworkNr['STU1'],
+                                 MyToolItBlock['ProductData'],
+                                 MyToolItProductData['FirmwareVersion'], [])
+        version = self.can.getReadMessageData(index)[-3:]
+        cls.firmware_version = '.'.join(map(str, version))
 
     def test_test(self):
         pass
