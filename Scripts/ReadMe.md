@@ -33,3 +33,9 @@ Convert-Base64-MAC CGvXAd6B
 The command `Test-STH` is a wrapper that executes the tests for the STH ([`sth.py`][]). All command line arguments of the wrapper will be forwarded to [`sth.py`][].
 
 [`sth.py`]: ../mytoolit/test/production/sth.py
+
+## Test-STU
+
+The command `Test-STU` is a wrapper that executes the tests for the STU ([`stu.py`][]). All command line arguments of the wrapper will be forwarded to [`stu.py`][].
+
+[`stu.py`]: ../mytoolit/test/production/stu.py
