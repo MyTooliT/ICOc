@@ -135,3 +135,11 @@ STH:
     # Describe the status of the current STH hardware. This scalar should either
     # store the value `Bare BCP` or `Epoxied`.
     Bare BCP
+
+STU:
+  Firmware:
+    Location:
+      # This value should contain the path to a complete image (bootloader and
+      # application). This path will be interpreted in relation to the root of
+      # the repository.
+      Flash: ../STU/builds/manufacturingImageStuv2.1.10.hex
