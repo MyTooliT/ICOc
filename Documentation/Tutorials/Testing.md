@@ -27,7 +27,7 @@ This tutorial lists the usual steps to test a sensory holder assembly or a senso
 
    - **Serial Number of Programming Board**: Please make sure, that the variable `STH` → `Programming Board` → `Serial Number` contains the serial number of the programming board connected to the STH. This serial number should be displayed on the bottom right of the LCD on the programming board.
 
-4. Now please open your favorite Terminal application and execute, the STH test using the command `ICOc`. For more information about this command, please take a look at the section “Production Tests” in the [main readme file](../../ReadMe.md).
+4. Now please open your favorite Terminal application and execute, the STH test using the command `Test-TH`. For more information about this command, please take a look at the section “Production Tests” in the [main readme file](../../ReadMe.md).
 
    Please note, that the test will rename the tested STH to a Base64 encoded version of the Bluetooth MAC address. The rationale behind this is that we can use this string to uniquely identify a STH. For more information, please take a look at the [corresponding issue](https://github.com/MyTooliT/ICOc/issues/1).
 
