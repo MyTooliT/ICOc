@@ -9,7 +9,7 @@ This tutorial lists the usual steps to test a sensory holder assembly or a senso
    - create a directory called `STH`, or
    - clone the [STH repository](https://github.com/mytoolit/STH) to a location
 
-   beside this repository inside your file system. Then create a directory called `build` and put the [current version of the STH firmware](https://github.com/MyTooliT/STH/releases/download/2.1.10/manufacturingImageSthv2.1.10.hex) into this directory. Afterwards the directory and file structure should look like this.
+   beside this repository inside your file system. Then create a directory called `builds` and put the [current version of the STH firmware](https://github.com/MyTooliT/STH/releases/download/2.1.10/manufacturingImageSthv2.1.10.hex) into this directory. Afterwards the directory and file structure should look like this.
 
    ```
    .
