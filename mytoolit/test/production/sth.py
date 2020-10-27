@@ -22,7 +22,7 @@ from mytoolit.measurement.acceleration import (convert_acceleration_adc_to_g,
 from mytoolit.report import Report
 from mytoolit.config import settings
 from mytoolit.test.production import TestNode
-from mytoolit.unittest import ExtendedTestRunner, ExtendedTestResult
+from mytoolit.unittest import ExtendedTestRunner
 from mytoolit.utility import convert_mac_base64
 
 from network import Network
