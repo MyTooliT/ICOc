@@ -1,5 +1,6 @@
 # -- Imports ------------------------------------------------------------------
 
+from functools import partial
 from os.path import abspath, join, dirname
 from sys import path as module_path
 from typing import List
@@ -21,7 +22,7 @@ from mytoolit.config import settings
 
 
 # noinspection PyUnusedLocal
-def _first_page(canvas, document):
+def _first_page(canvas, document, node):
     """Define the style of the first page of the report"""
 
     canvas.saveState()
@@ -47,7 +48,7 @@ def _first_page(canvas, document):
     heading1 = style['Heading1']
     canvas.setFont(heading1.fontName, heading1.fontSize)
     canvas.drawCentredString(center_width, page_height - title_offset,
-                             "STH Test Report")
+                             f"{node} Test Report")
 
     canvas.restoreState()
 
@@ -60,15 +61,26 @@ class Report:
 
     story: List[Flowable]  # Improve happiness of PyCharm type checker
 
-    def __init__(self):
-        """Initialize the report"""
+    def __init__(self, node):
+        """Initialize the report
+
+        Arguments
+        ---------
+
+        node:
+            A text that specifies the node (either STU or STH) for which a
+            report should be generated
+        """
 
         filepath = join(repository_root, 'Report.pdf')
 
-        self.document = SimpleDocTemplate(filepath,
-                                          author='MyTooliT',
-                                          title='Test Report',
-                                          subject='Sensory Tool Holder Test')
+        self.node = node
+        self.document = SimpleDocTemplate(
+            filepath,
+            author='MyTooliT',
+            title='Test Report',
+            subject='{} Test'.format('Sensory Tool Holder' if node ==
+                                     'STH' else 'Stationary Transceiver Unit'))
         self.story = [Spacer(1, 3 * cm)]
         self.styles = getSampleStyleSheet()
 
@@ -160,4 +172,5 @@ class Report:
         tests = ListFlowable(self.tests, bulletType='bullet')
         self.story.append(tests)
 
-        self.document.build(self.story, onFirstPage=_first_page)
+        first_page = partial(_first_page, node=self.node)
+        self.document.build(self.story, onFirstPage=first_page)

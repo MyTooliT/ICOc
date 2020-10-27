@@ -52,8 +52,9 @@ class TestNode(TestCase):
     def setUpClass(cls):
         """Set up data for whole test"""
 
-        # Initialize report
-        cls.report = Report()
+        # We assume that the last three characters of the subclass name
+        # specifies the node (STU or STH).
+        cls.report = Report(node=cls.__name__[-3:])
 
         # We store attributes related to the connection, such as MAC address
         # only once. To do that we set `read_attributes` to true after
