@@ -80,7 +80,13 @@ def filter_undefined_attributes(cls, possible_attributes):
 
 
 class TestNode(TestCase):
-    """This class contains shared test code for STH and STU"""
+    """This class contains shared test code for STH and STU
+
+    Please note that every subclass of this class has to implement
+
+    - the **class** method `_collect_node_data` and
+    - the method `_read_data`.
+    """
 
     @classmethod
     def setUpClass(cls):
@@ -126,6 +132,7 @@ class TestNode(TestCase):
     def __output_node_data(cls):
         """Print node information and add it to PDF report"""
 
+        # The method _collect_node_data has to be implemented by the subclass
         attributes = cls._collect_node_data()
         cls.__output_data(attributes)
 
