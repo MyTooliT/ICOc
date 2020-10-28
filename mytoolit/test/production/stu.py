@@ -57,8 +57,14 @@ class TestSTU(TestNode):
 
         cls.release_name = self.can.get_node_release_name('STU1')
 
-    def test_test(self):
-        pass
+    def test__firmware_flash(self):
+        """Upload bootloader and application into STU
+
+        Please note the additional underscore in the method name that makes
+        sure this test case is executed before all other test cases.
+        """
+
+        self._test_firmware_flash('STU')
 
 
 # -- Main ---------------------------------------------------------------------
