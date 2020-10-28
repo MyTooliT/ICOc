@@ -52,7 +52,7 @@ STH:
       Ratio Noise To Max Value: -55
       # Tolerance to expected (stationary) acceleration value (of 0 m/s²) in
       # multiples of g₀
-      Tolerance: 3
+      Tolerance: 5
     Self Test:
       Voltage:
         # Expected voltage difference between
