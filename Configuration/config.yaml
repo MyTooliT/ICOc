@@ -143,3 +143,10 @@ STU:
       # application). This path will be interpreted in relation to the root of
       # the repository.
       Flash: ../STU/builds/manufacturingImageStuv2.1.10.hex
+  Programming Board:
+    # Please store the serial number of the programming board that is connected
+    # to the STU here. This number should be displayed in the right bottom
+    # corner of the LC display, after you connect the programmer to a power
+    # source
+    Serial Number: 440120910
+    COM Interface: COM3
