@@ -1,11 +1,14 @@
 # -- Imports ------------------------------------------------------------------
 
 from datetime import datetime
+from os.path import abspath, isfile, dirname, join
 from mytoolit.config import settings
-from re import search
+from re import escape, search
+from subprocess import run
 from types import SimpleNamespace
 from unittest import TestCase
 
+from mytoolit.config import settings
 from mytoolit import __version__
 from mytoolit.report import Report
 
@@ -209,6 +212,66 @@ class TestNode(TestCase):
         """Tear down connection to STU"""
 
         self.can.__exit__()
+
+    def _test_firmware_flash(self, node):
+        """Upload bootloader and application into node
+
+        Please note the additional underscore in the method name that makes
+        sure this test case is executed before all other test cases.
+        """
+
+        programming_board_serial_number = (
+            settings.STH.Programming_Board.Serial_Number
+            if node == 'STH' else settings.STU.Programming_Board.Serial_Number)
+
+        identification_arguments = (
+            f"--serialno {programming_board_serial_number} " +
+            f"-d BGM113A256V2")
+
+        # Set debug mode to out, to make sure we flash the STH (connected via
+        # debug cable) and not another microcontroller connected to the
+        # programmer board.
+        change_mode_command = (
+            f"commander adapter dbgmode OUT {identification_arguments}")
+        status = run(change_mode_command, capture_output=True, text=True)
+        self.assertEqual(status.returncode, 0,
+                         f"Unable to change debug mode of programming board")
+
+        # Unlock debug access
+        unlock_command = (
+            f"commander device unlock {identification_arguments}")
+        status = run(unlock_command, capture_output=True, text=True)
+        self.assertEqual(
+            status.returncode, 0,
+            f"Unlock command returned non-zero exit code {status.returncode}")
+        self.assertRegex(status.stdout, "Chip successfully unlocked",
+                         "Unable to unlock debug access of chip")
+
+        # Upload bootloader and application data
+        flash_location = (settings.STH.Firmware.Location.Flash if node == 'STH'
+                          else settings.STU.Firmware.Location.Flash)
+        repository_root = dirname(dirname(dirname(dirname(abspath(__file__)))))
+        image_filepath = join(repository_root, flash_location)
+        self.assertTrue(isfile(image_filepath),
+                        f"Firmware file {image_filepath} does not exist")
+
+        flash_command = (f"commander flash {image_filepath} " +
+                         f"--address 0x0 {identification_arguments}")
+        status = run(flash_command, capture_output=True, text=True)
+        self.assertEqual(
+            status.returncode, 0,
+            "Flash program command returned non-zero exit code " +
+            f"{status.returncode}")
+        expected_output = "range 0x0FE04000 - 0x0FE047FF (2 KB)"
+        self.assertRegex(
+            status.stdout, escape(expected_output),
+            f"Flash output did not contain expected output “{expected_output}”"
+        )
+        expected_output = "DONE"
+        self.assertRegex(
+            status.stdout, expected_output,
+            f"Flash output did not contain expected output “{expected_output}”"
+        )
 
     def setUp(self):
         """Set up hardware before a single test case"""
