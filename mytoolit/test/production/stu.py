@@ -66,6 +66,11 @@ class TestSTU(TestNode):
 
         self._test_firmware_flash('STU')
 
+    def test_connection(self):
+        """Check connection to STU"""
+
+        # TODO: Send message and check acknowledgment
+
 
 # -- Main ---------------------------------------------------------------------
 
