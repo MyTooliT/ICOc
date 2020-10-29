@@ -154,6 +154,7 @@ class Report:
 
         result_text = f"{description}: <b>{result_text}</b>"
         if test.message:
+            test.message = f"{test.message}".replace("\n", "<br/>")
             result_text += f"<br/><br/><b>{test.message}</b><br/><br/>"
         paragraph_result = Paragraph(result_text, style=self.styles['Normal'])
         self.tests.append(paragraph_result)
