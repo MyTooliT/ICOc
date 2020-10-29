@@ -224,9 +224,10 @@ class TestNode(TestCase):
             settings.STH.Programming_Board.Serial_Number
             if node == 'STH' else settings.STU.Programming_Board.Serial_Number)
 
+        chip = "BGM113A256V2" if node == 'STH' else 'BGM111A256V2'
+
         identification_arguments = (
-            f"--serialno {programming_board_serial_number} " +
-            f"-d BGM113A256V2")
+            f"--serialno {programming_board_serial_number} -d {chip}")
 
         # Set debug mode to out, to make sure we flash the STH (connected via
         # debug cable) and not another microcontroller connected to the
