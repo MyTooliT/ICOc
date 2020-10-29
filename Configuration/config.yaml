@@ -133,7 +133,8 @@ STH:
 
   Status:
     # Describe the status of the current STH hardware. This scalar should either
-    # store the value `Bare BCP` or `Epoxied`.
+    # store the value `Bare BCP` or `Epoxied`. If you use the value `Epoxied`,
+    # then the flash test for the STH will be skipped.
     Bare BCP
 
 STU:

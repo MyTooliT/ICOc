@@ -1,5 +1,9 @@
 # Version 1.0.7
 
+## STH Test
+
+- The STH test case now skips the flash test if the status in the [configuration file](../Configuration/config.yaml) (`STH` → `Status`) is set to `Epoxied`.
+
 ## Logging
 
 - The [main CAN class](../Network.py) now logs the received CAN messages in a file called `can.log`, if you specify the level `DEBUG` in the [configuration file](../Configuration/config.yaml).

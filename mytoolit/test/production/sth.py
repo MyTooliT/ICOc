@@ -9,7 +9,8 @@ from subprocess import run
 from sys import path as module_path
 from time import sleep
 from types import SimpleNamespace
-from unittest import TestCase, TextTestResult, TextTestRunner, main, skip
+from unittest import (TestCase, TextTestResult, TextTestRunner, main, skip,
+                      skipIf)
 
 # Add path for custom libraries
 repository_root = dirname(dirname(dirname(dirname(abspath(__file__)))))
@@ -166,6 +167,8 @@ class TestSTH(TestNode):
         # the name of the STH in advance.
         cls.name = settings.STH.Name
 
+    @skipIf(settings.STH.Status == "Epoxied",
+            "Flash test skipped because of status “{settings.STH.Status}”")
     def test__firmware_flash(self):
         """Upload bootloader and application into STH
 
