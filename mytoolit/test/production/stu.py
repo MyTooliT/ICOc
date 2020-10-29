@@ -75,4 +75,9 @@ class TestSTU(TestNode):
 # -- Main ---------------------------------------------------------------------
 
 if __name__ == "__main__":
+    # Add path to Simplicity Commander (`commander`) — We do this to ensure,
+    # that we can call the command directly, without adding the path before
+    # the tool’s name.
+    environ['PATH'] += (pathsep + pathsep.join(settings.Commands.Path.Windows))
+
     main(testRunner=ExtendedTestRunner)
