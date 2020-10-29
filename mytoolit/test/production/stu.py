@@ -69,7 +69,7 @@ class TestSTU(TestNode):
     def test_connection(self):
         """Check connection to STU"""
 
-        # TODO: Send message and check acknowledgment
+        self._test_connection('STU')
 
 
 # -- Main ---------------------------------------------------------------------
