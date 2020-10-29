@@ -1,5 +1,6 @@
 # -- Imports ------------------------------------------------------------------
 
+from os import environ, pathsep
 from os.path import abspath, dirname
 from sys import path as module_path
 from unittest import main
@@ -8,6 +9,7 @@ from unittest import main
 repository_root = dirname(dirname(dirname(dirname(abspath(__file__)))))
 module_path.append(repository_root)
 
+from mytoolit.config import settings
 from mytoolit.test.production import (TestNode, create_attribute,
                                       filter_undefined_attributes)
 from mytoolit.unittest import ExtendedTestRunner
