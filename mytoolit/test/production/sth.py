@@ -178,7 +178,8 @@ class TestSTH(TestNode):
 
         self._test_firmware_flash('STH')
 
-    @skip("requires ota-dfu command")
+    @skip("Over the air update test skipped because it requires the " +
+          "ota-dfu command which is often unreliable")
     def test_ota_update(self):
         """Test if updating the firmware via Bluetooth works correctly"""
 
