@@ -235,8 +235,12 @@ class TestNode(TestCase):
         change_mode_command = (
             f"commander adapter dbgmode OUT {identification_arguments}")
         status = run(change_mode_command, capture_output=True, text=True)
-        self.assertEqual(status.returncode, 0,
-                         f"Unable to change debug mode of programming board")
+        self.assertEqual(
+            status.returncode, 0,
+            "Unable to change debug mode of programming board\n\n" +
+            "Possible Reasons:\n\n• No programming board connected\n" +
+            "• Serial Number of programming board " +
+            f"({programming_board_serial_number}) is incorrect")
 
         # Unlock debug access
         unlock_command = (
@@ -244,7 +248,9 @@ class TestNode(TestCase):
         status = run(unlock_command, capture_output=True, text=True)
         self.assertEqual(
             status.returncode, 0,
-            f"Unlock command returned non-zero exit code {status.returncode}")
+            "Unlock command returned non-zero exit code " +
+            f"{status.returncode}\n\n" +
+            f"Possible Reason:\n\n• {node} not connected to programming board")
         self.assertRegex(status.stdout, "Chip successfully unlocked",
                          "Unable to unlock debug access of chip")
 
