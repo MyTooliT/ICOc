@@ -5,16 +5,19 @@ from os.path import abspath, isfile, dirname, join
 from mytoolit.config import settings
 from re import escape, search
 from subprocess import run
+from time import sleep
 from types import SimpleNamespace
 from unittest import TestCase
 
+from mytoolit.can.identifier import Identifier
 from mytoolit.config import settings
 from mytoolit import __version__
 from mytoolit.report import Report
 
 from network import Network
 from MyToolItNetworkNumbers import MyToolItNetworkNr
-from MyToolItCommands import AdcOverSamplingRate
+from MyToolItCommands import (AdcOverSamplingRate, ActiveState, Node,
+                              NetworkState, MyToolItBlock, MyToolItSystem)
 
 # -- Functions ----------------------------------------------------------------
 
@@ -212,6 +215,50 @@ class TestNode(TestCase):
         """Tear down connection to STU"""
 
         self.can.__exit__()
+
+    def _test_connection(self, node):
+        """Check connection to node"""
+
+        # Send message to STH
+        command = self.can.CanCmd(MyToolItBlock['System'],
+                                  MyToolItSystem['ActiveState'],
+                                  request=True)
+        expected_data = ActiveState()
+        expected_data.asbyte = 0
+        expected_data.b.u2NodeState = Node['Application']
+        expected_data.b.u3NetworkState = NetworkState['Operating']
+        message = self.can.CanMessage20(command, MyToolItNetworkNr['SPU1'],
+                                        MyToolItNetworkNr[f'{node}1'],
+                                        [expected_data.asbyte])
+        self.can.Logger.Info('Write message')
+        self.can.WriteFrame(message)
+        self.can.Logger.Info('Wait 200ms')
+        sleep(0.2)
+
+        # Receive message from STH
+        received_message = self.can.getReadMessage(-1)
+
+        # Check for equivalence of message content
+        command = self.can.CanCmd(MyToolItBlock['System'],
+                                  MyToolItSystem['ActiveState'],
+                                  request=False)
+        expected_id = (self.can.CanMessage20(command,
+                                             MyToolItNetworkNr[f'{node}1'],
+                                             MyToolItNetworkNr['SPU1'],
+                                             [0])).ID
+        received_id = received_message.ID
+
+        self.assertEqual(
+            expected_id, received_id,
+            f"Expected CAN identifier {Identifier(expected_id)} does not " +
+            f"match received CAN identifier {Identifier(received_id)}")
+
+        expected_data_byte = expected_data.asbyte
+        received_data_byte = received_message.DATA[0]
+        self.assertEqual(
+            expected_data_byte, received_data_byte,
+            f"Expected data “{expected_data_byte}” does not match " +
+            f"received data “{received_data_byte}”")
 
     def _test_firmware_flash(self, node):
         """Upload bootloader and application into node

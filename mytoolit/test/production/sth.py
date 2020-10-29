@@ -219,46 +219,7 @@ class TestSTH(TestNode):
         sender/receiver and flipped acknowledgment bit).
         """
 
-        # Send message to STH
-        command = self.can.CanCmd(MyToolItBlock['System'],
-                                  MyToolItSystem['ActiveState'],
-                                  request=True)
-        expected_data = ActiveState()
-        expected_data.asbyte = 0
-        expected_data.b.u2NodeState = Node['Application']
-        expected_data.b.u3NetworkState = NetworkState['Operating']
-        message = self.can.CanMessage20(command, MyToolItNetworkNr['SPU1'],
-                                        MyToolItNetworkNr['STH1'],
-                                        [expected_data.asbyte])
-        self.can.Logger.Info('Write message')
-        self.can.WriteFrame(message)
-        self.can.Logger.Info('Wait 200ms')
-        sleep(0.2)
-
-        # Receive message from STH
-        received_message = self.can.getReadMessage(-1)
-
-        # Check for equivalence of message content
-        command = self.can.CanCmd(MyToolItBlock['System'],
-                                  MyToolItSystem['ActiveState'],
-                                  request=False)
-        expected_id = (self.can.CanMessage20(command,
-                                             MyToolItNetworkNr['STH1'],
-                                             MyToolItNetworkNr['SPU1'],
-                                             [0])).ID
-        received_id = received_message.ID
-
-        self.assertEqual(
-            expected_id, received_id,
-            f"Expected CAN identifier {Identifier(expected_id)} does not " +
-            f"match received CAN identifier {Identifier(received_id)}")
-
-        expected_data_byte = expected_data.asbyte
-        received_data_byte = received_message.DATA[0]
-        self.assertEqual(
-            expected_data_byte, received_data_byte,
-            f"Expected data “{expected_data_byte}” does not match " +
-            f"received data “{received_data_byte}”")
+        self._test_connection('STH')
 
     def test_battery_voltage(self):
         """Test voltage of STH power source"""
