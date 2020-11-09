@@ -620,7 +620,7 @@ class mwt(myToolItWatch):
                     self.stdscr.addstr("\nTry to update " + str(iNumber) +
                                        "\n")
                     self.stdscr.refresh()
-                    time.sleep(1)
+                    sleep(1)
                     sAddr = ""
                     if BlueToothDeviceNr["Self"] == iNumber:
                         sAddr = self.sStuAddr
@@ -641,7 +641,7 @@ class mwt(myToolItWatch):
                     else:
                         self.stdscr.addstr("Device does not exist")
                         self.stdscr.refresh()
-                        time.sleep(2)
+                        sleep(2)
                 else:
                     bContinue = True
                 bRun = False
@@ -1102,7 +1102,7 @@ class mwt(myToolItWatch):
                         self.stdscr.refresh()
                         self.Can.bBlueToothConnectPollingAddress(
                             MyToolItNetworkNr["STU1"], self.iAddress)
-                        time.sleep(1)
+                        sleep(1)
 
     def bTerminalMainMenuKeyEvaluation(self, devList):
         bRun = True
