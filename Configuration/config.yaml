@@ -50,28 +50,39 @@ Operator:
 
 STH:
   Acceleration Sensor:
-    Acceleration:
-      # Maximum Acceleration of sensor in multiples of g₀ (= 9.807 m/s²)
-      Maximum: 200
-      # This value stores the maximum allowed ratio of noise to maximum
-      # measurement value in dB. If the measured ratio is above this level, then
-      # the tested STH will be considered faulty.
-      Ratio Noise To Max Value: -55
-      # Tolerance to expected (stationary) acceleration value (of 0 m/s²) in
-      # multiples of g₀
-      Tolerance: 5
-    Self Test:
-      Voltage:
-        # Expected voltage difference between
-        #
-        # - the measured (stationary) acceleration voltage, and
-        # - acceleration voltage when the self test is active
-        #
-        # in mV. For more information, please check the data sheet of the
-        # accelerometer (ADXL1001).
-        Difference: 160
-        # Tolerance to the expected voltage difference in mV
-        Tolerance: 30
+    # Values for the Analog devices ± 100g analog accelerometer sensor ADXL1001.
+    ADXL1001:
+      Acceleration:
+        # Maximum Acceleration of sensor in multiples of g₀ (= 9.807 m/s²)
+        Maximum: 200
+        # This value stores the maximum allowed ratio of noise to maximum
+        # measurement value in dB. If the measured ratio is above this level,
+        # then the tested STH will be considered faulty.
+        Ratio Noise To Max Value: -55
+        # Tolerance to expected (stationary) acceleration value (of 0 m/s²) in
+        # multiples of g₀
+        Tolerance: 5
+      Self Test:
+        Voltage:
+          # Expected voltage difference between
+          #
+          # - the measured (stationary) acceleration voltage, and
+          # - acceleration voltage when the self test is active
+          #
+          # in mV. For more information, please check the data sheet of the
+          # accelerometer (ADXL1001).
+          Difference: 160
+          # Tolerance to the expected voltage difference in mV
+          Tolerance: 30
+    # The identifier of the accelerometer sensor. The values below the key
+    # will be used for the STH test.
+    #
+    # For example, if you specify the value `ADXL1001`, then the value
+    #
+    #  `STH` → `Acceleration Sensor` → `ADXL1001` → `Acceleration` → `Maximum`
+    #
+    # will be used as maximum acceleration value for the current STH.
+    Sensor: ADXL1001
 
   # An ever increasing (32 bit unsigned) number that describes the current
   # batch that this STH was a part of.

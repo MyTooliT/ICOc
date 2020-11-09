@@ -14,7 +14,7 @@ from mytoolit.config import settings
 # -- Functions ----------------------------------------------------------------
 
 
-def convert_acceleration_adc_to_g(acceleration_raw):
+def convert_acceleration_adc_to_g(acceleration_raw, max_value):
     """Convert an acceleration value sent by the STH into a factor
 
     The factor measures the amount of the gravitational force
@@ -26,6 +26,9 @@ def convert_acceleration_adc_to_g(acceleration_raw):
     acceleration_raw:
         The 16 bit integer acceleration value as sent by the STH
 
+    max_value:
+        The maximum acceleration value as factor of g₀
+
     Returns
     -------
 
@@ -33,8 +36,7 @@ def convert_acceleration_adc_to_g(acceleration_raw):
     """
 
     max_value_adc = 0xffff
-    acceleration_to_gravity = (
-        settings.STH.Acceleration_Sensor.Acceleration.Maximum)
+    acceleration_to_gravity = max_value
 
     # The code (probably) subtracts 1/2 from the computed value, since the STH
     # linearly maps the maximum negative acceleration to 0 and the maximum

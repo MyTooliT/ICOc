@@ -273,13 +273,14 @@ class TestSTH(TestNode):
             MyToolItNetworkNr['STH1'], MyToolItStreaming['Acceleration'], 1, 0,
             0, index)
         acceleration_value_raw = acceleration_raw[0]
-        acceleration = convert_acceleration_adc_to_g(acceleration_value_raw)
+        sensor = settings.STH.Acceleration_Sensor.ADXL1001
+        acceleration = convert_acceleration_adc_to_g(
+            acceleration_value_raw, sensor.Acceleration.Maximum)
 
         # We expect a stationary acceleration of the standard gravity
         # (1 g₀ = 9.807 m/s²)
         expected_acceleration = 1
-        tolerance_acceleration = (
-            settings.STH.Acceleration_Sensor.Acceleration.Tolerance)
+        tolerance_acceleration = sensor.Acceleration.Tolerance
         expected_minimum_acceleration = (expected_acceleration -
                                          tolerance_acceleration)
         expected_maximum_acceleration = (expected_acceleration +
@@ -312,8 +313,8 @@ class TestSTH(TestNode):
         cls = type(self)
         cls.ratio_noise_max = ratio_noise_max(acceleration)
 
-        maximum_ratio_allowed = (settings.STH.Acceleration_Sensor.Acceleration.
-                                 Ratio_Noise_To_Max_Value)
+        sensor = settings.STH.Acceleration_Sensor.ADXL1001
+        maximum_ratio_allowed = sensor.Acceleration.Ratio_Noise_To_Max_Value
         self.assertLessEqual(
             cls.ratio_noise_max, maximum_ratio_allowed,
             "The ratio noise to possible maximum measured value of " +
@@ -357,10 +358,9 @@ class TestSTH(TestNode):
 
         voltage_diff = voltage_at_test - voltage_before_test
 
-        voltage_diff_expected = (
-            settings.STH.Acceleration_Sensor.Self_Test.Voltage.Difference)
-        voltage_diff_tolerance = (
-            settings.STH.Acceleration_Sensor.Self_Test.Voltage.Tolerance)
+        sensor = settings.STH.Acceleration_Sensor.ADXL1001
+        voltage_diff_expected = sensor.Self_Test.Voltage.Difference
+        voltage_diff_tolerance = sensor.Self_Test.Voltage.Tolerance
 
         voltage_diff_minimum = voltage_diff_expected - voltage_diff_tolerance
         voltage_diff_maximum = voltage_diff_expected + voltage_diff_tolerance
@@ -893,8 +893,8 @@ class TestSTH(TestNode):
         # = Acceleration =
         # ================
 
-        acceleration_max = (
-            settings.STH.Acceleration_Sensor.Acceleration.Maximum)
+        sensor = settings.STH.Acceleration_Sensor.ADXL1001
+        acceleration_max = sensor.Acceleration.Maximum
         adc_max = 0xffff
         acceleration_slope = acceleration_max / adc_max
         write_acceleration_slope(acceleration_slope)
