@@ -677,6 +677,11 @@ class TestSTH(TestNode):
 
         cls.name = read_name
 
+        # We update the name also with the `System` → `Bluetooth` command.
+        # This is basically a workaround for the inconsistent naming problems
+        # described in the comment above.
+        self.can.vBlueToothNameWrite(MyToolItNetworkNr["STH1"], 0, name)
+
         # =========================
         # = Sleep & Advertisement =
         # =========================
