@@ -658,9 +658,16 @@ class TestSTH(TestNode):
         # = Name =
         # ========
 
+        # Please note that the chip will only use the new name after a reset
+        # at the end of this test.
+
         mac = [int(byte, 16) for byte in cls.bluetooth_mac.split(":")]
         name = convert_mac_base64(mac)
 
+        # Currently the renaming process can sometimes fail. For example, even
+        # though the name was written and read as “AAtXb+lp” it shows up as
+        # “IItYb+lq” after the test. The incorrect value “I”, “Y” and
+        # “q” all seem to be caused by a single bit flip.
         write_name(name)
         read_name = read_name()
 
@@ -668,13 +675,6 @@ class TestSTH(TestNode):
             name, read_name,
             f"Written name “{name}” does not match read name “{read_name}”")
 
-        # Please note that the chip will only use the new name after a reset
-        # at the end of this test.
-
-        # Currently the renaming process can sometimes fail. For example, even
-        # though the name was written and read as “AAtXb+lp” it shows up as
-        # “IItYb+lq” after the test. The incorrect value “I”, “Y” and
-        # “q” all seem to be caused by a single bit flip.
         cls.name = read_name
 
         # =========================
