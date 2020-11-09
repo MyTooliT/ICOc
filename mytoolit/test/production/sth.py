@@ -670,6 +670,11 @@ class TestSTH(TestNode):
 
         # Please note that the chip will only use the new name after a reset
         # at the end of this test.
+
+        # Currently the renaming process can sometimes fail. For example, even
+        # though the name was written and read as “AAtXb+lp” it shows up as
+        # “IItYb+lq” after the test. The incorrect value “I”, “Y” and
+        # “q” all seem to be caused by a single bit flip.
         cls.name = read_name
 
         # =========================
