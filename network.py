@@ -1489,7 +1489,7 @@ class Network(object):
                     currentTime = time()
                     endTime = currentTime + BluetoothTime["Connect"]
                     self.bBlueToothConnectDeviceConnect(stuNr, self.DeviceNr)
-                    while time() < endTime and False == self.bConnected:
+                    while time() < endTime and not self.bConnected:
                         self.bBlueToothCheckConnect(stuNr)
                     if False != self.bConnected and False != bLog:
                         self.Logger.Info("Connected to: " + self.iAddress)
