@@ -1,5 +1,12 @@
 # Currently only the production tests of the STH use the following config file.
 
+# We use anchors and references to use the same value in the document multiple
+# times. This has the advantage that we only have to update the value in
+# one place.
+
+# We assume that you use the same programming board for the STH (SHA) and STU.
+Programming Board Number: &serial 440120910
+
 Commands:
   Path:
     # The keys below this key should contain the path to
@@ -125,7 +132,7 @@ STH:
     # to the STH here. This number should be displayed in the right bottom
     # corner of the LC display, after you connect the programmer to a power
     # source
-    Serial Number: 440120910
+    Serial Number: *serial
     COM Interface: COM3
 
   # Serial number for the manufacturer (maximum of 32 byte UTF-8 encoded text)
@@ -149,5 +156,5 @@ STU:
     # to the STU here. This number should be displayed in the right bottom
     # corner of the LC display, after you connect the programmer to a power
     # source
-    Serial Number: 440120910
+    Serial Number: *serial
     COM Interface: COM3
