@@ -668,8 +668,8 @@ class TestSTH(TestNode):
             name, read_name,
             f"Written name “{name}” does not match read name “{read_name}”")
 
-        # Please note that the chip will only use the new name after a reset.
-        # Unfortunately at the moment this reset needs to be executed manually.
+        # Please note that the chip will only use the new name after a reset
+        # at the end of this test.
         cls.name = read_name
 
         # =========================
