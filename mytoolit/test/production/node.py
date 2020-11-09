@@ -261,11 +261,7 @@ class TestNode(TestCase):
             f"received data “{received_data_byte}”")
 
     def _test_firmware_flash(self, node):
-        """Upload bootloader and application into node
-
-        Please note the additional underscore in the method name that makes
-        sure this test case is executed before all other test cases.
-        """
+        """Upload bootloader and application into node"""
 
         programming_board_serial_number = (
             settings.STH.Programming_Board.Serial_Number
