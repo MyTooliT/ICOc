@@ -1,5 +1,9 @@
 # Version 1.0.7
 
+## SPU Test
+
+- Add first version of [new test for the STU](../mytoolit/test/production/stu.py). For more information, please take a look at the section “Production Tests” of the [main readme](../ReadMe.md).
+
 ## STH Test
 
 - The STH test case now skips the flash test if the status in the [configuration file](../Configuration/config.yaml) (`STH` → `Status`) is set to `Epoxied`.
