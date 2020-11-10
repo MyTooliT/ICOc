@@ -179,38 +179,6 @@ class TestSTH(TestNode):
 
         self._test_firmware_flash('STH')
 
-    @skip("Over the air update test skipped because it requires the " +
-          "ota-dfu command which is often unreliable")
-    def test_ota_update(self):
-        """Test if updating the firmware via Bluetooth works correctly"""
-
-        # We opened a connection to the STH to retrieve the MAC address in the
-        # test setup phase. We need to terminate the connection now, before we
-        # initiate the over the air update.
-        self.__disconnect()
-
-        firmware_location = join(repository_root,
-                                 settings.STH.Firmware.Location.OTA)
-        self.assertTrue(isfile(firmware_location),
-                        f"Firmware file {firmware_location} does not exist")
-
-        mac_address = type(self).bluetooth_mac
-        com_interface = settings.STH.Programming_Board.COM_Interface
-        ota_command = (f"ota-dfu {com_interface} 115200 " +
-                       f"{firmware_location} {mac_address}")
-        status = run(ota_command, capture_output=True, text=True, timeout=90)
-
-        self.assertEqual(
-            status.returncode, 0,
-            "Over the air update command returned non-zero exit code " +
-            f"{status.returncode}")
-
-        expected_output = "Finishing DFU block...OK"
-        self.assertRegex(
-            status.stdout, escape(expected_output),
-            f"Over the air update output did not contain expected output "
-            "“{expected_output}”")
-
     def test_connection(self):
         """Check connection to STH
 

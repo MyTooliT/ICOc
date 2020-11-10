@@ -4,6 +4,7 @@
 
 - The STH test case now skips the flash test if the status in the [configuration file](../Configuration/config.yaml) (`STH` → `Status`) is set to `Epoxied`.
 - The test now also supports the ±50 g digital accelerometer [ADXL1002](https://www.analog.com/media/en/technical-documentation/data-sheets/ADXL1001-1002.pdf). To choose which sensor is part of the STH (or SHA), please change the value `STH` → `Acceleration Sensor` → `Sensor` to the appropriate value in the [configuration file][].
+- Removed the over the air (OTA) test, since it requires the command `ota-dfu`, which needs to be compiled first, and often does not work reliable.
 
 ## Logging
 

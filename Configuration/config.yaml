@@ -9,26 +9,16 @@ Programming Board Number: &serial 440120910
 
 Commands:
   Path:
-    # The keys below this key should contain the path to
-    #
-    # - Simplicity Commander (`commander`), and
-    # - the OTA update command line tool (`ota-dfu`, part of Simplicity Studio)
-    #
-    # for different operating systems. If the list for the current OS does not
-    # do that, then the STH test will fail, unless the commands are already
-    # accessible via the path environment variable (`$Env:Path` in Windows or
-    # `$PATH` in Unix).
+    # The keys below this key should contain the path to Simplicity Commander
+    # (`commander`) for different operating systems. If the list for the current
+    # OS does not do that, then the STH test will fail, unless the commands are
+    # already accessible via the path environment variable (`$Env:Path` in
+    # Windows or `$PATH` in Unix).
     Windows:
       # The paths below are the default install locations of `commander` in
       # Windows
       - C:\SiliconLabs\SimplicityStudio\v4\developer\adapter_packs\commander
       - C:\SiliconLabs\SimplicityStudio\v5\developer\adapter_packs\commander
-      # This is the current default locations of `ota-dfu`, after you compiled
-      # it. Please note, the version number inside the path. Depending on the
-      # SDK we might need to extend this list in the future.
-      - "C:\\SiliconLabs\\SimplicityStudio\\v4\\developer\\sdks\
-         \\gecko_sdk_suite\\v2.7\\app\\bluetooth\\examples_ncp_host\
-         \\ota_dfu\\exe"
 
 Logger:
   CAN:
@@ -131,7 +121,6 @@ STH:
       # application). This path will be interpreted in relation to the root of
       # the repository.
       Flash: ../STH/builds/manufacturingImageSthv2.1.10.hex
-      OTA:   ../STH/builds/OtaServer.gbl
     # Code name of the current firmware release
     Release Name: Tanja
 
@@ -192,4 +181,3 @@ STU:
     # corner of the LC display, after you connect the programmer to a power
     # source
     Serial Number: *serial
-    COM Interface: COM3
