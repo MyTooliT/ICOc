@@ -157,7 +157,6 @@ STH:
     # corner of the LC display, after you connect the programmer to a power
     # source
     Serial Number: *serial
-    COM Interface: COM3
 
   # Serial number for the manufacturer (maximum of 32 byte UTF-8 encoded text)
   Serial Number: 0
