@@ -32,6 +32,7 @@ from MyToolItNetworkNumbers import MyToolItNetworkNr
 from MyToolItCommands import (
     ActiveState,
     AdcMax,
+    AdcVRefValuemV,
     AdcOverSamplingRate,
     AdcReference,
     CalibMeassurementActionNr,
@@ -335,7 +336,7 @@ class TestSTH(TestNode):
                 AdcReference['VDD'])
             index_result = 4
             adc_value = byte_list_to_int(response[index_result:])
-            return 100 * AdcReference['VDD'] * adc_value / AdcMax
+            return AdcVRefValuemV[AdcReference["VDD"]] * adc_value / AdcMax
 
         voltage_before_test = measure_voltage()
 
