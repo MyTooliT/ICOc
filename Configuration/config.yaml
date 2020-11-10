@@ -73,7 +73,7 @@ STH:
           # accelerometer (ADXL1001).
           Difference: 90
           # Tolerance to the expected voltage difference in mV
-          Tolerance: 30
+          Tolerance: 20
     # The identifier of the accelerometer sensor. The values below the key
     # will be used for the STH test.
     #
