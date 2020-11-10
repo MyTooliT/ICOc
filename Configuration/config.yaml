@@ -50,7 +50,7 @@ Operator:
 
 STH:
   Acceleration Sensor:
-    # Values for the Analog devices ± 100g analog accelerometer sensor ADXL1001.
+    # Values for the Analog Devices ± 100g analog accelerometer sensor ADXL1001.
     ADXL1001:
       Acceleration:
         # Maximum Acceleration of sensor in multiples of g₀ (= 9.807 m/s²)
@@ -70,7 +70,7 @@ STH:
           # - acceleration voltage when the self test is active
           #
           # in mV. For more information, please check the data sheet of the
-          # accelerometer (ADXL1001).
+          # accelerometer.
           Difference: 90
           # Tolerance to the expected voltage difference in mV
           Tolerance: 20
