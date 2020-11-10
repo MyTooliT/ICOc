@@ -74,6 +74,30 @@ STH:
           Difference: 90
           # Tolerance to the expected voltage difference in mV
           Tolerance: 20
+    # Values for the Analog devices ± 50g digital accelerometer sensor ADXL1002.
+    ADXL1002:
+      Acceleration:
+        # Maximum Acceleration of sensor in multiples of g₀ (= 9.807 m/s²)
+        Maximum: 100
+        # This value stores the maximum allowed ratio of noise to maximum
+        # measurement value in dB. If the measured ratio is above this level,
+        # then the tested STH will be considered faulty.
+        Ratio Noise To Max Value: -55
+        # Tolerance to expected (stationary) acceleration value (of 0 m/s²) in
+        # multiples of g₀
+        Tolerance: 2
+      Self Test:
+        Voltage:
+          # Expected voltage difference between
+          #
+          # - the measured (stationary) acceleration voltage, and
+          # - acceleration voltage when the self test is active
+          #
+          # in mV. For more information, please check the data sheet of the
+          # accelerometer.
+          Difference: 160
+          # Tolerance to the expected voltage difference in mV
+          Tolerance: 30
     # The identifier of the accelerometer sensor. The values below the key
     # will be used for the STH test.
     #
