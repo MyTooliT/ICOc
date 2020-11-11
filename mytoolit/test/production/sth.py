@@ -633,10 +633,6 @@ class TestSTH(TestNode):
         mac = [int(byte, 16) for byte in cls.bluetooth_mac.split(":")]
         name = convert_mac_base64(mac)
 
-        # Currently the renaming process can sometimes fail. For example, even
-        # though the name was written and read as “AAtXb+lp” it shows up as
-        # “IItYb+lq” after the test. The incorrect value “I”, “Y” and
-        # “q” all seem to be caused by a single bit flip.
         write_name(name)
         read_name = read_name()
 
@@ -647,9 +643,16 @@ class TestSTH(TestNode):
         cls.name = read_name
 
         # We update the name also with the `System` → `Bluetooth` command.
-        # This is basically a workaround for the inconsistent naming problems
-        # described in the comment above.
-        self.can.vBlueToothNameWrite(MyToolItNetworkNr["STH1"], 0, name)
+        # This way the STH takes the name change into account. Otherwise the
+        # device would still use the old name, although the name in the EEPROM
+        # was already updated.
+        #
+        # Before this approach we already tried to reset
+        # the node after we changed all the values. However, this way the name
+        # of the device often was not updated properly. For example, even
+        # though the name was written and read as “AAtXb+lp” it showed up as
+        # “IItYb+lq” after the test.
+        self.can.vBlueToothNameWrite(MyToolItNetworkNr["STH1"], 0, cls.name)
 
         # =========================
         # = Sleep & Advertisement =
@@ -900,11 +903,6 @@ class TestSTH(TestNode):
             f"Setting EEPROM status to “Initialized ({initialized})” "
             "failed. EEPROM status value currently stores the value "
             f"“{cls.eeprom_status}”")
-
-        # Reset STH to make make the name change at the beginning of the
-        # test permanent. Without this code, we would need to reset the STH
-        # manually.
-        self.can.reset_node("STH 1")
 
 
 # -- Main ---------------------------------------------------------------------
