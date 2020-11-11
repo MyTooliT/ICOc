@@ -71,7 +71,7 @@ STH:
       Acceleration:
         Maximum: 100
         Ratio Noise To Max Value: -55
-        Tolerance: 2
+        Tolerance: 3
       Self Test:
         Voltage:
           Difference: 160
