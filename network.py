@@ -1443,7 +1443,7 @@ class Network(object):
         if None == self.sDevName:
             if False != log:
                 self.Logger.Info("Available Devices: " + str(devList))
-            self.__exitError("Unable to connect to device")
+            self.__exitError(f"Unable to connect to device “{sName}”")
         return self.bConnected
 
     def tDeviceList(self, stuNr, bLog=True):
