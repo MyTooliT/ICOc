@@ -357,34 +357,10 @@ class TestSTH(TestNode):
     def test_eeprom(self):
         """Test if reading and writing the EEPROM works"""
 
-        def read_eeprom(address, offset, length):
-            """Read EEPROM data at a specific address"""
-
-            read_data = []
-            reserved = [0] * 5
-            data_start = 4  # Start index of data in response message
-
-            while length > 0:
-                # Write at most 4 bytes of data at once
-                read_length = 4 if length > 4 else length
-                payload = [address, offset, read_length, *reserved]
-                index = self.can.cmdSend(MyToolItNetworkNr['STH1'],
-                                         MyToolItBlock['EEPROM'],
-                                         MyToolItEeprom['Read'],
-                                         payload,
-                                         log=False)
-                response = self.can.getReadMessageData(index)
-                data_end = data_start + read_length
-                read_data.extend(response[data_start:data_end])
-                length -= read_length
-                offset += read_length
-
-            return read_data
-
         def read_eeprom_text(address, offset, length):
             """Read EEPROM data in UTT8 format"""
 
-            data = read_eeprom(address, offset, length)
+            data = self.can.read_eeprom(address, offset, length)
             data_without_null = []
             for byte in data:
                 if byte == 0:
@@ -396,10 +372,11 @@ class TestSTH(TestNode):
         def read_eeprom_unsigned(address, offset, length):
             """Read EEPROM data in unsigned format"""
 
-            return byte_list_to_int(read_eeprom(address, offset, length))
+            return byte_list_to_int(
+                self.can.read_eeprom(address, offset, length))
 
         def read_eeprom_float(address, offset):
-            data = read_eeprom(address, offset, length=4)
+            data = self.can.read_eeprom(address, offset, length=4)
             return unpack('f', bytearray(data))[0]
 
         def write_eeprom(address, offset, data, length=None):
@@ -452,7 +429,7 @@ class TestSTH(TestNode):
             write_eeprom(address, offset, data)
 
         def read_eeprom_status():
-            return read_eeprom(address=0, offset=0, length=1).pop()
+            return self.can.read_eeprom(address=0, offset=0, length=1).pop()
 
         def write_eeprom_status(value):
             write_eeprom_unsigned(address=0, offset=0, length=1, value=value)
@@ -520,7 +497,7 @@ class TestSTH(TestNode):
 
         def read_hardware_revision():
             return "{}.{}.{}".format(
-                *read_eeprom(address=4, offset=13, length=3))
+                *self.can.read_eeprom(address=4, offset=13, length=3))
 
         def write_hardware_revision(version):
             write_eeprom(address=4,
@@ -530,7 +507,7 @@ class TestSTH(TestNode):
 
         def read_firmware_version():
             return "{}.{}.{}".format(
-                *read_eeprom(address=4, offset=21, length=3))
+                *self.can.read_eeprom(address=4, offset=21, length=3))
 
         def write_firmware_version(version):
             write_eeprom(address=4,
@@ -557,7 +534,7 @@ class TestSTH(TestNode):
             write_eeprom_text(address=4, offset=64, length=128, text=text)
 
         def read_oem_data():
-            return read_eeprom(address=4, offset=192, length=64)
+            return self.can.read_eeprom(address=4, offset=192, length=64)
 
         def write_oem_data(data):
             return write_eeprom(address=4, offset=192, length=64, data=data)

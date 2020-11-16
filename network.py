@@ -1708,6 +1708,30 @@ class Network(object):
         aiName = self.getReadMessageData(index)
         return sArray2String(aiName)
 
+    def read_eeprom(self, address, offset, length):
+        """Read EEPROM data at a specific address"""
+
+        read_data = []
+        reserved = [0] * 5
+        data_start = 4  # Start index of data in response message
+
+        while length > 0:
+            # Read at most 4 bytes of data at once
+            read_length = 4 if length > 4 else length
+            payload = [address, offset, read_length, *reserved]
+            index = self.cmdSend(MyToolItNetworkNr['STH1'],
+                                 MyToolItBlock['EEPROM'],
+                                 MyToolItEeprom['Read'],
+                                 payload,
+                                 log=False)
+            response = self.getReadMessageData(index)
+            data_end = data_start + read_length
+            read_data.extend(response[data_start:data_end])
+            length -= read_length
+            offset += read_length
+
+        return read_data
+
 
 # -- Main ---------------------------------------------------------------------
 
