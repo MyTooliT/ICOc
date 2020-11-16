@@ -1709,7 +1709,26 @@ class Network(object):
         return sArray2String(aiName)
 
     def read_eeprom(self, address, offset, length):
-        """Read EEPROM data at a specific address"""
+        """Read EEPROM data at a specific address
+
+        Parameters
+        ----------
+
+        address:
+            The page number in the EEPROM
+
+        offset:
+            The offset to the base address in the specified page
+
+        length:
+            This value specifies how many bytes you want to read
+
+        Returns
+        -------
+
+        A list that contains the byte values at the specified address starting
+        with the byte at the smallest address
+        """
 
         read_data = []
         reserved = [0] * 5
