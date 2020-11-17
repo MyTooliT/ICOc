@@ -11,7 +11,7 @@ from mytoolit.can.command import Command
 from mytoolit.can.node import Node
 
 from MyToolItCommands import blocknumber_to_commands, MyToolItBlock
-from MyToolItNetworkNumbers import MyToolItNetworkName, MyToolItNetworkNr
+from MyToolItNetworkNumbers import MyToolItNetworkNr
 
 # -- Class --------------------------------------------------------------------
 
@@ -165,15 +165,15 @@ class Identifier:
 
                          V  block   number A E R send. R rec.
         >>> Identifier(0b0_000000_00000000_0_0_0_00001_0_00010)
-        [STH1 → STH2, Block: System, Command: Verboten, Acknowledge]
+        [STH 1 → STH 2, Block: System, Command: Verboten, Acknowledge]
 
                          V  block   number A E R send. R rec.
         >>> Identifier(0b0_000100_00000001_1_1_0_00010_0_00011)
-        [STH2 → STH3, Block: Streaming, Command: Temperature, Request, Error]
+        [STH 2 → STH 3, Block: Streaming, Command: Temperature, Request, Error]
 
                          V  block   number A E R send. R rec.
         >>> Identifier(0b0_010101_10000001_1_1_0_00010_0_00011)
-        [STH2 → STH3, Block: Unknown, Command: Unknown, Request, Error]
+        [STH 2 → STH 3, Block: Unknown, Command: Unknown, Request, Error]
         """
 
         return (f"[{self.sender_name()} → {self.receiver_name()}, " +
@@ -386,10 +386,10 @@ class Identifier:
                          V  block   number A E R send. R rec.
         >>> Identifier(0b0_000000_00000000_0_0_0_00101_0_00010
         ...           ).sender_name()
-        'STH5'
+        'STH 5'
         """
 
-        return MyToolItNetworkName[self.sender()]
+        return repr(Node(self.sender()))
 
     def receiver(self):
         """Get the receiver of the message
@@ -423,10 +423,10 @@ class Identifier:
                          V  block   number A E R send. R rec.
         >>> Identifier(0b0_000000_00000000_0_0_0_00101_0_01110
         ...           ).receiver_name()
-        'STH14'
+        'STH 14'
         """
 
-        return MyToolItNetworkName[self.receiver()]
+        return repr(Node(self.receiver()))
 
 
 # -- Main ---------------------------------------------------------------------

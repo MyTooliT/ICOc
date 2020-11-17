@@ -79,7 +79,7 @@ class Message:
         >>> pcan_message.LEN = 2
         >>> Message(pcan_message) # doctest:+NORMALIZE_WHITESPACE
         0b00000000000000110000001001110 2 0xfe 0xfe
-        # [STH1 → STH14, Block: System, Command: Reset, Request]
+        # [STH 1 → STH 14, Block: System, Command: Reset, Request]
         """
 
         identifier = Identifier(self.pcan_message.ID)
@@ -118,7 +118,7 @@ class Message:
         >>> message = Message(identifier=identifier, payload=[0xaa])
         >>> message.acknowledge() # doctest:+NORMALIZE_WHITESPACE
         0b00000000000000100001010000101 0
-        # [STH10 → STH5, Block: System, Command: Reset, Acknowledge]
+        # [STH 10 → STH 5, Block: System, Command: Reset, Acknowledge]
         """
 
         identifier = Identifier(self.pcan_message.ID)
