@@ -13,7 +13,7 @@ module_path.append(repository_root)
 class Node:
     """This class represents a CAN node of ICOtronic system"""
 
-    def __init__(self, *node):
+    def __init__(self, node=0):
         """Create a new node from the given argument
 
         A node represents a communication participant, such as a specific STH
@@ -33,7 +33,7 @@ class Node:
 
         """
 
-        self.value = node[0] if node else 0
+        self.value = node
 
     def __repr__(self):
         """Return the string representation of the current node
