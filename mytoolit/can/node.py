@@ -1,3 +1,7 @@
+# -- Imports ------------------------------------------------------------------
+
+from re import fullmatch
+
 # -- Class --------------------------------------------------------------------
 
 
@@ -22,7 +26,52 @@ class Node:
         >>> Node().value
         0
 
+        >>> Node('STH 1')
+        STH 1
+
+        >>> Node('STU1')
+        STU 1
+
+        >>> Node('STU 15')
+        Traceback (most recent call last):
+           ...
+        ValueError: Unknown node identifier “STU 15”
+
+        >>> Node('SPU 1').value
+        15
+
         """
+
+        if isinstance(node, str):
+
+            # Check for broadcast pseudo nodes
+            broadcast_match = fullmatch(
+                "Broadcast With(?P<no_acknowledgment>out)? Acknowledgment",
+                node)
+            if broadcast_match:
+                node.value = 0 if broadcast_match['no_acknowledgment'] else 31
+                return
+
+            # Check normal nodes
+            node_match = fullmatch(
+                "(?P<name>S(?:PU|TH|TU))\ ?(?P<number>\d{1,2})", node)
+
+            node_name = node_match['name']
+            node_number = int(node_match['number'])
+
+            if node_name == 'STH' and 1 <= node_number <= 14:
+                self.value = node_number
+                return
+
+            if node_name == 'SPU' and 1 <= node_number <= 2:
+                self.value = node_number + 14
+                return
+
+            if node_name == 'STU' and 1 <= node_number <= 14:
+                self.value = node_number + 16
+                return
+
+            raise ValueError(f"Unknown node identifier “{node}”")
 
         self.value = node
 
