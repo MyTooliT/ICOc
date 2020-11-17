@@ -1,6 +1,6 @@
 from can.interface import Bus
 from can import CanError, Message
-from mytoolit.can.identifier import Identifier
+from mytoolit.can import Identifier
 from platform import system
 from time import sleep, time
 

@@ -9,7 +9,7 @@ from time import sleep
 from types import SimpleNamespace
 from unittest import TestCase
 
-from mytoolit.can.identifier import Identifier
+from mytoolit.can import Identifier
 from mytoolit.config import settings
 from mytoolit import __version__
 from mytoolit.report import Report

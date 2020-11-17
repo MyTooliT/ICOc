@@ -8,11 +8,8 @@ from sys import stderr
 from logging import getLogger, FileHandler, Formatter, DEBUG
 from time import time, sleep
 
-from mytoolit.can.identifier import Identifier
-from mytoolit.can.command import Command
-from mytoolit.can.message import Message
-from mytoolit.can.status import (NodeStatusSTH, NodeStatusSTU, ErrorStatusSTH,
-                                 ErrorStatusSTU)
+from mytoolit.can import (Command, ErrorStatusSTH, ErrorStatusSTU, Identifier,
+                          Message, NodeStatusSTH, NodeStatusSTU)
 from mytoolit.config import settings
 
 from MyToolItCommands import *
