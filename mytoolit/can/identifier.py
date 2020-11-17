@@ -7,7 +7,8 @@ from sys import path as module_path
 repository_root = dirname(dirname(dirname(abspath(__file__))))
 module_path.append(repository_root)
 
-from mytoolit.can import Command
+from mytoolit.can.command import Command
+from mytoolit.can.node import Node
 
 from MyToolItCommands import blocknumber_to_commands, MyToolItBlock
 from MyToolItNetworkNumbers import MyToolItNetworkName, MyToolItNetworkNr
@@ -147,14 +148,9 @@ class Identifier:
 
         # Sender and receiver can be either an integer or a string like object
         if sender:
-            sender_number = sender if isinstance(
-                sender, int) else MyToolItNetworkNr[sender.replace(" ", "")]
-            set_part(start=6, width=5, number=sender_number)
+            set_part(start=6, width=5, number=Node(sender).value)
         if receiver:
-            receiver_number = receiver if isinstance(
-                receiver, int) else MyToolItNetworkNr[receiver.replace(
-                    " ", "")]
-            set_part(start=0, width=5, number=receiver_number)
+            set_part(start=0, width=5, number=Node(receiver).value)
 
     def __repr__(self):
         """Return the string representation of the current identifier
