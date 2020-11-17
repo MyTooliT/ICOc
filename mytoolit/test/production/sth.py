@@ -169,7 +169,7 @@ class TestSTH(TestNode):
         cls.name = settings.STH.Name
 
     @skipIf(settings.STH.Status == "Epoxied",
-            "Flash test skipped because of status “{settings.STH.Status}”")
+            f"Flash test skipped because of status “{settings.STH.Status}”")
     def test__firmware_flash(self):
         """Upload bootloader and application into STH
 
