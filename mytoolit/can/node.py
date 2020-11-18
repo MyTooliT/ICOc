@@ -46,8 +46,10 @@ class Node:
            ...
         ValueError: Unknown node identifier “STU 15”
 
-        >>> Node('SPU 1').value
-        15
+        You can create a copy of an already existing node
+
+        >>> Node(Node('STH 2'))
+        STH 2
 
         """
 
@@ -81,6 +83,10 @@ class Node:
                 return
 
             raise ValueError(f"Unknown node identifier “{node}”")
+
+        if isinstance(node, Node):
+            self.value = node.value
+            return
 
         self.value = node
 
