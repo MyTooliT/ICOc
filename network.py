@@ -1874,7 +1874,7 @@ class Network(object):
 
             reserved = [0] * 1
             payload = [address, offset, write_length, *reserved, *write_data]
-            self.cmdSend(MyToolItNetworkNr['STH1'],
+            self.cmdSend(self.receiver,
                          MyToolItBlock['EEPROM'],
                          MyToolItEeprom['Write'],
                          payload,
