@@ -1930,7 +1930,20 @@ class Network(object):
         self.write_eeprom(address, offset, data)
 
     def write_eeprom_float(self, address, offset, value):
-        """Write a float value at the specified EEPROM address"""
+        """Write a float value at the specified EEPROM address
+
+        Parameters
+        ----------
+
+        address:
+            The page number in the EEPROM
+
+        offset:
+            The offset to the base address in the specified page
+
+        value:
+            The float value that should be stored at the specified location
+        """
 
         data = list(pack('f', value))
         self.write_eeprom(address, offset, data)
