@@ -1787,6 +1787,11 @@ class Network(object):
 
         return "".join(map(chr, data_without_null))
 
+    def read_eeprom_unsigned(self, address, offset, length):
+        """Read EEPROM data in unsigned format"""
+
+        return byte_list_to_int(self.read_eeprom(address, offset, length))
+
 
 # -- Main ---------------------------------------------------------------------
 
