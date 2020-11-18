@@ -1883,7 +1883,26 @@ class Network(object):
             offset += write_length
 
     def write_eeprom_text(self, address, offset, text, length=None):
-        """Write a string at the specified EEPROM address"""
+        """Write a string at the specified EEPROM address
+
+        Parameters
+        ----------
+
+        address:
+            The page number in the EEPROM
+
+        offset:
+            The offset to the base address in the specified page
+
+        text:
+            A ASCII string that should be written to the specified location
+
+        length:
+            This optional parameter specifies how many of the character in
+            `text` should be stored in the EEPROM. If you specify a length
+            that is greater, than the size of the data list, then the
+            remainder of the EEPROM data will be filled with null bytes.
+        """
 
         data = list(map(ord, list(text)))
         self.write_eeprom(address, offset, data, length)
