@@ -16,7 +16,7 @@ repository_root = dirname(dirname(dirname(dirname(abspath(__file__)))))
 module_path.append(repository_root)
 
 from mytoolit import __version__
-from mytoolit.can import Identifier
+from mytoolit.can import Identifier, Node
 from mytoolit.measurement.acceleration import (convert_acceleration_adc_to_g,
                                                ratio_noise_max)
 from mytoolit.report import Report
@@ -129,7 +129,7 @@ class TestSTH(TestNode):
         """Create a connection to the STH"""
 
         # Connect to STU
-        super()._connect()
+        super()._connect(receiver=Node('STH 1').value)
 
         # Connect to STH
         self.can.bBlueToothConnectPollingName(MyToolItNetworkNr['STU1'],

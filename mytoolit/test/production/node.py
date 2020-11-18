@@ -9,7 +9,7 @@ from time import sleep
 from types import SimpleNamespace
 from unittest import TestCase
 
-from mytoolit.can import Identifier
+from mytoolit.can import Identifier, Node
 from mytoolit.config import settings
 from mytoolit import __version__
 from mytoolit.report import Report
@@ -193,7 +193,7 @@ class TestNode(TestCase):
         super().run(result)
         type(self).report.add_test_result(self.shortDescription(), result)
 
-    def _connect(self):
+    def _connect(self, receiver=Node('STU 1').value):
         """Create a connection to the STU"""
 
         # Initialize CAN bus
@@ -203,7 +203,7 @@ class TestNode(TestCase):
         self.can = Network(log_filepath,
                            log_filepath_error,
                            MyToolItNetworkNr['SPU1'],
-                           MyToolItNetworkNr['STH1'],
+                           receiver,
                            oversampling=AdcOverSamplingRate[64])
 
         # Reset STU (and STH)
