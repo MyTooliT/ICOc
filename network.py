@@ -1882,6 +1882,12 @@ class Network(object):
             data = data[4:]
             offset += write_length
 
+    def write_eeprom_text(self, address, offset, text, length=None):
+        """Write a string at the specified EEPROM address"""
+
+        data = list(map(ord, list(text)))
+        self.write_eeprom(address, offset, data, length)
+
 
 # -- Main ---------------------------------------------------------------------
 

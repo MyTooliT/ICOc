@@ -357,12 +357,6 @@ class TestSTH(TestNode):
     def test_eeprom(self):
         """Test if reading and writing the EEPROM works"""
 
-        def write_eeprom_text(address, offset, text, length=None):
-            """Write a string at the specified EEPROM address"""
-
-            data = list(map(ord, list(text)))
-            self.can.write_eeprom(address, offset, data, length)
-
         def write_eeprom_unsigned(address, offset, value, length):
             """Write an unsigned integer at the specified EEPROM address"""
 
@@ -385,7 +379,10 @@ class TestSTH(TestNode):
             return self.can.read_eeprom_text(address=0, offset=1, length=8)
 
         def write_name(text):
-            write_eeprom_text(address=0, offset=1, text=text, length=8)
+            self.can.write_eeprom_text(address=0,
+                                       offset=1,
+                                       text=text,
+                                       length=8)
 
         def read_write_time(read_function, write_function, variable,
                             description, milliseconds):
@@ -472,19 +469,28 @@ class TestSTH(TestNode):
             return self.can.read_eeprom_text(address=4, offset=24, length=8)
 
         def write_release_name(text):
-            return write_eeprom_text(address=4, offset=24, length=8, text=text)
+            return self.can.write_eeprom_text(address=4,
+                                              offset=24,
+                                              length=8,
+                                              text=text)
 
         def read_serial_number():
             return self.can.read_eeprom_text(address=4, offset=32, length=32)
 
         def write_serial_number(text):
-            write_eeprom_text(address=4, offset=32, length=32, text=text)
+            self.can.write_eeprom_text(address=4,
+                                       offset=32,
+                                       length=32,
+                                       text=text)
 
         def read_product_name():
             return self.can.read_eeprom_text(address=4, offset=64, length=128)
 
         def write_product_name(text):
-            write_eeprom_text(address=4, offset=64, length=128, text=text)
+            self.can.write_eeprom_text(address=4,
+                                       offset=64,
+                                       length=128,
+                                       text=text)
 
         def read_oem_data():
             return self.can.read_eeprom(address=4, offset=192, length=64)
@@ -538,7 +544,10 @@ class TestSTH(TestNode):
 
         def write_production_date(date="1970-12-31"):
             date = date.replace("-", "")
-            write_eeprom_text(address=5, offset=20, length=8, text=date)
+            self.can.write_eeprom_text(address=5,
+                                       offset=20,
+                                       length=8,
+                                       text=date)
 
         def read_batch_number():
             return self.can.read_eeprom_unsigned(address=5,
