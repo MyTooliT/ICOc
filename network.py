@@ -9,7 +9,7 @@ from logging import getLogger, FileHandler, Formatter, DEBUG
 from time import time, sleep
 
 from mytoolit.can import (Command, ErrorStatusSTH, ErrorStatusSTU, Identifier,
-                          Message, NodeStatusSTH, NodeStatusSTU)
+                          Message, Node, NodeStatusSTH, NodeStatusSTU)
 from mytoolit.config import settings
 
 from MyToolItCommands import (
@@ -1741,7 +1741,7 @@ class Network(object):
             # Read at most 4 bytes of data at once
             read_length = 4 if length > 4 else length
             payload = [address, offset, read_length, *reserved]
-            index = self.cmdSend(MyToolItNetworkNr['STH1'],
+            index = self.cmdSend(Node('STH 1').value,
                                  MyToolItBlock['EEPROM'],
                                  MyToolItEeprom['Read'],
                                  payload,
