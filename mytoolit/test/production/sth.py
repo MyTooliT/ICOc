@@ -4,7 +4,6 @@ from datetime import datetime
 from os import environ, pathsep
 from os.path import abspath, dirname, isfile, join
 from re import escape, search
-from struct import pack
 from subprocess import run
 from sys import path as module_path
 from time import sleep
@@ -357,12 +356,6 @@ class TestSTH(TestNode):
     def test_eeprom(self):
         """Test if reading and writing the EEPROM works"""
 
-        def write_eeprom_float(address, offset, value):
-            """Write a float value at the specified EEPROM address"""
-
-            data = list(pack('f', value))
-            self.can.write_eeprom(address, offset, data)
-
         def read_eeprom_status():
             return self.can.read_eeprom(address=0, offset=0, length=1).pop()
 
@@ -576,13 +569,13 @@ class TestSTH(TestNode):
             return self.can.read_eeprom_float(address=8, offset=0)
 
         def write_acceleration_slope(slope):
-            write_eeprom_float(address=8, offset=0, value=slope)
+            self.can.write_eeprom_float(address=8, offset=0, value=slope)
 
         def read_acceleration_offset():
             return self.can.read_eeprom_float(address=8, offset=4)
 
         def write_acceleration_offset(offset):
-            write_eeprom_float(address=8, offset=4, value=offset)
+            self.can.write_eeprom_float(address=8, offset=4, value=offset)
 
         cls = type(self)
 

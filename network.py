@@ -6,7 +6,7 @@ import math
 from ctypes import c_byte
 from sys import stderr
 from logging import getLogger, FileHandler, Formatter, DEBUG
-from struct import unpack
+from struct import pack, unpack
 from time import time, sleep
 
 from mytoolit.can import (Command, ErrorStatusSTH, ErrorStatusSTU, Identifier,
@@ -1927,6 +1927,12 @@ class Network(object):
         """
 
         data = list(value.to_bytes(length, byteorder='little'))
+        self.write_eeprom(address, offset, data)
+
+    def write_eeprom_float(self, address, offset, value):
+        """Write a float value at the specified EEPROM address"""
+
+        data = list(pack('f', value))
         self.write_eeprom(address, offset, data)
 
 
