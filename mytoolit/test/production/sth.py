@@ -357,54 +357,23 @@ class TestSTH(TestNode):
     def test_eeprom(self):
         """Test if reading and writing the EEPROM works"""
 
-        def write_eeprom(address, offset, data, length=None):
-            """Write EEPROM data at the specified address"""
-
-            # Change data, if
-            # - only a subset, or
-            # - additional data
-            # should be written to the EEPROM.
-            if length:
-                # Cut off additional data bytes
-                data = data[:length]
-                # Fill up additional data bytes
-                data.extend([0] * (length - len(data)))
-
-            while data:
-                write_data = data[:4]  # Maximum of 4 bytes per message
-                write_length = len(write_data)
-                # Use zeroes to fill up missing data bytes
-                write_data.extend([0] * (4 - write_length))
-
-                reserved = [0] * 1
-                payload = [
-                    address, offset, write_length, *reserved, *write_data
-                ]
-                self.can.cmdSend(MyToolItNetworkNr['STH1'],
-                                 MyToolItBlock['EEPROM'],
-                                 MyToolItEeprom['Write'],
-                                 payload,
-                                 log=False)
-                data = data[4:]
-                offset += write_length
-
         def write_eeprom_text(address, offset, text, length=None):
             """Write a string at the specified EEPROM address"""
 
             data = list(map(ord, list(text)))
-            write_eeprom(address, offset, data, length)
+            self.can.write_eeprom(address, offset, data, length)
 
         def write_eeprom_unsigned(address, offset, value, length):
             """Write an unsigned integer at the specified EEPROM address"""
 
             data = list(value.to_bytes(length, byteorder='little'))
-            write_eeprom(address, offset, data)
+            self.can.write_eeprom(address, offset, data)
 
         def write_eeprom_float(address, offset, value):
             """Write a float value at the specified EEPROM address"""
 
             data = list(pack('f', value))
-            write_eeprom(address, offset, data)
+            self.can.write_eeprom(address, offset, data)
 
         def read_eeprom_status():
             return self.can.read_eeprom(address=0, offset=0, length=1).pop()
@@ -484,20 +453,20 @@ class TestSTH(TestNode):
                 *self.can.read_eeprom(address=4, offset=13, length=3))
 
         def write_hardware_revision(version):
-            write_eeprom(address=4,
-                         offset=13,
-                         length=3,
-                         data=list(map(int, version.split("."))))
+            self.can.write_eeprom(address=4,
+                                  offset=13,
+                                  length=3,
+                                  data=list(map(int, version.split("."))))
 
         def read_firmware_version():
             return "{}.{}.{}".format(
                 *self.can.read_eeprom(address=4, offset=21, length=3))
 
         def write_firmware_version(version):
-            write_eeprom(address=4,
-                         offset=21,
-                         length=3,
-                         data=list(map(int, version.split("."))))
+            self.can.write_eeprom(address=4,
+                                  offset=21,
+                                  length=3,
+                                  data=list(map(int, version.split("."))))
 
         def read_release_name():
             return self.can.read_eeprom_text(address=4, offset=24, length=8)
@@ -521,7 +490,10 @@ class TestSTH(TestNode):
             return self.can.read_eeprom(address=4, offset=192, length=64)
 
         def write_oem_data(data):
-            return write_eeprom(address=4, offset=192, length=64, data=data)
+            return self.can.write_eeprom(address=4,
+                                         offset=192,
+                                         length=64,
+                                         data=data)
 
         def read_production_date():
             date = self.can.read_eeprom_text(address=5, offset=20, length=8)

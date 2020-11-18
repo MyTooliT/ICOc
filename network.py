@@ -1833,6 +1833,35 @@ class Network(object):
         data = self.read_eeprom(address, offset, length=4)
         return unpack('<f', bytearray(data))[0]
 
+    def write_eeprom(self, address, offset, data, length=None):
+        """Write EEPROM data at the specified address"""
+
+        # Change data, if
+        # - only a subset, or
+        # - additional data
+        # should be written to the EEPROM.
+        if length:
+            # Cut off additional data bytes
+            data = data[:length]
+            # Fill up additional data bytes
+            data.extend([0] * (length - len(data)))
+
+        while data:
+            write_data = data[:4]  # Maximum of 4 bytes per message
+            write_length = len(write_data)
+            # Use zeroes to fill up missing data bytes
+            write_data.extend([0] * (4 - write_length))
+
+            reserved = [0] * 1
+            payload = [address, offset, write_length, *reserved, *write_data]
+            self.cmdSend(MyToolItNetworkNr['STH1'],
+                         MyToolItBlock['EEPROM'],
+                         MyToolItEeprom['Write'],
+                         payload,
+                         log=False)
+            data = data[4:]
+            offset += write_length
+
 
 # -- Main ---------------------------------------------------------------------
 
