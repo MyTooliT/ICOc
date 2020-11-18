@@ -1908,7 +1908,23 @@ class Network(object):
         self.write_eeprom(address, offset, data, length)
 
     def write_eeprom_unsigned(self, address, offset, value, length):
-        """Write an unsigned integer at the specified EEPROM address"""
+        """Write an unsigned integer at the specified EEPROM address
+
+        Parameters
+        ----------
+
+        address:
+            The page number in the EEPROM
+
+        offset:
+            The offset to the base address in the specified page
+
+        value:
+            The unsigned number that should be stored at the specified location
+
+        length:
+            This value specifies how long the unsigned number is in bytes
+        """
 
         data = list(value.to_bytes(length, byteorder='little'))
         self.write_eeprom(address, offset, data)
