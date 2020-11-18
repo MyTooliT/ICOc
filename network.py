@@ -6,6 +6,7 @@ import math
 from ctypes import c_byte
 from sys import stderr
 from logging import getLogger, FileHandler, Formatter, DEBUG
+from struct import unpack
 from time import time, sleep
 
 from mytoolit.can import (Command, ErrorStatusSTH, ErrorStatusSTU, Identifier,
@@ -1809,6 +1810,10 @@ class Network(object):
         """
 
         return byte_list_to_int(self.read_eeprom(address, offset, length))
+
+    def read_eeprom_float(self, address, offset):
+        data = self.read_eeprom(address, offset, length=4)
+        return unpack('<f', bytearray(data))[0]
 
 
 # -- Main ---------------------------------------------------------------------
