@@ -1809,7 +1809,8 @@ class Network(object):
         The unsigned number at the specified location of the EEPROM
         """
 
-        return byte_list_to_int(self.read_eeprom(address, offset, length))
+        return int.from_bytes(self.read_eeprom(address, offset, length),
+                              'little')
 
     def read_eeprom_float(self, address, offset):
         """Read EEPROM data in float format
