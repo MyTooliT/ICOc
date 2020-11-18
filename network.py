@@ -1755,7 +1755,28 @@ class Network(object):
         return read_data
 
     def read_eeprom_text(self, address, offset, length):
-        """Read EEPROM data in UTT8 format"""
+        """Read EEPROM data in ASCII format
+
+        Please note, that this function will only return the characters up
+        to the first null byte.
+
+        Parameters
+        ----------
+
+        address:
+            The page number in the EEPROM
+
+        offset:
+            The offset to the base address in the specified page
+
+        length:
+            This value specifies how many characters you want to read
+
+        Returns
+        -------
+
+        A string that contains the text at the specified location
+        """
 
         data = self.read_eeprom(address, offset, length)
         data_without_null = []
