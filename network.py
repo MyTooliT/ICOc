@@ -1812,6 +1812,23 @@ class Network(object):
         return byte_list_to_int(self.read_eeprom(address, offset, length))
 
     def read_eeprom_float(self, address, offset):
+        """Read EEPROM data in float format
+
+        Parameters
+        ----------
+
+        address:
+            The page number in the EEPROM
+
+        offset:
+            The offset to the base address in the specified page
+
+        Returns
+        -------
+
+        The float number at the specified location of the EEPROM
+        """
+
         data = self.read_eeprom(address, offset, length=4)
         return unpack('<f', bytearray(data))[0]
 
