@@ -3,7 +3,7 @@ import os
 from mytoolit import __version__
 import xml.etree.ElementTree as ET
 from can.interfaces.pcan.basic import PCAN_ERROR_OK, PCAN_ERROR_QOVERRUN
-from network import rreplace, Network
+from network import Network
 from MyToolItNetworkNumbers import *
 from MyToolItCommands import *
 from time import sleep, time
