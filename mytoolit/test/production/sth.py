@@ -357,12 +357,6 @@ class TestSTH(TestNode):
     def test_eeprom(self):
         """Test if reading and writing the EEPROM works"""
 
-        def write_eeprom_unsigned(address, offset, value, length):
-            """Write an unsigned integer at the specified EEPROM address"""
-
-            data = list(value.to_bytes(length, byteorder='little'))
-            self.can.write_eeprom(address, offset, data)
-
         def write_eeprom_float(address, offset, value):
             """Write a float value at the specified EEPROM address"""
 
@@ -373,7 +367,10 @@ class TestSTH(TestNode):
             return self.can.read_eeprom(address=0, offset=0, length=1).pop()
 
         def write_eeprom_status(value):
-            write_eeprom_unsigned(address=0, offset=0, length=1, value=value)
+            self.can.write_eeprom_unsigned(address=0,
+                                           offset=0,
+                                           length=1,
+                                           value=value)
 
         def read_name():
             return self.can.read_eeprom_text(address=0, offset=1, length=8)
@@ -398,10 +395,10 @@ class TestSTH(TestNode):
             return self.can.read_eeprom_unsigned(address=0, offset=9, length=4)
 
         def write_sleep_time_1(milliseconds):
-            write_eeprom_unsigned(address=0,
-                                  offset=9,
-                                  value=milliseconds,
-                                  length=4)
+            self.can.write_eeprom_unsigned(address=0,
+                                           offset=9,
+                                           value=milliseconds,
+                                           length=4)
 
         def read_advertisement_time_1():
             return self.can.read_eeprom_unsigned(address=0,
@@ -409,10 +406,10 @@ class TestSTH(TestNode):
                                                  length=2)
 
         def write_advertisement_time_1(milliseconds):
-            write_eeprom_unsigned(address=0,
-                                  offset=13,
-                                  value=milliseconds,
-                                  length=2)
+            self.can.write_eeprom_unsigned(address=0,
+                                           offset=13,
+                                           value=milliseconds,
+                                           length=2)
 
         def read_sleep_time_2():
             return self.can.read_eeprom_unsigned(address=0,
@@ -420,10 +417,10 @@ class TestSTH(TestNode):
                                                  length=4)
 
         def write_sleep_time_2(milliseconds):
-            write_eeprom_unsigned(address=0,
-                                  offset=15,
-                                  value=milliseconds,
-                                  length=4)
+            self.can.write_eeprom_unsigned(address=0,
+                                           offset=15,
+                                           value=milliseconds,
+                                           length=4)
 
         def read_advertisement_time_2():
             return self.can.read_eeprom_unsigned(address=0,
@@ -431,19 +428,19 @@ class TestSTH(TestNode):
                                                  length=2)
 
         def write_advertisement_time_2(milliseconds):
-            write_eeprom_unsigned(address=0,
-                                  offset=19,
-                                  value=milliseconds,
-                                  length=2)
+            self.can.write_eeprom_unsigned(address=0,
+                                           offset=19,
+                                           value=milliseconds,
+                                           length=2)
 
         def read_gtin():
             return self.can.read_eeprom_unsigned(address=4, offset=0, length=8)
 
         def write_gtin(value):
-            return write_eeprom_unsigned(address=4,
-                                         offset=0,
-                                         length=8,
-                                         value=value)
+            return self.can.write_eeprom_unsigned(address=4,
+                                                  offset=0,
+                                                  length=8,
+                                                  value=value)
 
         def read_hardware_revision():
             return "{}.{}.{}".format(
@@ -512,19 +509,28 @@ class TestSTH(TestNode):
             return self.can.read_eeprom_unsigned(address=5, offset=0, length=4)
 
         def write_power_on_cycles(times):
-            write_eeprom_unsigned(address=5, offset=0, length=4, value=times)
+            self.can.write_eeprom_unsigned(address=5,
+                                           offset=0,
+                                           length=4,
+                                           value=times)
 
         def read_power_off_cycles():
             return self.can.read_eeprom_unsigned(address=5, offset=4, length=4)
 
         def write_power_off_cycles(times):
-            write_eeprom_unsigned(address=5, offset=4, length=4, value=times)
+            self.can.write_eeprom_unsigned(address=5,
+                                           offset=4,
+                                           length=4,
+                                           value=times)
 
         def read_operating_time():
             return self.can.read_eeprom_unsigned(address=5, offset=8, length=4)
 
         def write_operating_time(seconds):
-            write_eeprom_unsigned(address=5, offset=8, length=4, value=seconds)
+            self.can.write_eeprom_unsigned(address=5,
+                                           offset=8,
+                                           length=4,
+                                           value=seconds)
 
         def read_under_voltage_counter():
             return self.can.read_eeprom_unsigned(address=5,
@@ -532,7 +538,10 @@ class TestSTH(TestNode):
                                                  length=4)
 
         def write_under_voltage_counter(times):
-            write_eeprom_unsigned(address=5, offset=12, length=4, value=times)
+            self.can.write_eeprom_unsigned(address=5,
+                                           offset=12,
+                                           length=4,
+                                           value=times)
 
         def read_watchdog_reset_counter():
             return self.can.read_eeprom_unsigned(address=5,
@@ -540,7 +549,10 @@ class TestSTH(TestNode):
                                                  length=4)
 
         def write_watchdog_reset_counter(times):
-            write_eeprom_unsigned(address=5, offset=16, length=4, value=times)
+            self.can.write_eeprom_unsigned(address=5,
+                                           offset=16,
+                                           length=4,
+                                           value=times)
 
         def write_production_date(date="1970-12-31"):
             date = date.replace("-", "")
@@ -555,7 +567,10 @@ class TestSTH(TestNode):
                                                  length=4)
 
         def write_batch_number(value):
-            write_eeprom_unsigned(address=5, offset=28, length=4, value=value)
+            self.can.write_eeprom_unsigned(address=5,
+                                           offset=28,
+                                           length=4,
+                                           value=value)
 
         def read_acceleration_slope():
             return self.can.read_eeprom_float(address=8, offset=0)

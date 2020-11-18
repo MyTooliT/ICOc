@@ -1907,6 +1907,12 @@ class Network(object):
         data = list(map(ord, list(text)))
         self.write_eeprom(address, offset, data, length)
 
+    def write_eeprom_unsigned(self, address, offset, value, length):
+        """Write an unsigned integer at the specified EEPROM address"""
+
+        data = list(value.to_bytes(length, byteorder='little'))
+        self.write_eeprom(address, offset, data)
+
 
 # -- Main ---------------------------------------------------------------------
 
