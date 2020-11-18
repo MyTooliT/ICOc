@@ -16,7 +16,7 @@ from mytoolit.report import Report
 
 from network import Network
 from MyToolItNetworkNumbers import MyToolItNetworkNr
-from MyToolItCommands import (AdcOverSamplingRate, ActiveState, Node,
+from MyToolItCommands import (AdcOverSamplingRate, ActiveState, NodeState,
                               NetworkState, MyToolItBlock, MyToolItSystem)
 
 # -- Functions ----------------------------------------------------------------
@@ -225,7 +225,7 @@ class TestNode(TestCase):
                                   request=True)
         expected_data = ActiveState()
         expected_data.asbyte = 0
-        expected_data.b.u2NodeState = Node['Application']
+        expected_data.b.u2NodeState = NodeState['Application']
         expected_data.b.u3NetworkState = NetworkState['Operating']
         message = self.can.CanMessage20(command, MyToolItNetworkNr['SPU1'],
                                         MyToolItNetworkNr[f'{node}1'],

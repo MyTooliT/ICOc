@@ -1539,7 +1539,7 @@ class Network(object):
         sendData = ActiveState()
         sendData.asbyte = 0
         sendData.b.bSetState = 1
-        sendData.b.u2NodeState = Node["Application"]
+        sendData.b.u2NodeState = NodeState["Application"]
         sendData.b.u3NetworkState = NetworkState["Standby"]
         self.Logger.Info("Send Standby Command")
         index = self.cmdSend(receiver, MyToolItBlock["System"],

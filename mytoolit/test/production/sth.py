@@ -44,7 +44,7 @@ from MyToolItCommands import (
     MyToolItStreaming,
     MyToolItSystem,
     NetworkState,
-    Node,
+    NodeState,
     int_to_mac_address,
 )
 from MyToolItSth import fVoltageBattery

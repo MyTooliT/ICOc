@@ -545,7 +545,7 @@ Prescaler = {
     "Max": 127,
 }
 
-Node = {
+NodeState = {
     "NoChange": 0,
     "Bootloader": 1,
     "Application": 2,

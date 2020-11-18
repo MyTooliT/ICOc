@@ -355,7 +355,7 @@ class TestStu(unittest.TestCase):
                              hex(self.Can.getReadMessage(-1).ID))
         expectedData = ActiveState()
         expectedData.asbyte = 0
-        expectedData.b.u2NodeState = Node["Application"]
+        expectedData.b.u2NodeState = NodeState["Application"]
         expectedData.b.u3NetworkState = NetworkState["Operating"]
         self.Can.Logger.Info("Send Data: " + hex(0) + "; Expected Data: " +
                              hex(expectedData.asbyte) + "; Received Data: " +
@@ -847,7 +847,7 @@ class TestStu(unittest.TestCase):
     def test0202MyToolItTestAck(self):
         expectedData = ActiveState()
         expectedData.asbyte = 0
-        expectedData.b.u2NodeState = Node["Application"]
+        expectedData.b.u2NodeState = NodeState["Application"]
         expectedData.b.u3NetworkState = NetworkState["Operating"]
         self.vConnectSth1Dev0()
         time.sleep(3)

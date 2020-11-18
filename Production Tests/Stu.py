@@ -609,7 +609,7 @@ class TestStu(unittest.TestCase):
                               MyToolItSystem["ActiveState"], 1, 0)
         expectedData = ActiveState()
         expectedData.asbyte = 0
-        expectedData.b.u2NodeState = Node["Application"]
+        expectedData.b.u2NodeState = NodeState["Application"]
         expectedData.b.u3NetworkState = NetworkState["Operating"]
         msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
                                     MyToolItNetworkNr["STU1"],
@@ -678,7 +678,7 @@ class TestStu(unittest.TestCase):
                               MyToolItSystem["ActiveState"], 1, 0)
         expectedData = ActiveState()
         expectedData.asbyte = 0
-        expectedData.b.u2NodeState = Node["Application"]
+        expectedData.b.u2NodeState = NodeState["Application"]
         expectedData.b.u3NetworkState = NetworkState["Operating"]
         msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
                                     MyToolItNetworkNr["STU1"],

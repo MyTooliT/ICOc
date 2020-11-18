@@ -202,7 +202,7 @@ class TestSthManually(unittest.TestCase):
                          hex(self.Can.getReadMessage(-1).ID))
         self.assertEqual(activeState.b.bSetState, 0)
         self.assertEqual(activeState.b.bReserved, 0)
-        self.assertEqual(activeState.b.u2NodeState, Node["Application"])
+        self.assertEqual(activeState.b.u2NodeState, NodeState["Application"])
         self.assertEqual(activeState.b.bReserved1, 0)
         self.assertEqual(activeState.b.u3NetworkState,
                          NetworkState["Operating"])

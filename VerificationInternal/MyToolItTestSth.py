@@ -957,7 +957,7 @@ class TestSth(unittest.TestCase):
                               MyToolItSystem["ActiveState"], 1, 0)
         expectedData = ActiveState()
         expectedData.asbyte = 0
-        expectedData.b.u2NodeState = Node["Application"]
+        expectedData.b.u2NodeState = NodeState["Application"]
         expectedData.b.u3NetworkState = NetworkState["Operating"]
         msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
                                     MyToolItNetworkNr["STH1"],
@@ -7081,7 +7081,7 @@ class TestSth(unittest.TestCase):
                              str(activeState.b.u3NetworkState))
         self.assertEqual(activeState.b.bSetState, 0)
         self.assertEqual(activeState.b.bReserved, 0)
-        self.assertEqual(activeState.b.u2NodeState, Node["Application"])
+        self.assertEqual(activeState.b.u2NodeState, NodeState["Application"])
         self.assertEqual(activeState.b.bReserved1, 0)
         self.assertEqual(activeState.b.u3NetworkState,
                          NetworkState["Operating"])
@@ -7093,7 +7093,7 @@ class TestSth(unittest.TestCase):
     def test0881ActiveStateError(self):
         activeState = ActiveState()
         activeState.asbyte = 0  # Set=0 ->Read
-        activeState.b.u2NodeState = Node["Application"]
+        activeState.b.u2NodeState = NodeState["Application"]
         activeState.b.u3NetworkState = NetworkState["Error"]
         activeState.b.bSetState = 1
         indexAssumed = self.Can.cmdSend(MyToolItNetworkNr["STH1"],
@@ -7116,7 +7116,7 @@ class TestSth(unittest.TestCase):
             str(activeState.b.u3NetworkState))
         self.assertEqual(activeState.b.bSetState, 1)
         self.assertEqual(activeState.b.bReserved, 0)
-        self.assertEqual(activeState.b.u2NodeState, Node["Application"])
+        self.assertEqual(activeState.b.u2NodeState, NodeState["Application"])
         self.assertEqual(activeState.b.bReserved1, 0)
         self.assertEqual(activeState.b.u3NetworkState, NetworkState["Error"])
         indexAssumed = self.Can.cmdSend(MyToolItNetworkNr["STH1"],
@@ -7137,7 +7137,7 @@ class TestSth(unittest.TestCase):
                              str(activeState.b.u3NetworkState))
         self.assertEqual(activeState.b.bSetState, 0)
         self.assertEqual(activeState.b.bReserved, 0)
-        self.assertEqual(activeState.b.u2NodeState, Node["Application"])
+        self.assertEqual(activeState.b.u2NodeState, NodeState["Application"])
         self.assertEqual(activeState.b.bReserved1, 0)
         self.assertEqual(activeState.b.u3NetworkState, NetworkState["Error"])
         self.Can.Logger.Info("Trying to receive Stream (Must not work)")
