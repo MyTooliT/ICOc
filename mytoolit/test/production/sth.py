@@ -359,7 +359,7 @@ class TestSTH(TestNode):
 
         def read_eeprom_float(address, offset):
             data = self.can.read_eeprom(address, offset, length=4)
-            return unpack('f', bytearray(data))[0]
+            return unpack('<f', bytearray(data))[0]
 
         def write_eeprom(address, offset, data, length=None):
             """Write EEPROM data at the specified address"""
