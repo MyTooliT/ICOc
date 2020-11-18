@@ -23,14 +23,23 @@ class Node:
         Examples
         --------
 
+        Create node with default value
+
         >>> Node().value
         0
+
+        Create nodes with string values
 
         >>> Node('STH 1')
         STH 1
 
         >>> Node('STU1')
         STU 1
+
+        >>> Node('SPU 1').value
+        15
+
+        Check that we can not use incorrect numbers to initialize a node
 
         >>> Node('STU 15')
         Traceback (most recent call last):
