@@ -1834,7 +1834,27 @@ class Network(object):
         return unpack('<f', bytearray(data))[0]
 
     def write_eeprom(self, address, offset, data, length=None):
-        """Write EEPROM data at the specified address"""
+        """Write EEPROM data at the specified address
+
+        Parameters
+        ----------
+
+        address:
+            The page number in the EEPROM
+
+        offset:
+            The offset to the base address in the specified page
+
+        data:
+            A list of byte value that should be stored at the specified EEPROM
+            location
+
+        length:
+            This optional parameter specifies how many of the bytes in `data`
+            should be stored in the EEPROM. If you specify a length that is
+            greater, than the size of the data list, then the remainder of
+            the EEPROM data will be filled with null bytes.
+        """
 
         # Change data, if
         # - only a subset, or
