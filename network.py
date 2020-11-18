@@ -1741,7 +1741,7 @@ class Network(object):
             # Read at most 4 bytes of data at once
             read_length = 4 if length > 4 else length
             payload = [address, offset, read_length, *reserved]
-            index = self.cmdSend(Node('STH 1').value,
+            index = self.cmdSend(self.receiver,
                                  MyToolItBlock['EEPROM'],
                                  MyToolItEeprom['Read'],
                                  payload,
