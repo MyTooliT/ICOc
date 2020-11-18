@@ -1754,6 +1754,18 @@ class Network(object):
 
         return read_data
 
+    def read_eeprom_text(self, address, offset, length):
+        """Read EEPROM data in UTT8 format"""
+
+        data = self.read_eeprom(address, offset, length)
+        data_without_null = []
+        for byte in data:
+            if byte == 0:
+                break
+            data_without_null.append(byte)
+
+        return "".join(map(chr, data_without_null))
+
 
 # -- Main ---------------------------------------------------------------------
 
