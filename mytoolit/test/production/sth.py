@@ -357,12 +357,6 @@ class TestSTH(TestNode):
     def test_eeprom(self):
         """Test if reading and writing the EEPROM works"""
 
-        def write_eeprom_status(value):
-            self.can.write_eeprom_unsigned(address=0,
-                                           offset=0,
-                                           length=1,
-                                           value=value)
-
         def write_name(text):
             self.can.write_eeprom_text(address=0,
                                        offset=1,
@@ -841,7 +835,7 @@ class TestSTH(TestNode):
         # =================
 
         initialized = EEPROMStatus('Initialized')
-        write_eeprom_status(initialized.value)
+        self.can.write_eeprom_status(initialized.value)
         eeprom_status = self.can.read_eeprom_status()
         cls.eeprom_status = repr(eeprom_status)
         self.assertTrue(

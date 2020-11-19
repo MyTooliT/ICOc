@@ -1962,6 +1962,22 @@ class Network(object):
         return EEPROMStatus(
             self.read_eeprom(address=0, offset=0, length=1).pop())
 
+    def write_eeprom_status(self, value):
+        """Change the value of the EEPROM status byte
+
+        Parameters
+        ----------
+
+        value
+            The new value for the status byte
+
+        """
+
+        self.write_eeprom_unsigned(address=0,
+                                   offset=0,
+                                   length=1,
+                                   value=EEPROMStatus(value).value)
+
     def read_eeprom_name(self):
         """Retrieve the name of the node from the EEPROM
 
