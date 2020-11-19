@@ -1949,7 +1949,13 @@ class Network(object):
         self.write_eeprom(address, offset, data)
 
     def read_eeprom_name(self):
-        """Retrieve the name of the node from the EEPROM"""
+        """Retrieve the name of the node from the EEPROM
+
+        Returns
+        -------
+
+        The name of the current receiver as string
+        """
 
         return self.read_eeprom_text(address=0, offset=1, length=8)
 
