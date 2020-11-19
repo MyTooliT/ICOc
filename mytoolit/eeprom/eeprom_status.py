@@ -39,7 +39,7 @@ class EEPROMStatus:
 
         value = self.value
 
-        description = "Initialized" if value == 0xac else (
+        description = "Initialized" if self.is_initialized() else (
             "Locked" if self.is_locked() else "Uninitialized")
 
         return f"{description} (0x{value:02x})"
@@ -68,6 +68,31 @@ class EEPROMStatus:
         """
 
         return self.value == 0xca
+
+    def is_initialized(self):
+        """Check if the EEPROM is initialized
+
+        Returns
+        -------
+
+        `True` if the status byte represents an initialized EEPROM or `False`
+        otherwise
+
+        Examples
+        --------
+
+        >>> EEPROMStatus(0xca).is_initialized()
+        False
+
+        >>> EEPROMStatus(0xac).is_initialized()
+        True
+
+        >>> EEPROMStatus(0x2).is_initialized()
+        False
+
+        """
+
+        return self.value == 0xac
 
 
 # -- Main ---------------------------------------------------------------------
