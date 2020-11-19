@@ -31,6 +31,9 @@ class EEPROMStatus:
         >>> EEPROMStatus('Locked').value == 0xca
         True
 
+        >>> EEPROMStatus(EEPROMStatus('Locked'))
+        Locked (0xca)
+
         >>> EEPROMStatus('Something')
         Traceback (most recent call last):
            ...
@@ -53,6 +56,10 @@ class EEPROMStatus:
                 return
 
             raise ValueError(f"Unknown EEPROM status “{status}”")
+
+        if isinstance(status, EEPROMStatus):
+            self.value = status.value
+            return
 
         self.value = status
 
