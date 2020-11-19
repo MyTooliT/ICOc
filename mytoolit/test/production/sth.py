@@ -840,13 +840,11 @@ class TestSTH(TestNode):
         # =================
 
         initialized = 0xac
-        locked = 0xca
         write_eeprom_status(initialized)
-        init = self.can.read_eeprom_status()
-        cls.eeprom_status = "Initialized" if init == initialized else (
-            "Locked" if init == locked else f"Undefined ({hex(init)})")
-        self.assertEqual(
-            cls.eeprom_status, "Initialized",
+        eeprom_status = self.can.read_eeprom_status()
+        cls.eeprom_status = repr(eeprom_status)
+        self.assertTrue(
+            eeprom_status.is_initialized,
             f"Setting EEPROM status to “Initialized ({initialized})” "
             "failed. EEPROM status value currently stores the value "
             f"“{cls.eeprom_status}”")

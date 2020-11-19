@@ -11,6 +11,7 @@ from time import time, sleep
 
 from mytoolit.can import (Command, ErrorStatusSTH, ErrorStatusSTU, Identifier,
                           Message, Node, NodeStatusSTH, NodeStatusSTU)
+from mytoolit.eeprom import EEPROMStatus
 from mytoolit.config import settings
 
 from MyToolItCommands import (
@@ -1954,10 +1955,11 @@ class Network(object):
         Returns
         -------
 
-        The value of the EEPROM status byte
+        An EEPROM status object for the current status byte value
         """
 
-        return self.read_eeprom(address=0, offset=0, length=1).pop()
+        return EEPROMStatus(
+            self.read_eeprom(address=0, offset=0, length=1).pop())
 
     def read_eeprom_name(self):
         """Retrieve the name of the node from the EEPROM
