@@ -1948,6 +1948,11 @@ class Network(object):
         data = list(pack('f', value))
         self.write_eeprom(address, offset, data)
 
+    def read_eeprom_name(self):
+        """Retrieve the name of the node from the EEPROM"""
+
+        return self.read_eeprom_text(address=0, offset=1, length=8)
+
 
 # -- Main ---------------------------------------------------------------------
 

@@ -365,9 +365,6 @@ class TestSTH(TestNode):
                                            length=1,
                                            value=value)
 
-        def read_name():
-            return self.can.read_eeprom_text(address=0, offset=1, length=8)
-
         def write_name(text):
             self.can.write_eeprom_text(address=0,
                                        offset=1,
@@ -590,7 +587,7 @@ class TestSTH(TestNode):
         name = convert_mac_base64(mac)
 
         write_name(name)
-        read_name = read_name()
+        read_name = self.can.read_eeprom_name()
 
         self.assertEqual(
             name, read_name,
