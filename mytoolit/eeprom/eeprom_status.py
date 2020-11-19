@@ -12,6 +12,7 @@ class EEPROMStatus:
 
         value:
             The value of the status byte
+
         """
 
         self.value = value
@@ -35,6 +36,7 @@ class EEPROMStatus:
 
         >>> EEPROMStatus(0xCA)
         Locked (0xca)
+
         """
 
         value = self.value
