@@ -1948,6 +1948,17 @@ class Network(object):
         data = list(pack('f', value))
         self.write_eeprom(address, offset, data)
 
+    def read_eeprom_status(self):
+        """Retrieve EEPROM status byte
+
+        Returns
+        -------
+
+        The value of the EEPROM status byte
+        """
+
+        return self.read_eeprom(address=0, offset=0, length=1).pop()
+
     def read_eeprom_name(self):
         """Retrieve the name of the node from the EEPROM
 

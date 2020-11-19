@@ -356,9 +356,6 @@ class TestSTH(TestNode):
     def test_eeprom(self):
         """Test if reading and writing the EEPROM works"""
 
-        def read_eeprom_status():
-            return self.can.read_eeprom(address=0, offset=0, length=1).pop()
-
         def write_eeprom_status(value):
             self.can.write_eeprom_unsigned(address=0,
                                            offset=0,
@@ -845,7 +842,7 @@ class TestSTH(TestNode):
         initialized = 0xac
         locked = 0xca
         write_eeprom_status(initialized)
-        init = read_eeprom_status()
+        init = self.can.read_eeprom_status()
         cls.eeprom_status = "Initialized" if init == initialized else (
             "Locked" if init == locked else f"Undefined ({hex(init)})")
         self.assertEqual(
