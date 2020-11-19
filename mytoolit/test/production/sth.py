@@ -580,9 +580,6 @@ class TestSTH(TestNode):
         # = Name =
         # ========
 
-        # Please note that the chip will only use the new name after a reset
-        # at the end of this test.
-
         mac = [int(byte, 16) for byte in cls.bluetooth_mac.split(":")]
         name = convert_mac_base64(mac)
 
