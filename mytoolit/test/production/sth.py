@@ -17,6 +17,7 @@ module_path.append(repository_root)
 
 from mytoolit import __version__
 from mytoolit.can import Identifier, Node
+from mytoolit.eeprom import EEPROMStatus
 from mytoolit.measurement.acceleration import (convert_acceleration_adc_to_g,
                                                ratio_noise_max)
 from mytoolit.report import Report
@@ -839,14 +840,14 @@ class TestSTH(TestNode):
         # = EEPROM Status =
         # =================
 
-        initialized = 0xac
-        write_eeprom_status(initialized)
+        initialized = EEPROMStatus('Initialized')
+        write_eeprom_status(initialized.value)
         eeprom_status = self.can.read_eeprom_status()
         cls.eeprom_status = repr(eeprom_status)
         self.assertTrue(
-            eeprom_status.is_initialized,
-            f"Setting EEPROM status to “Initialized ({initialized})” "
-            "failed. EEPROM status value currently stores the value "
+            eeprom_status.is_initialized(),
+            f"Setting EEPROM status to “{initialized}” failed. "
+            "EEPROM status byte currently stores the value "
             f"“{cls.eeprom_status}”")
 
 
