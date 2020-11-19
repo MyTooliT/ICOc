@@ -32,8 +32,6 @@ class Network(object):
     bus. The thread will store the read data into a list, appending the latest
     data at the end.
 
-    Unlike it name suggests, this class does currently not offer support for
-    CAN FD.
     """
 
     def __init__(self,
