@@ -1956,6 +1956,7 @@ class Network(object):
         -------
 
         An EEPROM status object for the current status byte value
+
         """
 
         return EEPROMStatus(
