@@ -834,13 +834,11 @@ class TestSTH(TestNode):
         # = EEPROM Status =
         # =================
 
-        initialized = EEPROMStatus('Initialized')
-        self.can.write_eeprom_status(initialized.value)
-        eeprom_status = self.can.read_eeprom_status()
-        cls.eeprom_status = repr(eeprom_status)
+        self.can.write_eeprom_status('Initialized')
+        cls.eeprom_status = self.can.read_eeprom_status()
         self.assertTrue(
-            eeprom_status.is_initialized(),
-            f"Setting EEPROM status to “{initialized}” failed. "
+            cls.eeprom_status.is_initialized(),
+            f"Setting EEPROM status to “Initialized” failed. "
             "EEPROM status byte currently stores the value "
             f"“{cls.eeprom_status}”")
 
