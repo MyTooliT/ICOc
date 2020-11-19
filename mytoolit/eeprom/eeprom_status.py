@@ -4,18 +4,57 @@
 class EEPROMStatus:
     """This class represents an EEPROM status byte"""
 
-    def __init__(self, value):
+    def __init__(self, status):
         """Create a new status byte from the given argument
 
         Parameters
         ----------
 
-        value:
+        status:
             The value of the status byte
+
+        Examples
+        --------
+
+        >>> EEPROMStatus(0xca)
+        Locked (0xca)
+
+        >>> EEPROMStatus(0)
+        Uninitialized (0x00)
+
+        >>> EEPROMStatus('Initialized')
+        Initialized (0xac)
+
+        >>> EEPROMStatus('Uninitialized')
+        Uninitialized (0x00)
+
+        >>> EEPROMStatus('Locked').value == 0xca
+        True
+
+        >>> EEPROMStatus('Something')
+        Traceback (most recent call last):
+           ...
+        ValueError: Unknown EEPROM status “Something”
 
         """
 
-        self.value = value
+        if isinstance(status, str):
+
+            if status == "Initialized":
+                self.value = 0xac
+                return
+
+            if status == "Locked":
+                self.value = 0xca
+                return
+
+            if status == "Uninitialized":
+                self.value = 0
+                return
+
+            raise ValueError(f"Unknown EEPROM status “{status}”")
+
+        self.value = status
 
     def __repr__(self):
         """Return the string representation of the status byte
