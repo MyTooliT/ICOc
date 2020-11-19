@@ -73,6 +73,24 @@ class TestSTU(TestNode):
 
         self._test_connection('STU')
 
+    def test_eeprom(self):
+        """Test if reading and writing the EEPROM works"""
+
+        cls = type(self)
+
+        # ========
+        # = Name =
+        # ========
+
+        read_name = self.can.read_eeprom_name()
+        expected_name = "Valerie"
+        self.assertEqual(
+            read_name, expected_name,
+            f"Read name “{read_name}” does not match expected name " +
+            f"“{expected_name}”")
+
+        cls.name = read_name
+
 
 # -- Main ---------------------------------------------------------------------
 
