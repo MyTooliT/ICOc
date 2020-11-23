@@ -374,12 +374,6 @@ class TestSTH(TestNode):
             day = date[6:8]
             return f"{year}-{month}-{day}"
 
-        def write_power_on_cycles(times):
-            self.can.write_eeprom_unsigned(address=5,
-                                           offset=0,
-                                           length=4,
-                                           value=times)
-
         def read_power_off_cycles():
             return self.can.read_eeprom_unsigned(address=5, offset=4, length=4)
 
@@ -608,7 +602,7 @@ class TestSTH(TestNode):
         # =======================
 
         power_on_cycles = 0
-        write_power_on_cycles(power_on_cycles)
+        self.can.write_eeprom_power_on_cycles(power_on_cycles)
         cls.power_on_cycles = self.can.read_eeprom_power_on_cycles()
         self.assertEqual(
             power_on_cycles, cls.power_on_cycles,
