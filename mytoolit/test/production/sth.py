@@ -367,12 +367,6 @@ class TestSTH(TestNode):
                 f"{description} {milliseconds_read} ms does not match " +
                 f" written value of {milliseconds} ms")
 
-        def write_gtin(value):
-            return self.can.write_eeprom_unsigned(address=4,
-                                                  offset=0,
-                                                  length=8,
-                                                  value=value)
-
         def read_hardware_revision():
             return "{}.{}.{}".format(
                 *self.can.read_eeprom(address=4, offset=13, length=3))
@@ -580,7 +574,7 @@ class TestSTH(TestNode):
         # ========
 
         gtin = settings.STH.GTIN
-        write_gtin(gtin)
+        self.can.write_eeprom_gtin(gtin)
         cls.gtin = self.can.read_eeprom_gtin()
         self.assertEqual(
             gtin, cls.gtin,

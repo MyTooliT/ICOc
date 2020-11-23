@@ -2124,6 +2124,22 @@ class Network(object):
 
         return self.read_eeprom_unsigned(address=4, offset=0, length=8)
 
+    def write_eeprom_gtin(self, value):
+        """Write the global trade identifier number (GTIN) to the EEPROM
+
+        Parameters
+        ----------
+
+        value:
+            The new GTIN of the current receiver
+
+        """
+
+        return self.write_eeprom_unsigned(address=4,
+                                          offset=0,
+                                          length=8,
+                                          value=value)
+
 
 # -- Main ---------------------------------------------------------------------
 
