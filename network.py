@@ -1966,7 +1966,7 @@ class Network(object):
         Parameters
         ----------
 
-        value
+        value:
             The new value for the status byte
 
         """
@@ -1993,7 +1993,7 @@ class Network(object):
         Parameters
         ----------
 
-        text
+        text:
             The new (Bluetooth advertisement) name of the current receiver
 
         """
@@ -2018,7 +2018,7 @@ class Network(object):
         Parameters
         ----------
 
-        milliseconds
+        milliseconds:
             The value for sleep time 1 in milliseconds
 
         """
@@ -2046,7 +2046,7 @@ class Network(object):
         Parameters
         ----------
 
-        milliseconds
+        milliseconds:
             The value for advertisement time 1 in milliseconds
 
         """
@@ -2074,7 +2074,7 @@ class Network(object):
         Parameters
         ----------
 
-        milliseconds
+        milliseconds:
             The value for sleep time 2 in milliseconds
 
         """
@@ -2102,7 +2102,7 @@ class Network(object):
         Parameters
         ----------
 
-        milliseconds
+        milliseconds:
             The value for advertisement time 2 in milliseconds
 
         """
