@@ -367,9 +367,6 @@ class TestSTH(TestNode):
                 f"{description} {milliseconds_read} ms does not match " +
                 f" written value of {milliseconds} ms")
 
-        def read_sleep_time_1():
-            return self.can.read_eeprom_unsigned(address=0, offset=9, length=4)
-
         def write_sleep_time_1(milliseconds):
             self.can.write_eeprom_unsigned(address=0,
                                            offset=9,
@@ -594,7 +591,7 @@ class TestSTH(TestNode):
         # = Sleep & Advertisement =
         # =========================
 
-        read_write_time(read_function=read_sleep_time_1,
+        read_write_time(read_function=self.can.read_eeprom_sleep_time_1,
                         write_function=write_sleep_time_1,
                         variable='sleep_time_1',
                         description="Sleep Time 1",
