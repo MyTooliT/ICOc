@@ -2155,6 +2155,22 @@ class Network(object):
 
         return Version(major=major, minor=minor, patch=patch)
 
+    def write_eeprom_hardware_revision(self, version):
+        """Write hardware revision to the EEPROM
+
+        Parameters
+        ----------
+
+        version:
+            The new hardware revision of the current receiver
+
+        """
+
+        self.write_eeprom(address=4,
+                          offset=13,
+                          length=3,
+                          data=list(map(int, version.split("."))))
+
 
 # -- Main ---------------------------------------------------------------------
 
