@@ -370,9 +370,6 @@ class TestSTH(TestNode):
         def read_acceleration_offset():
             return self.can.read_eeprom_float(address=8, offset=4)
 
-        def write_acceleration_offset(offset):
-            self.can.write_eeprom_float(address=8, offset=4, value=offset)
-
         cls = type(self)
 
         # ========
@@ -631,7 +628,7 @@ class TestSTH(TestNode):
             f"“{cls.acceleration_slope:.5f}”")
 
         acceleration_offset = -(acceleration_max / 2)
-        write_acceleration_offset(acceleration_offset)
+        self.can.write_eeprom_x_axis_acceleration_offset(acceleration_offset)
         cls.acceleration_offset = read_acceleration_offset()
         self.assertAlmostEqual(
             acceleration_offset,

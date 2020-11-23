@@ -2521,6 +2521,19 @@ class Network(object):
 
         self.write_eeprom_float(address=8, offset=0, value=slope)
 
+    def write_eeprom_x_axis_acceleration_offset(self, offset):
+        """Write the acceleration offset of the x-axis to the EEPROM
+
+        Parameters
+        ----------
+
+        offset:
+            The (negative) offset of the acceleration value in multiples of g₀
+
+        """
+
+        self.write_eeprom_float(address=8, offset=4, value=offset)
+
 
 # -- Main ---------------------------------------------------------------------
 
