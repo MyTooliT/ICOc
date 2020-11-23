@@ -367,9 +367,6 @@ class TestSTH(TestNode):
                 f"{description} {milliseconds_read} ms does not match " +
                 f" written value of {milliseconds} ms")
 
-        def read_acceleration_slope():
-            return self.can.read_eeprom_float(address=8, offset=0)
-
         def read_acceleration_offset():
             return self.can.read_eeprom_float(address=8, offset=4)
 
@@ -624,7 +621,8 @@ class TestSTH(TestNode):
         adc_max = 0xffff
         acceleration_slope = acceleration_max / adc_max
         self.can.write_eeprom_x_axis_acceleration_slope(acceleration_slope)
-        cls.acceleration_slope = read_acceleration_slope()
+        cls.acceleration_slope = (
+            self.can.read_eeprom_x_axis_acceleration_slope())
         self.assertAlmostEqual(
             acceleration_slope,
             cls.acceleration_slope,

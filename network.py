@@ -2495,6 +2495,18 @@ class Network(object):
                                    length=4,
                                    value=number)
 
+    def read_eeprom_x_axis_acceleration_slope(self):
+        """Retrieve the acceleration slope of the x-axis from the EEPROM
+
+        Returns
+        -------
+
+        The acceleration slope of the x-axis of the current receiver
+
+        """
+
+        return self.read_eeprom_float(address=8, offset=0)
+
     def write_eeprom_x_axis_acceleration_slope(self, slope):
         """Write the acceleration slope of the x-axis to the EEPROM
 
