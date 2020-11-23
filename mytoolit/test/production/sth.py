@@ -377,12 +377,6 @@ class TestSTH(TestNode):
         def read_operating_time():
             return self.can.read_eeprom_unsigned(address=5, offset=8, length=4)
 
-        def write_operating_time(seconds):
-            self.can.write_eeprom_unsigned(address=5,
-                                           offset=8,
-                                           length=4,
-                                           value=seconds)
-
         def read_under_voltage_counter():
             return self.can.read_eeprom_unsigned(address=5,
                                                  offset=12,
@@ -615,7 +609,7 @@ class TestSTH(TestNode):
         # ==================
 
         operating_time = 0
-        write_operating_time(operating_time)
+        self.can.write_eeprom_operating_time(operating_time)
         cls.operating_time = read_operating_time()
         self.assertEqual(
             operating_time, cls.operating_time,
