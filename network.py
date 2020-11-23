@@ -2246,6 +2246,19 @@ class Network(object):
 
         return self.read_eeprom_text(address=4, offset=32, length=32)
 
+    def write_eeprom_serial_number(self, text):
+        """Write the serial number to the EEPROM
+
+        Parameters
+        ----------
+
+        text:
+            The serial number of the current receiver
+
+        """
+
+        self.write_eeprom_text(address=4, offset=32, length=32, text=text)
+
 
 # -- Main ---------------------------------------------------------------------
 
