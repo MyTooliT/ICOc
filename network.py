@@ -2206,6 +2206,18 @@ class Network(object):
                           length=3,
                           data=[version.major, version.minor, version.patch])
 
+    def read_eeprom_release_name(self):
+        """Retrieve the current release name from the EEPROM
+
+        Returns
+        -------
+
+        The firmware release name of the current receiver
+
+        """
+
+        return self.read_eeprom_text(address=4, offset=24, length=8)
+
 
 # -- Main ---------------------------------------------------------------------
 

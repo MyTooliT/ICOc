@@ -367,9 +367,6 @@ class TestSTH(TestNode):
                 f"{description} {milliseconds_read} ms does not match " +
                 f" written value of {milliseconds} ms")
 
-        def read_release_name():
-            return self.can.read_eeprom_text(address=4, offset=24, length=8)
-
         def write_release_name(text):
             return self.can.write_eeprom_text(address=4,
                                               offset=24,
@@ -595,7 +592,7 @@ class TestSTH(TestNode):
         # this is not the case.
         release_name = settings.STH.Firmware.Release_Name
         write_release_name(release_name)
-        cls.release_name = read_release_name()
+        cls.release_name = self.can.read_eeprom_release_name()
         self.assertEqual(
             release_name, cls.release_name,
             f"Written firmware release name “{release_name}” does not " +
