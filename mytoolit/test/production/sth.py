@@ -367,12 +367,6 @@ class TestSTH(TestNode):
                 f"{description} {milliseconds_read} ms does not match " +
                 f" written value of {milliseconds} ms")
 
-        def write_product_name(text):
-            self.can.write_eeprom_text(address=4,
-                                       offset=64,
-                                       length=128,
-                                       text=text)
-
         def read_oem_data():
             return self.can.read_eeprom(address=4, offset=192, length=64)
 
@@ -597,7 +591,7 @@ class TestSTH(TestNode):
         # ================
 
         product_name = str(settings.STH.Product_Name)
-        write_product_name(product_name)
+        self.can.write_eeprom_product_name(product_name)
         cls.product_name = self.can.read_eeprom_product_name()
         self.assertEqual(
             product_name, cls.product_name,

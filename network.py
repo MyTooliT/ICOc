@@ -2271,6 +2271,19 @@ class Network(object):
 
         return self.read_eeprom_text(address=4, offset=64, length=128)
 
+    def write_eeprom_product_name(self, text):
+        """Write the product name to the EEPROM
+
+        Parameters
+        ----------
+
+        text:
+            The product name of the current receiver
+
+        """
+
+        self.write_eeprom_text(address=4, offset=64, length=128, text=text)
+
 
 # -- Main ---------------------------------------------------------------------
 
