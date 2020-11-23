@@ -357,12 +357,6 @@ class TestSTH(TestNode):
     def test_eeprom(self):
         """Test if reading and writing the EEPROM works"""
 
-        def write_name(text):
-            self.can.write_eeprom_text(address=0,
-                                       offset=1,
-                                       text=text,
-                                       length=8)
-
         def read_write_time(read_function, write_function, variable,
                             description, milliseconds):
             write_function(milliseconds)
@@ -575,7 +569,7 @@ class TestSTH(TestNode):
         mac = [int(byte, 16) for byte in cls.bluetooth_mac.split(":")]
         name = convert_mac_base64(mac)
 
-        write_name(name)
+        self.can.write_eeprom_name(name)
         read_name = self.can.read_eeprom_name()
 
         self.assertEqual(

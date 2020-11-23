@@ -1987,6 +1987,19 @@ class Network(object):
 
         return self.read_eeprom_text(address=0, offset=1, length=8)
 
+    def write_eeprom_name(self, text):
+        """Write the name of the node to the EEPROM
+
+        Parameters
+        ----------
+
+        text
+            The new (Bluetooth advertisement) name of the current receiver
+
+        """
+
+        self.write_eeprom_text(address=0, offset=1, text=text, length=8)
+
 
 # -- Main ---------------------------------------------------------------------
 
