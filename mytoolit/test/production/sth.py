@@ -367,11 +367,6 @@ class TestSTH(TestNode):
                 f"{description} {milliseconds_read} ms does not match " +
                 f" written value of {milliseconds} ms")
 
-        def read_advertisement_time_1():
-            return self.can.read_eeprom_unsigned(address=0,
-                                                 offset=13,
-                                                 length=2)
-
         def write_advertisement_time_1(milliseconds):
             self.can.write_eeprom_unsigned(address=0,
                                            offset=13,
@@ -592,7 +587,7 @@ class TestSTH(TestNode):
                         milliseconds=settings.STH.Bluetooth.Sleep_Time_1)
 
         read_write_time(
-            read_function=read_advertisement_time_1,
+            read_function=self.can.read_eeprom_advertisement_time_1,
             write_function=write_advertisement_time_1,
             variable='advertisement_time_1',
             description="Advertisement Time 1",

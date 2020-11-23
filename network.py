@@ -2028,6 +2028,18 @@ class Network(object):
                                    value=milliseconds,
                                    length=4)
 
+    def read_eeprom_advertisement_time_1(self):
+        """Retrieve advertisement time 1 from the EEPROM
+
+        Returns
+        -------
+
+        The current value of advertisement time 1 in milliseconds
+
+        """
+
+        return self.read_eeprom_unsigned(address=0, offset=13, length=2)
+
 
 # -- Main ---------------------------------------------------------------------
 
