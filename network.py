@@ -2166,10 +2166,13 @@ class Network(object):
 
         """
 
+        if isinstance(version, str):
+            version = Version(version)
+
         self.write_eeprom(address=4,
                           offset=13,
                           length=3,
-                          data=list(map(int, version.split("."))))
+                          data=[version.major, version.minor, version.patch])
 
 
 # -- Main ---------------------------------------------------------------------
