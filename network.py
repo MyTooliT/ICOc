@@ -2096,6 +2096,22 @@ class Network(object):
 
         return self.read_eeprom_unsigned(address=0, offset=19, length=2)
 
+    def write_eeprom_advertisement_time_2(self, milliseconds):
+        """Write the value of advertisement time 2 to the EEPROM
+
+        Parameters
+        ----------
+
+        milliseconds
+            The value for advertisement time 2 in milliseconds
+
+        """
+
+        self.write_eeprom_unsigned(address=0,
+                                   offset=19,
+                                   value=milliseconds,
+                                   length=2)
+
 
 # -- Main ---------------------------------------------------------------------
 
