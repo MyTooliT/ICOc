@@ -2140,6 +2140,19 @@ class Network(object):
                                           length=8,
                                           value=value)
 
+    def read_eeprom_hardware_revision(self):
+        """Read the current hardware revision from the EEPROM
+
+        Returns
+        -------
+
+        The hardware revision of the current receiver
+
+        """
+
+        return "{}.{}.{}".format(
+            *self.read_eeprom(address=4, offset=13, length=3))
+
 
 # -- Main ---------------------------------------------------------------------
 

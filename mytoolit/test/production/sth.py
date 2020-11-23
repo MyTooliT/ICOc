@@ -367,10 +367,6 @@ class TestSTH(TestNode):
                 f"{description} {milliseconds_read} ms does not match " +
                 f" written value of {milliseconds} ms")
 
-        def read_hardware_revision():
-            return "{}.{}.{}".format(
-                *self.can.read_eeprom(address=4, offset=13, length=3))
-
         def write_hardware_revision(version):
             self.can.write_eeprom(address=4,
                                   offset=13,
@@ -586,7 +582,7 @@ class TestSTH(TestNode):
 
         hardware_revision = settings.STH.Hardware_Revision
         write_hardware_revision(hardware_revision)
-        cls.hardware_revision = read_hardware_revision()
+        cls.hardware_revision = self.can.read_eeprom_hardware_revision()
         self.assertEqual(
             hardware_revision, cls.hardware_revision,
             f"Written hardware revision “{hardware_revision}” does not " +
