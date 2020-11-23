@@ -2284,6 +2284,19 @@ class Network(object):
 
         self.write_eeprom_text(address=4, offset=64, length=128, text=text)
 
+    def write_eeprom_oem_data(self, data):
+        """Write OEM data to the EEPROM
+
+        Parameters
+        ----------
+
+        data:
+            The OEM data for the current receiver
+
+        """
+
+        self.write_eeprom(address=4, offset=192, length=64, data=data)
+
 
 # -- Main ---------------------------------------------------------------------
 

@@ -370,12 +370,6 @@ class TestSTH(TestNode):
         def read_oem_data():
             return self.can.read_eeprom(address=4, offset=192, length=64)
 
-        def write_oem_data(data):
-            return self.can.write_eeprom(address=4,
-                                         offset=192,
-                                         length=64,
-                                         data=data)
-
         def read_production_date():
             date = self.can.read_eeprom_text(address=5, offset=20, length=8)
             year = date[0:4]
@@ -603,7 +597,7 @@ class TestSTH(TestNode):
         # ============
 
         oem_data = settings.STH.OEM_Data
-        write_oem_data(oem_data)
+        self.can.write_eeprom_oem_data(oem_data)
         cls.oem_data = read_oem_data()
         self.assertListEqual(
             oem_data, cls.oem_data,
