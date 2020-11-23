@@ -2174,6 +2174,19 @@ class Network(object):
                           length=3,
                           data=[version.major, version.minor, version.patch])
 
+    def read_eeprom_firmware_version(self):
+        """Retrieve the current firmware version from the EEPROM
+
+        Returns
+        -------
+
+        The firmware version of the current receiver
+
+        """
+
+        major, minor, patch = self.read_eeprom(address=4, offset=21, length=3)
+        return Version(major=major, minor=minor, patch=patch)
+
 
 # -- Main ---------------------------------------------------------------------
 
