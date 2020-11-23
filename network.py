@@ -2412,6 +2412,19 @@ class Network(object):
 
         self.write_eeprom_unsigned(address=5, offset=12, length=4, value=times)
 
+    def write_eeprom_watchdog_reset_counter(self, times):
+        """Write the watchdog reset counter value to the EEPROM
+
+        Parameters
+        ----------
+
+        times:
+            The value of the watchdog reset counter for the current receiver
+
+        """
+
+        self.write_eeprom_unsigned(address=5, offset=16, length=4, value=times)
+
 
 # -- Main ---------------------------------------------------------------------
 

@@ -379,12 +379,6 @@ class TestSTH(TestNode):
                                                  offset=16,
                                                  length=4)
 
-        def write_watchdog_reset_counter(times):
-            self.can.write_eeprom_unsigned(address=5,
-                                           offset=16,
-                                           length=4,
-                                           value=times)
-
         def write_production_date(date="1970-12-31"):
             date = date.replace("-", "")
             self.can.write_eeprom_text(address=5,
@@ -621,7 +615,7 @@ class TestSTH(TestNode):
         # ==========================
 
         watchdog_reset_counter = 0
-        write_watchdog_reset_counter(watchdog_reset_counter)
+        self.can.write_eeprom_watchdog_reset_counter(watchdog_reset_counter)
         cls.watchdog_reset_counter = read_watchdog_reset_counter()
         self.assertEqual(
             watchdog_reset_counter, cls.watchdog_reset_counter,
