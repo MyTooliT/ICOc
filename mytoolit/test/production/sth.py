@@ -367,13 +367,6 @@ class TestSTH(TestNode):
                 f"{description} {milliseconds_read} ms does not match " +
                 f" written value of {milliseconds} ms")
 
-        def read_production_date():
-            date = self.can.read_eeprom_text(address=5, offset=20, length=8)
-            year = date[0:4]
-            month = date[4:6]
-            day = date[6:8]
-            return f"{year}-{month}-{day}"
-
         def read_batch_number():
             return self.can.read_eeprom_unsigned(address=5,
                                                  offset=28,
@@ -618,7 +611,7 @@ class TestSTH(TestNode):
 
         production_date = str(settings.STH.Production_Date)
         self.can.write_eeprom_production_date(production_date)
-        cls.production_date = read_production_date()
+        cls.production_date = self.can.read_eeprom_production_date()
         self.assertEqual(
             production_date, cls.production_date,
             f"Written production date “{production_date}” does not match " +

@@ -2437,6 +2437,22 @@ class Network(object):
 
         self.write_eeprom_unsigned(address=5, offset=16, length=4, value=times)
 
+    def read_eeprom_production_date(self):
+        """Retrieve the production date from the EEPROM
+
+        Returns
+        -------
+
+        The production date of the current receiver
+
+        """
+
+        date = self.read_eeprom_text(address=5, offset=20, length=8)
+        year = date[0:4]
+        month = date[4:6]
+        day = date[6:8]
+        return f"{year}-{month}-{day}"
+
     def write_eeprom_production_date(self, date="1970-12-31"):
         """Write the production date to the EEPROM
 
