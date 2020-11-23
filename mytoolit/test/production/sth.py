@@ -374,13 +374,6 @@ class TestSTH(TestNode):
             day = date[6:8]
             return f"{year}-{month}-{day}"
 
-        def write_production_date(date="1970-12-31"):
-            date = date.replace("-", "")
-            self.can.write_eeprom_text(address=5,
-                                       offset=20,
-                                       length=8,
-                                       text=date)
-
         def read_batch_number():
             return self.can.read_eeprom_unsigned(address=5,
                                                  offset=28,
@@ -624,7 +617,7 @@ class TestSTH(TestNode):
         # ===================
 
         production_date = str(settings.STH.Production_Date)
-        write_production_date(production_date)
+        self.can.write_eeprom_production_date(production_date)
         cls.production_date = read_production_date()
         self.assertEqual(
             production_date, cls.production_date,

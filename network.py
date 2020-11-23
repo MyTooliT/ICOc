@@ -2437,6 +2437,20 @@ class Network(object):
 
         self.write_eeprom_unsigned(address=5, offset=16, length=4, value=times)
 
+    def write_eeprom_production_date(self, date="1970-12-31"):
+        """Write the production date to the EEPROM
+
+        Parameters
+        ----------
+
+        date:
+             The production date of the current receiver
+
+        """
+
+        date = date.replace("-", "")
+        self.write_eeprom_text(address=5, offset=20, length=8, text=date)
+
 
 # -- Main ---------------------------------------------------------------------
 
