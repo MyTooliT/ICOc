@@ -2068,6 +2068,22 @@ class Network(object):
 
         return self.read_eeprom_unsigned(address=0, offset=15, length=4)
 
+    def write_eeprom_sleep_time_2(self, milliseconds):
+        """Write the value of sleep time 2 to the EEPROM
+
+        Parameters
+        ----------
+
+        milliseconds
+            The value for sleep time 2 in milliseconds
+
+        """
+
+        self.write_eeprom_unsigned(address=0,
+                                   offset=15,
+                                   value=milliseconds,
+                                   length=4)
+
 
 # -- Main ---------------------------------------------------------------------
 
