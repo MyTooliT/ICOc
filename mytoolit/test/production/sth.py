@@ -374,11 +374,6 @@ class TestSTH(TestNode):
             day = date[6:8]
             return f"{year}-{month}-{day}"
 
-        def read_under_voltage_counter():
-            return self.can.read_eeprom_unsigned(address=5,
-                                                 offset=12,
-                                                 length=4)
-
         def read_watchdog_reset_counter():
             return self.can.read_eeprom_unsigned(address=5,
                                                  offset=16,
@@ -613,7 +608,8 @@ class TestSTH(TestNode):
 
         under_voltage_counter = 0
         self.can.write_eeprom_under_voltage_counter(under_voltage_counter)
-        cls.under_voltage_counter = read_under_voltage_counter()
+        cls.under_voltage_counter = self.can.read_eeprom_under_voltage_counter(
+        )
         self.assertEqual(
             under_voltage_counter, cls.under_voltage_counter,
             f"Written under voltage counter value “{under_voltage_counter}” " +

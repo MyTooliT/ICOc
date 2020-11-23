@@ -2387,6 +2387,18 @@ class Network(object):
                                    length=4,
                                    value=seconds)
 
+    def read_eeprom_under_voltage_counter(self):
+        """Retrieve the under voltage counter value from the EEPROM
+
+        Returns
+        -------
+
+        The number of time the voltage was too low for the current receiver
+
+        """
+
+        return self.read_eeprom_unsigned(address=5, offset=12, length=4)
+
     def write_eeprom_under_voltage_counter(self, times):
         """Write the under voltage counter value to the EEPROM
 
