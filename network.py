@@ -2218,6 +2218,22 @@ class Network(object):
 
         return self.read_eeprom_text(address=4, offset=24, length=8)
 
+    def write_eeprom_release_name(self, text):
+        """Write the release name to the EEPROM
+
+        Parameters
+        ----------
+
+        text:
+            The new name of the release
+
+        """
+
+        return self.write_eeprom_text(address=4,
+                                      offset=24,
+                                      length=8,
+                                      text=text)
+
 
 # -- Main ---------------------------------------------------------------------
 

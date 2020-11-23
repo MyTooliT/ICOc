@@ -367,12 +367,6 @@ class TestSTH(TestNode):
                 f"{description} {milliseconds_read} ms does not match " +
                 f" written value of {milliseconds} ms")
 
-        def write_release_name(text):
-            return self.can.write_eeprom_text(address=4,
-                                              offset=24,
-                                              length=8,
-                                              text=text)
-
         def read_serial_number():
             return self.can.read_eeprom_text(address=4, offset=32, length=32)
 
@@ -591,7 +585,7 @@ class TestSTH(TestNode):
         # itself. However, according to tests with SHAs with an empty EEPROM
         # this is not the case.
         release_name = settings.STH.Firmware.Release_Name
-        write_release_name(release_name)
+        self.can.write_eeprom_release_name(release_name)
         cls.release_name = self.can.read_eeprom_release_name()
         self.assertEqual(
             release_name, cls.release_name,
