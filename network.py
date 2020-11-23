@@ -2495,6 +2495,20 @@ class Network(object):
                                    length=4,
                                    value=number)
 
+    def write_eeprom_x_axis_acceleration_slope(self, slope):
+        """Write the acceleration slope of the x-axis to the EEPROM
+
+        Parameters
+        ----------
+
+        slope:
+            The increase of the acceleration value for one step of the ADC in
+            multiples of g₀
+
+        """
+
+        self.write_eeprom_float(address=8, offset=0, value=slope)
+
 
 # -- Main ---------------------------------------------------------------------
 

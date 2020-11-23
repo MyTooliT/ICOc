@@ -370,9 +370,6 @@ class TestSTH(TestNode):
         def read_acceleration_slope():
             return self.can.read_eeprom_float(address=8, offset=0)
 
-        def write_acceleration_slope(slope):
-            self.can.write_eeprom_float(address=8, offset=0, value=slope)
-
         def read_acceleration_offset():
             return self.can.read_eeprom_float(address=8, offset=4)
 
@@ -626,7 +623,7 @@ class TestSTH(TestNode):
         acceleration_max = sensor.Acceleration.Maximum
         adc_max = 0xffff
         acceleration_slope = acceleration_max / adc_max
-        write_acceleration_slope(acceleration_slope)
+        self.can.write_eeprom_x_axis_acceleration_slope(acceleration_slope)
         cls.acceleration_slope = read_acceleration_slope()
         self.assertAlmostEqual(
             acceleration_slope,
