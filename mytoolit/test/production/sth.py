@@ -367,9 +367,6 @@ class TestSTH(TestNode):
                 f"{description} {milliseconds_read} ms does not match " +
                 f" written value of {milliseconds} ms")
 
-        def read_serial_number():
-            return self.can.read_eeprom_text(address=4, offset=32, length=32)
-
         def write_serial_number(text):
             self.can.write_eeprom_text(address=4,
                                        offset=32,
@@ -598,7 +595,7 @@ class TestSTH(TestNode):
 
         serial_number = str(settings.STH.Serial_Number)
         write_serial_number(serial_number)
-        cls.serial_number = read_serial_number()
+        cls.serial_number = self.can.read_eeprom_serial_number()
         self.assertEqual(
             serial_number, cls.serial_number,
             f"Written serial number “{serial_number}” does not " +

@@ -2234,6 +2234,18 @@ class Network(object):
                                       length=8,
                                       text=text)
 
+    def read_eeprom_serial_number(self):
+        """Retrieve the serial number from the EEPROM
+
+        Returns
+        -------
+
+        The serial number of the current receiver
+
+        """
+
+        return self.read_eeprom_text(address=4, offset=32, length=32)
+
 
 # -- Main ---------------------------------------------------------------------
 
