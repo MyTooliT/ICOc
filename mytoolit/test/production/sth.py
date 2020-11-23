@@ -357,16 +357,6 @@ class TestSTH(TestNode):
     def test_eeprom(self):
         """Test if reading and writing the EEPROM works"""
 
-        def read_write_time(read_function, write_function, variable,
-                            description, milliseconds):
-            write_function(milliseconds)
-            milliseconds_read = read_function()
-            setattr(type(self), variable, milliseconds_read)
-            self.assertEqual(
-                milliseconds_read, milliseconds,
-                f"{description} {milliseconds_read} ms does not match " +
-                f" written value of {milliseconds} ms")
-
         cls = type(self)
 
         # ========
@@ -400,6 +390,16 @@ class TestSTH(TestNode):
         # =========================
         # = Sleep & Advertisement =
         # =========================
+
+        def read_write_time(read_function, write_function, variable,
+                            description, milliseconds):
+            write_function(milliseconds)
+            milliseconds_read = read_function()
+            setattr(type(self), variable, milliseconds_read)
+            self.assertEqual(
+                milliseconds_read, milliseconds,
+                f"{description} {milliseconds_read} ms does not match " +
+                f" written value of {milliseconds} ms")
 
         read_write_time(read_function=self.can.read_eeprom_sleep_time_1,
                         write_function=self.can.write_eeprom_sleep_time_1,
