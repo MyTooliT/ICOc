@@ -2309,6 +2309,18 @@ class Network(object):
 
         self.write_eeprom(address=4, offset=192, length=64, data=data)
 
+    def read_eeprom_power_on_cycles(self):
+        """Retrieve the number of power on cycles from the EEPROM
+
+        Returns
+        -------
+
+        The number of power on cycles of the current receiver
+
+        """
+
+        return self.read_eeprom_unsigned(address=5, offset=0, length=4)
+
 
 # -- Main ---------------------------------------------------------------------
 
