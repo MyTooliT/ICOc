@@ -2284,6 +2284,18 @@ class Network(object):
 
         self.write_eeprom_text(address=4, offset=64, length=128, text=text)
 
+    def read_eeprom_oem_data(self):
+        """Retrieve the OEM data from the EEPROM
+
+        Returns
+        -------
+
+        The OEM data of the current receiver
+
+        """
+
+        return self.read_eeprom(address=4, offset=192, length=64)
+
     def write_eeprom_oem_data(self, data):
         """Write OEM data to the EEPROM
 
