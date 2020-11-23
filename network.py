@@ -2056,6 +2056,18 @@ class Network(object):
                                    value=milliseconds,
                                    length=2)
 
+    def read_eeprom_sleep_time_2(self):
+        """Retrieve sleep time 2 from the EEPROM
+
+        Returns
+        -------
+
+        The current value of sleep time 2 in milliseconds
+
+        """
+
+        return self.read_eeprom_unsigned(address=0, offset=15, length=4)
+
 
 # -- Main ---------------------------------------------------------------------
 
