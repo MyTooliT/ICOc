@@ -6,6 +6,7 @@ import math
 from ctypes import c_byte
 from sys import stderr
 from logging import getLogger, FileHandler, Formatter, DEBUG
+from semantic_version import Version
 from struct import pack, unpack
 from time import time, sleep
 
@@ -2150,8 +2151,9 @@ class Network(object):
 
         """
 
-        return "{}.{}.{}".format(
-            *self.read_eeprom(address=4, offset=13, length=3))
+        major, minor, patch = self.read_eeprom(address=4, offset=13, length=3)
+
+        return Version(major=major, minor=minor, patch=patch)
 
 
 # -- Main ---------------------------------------------------------------------

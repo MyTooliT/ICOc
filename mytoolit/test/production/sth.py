@@ -584,7 +584,7 @@ class TestSTH(TestNode):
         write_hardware_revision(hardware_revision)
         cls.hardware_revision = self.can.read_eeprom_hardware_revision()
         self.assertEqual(
-            hardware_revision, cls.hardware_revision,
+            hardware_revision, f"{cls.hardware_revision}",
             f"Written hardware revision “{hardware_revision}” does not " +
             f"match read hardware revision “{cls.hardware_revision}”")
 

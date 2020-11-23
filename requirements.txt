@@ -7,4 +7,5 @@ openpyxl
 pdfrw
 python-can
 reportlab
+semantic_version
 windows-curses
