@@ -2460,14 +2460,14 @@ class Network(object):
         ----------
 
         date:
-             The production date of the current receiver
+            The production date of the current receiver
 
         """
 
         date = date.replace("-", "")
         self.write_eeprom_text(address=5, offset=20, length=8, text=date)
 
-    def read_batch_number(self):
+    def read_eeprom_batch_number(self):
         """Retrieve the batch number from the EEPROM
 
         Returns
@@ -2486,7 +2486,7 @@ class Network(object):
         ----------
 
         number:
-             The batch number of the current receiver
+            The batch number of the current receiver
 
         """
 
