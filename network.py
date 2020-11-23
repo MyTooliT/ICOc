@@ -2334,6 +2334,18 @@ class Network(object):
 
         self.write_eeprom_unsigned(address=5, offset=0, length=4, value=times)
 
+    def read_eeprom_power_off_cycles(self):
+        """Retrieve the number of power off cycles from the EEPROM
+
+        Returns
+        -------
+
+        The number of power off cycles of the current receiver
+
+        """
+
+        return self.read_eeprom_unsigned(address=5, offset=4, length=4)
+
     def write_eeprom_power_off_cycles(self, times):
         """Write the number of power off cycles to the EEPROM
 
