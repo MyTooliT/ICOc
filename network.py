@@ -2467,6 +2467,18 @@ class Network(object):
         date = date.replace("-", "")
         self.write_eeprom_text(address=5, offset=20, length=8, text=date)
 
+    def read_batch_number(self):
+        """Retrieve the batch number from the EEPROM
+
+        Returns
+        -------
+
+        The batch number of the current receiver
+
+        """
+
+        return self.read_eeprom_unsigned(address=5, offset=28, length=4)
+
     def write_eeprom_batch_number(self, number):
         """Write the production date to the EEPROM
 

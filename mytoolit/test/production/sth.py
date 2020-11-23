@@ -367,11 +367,6 @@ class TestSTH(TestNode):
                 f"{description} {milliseconds_read} ms does not match " +
                 f" written value of {milliseconds} ms")
 
-        def read_batch_number():
-            return self.can.read_eeprom_unsigned(address=5,
-                                                 offset=28,
-                                                 length=4)
-
         def read_acceleration_slope():
             return self.can.read_eeprom_float(address=8, offset=0)
 
@@ -617,7 +612,7 @@ class TestSTH(TestNode):
 
         batch_number = settings.STH.Batch_Number
         self.can.write_eeprom_batch_number(batch_number)
-        cls.batch_number = read_batch_number()
+        cls.batch_number = self.can.read_eeprom_batch_number()
         self.assertEqual(
             batch_number, cls.batch_number,
             f"Written batch “{batch_number}” does not match " +
