@@ -377,12 +377,6 @@ class TestSTH(TestNode):
         def read_power_off_cycles():
             return self.can.read_eeprom_unsigned(address=5, offset=4, length=4)
 
-        def write_power_off_cycles(times):
-            self.can.write_eeprom_unsigned(address=5,
-                                           offset=4,
-                                           length=4,
-                                           value=times)
-
         def read_operating_time():
             return self.can.read_eeprom_unsigned(address=5, offset=8, length=4)
 
@@ -611,7 +605,7 @@ class TestSTH(TestNode):
             f"“{cls.power_on_cycles}”")
 
         power_off_cycles = 0
-        write_power_off_cycles(power_off_cycles)
+        self.can.write_eeprom_power_off_cycles(power_off_cycles)
         cls.power_off_cycles = read_power_off_cycles()
         self.assertEqual(
             power_off_cycles, cls.power_off_cycles,
