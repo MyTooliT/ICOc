@@ -2187,6 +2187,25 @@ class Network(object):
         major, minor, patch = self.read_eeprom(address=4, offset=21, length=3)
         return Version(major=major, minor=minor, patch=patch)
 
+    def write_eeprom_firmware_version(self, version):
+        """Write firmware version to the EEPROM
+
+        Parameters
+        ----------
+
+        version:
+            The new firmware version of the current receiver
+
+        """
+
+        if isinstance(version, str):
+            version = Version(version)
+
+        self.write_eeprom(address=4,
+                          offset=21,
+                          length=3,
+                          data=[version.major, version.minor, version.patch])
+
 
 # -- Main ---------------------------------------------------------------------
 

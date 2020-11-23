@@ -367,12 +367,6 @@ class TestSTH(TestNode):
                 f"{description} {milliseconds_read} ms does not match " +
                 f" written value of {milliseconds} ms")
 
-        def write_firmware_version(version):
-            self.can.write_eeprom(address=4,
-                                  offset=21,
-                                  length=3,
-                                  data=list(map(int, version.split("."))))
-
         def read_release_name():
             return self.can.read_eeprom_text(address=4, offset=24, length=8)
 
@@ -585,7 +579,7 @@ class TestSTH(TestNode):
         # The STH seems to define two different firmware version numbers. We
         # overwrite the version stored in the EEPROM with the one read, when
         # the test connected to the STH.
-        write_firmware_version(cls.firmware_version)
+        self.can.write_eeprom_firmware_version(cls.firmware_version)
         firmware_version = self.can.read_eeprom_firmware_version()
         self.assertEqual(
             cls.firmware_version, f"{firmware_version}",
