@@ -2112,6 +2112,18 @@ class Network(object):
                                    value=milliseconds,
                                    length=2)
 
+    def read_eeprom_gtin(self):
+        """Read the global trade identifier number (GTIN) from the EEPROM
+
+        Returns
+        -------
+
+        The GTIN of the current receiver
+
+        """
+
+        return self.read_eeprom_unsigned(address=4, offset=0, length=8)
+
 
 # -- Main ---------------------------------------------------------------------
 
