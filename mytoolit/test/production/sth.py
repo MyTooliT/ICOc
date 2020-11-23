@@ -379,12 +379,6 @@ class TestSTH(TestNode):
                                                  offset=12,
                                                  length=4)
 
-        def write_under_voltage_counter(times):
-            self.can.write_eeprom_unsigned(address=5,
-                                           offset=12,
-                                           length=4,
-                                           value=times)
-
         def read_watchdog_reset_counter():
             return self.can.read_eeprom_unsigned(address=5,
                                                  offset=16,
@@ -618,7 +612,7 @@ class TestSTH(TestNode):
         # =========================
 
         under_voltage_counter = 0
-        write_under_voltage_counter(under_voltage_counter)
+        self.can.write_eeprom_under_voltage_counter(under_voltage_counter)
         cls.under_voltage_counter = read_under_voltage_counter()
         self.assertEqual(
             under_voltage_counter, cls.under_voltage_counter,

@@ -2387,6 +2387,19 @@ class Network(object):
                                    length=4,
                                    value=seconds)
 
+    def write_eeprom_under_voltage_counter(self, times):
+        """Write the under voltage counter value to the EEPROM
+
+        Parameters
+        ----------
+
+        times:
+            The number of time the voltage was too low
+
+        """
+
+        self.write_eeprom_unsigned(address=5, offset=12, length=4, value=times)
+
 
 # -- Main ---------------------------------------------------------------------
 
