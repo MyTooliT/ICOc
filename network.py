@@ -2359,6 +2359,18 @@ class Network(object):
 
         self.write_eeprom_unsigned(address=5, offset=4, length=4, value=times)
 
+    def read_eeprom_operating_time(self):
+        """Retrieve the operating time from the EEPROM
+
+        Returns
+        -------
+
+        The operating time of the current receiver in seconds
+
+        """
+
+        return self.read_eeprom_unsigned(address=5, offset=8, length=4)
+
     def write_eeprom_operating_time(self, seconds):
         """Write operating time to the EEPROM
 

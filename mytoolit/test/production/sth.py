@@ -374,9 +374,6 @@ class TestSTH(TestNode):
             day = date[6:8]
             return f"{year}-{month}-{day}"
 
-        def read_operating_time():
-            return self.can.read_eeprom_unsigned(address=5, offset=8, length=4)
-
         def read_under_voltage_counter():
             return self.can.read_eeprom_unsigned(address=5,
                                                  offset=12,
@@ -610,7 +607,7 @@ class TestSTH(TestNode):
 
         operating_time = 0
         self.can.write_eeprom_operating_time(operating_time)
-        cls.operating_time = read_operating_time()
+        cls.operating_time = self.can.read_eeprom_operating_time()
         self.assertEqual(
             operating_time, cls.operating_time,
             f"Written operating time “{operating_time}” " +
