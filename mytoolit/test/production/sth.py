@@ -427,98 +427,11 @@ class TestSTH(TestNode):
             description="Advertisement Time 2",
             milliseconds=settings.STH.Bluetooth.Advertisement_Time_2)
 
-        # ========
-        # = GTIN =
-        # ========
-
-        gtin = settings.STH.GTIN
-        self.can.write_eeprom_gtin(gtin)
-        cls.gtin = self.can.read_eeprom_gtin()
-        self.assertEqual(
-            gtin, cls.gtin,
-            f"Written GTIN “{gtin}” does not match read GTIN “{cls.gtin}”")
-
-        # ============
-        # = Hardware =
-        # ============
-
-        hardware_revision = settings.STH.Hardware_Revision
-        self.can.write_eeprom_hardware_revision(hardware_revision)
-        cls.hardware_revision = self.can.read_eeprom_hardware_revision()
-        self.assertEqual(
-            hardware_revision, f"{cls.hardware_revision}",
-            f"Written hardware revision “{hardware_revision}” does not " +
-            f"match read hardware revision “{cls.hardware_revision}”")
-
-        # ============
-        # = Firmware =
-        # ============
-
-        # The STH seems to define two different firmware version numbers. We
-        # overwrite the version stored in the EEPROM with the one read, when
-        # the test connected to the STH.
-        self.can.write_eeprom_firmware_version(cls.firmware_version)
-        firmware_version = self.can.read_eeprom_firmware_version()
-        self.assertEqual(
-            cls.firmware_version, f"{firmware_version}",
-            f"Written firmware version “{cls.firmware_version}” does not " +
-            f"match read firmware version “{firmware_version}”")
-
         # ================
-        # = Release Name =
+        # = Product Data =
         # ================
 
-        # Originally we assumed that this value would be set by the firmware
-        # itself. However, according to tests with SHAs with an empty EEPROM
-        # this is not the case.
-        release_name = settings.STH.Firmware.Release_Name
-        self.can.write_eeprom_release_name(release_name)
-        cls.release_name = self.can.read_eeprom_release_name()
-        self.assertEqual(
-            release_name, cls.release_name,
-            f"Written firmware release name “{release_name}” does not " +
-            f"match read firmware release name “{cls.release_name}”")
-
-        # =================
-        # = Serial Number =
-        # =================
-
-        serial_number = str(settings.STH.Serial_Number)
-        self.can.write_eeprom_serial_number(serial_number)
-        cls.serial_number = self.can.read_eeprom_serial_number()
-        self.assertEqual(
-            serial_number, cls.serial_number,
-            f"Written serial number “{serial_number}” does not " +
-            f"match read serial number “{cls.serial_number}”")
-
-        # ================
-        # = Product Name =
-        # ================
-
-        product_name = str(settings.STH.Product_Name)
-        self.can.write_eeprom_product_name(product_name)
-        cls.product_name = self.can.read_eeprom_product_name()
-        self.assertEqual(
-            product_name, cls.product_name,
-            f"Written product name “{product_name}” does not " +
-            f"match read product name “{cls.product_name}”")
-
-        # ============
-        # = OEM Data =
-        # ============
-
-        oem_data = settings.STH.OEM_Data
-        self.can.write_eeprom_oem_data(oem_data)
-        cls.oem_data = self.can.read_eeprom_oem_data()
-        self.assertListEqual(
-            oem_data, cls.oem_data,
-            f"Written OEM data “{oem_data}” does not " +
-            f"match read OEM data “{cls.oem_data}”")
-        # We currently store the data in text format, to improve the
-        # readability of null bytes in the shell. Please notice, that this will
-        # not always work (depending on the binary data stored in EEPROM
-        # region).
-        cls.oem_data = ''.join(map(chr, cls.oem_data)).replace('\x00', '')
+        super()._test_eeprom_product_data()
 
         # =======================
         # = Power On/Off Cycles =
