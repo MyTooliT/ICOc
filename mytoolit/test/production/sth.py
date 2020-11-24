@@ -431,7 +431,7 @@ class TestSTH(TestNode):
         # = Product Data =
         # ================
 
-        super()._test_eeprom_product_data()
+        super()._test_eeprom_product_data('STH')
 
         # =======================
         # = Power On/Off Cycles =

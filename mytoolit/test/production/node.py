@@ -314,7 +314,7 @@ class TestNode(TestCase):
             f"Flash output did not contain expected output “{expected_output}”"
         )
 
-    def _test_eeprom_product_data(self, node='STH'):
+    def _test_eeprom_product_data(self, node):
         """Test if reading and writing the product data EEPROM page works"""
 
         config = settings.STH if node == 'STH' else settings.STU
