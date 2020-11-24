@@ -37,15 +37,34 @@ class TestSTU(TestNode):
 
         possible_attributes = [
             create_attribute("Name", "{cls.name}"),
+            create_attribute("Production Date",
+                             "{cls.production_date}",
+                             pdf=False),
             create_attribute("GTIN", "{cls.gtin}", pdf=False),
             create_attribute("Product Name", "{cls.product_name}", pdf=False),
             create_attribute("Serial Number", "{cls.serial_number}",
                              pdf=False),
+            create_attribute("Batch Number", "{cls.batch_number}", pdf=False),
             create_attribute("Bluetooth Address", "{cls.bluetooth_mac}"),
             create_attribute("Hardware Revision", "{cls.hardware_revision}"),
             create_attribute("Firmware Version", "{cls.firmware_version}"),
             create_attribute("Release Name", "{cls.release_name}", pdf=False),
             create_attribute("OEM Data", "{cls.oem_data}", pdf=False),
+            create_attribute("Power On Cycles",
+                             "{cls.power_on_cycles}",
+                             pdf=False),
+            create_attribute("Power Off Cycles",
+                             "{cls.power_off_cycles}",
+                             pdf=False),
+            create_attribute("Under Voltage Counter",
+                             "{cls.under_voltage_counter}",
+                             pdf=False),
+            create_attribute("Watchdog Reset Counter",
+                             "{cls.watchdog_reset_counter}",
+                             pdf=False),
+            create_attribute("Operating Time",
+                             "{cls.operating_time} s",
+                             pdf=False),
         ]
 
         return filter_undefined_attributes(cls, possible_attributes)
@@ -103,6 +122,12 @@ class TestSTU(TestNode):
         # ================
 
         super()._test_eeprom_product_data('STU')
+
+        # ==============
+        # = Statistics =
+        # ==============
+
+        super()._test_eeprom_statistics('STU')
 
 
 # -- Main ---------------------------------------------------------------------

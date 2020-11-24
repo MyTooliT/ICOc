@@ -157,6 +157,10 @@ STH:
 
 STU:
 
+  # An ever increasing (32 bit unsigned) number that describes the current
+  # batch that this STU was a part of.
+  Batch Number: 100
+
   Firmware:
     Location:
       # This value should contain the path to a complete image (bootloader and
@@ -182,6 +186,9 @@ STU:
      0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
      0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
      ]
+
+  # The production date of the STH PCB in the format YYYY-MM-DD
+  Production Date: 2020-08-20
 
   # Product name for the  manufacturer (maximum of 64 byte UTF-8 encoded text)
   Product Name: 0
