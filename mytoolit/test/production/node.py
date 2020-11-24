@@ -507,6 +507,23 @@ class TestNode(TestCase):
             f"Written batch “{batch_number}” does not match " +
             f"read batch number “{cls.batch_number}”")
 
+    def _test_eeprom_status(self):
+        """Test if reading and writing the EEPROM status byte works"""
+
+        cls = type(self)
+
+        # =================
+        # = EEPROM Status =
+        # =================
+
+        self.can.write_eeprom_status('Initialized')
+        cls.eeprom_status = self.can.read_eeprom_status()
+        self.assertTrue(
+            cls.eeprom_status.is_initialized(),
+            f"Setting EEPROM status to “Initialized” failed. "
+            "EEPROM status byte currently stores the value "
+            f"“{cls.eeprom_status}”")
+
     def setUp(self):
         """Set up hardware before a single test case"""
 

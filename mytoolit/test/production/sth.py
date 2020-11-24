@@ -472,13 +472,7 @@ class TestSTH(TestNode):
         # = EEPROM Status =
         # =================
 
-        self.can.write_eeprom_status('Initialized')
-        cls.eeprom_status = self.can.read_eeprom_status()
-        self.assertTrue(
-            cls.eeprom_status.is_initialized(),
-            f"Setting EEPROM status to “Initialized” failed. "
-            "EEPROM status byte currently stores the value "
-            f"“{cls.eeprom_status}”")
+        super()._test_eeprom_status()
 
 
 # -- Main ---------------------------------------------------------------------
