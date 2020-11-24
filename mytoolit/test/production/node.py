@@ -332,9 +332,9 @@ class TestNode(TestCase):
             gtin, cls.gtin,
             f"Written GTIN “{gtin}” does not match read GTIN “{cls.gtin}”")
 
-        # ============
-        # = Hardware =
-        # ============
+        # =====================
+        # = Hardware Revision =
+        # =====================
 
         hardware_revision = config.Hardware_Revision
         self.can.write_eeprom_hardware_revision(hardware_revision)
@@ -344,13 +344,13 @@ class TestNode(TestCase):
             f"Written hardware revision “{hardware_revision}” does not " +
             f"match read hardware revision “{cls.hardware_revision}”")
 
-        # ============
-        # = Firmware =
-        # ============
+        # ====================
+        # = Firmware Version =
+        # ====================
 
-        # The STH seems to define two different firmware version numbers. We
+        # Nodes seem to define two different firmware version numbers. We
         # overwrite the version stored in the EEPROM with the one read, when
-        # the test connected to the STH.
+        # the test connected to the node.
         self.can.write_eeprom_firmware_version(cls.firmware_version)
         firmware_version = self.can.read_eeprom_firmware_version()
         self.assertEqual(
@@ -363,8 +363,8 @@ class TestNode(TestCase):
         # ================
 
         # Originally we assumed that this value would be set by the firmware
-        # itself. However, according to tests with SHAs with an empty EEPROM
-        # this is not the case.
+        # itself. However, according to tests with an empty EEPROM this is not
+        # the case.
         release_name = config.Firmware.Release_Name
         self.can.write_eeprom_release_name(release_name)
         cls.release_name = self.can.read_eeprom_release_name()
