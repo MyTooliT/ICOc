@@ -1,6 +1,6 @@
 # Version 1.0.7
 
-## SPU Test
+## STU Test
 
 - Add first version of [new test for the STU](../mytoolit/test/production/stu.py). For more information, please take a look at the section “Production Tests” of the [main readme](../ReadMe.md).
 
