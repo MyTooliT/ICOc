@@ -184,15 +184,6 @@ class TestNode(TestCase):
             cls.report.add_attribute(attribute.description, attribute.value,
                                      node_data)
 
-    def run(self, result=None):
-        """Execute a single test
-
-        We override this method to store data about the test outcome.
-        """
-
-        super().run(result)
-        type(self).report.add_test_result(self.shortDescription(), result)
-
     def _connect(self, receiver=Node('STU 1').value):
         """Create a connection to the STU"""
 
@@ -347,3 +338,12 @@ class TestNode(TestCase):
             return
 
         self._disconnect()
+
+    def run(self, result=None):
+        """Execute a single test
+
+        We override this method to store data about the test outcome.
+        """
+
+        super().run(result)
+        type(self).report.add_test_result(self.shortDescription(), result)
