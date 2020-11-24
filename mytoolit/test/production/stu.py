@@ -36,6 +36,7 @@ class TestSTU(TestNode):
         """
 
         possible_attributes = [
+            create_attribute("Name", "{cls.name}"),
             create_attribute("Bluetooth Address", "{cls.bluetooth_mac}"),
             create_attribute("Firmware Version", "{cls.firmware_version}"),
             create_attribute("Release Name", "{cls.release_name}", pdf=False),
