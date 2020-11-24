@@ -433,91 +433,11 @@ class TestSTH(TestNode):
 
         super()._test_eeprom_product_data('STH')
 
-        # =======================
-        # = Power On/Off Cycles =
-        # =======================
+        # ==============
+        # = Statistics =
+        # ==============
 
-        power_on_cycles = 0
-        self.can.write_eeprom_power_on_cycles(power_on_cycles)
-        cls.power_on_cycles = self.can.read_eeprom_power_on_cycles()
-        self.assertEqual(
-            power_on_cycles, cls.power_on_cycles,
-            f"Written power on cycle value “{power_on_cycles}” " +
-            "does not match read power on cycle value " +
-            f"“{cls.power_on_cycles}”")
-
-        power_off_cycles = 0
-        self.can.write_eeprom_power_off_cycles(power_off_cycles)
-        cls.power_off_cycles = self.can.read_eeprom_power_off_cycles()
-        self.assertEqual(
-            power_off_cycles, cls.power_off_cycles,
-            f"Written power off cycle value “{power_off_cycles}” " +
-            "does not match read power off cycle value " +
-            f"“{cls.power_off_cycles}”")
-
-        # ==================
-        # = Operating Time =
-        # ==================
-
-        operating_time = 0
-        self.can.write_eeprom_operating_time(operating_time)
-        cls.operating_time = self.can.read_eeprom_operating_time()
-        self.assertEqual(
-            operating_time, cls.operating_time,
-            f"Written operating time “{operating_time}” " +
-            "does not match read operating time “{cls.operating_time}”")
-
-        # =========================
-        # = Under Voltage Counter =
-        # =========================
-
-        under_voltage_counter = 0
-        self.can.write_eeprom_under_voltage_counter(under_voltage_counter)
-        cls.under_voltage_counter = self.can.read_eeprom_under_voltage_counter(
-        )
-        self.assertEqual(
-            under_voltage_counter, cls.under_voltage_counter,
-            f"Written under voltage counter value “{under_voltage_counter}” " +
-            "does not match read under voltage counter value " +
-            f"“{cls.under_voltage_counter}”")
-
-        # ==========================
-        # = Watchdog Reset Counter =
-        # ==========================
-
-        watchdog_reset_counter = 0
-        self.can.write_eeprom_watchdog_reset_counter(watchdog_reset_counter)
-        cls.watchdog_reset_counter = (
-            self.can.read_eeprom_watchdog_reset_counter())
-        self.assertEqual(
-            watchdog_reset_counter, cls.watchdog_reset_counter,
-            f"Written watchdog reset counter value " +
-            f"“{watchdog_reset_counter} does not match read watchdog reset " +
-            f"counter value “{cls.watchdog_reset_counter}”")
-
-        # ===================
-        # = Production Date =
-        # ===================
-
-        production_date = str(settings.STH.Production_Date)
-        self.can.write_eeprom_production_date(production_date)
-        cls.production_date = self.can.read_eeprom_production_date()
-        self.assertEqual(
-            production_date, cls.production_date,
-            f"Written production date “{production_date}” does not match " +
-            f"read production date “{cls.production_date}”")
-
-        # ================
-        # = Batch Number =
-        # ================
-
-        batch_number = settings.STH.Batch_Number
-        self.can.write_eeprom_batch_number(batch_number)
-        cls.batch_number = self.can.read_eeprom_batch_number()
-        self.assertEqual(
-            batch_number, cls.batch_number,
-            f"Written batch “{batch_number}” does not match " +
-            f"read batch number “{cls.batch_number}”")
+        super()._test_eeprom_statistics('STH')
 
         # ================
         # = Acceleration =
