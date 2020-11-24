@@ -156,15 +156,43 @@ STH:
     Bare PCB
 
 STU:
+
   Firmware:
     Location:
       # This value should contain the path to a complete image (bootloader and
       # application). This path will be interpreted in relation to the root of
       # the repository.
       Flash: ../STU/builds/manufacturingImageStuv2.1.10.hex
+    Release Name: Valerie
+
+  # Global Trade Item Number
+  GTIN: 0
+
+  # The current version of the PCB design
+  Hardware Revision: 1.3.3
+
+  # OEM specific data
+  OEM Data: [
+     0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+     0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+     0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+     0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+     0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+     0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+     0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+     0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+     ]
+
+  # Product name for the  manufacturer (maximum of 64 byte UTF-8 encoded text)
+  Product Name: 0
+
   Programming Board:
     # Please store the serial number of the programming board that is connected
     # to the STU here. This number should be displayed in the right bottom
     # corner of the LC display, after you connect the programmer to a power
     # source
     Serial Number: *serial
+
+  # Serial number for the manufacturer (maximum of 32 byte UTF-8 encoded text)
+  Serial Number: 0
+

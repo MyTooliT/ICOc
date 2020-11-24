@@ -37,9 +37,15 @@ class TestSTU(TestNode):
 
         possible_attributes = [
             create_attribute("Name", "{cls.name}"),
+            create_attribute("GTIN", "{cls.gtin}", pdf=False),
+            create_attribute("Product Name", "{cls.product_name}", pdf=False),
+            create_attribute("Serial Number", "{cls.serial_number}",
+                             pdf=False),
             create_attribute("Bluetooth Address", "{cls.bluetooth_mac}"),
+            create_attribute("Hardware Revision", "{cls.hardware_revision}"),
             create_attribute("Firmware Version", "{cls.firmware_version}"),
             create_attribute("Release Name", "{cls.release_name}", pdf=False),
+            create_attribute("OEM Data", "{cls.oem_data}", pdf=False),
         ]
 
         return filter_undefined_attributes(cls, possible_attributes)
@@ -91,6 +97,12 @@ class TestSTU(TestNode):
             f"“{expected_name}”")
 
         cls.name = read_name
+
+        # ================
+        # = Product Data =
+        # ================
+
+        super()._test_eeprom_product_data('STU')
 
 
 # -- Main ---------------------------------------------------------------------
