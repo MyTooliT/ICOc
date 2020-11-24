@@ -129,6 +129,12 @@ class TestSTU(TestNode):
 
         super()._test_eeprom_statistics('STU')
 
+        # =================
+        # = EEPROM Status =
+        # =================
+
+        super()._test_eeprom_status()
+
 
 # -- Main ---------------------------------------------------------------------
 
