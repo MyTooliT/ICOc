@@ -224,17 +224,13 @@ class TestNode(TestCase):
 
         self.can.__exit__()
 
-    def _test_connection(self, node):
-        """Check connection to node
+    def _test_connection(self):
+        """Check connection to node"""
 
-        Parameters
-        ----------
-
-        node:
-            A string that identifies the node for which you want to run the
-            connection test (e.g. `STH`)
-
-        """
+        # The last three characters of the calling subclass (`TestSTU` or
+        # `TestSTH`) contain the name of the node (`STU` or `STH`)
+        cls = type(self)
+        node = cls.__name__[-3:]
 
         # Send message to STH
         command = self.can.CanCmd(MyToolItBlock['System'],
