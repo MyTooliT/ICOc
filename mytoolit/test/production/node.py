@@ -61,7 +61,7 @@ class TestNode(TestCase):
     possible_attributes = [
         create_attribute("EEPROM Status", "{cls.eeprom_status}", pdf=False),
         create_attribute("Name", "{cls.name}"),
-        create_attribute("Status", settings.STH.Status),
+        create_attribute("Status", "{cls.status}"),
         create_attribute("Production Date", "{cls.production_date}",
                          pdf=False),
         create_attribute("GTIN", "{cls.gtin}", pdf=False),

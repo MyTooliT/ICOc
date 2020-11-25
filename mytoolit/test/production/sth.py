@@ -56,6 +56,16 @@ from SthLimits import SthLimits
 class TestSTH(TestNode):
     """This class contains tests for the Sensory Tool Holder (STH)"""
 
+    @classmethod
+    def setUpClass(cls):
+        """Set up data for whole test"""
+
+        super().setUpClass()
+
+        # The status attribute (`Epoxied` or `Bare PCB`) only applies to the
+        # STH
+        cls.status = settings.STH.Status
+
     def _connect(self):
         """Create a connection to the STH"""
 
