@@ -1,8 +1,10 @@
 # Version 1.0.7
 
-## STU Test
+## Logging
 
-- Add first version of [new test for the STU](../mytoolit/test/production/stu.py). For more information, please take a look at the section “Production Tests” of the [main readme](../ReadMe.md).
+- The [main CAN class](../Network.py) now logs the received CAN messages in a file called `can.log`, if you specify the level `DEBUG` in the [configuration file][].
+
+[configuration file]: ../Configuration/config.yaml
 
 ## STH Test
 
@@ -11,11 +13,9 @@
 - Removed the over the air (OTA) test, since it requires the command `ota-dfu`, which needs to be compiled first, and often does not work reliable.
 - The [renaming of the STH in the EEPROM test](https://github.com/MyTooliT/ICOc/issues/10) should now work more reliable.
 
-## Logging
+## STU Test
 
-- The [main CAN class](../Network.py) now logs the received CAN messages in a file called `can.log`, if you specify the level `DEBUG` in the [configuration file][].
-
-[configuration file]: ../Configuration/config.yaml
+- Add first version of [new test for the STU](../mytoolit/test/production/stu.py). For more information, please take a look at the section “Production Tests” of the [main readme](../ReadMe.md).
 
 # Version 1.0.6
 
