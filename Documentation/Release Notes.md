@@ -2,7 +2,7 @@
 
 ## Logging
 
-- The [main CAN class](../Network.py) now logs the received CAN messages in a file called `can.log`, if you specify the level `DEBUG` in the [configuration file][].
+- The [main CAN class](../network.py) now logs the received CAN messages in a file called `can.log`, if you specify the level `DEBUG` in the [configuration file][].
 
 [configuration file]: ../Configuration/config.yaml
 
