@@ -22,7 +22,7 @@ from MyToolItCommands import (
     CalibMeassurementTypeName, DataSets, MyToolItBlock, MyToolItConfiguration,
     MyToolItEeprom, MyToolItProductData, MyToolItStreaming, MyToolItSystem,
     payload2Hex, sArray2String, sDateClock, SystemCommandBlueTooth, VRefName)
-from MyToolItNetworkNumbers import MyToolItNetworkNr, MyToolItNetworkName
+from MyToolItNetworkNumbers import MyToolItNetworkName
 from Logger import Logger
 
 
@@ -38,8 +38,8 @@ class Network(object):
     def __init__(self,
                  testMethodName='unknown_test_method.txt',
                  testMethodNameError='unknown_test_method_error.txt',
-                 sender=MyToolItNetworkNr['SPU1'],
-                 receiver=MyToolItNetworkNr['STH1'],
+                 sender=Node('SPU 1').value,
+                 receiver=Node('STH 1').value,
                  prescaler=2,
                  acquisition=8,
                  oversampling=64,
@@ -1102,7 +1102,7 @@ class Network(object):
         psw0 = self.tWriteFrameWaitAckRetries(message.pcan_message,
                                               retries=5)["Payload"]
 
-        if MyToolItNetworkNr.inverse[receiver].startswith('STH'):
+        if Node(receiver).is_sth():
             return NodeStatusSTH(psw0[0:4])
         return NodeStatusSTU(psw0[0:4])
 
@@ -1117,7 +1117,7 @@ class Network(object):
         payload = self.tWriteFrameWaitAckRetries(message.pcan_message,
                                                  retries=5)["Payload"]
         status_word_1_bytes = payload[0:4]
-        if MyToolItNetworkNr.inverse[receiver].startswith('STH'):
+        if Node(receiver).is_sth():
             return ErrorStatusSTH(status_word_1_bytes)
         return ErrorStatusSTU(status_word_1_bytes)
 
@@ -1553,7 +1553,7 @@ class Network(object):
     def sProductData(self, name, bLog=True):
         sReturn = ""
         if "GTIN" == name:
-            index = self.cmdSend(MyToolItNetworkNr["STH1"],
+            index = self.cmdSend(Node("STH1").value,
                                  MyToolItBlock["ProductData"],
                                  MyToolItProductData["GTIN"], [],
                                  log=bLog)
@@ -1562,7 +1562,7 @@ class Network(object):
                 self.Logger.Info("GTIN: " + str(iGtin))
             sReturn = str(iGtin)
         elif "HardwareRevision" == name:
-            index = self.cmdSend(MyToolItNetworkNr["STH1"],
+            index = self.cmdSend(Node("STH1").value,
                                  MyToolItBlock["ProductData"],
                                  MyToolItProductData["HardwareRevision"], [],
                                  log=bLog)
@@ -1572,7 +1572,7 @@ class Network(object):
             sReturn = str(tHwRev[5]) + "." + str(tHwRev[6]) + "." + str(
                 tHwRev[7])
         elif "FirmwareVersion" == name:
-            index = self.cmdSend(MyToolItNetworkNr["STH1"],
+            index = self.cmdSend(Node("STH1").value,
                                  MyToolItBlock["ProductData"],
                                  MyToolItProductData["FirmwareVersion"], [],
                                  log=bLog)
@@ -1582,7 +1582,7 @@ class Network(object):
             sReturn = str(tFirmwareVersion[5]) + "." + str(
                 tFirmwareVersion[6]) + "." + str(tFirmwareVersion[7])
         elif "ReleaseName" == name:
-            index = self.cmdSend(MyToolItNetworkNr["STH1"],
+            index = self.cmdSend(Node("STH1").value,
                                  MyToolItBlock["ProductData"],
                                  MyToolItProductData["ReleaseName"], [],
                                  log=bLog)
@@ -1593,7 +1593,7 @@ class Network(object):
         elif "SerialNumber" == name:
             aiSerialNumber = []
             for i in range(1, 5):
-                index = self.cmdSend(MyToolItNetworkNr["STH1"],
+                index = self.cmdSend(Node("STH1").value,
                                      MyToolItBlock["ProductData"],
                                      MyToolItProductData["SerialNumber" +
                                                          str(i)], [],
@@ -1610,7 +1610,7 @@ class Network(object):
         elif "Name" == name:
             aiName = []
             for i in range(1, 17):
-                index = self.cmdSend(MyToolItNetworkNr["STH1"],
+                index = self.cmdSend(Node("STH1").value,
                                      MyToolItBlock["ProductData"],
                                      MyToolItProductData["Name" + str(i)], [],
                                      log=bLog)
@@ -1627,7 +1627,7 @@ class Network(object):
             aiOemFreeUse = []
             for i in range(1, 9):
                 index = self.cmdSend(
-                    MyToolItNetworkNr["STH1"], MyToolItBlock["ProductData"],
+                    Node("STH1").value, MyToolItBlock["ProductData"],
                     MyToolItProductData["OemFreeUse" + str(i)], [])
                 aiOemFreeUse.extend(self.getReadMessageData(index))
             sReturn = payload2Hex(aiOemFreeUse)
@@ -1709,9 +1709,9 @@ class Network(object):
         The name of the software release running on the specified node
         """
 
-        index = self.cmdSend(MyToolItNetworkNr[node],
-                             MyToolItBlock["ProductData"],
-                             MyToolItProductData["ReleaseName"], [])
+        index = self.cmdSend(
+            Node(node).value, MyToolItBlock["ProductData"],
+            MyToolItProductData["ReleaseName"], [])
         aiName = self.getReadMessageData(index)
         return sArray2String(aiName)
 
