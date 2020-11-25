@@ -208,7 +208,16 @@ class TestNode(TestCase):
         self.can.__exit__()
 
     def _test_connection(self, node):
-        """Check connection to node"""
+        """Check connection to node
+
+        Parameters
+        ----------
+
+        node:
+            A string that identifies the node for which you want to run the
+            connection test (e.g. `STH`)
+
+        """
 
         # Send message to STH
         command = self.can.CanCmd(MyToolItBlock['System'],
@@ -252,7 +261,16 @@ class TestNode(TestCase):
             f"received data “{received_data_byte}”")
 
     def _test_firmware_flash(self, node):
-        """Upload bootloader and application into node"""
+        """Upload bootloader and application into node
+
+        Parameters
+        ----------
+
+        node:
+            A string that identifies the node for which you want to run the
+            test (e.g. `STH`)
+
+        """
 
         programming_board_serial_number = (
             settings.STH.Programming_Board.Serial_Number
@@ -315,7 +333,16 @@ class TestNode(TestCase):
         )
 
     def _test_eeprom_product_data(self, node):
-        """Test if reading and writing the product data EEPROM page works"""
+        """Test if reading and writing the product data EEPROM page works
+
+        Parameters
+        ----------
+
+        node:
+            A string that identifies the node for which you want to run the
+            test (e.g. `STU`)
+
+        """
 
         config = settings.STH if node == 'STH' else settings.STU
 
@@ -415,7 +442,16 @@ class TestNode(TestCase):
         cls.oem_data = ''.join(map(chr, cls.oem_data)).replace('\x00', '')
 
     def _test_eeprom_statistics(self, node):
-        """Test if reading and writing the statistics EEPROM page works"""
+        """Test if reading and writing the statistics EEPROM page works
+
+        Parameters
+        ----------
+
+        node:
+            A string that identifies the node for which you want to run the
+            test (e.g. `STH`)
+
+        """
 
         config = settings.STH if node == 'STH' else settings.STU
 
