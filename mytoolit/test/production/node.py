@@ -89,10 +89,68 @@ class TestNode(TestCase):
     """This class contains shared test code for STH and STU
 
     Please note that every subclass of this class has to implement
-
-    - the **class** method `_collect_node_data` and
-    - the method `_read_data`.
+    the method `_read_data`.
     """
+
+    possible_attributes = [
+        create_attribute("EEPROM Status", "{cls.eeprom_status}", pdf=False),
+        create_attribute("Name", "{cls.name}"),
+        create_attribute("Status", settings.STH.Status),
+        create_attribute("Production Date", "{cls.production_date}",
+                         pdf=False),
+        create_attribute("GTIN", "{cls.gtin}", pdf=False),
+        create_attribute("Product Name", "{cls.product_name}", pdf=False),
+        create_attribute("Serial Number", "{cls.serial_number}", pdf=False),
+        create_attribute("Batch Number", "{cls.batch_number}", pdf=False),
+        create_attribute("Bluetooth Address", "{cls.bluetooth_mac}"),
+        create_attribute("RSSI", "{cls.bluetooth_rssi} dBm"),
+        create_attribute("Hardware Revision", "{cls.hardware_revision}"),
+        create_attribute("Firmware Version", "{cls.firmware_version}"),
+        create_attribute("Release Name", "{cls.release_name}", pdf=False),
+        create_attribute("Ratio Noise Maximum",
+                         "{cls.ratio_noise_max:.3f} dB"),
+        create_attribute("Sleep Time 1", "{cls.sleep_time_1} ms", pdf=False),
+        create_attribute("Advertisement Time 1",
+                         "{cls.advertisement_time_1} ms",
+                         pdf=False),
+        create_attribute("Sleep Time 2", "{cls.sleep_time_2} ms", pdf=False),
+        create_attribute("Advertisement Time 2",
+                         "{cls.advertisement_time_2} ms",
+                         pdf=False),
+        create_attribute("OEM Data", "{cls.oem_data}", pdf=False),
+        create_attribute("Power On Cycles", "{cls.power_on_cycles}",
+                         pdf=False),
+        create_attribute("Power Off Cycles",
+                         "{cls.power_off_cycles}",
+                         pdf=False),
+        create_attribute("Under Voltage Counter",
+                         "{cls.under_voltage_counter}",
+                         pdf=False),
+        create_attribute("Watchdog Reset Counter",
+                         "{cls.watchdog_reset_counter}",
+                         pdf=False),
+        create_attribute("Operating Time", "{cls.operating_time} s",
+                         pdf=False),
+        create_attribute("Acceleration Slope",
+                         "{cls.acceleration_slope:.5f}",
+                         pdf=False),
+        create_attribute("Acceleration Offset",
+                         "{cls.acceleration_offset:.3f}",
+                         pdf=False),
+    ]
+
+    @classmethod
+    def _collect_node_data(cls):
+        """Collect data about current node
+
+        Returns
+        -------
+
+        An iterable of defined node attributes stored in simple name space
+        objects
+        """
+
+        return filter_undefined_attributes(cls, cls.possible_attributes)
 
     @classmethod
     def setUpClass(cls):
@@ -138,7 +196,6 @@ class TestNode(TestCase):
     def __output_node_data(cls):
         """Print node information and add it to PDF report"""
 
-        # The method _collect_node_data has to be implemented by the subclass
         attributes = cls._collect_node_data()
         cls.__output_data(attributes)
 
