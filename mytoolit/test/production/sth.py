@@ -27,7 +27,6 @@ from mytoolit.unittest import ExtendedTestRunner
 from mytoolit.utility import convert_mac_base64
 
 from network import Network
-from MyToolItNetworkNumbers import MyToolItNetworkNr
 from MyToolItCommands import (
     ActiveState,
     AdcMax,
@@ -73,7 +72,7 @@ class TestSTH(TestNode):
         super()._connect(receiver=Node('STH 1').value)
 
         # Connect to STH
-        self.can.bBlueToothConnectPollingName(MyToolItNetworkNr['STU1'],
+        self.can.bBlueToothConnectPollingName(Node('STU 1').value,
                                               settings.STH.Name,
                                               log=False)
         sleep(2)
@@ -82,7 +81,7 @@ class TestSTH(TestNode):
         """Tear down connection to STH"""
 
         # Disconnect from STH
-        self.can.bBlueToothDisconnect(MyToolItNetworkNr['STU1'])
+        self.can.bBlueToothDisconnect(Node('STU 1').value)
 
         # Disconnect from STU
         super()._disconnect()
@@ -93,12 +92,12 @@ class TestSTH(TestNode):
         cls = type(self)
 
         cls.bluetooth_mac = int_to_mac_address(
-            self.can.BlueToothAddress(MyToolItNetworkNr['STH1']))
-        cls.bluetooth_rssi = self.can.BlueToothRssi(MyToolItNetworkNr['STH1'])
+            self.can.BlueToothAddress(Node('STH 1').value))
+        cls.bluetooth_rssi = self.can.BlueToothRssi(Node('STH 1').value)
 
-        index = self.can.cmdSend(MyToolItNetworkNr['STH1'],
-                                 MyToolItBlock['ProductData'],
-                                 MyToolItProductData['FirmwareVersion'], [])
+        index = self.can.cmdSend(
+            Node('STH 1').value, MyToolItBlock['ProductData'],
+            MyToolItProductData['FirmwareVersion'], [])
         version = self.can.getReadMessageData(index)[-3:]
 
         cls.firmware_version = '.'.join(map(str, version))
@@ -135,7 +134,7 @@ class TestSTH(TestNode):
 
         # Read 2 byte voltage format
         index = self.can.singleValueCollect(
-            MyToolItNetworkNr['STH1'],
+            Node('STH 1').value,
             MyToolItStreaming['Voltage'],
             # Read voltage 1
             1,
@@ -175,12 +174,11 @@ class TestSTH(TestNode):
         """Test stationary acceleration value"""
 
         # Read acceleration at x-axis
-        index = self.can.singleValueCollect(MyToolItNetworkNr['STH1'],
-                                            MyToolItStreaming['Acceleration'],
-                                            1, 0, 0)
+        index = self.can.singleValueCollect(
+            Node('STH 1').value, MyToolItStreaming['Acceleration'], 1, 0, 0)
         acceleration_raw, _, _ = self.can.singleValueArray(
-            MyToolItNetworkNr['STH1'], MyToolItStreaming['Acceleration'], 1, 0,
-            0, index)
+            Node('STH 1').value, MyToolItStreaming['Acceleration'], 1, 0, 0,
+            index)
         acceleration_value_raw = acceleration_raw[0]
         sensor = acceleration_sensor()
         acceleration = convert_acceleration_adc_to_g(
@@ -212,11 +210,11 @@ class TestSTH(TestNode):
         # Read x-acceleration values in single data sets for 4
         # seconds
         index_start, index_end = self.can.streamingValueCollect(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
+            Node("STH 1").value, MyToolItStreaming["Acceleration"],
             DataSets[1], 1, 0, 0, 4000)
 
         acceleration, _, _ = self.can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
+            Node("STH 1").value, MyToolItStreaming["Acceleration"],
             DataSets[1], 1, 0, 0, index_start, index_end)
 
         cls = type(self)
@@ -236,7 +234,7 @@ class TestSTH(TestNode):
         def measure_voltage():
             """Measure the accelerometer voltage in mV"""
             response = self.can.calibMeasurement(
-                MyToolItNetworkNr['STH1'],
+                Node('STH 1').value,
                 CalibMeassurementActionNr['Measure'],
                 CalibMeassurementTypeNr['Acc'],
                 # Measure x-dimension
@@ -249,18 +247,16 @@ class TestSTH(TestNode):
         voltage_before_test = measure_voltage()
 
         # Turn on self test and wait for activation
-        self.can.calibMeasurement(MyToolItNetworkNr['STH1'],
-                                  CalibMeassurementActionNr['Inject'],
-                                  CalibMeassurementTypeNr['Acc'], 1,
-                                  AdcReference['VDD'])
+        self.can.calibMeasurement(
+            Node('STH 1').value, CalibMeassurementActionNr['Inject'],
+            CalibMeassurementTypeNr['Acc'], 1, AdcReference['VDD'])
         sleep(0.1)
 
         # Turn off self test and wait for deactivation
         voltage_at_test = measure_voltage()
-        self.can.calibMeasurement(MyToolItNetworkNr['STH1'],
-                                  CalibMeassurementActionNr['Eject'],
-                                  CalibMeassurementTypeNr['Acc'], 1,
-                                  AdcReference['VDD'])
+        self.can.calibMeasurement(
+            Node('STH 1').value, CalibMeassurementActionNr['Eject'],
+            CalibMeassurementTypeNr['Acc'], 1, AdcReference['VDD'])
         sleep(0.1)
 
         voltage_after_test = measure_voltage()
@@ -325,7 +321,7 @@ class TestSTH(TestNode):
         # of the device often was not updated properly. For example, even
         # though the name was written and read as “AAtXb+lp” it showed up as
         # “IItYb+lq” after the test.
-        self.can.vBlueToothNameWrite(MyToolItNetworkNr["STH1"], 0, cls.name)
+        self.can.vBlueToothNameWrite(Node("STH1").value, 0, cls.name)
 
         # =========================
         # = Sleep & Advertisement =
