@@ -177,7 +177,7 @@ class TestSTH(TestNode):
         sure this test case is executed before all other test cases.
         """
 
-        self._test_firmware_flash('STH')
+        self._test_firmware_flash()
 
     def test_connection(self):
         """Check connection to STH
@@ -431,13 +431,13 @@ class TestSTH(TestNode):
         # = Product Data =
         # ================
 
-        super()._test_eeprom_product_data('STH')
+        super()._test_eeprom_product_data()
 
         # ==============
         # = Statistics =
         # ==============
 
-        super()._test_eeprom_statistics('STH')
+        super()._test_eeprom_statistics()
 
         # ================
         # = Acceleration =

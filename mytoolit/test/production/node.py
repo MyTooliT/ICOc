@@ -260,17 +260,13 @@ class TestNode(TestCase):
             f"Expected data “{expected_data_byte}” does not match " +
             f"received data “{received_data_byte}”")
 
-    def _test_firmware_flash(self, node):
-        """Upload bootloader and application into node
+    def _test_firmware_flash(self):
+        """Upload bootloader and application into node"""
 
-        Parameters
-        ----------
-
-        node:
-            A string that identifies the node for which you want to run the
-            test (e.g. `STH`)
-
-        """
+        # The last three characters of the calling subclass (`TestSTU` or
+        # `TestSTH`) contain the name of the node (`STU` or `STH`)
+        cls = type(self)
+        node = cls.__name__[-3:]
 
         programming_board_serial_number = (
             settings.STH.Programming_Board.Serial_Number
@@ -332,21 +328,15 @@ class TestNode(TestCase):
             f"Flash output did not contain expected output “{expected_output}”"
         )
 
-    def _test_eeprom_product_data(self, node):
-        """Test if reading and writing the product data EEPROM page works
-
-        Parameters
-        ----------
-
-        node:
-            A string that identifies the node for which you want to run the
-            test (e.g. `STU`)
-
-        """
-
-        config = settings.STH if node == 'STH' else settings.STU
+    def _test_eeprom_product_data(self):
+        """Test if reading and writing the product data EEPROM page works"""
 
         cls = type(self)
+
+        # The last three characters of the calling subclass (`TestSTU` or
+        # `TestSTH`) contain the name of the node (`STU` or `STH`)
+        node = cls.__name__[-3:]
+        config = settings.STH if node == 'STH' else settings.STU
 
         # ========
         # = GTIN =
@@ -441,21 +431,15 @@ class TestNode(TestCase):
         # region).
         cls.oem_data = ''.join(map(chr, cls.oem_data)).replace('\x00', '')
 
-    def _test_eeprom_statistics(self, node):
-        """Test if reading and writing the statistics EEPROM page works
-
-        Parameters
-        ----------
-
-        node:
-            A string that identifies the node for which you want to run the
-            test (e.g. `STH`)
-
-        """
-
-        config = settings.STH if node == 'STH' else settings.STU
+    def _test_eeprom_statistics(self):
+        """Test if reading and writing the statistics EEPROM page works"""
 
         cls = type(self)
+
+        # The last three characters of the calling subclass (`TestSTU` or
+        # `TestSTH`) contain the name of the node (`STU` or `STH`)
+        node = cls.__name__[-3:]
+        config = settings.STH if node == 'STH' else settings.STU
 
         # =======================
         # = Power On/Off Cycles =

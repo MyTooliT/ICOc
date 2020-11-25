@@ -92,7 +92,7 @@ class TestSTU(TestNode):
         sure this test case is executed before all other test cases.
         """
 
-        self._test_firmware_flash('STU')
+        self._test_firmware_flash()
 
     def test_connection(self):
         """Check connection to STU"""
@@ -121,13 +121,13 @@ class TestSTU(TestNode):
         # = Product Data =
         # ================
 
-        super()._test_eeprom_product_data('STU')
+        super()._test_eeprom_product_data()
 
         # ==============
         # = Statistics =
         # ==============
 
-        super()._test_eeprom_statistics('STU')
+        super()._test_eeprom_statistics()
 
         # =================
         # = EEPROM Status =
