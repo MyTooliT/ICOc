@@ -106,27 +106,6 @@ class TestNode(TestCase):
     ]
 
     @classmethod
-    def _collect_node_data(cls):
-        """Collect data about current node
-
-        Returns
-        -------
-
-        An iterable of defined node attributes stored in simple name space
-        objects
-        """
-
-        attributes = []
-        for attribute in cls.possible_attributes:
-            try:
-                attribute.value = str(attribute.value).format(cls=cls)
-                attributes.append(attribute)
-            except AttributeError:
-                pass
-
-        return attributes
-
-    @classmethod
     def setUpClass(cls):
         """Set up data for whole test"""
 
@@ -170,7 +149,14 @@ class TestNode(TestCase):
     def __output_node_data(cls):
         """Print node information and add it to PDF report"""
 
-        attributes = cls._collect_node_data()
+        attributes = []
+        for attribute in cls.possible_attributes:
+            try:
+                attribute.value = str(attribute.value).format(cls=cls)
+                attributes.append(attribute)
+            except AttributeError:
+                pass
+
         cls.__output_data(attributes)
 
     @classmethod
