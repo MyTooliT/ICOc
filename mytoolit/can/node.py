@@ -121,13 +121,61 @@ class Node:
         if self.value == 0 or self.value == 31:
             return "Broadcast With{} Acknowledgment".format("" if self.value ==
                                                             0 else "out")
-        if 1 <= self.value <= 14:
+        if self.is_sth():
             return f"STH {self.value}"
 
         if 15 <= self.value <= 16:
             return f"SPU {self.value-14}"
 
         return f"STU {self.value-16}"
+
+    def is_sth(self):
+        """Check if this node is an STH or not
+
+        Returns
+        -------
+
+        `True` if this node is an STH or `False` otherwise
+
+        Examples
+        --------
+
+        >>> Node('STH 1').is_sth()
+        True
+
+        >>> Node('STU 12').is_sth()
+        False
+
+        >>> Node('STH 12').is_sth()
+        True
+
+        """
+
+        return 1 <= self.value <= 14
+
+    def is_stu(self):
+        """Check if this node is an STU or not
+
+        Returns
+        -------
+
+        `True` if this node is an STU or `False` otherwise
+
+        Examples
+        --------
+
+        >>> Node('STH 7').is_stu()
+        False
+
+        >>> Node('STU 14').is_stu()
+        True
+
+        >>> Node('SPU 1').is_stu()
+        False
+
+        """
+
+        return 17 <= self.value <= 30
 
 
 # -- Main ---------------------------------------------------------------------
