@@ -48,40 +48,6 @@ def create_attribute(description, value, pdf=True):
     return SimpleNamespace(description=description, value=str(value), pdf=pdf)
 
 
-def filter_undefined_attributes(cls, possible_attributes):
-    """Get all defined attributes for a certain class
-
-    The attributes (specified in possible_attributes) have to be created
-    with the function create_attribute.
-
-    Parameters
-    ----------
-
-    cls:
-        The class that might store the attributes specified in
-        possible_attributes
-
-    possible_attributes:
-        An iterable of possible attributes stored in the class cls
-
-    Returns
-    -------
-
-    A list of defined attributes for the class
-    """
-
-    # Check available read hardware attributes
-    attributes = []
-    for attribute in possible_attributes:
-        try:
-            attribute.value = str(attribute.value).format(cls=cls)
-            attributes.append(attribute)
-        except AttributeError:
-            pass
-
-    return attributes
-
-
 # -- Class --------------------------------------------------------------------
 
 
@@ -150,7 +116,15 @@ class TestNode(TestCase):
         objects
         """
 
-        return filter_undefined_attributes(cls, cls.possible_attributes)
+        attributes = []
+        for attribute in cls.possible_attributes:
+            try:
+                attribute.value = str(attribute.value).format(cls=cls)
+                attributes.append(attribute)
+            except AttributeError:
+                pass
+
+        return attributes
 
     @classmethod
     def setUpClass(cls):
