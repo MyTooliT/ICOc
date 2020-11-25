@@ -44,8 +44,11 @@ class Network(object):
                  acquisition=8,
                  oversampling=64,
                  FreshLog=False):
+        # Start with disconnected Bluetooth connection
         self.bConnected = False
+        # Set default sender (number) for CAN bus
         self.sender = sender
+        # Set default receiver (number) for CAN bus
         self.receiver = receiver
         self.Logger = Logger(testMethodName,
                              testMethodNameError,
