@@ -3,7 +3,7 @@
 from datetime import datetime
 from os.path import abspath, isfile, dirname, join
 from mytoolit.config import settings
-from re import escape, search
+from re import escape
 from subprocess import run
 from time import sleep
 from types import SimpleNamespace
@@ -575,9 +575,8 @@ class TestNode(TestCase):
     def tearDown(self):
         """Clean up after single test case"""
 
-        # The firmware flash does not initiate a connection. The over the air
-        # update already terminates the connection itself.
-        if search("flash|ota", self._testMethodName):
+        # The firmware flash does not initiate a connection.
+        if self._testMethodName.find("flash") >= 0:
             return
 
         self._disconnect()
