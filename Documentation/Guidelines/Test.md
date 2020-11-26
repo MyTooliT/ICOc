@@ -42,11 +42,11 @@ and make sure that it reports no test failures.
 1. Call the command `Test-STH` for a working STH
 2. Wait for the command execution
 3. Check that the command shows no error messages
-4. Open the PDF report (`Report.pdf`) in the repository root and make sure that it includes the correct test data
+4. Open the PDF report (`STH Test.pdf`) in the repository root and make sure that it includes the correct test data
 
 ### STU Test
 
 1. Call the command `Test-STU -k eeprom -k connect` for a working STU
 2. Wait for the command execution
 3. Check that the command shows no error messages
-4. Open the PDF report (`Report.pdf`) in the repository root and make sure that it includes the correct test data
+4. Open the PDF report (`STU Test.pdf`) in the repository root and make sure that it includes the correct test data

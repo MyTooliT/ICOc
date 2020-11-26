@@ -72,7 +72,7 @@ class Report:
             report should be generated
         """
 
-        filepath = join(repository_root, 'Report.pdf')
+        filepath = join(repository_root, f"{node} Test.pdf")
 
         self.node = node
         self.document = SimpleDocTemplate(
