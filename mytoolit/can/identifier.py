@@ -11,7 +11,6 @@ from mytoolit.can.command import Command
 from mytoolit.can.node import Node
 
 from MyToolItCommands import blocknumber_to_commands, MyToolItBlock
-from MyToolItNetworkNumbers import MyToolItNetworkNr
 
 # -- Class --------------------------------------------------------------------
 
