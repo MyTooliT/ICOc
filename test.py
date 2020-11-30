@@ -189,6 +189,9 @@ def create_connection_bus():
         return
     print(f"Disconnected Bluetooth of STU 1")
 
+    # Clean up resources
+    bus.shutdown()
+
 
 if __name__ == '__main__':
     if system() == "Windows":
