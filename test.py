@@ -29,7 +29,8 @@ def create_id(block,
 
 
 def bytearray_to_text(data):
-    return data.decode('ASCII').rstrip('\x00')
+    return bytearray(filter(lambda byte: byte > ord(' ') and byte < 128,
+                            data)).decode('ASCII')
 
 
 def check_bluetooth_connection(bus):
