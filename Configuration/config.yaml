@@ -1,4 +1,5 @@
-# Currently only the production tests of the STH use the following config file.
+# Currently only the production tests of the STH and STU use the following
+# config file.
 
 # We use anchors and references to use the same value in the document multiple
 # times. This has the advantage that we only have to update the value in
