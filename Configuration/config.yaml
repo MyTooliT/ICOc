@@ -1,12 +1,20 @@
 # Currently only the production tests of the STH and STU use the following
 # config file.
 
+# =================
+# = Shared Values =
+# =================
+
 # We use anchors and references to use the same value in the document multiple
 # times. This has the advantage that we only have to update the value in
 # one place.
 
 # We assume that you use the same programming board for the STH (SHA) and STU.
 Programming Board Number: &serial 440120910
+# =================
+# = Configuration =
+# =================
+
 
 Commands:
   Path:
