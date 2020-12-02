@@ -17,7 +17,11 @@ from mytoolit.can.identifier import Identifier
 class Message:
     """Wrapper class for CAN messages"""
 
-    def __init__(self, *pcan_message, identifier=None, payload=None):
+    def __init__(self,
+                 *pcan_message,
+                 identifier=None,
+                 payload=None,
+                 **keyword_arguments):
         """Create a new message based on the given attributes
 
         Usually you will either specify the Peak CAN message directly, or
@@ -25,6 +29,13 @@ class Message:
         the Peak CAN message and one of the keyword arguments, then the
         keyword arguments will be used to overwrite specific parts of the
         Peak CAN message.
+
+        Additional keyword parameters will be used as arguments for the
+        identifier. This way you can specify all the arguments for a message
+        without creating the identifier class yourself. If you decide to
+        specify both an identifier and keyword arguments for the identifier,
+        then the keyword arguments will overwrite the specific parts of the
+        provided identifier.
 
         Parameters
         ----------
@@ -42,19 +53,41 @@ class Message:
         Examples
         --------
 
+        Create a message from a given PCAN message
+
         >>> message = Message(TPCANMsg())
+
+        Create a message using identifier and payload
 
         >>> identifier = Identifier(block=0, block_command=1)
         >>> payload = [0xab, 0xcd]
         >>> message = Message(identifier=identifier, payload=payload)
 
+        Create a message using keyword arguments handled by the identifier
+        class
+
+        >>> message = Message(block='System', block_command='Reset')
+
+        If you provide both identifier and identifier keyword arguments, then
+        the specific keyword arguments overwrite the values of the identifier
+
+        >>> identifier = Identifier(block='System')
+        >>> message = Message(identifier=identifier, block='Streaming')
+        >>> Identifier(message.pcan_message.ID).block_name()
+        'Streaming'
+
         """
+
         self.pcan_message = pcan_message[0] if pcan_message else TPCANMsg()
         self.pcan_message.MSGTYPE = PCAN_MESSAGE_EXTENDED
 
         if identifier:
             self.pcan_message.ID = identifier if isinstance(
                 identifier, int) else identifier.value
+
+        if keyword_arguments:
+            self.pcan_message.ID = Identifier(self.pcan_message.ID,
+                                              **keyword_arguments).value
 
         if payload:
             for byte, data in enumerate(payload):
@@ -69,8 +102,8 @@ class Message:
 
         A text that shows the various attributes of the current message
 
-        Example
-        -------
+        Examples
+        --------
 
         >>> pcan_message = TPCANMsg()
         >>> pcan_message.ID = Identifier(block=0, block_command=1,
@@ -82,6 +115,16 @@ class Message:
         >>> Message(pcan_message) # doctest:+NORMALIZE_WHITESPACE
         0b00000000000000110000001001110 2 0xfe 0xfe
         # [STH 1 → STH 14, Block: System, Command: Reset, Request]
+
+        >>> from re import search
+        >>> representation = repr(
+        ...     Message(block='Streaming',
+        ...             block_command='Acceleration',
+        ...             sender='SPU 1',
+        ...             receiver='STH 1',
+        ...             request=True))
+        >>> search('# (.*)', representation)[1]
+        '[SPU 1 → STH 1, Block: Streaming, Command: Acceleration, Request]'
         """
 
         identifier = Identifier(self.pcan_message.ID)
