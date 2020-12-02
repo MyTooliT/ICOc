@@ -167,18 +167,12 @@ class Message:
         """
 
         identifier = Identifier(self.pcan_message.ID)
-        block = identifier.block()
-        block_command = identifier.block_command()
-        sender = identifier.receiver()
-        receiver = identifier.sender()
-        acknowledgment_identifier = Identifier(block=block,
-                                               block_command=block_command,
-                                               request=False,
-                                               error=error,
-                                               sender=sender,
-                                               receiver=receiver)
-
-        return Message(identifier=acknowledgment_identifier, payload=[])
+        return Message(identifier=identifier,
+                       sender=identifier.receiver(),
+                       receiver=identifier.sender(),
+                       request=False,
+                       error=error,
+                       payload=[])
 
 
 # -- Main ---------------------------------------------------------------------
