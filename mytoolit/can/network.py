@@ -22,6 +22,7 @@ class Network:
         --------
 
         >>> network = Network()
+        >>> network.shutdown()
 
         """
 
@@ -31,11 +32,12 @@ class Network:
             key.lower(): value
             for key, value in configuration.items()
         }
-        bus = Bus(**bus_config)
+        self.bus = Bus(**bus_config)
 
-        # For now we just shut down the bus connection after the bus
-        # initialization
-        bus.shutdown()
+    def shutdown(self):
+        """Deallocate all resources for this network connection"""
+
+        self.bus.shutdown()
 
 
 # -- Main ---------------------------------------------------------------------
