@@ -98,6 +98,11 @@ class Identifier:
         >>> identifier.command()
         512
 
+                                      V  block   number A E R send. R rec.
+        >>> identifier = Identifier(0b0_000000_00000000_1_0_0_10000_0_00110)
+        >>> Identifier(identifier.value, request=False).is_acknowledgment()
+        True
+
         >>> Identifier(receiver='SPU 1').receiver()
         15
 
@@ -136,14 +141,14 @@ class Identifier:
             command_as_number = command if isinstance(command,
                                                       int) else command.value
             set_part(start=12, width=16, number=command_as_number)
-        if list(filter(None, [block, block_command, request, error])):
-            set_part(start=12,
-                     width=16,
-                     number=Command((self.value >> 12) & 0xffff,
-                                    block=block,
-                                    block_command=block_command,
-                                    request=request,
-                                    error=error).value)
+
+        set_part(start=12,
+                 width=16,
+                 number=Command((self.value >> 12) & 0xffff,
+                                block=block,
+                                block_command=block_command,
+                                request=request,
+                                error=error).value)
 
         # Sender and receiver can be either an integer or a string like object
         if sender:
