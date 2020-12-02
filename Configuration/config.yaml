@@ -11,10 +11,26 @@
 
 # We assume that you use the same programming board for the STH (SHA) and STU.
 Programming Board Number: &serial 440120910
+# We assume that you use the same CAN bitrate on Linux and Windows
+CAN Bitrate: &bitrate 1000000
+
 # =================
 # = Configuration =
 # =================
 
+# The values below specify the configuration options for the
+# [python-can](https://python-can.readthedocs.io) Bus class. Please note that
+# this configuration values are currently not used by the main command line tool
+# or any of the tests!
+CAN:
+  Linux:
+    Bitrate: *bitrate
+    Channel: can0
+    Interface: socketcan
+  Windows:
+    Bitrate: *bitrate
+    Channel: PCAN_USBBUS1
+    Interface: pcan
 
 Commands:
   Path:
