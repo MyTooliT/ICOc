@@ -4,6 +4,10 @@
 
 - The name of the PDF test report now reflects the tested node. The latest test data for the STH will be stored in a file called `STH Test.pdf`, while the STU test data is stored in a file called `STU Test.pdf`. Before this update both tests would use the file name `Report.pdf`.
 
+## STH Test
+
+- We now always assume the name of the STH (`STH` → `Name`) in the [configuration][configuration file] is given as string. This improves the usability of the tests, since otherwise you might specify an integer as name (e.g. `1337`) and wonder why the test is unable to connect to the STH.
+
 # Version 1.0.7
 
 ## Logging

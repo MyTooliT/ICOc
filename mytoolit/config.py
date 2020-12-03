@@ -23,6 +23,18 @@ class Settings(Dynaconf):
             return sensor_settings.ADXL1002
         return sensor_settings.ADXL1001
 
+    def sth_name(self) -> str:
+        """Return the current name of the STH as string
+
+        Returns
+        -------
+
+        The name of the STH
+
+        """
+
+        return str(self.STH.Name)
+
 
 # -- Attributes ---------------------------------------------------------------
 

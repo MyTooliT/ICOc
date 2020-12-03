@@ -73,7 +73,7 @@ class TestSTH(TestNode):
 
         # Connect to STH
         self.can.bBlueToothConnectPollingName(Node('STU 1').value,
-                                              settings.STH.Name,
+                                              settings.sth_name(),
                                               log=False)
         sleep(2)
 
@@ -105,7 +105,7 @@ class TestSTH(TestNode):
         # This is more or less placeholder code, until we handle the naming
         # process gracefully. Currently the whole test requires that we know
         # the name of the STH in advance.
-        cls.name = settings.STH.Name
+        cls.name = settings.sth_name()
 
     @skipIf(settings.STH.Status == "Epoxied",
             f"Flash test skipped because of status “{settings.STH.Status}”")
