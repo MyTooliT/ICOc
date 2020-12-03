@@ -21,7 +21,7 @@ from mytoolit.eeprom import EEPROMStatus
 from mytoolit.measurement.acceleration import (convert_acceleration_adc_to_g,
                                                ratio_noise_max)
 from mytoolit.report import Report
-from mytoolit.config import settings, acceleration_sensor
+from mytoolit.config import settings
 from mytoolit.test.production import TestNode
 from mytoolit.unittest import ExtendedTestRunner
 from mytoolit.utility import convert_mac_base64
@@ -180,7 +180,7 @@ class TestSTH(TestNode):
             Node('STH 1').value, MyToolItStreaming['Acceleration'], 1, 0, 0,
             index)
         acceleration_value_raw = acceleration_raw[0]
-        sensor = acceleration_sensor()
+        sensor = settings.acceleration_sensor()
         acceleration = convert_acceleration_adc_to_g(
             acceleration_value_raw, sensor.Acceleration.Maximum)
 
@@ -220,7 +220,7 @@ class TestSTH(TestNode):
         cls = type(self)
         cls.ratio_noise_max = ratio_noise_max(acceleration)
 
-        sensor = acceleration_sensor()
+        sensor = settings.acceleration_sensor()
         maximum_ratio_allowed = sensor.Acceleration.Ratio_Noise_To_Max_Value
         self.assertLessEqual(
             cls.ratio_noise_max, maximum_ratio_allowed,
@@ -263,7 +263,7 @@ class TestSTH(TestNode):
 
         voltage_diff = voltage_at_test - voltage_before_test
 
-        sensor = acceleration_sensor()
+        sensor = settings.acceleration_sensor()
         voltage_diff_expected = sensor.Self_Test.Voltage.Difference
         voltage_diff_tolerance = sensor.Self_Test.Voltage.Tolerance
 
@@ -379,7 +379,7 @@ class TestSTH(TestNode):
         # = Acceleration =
         # ================
 
-        sensor = acceleration_sensor()
+        sensor = settings.acceleration_sensor()
         acceleration_max = sensor.Acceleration.Maximum
         adc_max = 0xffff
         acceleration_slope = acceleration_max / adc_max
