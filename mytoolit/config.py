@@ -1,7 +1,7 @@
 # -- Import -------------------------------------------------------------------
 
 from dynaconf import Dynaconf
-from os.path import abspath, dirname, join
+from pathlib import Path
 
 # -- Class --------------------------------------------------------------------
 
@@ -38,10 +38,10 @@ class Settings(Dynaconf):
 
 # -- Attributes ---------------------------------------------------------------
 
-repository_root = dirname(dirname(abspath(__file__)))
 settings = Settings(
     envvar_prefix="DYNACONF",
     settings_file=[
-        join(join(repository_root, 'Configuration'), 'config.yaml')
+        Path(__file__).parent.parent.joinpath('Configuration').joinpath(
+            'config.yaml')
     ],
 )
