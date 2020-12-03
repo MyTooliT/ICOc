@@ -1,5 +1,9 @@
+# -- Import -------------------------------------------------------------------
+
 from dynaconf import Dynaconf
 from os.path import abspath, dirname, join
+
+# -- Class --------------------------------------------------------------------
 
 
 class Settings(Dynaconf):
@@ -19,6 +23,8 @@ class Settings(Dynaconf):
             return sensor_settings.ADXL1002
         return sensor_settings.ADXL1001
 
+
+# -- Attributes ---------------------------------------------------------------
 
 repository_root = dirname(dirname(abspath(__file__)))
 settings = Settings(
