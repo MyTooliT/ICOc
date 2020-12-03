@@ -279,16 +279,20 @@ class TestSTH(TestNode):
             f"Self test voltage of {voltage_at_test:.0f} mV was lower " +
             f"than voltage after test {voltage_before_test:.0f} mv")
 
+        possible_failure_reason = (
+            f"\n\nPossible Reason:\n\n• Acceleration sensor config value " +
+            f"“{settings.STH.Acceleration_Sensor.Sensor}” is incorrect")
+
         self.assertGreaterEqual(
             voltage_diff, voltage_diff_minimum,
             f"Measured voltage difference of {voltage_diff:.0f} mV is lower " +
             "than expected minimum voltage difference of " +
-            f"{voltage_diff_minimum:.0f} mV")
+            f"{voltage_diff_minimum:.0f} mV{possible_failure_reason}")
         self.assertLessEqual(
             voltage_diff, voltage_diff_maximum,
             f"Measured voltage difference of {voltage_diff:.0f} mV is " +
             "greater than expected minimum voltage difference of " +
-            f"{voltage_diff_maximum:.0f} mV")
+            f"{voltage_diff_maximum:.0f} mV{possible_failure_reason}")
 
     def test_eeprom(self):
         """Test if reading and writing the EEPROM works"""

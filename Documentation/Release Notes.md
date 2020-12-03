@@ -7,6 +7,7 @@
 ## STH Test
 
 - We now always assume the name of the STH (`STH` → `Name`) in the [configuration][configuration file] is given as string. This improves the usability of the tests, since otherwise you might specify an integer as name (e.g. `1337`) and wonder why the test is unable to connect to the STH.
+- The STH test now prints a message about a possible incorrect config value for the acceleration sensor (`STH` → `Acceleration Sensor` → `Sensor`), if [the self test of the accelerometer failed](https://github.com/MyTooliT/ICOc/issues/13).
 
 # Version 1.0.7
 
