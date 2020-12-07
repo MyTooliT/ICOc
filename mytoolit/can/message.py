@@ -21,12 +21,12 @@ class Message:
     def __init__(self,
                  *pcan_message,
                  identifier=None,
-                 payload=None,
+                 data=None,
                  **keyword_arguments):
         """Create a new message based on the given attributes
 
         Usually you will either specify the Peak CAN message directly, or
-        provide identifier and payload. If, you decide to specify both
+        provide identifier and data. If, you decide to specify both
         the Peak CAN message and one of the keyword arguments, then the
         keyword arguments will be used to overwrite specific parts of the
         Peak CAN message.
@@ -47,7 +47,7 @@ class Message:
         identifier:
             A 29 bit CAN identifier
 
-        payload:
+        data:
             An iterable over 8 bit values that stores the payload of the
             message
 
@@ -58,11 +58,11 @@ class Message:
 
         >>> message = Message(TPCANMsg())
 
-        Create a message using identifier and payload
+        Create a message using identifier and data
 
         >>> identifier = Identifier(block=0, block_command=1)
         >>> payload = [0xab, 0xcd]
-        >>> message = Message(identifier=identifier, payload=payload)
+        >>> message = Message(identifier=identifier, data=payload)
 
         Create a message using keyword arguments handled by the identifier
         class
@@ -90,10 +90,10 @@ class Message:
             self.pcan_message.ID = Identifier(self.pcan_message.ID,
                                               **keyword_arguments).value
 
-        if payload:
-            for byte, data in enumerate(payload):
-                self.pcan_message.DATA[byte] = data
-            self.pcan_message.LEN = len(payload)
+        if data:
+            for byte, value in enumerate(data):
+                self.pcan_message.DATA[byte] = value
+            self.pcan_message.LEN = len(data)
 
     def __repr__(self):
         """Get a textual representation of the current message
@@ -130,16 +130,16 @@ class Message:
 
         identifier = Identifier(self.pcan_message.ID)
 
-        payload_representation = " ".join([
+        data_representation = " ".join([
             hex(self.pcan_message.DATA[byte])
             for byte in range(self.pcan_message.LEN)
         ])
         bit_values = [
             f"0b{identifier.value:029b}",
-            str(self.pcan_message.LEN), payload_representation
+            str(self.pcan_message.LEN), data_representation
         ]
         # Filter empty string, since otherwise there might be an additional
-        # space at the end of the representation for empty payloads
+        # space at the end of the representation for empty data
         bit_representation = " ".join(filter(None, bit_values))
 
         return f"{bit_representation} # {identifier}"
@@ -149,7 +149,7 @@ class Message:
 
         In the acknowledgment message receiver and sender will be swapped and
         the request (acknowledge) bit will be set to 0 (acknowledge). The
-        payload of the acknowledgment message will be empty.
+        data of the acknowledgment message will be empty.
 
         Returns
         -------
@@ -161,7 +161,7 @@ class Message:
 
         >>> identifier = Identifier(block=0, block_command=1, sender=5,
         ...                         receiver=10)
-        >>> message = Message(identifier=identifier, payload=[0xaa])
+        >>> message = Message(identifier=identifier, data=[0xaa])
         >>> message.acknowledge() # doctest:+NORMALIZE_WHITESPACE
         0b00000000000000100001010000101 0
         # [STH 10 → STH 5, Block: System, Command: Reset, Acknowledge]
@@ -173,7 +173,7 @@ class Message:
                        receiver=identifier.sender(),
                        request=False,
                        error=error,
-                       payload=[])
+                       data=[])
 
     def to_python_can(self):
         """Retrieve a python-can message object for this message

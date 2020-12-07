@@ -5,6 +5,7 @@
 ### Message
 
 - Added method to convert message to [python-can](https://python-can.readthedocs.io) message object
+- Renamed initialization attribute `payload` to `data`
 
 ## Production Test
 

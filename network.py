@@ -368,7 +368,7 @@ class Network(object):
                                                 request=True,
                                                 sender=self.sender,
                                                 receiver=receiver),
-                          payload=payload).pcan_message
+                          data=payload).pcan_message
         index = self.GetReadArrayIndex()
         msgAck = self.tWriteFrameWaitAckRetries(
             message,
@@ -1098,7 +1098,7 @@ class Network(object):
                                                 request=True,
                                                 sender=self.sender,
                                                 receiver=receiver),
-                          payload=[0] * 8)
+                          data=[0] * 8)
         psw0 = self.tWriteFrameWaitAckRetries(message.pcan_message,
                                               retries=5)["Payload"]
 
@@ -1112,7 +1112,7 @@ class Network(object):
                                                 request=True,
                                                 sender=self.sender,
                                                 receiver=receiver),
-                          payload=[0] * 8)
+                          data=[0] * 8)
 
         payload = self.tWriteFrameWaitAckRetries(message.pcan_message,
                                                  retries=5)["Payload"]
@@ -1148,7 +1148,7 @@ class Network(object):
         identifier = Identifier(command=command,
                                 sender=sender,
                                 receiver=receiver)
-        return Message(identifier=identifier, payload=data).pcan_message
+        return Message(identifier=identifier, data=data).pcan_message
 
     def CanCmd(self, block, cmd, request=1, error=0):
         """Return the binary representation of a MyTooliT CAN command
