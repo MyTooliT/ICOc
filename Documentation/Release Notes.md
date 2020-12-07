@@ -4,8 +4,11 @@
 
 ### Message
 
-- Added method to convert message to [python-can](https://python-can.readthedocs.io) message object
+- Added method to convert message to python-can message object
 - Renamed initialization attribute `payload` to `data`
+- Added support to initialize a message object with a message object of [python-can]
+
+[python-can]: https://python-can.readthedocs.io
 
 ## Production Test
 

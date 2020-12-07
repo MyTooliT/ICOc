@@ -19,17 +19,17 @@ class Message:
     """Wrapper class for CAN messages"""
 
     def __init__(self,
-                 *pcan_message,
+                 *message,
                  identifier=None,
                  data=None,
                  **keyword_arguments):
         """Create a new message based on the given attributes
 
-        Usually you will either specify the Peak CAN message directly, or
-        provide identifier and data. If, you decide to specify both
-        the Peak CAN message and one of the keyword arguments, then the
-        keyword arguments will be used to overwrite specific parts of the
-        Peak CAN message.
+        Usually you will either specify the (PCAN or python-can) message
+        directly, or provide identifier and data. If, you decide to specify
+        both the message and one of the keyword arguments, then the keyword
+        arguments will be used to overwrite specific parts of the message
+        argument.
 
         Additional keyword parameters will be used as arguments for the
         identifier. This way you can specify all the arguments for a message
@@ -41,8 +41,10 @@ class Message:
         Parameters
         ----------
 
-        pcan_message:
-            A PCAN message structure as used by the PCAN Basic API
+        message:
+            Either
+                 - A PCAN message structure as used by the PCAN Basic API
+                 - or a python-can message
 
         identifier:
             A 29 bit CAN identifier
@@ -57,6 +59,17 @@ class Message:
         Create a message from a given PCAN message
 
         >>> message = Message(TPCANMsg())
+
+        Create a message from a python-can message
+
+        >>> from can import Message as CANMessage
+        >>> message = Message(
+        ...     CANMessage(
+        ...         is_extended_id=True,
+        ...         arbitration_id=0b0_000000_00000001_00_0_01111_0_00001))
+        >>> from re import search
+        >>> search('# (.*)', repr(message))[1]
+        '[SPU 1 → STH 1, Block: System, Command: Reset, Acknowledge]'
 
         Create a message using identifier and data
 
@@ -79,7 +92,23 @@ class Message:
 
         """
 
-        self.pcan_message = pcan_message[0] if pcan_message else TPCANMsg()
+        if message:
+            message = message[0]
+            if isinstance(message, TPCANMsg):
+                self.pcan_message = message
+            elif isinstance(message, CANMessage):
+                self.pcan_message = TPCANMsg()
+                self.pcan_message.ID = message.arbitration_id
+                for byte, value in enumerate(message.data):
+                    self.pcan_message.DATA[byte] = value
+                self.pcan_message.LEN = len(message.data)
+            else:
+                raise ValueError(
+                    "Unsupported object type for argument message: "
+                    f" “{type(message)}”")
+        else:
+            self.pcan_message = TPCANMsg()
+
         self.pcan_message.MSGTYPE = PCAN_MESSAGE_EXTENDED
 
         if identifier:
