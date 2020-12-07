@@ -19,9 +19,21 @@ class Settings(Dynaconf):
         """
 
         sensor_settings = self.STH.Acceleration_Sensor
+        if sensor_settings.Sensor == 'ADXL1001':
+            return sensor_settings.ADXL1001
         if sensor_settings.Sensor == 'ADXL1002':
             return sensor_settings.ADXL1002
-        return sensor_settings.ADXL1001
+
+        # TODO: Use [validation](https://www.dynaconf.com/validation)
+        # to handle incorrect config values after
+        #
+        # - https://github.com/rochacbruno/dynaconf/issues/486
+        #
+        # is fixed.
+        raise ValueError(
+            f"Unsupported sensor: “{sensor_settings.Sensor}”\n\n"
+            "Please use one of the supported sensor configuration values "
+            "“ADXL1001” or “ADXL1002”")
 
     def sth_name(self) -> str:
         """Return the current name of the STH as string
