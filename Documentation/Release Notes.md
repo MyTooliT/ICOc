@@ -1,5 +1,11 @@
 # Version 1.0.8
 
+## Internal
+
+### Message
+
+- Added method to convert message to [python-can](https://python-can.readthedocs.io) message object
+
 ## Production Test
 
 - The name of the PDF test report now reflects the tested node. The latest test data for the STH will be stored in a file called `STH Test.pdf`, while the STU test data is stored in a file called `STU Test.pdf`. Before this update both tests would use the file name `Report.pdf`.

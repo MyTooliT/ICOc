@@ -1,6 +1,7 @@
 # -- Imports ------------------------------------------------------------------
 
 from can.interfaces.pcan.basic import PCAN_MESSAGE_EXTENDED, TPCANMsg
+from can import Message as CANMessage
 
 from os.path import abspath, dirname
 from sys import path as module_path
@@ -173,6 +174,33 @@ class Message:
                        request=False,
                        error=error,
                        payload=[])
+
+    def to_python_can(self):
+        """Retrieve a python-can message object for this message
+
+        Returns
+        -------
+
+        A message object of the python-can API
+
+        Example
+        -------
+
+        >>> message = Message(block='EEPROM', sender='SPU 1')
+        >>> can_message = message.to_python_can()
+        >>> can_message # doctest:+NORMALIZE_WHITESPACE
+        can.Message(timestamp=0.0, arbitration_id=0xf4003c0,
+                    extended_id=True, dlc=0, data=[])
+
+        >>> message.pcan_message.ID == can_message.arbitration_id
+        True
+
+        """
+
+        return CANMessage(
+            is_extended_id=True,
+            arbitration_id=self.pcan_message.ID,
+            data=[value[byte] for byte, value in range(self.pcan_message.LEN)])
 
 
 # -- Main ---------------------------------------------------------------------
