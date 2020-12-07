@@ -363,11 +363,11 @@ class Network(object):
                 printLog=False,
                 bErrorExit=True,
                 notAckIdleWaitTimeMs=0.001):
-        message = Message(identifier=Identifier(block=blockCmd,
-                                                block_command=subCmd,
-                                                request=True,
-                                                sender=self.sender,
-                                                receiver=receiver),
+        message = Message(block=blockCmd,
+                          block_command=subCmd,
+                          request=True,
+                          sender=self.sender,
+                          receiver=receiver,
                           data=payload).pcan_message
         index = self.GetReadArrayIndex()
         msgAck = self.tWriteFrameWaitAckRetries(
@@ -1093,11 +1093,11 @@ class Network(object):
         return msgAck["Payload"]
 
     def node_status(self, receiver):
-        message = Message(identifier=Identifier(block='System',
-                                                block_command='Node Status',
-                                                request=True,
-                                                sender=self.sender,
-                                                receiver=receiver),
+        message = Message(block='System',
+                          block_command='Node Status',
+                          request=True,
+                          sender=self.sender,
+                          receiver=receiver,
                           data=[0] * 8)
         psw0 = self.tWriteFrameWaitAckRetries(message.pcan_message,
                                               retries=5)["Payload"]
@@ -1107,11 +1107,11 @@ class Network(object):
         return NodeStatusSTU(psw0[0:4])
 
     def error_status(self, receiver):
-        message = Message(identifier=Identifier(block='System',
-                                                block_command='Error Status',
-                                                request=True,
-                                                sender=self.sender,
-                                                receiver=receiver),
+        message = Message(block='System',
+                          block_command='Error Status',
+                          request=True,
+                          sender=self.sender,
+                          receiver=receiver,
                           data=[0] * 8)
 
         payload = self.tWriteFrameWaitAckRetries(message.pcan_message,
