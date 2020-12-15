@@ -251,6 +251,26 @@ class Message:
             arbitration_id=self.id(),
             data=[value[byte] for byte, value in range(self.pcan_message.LEN)])
 
+    def to_pcan(self):
+        """Retrieve a PCAN message object for this message
+
+        Returns
+        -------
+
+        A message object of the PCAN Basic API
+
+        Example
+        -------
+
+        >>> message = Message(block='System', block_command='Bluetooth')
+        >>> pcan_message = message.to_pcan()
+        >>> message.id() == pcan_message.ID
+        True
+
+        """
+
+        return self.pcan_message
+
 
 # -- Main ---------------------------------------------------------------------
 
