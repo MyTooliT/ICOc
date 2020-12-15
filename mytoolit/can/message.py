@@ -87,7 +87,7 @@ class Message:
 
         >>> identifier = Identifier(block='System')
         >>> message = Message(identifier=identifier, block='Streaming')
-        >>> Identifier(message.pcan_message.ID).block_name()
+        >>> Identifier(message.id()).block_name()
         'Streaming'
 
         """
@@ -116,7 +116,7 @@ class Message:
                 identifier, int) else identifier.value
 
         if keyword_arguments:
-            self.pcan_message.ID = Identifier(self.pcan_message.ID,
+            self.pcan_message.ID = Identifier(self.id(),
                                               **keyword_arguments).value
 
         if data:
@@ -157,7 +157,7 @@ class Message:
         '[SPU 1 → STH 1, Block: Streaming, Command: Acceleration, Request]'
         """
 
-        identifier = Identifier(self.pcan_message.ID)
+        identifier = Identifier(self.id())
 
         data_representation = " ".join([
             hex(self.pcan_message.DATA[byte])
@@ -196,13 +196,33 @@ class Message:
         # [STH 10 → STH 5, Block: System, Command: Reset, Acknowledge]
         """
 
-        identifier = Identifier(self.pcan_message.ID)
+        identifier = Identifier(self.id())
         return Message(identifier=identifier,
                        sender=identifier.receiver(),
                        receiver=identifier.sender(),
                        request=False,
                        error=error,
                        data=[])
+
+    def id(self) -> int:
+        """Retrieve the ID of the message
+
+        Returns
+        -------
+
+        The 29 bit CAN identifier of the message
+
+
+        Example
+        -------
+
+        >>> Message(block='Configuration').id(
+        ...        ) == 0b0_1010_000000000000000000000000
+        True
+
+        """
+
+        return self.pcan_message.ID
 
     def to_python_can(self):
         """Retrieve a python-can message object for this message
@@ -221,14 +241,14 @@ class Message:
         can.Message(timestamp=0.0, arbitration_id=0xf4003c0,
                     extended_id=True, dlc=0, data=[])
 
-        >>> message.pcan_message.ID == can_message.arbitration_id
+        >>> message.id() == can_message.arbitration_id
         True
 
         """
 
         return CANMessage(
             is_extended_id=True,
-            arbitration_id=self.pcan_message.ID,
+            arbitration_id=self.id(),
             data=[value[byte] for byte, value in range(self.pcan_message.LEN)])
 
 
