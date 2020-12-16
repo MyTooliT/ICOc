@@ -285,12 +285,11 @@ class Network(object):
 
         waitTimeMax = self.get_elapsed_time() + waitMs
         if bError:
-            CanMsgAckError = Message(CanMsg).acknowledge().pcan_message
-            CanMsgAck = Message(CanMsg).acknowledge(error=True).pcan_message
+            CanMsgAckError = Message(CanMsg).acknowledge().to_pcan()
+            CanMsgAck = Message(CanMsg).acknowledge(error=True).to_pcan()
         else:
-            CanMsgAck = Message(CanMsg).acknowledge().pcan_message
-            CanMsgAckError = Message(CanMsg).acknowledge(
-                error=True).pcan_message
+            CanMsgAck = Message(CanMsg).acknowledge().to_pcan()
+            CanMsgAckError = Message(CanMsg).acknowledge(error=True).to_pcan()
         returnMessage = "Run"
         while returnMessage == "Run":
             if waitTimeMax < self.get_elapsed_time():
@@ -368,7 +367,7 @@ class Network(object):
                           request=True,
                           sender=self.sender,
                           receiver=receiver,
-                          data=payload).pcan_message
+                          data=payload).to_pcan()
         index = self.GetReadArrayIndex()
         msgAck = self.tWriteFrameWaitAckRetries(
             message,
@@ -442,7 +441,7 @@ class Network(object):
             self.Logger.Info(f"Reset {identifier.receiver_name()}")
 
         return_message = self.tWriteFrameWaitAckRetries(
-            Message(identifier=identifier).pcan_message, retries=retries)
+            Message(identifier=identifier).to_pcan(), retries=retries)
         sleep(2)
         return return_message
 
@@ -1099,7 +1098,7 @@ class Network(object):
                           sender=self.sender,
                           receiver=receiver,
                           data=[0] * 8)
-        psw0 = self.tWriteFrameWaitAckRetries(message.pcan_message,
+        psw0 = self.tWriteFrameWaitAckRetries(message.to_pcan(),
                                               retries=5)["Payload"]
 
         if Node(receiver).is_sth():
@@ -1114,7 +1113,7 @@ class Network(object):
                           receiver=receiver,
                           data=[0] * 8)
 
-        payload = self.tWriteFrameWaitAckRetries(message.pcan_message,
+        payload = self.tWriteFrameWaitAckRetries(message.to_pcan(),
                                                  retries=5)["Payload"]
         status_word_1_bytes = payload[0:4]
         if Node(receiver).is_sth():
@@ -1148,7 +1147,7 @@ class Network(object):
         identifier = Identifier(command=command,
                                 sender=sender,
                                 receiver=receiver)
-        return Message(identifier=identifier, data=data).pcan_message
+        return Message(identifier=identifier, data=data).to_pcan()
 
     def CanCmd(self, block, cmd, request=1, error=0):
         """Return the binary representation of a MyTooliT CAN command
