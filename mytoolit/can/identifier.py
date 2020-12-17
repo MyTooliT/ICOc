@@ -10,8 +10,6 @@ module_path.append(repository_root)
 from mytoolit.can.command import Command
 from mytoolit.can.node import Node
 
-from MyToolItCommands import blocknumber_to_commands, MyToolItBlock
-
 # -- Class --------------------------------------------------------------------
 
 
