@@ -1,15 +1,7 @@
 # -- Imports ------------------------------------------------------------------
 
-from os.path import abspath, dirname
 from math import log, sqrt
 from statistics import pvariance
-from sys import path as module_path
-
-# Add path for custom libraries
-repository_root = dirname(dirname(abspath(__file__)))
-module_path.append(repository_root)
-
-from mytoolit.config import settings
 
 # -- Functions ----------------------------------------------------------------
 
