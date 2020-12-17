@@ -1,6 +1,8 @@
 [flake8]
 
-ignore = E402
+ignore =
+  E402, # Module level import not at top of file
+  W504, # Line break after binary operator
 per-file-ignores = __init__.py:F401
 exclude =
   .git,
