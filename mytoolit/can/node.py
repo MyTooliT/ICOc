@@ -65,7 +65,7 @@ class Node:
 
             # Check normal nodes
             node_match = fullmatch(
-                "(?P<name>S(?:PU|TH|TU))\ ?(?P<number>\d{1,2})", node)
+                r"(?P<name>S(?:PU|TH|TU))\ ?(?P<number>\d{1,2})", node)
 
             node_name = node_match['name']
             node_number = int(node_match['number'])
