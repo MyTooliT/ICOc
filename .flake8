@@ -1,0 +1,27 @@
+[flake8]
+
+ignore = E402
+exclude =
+  .git,
+  __pycache__,
+  ._*,
+  Documentation,
+  HardwareTests,
+  Scripts,
+  VerificationInternal,
+  VerificationInternalManual,
+  Logger.py,
+  MyToolItCommands.py,
+  MyToolItNetworkNumbers.py,
+  MyToolItSth.py,
+  MyToolItStu.py,
+  MyToolItTests.py,
+  Plotter.py,
+  SthLimits.py,
+  StuLimits.py,
+  configKeys.py,
+  mwt.py,
+  myToolItWatch.py,
+  network.py,
+  test.py,
+  testSignal.py,
