@@ -32,7 +32,6 @@ def _first_page(canvas, document, node):
     logo_height = 75
     logo_offset = 50
     title_offset = logo_offset + logo_height + 20
-    date_offset = title_offset + 20
 
     logo_filepath = join(repository_root, "Documentation", "Pictures",
                          "MyTooliT.pdf")
