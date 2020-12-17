@@ -80,6 +80,6 @@ class PDFImage(Flowable):
             canvas.scale(x_scale, y_scale)
             canvas.doForm(makerl(canvas, data))
         else:
-            canvas.drawImage(image, x, y, self.width, self.height)
+            canvas.drawImage(self.img_data, x, y, self.width, self.height)
 
         canvas.restoreState()
