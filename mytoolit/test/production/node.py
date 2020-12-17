@@ -511,8 +511,8 @@ class TestNode(TestCase):
             self.can.read_eeprom_watchdog_reset_counter())
         self.assertEqual(
             watchdog_reset_counter, cls.watchdog_reset_counter,
-            f"Written watchdog reset counter value " +
-            f"“{watchdog_reset_counter} does not match read watchdog reset " +
+            "Written watchdog reset counter value "
+            f"“{watchdog_reset_counter} does not match read watchdog reset "
             f"counter value “{cls.watchdog_reset_counter}”")
 
         # ===================
