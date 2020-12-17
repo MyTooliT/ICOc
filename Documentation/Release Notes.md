@@ -23,6 +23,12 @@
   - `ADXL1001` or
   - `ADXL1002`.
 
+## Tests
+
+- We now check the code base with [flake8][].
+
+[flake8]: https://flake8.pycqa.org
+
 # Version 1.0.7
 
 ## Logging

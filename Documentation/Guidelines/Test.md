@@ -4,6 +4,14 @@ The following text describes some of the measures we should take to keep the sof
 
 Please only push your changes to the `master` branch, if you think there are no new bugs or regressions. The `master` branch **should always contain a working version of the software**. Please **always run the automatic and manual tests** described below before you push to the `master` branch.
 
+## Code Checks
+
+We check the code with [flake8](https://flake8.pycqa.org). Please use the following command in the root of the repository to make sure you did not add any code that introduces warnings:
+
+```sh
+flake8
+```
+
 ## Automatic Tests
 
 ### Requirements
