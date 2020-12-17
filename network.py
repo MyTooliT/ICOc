@@ -274,7 +274,7 @@ class Network(object):
         message = self.readArray[currentIndex]
 
         if printLog:
-            print(f"Message ID Send: {hex(CanMsg.ID)}")
+            print(f"Message ID Send: {Identifier(CanMsg.ID)}")
             print(f"Message DATA Send: {payload2Hex(CanMsg.DATA)}")
         returnMessage = self.WriteFrame(CanMsg)
 
