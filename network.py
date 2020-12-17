@@ -9,11 +9,11 @@ from can.interfaces.pcan.basic import (
     PCANBasic,
 )
 from ctypes import c_byte
-from sys import stderr
 from logging import getLogger, FileHandler, Formatter, DEBUG
 from math import log
 from semantic_version import Version
 from struct import pack, unpack
+from sys import stderr
 from threading import Lock, Thread
 from time import time, sleep
 
