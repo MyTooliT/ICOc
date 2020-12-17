@@ -287,7 +287,7 @@ class Network(object):
             error=not bError).to_pcan()
         returnMessage = "Run"
         while returnMessage == "Run":
-            if waitTimeMax < self.get_elapsed_time():
+            if self.get_elapsed_time() > waitTimeMax:
                 returnMessage = self.WriteFrameWaitAckTimeOut(CanMsg, printLog)
             elif sendTime > message["PcTime"]:
                 message = self.readArray[0]
