@@ -211,17 +211,17 @@ class Network(object):
             return returnMessage
 
         with self.tCanReadWriteMutex:
-            returnMessage = self.pcan.Write(self.m_PcanHandle, CanMsg)
-        if returnMessage != PCAN_ERROR_OK:
+            status = self.pcan.Write(self.m_PcanHandle, CanMsg)
+        if status != PCAN_ERROR_OK:
             error_message = self.__get_error_message(
-                "Unable to write CAN message", returnMessage)
+                "Unable to write CAN message", status)
             self.Logger.Error(error_message)
             self.__exitError(error_message)
 
         # Only log message, if writing was successful
         getLogger('can').debug(f"{Message(CanMsg)}")
 
-        return returnMessage
+        return status
 
     def WriteFrameWaitAckOk(self, message):
         payload = list(message["CanMsg"].DATA)
