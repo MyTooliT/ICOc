@@ -1,7 +1,4 @@
-import threading
-import array
-import math
-
+from array import array
 from can.interfaces.pcan.basic import (
     PCAN_BAUD_1M,
     PCAN_BUSOFF_AUTORESET,
@@ -14,8 +11,10 @@ from can.interfaces.pcan.basic import (
 from ctypes import c_byte
 from sys import stderr
 from logging import getLogger, FileHandler, Formatter, DEBUG
+from math import log
 from semantic_version import Version
 from struct import pack, unpack
+from threading import Lock, Thread
 from time import time, sleep
 
 from mytoolit.can import (Command, ErrorStatusSTH, ErrorStatusSTU, Identifier,
@@ -98,7 +97,7 @@ class Network(object):
             print(self.__get_error_message(
                 "Unable to set auto reset on CAN bus-off state", result),
                   file=stderr)
-        self.tCanReadWriteMutex = threading.Lock()
+        self.tCanReadWriteMutex = Lock()
         self.reset()
         self.ReadThreadReset()
 
@@ -198,8 +197,8 @@ class Network(object):
             }]
             sleep(0.2)
             self.RunReadThread = True
-            self.readThread = threading.Thread(target=self.ReadMessage,
-                                               name="CanReadThread")
+            self.readThread = Thread(target=self.ReadMessage,
+                                     name="CanReadThread")
             self.readThread.start()
             self.reset()
             sleep(0.2)
@@ -857,7 +856,7 @@ class Network(object):
                 self.Logger.Info("90%-Range: " + str(stat["90PRange"]))
                 self.Logger.Info("98%-Range: " + str(stat["98PRange"]))
                 self.Logger.Info("Total Range: " + str(stat["TotalRange"]))
-                SNR = 20 * math.log((stat["StandardDeviation"] / AdcMax), 10)
+                SNR = 20 * log((stat["StandardDeviation"] / AdcMax), 10)
                 self.Logger.Info("SNR: " + str(SNR))
                 self.Logger.Info(
                     "____________________________________________________")
@@ -1603,7 +1602,7 @@ class Network(object):
                 element = self.getReadMessageData(index)
                 aiSerialNumber.extend(element)
             try:
-                sReturn = array.array(
+                sReturn = array(
                     'b', bytearray(aiSerialNumber)).tostring().encode('utf-8')
             except:
                 sReturn = ""
@@ -1619,8 +1618,8 @@ class Network(object):
                 element = self.getReadMessageData(index)
                 aiName.extend(element)
             try:
-                sReturn = array.array(
-                    'b', bytearray(aiName)).tostring().encode('utf-8')
+                sReturn = array('b',
+                                bytearray(aiName)).tostring().encode('utf-8')
             except:
                 sReturn = ""
             if False != bLog:
