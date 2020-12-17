@@ -119,8 +119,8 @@ class Node:
         """
 
         if self.value == 0 or self.value == 31:
-            return "Broadcast With{} Acknowledgment".format("" if self.value ==
-                                                            0 else "out")
+            return "Broadcast With{} Acknowledgment".format(
+                "" if self.value == 0 else "out")  # noqa: W504
         if self.is_sth():
             return f"STH {self.value}"
 
