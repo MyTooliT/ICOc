@@ -345,7 +345,7 @@ class Network(object):
                     if printLog:
                         print(text)
                     if bErrorExit:
-                        self.__exitError(f"To many retries({retries})")
+                        self.__exitError(f"Too many retries ({retries})")
             sleep(0.01)
             return returnMessage
         except KeyboardInterrupt:
