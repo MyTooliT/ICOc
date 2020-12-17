@@ -2,7 +2,6 @@
 
 from datetime import datetime
 from os.path import abspath, isfile, dirname, join
-from mytoolit.config import settings
 from re import escape
 from subprocess import run
 from time import sleep
