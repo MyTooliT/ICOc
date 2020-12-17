@@ -16,7 +16,6 @@ repository_root = dirname(dirname(dirname(abspath(__file__))))
 module_path.append(repository_root)
 
 from .pdf import PDFImage
-from mytoolit.config import settings
 
 # -- Functions ----------------------------------------------------------------
 
