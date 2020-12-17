@@ -9,7 +9,7 @@ from can.interfaces.pcan.basic import (
     PCANBasic,
 )
 from ctypes import c_byte
-from logging import getLogger, FileHandler, Formatter, DEBUG
+from logging import getLogger, FileHandler, Formatter
 from math import log
 from semantic_version import Version
 from struct import pack, unpack
