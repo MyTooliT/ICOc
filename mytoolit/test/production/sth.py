@@ -18,8 +18,8 @@ module_path.append(repository_root)
 from mytoolit import __version__
 from mytoolit.can import Identifier, Node
 from mytoolit.eeprom import EEPROMStatus
-from mytoolit.measurement.acceleration import (convert_acceleration_adc_to_g,
-                                               ratio_noise_max)
+from mytoolit.measurement import (convert_acceleration_adc_to_g,
+                                  ratio_noise_max)
 from mytoolit.report import Report
 from mytoolit.config import settings
 from mytoolit.test.production import TestNode
