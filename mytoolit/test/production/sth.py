@@ -1,53 +1,37 @@
 # -- Imports ------------------------------------------------------------------
 
-from datetime import datetime
 from os import environ, pathsep
-from os.path import abspath, dirname, isfile, join
-from re import escape, search
-from subprocess import run
+from os.path import abspath, dirname
 from sys import path as module_path
 from time import sleep
-from types import SimpleNamespace
-from unittest import (TestCase, TextTestResult, TextTestRunner, main, skip,
-                      skipIf)
+from unittest import main, skipIf
 
 # Add path for custom libraries
 repository_root = dirname(dirname(dirname(dirname(abspath(__file__)))))
 module_path.append(repository_root)
 
-from mytoolit import __version__
-from mytoolit.can import Identifier, Node
-from mytoolit.eeprom import EEPROMStatus
+from mytoolit.can import Node
 from mytoolit.measurement import (convert_acceleration_adc_to_g,
                                   ratio_noise_max)
-from mytoolit.report import Report
 from mytoolit.config import settings
 from mytoolit.test.production import TestNode
 from mytoolit.unittest import ExtendedTestRunner
 from mytoolit.utility import convert_mac_base64
 
-from network import Network
 from MyToolItCommands import (
-    ActiveState,
     AdcMax,
     AdcVRefValuemV,
-    AdcOverSamplingRate,
     AdcReference,
     CalibMeassurementActionNr,
     CalibMeassurementTypeNr,
     DataSets,
     byte_list_to_int,
     MyToolItBlock,
-    MyToolItEeprom,
     MyToolItProductData,
     MyToolItStreaming,
-    MyToolItSystem,
-    NetworkState,
-    NodeState,
     int_to_mac_address,
 )
 from MyToolItSth import fVoltageBattery
-from SthLimits import SthLimits
 
 # -- Classes ------------------------------------------------------------------
 
