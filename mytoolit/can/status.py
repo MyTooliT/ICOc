@@ -1,6 +1,5 @@
 # -- Imports ------------------------------------------------------------------
 
-from enum import Enum
 from os.path import abspath, dirname
 from sys import path as module_path
 
