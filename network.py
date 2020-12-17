@@ -282,12 +282,9 @@ class Network(object):
             return [returnMessage, currentIndex]
 
         waitTimeMax = self.get_elapsed_time() + waitMs
-        if bError:
-            CanMsgAckError = Message(CanMsg).acknowledge().to_pcan()
-            CanMsgAck = Message(CanMsg).acknowledge(error=True).to_pcan()
-        else:
-            CanMsgAck = Message(CanMsg).acknowledge().to_pcan()
-            CanMsgAckError = Message(CanMsg).acknowledge(error=True).to_pcan()
+        CanMsgAck = Message(CanMsg).acknowledge(error=bError).to_pcan()
+        CanMsgAckError = Message(CanMsg).acknowledge(
+            error=not bError).to_pcan()
         returnMessage = "Run"
         while returnMessage == "Run":
             if waitTimeMax < self.get_elapsed_time():
