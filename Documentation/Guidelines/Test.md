@@ -6,7 +6,13 @@ Please only push your changes to the `master` branch, if you think there are no 
 
 ## Code Checks
 
-We check the code with [flake8](https://flake8.pycqa.org). Please use the following command in the root of the repository to make sure you did not add any code that introduces warnings:
+We check the code with [flake8](https://flake8.pycqa.org):
+
+```sh
+pip install flake8
+```
+
+Please use the following command in the root of the repository to make sure you did not add any code that introduces warnings:
 
 ```sh
 flake8
