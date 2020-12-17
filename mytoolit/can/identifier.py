@@ -178,7 +178,7 @@ class Identifier:
         [STH 2 → STH 3, Block: Unknown, Command: Unknown, Request, Error]
         """
 
-        return (f"[{self.sender_name()} → {self.receiver_name()}, " +
+        return (f"[{self.sender_name()} → {self.receiver_name()}, "
                 f"{Command(self.command())}]")
 
     def command(self):
