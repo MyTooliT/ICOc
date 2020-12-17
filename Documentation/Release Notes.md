@@ -26,6 +26,9 @@
 ## Tests
 
 - We now check the code base with [flake8][].
+- We use [GitHub actions](https://github.com/MyTooliT/ICOc/actions)
+  - to run non-hardware dependent parts of the automated tests, and
+  - to check the code base with [flake8][]
 
 [flake8]: https://flake8.pycqa.org
 
