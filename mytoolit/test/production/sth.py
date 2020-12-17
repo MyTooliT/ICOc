@@ -145,13 +145,13 @@ class TestSTH(TestNode):
 
         self.assertGreaterEqual(
             battery_voltage, expected_minimum_voltage,
-            f"STH power source voltage of {battery_voltage:.3f} V is lower " +
-            "than expected minimum voltage of" +
+            f"STH power source voltage of {battery_voltage:.3f} V is lower "
+            "than expected minimum voltage of"
             "{expected_minimum_voltage:.3f} V")
         self.assertLessEqual(
             battery_voltage, expected_maximum_voltage,
-            f"STH power source voltage of {battery_voltage:.3f} V is " +
-            "greater than expected maximum voltage of " +
+            f"STH power source voltage of {battery_voltage:.3f} V is "
+            "greater than expected maximum voltage of "
             f"{expected_minimum_voltage:.3f} V")
 
     def test_acceleration_single_value(self):
@@ -179,13 +179,13 @@ class TestSTH(TestNode):
 
         self.assertGreaterEqual(
             acceleration, expected_minimum_acceleration,
-            f"Measured acceleration {acceleration:.3f} g₀ is lower " +
-            "than expected minimum acceleration " +
+            f"Measured acceleration {acceleration:.3f} g₀ is lower "
+            "than expected minimum acceleration "
             f"{expected_minimum_acceleration} g₀")
         self.assertLessEqual(
             acceleration, expected_maximum_acceleration,
-            f"Measured acceleration {acceleration:.3f} g₀ is greater " +
-            "than expected maximum acceleration " +
+            f"Measured acceleration {acceleration:.3f} g₀ is greater "
+            "than expected maximum acceleration "
             f"{expected_maximum_acceleration} g₀")
 
     def test_acceleration_noise(self):
@@ -208,8 +208,8 @@ class TestSTH(TestNode):
         maximum_ratio_allowed = sensor.Acceleration.Ratio_Noise_To_Max_Value
         self.assertLessEqual(
             cls.ratio_noise_max, maximum_ratio_allowed,
-            "The ratio noise to possible maximum measured value of " +
-            f"{cls.ratio_noise_max} dB is higher than the maximum allowed " +
+            "The ratio noise to possible maximum measured value of "
+            f"{cls.ratio_noise_max} dB is higher than the maximum allowed "
             f"level of {maximum_ratio_allowed} dB")
 
     def test_acceleration_self_test(self):
@@ -256,26 +256,26 @@ class TestSTH(TestNode):
 
         self.assertLess(
             voltage_before_test, voltage_at_test,
-            f"Self test voltage of {voltage_at_test:.0f} mV was lower " +
+            f"Self test voltage of {voltage_at_test:.0f} mV was lower "
             f"than voltage before test {voltage_before_test:.0f} mv")
         self.assertLess(
             voltage_after_test, voltage_at_test,
-            f"Self test voltage of {voltage_at_test:.0f} mV was lower " +
+            f"Self test voltage of {voltage_at_test:.0f} mV was lower "
             f"than voltage after test {voltage_before_test:.0f} mv")
 
         possible_failure_reason = (
-            f"\n\nPossible Reason:\n\n• Acceleration sensor config value " +
+            "\n\nPossible Reason:\n\n• Acceleration sensor config value "
             f"“{settings.STH.Acceleration_Sensor.Sensor}” is incorrect")
 
         self.assertGreaterEqual(
             voltage_diff, voltage_diff_minimum,
-            f"Measured voltage difference of {voltage_diff:.0f} mV is lower " +
-            "than expected minimum voltage difference of " +
+            f"Measured voltage difference of {voltage_diff:.0f} mV is lower "
+            "than expected minimum voltage difference of "
             f"{voltage_diff_minimum:.0f} mV{possible_failure_reason}")
         self.assertLessEqual(
             voltage_diff, voltage_diff_maximum,
-            f"Measured voltage difference of {voltage_diff:.0f} mV is " +
-            "greater than expected minimum voltage difference of " +
+            f"Measured voltage difference of {voltage_diff:.0f} mV is "
+            "greater than expected minimum voltage difference of "
             f"{voltage_diff_maximum:.0f} mV{possible_failure_reason}")
 
     def test_eeprom(self):
@@ -322,7 +322,7 @@ class TestSTH(TestNode):
             setattr(type(self), variable, milliseconds_read)
             self.assertEqual(
                 milliseconds_read, milliseconds,
-                f"{description} {milliseconds_read} ms does not match " +
+                f"{description} {milliseconds_read} ms does not match "
                 f" written value of {milliseconds} ms")
 
         read_write_time(read_function=self.can.read_eeprom_sleep_time_1,
@@ -377,8 +377,8 @@ class TestSTH(TestNode):
         self.assertAlmostEqual(
             acceleration_slope,
             cls.acceleration_slope,
-            msg=f"Written acceleration slope “{acceleration_slope:.5f}” " +
-            "does not match read acceleration slope " +
+            msg=f"Written acceleration slope “{acceleration_slope:.5f}” "
+            "does not match read acceleration slope "
             f"“{cls.acceleration_slope:.5f}”")
 
         acceleration_offset = -(acceleration_max / 2)
@@ -388,8 +388,8 @@ class TestSTH(TestNode):
         self.assertAlmostEqual(
             acceleration_offset,
             cls.acceleration_offset,
-            msg=f"Written acceleration offset “{acceleration_offset:.3f}” " +
-            "does not match read acceleration offset " +
+            msg=f"Written acceleration offset “{acceleration_offset:.3f}” "
+            "does not match read acceleration offset "
             f"“{cls.acceleration_offset:.3f}”")
 
         # =================
