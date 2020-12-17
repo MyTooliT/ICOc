@@ -269,9 +269,7 @@ class Network(object):
                 f"Meantime between send retry to low ({waitMs} ms)")
         if sendTime is None:
             sendTime = self.get_elapsed_time()
-        if currentIndex is None:
-            currentIndex = self.GetReadArrayIndex()
-        if currentIndex >= self.GetReadArrayIndex():
+        if currentIndex is None or currentIndex >= self.GetReadArrayIndex():
             currentIndex = self.GetReadArrayIndex() - 1
         message = self.readArray[currentIndex]
 
