@@ -1,8 +1,16 @@
-from can.interfaces.pcan.basic import *
 import threading
 import array
 import math
 
+from can.interfaces.pcan.basic import (
+    PCAN_BAUD_1M,
+    PCAN_BUSOFF_AUTORESET,
+    PCAN_ERROR_OK,
+    PCAN_ERROR_QOVERRUN,
+    PCAN_PARAMETER_ON,
+    PCAN_USBBUS1,
+    PCANBasic,
+)
 from ctypes import c_byte
 from sys import stderr
 from logging import getLogger, FileHandler, Formatter, DEBUG
