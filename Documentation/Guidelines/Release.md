@@ -5,7 +5,7 @@
 3. Push the commit that changes the version number
 4. Create a new release [here](https://github.com/MyTooliT/ICOc/releases/new)
 
-   1. Copy the [release notes](../Release Notes.md) for the latest version
+   1. Copy the [release notes](../Releases) for the latest version
    2. Paste them into the main text
    3. Decrease the header level of each section by one
    4. Replace links with a permanent version:
