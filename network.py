@@ -283,10 +283,10 @@ class Network(object):
         if printLog:
             print(f"Message ID Send: {Identifier(CanMsg.ID)}")
             print(f"Message DATA Send: {payload2Hex(CanMsg.DATA)}")
-        returnMessage = self.WriteFrame(CanMsg)
+        status = self.WriteFrame(CanMsg)
 
-        if returnMessage == "Error":
-            return [returnMessage, currentIndex]
+        if status == "Error":
+            return [status, currentIndex]
 
         waitTimeMax = self.get_elapsed_time() + waitMs
         CanMsgAck = Message(CanMsg).acknowledge(error=bError).to_pcan()
