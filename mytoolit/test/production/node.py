@@ -200,12 +200,16 @@ class TestNode(TestCase):
             cls.report.add_attribute(attribute.description, attribute.value,
                                      node_data)
 
-    def _connect(self, receiver=Node('STU 1').value):
+    def _connect(self):
         """Create a connection to the STU"""
 
         # Initialize CAN bus
         log_filepath = f"{self._testMethodName}.txt"
         log_filepath_error = f"{self._testMethodName}_Error.txt"
+
+        cls = type(self)
+        node = cls.__name__[-3:]
+        receiver = Node(f'{node} 1').value
 
         self.can = Network(log_filepath,
                            log_filepath_error,

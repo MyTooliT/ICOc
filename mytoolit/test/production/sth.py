@@ -53,7 +53,7 @@ class TestSTH(TestNode):
         """Create a connection to the STH"""
 
         # Connect to STU
-        super()._connect(receiver=Node('STH 1').value)
+        super()._connect()
 
         # Connect to STH
         self.can.bBlueToothConnectPollingName(Node('STU 1').value,
