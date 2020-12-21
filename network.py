@@ -1223,8 +1223,9 @@ class Network(object):
                 status, message, timestamp = self.pcan.Read(self.m_PcanHandle)
                 self.tCanReadWriteMutex.release()
                 if status == PCAN_ERROR_OK:
-                    peakCanTimeStamp = timestamp.millis_overflow * (
-                        2**32) + timestamp.millis + timestamp.micros / 1000
+                    peakCanTimeStamp = (timestamp.millis_overflow * 2**32 +
+                                        timestamp.millis +
+                                        timestamp.micros / 1000)
                     self.readArray.append({
                         "CanMsg": message,
                         "PcTime": self.get_elapsed_time(),
