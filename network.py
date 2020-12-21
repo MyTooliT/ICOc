@@ -1146,10 +1146,10 @@ class Network(object):
         if len(data) > 8:
             return "Error"
 
-        identifier = Identifier(command=command,
-                                sender=sender,
-                                receiver=receiver)
-        return Message(identifier=identifier, data=data).to_pcan()
+        return Message(command=command,
+                       sender=sender,
+                       receiver=receiver,
+                       data=data).to_pcan()
 
     def CanCmd(self, block, cmd, request=1, error=0):
         """Return the binary representation of a MyTooliT CAN command
