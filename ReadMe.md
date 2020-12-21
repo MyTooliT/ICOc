@@ -10,7 +10,7 @@ For these purposes the software reads data from the Stationary Transceiver Unit 
 The framework currently requires
 
 - [Microsoft Windows 10](https://microsoft.com/windows), and
-- [Python 3.6](https://www.python.org) or newer.
+- [Python 3.7](https://www.python.org) or newer.
 
 For more information about other required software components, please read the subsection “Software” in this document.
 
@@ -30,7 +30,7 @@ In order to setup a test bench you need at least:
 
 ##### Interpreter
 
-MyToolIt Watch requires at least Python `3.6`. Later versions should work too. You can download Python [here](https://www.python.org/downloads).
+MyToolIt Watch requires at least Python `3.7`. Later versions should work too. You can download Python [here](https://www.python.org/downloads).
 
 When you install the package downloaded above, please do not forget to enable the checkbox “Add Python to PATH” in the setup window of the installer.
 

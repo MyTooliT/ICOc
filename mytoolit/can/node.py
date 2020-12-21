@@ -1,6 +1,9 @@
 # -- Imports ------------------------------------------------------------------
 
+from __future__ import annotations
+
 from re import fullmatch
+from typing import Union
 
 # -- Class --------------------------------------------------------------------
 
@@ -8,7 +11,7 @@ from re import fullmatch
 class Node:
     """This class represents a CAN node of ICOtronic system"""
 
-    def __init__(self, node=0):
+    def __init__(self, node: Union[int, str, Node] = 0):
         """Create a new node from the given argument
 
         A node represents a communication participant, such as a specific STH
