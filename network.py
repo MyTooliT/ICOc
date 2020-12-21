@@ -1220,18 +1220,18 @@ class Network(object):
         while self.RunReadThread:
             try:
                 self.tCanReadWriteMutex.acquire()
-                result = self.pcan.Read(self.m_PcanHandle)
+                status, message, timestamp = self.pcan.Read(self.m_PcanHandle)
                 self.tCanReadWriteMutex.release()
-                if result[0] == PCAN_ERROR_OK:
-                    peakCanTimeStamp = result[2].millis_overflow * (
-                        2**32) + result[2].millis + result[2].micros / 1000
+                if status == PCAN_ERROR_OK:
+                    peakCanTimeStamp = timestamp.millis_overflow * (
+                        2**32) + timestamp.millis + timestamp.micros / 1000
                     self.readArray.append({
-                        "CanMsg": result[1],
+                        "CanMsg": message,
                         "PcTime": self.get_elapsed_time(),
                         "PeakCanTime": peakCanTimeStamp
                     })
-                    getLogger('can').debug(f"{Message(result[1])}")
-                elif result[0] == PCAN_ERROR_QOVERRUN:
+                    getLogger('can').debug(f"{Message(message)}")
+                elif status == PCAN_ERROR_QOVERRUN:
                     self.Logger.Error("RxOverRun")
                     print("RxOverRun")
                     self.RunReadThread = False
