@@ -946,9 +946,13 @@ class Network(object):
             self.Logger.Info("Bluetooth Bandwidth(Lowest, may be more): " +
                              str(self.bluetoothBandwidth()) + "bit/s")
 
-        cmd = self.CanCmd(MyToolItBlock["Streaming"], subCmd, 1, 0)
-        message = self.CanMessage20(cmd, self.sender, receiver,
-                                    [streamingFormat.asbyte])
+        message = Message(block="Streaming",
+                          block_command=subCmd,
+                          request=True,
+                          sender=self.sender,
+                          receiver=receiver,
+                          data=[streamingFormat.asbyte]).to_pcan()
+
         if False != log:
             canCmd = self.CanCmd(MyToolItBlock["Streaming"], subCmd, 1, 0)
             self.Logger.Info("Start sending  " +
