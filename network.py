@@ -281,7 +281,7 @@ class Network(object):
         status = self.WriteFrame(CanMsg)
 
         if status == "Error":
-            return [status, currentIndex]
+            return (status, currentIndex)
 
         waitTimeMax = self.get_elapsed_time() + waitMs
         CanMsgAck = Message(CanMsg).acknowledge(error=bError).to_pcan()
