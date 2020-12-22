@@ -924,22 +924,19 @@ class Network(object):
         return (bitsAcc + bitsVoltage)
 
     def streamingStart(self, receiver, subCmd, dataSets, b1, b2, b3, log=True):
+        config = AtvcFormat()
+        config.asbyte = 0
+        config.b.bStreaming = 1
+        config.b.bNumber1 = b1
+        config.b.bNumber2 = b2
+        config.b.bNumber3 = b3
+        config.b.u3DataSets = dataSets
+        streamingFormat = config
+
         if MyToolItStreaming["Acceleration"] == subCmd:
-            self.AccConfig.asbyte = 0
-            self.AccConfig.b.bStreaming = 1
-            self.AccConfig.b.bNumber1 = b1
-            self.AccConfig.b.bNumber2 = b2
-            self.AccConfig.b.bNumber3 = b3
-            self.AccConfig.b.u3DataSets = dataSets
-            streamingFormat = self.AccConfig
+            self.AccConfig = config
         elif MyToolItStreaming["Voltage"] == subCmd:
-            self.VoltageConfig.asbyte = 0
-            self.VoltageConfig.b.bStreaming = 1
-            self.VoltageConfig.b.bNumber1 = b1
-            self.VoltageConfig.b.bNumber2 = b2
-            self.VoltageConfig.b.bNumber3 = b3
-            self.VoltageConfig.b.u3DataSets = dataSets
-            streamingFormat = self.VoltageConfig
+            self.VoltageConfig = config
         else:
             self.__exitError("Streaming unknown at streaming start: + (" +
                              str(subCmd) + ")")
