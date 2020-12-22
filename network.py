@@ -403,8 +403,12 @@ class Network(object):
         """
         Send cmd and return Ack
         """
-        cmd = self.CanCmd(blockCmd, subCmd, 1, 0)
-        message = self.CanMessage20(cmd, self.sender, receiver, payload)
+        message = Message(block=blockCmd,
+                          block_command=subCmd,
+                          sender=self.sender,
+                          receiver=receiver,
+                          request=True,
+                          data=payload).to_pcan()
         index = self.GetReadArrayIndex()
         msgAck = self.tWriteFrameWaitAckRetries(message,
                                                 retries=retries,
