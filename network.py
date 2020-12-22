@@ -924,19 +924,18 @@ class Network(object):
         return (bitsAcc + bitsVoltage)
 
     def streamingStart(self, receiver, subCmd, dataSets, b1, b2, b3, log=True):
-        config = AtvcFormat()
-        config.asbyte = 0
-        config.b.bStreaming = 1
-        config.b.bNumber1 = b1
-        config.b.bNumber2 = b2
-        config.b.bNumber3 = b3
-        config.b.u3DataSets = dataSets
-        streamingFormat = config
+        streamingFormat = AtvcFormat()
+        streamingFormat.asbyte = 0
+        streamingFormat.b.bStreaming = 1
+        streamingFormat.b.bNumber1 = b1
+        streamingFormat.b.bNumber2 = b2
+        streamingFormat.b.bNumber3 = b3
+        streamingFormat.b.u3DataSets = dataSets
 
         if MyToolItStreaming["Acceleration"] == subCmd:
-            self.AccConfig = config
+            self.AccConfig = streamingFormat
         elif MyToolItStreaming["Voltage"] == subCmd:
-            self.VoltageConfig = config
+            self.VoltageConfig = streamingFormat
         else:
             self.__exitError("Streaming unknown at streaming start: + (" +
                              str(subCmd) + ")")
@@ -953,11 +952,10 @@ class Network(object):
                           receiver=receiver,
                           data=[streamingFormat.asbyte]).to_pcan()
 
-        if False != log:
-            canCmd = self.CanCmd(MyToolItBlock["Streaming"], subCmd, 1, 0)
-            self.Logger.Info("Start sending  " +
-                             Identifier(command=canCmd).block_command_name() +
-                             "; Subpayload: " + hex(streamingFormat.asbyte))
+        if log:
+            block_command = Command(block_command=subCmd).block_command_name()
+            self.Logger.Info(f"Start sending  {block_command}; "
+                             f"Subpayload: {hex(streamingFormat.asbyte)}")
 
         indexStart = self.GetReadArrayIndex()
         self.tWriteFrameWaitAckRetries(message)
