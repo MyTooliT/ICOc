@@ -966,16 +966,15 @@ class Network(object):
                       subCmd,
                       bErrorExit=True,
                       notAckIdleWaitTimeMs=0.00005):
+        streamingFormat = AtvcFormat()
+        streamingFormat.asbyte = 0
+        streamingFormat.b.bStreaming = 1
+        streamingFormat.b.u3DataSets = DataSets[0]
+
         if MyToolItStreaming["Acceleration"] == subCmd:
-            self.AccConfig.asbyte = 0
-            self.AccConfig.b.bStreaming = 1
-            self.AccConfig.b.u3DataSets = DataSets[0]
-            streamingFormat = self.AccConfig
+            self.AccConfig = streamingFormat
         elif MyToolItStreaming["Voltage"] == subCmd:
-            self.VoltageConfig.asbyte = 0
-            self.VoltageConfig.b.bStreaming = 1
-            self.VoltageConfig.b.u3DataSets = DataSets[0]
-            streamingFormat = self.VoltageConfig
+            self.VoltageConfig = streamingFormat
         else:
             self.__exitError("Streaming unknown at streaming stop: + (" +
                              str(subCmd) + ")")
