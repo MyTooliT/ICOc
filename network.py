@@ -978,15 +978,20 @@ class Network(object):
         else:
             self.__exitError("Streaming unknown at streaming stop: + (" +
                              str(subCmd) + ")")
-        cmd = self.CanCmd(MyToolItBlock["Streaming"], subCmd, 1, 0)
-        message = self.CanMessage20(cmd, self.sender, receiver,
-                                    [streamingFormat.asbyte])
+
+        message = Message(block="Streaming",
+                          block_command=subCmd,
+                          request=True,
+                          sender=self.sender,
+                          receiver=receiver,
+                          data=[streamingFormat.asbyte])
+
         self.Logger.Info(
             "_____________________________________________________________")
         self.Logger.Info("Stop Streaming - " +
-                         Identifier(command=cmd).block_command_name())
+                         Identifier(message.id()).block_command_name())
         ack = self.tWriteFrameWaitAckRetries(
-            message,
+            message.to_pcan(),
             retries=20,
             printLog=False,
             assumedPayload=[streamingFormat.asbyte, 0, 0, 0, 0, 0, 0, 0],
