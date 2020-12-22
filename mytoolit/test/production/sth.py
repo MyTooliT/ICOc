@@ -191,15 +191,14 @@ class TestSTH(TestNode):
     def test_acceleration_noise(self):
         """Test ratio of noise to maximal possible measurement value"""
 
-        # Read x-acceleration values in single data sets for 4
-        # seconds
+        # Read x-acceleration values in single data sets for 4 seconds
+        streaming_arguments = (Node("STH 1").value,
+                               MyToolItStreaming["Acceleration"], DataSets[1],
+                               1, 0, 0)
         index_start, index_end = self.can.streamingValueCollect(
-            Node("STH 1").value, MyToolItStreaming["Acceleration"],
-            DataSets[1], 1, 0, 0, 4000)
-
+            *streaming_arguments, 4000)
         acceleration, _, _ = self.can.streamingValueArray(
-            Node("STH 1").value, MyToolItStreaming["Acceleration"],
-            DataSets[1], 1, 0, 0, index_start, index_end)
+            *streaming_arguments, index_start, index_end)
 
         cls = type(self)
         cls.ratio_noise_max = ratio_noise_max(acceleration)
