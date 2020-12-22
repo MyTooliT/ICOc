@@ -190,11 +190,7 @@ class Network(object):
     def ReadThreadReset(self):
         try:
             self.readThreadStop()
-            self.readArray = [{
-                "CanMsg": self.CanMessage20(data=[0] * 8),
-                "PcTime": 1 << 64,
-                "PeakCanTime": 0
-            }]
+            self.readArray = []
             sleep(0.2)
             self.RunReadThread = True
             self.readThread = Thread(target=self.ReadMessage,
@@ -278,7 +274,6 @@ class Network(object):
             sendTime = self.get_elapsed_time()
         if currentIndex is None or currentIndex >= self.GetReadArrayIndex():
             currentIndex = self.GetReadArrayIndex() - 1
-        message = self.readArray[currentIndex]
 
         if printLog:
             print(f"Message ID Send: {Identifier(CanMsg.ID)}")
@@ -294,22 +289,30 @@ class Network(object):
             error=not bError).to_pcan()
         returnMessage = "Run"
         while returnMessage == "Run":
+            # Check timeout
             if self.get_elapsed_time() > waitTimeMax:
                 returnMessage = self.WriteFrameWaitAckTimeOut(CanMsg, printLog)
-            elif sendTime > message["PcTime"]:
-                message = self.readArray[0]
-            elif CanMsgAck.ID == message["CanMsg"].ID and (
+
+            # Get read message
+            if currentIndex < self.GetReadArrayIndex() - 1:
+                currentIndex += 1
+                message = self.readArray[currentIndex]
+            else:
+                # No new message ready yet
+                sleep(notAckIdleWaitTimeMs)
+                continue
+
+            # Message was received before sent message
+            if sendTime > message["PcTime"]:
+                continue
+
+            if CanMsgAck.ID == message["CanMsg"].ID and (
                     assumedPayload is None
                     or list(message["CanMsg"].DATA) == assumedPayload):
                 returnMessage = self.WriteFrameWaitAckOk(message)
             elif CanMsgAckError.ID == message["CanMsg"].ID:
                 returnMessage = self.WriteFrameWaitAckError(
                     message, bError, printLog)
-            elif currentIndex < self.GetReadArrayIndex() - 1:
-                currentIndex += 1
-                message = self.readArray[currentIndex]
-            else:
-                sleep(notAckIdleWaitTimeMs)
 
         return [returnMessage, currentIndex]
 
