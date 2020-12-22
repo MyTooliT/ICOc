@@ -28,7 +28,7 @@ class ActiveState(ctypes.Union):
 class AtvcFormatFlags(ctypes.BigEndianStructure):
     """Byte format for streaming data
 
-    bStreaming: Streaming or single data transmission
+    bStreaming: Streaming or single request (latest data)
         - 0: Streaming
         - 1: Single request
 
