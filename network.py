@@ -326,10 +326,9 @@ class Network(object):
                                   bErrorExit=True,
                                   notAckIdleWaitTimeMs=0.001):
         try:
-            retries += 1
             currentIndex = self.GetReadArrayIndex() - 1
             sendTime = self.get_elapsed_time()
-            for i in range(0, retries):
+            for _ in range(retries + 1):
                 returnMessage, currentIndex = self.tWriteFrameWaitAck(
                     CanMsg,
                     waitMs=waitMs,
@@ -340,18 +339,17 @@ class Network(object):
                     sendTime=sendTime,
                     notAckIdleWaitTimeMs=notAckIdleWaitTimeMs)
                 if returnMessage != "Error":
-                    break
-                elif i == retries - 1:
-                    identifier = Identifier(CanMsg.ID)
-                    payload = payload2Hex(CanMsg.DATA)
-                    text = (f"Message request failed: {identifier}; " +
-                            f"Payload: {payload}")
-                    self.Logger.Error(text)
-                    if printLog:
-                        print(text)
-                    if bErrorExit:
-                        self.__exitError(f"Too many retries ({retries})")
-            return returnMessage
+                    return returnMessage
+
+            identifier = Identifier(CanMsg.ID)
+            payload = payload2Hex(CanMsg.DATA)
+            text = (f"Message request failed: {identifier}; " +
+                    f"Payload: {payload}")
+            self.Logger.Error(text)
+            if printLog:
+                print(text)
+            if bErrorExit:
+                self.__exitError(f"Too many retries ({retries})")
         except KeyboardInterrupt:
             self.RunReadThread = False
 
