@@ -351,7 +351,6 @@ class Network(object):
                         print(text)
                     if bErrorExit:
                         self.__exitError(f"Too many retries ({retries})")
-            sleep(0.01)
             return returnMessage
         except KeyboardInterrupt:
             self.RunReadThread = False
