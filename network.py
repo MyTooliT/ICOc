@@ -23,12 +23,35 @@ from mytoolit.eeprom import EEPROMStatus
 from mytoolit.config import settings
 
 from MyToolItCommands import (
-    AdcAcquisitionTimeName, AdcOverSamplingRateName,
-    AsciiStringWordLittleEndian, AtvcFormat, BluetoothTime, byte_list_to_int,
-    calcSamplingRate, CalibrationMeassurement, CalibMeassurementActionName,
-    CalibMeassurementTypeName, DataSets, MyToolItBlock, MyToolItConfiguration,
-    MyToolItEeprom, MyToolItProductData, MyToolItStreaming, MyToolItSystem,
-    payload2Hex, sArray2String, sDateClock, SystemCommandBlueTooth, VRefName)
+    AdcAcquisitionTimeName,
+    AdcOverSamplingRateName,
+    AdcMax,
+    ActiveState,
+    AsciiStringWordLittleEndian,
+    AtvcFormat,
+    BluetoothTime,
+    byte_list_to_int,
+    calcSamplingRate,
+    CalibrationMeassurement,
+    CalibMeassurementActionName,
+    CalibMeassurementTypeName,
+    DataSets,
+    int_to_byte_list,
+    int_to_mac_address,
+    MyToolItBlock,
+    MyToolItConfiguration,
+    MyToolItEeprom,
+    MyToolItProductData,
+    MyToolItStreaming,
+    MyToolItSystem,
+    NodeState,
+    NetworkState,
+    payload2Hex,
+    sArray2String,
+    sDateClock,
+    SystemCommandBlueTooth,
+    VRefName,
+)
 from MyToolItNetworkNumbers import MyToolItNetworkName
 from Logger import Logger
 
