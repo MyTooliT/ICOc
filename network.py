@@ -614,15 +614,15 @@ class Network(object):
                           request=True,
                           sender=self.sender,
                           receiver=receiver,
-                          data=[streamingFormat.asbyte]).to_pcan()
+                          data=[streamingFormat.asbyte])
 
         if log:
-            block_command = Command(block_command=subCmd).block_command_name()
-            self.Logger.Info(f"Start sending  {block_command}; "
+            block_command = Identifier(message.id()).block_command_name()
+            self.Logger.Info(f"Start sending {block_command}; "
                              f"Subpayload: {hex(streamingFormat.asbyte)}")
 
         indexStart = self.GetReadArrayIndex()
-        self.tWriteFrameWaitAckRetries(message)
+        self.tWriteFrameWaitAckRetries(message.to_pcan())
         return indexStart
 
     def streamingStop(self,
