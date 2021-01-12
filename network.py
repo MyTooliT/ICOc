@@ -599,7 +599,7 @@ class Network(object):
                               log=True,
                               StartupTimeMs=0):
         if log:
-            self.Logger.Info("Test Time: " + str(testTimeMs) + "ms")
+            self.Logger.Info(f"Test Time: {testTimeMs} ms")
         indexStart = self.streamingStart(receiver,
                                          subCmd,
                                          dataSets,
@@ -608,7 +608,7 @@ class Network(object):
                                          b3,
                                          log=log)
         if log:
-            self.Logger.Info("indexStart: " + str(indexStart))
+            self.Logger.Info(f"indexStart: {indexStart}")
         testTimeMs += StartupTimeMs
         sleep(testTimeMs / 1000)
         self.streamingStop(receiver, subCmd)
@@ -960,13 +960,12 @@ class Network(object):
         elif MyToolItStreaming["Voltage"] == subCmd:
             self.VoltageConfig = streamingFormat
         else:
-            self.__exitError("Streaming unknown at streaming start: + (" +
-                             str(subCmd) + ")")
+            self.__exitError(f"Streaming unknown at streaming start: {subCmd}")
         if False != log:
-            self.Logger.Info("Can Bandwidth(Lowest, may be more): " +
-                             str(self.canBandwith()) + "bit/s")
-            self.Logger.Info("Bluetooth Bandwidth(Lowest, may be more): " +
-                             str(self.bluetoothBandwidth()) + "bit/s")
+            self.Logger.Info("CAN Bandwidth(Lowest, may be more): "
+                             f"{self.canBandwith()} bit/s")
+            self.Logger.Info("Bluetooth Bandwidth(Lowest, may be more): "
+                             f"{self.bluetoothBandwidth()} bit/s")
 
         message = Message(block="Streaming",
                           block_command=subCmd,
@@ -999,8 +998,7 @@ class Network(object):
         elif MyToolItStreaming["Voltage"] == subCmd:
             self.VoltageConfig = streamingFormat
         else:
-            self.__exitError("Streaming unknown at streaming stop: + (" +
-                             str(subCmd) + ")")
+            self.__exitError(f"Streaming unknown at streaming stop: {subCmd}")
 
         message = Message(block="Streaming",
                           block_command=subCmd,
@@ -1011,8 +1009,9 @@ class Network(object):
 
         self.Logger.Info(
             "_____________________________________________________________")
-        self.Logger.Info("Stop Streaming - " +
-                         Identifier(message.id()).block_command_name())
+        self.Logger.Info(
+            f"Stop Streaming - {Identifier(message.id()).block_command_name()}"
+        )
         ack = self.tWriteFrameWaitAckRetries(
             message.to_pcan(),
             retries=20,
