@@ -392,10 +392,10 @@ class Network(object):
                           request=True,
                           sender=self.sender,
                           receiver=receiver,
-                          data=payload).to_pcan()
+                          data=payload)
         index = self.GetReadArrayIndex()
         msgAck = self.tWriteFrameWaitAckRetries(
-            message,
+            message.to_pcan(),
             retries=retries,
             waitMs=1000,
             bErrorAck=bErrorAck,
