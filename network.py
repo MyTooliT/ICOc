@@ -588,6 +588,83 @@ class Network(object):
             array3 = [array3[0]]
         return [array1, array2, array3]
 
+    def streamingStart(self, receiver, subCmd, dataSets, b1, b2, b3, log=True):
+        streamingFormat = AtvcFormat()
+        streamingFormat.asbyte = 0
+        streamingFormat.b.bStreaming = 1
+        streamingFormat.b.bNumber1 = b1
+        streamingFormat.b.bNumber2 = b2
+        streamingFormat.b.bNumber3 = b3
+        streamingFormat.b.u3DataSets = dataSets
+
+        if MyToolItStreaming["Acceleration"] == subCmd:
+            self.AccConfig = streamingFormat
+        elif MyToolItStreaming["Voltage"] == subCmd:
+            self.VoltageConfig = streamingFormat
+        else:
+            self.__exitError(f"Streaming unknown at streaming start: {subCmd}")
+        if False != log:
+            self.Logger.Info("CAN Bandwidth(Lowest, may be more): "
+                             f"{self.canBandwith()} bit/s")
+            self.Logger.Info("Bluetooth Bandwidth(Lowest, may be more): "
+                             f"{self.bluetoothBandwidth()} bit/s")
+
+        message = Message(block="Streaming",
+                          block_command=subCmd,
+                          request=True,
+                          sender=self.sender,
+                          receiver=receiver,
+                          data=[streamingFormat.asbyte]).to_pcan()
+
+        if log:
+            block_command = Command(block_command=subCmd).block_command_name()
+            self.Logger.Info(f"Start sending  {block_command}; "
+                             f"Subpayload: {hex(streamingFormat.asbyte)}")
+
+        indexStart = self.GetReadArrayIndex()
+        self.tWriteFrameWaitAckRetries(message)
+        return indexStart
+
+    def streamingStop(self,
+                      receiver,
+                      subCmd,
+                      bErrorExit=True,
+                      notAckIdleWaitTimeMs=0.00005):
+        streamingFormat = AtvcFormat()
+        streamingFormat.asbyte = 0
+        streamingFormat.b.bStreaming = 1
+        streamingFormat.b.u3DataSets = DataSets[0]
+
+        if MyToolItStreaming["Acceleration"] == subCmd:
+            self.AccConfig = streamingFormat
+        elif MyToolItStreaming["Voltage"] == subCmd:
+            self.VoltageConfig = streamingFormat
+        else:
+            self.__exitError(f"Streaming unknown at streaming stop: {subCmd}")
+
+        message = Message(block="Streaming",
+                          block_command=subCmd,
+                          request=True,
+                          sender=self.sender,
+                          receiver=receiver,
+                          data=[streamingFormat.asbyte])
+
+        self.Logger.Info(
+            "_____________________________________________________________")
+        self.Logger.Info(
+            f"Stop Streaming - {Identifier(message.id()).block_command_name()}"
+        )
+        ack = self.tWriteFrameWaitAckRetries(
+            message.to_pcan(),
+            retries=20,
+            printLog=False,
+            assumedPayload=[streamingFormat.asbyte, 0, 0, 0, 0, 0, 0, 0],
+            bErrorExit=bErrorExit,
+            notAckIdleWaitTimeMs=notAckIdleWaitTimeMs)
+        self.Logger.Info(
+            "_____________________________________________________________")
+        return ack
+
     def streamingValueCollect(self,
                               receiver,
                               subCmd,
@@ -945,83 +1022,6 @@ class Network(object):
         bitsVoltage = (32 + 16 + dataSetsVoltage * 16) * msgVoltage
 
         return (bitsAcc + bitsVoltage)
-
-    def streamingStart(self, receiver, subCmd, dataSets, b1, b2, b3, log=True):
-        streamingFormat = AtvcFormat()
-        streamingFormat.asbyte = 0
-        streamingFormat.b.bStreaming = 1
-        streamingFormat.b.bNumber1 = b1
-        streamingFormat.b.bNumber2 = b2
-        streamingFormat.b.bNumber3 = b3
-        streamingFormat.b.u3DataSets = dataSets
-
-        if MyToolItStreaming["Acceleration"] == subCmd:
-            self.AccConfig = streamingFormat
-        elif MyToolItStreaming["Voltage"] == subCmd:
-            self.VoltageConfig = streamingFormat
-        else:
-            self.__exitError(f"Streaming unknown at streaming start: {subCmd}")
-        if False != log:
-            self.Logger.Info("CAN Bandwidth(Lowest, may be more): "
-                             f"{self.canBandwith()} bit/s")
-            self.Logger.Info("Bluetooth Bandwidth(Lowest, may be more): "
-                             f"{self.bluetoothBandwidth()} bit/s")
-
-        message = Message(block="Streaming",
-                          block_command=subCmd,
-                          request=True,
-                          sender=self.sender,
-                          receiver=receiver,
-                          data=[streamingFormat.asbyte]).to_pcan()
-
-        if log:
-            block_command = Command(block_command=subCmd).block_command_name()
-            self.Logger.Info(f"Start sending  {block_command}; "
-                             f"Subpayload: {hex(streamingFormat.asbyte)}")
-
-        indexStart = self.GetReadArrayIndex()
-        self.tWriteFrameWaitAckRetries(message)
-        return indexStart
-
-    def streamingStop(self,
-                      receiver,
-                      subCmd,
-                      bErrorExit=True,
-                      notAckIdleWaitTimeMs=0.00005):
-        streamingFormat = AtvcFormat()
-        streamingFormat.asbyte = 0
-        streamingFormat.b.bStreaming = 1
-        streamingFormat.b.u3DataSets = DataSets[0]
-
-        if MyToolItStreaming["Acceleration"] == subCmd:
-            self.AccConfig = streamingFormat
-        elif MyToolItStreaming["Voltage"] == subCmd:
-            self.VoltageConfig = streamingFormat
-        else:
-            self.__exitError(f"Streaming unknown at streaming stop: {subCmd}")
-
-        message = Message(block="Streaming",
-                          block_command=subCmd,
-                          request=True,
-                          sender=self.sender,
-                          receiver=receiver,
-                          data=[streamingFormat.asbyte])
-
-        self.Logger.Info(
-            "_____________________________________________________________")
-        self.Logger.Info(
-            f"Stop Streaming - {Identifier(message.id()).block_command_name()}"
-        )
-        ack = self.tWriteFrameWaitAckRetries(
-            message.to_pcan(),
-            retries=20,
-            printLog=False,
-            assumedPayload=[streamingFormat.asbyte, 0, 0, 0, 0, 0, 0, 0],
-            bErrorExit=bErrorExit,
-            notAckIdleWaitTimeMs=notAckIdleWaitTimeMs)
-        self.Logger.Info(
-            "_____________________________________________________________")
-        return ack
 
     def ConfigAdc(self,
                   receiver,
