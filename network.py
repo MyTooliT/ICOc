@@ -697,12 +697,12 @@ class Network(object):
             countDel += 1
             indexEnd -= 1
         if log:
-            self.Logger.Info("Deleted Messages to achieve " + str(testTimeMs) +
-                             "ms: " + str(countDel + 180))
-            self.Logger.Info("indexEnd: " + str(indexEnd))
+            self.Logger.Info(f"Deleted Messages to achieve {testTimeMs} ms: "
+                             f"{countDel + 180}")
+            self.Logger.Info(f"indexEnd: {indexEnd}")
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Logger.Warning("Deleted Messages to achieve " +
-                                str(testTimeMs) + "ms: " + str(countDel + 180))
+            self.Logger.Warning(f"Deleted Messages to achieve {testTimeMs} ms:"
+                                f"{countDel + 180}")
 
         return [indexStart, indexEnd]
 
