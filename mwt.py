@@ -1301,8 +1301,12 @@ class mwt(myToolItWatch):
         self.close()
 
 
-if __name__ == "__main__":
+def main():
     watch_tool = mwt()
     watch_tool.vParserInit()
     watch_tool.vParserConsoleArgumentsPass()
     watch_tool.vRunConsole()
+
+
+if __name__ == "__main__":
+    main()
