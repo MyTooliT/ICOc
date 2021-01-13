@@ -534,15 +534,15 @@ class TestSth(unittest.TestCase):
             adcXTol = self.tSthLimits.iAdcAccXRawTolerance * ratT
             adcYTol = self.tSthLimits.iAdcAccYRawTolerance * ratT
             adcZTol = self.tSthLimits.iAdcAccZRawTolerance * ratT
-            if (16 > AdcOverSamplingRateReverse[overSamplingRate]):
+            if (16 > AdcOverSamplingRate.inverse[overSamplingRate]):
                 self.Can.Logger.Info("Maximum ADC Value: " + str(AdcMax / 2**(
-                    5 - AdcOverSamplingRateReverse[overSamplingRate])))
+                    5 - AdcOverSamplingRate.inverse[overSamplingRate])))
                 adcXMiddle = adcXMiddle / 2**(
-                    5 - AdcOverSamplingRateReverse[overSamplingRate])
+                    5 - AdcOverSamplingRate.inverse[overSamplingRate])
                 adcYMiddle = adcYMiddle / 2**(
-                    5 - AdcOverSamplingRateReverse[overSamplingRate])
+                    5 - AdcOverSamplingRate.inverse[overSamplingRate])
                 adcZMiddle = adcZMiddle / 2**(
-                    5 - AdcOverSamplingRateReverse[overSamplingRate])
+                    5 - AdcOverSamplingRate.inverse[overSamplingRate])
             else:
                 self.Can.Logger.Info("Maximum ADC Value: " + str(AdcMax))
             self.streamingValueCompare(array1, array2, array3, adcXMiddle,

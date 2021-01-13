@@ -1706,7 +1706,7 @@ class myToolItWatch():
                 config.find('AcquisitionTime').text = str(
                     AdcAcquisitionTime.inverse[self.iAquistionTime])
                 config.find('OverSamples').text = str(
-                    AdcOverSamplingRateReverse[self.iOversampling])
+                    AdcOverSamplingRate.inverse[self.iOversampling])
                 config.find('AdcRef').text = str(self.sAdcRef)
                 sFileName = self.Can.Logger.fileName
                 config.find('LogName').text = sFileName[:sFileName.find('_'):]
@@ -1801,7 +1801,7 @@ class myToolItWatch():
             "Adc Prescaler/AcquisitionTime/OversamplingRate/Reference(Samples/s): "
             + str(self.iPrescaler) + "/" +
             str(AdcAcquisitionTime.inverse[self.iAquistionTime]) + "/" +
-            str(AdcOverSamplingRateReverse[self.iOversampling]) + "/" +
+            str(AdcOverSamplingRate.inverse[self.iOversampling]) + "/" +
             str(self.sAdcRef) + "(" + str(self.samplingRate) + ")")
         print("Acc Config(XYZ/DataSets): " + str(int(self.bAccX)) +
               str(int(self.bAccY)) + str(int(self.bAccZ)) + "/" +
@@ -1830,7 +1830,7 @@ class myToolItWatch():
             "Adc Prescaler/AcquisitionTime/OversamplingRate/Reference(Samples/s): "
             + str(self.iPrescaler) + "/" +
             str(AdcAcquisitionTime.inverse[self.iAquistionTime]) + "/" +
-            str(AdcOverSamplingRateReverse[self.iOversampling]) + "/" +
+            str(AdcOverSamplingRate.inverse[self.iOversampling]) + "/" +
             str(self.sAdcRef) + "(" + str(self.samplingRate) + ")")
         self.Can.Logger.Info("Acc Config(XYZ/DataSets): " +
                              str(int(self.bAccX)) + str(int(self.bAccY)) +

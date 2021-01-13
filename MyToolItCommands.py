@@ -437,7 +437,7 @@ AdcAcquisitionTimeName = {
     AdcAcquisitionTime[256]: "ADC Acquisition Time - 256 Cycles"
 }
 
-AdcOverSamplingRate = {
+AdcOverSamplingRate = bidict({
     1: 0,
     2: 1,
     4: 2,
@@ -451,23 +451,7 @@ AdcOverSamplingRate = {
     1024: 10,
     2048: 11,
     4096: 12,
-}
-
-AdcOverSamplingRateReverse = {
-    0: 1,
-    1: 2,
-    2: 4,
-    3: 8,
-    4: 16,
-    5: 32,
-    6: 64,
-    7: 128,
-    8: 256,
-    9: 512,
-    10: 1024,
-    11: 2048,
-    12: 4096,
-}
+})
 
 AdcOverSamplingRateName = {
     AdcOverSamplingRate[1]: "ADC Single Sampling",
@@ -595,7 +579,7 @@ def int_to_byte_list(iValue, iLength, byte_order='little'):
 
 def calcSamplingRate(prescaler, acquisitionTime, OverSamplingRate):
     acquTime = AdcAcquisitionTime.inverse[acquisitionTime]
-    samplingRate = AdcOverSamplingRateReverse[OverSamplingRate]
+    samplingRate = AdcOverSamplingRate.inverse[OverSamplingRate]
     return int(38400000 / ((prescaler + 1) * (acquTime + 13) * samplingRate) +
                0.5)
 
