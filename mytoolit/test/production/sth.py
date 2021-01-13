@@ -4,7 +4,7 @@ from os import environ, pathsep
 from os.path import abspath, dirname
 from sys import path as module_path
 from time import sleep
-from unittest import main, skipIf
+from unittest import main as unittest_main, skipIf
 
 # Add path for custom libraries
 repository_root = dirname(dirname(dirname(dirname(abspath(__file__)))))
@@ -398,12 +398,17 @@ class TestSTH(TestNode):
         super()._test_eeprom_status()
 
 
-# -- Main ---------------------------------------------------------------------
-
-if __name__ == "__main__":
+def main():
     # Add path to Simplicity Commander (`commander`) — We do this to ensure,
     # that we can call the command directly, without adding the path before
     # the tool’s name.
     environ['PATH'] += (pathsep + pathsep.join(settings.Commands.Path.Windows))
 
-    main(testRunner=ExtendedTestRunner)
+    unittest_main(testRunner=ExtendedTestRunner,
+                  module="mytoolit.test.production.sth")
+
+
+# -- Main ---------------------------------------------------------------------
+
+if __name__ == "__main__":
+    main()

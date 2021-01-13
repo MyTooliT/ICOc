@@ -28,6 +28,12 @@ setup(name="icoc",
           "Operating System :: Microsoft :: Windows :: Windows 10",
       ],
       python_requires='>=3.7',
-      entry_points={'console_scripts': ['icoc = mwt:main']},
+      entry_points={
+          'console_scripts': [
+              'icoc = mwt:main',
+              'test-sth = mytoolit.test.production.sth:main',
+              'test-stu = mytoolit.test.production.stu:main'
+          ]
+      },
       tests_require=['nose'],
       test_suite='nose.collector')
