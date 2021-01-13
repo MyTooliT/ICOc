@@ -1,6 +1,10 @@
 from myToolItWatch import myToolItWatch
-from MyToolItCommands import *
-from MyToolItNetworkNumbers import *
+from MyToolItCommands import (AdcReference, AdcAcquisitionTime,
+                              AdcOverSamplingRate, byte_list_to_int,
+                              calcSamplingRate, CalibMeassurementActionNr,
+                              CalibMeassurementTypeNr, BlueToothDeviceNr,
+                              DataSets, int_to_mac_address, MyToolItStreaming)
+from MyToolItNetworkNumbers import MyToolItNetworkNr
 from MyToolItSth import fVoltageBattery
 from time import sleep
 import glob
@@ -11,6 +15,7 @@ import subprocess
 
 
 class mwt(myToolItWatch):
+
     def __init__(self):
         myToolItWatch.__init__(self)
         self.process = None
