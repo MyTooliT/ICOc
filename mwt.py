@@ -681,7 +681,7 @@ class mwt(myToolItWatch):
 
             if ((False != os.path.isdir(sSthOta))
                     or (False != os.path.isdir(sStuOta))):
-                devList = self.tTerminalHeaderExtended()
+                self.tTerminalHeaderExtended()
             if False != os.path.isdir(sStuOta):
                 self.stdscr.addstr(
                     str(BlueToothDeviceNr["Self"]) + "(STU): " +
