@@ -10,6 +10,9 @@
 __pycache__/
 *.pyc
 
+# Setuptools
+*.egg-info
+
 # Spyder project settings
 .spyderproject
 .spyproject
