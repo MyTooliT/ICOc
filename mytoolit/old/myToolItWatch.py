@@ -1,6 +1,5 @@
 import sys
 import os
-from mytoolit import __version__
 import xml.etree.ElementTree as ET
 from can.interfaces.pcan.basic import PCAN_ERROR_OK, PCAN_ERROR_QOVERRUN
 from network import Network
@@ -24,6 +23,12 @@ import socket
 import array
 import struct
 
+# Add path for custom libraries
+from pathlib import Path
+from sys import path
+path.append(str(Path(__file__).parent.parent.parent))
+
+from mytoolit import __version__
 from mytoolit.config import settings
 
 Watch = {
@@ -37,6 +42,7 @@ Watch = {
 
 
 class myToolItWatch():
+
     def __init__(self, *args, **kwargs):
         self.vXmlConfigSet('configKeys.xml')
         self.KeyBoardInterrupt = False

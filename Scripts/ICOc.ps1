@@ -5,6 +5,6 @@ $oldPath=Get-Location
 # Unfortunately the script is currently not location independent
 cd $repoPath
 # We assume that `python` is in your path
-python mwt.py $args
+python mytoolit/old/mwt.py $args
 # Restore old working directory
 cd $oldPath
