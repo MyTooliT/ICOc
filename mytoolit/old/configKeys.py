@@ -1,5 +1,7 @@
 import xml.etree.ElementTree as ET
 
+from pathlib import Path
+
 
 class ConfigKeys():
     """
@@ -8,7 +10,7 @@ class ConfigKeys():
     """
 
     def __init__(self, sFileName):
-        self.sXmlFileName = sFileName
+        self.sXmlFileName = Path(__file__).parent.joinpath(sFileName)
         self.tree = ET.parse(self.sXmlFileName)
         self.root = self.tree.getroot()
 
