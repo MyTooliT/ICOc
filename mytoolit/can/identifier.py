@@ -17,15 +17,15 @@ class Identifier:
     """This class represents a CAN identifier of the MyTooliT protocol"""
 
     def __init__(
-            self,
-            *identifier,
-            command=None,
-            block=None,
-            block_command=None,
-            error=None,
-            request=None,
-            sender=None,
-            receiver=None,
+        self,
+        *identifier,
+        command=None,
+        block=None,
+        block_command=None,
+        error=None,
+        request=None,
+        sender=None,
+        receiver=None,
     ):
         """Create a new identifier from a given integer
 

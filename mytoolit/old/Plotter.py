@@ -109,7 +109,7 @@ Init Server Socket such that Clients may connect
 
 @param iSocketPort Socket Port to be opened
 
-@return 
+@return
 """
 
 

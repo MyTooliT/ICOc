@@ -2,6 +2,7 @@ from MyToolItCommands import AdcAcquisitionTime, AdcOverSamplingRate, AdcReferen
 
 
 class SthLimits():
+
     def __init__(self, iAccSensorAxis, uAccelerationToAccGravitity,
                  iTemperatureInternalMin, iTemperatureInternalMax):
         self.vBatteryParameters(True)

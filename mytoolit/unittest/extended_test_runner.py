@@ -9,6 +9,7 @@ from .extended_test_result import ExtendedTestResult
 
 class ExtendedTestRunner(TextTestRunner):
     """Extend default test runner to change result class"""
+
     def __init__(self, *arguments, **keyword_arguments):
         """Initialize the test runner"""
 

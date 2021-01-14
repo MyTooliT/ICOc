@@ -105,6 +105,7 @@ class NodeStatus:
 
 
 class NodeStatusSTH(NodeStatus):
+
     def __init__(self, value):
         """Initialize the node status word using the given arguments
 
@@ -137,6 +138,7 @@ class NodeStatusSTH(NodeStatus):
 
 
 class NodeStatusSTU(NodeStatus):
+
     def __init__(self, value):
         """Initialize the node status word using the given arguments
 
