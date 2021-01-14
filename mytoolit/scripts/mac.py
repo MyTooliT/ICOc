@@ -19,7 +19,8 @@ def usage(command):
 
 # -- Main ---------------------------------------------------------------------
 
-if __name__ == '__main__':
+
+def main():
     EXIT_USAGE = 2
 
     if len(argv) != 2:
@@ -39,3 +40,7 @@ if __name__ == '__main__':
         print(f"Please use a MAC address of the form xx:xx:xx:xx:xx:xx",
               file=stderr)
         exit(EXIT_USAGE)
+
+
+if __name__ == '__main__':
+    main()

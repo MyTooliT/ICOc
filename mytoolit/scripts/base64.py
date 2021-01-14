@@ -19,7 +19,8 @@ def usage(command):
 
 # -- Main ---------------------------------------------------------------------
 
-if __name__ == '__main__':
+
+def main():
     EXIT_USAGE = 2
 
     if len(argv) != 2:
@@ -35,3 +36,7 @@ if __name__ == '__main__':
     except ValueError:
         print(f"Please use a Base64 encoded name with length 8", file=stderr)
         exit(EXIT_USAGE)
+
+
+if __name__ == '__main__':
+    main

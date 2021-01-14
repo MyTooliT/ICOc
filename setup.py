@@ -32,7 +32,9 @@ setup(name="icoc",
           'console_scripts': [
               'icoc = mytoolit.old.mwt:main',
               'test-sth = mytoolit.test.production.sth:main',
-              'test-stu = mytoolit.test.production.stu:main'
+              'test-stu = mytoolit.test.production.stu:main',
+              'convert-base64-mac = mytoolit.scripts.base64:main',
+              'convert-mac-base64 = mytoolit.scripts.mac:main',
           ]
       },
       tests_require=['nose'],
