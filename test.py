@@ -1,5 +1,5 @@
 from can.interface import Bus
-from can import CanError, Message
+from can import Message
 from mytoolit.can import Identifier
 from platform import system
 from time import sleep, time
@@ -78,8 +78,7 @@ def create_connection_network():
 
     # Connect to first available device
     device_number = 0
-    acknowledgment_data = network.bBlueToothConnectDeviceConnect(
-        'STU1', device_number)
+    network.bBlueToothConnectDeviceConnect('STU1', device_number)
 
     # Check connection to device
     timeout = time() + 10
@@ -100,7 +99,7 @@ def create_connection_network():
     connected = network.bBlueToothDisconnect(MyToolItNetworkNr['STU1'])
     if connected:
         return
-    print(f"Disconnected Bluetooth of STU 1")
+    print("Disconnected Bluetooth of STU 1")
 
     network.__exit__()  # Cleanup resources (read thread)
 
@@ -187,7 +186,7 @@ def create_connection_bus():
     connected = check_bluetooth_connection(bus)
     if connected:
         return
-    print(f"Disconnected Bluetooth of STU 1")
+    print("Disconnected Bluetooth of STU 1")
 
     # Clean up resources
     bus.shutdown()
