@@ -1,11 +1,12 @@
 import os
 import time
-"""
-Logger Classe is used to create Logs (in a .txt format)
-"""
 
 
 class Logger():
+    """
+    Logger class used to create logs (in a .txt format)
+    """
+
     def __init__(self, fileName, fileNameError, FreshLog=False):
         self.bFileOpen = False
         self.ErrorFlag = False
