@@ -1,4 +1,6 @@
-from MyToolItCommands import AdcAcquisitionTime, AdcOverSamplingRate, AdcReference, calcSamplingRate, AdcMax
+from mytoolit.old.MyToolItCommands import (AdcAcquisitionTime,
+                                           AdcOverSamplingRate, AdcReference,
+                                           calcSamplingRate, AdcMax)
 
 
 class SthLimits():
