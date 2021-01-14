@@ -15,6 +15,7 @@ sys.path.append(sDirName)
 import getopt
 import openpyxl
 from openpyxl.styles import Font
+from pathlib import Path
 import copy
 import argparse
 import multiprocessing
@@ -1233,7 +1234,8 @@ class myToolItWatch():
         xml = (bytes('<?xml version="1.0" encoding="UTF-8"?>\n',
                      encoding='utf-8') + ET.tostring(self.tXmlConfig.root))
         xml = xml.decode('utf-8')
-        with open(self.sXmlFileName, "w", encoding='utf-8') as f:
+        filepath = Path(__file__).parent.joinpath(self.sXmlFileName)
+        with open(filepath, "w", encoding='utf-8') as f:
             f.write(xml)
 
     """
@@ -1252,7 +1254,8 @@ class myToolItWatch():
     """
 
     def xmlSave(self):
-        self.tXmlConfig.tree.write(self.sXmlFileName)
+        filepath = str(Path(__file__).parent.joinpath(self.sXmlFileName))
+        self.tXmlConfig.tree.write(filepath)
         self._XmlWriteEndoding()
         del self.tXmlConfig
         self.tXmlConfig = ConfigKeys(self.args_dict['xml_file_name'][0])
