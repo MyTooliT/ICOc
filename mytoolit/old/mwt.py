@@ -4,6 +4,8 @@ import curses
 import os
 import subprocess
 
+from pathlib import Path
+
 from mytoolit.old.myToolItWatch import myToolItWatch
 from mytoolit.old.MyToolItCommands import (
     AdcReference, AdcAcquisitionTime, AdcOverSamplingRate, byte_list_to_int,
@@ -52,7 +54,8 @@ class mwt(myToolItWatch):
         lastRun = self.tXmlConfig.tree.find('lastRun')
         sLogName = self.Can.Logger.fileName.split('_')[0]
         sLogName = sLogName.split('.')[0]  # Just to be sure
-        lastRun.find('LogName').text = str(sLogName)
+        basename_log = Path(sLogName).name
+        lastRun.find('LogName').text = str(basename_log)
         lastRun.find('Product').text = self.sProduct
         lastRun.find('Version').text = self.sConfig
         lastRun.find('NetworkNumber').text = self.sNetworkNumber
