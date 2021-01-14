@@ -1,6 +1,8 @@
 import os
 import time
 
+from pathlib import Path
+
 
 class Logger():
     """
@@ -13,6 +15,7 @@ class Logger():
         self.startTime = int(round(time.time() * 1000))
         self.file = None
         self.fileName = None
+
         self.vRename(fileName, fileNameError, FreshLog=FreshLog)
 
     def __exit__(self):
@@ -59,6 +62,11 @@ class Logger():
             self.file.flush()
 
     def vRename(self, fileName, fileNameError, FreshLog=False):
+        # Store log files in root of repository
+        repository = Path(__file__).parent.parent.parent
+        fileName = str(repository.joinpath(fileName))
+        fileNameError = str(repository.joinpath(fileNameError))
+
         if None != self.file:
             self.vClose()
         if not os.path.exists(os.path.dirname(fileName)) and os.path.isdir(
