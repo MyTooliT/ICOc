@@ -30,7 +30,7 @@ setup(name="icoc",
       python_requires='>=3.7',
       entry_points={
           'console_scripts': [
-              'icoc = mwt:main',
+              'icoc = mytoolit.old.mwt:main',
               'test-sth = mytoolit.test.production.sth:main',
               'test-stu = mytoolit.test.production.stu:main'
           ]
