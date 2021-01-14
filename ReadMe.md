@@ -168,7 +168,7 @@ The time stamp inside the CAN message (`TimeStamp`) together with the cyclically
 - message loss, and
 - the message jitter.
 
-For our example, the message jitter (maximum time - minimum time between messages) for our example data is 6µs (198µs-192µs).
+For our example, the message jitter (maximum time - minimum time between messages) is 6µs (198µs-192µs).
 
 Currently most of the STHs (or SHAs) only measure the acceleration in the x direction. For those that measure the acceleration in different directions, the log format for the acceleration is a little bit different. For example, a sensor that measures the acceleration in all three directions produces log entries that look like this:
 
