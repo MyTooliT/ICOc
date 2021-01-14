@@ -2,7 +2,7 @@
 
 The ICOc software is a collection of tools and scripts for the [ICOtronic system](https://www.mytoolit.com/ICOtronic/). Currently the main purpose of the software is
 
-- data collection (via [`mwt.py`](mwt.py) or the [ICOc script](Scripts/ReadMe.md))
+- data collection (via the script `icoc`)
 - and testing the functionality of the Sensory Holder Assembly (SHA) and Sensory Tool Holder (STH).
 
 For these purposes the software reads data from the Stationary Transceiver Unit (STU) via CAN using the MyTooliT protocol. The STU itself reads from and writes data to the SHA/STH via Bluetooth.
@@ -34,16 +34,6 @@ MyToolIt Watch requires at least Python `3.7`. Later versions should work too. Y
 
 When you install the package downloaded above, please do not forget to enable the checkbox “Add Python to PATH” in the setup window of the installer.
 
-##### Packages
-
-Since MyToolIt Watch requires additional Python packages you need to install them too. You can do that using the following command inside PowerShell or the old Windows command line interface `cmd.exe` in the _root of this repository_:
-
-```sh
-pip install -r requirements.txt
-```
-
-The command above will read the file [requirement.txt](requirement.txt) and install all the packages listed in this file.
-
 #### ICOc
 
 Please clone [this repository](https://github.com/MyTooliT/ICOc) to a directory of your choice. You can either use the [command line tool `git`](https://git-scm.com/downloads):
@@ -56,13 +46,17 @@ or one of the many available [graphical user interfaces for Git](https://git-scm
 
 The repository contains everything necessary to connect to an STU via CAN and pull data from the attached STHs.
 
+Before you use the software you need to install it (in developer mode). To do that please run the following command in the root of the repository:
+
+```sh
+pip install -e .
+```
+
+Afterwards you can use the various [scripts](Documentation/Scripts.md) included in the package.
+
 #### Simplicity Studio
 
 For the tests that require a firmware flash, such as the [production tests](mytoolit/test/production) you need to [install Simplicity Studio](https://www.silabs.com/products/development-tools/software/simplicity-studio). Please also make sure to install the Simplicity Commander tool inside Simplicity Studio.
-
-## Usage
-
-We recommend that you add the [scripts directory](Scripts) to your path environment variable. Afterwards you can use all [the scripts in this folder](Scripts/ReadMe.md) directly in your Terminal application of choice, without the need to change the current working directory.
 
 ### Control and Data Acquirement
 
@@ -71,7 +65,7 @@ We recommend that you add the [scripts directory](Scripts) to your path environm
 The `ICOc` script can be used to control an STH (or SHA). After you enter the command
 
 ```sh
-ICOc
+icoc
 ```
 
 in your terminal, a text based interface shows you the currently available options. For example, the text
@@ -184,34 +178,16 @@ As you can see instead of transmitting three x acceleration values, the STH inst
 
 ### STH
 
-To run the production tests for the STH, please execute the following command in the root of the repository:
+To run the production tests for the STH, please execute the following command
 
 ```sh
-python mytoolit/test/production/sth.py
-```
-
-If you change the current working directory to the test directory:
-
-```sh
-cd mytoolit/test/production
-```
-
-then you can invoke the command directly via
-
-```sh
-python sth.py
-```
-
-Depending on your environment, using `py` instead of `python` might also work:
-
-```sh
-py sth.py
+test-sth
 ```
 
 For a list of available command line options, please use the option `-h`:
 
 ```sh
-python sth.py -h
+test-sth -h
 ```
 
 #### Specific Tests
@@ -219,31 +195,21 @@ python sth.py -h
 To only run a single test you need the specify its name. For example, to run the test `test__firmware_flash` you can use the following command:
 
 ```sh
-python sth.py TestSTH.test__firmware_flash
+test-sth TestSTH.test__firmware_flash
 ```
 
 You can also run specific tests using pattern matching. To do that use the command line option `-k`. For example to run the firmware flash and the connection test you can use the command:
 
 ```sh
-python sth.py -k flash -k connection
+test-sth -k flash -k connection
 ```
 
 , which executes all tests that contain the text `flash` or `connection`.
 
-#### Wrapper Script
-
-We provide a very simple wrapper script for the STH test called [`Test-STH.ps1`](../Scripts/Test-STH.ps1). This script just executes the script `sth.py` with the current Python interpreter forwarding the given command line arguments in the process. If you add the [Scripts](../Scripts) folder to your Windows path variable, you can call the wrapper script (and hence the STH test) regardless of the current path. For example, to execute the EEPROM test just call
-
-```sh
-Test-STH -k eeprom
-```
-
-inside the Terminal. If this command shows an execution policy error, then please read the section “How Can I Fix Execution Policy Errors?” in the [FAQ](Documentation/FAQ.md).
-
 ### STU
 
-The explanation for the STH test apply also for the STU tests. Please just replace `STH` (or `sth`) in the previous section with the term `STU` (respective `stu`). For example, to execute all tests for the STU you can use the following command:
+The explanation for the STH test apply also for the STU tests. Please just replace `sth` in the previous section with the term `stu`. For example, to execute all tests for the STU you can use the following command:
 
 ```sh
-Test-STU
+test-stu
 ```

@@ -42,7 +42,7 @@ and make sure that it reports no test failures.
 
 ### ICOc
 
-1. Call the command `ICOc`.
+1. Call the command `icoc`.
 2. Connect to a working STH (Enter the number and press <kbd>⏎</kbd>)
 3. Start the data acquisition (<kbd>s</kbd>)
 4. After some time a window displaying the current acceleration of the STH (or SHA) should show up
@@ -53,14 +53,14 @@ and make sure that it reports no test failures.
 
 ### STH Test
 
-1. Call the command `Test-STH` for a working STH
+1. Call the command `test-sth` for a working STH
 2. Wait for the command execution
 3. Check that the command shows no error messages
 4. Open the PDF report (`STH Test.pdf`) in the repository root and make sure that it includes the correct test data
 
 ### STU Test
 
-1. Call the command `Test-STU -k eeprom -k connect` for a working STU
+1. Call the command `test-stu -k eeprom -k connect` for a working STU
 2. Wait for the command execution
 3. Check that the command shows no error messages
 4. Open the PDF report (`STU Test.pdf`) in the repository root and make sure that it includes the correct test data
