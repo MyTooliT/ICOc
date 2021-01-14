@@ -18,7 +18,7 @@ from mytoolit.test.production import TestNode
 from mytoolit.unittest import ExtendedTestRunner
 from mytoolit.utility import convert_mac_base64
 
-from MyToolItCommands import (
+from mytoolit.old.MyToolItCommands import (
     AdcMax,
     AdcVRefValuemV,
     AdcReference,
@@ -31,7 +31,7 @@ from MyToolItCommands import (
     MyToolItStreaming,
     int_to_mac_address,
 )
-from MyToolItSth import fVoltageBattery
+from mytoolit.old.MyToolItSth import fVoltageBattery
 
 # -- Classes ------------------------------------------------------------------
 

@@ -5,8 +5,8 @@ from platform import system
 from time import sleep, time
 
 from network import Network
-from MyToolItNetworkNumbers import MyToolItNetworkNr
-from MyToolItCommands import int_to_mac_address
+from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
+from mytoolit.old.MyToolItCommands import int_to_mac_address
 
 
 def send_message(bus, identifier, data=None):

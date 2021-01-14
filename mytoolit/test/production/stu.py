@@ -13,9 +13,9 @@ from mytoolit.config import settings
 from mytoolit.test.production import TestNode
 from mytoolit.unittest import ExtendedTestRunner
 
-from MyToolItNetworkNumbers import MyToolItNetworkNr
-from MyToolItCommands import (int_to_mac_address, MyToolItBlock,
-                              MyToolItProductData)
+from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
+from mytoolit.old.MyToolItCommands import (int_to_mac_address, MyToolItBlock,
+                                           MyToolItProductData)
 
 # -- Class --------------------------------------------------------------------
 

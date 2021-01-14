@@ -7,7 +7,8 @@ from sys import path as module_path
 repository_root = dirname(dirname(dirname(abspath(__file__))))
 module_path.append(repository_root)
 
-from MyToolItCommands import MyToolItBlock, blocknumber_to_commands
+from mytoolit.old.MyToolItCommands import (MyToolItBlock,
+                                           blocknumber_to_commands)
 
 # -- Class --------------------------------------------------------------------
 
@@ -16,12 +17,12 @@ class Command:
     """This class represents a command including error and acknowledge bits"""
 
     def __init__(
-            self,
-            *command,
-            block=None,
-            block_command=None,
-            request=None,
-            error=None,
+        self,
+        *command,
+        block=None,
+        block_command=None,
+        request=None,
+        error=None,
     ):
         """Create a new command from the given arguments
 

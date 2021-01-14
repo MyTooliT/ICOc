@@ -2,14 +2,9 @@ import sys
 import os
 import xml.etree.ElementTree as ET
 from can.interfaces.pcan.basic import PCAN_ERROR_OK, PCAN_ERROR_QOVERRUN
-from network import Network
-from MyToolItNetworkNumbers import *
-from MyToolItCommands import *
 from time import sleep, time
 from random import randint
-from MyToolItSth import *
 from datetime import datetime
-from configKeys import ConfigKeys
 sDirName = os.path.dirname('')
 sys.path.append(sDirName)
 import getopt
@@ -19,7 +14,6 @@ from pathlib import Path
 import copy
 import argparse
 import multiprocessing
-from Plotter import vPlotter, tArray2Binary
 import socket
 import array
 import struct
@@ -31,6 +25,13 @@ path.append(str(Path(__file__).parent.parent.parent))
 
 from mytoolit import __version__
 from mytoolit.config import settings
+
+from mytoolit.old.network import Network
+from mytoolit.old.MyToolItNetworkNumbers import *
+from mytoolit.old.MyToolItCommands import *
+from mytoolit.old.MyToolItSth import *
+from mytoolit.old.configKeys import ConfigKeys
+from mytoolit.old.Plotter import vPlotter, tArray2Binary
 
 Watch = {
     "IntervalDimMinX": 10,  # Minimum interval time in ms

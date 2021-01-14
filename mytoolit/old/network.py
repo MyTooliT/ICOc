@@ -27,7 +27,7 @@ from mytoolit.can import (Command, ErrorStatusSTH, ErrorStatusSTU, Identifier,
 from mytoolit.eeprom import EEPROMStatus
 from mytoolit.config import settings
 
-from MyToolItCommands import (
+from mytoolit.old.MyToolItCommands import (
     AdcAcquisitionTimeName,
     AdcOverSamplingRateName,
     AdcMax,
@@ -57,8 +57,8 @@ from MyToolItCommands import (
     SystemCommandBlueTooth,
     VRefName,
 )
-from MyToolItNetworkNumbers import MyToolItNetworkName
-from Logger import Logger
+from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkName
+from mytoolit.old.Logger import Logger
 
 
 class Network(object):

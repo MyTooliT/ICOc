@@ -1,17 +1,17 @@
-from myToolItWatch import myToolItWatch
-from MyToolItCommands import (AdcReference, AdcAcquisitionTime,
-                              AdcOverSamplingRate, byte_list_to_int,
-                              calcSamplingRate, CalibMeassurementActionNr,
-                              CalibMeassurementTypeNr, BlueToothDeviceNr,
-                              DataSets, int_to_mac_address, MyToolItStreaming)
-from MyToolItNetworkNumbers import MyToolItNetworkNr
-from MyToolItSth import fVoltageBattery
 from time import sleep
 import glob
 import curses
 import os
-from network import Network
 import subprocess
+
+from mytoolit.old.myToolItWatch import myToolItWatch
+from mytoolit.old.MyToolItCommands import (
+    AdcReference, AdcAcquisitionTime, AdcOverSamplingRate, byte_list_to_int,
+    calcSamplingRate, CalibMeassurementActionNr, CalibMeassurementTypeNr,
+    BlueToothDeviceNr, DataSets, int_to_mac_address, MyToolItStreaming)
+from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
+from mytoolit.old.MyToolItSth import fVoltageBattery
+from mytoolit.old.network import Network
 
 
 class mwt(myToolItWatch):

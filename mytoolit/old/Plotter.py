@@ -2,9 +2,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import socket
 import json
-from configKeys import ConfigKeys
 from time import time
-from Logger import Logger
+
+from mytoolit.old.configKeys import ConfigKeys
+from mytoolit.old.Logger import Logger
 
 HOST = ''  # Symbolic name meaning all available interfaces
 PORT = 50007  # Arbitrary non-privileged port to define standard port for this application

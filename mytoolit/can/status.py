@@ -7,7 +7,7 @@ from sys import path as module_path
 repository_root = dirname(dirname(dirname(abspath(__file__))))
 module_path.append(repository_root)
 
-from MyToolItCommands import NetworkStateName
+from mytoolit.old.MyToolItCommands import NetworkStateName
 
 # -- Classes ------------------------------------------------------------------
 

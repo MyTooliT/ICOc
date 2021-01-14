@@ -13,10 +13,11 @@ from mytoolit.config import settings
 from mytoolit import __version__
 from mytoolit.report import Report
 
-from network import Network
-from MyToolItNetworkNumbers import MyToolItNetworkNr
-from MyToolItCommands import (AdcOverSamplingRate, ActiveState, NodeState,
-                              NetworkState, MyToolItBlock, MyToolItSystem)
+from mytoolit.old.network import Network
+from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
+from mytoolit.old.MyToolItCommands import (AdcOverSamplingRate, ActiveState,
+                                           NodeState, NetworkState,
+                                           MyToolItBlock, MyToolItSystem)
 
 # -- Functions ----------------------------------------------------------------
 
