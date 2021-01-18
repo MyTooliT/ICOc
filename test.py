@@ -4,7 +4,7 @@ from mytoolit.can import Identifier
 from platform import system
 from time import sleep, time
 
-from network import Network
+from mytoolit.old.network import Network
 from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
 from mytoolit.old.MyToolItCommands import int_to_mac_address
 
