@@ -50,10 +50,7 @@ class Settings(Dynaconf):
 
 # -- Attributes ---------------------------------------------------------------
 
-settings = Settings(
-    envvar_prefix="DYNACONF",
-    settings_file=[
-        Path(__file__).parent.parent.joinpath('Configuration').joinpath(
-            'config.yaml')
-    ],
-)
+settings = Settings(settings_file=[
+    Path(__file__).parent.parent.joinpath('Configuration').joinpath(
+        'config.yaml')
+], )
