@@ -1,9 +1,14 @@
 from can.interface import Bus
 from can import Message
-from mytoolit.can import Identifier
+from pathlib import Path
 from platform import system
+from sys import path
 from time import sleep, time
 
+# Add path for custom libraries
+path.append(str(Path(__file__).parent.parent.parent))
+
+from mytoolit.can import Identifier
 from mytoolit.old.network import Network
 from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
 from mytoolit.old.MyToolItCommands import int_to_mac_address
