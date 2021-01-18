@@ -10,9 +10,9 @@
 # one place.
 
 # We assume that you use the same programming board for the STH (SHA) and STU.
-Programming Board Number: &serial 440120910
+PROGRAMMING BOARD NUMBER: &serial 440120910
 # We assume that you use the same CAN bitrate on Linux and Windows
-CAN Bitrate: &bitrate 1000000
+CAN BITRATE: &bitrate 1000000
 
 # =================
 # = Configuration =
@@ -23,62 +23,62 @@ CAN Bitrate: &bitrate 1000000
 # this configuration values are currently not used by the main command line tool
 # or any of the tests!
 CAN:
-  Linux:
-    Bitrate: *bitrate
-    Channel: can0
-    Interface: socketcan
-  Windows:
-    Bitrate: *bitrate
-    Channel: PCAN_USBBUS1
-    Interface: pcan
+  LINUX:
+    BITRATE: *bitrate
+    CHANNEL: can0
+    INTERFACE: socketcan
+  WINDOWS:
+    BITRATE: *bitrate
+    CHANNEL: PCAN_USBBUS1
+    INTERFACE: pcan
 
-Commands:
-  Path:
+COMMANDS:
+  PATH:
     # The keys below this key should contain the path to Simplicity Commander
     # (`commander`) for different operating systems. If the list for the current
     # OS does not do that, then the STH test will fail, unless the commands are
     # already accessible via the path environment variable (`$Env:Path` in
     # Windows or `$PATH` in Unix).
-    Windows:
+    WINDOWS:
       # The paths below are the default install locations of `commander` in
       # Windows
       - C:\SiliconLabs\SimplicityStudio\v4\developer\adapter_packs\commander
       - C:\SiliconLabs\SimplicityStudio\v5\developer\adapter_packs\commander
 
-Logger:
+LOGGER:
   CAN:
     # The value below specifies the minimum level of messages logged to
     # `can.log`. Currently the logger only writes debug messages, which means
     # ICOc will write CAN messages to `can.log`, if you specify the value
     # `DEBUG`. If you use a different allowed value, such as `INFO` or `WARNING`
     # no messages will be logged.
-    Level:
+    LEVEL:
       INFO
 
 GUI:
   HOST: localhost # Socket address of Matplotlib GUI
   PORT: 50007 # Port of Matplotlib GUI
 
-Operator:
+OPERATOR:
   # The name of the operator that executes the hardware tests
-  Name: Dummy User
+  NAME: Dummy User
 
 STH:
-  Acceleration Sensor:
+  ACCELERATION SENSOR:
     # Values for the Analog Devices ± 100g analog accelerometer sensor ADXL1001.
     ADXL1001:
-      Acceleration:
+      ACCELERATION:
         # Maximum Acceleration of sensor in multiples of g₀ (= 9.807 m/s²)
-        Maximum: 200
+        MAXIMUM: 200
         # This value stores the maximum allowed ratio of noise to maximum
         # measurement value in dB. If the measured ratio is above this level,
         # then the tested STH will be considered faulty.
-        Ratio Noise To Max Value: -55
+        RATIO NOISE TO MAX VALUE: -55
         # Tolerance to expected (stationary) acceleration value (of 0 m/s²) in
         # multiples of g₀
-        Tolerance: 5
-      Self Test:
-        Voltage:
+        TOLERANCE: 5
+      SELF TEST:
+        VOLTAGE:
           # Expected voltage difference between
           #
           # - the measured (stationary) acceleration voltage, and
@@ -86,21 +86,21 @@ STH:
           #
           # in mV. For more information, please check the data sheet of the
           # accelerometer.
-          Difference: 90
+          DIFFERENCE: 90
           # Tolerance to the expected voltage difference in mV
-          Tolerance: 20
+          TOLERANCE: 20
     # Values for the Analog devices ± 50g digital accelerometer sensor ADXL1002.
     # Please check the comments for sensor `ADXL1001` for a more detailed
     # description of the config values.
     ADXL1002:
-      Acceleration:
-        Maximum: 100
-        Ratio Noise To Max Value: -55
-        Tolerance: 3
-      Self Test:
-        Voltage:
-          Difference: 160
-          Tolerance: 30
+      ACCELERATION:
+        MAXIMUM: 100
+        RATIO NOISE TO MAX VALUE: -55
+        TOLERANCE: 3
+      SELF TEST:
+        VOLTAGE:
+          DIFFERENCE: 160
+          TOLERANCE: 30
     # The identifier of the accelerometer sensor (either `ADXL1001` or
     # `ADXL1002`). The values below the key will be used for the STH test.
     #
@@ -109,45 +109,45 @@ STH:
     #  `STH` → `Acceleration Sensor` → `ADXL1001` → `Acceleration` → `Maximum`
     #
     # will be used as maximum acceleration value for the current STH.
-    Sensor: ADXL1001
+    SENSOR: ADXL1001
 
   # An ever increasing (32 bit unsigned) number that describes the current
   # batch that this STH was a part of.
-  Batch Number: 200
+  BATCH NUMBER: 200
 
-  Battery Voltage:
-    Average: 3.6 # Expected value of power source voltage in Volt
-    Tolerance: 0.6 # Tolerance for expected power source voltage in Volt
-  Bluetooth:
+  BATTERY VOLTAGE:
+    AVERAGE: 3.6 # Expected value of power source voltage in Volt
+    TOLERANCE: 0.6 # Tolerance for expected power source voltage in Volt
+  BLUETOOTH:
     # Advertisement time 1 in ms
-    Advertisement Time 1: 2000
+    ADVERTISEMENT TIME 1: 2000
     # Advertisement time 2 in ms
-    Advertisement Time 2: 4000
+    ADVERTISEMENT TIME 2: 4000
     # Time to from disconnect or power on to sleep mode 1 in ms
-    Sleep Time 1: 300000
+    SLEEP TIME 1: 300000
     # Time to/from entering sleep mode 1 to sleep mode 2 in ms
-    Sleep Time 2: 259200000
+    SLEEP TIME 2: 259200000
 
-  Firmware:
-    Location:
+  FIRMWARE:
+    LOCATION:
       # This value should contain the path to a complete image (bootloader and
       # application). This path will be interpreted in relation to the root of
       # the repository.
-      Flash: ../STH/builds/manufacturingImageSthv2.1.10.hex
+      FLASH: ../STH/builds/manufacturingImageSthv2.1.10.hex
     # Code name of the current firmware release
-    Release Name: Tanja
+    RELEASE NAME: Tanja
 
   # Global Trade Item Number
   GTIN: 0
 
   # The current version of the PCB design
-  Hardware Revision: 1.4.0
+  HARDWARE REVISION: 1.4.0
 
   # This value specifies the current name of the STH unit
-  Name: CGvXAd6B
+  NAME: CGvXAd6B
 
   # OEM specific data
-  OEM Data: [
+  OEM DATA: [
      0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
      0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
      0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
@@ -159,22 +159,22 @@ STH:
      ]
 
   # The production date of the STH PCB in the format YYYY-MM-DD
-  Production Date: 2019-07-03
+  PRODUCTION DATE: 2019-07-03
 
   # Product name for the  manufacturer (maximum of 64 byte UTF-8 encoded text)
-  Product Name: 0
+  PRODUCT NAME: 0
 
-  Programming Board:
+  PROGRAMMING BOARD:
     # Please store the serial number of the programming board that is connected
     # to the STH here. This number should be displayed in the right bottom
     # corner of the LC display, after you connect the programmer to a power
     # source
-    Serial Number: *serial
+    SERIAL NUMBER: *serial
 
   # Serial number for the manufacturer (maximum of 32 byte UTF-8 encoded text)
-  Serial Number: 0
+  SERIAL NUMBER: 0
 
-  Status:
+  STATUS:
     # Describe the status of the current STH hardware. This scalar should either
     # store the value `Bare PCB` or `Epoxied`. If you use the value `Epoxied`,
     # then the flash test for the STH will be skipped.
@@ -184,24 +184,24 @@ STU:
 
   # An ever increasing (32 bit unsigned) number that describes the current
   # batch that this STU was a part of.
-  Batch Number: 100
+  BATCH NUMBER: 100
 
-  Firmware:
-    Location:
+  FIRMWARE:
+    LOCATION:
       # This value should contain the path to a complete image (bootloader and
       # application). This path will be interpreted in relation to the root of
       # the repository.
-      Flash: ../STU/builds/manufacturingImageStuv2.1.10.hex
-    Release Name: Valerie
+      FLASH: ../STU/builds/manufacturingImageStuv2.1.10.hex
+    RELEASE NAME: Valerie
 
   # Global Trade Item Number
   GTIN: 0
 
   # The current version of the PCB design
-  Hardware Revision: 1.3.3
+  HARDWARE REVISION: 1.3.3
 
   # OEM specific data
-  OEM Data: [
+  OEM DATA: [
      0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
      0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
      0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
@@ -213,18 +213,18 @@ STU:
      ]
 
   # The production date of the STH PCB in the format YYYY-MM-DD
-  Production Date: 2020-08-20
+  PRODUCTION DATE: 2020-08-20
 
   # Product name for the  manufacturer (maximum of 64 byte UTF-8 encoded text)
-  Product Name: 0
+  PRODUCT NAME: 0
 
-  Programming Board:
+  PROGRAMMING BOARD:
     # Please store the serial number of the programming board that is connected
     # to the STU here. This number should be displayed in the right bottom
     # corner of the LC display, after you connect the programmer to a power
     # source
-    Serial Number: *serial
+    SERIAL NUMBER: *serial
 
   # Serial number for the manufacturer (maximum of 32 byte UTF-8 encoded text)
-  Serial Number: 0
+  SERIAL NUMBER: 0
 

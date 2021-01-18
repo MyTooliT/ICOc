@@ -2,8 +2,11 @@
 
 ## Configuration
 
-- We moved the [configuration file for the test scripts](../../mytoolit/config/config.yaml) into the `mytoolit` package.
+- We moved the [configuration file for the test scripts][config] into the `mytoolit` package.
 - We moved the [configuration file for ICOc](../../mytoolit/old/configKeys.xml) into the `mytoolit` package.
+- We now use uppercase letters for all configuration keys in [`config.yaml`][config]. The reason behind this update is that we can overwrite these values using environment variables – with the prefix `DYNACONF_` – even on Windows. Unfortunately Windows [converts all environment variables to uppercase](https://www.dynaconf.com/configuration).
+
+[config]: ../../mytoolit/config/config.yaml
 
 ## Compatibility
 
