@@ -29,6 +29,7 @@ setup(name="icoc",
           "semantic_version",
           "windows-curses",
       ],
+      include_package_data=True,
       classifiers=[
           "Development Status :: 3 - Alpha",
           "Programming Language :: Python :: 3",

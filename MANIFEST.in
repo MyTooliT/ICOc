@@ -1,0 +1,2 @@
+global-include config.yaml
+global-include configKeys.xml
