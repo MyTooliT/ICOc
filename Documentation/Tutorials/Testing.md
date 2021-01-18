@@ -33,7 +33,7 @@ Before you start, please make sure that you installed the hardware and software 
 
    Please note, that the test will rename the tested STH to a Base64 encoded version of the Bluetooth MAC address. The rationale behind this is that we can use this string to uniquely identify a STH. For more information, please take a look at the [corresponding issue](https://github.com/MyTooliT/ICOc/issues/1).
 
-[config]: ../../Configuration/config.yaml
+[config]: ../../mytoolit/config/config.yaml
 
 ## STU
 
