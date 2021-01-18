@@ -2,7 +2,7 @@
 
 ## Configuration
 
-- We moved the host and port configuration values of the [Matplotlib](https://matplotlib.org) GUI from the XML configuration file into the [YAML configuration](../Configuration/config.yaml).
+- We moved the host and port configuration values of the [Matplotlib](https://matplotlib.org) GUI from the XML configuration file into the YAML configuration.
 
 ## Documentation
 
@@ -10,7 +10,7 @@
 
 ## STH Test
 
-- The EEPROM tests now also writes the firmware release name (`STH` → `Firmware` → `Release Name` in the [configuration](../Configuration/config.yaml)) into the EEPROM.
+- The EEPROM tests now also writes the firmware release name (`STH` → `Firmware` → `Release Name` in the configuration into the EEPROM.
 - The EEPROM test now sets the
 
   - operating time,
