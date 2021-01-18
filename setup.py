@@ -29,9 +29,6 @@ setup(name="icoc",
           "semantic_version",
           "windows-curses",
       ],
-      package_data={
-          '': ['*.md'],
-      },
       classifiers=[
           "Development Status :: 3 - Alpha",
           "Programming Language :: Python :: 3",
