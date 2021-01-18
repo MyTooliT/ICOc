@@ -15,6 +15,8 @@
 
 ## Internal
 
+- We removed old hardware test code
+
 ### Network (Old)
 
 - Simplified code
