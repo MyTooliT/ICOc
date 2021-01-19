@@ -130,7 +130,9 @@ class Network(object):
         self.ReadThreadReset()
 
         logger = getLogger('can')
-        logger.setLevel(settings.Logger.CAN.Level)
+        # We use `Logger` in the code below, since the `.logger` attribute
+        # stores internal DynaConf data
+        logger.setLevel(settings.Logger.can.level)
         handler = FileHandler('can.log', 'w', 'utf-8', delay=True)
         handler.setFormatter(Formatter('{asctime} {message}', style='{'))
         logger.addHandler(handler)

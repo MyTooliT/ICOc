@@ -112,8 +112,8 @@ class myToolItWatch():
 
     def vXmlConfigurationPlotterHost(self):
         """Set Matplotlib GUI host and port"""
-        self.sPloterSocketHost = settings.GUI.Host
-        self.iPloterSocketPort = settings.GUI.Port
+        self.sPloterSocketHost = settings.gui.host
+        self.iPloterSocketPort = settings.gui.port
 
     def _statusWords(self):
         self.Can.Logger.Info("STH Status Word: {}".format(

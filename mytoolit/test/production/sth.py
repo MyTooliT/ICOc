@@ -47,7 +47,7 @@ class TestSTH(TestNode):
 
         # The status attribute (`Epoxied` or `Bare PCB`) only applies to the
         # STH
-        cls.status = settings.STH.Status
+        cls.status = settings.sth.status
 
     def _connect(self):
         """Create a connection to the STH"""
@@ -91,8 +91,8 @@ class TestSTH(TestNode):
         # the name of the STH in advance.
         cls.name = settings.sth_name()
 
-    @skipIf(settings.STH.Status == "Epoxied",
-            f"Flash test skipped because of status “{settings.STH.Status}”")
+    @skipIf(settings.sth.status == "Epoxied",
+            f"Flash test skipped because of status “{settings.sth.status}”")
     def test__firmware_flash(self):
         """Upload bootloader and application into STH
 
@@ -136,8 +136,8 @@ class TestSTH(TestNode):
         voltage_bytes = message[voltage_index_start:voltage_index_end + 1]
         battery_voltage_raw = byte_list_to_int(voltage_bytes)
 
-        expected_voltage = settings.STH.Battery_Voltage.Average
-        tolerance_voltage = settings.STH.Battery_Voltage.Tolerance
+        expected_voltage = settings.sth.battery_voltage.average
+        tolerance_voltage = settings.sth.battery_voltage.tolerance
         expected_minimum_voltage = expected_voltage - tolerance_voltage
         expected_maximum_voltage = expected_voltage + tolerance_voltage
 
@@ -166,12 +166,12 @@ class TestSTH(TestNode):
         acceleration_value_raw = acceleration_raw[0]
         sensor = settings.acceleration_sensor()
         acceleration = convert_acceleration_adc_to_g(
-            acceleration_value_raw, sensor.Acceleration.Maximum)
+            acceleration_value_raw, sensor.acceleration.maximum)
 
         # We expect a stationary acceleration of the standard gravity
         # (1 g₀ = 9.807 m/s²)
         expected_acceleration = 1
-        tolerance_acceleration = sensor.Acceleration.Tolerance
+        tolerance_acceleration = sensor.acceleration.tolerance
         expected_minimum_acceleration = (expected_acceleration -
                                          tolerance_acceleration)
         expected_maximum_acceleration = (expected_acceleration +
@@ -204,7 +204,7 @@ class TestSTH(TestNode):
         cls.ratio_noise_max = ratio_noise_max(acceleration)
 
         sensor = settings.acceleration_sensor()
-        maximum_ratio_allowed = sensor.Acceleration.Ratio_Noise_To_Max_Value
+        maximum_ratio_allowed = sensor.acceleration.ratio_noise_to_max_value
         self.assertLessEqual(
             cls.ratio_noise_max, maximum_ratio_allowed,
             "The ratio noise to possible maximum measured value of "
@@ -247,8 +247,8 @@ class TestSTH(TestNode):
         voltage_diff = voltage_at_test - voltage_before_test
 
         sensor = settings.acceleration_sensor()
-        voltage_diff_expected = sensor.Self_Test.Voltage.Difference
-        voltage_diff_tolerance = sensor.Self_Test.Voltage.Tolerance
+        voltage_diff_expected = sensor.self_test.voltage.difference
+        voltage_diff_tolerance = sensor.self_test.voltage.tolerance
 
         voltage_diff_minimum = voltage_diff_expected - voltage_diff_tolerance
         voltage_diff_maximum = voltage_diff_expected + voltage_diff_tolerance
@@ -264,7 +264,7 @@ class TestSTH(TestNode):
 
         possible_failure_reason = (
             "\n\nPossible Reason:\n\n• Acceleration sensor config value "
-            f"“{settings.STH.Acceleration_Sensor.Sensor}” is incorrect")
+            f"“{settings.sth.acceleration_sensor.sensor}” is incorrect")
 
         self.assertGreaterEqual(
             voltage_diff, voltage_diff_minimum,
@@ -328,27 +328,27 @@ class TestSTH(TestNode):
                         write_function=self.can.write_eeprom_sleep_time_1,
                         variable='sleep_time_1',
                         description="Sleep Time 1",
-                        milliseconds=settings.STH.Bluetooth.Sleep_Time_1)
+                        milliseconds=settings.sth.bluetooth.sleep_time_1)
 
         read_write_time(
             read_function=self.can.read_eeprom_advertisement_time_1,
             write_function=self.can.write_eeprom_advertisement_time_1,
             variable='advertisement_time_1',
             description="Advertisement Time 1",
-            milliseconds=settings.STH.Bluetooth.Advertisement_Time_1)
+            milliseconds=settings.sth.bluetooth.advertisement_time_1)
 
         read_write_time(read_function=self.can.read_eeprom_sleep_time_2,
                         write_function=self.can.write_eeprom_sleep_time_2,
                         variable='sleep_time_2',
                         description="Sleep Time 2",
-                        milliseconds=settings.STH.Bluetooth.Sleep_Time_2)
+                        milliseconds=settings.sth.bluetooth.sleep_time_2)
 
         read_write_time(
             read_function=self.can.read_eeprom_advertisement_time_2,
             write_function=self.can.write_eeprom_advertisement_time_2,
             variable='advertisement_time_2',
             description="Advertisement Time 2",
-            milliseconds=settings.STH.Bluetooth.Advertisement_Time_2)
+            milliseconds=settings.sth.bluetooth.advertisement_time_2)
 
         # ================
         # = Product Data =
@@ -367,7 +367,7 @@ class TestSTH(TestNode):
         # ================
 
         sensor = settings.acceleration_sensor()
-        acceleration_max = sensor.Acceleration.Maximum
+        acceleration_max = sensor.acceleration.maximum
         adc_max = 0xffff
         acceleration_slope = acceleration_max / adc_max
         self.can.write_eeprom_x_axis_acceleration_slope(acceleration_slope)
@@ -402,7 +402,7 @@ def main():
     # Add path to Simplicity Commander (`commander`) — We do this to ensure,
     # that we can call the command directly, without adding the path before
     # the tool’s name.
-    environ['PATH'] += (pathsep + pathsep.join(settings.Commands.Path.Windows))
+    environ['PATH'] += (pathsep + pathsep.join(settings.commands.path.windows))
 
     unittest_main(testRunner=ExtendedTestRunner,
                   module="mytoolit.test.production.sth")

@@ -134,7 +134,7 @@ class TestNode(TestCase):
         date = now.strftime('%Y-%m-%d')
         time = now.strftime("%H:%M:%S")
 
-        operator = settings.Operator.Name
+        operator = settings.operator.name
 
         attributes = [
             create_attribute("ICOc Version", __version__),
@@ -286,8 +286,8 @@ class TestNode(TestCase):
         node = cls.__name__[-3:]
 
         programming_board_serial_number = (
-            settings.STH.Programming_Board.Serial_Number
-            if node == 'STH' else settings.STU.Programming_Board.Serial_Number)
+            settings.sth.programming_board.serial_number
+            if node == 'STH' else settings.stu.programming_board.serial_number)
 
         chip = "BGM113A256V2" if node == 'STH' else 'BGM111A256V2'
 
@@ -320,8 +320,8 @@ class TestNode(TestCase):
                          "Unable to unlock debug access of chip")
 
         # Upload bootloader and application data
-        flash_location = (settings.STH.Firmware.Location.Flash if node == 'STH'
-                          else settings.STU.Firmware.Location.Flash)
+        flash_location = (settings.sth.firmware.location.flash if node == 'STH'
+                          else settings.stu.firmware.location.flash)
         repository_root = dirname(dirname(dirname(dirname(abspath(__file__)))))
         image_filepath = join(repository_root, flash_location)
         self.assertTrue(isfile(image_filepath),
@@ -353,13 +353,13 @@ class TestNode(TestCase):
         # The last three characters of the calling subclass (`TestSTU` or
         # `TestSTH`) contain the name of the node (`STU` or `STH`)
         node = cls.__name__[-3:]
-        config = settings.STH if node == 'STH' else settings.STU
+        config = settings.sth if node == 'STH' else settings.stu
 
         # ========
         # = GTIN =
         # ========
 
-        gtin = config.GTIN
+        gtin = config.gtin
         self.can.write_eeprom_gtin(gtin)
         cls.gtin = self.can.read_eeprom_gtin()
         self.assertEqual(
@@ -370,7 +370,7 @@ class TestNode(TestCase):
         # = Hardware Revision =
         # =====================
 
-        hardware_revision = config.Hardware_Revision
+        hardware_revision = config.hardware_revision
         self.can.write_eeprom_hardware_revision(hardware_revision)
         cls.hardware_revision = self.can.read_eeprom_hardware_revision()
         self.assertEqual(
@@ -399,7 +399,7 @@ class TestNode(TestCase):
         # Originally we assumed that this value would be set by the firmware
         # itself. However, according to tests with an empty EEPROM this is not
         # the case.
-        release_name = config.Firmware.Release_Name
+        release_name = config.firmware.release_name
         self.can.write_eeprom_release_name(release_name)
         cls.release_name = self.can.read_eeprom_release_name()
         self.assertEqual(
@@ -411,7 +411,7 @@ class TestNode(TestCase):
         # = Serial Number =
         # =================
 
-        serial_number = str(config.Serial_Number)
+        serial_number = str(config.serial_number)
         self.can.write_eeprom_serial_number(serial_number)
         cls.serial_number = self.can.read_eeprom_serial_number()
         self.assertEqual(
@@ -423,7 +423,7 @@ class TestNode(TestCase):
         # = Product Name =
         # ================
 
-        product_name = str(config.Product_Name)
+        product_name = str(config.product_name)
         self.can.write_eeprom_product_name(product_name)
         cls.product_name = self.can.read_eeprom_product_name()
         self.assertEqual(
@@ -435,7 +435,7 @@ class TestNode(TestCase):
         # = OEM Data =
         # ============
 
-        oem_data = config.OEM_Data
+        oem_data = config.oem_data
         self.can.write_eeprom_oem_data(oem_data)
         cls.oem_data = self.can.read_eeprom_oem_data()
         self.assertListEqual(
@@ -456,7 +456,7 @@ class TestNode(TestCase):
         # The last three characters of the calling subclass (`TestSTU` or
         # `TestSTH`) contain the name of the node (`STU` or `STH`)
         node = cls.__name__[-3:]
-        config = settings.STH if node == 'STH' else settings.STU
+        config = settings.sth if node == 'STH' else settings.stu
 
         # =======================
         # = Power On/Off Cycles =
@@ -524,7 +524,7 @@ class TestNode(TestCase):
         # = Production Date =
         # ===================
 
-        production_date = str(config.Production_Date)
+        production_date = str(config.production_date)
         self.can.write_eeprom_production_date(production_date)
         cls.production_date = self.can.read_eeprom_production_date()
         self.assertEqual(
@@ -536,7 +536,7 @@ class TestNode(TestCase):
         # = Batch Number =
         # ================
 
-        batch_number = settings.STH.Batch_Number
+        batch_number = settings.sth.batch_number
         self.can.write_eeprom_batch_number(batch_number)
         cls.batch_number = self.can.read_eeprom_batch_number()
         self.assertEqual(

@@ -18,11 +18,11 @@ class Settings(Dynaconf):
         A configuration object for the currently selected accelerometer sensor
         """
 
-        sensor_settings = self.STH.Acceleration_Sensor
-        if sensor_settings.Sensor == 'ADXL1001':
-            return sensor_settings.ADXL1001
-        if sensor_settings.Sensor == 'ADXL1002':
-            return sensor_settings.ADXL1002
+        sensor_settings = self.sth.acceleration_sensor
+        if sensor_settings.sensor == 'ADXL1001':
+            return sensor_settings.adxl1001
+        if sensor_settings.sensor == 'ADXL1002':
+            return sensor_settings.adxl1002
 
         # TODO: Use [validation](https://www.dynaconf.com/validation)
         # to handle incorrect config values after
@@ -31,7 +31,7 @@ class Settings(Dynaconf):
         #
         # is fixed.
         raise ValueError(
-            f"Unsupported sensor: “{sensor_settings.Sensor}”\n\n"
+            f"Unsupported sensor: “{sensor_settings.sensor}”\n\n"
             "Please use one of the supported sensor configuration values "
             "“ADXL1001” or “ADXL1002”")
 
@@ -45,7 +45,7 @@ class Settings(Dynaconf):
 
         """
 
-        return str(self.STH.Name)
+        return str(self.sth.name)
 
 
 # -- Attributes ---------------------------------------------------------------

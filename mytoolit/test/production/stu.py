@@ -97,7 +97,7 @@ def main():
     # Add path to Simplicity Commander (`commander`) — We do this to ensure,
     # that we can call the command directly, without adding the path before
     # the tool’s name.
-    environ['PATH'] += (pathsep + pathsep.join(settings.Commands.Path.Windows))
+    environ['PATH'] += (pathsep + pathsep.join(settings.commands.path.windows))
 
     unittest_main(testRunner=ExtendedTestRunner,
                   module="mytoolit.test.production.stu")
