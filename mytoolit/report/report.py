@@ -1,8 +1,8 @@
 # -- Imports ------------------------------------------------------------------
 
+from importlib import resources
 from functools import partial
-from os.path import abspath, join, dirname
-from sys import path as module_path
+from pathlib import Path
 from typing import List
 
 from reportlab.lib.styles import getSampleStyleSheet
@@ -10,10 +10,6 @@ from reportlab.lib.units import cm
 from reportlab.platypus import (Flowable, ListFlowable, Paragraph,
                                 SimpleDocTemplate, Spacer, Table)
 from reportlab.rl_config import defaultPageSize
-
-# Add path for custom libraries
-repository_root = dirname(dirname(dirname(abspath(__file__))))
-module_path.append(repository_root)
 
 from .pdf import PDFImage
 
@@ -33,11 +29,10 @@ def _first_page(canvas, document, node):
     logo_offset = 50
     title_offset = logo_offset + logo_height + 20
 
-    logo_filepath = join(repository_root, "Documentation", "Pictures",
-                         "MyTooliT.pdf")
-    PDFImage(logo_filepath, logo_width,
-             logo_height).drawOn(canvas, (page_width - logo_width) / 2,
-                                 page_height - logo_offset - logo_height)
+    with resources.path("mytoolit.report", "MyTooliT.pdf") as logo_filepath:
+        PDFImage(logo_filepath, logo_width,
+                 logo_height).drawOn(canvas, (page_width - logo_width) / 2,
+                                     page_height - logo_offset - logo_height)
 
     style = getSampleStyleSheet()
 
@@ -70,11 +65,9 @@ class Report:
             report should be generated
         """
 
-        filepath = join(repository_root, f"{node} Test.pdf")
-
         self.node = node
         self.document = SimpleDocTemplate(
-            filepath,
+            str(Path(__file__).parent.parent.parent / f"{node} Test.pdf"),
             author='MyTooliT',
             title='Test Report',
             subject='{} Test'.format('Sensory Tool Holder' if node ==
