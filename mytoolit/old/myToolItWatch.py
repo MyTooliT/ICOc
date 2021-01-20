@@ -17,9 +17,31 @@ from mytoolit import __version__
 from mytoolit.config import settings
 
 from mytoolit.old.network import Network
-from mytoolit.old.MyToolItNetworkNumbers import *
-from mytoolit.old.MyToolItCommands import *
-from mytoolit.old.MyToolItSth import *
+from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
+from mytoolit.old.MyToolItCommands import (
+    AdcAcquisitionTime,
+    AdcOverSamplingRate,
+    AdcReference,
+    AtvcFormat,
+    byte_list_to_int,
+    calcSamplingRate,
+    DataSets,
+    EepromSpecialConfig,
+    iBlueToothMacAddr,
+    int_to_mac_address,
+    int_to_byte_list,
+    rreplace,
+    MyToolItBlock,
+    MyToolItEeprom,
+    MyToolItNetworkName,
+    MyToolItStreaming,
+    payload2Hex,
+    Prescaler,
+    sArray2String,
+    SystemCommandBlueTooth,
+    SystemCommandRouting,
+)
+from mytoolit.old.MyToolItSth import TestConfig
 from mytoolit.old.configKeys import ConfigKeys
 from mytoolit.old.Plotter import vPlotter, tArray2Binary
 
