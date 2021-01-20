@@ -1533,7 +1533,8 @@ class Network(object):
                         self.Logger.Info("Connected to: " + self.iAddress)
         if self.sDevName is None:
             self.Logger.Info("Available Devices: " + str(devList))
-            self.__exitError("No Device Name was available")
+            self.__exitError(
+                f"Unable to connect to device with address “{iAddress}”")
         return self.bConnected
 
     def BlueToothEnergyModeNr(self, Sleep1TimeReset,
