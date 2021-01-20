@@ -1,11 +1,10 @@
 # -- Imports ------------------------------------------------------------------
 
-from os.path import abspath, dirname
-from sys import path as module_path
-
-# Add path for custom libraries
-repository_root = dirname(dirname(dirname(abspath(__file__))))
-module_path.append(repository_root)
+# Fix imports for script usage
+if __name__ == '__main__':
+    from pathlib import Path
+    from sys import path
+    path.append(str(Path(__file__).parent.parent.parent))
 
 from mytoolit.old.MyToolItCommands import (MyToolItBlock,
                                            blocknumber_to_commands)
