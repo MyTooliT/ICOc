@@ -19,7 +19,12 @@ class EEPROM_Check:
 
         print(f"Connected to “{self.network.read_eeprom_name()}”")
 
-    def read_eeprom_page(self):
+    def write_eeprom(self):
+        self.network.write_eeprom(address=1,
+                                  offset=0,
+                                  data=[14 for _ in range(256)])
+
+    def read_eeprom(self):
         page1 = self.network.read_eeprom(address=1, offset=0, length=256)
         print("\nContent of EEPROM page 1:\n")
         bytes_per_line = 8
@@ -41,7 +46,9 @@ def main():
 
     check = EEPROM_Check()
     check.connect_bluetooth("08:6b:d7:01:de:81")
-    check.read_eeprom_page()
+    check.write_eeprom()
+    check.read_eeprom()
+    check.read_eeprom()
     check.disconnect()
 
 
