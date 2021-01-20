@@ -1,12 +1,6 @@
 # -- Imports ------------------------------------------------------------------
 
-from os.path import abspath, dirname
 from sys import argv, exit, stderr
-from sys import path as module_path
-
-# Add path for custom libraries
-repository_root = dirname(dirname(abspath(__file__)))
-module_path.append(repository_root)
 
 from mytoolit.utility import convert_mac_base64
 
