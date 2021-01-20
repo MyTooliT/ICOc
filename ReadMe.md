@@ -52,7 +52,13 @@ Before you use the software you need to install it (in developer mode). To do th
 pip install -e .
 ```
 
-Afterwards you can use the various [scripts](Documentation/Scripts.md) included in the package.
+Afterwards you can use the various [scripts](Documentation/Scripts.md) included in the package. If you do not have sufficient rights to install the package you can also try to install the package in the user folder:
+
+```sh
+pip install --user -e .
+```
+
+Please note, that in this case you might have to add Python’s user script directory (e.g `%AppData%\Python\Python39\Scripts`) to the `PATH` environment variable.
 
 #### Simplicity Studio
 
