@@ -17,7 +17,8 @@ from openpyxl.styles import Font
 from mytoolit import __version__
 from mytoolit.config import settings
 from mytoolit.old.network import Network
-from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
+from mytoolit.old.MyToolItNetworkNumbers import (MyToolItNetworkName,
+                                                 MyToolItNetworkNr)
 from mytoolit.old.MyToolItCommands import (
     AdcAcquisitionTime,
     AdcOverSamplingRate,
@@ -33,7 +34,6 @@ from mytoolit.old.MyToolItCommands import (
     rreplace,
     MyToolItBlock,
     MyToolItEeprom,
-    MyToolItNetworkName,
     MyToolItStreaming,
     payload2Hex,
     Prescaler,
