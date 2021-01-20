@@ -1516,6 +1516,7 @@ class Network(object):
         endTime = time() + BluetoothTime["Connect"]
         self.Logger.Info("Try to connect to Test Device Address: " +
                          str(iAddress))
+        self.sDevName = None
         while time() < endTime and False == self.bConnected:
             devList = self.tDeviceList(stuNr)
             for dev in devList:
