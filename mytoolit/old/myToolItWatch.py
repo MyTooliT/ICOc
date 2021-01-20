@@ -1554,7 +1554,6 @@ class myToolItWatch():
             if workbook:
                 for worksheetName in workbook.sheetnames:
                     sName = str(worksheetName).split('@')
-                    _sAddress = sName[1]
                     sName = sName[0]
                     workSheetNames.append(sName)
         except:
