@@ -1,8 +1,8 @@
 # -- Imports ------------------------------------------------------------------
 
+from sys import platform
+
 from can.interface import Bus
-from pathlib import Path
-from sys import path, platform
 
 # Fix imports for script usage
 if __name__ == '__main__':
