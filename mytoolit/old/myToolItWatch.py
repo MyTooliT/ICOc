@@ -1,21 +1,21 @@
+import argparse
+import array
+import copy
+import multiprocessing
 import os
+import socket
+import struct
 import xml.etree.ElementTree as ET
-from can.interfaces.pcan.basic import PCAN_ERROR_OK, PCAN_ERROR_QOVERRUN
 from time import sleep, time
 from datetime import datetime
-import openpyxl
-from openpyxl.styles import Font
 from pathlib import Path
-import copy
-import argparse
-import multiprocessing
-import socket
-import array
-import struct
+
+import openpyxl
+from can.interfaces.pcan.basic import PCAN_ERROR_OK, PCAN_ERROR_QOVERRUN
+from openpyxl.styles import Font
 
 from mytoolit import __version__
 from mytoolit.config import settings
-
 from mytoolit.old.network import Network
 from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
 from mytoolit.old.MyToolItCommands import (
