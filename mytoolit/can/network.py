@@ -4,8 +4,11 @@ from can.interface import Bus
 from pathlib import Path
 from sys import path, platform
 
-# Add path for custom libraries
-path.append(str(Path(__file__).parent.parent.parent))
+# Fix imports for script usage
+if __name__ == '__main__':
+    from pathlib import Path
+    from sys import path
+    path.append(str(Path(__file__).parent.parent.parent))
 
 from mytoolit.config import settings
 
