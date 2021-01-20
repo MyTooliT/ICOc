@@ -17,11 +17,6 @@ from sys import stderr
 from threading import Lock, Thread
 from time import time, sleep
 
-# Add path for custom libraries
-from pathlib import Path
-from sys import path
-path.append(str(Path(__file__).parent.parent.parent))
-
 from mytoolit.can import (Command, ErrorStatusSTH, ErrorStatusSTU, Identifier,
                           Message, Node, NodeStatusSTH, NodeStatusSTU)
 from mytoolit.eeprom import EEPROMStatus
