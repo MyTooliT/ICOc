@@ -11,7 +11,6 @@ class EEPROM_Check:
     def __init__(self):
         self.network = Network()
         self.network.reset_node('STU 1')
-        self.eeprom_content = None
         self.eeprom_address = 1
         self.eeprom_length = 256
 
@@ -22,6 +21,10 @@ class EEPROM_Check:
 
         print(f"Connected to “{self.network.read_eeprom_name()}”")
 
+    def reset_sth(self):
+        self.network.reset_node('STH 1')
+        self.network.bConnected = False
+
     def write_eeprom(self, number):
         self.network.write_eeprom(
             address=1,
@@ -29,12 +32,10 @@ class EEPROM_Check:
             data=[number for _ in range(self.eeprom_length)])
 
     def read_eeprom(self):
-        self.eeprom_content = self.network.read_eeprom(address=1,
-                                                       offset=0,
-                                                       length=256)
+        return self.network.read_eeprom(address=1, offset=0, length=256)
 
     def print_eeprom(self):
-        page = self.eeprom_content
+        page = self.read_eeprom()
         bytes_per_line = 8
         for byte in range(0, self.eeprom_length - 1, bytes_per_line):
             print(f"{byte:3}: ", end='')
@@ -55,7 +56,9 @@ def main():
     check = EEPROM_Check()
     check.connect_bluetooth("08:6b:d7:01:de:81")
     check.write_eeprom(10)
-    check.read_eeprom()
+    for _ in range(5):
+        check.reset_sth()
+        check.connect_bluetooth("08:6b:d7:01:de:81")
     check.print_eeprom()
     check.disconnect()
 
