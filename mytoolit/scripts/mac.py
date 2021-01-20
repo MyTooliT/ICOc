@@ -31,7 +31,7 @@ def main():
         name = convert_mac_base64(mac)
         print(name)
     except ValueError:
-        print(f"Please use a MAC address of the form xx:xx:xx:xx:xx:xx",
+        print("Please use a MAC address of the form xx:xx:xx:xx:xx:xx",
               file=stderr)
         exit(EXIT_USAGE)
 

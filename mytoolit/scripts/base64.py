@@ -28,7 +28,7 @@ def main():
         mac = convert_base64_mac(name)
         print(mac)
     except ValueError:
-        print(f"Please use a Base64 encoded name with length 8", file=stderr)
+        print("Please use a Base64 encoded name with length 8", file=stderr)
         exit(EXIT_USAGE)
 
 
