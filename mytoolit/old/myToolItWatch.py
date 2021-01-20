@@ -1,13 +1,8 @@
-import sys
 import os
 import xml.etree.ElementTree as ET
 from can.interfaces.pcan.basic import PCAN_ERROR_OK, PCAN_ERROR_QOVERRUN
 from time import sleep, time
-from random import randint
 from datetime import datetime
-sDirName = os.path.dirname('')
-sys.path.append(sDirName)
-import getopt
 import openpyxl
 from openpyxl.styles import Font
 from pathlib import Path
