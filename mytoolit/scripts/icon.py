@@ -11,6 +11,9 @@ class EEPROM_Check:
     def __init__(self):
         self.network = Network()
         self.network.reset_node('STU 1')
+        self.eeprom_content = None
+        self.eeprom_address = 1
+        self.eeprom_length = 256
 
     def connect_bluetooth(self, mac_address):
         mac_address_hex = hex(int("".join(mac_address.split(":")), 16))
@@ -19,19 +22,24 @@ class EEPROM_Check:
 
         print(f"Connected to “{self.network.read_eeprom_name()}”")
 
-    def write_eeprom(self):
-        self.network.write_eeprom(address=1,
-                                  offset=0,
-                                  data=[14 for _ in range(256)])
+    def write_eeprom(self, number):
+        self.network.write_eeprom(
+            address=1,
+            offset=0,
+            data=[number for _ in range(self.eeprom_length)])
 
     def read_eeprom(self):
-        page1 = self.network.read_eeprom(address=1, offset=0, length=256)
-        print("\nContent of EEPROM page 1:\n")
+        self.eeprom_content = self.network.read_eeprom(address=1,
+                                                       offset=0,
+                                                       length=256)
+
+    def print_eeprom(self):
+        page = self.eeprom_content
         bytes_per_line = 8
-        for byte in range(0, len(page1), bytes_per_line):
+        for byte in range(0, self.eeprom_length - 1, bytes_per_line):
             print(f"{byte:3}: ", end='')
             byte_representation = " ".join(["{:3}"] * bytes_per_line).format(
-                *page1[byte:byte + bytes_per_line])
+                *page[byte:byte + bytes_per_line])
             print(byte_representation)
 
     def disconnect(self):
@@ -46,9 +54,9 @@ def main():
 
     check = EEPROM_Check()
     check.connect_bluetooth("08:6b:d7:01:de:81")
-    check.write_eeprom()
+    check.write_eeprom(10)
     check.read_eeprom()
-    check.read_eeprom()
+    check.print_eeprom()
     check.disconnect()
 
 
