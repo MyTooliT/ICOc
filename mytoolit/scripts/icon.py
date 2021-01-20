@@ -1,9 +1,6 @@
 # -- Imports ------------------------------------------------------------------
 
-from time import sleep
-
 from mytoolit.can import Node
-from mytoolit.config import settings
 from mytoolit.old.network import Network
 
 # -- Functions ----------------------------------------------------------------
@@ -13,10 +10,10 @@ def connect():
     network = Network()
     stu1 = Node('STU 1')
     network.reset_node(stu1)
-    network.bBlueToothConnectPollingName(stu1.value,
-                                         settings.sth_name(),
-                                         log=False)
-    sleep(1)  # Wait for connection
+
+    mac_address = "08:6b:d7:01:de:81"
+    mac_address_hex = hex(int("".join(mac_address.split(":")), 16))
+    network.bBlueToothConnectPollingAddress(stu1.value, mac_address_hex)
 
     print(f"Connected to “{network.read_eeprom_name()}”")
 
