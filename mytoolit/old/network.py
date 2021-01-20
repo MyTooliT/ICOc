@@ -1517,6 +1517,7 @@ class Network(object):
         self.Logger.Info("Try to connect to Test Device Address: " +
                          str(iAddress))
         self.sDevName = None
+        devList = []
         while time() < endTime and False == self.bConnected:
             devList = self.tDeviceList(stuNr)
             for dev in devList:
