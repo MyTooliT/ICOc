@@ -1531,8 +1531,8 @@ class Network(object):
                         self.bBlueToothCheckConnect(stuNr)
                     if False != self.bConnected and False != bLog:
                         self.Logger.Info("Connected to: " + self.iAddress)
-            self.Logger.Info("Available Devices: " + str(dev))
         if self.sDevName is None:
+            self.Logger.Info("Available Devices: " + str(devList))
             self.__exitError("No Device Name was available")
         return self.bConnected
 
