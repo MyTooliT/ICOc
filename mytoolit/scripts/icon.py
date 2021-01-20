@@ -13,6 +13,7 @@ class EEPROM_Check:
         self.network.reset_node('STU 1')
         self.eeprom_address = 1
         self.eeprom_length = 256
+        self.eeprom_value = 10
 
     def connect_bluetooth(self, mac_address):
         mac_address_hex = hex(int("".join(mac_address.split(":")), 16))
@@ -25,14 +26,21 @@ class EEPROM_Check:
         self.network.reset_node('STH 1')
         self.network.bConnected = False
 
-    def write_eeprom(self, number):
+    def write_eeprom(self):
         self.network.write_eeprom(
             address=1,
             offset=0,
-            data=[number for _ in range(self.eeprom_length)])
+            data=[self.eeprom_value for _ in range(self.eeprom_length)])
 
     def read_eeprom(self):
         return self.network.read_eeprom(address=1, offset=0, length=256)
+
+    def print_eeprom_incorrect(self):
+        changed = [
+            byte for byte in self.read_eeprom() if byte != self.eeprom_value
+        ]
+        incorrect = len(changed) / self.eeprom_length
+        print(f"{incorrect:.2%} incorrect: {changed}")
 
     def print_eeprom(self):
         page = self.read_eeprom()
@@ -53,12 +61,16 @@ class EEPROM_Check:
 
 def main():
 
+    mac_address = "08:6b:d7:01:de:81"
     check = EEPROM_Check()
-    check.connect_bluetooth("08:6b:d7:01:de:81")
-    check.write_eeprom(10)
+    check.connect_bluetooth(mac_address)
+    check.write_eeprom()
+    print()
     for _ in range(5):
         check.reset_sth()
-        check.connect_bluetooth("08:6b:d7:01:de:81")
+        check.connect_bluetooth(mac_address)
+        check.print_eeprom_incorrect()
+        print()
     check.print_eeprom()
     check.disconnect()
 
