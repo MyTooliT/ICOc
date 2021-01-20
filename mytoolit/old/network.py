@@ -1,27 +1,24 @@
 from array import array
-from can.interfaces.pcan.basic import (
-    PCAN_BAUD_1M,
-    PCAN_BUSOFF_AUTORESET,
-    PCAN_ERROR_OK,
-    PCAN_ERROR_QOVERRUN,
-    PCAN_PARAMETER_ON,
-    PCAN_USBBUS1,
-    PCANBasic,
-)
 from ctypes import c_byte
 from logging import getLogger, FileHandler, Formatter
 from math import log
-from semantic_version import Version
 from struct import pack, unpack
 from sys import stderr
 from threading import Lock, Thread
 from time import time, sleep
 
+from can.interfaces.pcan.basic import (PCAN_BAUD_1M, PCAN_BUSOFF_AUTORESET,
+                                       PCAN_ERROR_OK, PCAN_ERROR_QOVERRUN,
+                                       PCAN_PARAMETER_ON, PCAN_USBBUS1,
+                                       PCANBasic)
+from semantic_version import Version
+
 from mytoolit.can import (Command, ErrorStatusSTH, ErrorStatusSTU, Identifier,
                           Message, Node, NodeStatusSTH, NodeStatusSTU)
 from mytoolit.eeprom import EEPROMStatus
 from mytoolit.config import settings
-
+from mytoolit.old.Logger import Logger
+from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkName
 from mytoolit.old.MyToolItCommands import (
     AdcAcquisitionTimeName,
     AdcOverSamplingRateName,
@@ -52,8 +49,6 @@ from mytoolit.old.MyToolItCommands import (
     SystemCommandBlueTooth,
     VRefName,
 )
-from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkName
-from mytoolit.old.Logger import Logger
 
 
 class Network(object):
