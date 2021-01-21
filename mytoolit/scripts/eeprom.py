@@ -80,7 +80,8 @@ class EEPROMCheck:
         counter = Counter(changed)
         summary = ", ".join(
             f"{value} ({times} time{'' if times == 1 else 's'})"
-            for value, times in counter.items())
+            for value, times in sorted(
+                counter.items(), key=lambda item: item[1], reverse=True))
         print(f"{incorrect:.2%} incorrect{': ' if summary else ''}{summary}")
 
     def print_eeprom(self):
