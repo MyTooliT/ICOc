@@ -71,6 +71,7 @@ def main():
     check = EEPROM_Check()
     check.connect_bluetooth(mac_address)
     check.write_eeprom()
+    check.print_eeprom_incorrect()
     print()
     for _ in range(5):
         check.reset_sth()
