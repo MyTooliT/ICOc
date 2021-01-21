@@ -27,7 +27,8 @@ def parse_arguments():
         except ValueError:
             raise ArgumentTypeError(f"“{value}” is not a valid byte value")
 
-    parser = ArgumentParser()
+    parser = ArgumentParser(
+        description="Check the integrity of STH EEPROM content")
     parser.add_argument("mac_address",
                         help="MAC address of STH e.g. 08:6b:d7:01:de:81",
                         type=is_mac_address)
