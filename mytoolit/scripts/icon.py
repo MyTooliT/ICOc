@@ -42,17 +42,17 @@ def parse_arguments():
 
 class EEPROM_Check:
 
-    def __init__(self, value=None):
+    def __init__(self, mac_address, value=None):
         self.network = Network()
         self.network.reset_node('STU 1')
+        self.mac_address = hex(int("".join(mac_address.split(":")), 16))
         self.eeprom_address = 1
         self.eeprom_length = 256
         self.eeprom_value = 10 if value is None else value
 
-    def connect_bluetooth(self, mac_address):
-        mac_address_hex = hex(int("".join(mac_address.split(":")), 16))
+    def connect_bluetooth(self):
         self.network.bBlueToothConnectPollingAddress(
-            Node('STU 1').value, mac_address_hex)
+            Node('STU 1').value, self.mac_address)
 
         print(f"Connected to “{self.network.read_eeprom_name()}”")
 
@@ -101,16 +101,16 @@ class EEPROM_Check:
 def main():
 
     arguments = parse_arguments()
-    mac_address = arguments.mac_address
 
-    check = EEPROM_Check(value=arguments.value)
-    check.connect_bluetooth(mac_address)
+    check = EEPROM_Check(mac_address=arguments.mac_address,
+                         value=arguments.value)
+    check.connect_bluetooth()
     check.write_eeprom()
     check.print_eeprom_incorrect()
     print()
     for _ in range(5):
         check.reset_sth()
-        check.connect_bluetooth(mac_address)
+        check.connect_bluetooth()
         check.print_eeprom_incorrect()
         print()
     check.print_eeprom()
