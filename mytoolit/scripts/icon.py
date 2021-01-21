@@ -18,10 +18,22 @@ def parse_arguments():
             return mac_address
         raise ArgumentTypeError(f"“{mac_address}” is not a valid MAC address")
 
+    def is_byte_value(value):
+        try:
+            number = int(value, base=0)
+            if number < 0 or number > 255:
+                raise ValueError()
+            return number
+        except ValueError:
+            raise ArgumentTypeError(f"“{value}” is not a valid byte value")
+
     parser = ArgumentParser()
     parser.add_argument("mac_address",
                         help="MAC address of STH e.g. 08:6b:d7:01:de:81",
                         type=is_mac_address)
+    parser.add_argument("--value",
+                        help="byte value for EEPROM cells",
+                        type=is_byte_value)
     return parser.parse_args()
 
 
@@ -30,12 +42,12 @@ def parse_arguments():
 
 class EEPROM_Check:
 
-    def __init__(self):
+    def __init__(self, value=None):
         self.network = Network()
         self.network.reset_node('STU 1')
         self.eeprom_address = 1
         self.eeprom_length = 256
-        self.eeprom_value = 10
+        self.eeprom_value = 10 if value is None else value
 
     def connect_bluetooth(self, mac_address):
         mac_address_hex = hex(int("".join(mac_address.split(":")), 16))
@@ -91,7 +103,7 @@ def main():
     arguments = parse_arguments()
     mac_address = arguments.mac_address
 
-    check = EEPROM_Check()
+    check = EEPROM_Check(value=arguments.value)
     check.connect_bluetooth(mac_address)
     check.write_eeprom()
     check.print_eeprom_incorrect()
