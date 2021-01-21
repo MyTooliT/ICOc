@@ -5,6 +5,15 @@ from argparse import ArgumentParser
 from mytoolit.can import Node
 from mytoolit.old.network import Network
 
+# -- Function -----------------------------------------------------------------
+
+
+def parse_arguments():
+    parser = ArgumentParser()
+    parser.add_argument("mac_address")
+    return parser.parse_args()
+
+
 # -- Class --------------------------------------------------------------------
 
 
@@ -63,11 +72,9 @@ class EEPROM_Check:
 
 def main():
 
-    parser = ArgumentParser()
-    parser.add_argument("mac_address")
-    arguments = parser.parse_args()
-
+    arguments = parse_arguments()
     mac_address = arguments.mac_address
+
     check = EEPROM_Check()
     check.connect_bluetooth(mac_address)
     check.write_eeprom()
