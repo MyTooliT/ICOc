@@ -42,7 +42,7 @@ def parse_arguments():
 # -- Class --------------------------------------------------------------------
 
 
-class EEPROM_Check:
+class EEPROMCheck:
 
     def __init__(self, mac_address, value):
         self.network = Network()
@@ -104,8 +104,8 @@ def main():
 
     arguments = parse_arguments()
 
-    check = EEPROM_Check(mac_address=arguments.mac_address,
-                         value=arguments.value)
+    check = EEPROMCheck(mac_address=arguments.mac_address,
+                        value=arguments.value)
     check.connect_bluetooth()
     check.write_eeprom()
     check.print_eeprom_incorrect()
