@@ -40,7 +40,7 @@ setup(name="icoc",
       entry_points={
           'console_scripts': [
               'icoc = mytoolit.old.mwt:main',
-              'icon = mytoolit.scripts.icon:main',
+              'eeprom-check = mytoolit.scripts.eeprom:main',
               'test-sth = mytoolit.test.production.sth:main',
               'test-stu = mytoolit.test.production.stu:main',
               'convert-base64-mac = mytoolit.scripts.base64:main',
