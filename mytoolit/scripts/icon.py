@@ -33,7 +33,8 @@ def parse_arguments():
                         type=is_mac_address)
     parser.add_argument("--value",
                         help="byte value for EEPROM cells",
-                        type=is_byte_value)
+                        type=is_byte_value,
+                        default=10)
     return parser.parse_args()
 
 
@@ -42,13 +43,13 @@ def parse_arguments():
 
 class EEPROM_Check:
 
-    def __init__(self, mac_address, value=None):
+    def __init__(self, mac_address, value):
         self.network = Network()
         self.network.reset_node('STU 1')
         self.mac_address = hex(int("".join(mac_address.split(":")), 16))
         self.eeprom_address = 1
         self.eeprom_length = 256
-        self.eeprom_value = 10 if value is None else value
+        self.eeprom_value = value
 
     def connect_bluetooth(self):
         self.network.bBlueToothConnectPollingAddress(
