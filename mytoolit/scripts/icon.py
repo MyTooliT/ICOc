@@ -10,7 +10,8 @@ from mytoolit.old.network import Network
 
 def parse_arguments():
     parser = ArgumentParser()
-    parser.add_argument("mac_address")
+    parser.add_argument("mac_address",
+                        help="MAC address of STH e.g. 08:6b:d7:01:de:81")
     return parser.parse_args()
 
 
