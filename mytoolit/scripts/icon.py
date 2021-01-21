@@ -48,6 +48,7 @@ class EEPROM_Check:
         self.network.bConnected = False
 
     def write_eeprom(self):
+        print(f"Write value “{self.eeprom_value}” into EEPROM cells")
         self.network.write_eeprom(
             address=1,
             offset=0,
