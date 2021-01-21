@@ -1,5 +1,7 @@
 # -- Imports ------------------------------------------------------------------
 
+from argparse import ArgumentParser
+
 from mytoolit.can import Node
 from mytoolit.old.network import Network
 
@@ -60,6 +62,9 @@ class EEPROM_Check:
 
 
 def main():
+
+    parser = ArgumentParser()
+    parser.parse_args()
 
     mac_address = "08:6b:d7:01:de:81"
     check = EEPROM_Check()
