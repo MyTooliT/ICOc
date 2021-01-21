@@ -1,6 +1,7 @@
 # -- Imports ------------------------------------------------------------------
 
 from argparse import ArgumentParser, ArgumentTypeError
+from collections import Counter
 from re import compile
 
 from mytoolit.can import Node
@@ -62,7 +63,11 @@ class EEPROM_Check:
             byte for byte in self.read_eeprom() if byte != self.eeprom_value
         ]
         incorrect = len(changed) / self.eeprom_length
-        print(f"{incorrect:.2%} incorrect: {changed}")
+        counter = Counter(changed)
+        summary = ", ".join(
+            f"{value} ({times} time{'' if times == 1 else 's'})"
+            for value, times in counter.items())
+        print(f"{incorrect:.2%} incorrect{': ' if summary else ''}{summary}")
 
     def print_eeprom(self):
         page = self.read_eeprom()
