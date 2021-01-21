@@ -1,6 +1,7 @@
 # -- Imports ------------------------------------------------------------------
 
-from argparse import ArgumentParser
+from argparse import ArgumentParser, ArgumentTypeError
+from re import compile
 
 from mytoolit.can import Node
 from mytoolit.old.network import Network
@@ -9,9 +10,17 @@ from mytoolit.old.network import Network
 
 
 def parse_arguments():
+
+    def is_mac_address(mac_address):
+        mac_regex = compile("[0-9a-fA-F]{2}(?::[0-9a-fA-F]{2}){5}$")
+        if mac_regex.match(mac_address):
+            return mac_address
+        raise ArgumentTypeError(f"“{mac_address}” is not a valid MAC address")
+
     parser = ArgumentParser()
     parser.add_argument("mac_address",
-                        help="MAC address of STH e.g. 08:6b:d7:01:de:81")
+                        help="MAC address of STH e.g. 08:6b:d7:01:de:81",
+                        type=is_mac_address)
     return parser.parse_args()
 
 
