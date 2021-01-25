@@ -6,6 +6,28 @@ from re import compile
 # -- Functions ----------------------------------------------------------------
 
 
+def base64_mac_address(name):
+    """Check if the given text represents a Base64 encoded MAC address
+
+    Throws
+    ------
+
+    An argument type error in case the given value does not represent a MAC
+    address
+
+
+    Returns
+    -------
+
+    The given text on success
+    """
+
+    base64_regex = compile("[A-Za-z0-9/+]{8}$")
+    if base64_regex.match(name):
+        return name
+    raise ArgumentTypeError(f"“{name}” is not a Base64 encoded MAC address")
+
+
 def byte_value(value):
     """Check if the given integer like value represents a byte value
 

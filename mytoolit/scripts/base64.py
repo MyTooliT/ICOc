@@ -1,35 +1,22 @@
 # -- Imports ------------------------------------------------------------------
 
-from sys import argv, exit, stderr
+from argparse import ArgumentParser
 
+from mytoolit.cmdline import base64_mac_address
 from mytoolit.utility import convert_base64_mac
-
-# -- Functions ----------------------------------------------------------------
-
-
-def usage(command):
-    print(f"Usage: {command} name", file=stderr)
-
 
 # -- Main ---------------------------------------------------------------------
 
 
 def main():
-    EXIT_USAGE = 2
-
-    if len(argv) != 2:
-        usage(argv[0])
-        exit(EXIT_USAGE)
-
-    name = argv[1]
-    try:
-        if len(name) != 8:
-            raise ValueError
-        mac = convert_base64_mac(name)
-        print(mac)
-    except ValueError:
-        print("Please use a Base64 encoded name with length 8", file=stderr)
-        exit(EXIT_USAGE)
+    parser = ArgumentParser(
+        description="Convert the Base64 name of an STH to a MAC address")
+    parser.add_argument("name",
+                        help="name of the STH e.g. CGvXAd6B",
+                        type=base64_mac_address)
+    name = parser.parse_args().name
+    mac = convert_base64_mac(name)
+    print(mac)
 
 
 if __name__ == '__main__':
