@@ -20,6 +20,18 @@ def base64_mac_address(name):
     -------
 
     The given text on success
+
+    Examples
+    --------
+
+    >>> base64_mac_address("CGvXAd6B")
+    'CGvXAd6B'
+
+    >>> base64_mac_address("CGvXAd")
+    Traceback (most recent call last):
+       ...
+    argparse.ArgumentTypeError: “CGvXAd” is not a Base64 encoded MAC address
+
     """
 
     base64_regex = compile("[A-Za-z0-9/+]{8}$")
@@ -29,7 +41,7 @@ def base64_mac_address(name):
 
 
 def byte_value(value):
-    """Check if the given integer like value represents a byte value
+    """Check if the given string represents a byte value
 
     Throws
     ------
@@ -37,11 +49,25 @@ def byte_value(value):
     An argument type error in case the given value does not represent a
     (positive) byte value
 
-
     Returns
     -------
 
     An integer representing the given value on success
+
+    Examples
+    --------
+
+    >>> byte_value("0xa")
+    10
+
+    >>> byte_value("137")
+    137
+
+    >>> byte_value("256")
+    Traceback (most recent call last):
+       ...
+    argparse.ArgumentTypeError: “256” is not a valid byte value
+
     """
 
     try:
@@ -67,9 +93,28 @@ def mac_address(address):
     -------
 
     The given text on success
+
+    Examples
+    --------
+
+    >>> mac_address("08:6b:d7:01:de:81")
+    '08:6b:d7:01:de:81'
+
+    >>> mac_address("08:6b:d7:01:de:8")
+    Traceback (most recent call last):
+       ...
+    argparse.ArgumentTypeError: “08:6b:d7:01:de:8” is not a valid MAC address
+
     """
 
     mac_regex = compile("[0-9a-fA-F]{2}(?::[0-9a-fA-F]{2}){5}$")
     if mac_regex.match(address):
         return address
     raise ArgumentTypeError(f"“{address}” is not a valid MAC address")
+
+
+# -- Main ---------------------------------------------------------------------
+
+if __name__ == '__main__':
+    from doctest import testmod
+    testmod()
