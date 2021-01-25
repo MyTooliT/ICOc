@@ -20,8 +20,8 @@ CAN BITRATE: &bitrate 1000000
 
 # The values below specify the configuration options for the
 # [python-can](https://python-can.readthedocs.io) Bus class. Please note that
-# this configuration values are currently not used by the main command line tool
-# or any of the tests!
+# these configuration values are currently not used by the main command line
+# tool or any of the tests!
 CAN:
   LINUX:
     BITRATE: *bitrate
