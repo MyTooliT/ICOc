@@ -45,12 +45,19 @@ def parse_arguments():
 class EEPROMCheck:
 
     def __init__(self, mac_address, value):
-        self.network = Network()
-        self.network.reset_node('STU 1')
         self.mac_address = hex(int("".join(mac_address.split(":")), 16))
         self.eeprom_address = 1
         self.eeprom_length = 256
         self.eeprom_value = value
+
+    def __enter__(self):
+        self.network = Network()
+        self.network.reset_node('STU 1')
+        return self
+
+    def __exit__(self, type, value, traceback):
+        self.network.bBlueToothDisconnect(Node('STU 1').value)
+        self.network.__exit__()  # Cleanup resources (read thread)
 
     def connect_bluetooth(self):
         self.network.bBlueToothConnectPollingAddress(
@@ -93,10 +100,6 @@ class EEPROMCheck:
                 *page[byte:byte + bytes_per_line])
             print(byte_representation)
 
-    def disconnect(self):
-        self.network.bBlueToothDisconnect(Node('STU 1').value)
-        self.network.__exit__()  # Cleanup resources (read thread)
-
 
 # -- Main ---------------------------------------------------------------------
 
@@ -105,19 +108,18 @@ def main():
 
     arguments = parse_arguments()
 
-    check = EEPROMCheck(mac_address=arguments.mac_address,
-                        value=arguments.value)
-    check.connect_bluetooth()
-    check.write_eeprom()
-    check.print_eeprom_incorrect()
-    print()
-    for _ in range(5):
-        check.reset_sth()
+    with EEPROMCheck(mac_address=arguments.mac_address,
+                     value=arguments.value) as check:
         check.connect_bluetooth()
+        check.write_eeprom()
         check.print_eeprom_incorrect()
         print()
-    check.print_eeprom()
-    check.disconnect()
+        for _ in range(5):
+            check.reset_sth()
+            check.connect_bluetooth()
+            check.print_eeprom_incorrect()
+            print()
+        check.print_eeprom()
 
 
 if __name__ == '__main__':
