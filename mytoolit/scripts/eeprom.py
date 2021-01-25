@@ -1,10 +1,10 @@
 # -- Imports ------------------------------------------------------------------
 
-from argparse import ArgumentParser, ArgumentTypeError
+from argparse import ArgumentParser
 from collections import Counter
-from re import compile
 
 from mytoolit.can import Node
+from mytoolit.cmdline import byte_value, mac_address
 from mytoolit.old.network import Network
 
 # -- Function -----------------------------------------------------------------
@@ -16,65 +16,20 @@ def parse_arguments():
     Returns
     -------
 
-    A simple object storing the MAC address (attribute `mac_address`) of an
-    STH and an byte value that should be stored into the cells of the EEPROM
-    (attribute `value`)
+    A simple object storing the MAC address (attribute `mac`) of an STH and an
+    byte value that should be stored into the cells of the EEPROM (attribute
+    `value`)
     """
-
-    def is_mac_address(mac_address):
-        """Check if the given text represents a MAC address
-
-        Throws
-        ------
-
-        An argument type error in case the given text does not store a MAC
-        address of the form `xx:xx:xx:xx:xx:xx`, where `x` represents a
-        hexadecimal number.
-
-        Returns
-        -------
-
-        The given text on success
-        """
-
-        mac_regex = compile("[0-9a-fA-F]{2}(?::[0-9a-fA-F]{2}){5}$")
-        if mac_regex.match(mac_address):
-            return mac_address
-        raise ArgumentTypeError(f"“{mac_address}” is not a valid MAC address")
-
-    def is_byte_value(value):
-        """Check if the given integer like value represents a byte value
-
-        Throws
-        ------
-
-        An argument type error in case the given value does not represent a
-        (positive) byte value
-
-
-        Returns
-        -------
-
-        An integer representing the given value on success
-        """
-
-        try:
-            number = int(value, base=0)
-            if number < 0 or number > 255:
-                raise ValueError()
-            return number
-        except ValueError:
-            raise ArgumentTypeError(f"“{value}” is not a valid byte value")
 
     parser = ArgumentParser(
         description="Check the integrity of STH EEPROM content")
-    parser.add_argument("mac_address",
+    parser.add_argument("mac",
                         help="MAC address of STH e.g. 08:6b:d7:01:de:81",
-                        type=is_mac_address)
+                        type=mac_address)
     parser.add_argument(
         "--value",
         help="byte value for EEPROM cells (default: %(default)s)",
-        type=is_byte_value,
+        type=byte_value,
         default=10)
 
     return parser.parse_args()
@@ -184,7 +139,7 @@ def main():
 
     arguments = parse_arguments()
 
-    with EEPROMCheck(mac_address=arguments.mac_address,
+    with EEPROMCheck(mac_address=arguments.mac,
                      value=arguments.value) as check:
         check.connect_bluetooth()
         check.write_eeprom()
