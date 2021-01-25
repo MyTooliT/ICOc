@@ -83,33 +83,57 @@ def parse_arguments():
 
 
 class EEPROMCheck:
+    """Write and check the content of a certain page in EEPROM of an STH"""
 
     def __init__(self, mac_address, value):
+        """Initialize the EEPROM check with the given arguments
+
+        Arguments
+        ---------
+
+        mac_address
+            The MAC address of an STH as text of the form `xx:xx:xx:xx:xx:xx`,
+            where `x` represents a hexadecimal number.
+
+        value:
+            The value that the EEPROM checker should write into the EEPROM
+        """
+
         self.mac_address = hex(int("".join(mac_address.split(":")), 16))
         self.eeprom_address = 1
         self.eeprom_length = 256
         self.eeprom_value = value
 
     def __enter__(self):
+        """Initialize the connection to the STU"""
+
         self.network = Network()
         self.network.reset_node('STU 1')
         return self
 
     def __exit__(self, type, value, traceback):
+        """Disconnect from the STU"""
+
         self.network.bBlueToothDisconnect(Node('STU 1').value)
         self.network.__exit__()  # Cleanup resources (read thread)
 
     def connect_bluetooth(self):
+        """Connect to the STH"""
+
         self.network.bBlueToothConnectPollingAddress(
             Node('STU 1').value, self.mac_address)
 
         print(f"Connected to “{self.network.read_eeprom_name()}”")
 
     def reset_sth(self):
+        """Reset the (connected) STH"""
+
         self.network.reset_node('STH 1')
         self.network.bConnected = False
 
     def write_eeprom(self):
+        """Write a byte value into one page of the EEPROM"""
+
         print(f"Write value “{self.eeprom_value}” into EEPROM cells")
         self.network.write_eeprom(
             address=1,
@@ -117,9 +141,18 @@ class EEPROMCheck:
             data=[self.eeprom_value for _ in range(self.eeprom_length)])
 
     def read_eeprom(self):
+        """Read a page of the EEPROM
+
+        Returns:
+
+        A list of the byte values stored in the EEPROM page
+        """
+
         return self.network.read_eeprom(address=1, offset=0, length=256)
 
     def print_eeprom_incorrect(self):
+        """Print a summary of the incorrect values in the EEPROM page"""
+
         changed = [
             byte for byte in self.read_eeprom() if byte != self.eeprom_value
         ]
@@ -132,6 +165,8 @@ class EEPROMCheck:
         print(f"{incorrect:.2%} incorrect{': ' if summary else ''}{summary}")
 
     def print_eeprom(self):
+        """Print the values stored in the EEPROM page"""
+
         page = self.read_eeprom()
         bytes_per_line = 8
         for byte in range(0, self.eeprom_length - 1, bytes_per_line):
