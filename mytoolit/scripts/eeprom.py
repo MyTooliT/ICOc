@@ -11,14 +11,53 @@ from mytoolit.old.network import Network
 
 
 def parse_arguments():
+    """Parse the arguments of the EEPROM checker command line tool
+
+    Returns
+    -------
+
+    A simple object storing the MAC address (attribute `mac_address`) of an
+    STH and an optional byte value that should be stored into the cells of the
+    EEPROM (attribute `value`)
+    """
 
     def is_mac_address(mac_address):
+        """Check if the given text represents a MAC address
+
+        Throws
+        ------
+
+        An argument type error in case the given text does not store a MAC
+        address of the form `xx:xx:xx:xx:xx:xx`, where `x` represents a
+        hexadecimal number.
+
+        Returns
+        -------
+
+        The given text on success
+        """
+
         mac_regex = compile("[0-9a-fA-F]{2}(?::[0-9a-fA-F]{2}){5}$")
         if mac_regex.match(mac_address):
             return mac_address
         raise ArgumentTypeError(f"“{mac_address}” is not a valid MAC address")
 
     def is_byte_value(value):
+        """Check if the given integer like value represents a byte value
+
+        Throws
+        ------
+
+        An argument type error in case the given value does not represent a
+        (positive) byte value
+
+
+        Returns
+        -------
+
+        An integer representing the given value on success
+        """
+
         try:
             number = int(value, base=0)
             if number < 0 or number > 255:
@@ -36,6 +75,7 @@ def parse_arguments():
                         help="byte value for EEPROM cells",
                         type=is_byte_value,
                         default=10)
+
     return parser.parse_args()
 
 
