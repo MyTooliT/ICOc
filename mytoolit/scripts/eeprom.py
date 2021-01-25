@@ -71,10 +71,11 @@ def parse_arguments():
     parser.add_argument("mac_address",
                         help="MAC address of STH e.g. 08:6b:d7:01:de:81",
                         type=is_mac_address)
-    parser.add_argument("--value",
-                        help="byte value for EEPROM cells",
-                        type=is_byte_value,
-                        default=10)
+    parser.add_argument(
+        "--value",
+        help="byte value for EEPROM cells (default: %(default)s)",
+        type=is_byte_value,
+        default=10)
 
     return parser.parse_args()
 
