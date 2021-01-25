@@ -111,7 +111,7 @@ class EEPROMCheck:
         self.network.reset_node('STU 1')
         return self
 
-    def __exit__(self, type, value, traceback):
+    def __exit__(self, exception_type, exception_value, traceback):
         """Disconnect from the STU"""
 
         self.network.bBlueToothDisconnect(Node('STU 1').value)
