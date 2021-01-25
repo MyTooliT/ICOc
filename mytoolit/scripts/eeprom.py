@@ -17,8 +17,8 @@ def parse_arguments():
     -------
 
     A simple object storing the MAC address (attribute `mac_address`) of an
-    STH and an optional byte value that should be stored into the cells of the
-    EEPROM (attribute `value`)
+    STH and an byte value that should be stored into the cells of the EEPROM
+    (attribute `value`)
     """
 
     def is_mac_address(mac_address):
