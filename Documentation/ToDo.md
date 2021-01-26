@@ -16,8 +16,6 @@
   - Sleep Mode 2
   - Active
   - Streaming
-- Handle naming process of empty STHs
-  - For that to work we have to determine the default name of an STH (probably Tanja)
 - Add instructions for operator to test output
   - Write down MAC address on PCB
 - Add SPU version to PDF report
