@@ -13,3 +13,4 @@
 ### Network (New)
 
 - Add method (`reset_node`) to reset a node in the network
+- Implement context manager interface (`with … as`)

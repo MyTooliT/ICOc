@@ -51,6 +51,37 @@ class Network:
 
         self.sender = Node(sender)
 
+    def __enter__(self):
+        """Initialize the network
+
+        Returns
+        -------
+
+        An initialized network object
+
+        """
+
+        return self
+
+    def __exit__(self, exception_type, exception_value, traceback):
+        """Disconnect from the network
+
+        Parameters
+        ----------
+
+        exception_type:
+            The type of the exception in case of an exception
+
+        exception_value:
+            The value of the exception in case of an exception
+
+        traceback:
+            The traceback in case of an exception
+
+        """
+
+        self.shutdown()
+
     def reset_node(self, node='STH 1'):
         """Reset the specified node
 
@@ -63,9 +94,8 @@ class Network:
         Example
         -------
 
-        >>> network = Network(sender='SPU 1')
-        >>> network.reset_node('STU 1')
-        >>> network.shutdown()
+        >>> with Network(sender='SPU 1') as network:
+        ...     network.reset_node('STU 1')
 
         """
 
