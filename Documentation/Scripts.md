@@ -16,6 +16,22 @@ The command `icoc` calls `mwt.py`. All command line arguments to the script will
 icoc -n CGvXAd6B -r 10
 ```
 
+## EEPROM Check
+
+The script `check-eeprom` connects to an STH using its MAC address. Afterwards it writes a given byte value (default: `10`) into all the cells of an EEPROM page. It then resets the STH, connects again and shows the amount of incorrect EEPROM bytes. It repeats the last steps 5 times before it prints all values in the EEPROM page.
+
+The command below shows how to execute the EEPROM check for the STH with MAC address `08:6b:d7:01:de:81`:
+
+```sh
+check-eeprom 08:6b:d7:01:de:81
+```
+
+You can specify the value that should be written into the EEPROM cells using the option `--value`:
+
+```sh
+check-eeprom 08:6b:d7:01:de:81 --value 42
+```
+
 ## MAC Address Conversion
 
 The utility `convert-mac-base64` returns the Base64 encoded version of a MAC address. We use the encoded addresses as unique Bluetooth advertisement name for the STH (or SHA). Unfortunately we can not use the MAC address directly because the maximum length of the name is limited to 8 characters. To decode the Base64 name back into a Bluetooth address you can use the script `convert-base64-mac`.
