@@ -223,6 +223,25 @@ class Message:
 
         return self.pcan_message.ID
 
+    def identifier(self) -> Identifier:
+        """Retrieve an identifier object for the ID of the message
+
+        Returns
+        -------
+
+        An identifier object representing the ID of the message
+
+        Example
+        -------
+
+        >>> Message(block='System', block_command='Reset', request=True,
+        ...         sender='SPU 1', receiver='STH 2').identifier()
+        [SPU 1 → STH 2, Block: System, Command: Reset, Request]
+
+        """
+
+        return Identifier(self.pcan_message.ID)
+
     def to_python_can(self):
         """Retrieve a python-can message object for this message
 
