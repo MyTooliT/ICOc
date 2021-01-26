@@ -11,6 +11,7 @@ if __name__ == '__main__':
     path.append(str(Path(__file__).parent.parent.parent))
 
 from mytoolit.config import settings
+from mytoolit.can import Node
 
 # -- Class --------------------------------------------------------------------
 
@@ -18,8 +19,14 @@ from mytoolit.config import settings
 class Network:
     """Basic class to communicate with STU and STH devices"""
 
-    def __init__(self):
+    def __init__(self, sender='SPU 1'):
         """Create a new network from the given arguments
+
+        Parameters
+        ----------
+
+        sender:
+            The default sender of the network
 
         Examples
         --------
@@ -36,6 +43,8 @@ class Network:
             for key, value in configuration.items()
         }
         self.bus = Bus(**bus_config)
+
+        self.sender = Node(sender)
 
     def shutdown(self):
         """Deallocate all resources for this network connection"""
