@@ -1,6 +1,7 @@
 # -- Imports ------------------------------------------------------------------
 
 from sys import platform
+from time import sleep
 
 from can.interface import Bus
 
@@ -11,9 +12,13 @@ if __name__ == '__main__':
     path.append(str(Path(__file__).parent.parent.parent))
 
 from mytoolit.config import settings
-from mytoolit.can import Node
+from mytoolit.can import Node, Identifier, Message
 
-# -- Class --------------------------------------------------------------------
+# -- Classes ------------------------------------------------------------------
+
+
+class UnexpectedResponseError(Exception):
+    """Exception for unexpected response messages"""
 
 
 class Network:
@@ -45,6 +50,43 @@ class Network:
         self.bus = Bus(**bus_config)
 
         self.sender = Node(sender)
+
+    def reset_node(self, node='STH 1'):
+        """Reset the specified node
+
+        Parameters
+        ----------
+
+        node:
+            The node to reset
+
+        Example
+        -------
+
+        >>> network = Network(sender='SPU 1')
+        >>> network.reset_node('STU 1')
+        >>> network.shutdown()
+
+        """
+
+        message = Message(block='System',
+                          block_command='Reset',
+                          sender=self.sender,
+                          receiver=node,
+                          request=True)
+
+        self.bus.send(message.to_python_can())
+
+        answer = self.bus.recv(2)
+        ack_message = message.acknowledge()
+
+        if ack_message.id() != answer.arbitration_id:
+            self.shutdown()
+            raise UnexpectedResponseError(
+                f"Received “{Identifier(answer.arbitration_id)}” instead of "
+                f"“{ack_message.identifier()}”")
+
+        sleep(2)  # Wait until the node is up again
 
     def shutdown(self):
         """Deallocate all resources for this network connection"""

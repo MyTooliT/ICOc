@@ -9,3 +9,7 @@
 ### Message
 
 - Add method `identifier` to receive an identifier object for the current message
+
+### Network (New)
+
+- Add method (`reset_node`) to reset a node in the network
