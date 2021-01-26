@@ -16,6 +16,10 @@
 
 - We added a [package description](../../setup.py) for ICOc. You can now install the software using `pip install -e .` in the root of the repository. To uninstall the package use `pip uninstall icoc`.
 
+## Scripts
+
+- We added a new EEPROM checking tool. For more information please take a look at the section “EEPROM Check” of the [script documentation](../Scripts.md).
+
 ## Internal
 
 - We removed old hardware test code
