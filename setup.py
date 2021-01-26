@@ -4,7 +4,7 @@ with open("ReadMe.md", encoding='utf-8') as readme:
     long_description = readme.read()
 
 setup(name="icoc",
-      version="1.0.8",
+      version="1.0.9",
       description=("Control and test software for sensory tool holders (STH) "
                    "and stationary transceiver units (STU)"),
       long_description=long_description,
