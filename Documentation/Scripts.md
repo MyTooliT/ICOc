@@ -2,19 +2,11 @@
 
 After you installed the ICOc package various helper scripts are available:
 
+- `convert-base64-mac`: Utility to convert a Base64 encoded 8 character text into a Bluetooth MAC address
+- `convert-mac-base64`: Convert Bluetooth MAC address into a (Base64) encoded 8 character string
 - `icoc`: Controller software for the ICOtronic system. Can be used to access measurement data.
 - `test-sth`: Test code for the STH/SHA
 - `test-stu`: Test code for the STU
-- `convert-base64-mac`: Utility to convert a Base64 encoded 8 character text into a Bluetooth MAC address
-- `convert-mac-base64`: Convert Bluetooth MAC address into a (Base64) encoded 8 character string
-
-## ICOc
-
-The command `icoc` calls `mwt.py`. All command line arguments to the script will be directly forwarded to `mwt.py`. For example, to read acceleration data for 10 seconds from the STH with the (Bluetooth advertisement) name `CGvXAd6B`, you can use the following command:
-
-```sh
-icoc -n CGvXAd6B -r 10
-```
 
 ## EEPROM Check
 
@@ -30,6 +22,14 @@ You can specify the value that should be written into the EEPROM cells using the
 
 ```sh
 check-eeprom 08:6b:d7:01:de:81 --value 42
+```
+
+## ICOc
+
+The command `icoc` calls `mwt.py`. All command line arguments to the script will be directly forwarded to `mwt.py`. For example, to read acceleration data for 10 seconds from the STH with the (Bluetooth advertisement) name `CGvXAd6B`, you can use the following command:
+
+```sh
+icoc -n CGvXAd6B -r 10
 ```
 
 ## MAC Address Conversion
