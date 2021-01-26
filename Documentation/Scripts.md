@@ -2,12 +2,14 @@
 
 After you installed the ICOc package various helper scripts are available:
 
-- `convert-base64-mac`: Utility to convert a Base64 encoded 8 character text into a Bluetooth MAC address
-- `convert-mac-base64`: Convert Bluetooth MAC address into a (Base64) encoded 8 character string
-- `check-eeprom`: Write a byte value into the cells of an EEPROM page an check how many of the values are read incorrectly after an reset
-- `icoc`: Controller software for the ICOtronic system. Can be used to access measurement data.
-- `test-sth`: Test code for the STH/SHA
-- `test-stu`: Test code for the STU
+- [`convert-base64-mac`](#section:mac-address-conversion): Utility to convert a Base64 encoded 8 character text into a Bluetooth MAC address
+- [`convert-mac-base64`](#section:mac-address-conversion): Convert Bluetooth MAC address into a (Base64) encoded 8 character string
+- [`check-eeprom`](#section:eeprom-check): Write a byte value into the cells of an EEPROM page an check how many of the values are read incorrectly after an reset
+- [`icoc`](#section:icoc): Controller software for the ICOtronic system. Can be used to access measurement data.
+- [`test-sth`](#section:test-sth): Test code for the STH/SHA
+- [`test-stu`](#section:test-stu): Test code for the STU
+
+<a name="section:eeprom-check"></a>
 
 ## EEPROM Check
 
@@ -25,6 +27,8 @@ You can specify the value that should be written into the EEPROM cells using the
 check-eeprom 08:6b:d7:01:de:81 --value 42
 ```
 
+<a name="section:icoc"></a>
+
 ## ICOc
 
 The command `icoc` calls `mwt.py`. All command line arguments to the script will be directly forwarded to `mwt.py`. For example, to read acceleration data for 10 seconds from the STH with the (Bluetooth advertisement) name `CGvXAd6B`, you can use the following command:
@@ -32,6 +36,8 @@ The command `icoc` calls `mwt.py`. All command line arguments to the script will
 ```sh
 icoc -n CGvXAd6B -r 10
 ```
+
+<a name="section:mac-address-conversion"></a>
 
 ## MAC Address Conversion
 
@@ -49,11 +55,15 @@ convert-base64-mac CGvXAd6B
 #> 08:6b:d7:01:de:81
 ```
 
+<a name="section:test-sth"></a>
+
 ## Test-STH
 
 The command `test-sth` is a command that executes the tests for the STH ([`sth.py`][]). All command line arguments of the wrapper will be forwarded to [`sth.py`][].
 
 [`sth.py`]: ../mytoolit/test/production/sth.py
+
+<a name="section:test-stu"></a>
 
 ## Test-STU
 
