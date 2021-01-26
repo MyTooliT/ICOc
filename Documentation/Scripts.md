@@ -4,6 +4,7 @@ After you installed the ICOc package various helper scripts are available:
 
 - `convert-base64-mac`: Utility to convert a Base64 encoded 8 character text into a Bluetooth MAC address
 - `convert-mac-base64`: Convert Bluetooth MAC address into a (Base64) encoded 8 character string
+- `check-eeprom`: Write a byte value into the cells of an EEPROM page an check how many of the values are read incorrectly after an reset
 - `icoc`: Controller software for the ICOtronic system. Can be used to access measurement data.
 - `test-sth`: Test code for the STH/SHA
 - `test-stu`: Test code for the STU
