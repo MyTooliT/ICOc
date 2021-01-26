@@ -41,13 +41,13 @@ def parse_arguments():
 class EEPROMCheck:
     """Write and check the content of a certain page in EEPROM of an STH"""
 
-    def __init__(self, mac_address, value):
+    def __init__(self, mac, value):
         """Initialize the EEPROM check with the given arguments
 
         Arguments
         ---------
 
-        mac_address
+        mac
             The MAC address of an STH as text of the form `xx:xx:xx:xx:xx:xx`,
             where `x` represents a hexadecimal number.
 
@@ -55,7 +55,7 @@ class EEPROMCheck:
             The value that the EEPROM checker should write into the EEPROM
         """
 
-        self.mac_address = hex(int("".join(mac_address.split(":")), 16))
+        self.mac_address = hex(int("".join(mac.split(":")), 16))
         self.eeprom_address = 1
         self.eeprom_length = 256
         self.eeprom_value = value
@@ -139,7 +139,7 @@ def main():
 
     arguments = parse_arguments()
 
-    with EEPROMCheck(mac_address=arguments.mac,
+    with EEPROMCheck(mac=arguments.mac,
                      value=arguments.value) as check:
         check.connect_bluetooth()
         check.write_eeprom()
