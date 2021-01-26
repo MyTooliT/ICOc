@@ -41,6 +41,7 @@ setup(name="icoc",
           'console_scripts': [
               'icoc = mytoolit.old.mwt:main',
               'check-eeprom = mytoolit.scripts.eeprom:main',
+              'clean-repo = mytoolit.scripts.clean:main',
               'test-sth = mytoolit.test.production.sth:main',
               'test-stu = mytoolit.test.production.stu:main',
               'convert-base64-mac = mytoolit.scripts.base64:main',

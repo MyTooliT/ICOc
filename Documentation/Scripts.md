@@ -2,6 +2,7 @@
 
 After you installed the ICOc package various helper scripts are available:
 
+- [`clean-repo`](#section:remove-log-and-pdf-files): Remove log (`*.txt`) and PDF files (`*.pdf`) from the repository root
 - [`convert-base64-mac`](#section:mac-address-conversion): Utility to convert a Base64 encoded 8 character text into a Bluetooth MAC address
 - [`convert-mac-base64`](#section:mac-address-conversion): Convert Bluetooth MAC address into a (Base64) encoded 8 character string
 - [`check-eeprom`](#section:eeprom-check): Write a byte value into the cells of an EEPROM page an check how many of the values are read incorrectly after an reset
@@ -53,6 +54,28 @@ convert-mac-base64 08:6b:d7:01:de:81
 # Convert the Base64 encoded name back into a MAC address
 convert-base64-mac CGvXAd6B
 #> 08:6b:d7:01:de:81
+```
+
+<a name="section:remove-log-and-pdf-files"></a>
+
+## Remove Log and PDF Files
+
+The script `clean-repo` removes PDF files (`*.pdf`) and log files (`*.txt`) from the repository root folder. To show the names of the removed files add the option `-v` (or `--verbose`):
+
+```sh
+clean-repo -v
+```
+
+If you also want to remove Python bytecode files from the repository we recommend you install [`pyclean`](https://pypi.org/project/pyclean/):
+
+```sh
+pip install pyclean
+```
+
+and run the following commands in the root of the repository:
+
+```sh
+clean-repo -v; pyclean -v .
 ```
 
 <a name="section:test-sth"></a>
