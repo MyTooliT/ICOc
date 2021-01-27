@@ -63,7 +63,7 @@ class Node:
                 "Broadcast With(?P<no_acknowledgment>out)? Acknowledgment",
                 node)
             if broadcast_match:
-                node.value = 0 if broadcast_match['no_acknowledgment'] else 31
+                self.value = 0 if broadcast_match['no_acknowledgment'] else 31
                 return
 
             # Check normal nodes
