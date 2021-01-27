@@ -6,6 +6,8 @@ Please only push your changes to the `master` branch, if you think there are no 
 
 ## Code Checks
 
+### Flake8
+
 We check the code with [flake8](https://flake8.pycqa.org):
 
 ```sh
@@ -16,6 +18,20 @@ Please use the following command in the root of the repository to make sure you 
 
 ```sh
 flake8
+```
+
+### Mypy
+
+To check the type hint in the code base we use the static code checker [Mypy](https://mypy.readthedocs.io):
+
+```sh
+pip install mypy
+```
+
+Please use the following command in the root of the repository to check the code base for type problems:
+
+```sh
+mypy --ignore-missing-imports mytoolit
 ```
 
 ## Automatic Tests
