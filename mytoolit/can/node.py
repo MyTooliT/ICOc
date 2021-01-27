@@ -70,20 +70,21 @@ class Node:
             node_match = fullmatch(
                 r"(?P<name>S(?:PU|TH|TU)) ?(?P<number>\d{1,2})", node)
 
-            node_name = node_match['name']
-            node_number = int(node_match['number'])
+            if node_match is not None:
+                node_name = node_match['name']
+                node_number = int(node_match['number'])
 
-            if node_name == 'STH' and 1 <= node_number <= 14:
-                self.value = node_number
-                return
+                if node_name == 'STH' and 1 <= node_number <= 14:
+                    self.value = node_number
+                    return
 
-            if node_name == 'SPU' and 1 <= node_number <= 2:
-                self.value = node_number + 14
-                return
+                if node_name == 'SPU' and 1 <= node_number <= 2:
+                    self.value = node_number + 14
+                    return
 
-            if node_name == 'STU' and 1 <= node_number <= 14:
-                self.value = node_number + 16
-                return
+                if node_name == 'STU' and 1 <= node_number <= 14:
+                    self.value = node_number + 16
+                    return
 
             raise ValueError(f"Unknown node identifier “{node}”")
 
