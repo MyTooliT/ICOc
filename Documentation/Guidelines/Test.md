@@ -80,3 +80,19 @@ and make sure that it reports no test failures.
 2. Wait for the command execution
 3. Check that the command shows no error messages
 4. Open the PDF report (`STU Test.pdf`) in the repository root and make sure that it includes the correct test data
+
+## Combined Checks & Tests
+
+While you need to run the test for ICOc manually, the other tests and checks can be automated at least partially. To run all checks, the STH test and the STU test use the following command in a shell with support for the `&&` operator (e.g. [PowerShell **Core**](https://github.com/PowerShell/PowerShell)):
+
+```sh
+flake8 &&
+mypy --ignore-missing-imports mytoolit &&
+nosetests --with-doctest --traverse-namespace mytoolit &&
+Test-STH -v &&
+Test-STU -k eeprom -k connect &&
+ii 'STH Test.pdf' &&
+ii 'STU Test.pdf'
+```
+
+Afterwards make sure there were no (unexpected) errors in the output of the STH and STU test.
