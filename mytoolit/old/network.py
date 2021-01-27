@@ -311,8 +311,8 @@ class Network(object):
         while True:
             # Check timeout
             if self.get_elapsed_time() > waitTimeMax:
-                return (self.WriteFrameWaitAckTimeOut(CanMsg,
-                                                      printLog), currentIndex)
+                return self.WriteFrameWaitAckTimeOut(CanMsg,
+                                                     printLog), currentIndex
 
             # Get read message
             if currentIndex < self.GetReadArrayIndex() - 1:
@@ -330,11 +330,11 @@ class Network(object):
             if CanMsgAck.ID == message["CanMsg"].ID and (
                     assumedPayload is None
                     or list(message["CanMsg"].DATA) == assumedPayload):
-                return (self.WriteFrameWaitAckOk(message), currentIndex)
+                return self.WriteFrameWaitAckOk(message), currentIndex
 
             if CanMsgAckError.ID == message["CanMsg"].ID:
-                return (self.WriteFrameWaitAckError(message, bError,
-                                                    printLog), currentIndex)
+                return self.WriteFrameWaitAckError(message, bError,
+                                                   printLog), currentIndex
 
     def tWriteFrameWaitAckRetries(self,
                                   CanMsg,
