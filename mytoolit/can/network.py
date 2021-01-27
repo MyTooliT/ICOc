@@ -16,7 +16,9 @@ if __name__ == '__main__':
     path.append(str(Path(__file__).parent.parent.parent))
 
 from mytoolit.config import settings
-from mytoolit.can import Node, Identifier, Message
+from mytoolit.can.identifier import Identifier
+from mytoolit.can.message import Message
+from mytoolit.can.node import Node
 
 # -- Classes ------------------------------------------------------------------
 

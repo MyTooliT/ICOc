@@ -1,5 +1,9 @@
 # -- Imports ------------------------------------------------------------------
 
+from __future__ import annotations
+
+from typing import List, Optional, Union
+
 from can.interfaces.pcan.basic import PCAN_MESSAGE_EXTENDED, TPCANMsg
 from can import Message as CANMessage
 
@@ -9,7 +13,9 @@ if __name__ == '__main__':
     from sys import path
     path.append(str(Path(__file__).parent.parent.parent))
 
+from mytoolit.can.command import Command
 from mytoolit.can.identifier import Identifier
+from mytoolit.can.node import Node
 
 # -- Class --------------------------------------------------------------------
 
@@ -18,10 +24,10 @@ class Message:
     """Wrapper class for CAN messages"""
 
     def __init__(self,
-                 *message,
-                 identifier=None,
-                 data=None,
-                 **keyword_arguments):
+                 *message: Union[TPCANMsg, CANMessage],
+                 identifier: Optional[Identifier] = None,
+                 data: Optional[List[int]] = None,
+                 **keyword_arguments: Union[Command, Node, str, int]) -> None:
         """Create a new message based on the given attributes
 
         Usually you will either specify the (PCAN or python-can) message
@@ -123,7 +129,7 @@ class Message:
                 self.pcan_message.DATA[byte] = value
             self.pcan_message.LEN = len(data)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Get a textual representation of the current message
 
         Returns
@@ -172,7 +178,7 @@ class Message:
 
         return f"{bit_representation} # {identifier}"
 
-    def acknowledge(self, error=False):
+    def acknowledge(self, error: bool = False) -> Message:
         """Returns an acknowledgment message object for this message
 
         In the acknowledgment message receiver and sender will be swapped and
@@ -242,7 +248,7 @@ class Message:
 
         return Identifier(self.pcan_message.ID)
 
-    def to_python_can(self):
+    def to_python_can(self) -> CANMessage:
         """Retrieve a python-can message object for this message
 
         Returns
@@ -271,7 +277,7 @@ class Message:
                               for byte in range(self.pcan_message.LEN)
                           ])
 
-    def to_pcan(self):
+    def to_pcan(self) -> TPCANMsg:
         """Retrieve a PCAN message object for this message
 
         Returns
