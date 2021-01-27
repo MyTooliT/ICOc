@@ -1,7 +1,11 @@
 # -- Imports ------------------------------------------------------------------
 
+from __future__ import annotations
+
 from sys import platform
 from time import sleep
+from types import TracebackType
+from typing import Union, Optional, Type
 
 from can.interface import Bus
 
@@ -24,7 +28,7 @@ class UnexpectedResponseError(Exception):
 class Network:
     """Basic class to communicate with STU and STH devices"""
 
-    def __init__(self, sender='SPU 1'):
+    def __init__(self, sender: Union[str, Node] = 'SPU 1') -> None:
         """Create a new network from the given arguments
 
         Parameters
@@ -51,7 +55,7 @@ class Network:
 
         self.sender = Node(sender)
 
-    def __enter__(self):
+    def __enter__(self) -> Network:
         """Initialize the network
 
         Returns
@@ -63,7 +67,9 @@ class Network:
 
         return self
 
-    def __exit__(self, exception_type, exception_value, traceback):
+    def __exit__(self, exception_type: Optional[Type[BaseException]],
+                 exception_value: Optional[BaseException],
+                 traceback: Optional[TracebackType]) -> None:
         """Disconnect from the network
 
         Parameters
@@ -82,7 +88,7 @@ class Network:
 
         self.shutdown()
 
-    def reset_node(self, node='STH 1'):
+    def reset_node(self, node: Union[str, Node] = 'STH 1') -> None:
         """Reset the specified node
 
         Parameters
@@ -118,7 +124,7 @@ class Network:
 
         sleep(2)  # Wait until the node is up again
 
-    def shutdown(self):
+    def shutdown(self) -> None:
         """Deallocate all resources for this network connection"""
 
         self.bus.shutdown()
