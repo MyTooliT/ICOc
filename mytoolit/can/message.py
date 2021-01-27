@@ -264,10 +264,12 @@ class Message:
 
         """
 
-        return CANMessage(
-            is_extended_id=True,
-            arbitration_id=self.id(),
-            data=[value[byte] for byte, value in range(self.pcan_message.LEN)])
+        return CANMessage(is_extended_id=True,
+                          arbitration_id=self.id(),
+                          data=[
+                              self.pcan_message[byte]
+                              for byte in range(self.pcan_message.LEN)
+                          ])
 
     def to_pcan(self):
         """Retrieve a PCAN message object for this message
