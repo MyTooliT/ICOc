@@ -140,8 +140,8 @@ class TestSTH(TestNode):
         self.assertGreaterEqual(
             battery_voltage, expected_minimum_voltage,
             f"STH power source voltage of {battery_voltage:.3f} V is lower "
-            "than expected minimum voltage of"
-            "{expected_minimum_voltage:.3f} V")
+            "than expected minimum voltage of "
+            f"{expected_minimum_voltage:.3f} V")
         self.assertLessEqual(
             battery_voltage, expected_maximum_voltage,
             f"STH power source voltage of {battery_voltage:.3f} V is "
