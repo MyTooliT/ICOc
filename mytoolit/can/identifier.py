@@ -45,7 +45,7 @@ class Identifier:
         ----------
 
         identifier:
-            A extended CAN identifier (29 bit number)
+            An extended CAN identifier (29 bit number)
 
         command:
             The whole command including group, number, error bit, and
