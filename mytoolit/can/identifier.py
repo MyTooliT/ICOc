@@ -1,5 +1,9 @@
 # -- Imports ------------------------------------------------------------------
 
+from __future__ import annotations
+
+from typing import Optional, Union
+
 # Fix imports for script usage
 if __name__ == '__main__':
     from pathlib import Path
@@ -17,15 +21,15 @@ class Identifier:
 
     def __init__(
         self,
-        *identifier,
-        command=None,
-        block=None,
-        block_command=None,
-        error=None,
-        request=None,
-        sender=None,
-        receiver=None,
-    ):
+        *identifier: int,
+        command: Union[Command, None, int] = None,
+        block: Union[None, str, int] = None,
+        block_command: Union[None, str, int] = None,
+        error: Optional[bool] = None,
+        request: Optional[bool] = None,
+        sender: Union[Node, None, str, int] = None,
+        receiver: Union[Node, None, str, int] = None,
+    ) -> None:
         """Create a new identifier from a given integer
 
         Usually you will either specify the identifier number directly, or
@@ -153,7 +157,7 @@ class Identifier:
         if receiver:
             set_part(start=0, width=5, number=Node(receiver).value)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Return the string representation of the current identifier
 
         Returns
@@ -180,7 +184,7 @@ class Identifier:
         return (f"[{self.sender_name()} → {self.receiver_name()}, "
                 f"{Command(self.command())}]")
 
-    def command(self):
+    def command(self) -> int:
         """Get the command part of the identifier
 
         Returns
@@ -205,7 +209,7 @@ class Identifier:
 
         return (self.value >> 12) & 0xffff
 
-    def command_number(self):
+    def command_number(self) -> int:
         """Get the block and block command part of the identifier
 
         Returns
@@ -224,7 +228,7 @@ class Identifier:
 
         return Command(self.command()).value >> 2
 
-    def block(self):
+    def block(self) -> int:
         """Get the block
 
         Returns
@@ -242,7 +246,7 @@ class Identifier:
 
         return Command(self.command()).block()
 
-    def block_name(self):
+    def block_name(self) -> str:
         """Get the name of the command block
 
         Returns
@@ -266,7 +270,7 @@ class Identifier:
 
         return Command(self.command()).block_name()
 
-    def block_command(self):
+    def block_command(self) -> int:
         """Get the block command
 
         Returns
@@ -284,7 +288,7 @@ class Identifier:
 
         return Command(self.command()).block_command()
 
-    def block_command_name(self):
+    def block_command_name(self) -> str:
         """Get the name of the block command
 
         Returns
@@ -303,7 +307,7 @@ class Identifier:
 
         return Command(self.command()).block_command_name()
 
-    def is_acknowledgment(self):
+    def is_acknowledgment(self) -> bool:
         """Checks if the identifier represents an acknowledgment
 
         Returns
@@ -322,7 +326,7 @@ class Identifier:
 
         return Command(self.command()).is_acknowledgment()
 
-    def set_acknowledgment(self, value=True):
+    def set_acknowledgment(self, value: bool = True) -> Identifier:
         """Set the acknowledgment bit to the given value
 
         Arguments
@@ -355,7 +359,7 @@ class Identifier:
         self.value = Identifier(self.value, command=command).value
         return self
 
-    def sender(self):
+    def sender(self) -> int:
         """Get the sender of the message
 
         Returns
@@ -373,7 +377,7 @@ class Identifier:
 
         return self.value >> 6 & 0x1F
 
-    def sender_name(self):
+    def sender_name(self) -> str:
         """Get the name of the sender of a message
 
         Returns
@@ -392,7 +396,7 @@ class Identifier:
 
         return repr(Node(self.sender()))
 
-    def receiver(self):
+    def receiver(self) -> int:
         """Get the receiver of the message
 
         Returns
@@ -410,7 +414,7 @@ class Identifier:
 
         return self.value & 0x1f
 
-    def receiver_name(self):
+    def receiver_name(self) -> str:
         """Get the name of the receiver of a message
 
         Returns

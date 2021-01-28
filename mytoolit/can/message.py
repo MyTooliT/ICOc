@@ -23,11 +23,13 @@ from mytoolit.can.node import Node
 class Message:
     """Wrapper class for CAN messages"""
 
-    def __init__(self,
-                 *message: Union[TPCANMsg, CANMessage],
-                 identifier: Optional[Identifier] = None,
-                 data: Optional[List[int]] = None,
-                 **keyword_arguments: Union[Command, Node, str, int]) -> None:
+    def __init__(
+        self,
+        *message: Union[TPCANMsg, CANMessage],
+        identifier: Optional[Identifier] = None,
+        data: Optional[List[int]] = None,
+        **keyword_arguments: Union[Command, Node, None, str, int,
+                                   bool]) -> None:
         """Create a new message based on the given attributes
 
         Usually you will either specify the (PCAN or python-can) message
@@ -121,8 +123,9 @@ class Message:
                 identifier, int) else identifier.value
 
         if keyword_arguments:
-            self.pcan_message.ID = Identifier(self.id(),
-                                              **keyword_arguments).value
+            # Mypy assumes that all keyword arguments have the same type
+            self.pcan_message.ID = Identifier(
+                self.id(), **keyword_arguments).value  # type: ignore
 
         if data:
             for byte, value in enumerate(data):
