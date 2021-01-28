@@ -11,7 +11,7 @@ from typing import Union
 class Node:
     """This class represents a CAN node of ICOtronic system"""
 
-    def __init__(self, node: Union[int, str, Node] = 0):
+    def __init__(self, node: Union[int, str, Node] = 0) -> None:
         """Create a new node from the given argument
 
         A node represents a communication participant, such as a specific STH
@@ -94,7 +94,7 @@ class Node:
 
         self.value = node
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Return the string representation of the current node
 
         Returns
@@ -133,7 +133,7 @@ class Node:
 
         return f"STU {self.value-16}"
 
-    def is_sth(self):
+    def is_sth(self) -> bool:
         """Check if this node is an STH or not
 
         Returns
@@ -157,7 +157,7 @@ class Node:
 
         return 1 <= self.value <= 14
 
-    def is_stu(self):
+    def is_stu(self) -> bool:
         """Check if this node is an STU or not
 
         Returns
