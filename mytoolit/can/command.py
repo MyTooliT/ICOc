@@ -1,5 +1,7 @@
 # -- Imports ------------------------------------------------------------------
 
+from typing import Optional, Union
+
 # Fix imports for script usage
 if __name__ == '__main__':
     from pathlib import Path
@@ -17,12 +19,12 @@ class Command:
 
     def __init__(
         self,
-        *command,
-        block=None,
-        block_command=None,
-        request=None,
-        error=None,
-    ):
+        *command: int,
+        block: Union[None, str, int] = None,
+        block_command: Union[None, str, int] = None,
+        request: Optional[bool] = None,
+        error: Optional[bool] = None,
+    ) -> None:
         """Create a new command from the given arguments
 
         Usually you will either specify the command directly, or provide
@@ -121,7 +123,10 @@ class Command:
 
         if isinstance(block_command, str):
             try:
-                block_command_names = blocknumber_to_commands[block]
+                # Block has type `int`, otherwise the code beforehand would
+                # have thrown an exception
+                block_command_names = blocknumber_to_commands[
+                    block]  # type: ignore
             except KeyError:
                 raise ValueError(f"Unknown block number: {block}")
             else:
@@ -143,7 +148,7 @@ class Command:
         if error is not None:
             set_part(start=0, width=1, number=int(bool(error)))
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Get a textual representation of the command
 
         Returns
@@ -173,7 +178,7 @@ class Command:
 
         return ', '.join(attributes)
 
-    def block(self):
+    def block(self) -> int:
         """Get the block
 
         Returns
@@ -191,7 +196,7 @@ class Command:
 
         return (self.value >> 10) & 0b111111
 
-    def block_name(self):
+    def block_name(self) -> str:
         """Get a short description of the block
 
         Returns
@@ -212,7 +217,7 @@ class Command:
 
         return MyToolItBlock.inverse.get(self.block(), "Unknown")
 
-    def block_command(self):
+    def block_command(self) -> int:
         """Get the block command number
 
         Returns
@@ -230,7 +235,7 @@ class Command:
 
         return (self.value >> 2) & 0xff
 
-    def block_command_name(self):
+    def block_command_name(self) -> str:
         """Get the name of the block command
 
         Returns
@@ -256,7 +261,7 @@ class Command:
         except KeyError:
             return "Unknown"
 
-    def is_acknowledgment(self):
+    def is_acknowledgment(self) -> bool:
         """Checks if this command represents an acknowledgment
 
         Returns
@@ -277,7 +282,7 @@ class Command:
 
         return bool((self.value >> 1) & 1 == 0)
 
-    def set_acknowledgment(self, value=True):
+    def set_acknowledgment(self, value: bool = True):
         """Set the acknowledgment bit to the given value
 
         Arguments
