@@ -1,7 +1,7 @@
 # Release
 
 1. Make sure that **none** of the [tests](Test.md) fail
-2. Change the [`__version__`](../../mytoolit/__init__.py) number inside the [`mytoolit`](../../mytoolit) package and update `version` in [`setup.py`](../../setup.py)
+2. Change the [`__version__`](../../mytoolit/__init__.py) number inside the [`mytoolit`](../../mytoolit) package
 3. Push the commit that changes the version number
 4. Create a new release [here](https://github.com/MyTooliT/ICOc/releases/new)
 

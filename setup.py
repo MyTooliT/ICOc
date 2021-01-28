@@ -1,10 +1,16 @@
+from re import MULTILINE, search
 from setuptools import find_packages, setup
+
+with open("mytoolit/__init__.py", "r") as init_file:
+    version = search(r"__version__\s*=\s*['\"](?P<version>[^'\"]*)['\"]",
+                     init_file.read(),
+                     flags=MULTILINE)['version']
 
 with open("ReadMe.md", encoding='utf-8') as readme:
     long_description = readme.read()
 
 setup(name="icoc",
-      version="1.0.9",
+      version=version,
       description=("Control and test software for sensory tool holders (STH) "
                    "and stationary transceiver units (STU)"),
       long_description=long_description,

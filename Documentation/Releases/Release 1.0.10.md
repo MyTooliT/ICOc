@@ -4,6 +4,10 @@
 
 - We also check the code base with the static type checker [Mypy](https://mypy.readthedocs.io)
 
+## Package
+
+- We now use the version number specified in the [init file of the package](../../mytoolit/__init__.py) for the package version number.
+
 ## Scripts
 
 - We added a script that removes log and PDF files from the repository root. For more information please take a look at the section “Remove Log and PDF Files” of the [script documentation](../Scripts.md).
