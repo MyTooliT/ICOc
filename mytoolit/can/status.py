@@ -1,5 +1,7 @@
 # -- Imports ------------------------------------------------------------------
 
+from typing import List, Union
+
 # Fix imports for script usage
 if __name__ == '__main__':
     from pathlib import Path
@@ -18,7 +20,7 @@ class NodeStatus:
     two specific status classes for the STH and STU.
     """
 
-    def __init__(self, value):
+    def __init__(self, value: Union[List[int], int]) -> None:
         """Initialize the node status word using the given arguments
 
         Arguments
@@ -33,7 +35,7 @@ class NodeStatus:
         # status word 0 contains (non-reserved) data
         self.value = value if isinstance(value, int) else value[0]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Retrieve the textual representation of the node status word
 
         Returns
@@ -61,7 +63,7 @@ class NodeStatus:
 
         return ", ".join(attributes)
 
-    def error(self):
+    def error(self) -> bool:
         """Retrieve the status of the error bit
 
         Returns
@@ -81,7 +83,7 @@ class NodeStatus:
 
         return bool(self.value & 1)
 
-    def state_name(self):
+    def state_name(self) -> str:
         """Get the name of the state represented by the node status word
 
         Returns
@@ -105,7 +107,7 @@ class NodeStatus:
 
 class NodeStatusSTH(NodeStatus):
 
-    def __init__(self, value):
+    def __init__(self, value: Union[List[int], int]) -> None:
         """Initialize the node status word using the given arguments
 
         Arguments
@@ -118,7 +120,7 @@ class NodeStatusSTH(NodeStatus):
 
         super().__init__(value)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Retrieve the textual representation of the node status word
 
         Returns
@@ -138,7 +140,7 @@ class NodeStatusSTH(NodeStatus):
 
 class NodeStatusSTU(NodeStatus):
 
-    def __init__(self, value):
+    def __init__(self, value: Union[List[int], int]) -> None:
         """Initialize the node status word using the given arguments
 
         Arguments
@@ -151,7 +153,7 @@ class NodeStatusSTU(NodeStatus):
 
         super().__init__(value)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Retrieve the textual representation of the node status word
 
         Returns
@@ -191,7 +193,7 @@ class ErrorStatus:
     two specific error status classes for the STH and STU.
     """
 
-    def __init__(self, value):
+    def __init__(self, value: Union[List[int], int]) -> None:
         """Initialize the error status word using the given arguments
 
         Arguments
@@ -206,7 +208,7 @@ class ErrorStatus:
         # status word contains (non-reserved) data
         self.value = value if isinstance(value, int) else value[0]
 
-    def transmission_error(self):
+    def transmission_error(self) -> bool:
         """Retrieve the status of the transmission error bit
 
         Returns
@@ -230,7 +232,7 @@ class ErrorStatus:
 class ErrorStatusSTH(ErrorStatus):
     """Wrapper class for error status word 1 of the STH"""
 
-    def __init__(self, value):
+    def __init__(self, value: Union[List[int], int]) -> None:
         """Initialize the error status word using the given arguments
 
         Arguments
@@ -242,7 +244,7 @@ class ErrorStatusSTH(ErrorStatus):
         """
         super().__init__(value)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Retrieve the textual representation of the error status word
 
         Returns
@@ -276,7 +278,7 @@ class ErrorStatusSTH(ErrorStatus):
 
         return ", ".join(errors)
 
-    def adc_overrun(self):
+    def adc_overrun(self) -> bool:
         """Retrieve the status of the ADC overrun bit
 
         Returns
@@ -303,7 +305,7 @@ class ErrorStatusSTH(ErrorStatus):
 class ErrorStatusSTU(ErrorStatus):
     """Wrapper class for error status word 1 of the STH"""
 
-    def __init__(self, value):
+    def __init__(self, value: Union[List[int], int]) -> None:
         """Initialize the error status word using the given arguments
 
         Arguments
@@ -315,7 +317,7 @@ class ErrorStatusSTU(ErrorStatus):
         """
         super().__init__(value)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Retrieve the textual representation of the error status word
 
         Returns
