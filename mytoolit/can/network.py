@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from asyncio import get_running_loop, sleep, Queue, wait_for
+from asyncio.exceptions import CancelledError, TimeoutError
 from sys import platform
 from types import TracebackType
 from typing import Union, Optional, Type
@@ -27,6 +28,10 @@ class UnexpectedResponseError(Exception):
     """Exception for unexpected response messages"""
 
 
+class NoResponseError(Exception):
+    """Thrown if no response message for a request was received"""
+
+
 class ResetManager(Listener):
 
     def __init__(self):
@@ -36,7 +41,10 @@ class ResetManager(Listener):
         self.queue.put_nowait(message)
 
     async def on_message(self):
-        return await self.queue.get()
+        try:
+            return await self.queue.get()
+        except CancelledError:
+            pass
 
 
 class Network:
@@ -111,15 +119,27 @@ class Network:
         node:
             The node to reset
 
-        Example
-        -------
+        Examples
+        --------
 
         >>> from asyncio import run
 
+        Reset connected node
+
         >>> async def reset():
-        ...     with Network(sender='SPU 1') as network:
+        ...     with Network() as network:
         ...         await network.reset_node('STU 1')
         >>> run(reset())
+
+        Reset node, which is not connected
+
+        >>> async def reset():
+        ...     with Network() as network:
+        ...         await network.reset_node('STH 1')
+        >>> run(reset())
+        Traceback (most recent call last):
+            ...
+        mytoolit.can.network.NoResponseError: Unable to reset node “STH 1”
 
         """
 
@@ -138,14 +158,18 @@ class Network:
         ack_message = message.acknowledge()
         self.bus.send(message.to_python_can())
 
-        answer = await wait_for(listener.on_message(), timeout=1)
-        notifier.stop()
+        try:
+            answer = await wait_for(listener.on_message(), timeout=1)
+        except TimeoutError:
+            raise NoResponseError(f"Unable to reset node “{node}”")
+        finally:
+            notifier.stop()
 
         if ack_message.id() != answer.arbitration_id:
             self.shutdown()
             raise UnexpectedResponseError(
                 f"Received “{Identifier(answer.arbitration_id)}” instead of "
-                f"“{ack_message.identifier()}”")
+                f"“{ack_message.identifier()}” from “{node}”")
 
         await sleep(2)  # Wait until the node is up again
 
