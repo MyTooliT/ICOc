@@ -83,6 +83,7 @@ class Command:
         Traceback (most recent call last):
             ...
         ValueError: Unknown block command: Does Not Exist
+
         """
 
         def set_part(start, width, number):
@@ -166,6 +167,7 @@ class Command:
                       block   command A E
         >>> Command(block=0, block_command=0x0c, request=True, error=False)
         Block: System, Command: Routing, Request
+
         """
         error = self.value & 1
 
@@ -192,6 +194,7 @@ class Command:
                       block   command A E
         >>> Command(0b000011_00000000_0_0).block()
         3
+
         """
 
         return (self.value >> 10) & 0b111111
@@ -213,6 +216,7 @@ class Command:
                       block   command A E
         >>> Command(0b111101_00000010_0_0).block_name()
         'EEPROM'
+
         """
 
         return MyToolItBlock.inverse.get(self.block(), "Unknown")
@@ -231,6 +235,7 @@ class Command:
                       block   command A E
         >>> Command(0b001000_00000100_0_0).block_command()
         4
+
         """
 
         return (self.value >> 2) & 0xff
@@ -253,6 +258,7 @@ class Command:
                       block   command A E
         >>> Command(0b000000_00001011_0_0).block_command_name()
         'Bluetooth'
+
         """
 
         try:
@@ -278,6 +284,7 @@ class Command:
 
         >>> Command(request=True).is_acknowledgment()
         False
+
         """
 
         return bool((self.value >> 1) & 1 == 0)
@@ -330,6 +337,7 @@ class Command:
         -------
 
         The modified command object
+
         """
 
         request = not value
