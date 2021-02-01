@@ -353,6 +353,41 @@ class Command:
 
         return self
 
+    def set_error(self, error: bool = True) -> Command:
+        """Set the error bit to the given value
+
+        Arguments
+        ---------
+
+        error:
+            A boolean that specifies if the command represents an error or not
+
+        Examples
+        --------
+
+        >>> Command().set_error().is_error()
+        True
+
+        >>> Command().set_error(True).is_error()
+        True
+
+        >>> Command().set_error(False).is_error()
+        False
+
+        Returns
+        -------
+
+        The modified command object
+
+        """
+
+        if error:
+            self.value |= 1
+        else:
+            self.value &= 0b11111110
+
+        return self
+
 
 # -- Main ---------------------------------------------------------------------
 
