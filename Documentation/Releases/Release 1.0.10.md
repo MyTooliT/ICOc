@@ -22,6 +22,7 @@
 ### Identifier
 
 - Add method `is_error` to check if the current identifier represents an error message
+- Add method `set_error` to set or unset the error bit
 
 ### Message
 

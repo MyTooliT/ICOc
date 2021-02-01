@@ -379,6 +379,41 @@ class Identifier:
         self.value = Identifier(self.value, command=command).value
         return self
 
+    def set_error(self, error: bool = True) -> Identifier:
+        """Set the error bit to the given value
+
+        Arguments
+        ---------
+
+        error:
+            A boolean that specifies if this identifier should indicate an
+            error or not
+
+        Examples
+        --------
+
+                                      V  block   number A E R send. R rec.
+        >>> identifier = Identifier(0b0_000011_00001000_0_1_0_00111_0_00010)
+        >>> identifier.is_error()
+        True
+
+        >>> identifier.set_error(False).is_error()
+        False
+
+        >>> identifier.set_error().is_error()
+        True
+
+        Returns
+        -------
+
+        The modified identifier object
+
+        """
+
+        command = Command(self.command()).set_error(error)
+        self.value = Identifier(self.value, command=command).value
+        return self
+
     def sender(self) -> int:
         """Get the sender of the message
 
