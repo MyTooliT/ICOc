@@ -14,6 +14,10 @@
 
 ## Internal
 
+### Command
+
+- Add method `is_error` to check if the current command represents an error
+
 ### Message
 
 - Add method `identifier` to receive an identifier object for the current message
