@@ -137,7 +137,7 @@ class Identifier:
 
         self.value = identifier[0] if identifier else 0
 
-        if command:
+        if command is not None:
             # A command can be a number or a `Command` object
             command_as_number = command if isinstance(command,
                                                       int) else command.value
@@ -152,9 +152,9 @@ class Identifier:
                                 error=error).value)
 
         # Sender and receiver can be either an integer or a string like object
-        if sender:
+        if sender is not None:
             set_part(start=6, width=5, number=Node(sender).value)
-        if receiver:
+        if receiver is not None:
             set_part(start=0, width=5, number=Node(receiver).value)
 
     def __repr__(self) -> str:
