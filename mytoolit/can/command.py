@@ -282,6 +282,28 @@ class Command:
 
         return bool((self.value >> 1) & 1 == 0)
 
+    def is_error(self) -> bool:
+        """Checks if the command represents an error
+
+        Returns
+        -------
+
+        True if the command represents an error, or false otherwise
+
+        Examples
+        --------
+                      block   command A E
+        >>> Command(0b101011_00000001_1_0).is_error()
+        False
+
+                      block   command A E
+        >>> Command(0b101010_00000000_0_1).is_error()
+        True
+
+        """
+
+        return bool(self.value & 1)
+
     def set_acknowledgment(self, value: bool = True):
         """Set the acknowledgment bit to the given value
 
