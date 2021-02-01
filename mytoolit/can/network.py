@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
+from asyncio import get_running_loop, run, sleep, Queue, wait_for
 from sys import platform
-from time import sleep
 from types import TracebackType
 from typing import Union, Optional, Type
 
-from can.interface import Bus
+from can import Bus, Listener, Message as CANMessage, Notifier
 
 # Fix imports for script usage
 if __name__ == '__main__':
@@ -25,6 +25,18 @@ from mytoolit.can.node import Node
 
 class UnexpectedResponseError(Exception):
     """Exception for unexpected response messages"""
+
+
+class ResetManager(Listener):
+
+    def __init__(self):
+        self.queue = Queue()
+
+    def on_message_received(self, message: CANMessage):
+        self.queue.put_nowait(message)
+
+    async def on_message(self):
+        return await self.queue.get()
 
 
 class Network:
@@ -90,7 +102,7 @@ class Network:
 
         self.shutdown()
 
-    def reset_node(self, node: Union[str, Node] = 'STH 1') -> None:
+    async def reset_node(self, node: Union[str, Node] = 'STH 1') -> None:
         """Reset the specified node
 
         Parameters
@@ -113,10 +125,16 @@ class Network:
                           receiver=node,
                           request=True)
 
+        listener = ResetManager()
+        notifier = Notifier(self.bus,
+                            listeners=[listener],
+                            loop=get_running_loop())
+
+        ack_message = message.acknowledge()
         self.bus.send(message.to_python_can())
 
-        answer = self.bus.recv(2)
-        ack_message = message.acknowledge()
+        answer = await wait_for(listener.on_message(), timeout=1)
+        notifier.stop()
 
         if ack_message.id() != answer.arbitration_id:
             self.shutdown()
@@ -124,7 +142,7 @@ class Network:
                 f"Received “{Identifier(answer.arbitration_id)}” instead of "
                 f"“{ack_message.identifier()}”")
 
-        sleep(2)  # Wait until the node is up again
+        await sleep(2)  # Wait until the node is up again
 
     def shutdown(self) -> None:
         """Deallocate all resources for this network connection"""
@@ -134,7 +152,12 @@ class Network:
 
 # -- Main ---------------------------------------------------------------------
 
-if __name__ == '__main__':
-    from doctest import testmod
 
-    testmod()
+async def main():
+    network = Network()
+    await network.reset_node('STU 1')
+    network.shutdown()
+
+
+if __name__ == '__main__':
+    run(main())
