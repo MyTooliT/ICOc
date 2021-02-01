@@ -326,6 +326,26 @@ class Identifier:
 
         return Command(self.command()).is_acknowledgment()
 
+    def is_error(self) -> bool:
+        """Checks if the identifier represents an error
+
+        Returns
+        -------
+
+        True if the identifier indicates an error message, or false otherwise
+
+        Example
+        -------
+
+                         V  block   number A E R send. R rec.
+        >>> Identifier(0b0_000000_00000000_1_1_0_00101_0_00010
+        ...           ).is_error()
+        True
+
+        """
+
+        return Command(self.command()).is_error()
+
     def set_acknowledgment(self, value: bool = True) -> Identifier:
         """Set the acknowledgment bit to the given value
 

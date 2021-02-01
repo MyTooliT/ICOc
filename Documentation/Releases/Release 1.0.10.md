@@ -19,6 +19,10 @@
 - Add method `is_error` to check if the current command represents an error
 - Add method `set_error` to set or unset the error bit
 
+### Identifier
+
+- Add method `is_error` to check if the current identifier represents an error message
+
 ### Message
 
 - Add method `identifier` to receive an identifier object for the current message
