@@ -204,13 +204,7 @@ class Message:
         # [STH 10 → STH 5, Block: System, Command: Reset, Acknowledge]
         """
 
-        identifier = Identifier(self.id())
-        return Message(identifier=identifier,
-                       sender=identifier.receiver(),
-                       receiver=identifier.sender(),
-                       request=False,
-                       error=error,
-                       data=[])
+        return Message(identifier=self.identifier().acknowledge(), data=[])
 
     def id(self) -> int:
         """Retrieve the ID of the message

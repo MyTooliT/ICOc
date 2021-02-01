@@ -184,6 +184,43 @@ class Identifier:
         return (f"[{self.sender_name()} → {self.receiver_name()}, "
                 f"{Command(self.command())}]")
 
+    def acknowledge(self, error: bool = False) -> Identifier:
+        """Returns an acknowledgement identifier for this identifier
+
+        In the acknowledgment identifier receiver and sender will be swapped
+        and the request (acknowledge) bit will be set to 0 (acknowledge).
+
+        Returns
+        -------
+
+        An acknowledgment message for the current message
+
+        Example
+        -------
+
+        >>> identifier = Identifier(block='System', block_command='Reset',
+        ...                         sender='SPU 1', receiver='STH 1')
+
+        >>> acknowledgement_identifier = identifier.acknowledge()
+        >>> acknowledgement_identifier.receiver_name()
+        'SPU 1'
+        >>> acknowledgement_identifier.is_error()
+        False
+
+        >>> error_identifier = identifier.acknowledge(error=True)
+        >>> error_identifier.sender_name()
+        'STH 1'
+        >>> error_identifier.is_error()
+        True
+
+        """
+
+        return Identifier(self.value,
+                          sender=self.receiver(),
+                          receiver=self.sender(),
+                          request=False,
+                          error=error)
+
     def command(self) -> int:
         """Get the command part of the identifier
 
