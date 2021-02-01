@@ -157,6 +157,43 @@ class Identifier:
         if receiver is not None:
             set_part(start=0, width=5, number=Node(receiver).value)
 
+    def __eq__(self, other: object) -> bool:
+        """Compare this identifier to another object
+
+        Parameters
+        ----------
+
+        other:
+            The other object this identifier should be compared to
+
+        Returns
+        -------
+
+        - True, if the given object is and identifier and it has the same
+          value as this identifier
+
+        - False, otherwise
+
+        Examples
+        --------
+
+        >>> identifier1 = Identifier(block='System', block_command='Reset')
+        >>> identifier2 = Identifier(block='System', block_command='Reset',
+        ...                          receiver='STH 1')
+
+        >>> identifier1 == identifier2
+        False
+
+        >>> identifier1 == Identifier(identifier2.value, receiver=0)
+        True
+
+        """
+
+        if isinstance(other, Identifier):
+            return self.value == other.value
+
+        return False
+
     def __repr__(self) -> str:
         """Return the string representation of the current identifier
 
