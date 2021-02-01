@@ -1,5 +1,7 @@
 # -- Imports ------------------------------------------------------------------
 
+from __future__ import annotations
+
 from typing import Optional, Union
 
 # Fix imports for script usage
@@ -311,7 +313,7 @@ class Command:
 
         return bool(self.value & 1)
 
-    def set_acknowledgment(self, value: bool = True):
+    def set_acknowledgment(self, value: bool = True) -> Command:
         """Set the acknowledgment bit to the given value
 
         Arguments
