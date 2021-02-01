@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from asyncio import get_running_loop, sleep, Queue, wait_for
-from asyncio.exceptions import CancelledError, TimeoutError
+from asyncio import (CancelledError, get_running_loop, sleep, TimeoutError,
+                     Queue, wait_for)
 from sys import platform
 from types import TracebackType
 from typing import Union, Optional, Type
