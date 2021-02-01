@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from asyncio import get_running_loop, run, sleep, Queue, wait_for
+from asyncio import get_running_loop, sleep, Queue, wait_for
 from sys import platform
 from types import TracebackType
 from typing import Union, Optional, Type
@@ -114,8 +114,12 @@ class Network:
         Example
         -------
 
-        >>> with Network(sender='SPU 1') as network:
-        ...     network.reset_node('STU 1')
+        >>> from asyncio import run
+
+        >>> async def reset():
+        ...     with Network(sender='SPU 1') as network:
+        ...         await network.reset_node('STU 1')
+        >>> run(reset())
 
         """
 
@@ -126,6 +130,7 @@ class Network:
                           request=True)
 
         listener = ResetManager()
+
         notifier = Notifier(self.bus,
                             listeners=[listener],
                             loop=get_running_loop())
@@ -152,12 +157,7 @@ class Network:
 
 # -- Main ---------------------------------------------------------------------
 
-
-async def main():
-    network = Network()
-    await network.reset_node('STU 1')
-    network.shutdown()
-
-
 if __name__ == '__main__':
-    run(main())
+    from doctest import testmod
+
+    testmod()
