@@ -32,13 +32,18 @@ class NoResponseError(Exception):
     """Thrown if no response message for a request was received"""
 
 
-class ResetManager(Listener):
+class ResponseListener(Listener):
 
-    def __init__(self):
+    def __init__(self, identifier: Identifier):
         self.queue = Queue()
+        self.acknowledgment_identifier = identifier.acknowledge()
+        self.error_idenftifier = identifier.acknowledge(error=True)
 
     def on_message_received(self, message: CANMessage):
-        self.queue.put_nowait(message)
+        identifier = message.arbitration_id
+        if (identifier == self.acknowledgment_identifier.value
+                or identifier == self.error_idenftifier.value):
+            self.queue.put_nowait(message)
 
     async def on_message(self):
         try:
@@ -149,7 +154,7 @@ class Network:
                           receiver=node,
                           request=True)
 
-        listener = ResetManager()
+        listener = ResponseListener(message.identifier())
 
         notifier = Notifier(self.bus,
                             listeners=[listener],
