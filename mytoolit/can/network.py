@@ -24,11 +24,15 @@ from mytoolit.can.node import Node
 # -- Classes ------------------------------------------------------------------
 
 
-class UnexpectedResponseError(Exception):
+class NetworkError(Exception):
+    """Exception for errors in the MytooliT network"""
+
+
+class UnexpectedResponseError(NetworkError):
     """Exception for unexpected response messages"""
 
 
-class NoResponseError(Exception):
+class NoResponseError(NetworkError):
     """Thrown if no response message for a request was received"""
 
 
