@@ -108,6 +108,11 @@ class Network:
     def __init__(self, sender: Union[str, Node] = 'SPU 1') -> None:
         """Create a new network from the given arguments
 
+        Please note, that you have to clean up used resources after you use
+        this class using the method `shutdown`. Since this class implements
+        the context manager interface we recommend you use a with statement to
+        handle the cleanup phase automatically.
+
         Parameters
         ----------
 
