@@ -68,8 +68,9 @@ class ResponseListener(Listener):
         identifier = message.arbitration_id
         # Only store CAN messages that contain the expected response message
         # identifier
-        if (identifier == self.acknowledgment_identifier.value
-                or identifier == self.error_idenftifier.value):
+        error_response = identifier == self.error_idenftifier.value
+        normal_response = identifier == self.acknowledgment_identifier.value
+        if error_response or normal_response:
             self.queue.put_nowait(message)
 
     async def on_message(self) -> Optional[CANMessage]:
