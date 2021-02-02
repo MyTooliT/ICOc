@@ -34,22 +34,22 @@ class NoResponseError(Exception):
 
 class ResponseListener(Listener):
 
-    def __init__(self, identifier: Identifier):
-        self.queue = Queue()
+    def __init__(self, identifier: Identifier) -> None:
+        self.queue: Queue[CANMessage] = Queue()
         self.acknowledgment_identifier = identifier.acknowledge()
         self.error_idenftifier = identifier.acknowledge(error=True)
 
-    def on_message_received(self, message: CANMessage):
+    def on_message_received(self, message: CANMessage) -> None:
         identifier = message.arbitration_id
         if (identifier == self.acknowledgment_identifier.value
                 or identifier == self.error_idenftifier.value):
             self.queue.put_nowait(message)
 
-    async def on_message(self):
+    async def on_message(self) -> Optional[CANMessage]:
         try:
             return await self.queue.get()
         except CancelledError:
-            pass
+            return None
 
 
 class Network:
@@ -164,7 +164,8 @@ class Network:
         self.bus.send(message.to_python_can())
 
         try:
-            answer = await wait_for(listener.on_message(), timeout=1)
+            answer: CANMessage = await wait_for(listener.on_message(),
+                                                timeout=1)
         except TimeoutError:
             raise NoResponseError(f"Unable to reset node “{node}”")
         finally:
