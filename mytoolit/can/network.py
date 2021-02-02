@@ -122,8 +122,15 @@ class Network:
         Examples
         --------
 
+        Create and shutdown the network explicitly
+
         >>> network = Network()
         >>> network.shutdown()
+
+        Use a context manager to handle the cleanup process automatically
+
+        >>> with Network() as network:
+        ...     pass
 
         """
 
