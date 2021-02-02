@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from asyncio import (CancelledError, get_running_loop, sleep, TimeoutError,
-                     Queue, wait_for)
+from asyncio import (CancelledError, get_running_loop, TimeoutError, Queue,
+                     wait_for)
 from sys import platform
 from types import TracebackType
 from typing import Union, Optional, Type
@@ -210,8 +210,6 @@ class Network:
             raise UnexpectedResponseError(
                 f"Received “{Identifier(answer.arbitration_id)}” instead of "
                 f"“{ack_message.identifier()}” from “{node}”")
-
-        await sleep(2)  # Wait until the node is up again
 
     def shutdown(self) -> None:
         """Deallocate all resources for this network connection"""
