@@ -221,7 +221,6 @@ class Network:
             notifier.stop()
 
         if response.is_error:
-            self.shutdown()
             raise ErrorResponseError(
                 f"Received error response for reset request from “{node}”")
 
