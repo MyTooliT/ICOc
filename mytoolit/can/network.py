@@ -33,19 +33,53 @@ class NoResponseError(Exception):
 
 
 class ResponseListener(Listener):
+    """A listener that reacts to messages containing a certain id"""
 
     def __init__(self, identifier: Identifier) -> None:
+        """Initialize the listener using the given identifier
+
+        Parameters
+        ----------
+
+        identifier
+            The identifier of a sent message this listener should react to
+
+        """
+
         self.queue: Queue[CANMessage] = Queue()
         self.acknowledgment_identifier = identifier.acknowledge()
         self.error_idenftifier = identifier.acknowledge(error=True)
 
     def on_message_received(self, message: CANMessage) -> None:
+        """React to a received message on the bus
+
+        Parameters
+        ----------
+
+        message
+            The received CAN message the notifier should react to
+
+        """
+
         identifier = message.arbitration_id
+        # Only store CAN messages that contain the expected response message
+        # identifier
         if (identifier == self.acknowledgment_identifier.value
                 or identifier == self.error_idenftifier.value):
             self.queue.put_nowait(message)
 
     async def on_message(self) -> Optional[CANMessage]:
+        """Return answer messages for the specified message identifier
+
+
+        Returns
+        -------
+
+        A response message for the message with the identifier given at object
+        creation
+
+        """
+
         try:
             return await self.queue.get()
         except CancelledError:
