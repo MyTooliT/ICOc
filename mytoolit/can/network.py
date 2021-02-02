@@ -177,6 +177,57 @@ class Network:
 
         self.shutdown()
 
+    async def request(self, message: Message, description: str) -> CANMessage:
+        """Send a request message and wait for the response
+
+        Parameters
+        ----------
+
+        message:
+            The message containing the request
+
+        description:
+            A description of the request used in error messages
+
+        Returns
+        -------
+
+        The response message for the given request
+
+        Throws
+        ------
+
+        NoResponseError:
+            If the receiver did not respond to the message after a certain
+            amount of time (1s)
+
+        ErrorResponseError:
+            If the receiver answered with an error message
+
+        """
+
+        listener = ResponseListener(message.identifier())
+
+        notifier = Notifier(self.bus,
+                            listeners=[listener],
+                            loop=get_running_loop())
+
+        self.bus.send(message.to_python_can())
+
+        try:
+            response = await wait_for(listener.on_message(), timeout=1)
+            assert response is not None
+        except TimeoutError:
+            raise NoResponseError(f"Unable to {description}")
+        finally:
+            notifier.stop()
+
+        if response.is_error:
+            raise ErrorResponseError(
+                f"Received error response for request to {description}")
+
+        return response.message
+
     async def reset_node(self, node: Union[str, Node] = 'STH 1') -> None:
         """Reset the specified node
 
@@ -215,26 +266,7 @@ class Network:
                           sender=self.sender,
                           receiver=node,
                           request=True)
-
-        listener = ResponseListener(message.identifier())
-
-        notifier = Notifier(self.bus,
-                            listeners=[listener],
-                            loop=get_running_loop())
-
-        self.bus.send(message.to_python_can())
-
-        try:
-            response = await wait_for(listener.on_message(), timeout=1)
-            assert response is not None
-        except TimeoutError:
-            raise NoResponseError(f"Unable to reset node “{node}”")
-        finally:
-            notifier.stop()
-
-        if response.is_error:
-            raise ErrorResponseError(
-                f"Received error response for reset request from “{node}”")
+        await self.request(message, description=f"reset node “{node}”")
 
     def shutdown(self) -> None:
         """Deallocate all resources for this network connection"""

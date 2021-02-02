@@ -33,4 +33,5 @@
 ### Network (New)
 
 - Add method (`reset_node`) to reset a node in the network
+- Add method (`request`) to send requests
 - Implement context manager interface (`with … as`)
