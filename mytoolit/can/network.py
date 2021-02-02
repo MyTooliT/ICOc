@@ -6,7 +6,7 @@ from asyncio import (CancelledError, get_running_loop, TimeoutError, Queue,
                      wait_for)
 from sys import platform
 from types import TracebackType
-from typing import Union, Optional, Type
+from typing import Union, Optional, NamedTuple, Type
 
 from can import Bus, Listener, Message as CANMessage, Notifier
 
@@ -28,12 +28,19 @@ class NetworkError(Exception):
     """Exception for errors in the MytooliT network"""
 
 
-class UnexpectedResponseError(NetworkError):
-    """Exception for unexpected response messages"""
+class ErrorResponseError(NetworkError):
+    """Exception for error response messages"""
 
 
 class NoResponseError(NetworkError):
     """Thrown if no response message for a request was received"""
+
+
+class Response(NamedTuple):
+    """Used to store a response (message)"""
+
+    message: CANMessage  # The response message
+    is_error: bool  # States if the response was an error or a normal response
 
 
 class ResponseListener(Listener):
@@ -50,7 +57,7 @@ class ResponseListener(Listener):
 
         """
 
-        self.queue: Queue[CANMessage] = Queue()
+        self.queue: Queue[Response] = Queue()
         self.acknowledgment_identifier = identifier.acknowledge()
         self.error_idenftifier = identifier.acknowledge(error=True)
 
@@ -71,17 +78,21 @@ class ResponseListener(Listener):
         error_response = identifier == self.error_idenftifier.value
         normal_response = identifier == self.acknowledgment_identifier.value
         if error_response or normal_response:
-            self.queue.put_nowait(message)
+            self.queue.put_nowait(
+                Response(message=message, is_error=error_response))
 
-    async def on_message(self) -> Optional[CANMessage]:
+    async def on_message(self) -> Optional[Response]:
         """Return answer messages for the specified message identifier
 
 
         Returns
         -------
 
-        A response message for the message with the identifier given at object
-        creation
+        A response containing
+
+        - the response message for the message with the identifier given at
+          object creation, and
+        - the error status of the response message
 
         """
 
@@ -199,22 +210,20 @@ class Network:
                             listeners=[listener],
                             loop=get_running_loop())
 
-        ack_message = message.acknowledge()
         self.bus.send(message.to_python_can())
 
         try:
-            answer: CANMessage = await wait_for(listener.on_message(),
-                                                timeout=1)
+            response = await wait_for(listener.on_message(), timeout=1)
+            assert response is not None
         except TimeoutError:
             raise NoResponseError(f"Unable to reset node “{node}”")
         finally:
             notifier.stop()
 
-        if ack_message.id() != answer.arbitration_id:
+        if response.is_error:
             self.shutdown()
-            raise UnexpectedResponseError(
-                f"Received “{Identifier(answer.arbitration_id)}” instead of "
-                f"“{ack_message.identifier()}” from “{node}”")
+            raise ErrorResponseError(
+                f"Received error response for reset request from “{node}”")
 
     def shutdown(self) -> None:
         """Deallocate all resources for this network connection"""
