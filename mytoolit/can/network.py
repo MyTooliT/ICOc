@@ -136,10 +136,10 @@ class Network:
         >>> async def reset():
         ...     with Network() as network:
         ...         await network.reset_node('STH 1')
-        >>> run(reset())
+        >>> run(reset()) # doctest: +IGNORE_EXCEPTION_DETAIL
         Traceback (most recent call last):
             ...
-        mytoolit.can.network.NoResponseError: Unable to reset node “STH 1”
+        NoResponseError: Unable to reset node “STH 1”
 
         """
 
