@@ -9,14 +9,14 @@ from time import sleep, time
 path.append(str(Path(__file__).parent.parent.parent))
 
 from mytoolit.can import Identifier
-from mytoolit.old.network import Network
+from mytoolit.old.network import Network as OldNetwork
 from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
 from mytoolit.old.MyToolItCommands import int_to_mac_address
 
 
 def create_connection_network():
     # Configure the CAN hardware
-    network = Network()
+    network = OldNetwork()
 
     # Reset STU (and STH)
     message = network.reset_node("STU 1")
