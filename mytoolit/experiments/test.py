@@ -1,3 +1,4 @@
+from asyncio import run
 from can.interface import Bus
 from can import Message
 from pathlib import Path
@@ -8,13 +9,18 @@ from time import sleep, time
 # Add path for custom libraries
 path.append(str(Path(__file__).parent.parent.parent))
 
-from mytoolit.can import Identifier
+from mytoolit.can import Identifier, Network
 from mytoolit.old.network import Network as OldNetwork
 from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
 from mytoolit.old.MyToolItCommands import int_to_mac_address
 
 
-def create_connection_network():
+async def create_connection_network_new():
+    with Network() as network:
+        await network.reset_node('STU 1')  # Reset STU (and STH)
+
+
+def create_connection_network_old():
     # Configure the CAN hardware
     network = OldNetwork()
 
@@ -197,6 +203,8 @@ def create_connection_bus():
 
 if __name__ == '__main__':
     if system() == "Windows":
-        create_connection_network()
+        create_connection_network_old()
         print("————")
+    run(create_connection_network_new())
+    print("————")
     create_connection_bus()
