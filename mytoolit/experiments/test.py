@@ -14,37 +14,6 @@ from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
 from mytoolit.old.MyToolItCommands import int_to_mac_address
 
 
-def send_message(bus, identifier, data=None):
-    message = Message(arbitration_id=identifier.value,
-                      data=data,
-                      is_extended_id=True)
-    bus.send(message)
-
-
-def create_id(block,
-              block_command,
-              sender='SPU 1',
-              receiver='STU 1',
-              request=True):
-    return Identifier(block=block,
-                      block_command=block_command,
-                      sender=sender,
-                      receiver=receiver,
-                      request=request)
-
-
-def bytearray_to_text(data):
-    return bytearray(filter(lambda byte: byte > ord(' ') and byte < 128,
-                            data)).decode('ASCII')
-
-
-def check_bluetooth_connection(bus):
-    send_message(bus, create_id('System', 'Bluetooth'), data=[8] + 7 * [0])
-    message = bus.recv(2)
-    connected = bool(message.data[2])
-    return connected
-
-
 def create_connection_network():
     # Configure the CAN hardware
     network = Network()
@@ -110,6 +79,35 @@ def create_connection_network():
 
 
 def create_connection_bus():
+
+    def bytearray_to_text(data):
+        return bytearray(
+            filter(lambda byte: byte > ord(' ') and byte < 128,
+                   data)).decode('ASCII')
+
+    def check_bluetooth_connection(bus):
+        send_message(bus, create_id('System', 'Bluetooth'), data=[8] + 7 * [0])
+        message = bus.recv(2)
+        connected = bool(message.data[2])
+        return connected
+
+    def send_message(bus, identifier, data=None):
+        message = Message(arbitration_id=identifier.value,
+                          data=data,
+                          is_extended_id=True)
+        bus.send(message)
+
+    def create_id(block,
+                  block_command,
+                  sender='SPU 1',
+                  receiver='STU 1',
+                  request=True):
+        return Identifier(block=block,
+                          block_command=block_command,
+                          sender=sender,
+                          receiver=receiver,
+                          request=request)
+
     # Configure the CAN hardware
     bus = Bus(bustype='socketcan', channel='can0',
               bitrate=1000000) if system() == "Linux" else Bus(
