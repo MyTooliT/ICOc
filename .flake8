@@ -2,6 +2,7 @@
 
 ignore =
   E402, # Module level import not at top of file
+  W503, # Line break before binary operator
   W504, # Line break after binary operator
 per-file-ignores = __init__.py:F401
 exclude =
