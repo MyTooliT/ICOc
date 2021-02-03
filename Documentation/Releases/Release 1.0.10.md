@@ -40,4 +40,5 @@
 
 - Add method (`reset_node`) to reset a node in the network
 - Add method (`request`) to send requests
+- Add method (`activate_bluetooth`) to activate Bluetooth on a node in the network
 - Implement context manager interface (`with … as`)
