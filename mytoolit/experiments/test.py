@@ -202,9 +202,4 @@ def create_connection_bus():
 
 
 if __name__ == '__main__':
-    if system() == "Windows":
-        create_connection_network_old()
-        print("————")
     run(create_connection_network_new())
-    print("————")
-    create_connection_bus()
