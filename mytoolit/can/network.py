@@ -228,7 +228,7 @@ class Network:
 
         return response.message
 
-    async def reset_node(self, node: Union[str, Node] = 'STH 1') -> None:
+    async def reset_node(self, node: Union[str, Node]) -> None:
         """Reset the specified node
 
         Parameters
