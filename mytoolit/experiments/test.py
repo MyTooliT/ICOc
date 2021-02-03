@@ -1,4 +1,4 @@
-from asyncio import run
+from asyncio import run, sleep as asleep
 from can.interface import Bus
 from can import Message
 from pathlib import Path
@@ -19,6 +19,10 @@ async def create_connection_network_new():
     with Network() as network:
         print("Reset STU 1")
         await network.reset_node('STU 1')  # Reset STU (and STH)
+
+        wait_time = 2
+        print(f"Wait {wait_time} seconds for STU 1 reset")
+        await asleep(wait_time)
 
 
 def create_connection_network_old():
