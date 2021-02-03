@@ -268,6 +268,19 @@ class Network:
                           request=True)
         await self.request(message, description=f"reset node “{node}”")
 
+    async def activate_bluetooth(self, node: Union[str, Node] = 'STU 1'):
+
+        connect_command = 1
+        message = Message(block='System',
+                          block_command='Bluetooth',
+                          sender=self.sender,
+                          receiver=node,
+                          request=True,
+                          data=[connect_command] + [0] * 7)
+
+        await self.request(message,
+                           description=f"activate Bluetooth of node “{node}”")
+
     def shutdown(self) -> None:
         """Deallocate all resources for this network connection"""
 
