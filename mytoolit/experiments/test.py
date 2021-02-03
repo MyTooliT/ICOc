@@ -17,6 +17,7 @@ from mytoolit.old.MyToolItCommands import int_to_mac_address
 
 async def create_connection_network_new():
     with Network() as network:
+        print("Reset STU 1")
         await network.reset_node('STU 1')  # Reset STU (and STH)
 
 
