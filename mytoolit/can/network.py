@@ -269,6 +269,27 @@ class Network:
         await self.request(message, description=f"reset node “{node}”")
 
     async def activate_bluetooth(self, node: Union[str, Node] = 'STU 1'):
+        """Activate Bluetooth on the specified node
+
+        Parameters
+        ----------
+
+        node:
+            The node on which Bluetooth should be activated
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Activate Bluetooth on STU 1
+
+        >>> async def reset():
+        ...     with Network() as network:
+        ...         await network.activate_bluetooth('STU 1')
+        >>> run(reset())
+
+        """
 
         connect_command = 1
         message = Message(block='System',
