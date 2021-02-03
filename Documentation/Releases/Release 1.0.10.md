@@ -34,6 +34,7 @@
 ### Message
 
 - Add method `identifier` to receive an identifier object for the current message
+- Fix conversion into `python-can` message for non-empty data field
 
 ### Network (New)
 

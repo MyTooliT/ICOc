@@ -256,11 +256,11 @@ class Message:
         Example
         -------
 
-        >>> message = Message(block='EEPROM', sender='SPU 1')
+        >>> message = Message(block='EEPROM', sender='SPU 1', data=[1,2,3])
         >>> can_message = message.to_python_can()
         >>> can_message # doctest:+NORMALIZE_WHITESPACE
         can.Message(timestamp=0.0, arbitration_id=0xf4003c0,
-                    extended_id=True, dlc=0, data=[])
+                    extended_id=True, dlc=3, data=[0x1, 0x2, 0x3])
 
         >>> message.id() == can_message.arbitration_id
         True
@@ -270,7 +270,7 @@ class Message:
         return CANMessage(is_extended_id=True,
                           arbitration_id=self.id(),
                           data=[
-                              self.pcan_message[byte]
+                              self.pcan_message.DATA[byte]
                               for byte in range(self.pcan_message.LEN)
                           ])
 
