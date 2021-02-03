@@ -1,3 +1,4 @@
+from platform import system
 from re import MULTILINE, search
 from setuptools import find_packages, setup
 
@@ -8,6 +9,20 @@ with open("mytoolit/__init__.py", "r") as init_file:
 
 with open("ReadMe.md", encoding='utf-8') as readme:
     long_description = readme.read()
+
+required_packages = [
+    "bidict",
+    "dynaconf",
+    "matplotlib",
+    "openpyxl",
+    "pdfrw",
+    "python-can",
+    "reportlab",
+    "semantic_version",
+]
+
+if system() == "Windows":
+    required_packages.append("windows-curses")
 
 setup(name="icoc",
       version=version,
@@ -24,17 +39,7 @@ setup(name="icoc",
           'Source': "https://github.com/MyTooliT/ICOc",
       },
       packages=find_packages(),
-      install_requires=[
-          "bidict",
-          "dynaconf",
-          "matplotlib",
-          "openpyxl",
-          "pdfrw",
-          "python-can",
-          "reportlab",
-          "semantic_version",
-          "windows-curses",
-      ],
+      install_requires=required_packages,
       include_package_data=True,
       classifiers=[
           "Development Status :: 3 - Alpha",

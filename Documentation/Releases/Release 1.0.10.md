@@ -7,6 +7,7 @@
 ## Package
 
 - We now use the version number specified in the [init file of the package](../../mytoolit/__init__.py) for the package version number.
+- You can now also install the Package on Linux (and macOS)
 
 ## Scripts
 
