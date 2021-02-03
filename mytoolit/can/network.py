@@ -302,6 +302,27 @@ class Network:
         await self.request(message,
                            description=f"activate Bluetooth of node “{node}”")
 
+    async def get_available_devices_bluetooth(self,
+                                              node: Union[str, Node] = 'STU 1'
+                                              ) -> int:
+        """Retrieve the number of available Bluetooth devices at a node"""
+
+        get_available_devices = 2
+        message = Message(block='System',
+                          block_command='Bluetooth',
+                          sender=self.sender,
+                          receiver=node,
+                          request=True,
+                          data=[get_available_devices] + [0] * 7)
+
+        answer = await self.request(
+            message,
+            description=f"get available Bluetooth devices of node “{node}”")
+
+        available_devices = int(chr(answer.data[2]))
+
+        return available_devices
+
     def shutdown(self) -> None:
         """Deallocate all resources for this network connection"""
 
