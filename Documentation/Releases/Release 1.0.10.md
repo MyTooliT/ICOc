@@ -4,6 +4,10 @@
 
 - We also check the code base with the static type checker [Mypy](https://mypy.readthedocs.io)
 
+## GitHub Actions
+
+- We now also test ICOc on Ubuntu Linux
+
 ## Package
 
 - We now use the version number specified in the [init file of the package](../../mytoolit/__init__.py) for the package version number.
