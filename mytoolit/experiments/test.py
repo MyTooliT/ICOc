@@ -24,6 +24,9 @@ async def create_connection_network_new():
         print(f"Wait {wait_time} seconds for STU 1 reset")
         await asleep(wait_time)
 
+        print("Activate Bluetooth of STU 1")
+        await network.activate_bluetooth('STU 1')
+
 
 def create_connection_network_old():
     # Configure the CAN hardware
