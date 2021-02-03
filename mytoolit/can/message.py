@@ -163,9 +163,30 @@ class Message:
         ...             request=True))
         >>> search('# (.*)', representation)[1]
         '[SPU 1 → STH 1, Block: Streaming, Command: Acceleration, Request]'
+
+        >>> representation = repr(
+        ...     Message(block='System',
+        ...             block_command='Bluetooth',
+        ...             sender='SPU 1',
+        ...             receiver='STU 1',
+        ...             request=True,
+        ...             data=[1] + [0]*7))
+        >>> search('# (.*)', representation)[1] # doctest:+NORMALIZE_WHITESPACE
+        '[SPU 1 → STU 1, Block: System, Command: Bluetooth, Request]
+         (Activate)'
+
         """
 
         identifier = Identifier(self.id())
+
+        data_explanation = None
+        if (len(self.pcan_message.DATA) >= 1
+                and identifier.block_name() == 'System'
+                and identifier.block_command_name() == 'Bluetooth'):
+            if self.pcan_message.DATA[0] == 1:
+                data_explanation = "Activate"
+        explanation = (f"{identifier} ({data_explanation})"
+                       if data_explanation else repr(identifier))
 
         data_representation = " ".join([
             hex(self.pcan_message.DATA[byte])
@@ -179,7 +200,7 @@ class Message:
         # space at the end of the representation for empty data
         bit_representation = " ".join(filter(None, bit_values))
 
-        return f"{bit_representation} # {identifier}"
+        return f"{bit_representation} # {explanation}"
 
     def acknowledge(self, error: bool = False) -> Message:
         """Returns an acknowledgment message object for this message
