@@ -112,7 +112,7 @@ class Message:
             else:
                 raise ValueError(
                     "Unsupported object type for argument message: "
-                    f" “{type(message)}”")
+                    f"“{type(message)}”")
         else:
             self.pcan_message = TPCANMsg()
 
