@@ -107,7 +107,7 @@ class Message:
                 self.pcan_message = TPCANMsg()
                 self.pcan_message.ID = message.arbitration_id
                 for byte, value in enumerate(message.data):
-                    self.pcan_message.DATA[byte] = value
+                    self[byte] = value
                 self.pcan_message.LEN = len(message.data)
             else:
                 raise ValueError(
@@ -129,7 +129,7 @@ class Message:
 
         if data:
             for byte, value in enumerate(data):
-                self.pcan_message.DATA[byte] = value
+                self[byte] = value
             self.pcan_message.LEN = len(data)
 
     def __getitem__(self, index: int) -> int:
@@ -156,6 +156,38 @@ class Message:
         """
 
         return self.pcan_message.DATA[index]
+
+    def __setitem__(self, index: int, value: int) -> None:
+        """Write a byte of the message using an integer index and an value
+
+        Parameters
+        ----------
+
+        index:
+            The number of the byte in the message that should be set to the
+            given value
+
+        value:
+            The byte value that should be stored at the specified index
+
+        Examples
+        --------
+
+        >>> message = Message()
+        >>> message[1] = 1
+        >>> message[2] = 2
+        >>> message[7] = 7
+
+        >>> message[1]
+        1
+        >>> message[3]
+        0
+        >>> message[7]
+        7
+
+        """
+
+        self.pcan_message.DATA[index] = value
 
     def __repr__(self) -> str:
         """Get a textual representation of the current message
