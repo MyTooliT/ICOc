@@ -35,6 +35,7 @@
 
 - Add method `identifier` to receive an identifier object for the current message
 - Add index based read and write access for message data (`[ ]`)
+- Add support for `len` function to retrieve the number of data bytes stored in the message
 - Fix conversion into `python-can` message for non-empty data field
 - Add explanation to string representation for [Bluetooth Activate subcommand](https://mytoolit.github.io/Documentation/#value:bluetooth-subcommand)
 

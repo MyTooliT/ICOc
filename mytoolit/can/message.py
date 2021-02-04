@@ -132,6 +132,28 @@ class Message:
                 self[byte] = value
             self.pcan_message.LEN = len(data)
 
+    def __len__(self) -> int:
+        """Retrieve the length of the message data
+
+        Returns
+        -------
+
+        The number of bytes stored in the message data
+
+        Examples
+        -------
+
+        >>> len(Message())
+        0
+        >>> len(Message(data=[5, 6, 7]))
+        3
+        >>> len(Message(data=[1, 2]))
+        2
+
+        """
+
+        return self.pcan_message.LEN
+
     def __getitem__(self, index: int) -> int:
         """Access a byte of the message using an integer index
 
@@ -237,8 +259,7 @@ class Message:
         identifier = Identifier(self.id())
 
         data_explanation = None
-        if (len(self.pcan_message.DATA) >= 1
-                and identifier.block_name() == 'System'
+        if (len(self) >= 1 and identifier.block_name() == 'System'
                 and identifier.block_command_name() == 'Bluetooth'):
             if self[0] == 1:
                 data_explanation = "Activate"
@@ -246,10 +267,10 @@ class Message:
                        if data_explanation else repr(identifier))
 
         data_representation = " ".join(
-            [hex(self[byte]) for byte in range(self.pcan_message.LEN)])
+            [hex(self[byte]) for byte in range(len(self))])
         bit_values = [
             f"0b{identifier.value:029b}",
-            str(self.pcan_message.LEN), data_representation
+            str(len(self)), data_representation
         ]
         # Filter empty string, since otherwise there might be an additional
         # space at the end of the representation for empty data
@@ -343,10 +364,9 @@ class Message:
 
         """
 
-        return CANMessage(
-            is_extended_id=True,
-            arbitration_id=self.id(),
-            data=[self[byte] for byte in range(self.pcan_message.LEN)])
+        return CANMessage(is_extended_id=True,
+                          arbitration_id=self.id(),
+                          data=[self[byte] for byte in range(len(self))])
 
     def to_pcan(self) -> TPCANMsg:
         """Retrieve a PCAN message object for this message
