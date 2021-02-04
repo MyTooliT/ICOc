@@ -357,6 +357,44 @@ class Network:
     async def get_device_name_bluetooth(self,
                                         node: Union[str, Node] = 'STU 1',
                                         device_number: int = 0) -> str:
+        """Retrieve the name of a Bluetooth device
+
+        The possible Bluetooth device number include integers from 0 up to the
+        number of available devices - 1.
+
+        Parameters
+        ----------
+
+        node:
+            The node which is connected to the Bluetooth device
+
+        device_number:
+            The number of the Bluetooth device
+
+        Returns
+        -------
+
+        The (Bluetooth broadcast) name of the device
+
+        Example
+        -------
+
+        >>> from asyncio import run, sleep
+
+        Activate Bluetooth on STU 1
+
+        >>> async def get_bluetooth_device_name():
+        ...     with Network() as network:
+        ...         await network.activate_bluetooth('STU 1')
+        ...         # Wait for device scan in node STU 1 to take place
+        ...         await sleep(0.1)
+        ...         # We assume that at least one STH is available
+        ...         return await network.get_device_name_bluetooth(
+        ...                         'STU 1', device_number=0)
+        >>> isinstance(run(get_bluetooth_device_name()), str)
+        True
+
+        """
 
         def bytearray_to_text(data):
             return bytearray(
