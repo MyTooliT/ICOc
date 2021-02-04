@@ -177,7 +177,7 @@ class Network:
 
         self.shutdown()
 
-    async def request(self, message: Message, description: str) -> CANMessage:
+    async def _request(self, message: Message, description: str) -> CANMessage:
         """Send a request message and wait for the response
 
         Parameters
@@ -228,8 +228,8 @@ class Network:
 
         return response.message
 
-    async def request_bluetooth(self, node: Union[str, Node], subcommand: int,
-                                description: str) -> CANMessage:
+    async def _request_bluetooth(self, node: Union[str, Node], subcommand: int,
+                                 description: str) -> CANMessage:
         """Send a request for a certain Bluetooth command
 
         Parameters
@@ -258,7 +258,7 @@ class Network:
                           request=True,
                           data=[subcommand] + [0] * 7)
 
-        return await self.request(message, description=description)
+        return await self._request(message, description=description)
 
     async def reset_node(self, node: Union[str, Node]) -> None:
         """Reset the specified node
@@ -298,7 +298,7 @@ class Network:
                           sender=self.sender,
                           receiver=node,
                           request=True)
-        await self.request(message, description=f"reset node “{node}”")
+        await self._request(message, description=f"reset node “{node}”")
 
     async def activate_bluetooth(self, node: Union[str, Node] = 'STU 1'):
         """Activate Bluetooth on the specified node
@@ -323,7 +323,7 @@ class Network:
 
         """
 
-        await self.request_bluetooth(
+        await self._request_bluetooth(
             node=node,
             subcommand=1,
             description=f"activate Bluetooth of node “{node}”")
@@ -364,7 +364,7 @@ class Network:
 
         """
 
-        answer = await self.request_bluetooth(
+        answer = await self._request_bluetooth(
             node=node,
             subcommand=2,
             description=f"activate Bluetooth of node “{node}”")
@@ -420,7 +420,7 @@ class Network:
                 filter(lambda byte: byte > ord(' ') and byte < 128,
                        data)).decode('ASCII')
 
-        answer = await self.request_bluetooth(
+        answer = await self._request_bluetooth(
             node=node,
             subcommand=5,
             description="get first part of device name of device "
@@ -428,7 +428,7 @@ class Network:
 
         first_part = bytearray_to_text(answer.data[2:])
 
-        answer = await self.request_bluetooth(
+        answer = await self._request_bluetooth(
             node=node,
             subcommand=6,
             description="get second part of device name of device "
