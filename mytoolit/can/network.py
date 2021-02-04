@@ -284,10 +284,10 @@ class Network:
 
         Activate Bluetooth on STU 1
 
-        >>> async def reset():
+        >>> async def activate():
         ...     with Network() as network:
         ...         await network.activate_bluetooth('STU 1')
-        >>> run(reset())
+        >>> run(activate())
 
         """
 
