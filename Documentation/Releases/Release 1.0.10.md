@@ -42,6 +42,8 @@
 ### Network (New)
 
 - Add coroutine (`reset_node`) to reset a node in the network
-- Add coroutine (`request`) to send requests
 - Add coroutine (`activate_bluetooth`) to activate Bluetooth on a node in the network
+- Add coroutine (`get_available_devices_bluetooth`) to retrieve the number of available Bluetooth devices
+- Add coroutine (`get_device_name_bluetooth`) to retrieve the Bluetooth advertisement name of a device
+
 - Implement context manager interface (`with … as`)
