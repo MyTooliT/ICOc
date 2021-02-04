@@ -378,7 +378,22 @@ class Network:
 
         first_part = bytearray_to_text(answer.data[2:])
 
-        return first_part
+        get_second_part_device_name = 6
+        message = Message(block='System',
+                          block_command='Bluetooth',
+                          sender=self.sender,
+                          receiver=node,
+                          request=True,
+                          data=[get_second_part_device_name] + [0] * 7)
+
+        answer = await self.request(
+            message,
+            description=("get second part of device name of device "
+                         f"“{device_number}” from “{node}”"))
+
+        second_part = bytearray_to_text(answer.data[2:])
+
+        return first_part + second_part
 
     def shutdown(self) -> None:
         """Deallocate all resources for this network connection"""
