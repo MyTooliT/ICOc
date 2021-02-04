@@ -27,9 +27,12 @@ async def create_connection_network_new():
         print("Activate Bluetooth of STU 1")
         await network.activate_bluetooth('STU 1')
 
+        available_devices = 0
         print("Get available Bluetooth devices for STU 1")
-        available_devices = await network.get_available_devices_bluetooth(
-            'STU 1')
+        while available_devices <= 0:
+            available_devices = await network.get_available_devices_bluetooth(
+                'STU 1')
+            await asleep(0.1)
 
         print(f"Available devices: {available_devices}")
 
