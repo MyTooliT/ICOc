@@ -268,7 +268,7 @@ class Message:
                 is_acknowledgment = self.identifier().is_acknowledgment()
                 data_explanation = "{} number of available devices".format(
                     "Return" if is_acknowledgment else "Get")
-                if len(self) >= 2:
+                if is_acknowledgment and len(self) >= 2:
                     number_devices = int(chr(self[2]))
                     data_explanation += f": {number_devices}"
 
