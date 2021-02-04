@@ -36,6 +36,14 @@ async def create_connection_network_new():
 
         print(f"Available devices: {available_devices}")
 
+        device_number = 0
+        print(
+            f"Get name of Bluetooth device with device number: {device_number}"
+        )
+        sth_name = await network.get_device_name_bluetooth(
+            'STU 1', device_number=device_number)
+        print(f"Name of first Bluetooth device: {sth_name}")
+
 
 def create_connection_network_old():
     # Configure the CAN hardware
