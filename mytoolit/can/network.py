@@ -228,6 +228,38 @@ class Network:
 
         return response.message
 
+    async def request_bluetooth(self, node: Union[str, Node], subcommand: int,
+                                description: str) -> CANMessage:
+        """Send a request for a certain Bluetooth command
+
+        Parameters
+        ----------
+
+        node:
+            The node on which the Bluetooth command should be executed
+
+        subcommand:
+            The number of the Bluetooth subcommand
+
+        description:
+            A description of the request used in error messages
+
+        Returns
+        -------
+
+        The response message for the given request
+
+        """
+
+        message = Message(block='System',
+                          block_command='Bluetooth',
+                          sender=self.sender,
+                          receiver=node,
+                          request=True,
+                          data=[subcommand] + [0] * 7)
+
+        return await self.request(message, description=description)
+
     async def reset_node(self, node: Union[str, Node]) -> None:
         """Reset the specified node
 
@@ -291,16 +323,10 @@ class Network:
 
         """
 
-        connect_command = 1
-        message = Message(block='System',
-                          block_command='Bluetooth',
-                          sender=self.sender,
-                          receiver=node,
-                          request=True,
-                          data=[connect_command] + [0] * 7)
-
-        await self.request(message,
-                           description=f"activate Bluetooth of node “{node}”")
+        await self.request_bluetooth(
+            node=node,
+            subcommand=1,
+            description=f"activate Bluetooth of node “{node}”")
 
     async def get_available_devices_bluetooth(self,
                                               node: Union[str, Node] = 'STU 1'
@@ -338,17 +364,10 @@ class Network:
 
         """
 
-        get_available_devices = 2
-        message = Message(block='System',
-                          block_command='Bluetooth',
-                          sender=self.sender,
-                          receiver=node,
-                          request=True,
-                          data=[get_available_devices] + [0] * 7)
-
-        answer = await self.request(
-            message,
-            description=f"get available Bluetooth devices of node “{node}”")
+        answer = await self.request_bluetooth(
+            node=node,
+            subcommand=2,
+            description=f"activate Bluetooth of node “{node}”")
 
         available_devices = int(chr(answer.data[2]))
 
@@ -401,33 +420,19 @@ class Network:
                 filter(lambda byte: byte > ord(' ') and byte < 128,
                        data)).decode('ASCII')
 
-        get_first_part_device_name = 5
-        message = Message(block='System',
-                          block_command='Bluetooth',
-                          sender=self.sender,
-                          receiver=node,
-                          request=True,
-                          data=[get_first_part_device_name] + [0] * 7)
-
-        answer = await self.request(
-            message,
-            description=("get first part of device name of device "
-                         f"“{device_number}” from “{node}”"))
+        answer = await self.request_bluetooth(
+            node=node,
+            subcommand=5,
+            description="get first part of device name of device "
+            f"“{device_number}” from “{node}”")
 
         first_part = bytearray_to_text(answer.data[2:])
 
-        get_second_part_device_name = 6
-        message = Message(block='System',
-                          block_command='Bluetooth',
-                          sender=self.sender,
-                          receiver=node,
-                          request=True,
-                          data=[get_second_part_device_name] + [0] * 7)
-
-        answer = await self.request(
-            message,
-            description=("get second part of device name of device "
-                         f"“{device_number}” from “{node}”"))
+        answer = await self.request_bluetooth(
+            node=node,
+            subcommand=6,
+            description="get second part of device name of device "
+            f"“{device_number}” from “{node}”")
 
         second_part = bytearray_to_text(answer.data[2:])
 
