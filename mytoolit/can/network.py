@@ -354,6 +354,32 @@ class Network:
 
         return available_devices
 
+    async def get_device_name_bluetooth(self,
+                                        node: Union[str, Node] = 'STU 1',
+                                        device_number: int = 0) -> str:
+
+        def bytearray_to_text(data):
+            return bytearray(
+                filter(lambda byte: byte > ord(' ') and byte < 128,
+                       data)).decode('ASCII')
+
+        get_first_part_device_name = 5
+        message = Message(block='System',
+                          block_command='Bluetooth',
+                          sender=self.sender,
+                          receiver=node,
+                          request=True,
+                          data=[get_first_part_device_name] + [0] * 7)
+
+        answer = await self.request(
+            message,
+            description=("get first part of device name of device "
+                         f"“{device_number}” from “{node}”"))
+
+        first_part = bytearray_to_text(answer.data[2:])
+
+        return first_part
+
     def shutdown(self) -> None:
         """Deallocate all resources for this network connection"""
 
