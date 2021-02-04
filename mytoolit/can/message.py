@@ -132,6 +132,31 @@ class Message:
                 self.pcan_message.DATA[byte] = value
             self.pcan_message.LEN = len(data)
 
+    def __getitem__(self, index: int) -> int:
+        """Access a byte of the message using an integer index
+
+        Parameters
+        ----------
+
+        index:
+            The number of the byte in the message that should be returned
+
+        Returns
+        -------
+
+        The byte of the message data at the specified index
+
+        Example
+        -------
+
+        >>> message = Message(data=[1,2,3])
+        >>> message[0]
+        1
+
+        """
+
+        return self.pcan_message.DATA[index]
+
     def __repr__(self) -> str:
         """Get a textual representation of the current message
 
@@ -183,15 +208,13 @@ class Message:
         if (len(self.pcan_message.DATA) >= 1
                 and identifier.block_name() == 'System'
                 and identifier.block_command_name() == 'Bluetooth'):
-            if self.pcan_message.DATA[0] == 1:
+            if self[0] == 1:
                 data_explanation = "Activate"
         explanation = (f"{identifier} ({data_explanation})"
                        if data_explanation else repr(identifier))
 
-        data_representation = " ".join([
-            hex(self.pcan_message.DATA[byte])
-            for byte in range(self.pcan_message.LEN)
-        ])
+        data_representation = " ".join(
+            [hex(self[byte]) for byte in range(self.pcan_message.LEN)])
         bit_values = [
             f"0b{identifier.value:029b}",
             str(self.pcan_message.LEN), data_representation
@@ -288,12 +311,10 @@ class Message:
 
         """
 
-        return CANMessage(is_extended_id=True,
-                          arbitration_id=self.id(),
-                          data=[
-                              self.pcan_message.DATA[byte]
-                              for byte in range(self.pcan_message.LEN)
-                          ])
+        return CANMessage(
+            is_extended_id=True,
+            arbitration_id=self.id(),
+            data=[self[byte] for byte in range(self.pcan_message.LEN)])
 
     def to_pcan(self) -> TPCANMsg:
         """Retrieve a PCAN message object for this message
