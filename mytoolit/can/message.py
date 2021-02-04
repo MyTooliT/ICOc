@@ -261,8 +261,17 @@ class Message:
         data_explanation = None
         if (len(self) >= 1 and identifier.block_name() == 'System'
                 and identifier.block_command_name() == 'Bluetooth'):
-            if self[0] == 1:
+            subcommand = self[0]
+            if subcommand == 1:
                 data_explanation = "Activate"
+            elif subcommand == 2:
+                is_acknowledgment = self.identifier().is_acknowledgment()
+                data_explanation = "{} number of available devices".format(
+                    "Return" if is_acknowledgment else "Get")
+                if len(self) >= 2:
+                    number_devices = int(chr(self[2]))
+                    data_explanation += f": {number_devices}"
+
         explanation = (f"{identifier} ({data_explanation})"
                        if data_explanation else repr(identifier))
 
