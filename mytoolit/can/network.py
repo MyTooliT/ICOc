@@ -305,7 +305,38 @@ class Network:
     async def get_available_devices_bluetooth(self,
                                               node: Union[str, Node] = 'STU 1'
                                               ) -> int:
-        """Retrieve the number of available Bluetooth devices at a node"""
+        """Retrieve the number of available Bluetooth devices at a node
+
+        Parameters
+        ----------
+
+        node:
+            The node which should retrieve the number of available Bluetooth
+            devices
+
+        Returns
+        -------
+
+        The number of available Bluetooth devices
+
+        Example
+        -------
+
+        >>> from asyncio import run, sleep
+
+        Activate Bluetooth on STU 1
+
+        >>> async def get_number_bluetooth_devices():
+        ...     with Network() as network:
+        ...         await network.activate_bluetooth('STU 1')
+        ...         # Wait for device scan in node STU 1 to take place
+        ...         await sleep(1)
+        ...         return await network.get_available_devices_bluetooth(
+        ...                     'STU 1')
+        >>> run(get_number_bluetooth_devices())
+        1
+
+        """
 
         get_available_devices = 2
         message = Message(block='System',
