@@ -387,17 +387,20 @@ class Network:
                                         device_number: int = 0) -> str:
         """Retrieve the name of a Bluetooth device
 
-        The possible Bluetooth device number include integers from 0 up to the
-        number of available devices - 1.
+        This also works when the given node is not connected to the Bluetooth
+        device. Before you use this method make sure you activated the
+        Bluetooth connection on the given node.
 
         Parameters
         ----------
 
         node:
-            The node which is connected to the Bluetooth device
+            The node which has access to the Bluetooth device
 
         device_number:
-            The number of the Bluetooth device
+            The number of the Bluetooth device; The possible Bluetooth device
+            numbers include integers from 0 up to the number of available
+            devices - 1.
 
         Returns
         -------
