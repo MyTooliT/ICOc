@@ -411,7 +411,10 @@ class Network:
         ...         # We assume that at least one STH is available
         ...         return await network.get_device_name_bluetooth(
         ...                         'STU 1', device_number=0)
-        >>> isinstance(run(get_bluetooth_device_name()), str)
+        >>> sth_name = run(get_bluetooth_device_name())
+        >>> isinstance(sth_name, str)
+        True
+        >>> 0 <= len(sth_name) <= 8
         True
 
         """
