@@ -450,6 +450,30 @@ class Network:
 
         return first_part + second_part
 
+    async def connect_device_number_bluetooth(self,
+                                              node: Union[str, Node] = 'STU 1',
+                                              device_number: int = 0) -> None:
+        """Connect to a Bluetooth device using a device number
+
+        Parameters
+        ----------
+
+        node:
+            The node which is connected to the Bluetooth device
+
+        device_number:
+            The number of the Bluetooth device; The possible Bluetooth device
+            numbers include integers from 0 up to the number of available
+            devices - 1.
+
+        """
+
+        await self._request_bluetooth(
+            node=node,
+            subcommand=7,
+            device_number=device_number,
+            description=f"connect to “{device_number}” from “{node}”")
+
     def shutdown(self) -> None:
         """Deallocate all resources for this network connection"""
 
