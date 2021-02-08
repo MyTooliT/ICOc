@@ -483,8 +483,8 @@ class Network:
         ...                         'STU 1', device_number=0)
         ...         # Wait for device connection
         ...         await sleep(0.1)
-        ...         # Disconnect
-        ...         await network.disconnect_bluetooth('STU 1')
+        ...         # Deactivate Bluetooth connection
+        ...         await network.deactivate_bluetooth('STU 1')
         ...         # Wait until device is disconnected
         ...         await sleep(0.1)
         >>> run(connect_bluetooth_device_number())
@@ -497,7 +497,7 @@ class Network:
             device_number=device_number,
             description=f"connect to “{device_number}” from “{node}”")
 
-    async def disconnect_bluetooth(self,
+    async def deactivate_bluetooth(self,
                                    node: Union[str, Node] = 'STU 1') -> None:
 
         await self._request_bluetooth(
