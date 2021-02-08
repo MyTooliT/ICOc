@@ -378,7 +378,7 @@ class Network:
             subcommand=2,
             description=f"activate Bluetooth of node “{node}”")
 
-        available_devices = int(chr(answer.data[2]))
+        available_devices = int(bytearray_to_text(answer.data[2:]))
 
         return available_devices
 
