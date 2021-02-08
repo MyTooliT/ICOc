@@ -46,6 +46,7 @@
 - Add coroutine (`get_available_devices_bluetooth`) to retrieve the number of available Bluetooth devices
 - Add coroutine (`get_device_name_bluetooth`) to retrieve the Bluetooth advertisement name of a device
 - Add coroutine (`connect_device_number_bluetooth`) to connect to a Bluetooth device using the device number
+- Add coroutine (`disconnect_bluetooth`) to disconnect the Bluetooth connection of a node
 - Implement context manager interface (`with … as`)
 
 ### Utility

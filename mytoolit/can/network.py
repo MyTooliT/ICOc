@@ -466,6 +466,29 @@ class Network:
             numbers include integers from 0 up to the number of available
             devices - 1.
 
+        Example
+        -------
+
+        >>> from asyncio import run, sleep
+
+        Get Bluetooth advertisement name of device “0” from STU 1
+
+        >>> async def connect_bluetooth_device_number():
+        ...     with Network() as network:
+        ...         await network.activate_bluetooth('STU 1')
+        ...         # Wait for device scan in node STU 1 to take place
+        ...         await sleep(0.1)
+        ...         # We assume that at least one STH is available
+        ...         await network.connect_device_number_bluetooth(
+        ...                         'STU 1', device_number=0)
+        ...         # Wait for device connection
+        ...         await sleep(0.1)
+        ...         # Disconnect
+        ...         await network.disconnect_bluetooth('STU 1')
+        ...         # Wait until device is disconnected
+        ...         await sleep(0.1)
+        >>> run(connect_bluetooth_device_number())
+
         """
 
         await self._request_bluetooth(
@@ -473,6 +496,14 @@ class Network:
             subcommand=7,
             device_number=device_number,
             description=f"connect to “{device_number}” from “{node}”")
+
+    async def disconnect_bluetooth(self,
+                                   node: Union[str, Node] = 'STU 1') -> None:
+
+        await self._request_bluetooth(
+            node=node,
+            subcommand=9,
+            description=f"disconnect Bluetooth connection of “{node}”")
 
     def shutdown(self) -> None:
         """Deallocate all resources for this network connection"""
