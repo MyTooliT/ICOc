@@ -1,7 +1,7 @@
 # -- Functions ----------------------------------------------------------------
 
 
-def bytearray_to_text(data):
+def bytearray_to_text(data: bytearray) -> str:
     """Convert byte array data to a string
 
     Please note, that this function ignores non ASCII data and control

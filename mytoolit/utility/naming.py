@@ -1,11 +1,12 @@
 # -- Imports ------------------------------------------------------------------
 
 from base64 import b64encode, b64decode
+from typing import List
 
 # -- Functions ----------------------------------------------------------------
 
 
-def convert_mac_base64(mac):
+def convert_mac_base64(mac: List[int]) -> str:
     """Convert a Bluetooth MAC address to a Base64 encoded text
 
     Parameters
@@ -30,7 +31,7 @@ def convert_mac_base64(mac):
     return b64encode(bytes(mac)).decode()
 
 
-def convert_base64_mac(name):
+def convert_base64_mac(name: str) -> str:
     """Convert a Base64 encoded MAC address into a readable MAC address
 
     Parameters
