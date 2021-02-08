@@ -42,8 +42,8 @@ def bytearray_to_text(data):
 def convert_mac_base64(mac):
     """Convert a Bluetooth MAC address to a Base64 encoded text
 
-    Arguments
-    ---------
+    Parameters
+    ----------
 
     mac:
         The MAC address as an iterable of 8 byte sized integer values
@@ -58,6 +58,7 @@ def convert_mac_base64(mac):
 
     >>> convert_mac_base64([0x08, 0x6b, 0xd7, 0x01, 0xde, 0x81])
     'CGvXAd6B'
+
     """
 
     return b64encode(bytes(mac)).decode()
@@ -66,8 +67,8 @@ def convert_mac_base64(mac):
 def convert_base64_mac(name):
     """Convert a Base64 encoded MAC address into a readable MAC address
 
-    Arguments
-    ---------
+    Parameters
+    ----------
 
     mac:
         A Base64 encoded text that stores a (Bluetooth) MAC address
@@ -82,6 +83,7 @@ def convert_base64_mac(name):
 
     >>> convert_base64_mac('CGvXAd6B')
     '08:6b:d7:01:de:81'
+
     """
 
     mac = list(b64decode(name))
