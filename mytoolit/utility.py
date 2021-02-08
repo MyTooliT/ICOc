@@ -23,6 +23,16 @@ def bytearray_to_text(data):
     An string where each (valid) byte of the input is mapped to an ASCII
     character
 
+    Examples
+    --------
+
+    >>> bytearray_to_text("test".encode('ASCII'))
+    'test'
+
+    >>> input = bytearray([0, 255, 10, 30]) + "something".encode('ASCII')
+    >>> bytearray_to_text(input)
+    'something'
+
     """
 
     return bytearray(filter(lambda byte: byte > ord(' ') and byte < 128,
