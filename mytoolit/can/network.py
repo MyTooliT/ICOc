@@ -412,7 +412,7 @@ class Network:
 
         >>> from asyncio import run, sleep
 
-        Activate Bluetooth on STU 1
+        Get Bluetooth advertisement name of device “0” from STU 1
 
         >>> async def get_bluetooth_device_name():
         ...     with Network() as network:
