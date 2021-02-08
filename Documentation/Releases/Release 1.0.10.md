@@ -47,3 +47,7 @@
 - Add coroutine (`get_device_name_bluetooth`) to retrieve the Bluetooth advertisement name of a device
 
 - Implement context manager interface (`with … as`)
+
+### Utility
+
+- Add function `bytearray_to_text` to convert byte data to a string

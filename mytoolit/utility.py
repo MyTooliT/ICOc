@@ -5,6 +5,11 @@ from base64 import b64encode, b64decode
 # -- Functions ----------------------------------------------------------------
 
 
+def bytearray_to_text(data):
+    return bytearray(filter(lambda byte: byte > ord(' ') and byte < 128,
+                            data)).decode('ASCII')
+
+
 def convert_mac_base64(mac):
     """Convert a Bluetooth MAC address to a Base64 encoded text
 

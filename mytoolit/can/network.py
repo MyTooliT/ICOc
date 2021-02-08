@@ -20,6 +20,7 @@ from mytoolit.config import settings
 from mytoolit.can.identifier import Identifier
 from mytoolit.can.message import Message
 from mytoolit.can.node import Node
+from mytoolit.utility import bytearray_to_text
 
 # -- Classes ------------------------------------------------------------------
 
@@ -414,11 +415,6 @@ class Network:
         True
 
         """
-
-        def bytearray_to_text(data):
-            return bytearray(
-                filter(lambda byte: byte > ord(' ') and byte < 128,
-                       data)).decode('ASCII')
 
         answer = await self._request_bluetooth(
             node=node,
