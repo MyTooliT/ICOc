@@ -229,8 +229,12 @@ class Network:
 
         return response.message
 
-    async def _request_bluetooth(self, node: Union[str, Node], subcommand: int,
-                                 description: str) -> CANMessage:
+    async def _request_bluetooth(
+            self,
+            node: Union[str, Node],
+            subcommand: int,
+            description: str,
+            device_number: Optional[int] = None) -> CANMessage:
         """Send a request for a certain Bluetooth command
 
         Parameters
@@ -242,6 +246,9 @@ class Network:
         subcommand:
             The number of the Bluetooth subcommand
 
+        subcommand:
+            The device number of the Bluetooth device
+
         description:
             A description of the request used in error messages
 
@@ -252,12 +259,13 @@ class Network:
 
         """
 
+        device_number = 0 if device_number is None else device_number
         message = Message(block='System',
                           block_command='Bluetooth',
                           sender=self.sender,
                           receiver=node,
                           request=True,
-                          data=[subcommand] + [0] * 7)
+                          data=[subcommand, device_number] + [0] * 6)
 
         return await self._request(message, description=description)
 
@@ -422,6 +430,7 @@ class Network:
         answer = await self._request_bluetooth(
             node=node,
             subcommand=5,
+            device_number=device_number,
             description="get first part of device name of device "
             f"“{device_number}” from “{node}”")
 
@@ -430,6 +439,7 @@ class Network:
         answer = await self._request_bluetooth(
             node=node,
             subcommand=6,
+            device_number=device_number,
             description="get second part of device name of device "
             f"“{device_number}” from “{node}”")
 
