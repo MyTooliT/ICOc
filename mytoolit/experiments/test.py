@@ -10,6 +10,7 @@ from time import sleep, time
 path.append(str(Path(__file__).parent.parent.parent))
 
 from mytoolit.can import Identifier, Network
+from mytoolit.utility import bytearray_to_text
 from mytoolit.old.network import Network as OldNetwork
 from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
 from mytoolit.old.MyToolItCommands import int_to_mac_address
@@ -110,11 +111,6 @@ def create_connection_network_old():
 
 
 def create_connection_bus():
-
-    def bytearray_to_text(data):
-        return bytearray(
-            filter(lambda byte: byte > ord(' ') and byte < 128,
-                   data)).decode('ASCII')
 
     def check_bluetooth_connection(bus):
         send_message(bus, create_id('System', 'Bluetooth'), data=[8] + 7 * [0])
