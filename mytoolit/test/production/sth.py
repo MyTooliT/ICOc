@@ -9,7 +9,7 @@ from mytoolit.measurement import (convert_acceleration_adc_to_g,
                                   ratio_noise_max)
 from mytoolit.config import settings
 from mytoolit.test.production import TestNode
-from mytoolit.unittest import ExtendedTestRunner
+from mytoolit.test.unit import ExtendedTestRunner
 from mytoolit.utility import convert_mac_base64
 
 from mytoolit.old.MyToolItCommands import (

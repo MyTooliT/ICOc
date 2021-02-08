@@ -5,7 +5,7 @@ from unittest import main as unittest_main
 
 from mytoolit.config import settings
 from mytoolit.test.production import TestNode
-from mytoolit.unittest import ExtendedTestRunner
+from mytoolit.test.unit import ExtendedTestRunner
 
 from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
 from mytoolit.old.MyToolItCommands import (int_to_mac_address, MyToolItBlock,
