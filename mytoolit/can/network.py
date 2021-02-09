@@ -459,7 +459,7 @@ class Network:
         ----------
 
         node:
-            The node which is connected to the Bluetooth device
+            The node which should connect to the Bluetooth device
 
         device_number:
             The number of the Bluetooth device; The possible Bluetooth device
