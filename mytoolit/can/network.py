@@ -398,9 +398,8 @@ class Network:
             The node which has access to the Bluetooth device
 
         device_number:
-            The number of the Bluetooth device; The possible Bluetooth device
-            numbers include integers from 0 up to the number of available
-            devices - 1.
+            The number of the Bluetooth device (0 up to the number of
+            available devices - 1; 0x00 for self addressing).
 
         Returns
         -------
@@ -462,9 +461,8 @@ class Network:
             The node which should connect to the Bluetooth device
 
         device_number:
-            The number of the Bluetooth device; The possible Bluetooth device
-            numbers include integers from 0 up to the number of available
-            devices - 1.
+            The number of the Bluetooth device (0 up to the number of
+            available devices - 1; 0x00 for self addressing).
 
         Returns
         -------
@@ -557,9 +555,8 @@ class Network:
             The node which should check its Bluetooth connection to the device
 
         device_number:
-            The number of the Bluetooth device; The possible Bluetooth device
-            numbers include integers from 0 up to the number of available
-            devices - 1.
+            The number of the Bluetooth device (0 up to the number of
+            available devices - 1; 0x00 for self addressing).
 
         Returns
         -------
