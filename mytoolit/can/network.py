@@ -499,6 +499,15 @@ class Network:
 
     async def deactivate_bluetooth(self,
                                    node: Union[str, Node] = 'STU 1') -> None:
+        """Deactivate Bluetooth on a node
+
+        Parameters
+        ----------
+
+        node:
+            The node where Bluetooth should be deactivated
+
+        """
 
         await self._request_bluetooth(
             node=node,
