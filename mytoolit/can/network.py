@@ -61,7 +61,7 @@ class ResponseListener(Listener):
 
         self.queue: Queue[Response] = Queue()
         self.acknowledgment_identifier = identifier.acknowledge()
-        self.error_idenftifier = identifier.acknowledge(error=True)
+        self.error_identifier = identifier.acknowledge(error=True)
 
     def on_message_received(self, message: CANMessage) -> None:
         """React to a received message on the bus
@@ -77,7 +77,7 @@ class ResponseListener(Listener):
         identifier = message.arbitration_id
         # Only store CAN messages that contain the expected response message
         # identifier
-        error_response = identifier == self.error_idenftifier.value
+        error_response = identifier == self.error_identifier.value
         normal_response = identifier == self.acknowledgment_identifier.value
         if error_response or normal_response:
             self.queue.put_nowait(
