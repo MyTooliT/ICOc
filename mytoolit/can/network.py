@@ -584,11 +584,13 @@ class Network:
         ...         # We assume that at least one STH is available
         ...         await network.connect_device_number_bluetooth(
         ...                         'STU 1', device_number=0)
+        ...
         ...         # Wait for device connection
-        ...         await sleep(0.2)
-        ...         connected_between = (await
-        ...             network.check_connection_device_bluetooth(
-        ...                 'STU 1', device_number=0))
+        ...         connected_between = False
+        ...         while not connected_between:
+        ...             connected_between = (
+        ...                 await network.check_connection_device_bluetooth())
+        ...             await sleep(0.1)
         ...
         ...         # Deactivate Bluetooth connection
         ...         await network.deactivate_bluetooth('STU 1')
