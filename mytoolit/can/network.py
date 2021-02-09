@@ -544,6 +544,19 @@ class Network:
             subcommand=9,
             description=f"deactivate Bluetooth on “{node}”")
 
+    async def check_connection_device_bluetooth(
+            self,
+            node: Union[str, Node] = 'STU 1',
+            device_number: int = 0) -> bool:
+
+        response = await self._request_bluetooth(
+            node=node,
+            subcommand=8,
+            description=f"check if device “{device_number}” is connected "
+            f"to “{node}”")
+
+        return bool(response.data[2])
+
     def shutdown(self) -> None:
         """Deallocate all resources for this network connection"""
 
