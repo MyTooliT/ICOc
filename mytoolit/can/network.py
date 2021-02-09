@@ -609,6 +609,7 @@ class Network:
         response = await self._request_bluetooth(
             node=node,
             subcommand=8,
+            device_number=device_number,
             description=f"check if device “{device_number}” is connected "
             f"to “{node}”")
 
