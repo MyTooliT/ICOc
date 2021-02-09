@@ -48,6 +48,11 @@ async def create_connection_network_new():
         print("Connect to first Bluetooth device")
         await network.connect_device_number_bluetooth()
 
+        while not await network.check_connection_device_bluetooth():
+            await asleep(0.1)
+
+        print("Connection to first Bluetooth device established")
+
         print("Deactivate Bluetooth of STU 1")
         await network.deactivate_bluetooth()
 
