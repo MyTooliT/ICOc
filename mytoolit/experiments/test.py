@@ -8,7 +8,7 @@ async def create_connection_network():
         print("Reset STU 1")
         await network.reset_node('STU 1')  # Reset STU (and STH)
 
-        wait_time = 2
+        wait_time = 1
         print(f"Wait {wait_time} seconds for STU 1 reset")
         await sleep(wait_time)
 
