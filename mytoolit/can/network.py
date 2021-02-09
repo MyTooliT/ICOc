@@ -507,6 +507,21 @@ class Network:
         node:
             The node where Bluetooth should be deactivated
 
+        Example
+        -------
+
+        >>> from asyncio import run, sleep
+
+        Deactivate Bluetooth on STU 1
+
+        >>> async def deactivate_bluetooth():
+        ...     with Network() as network:
+        ...         # Deactivate Bluetooth connection
+        ...         await network.deactivate_bluetooth('STU 1')
+        ...         # Wait until device is disconnected
+        ...         await sleep(0.1)
+        >>> run(deactivate_bluetooth())
+
         """
 
         await self._request_bluetooth(
