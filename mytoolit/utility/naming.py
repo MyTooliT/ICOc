@@ -53,8 +53,7 @@ def convert_base64_mac(name: str) -> str:
 
     """
 
-    mac = list(b64decode(name))
-    return ":".join([f"{byte:02x}" for byte in mac])
+    return ":".join([f"{byte:02x}" for byte in b64decode(name)])
 
 
 # -- Main ---------------------------------------------------------------------
