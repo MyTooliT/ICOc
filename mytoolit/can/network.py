@@ -503,7 +503,7 @@ class Network:
         await self._request_bluetooth(
             node=node,
             subcommand=9,
-            description=f"disconnect Bluetooth connection of “{node}”")
+            description=f"deactivate Bluetooth on “{node}”")
 
     def shutdown(self) -> None:
         """Deallocate all resources for this network connection"""
