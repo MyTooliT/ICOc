@@ -52,6 +52,7 @@
 - Add coroutine (`connect_device_number_bluetooth`) to connect to a Bluetooth device using the device number
 - Add coroutine (`deactivate_bluetooth`) to deactivate the Bluetooth connection of a node
 - Add coroutine (`check_connection_device_bluetooth`) to check if a Bluetooth device is connected to a node
+- Add coroutine (`get_mac_address_bluetooth`) to retrieve the MAC address of a connected Bluetooth device
 - Implement context manager interface (`with … as`)
 
 ### Utility

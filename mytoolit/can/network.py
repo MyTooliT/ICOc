@@ -9,6 +9,7 @@ from types import TracebackType
 from typing import Union, Optional, NamedTuple, Type
 
 from can import Bus, Listener, Message as CANMessage, Notifier
+from netaddr import EUI
 
 # Fix imports for script usage
 if __name__ == '__main__':
@@ -611,6 +612,17 @@ class Network:
             f"to “{node}”")
 
         return bool(response.data[2])
+
+    async def get_mac_address_bluetooth(self,
+                                        node: Union[str, Node] = 'STH 1',
+                                        device_number: int = 0xff) -> EUI:
+
+        response = await self._request_bluetooth(
+            node=node,
+            subcommand=17,
+            description=f"get MAC address of “{device_number}” from “{node}”")
+
+        return EUI(":".join(f"{byte:02x}" for byte in response.data[:1:-1]))
 
     def shutdown(self) -> None:
         """Deallocate all resources for this network connection"""
