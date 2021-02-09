@@ -452,7 +452,7 @@ class Network:
 
     async def connect_device_number_bluetooth(self,
                                               node: Union[str, Node] = 'STU 1',
-                                              device_number: int = 0) -> None:
+                                              device_number: int = 0) -> bool:
         """Connect to a Bluetooth device using a device number
 
         Parameters
@@ -465,6 +465,16 @@ class Network:
             The number of the Bluetooth device; The possible Bluetooth device
             numbers include integers from 0 up to the number of available
             devices - 1.
+
+        Returns
+        -------
+
+        - True, if
+          1. in search mode,
+          2. at least single device was found,
+          3. no legacy mode,
+          4. and scanning mode active
+        - False, otherwise
 
         Example
         -------
@@ -479,7 +489,7 @@ class Network:
         ...         # Wait for device scan in node STU 1 to take place
         ...         await sleep(0.1)
         ...         # We assume that at least one STH is available
-        ...         await network.connect_device_number_bluetooth(
+        ...         status = await network.connect_device_number_bluetooth(
         ...                         'STU 1', device_number=0)
         ...         # Wait for device connection
         ...         await sleep(0.1)
@@ -487,15 +497,20 @@ class Network:
         ...         await network.deactivate_bluetooth('STU 1')
         ...         # Wait until device is disconnected
         ...         await sleep(0.1)
+        ...         # Return status of Bluetooth device connect response
+        ...         return status
         >>> run(connect_bluetooth_device_number())
+        True
 
         """
 
-        await self._request_bluetooth(
+        response = await self._request_bluetooth(
             node=node,
             subcommand=7,
             device_number=device_number,
             description=f"connect to “{device_number}” from “{node}”")
+
+        return bool(response.data[2])
 
     async def deactivate_bluetooth(self,
                                    node: Union[str, Node] = 'STU 1') -> None:
