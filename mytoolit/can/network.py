@@ -27,7 +27,7 @@ from mytoolit.utility import bytearray_to_text
 
 
 class NetworkError(Exception):
-    """Exception for errors in the MytooliT network"""
+    """Exception for errors in the MyTooliT network"""
 
 
 class ErrorResponseError(NetworkError):
