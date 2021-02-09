@@ -548,6 +548,63 @@ class Network:
             self,
             node: Union[str, Node] = 'STU 1',
             device_number: int = 0) -> bool:
+        """Check the connection to a Bluetooth device using a device number
+
+        Parameters
+        ----------
+
+        node:
+            The node which should check its Bluetooth connection to the device
+
+        device_number:
+            The number of the Bluetooth device; The possible Bluetooth device
+            numbers include integers from 0 up to the number of available
+            devices - 1.
+
+        Returns
+        -------
+
+        - True, if the device is connected to the node
+        - False, otherwise
+
+        Example
+        -------
+
+        >>> from asyncio import run, sleep
+
+        Check connection of device “0” to STU 1
+
+        >>> async def check_bluetooth_connection():
+        ...     with Network() as network:
+        ...         await network.activate_bluetooth('STU 1')
+        ...         # Wait for device scan in node STU 1 to take place
+        ...         await sleep(0.1)
+        ...         connected_start = (await
+        ...             network.check_connection_device_bluetooth(
+        ...                 'STU 1', device_number=0))
+        ...
+        ...         # We assume that at least one STH is available
+        ...         await network.connect_device_number_bluetooth(
+        ...                         'STU 1', device_number=0)
+        ...         # Wait for device connection
+        ...         await sleep(0.2)
+        ...         connected_between = (await
+        ...             network.check_connection_device_bluetooth(
+        ...                 'STU 1', device_number=0))
+        ...
+        ...         # Deactivate Bluetooth connection
+        ...         await network.deactivate_bluetooth('STU 1')
+        ...         # Wait until device is disconnected
+        ...         await sleep(0.1)
+        ...         connected_after = (await
+        ...             network.check_connection_device_bluetooth(
+        ...                 'STU 1', device_number=0))
+        ...
+        ...         return connected_start, connected_between, connected_after
+        >>> run(check_bluetooth_connection())
+        (False, True, False)
+
+        """
 
         response = await self._request_bluetooth(
             node=node,
