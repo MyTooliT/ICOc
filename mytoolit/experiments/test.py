@@ -53,6 +53,9 @@ async def create_connection_network_new():
 
         print("Connection to first Bluetooth device established")
 
+        mac_address = await network.get_mac_address_bluetooth()
+        print(f"MAC address of STH 1: {mac_address}")
+
         print("Deactivate Bluetooth of STU 1")
         await network.deactivate_bluetooth()
 
