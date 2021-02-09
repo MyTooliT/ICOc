@@ -16,7 +16,7 @@ def main():
                         type=mac_address)
     mac = parser.parse_args().mac
 
-    name = convert_mac_base64([int(byte, 16) for byte in mac.split(":")])
+    name = convert_mac_base64(mac)
     print(name)
 
 

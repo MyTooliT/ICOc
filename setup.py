@@ -14,6 +14,7 @@ required_packages = [
     "bidict",
     "dynaconf",
     "matplotlib",
+    "netaddr",
     "openpyxl",
     "pdfrw",
     "python-can",

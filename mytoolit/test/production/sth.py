@@ -280,8 +280,7 @@ class TestSTH(TestNode):
         # = Name =
         # ========
 
-        mac = [int(byte, 16) for byte in cls.bluetooth_mac.split(":")]
-        name = convert_mac_base64(mac)
+        name = convert_mac_base64(cls.bluetooth_mac)
 
         self.can.write_eeprom_name(name)
         read_name = self.can.read_eeprom_name()

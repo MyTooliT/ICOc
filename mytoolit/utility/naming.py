@@ -1,19 +1,19 @@
 # -- Imports ------------------------------------------------------------------
 
 from base64 import b64encode, b64decode
-from typing import List
+from netaddr import EUI
 
 # -- Functions ----------------------------------------------------------------
 
 
-def convert_mac_base64(mac: List[int]) -> str:
+def convert_mac_base64(mac: str) -> str:
     """Convert a Bluetooth MAC address to a Base64 encoded text
 
     Parameters
     ----------
 
     mac:
-        The MAC address as an iterable of 8 byte sized integer values
+        The MAC address
 
     Returns
     -------
@@ -23,12 +23,12 @@ def convert_mac_base64(mac: List[int]) -> str:
     Example
     -------
 
-    >>> convert_mac_base64([0x08, 0x6b, 0xd7, 0x01, 0xde, 0x81])
+    >>> convert_mac_base64("08:6b:d7:01:de:81")
     'CGvXAd6B'
 
     """
 
-    return b64encode(bytes(mac)).decode()
+    return b64encode(EUI(mac).packed).decode()
 
 
 def convert_base64_mac(name: str) -> str:
