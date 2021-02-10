@@ -618,6 +618,53 @@ class Network:
     async def get_mac_address_bluetooth(self,
                                         node: Union[str, Node] = 'STH 1',
                                         device_number: int = 0xff) -> EUI:
+        """Retrieve the Bluetooth MAC address of a connected device
+
+        Parameters
+        ----------
+
+        node:
+            The node which should retrieve the MAC address
+
+        device_number:
+            The number of the Bluetooth device (0 up to the number of
+            available devices - 1; 0x00 for self addressing).
+
+        Returns
+        -------
+
+        The MAC address of the device specified via node and device number
+
+        Example
+        -------
+
+        >>> from asyncio import run, sleep
+
+        Retrieve the MAC address of STH 1
+
+        >>> async def get_bluetooth_mac():
+        ...     with Network() as network:
+        ...         await network.activate_bluetooth('STU 1')
+        ...         # We assume that at least one STH is available
+        ...         await network.connect_device_number_bluetooth(
+        ...                         'STU 1', device_number=0)
+        ...
+        ...         while not (await
+        ...                   network.check_connection_device_bluetooth()):
+        ...             await sleep(0.1)
+        ...
+        ...         mac = await network.get_mac_address_bluetooth('STH 1')
+        ...
+        ...         # Deactivate Bluetooth connection
+        ...         await network.deactivate_bluetooth('STU 1')
+        ...         # Wait until device is disconnected
+        ...         await sleep(0.1)
+        ...         return mac
+        >>> mac_address = run(get_bluetooth_mac())
+        >>> isinstance(mac_address, EUI)
+        True
+
+        """
 
         response = await self._request_bluetooth(
             node=node,
