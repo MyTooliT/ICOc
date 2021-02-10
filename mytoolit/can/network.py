@@ -6,7 +6,7 @@ from asyncio import (CancelledError, get_running_loop, TimeoutError, Queue,
                      wait_for)
 from sys import platform
 from types import TracebackType
-from typing import Union, Optional, NamedTuple, Type
+from typing import List, NamedTuple, Optional, Type, Union
 
 from can import Bus, Listener, Message as CANMessage, Notifier
 from netaddr import EUI
@@ -235,7 +235,8 @@ class Network:
             node: Union[str, Node],
             subcommand: int,
             description: str,
-            device_number: Optional[int] = None) -> CANMessage:
+            device_number: Optional[int] = None,
+            data: Optional[List[int]] = None) -> CANMessage:
         """Send a request for a certain Bluetooth command
 
         Parameters
@@ -261,12 +262,13 @@ class Network:
         """
 
         device_number = 0 if device_number is None else device_number
+        data = [0] * 6 if data is None else data
         message = Message(block='System',
                           block_command='Bluetooth',
                           sender=self.sender,
                           receiver=node,
                           request=True,
-                          data=[subcommand, device_number] + [0] * 6)
+                          data=[subcommand, device_number] + data)
 
         return await self._request(message, description=description)
 
