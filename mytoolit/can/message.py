@@ -291,8 +291,9 @@ class Message:
         """Returns an acknowledgment message object for this message
 
         In the acknowledgment message receiver and sender will be swapped and
-        the request (acknowledge) bit will be set to 0 (acknowledge). The
-        data of the acknowledgment message will be empty.
+        the request (acknowledge) bit will be set to 0 (acknowledge). The data
+        of the acknowledgment message will be the same as in the original
+        message.
 
         Returns
         -------
@@ -306,11 +307,13 @@ class Message:
         ...                         receiver=10)
         >>> message = Message(identifier=identifier, data=[0xaa])
         >>> message.acknowledge() # doctest:+NORMALIZE_WHITESPACE
-        0b00000000000000100001010000101 0
+        0b00000000000000100001010000101 1 0xaa
         # [STH 10 → STH 5, Block: System, Command: Reset, Acknowledge]
+
         """
 
-        return Message(identifier=self.identifier().acknowledge(), data=[])
+        return Message(identifier=self.identifier().acknowledge(),
+                       data=self[:len(self)])
 
     def id(self) -> int:
         """Retrieve the ID of the message
