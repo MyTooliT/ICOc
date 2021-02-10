@@ -545,26 +545,23 @@ class Network:
             subcommand=9,
             description=f"deactivate Bluetooth on “{node}”")
 
-    async def check_connection_device_bluetooth(
-            self,
-            node: Union[str, Node] = 'STU 1',
-            device_number: int = 0) -> bool:
-        """Check the connection to a Bluetooth device using a device number
+    async def check_connection_device_bluetooth(self,
+                                                node: Union[str,
+                                                            Node] = 'STU 1'
+                                                ) -> bool:
+        """Check if the node is connected to a Bluetooth device
 
         Parameters
         ----------
 
         node:
-            The node which should check its Bluetooth connection to the device
-
-        device_number:
-            The number of the Bluetooth device (0 up to the number of
-            available devices - 1; 0x00 for self addressing).
+            The node which should check if it is connected to a Bluetooth
+            device
 
         Returns
         -------
 
-        - True, if the device is connected to the node
+        - True, if a Bluetooth device is connected to the node
         - False, otherwise
 
         Example
@@ -580,8 +577,7 @@ class Network:
         ...         # Wait for device scan in node STU 1 to take place
         ...         await sleep(0.1)
         ...         connected_start = (await
-        ...             network.check_connection_device_bluetooth(
-        ...                 'STU 1', device_number=0))
+        ...             network.check_connection_device_bluetooth('STU 1'))
         ...
         ...         # We assume that at least one STH is available
         ...         await network.connect_device_number_bluetooth(
@@ -599,8 +595,7 @@ class Network:
         ...         # Wait until device is disconnected
         ...         await sleep(0.1)
         ...         connected_after = (await
-        ...             network.check_connection_device_bluetooth(
-        ...                 'STU 1', device_number=0))
+        ...             network.check_connection_device_bluetooth('STU 1'))
         ...
         ...         return connected_start, connected_between, connected_after
         >>> run(check_bluetooth_connection())
@@ -611,9 +606,8 @@ class Network:
         response = await self._request_bluetooth(
             node=node,
             subcommand=8,
-            device_number=device_number,
-            description=f"check if device “{device_number}” is connected "
-            f"to “{node}”")
+            description=f"check if “{node}” is connected to a Bluetooth device"
+        )
 
         return bool(response.data[2])
 
