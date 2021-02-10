@@ -420,7 +420,7 @@ class Network:
         ...     with Network() as network:
         ...         await network.activate_bluetooth('STU 1')
         ...         # Wait for device scan in node STU 1 to take place
-        ...         await sleep(0.1)
+        ...         await sleep(0.2)
         ...         # We assume that at least one STH is available
         ...         return await network.get_device_name_bluetooth(
         ...                         'STU 1', device_number=0)
