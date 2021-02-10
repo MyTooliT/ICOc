@@ -18,7 +18,6 @@ if __name__ == '__main__':
     path.append(str(Path(__file__).parent.parent.parent))
 
 from mytoolit.config import settings
-from mytoolit.can.identifier import Identifier
 from mytoolit.can.message import Message
 from mytoolit.can.node import Node
 from mytoolit.utility import bytearray_to_text
@@ -48,18 +47,19 @@ class Response(NamedTuple):
 class ResponseListener(Listener):
     """A listener that reacts to messages containing a certain id"""
 
-    def __init__(self, identifier: Identifier) -> None:
+    def __init__(self, message: Message) -> None:
         """Initialize the listener using the given identifier
 
         Parameters
         ----------
 
-        identifier
-            The identifier of a sent message this listener should react to
+        message
+            The sent message this listener should react to
 
         """
 
         self.queue: Queue[Response] = Queue()
+        identifier = message.identifier()
         self.acknowledgment_identifier = identifier.acknowledge()
         self.error_identifier = identifier.acknowledge(error=True)
 
@@ -208,7 +208,7 @@ class Network:
 
         """
 
-        listener = ResponseListener(message.identifier())
+        listener = ResponseListener(message)
 
         notifier = Notifier(self.bus,
                             listeners=[listener],
