@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import List, Optional, Union
+from typing import List, Optional, overload, Union
 
 from can.interfaces.pcan.basic import PCAN_MESSAGE_EXTENDED, TPCANMsg
 from can import Message as CANMessage
@@ -154,7 +154,15 @@ class Message:
 
         return self.pcan_message.LEN
 
+    @overload
     def __getitem__(self, index: int) -> int:
+        ...
+
+    @overload
+    def __getitem__(self, index: slice) -> List[int]:
+        ...
+
+    def __getitem__(self, index):
         """Access a byte of the message using an integer index
 
         Parameters
@@ -179,7 +187,7 @@ class Message:
 
         return self.pcan_message.DATA[index]
 
-    def __setitem__(self, index: int, value: int) -> None:
+    def __setitem__(self, index: int, value: Union[int, slice]) -> None:
         """Write a byte of the message using an integer index and an value
 
         Parameters
