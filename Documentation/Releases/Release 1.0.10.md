@@ -21,6 +21,10 @@
 
 - We added a script that removes log and PDF files from the repository root. For more information please take a look at the section “Remove Log and PDF Files” of the [script documentation](../Scripts.md).
 
+### STH Test
+
+- The report of the STH test now also contains information about the used acceleration sensor (±100 g or ± 50 g)
+
 ## Internal
 
 ### Command

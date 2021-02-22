@@ -43,6 +43,13 @@ class TestSTH(TestNode):
         # STH
         cls.status = settings.sth.status
 
+        # Only the STH contains an acceleration sensor
+        sensor_name = settings.sth.acceleration_sensor.sensor
+        maximum_acceleration = settings.acceleration_sensor(
+        ).acceleration.maximum
+        cls.acceleration_sensor = (
+            f"±{maximum_acceleration//2} g Sensor ({sensor_name})")
+
     def _connect(self):
         """Create a connection to the STH"""
 
