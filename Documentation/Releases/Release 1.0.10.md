@@ -46,6 +46,7 @@
 
 ### Message
 
+- The class now uses the class `Message` of python-can to store data instead of the class `TPCANMsg` of the PCAN-Basic API
 - Add method `identifier` to receive an identifier object for the current message
 - Add index based read and write access for message data (`[ ]`)
 - Add support for `len` function to retrieve the number of data bytes stored in the message

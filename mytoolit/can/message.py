@@ -102,35 +102,31 @@ class Message:
         if message:
             message = message[0]
             if isinstance(message, TPCANMsg):
-                self.pcan_message = message
+                self.message = CANMessage(
+                    is_extended_id=True,
+                    arbitration_id=message.ID,
+                    data=[message.DATA[byte] for byte in range(message.LEN)])
             elif isinstance(message, CANMessage):
-                self.pcan_message = TPCANMsg()
-                self.pcan_message.ID = message.arbitration_id
-                for byte, value in enumerate(message.data):
-                    self[byte] = value
-                self.pcan_message.LEN = len(message.data)
+                self.message = message
             else:
                 raise ValueError(
                     "Unsupported object type for argument message: "
                     f"“{type(message)}”")
         else:
-            self.pcan_message = TPCANMsg()
-
-        self.pcan_message.MSGTYPE = PCAN_MESSAGE_EXTENDED
+            self.message = CANMessage(is_extended_id=True)
 
         if identifier:
-            self.pcan_message.ID = identifier if isinstance(
+            self.message.arbitration_id = identifier if isinstance(
                 identifier, int) else identifier.value
 
         if keyword_arguments:
             # Mypy assumes that all keyword arguments have the same type
-            self.pcan_message.ID = Identifier(
+            self.message.arbitration_id = Identifier(
                 self.id(), **keyword_arguments).value  # type: ignore
 
         if data:
-            for byte, value in enumerate(data):
-                self[byte] = value
-            self.pcan_message.LEN = len(data)
+            self.message.data = bytearray(data)
+            self.message.dlc = len(data)
 
     def __len__(self) -> int:
         """Retrieve the length of the message data
@@ -152,7 +148,7 @@ class Message:
 
         """
 
-        return self.pcan_message.LEN
+        return len(self.message.data)
 
     @overload
     def __getitem__(self, index: int) -> int:
@@ -185,7 +181,7 @@ class Message:
 
         """
 
-        return self.pcan_message.DATA[index]
+        return self.message.data[index]
 
     def __setitem__(self, index: int, value: Union[int, slice]) -> None:
         """Write a byte of the message using an integer index and an value
@@ -203,7 +199,7 @@ class Message:
         Examples
         --------
 
-        >>> message = Message()
+        >>> message = Message(data = [0] * 8)
         >>> message[1] = 1
         >>> message[2] = 2
         >>> message[7] = 7
@@ -217,7 +213,7 @@ class Message:
 
         """
 
-        self.pcan_message.DATA[index] = value
+        self.message.data[index] = value
 
     def __repr__(self) -> str:
         """Get a textual representation of the current message
@@ -341,7 +337,7 @@ class Message:
 
         """
 
-        return self.pcan_message.ID
+        return self.message.arbitration_id
 
     def identifier(self) -> Identifier:
         """Retrieve an identifier object for the ID of the message
@@ -360,7 +356,7 @@ class Message:
 
         """
 
-        return Identifier(self.pcan_message.ID)
+        return Identifier(self.message.arbitration_id)
 
     def to_python_can(self) -> CANMessage:
         """Retrieve a python-can message object for this message
@@ -384,9 +380,7 @@ class Message:
 
         """
 
-        return CANMessage(is_extended_id=True,
-                          arbitration_id=self.id(),
-                          data=[self[byte] for byte in range(len(self))])
+        return self.message
 
     def to_pcan(self) -> TPCANMsg:
         """Retrieve a PCAN message object for this message
@@ -406,7 +400,14 @@ class Message:
 
         """
 
-        return self.pcan_message
+        message = TPCANMsg()
+        message.ID = self.message.arbitration_id
+        for byte, value in enumerate(self.message.data):
+            message.DATA[byte] = value
+        message.LEN = len(self.message.data)
+        message.MSGTYPE = PCAN_MESSAGE_EXTENDED
+
+        return message
 
 
 # -- Main ---------------------------------------------------------------------
