@@ -95,7 +95,7 @@ class Report:
         self.story.append(Paragraph(text, style=self.styles['Heading2']))
         self.story.append(Spacer(1, 0.5 * cm))
 
-    def __add_table(self, data):
+    def __add_table(self, data, column_widths=None):
         """Add a table at the current position in the document
 
         Parameters
@@ -103,9 +103,13 @@ class Report:
 
         data:
             The data that should be stored in the table
+
+        column_widths:
+            The width of each column of the table
+
         """
 
-        table = Table(data)
+        table = Table(data, colWidths=column_widths)
         table.hAlign = 'LEFT'
         self.story.append(table)
 
@@ -186,7 +190,11 @@ class Report:
 
         if len(self.checks) > 0:
             self.__add_header("Manual Checks")
-            self.__add_table(self.checks)
+            # Somehow the text columns of a table will contain a lot of
+            # trailing whitespace, if some (other) cells contain non-textual
+            # data. We work around that by specifying the size of the first
+            # column manually.
+            self.__add_table(self.checks, column_widths=[5.2 * cm, None])
 
         first_page = partial(_first_page, node=self.node)
         self.document.build(self.story, onFirstPage=first_page)
