@@ -64,6 +64,10 @@
 - Add coroutine (`get_mac_address_bluetooth`) to retrieve the MAC address of a connected Bluetooth device
 - Implement context manager interface (`with … as`)
 
+### Report
+
+- Add method `add_checkbox_item` to add text and and a checkbox at the end of the PDF report
+
 ### Utility
 
 - Add function `bytearray_to_text` to convert byte data to a string

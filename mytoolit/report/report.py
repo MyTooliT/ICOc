@@ -12,6 +12,7 @@ from reportlab.platypus import (Flowable, ListFlowable, Paragraph,
 from reportlab.rl_config import defaultPageSize
 
 from .pdf import PDFImage
+from .checkbox import Checkbox
 
 # -- Functions ----------------------------------------------------------------
 
@@ -78,6 +79,7 @@ class Report:
         self.general = []
         self.attributes = []
         self.tests = []
+        self.checks = []
 
     def __add_header(self, text):
         """Add a header at the current position in the document
@@ -150,6 +152,24 @@ class Report:
         paragraph_result = Paragraph(result_text, style=self.styles['Normal'])
         self.tests.append(paragraph_result)
 
+    def add_checkbox_item(self, text: str, tooltip=None) -> None:
+        """Add a checkbox item to the report
+
+        Parameters
+        ----------
+
+        text:
+            The text that should be added before the checkbox item in the
+            PDF report
+
+        tooltip:
+            The tooltip for the checkbox; If you do not specify a tooltip, then
+            `text` will also be used for the tooltip.
+
+        """
+
+        self.checks.append((text, Checkbox(text, tooltip)))
+
     def build(self):
         """Store the PDF report"""
 
@@ -163,6 +183,10 @@ class Report:
         self.__add_header("Test Results")
         tests = ListFlowable(self.tests, bulletType='bullet')
         self.story.append(tests)
+
+        if len(self.checks) > 0:
+            self.__add_header("Manual Checks")
+            self.__add_table(self.checks)
 
         first_page = partial(_first_page, node=self.node)
         self.document.build(self.story, onFirstPage=first_page)
