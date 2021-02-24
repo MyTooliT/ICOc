@@ -27,6 +27,10 @@
 
 ## Internal
 
+### Checkbox
+
+- New `Flowable` class that can be used to add a checkbox to a PDF report
+
 ### Command
 
 - Add method `is_error` to check if the current command represents an error
