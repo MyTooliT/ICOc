@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import List, Optional, overload, Union
+from typing import List, Optional, Union
 
 from can.interfaces.pcan.basic import PCAN_MESSAGE_EXTENDED, TPCANMsg
 from can import Message as CANMessage
@@ -128,92 +128,63 @@ class Message:
             self.message.data = bytearray(data)
             self.message.dlc = len(data)
 
-    def __len__(self) -> int:
-        """Retrieve the length of the message data
+    @property
+    def data(self) -> bytearray:
+        """Retrieve the message data
 
         Returns
         -------
 
-        The number of bytes stored in the message data
-
-        Examples
-        -------
-
-        >>> len(Message())
-        0
-        >>> len(Message(data=[5, 6, 7]))
-        3
-        >>> len(Message(data=[1, 2]))
-        2
-
-        """
-
-        return len(self.message.data)
-
-    @overload
-    def __getitem__(self, index: int) -> int:
-        ...
-
-    @overload
-    def __getitem__(self, index: slice) -> List[int]:
-        ...
-
-    def __getitem__(self, index):
-        """Access a byte of the message using an integer index
-
-        Parameters
-        ----------
-
-        index:
-            The number of the byte in the message that should be returned
-
-        Returns
-        -------
-
-        The byte of the message data at the specified index
-
-        Example
-        -------
-
-        >>> message = Message(data=[1,2,3])
-        >>> message[0]
-        1
-
-        """
-
-        return self.message.data[index]
-
-    def __setitem__(self, index: int, value: Union[int, slice]) -> None:
-        """Write a byte of the message using an integer index and an value
-
-        Parameters
-        ----------
-
-        index:
-            The number of the byte in the message that should be set to the
-            given value
-
-        value:
-            The byte value that should be stored at the specified index
+        A bytearray containing the data of the message
 
         Examples
         --------
 
-        >>> message = Message(data = [0] * 8)
-        >>> message[1] = 1
-        >>> message[2] = 2
-        >>> message[7] = 7
-
-        >>> message[1]
-        1
-        >>> message[3]
+        >>> len(Message().data)
         0
-        >>> message[7]
+        >>> len(Message(data=[5, 6, 7]).data)
+        3
+        >>> len(Message(data=[1, 2]).data)
+        2
+
+        """
+
+        return self.message.data
+
+    @data.setter
+    def data(self, data: Union[List[int], bytearray]) -> None:
+        """Set the message data to a new value
+
+        Parameters
+        ----------
+
+        data:
+            The data that should be stored in the message
+
+        Examples
+        --------
+
+        >>> message = Message(data=[1])
+        >>> message.data[0] = 42
+        >>> message.data[0]
+        42
+
+        >>> message = Message(data = bytearray([0] * 8))
+        >>> message.data[1] = 1
+        >>> message.data[2] = 2
+        >>> message.data[7] = 7
+
+        >>> message.data[1]
+        1
+        >>> message.data[3]
+        0
+        >>> message.data[7]
         7
 
         """
 
-        self.message.data[index] = value
+        self.message.data = bytearray(data)
+        self.message.dlc = len(self.data)
 
     def __repr__(self) -> str:
         """Get a textual representation of the current message
@@ -263,27 +234,27 @@ class Message:
         identifier = Identifier(self.id())
 
         data_explanation = None
-        if (len(self) >= 1 and identifier.block_name() == 'System'
+        if (len(self.data) >= 1 and identifier.block_name() == 'System'
                 and identifier.block_command_name() == 'Bluetooth'):
-            subcommand = self[0]
+            subcommand = self.data[0]
             if subcommand == 1:
                 data_explanation = "Activate"
             elif subcommand == 2:
                 is_acknowledgment = self.identifier().is_acknowledgment()
                 data_explanation = "{} number of available devices".format(
                     "Return" if is_acknowledgment else "Get")
-                if is_acknowledgment and len(self) >= 2:
-                    number_devices = int(chr(self[2]))
+                if is_acknowledgment and len(self.data) >= 2:
+                    number_devices = int(chr(self.data[2]))
                     data_explanation += f": {number_devices}"
 
         explanation = (f"{identifier} ({data_explanation})"
                        if data_explanation else repr(identifier))
 
         data_representation = " ".join(
-            [hex(self[byte]) for byte in range(len(self))])
+            [hex(self.data[byte]) for byte in range(len(self.data))])
         bit_values = [
             f"0b{identifier.value:029b}",
-            str(len(self)), data_representation
+            str(len(self.data)), data_representation
         ]
         # Filter empty string, since otherwise there might be an additional
         # space at the end of the representation for empty data
@@ -317,7 +288,7 @@ class Message:
         """
 
         return Message(identifier=self.identifier().acknowledge(),
-                       data=self[:len(self)])
+                       data=list(self.data))
 
     def id(self) -> int:
         """Retrieve the ID of the message
@@ -404,7 +375,7 @@ class Message:
         message.ID = self.message.arbitration_id
         for byte, value in enumerate(self.message.data):
             message.DATA[byte] = value
-        message.LEN = len(self.message.data)
+        message.LEN = len(self.data)
         message.MSGTYPE = PCAN_MESSAGE_EXTENDED
 
         return message

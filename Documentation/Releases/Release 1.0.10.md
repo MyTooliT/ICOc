@@ -48,8 +48,7 @@
 
 - The class now uses the class `Message` of python-can to store data instead of the class `TPCANMsg` of the PCAN-Basic API
 - Add method `identifier` to receive an identifier object for the current message
-- Add index based read and write access for message data (`[ ]`)
-- Add support for `len` function to retrieve the number of data bytes stored in the message
+- Add accessor to set and retrieve message data (`.data`)
 - The method `acknowledge` now stores the data of the message in the acknowledgment message
 - Fix conversion into `python-can` message for non-empty data field
 - Add explanation to string representation for Bluetooth “Activate” and “Get number of available devices” [subcommand](https://mytoolit.github.io/Documentation/#value:bluetooth-subcommand)
