@@ -40,7 +40,7 @@ class Checkbox(Flowable):
 
         self.text = text
         self.tooltip = text if tooltip is None else tooltip
-        self.boxsize = 12
+        self.boxsize = 10
 
         self.width = self.height = self.boxsize
 
