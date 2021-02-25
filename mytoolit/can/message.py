@@ -270,6 +270,13 @@ class Message:
         of the acknowledgment message will be the same as in the original
         message.
 
+        Parameters
+        ----------
+
+        error:
+            Specifies if the acknowledgment message is an error acknowledgment
+            or not
+
         Returns
         -------
 
