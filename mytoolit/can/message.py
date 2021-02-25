@@ -16,6 +16,7 @@ if __name__ == '__main__':
 from mytoolit.can.command import Command
 from mytoolit.can.identifier import Identifier
 from mytoolit.can.node import Node
+from mytoolit.utility import bytearray_to_text
 
 # -- Class --------------------------------------------------------------------
 
@@ -203,16 +204,28 @@ class Message:
         data_explanation = ""
         if (identifier.block_name() == 'System'
                 and identifier.block_command_name() == 'Bluetooth'):
+
             subcommand = self.data[0]
+            device_number = self.data[1]
+            is_acknowledgment = self.identifier().is_acknowledgment()
+            verb = "Return" if is_acknowledgment else "Get"
+
             if subcommand == 1:
                 data_explanation = "Activate"
+
             elif subcommand == 2:
-                is_acknowledgment = self.identifier().is_acknowledgment()
-                data_explanation = "{} number of available devices".format(
-                    "Return" if is_acknowledgment else "Get")
-                if is_acknowledgment and len(self.data) >= 2:
+                data_explanation = f"{verb} number of available devices"
+                if is_acknowledgment:
                     number_devices = int(chr(self.data[2]))
                     data_explanation += f": {number_devices}"
+
+            elif subcommand == 5 or subcommand == 6:
+                part = "first" if subcommand == 5 else "second"
+                data_explanation = (f"{verb} {part} part of name of device "
+                                    f"with device number “{device_number}”")
+                if is_acknowledgment and len(self.data) >= 2:
+                    name = bytearray_to_text(self.data[2:])
+                    data_explanation += f": {name}"
 
         return data_explanation
 
