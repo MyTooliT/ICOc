@@ -63,9 +63,8 @@ class ResponseListener(Listener):
            This optional field specifies the expected acknowledgment data.
            You can either specify to:
                - not check the message data (`None`),
-               - check the first `n` bytes by providing a bytearray of
-                 size `n`, or
-               - check only certain bytes by providing a heterogenous list
+               - check all bytes by providing a bytearray,
+               - check only the first bytes by providing a heterogenous list
                  of numbers (data byte will be checked for equality) and
                  `None` (data byte will not be checked).
 
@@ -99,7 +98,9 @@ class ResponseListener(Listener):
         # match the expected data
         expected_data = self.expected_data
         if normal_response and expected_data:
-            error_response |= len(expected_data) > len(message.data)
+            error_response |= (len(expected_data) != len(message.data)
+                               if isinstance(expected_data, bytearray) else
+                               len(expected_data) > len(message.data))
             error_response |= any(
                 expected != data
                 for expected, data in zip(expected_data, message.data)
@@ -308,7 +309,7 @@ class Network:
         # The bluetooth subcommand should be the same in the response message
         return await self._request(message,
                                    description=description,
-                                   expected_data=message.data[:1])
+                                   expected_data=list(message.data[:1]))
 
     async def reset_node(self, node: Union[str, Node]) -> None:
         """Reset the specified node
