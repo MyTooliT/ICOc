@@ -345,7 +345,9 @@ class Network:
                           sender=self.sender,
                           receiver=node,
                           request=True)
-        await self._request(message, description=f"reset node “{node}”")
+        await self._request(message,
+                            description=f"reset node “{node}”",
+                            expected_data=message.data)
 
     async def activate_bluetooth(self, node: Union[str, Node] = 'STU 1'):
         """Activate Bluetooth on the specified node
