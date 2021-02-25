@@ -64,6 +64,7 @@
 - Add coroutine (`check_connection_device_bluetooth`) to check if a Bluetooth device is connected to a node
 - Add coroutine (`get_mac_address_bluetooth`) to retrieve the MAC address of a connected Bluetooth device
 - Implement context manager interface (`with … as`)
+- The code now checks part of the acknowledgement data for the Bluetooth and reset commands of the `System` block
 
 ### Report
 
