@@ -9,7 +9,8 @@ async def create_connection_network():
         await network.reset_node('STU 1')  # Reset STU (and STH)
 
         wait_time = 1
-        print(f"Wait {wait_time} seconds for STU 1 reset")
+        print(f"Wait {wait_time} second{'' if wait_time == 1 else 's'} "
+              "for STU 1 reset")
         await sleep(wait_time)
 
         print("Activate Bluetooth of STU 1")
