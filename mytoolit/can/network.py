@@ -53,8 +53,8 @@ class ResponseListener(Listener):
         Parameters
         ----------
 
-        message
             The sent message this listener should react to
+        message:
 
         """
 
@@ -69,7 +69,7 @@ class ResponseListener(Listener):
         Parameters
         ----------
 
-        message
+        message:
             The received CAN message the notifier should react to
 
         """
