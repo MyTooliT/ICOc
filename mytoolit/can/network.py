@@ -30,7 +30,7 @@ class NetworkError(Exception):
 
 
 class ErrorResponseError(NetworkError):
-    """Exception for error response messages"""
+    """Exception for erroneous response messages"""
 
 
 class NoResponseError(NetworkError):
@@ -47,7 +47,10 @@ class Response(NamedTuple):
 class ResponseListener(Listener):
     """A listener that reacts to messages containing a certain id"""
 
-    def __init__(self, message: Message) -> None:
+    def __init__(
+            self, message: Message,
+            expected_data: Union[bytearray, List[Union[int, None]],
+                                 None]) -> None:
         """Initialize the listener using the given identifier
 
         Parameters
@@ -56,12 +59,23 @@ class ResponseListener(Listener):
             The sent message this listener should react to
         message:
 
+        expected_data:
+           This optional field specifies the expected acknowledgment data.
+           You can either specify to:
+               - not check the message data (`None`),
+               - check the first `n` bytes by providing a bytearray of
+                 size `n`, or
+               - check only certain bytes by providing a heterogenous list
+                 of numbers (data byte will be checked for equality) and
+                 `None` (data byte will not be checked).
+
         """
 
         self.queue: Queue[Response] = Queue()
         identifier = message.identifier()
         self.acknowledgment_identifier = identifier.acknowledge()
         self.error_identifier = identifier.acknowledge(error=True)
+        self.expected_data = expected_data
 
     def on_message_received(self, message: CANMessage) -> None:
         """React to a received message on the bus
@@ -75,10 +89,22 @@ class ResponseListener(Listener):
         """
 
         identifier = message.arbitration_id
-        # Only store CAN messages that contain the expected response message
-        # identifier
         error_response = identifier == self.error_identifier.value
         normal_response = identifier == self.acknowledgment_identifier.value
+
+        # We only store CAN messages that contain the expected (error) response
+        # message identifier
+
+        # Also set an error response, if the retrieved message data does not
+        # match the expected data
+        expected_data = self.expected_data
+        if normal_response and expected_data:
+            error_response |= len(expected_data) > len(message.data)
+            error_response |= any(
+                expected != data
+                for expected, data in zip(expected_data, message.data)
+                if expected is not None)
+
         if error_response or normal_response:
             self.queue.put_nowait(
                 Response(message=message, is_error=error_response))
@@ -179,7 +205,12 @@ class Network:
 
         self.shutdown()
 
-    async def _request(self, message: Message, description: str) -> CANMessage:
+    async def _request(
+        self,
+        message: Message,
+        description: str,
+        expected_data: Union[bytearray, List[Union[int, None]], None] = None
+    ) -> CANMessage:
         """Send a request message and wait for the response
 
         Parameters
@@ -190,6 +221,10 @@ class Network:
 
         description:
             A description of the request used in error messages
+
+        expected_data:
+           Specifies the expected acknowledgment data
+
 
         Returns
         -------
@@ -208,7 +243,7 @@ class Network:
 
         """
 
-        listener = ResponseListener(message)
+        listener = ResponseListener(message, expected_data)
 
         notifier = Notifier(self.bus,
                             listeners=[listener],
@@ -226,7 +261,7 @@ class Network:
 
         if response.is_error:
             raise ErrorResponseError(
-                f"Received error response for request to {description}")
+                f"Received erroneous response for request to {description}")
 
         return response.message
 
