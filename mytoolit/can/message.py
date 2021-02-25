@@ -186,6 +186,36 @@ class Message:
         self.message.data = bytearray(data)
         self.message.dlc = len(self.data)
 
+    def _data_explanation(self) -> str:
+        """Retrieve a textual representation of the message data
+
+        Returns
+        -------
+
+        A textual description of the data contained in the message
+
+        """
+
+        if len(self.data) <= 0:
+            return ""
+
+        identifier = self.identifier()
+        data_explanation = ""
+        if (identifier.block_name() == 'System'
+                and identifier.block_command_name() == 'Bluetooth'):
+            subcommand = self.data[0]
+            if subcommand == 1:
+                data_explanation = "Activate"
+            elif subcommand == 2:
+                is_acknowledgment = self.identifier().is_acknowledgment()
+                data_explanation = "{} number of available devices".format(
+                    "Return" if is_acknowledgment else "Get")
+                if is_acknowledgment and len(self.data) >= 2:
+                    number_devices = int(chr(self.data[2]))
+                    data_explanation += f": {number_devices}"
+
+        return data_explanation
+
     def __repr__(self) -> str:
         """Get a textual representation of the current message
 
@@ -231,21 +261,8 @@ class Message:
 
         """
 
-        identifier = Identifier(self.id())
-
-        data_explanation = None
-        if (len(self.data) >= 1 and identifier.block_name() == 'System'
-                and identifier.block_command_name() == 'Bluetooth'):
-            subcommand = self.data[0]
-            if subcommand == 1:
-                data_explanation = "Activate"
-            elif subcommand == 2:
-                is_acknowledgment = self.identifier().is_acknowledgment()
-                data_explanation = "{} number of available devices".format(
-                    "Return" if is_acknowledgment else "Get")
-                if is_acknowledgment and len(self.data) >= 2:
-                    number_devices = int(chr(self.data[2]))
-                    data_explanation += f": {number_devices}"
+        identifier = self.identifier()
+        data_explanation = self._data_explanation()
 
         explanation = (f"{identifier} ({data_explanation})"
                        if data_explanation else repr(identifier))
@@ -334,7 +351,7 @@ class Message:
 
         """
 
-        return Identifier(self.message.arbitration_id)
+        return Identifier(self.id())
 
     def to_python_can(self) -> CANMessage:
         """Retrieve a python-can message object for this message
