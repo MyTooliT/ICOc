@@ -81,7 +81,7 @@ class Report:
         self.tests = []
         self.checks = []
 
-    def __add_header(self, text):
+    def __add_header(self, text, subheader=False):
         """Add a header at the current position in the document
 
         Parameters
@@ -89,9 +89,16 @@ class Report:
 
         text:
             The text of the heading
+
+        subheader:
+            Specifies if the header should be a regular header or a (smaller)
+            subheader
+
         """
 
-        self.story.append(Paragraph(text, style=self.styles['Heading2']))
+        header_level = 3 if subheader else 2
+        self.story.append(
+            Paragraph(text, style=self.styles[f'Heading{header_level}']))
 
     def __add_table(self, data, column_widths=None):
         """Add a table at the current position in the document
