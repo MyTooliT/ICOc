@@ -50,8 +50,14 @@ class TestSTH(TestNode):
         cls.acceleration_sensor = (
             f"±{maximum_acceleration//2} g Sensor ({sensor_name})")
 
-        # The STH report should contain a checkbox for the operator
+        # Manual checks
         cls.report.add_checkbox_item("Resin cast contains no bubbles")
+        cls.report.add_checkbox_item("Resin cast hardened completely")
+        cls.report.add_checkbox_item("No resin residue outside of pocket")
+        cls.report.add_checkbox_item("Pocket is completely filled with resin")
+        cls.report.add_checkbox_item("No oil spillage in vacuum chamber")
+        cls.report.add_checkbox_item(
+            "Charge in charging station was successful")
 
     def _connect(self):
         """Create a connection to the STH"""
