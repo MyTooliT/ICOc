@@ -16,7 +16,7 @@ base_font_bold_italic = tt2ps(canvas_basefontname, 1, 1)
 # -- Functions ----------------------------------------------------------------
 
 
-def getStyleSheet() -> StyleSheet1:
+def get_style_sheet() -> StyleSheet1:
     """Get the default style sheet for PDF reports
 
     This is more or less a slightly modified version of the
