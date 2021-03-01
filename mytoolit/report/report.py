@@ -177,7 +177,7 @@ class Report:
 
         """
 
-        self.checks.append((text, Checkbox(text, tooltip)))
+        self.checks.append((Checkbox(text, tooltip), text))
 
     def build(self):
         """Store the PDF report"""
@@ -200,7 +200,7 @@ class Report:
             # trailing whitespace, if some (other) cells contain non-textual
             # data. We work around that by specifying the size of the first
             # column manually.
-            self.__add_table(self.checks, column_widths=[7 * cm, None])
+            self.__add_table(self.checks, column_widths=[0.5 * cm, None])
 
         first_page = partial(_first_page, node=self.node)
         self.document.build(self.story, onFirstPage=first_page)
