@@ -5,13 +5,13 @@ from functools import partial
 from pathlib import Path
 from typing import List
 
-from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import cm
 from reportlab.platypus import (Flowable, ListFlowable, Paragraph,
                                 SimpleDocTemplate, Spacer, Table)
 from reportlab.rl_config import defaultPageSize
 
 from .pdf import PDFImage
+from .style import getStyleSheet
 from .checkbox import Checkbox
 
 # -- Functions ----------------------------------------------------------------
@@ -35,7 +35,7 @@ def _first_page(canvas, document, node):
                  logo_height).drawOn(canvas, (page_width - logo_width) / 2,
                                      page_height - logo_offset - logo_height)
 
-    style = getSampleStyleSheet()
+    style = getStyleSheet()
 
     center_width = page_width / 2
 
@@ -74,7 +74,7 @@ class Report:
             subject='{} Test'.format('Sensory Tool Holder' if node ==
                                      'STH' else 'Stationary Transceiver Unit'))
         self.story = [Spacer(1, 3 * cm)]
-        self.styles = getSampleStyleSheet()
+        self.styles = getStyleSheet()
 
         self.general = []
         self.attributes = []
