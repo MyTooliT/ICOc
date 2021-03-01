@@ -195,6 +195,7 @@ class Report:
 
         if len(self.checks) > 0:
             self.__add_header("Manual Checks")
+            self.__add_header("Final Checks", subheader=True)
             # Somehow the text columns of a table will contain a lot of
             # trailing whitespace, if some (other) cells contain non-textual
             # data. We work around that by specifying the size of the first
