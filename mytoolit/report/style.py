@@ -1,10 +1,17 @@
 # -- Imports ------------------------------------------------------------------
 
-from reportlab.lib.styles import (_baseFontName, _baseFontNameB,
-                                  _baseFontNameI, _baseFontNameBI, ListStyle,
-                                  ParagraphStyle, StyleSheet1)
+from reportlab.rl_config import canvas_basefontname
+from reportlab.lib.fonts import tt2ps
+from reportlab.lib.styles import ListStyle, ParagraphStyle, StyleSheet1
 from reportlab.lib.colors import black
 from reportlab.lib.enums import TA_CENTER
+
+# -- Attributes ---------------------------------------------------------------
+
+base_font = canvas_basefontname
+base_font_bold = tt2ps(canvas_basefontname, 1, 0)
+base_font_italic = tt2ps(canvas_basefontname, 0, 1)
+base_font_bold_italic = tt2ps(canvas_basefontname, 1, 1)
 
 # -- Functions ----------------------------------------------------------------
 
@@ -20,7 +27,7 @@ def getStyleSheet() -> StyleSheet1:
 
     stylesheet.add(
         ParagraphStyle(name='Normal',
-                       fontName=_baseFontName,
+                       fontName=base_font,
                        fontSize=10,
                        leading=12))
 
@@ -31,11 +38,11 @@ def getStyleSheet() -> StyleSheet1:
     stylesheet.add(
         ParagraphStyle(name='Italic',
                        parent=stylesheet['BodyText'],
-                       fontName=_baseFontNameI))
+                       fontName=base_font_italic))
 
     stylesheet.add(ParagraphStyle(name='Heading1',
                                   parent=stylesheet['Normal'],
-                                  fontName=_baseFontNameB,
+                                  fontName=base_font_bold,
                                   fontSize=18,
                                   leading=22,
                                   spaceAfter=6),
@@ -43,7 +50,7 @@ def getStyleSheet() -> StyleSheet1:
 
     stylesheet.add(ParagraphStyle(name='Title',
                                   parent=stylesheet['Normal'],
-                                  fontName=_baseFontNameB,
+                                  fontName=base_font_bold,
                                   fontSize=18,
                                   leading=22,
                                   alignment=TA_CENTER,
@@ -52,7 +59,7 @@ def getStyleSheet() -> StyleSheet1:
 
     stylesheet.add(ParagraphStyle(name='Heading2',
                                   parent=stylesheet['Normal'],
-                                  fontName=_baseFontNameB,
+                                  fontName=base_font_bold,
                                   fontSize=14,
                                   leading=18,
                                   spaceBefore=12,
@@ -61,7 +68,7 @@ def getStyleSheet() -> StyleSheet1:
 
     stylesheet.add(ParagraphStyle(name='Heading3',
                                   parent=stylesheet['Normal'],
-                                  fontName=_baseFontNameB,
+                                  fontName=base_font_bold,
                                   fontSize=12,
                                   leading=14,
                                   spaceBefore=12,
@@ -70,7 +77,7 @@ def getStyleSheet() -> StyleSheet1:
 
     stylesheet.add(ParagraphStyle(name='Heading4',
                                   parent=stylesheet['Normal'],
-                                  fontName=_baseFontNameBI,
+                                  fontName=base_font_bold_italic,
                                   fontSize=10,
                                   leading=12,
                                   spaceBefore=10,
@@ -79,7 +86,7 @@ def getStyleSheet() -> StyleSheet1:
 
     stylesheet.add(ParagraphStyle(name='Heading5',
                                   parent=stylesheet['Normal'],
-                                  fontName=_baseFontNameB,
+                                  fontName=base_font_bold,
                                   fontSize=9,
                                   leading=10.8,
                                   spaceBefore=8,
@@ -88,7 +95,7 @@ def getStyleSheet() -> StyleSheet1:
 
     stylesheet.add(ParagraphStyle(name='Heading6',
                                   parent=stylesheet['Normal'],
-                                  fontName=_baseFontNameB,
+                                  fontName=base_font_bold,
                                   fontSize=7,
                                   leading=8.4,
                                   spaceBefore=6,
@@ -107,7 +114,7 @@ def getStyleSheet() -> StyleSheet1:
                                   leftIndent=36,
                                   bulletIndent=0,
                                   spaceBefore=6,
-                                  bulletFontName=_baseFontNameBI),
+                                  bulletFontName=base_font_bold_italic),
                    alias='df')
 
     stylesheet.add(
