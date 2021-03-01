@@ -24,6 +24,7 @@
 ### STH Test
 
 - The report of the STH test now also contains information about the used acceleration sensor (±100 g or ± 50 g)
+- Removed extra space before and after headers in PDF report
 - The PDF report now contains a checkbox for the resin cast
 
 ## Internal

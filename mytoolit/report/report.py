@@ -91,9 +91,7 @@ class Report:
             The text of the heading
         """
 
-        self.story.append(Spacer(1, 0.2 * cm))
         self.story.append(Paragraph(text, style=self.styles['Heading2']))
-        self.story.append(Spacer(1, 0.5 * cm))
 
     def __add_table(self, data, column_widths=None):
         """Add a table at the current position in the document
