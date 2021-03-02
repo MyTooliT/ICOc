@@ -220,8 +220,20 @@ class Report:
 # -- Main ---------------------------------------------------------------------
 
 if __name__ == '__main__':
+    from platform import system
+    from subprocess import run
+
     # Create a example test report
-    # We check the resulting PDF (stored in the file `STH Test.pdf` in the
-    # repo root) manually
-    report = Report("STH")
+    node = 'STH'
+    pdf_path = str(Path(__file__).parent.parent.parent / f"{node} Test.pdf")
+    report = Report(node)
     report.build()
+
+    # Open the file to check the resulting PDF manually
+    if system() == 'Windows':
+        from os import startfile
+        startfile(pdf_path)
+    else:
+        run([
+            "{}open".format("" if system() == 'Darwin' else "xdg-"), pdf_path
+        ])
