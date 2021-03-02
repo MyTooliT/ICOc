@@ -186,8 +186,9 @@ class Report:
     def build(self):
         """Store the PDF report"""
 
-        self.__add_header("General")
-        self.__add_table(self.general)
+        if len(self.general) > 0:
+            self.__add_header("General")
+            self.__add_table(self.general)
 
         if len(self.attributes) > 0:
             self.__add_header("Attributes")
