@@ -227,6 +227,10 @@ if __name__ == '__main__':
     node = 'STH'
     pdf_path = str(Path(__file__).parent.parent.parent / f"{node} Test.pdf")
     report = Report(node)
+
+    report.add_checkbox_list(title="Checkbox Title",
+                             boxes=["First box", "Second box"])
+
     report.build()
 
     # Open the file to check the resulting PDF manually
