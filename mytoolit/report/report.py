@@ -236,7 +236,7 @@ if __name__ == '__main__':
     # Open the file to check the resulting PDF manually
     if system() == 'Windows':
         # The function `startfile` is only available on Windows
-        from os import startfile # type: ignore
+        from os import startfile  # type: ignore
         startfile(pdf_path)
     else:
         run([
