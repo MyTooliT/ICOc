@@ -53,13 +53,13 @@ class TestSTH(TestNode):
         # Manual checks
         cls.report.add_checkbox_list(title="Metal Blank",
                                      boxes=[
-                                         "Okay", "Cylindrical Thread Defect",
-                                         "Dent", "Oil Spillage", "Shavings",
-                                         "Milling Errors"
+                                         "Okay", "Cylindrical thread defect",
+                                         "Dent", "Oil spillage", "Shavings",
+                                         "Milling errors"
                                      ])
 
         cls.report.add_checkbox_list(title="PCB",
-                                     boxes=["Optical Inspection: No Defects"])
+                                     boxes=["Optical inspection: no defects"])
 
         cls.report.add_checkbox_list(
             title="Before Resin Cast",
