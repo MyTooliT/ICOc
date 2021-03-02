@@ -1,11 +1,76 @@
 # -- Imports ------------------------------------------------------------------
 
+from __future__ import annotations
+
 from typing import Optional
 
 from reportlab.lib.colors import white
-from reportlab.platypus import Flowable
+from reportlab.lib.units import cm
+from reportlab.platypus import Flowable, KeepTogether, Paragraph, Table
 
-# -- Class --------------------------------------------------------------------
+from .style import get_style_sheet
+
+# -- Classes ------------------------------------------------------------------
+
+
+class CheckboxList:
+    """This class represents a list of checkboxes
+
+    The list starts with a title that should describe the purpose of the
+    checkbox list
+    """
+
+    def __init__(self, title="Checks") -> None:
+        """Create a new checkbox list with the given title
+
+        Parameters
+        ----------
+
+        title:
+            A title that describes the purpose of the checklist
+
+        """
+
+        self.title = title
+        self.checks = []
+        self.styles = get_style_sheet()
+
+    def add_checkbox_item(self, text: str, tooltip=None) -> None:
+        """Add a checkbox item to the checkbox list
+
+        Parameters
+        ----------
+
+        text:
+            The text that should be added after the checkbox item
+
+        tooltip:
+            The tooltip for the checkbox; If you do not specify a tooltip, then
+            `text` will also be used for the tooltip.
+
+        """
+
+        self.checks.append((Checkbox(text, tooltip), text))
+
+    def to_flowable(self) -> KeepTogether:
+        """Convert the checkbox list into a Flowable
+
+        Returns
+        -------
+
+        A Flowable representing this checkbox list
+
+        """
+
+        title = Paragraph(self.title, style=self.styles['Heading3'])
+
+        # Somehow the text columns of a table will contain a lot of
+        # trailing whitespace, if some (other) cells contain non-textual
+        # data. We work around that by specifying the size of the first
+        # column manually.
+        checks = Table(self.checks, colWidths=[0.5 * cm, None])
+
+        return KeepTogether([title, checks])
 
 
 class Checkbox(Flowable):
