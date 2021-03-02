@@ -118,7 +118,7 @@ class Report:
         table.hAlign = 'LEFT'
         self.story.append(table)
 
-    def add_attribute(self, name, value, sth_attribute=True):
+    def add_attribute(self, name, value, node_attribute=True):
         """Add information about an attribute to the report
 
         Parameters
@@ -126,14 +126,18 @@ class Report:
 
         name:
             The name of the attribute
+
         value:
             The value of the attribute
+
         sth_attribute
-            Specifies if the specified name and value stores STH specific data
+
+            Specifies if the specified name and value stores node specific data
             or general data
+
         """
 
-        table = self.attributes if sth_attribute else self.general
+        table = self.attributes if node_attribute else self.general
         table.append([name, value])
 
     def add_test_result(self, description, result):
