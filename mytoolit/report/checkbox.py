@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Optional
+from typing import List, Tuple, Optional
 
 from reportlab.lib.colors import white
 from reportlab.lib.units import cm
@@ -20,7 +20,7 @@ class CheckboxList:
     checkbox list
     """
 
-    def __init__(self, title="Checks") -> None:
+    def __init__(self, title: str = "Checks") -> None:
         """Create a new checkbox list with the given title
 
         Parameters
@@ -32,10 +32,10 @@ class CheckboxList:
         """
 
         self.title = title
-        self.checks = []
+        self.checks: List[Tuple[Checkbox, str]] = []
         self.styles = get_style_sheet()
 
-    def add_checkbox_item(self, text: str, tooltip=None) -> None:
+    def add_checkbox_item(self, text: str, tooltip: str = None) -> None:
         """Add a checkbox item to the checkbox list
 
         Parameters
