@@ -69,7 +69,7 @@
 
 ### Report
 
-- Add method `add_checkbox_item` to add text and and a checkbox at the end of the PDF report
+- Add method `add_checkbox_list` to add a list of checkboxes at the end of the PDF report
 
 ### Utility
 
