@@ -51,6 +51,23 @@ class TestSTH(TestNode):
             f"±{maximum_acceleration//2} g Sensor ({sensor_name})")
 
         # Manual checks
+        cls.report.add_checkbox_list(title="Metal Blank",
+                                     boxes=[
+                                         "Okay", "Cylindrical Thread Defect",
+                                         "Dent", "Oil Spillage", "Shavings",
+                                         "Milling Errors"
+                                     ])
+
+        cls.report.add_checkbox_list(title="PCB",
+                                     boxes=["Optical Inspection: No Defects"])
+
+        cls.report.add_checkbox_list(
+            title="Before Resin Cast",
+            boxes=[
+                "Battery test successful",
+                "Charge in charging station was successful"
+            ])
+
         cls.report.add_checkbox_list(
             title="Final Checks",
             boxes=[
