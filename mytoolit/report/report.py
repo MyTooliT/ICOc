@@ -194,9 +194,10 @@ class Report:
             self.__add_header("Attributes")
             self.__add_table(self.attributes)
 
-        self.__add_header("Test Results")
-        tests = ListFlowable(self.tests, bulletType='bullet')
-        self.story.append(tests)
+        if len(self.tests) > 0:
+            self.__add_header("Test Results")
+            tests = ListFlowable(self.tests, bulletType='bullet')
+            self.story.append(tests)
 
         if len(self.checks) > 0:
             self.__add_header("Manual Checks")
