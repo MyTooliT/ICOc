@@ -17,7 +17,7 @@ if __name__ == '__main__':
 
 from mytoolit.report.pdf import PDFImage
 from mytoolit.report.style import get_style_sheet
-from mytoolit.report.checkbox import Checkbox
+from mytoolit.report.checkbox import CheckboxList
 
 # -- Functions ----------------------------------------------------------------
 
@@ -170,23 +170,26 @@ class Report:
         paragraph_result = Paragraph(result_text, style=self.styles['Normal'])
         self.tests.append(paragraph_result)
 
-    def add_checkbox_item(self, text: str, tooltip=None) -> None:
-        """Add a checkbox item to the report
+    def add_checkbox_list(self, title: str, boxes: List[str]) -> None:
+        """Add a checkbox list to the report
 
         Parameters
         ----------
 
-        text:
-            The text that should be added before the checkbox item in the
-            PDF report
+        title:
+            The title that should be printed before the checkbox list
 
-        tooltip:
-            The tooltip for the checkbox; If you do not specify a tooltip, then
-            `text` will also be used for the tooltip.
+        boxes:
+            A text for each box that should be added to the checkbox list
 
         """
 
-        self.checks.append((Checkbox(text, tooltip), text))
+        checkbox_list = CheckboxList(title)
+
+        for box in boxes:
+            checkbox_list.add_checkbox_item(box)
+
+        self.checks.append(checkbox_list)
 
     def build(self):
         """Store the PDF report"""
@@ -206,12 +209,9 @@ class Report:
 
         if len(self.checks) > 0:
             self.__add_header("Manual Checks")
-            self.__add_header("Final Checks", subheader=True)
-            # Somehow the text columns of a table will contain a lot of
-            # trailing whitespace, if some (other) cells contain non-textual
-            # data. We work around that by specifying the size of the first
-            # column manually.
-            self.__add_table(self.checks, column_widths=[0.5 * cm, None])
+
+            for checkbox_list in self.checks:
+                self.story.append(checkbox_list.to_flowable())
 
         first_page = partial(_first_page, node=self.node)
         self.document.build(self.story, onFirstPage=first_page)

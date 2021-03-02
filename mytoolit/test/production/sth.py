@@ -51,13 +51,16 @@ class TestSTH(TestNode):
             f"±{maximum_acceleration//2} g Sensor ({sensor_name})")
 
         # Manual checks
-        cls.report.add_checkbox_item("Resin cast contains no bubbles")
-        cls.report.add_checkbox_item("Resin cast hardened completely")
-        cls.report.add_checkbox_item("No resin residue outside of pocket")
-        cls.report.add_checkbox_item("Pocket is completely filled with resin")
-        cls.report.add_checkbox_item("No oil spillage in vacuum chamber")
-        cls.report.add_checkbox_item(
-            "Charge in charging station was successful")
+        cls.report.add_checkbox_list(
+            title="Final Checks",
+            boxes=[
+                "Resin cast contains no bubbles",
+                "Resin cast hardened completely",
+                "No resin residue outside of pocket",
+                "Pocket is completely filled with resin",
+                "No oil spillage in vacuum chamber",
+                "Charge in charging station was successful"
+            ])
 
     def _connect(self):
         """Create a connection to the STH"""
