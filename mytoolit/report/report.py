@@ -10,9 +10,14 @@ from reportlab.platypus import (Flowable, ListFlowable, Paragraph,
                                 SimpleDocTemplate, Spacer, Table)
 from reportlab.rl_config import defaultPageSize
 
-from .pdf import PDFImage
-from .style import get_style_sheet
-from .checkbox import Checkbox
+# Fix imports for script usage
+if __name__ == '__main__':
+    from sys import path
+    path.append(str(Path(__file__).parent.parent.parent))
+
+from mytoolit.report.pdf import PDFImage
+from mytoolit.report.style import get_style_sheet
+from mytoolit.report.checkbox import Checkbox
 
 # -- Functions ----------------------------------------------------------------
 
@@ -210,3 +215,13 @@ class Report:
 
         first_page = partial(_first_page, node=self.node)
         self.document.build(self.story, onFirstPage=first_page)
+
+
+# -- Main ---------------------------------------------------------------------
+
+if __name__ == '__main__':
+    # Create a example test report
+    # We check the resulting PDF (stored in the file `STH Test.pdf` in the
+    # repo root) manually
+    report = Report("STH")
+    report.build()
