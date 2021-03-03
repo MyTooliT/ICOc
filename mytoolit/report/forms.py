@@ -45,7 +45,7 @@ class CheckboxList:
         """
 
         self.title = title
-        self.checks: List[Tuple[Checkbox, str]] = []
+        self.checks: List[Tuple[CheckBox, str]] = []
         self.styles = get_style_sheet()
         self.lines = lines
 
@@ -64,7 +64,7 @@ class CheckboxList:
 
         """
 
-        self.checks.append((Checkbox(text, tooltip), text))
+        self.checks.append((CheckBox(text, tooltip), text))
 
     def to_flowable(self) -> KeepTogether:
         """Convert the checkbox list into a Flowable
@@ -92,7 +92,7 @@ class CheckboxList:
         return KeepTogether([title, checks, *lines])
 
 
-class Checkbox(Flowable):
+class CheckBox(Flowable):
     """A flowable checkbox"""
 
     def __init__(self, text: str, tooltip: Optional[str] = None) -> None:
@@ -112,10 +112,10 @@ class Checkbox(Flowable):
         Examples
         --------
 
-        >>> Checkbox(text="A checkbox", tooltip="The tooltip of the box")
+        >>> CheckBox(text="A checkbox", tooltip="The tooltip of the box")
         ☑️ A checkbox | Tooltip: The tooltip of the box
 
-        >>> Checkbox(text="Another checkbox")
+        >>> CheckBox(text="Another checkbox")
         ☑️ Another checkbox | Tooltip: Another checkbox
 
         """
