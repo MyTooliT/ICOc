@@ -17,7 +17,7 @@ if __name__ == '__main__':
 
 from mytoolit.report.pdf import PDFImage
 from mytoolit.report.style import get_style_sheet
-from mytoolit.report.checkbox import CheckboxList
+from mytoolit.report.forms import CheckBoxList
 
 # -- Functions ----------------------------------------------------------------
 
@@ -191,7 +191,7 @@ class Report:
 
         """
 
-        checkbox_list = CheckboxList(title, lines)
+        checkbox_list = CheckBoxList(title, lines)
 
         for box in boxes:
             checkbox_list.add_checkbox_item(box)

@@ -20,7 +20,7 @@ from mytoolit.report.style import get_style_sheet
 # -- Classes ------------------------------------------------------------------
 
 
-class CheckboxList:
+class CheckBoxList:
     """This class represents a list of checkboxes
 
     The list starts with a title that should describe the purpose of the
