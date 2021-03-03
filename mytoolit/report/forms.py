@@ -153,31 +153,26 @@ class CheckBox(Flowable):
 class TextField(Flowable):
     """A flowable text box"""
 
-    def __init__(self, name: str, tooltip: Optional[str] = None) -> None:
+    def __init__(self, tooltip: Optional[str] = None) -> None:
         """Initialize the text box using the given arguments
 
         Parameters
         ----------
 
-        name:
-            The name of the text box
-
         tooltip:
-            The text displayed in the tooltip of the text ; If you do not
-            provide a tooltip, then the name will be used for the tooltip too.
+            The text displayed in the tooltip of the text
 
         Example
         -------
 
-        >>> TextField(name="A text box", tooltip="The tooltip of the box")
-        📝 A text box | Tooltip: The tooltip of the box
+        >>> TextField(tooltip="The tooltip of the text field")
+        📝 Tooltip: The tooltip of the text field
 
         """
 
         super().__init__()
 
-        self.name = name
-        self.tooltip = name if tooltip is None else tooltip
+        self.tooltip = tooltip
 
         self.indent = 6  # Indent slightly to match indentation of checkboxes
         self.width = 350
@@ -194,7 +189,8 @@ class TextField(Flowable):
 
         """
 
-        return f"📝 {self.name} | Tooltip: {self.tooltip}"
+        return "📝{}".format(
+            f" Tooltip: {self.tooltip}" if self.tooltip is not None else "")
 
     def draw(self) -> None:
         """Draw the text box on the canvas"""
@@ -205,7 +201,6 @@ class TextField(Flowable):
         style = self.styles['Normal']
         form.textfield(
             x=self.indent,
-            name=self.name,
             fontName=style.fontName,
             fontSize=style.fontSize,
             fillColor=white,
