@@ -9,7 +9,13 @@ from reportlab.lib.colors import white
 from reportlab.lib.units import cm
 from reportlab.platypus import Flowable, KeepTogether, Paragraph, Table
 
-from .style import get_style_sheet
+# Fix imports for script usage
+if __name__ == '__main__':
+    from sys import path
+    from pathlib import Path
+    path.append(str(Path(__file__).parent.parent.parent))
+
+from mytoolit.report.style import get_style_sheet
 
 # -- Classes ------------------------------------------------------------------
 
@@ -147,6 +153,76 @@ class Checkbox(Flowable):
                       tooltip=self.tooltip,
                       relative=True,
                       size=self.boxsize)
+
+        self.canv.restoreState()
+
+
+class TextBox(Flowable):
+    """A flowable text box"""
+
+    def __init__(self, name: str, tooltip: Optional[str] = None) -> None:
+        """Initialize the text box using the given arguments
+
+        Parameters
+        ----------
+
+        name:
+            The name of the text box
+
+        tooltip:
+            The text displayed in the tooltip of the text ; If you do not
+            provide a tooltip, then the name will be used for the tooltip too.
+
+        Example
+        -------
+
+        >>> TextBox(name="A text box", tooltip="The tooltip of the box")
+        📝 A text box | Tooltip: The tooltip of the box
+
+        """
+
+        super().__init__()
+
+        self.name = name
+        self.tooltip = name if tooltip is None else tooltip
+
+        self.indent = 6  # Indent slightly to match indentation of checkboxes
+        self.width = 350
+        self.height = 18
+        self.styles = get_style_sheet()
+
+    def __repr__(self) -> str:
+        """The string representation of the checkbox
+
+        Returns
+        -------
+
+        A string containing information about the checkbox
+
+        """
+
+        return f"📝 {self.name} | Tooltip: {self.tooltip}"
+
+    def draw(self) -> None:
+        """Draw the text box on the canvas"""
+
+        self.canv.saveState()
+
+        form = self.canv.acroForm
+        style = self.styles['Normal']
+        form.textfield(
+            x=self.indent,
+            name=self.name,
+            fontName=style.fontName,
+            fontSize=style.fontSize,
+            fillColor=white,
+            tooltip=self.tooltip,
+            relative=True,
+            borderWidth=0.1,
+            width=self.width,
+            height=self.height,
+            annotationFlags=''  # Do not print border
+        )
 
         self.canv.restoreState()
 
