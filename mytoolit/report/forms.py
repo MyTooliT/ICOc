@@ -199,18 +199,15 @@ class TextField(Flowable):
 
         form = self.canv.acroForm
         style = self.styles['Normal']
-        form.textfield(
-            x=self.indent,
-            fontName=style.fontName,
-            fontSize=style.fontSize,
-            fillColor=white,
-            tooltip=self.tooltip,
-            relative=True,
-            borderWidth=0.5,
-            width=self.width,
-            height=self.height,
-            annotationFlags=''  # Do not print border
-        )
+        form.textfield(x=self.indent,
+                       fontName=style.fontName,
+                       fontSize=style.fontSize,
+                       fillColor=white,
+                       tooltip=self.tooltip,
+                       relative=True,
+                       borderWidth=0.5,
+                       width=self.width,
+                       height=self.height)
 
         self.canv.restoreState()
 
