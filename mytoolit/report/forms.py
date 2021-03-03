@@ -84,7 +84,7 @@ class CheckBoxList:
         checks = Table(self.checks, colWidths=[0.5 * cm, None])
 
         text_fields = [
-            TextBox("Additional comments") for _ in range(self.text_fields)
+            TextField("Additional comments") for _ in range(self.text_fields)
         ]
 
         return KeepTogether([title, checks, *text_fields])
@@ -155,7 +155,7 @@ class CheckBox(Flowable):
         self.canv.restoreState()
 
 
-class TextBox(Flowable):
+class TextField(Flowable):
     """A flowable text box"""
 
     def __init__(self, name: str, tooltip: Optional[str] = None) -> None:
@@ -174,7 +174,7 @@ class TextBox(Flowable):
         Example
         -------
 
-        >>> TextBox(name="A text box", tooltip="The tooltip of the box")
+        >>> TextField(name="A text box", tooltip="The tooltip of the box")
         📝 A text box | Tooltip: The tooltip of the box
 
         """
