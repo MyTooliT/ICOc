@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from typing import List, Tuple, Optional
 
-from reportlab.graphics.shapes import Drawing, Line
 from reportlab.lib.colors import white
 from reportlab.lib.units import cm
 from reportlab.platypus import Flowable, KeepTogether, Paragraph, Table
@@ -25,11 +24,11 @@ class CheckBoxList:
 
     The list starts with a title that should describe the purpose of the
     checkbox list, followed by the checkbox items. At the end a optional list
-    of lines will be printed. These lines can be used to add handwritten
-    comments.
+    of text fields will be added. These text fields can be used to add
+    additional comments.
     """
 
-    def __init__(self, title: str = "Checks", lines: int = 0) -> None:
+    def __init__(self, title: str = "Checks", text_fields: int = 0) -> None:
         """Create a new checkbox list with the given title
 
         Parameters
@@ -38,16 +37,16 @@ class CheckBoxList:
         title:
             A title that describes the purpose of the checklist
 
-        lines:
-            The number of lines for handwritten input that should be added at
-            the end of the checklist
+        text_fields:
+            The number of text fields for additional comments that should be
+            added at the end of the checklist.
 
         """
 
         self.title = title
         self.checks: List[Tuple[CheckBox, str]] = []
         self.styles = get_style_sheet()
-        self.lines = lines
+        self.text_fields = text_fields
 
     def add_checkbox_item(self, text: str, tooltip: str = None) -> None:
         """Add a checkbox item to the checkbox list
@@ -84,12 +83,11 @@ class CheckBoxList:
         # column manually.
         checks = Table(self.checks, colWidths=[0.5 * cm, None])
 
-        drawing = Drawing(400, 20)
-        drawing.add(Line(6, 0, 350, 0))
+        text_fields = [
+            TextBox("Additional comments") for _ in range(self.text_fields)
+        ]
 
-        lines = [drawing for _ in range(self.lines)]
-
-        return KeepTogether([title, checks, *lines])
+        return KeepTogether([title, checks, *text_fields])
 
 
 class CheckBox(Flowable):

@@ -173,7 +173,7 @@ class Report:
     def add_checkbox_list(self,
                           title: str,
                           boxes: List[str],
-                          lines: int = 0) -> None:
+                          text_fields: int = 0) -> None:
         """Add a checkbox list to the report
 
         Parameters
@@ -185,13 +185,13 @@ class Report:
         boxes:
             A text for each box that should be added to the checkbox list
 
-        lines:
-            The number of lines for handwritten input that should be added at
-            the end of the checklist
+        text_fields:
+            The number of text fields for additional comments that should be
+            added at the end of the checklist.
 
         """
 
-        checkbox_list = CheckBoxList(title, lines)
+        checkbox_list = CheckBoxList(title, text_fields)
 
         for box in boxes:
             checkbox_list.add_checkbox_item(box)
