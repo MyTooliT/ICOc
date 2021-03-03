@@ -170,7 +170,10 @@ class Report:
         paragraph_result = Paragraph(result_text, style=self.styles['Normal'])
         self.tests.append(paragraph_result)
 
-    def add_checkbox_list(self, title: str, boxes: List[str]) -> None:
+    def add_checkbox_list(self,
+                          title: str,
+                          boxes: List[str],
+                          lines: int = 0) -> None:
         """Add a checkbox list to the report
 
         Parameters
@@ -182,9 +185,13 @@ class Report:
         boxes:
             A text for each box that should be added to the checkbox list
 
+        lines:
+            The number of lines for handwritten input that should be added at
+            the end of the checklist
+
         """
 
-        checkbox_list = CheckboxList(title)
+        checkbox_list = CheckboxList(title, lines)
 
         for box in boxes:
             checkbox_list.add_checkbox_item(box)
