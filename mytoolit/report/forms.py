@@ -63,7 +63,8 @@ class CheckBoxList:
 
         """
 
-        self.checks.append((CheckBox(text, tooltip), text))
+        tooltip = text if tooltip is None else tooltip
+        self.checks.append((CheckBox(tooltip), text))
 
     def to_flowable(self) -> KeepTogether:
         """Convert the checkbox list into a Flowable
@@ -93,35 +94,29 @@ class CheckBoxList:
 class CheckBox(Flowable):
     """A flowable checkbox"""
 
-    def __init__(self, text: str, tooltip: Optional[str] = None) -> None:
+    def __init__(self, tooltip: Optional[str] = None) -> None:
         """Initialize the checkbox using the given arguments
 
         Parameters
         ----------
 
-        text:
-            The name of the checkbox
-
         tooltip:
-            The text displayed in the tooltip of the checkbox; If you do not
-            provide a tooltip, then the content of `text` will be used for the
-            tooltip too.
+            The text displayed in the tooltip of the checkbox
 
         Examples
         --------
 
-        >>> CheckBox(text="A checkbox", tooltip="The tooltip of the box")
-        ☑️ A checkbox | Tooltip: The tooltip of the box
+        >>> CheckBox(tooltip="The tooltip of the box")
+        ☑️ Tooltip: The tooltip of the box
 
-        >>> CheckBox(text="Another checkbox")
-        ☑️ Another checkbox | Tooltip: Another checkbox
+        >>> CheckBox()
+        ☑️
 
         """
 
         super().__init__()
 
-        self.text = text
-        self.tooltip = text if tooltip is None else tooltip
+        self.tooltip = tooltip
         self.boxsize = 10
 
         self.width = self.height = self.boxsize
@@ -136,7 +131,8 @@ class CheckBox(Flowable):
 
         """
 
-        return f"☑️ {self.text} | Tooltip: {self.tooltip}"
+        return "☑️{}".format(
+            f" Tooltip: {self.tooltip}" if self.tooltip is not None else "")
 
     def draw(self) -> None:
         """Draw the checkbox on the canvas"""
@@ -146,7 +142,6 @@ class CheckBox(Flowable):
         form = self.canv.acroForm
         form.checkbox(checked=False,
                       buttonStyle='check',
-                      name=self.text,
                       fillColor=white,
                       tooltip=self.tooltip,
                       relative=True,
