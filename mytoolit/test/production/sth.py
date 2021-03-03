@@ -56,17 +56,20 @@ class TestSTH(TestNode):
                                          "Okay", "Cylindrical thread defect",
                                          "Dent", "Oil spillage", "Shavings",
                                          "Milling errors"
-                                     ])
+                                     ],
+                                     lines=1)
 
         cls.report.add_checkbox_list(title="PCB",
-                                     boxes=["Optical inspection: no defects"])
+                                     boxes=["Optical inspection: no defects"],
+                                     lines=1)
 
         cls.report.add_checkbox_list(
             title="Before Resin Cast",
             boxes=[
                 "Battery test successful",
                 "Charge in charging station was successful"
-            ])
+            ],
+            lines=2)
 
         cls.report.add_checkbox_list(
             title="Final Checks",
@@ -77,7 +80,8 @@ class TestSTH(TestNode):
                 "Pocket is completely filled with resin",
                 "No oil spillage in vacuum chamber",
                 "Charge in charging station was successful"
-            ])
+            ],
+            lines=2)
 
     def _connect(self):
         """Create a connection to the STH"""
