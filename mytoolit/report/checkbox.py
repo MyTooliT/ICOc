@@ -125,7 +125,6 @@ class Checkbox(Flowable):
     def __repr__(self) -> str:
         """The string representation of the checkbox
 
-
         Returns
         -------
 
