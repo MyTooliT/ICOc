@@ -206,7 +206,7 @@ class TextField(Flowable):
             fillColor=white,
             tooltip=self.tooltip,
             relative=True,
-            borderWidth=0.1,
+            borderWidth=0.5,
             width=self.width,
             height=self.height,
             annotationFlags=''  # Do not print border
