@@ -209,7 +209,10 @@ class Report:
             self.story.append(tests)
 
         if len(self.checks) > 0:
-            self.__add_header("Manual Checks")
+            # Keep title and first checklist on same page
+            title = Paragraph("Manual Checks", style=self.styles['Heading2'])
+            title.keepWithNext = True
+            self.story.append(title)
 
             for checkbox_list in self.checks:
                 self.story.append(checkbox_list.to_flowable())
