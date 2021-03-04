@@ -143,6 +143,9 @@ STH:
   # The current version of the PCB design
   HARDWARE REVISION: 1.4.0
 
+  # The type of holder that contains the SHA
+  HOLDER TYPE: D 10x130 HSK-A63
+
   # This value specifies the current name of the STH unit
   NAME: CGvXAd6B
 

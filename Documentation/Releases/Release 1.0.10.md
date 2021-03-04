@@ -24,6 +24,7 @@
 ### STH Test
 
 - The report of the STH test now also contains information about the used acceleration sensor (±100 g or ± 50 g)
+- We added a [configuration item](../../mytoolit/config/config.yaml) for the holder type (`STH` → `HOLDER TYPE`)
 - Removed extra space before and after headers in PDF report
 - The PDF report now contains a list of tables with checkboxes for manual checks
 

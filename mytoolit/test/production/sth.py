@@ -39,11 +39,10 @@ class TestSTH(TestNode):
 
         super().setUpClass()
 
-        # The status attribute (`Epoxied` or `Bare PCB`) only applies to the
-        # STH
+        # Add data that only applies to the STH
+        cls.holder_type = settings.sth.holder_type
         cls.status = settings.sth.status
 
-        # Only the STH contains an acceleration sensor
         sensor_name = settings.sth.acceleration_sensor.sensor
         maximum_acceleration = settings.acceleration_sensor(
         ).acceleration.maximum
