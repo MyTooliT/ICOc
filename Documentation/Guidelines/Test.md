@@ -89,8 +89,8 @@ While you need to run the test for ICOc manually, the other tests and checks can
 flake8 &&
 mypy --ignore-missing-imports mytoolit &&
 nosetests --with-doctest --traverse-namespace mytoolit &&
-Test-STH -v &&
-Test-STU -k eeprom -k connect &&
+test-sth -v &&
+test-stu -k eeprom -k connect &&
 ii 'STH Test.pdf' &&
 ii 'STU Test.pdf'
 ```
