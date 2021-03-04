@@ -66,7 +66,7 @@ class TestNode(TestCase):
                          pdf=False),
         create_attribute("GTIN", "{cls.gtin}", pdf=False),
         create_attribute("Product Name", "{cls.product_name}", pdf=False),
-        create_attribute("Serial Number", "{cls.serial_number}", pdf=False),
+        create_attribute("Serial Number", "{cls.serial_number}", pdf=True),
         create_attribute("Batch Number", "{cls.batch_number}", pdf=False),
         create_attribute("Bluetooth Address", "{cls.bluetooth_mac}"),
         create_attribute("RSSI", "{cls.bluetooth_rssi} dBm"),
@@ -197,8 +197,12 @@ class TestNode(TestCase):
                   f"{attribute.value:>{max_length_value}}")
 
         # Add attributes to PDF
+        node = cls.__name__[-3:]
+        # We write the serial number for the STH but do not add it to the
+        # PDF report
         attributes_pdf = [
-            attribute for attribute in attributes if attribute.pdf
+            attribute for attribute in attributes if attribute.pdf and not (
+                node == "STU" and attribute.description == "Serial Number")
         ]
         for attribute in attributes_pdf:
             cls.report.add_attribute(attribute.description, attribute.value,
