@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import List, Tuple, Optional
 
+from reportlab.graphics.shapes import Drawing, Line, String
 from reportlab.lib.colors import white
 from reportlab.lib.units import cm
 from reportlab.platypus import Flowable, KeepTogether, Paragraph, Table
@@ -17,6 +18,40 @@ if __name__ == '__main__':
 from mytoolit.report.style import get_style_sheet
 
 # -- Classes ------------------------------------------------------------------
+
+
+class Signature:
+    """This class represents a form for adding a signature"""
+
+    def __init__(self) -> None:
+        """Create a new signature"""
+
+        self.signature = Drawing(400, 30)
+
+        style = get_style_sheet()['Normal']
+
+        indent = 180
+        line_start = indent + 50
+        line_end = line_start + 150
+        self.signature.add(
+            String(indent,
+                   0,
+                   'Signature:',
+                   fontName=style.fontName,
+                   fontSize=style.fontSize))
+        self.signature.add(Line(line_start, 0, line_end, 0))
+
+    def to_flowable(self) -> Drawing:
+        """Convert the signature list into a Flowable
+
+        Returns
+        -------
+
+        A Flowable representing this signature
+
+        """
+
+        return self.signature
 
 
 class CheckBoxList:

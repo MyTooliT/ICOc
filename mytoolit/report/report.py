@@ -5,7 +5,6 @@ from functools import partial
 from pathlib import Path
 from typing import List
 
-from reportlab.graphics.shapes import Drawing, Line, String
 from reportlab.lib.units import cm
 from reportlab.platypus import (Flowable, ListFlowable, Paragraph,
                                 SimpleDocTemplate, Spacer, Table)
@@ -18,7 +17,7 @@ if __name__ == '__main__':
 
 from mytoolit.report.pdf import PDFImage
 from mytoolit.report.style import get_style_sheet
-from mytoolit.report.forms import CheckBoxList
+from mytoolit.report.forms import CheckBoxList, Signature
 
 # -- Functions ----------------------------------------------------------------
 
@@ -221,20 +220,7 @@ class Report:
             for checkbox_list in self.checks:
                 self.story.append(checkbox_list.to_flowable())
 
-        # Add signature field
-        signature = Drawing(400, 30)
-        style = self.styles['Normal']
-        indent = 180
-        line_start = indent + 50
-        line_end = line_start + 150
-        signature.add(
-            String(indent,
-                   0,
-                   'Signature:',
-                   fontName=style.fontName,
-                   fontSize=style.fontSize))
-        signature.add(Line(line_start, 0, line_end, 0))
-        self.story.append(signature)
+        self.story.append(Signature().to_flowable())
 
         first_page = partial(_first_page, node=self.node)
         self.document.build(self.story, onFirstPage=first_page)
