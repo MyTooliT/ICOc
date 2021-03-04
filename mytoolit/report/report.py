@@ -17,7 +17,7 @@ if __name__ == '__main__':
 
 from mytoolit.report.pdf import PDFImage
 from mytoolit.report.style import get_style_sheet
-from mytoolit.report.forms import CheckBoxList, Signature
+from mytoolit.report.forms import CheckBoxList, KeepTogether, Signature
 
 # -- Functions ----------------------------------------------------------------
 
@@ -209,13 +209,23 @@ class Report:
             self.story.append(tests)
 
         if len(self.checks) > 0:
-            # Keep title and first checklist on same page
             title = Paragraph("Manual Checks", style=self.styles['Heading2'])
-            title.keepWithNext = True
-            self.story.append(title)
+            check_lists = [
+                checkbox_list.to_flowable() for checkbox_list in self.checks
+            ]
 
-            for checkbox_list in self.checks:
-                self.story.append(checkbox_list.to_flowable())
+            # We try to keep title and the first checklist on the same page
+            # Unfortunately, this currently means that all checklists will be
+            # added at the same page, even if there would be enough space for
+            # some of the checklists on the previous page. We tried to address
+            # this by setting the `keepWithNext` attribute in the `Paragraph`
+            # and `ParagraphStyle`. Unfortunately this does not change the flow
+            # at all, which means the header “Manual Checks” might be added
+            # at the end of a page without any following additional content on
+            # the same page :(.
+
+            self.story.append(KeepTogether([title, check_lists[0]]))
+            self.story.extend(check_lists[1:])
 
         self.story.append(Signature().to_flowable())
 
