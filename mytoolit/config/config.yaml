@@ -172,7 +172,7 @@ STH:
     SERIAL NUMBER: *serial
 
   # Serial number for the manufacturer (maximum of 32 byte UTF-8 encoded text)
-  SERIAL NUMBER: 0
+  SERIAL NUMBER: 1337-BBCB4242
 
   STATUS:
     # Describe the status of the current STH hardware. This scalar should either
