@@ -25,9 +25,9 @@ Before you start, please make sure that you installed the hardware and software 
 
 2. Make sure that the configuration value in the [config file][config] are set correctly. You probably need to change at least the following variables:
 
-   - **Name**: Please change the Bluetooth advertisement name (`STH` → `Name` ) to the name of the STH you want to test.
+   - **Name**: Please change the Bluetooth advertisement name (`STH` → `NAME` ) to the name of the STH you want to test.
 
-   - **Serial Number of Programming Board**: Please make sure, that the variable `STH` → `Programming Board` → `Serial Number` contains the serial number of the programming board connected to the STH. This serial number should be displayed on the bottom right of the LCD on the programming board.
+   - **Serial Number of Programming Board**: Please make sure, that the variable `STH` → `PROGRAMMING BOARD` → `SERIAL NUMBER` contains the serial number of the programming board connected to the STH. This serial number should be displayed on the bottom right of the LCD on the programming board.
 
 3. Now please open your favorite Terminal application and execute, the STH test using the command `test-th`. For more information about this command, please take a look at the section “Production Tests” in the [main readme file](../../ReadMe.md).
 
