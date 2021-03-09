@@ -561,6 +561,24 @@ class Network:
 
         return bool(response.data[2])
 
+    async def connect_mac_address_bluetooth(self,
+                                            mac_address: EUI,
+                                            node: Union[str, Node] = 'STU 1'
+                                            ) -> bool:
+        """Connect to a Bluetooth device using its MAC address"""
+
+        mac_address_bytes_reversed = list(reversed(mac_address.packed))
+
+        response = await self._request_bluetooth(
+            node=node,
+            subcommand=18,
+            data=mac_address_bytes_reversed,
+            description=f"connect to device “{mac_address}” from “{node}”")
+
+        success = response.data[2:] == mac_address_bytes_reversed
+
+        return success
+
     async def deactivate_bluetooth(self,
                                    node: Union[str, Node] = 'STU 1') -> None:
         """Deactivate Bluetooth on a node
