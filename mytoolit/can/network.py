@@ -298,6 +298,9 @@ class Network:
         description:
             A description of the request used in error messages
 
+        data:
+            An optional list of bytes that should be included in the request
+
         Returns
         -------
 
