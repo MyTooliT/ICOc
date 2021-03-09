@@ -25,16 +25,6 @@ async def create_connection_network():
                 'STU 1')
             await sleep(0.1)
 
-        print(f"Available devices: {available_devices}")
-
-        device_number = 0
-        print(
-            f"Get name of Bluetooth device with device number: {device_number}"
-        )
-        sth_name = await network.get_device_name_bluetooth(
-            'STU 1', device_number=device_number)
-        print(f"Name of first Bluetooth device: {sth_name}")
-
         mac_address = EUI('08:6b:d7:01:de:81')
         print(f"Connect to device with MAC address {mac_address}")
         await network.connect_mac_address_bluetooth(mac_address)
