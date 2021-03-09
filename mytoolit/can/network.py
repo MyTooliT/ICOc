@@ -481,12 +481,13 @@ class Network:
 
         """
 
+        description = f"name of device “{device_number}” from “{node}”"
+
         answer = await self._request_bluetooth(
             node=node,
             subcommand=5,
             device_number=device_number,
-            description="get first part of device name of device "
-            f"“{device_number}” from “{node}”")
+            description=f"get first part of {description}")
 
         first_part = bytearray_to_text(answer.data[2:])
 
@@ -494,8 +495,7 @@ class Network:
             node=node,
             subcommand=6,
             device_number=device_number,
-            description="get second part of device name of device "
-            f"“{device_number}” from “{node}”")
+            description=f"get second part of {description}")
 
         second_part = bytearray_to_text(answer.data[2:])
 
