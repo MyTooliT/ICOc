@@ -281,7 +281,7 @@ class Network:
             description: str,
             device_number: Optional[int] = None,
             data: Optional[List[int]] = None,
-            response_data: Optional[List[int]] = None) -> CANMessage:
+            response_data: Optional[List[Optional[int]]] = None) -> CANMessage:
         """Send a request for a certain Bluetooth command
 
         Parameters
@@ -323,8 +323,8 @@ class Network:
 
         # The bluetooth subcommand and device number should be the same in the
         # response message
-        expected_data = list(message.data[:2])
-        if response_data:
+        expected_data: List[Optional[int]] = list(message.data[:2])
+        if response_data is not None:
             expected_data.extend(response_data)
 
         return await self._request(message,
@@ -575,21 +575,17 @@ class Network:
 
     async def connect_mac_address_bluetooth(self,
                                             mac_address: EUI,
-                                            node: Union[str, Node] = 'STU 1'
-                                            ) -> bool:
+                                            node: Union[str, Node] = 'STU 1'):
         """Connect to a Bluetooth device using its MAC address"""
 
         mac_address_bytes_reversed = list(reversed(mac_address.packed))
 
-        response = await self._request_bluetooth(
+        await self._request_bluetooth(
             node=node,
             subcommand=18,
             data=mac_address_bytes_reversed,
+            response_data=mac_address_bytes_reversed,
             description=f"connect to device “{mac_address}” from “{node}”")
-
-        success = response.data[2:] == mac_address_bytes_reversed
-
-        return success
 
     async def deactivate_bluetooth(self,
                                    node: Union[str, Node] = 'STU 1') -> None:
