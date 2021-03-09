@@ -428,7 +428,7 @@ class Network:
         answer = await self._request_bluetooth(
             node=node,
             subcommand=2,
-            description=f"activate Bluetooth of node “{node}”")
+            description=f"get available Bluetooth devices of node “{node}”")
 
         available_devices = int(bytearray_to_text(answer.data[2:]))
 
