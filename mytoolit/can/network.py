@@ -314,10 +314,11 @@ class Network:
                           request=True,
                           data=[subcommand, device_number] + data)
 
-        # The bluetooth subcommand should be the same in the response message
+        # The bluetooth subcommand and device number should be the same in the
+        # response message
         return await self._request(message,
                                    description=description,
-                                   expected_data=list(message.data[:1]))
+                                   expected_data=list(message.data[:2]))
 
     async def reset_node(self, node: Union[str, Node]) -> None:
         """Reset the specified node
