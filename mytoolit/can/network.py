@@ -171,6 +171,9 @@ class Network:
         }
         self.bus = Bus(**bus_config)
 
+        # We create the notifier when we need it for the first time, since
+        # there might not be an active loop when you create the network object
+        self.notifier = None
         self.sender = Node(sender)
 
     def __enter__(self) -> Network:
@@ -204,6 +207,8 @@ class Network:
 
         """
 
+        if self.notifier is not None:
+            self.notifier.stop()
         self.shutdown()
 
     async def _request(
@@ -244,12 +249,15 @@ class Network:
 
         """
 
+        # If there is no notifier yet, create it
+        if self.notifier is None:
+            self.notifier = Notifier(self.bus,
+                                     listeners=[],
+                                     loop=get_running_loop())
+        assert self.notifier is not None
+
         listener = ResponseListener(message, expected_data)
-
-        notifier = Notifier(self.bus,
-                            listeners=[listener],
-                            loop=get_running_loop())
-
+        self.notifier.add_listener(listener)
         self.bus.send(message.to_python_can())
 
         try:
@@ -258,7 +266,7 @@ class Network:
         except TimeoutError:
             raise NoResponseError(f"Unable to {description}")
         finally:
-            notifier.stop()
+            self.notifier.remove_listener(listener)
 
         if response.is_error:
             raise ErrorResponseError(
