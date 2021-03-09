@@ -536,13 +536,12 @@ class Network:
         >>> async def connect_bluetooth_device_number():
         ...     with Network() as network:
         ...         await network.activate_bluetooth('STU 1')
-        ...         # Wait for device scan in node STU 1 to take place
-        ...         await sleep(1)
         ...         # We assume that at least one STH is available
-        ...         status = await network.connect_device_number_bluetooth(
+        ...         status = False
+        ...         while not status:
+        ...             status = await network.connect_device_number_bluetooth(
         ...                         'STU 1', device_number=0)
-        ...         # Wait for device connection
-        ...         await sleep(0.1)
+        ...
         ...         # Deactivate Bluetooth connection
         ...         await network.deactivate_bluetooth('STU 1')
         ...         # Wait until device is disconnected
