@@ -280,7 +280,8 @@ class Network:
             subcommand: int,
             description: str,
             device_number: Optional[int] = None,
-            data: Optional[List[int]] = None) -> CANMessage:
+            data: Optional[List[int]] = None,
+            response_data: Optional[List[int]] = None) -> CANMessage:
         """Send a request for a certain Bluetooth command
 
         Parameters
@@ -301,6 +302,9 @@ class Network:
         data:
             An optional list of bytes that should be included in the request
 
+        response_data:
+            An optional list of expected data bytes in the response message
+
         Returns
         -------
 
@@ -319,9 +323,13 @@ class Network:
 
         # The bluetooth subcommand and device number should be the same in the
         # response message
+        expected_data = list(message.data[:2])
+        if response_data:
+            expected_data.extend(response_data)
+
         return await self._request(message,
                                    description=description,
-                                   expected_data=list(message.data[:2]))
+                                   expected_data=expected_data)
 
     async def reset_node(self, node: Union[str, Node]) -> None:
         """Reset the specified node
