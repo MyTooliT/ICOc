@@ -571,8 +571,20 @@ class Network:
 
     async def connect_mac_address_bluetooth(self,
                                             mac_address: EUI,
-                                            node: Union[str, Node] = 'STU 1'):
-        """Connect to a Bluetooth device using its MAC address"""
+                                            node: Union[str, Node] = 'STU 1'
+                                            ) -> None:
+        """Connect to a Bluetooth device using its MAC address
+
+        Parameters
+        ----------
+
+        mac_address:
+            The MAC address of the Bluetooth device
+
+        node:
+            The node which should connect to the Bluetooth device
+
+        """
 
         mac_address_bytes_reversed = list(reversed(mac_address.packed))
 
