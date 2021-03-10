@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from asyncio import (CancelledError, get_running_loop, TimeoutError, Queue,
-                     wait_for)
+from asyncio import (CancelledError, get_running_loop, sleep, TimeoutError,
+                     Queue, wait_for)
 from sys import platform
 from types import TracebackType
 from typing import List, NamedTuple, Optional, Type, Union
@@ -752,6 +752,22 @@ class Network:
             description=f"get MAC address of “{device_number}” from “{node}”")
 
         return EUI(":".join(f"{byte:02x}" for byte in response.data[:1:-1]))
+
+    async def connect_sth(self, mac_address: EUI):
+        """Connect to an STH using its MAC address"""
+
+        await self.activate_bluetooth('STU 1')
+
+        available_devices = 0
+        while available_devices <= 0:
+            available_devices = await self.get_available_devices_bluetooth(
+                'STU 1')
+            await sleep(0.1)
+
+        await self.connect_mac_address_bluetooth(mac_address)
+
+        while not await self.check_connection_device_bluetooth('STU 1'):
+            await sleep(0.1)
 
     def shutdown(self) -> None:
         """Deallocate all resources for this network connection"""
