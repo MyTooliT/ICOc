@@ -396,7 +396,8 @@ class Network:
         await self._request_bluetooth(
             node=node,
             subcommand=1,
-            description=f"activate Bluetooth of node “{node}”")
+            description=f"activate Bluetooth of node “{node}”",
+            response_data=6 * [0])
 
     async def get_available_devices_bluetooth(self,
                                               node: Union[str, Node] = 'STU 1'
@@ -614,6 +615,7 @@ class Network:
         await self._request_bluetooth(
             node=node,
             subcommand=9,
+            response_data=6 * [0],
             description=f"deactivate Bluetooth on “{node}”")
 
     async def check_connection_device_bluetooth(self,
@@ -677,6 +679,7 @@ class Network:
         response = await self._request_bluetooth(
             node=node,
             subcommand=8,
+            response_data=[None] + 5 * [0],
             description=f"check if “{node}” is connected to a Bluetooth device"
         )
 
