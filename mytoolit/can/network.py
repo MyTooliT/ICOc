@@ -204,8 +204,6 @@ class Network:
 
         """
 
-        if self.notifier is not None:
-            self.notifier.stop()
         self.shutdown()
 
     async def _request(
@@ -745,6 +743,9 @@ class Network:
 
     def shutdown(self) -> None:
         """Deallocate all resources for this network connection"""
+
+        if self.notifier is not None:
+            self.notifier.stop()
 
         self.bus.shutdown()
 
