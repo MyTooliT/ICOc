@@ -48,9 +48,9 @@ class ResponseListener(Listener):
     """A listener that reacts to messages containing a certain id"""
 
     def __init__(
-            self, message: Message,
-            expected_data: Union[bytearray, List[Union[int, None]],
-                                 None]) -> None:
+            self, message: Message, expected_data: Union[bytearray,
+                                                         List[Optional[int]],
+                                                         None]) -> None:
         """Initialize the listener using the given identifier
 
         Parameters
