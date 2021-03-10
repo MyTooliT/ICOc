@@ -6,7 +6,7 @@ from asyncio import (CancelledError, get_running_loop, sleep, TimeoutError,
                      Queue, wait_for)
 from sys import platform
 from types import TracebackType
-from typing import List, NamedTuple, Optional, Type, Union
+from typing import List, NamedTuple, Optional, Sequence, Type, Union
 
 from can import Bus, Listener, Message as CANMessage, Notifier
 from netaddr import EUI
@@ -48,9 +48,9 @@ class ResponseListener(Listener):
     """A listener that reacts to messages containing a certain id"""
 
     def __init__(
-            self, message: Message, expected_data: Union[bytearray,
-                                                         List[Optional[int]],
-                                                         None]) -> None:
+        self, message: Message, expected_data: Union[bytearray,
+                                                     Sequence[Optional[int]],
+                                                     None]) -> None:
         """Initialize the listener using the given identifier
 
         Parameters
