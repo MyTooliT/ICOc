@@ -212,7 +212,7 @@ class Network:
         self,
         message: Message,
         description: str,
-        expected_data: Union[bytearray, List[Union[int, None]], None] = None
+        response_data: Union[bytearray, List[Union[int, None]], None] = None
     ) -> CANMessage:
         """Send a request message and wait for the response
 
@@ -225,8 +225,8 @@ class Network:
         description:
             A description of the request used in error messages
 
-        expected_data:
-           Specifies the expected acknowledgment data
+        response_data:
+           Specifies the expected data in the acknowledgment message
 
 
         Returns
@@ -253,7 +253,7 @@ class Network:
                                      loop=get_running_loop())
         assert self.notifier is not None
 
-        listener = ResponseListener(message, expected_data)
+        listener = ResponseListener(message, response_data)
         self.notifier.add_listener(listener)
         self.bus.send(message.to_python_can())
 
@@ -326,7 +326,7 @@ class Network:
 
         return await self._request(message,
                                    description=description,
-                                   expected_data=expected_data)
+                                   response_data=expected_data)
 
     async def reset_node(self, node: Union[str, Node]) -> None:
         """Reset the specified node
@@ -368,7 +368,7 @@ class Network:
                           request=True)
         await self._request(message,
                             description=f"reset node “{node}”",
-                            expected_data=message.data)
+                            response_data=message.data)
 
     async def activate_bluetooth(self, node: Union[str, Node] = 'STU 1'):
         """Activate Bluetooth on the specified node
