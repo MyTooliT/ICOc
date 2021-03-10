@@ -15,22 +15,9 @@ async def create_connection_network():
               "for STU 1 reset")
         await sleep(wait_time)
 
-        print("Activate Bluetooth of STU 1")
-        await network.activate_bluetooth('STU 1')
-
-        available_devices = 0
-        print("Get available Bluetooth devices for STU 1")
-        while available_devices <= 0:
-            available_devices = await network.get_available_devices_bluetooth(
-                'STU 1')
-            await sleep(0.1)
-
         mac_address = EUI('08:6b:d7:01:de:81')
         print(f"Connect to device with MAC address {mac_address}")
-        await network.connect_mac_address_bluetooth(mac_address)
-
-        while not await network.check_connection_device_bluetooth():
-            await sleep(0.1)
+        await network.connect_sth(mac_address)
 
         print("Connection to Bluetooth device established")
 
