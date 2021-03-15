@@ -700,7 +700,22 @@ class Network:
     async def get_mac_address_bluetooth(self,
                                         node: Union[str, Node] = 'STH 1',
                                         device_number: int = 0xff) -> EUI:
-        """Retrieve the Bluetooth MAC address of a connected device
+        """Retrieve the Bluetooth MAC address of a device
+
+        You can use this method to retrieve the address of both
+
+        1. disconnected and
+        2. connected
+
+        devices.
+
+        1. For disconnected devices (STHs) you will usually use the STU (e.g.
+           `STU 1`) and the device number at the STU (in the range `0` up to
+           the number of devices - 1) to retrieve the MAC address.
+
+        2. For connected devices you will use the device name and the special
+           “self addressing” device number (`0xff`) to ask a device about its
+           own device number.
 
         Parameters
         ----------
