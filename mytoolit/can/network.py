@@ -755,7 +755,7 @@ class Network:
 
         return EUI(":".join(f"{byte:02x}" for byte in response.data[:1:-1]))
 
-    async def connect_sth(self, mac_address: EUI):
+    async def connect_sth(self, mac_address: EUI) -> None:
         """Connect to an STH using its MAC address
 
         Parameters
