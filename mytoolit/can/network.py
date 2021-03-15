@@ -756,7 +756,15 @@ class Network:
         return EUI(":".join(f"{byte:02x}" for byte in response.data[:1:-1]))
 
     async def connect_sth(self, mac_address: EUI):
-        """Connect to an STH using its MAC address"""
+        """Connect to an STH using its MAC address
+
+        Parameters
+        ----------
+
+        mac_address:
+            The MAC address of the node we want to connect to
+
+        """
 
         await self.activate_bluetooth('STU 1')
 
