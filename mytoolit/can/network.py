@@ -448,9 +448,20 @@ class Network:
                                         device_number: int = 0) -> str:
         """Retrieve the name of a Bluetooth device
 
-        This also works when the given node is not connected to the Bluetooth
-        device. Before you use this method make sure you activated the
-        Bluetooth connection on the given node.
+        You can use this method to name of both
+
+        1. disconnected and
+        2. connected
+
+        devices.
+
+        1. For disconnected devices (STHs) you will usually use the STU (e.g.
+           `STU 1`) and the device number at the STU (in the range `0` up to
+           the number of devices - 1) to retrieve the name.
+
+        2. For connected devices you will use the device name and the special
+           “self addressing” device number (`0xff`) to ask a device about its
+           own name.
 
         Parameters
         ----------
