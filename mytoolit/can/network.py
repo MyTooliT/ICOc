@@ -44,6 +44,14 @@ class Response(NamedTuple):
     is_error: bool  # States if the response was an error or a normal response
 
 
+class STHDeviceInfo(NamedTuple):
+    """Used to store information about a (disconnected) STH"""
+
+    name: str  # The (Bluetooth advertisement) name of the STH
+    mac_address: EUI  # The (Bluetooth) MAC address of the STH
+    rssi: int  # The RSSI of the STH
+
+
 class ResponseListener(Listener):
     """A listener that reacts to messages containing a certain id"""
 
@@ -662,6 +670,73 @@ class Network:
         return int.from_bytes(response.data[2:3],
                               byteorder='little',
                               signed=True)
+
+    async def get_sths(self,
+                       node: Union[str,
+                                   Node] = 'STU 1') -> List[STHDeviceInfo]:
+        """Retrieve a list of available STHs
+
+        Parameters
+        ----------
+
+        node:
+            The node which should retrieve the list of available Bluetooth
+            devices
+
+        Returns
+        -------
+
+        A list of available devices including name, MAC address and RSSI for
+        each device
+
+        Example
+        -------
+
+        >>> from asyncio import run, sleep
+        >>> from netaddr import EUI
+
+        Retrieve the list of Bluetooth devices at STU 1
+
+        >>> async def get_sths():
+        ...     with Network() as network:
+        ...
+        ...         # We assume that at least one STH is available
+        ...         devices = []
+        ...         while not devices:
+        ...             devices = await network.get_sths()
+        ...             await sleep(0.1)
+        ...
+        ...         return devices
+        >>> sths = run(get_sths())
+        >>> len(sths) >= 1
+        True
+        >>> sth = sths[0]
+
+        >>> isinstance(sth.name, str)
+        True
+        >>> 0 <= len(sth.name) <= 8
+        True
+
+        >>> -70 < sth.rssi < 0
+        True
+
+        >>> isinstance(sth.mac_address, EUI)
+        True
+
+        """
+
+        await self.activate_bluetooth(node)
+        available_devices = await self.get_available_devices_bluetooth(node)
+        devices = []
+        for device in range(available_devices):
+            mac_address = await self.get_mac_address_bluetooth(node, device)
+            rssi = await self.get_rssi_bluetooth(node, device)
+            name = await self.get_name_bluetooth(node, device)
+
+            devices.append(
+                STHDeviceInfo(mac_address=mac_address, name=name, rssi=rssi))
+
+        return devices
 
     async def connect_device_number_bluetooth(self,
                                               node: Union[str, Node] = 'STU 1',
