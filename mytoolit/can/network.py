@@ -433,11 +433,16 @@ class Network:
         >>> async def get_number_bluetooth_devices():
         ...     with Network() as network:
         ...         await network.activate_bluetooth('STU 1')
-        ...         # Wait for device scan in node STU 1 to take place
-        ...         await sleep(1)
-        ...         return await network.get_available_devices_bluetooth(
-        ...                     'STU 1')
-        >>> run(get_number_bluetooth_devices())
+        ...
+        ...         # We assume at least one STH is available
+        ...         number_sths = 0
+        ...         while number_sths <= 0:
+        ...             number_sths = await (
+        ...                 network.get_available_devices_bluetooth('STU 1'))
+        ...             await sleep(0.1)
+        ...
+        ...         return number_sths
+        >>> run(get_number_bluetooth_devices()) >= 0
         1
 
         """
