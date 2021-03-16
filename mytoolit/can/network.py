@@ -892,7 +892,6 @@ class Network:
         >>> async def check_bluetooth_connection():
         ...     with Network() as network:
         ...         await network.activate_bluetooth('STU 1')
-        ...         # Wait for device scan in node STU 1 to take place
         ...         await sleep(0.1)
         ...         connected_start = (await
         ...             network.check_connection_device_bluetooth('STU 1'))
