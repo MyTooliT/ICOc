@@ -1,7 +1,5 @@
 from asyncio import run, sleep
 
-from netaddr import EUI
-
 from mytoolit.can import Network
 
 
@@ -15,14 +13,15 @@ async def create_connection_network():
               "for STU 1 reset")
         await sleep(wait_time)
 
-        mac_address = EUI('08:6b:d7:01:de:81')
-        print(f"Connect to device with MAC address {mac_address}")
-        await network.connect_sth(mac_address)
+        print("Scan for available STHs")
+        devices = []
+        while not devices:
+            devices = await network.get_sths()
+            await sleep(0.1)
+        device = devices[0]
 
-        print("Connection to Bluetooth device established")
-
-        mac_address = await network.get_mac_address_bluetooth()
-        print(f"MAC address of STH 1: {mac_address}")
+        print(f"Connect to device “{device.name}”")
+        await network.connect_sth(device.mac_address)
 
         print("Deactivate Bluetooth of STU 1")
         await network.deactivate_bluetooth()
