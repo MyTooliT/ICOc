@@ -471,7 +471,7 @@ class Network:
 
         device_number:
             The number of the Bluetooth device (0 up to the number of
-            available devices - 1; 0x00 for self addressing).
+            available devices - 1; 0xff for self addressing).
 
         Returns
         -------
