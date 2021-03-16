@@ -770,6 +770,75 @@ class Network:
 
         return EUI(":".join(f"{byte:02x}" for byte in response.data[:1:-1]))
 
+    async def get_rssi_bluetooth(self,
+                                 node: Union[str, Node] = 'STH 1',
+                                 device_number: int = 0xff):
+        """Retrieve the RSSI (Received Signal Strength Indication) of a device
+
+        You can use this method to retrieve the RSSI of both
+
+        1. disconnected and
+        2. connected
+
+        devices.
+
+        1. For disconnected devices (STHs) you will usually use the STU (e.g.
+           `STU 1`) and the device number at the STU (in the range `0` up to
+           the number of devices - 1) to retrieve the RSSI.
+
+        2. For connected devices you will use the device name and the special
+           “self addressing” device number (`0xff`) to ask a device about its
+           own RSSI.
+
+        Parameters
+        ----------
+
+        node:
+            The node which should retrieve the RSSI
+
+        device_number:
+            The number of the Bluetooth device (0 up to the number of
+            available devices - 1; 0xff for self addressing).
+
+        Returns
+        -------
+
+        The RSSI of the device specified via node and device number
+
+        Example
+        -------
+
+        >>> from asyncio import run, sleep
+
+        Retrieve the RSSI of a disconnected STH
+
+        >>> async def get_bluetooth_mac():
+        ...     with Network() as network:
+        ...         await network.activate_bluetooth('STU 1')
+        ...
+        ...         # We assume that at least one STH is available
+        ...         # Get the RSSI of device “0”
+        ...         rssi = await network.get_rssi_bluetooth('STU 1', 0)
+        ...
+        ...         # Deactivate Bluetooth connection
+        ...         await network.deactivate_bluetooth('STU 1')
+        ...
+        ...         return rssi
+        >>> rssi = run(get_bluetooth_mac())
+        >>> -70 < rssi < 0
+        True
+
+        """
+
+        response = await self._request_bluetooth(
+            node=node,
+            subcommand=12,
+            description=f"get RSSI of “{device_number}” from “{node}”")
+
+        return int.from_bytes(response.data[2:3],
+                              byteorder='little',
+                              signed=True)
+
     async def connect_sth(self, mac_address: EUI) -> None:
         """Connect to an STH using its MAC address
 
