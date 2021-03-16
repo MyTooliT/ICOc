@@ -48,6 +48,7 @@ class STHDeviceInfo(NamedTuple):
     """Used to store information about a (disconnected) STH"""
 
     name: str  # The (Bluetooth advertisement) name of the STH
+    device_number: int  # The device number of the STH
     mac_address: EUI  # The (Bluetooth) MAC address of the STH
     rssi: int  # The RSSI of the STH
 
@@ -691,8 +692,14 @@ class Network:
         Returns
         -------
 
-        A list of available devices including name, MAC address and RSSI for
-        each device
+        A list of available devices including:
+
+        - device number,
+        - name,
+        - MAC address and
+        - RSSI
+
+        for each device
 
         Example
         -------
@@ -717,6 +724,9 @@ class Network:
         True
         >>> sth = sths[0]
 
+        >>> sth.device_number
+        0
+
         >>> isinstance(sth.name, str)
         True
         >>> 0 <= len(sth.name) <= 8
@@ -739,7 +749,10 @@ class Network:
             name = await self.get_name_bluetooth(node, device)
 
             devices.append(
-                STHDeviceInfo(mac_address=mac_address, name=name, rssi=rssi))
+                STHDeviceInfo(device_number=device,
+                              mac_address=mac_address,
+                              name=name,
+                              rssi=rssi))
 
         return devices
 
