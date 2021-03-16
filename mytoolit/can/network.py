@@ -636,7 +636,7 @@ class Network:
 
         Retrieve the RSSI of a disconnected STH
 
-        >>> async def get_bluetooth_mac():
+        >>> async def get_bluetooth_rssi():
         ...     with Network() as network:
         ...         await network.activate_bluetooth('STU 1')
         ...
@@ -648,7 +648,7 @@ class Network:
         ...         await network.deactivate_bluetooth('STU 1')
         ...
         ...         return rssi
-        >>> rssi = run(get_bluetooth_mac())
+        >>> rssi = run(get_bluetooth_rssi())
         >>> -70 < rssi < 0
         True
 
