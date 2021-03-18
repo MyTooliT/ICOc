@@ -174,8 +174,11 @@ STH:
     # source
     SERIAL NUMBER: *serial
 
-  # Serial number for the manufacturer (maximum of 32 byte UTF-8 encoded text)
-  SERIAL NUMBER: 1337-BBCB4242
+  # Serial number for the manufacturer (maximum of 8 alphanumerical characters);
+  # The STH test will rename the STH (from `STH` → `NAME`) to this value, if
+  # you set the status (`STH` → `STATUS`) to `Epoxied`. Otherwise the test
+  # will use the (Base64 encoded) MAC address as new name.
+  SERIAL NUMBER: Serial
 
   STATUS:
     # Describe the status of the current STH hardware. This scalar should either
