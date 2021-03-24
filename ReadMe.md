@@ -72,6 +72,10 @@ pip install --user -e .
 
 Please note, that in this case you might have to add Python’s user script directory (e.g `%AppData%\Python\Python39\Scripts`) to the `PATH` environment variable.
 
+#### PCAN Driver
+
+To communicate with the STU you need to install the driver for the PCAN adapter. You can find the download link for Windows [here](https://www.peak-system.com/quick/DrvSetup). Please make sure that you include the “PCAN-Basic API” when you install the driver.
+
 #### Simplicity Studio
 
 For the tests that require a firmware flash, such as the [production tests](mytoolit/test/production) you need to [install Simplicity Studio](https://www.silabs.com/products/development-tools/software/simplicity-studio). Please also make sure to install the Simplicity Commander tool inside Simplicity Studio.
