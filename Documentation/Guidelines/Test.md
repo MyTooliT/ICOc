@@ -91,8 +91,8 @@ mypy --ignore-missing-imports mytoolit &&
 nosetests --with-doctest --traverse-namespace mytoolit &&
 test-sth -v &&
 test-stu -k eeprom -k connect &&
-ii 'STH Test.pdf' &&
-ii 'STU Test.pdf'
+Invoke-Item 'STH Test.pdf' &&
+Invoke-Item 'STU Test.pdf'
 ```
 
 Afterwards make sure there were no (unexpected) errors in the output of the STH and STU test.
