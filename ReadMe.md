@@ -76,7 +76,7 @@ Please note, that in this case you might have to add Python’s user script dire
 
 For the tests that require a firmware flash, such as the [production tests](mytoolit/test/production) you need to [install Simplicity Studio](https://www.silabs.com/products/development-tools/software/simplicity-studio). Please also make sure to install the Simplicity Commander tool inside Simplicity Studio.
 
-### Control and Data Acquirement
+## Control and Data Acquirement
 
 #### Start the Program
 
