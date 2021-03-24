@@ -40,7 +40,7 @@ When you install the package downloaded above, please do not forget to enable th
 
 Please clone [this repository](https://github.com/MyTooliT/ICOc) to a directory of your choice. You can either use the [command line tool `git`](https://git-scm.com/downloads):
 
-```
+```sh
 git clone https://github.com/MyTooliT/ICOc.git
 ```
 
