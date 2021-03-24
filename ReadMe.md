@@ -97,7 +97,7 @@ shows that currently one STH was detected. The Bluetooth MAC address of the STH 
 
 #### Read Acceleration Data
 
-To read data from an STH (or SHA), start the ICOc script, and connect to an STH. To do that, enter the number of the detected STH and use the return key <kbd>⮐</kbd> to confirm your selection. The text based interface will now show you something like this:
+To read data from an STH (or SHA), start the ICOc script, and connect to an STH. To do that, enter the number in front of an STH entry (e.g. `1` for the first detected STH) and use the return key <kbd>⮐</kbd> to confirm your selection. The text based interface will now show you something like this:
 
 ```
 08:6b:d7:01:de:81(Tanja)
