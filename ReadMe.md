@@ -23,8 +23,13 @@ In order to setup a test bench you need at least:
 - a [PCAN adapter](https://www.peak-system.com) including:
   - power injector, and
   - power supply unit (for the power injector),
-- a [Stationary Transceiver Unit](https://www.mytoolit.com/ICOtronic/).
-- a [Sensory Holder Assembly or Sensory Tool Holder](https://www.mytoolit.com/ICOtronic/),
+- a [Stationary Transceiver Unit](https://www.mytoolit.com/ICOtronic/)
+
+   <img src="https://cdn.bitrix24.de/b5488381/landing/5fa/5fa2ce04fd1326e07bf39866e44f4e61/IMG_6338_2x.jpg" alt="STU" width="400">
+
+- a [Sensory Holder Assembly or Sensory Tool Holder](https://www.mytoolit.com/ICOtronic/)
+
+   <img src="https://cdn.bitrix24.de/b5488381/landing/cbe/cbe07df56cea688299533819c1e8a8d3/IMG_6350_2x_2x.jpg" alt="STH" width="400">
 
 #### Setup
 
