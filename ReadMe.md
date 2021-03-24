@@ -83,7 +83,7 @@ To communicate with the STU you need to install the driver for the PCAN adapter.
 
 #### Simplicity Studio
 
-For the tests that require a firmware flash, such as the [production tests](mytoolit/test/production) you need to [install Simplicity Studio](https://www.silabs.com/products/development-tools/software/simplicity-studio). Please also make sure to install the Simplicity Commander tool inside Simplicity Studio.
+For the tests that require a firmware flash you need to [install Simplicity Studio](https://www.silabs.com/products/development-tools/software/simplicity-studio). Please also make sure to install the Simplicity Commander tool inside Simplicity Studio.
 
 ## Control and Data Acquirement
 
