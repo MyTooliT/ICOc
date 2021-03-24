@@ -218,11 +218,11 @@ You can also run specific tests using pattern matching. To do that use the comma
 test-sth -k flash -k connection
 ```
 
-, which executes all tests that contain the text `flash` or `connection`.
+which executes all tests that contain the text `flash` or `connection`.
 
 ### STU
 
-The explanation for the STH test apply also for the STU tests. Please just replace `sth` in the previous section with the term `stu`. For example, to execute all tests for the STU you can use the following command:
+The explanation for the STH test apply for the STU tests as well. Please just replace `sth` in the previous section with the term `stu`. For example, to execute all tests for the STU you can use the following command:
 
 ```sh
 test-stu
