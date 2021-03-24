@@ -46,7 +46,7 @@ git clone https://github.com/MyTooliT/ICOc.git
 
 or one of the many available [graphical user interfaces for Git](https://git-scm.com/downloads/guis) to do that.
 
-The repository contains everything necessary to connect to an STU via CAN and pull data from the attached STHs.
+The repository contains everything necessary to communicate with an STU over CAN to retrieve data from an STH.
 
 Before you use the software you need to install it (in developer mode). To do that please run the following command in the root of the repository:
 
