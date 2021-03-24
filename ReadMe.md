@@ -20,9 +20,19 @@ For more information about other required software components, please read the s
 
 In order to setup a test bench you need at least:
 
-- a [PCAN adapter](https://www.peak-system.com),
-- a [Sensory Holder Assembly or Sensory Tool Holder](https://www.mytoolit.com/ICOtronic/),
+- a [PCAN adapter](https://www.peak-system.com) including:
+  - power injector, and
+  - power supply unit (for the power injector),
 - a [Stationary Transceiver Unit](https://www.mytoolit.com/ICOtronic/).
+- a [Sensory Holder Assembly or Sensory Tool Holder](https://www.mytoolit.com/ICOtronic/),
+
+#### Setup
+
+1. Connect the power injector
+   1. to the PCAN adapter, and
+   2. the power supply unit
+2. Connect the USB connector of the PCAN adapter to your computer
+3. Make sure that your SHA/STH is connected to a power source. For an STH this usually means that you should check that the battery is (fully) charged.
 
 <a name="section:software"></a>
 
