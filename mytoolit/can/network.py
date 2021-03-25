@@ -5,6 +5,7 @@ from __future__ import annotations
 from asyncio import (CancelledError, get_running_loop, sleep, TimeoutError,
                      Queue, wait_for)
 from sys import platform
+from time import time
 from types import TracebackType
 from typing import List, NamedTuple, Optional, Sequence, Type, Union
 
@@ -955,15 +956,30 @@ class Network:
 
         await self.activate_bluetooth('STU 1')
 
-        available_devices = 0
-        while available_devices <= 0:
-            available_devices = await self.get_available_devices_bluetooth(
-                'STU 1')
-            await sleep(0.1)
+        # We wait a maximum of 5 seconds for the connection to the STH to take
+        # place
+        timeout_in_s = 5
+        end_time = time() + timeout_in_s
+
+        while True:
+            if time() > end_time:
+                raise TimeoutError(
+                    "Unable to find STH with MAC address "
+                    f"“{mac_address}” in {timeout_in_s} seconds")
+
+            sths = await self.get_sths()
+            if mac_address in (sth.mac_address for sth in sths):
+                break
+
+            sleep(0.1)
 
         await self.connect_mac_address_bluetooth(mac_address)
-
         while not await self.check_connection_device_bluetooth('STU 1'):
+            if time() > end_time:
+                raise TimeoutError(
+                    "Unable to connect to STH with MAC address "
+                    f"“{mac_address}” in {timeout_in_s} seconds")
+
             await sleep(0.1)
 
     def shutdown(self) -> None:
