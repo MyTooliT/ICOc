@@ -261,23 +261,28 @@ class Network:
                                      loop=get_running_loop())
         assert self.notifier is not None
 
-        listener = ResponseListener(message, response_data)
-        self.notifier.add_listener(listener)
-        self.bus.send(message.to_python_can())
+        for attempt in range(5):
 
-        try:
-            response = await wait_for(listener.on_message(), timeout=1)
-            assert response is not None
-        except TimeoutError:
-            raise NoResponseError(f"Unable to {description}")
-        finally:
-            self.notifier.remove_listener(listener)
+            listener = ResponseListener(message, response_data)
+            self.notifier.add_listener(listener)
+            self.bus.send(message.to_python_can())
 
-        if response.is_error:
-            raise ErrorResponseError(
-                f"Received erroneous response for request to {description}")
+            try:
+                response = await wait_for(listener.on_message(), timeout=1)
+                assert response is not None
+            except TimeoutError:
+                continue
+            finally:
+                self.notifier.remove_listener(listener)
 
-        return response.message
+            if response.is_error:
+                raise ErrorResponseError(
+                    f"Received erroneous response for request to {description}"
+                )
+
+            return response.message
+
+        raise NoResponseError(f"Unable to {description}")
 
     async def _request_bluetooth(
             self,
