@@ -948,7 +948,7 @@ class Network:
 
         return bool(response.data[2])
 
-    async def connect_sth(self, identifier: [int, str, EUI]) -> None:
+    async def connect_sth(self, identifier: Union[int, str, EUI]) -> None:
         """Connect to an STH
 
         Parameters
@@ -966,7 +966,7 @@ class Network:
         """
 
         def get_mac_address(sths: List[STHDeviceInfo],
-                            identifier: [int, str, EUI]) -> Optional[EUI]:
+                            identifier: Union[int, str, EUI]) -> Optional[EUI]:
             """Get the MAC address of an STH"""
 
             for sth in sths:
