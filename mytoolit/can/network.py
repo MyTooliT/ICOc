@@ -949,7 +949,7 @@ class Network:
         return bool(response.data[2])
 
     async def connect_sth(self, identifier: [str, EUI]) -> None:
-        """Connect to an STH using its MAC address
+        """Connect to an STH
 
         Parameters
         ----------
