@@ -1,9 +1,11 @@
 from asyncio import run, sleep
 
+from netaddr import EUI
+
 from mytoolit.can import Network
 
 
-async def create_connection_network():
+async def test(identifier=EUI("08:6b:d7:01:de:81")):
     with Network() as network:
         print("Reset STU 1")
         await network.reset_node('STU 1')  # Reset STU (and STH)
@@ -13,19 +15,12 @@ async def create_connection_network():
               "for STU 1 reset")
         await sleep(wait_time)
 
-        print("Scan for available STHs")
-        devices = []
-        while not devices:
-            devices = await network.get_sths()
-            await sleep(0.1)
-        device = devices[0]
-
-        print(f"Connect to device “{device.name}”")
-        await network.connect_sth(device.mac_address)
+        print(f"Connect to device “{identifier}”")
+        await network.connect_sth(identifier)
 
         print("Deactivate Bluetooth of STU 1")
         await network.deactivate_bluetooth()
 
 
 if __name__ == '__main__':
-    run(create_connection_network())
+    run(test("Serial"))
