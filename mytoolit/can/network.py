@@ -959,6 +959,15 @@ class Network:
 
         """
 
+        def get_mac_address(sths: List[STHDeviceInfo],
+                            identifier: [str, EUI]) -> Optional[EUI]:
+            """Get the MAC address of an STH"""
+
+            for sth in sths:
+                if (isinstance(identifier, str) and sth.name == identifier
+                        or sth.mac_address == identifier):
+                    return sth.mac_address
+
         if not (isinstance(identifier, str) or isinstance(identifier, EUI)):
             raise TypeError("Identifier must be str or EUI, not "
                             f"{type(identifier).__name__}")
@@ -970,29 +979,17 @@ class Network:
         timeout_in_s = 5
         end_time = time() + timeout_in_s
 
-        while True:
-
+        mac_address = None
+        while mac_address is None:
             if time() > end_time:
                 raise TimeoutError(
                     "Unable to find STH with {} “{}” in {} seconds".format(
                         "MAC address" if isinstance(identifier, EUI) else
                         "name", identifier, timeout_in_s))
 
-            sths = await self.get_sths()
-
-            if isinstance(identifier, str):
-                mac_address = None
-                for sth in sths:
-                    if identifier == sth.name:
-                        mac_address = sth.mac_address
-                        break
-                if mac_address is not None:
-                    break
-            elif identifier in (sth.mac_address for sth in sths):
-                mac_address = identifier
-                break
-
-            await sleep(0.1)
+            mac_address = get_mac_address(await self.get_sths(), identifier)
+            if mac_address is None:
+                await sleep(0.1)
 
         await self.connect_mac_address_bluetooth(mac_address)
         while not await self.check_connection_device_bluetooth('STU 1'):
