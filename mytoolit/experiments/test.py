@@ -24,4 +24,5 @@ async def test(identifier=EUI("08:6b:d7:01:de:81")):
 
 if __name__ == '__main__':
     run(test("Serial"))
+    run(test(0))
     run(test())
