@@ -948,28 +948,37 @@ class Network:
 
         return bool(response.data[2])
 
-    async def connect_sth(self, identifier: [str, EUI]) -> None:
+    async def connect_sth(self, identifier: [int, str, EUI]) -> None:
         """Connect to an STH
 
         Parameters
         ----------
 
         identifier:
-            The MAC address (EUI) or name of the STH we want to connect to
+            The
+
+            - MAC address (`EUI`),
+            - name (`str`), or
+            - device number (`int`)
+
+            of the STH we want to connect to
 
         """
 
         def get_mac_address(sths: List[STHDeviceInfo],
-                            identifier: [str, EUI]) -> Optional[EUI]:
+                            identifier: [int, str, EUI]) -> Optional[EUI]:
             """Get the MAC address of an STH"""
 
             for sth in sths:
                 if (isinstance(identifier, str) and sth.name == identifier
+                        or isinstance(identifier, int)
+                        and sth.device_number == identifier
                         or sth.mac_address == identifier):
                     return sth.mac_address
 
-        if not (isinstance(identifier, str) or isinstance(identifier, EUI)):
-            raise TypeError("Identifier must be str or EUI, not "
+        if not (isinstance(identifier, str) or isinstance(identifier, int)
+                or isinstance(identifier, EUI)):
+            raise TypeError("Identifier must be int, str or EUI, not "
                             f"{type(identifier).__name__}")
 
         await self.activate_bluetooth('STU 1')
@@ -984,8 +993,10 @@ class Network:
             if time() > end_time:
                 raise TimeoutError(
                     "Unable to find STH with {} “{}” in {} seconds".format(
-                        "MAC address" if isinstance(identifier, EUI) else
-                        "name", identifier, timeout_in_s))
+                        "MAC address"
+                        if isinstance(identifier, EUI) else "device_number"
+                        if isinstance(identifier, int) else "name", identifier,
+                        timeout_in_s))
 
             mac_address = get_mac_address(await self.get_sths(), identifier)
             if mac_address is None:
