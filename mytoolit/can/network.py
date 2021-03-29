@@ -976,6 +976,8 @@ class Network:
                         or sth.mac_address == identifier):
                     return sth.mac_address
 
+            return None
+
         if not (isinstance(identifier, str) or isinstance(identifier, int)
                 or isinstance(identifier, EUI)):
             raise TypeError("Identifier must be int, str or EUI, not "
