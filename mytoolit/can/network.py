@@ -963,6 +963,20 @@ class Network:
 
             of the STH we want to connect to
 
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Connect to the STH with device number `0`
+
+        >>> async def connect_sth():
+        ...     with Network() as network:
+        ...         await network.connect_sth(0)
+        ...         return await network.check_connection_device_bluetooth()
+        >>> run(connect_sth())
+        True
+
         """
 
         def get_mac_address(sths: List[STHDeviceInfo],
