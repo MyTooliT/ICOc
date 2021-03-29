@@ -948,16 +948,20 @@ class Network:
 
         return bool(response.data[2])
 
-    async def connect_sth(self, mac_address: EUI) -> None:
+    async def connect_sth(self, identifier: [str, EUI]) -> None:
         """Connect to an STH using its MAC address
 
         Parameters
         ----------
 
-        mac_address:
-            The MAC address of the node we want to connect to
+        identifier:
+            The MAC address (EUI) or name of the STH we want to connect to
 
         """
+
+        if not (isinstance(identifier, str) or isinstance(identifier, EUI)):
+            raise TypeError("Identifier must be str or EUI, not "
+                            f"{type(identifier).__name__}")
 
         await self.activate_bluetooth('STU 1')
 
@@ -967,13 +971,25 @@ class Network:
         end_time = time() + timeout_in_s
 
         while True:
+
             if time() > end_time:
                 raise TimeoutError(
-                    "Unable to find STH with MAC address "
-                    f"“{mac_address}” in {timeout_in_s} seconds")
+                    "Unable to find STH with {} “{}” in {} seconds".format(
+                        "MAC address" if isinstance(identifier, EUI) else
+                        "name", identifier, timeout_in_s))
 
             sths = await self.get_sths()
-            if mac_address in (sth.mac_address for sth in sths):
+
+            if isinstance(identifier, str):
+                mac_address = None
+                for sth in sths:
+                    if identifier == sth.name:
+                        mac_address = sth.mac_address
+                        break
+                if mac_address is not None:
+                    break
+            elif identifier in (sth.mac_address for sth in sths):
+                mac_address = identifier
                 break
 
             await sleep(0.1)

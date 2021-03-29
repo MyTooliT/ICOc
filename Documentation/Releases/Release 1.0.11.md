@@ -10,7 +10,7 @@
 
 - Add coroutine (`connect_mac_address_bluetooth`) to connect to a device using its MAC address
 - Add coroutine (`get_rssi_bluetooth`) to retrieve the RSSI (Received Signal Strength Indication) of a device
-- Add coroutine (`connect_sth`) to directly connect to an STH using its MAC address
+- Add coroutine (`connect_sth`) to directly connect to an STH using its MAC address or name
 - Add coroutine (`get_sths`) to retrieve a list of available STHs
 - Renamed the coroutine to retrieve a Bluetooth device name to `get_name_bluetooth`
 - The class now sends requests multiple times, if it does not receive an answer in a certain amount of time
