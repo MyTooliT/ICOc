@@ -976,7 +976,7 @@ class Network:
             if mac_address in (sth.mac_address for sth in sths):
                 break
 
-            sleep(0.1)
+            await sleep(0.1)
 
         await self.connect_mac_address_bluetooth(mac_address)
         while not await self.check_connection_device_bluetooth('STU 1'):
