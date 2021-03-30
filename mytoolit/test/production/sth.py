@@ -212,14 +212,14 @@ class TestSTH(TestNode):
 
         self.assertGreaterEqual(
             acceleration, expected_minimum_acceleration,
-            f"Measured acceleration {acceleration:.3f} g₀ is lower "
+            f"Measured acceleration {acceleration:.3f} g is lower "
             "than expected minimum acceleration "
-            f"{expected_minimum_acceleration} g₀")
+            f"{expected_minimum_acceleration} g")
         self.assertLessEqual(
             acceleration, expected_maximum_acceleration,
-            f"Measured acceleration {acceleration:.3f} g₀ is greater "
+            f"Measured acceleration {acceleration:.3f} g is greater "
             "than expected maximum acceleration "
-            f"{expected_maximum_acceleration} g₀")
+            f"{expected_maximum_acceleration} g")
 
     def test_acceleration_noise(self):
         """Test ratio of noise to maximal possible measurement value"""
