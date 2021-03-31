@@ -1027,6 +1027,24 @@ class Network:
 
             await sleep(0.1)
 
+    async def read_eeprom(self, node='STU 1'):
+        """Read EEPROM data"""
+
+        address = 0
+        offset = 1
+        read_length = 4
+
+        message = Message(block='EEPROM',
+                          block_command='Read',
+                          sender=self.sender,
+                          receiver=Node(node),
+                          request=True,
+                          data=[address, offset, read_length, *(5 * [0])])
+        response = await self._request(
+            message, description=f"read EEPROM data from “{node}”")
+
+        print(f"Response: {Message(response)}")
+
     def shutdown(self) -> None:
         """Deallocate all resources for this network connection"""
 
