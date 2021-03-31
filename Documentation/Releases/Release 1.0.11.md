@@ -25,6 +25,7 @@
 - Add coroutines:
 
   - `read_eeprom`,
+  - `read_eeprom_float`,
   - `read_eeprom_int`, and
   - `read_eeprom_text`
 

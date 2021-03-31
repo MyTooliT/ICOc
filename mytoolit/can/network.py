@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from asyncio import (CancelledError, get_running_loop, sleep, TimeoutError,
                      Queue, wait_for)
+from struct import unpack
 from sys import platform
 from time import time
 from types import TracebackType
@@ -1102,6 +1103,52 @@ class Network:
             offset += read_length
 
         return read_data
+
+    async def read_eeprom_float(self,
+                                address: int,
+                                offset: int,
+                                node: Union[str, Node] = 'STU 1') -> float:
+        """Read EEPROM data in float format
+
+        Parameters
+        ----------
+
+        address:
+            The page number in the EEPROM
+
+        offset:
+            The offset to the base address in the specified page
+
+        node:
+            The node from which the EEPROM data should be retrieved
+
+        Returns
+        -------
+
+        The float number at the specified location of the EEPROM
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Read slope of acceleration for x-axis of STH 1
+
+        >>> async def read_slope():
+        ...     with Network() as network:
+        ...         await network.connect_sth(0)
+        ...         slope = await network.read_eeprom_float(
+        ...             address=8, offset=0, node='STH 1')
+        ...         await network.deactivate_bluetooth('STU 1')
+        ...         return slope
+        >>> slope = run(read_slope())
+        >>> isinstance(slope, float)
+        True
+
+        """
+
+        data = await self.read_eeprom(address, offset, length=4, node=node)
+        return unpack('<f', bytearray(data))[0]
 
     async def read_eeprom_int(self,
                               address: int,
