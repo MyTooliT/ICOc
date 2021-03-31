@@ -10,6 +10,7 @@ from types import TracebackType
 from typing import List, NamedTuple, Optional, Sequence, Type, Union
 
 from can import Bus, Listener, Message as CANMessage, Notifier
+from can.interfaces.pcan.pcan import PcanError
 from netaddr import EUI
 
 # Fix imports for script usage
@@ -176,7 +177,13 @@ class Network:
             key.lower(): value
             for key, value in configuration.items()
         }
-        self.bus = Bus(**bus_config)
+        try:
+            self.bus = Bus(**bus_config)
+        except (PcanError, OSError) as error:
+            raise NetworkError(
+                f"Unable to initialize CAN connection: {error}\n\n"
+                "Possible reason:\n\n"
+                "• CAN adapter is not connected to the computer")
 
         # We create the notifier when we need it for the first time, since
         # there might not be an active loop when you create the network object
