@@ -877,7 +877,7 @@ class Network:
         ...         # Deactivate Bluetooth connection
         ...         await network.deactivate_bluetooth('STU 1')
         ...         # Wait until device is disconnected
-        ...         await sleep(0.1)
+        ...         await sleep(0.2)
         >>> run(deactivate_bluetooth())
 
         """
