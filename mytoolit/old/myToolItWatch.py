@@ -1089,7 +1089,7 @@ class myToolItWatch():
                 "PeakCanTime": peakCanTimeStamp
             }
         elif result[0] == PCAN_ERROR_QOVERRUN:
-            self.Logger.bError("RxOverRun")
+            self.Can.Logger.bError("RxOverRun")
             print("RxOverRun")
             raise
         else:
