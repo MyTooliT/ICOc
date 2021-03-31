@@ -1107,7 +1107,7 @@ class Network:
                                address: int,
                                offset: int,
                                length: int,
-                               node: Union[str, Node] = 'STU 1'):
+                               node: Union[str, Node] = 'STU 1') -> str:
         """Read EEPROM data in ASCII format
 
         Please note, that this function will only return the characters up
