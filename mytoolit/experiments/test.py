@@ -15,14 +15,15 @@ async def test(identifier=EUI("08:6b:d7:01:de:81")):
               "for STU 1 reset")
         await sleep(wait_time)
 
-        print(f"Connect to device “{identifier}”")
         await network.connect_sth(identifier)
 
-        print("Deactivate Bluetooth of STU 1")
-        await network.deactivate_bluetooth()
+        slope = await network.read_eeprom_float(address=8,
+                                                offset=0,
+                                                node='STH 1')
+        print(f"Slope: {slope}")
+
+        await network.deactivate_bluetooth('STU 1')
 
 
 if __name__ == '__main__':
-    run(test("Serial"))
-    run(test(0))
     run(test())
