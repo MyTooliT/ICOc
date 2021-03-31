@@ -284,8 +284,8 @@ class Network:
 
             if response.is_error:
                 raise ErrorResponseError(
-                    f"Received erroneous response for request to {description}"
-                )
+                    "Received erroneous response for request to "
+                    f"{description}: {Message(response.message)}")
 
             return response.message
 
