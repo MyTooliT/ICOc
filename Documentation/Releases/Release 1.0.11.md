@@ -24,7 +24,8 @@
 - Improve error message for disconnected CAN adapter
 - Add coroutines:
 
-  - `read_eeprom`, and
+  - `read_eeprom`,
+  - `read_eeprom_int`, and
   - `read_eeprom_text`
 
   to read EEPROM data

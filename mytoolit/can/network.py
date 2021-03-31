@@ -1103,6 +1103,53 @@ class Network:
 
         return read_data
 
+    async def read_eeprom_int(self,
+                              address: int,
+                              offset: int,
+                              length: int,
+                              node: Union[str, Node] = 'STU 1') -> int:
+        """Read an integer value from the EEPROM
+
+        Parameters
+        ----------
+
+        address:
+            The page number in the EEPROM
+
+        offset:
+            The offset to the base address in the specified page
+
+        length:
+            This value specifies how long the number is in bytes
+
+        node:
+            The node from which the EEPROM data should be retrieved
+
+        Returns
+        -------
+
+        The number at the specified location of the EEPROM
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Read the operating time (in seconds) of STU 1
+
+        >>> async def read_operating_time():
+        ...     with Network() as network:
+        ...         return await network.read_eeprom_int(
+        ...             address=5, offset=8, length=4, node='STU 1')
+        >>> operating_time = run(read_operating_time())
+        >>> operating_time >= 0
+        True
+
+        """
+
+        return int.from_bytes(
+            await self.read_eeprom(address, offset, length, node), 'little')
+
     async def read_eeprom_text(self,
                                address: int,
                                offset: int,
