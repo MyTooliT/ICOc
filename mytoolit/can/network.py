@@ -1103,6 +1103,64 @@ class Network:
 
         return read_data
 
+    async def read_eeprom_text(self,
+                               address: int,
+                               offset: int,
+                               length: int,
+                               node: Union[str, Node] = 'STU 1'):
+        """Read EEPROM data in ASCII format
+
+        Please note, that this function will only return the characters up
+        to the first null byte.
+
+        Parameters
+        ----------
+
+        address:
+            The page number in the EEPROM
+
+        offset:
+            The offset to the base address in the specified page
+
+        length:
+            This value specifies how many characters you want to read
+
+        node:
+            The node from which the EEPROM data should be retrieved
+
+        Returns
+        -------
+
+        A string that contains the text at the specified location
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Read name of STU 1
+
+        >>> async def read_name_eeprom():
+        ...     with Network() as network:
+        ...         return await network.read_eeprom_text(
+        ...             address=0, offset=1, length=8, node='STU 1')
+        >>> name = run(read_name_eeprom())
+        >>> 0 <= len(name) <= 8
+        True
+        >>> isinstance(name, str)
+        True
+
+        """
+
+        data = await self.read_eeprom(address, offset, length, node)
+        data_without_null = []
+        for byte in data:
+            if byte == 0:
+                break
+            data_without_null.append(byte)
+
+        return "".join(map(chr, data_without_null))
+
     def shutdown(self) -> None:
         """Deallocate all resources for this network connection"""
 
