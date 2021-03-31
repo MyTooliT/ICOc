@@ -1034,23 +1034,74 @@ class Network:
 
             await sleep(0.1)
 
-    async def read_eeprom(self, node='STU 1'):
-        """Read EEPROM data"""
+    async def read_eeprom(self,
+                          address: int,
+                          offset: int,
+                          length: int,
+                          node: Union[str, Node] = 'STU 1') -> List[int]:
+        """Read EEPROM data
 
-        address = 0
-        offset = 1
-        read_length = 4
+        Parameters
+        ----------
 
-        message = Message(block='EEPROM',
-                          block_command='Read',
-                          sender=self.sender,
-                          receiver=Node(node),
-                          request=True,
-                          data=[address, offset, read_length, *(5 * [0])])
-        response = await self._request(
-            message, description=f"read EEPROM data from “{node}”")
+        address:
+            The page number in the EEPROM
 
-        print(f"Response: {Message(response)}")
+        offset:
+            The offset to the base address in the specified page
+
+        length:
+            This value specifies how many bytes you want to read
+
+        node:
+            The node from which the EEPROM data should be retrieved
+
+        Returns
+        -------
+
+        A list containing the EEPROM data at the specified location
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Read EEPROM data from STU 1
+
+        >>> async def read_eeprom():
+        ...     with Network() as network:
+        ...         return await network.read_eeprom(address=0, offset=1,
+        ...                                          length=8, node='STU 1')
+        >>> data = run(read_eeprom())
+        >>> len(data)
+        8
+        >>> all((0 <= byte <= 255 for byte in data))
+        True
+
+        """
+
+        read_data = []
+        reserved = [0] * 5
+        data_start = 4  # Start index of data in response message
+
+        while length > 0:
+            # Read at most 4 bytes of data at once
+            read_length = 4 if length > 4 else length
+            message = Message(block='EEPROM',
+                              block_command='Read',
+                              sender=self.sender,
+                              receiver=Node(node),
+                              request=True,
+                              data=[address, offset, read_length, *reserved])
+            response = await self._request(
+                message, description=f"read EEPROM data from “{node}”")
+
+            data_end = data_start + read_length
+            read_data.extend(response.data[data_start:data_end])
+            length -= read_length
+            offset += read_length
+
+        return read_data
 
     def shutdown(self) -> None:
         """Deallocate all resources for this network connection"""
