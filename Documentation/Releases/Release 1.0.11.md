@@ -22,3 +22,9 @@
 - Renamed the coroutine to retrieve a Bluetooth device name to `get_name_bluetooth`
 - The class now sends requests multiple times, if it does not receive an answer in a certain amount of time
 - Improve error message for disconnected CAN adapter
+- Add coroutines:
+
+  - `read_eeprom`, and
+  - `read_eeprom_text`
+
+  to read EEPROM data
