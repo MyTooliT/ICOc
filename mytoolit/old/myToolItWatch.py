@@ -1091,7 +1091,7 @@ class myToolItWatch():
         elif result[0] == PCAN_ERROR_QOVERRUN:
             self.Can.Logger.Error("RxOverRun")
             print("RxOverRun")
-            raise
+            raise Exception("RxOverRun")
         else:
             sleep(0.0002)
         return message
