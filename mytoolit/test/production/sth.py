@@ -92,7 +92,6 @@ class TestSTH(TestNode):
         self.can.bBlueToothConnectPollingName(Node('STU 1').value,
                                               settings.sth_name(),
                                               log=False)
-        sleep(2)
 
     def _disconnect(self):
         """Tear down connection to STH"""

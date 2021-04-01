@@ -244,6 +244,11 @@ class TestNode(TestCase):
         cls = type(self)
         node = cls.__name__[-3:]
 
+        # Wait until there is no other traffic on the CAN bus for the STH.
+        # This is a **workaround** for the behaviour of the old Network class.
+        if node == 'STH':
+            sleep(2)
+
         # Send message to STH
         command = self.can.CanCmd(MyToolItBlock['System'],
                                   MyToolItSystem['ActiveState'],
