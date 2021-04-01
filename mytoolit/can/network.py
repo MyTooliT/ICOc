@@ -1298,6 +1298,24 @@ class Network:
         node:
             The node where the EEPROM data should be stored
 
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Write data to and read (same) data from EEPROM of STU 1
+
+        >>> async def write_and_read_eeprom(data):
+        ...     with Network() as network:
+        ...         await network.write_eeprom(
+        ...             address=10, offset=3, data=data, node='STU 1')
+        ...         return await network.read_eeprom(
+        ...             address=10, offset=3, length=len(data), node='STU 1')
+        >>> data = [1, 3, 3, 7]
+        >>> read_data = run(write_and_read_eeprom(data))
+        >>> data == read_data
+        True
+
         """
 
         # Change data, if
