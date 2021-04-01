@@ -106,7 +106,8 @@ class Network(object):
         if result != PCAN_ERROR_OK:
             raise Exception(
                 self.__get_error_message("Unable to initialize CAN hardware",
-                                         result))
+                                         result) + "\n\nPossible reason:\n\n"
+                "• CAN adapter is not connected to the computer")
 
         # Reset the CAN controller if a bus-off state is detected
         result = self.pcan.SetValue(self.m_PcanHandle, PCAN_BUSOFF_AUTORESET,

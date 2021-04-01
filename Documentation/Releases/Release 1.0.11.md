@@ -10,6 +10,10 @@
 
 - The string representation of a message (`repr`) now includes additional information for [EEPROM commands](https://mytoolit.github.io/Documentation/#block-eeprom)
 
+### Network (Old)
+
+- Improve error message for disconnected CAN adapter
+
 ### Network (New)
 
 - Add coroutine (`connect_mac_address_bluetooth`) to connect to a device using its MAC address
