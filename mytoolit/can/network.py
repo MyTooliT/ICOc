@@ -1022,7 +1022,7 @@ class Network:
         end_time = time() + timeout_in_s
 
         mac_address = None
-        sths = []
+        sths: List[STHDeviceInfo] = []
         while mac_address is None:
             if time() > end_time:
                 sths_representation = '\n'.join([repr(sth) for sth in sths])
