@@ -1208,8 +1208,10 @@ class Network:
 
         """
 
-        return int.from_bytes(
-            await self.read_eeprom(address, offset, length, node), 'little')
+        return int.from_bytes(await self.read_eeprom(address, offset, length,
+                                                     node),
+                              'little',
+                              signed=True)
 
     async def read_eeprom_text(self,
                                address: int,
@@ -1422,7 +1424,7 @@ class Network:
 
         """
 
-        data = list(value.to_bytes(length, byteorder='little'))
+        data = list(value.to_bytes(length, byteorder='little', signed=True))
         await self.write_eeprom(address, offset, data, node=node)
 
     def shutdown(self) -> None:
