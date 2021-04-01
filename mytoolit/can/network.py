@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from asyncio import (CancelledError, get_running_loop, sleep, TimeoutError,
                      Queue, wait_for)
-from struct import unpack
+from struct import pack, unpack
 from sys import platform
 from time import time
 from types import TracebackType
@@ -1348,6 +1348,33 @@ class Network:
 
             data = data[4:]
             offset += write_length
+
+    async def write_eeprom_float(self,
+                                 address: int,
+                                 offset: int,
+                                 value: float,
+                                 node: Union[str, Node] = 'STU 1') -> None:
+        """Write a float value at the specified EEPROM address
+
+        Parameters
+        ----------
+
+        address:
+            The page number in the EEPROM
+
+        offset:
+            The offset to the base address in the specified page
+
+        value:
+            The float value that should be stored at the specified location
+
+        node:
+            The node where the EEPROM data should be stored
+
+        """
+
+        data = list(pack('f', value))
+        await self.write_eeprom(address, offset, data, node=node)
 
     def shutdown(self) -> None:
         """Deallocate all resources for this network connection"""

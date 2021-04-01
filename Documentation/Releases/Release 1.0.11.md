@@ -36,4 +36,9 @@
 
   to read EEPROM data
 
-- Add coroutine `write_eeprom` to write EEPROM data
+- Add coroutine
+
+  - `write_eeprom`, and
+  - `write_eeprom_float`
+
+  to write EEPROM data
