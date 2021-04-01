@@ -1399,7 +1399,7 @@ class Network:
     async def write_eeprom_int(self,
                                address: int,
                                offset: int,
-                               value: float,
+                               value: int,
                                length: int,
                                node: Union[str, Node] = 'STU 1') -> None:
         """Write an integer number at the specified EEPROM address
