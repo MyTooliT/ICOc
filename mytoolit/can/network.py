@@ -1013,6 +1013,7 @@ class Network:
             raise TypeError("Identifier must be int, str or EUI, not "
                             f"{type(identifier).__name__}")
 
+        await self.deactivate_bluetooth('STU 1')  # Disconnect from STH
         await self.activate_bluetooth('STU 1')
 
         # We wait a maximum of 5 seconds for the connection to the STH to take
