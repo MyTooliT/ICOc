@@ -1268,6 +1268,68 @@ class Network:
 
         return "".join(map(chr, data_without_null))
 
+    async def write_eeprom(self,
+                           address: int,
+                           offset: int,
+                           data: List[int],
+                           length: Optional[int] = None,
+                           node: Union[str, Node] = 'STU 1') -> None:
+        """Write EEPROM data at the specified address
+
+        Parameters
+        ----------
+
+        address:
+            The page number in the EEPROM
+
+        offset:
+            The offset to the base address in the specified page
+
+        data:
+            A list of byte value that should be stored at the specified EEPROM
+            location
+
+        length:
+            This optional parameter specifies how many of the bytes in `data`
+            should be stored in the EEPROM. If you specify a length that is
+            greater, than the size of the data list, then the remainder of
+            the EEPROM data will be filled with null bytes.
+
+        node:
+            The node where the EEPROM data should be stored
+
+        """
+
+        # Change data, if
+        # - only a subset, or
+        # - additional data
+        # should be written to the EEPROM.
+        if length is not None:
+            # Cut off additional data bytes
+            data = data[:length]
+            # Fill up additional data bytes
+            data.extend([0] * (length - len(data)))
+
+        while data:
+            write_data = data[:4]  # Maximum of 4 bytes per message
+            write_length = len(write_data)
+            # Use zeroes to fill up missing data bytes
+            write_data.extend([0] * (4 - write_length))
+
+            reserved = [0] * 1
+            message = Message(
+                block='EEPROM',
+                block_command='Write',
+                sender=self.sender,
+                receiver=Node(node),
+                request=True,
+                data=[address, offset, write_length, *reserved, *write_data])
+            await self._request(message,
+                                description=f"write EEPROM data in “{node}”")
+
+            data = data[4:]
+            offset += write_length
+
     def shutdown(self) -> None:
         """Deallocate all resources for this network connection"""
 

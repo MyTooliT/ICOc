@@ -35,3 +35,5 @@
   - `read_eeprom_text`
 
   to read EEPROM data
+
+- Add coroutine `write_eeprom` to write EEPROM data
