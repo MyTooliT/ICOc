@@ -1013,16 +1013,21 @@ class Network:
         end_time = time() + timeout_in_s
 
         mac_address = None
+        sths = []
         while mac_address is None:
             if time() > end_time:
+                sths_representation = '\n'.join([repr(sth) for sth in sths])
+                sth_info = (f"Found the following STHs:\n{sths_representation}"
+                            if len(sths) > 0 else "No STHs found")
+
                 raise TimeoutError(
                     "Unable to find STH with {} “{}” in {} seconds".format(
-                        "MAC address"
-                        if isinstance(identifier, EUI) else "device_number"
-                        if isinstance(identifier, int) else "name", identifier,
-                        timeout_in_s))
+                        "MAC address" if isinstance(identifier, EUI) else
+                        "device_number" if isinstance(identifier, int) else
+                        "name", identifier, timeout_in_s) + f"\n\n{sth_info}")
 
-            mac_address = get_mac_address(await self.get_sths(), identifier)
+            sths = await self.get_sths()
+            mac_address = get_mac_address(sths, identifier)
             if mac_address is None:
                 await sleep(0.1)
 
