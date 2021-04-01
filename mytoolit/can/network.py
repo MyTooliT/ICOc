@@ -55,6 +55,14 @@ class STHDeviceInfo(NamedTuple):
     mac_address: EUI  # The (Bluetooth) MAC address of the STH
     rssi: int  # The RSSI of the STH
 
+    def __repr__(self) -> str:
+        """Return the string representation of an STH"""
+
+        return "🤖 {}".format(", ".join([
+            f"Name: {self.name}", f"Device Number: {self.device_number}",
+            f"MAC address: {self.mac_address}", f"RSSI: {self.rssi}"
+        ]))
+
 
 class ResponseListener(Listener):
     """A listener that reacts to messages containing a certain id"""
