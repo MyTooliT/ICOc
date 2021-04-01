@@ -1376,6 +1376,37 @@ class Network:
         data = list(pack('f', value))
         await self.write_eeprom(address, offset, data, node=node)
 
+    async def write_eeprom_int(self,
+                               address: int,
+                               offset: int,
+                               value: float,
+                               length: int,
+                               node: Union[str, Node] = 'STU 1') -> None:
+        """Write an integer number at the specified EEPROM address
+
+        Parameters
+        ----------
+
+        address:
+            The page number in the EEPROM
+
+        offset:
+            The offset to the base address in the specified page
+
+        value:
+            The number that should be stored at the specified location
+
+        length:
+            This value specifies how long the number is in bytes
+
+        node:
+            The node where the EEPROM data should be stored
+
+        """
+
+        data = list(value.to_bytes(length, byteorder='little'))
+        await self.write_eeprom(address, offset, data, node=node)
+
     def shutdown(self) -> None:
         """Deallocate all resources for this network connection"""
 
