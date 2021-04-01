@@ -19,7 +19,6 @@ async def test(identifier=EUI("08:6b:d7:01:de:81")):
                                                       offset=0,
                                                       node='STH 1')
         print(f"Read number: {read_number}")
-        await network.deactivate_bluetooth('STU 1')
 
 
 if __name__ == '__main__':
