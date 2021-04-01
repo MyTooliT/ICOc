@@ -1445,6 +1445,40 @@ class Network:
         data = list(value.to_bytes(length, byteorder='little', signed=True))
         await self.write_eeprom(address, offset, data, node=node)
 
+    async def write_eeprom_text(self,
+                                address: int,
+                                offset: int,
+                                text: str,
+                                length: int,
+                                node: Union[str, Node] = 'STU 1') -> None:
+        """Write a string at the specified EEPROM address
+
+        Parameters
+        ----------
+
+        address:
+            The page number in the EEPROM
+
+        offset:
+            The offset to the base address in the specified page
+
+        text:
+            An ASCII string that should be written to the specified location
+
+        length:
+            This optional parameter specifies how many of the character in
+            `text` should be stored in the EEPROM. If you specify a length
+            that is greater than the size of the data list, then the
+            remainder of the EEPROM data will be filled with null bytes.
+
+        node:
+            The node where the EEPROM data should be stored
+
+        """
+
+        data = list(map(ord, list(text)))
+        await self.write_eeprom(address, offset, data, length, node)
+
     def shutdown(self) -> None:
         """Deallocate all resources for this network connection"""
 

@@ -39,7 +39,8 @@
 - Add coroutine
 
   - `write_eeprom`,
-  - `write_eeprom_float`, and
-  - `write_eeprom_int`
+  - `write_eeprom_float`,
+  - `write_eeprom_int`, and
+  - `write_eeprom_text`,
 
   to write EEPROM data
