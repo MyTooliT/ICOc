@@ -594,9 +594,9 @@ class Network:
 
         return first_part + second_part
 
-    async def get_mac_address_bluetooth(self,
-                                        node: Union[str, Node] = 'STH 1',
-                                        device_number: int = 0xff) -> EUI:
+    async def get_mac_address(self,
+                              node: Union[str, Node] = 'STH 1',
+                              device_number: int = 0xff) -> EUI:
         """Retrieve the Bluetooth MAC address of a device
 
         You can use this method to retrieve the address of both
@@ -647,7 +647,7 @@ class Network:
         ...                   network.check_connection_device_bluetooth()):
         ...             await sleep(0.1)
         ...
-        ...         mac = await network.get_mac_address_bluetooth('STH 1')
+        ...         mac = await network.get_mac_address('STH 1')
         ...
         ...         # Deactivate Bluetooth connection
         ...         await network.deactivate_bluetooth('STU 1')
@@ -803,7 +803,7 @@ class Network:
         available_devices = await self.get_available_devices(node)
         devices = []
         for device in range(available_devices):
-            mac_address = await self.get_mac_address_bluetooth(node, device)
+            mac_address = await self.get_mac_address(node, device)
             rssi = await self.get_rssi_bluetooth(node, device)
             name = await self.get_name(node, device)
 
