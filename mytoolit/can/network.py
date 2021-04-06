@@ -985,7 +985,10 @@ class Network:
         >>> async def connect_sth():
         ...     with Network() as network:
         ...         await network.connect_sth(0)
-        ...         return await network.is_connected()
+        ...         status = await network.is_connected()
+        ...         await network.deactivate_bluetooth('STU 1')
+        ...         await sleep(0.1) # Wait until device is disconnected
+        ...         return status
         >>> run(connect_sth())
         True
 
