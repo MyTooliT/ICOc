@@ -643,8 +643,7 @@ class Network:
         ...         await network.connect_with_device_number(
         ...                         'STU 1', device_number=0)
         ...
-        ...         while not (await
-        ...                   network.is_connected()):
+        ...         while not await network.is_connected():
         ...             await sleep(0.1)
         ...
         ...         mac = await network.get_mac_address('STH 1')
@@ -928,8 +927,7 @@ class Network:
         ...     with Network() as network:
         ...         await network.activate_bluetooth('STU 1')
         ...         await sleep(0.1)
-        ...         connected_start = (await
-        ...             network.is_connected('STU 1'))
+        ...         connected_start = (await network.is_connected('STU 1'))
         ...
         ...         # We assume that at least one STH is available
         ...         await network.connect_with_device_number(
@@ -938,16 +936,14 @@ class Network:
         ...         # Wait for device connection
         ...         connected_between = False
         ...         while not connected_between:
-        ...             connected_between = (
-        ...                 await network.is_connected())
+        ...             connected_between = await network.is_connected()
         ...             await sleep(0.1)
         ...
         ...         # Deactivate Bluetooth connection
         ...         await network.deactivate_bluetooth('STU 1')
         ...         # Wait until device is disconnected
         ...         await sleep(0.1)
-        ...         connected_after = (await
-        ...             network.is_connected('STU 1'))
+        ...         connected_after = await network.is_connected('STU 1')
         ...
         ...         return connected_start, connected_between, connected_after
         >>> run(check_bluetooth_connection())
