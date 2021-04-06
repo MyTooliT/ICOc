@@ -1168,6 +1168,7 @@ class Network:
                               address: int,
                               offset: int,
                               length: int,
+                              signed: bool = False,
                               node: Union[str, Node] = 'STU 1') -> int:
         """Read an integer value from the EEPROM
 
@@ -1182,6 +1183,10 @@ class Network:
 
         length:
             This value specifies how long the number is in bytes
+
+        signed:
+            Specifies if `value` is a signed number (`True`) or an
+            unsigned number (`False`)
 
         node:
             The node from which the EEPROM data should be retrieved
@@ -1401,6 +1406,7 @@ class Network:
                                offset: int,
                                value: int,
                                length: int,
+                               signed: bool = False,
                                node: Union[str, Node] = 'STU 1') -> None:
         """Write an integer number at the specified EEPROM address
 
@@ -1419,6 +1425,10 @@ class Network:
         length:
             This value specifies how long the number is in bytes
 
+        signed:
+            Specifies if `value` is a signed number (`True`) or an
+            unsigned number (`False`)
+
         node:
             The node where the EEPROM data should be stored
 
@@ -1432,9 +1442,9 @@ class Network:
         >>> async def write_and_read_int(value):
         ...     with Network() as network:
         ...         await network.write_eeprom_int(address=10, offset=0,
-        ...                 value=value, length=8, node='STU 1')
-        ...         return await network.read_eeprom_int(
-        ...             address=10, offset=0, length=8, node='STU 1')
+        ...                 value=value, length=8, signed=True, node='STU 1')
+        ...         return await network.read_eeprom_int(address=10, offset=0,
+        ...                 length=8, signed=True, node='STU 1')
         >>> value = -1337
         >>> read_value = run(write_and_read_int(value))
         >>> value == read_value
@@ -1442,7 +1452,7 @@ class Network:
 
         """
 
-        data = list(value.to_bytes(length, byteorder='little', signed=True))
+        data = list(value.to_bytes(length, byteorder='little', signed=signed))
         await self.write_eeprom(address, offset, data, node=node)
 
     async def write_eeprom_text(self,
