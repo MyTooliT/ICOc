@@ -66,7 +66,8 @@
 
 - Add the coroutines:
 
-  - `write_eeprom_status`, and
-  - `write_eeprom_name`
+  - `write_eeprom_name`,
+  - `write_eeprom_sleep_time_1`, and
+  - `write_eeprom_status`
 
   to write specific parts of the EEPROM

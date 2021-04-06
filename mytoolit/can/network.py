@@ -1699,6 +1699,44 @@ class Network:
                                           length=4,
                                           node=node)
 
+    async def write_eeprom_sleep_time_1(self,
+                                        milliseconds: int,
+                                        node: Union[str,
+                                                    Node] = 'STU 1') -> None:
+        """Write the value of sleep time 1 to the EEPROM
+
+        Parameters
+        ----------
+
+        milliseconds:
+            The value for sleep time 1 in milliseconds
+
+        node:
+            The node where sleep time 1 should be updated
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Write and read sleep time 1 of STU 1
+
+        >>> async def write_read_sleep_time_1(milliseconds):
+        ...     with Network() as network:
+        ...         await network.write_eeprom_sleep_time_1(milliseconds,
+        ...                                                 node='STU 1')
+        ...         return await network.read_eeprom_sleep_time_1(node='STU 1')
+        >>> run(write_read_sleep_time_1(300_000))
+        300000
+
+        """
+
+        await self.write_eeprom_int(address=0,
+                                    offset=9,
+                                    value=milliseconds,
+                                    length=4,
+                                    node=node)
+
 
 # -- Main ---------------------------------------------------------------------
 
