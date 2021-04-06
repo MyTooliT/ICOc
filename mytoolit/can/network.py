@@ -667,9 +667,9 @@ class Network:
 
         return EUI(":".join(f"{byte:02x}" for byte in response.data[:1:-1]))
 
-    async def get_rssi_bluetooth(self,
-                                 node: Union[str, Node] = 'STH 1',
-                                 device_number: int = 0xff):
+    async def get_rssi(self,
+                       node: Union[str, Node] = 'STH 1',
+                       device_number: int = 0xff):
         """Retrieve the RSSI (Received Signal Strength Indication) of a device
 
         You can use this method to retrieve the RSSI of both
@@ -715,7 +715,7 @@ class Network:
         ...
         ...         # We assume that at least one STH is available
         ...         # Get the RSSI of device “0”
-        ...         rssi = await network.get_rssi_bluetooth('STU 1', 0)
+        ...         rssi = await network.get_rssi('STU 1', 0)
         ...
         ...         # Deactivate Bluetooth connection
         ...         await network.deactivate_bluetooth('STU 1')
@@ -804,7 +804,7 @@ class Network:
         devices = []
         for device in range(available_devices):
             mac_address = await self.get_mac_address(node, device)
-            rssi = await self.get_rssi_bluetooth(node, device)
+            rssi = await self.get_rssi(node, device)
             name = await self.get_name(node, device)
 
             devices.append(
