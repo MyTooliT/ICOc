@@ -640,7 +640,7 @@ class Network:
         ...     with Network() as network:
         ...         await network.activate_bluetooth('STU 1')
         ...         # We assume that at least one STH is available
-        ...         await network.connect_device_number_bluetooth(
+        ...         await network.connect_with_device_number(
         ...                         'STU 1', device_number=0)
         ...
         ...         while not (await
@@ -815,9 +815,9 @@ class Network:
 
         return devices
 
-    async def connect_device_number_bluetooth(self,
-                                              node: Union[str, Node] = 'STU 1',
-                                              device_number: int = 0) -> bool:
+    async def connect_with_device_number(self,
+                                         node: Union[str, Node] = 'STU 1',
+                                         device_number: int = 0) -> bool:
         """Connect to a Bluetooth device using a device number
 
         Parameters
@@ -853,7 +853,7 @@ class Network:
         ...         # We assume that at least one STH is available
         ...         status = False
         ...         while not status:
-        ...             status = await network.connect_device_number_bluetooth(
+        ...             status = await network.connect_with_device_number(
         ...                         'STU 1', device_number=0)
         ...
         ...         # Deactivate Bluetooth connection
@@ -935,7 +935,7 @@ class Network:
         ...             network.check_connection_device_bluetooth('STU 1'))
         ...
         ...         # We assume that at least one STH is available
-        ...         await network.connect_device_number_bluetooth(
+        ...         await network.connect_with_device_number(
         ...                         'STU 1', device_number=0)
         ...
         ...         # Wait for device connection
