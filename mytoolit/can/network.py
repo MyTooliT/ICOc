@@ -1579,7 +1579,8 @@ class Network:
         await self.write_eeprom_int(address=0,
                                     offset=0,
                                     length=1,
-                                    value=EEPROMStatus(value).value)
+                                    value=EEPROMStatus(value).value,
+                                    node=node)
 
     async def read_eeprom_name(self, node: Union[str, Node] = 'STU 1') -> str:
         """Retrieve the name of the node from the EEPROM
