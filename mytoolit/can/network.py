@@ -464,9 +464,8 @@ class Network:
             response_data=6 * [0]  # type: ignore[arg-type]
         )
 
-    async def get_available_devices_bluetooth(self,
-                                              node: Union[str, Node] = 'STU 1'
-                                              ) -> int:
+    async def get_available_devices(self,
+                                    node: Union[str, Node] = 'STU 1') -> int:
         """Retrieve the number of available Bluetooth devices at a node
 
         Parameters
@@ -496,7 +495,7 @@ class Network:
         ...         number_sths = 0
         ...         while number_sths <= 0:
         ...             number_sths = await (
-        ...                 network.get_available_devices_bluetooth('STU 1'))
+        ...                 network.get_available_devices('STU 1'))
         ...             await sleep(0.1)
         ...
         ...         return number_sths
@@ -798,7 +797,7 @@ class Network:
         """
 
         await self.activate_bluetooth(node)
-        available_devices = await self.get_available_devices_bluetooth(node)
+        available_devices = await self.get_available_devices(node)
         devices = []
         for device in range(available_devices):
             mac_address = await self.get_mac_address_bluetooth(node, device)

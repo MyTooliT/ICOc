@@ -17,6 +17,12 @@
 
 ### Network (New)
 
+- Renamed the following coroutines:
+
+  | Old Name                          | New Name                |
+  | --------------------------------- | ----------------------- |
+  | `get_available_devices_bluetooth` | `get_available_devices` |
+
 - Add coroutine (`connect_mac_address_bluetooth`) to connect to a device using its MAC address
 - Add coroutine (`get_rssi_bluetooth`) to retrieve the RSSI (Received Signal Strength Indication) of a device
 - Add coroutine (`connect_sth`) to directly connect to an STH using its
