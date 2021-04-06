@@ -1695,10 +1695,7 @@ class Network:
                                           length=4,
                                           node='STH 1')
 
-    async def write_eeprom_sleep_time_1(self,
-                                        milliseconds: int,
-                                        node: Union[str,
-                                                    Node] = 'STU 1') -> None:
+    async def write_eeprom_sleep_time_1(self, milliseconds: int) -> None:
         """Write the value of sleep time 1 to the EEPROM
 
         Parameters
@@ -1706,9 +1703,6 @@ class Network:
 
         milliseconds:
             The value for sleep time 1 in milliseconds
-
-        node:
-            The node where sleep time 1 should be updated
 
         Example
         -------
@@ -1719,9 +1713,12 @@ class Network:
 
         >>> async def write_read_sleep_time_1(milliseconds):
         ...     with Network() as network:
-        ...         await network.write_eeprom_sleep_time_1(milliseconds,
-        ...                                                 node='STU 1')
-        ...         return await network.read_eeprom_sleep_time_1(node='STU 1')
+        ...         await network.connect_sth(0)
+        ...         await network.write_eeprom_sleep_time_1(milliseconds)
+        ...         sleep_time_1 = await network.read_eeprom_sleep_time_1()
+        ...         await network.deactivate_bluetooth('STU 1')
+        ...         await sleep(0.1) # Wait until device is disconnected
+        ...         return sleep_time_1
         >>> run(write_read_sleep_time_1(300_000))
         300000
 
@@ -1731,7 +1728,7 @@ class Network:
                                     offset=9,
                                     value=milliseconds,
                                     length=4,
-                                    node=node)
+                                    node='STH 1')
 
     async def read_eeprom_advertisement_time_1(self,
                                                node: Union[str, Node] = 'STU 1'
