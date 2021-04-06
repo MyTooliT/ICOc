@@ -17,28 +17,27 @@
 
 ### Network (New)
 
+- The class now sends requests multiple times, if it does not receive an answer in a certain amount of time
+- Improve error message for disconnected CAN adapter
 - Renamed the following coroutines:
 
   | Old Name                            | New Name                     |
   | ----------------------------------- | ---------------------------- |
   | `get_available_devices_bluetooth`   | `get_available_devices`      |
-  | `get_name_bluetooth`                | `get_name`                   |
+  | `get_device_name_bluetooth`         | `get_name`                   |
   | `get_mac_address_bluetooth`         | `get_mac_address`            |
-  | `get_rssi_bluetooth`                | `get_rssi`                   |
   | `connect_device_number_bluetooth`   | `connect_with_device_number` |
-  | `connect_mac_address_bluetooth`     | `connect_with_mac_address`   |
   | `check_connection_device_bluetooth` | `is_connected`               |
 
-- Add coroutine (`connect_mac_address_bluetooth`) to connect to a device using its MAC address
-- Add coroutine (`get_rssi_bluetooth`) to retrieve the RSSI (Received Signal Strength Indication) of a device
-- Add coroutine (`connect_sth`) to directly connect to an STH using its
-  - MAC address,
-  - device number, or
-  - name
-- Add coroutine (`get_sths`) to retrieve a list of available STHs
-- Renamed the coroutine to retrieve a Bluetooth device name to `get_name_bluetooth`
-- The class now sends requests multiple times, if it does not receive an answer in a certain amount of time
-- Improve error message for disconnected CAN adapter
+- Add the following coroutines
+
+  | Name                       | Description                                                                                       |
+  | -------------------------- | ------------------------------------------------------------------------------------------------- |
+  | `connect_with_mac_address` | Connect to a device using its MAC address                                                         |
+  | `get_rssi`                 | Retrieve the RSSI (Received Signal Strength Indication) of a device                               |
+  | `get_sths`                 | Retrieve a list of available STHs                                                                 |
+  | `connect_sth`              | Directly connect to an STH using its<br/>• MAC address,<br/> • device number, or<br/> • name<br/> |
+
 - Add coroutines:
 
   - `read_eeprom`,
