@@ -58,7 +58,8 @@
 
 - Add the coroutines:
 
-  - `read_eeprom_name`
+  - `read_eeprom_advertisement_time_1`,
+  - `read_eeprom_name`,
   - `read_eeprom_sleep_time_1`, and
   - `read_eeprom_status`
 

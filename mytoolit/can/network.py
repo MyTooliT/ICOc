@@ -1737,6 +1737,46 @@ class Network:
                                     length=4,
                                     node=node)
 
+    async def read_eeprom_advertisement_time_1(self,
+                                               node: Union[str, Node] = 'STU 1'
+                                               ) -> int:
+        """Retrieve advertisement time 1 from the EEPROM
+
+        Parameters
+        ----------
+
+        node:
+            The node where advertisement time 1 should be updated
+
+        Returns
+        -------
+
+        The current value of advertisement time 1 in milliseconds
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Read advertisement time 1 of STU 1
+
+        >>> async def read_advertisement_time_1():
+        ...     with Network() as network:
+        ...         return await network.read_eeprom_advertisement_time_1(
+        ...                 node='STU 1')
+        >>> advertisement_time = run(read_advertisement_time_1())
+        >>> isinstance(advertisement_time, int)
+        True
+        >>> advertisement_time > 0
+        True
+
+        """
+
+        return await self.read_eeprom_int(address=0,
+                                          offset=13,
+                                          length=2,
+                                          node=node)
+
 
 # -- Main ---------------------------------------------------------------------
 
