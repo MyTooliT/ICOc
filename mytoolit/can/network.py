@@ -1050,6 +1050,10 @@ class Network:
 
             await sleep(0.1)
 
+    # ==========
+    # = EEPROM =
+    # ==========
+
     async def read_eeprom(self,
                           address: int,
                           offset: int,
