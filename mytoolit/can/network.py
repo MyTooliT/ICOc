@@ -644,7 +644,7 @@ class Network:
         ...                         'STU 1', device_number=0)
         ...
         ...         while not (await
-        ...                   network.check_connection_device_bluetooth()):
+        ...                   network.is_connected()):
         ...             await sleep(0.1)
         ...
         ...         mac = await network.get_mac_address('STH 1')
@@ -901,10 +901,7 @@ class Network:
             response_data=mac_address_bytes_reversed,
             description=f"connect to device “{mac_address}” from “{node}”")
 
-    async def check_connection_device_bluetooth(self,
-                                                node: Union[str,
-                                                            Node] = 'STU 1'
-                                                ) -> bool:
+    async def is_connected(self, node: Union[str, Node] = 'STU 1') -> bool:
         """Check if the node is connected to a Bluetooth device
 
         Parameters
@@ -932,7 +929,7 @@ class Network:
         ...         await network.activate_bluetooth('STU 1')
         ...         await sleep(0.1)
         ...         connected_start = (await
-        ...             network.check_connection_device_bluetooth('STU 1'))
+        ...             network.is_connected('STU 1'))
         ...
         ...         # We assume that at least one STH is available
         ...         await network.connect_with_device_number(
@@ -942,7 +939,7 @@ class Network:
         ...         connected_between = False
         ...         while not connected_between:
         ...             connected_between = (
-        ...                 await network.check_connection_device_bluetooth())
+        ...                 await network.is_connected())
         ...             await sleep(0.1)
         ...
         ...         # Deactivate Bluetooth connection
@@ -950,7 +947,7 @@ class Network:
         ...         # Wait until device is disconnected
         ...         await sleep(0.1)
         ...         connected_after = (await
-        ...             network.check_connection_device_bluetooth('STU 1'))
+        ...             network.is_connected('STU 1'))
         ...
         ...         return connected_start, connected_between, connected_after
         >>> run(check_bluetooth_connection())
@@ -992,7 +989,7 @@ class Network:
         >>> async def connect_sth():
         ...     with Network() as network:
         ...         await network.connect_sth(0)
-        ...         return await network.check_connection_device_bluetooth()
+        ...         return await network.is_connected()
         >>> run(connect_sth())
         True
 
@@ -1044,7 +1041,7 @@ class Network:
                 await sleep(0.1)
 
         await self.connect_with_mac_address(mac_address)
-        while not await self.check_connection_device_bluetooth('STU 1'):
+        while not await self.is_connected('STU 1'):
             if time() > end_time:
                 raise TimeoutError(
                     "Unable to connect to STH with MAC address "
