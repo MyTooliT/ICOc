@@ -1660,16 +1660,8 @@ class Network:
                                      length=8,
                                      node=node)
 
-    async def read_eeprom_sleep_time_1(self,
-                                       node: Union[str,
-                                                   Node] = 'STU 1') -> int:
+    async def read_eeprom_sleep_time_1(self) -> int:
         """Retrieve sleep time 1 from the EEPROM
-
-        Parameters
-        ----------
-
-        node:
-            The node from which the sleep time should be retrieved
 
         Returns
         -------
@@ -1681,11 +1673,15 @@ class Network:
 
         >>> from asyncio import run
 
-        Read sleep time 1 of STU 1
+        Read sleep time 1 of STH 1
 
         >>> async def read_sleep_time_1():
         ...     with Network() as network:
-        ...         return await network.read_eeprom_sleep_time_1(node='STU 1')
+        ...         await network.connect_sth(0)
+        ...         sleep_time_1 = await network.read_eeprom_sleep_time_1()
+        ...         await network.deactivate_bluetooth('STU 1')
+        ...         await sleep(0.1) # Wait until device is disconnected
+        ...         return sleep_time_1
         >>> sleep_time = run(read_sleep_time_1())
         >>> isinstance(sleep_time, int)
         True
@@ -1697,7 +1693,7 @@ class Network:
         return await self.read_eeprom_int(address=0,
                                           offset=9,
                                           length=4,
-                                          node=node)
+                                          node='STH 1')
 
     async def write_eeprom_sleep_time_1(self,
                                         milliseconds: int,
