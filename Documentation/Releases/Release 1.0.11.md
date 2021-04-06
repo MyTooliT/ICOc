@@ -45,11 +45,12 @@
 
   to write EEPROM data
 
-- Add the coroutine:
+- Add the coroutines:
 
-  - `read_eeprom_status`
+  - `read_eeprom_status`, and
+  - `read_eeprom_name`
 
-  to read the status byte of the EEPROM
+  to read specific parts of the EEPROM
 
 - Add the coroutine:
 

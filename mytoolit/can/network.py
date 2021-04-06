@@ -1579,6 +1579,40 @@ class Network:
                                     length=1,
                                     value=EEPROMStatus(value).value)
 
+    async def read_eeprom_name(self, node: Union[str, Node] = 'STU 1') -> str:
+        """Retrieve the name of the node from the EEPROM
+
+        Parameters
+        ----------
+
+        node:
+            The node from which the name should be retrieved
+
+        Returns
+        -------
+
+        The name of the node
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Read the name STU 1
+
+        >>> async def read_name():
+        ...     with Network() as network:
+        ...         return await network.read_eeprom_name(node='STU 1')
+        >>> isinstance(run(read_name()), str)
+        True
+
+        """
+
+        return await self.read_eeprom_text(address=0,
+                                           offset=1,
+                                           length=8,
+                                           node=node)
+
     def shutdown(self) -> None:
         """Deallocate all resources for this network connection"""
 
