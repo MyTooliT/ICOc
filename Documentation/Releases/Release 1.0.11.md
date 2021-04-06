@@ -58,8 +58,9 @@
 
 - Add the coroutines:
 
-  - `read_eeprom_status`, and
   - `read_eeprom_name`
+  - `read_eeprom_sleep_time_1`, and
+  - `read_eeprom_status`
 
   to read specific parts of the EEPROM
 
