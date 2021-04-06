@@ -50,3 +50,9 @@
   - `read_eeprom_status`
 
   to read the status byte of the EEPROM
+
+- Add the coroutine:
+
+  - `write_eeprom_status`
+
+  to change the status byte of the EEPROM

@@ -1542,6 +1542,43 @@ class Network:
                                                     length=1,
                                                     node=node)).pop())
 
+    async def write_eeprom_status(self,
+                                  value: Union[int, EEPROMStatus],
+                                  node: Union[str, Node] = 'STU 1') -> None:
+        """Change the value of the EEPROM status byte
+
+        Parameters
+        ----------
+
+        value:
+            The new value for the status byte
+
+        node:
+            The node where the EEPROM status byte should be updated
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Write and read the status byte of STU 1
+
+        >>> async def write_read_status_byte():
+        ...     with Network() as network:
+        ...         await network.write_eeprom_status(
+        ...             EEPROMStatus('Initialized'), node='STU 1')
+        ...         return await network.read_eeprom_status(node='STU 1')
+        >>> status = run(write_read_status_byte())
+        >>> status.is_initialized()
+        True
+
+        """
+
+        await self.write_eeprom_int(address=0,
+                                    offset=0,
+                                    length=1,
+                                    value=EEPROMStatus(value).value)
+
     def shutdown(self) -> None:
         """Deallocate all resources for this network connection"""
 
