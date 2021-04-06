@@ -430,6 +430,40 @@ class Network:
             response_data=6 * [0]  # type: ignore[arg-type]
         )
 
+    async def deactivate_bluetooth(self,
+                                   node: Union[str, Node] = 'STU 1') -> None:
+        """Deactivate Bluetooth on a node
+
+        Parameters
+        ----------
+
+        node:
+            The node where Bluetooth should be deactivated
+
+        Example
+        -------
+
+        >>> from asyncio import run, sleep
+
+        Deactivate Bluetooth on STU 1
+
+        >>> async def deactivate_bluetooth():
+        ...     with Network() as network:
+        ...         # Deactivate Bluetooth connection
+        ...         await network.deactivate_bluetooth('STU 1')
+        ...         # Wait until device is disconnected
+        ...         await sleep(0.2)
+        >>> run(deactivate_bluetooth())
+
+        """
+
+        await self._request_bluetooth(
+            node=node,
+            subcommand=9,
+            description=f"deactivate Bluetooth on “{node}”",
+            response_data=6 * [0]  # type: ignore[arg-type]
+        )
+
     async def get_available_devices_bluetooth(self,
                                               node: Union[str, Node] = 'STU 1'
                                               ) -> int:
@@ -864,40 +898,6 @@ class Network:
             data=mac_address_bytes_reversed,
             response_data=mac_address_bytes_reversed,
             description=f"connect to device “{mac_address}” from “{node}”")
-
-    async def deactivate_bluetooth(self,
-                                   node: Union[str, Node] = 'STU 1') -> None:
-        """Deactivate Bluetooth on a node
-
-        Parameters
-        ----------
-
-        node:
-            The node where Bluetooth should be deactivated
-
-        Example
-        -------
-
-        >>> from asyncio import run, sleep
-
-        Deactivate Bluetooth on STU 1
-
-        >>> async def deactivate_bluetooth():
-        ...     with Network() as network:
-        ...         # Deactivate Bluetooth connection
-        ...         await network.deactivate_bluetooth('STU 1')
-        ...         # Wait until device is disconnected
-        ...         await sleep(0.2)
-        >>> run(deactivate_bluetooth())
-
-        """
-
-        await self._request_bluetooth(
-            node=node,
-            subcommand=9,
-            description=f"deactivate Bluetooth on “{node}”",
-            response_data=6 * [0]  # type: ignore[arg-type]
-        )
 
     async def check_connection_device_bluetooth(self,
                                                 node: Union[str,
