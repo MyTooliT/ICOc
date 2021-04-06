@@ -1685,8 +1685,6 @@ class Network:
         >>> sleep_time = run(read_sleep_time_1())
         >>> isinstance(sleep_time, int)
         True
-        >>> sleep_time > 0
-        True
 
         """
 
