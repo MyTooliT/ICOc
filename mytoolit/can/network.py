@@ -233,6 +233,14 @@ class Network:
 
         self.shutdown()
 
+    def shutdown(self) -> None:
+        """Deallocate all resources for this network connection"""
+
+        if self.notifier is not None:
+            self.notifier.stop()
+
+        self.bus.shutdown()
+
     async def _request(
         self,
         message: Message,
@@ -1651,14 +1659,6 @@ class Network:
                                      text=name,
                                      length=8,
                                      node=node)
-
-    def shutdown(self) -> None:
-        """Deallocate all resources for this network connection"""
-
-        if self.notifier is not None:
-            self.notifier.stop()
-
-        self.bus.shutdown()
 
 
 # -- Main ---------------------------------------------------------------------
