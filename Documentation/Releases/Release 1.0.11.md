@@ -44,3 +44,9 @@
   - `write_eeprom_text`,
 
   to write EEPROM data
+
+- Add the coroutine:
+
+  - `read_eeprom_status`
+
+  to read the status byte of the EEPROM

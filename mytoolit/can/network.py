@@ -20,6 +20,7 @@ if __name__ == '__main__':
     from sys import path
     path.append(str(Path(__file__).parent.parent.parent))
 
+from mytoolit.eeprom import EEPROMStatus
 from mytoolit.config import settings
 from mytoolit.can.message import Message
 from mytoolit.can.node import Node
@@ -1504,6 +1505,42 @@ class Network:
 
         data = list(map(ord, list(text)))
         await self.write_eeprom(address, offset, data, length, node)
+
+    async def read_eeprom_status(self,
+                                 node: Union[str,
+                                             Node] = 'STU 1') -> EEPROMStatus:
+        """Retrieve EEPROM status byte
+
+        Returns
+        -------
+
+        An EEPROM status object for the current status byte value
+
+        Parameters
+        ----------
+
+        node:
+            The node from which the EEPROM status byte should be retrieved
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Read the status byte of STU 1
+
+        >>> async def read_status_byte():
+        ...     with Network() as network:
+        ...         return await network.read_eeprom_status(node='STU 1')
+        >>> isinstance(run(read_status_byte()), EEPROMStatus)
+        True
+
+        """
+
+        return EEPROMStatus((await self.read_eeprom(address=0,
+                                                    offset=0,
+                                                    length=1,
+                                                    node=node)).pop())
 
     def shutdown(self) -> None:
         """Deallocate all resources for this network connection"""
