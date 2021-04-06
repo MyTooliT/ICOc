@@ -400,6 +400,10 @@ class Network:
                             description=f"reset node “{node}”",
                             response_data=message.data)
 
+    # =============
+    # = Bluetooth =
+    # =============
+
     async def activate_bluetooth(self, node: Union[str, Node] = 'STU 1'):
         """Activate Bluetooth on the specified node
 
