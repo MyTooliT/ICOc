@@ -67,6 +67,7 @@
 
 - Add the coroutines:
 
+  - `write_eeprom_advertisement_time_1`,
   - `write_eeprom_name`,
   - `write_eeprom_sleep_time_1`, and
   - `write_eeprom_status`
