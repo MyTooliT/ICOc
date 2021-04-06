@@ -22,6 +22,7 @@
   | Old Name                          | New Name                |
   | --------------------------------- | ----------------------- |
   | `get_available_devices_bluetooth` | `get_available_devices` |
+  | `get_name_bluetooth`              | `get_name`              |
 
 - Add coroutine (`connect_mac_address_bluetooth`) to connect to a device using its MAC address
 - Add coroutine (`get_rssi_bluetooth`) to retrieve the RSSI (Received Signal Strength Indication) of a device

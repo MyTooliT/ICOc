@@ -517,9 +517,9 @@ class Network:
 
         return available_devices
 
-    async def get_name_bluetooth(self,
-                                 node: Union[str, Node] = 'STU 1',
-                                 device_number: int = 0) -> str:
+    async def get_name(self,
+                       node: Union[str, Node] = 'STU 1',
+                       device_number: int = 0) -> str:
         """Retrieve the name of a Bluetooth device
 
         You can use this method to name of both
@@ -565,8 +565,7 @@ class Network:
         ...         # Wait for device scan in node STU 1 to take place
         ...         await sleep(1)
         ...         # We assume that at least one STH is available
-        ...         return await network.get_name_bluetooth(
-        ...                         'STU 1', device_number=0)
+        ...         return await network.get_name('STU 1', device_number=0)
         >>> sth_name = run(get_bluetooth_device_name())
         >>> isinstance(sth_name, str)
         True
@@ -806,7 +805,7 @@ class Network:
         for device in range(available_devices):
             mac_address = await self.get_mac_address_bluetooth(node, device)
             rssi = await self.get_rssi_bluetooth(node, device)
-            name = await self.get_name_bluetooth(node, device)
+            name = await self.get_name(node, device)
 
             devices.append(
                 STHDeviceInfo(device_number=device,
