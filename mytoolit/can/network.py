@@ -875,10 +875,10 @@ class Network:
 
         return bool(response.data[2])
 
-    async def connect_mac_address_bluetooth(self,
-                                            mac_address: EUI,
-                                            node: Union[str, Node] = 'STU 1'
-                                            ) -> None:
+    async def connect_with_mac_address(self,
+                                       mac_address: EUI,
+                                       node: Union[str,
+                                                   Node] = 'STU 1') -> None:
         """Connect to a Bluetooth device using its MAC address
 
         Parameters
@@ -1043,7 +1043,7 @@ class Network:
             if mac_address is None:
                 await sleep(0.1)
 
-        await self.connect_mac_address_bluetooth(mac_address)
+        await self.connect_with_mac_address(mac_address)
         while not await self.check_connection_device_bluetooth('STU 1'):
             if time() > end_time:
                 raise TimeoutError(
