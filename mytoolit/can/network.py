@@ -1615,6 +1615,42 @@ class Network:
                                            length=8,
                                            node=node)
 
+    async def write_eeprom_name(self,
+                                name: str,
+                                node: Union[str, Node] = 'STU 1') -> None:
+        """Write the name of the node into the EEPROM
+
+        Parameters
+        ----------
+
+        name:
+            The new (Bluetooth advertisement) name of the node
+
+        node:
+            The node where the name should be updated
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Write and read the name of STU 1
+
+        >>> async def write_read_name(name):
+        ...     with Network() as network:
+        ...         await network.write_eeprom_name(name, node='STU 1')
+        ...         return await network.read_eeprom_name(node='STU 1')
+        >>> run(write_read_name('Valerie'))
+        'Valerie'
+
+        """
+
+        await self.write_eeprom_text(address=0,
+                                     offset=1,
+                                     text=name,
+                                     length=8,
+                                     node=node)
+
     def shutdown(self) -> None:
         """Deallocate all resources for this network connection"""
 

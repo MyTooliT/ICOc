@@ -63,8 +63,9 @@
 
   to read specific parts of the EEPROM
 
-- Add the coroutine:
+- Add the coroutines:
 
-  - `write_eeprom_status`
+  - `write_eeprom_status`, and
+  - `write_eeprom_name`
 
-  to change the status byte of the EEPROM
+  to write specific parts of the EEPROM
