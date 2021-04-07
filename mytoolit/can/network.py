@@ -527,7 +527,7 @@ class Network:
 
     async def get_name(self,
                        node: Union[str, Node] = 'STU 1',
-                       device_number: int = 0) -> str:
+                       device_number: int = 0xff) -> str:
         """Retrieve the name of a Bluetooth device
 
         You can use this method to name of both
