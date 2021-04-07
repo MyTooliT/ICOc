@@ -46,6 +46,7 @@ class Response(NamedTuple):
 
     message: CANMessage  # The response message
     is_error: bool  # States if the response was an error or a normal response
+    error_message: str  # Optional explanation for the error reason
 
 
 class STHDeviceInfo(NamedTuple):
@@ -118,15 +119,23 @@ class ResponseListener(Listener):
         # Also set an error response, if the retrieved message data does not
         # match the expected data
         expected_data = self.expected_data
-        if normal_response and expected_data:
+        error_reason = ""
+        if normal_response and expected_data is not None:
             error_response |= any(
                 expected != data
                 for expected, data in zip(expected_data, message.data)
                 if expected is not None)
+            error_reason = ("Unexpected response message data:\n"
+                            f"Expected: {list(expected_data)}\n"
+                            f"Received: {list(message.data)}")
+        elif error_response:
+            error_reason = "Received error response"
 
         if error_response or normal_response:
             self.queue.put_nowait(
-                Response(message=message, is_error=error_response))
+                Response(message=message,
+                         is_error=error_response,
+                         error_message=error_reason))
 
     async def on_message(self) -> Optional[Response]:
         """Return answer messages for the specified message identifier
@@ -302,8 +311,9 @@ class Network:
 
             if response.is_error:
                 raise ErrorResponseError(
-                    "Received erroneous response for request to "
-                    f"{description}: {Message(response.message)}")
+                    "Received unexpected response for request to "
+                    f"{description}:\n\n{response.error_message}\n"
+                    f"Response Message: {Message(response.message)}")
 
             return response.message
 
