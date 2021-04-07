@@ -618,6 +618,62 @@ class Network:
 
         return first_part + second_part
 
+    async def set_name(self,
+                       name: str,
+                       node: Union[str, Node] = 'STU 1') -> None:
+        """Set the name of a node
+
+        Parameters
+        ----------
+
+        name:
+            The new name for the device
+
+        node:
+            The node which should be renamed
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Set name of STU 1 to the (default name) “Valerie”
+
+        >>> async def set_name(name):
+        ...     with Network() as network:
+        ...         await network.set_name(name=name, node='STU 1')
+        >>> run(set_name("Valerie"))
+
+        """
+
+        if not isinstance(name, str):
+            raise TypeError("Name must be str, not type(identifier).__name__")
+
+        bytes_name = list(name.encode('utf-8'))
+        length_name = len(bytes_name)
+        if length_name > 8:
+            raise ValueError("Name is too long ({length_name} bytes). "
+                             "Please use a name between 0 and 8 bytes.")
+
+        # Use 0 bytes at end of names that are shorter than 8 bytes
+        bytes_name.extend([0] * (8 - length_name))
+        description = f"name of “{node}”"
+        self_addressing = 0xff
+
+        await self._request_bluetooth(
+            node=node,
+            subcommand=3,
+            device_number=self_addressing,
+            data=bytes_name[:6],
+            description=f"set first part of {description}")
+
+        await self._request_bluetooth(
+            node=node,
+            subcommand=4,
+            device_number=self_addressing,
+            data=bytes_name[6:] + [0] * 4,
+            description=f"set second part of {description}")
+
     async def get_mac_address(self,
                               node: Union[str, Node] = 'STH 1',
                               device_number: int = 0xff) -> EUI:

@@ -37,6 +37,7 @@
   | `get_rssi`                 | Retrieve the RSSI (Received Signal Strength Indication) of a device                               |
   | `get_sths`                 | Retrieve a list of available STHs                                                                 |
   | `connect_sth`              | Directly connect to an STH using its<br/>• MAC address,<br/> • device number, or<br/> • name<br/> |
+  | `set_name`                 | Set the (Bluetooth advertisement) name of an STU or STH                                           |
 
 - Add coroutines:
 
