@@ -696,7 +696,8 @@ class Network:
 
         2. For connected devices you will use the device name and the special
            “self addressing” device number (`0xff`) to ask a device about its
-           own device number.
+           own device number. **Note**: A connected STH will return its own
+           MAC address, regardless of the value of the device number.
 
         Parameters
         ----------
