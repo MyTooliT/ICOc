@@ -745,6 +745,7 @@ class Network:
 
         response = await self._request_bluetooth(
             node=node,
+            device_number=device_number,
             subcommand=17,
             description=f"get MAC address of “{device_number}” from “{node}”")
 
