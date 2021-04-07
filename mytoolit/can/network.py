@@ -338,7 +338,7 @@ class Network:
         subcommand:
             The number of the Bluetooth subcommand
 
-        subcommand:
+        device_number:
             The device number of the Bluetooth device
 
         description:
