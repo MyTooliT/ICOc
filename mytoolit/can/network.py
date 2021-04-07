@@ -589,6 +589,9 @@ class Network:
 
         >>> async def get_bluetooth_device_name():
         ...     with Network() as network:
+        ...         # Make sure the STU is not connected to an STH
+        ...         await network.deactivate_bluetooth('STU 1')
+        ...
         ...         await network.activate_bluetooth('STU 1')
         ...         # Wait for device scan in node STU 1 to take place
         ...         await sleep(1)
@@ -723,21 +726,9 @@ class Network:
 
         >>> async def get_bluetooth_mac():
         ...     with Network() as network:
-        ...         await network.activate_bluetooth('STU 1')
         ...         # We assume that at least one STH is available
-        ...         await network.connect_with_device_number(
-        ...                         'STU 1', device_number=0)
-        ...
-        ...         while not await network.is_connected():
-        ...             await sleep(0.1)
-        ...
-        ...         mac = await network.get_mac_address('STH 1')
-        ...
-        ...         # Deactivate Bluetooth connection
-        ...         await network.deactivate_bluetooth('STU 1')
-        ...         # Wait until device is disconnected
-        ...         await sleep(0.1)
-        ...         return mac
+        ...         await network.connect_sth(0)
+        ...         return await network.get_mac_address('STH 1')
         >>> mac_address = run(get_bluetooth_mac())
         >>> isinstance(mac_address, EUI)
         True
