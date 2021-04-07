@@ -543,7 +543,8 @@ class Network:
 
         2. For connected devices you will use the device name and the special
            “self addressing” device number (`0xff`) to ask a device about its
-           own name.
+           own name. **Note**: A connected STH will return its own name,
+           regardless of the value of the device number.
 
         Parameters
         ----------
