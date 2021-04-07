@@ -1756,10 +1756,7 @@ class Network:
         >>> async def read_sleep_time_1():
         ...     with Network() as network:
         ...         await network.connect_sth(0)
-        ...         sleep_time_1 = await network.read_eeprom_sleep_time_1()
-        ...         await network.deactivate_bluetooth('STU 1')
-        ...         await sleep(0.1) # Wait until device is disconnected
-        ...         return sleep_time_1
+        ...         return await network.read_eeprom_sleep_time_1()
         >>> sleep_time = run(read_sleep_time_1())
         >>> isinstance(sleep_time, int)
         True
@@ -1791,10 +1788,7 @@ class Network:
         ...     with Network() as network:
         ...         await network.connect_sth(0)
         ...         await network.write_eeprom_sleep_time_1(milliseconds)
-        ...         sleep_time_1 = await network.read_eeprom_sleep_time_1()
-        ...         await network.deactivate_bluetooth('STU 1')
-        ...         await sleep(0.1) # Wait until device is disconnected
-        ...         return sleep_time_1
+        ...         return await network.read_eeprom_sleep_time_1()
         >>> run(write_read_sleep_time_1(300_000))
         300000
 
@@ -1824,11 +1818,7 @@ class Network:
         >>> async def read_advertisement_time_1():
         ...     with Network() as network:
         ...         await network.connect_sth(0)
-        ...         advertisement_time_1 = (await
-        ...                 network.read_eeprom_advertisement_time_1())
-        ...         await network.deactivate_bluetooth('STU 1')
-        ...         await sleep(0.1) # Wait until device is disconnected
-        ...         return advertisement_time_1
+        ...         return await network.read_eeprom_advertisement_time_1()
         >>> advertisement_time = run(read_advertisement_time_1())
         >>> isinstance(advertisement_time, int)
         True
