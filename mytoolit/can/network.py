@@ -181,15 +181,21 @@ class Network:
         Examples
         --------
 
+        >>> from asyncio import run
+
         Create and shutdown the network explicitly
 
-        >>> network = Network()
-        >>> network.shutdown()
+        >>> async def create_and_shutdown_network():
+        ...     network = Network()
+        ...     await network.shutdown()
+        >>> run(create_and_shutdown_network())
 
         Use a context manager to handle the cleanup process automatically
 
-        >>> with Network() as network:
-        ...     pass
+        >>> async def create_and_shutdown_network():
+        ...     async with Network() as network:
+        ...         pass
+        >>> run(create_and_shutdown_network())
 
         """
 
@@ -220,7 +226,7 @@ class Network:
         handler.setFormatter(Formatter('{asctime} {message}', style='{'))
         logger.addHandler(handler)
 
-    def __enter__(self) -> Network:
+    async def __aenter__(self) -> Network:
         """Initialize the network
 
         Returns
@@ -232,9 +238,9 @@ class Network:
 
         return self
 
-    def __exit__(self, exception_type: Optional[Type[BaseException]],
-                 exception_value: Optional[BaseException],
-                 traceback: Optional[TracebackType]) -> None:
+    async def __aexit__(self, exception_type: Optional[Type[BaseException]],
+                        exception_value: Optional[BaseException],
+                        traceback: Optional[TracebackType]) -> None:
         """Disconnect from the network
 
         Parameters
@@ -251,10 +257,12 @@ class Network:
 
         """
 
-        self.shutdown()
+        await self.shutdown()
 
-    def shutdown(self) -> None:
+    async def shutdown(self) -> None:
         """Deallocate all resources for this network connection"""
+
+        await self.deactivate_bluetooth('STU 1')
 
         if self.notifier is not None:
             self.notifier.stop()
@@ -414,14 +422,14 @@ class Network:
         Reset connected node
 
         >>> async def reset():
-        ...     with Network() as network:
+        ...     async with Network() as network:
         ...         await network.reset_node('STU 1')
         >>> run(reset())
 
         Reset node, which is not connected
 
         >>> async def reset():
-        ...     with Network() as network:
+        ...     async with Network() as network:
         ...         await network.reset_node('STH 1')
         >>> run(reset()) # doctest: +IGNORE_EXCEPTION_DETAIL
         Traceback (most recent call last):
@@ -460,7 +468,7 @@ class Network:
         Activate Bluetooth on STU 1
 
         >>> async def activate():
-        ...     with Network() as network:
+        ...     async with Network() as network:
         ...         await network.activate_bluetooth('STU 1')
         >>> run(activate())
 
@@ -491,11 +499,9 @@ class Network:
         Deactivate Bluetooth on STU 1
 
         >>> async def deactivate_bluetooth():
-        ...     with Network() as network:
+        ...     async with Network() as network:
         ...         # Deactivate Bluetooth connection
         ...         await network.deactivate_bluetooth('STU 1')
-        ...         # Wait until device is disconnected
-        ...         await sleep(0.2)
         >>> run(deactivate_bluetooth())
 
         """
@@ -531,7 +537,7 @@ class Network:
         Get the number of available Bluetooth devices at STU 1
 
         >>> async def get_number_bluetooth_devices():
-        ...     with Network() as network:
+        ...     async with Network() as network:
         ...         await network.activate_bluetooth('STU 1')
         ...
         ...         # We assume at least one STH is available
@@ -600,10 +606,7 @@ class Network:
         Get Bluetooth advertisement name of device “0” from STU 1
 
         >>> async def get_bluetooth_device_name():
-        ...     with Network() as network:
-        ...         # Make sure the STU is not connected to an STH
-        ...         await network.deactivate_bluetooth('STU 1')
-        ...
+        ...     async with Network() as network:
         ...         await network.activate_bluetooth('STU 1')
         ...         # Wait for device scan in node STU 1 to take place
         ...         await sleep(1)
@@ -659,7 +662,7 @@ class Network:
         Set name of STU 1 to the (default name) “Valerie”
 
         >>> async def set_name(name):
-        ...     with Network() as network:
+        ...     async with Network() as network:
         ...         await network.set_name(name=name, node='STU 1')
         >>> run(set_name("Valerie"))
 
@@ -737,7 +740,7 @@ class Network:
         Retrieve the MAC address of STH 1
 
         >>> async def get_bluetooth_mac():
-        ...     with Network() as network:
+        ...     async with Network() as network:
         ...         # We assume that at least one STH is available
         ...         await network.connect_sth(0)
         ...         return await network.get_mac_address('STH 1')
@@ -798,17 +801,12 @@ class Network:
         Retrieve the RSSI of a disconnected STH
 
         >>> async def get_bluetooth_rssi():
-        ...     with Network() as network:
+        ...     async with Network() as network:
         ...         await network.activate_bluetooth('STU 1')
         ...
         ...         # We assume that at least one STH is available
         ...         # Get the RSSI of device “0”
-        ...         rssi = await network.get_rssi('STU 1', 0)
-        ...
-        ...         # Deactivate Bluetooth connection
-        ...         await network.deactivate_bluetooth('STU 1')
-        ...
-        ...         return rssi
+        ...         return await network.get_rssi('STU 1', 0)
         >>> rssi = run(get_bluetooth_rssi())
         >>> -70 < rssi < 0
         True
@@ -857,7 +855,7 @@ class Network:
         Retrieve the list of Bluetooth devices at STU 1
 
         >>> async def get_sths():
-        ...     with Network() as network:
+        ...     async with Network() as network:
         ...
         ...         # We assume that at least one STH is available
         ...         devices = []
@@ -937,7 +935,7 @@ class Network:
         Connect to device “0” of STU 1
 
         >>> async def connect_bluetooth_device_number():
-        ...     with Network() as network:
+        ...     async with Network() as network:
         ...         await network.activate_bluetooth('STU 1')
         ...         # We assume that at least one STH is available
         ...         status = False
@@ -945,10 +943,6 @@ class Network:
         ...             status = await network.connect_with_device_number(
         ...                         device_number=0, node='STU 1')
         ...
-        ...         # Deactivate Bluetooth connection
-        ...         await network.deactivate_bluetooth('STU 1')
-        ...         # Wait until device is disconnected
-        ...         await sleep(0.1)
         ...         # Return status of Bluetooth device connect response
         ...         return status
         >>> run(connect_bluetooth_device_number())
@@ -1014,7 +1008,7 @@ class Network:
         Check connection of device “0” to STU 1
 
         >>> async def check_bluetooth_connection():
-        ...     with Network() as network:
+        ...     async with Network() as network:
         ...         await network.activate_bluetooth('STU 1')
         ...         await sleep(0.1)
         ...         connected_start = (await network.is_connected('STU 1'))
@@ -1073,12 +1067,9 @@ class Network:
         Connect to the STH with device number `0`
 
         >>> async def connect_sth():
-        ...     with Network() as network:
+        ...     async with Network() as network:
         ...         await network.connect_sth(0)
-        ...         status = await network.is_connected()
-        ...         await network.deactivate_bluetooth('STU 1')
-        ...         await sleep(0.1) # Wait until device is disconnected
-        ...         return status
+        ...         return await network.is_connected()
         >>> run(connect_sth())
         True
 
@@ -1176,7 +1167,7 @@ class Network:
         Read EEPROM data from STU 1
 
         >>> async def read_eeprom():
-        ...     with Network() as network:
+        ...     async with Network() as network:
         ...         return await network.read_eeprom(address=0, offset=1,
         ...                                          length=8, node='STU 1')
         >>> data = run(read_eeprom())
@@ -1241,12 +1232,10 @@ class Network:
         Read slope of acceleration for x-axis of STH 1
 
         >>> async def read_slope():
-        ...     with Network() as network:
+        ...     async with Network() as network:
         ...         await network.connect_sth(0)
-        ...         slope = await network.read_eeprom_float(
+        ...         return await network.read_eeprom_float(
         ...             address=8, offset=0, node='STH 1')
-        ...         await network.deactivate_bluetooth('STU 1')
-        ...         return slope
         >>> slope = run(read_slope())
         >>> isinstance(slope, float)
         True
@@ -1296,7 +1285,7 @@ class Network:
         Read the operating time (in seconds) of STU 1
 
         >>> async def read_operating_time():
-        ...     with Network() as network:
+        ...     async with Network() as network:
         ...         return await network.read_eeprom_int(
         ...             address=5, offset=8, length=4, node='STU 1')
         >>> operating_time = run(read_operating_time())
@@ -1348,7 +1337,7 @@ class Network:
         Read name of STU 1
 
         >>> async def read_name_eeprom():
-        ...     with Network() as network:
+        ...     async with Network() as network:
         ...         return await network.read_eeprom_text(
         ...             address=0, offset=1, length=8, node='STU 1')
         >>> name = run(read_name_eeprom())
@@ -1406,7 +1395,7 @@ class Network:
         Write data to and read (same) data from EEPROM of STU 1
 
         >>> async def write_and_read_eeprom(data):
-        ...     with Network() as network:
+        ...     async with Network() as network:
         ...         await network.write_eeprom(
         ...             address=10, offset=3, data=data, node='STU 1')
         ...         return await network.read_eeprom(
@@ -1478,7 +1467,7 @@ class Network:
         Write float value to and read (same) float value from EEPROM of STU 1
 
         >>> async def write_and_read_float(value):
-        ...     with Network() as network:
+        ...     async with Network() as network:
         ...         await network.write_eeprom_float(
         ...             address=10, offset=0, value=value, node='STU 1')
         ...         return await network.read_eeprom_float(
@@ -1532,7 +1521,7 @@ class Network:
         Write int value to and read (same) int value from EEPROM of STU 1
 
         >>> async def write_and_read_int(value):
-        ...     with Network() as network:
+        ...     async with Network() as network:
         ...         await network.write_eeprom_int(address=10, offset=0,
         ...                 value=value, length=8, signed=True, node='STU 1')
         ...         return await network.read_eeprom_int(address=10, offset=0,
@@ -1584,7 +1573,7 @@ class Network:
         Write text to and read (same) text from EEPROM of STU 1
 
         >>> async def write_and_read_text(text):
-        ...     with Network() as network:
+        ...     async with Network() as network:
         ...         await network.write_eeprom_text(address=10, offset=11,
         ...                 text=text, length=len(text), node='STU 1')
         ...         return await network.read_eeprom_text(
@@ -1621,7 +1610,7 @@ class Network:
         Read the status byte of STU 1
 
         >>> async def read_status_byte():
-        ...     with Network() as network:
+        ...     async with Network() as network:
         ...         return await network.read_eeprom_status(node='STU 1')
         >>> isinstance(run(read_status_byte()), EEPROMStatus)
         True
@@ -1655,7 +1644,7 @@ class Network:
         Write and read the status byte of STU 1
 
         >>> async def write_read_status_byte():
-        ...     with Network() as network:
+        ...     async with Network() as network:
         ...         await network.write_eeprom_status(
         ...             EEPROMStatus('Initialized'), node='STU 1')
         ...         return await network.read_eeprom_status(node='STU 1')
@@ -1693,7 +1682,7 @@ class Network:
         Read the name STU 1
 
         >>> async def read_name():
-        ...     with Network() as network:
+        ...     async with Network() as network:
         ...         return await network.read_eeprom_name(node='STU 1')
         >>> isinstance(run(read_name()), str)
         True
@@ -1727,7 +1716,7 @@ class Network:
         Write and read the name of STU 1
 
         >>> async def write_read_name(name):
-        ...     with Network() as network:
+        ...     async with Network() as network:
         ...         await network.write_eeprom_name(name, node='STU 1')
         ...         return await network.read_eeprom_name(node='STU 1')
         >>> run(write_read_name('Valerie'))
@@ -1757,7 +1746,7 @@ class Network:
         Read sleep time 1 of STH 1
 
         >>> async def read_sleep_time_1():
-        ...     with Network() as network:
+        ...     async with Network() as network:
         ...         await network.connect_sth(0)
         ...         return await network.read_eeprom_sleep_time_1()
         >>> sleep_time = run(read_sleep_time_1())
@@ -1788,7 +1777,7 @@ class Network:
         Write and read sleep time 1 of STU 1
 
         >>> async def write_read_sleep_time_1(milliseconds):
-        ...     with Network() as network:
+        ...     async with Network() as network:
         ...         await network.connect_sth(0)
         ...         await network.write_eeprom_sleep_time_1(milliseconds)
         ...         return await network.read_eeprom_sleep_time_1()
@@ -1819,7 +1808,7 @@ class Network:
         Read advertisement time 1 of STH 1
 
         >>> async def read_advertisement_time_1():
-        ...     with Network() as network:
+        ...     async with Network() as network:
         ...         await network.connect_sth(0)
         ...         return await network.read_eeprom_advertisement_time_1()
         >>> advertisement_time = run(read_advertisement_time_1())
@@ -1852,7 +1841,7 @@ class Network:
         Write and read advertisement time 1 of STH 1
 
         >>> async def write_read_advertisement_time_1(milliseconds):
-        ...     with Network() as network:
+        ...     async with Network() as network:
         ...         await network.connect_sth(0)
         ...         await network.write_eeprom_advertisement_time_1(
         ...                 milliseconds)
