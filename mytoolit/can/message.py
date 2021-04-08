@@ -234,7 +234,8 @@ class Message:
                     data_explanation += ": {}".format(
                         "Connected" if connected else "Not connected")
             elif subcommand == 17:
-                data_explanation = f"{verb} MAC address"
+                data_explanation = (f"{verb} MAC address of device "
+                                    f"with device number “{device_number}”")
                 if is_acknowledgment and len(self.data) >= 8:
                     mac_address = EUI("-".join(
                         (f"{byte:0x}" for byte in self.data[7:1:-1])))
