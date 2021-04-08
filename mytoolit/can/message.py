@@ -238,6 +238,9 @@ class Message:
                     connected = bool(self.data[2])
                     data_explanation += ": {}".format(
                         "Connected" if connected else "Not connected")
+            elif subcommand == 9:
+                verb = "Acknowledge" if is_acknowledgment else "Request"
+                data_explanation = f"{verb} Bluetooth deactivation"
             elif subcommand == 12:
                 data_explanation = (f"{verb} RSSI of device "
                                     f"with device number “{device_number}”")

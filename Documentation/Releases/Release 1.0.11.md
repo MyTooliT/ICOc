@@ -15,6 +15,7 @@
   - the [Bluetooth commands](https://mytoolit.github.io/Documentation/#command:bluetooth):
     - [to request a connection](https://mytoolit.github.io/Documentation/#command:bluetooth:7),
     - [to check the connection status](https://mytoolit.github.io/Documentation/#command:bluetooth:8),
+    - [to deactivate the Bluetooth connection](https://mytoolit.github.io/Documentation/#command:bluetooth:9),
     - [to retrieve the RSSI](https://mytoolit.github.io/Documentation/#command:bluetooth:12), and
     - [to retrieve the MAC address](https://mytoolit.github.io/Documentation/#command:bluetooth:17)
 
