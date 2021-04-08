@@ -227,6 +227,11 @@ class Message:
                 if is_acknowledgment and len(self.data) >= 2:
                     name = bytearray_to_text(self.data[2:])
                     data_explanation += f": “{name}”"
+            elif subcommand == 7:
+                info = ("Acknowledge connection request to"
+                        if is_acknowledgment else "Request connection for")
+                data_explanation = (f"{info} device "
+                                    f"with device number “{device_number}”")
             elif subcommand == 8:
                 data_explanation = f"{verb} Bluetooth connection status"
                 if is_acknowledgment and len(self.data) >= 3:
