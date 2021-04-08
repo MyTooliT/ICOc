@@ -262,8 +262,16 @@ class Message:
             offset = self.data[1]
             length = self.data[2]
             data = list(self.data[4:4 + min(length, 4)])
+            is_acknowledgment = self.identifier().is_acknowledgment()
+
+            info = ("Acknowledge request" if is_acknowledgment else "Request")
+            verb = identifier.block_command_name().lower()
             data_explanation = (
-                f"Page {page}, Offset {offset}, Length {length}, Data: {data}")
+                f"{info} to {verb} {length} bytes at page {page} "
+                f"with offset {offset}")
+            read_request = verb == "read" and not is_acknowledgment
+            if not read_request:
+                data_explanation += f": {data}"
 
         return data_explanation
 
@@ -308,7 +316,7 @@ class Message:
         ...             data=[1] + [0]*7))
         >>> search('# (.*)', representation)[1] # doctest:+NORMALIZE_WHITESPACE
         '[SPU 1 → STU 1, Block: System, Command: Bluetooth, Request]
-         (Activate)'
+         (Request Bluetooth activation)'
 
         """
 
