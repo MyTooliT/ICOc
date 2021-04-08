@@ -233,6 +233,14 @@ class Message:
                     connected = bool(self.data[2])
                     data_explanation += ": {}".format(
                         "Connected" if connected else "Not connected")
+            elif subcommand == 12:
+                data_explanation = (f"{verb} RSSI of device "
+                                    f"with device number “{device_number}”")
+                if is_acknowledgment and len(self.data) >= 3:
+                    rssi = int.from_bytes(self.data[2:3],
+                                          byteorder='little',
+                                          signed=True)
+                    data_explanation += f": {rssi}"
             elif subcommand == 17:
                 data_explanation = (f"{verb} MAC address of device "
                                     f"with device number “{device_number}”")
