@@ -18,6 +18,7 @@
     - [to deactivate the Bluetooth connection](https://mytoolit.github.io/Documentation/#command:bluetooth:9),
     - [to retrieve the RSSI](https://mytoolit.github.io/Documentation/#command:bluetooth:12), and
     - [to retrieve the MAC address](https://mytoolit.github.io/Documentation/#command:bluetooth:17)
+    - [to connect to a device using a MAC address](https://mytoolit.github.io/Documentation/#command:bluetooth:18)
 
 ### Network (Old)
 

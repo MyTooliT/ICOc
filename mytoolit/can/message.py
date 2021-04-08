@@ -198,6 +198,10 @@ class Message:
 
         """
 
+        def mac_address() -> EUI:
+            """Convert the message data into a MAC address"""
+            return EUI("-".join((f"{byte:0x}" for byte in self.data[7:1:-1])))
+
         if len(self.data) <= 0:
             return ""
 
@@ -253,9 +257,12 @@ class Message:
                 data_explanation = (f"{verb} MAC address of device "
                                     f"with device number “{device_number}”")
                 if is_acknowledgment and len(self.data) >= 8:
-                    mac_address = EUI("-".join(
-                        (f"{byte:0x}" for byte in self.data[7:1:-1])))
-                    data_explanation += f": {mac_address}"
+                    data_explanation += f": {mac_address()}"
+            elif subcommand == 18:
+                verb = ("Acknowledge connection request"
+                        if is_acknowledgment else "Request connection")
+                data_explanation = (f"{verb} to device "
+                                    f"with MAC address “{mac_address()}”")
 
         if identifier.block_name() == 'EEPROM':
             page = self.data[0]
