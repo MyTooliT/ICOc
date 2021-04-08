@@ -891,20 +891,21 @@ class Network:
 
         return devices
 
-    async def connect_with_device_number(self,
-                                         node: Union[str, Node] = 'STU 1',
-                                         device_number: int = 0) -> bool:
+    async def connect_with_device_number(
+            self,
+            device_number: int = 0,
+            node: Union[str, Node] = 'STU 1') -> bool:
         """Connect to a Bluetooth device using a device number
 
         Parameters
         ----------
 
-        node:
-            The node which should connect to the Bluetooth device
-
         device_number:
             The number of the Bluetooth device (0 up to the number of
             available devices - 1; 0x00 for self addressing).
+
+        node:
+            The node which should connect to the Bluetooth device
 
         Returns
         -------
@@ -930,7 +931,7 @@ class Network:
         ...         status = False
         ...         while not status:
         ...             status = await network.connect_with_device_number(
-        ...                         'STU 1', device_number=0)
+        ...                         device_number=0, node='STU 1')
         ...
         ...         # Deactivate Bluetooth connection
         ...         await network.deactivate_bluetooth('STU 1')
@@ -1008,7 +1009,7 @@ class Network:
         ...
         ...         # We assume that at least one STH is available
         ...         await network.connect_with_device_number(
-        ...                         'STU 1', device_number=0)
+        ...                         device_number=0, node='STU 1')
         ...
         ...         # Wait for device connection
         ...         connected_between = False
