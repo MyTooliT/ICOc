@@ -27,6 +27,7 @@
 
 - The class now sends requests multiple times, if it does not receive an answer in a certain amount of time
 - Improve error message for disconnected CAN adapter
+- The class now logs sent and received messages on the CAN bus, if you change the logger level to `DEBUG` (`LOGGER`→`CAN`→`LEVEL` in the [configuration](../../mytoolit/config/config.yaml))
 - Renamed the following coroutines:
 
   | Old Name                            | New Name                     |

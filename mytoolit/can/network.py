@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from asyncio import (CancelledError, get_running_loop, sleep, TimeoutError,
                      Queue, wait_for)
+from logging import getLogger, FileHandler, Formatter
 from struct import pack, unpack
 from sys import platform
 from time import time
@@ -109,6 +110,8 @@ class ResponseListener(Listener):
 
         """
 
+        getLogger('network').debug(f"{Message(message)}")
+
         identifier = message.arbitration_id
         error_response = identifier == self.error_identifier.value
         normal_response = identifier == self.acknowledgment_identifier.value
@@ -209,6 +212,14 @@ class Network:
         self.notifier = None
         self.sender = Node(sender)
 
+        logger = getLogger('network')
+        # We use `Logger` in the code below, since the `.logger` attribute
+        # stores internal DynaConf data
+        logger.setLevel(settings.Logger.can.level)
+        handler = FileHandler('can.log', 'w', 'utf-8', delay=True)
+        handler.setFormatter(Formatter('{asctime} {message}', style='{'))
+        logger.addHandler(handler)
+
     def __enter__(self) -> Network:
         """Initialize the network
 
@@ -299,6 +310,7 @@ class Network:
 
             listener = ResponseListener(message, response_data)
             self.notifier.add_listener(listener)
+            getLogger('network').debug(f"{message}")
             self.bus.send(message.to_python_can())
 
             try:
