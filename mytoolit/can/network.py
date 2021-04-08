@@ -1084,8 +1084,9 @@ class Network:
 
         """
 
-        def get_mac_address(sths: List[STHDeviceInfo],
-                            identifier: Union[int, str, EUI]) -> Optional[EUI]:
+        def get_sth(
+                sths: List[STHDeviceInfo],
+                identifier: Union[int, str, EUI]) -> Optional[STHDeviceInfo]:
             """Get the MAC address of an STH"""
 
             for sth in sths:
@@ -1093,7 +1094,7 @@ class Network:
                         or isinstance(identifier, int)
                         and sth.device_number == identifier
                         or sth.mac_address == identifier):
-                    return sth.mac_address
+                    return sth
 
             return None
 
@@ -1110,9 +1111,9 @@ class Network:
         timeout_in_s = 5
         end_time = time() + timeout_in_s
 
-        mac_address = None
+        sth = None
         sths: List[STHDeviceInfo] = []
-        while mac_address is None:
+        while sth is None:
             if time() > end_time:
                 sths_representation = '\n'.join([repr(sth) for sth in sths])
                 sth_info = (f"Found the following STHs:\n{sths_representation}"
@@ -1125,16 +1126,15 @@ class Network:
                         "name", identifier, timeout_in_s) + f"\n\n{sth_info}")
 
             sths = await self.get_sths()
-            mac_address = get_mac_address(sths, identifier)
-            if mac_address is None:
+            sth = get_sth(sths, identifier)
+            if sth is None:
                 await sleep(0.1)
 
-        await self.connect_with_mac_address(mac_address)
+        await self.connect_with_device_number(sth.device_number)
         while not await self.is_connected('STU 1'):
             if time() > end_time:
-                raise TimeoutError(
-                    "Unable to connect to STH with MAC address "
-                    f"“{mac_address}” in {timeout_in_s} seconds")
+                raise TimeoutError("Unable to connect to STH "
+                                   f"“{sth}” in {timeout_in_s} seconds")
 
             await sleep(0.1)
 
