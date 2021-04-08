@@ -1011,17 +1011,16 @@ class Network:
         ...     async with Network() as network:
         ...         await network.activate_bluetooth('STU 1')
         ...         await sleep(0.1)
-        ...         connected_start = (await network.is_connected('STU 1'))
+        ...         connected_start = await network.is_connected('STU 1')
         ...
         ...         # We assume that at least one STH is available
-        ...         await network.connect_with_device_number(
-        ...                         device_number=0, node='STU 1')
-        ...
+        ...         await network.connect_with_device_number(0)
         ...         # Wait for device connection
         ...         connected_between = False
         ...         while not connected_between:
         ...             connected_between = await network.is_connected()
         ...             await sleep(0.1)
+        ...             await network.connect_with_device_number(0)
         ...
         ...         # Deactivate Bluetooth connection
         ...         await network.deactivate_bluetooth('STU 1')
