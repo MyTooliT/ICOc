@@ -141,8 +141,7 @@ def main():
 
     arguments = parse_arguments()
 
-    with EEPROMCheck(mac=arguments.mac,
-                     value=arguments.value) as check:
+    with EEPROMCheck(mac=arguments.mac, value=arguments.value) as check:
         check.connect_bluetooth()
         check.write_eeprom()
         check.print_eeprom_incorrect()
