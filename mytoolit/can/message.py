@@ -6,6 +6,7 @@ from typing import List, Optional, Union
 
 from can.interfaces.pcan.basic import PCAN_MESSAGE_EXTENDED, TPCANMsg
 from can import Message as CANMessage
+from netaddr import EUI
 
 # Fix imports for script usage
 if __name__ == '__main__':
@@ -226,6 +227,13 @@ class Message:
                 if is_acknowledgment and len(self.data) >= 2:
                     name = bytearray_to_text(self.data[2:])
                     data_explanation += f": {name}"
+            elif subcommand == 17:
+                data_explanation = f"{verb} MAC address"
+                if is_acknowledgment and len(self.data) >= 8:
+                    mac_address = EUI("-".join(
+                        (f"{byte:0x}" for byte in self.data[7:1:-1])))
+                    data_explanation += f": {mac_address}"
+
         if identifier.block_name() == 'EEPROM':
             page = self.data[0]
             offset = self.data[1]
