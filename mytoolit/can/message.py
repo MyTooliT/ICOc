@@ -212,8 +212,8 @@ class Message:
             verb = "Return" if is_acknowledgment else "Get"
 
             if subcommand == 1:
-                data_explanation = "Activate"
-
+                verb = "Acknowledge" if is_acknowledgment else "Request"
+                data_explanation = f"{verb} Bluetooth activation"
             elif subcommand == 2:
                 data_explanation = f"{verb} number of available devices"
                 if is_acknowledgment:
