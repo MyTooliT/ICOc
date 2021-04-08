@@ -226,7 +226,7 @@ class Message:
                 if is_acknowledgment and len(self.data) >= 2:
                     name = bytearray_to_text(self.data[2:])
                     data_explanation += f": {name}"
-        if (identifier.block_name() == 'EEPROM'):
+        if identifier.block_name() == 'EEPROM':
             page = self.data[0]
             offset = self.data[1]
             length = self.data[2]
