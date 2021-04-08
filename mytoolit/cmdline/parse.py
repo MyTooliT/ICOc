@@ -107,7 +107,7 @@ def mac_address(address):
 
     """
 
-    mac_regex = compile("[0-9a-fA-F]{2}(?::[0-9a-fA-F]{2}){5}$")
+    mac_regex = compile("[0-9a-fA-F]{2}(?:[:-][0-9a-fA-F]{2}){5}$")
     if mac_regex.match(address):
         return address
     raise ArgumentTypeError(f"“{address}” is not a valid MAC address")

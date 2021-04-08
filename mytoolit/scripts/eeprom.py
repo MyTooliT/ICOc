@@ -3,6 +3,8 @@
 from argparse import ArgumentParser
 from collections import Counter
 
+from netaddr import EUI
+
 from mytoolit.can import Node
 from mytoolit.cmdline import byte_value, mac_address
 from mytoolit.old.network import Network
@@ -55,7 +57,7 @@ class EEPROMCheck:
             The value that the EEPROM checker should write into the EEPROM
         """
 
-        self.mac_address = hex(int("".join(mac.split(":")), 16))
+        self.mac_address = hex(EUI(mac).value)
         self.eeprom_address = 1
         self.eeprom_length = 256
         self.eeprom_value = value
