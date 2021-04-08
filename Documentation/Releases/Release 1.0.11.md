@@ -9,10 +9,12 @@
 
 ### Message
 
-- The string representation of a message (`repr`) now includes additional information for
+- The string representation of a message (`repr`) now includes additional information for:
 
   - [EEPROM commands](https://mytoolit.github.io/Documentation/#block-eeprom), and
-  - the [Bluetooth command for retrieving the MAC address of a node](https://mytoolit.github.io/Documentation/#command:bluetooth:17)
+  - the [Bluetooth commands](https://mytoolit.github.io/Documentation/#command:bluetooth):
+    - [to check the Bluetooth connection status](https://mytoolit.github.io/Documentation/#command:bluetooth:8), and
+    - [for retrieving the MAC address of a node](https://mytoolit.github.io/Documentation/#command:bluetooth:17)
 
 ### Network (Old)
 

@@ -227,6 +227,12 @@ class Message:
                 if is_acknowledgment and len(self.data) >= 2:
                     name = bytearray_to_text(self.data[2:])
                     data_explanation += f": {name}"
+            elif subcommand == 8:
+                data_explanation = f"{verb} Bluetooth connection status"
+                if is_acknowledgment and len(self.data) >= 3:
+                    connected = bool(self.data[2])
+                    data_explanation += ": {}".format(
+                        "Connected" if connected else "Not connected")
             elif subcommand == 17:
                 data_explanation = f"{verb} MAC address"
                 if is_acknowledgment and len(self.data) >= 8:
