@@ -33,7 +33,11 @@ Before you start, please make sure that you installed the hardware and software 
 
 3. Now please open your favorite Terminal application and execute, the STH test using the command `test-th`. For more information about this command, please take a look at the section “Production Tests” in the [main readme file](../../ReadMe.md).
 
-   Please note, that the test will rename the tested STH to a Base64 encoded version of the Bluetooth MAC address. The rationale behind this is that we can use this string to uniquely identify a STH. For more information, please take a look at the [corresponding issue](https://github.com/MyTooliT/ICOc/issues/1).
+   Please note, that the test will rename the tested STH
+
+   - to a [**Base64 encoded version of the Bluetooth MAC address**](https://github.com/MyTooliT/ICOc/issues/1), if `STH` → `STATUS` is set to `Epoxied`, or
+
+   - to the **serial number** (`STH` → `PROGRAMMING BOARD` → `SERIAL NUMBER`), if you set the status to `Bare PCB`.
 
 [config]: ../../mytoolit/config/config.yaml
 
