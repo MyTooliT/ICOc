@@ -1,6 +1,10 @@
 # Version 1.0.11
 
-### STH Test
+## Documentation
+
+- Add [STH renaming tutorial](../Tutorials/Renaming.md)
+
+## STH Test
 
 - The test now uses the serial number (`STH` → `SERIAL NUMBER`) as new name, if you set the status (`STH` → `STATUS`) to `Epoxied` in the [configuration](../../mytoolit/config/config.yaml). If you use use a different status, then the test will still use the [Base64 encoded MAC address](https://github.com/MyTooliT/ICOc/issues/1) as new (Bluetooth advertisement) name.
 - Remove wait time (of 2 seconds) after Bluetooth connection was established. In theory this should make the test execution quite a bit faster, without any adverse effects.
