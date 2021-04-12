@@ -6,7 +6,9 @@ Before you start, please make sure that you installed the hardware and software 
 
 ## STH
 
-1. Please either
+1. > **Note:** You can **skip this step, if you do not want to run the flash test**. To skip the flash test, please set `STH` → `STATUS` in the [configuration file][config] to `Epoxied`.
+
+   Please either
 
    - create a directory called `STH`, or
    - clone the [STH repository](https://github.com/mytoolit/STH) to a location
