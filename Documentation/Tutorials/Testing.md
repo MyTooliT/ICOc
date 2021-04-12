@@ -43,7 +43,9 @@ Before you start, please make sure that you installed the hardware and software 
 
 ## STU
 
-1. Please take a look at step 1 for the STH and replace every occurrence of STU with `STU`. In the end of this step the directory structure should look like something like this:
+1. > **Note:** You can **skip this step, if you do not want to run the flash test**.
+
+   Please take a look at step 1 for the STH and replace every occurrence of STU with `STU`. In the end of this step the directory structure should look like something like this:
 
    ```
    .
