@@ -4,7 +4,6 @@ import socket
 import json
 from time import time
 
-from mytoolit.old.configKeys import ConfigKeys
 from mytoolit.old.Logger import Logger
 
 HOST = ''  # Symbolic name meaning all available interfaces
