@@ -61,7 +61,7 @@ GUI:
 
 OPERATOR:
   # The name of the operator that executes the hardware tests
-  NAME: Dummy User
+  NAME: New Dummy User
 
 STH:
   ACCELERATION SENSOR:
