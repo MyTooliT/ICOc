@@ -4,6 +4,10 @@
 
 - Add [STH renaming tutorial](../Tutorials/Renaming.md)
 
+## ICOc
+
+- We fixed the sporadic crashes of the graphical plotter interface. You should not see messages about “WinError 10061” any more, when you try to read acceleration data with `icoc`.
+
 ## STH Test
 
 - The test now uses the serial number (`STH` → `SERIAL NUMBER`) as new name, if you set the status (`STH` → `STATUS`) to `Epoxied` in the [configuration](../../mytoolit/config/config.yaml). If you use use a different status, then the test will still use the [Base64 encoded MAC address](https://github.com/MyTooliT/ICOc/issues/1) as new (Bluetooth advertisement) name.

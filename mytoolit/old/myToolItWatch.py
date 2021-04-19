@@ -438,7 +438,6 @@ class myToolItWatch():
         self.iGraphSampleInterval = sampleInterval
         self.sMsgLoss = "Acceleration(" + str(format(0, '3.3f')) + "%)"
         self.GuiPackage = {"X": [], "Y": [], "Z": []}
-        self.tSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     def vStuAddr(self, sStuAddr):
         self.sStuAddr = sStuAddr
@@ -468,13 +467,19 @@ class myToolItWatch():
             self.guiProcess = multiprocessing.Process(
                 target=vPlotter, args=(self.iPloterSocketPort, ))
             self.guiProcess.start()
-            # We suspend the task for two seconds to make sure that the
-            # plotter process is ready to receive data. This is not an ideal
-            # solution. However, this approach should get rid of
-            # “WinError 10061” on most machines.
-            sleep(2)
-            self.tSocket.connect(
-                (self.sPloterSocketHost, self.iPloterSocketPort))
+
+            # Wait until socket of GUI application is ready
+            connection_established = False
+            while not connection_established:
+                try:
+                    self.tSocket = socket.socket(socket.AF_INET,
+                                                 socket.SOCK_STREAM)
+                    self.tSocket.connect(
+                        (self.sPloterSocketHost, self.iPloterSocketPort))
+                    connection_established = True
+                except ConnectionError:
+                    sleep(0.1)
+
             self.vGraphSend(["dataBlockSize", self.iGraphBlockSize])
             self.vGraphSend(["sampleInterval", self.iGraphSampleInterval])
             self.vGraphSend(["xDim", self.iDisplayTime])
