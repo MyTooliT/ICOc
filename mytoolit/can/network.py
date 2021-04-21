@@ -110,7 +110,7 @@ class ResponseListener(Listener):
 
         """
 
-        getLogger('network').debug(f"{Message(message)}")
+        getLogger('network.can').debug(f"{Message(message)}")
 
         identifier = message.arbitration_id
         error_response = identifier == self.error_identifier.value
@@ -218,7 +218,7 @@ class Network:
         self.notifier = None
         self.sender = Node(sender)
 
-        logger = getLogger('network')
+        logger = getLogger('network.can')
         # We use `Logger` in the code below, since the `.logger` attribute
         # stores internal DynaConf data
         logger.setLevel(settings.Logger.can.level)
@@ -318,7 +318,7 @@ class Network:
 
             listener = ResponseListener(message, response_data)
             self.notifier.add_listener(listener)
-            getLogger('network').debug(f"{message}")
+            getLogger('network.can').debug(f"{message}")
             self.bus.send(message.to_python_can())
 
             try:
