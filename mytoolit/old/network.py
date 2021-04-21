@@ -312,6 +312,9 @@ class Network(object):
         while True:
             # Check timeout
             if self.get_elapsed_time() > waitTimeMax:
+                warning = ("No acknowledgement message received in "
+                           f"{waitMs} milliseconds: Message(CanMsg)")
+                self.Logger.Warning(warning)
                 return self.WriteFrameWaitAckTimeOut(CanMsg,
                                                      printLog), currentIndex
 
@@ -336,6 +339,9 @@ class Network(object):
                 return self.WriteFrameWaitAckOk(message), currentIndex
 
             if CanMsgAckError.ID == pcan_message.ID:
+                warning = ("Received error response message: "
+                           f"{Message(pcan_message)}")
+                self.Logger.Warning(warning)
                 return self.WriteFrameWaitAckError(message, bError,
                                                    printLog), currentIndex
 
