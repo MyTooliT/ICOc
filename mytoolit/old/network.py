@@ -328,12 +328,14 @@ class Network(object):
             if sendTime > message["PcTime"]:
                 continue
 
-            if CanMsgAck.ID == message["CanMsg"].ID and (
+            pcan_message = message["CanMsg"]
+
+            if CanMsgAck.ID == pcan_message.ID and (
                     assumedPayload is None
                     or list(message["CanMsg"].DATA) == assumedPayload):
                 return self.WriteFrameWaitAckOk(message), currentIndex
 
-            if CanMsgAckError.ID == message["CanMsg"].ID:
+            if CanMsgAckError.ID == pcan_message.ID:
                 return self.WriteFrameWaitAckError(message, bError,
                                                    printLog), currentIndex
 
