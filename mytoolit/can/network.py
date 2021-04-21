@@ -289,7 +289,6 @@ class Network:
         response_data:
            Specifies the expected data in the acknowledgment message
 
-
         Returns
         -------
 
