@@ -1095,9 +1095,9 @@ class Network:
 
         await self.activate_bluetooth('STU 1')
 
-        # We wait a maximum of 5 seconds for the connection to the STH to take
-        # place
-        timeout_in_s = 5
+        # We wait for a certain amount of time for the connection to the STH to
+        # take place
+        timeout_in_s = 10
         end_time = time() + timeout_in_s
 
         sth = None
