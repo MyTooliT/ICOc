@@ -1120,10 +1120,12 @@ class Network:
                 await sleep(0.1)
 
         await self.connect_with_device_number(sth.device_number)
+        connection_attempt_time = time()
         while not await self.is_connected('STU 1'):
             if time() > end_time:
+                connection_time = time() - connection_attempt_time
                 raise TimeoutError("Unable to connect to STH "
-                                   f"“{sth}” in {timeout_in_s} seconds")
+                                   f"“{sth}” in {connection_time} seconds")
 
             await sleep(0.1)
 
