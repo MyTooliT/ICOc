@@ -4,6 +4,10 @@
 
 - Add [STH renaming tutorial](../Tutorials/Renaming.md)
 
+## EEPROM Checker
+
+- The EEPROM checker (`check-eeprom`) now uses [the new network class](../../mytoolit/can/network.py).
+
 ## ICOc
 
 - We fixed the sporadic crashes of the graphical plotter interface. You should not see messages about “WinError 10061” any more, when you try to read acceleration data with `icoc`.
