@@ -1887,6 +1887,38 @@ class Network:
                                           length=4,
                                           node='STH 1')
 
+    async def write_eeprom_sleep_time_2(self, milliseconds: int) -> None:
+        """Write the value of sleep time 2 to the EEPROM
+
+        Parameters
+        ----------
+
+        milliseconds:
+            The value for sleep time 2 in milliseconds
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Write and read sleep time 2 of STH 1
+
+        >>> async def write_read_sleep_time_2(milliseconds):
+        ...     async with Network() as network:
+        ...         await network.connect_sth(0)
+        ...         await network.write_eeprom_sleep_time_2(milliseconds)
+        ...         return await network.read_eeprom_sleep_time_2()
+        >>> run(write_read_sleep_time_2(259_200_000))
+        259200000
+
+        """
+
+        await self.write_eeprom_int(address=0,
+                                    offset=15,
+                                    value=milliseconds,
+                                    length=4,
+                                    node='STH 1')
+
 
 # -- Main ---------------------------------------------------------------------
 
