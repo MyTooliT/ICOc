@@ -2014,6 +2014,41 @@ class Network:
 
         return await self.read_eeprom_int(address=4, offset=0, length=8)
 
+    async def write_eeprom_gtin(self,
+                                gtin: int,
+                                node: Union[str, Node] = 'STU 1') -> None:
+        """Write the global trade identifier number (GTIN) to the EEPROM
+
+        Parameters
+        ----------
+
+        gtin:
+            The new GTIN of the current receiver
+
+        node:
+            The node where you want to change the GTIN
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Write and read the GTIN of STU 1
+
+        >>> async def write_read_gtin(gtin):
+        ...     async with Network() as network:
+        ...         await network.write_eeprom_gtin(gtin=gtin, node='STU 1')
+        ...         return await network.read_eeprom_gtin(node='STU 1')
+        >>> run(write_read_gtin(0))
+        0
+
+        """
+
+        return await self.write_eeprom_int(address=4,
+                                           offset=0,
+                                           length=8,
+                                           value=gtin)
+
 
 # -- Main ---------------------------------------------------------------------
 
