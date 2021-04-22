@@ -1774,7 +1774,7 @@ class Network:
 
         >>> from asyncio import run
 
-        Write and read sleep time 1 of STU 1
+        Write and read sleep time 1 of STH 1
 
         >>> async def write_read_sleep_time_1(milliseconds):
         ...     async with Network() as network:
