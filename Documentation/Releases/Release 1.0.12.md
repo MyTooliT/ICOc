@@ -6,10 +6,11 @@
 
 - Add the coroutines
 
-  - `read_eeprom_advertisement_time_2`, and
-  - `read_eeprom_sleep_time_2`
+  - `read_eeprom_advertisement_time_2`,
+  - `read_eeprom_gtin`, and
+  - `read_eeprom_sleep_time_2`,
 
-  to read specific parts of the EEPROM
+  to read specific values of the EEPROM
 
 - Add the coroutines
 

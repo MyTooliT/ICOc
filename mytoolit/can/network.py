@@ -1982,6 +1982,38 @@ class Network:
                                     length=2,
                                     node='STH 1')
 
+    async def read_eeprom_gtin(self, node: Union[str, Node] = 'STU 1') -> int:
+        """Read the global trade identifier number (GTIN) from the EEPROM
+
+        Parameters
+        ----------
+
+        node:
+            The node for which you want to retrieve the GTIN
+
+        Returns
+        -------
+
+        The GTIN of the specified node
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Read the GTIN of STU 1
+
+        >>> async def read_gtin():
+        ...     async with Network() as network:
+        ...         return await network.read_eeprom_gtin('STU 1')
+        >>> gtin = run(read_gtin())
+        >>> isinstance(gtin, int)
+        True
+
+        """
+
+        return await self.read_eeprom_int(address=4, offset=0, length=8)
+
 
 # -- Main ---------------------------------------------------------------------
 
