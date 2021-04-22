@@ -1919,6 +1919,36 @@ class Network:
                                     length=4,
                                     node='STH 1')
 
+    async def read_eeprom_advertisement_time_2(self) -> int:
+        """Retrieve advertisement time 2 from the EEPROM
+
+        Returns
+        -------
+
+        The current value of advertisement time 2 in milliseconds
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Read advertisement time 2 of STH 1
+
+        >>> async def read_advertisement_time_2():
+        ...     async with Network() as network:
+        ...         await network.connect_sth(0)
+        ...         return await network.read_eeprom_advertisement_time_2()
+        >>> advertisement_time = run(read_advertisement_time_2())
+        >>> isinstance(advertisement_time, int)
+        True
+
+        """
+
+        return await self.read_eeprom_int(address=0,
+                                          offset=19,
+                                          length=2,
+                                          node='STH 1')
+
 
 # -- Main ---------------------------------------------------------------------
 
