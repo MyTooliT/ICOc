@@ -1949,6 +1949,39 @@ class Network:
                                           length=2,
                                           node='STH 1')
 
+    async def write_eeprom_advertisement_time_2(self, milliseconds: int):
+        """Write the value of advertisement time 2 to the EEPROM
+
+        Parameters
+        ----------
+
+        milliseconds:
+            The value for advertisement time 2 in milliseconds
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Write and read advertisement time 2 of STH 1
+
+        >>> async def write_read_advertisement_time_2(milliseconds):
+        ...     async with Network() as network:
+        ...         await network.connect_sth(0)
+        ...         await network.write_eeprom_advertisement_time_2(
+        ...                 milliseconds)
+        ...         return await network.read_eeprom_advertisement_time_2()
+        >>> run(write_read_advertisement_time_2(4000))
+        4000
+
+        """
+
+        await self.write_eeprom_int(address=0,
+                                    offset=19,
+                                    value=milliseconds,
+                                    length=2,
+                                    node='STH 1')
+
 
 # -- Main ---------------------------------------------------------------------
 
