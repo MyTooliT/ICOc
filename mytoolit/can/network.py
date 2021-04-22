@@ -1857,6 +1857,36 @@ class Network:
                                     length=2,
                                     node='STH 1')
 
+    async def read_eeprom_sleep_time_2(self) -> int:
+        """Retrieve sleep time 2 from the EEPROM
+
+        Returns
+        -------
+
+        The current value of sleep time 2 in milliseconds
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Read sleep time 2 of STH 1
+
+        >>> async def read_sleep_time_2():
+        ...     async with Network() as network:
+        ...         await network.connect_sth(0)
+        ...         return await network.read_eeprom_sleep_time_2()
+        >>> sleep_time = run(read_sleep_time_2())
+        >>> isinstance(sleep_time, int)
+        True
+
+        """
+
+        return await self.read_eeprom_int(address=0,
+                                          offset=15,
+                                          length=4,
+                                          node='STH 1')
+
 
 # -- Main ---------------------------------------------------------------------
 
