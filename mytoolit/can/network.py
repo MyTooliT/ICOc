@@ -2554,6 +2554,42 @@ class Network:
                                           length=4,
                                           node=node)
 
+    async def write_eeprom_power_on_cycles(self,
+                                           times: int,
+                                           node: Union[str, Node] = 'STU 1'):
+        """Write the number of power on cycles to the EEPROM
+
+        Parameters
+        ----------
+
+        times:
+            The number of power on cycles of the specified node
+
+        node:
+            The node where you want to change the number of power on cycles
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Write and read the number of power on cycles of STU 1
+
+        >>> async def write_read_power_on_cycles(times):
+        ...     async with Network() as network:
+        ...         await network.write_eeprom_power_on_cycles(times, 'STU 1')
+        ...         return await network.read_eeprom_power_on_cycles('STU 1')
+        >>> run(write_read_power_on_cycles(0))
+        0
+
+        """
+
+        await self.write_eeprom_int(address=5,
+                                    offset=0,
+                                    length=4,
+                                    value=times,
+                                    node=node)
+
 
 # -- Main ---------------------------------------------------------------------
 
