@@ -42,6 +42,7 @@
   - `write_eeprom_gtin`,
   - `write_eeprom_hardware_version`,
   - `write_eeprom_oem_data`,
+  - `write_eeprom_operating_time`,
   - `write_eeprom_power_off_cycles`,
   - `write_eeprom_power_on_cycles`,
   - `write_eeprom_product_name`,

@@ -2700,6 +2700,43 @@ class Network:
                                           length=4,
                                           node=node)
 
+    async def write_eeprom_operating_time(self,
+                                          seconds: int,
+                                          node: Union[str, Node] = 'STU 1'):
+        """Write operating time to the EEPROM
+
+        Parameters
+        ----------
+
+        seconds:
+            The operating time in seconds that should be stored in the EEPROM
+
+        node:
+            The node for which you want to change the operating time
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Write and read the operating time of STU 1
+
+        >>> async def write_read_operating_time(seconds):
+        ...     async with Network() as network:
+        ...         await network.write_eeprom_operating_time(seconds, 'STU 1')
+        ...         return await network.read_eeprom_operating_time('STU 1')
+        >>> operating_time = run(write_read_operating_time(10))
+        >>> 10 <= operating_time <= 11
+        True
+
+        """
+
+        await self.write_eeprom_int(address=5,
+                                    offset=8,
+                                    length=4,
+                                    value=seconds,
+                                    node=node)
+
 
 # -- Main ---------------------------------------------------------------------
 
