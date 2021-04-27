@@ -2663,6 +2663,43 @@ class Network:
                                     value=times,
                                     node=node)
 
+    async def read_eeprom_operating_time(self,
+                                         node: Union[str,
+                                                     Node] = 'STU 1') -> int:
+        """Retrieve the operating time from the EEPROM
+
+        Parameters
+        ----------
+
+        node:
+            The node for which you want to retrieve the operating time
+
+        Returns
+        -------
+
+        The operating time of the specified node in seconds
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Read the operating time of STU 1
+
+        >>> async def read_operating_time():
+        ...     async with Network() as network:
+        ...         return await network.read_eeprom_operating_time('STU 1')
+        >>> operating_time = run(read_operating_time())
+        >>> operating_time >= 0
+        True
+
+        """
+
+        return await self.read_eeprom_int(address=5,
+                                          offset=8,
+                                          length=4,
+                                          node=node)
+
 
 # -- Main ---------------------------------------------------------------------
 

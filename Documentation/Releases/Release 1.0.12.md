@@ -25,6 +25,7 @@
   - `read_eeprom_gtin`,
   - `read_eeprom_hardware_version`,
   - `read_eeprom_oem_data`,
+  - `read_eeprom_operating_time`,
   - `read_eeprom_power_off_cycles`,
   - `read_eeprom_power_on_cycles`,
   - `read_eeprom_product_name`,
