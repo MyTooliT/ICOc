@@ -2455,7 +2455,7 @@ class Network(object):
         ----------
 
         times:
-            The number of time the voltage was too low
+            The number of times the voltage was too low
 
         """
 
