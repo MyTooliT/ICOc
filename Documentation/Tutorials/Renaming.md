@@ -28,7 +28,7 @@
 3. Now the menu should look like this:
 
    ```
-   08:6b:d7:01:de:81(Tanja)
+   08:6b:d7:01:de:81(Serial)
    Global Trade Identification Number (GTIN): 0
    Hardware Version(Major.Minor.Build): 1.4.0
    Firmware Version(Major.Minor.Build): 2.1.10

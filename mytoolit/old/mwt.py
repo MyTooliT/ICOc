@@ -291,6 +291,7 @@ class mwt(myToolItWatch):
                             self.stdscr.addstr("Connect to " +
                                                hex(dev["Address"]) + "(" +
                                                str(dev["Name"]) + ")\n")
+                            self.sDevName = dev["Name"]
                             self.stdscr.refresh()
                             if False != self.Can.bBlueToothConnectPollingAddress(
                                     MyToolItNetworkNr["STU1"], self.iAddress):

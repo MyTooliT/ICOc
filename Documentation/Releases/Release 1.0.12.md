@@ -9,6 +9,10 @@
 
   in the [configuration file](../../mytoolit/config/config.yaml).
 
+## ICOc
+
+- The menu for a connected STH now displays the correct STH name instead of the text “Tanja”.
+
 ## Internal
 
 ### Network
