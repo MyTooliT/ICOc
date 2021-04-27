@@ -2209,6 +2209,39 @@ class Network:
             length=3,
             data=[version.major, version.minor, version.patch])
 
+    async def read_eeprom_release_name(self,
+                                       node: Union[str,
+                                                   Node] = 'STU 1') -> str:
+        """Retrieve the current release name from the EEPROM
+
+        Parameters
+        ----------
+
+        node:
+            The node from which you want to retrieve the release name
+
+        Returns
+        -------
+
+        The firmware release name of the specified node
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Read the release name of STU 1
+
+        >>> async def read_release_name():
+        ...     async with Network() as network:
+        ...         return await network.read_eeprom_release_name(node='STU 1')
+        >>> run(read_release_name())
+        'Valerie'
+
+        """
+
+        return await self.read_eeprom_text(address=4, offset=24, length=8)
+
 
 # -- Main ---------------------------------------------------------------------
 
