@@ -13,6 +13,7 @@ from typing import List, NamedTuple, Optional, Sequence, Type, Union
 
 from can import Bus, Listener, Message as CANMessage, Notifier
 from can.interfaces.pcan.pcan import PcanError
+from semantic_version import Version
 from netaddr import EUI
 
 # Fix imports for script usage
@@ -2048,6 +2049,44 @@ class Network:
                                            offset=0,
                                            length=8,
                                            value=gtin)
+
+    async def read_eeprom_hardware_version(self,
+                                           node: Union[str, Node] = 'STU 1'
+                                           ) -> Version:
+        """Read the current hardware version from the EEPROM
+
+        Parameters
+        ----------
+
+        node:
+            The node from which you want to retrieve the hardware version
+
+        Returns
+        -------
+
+        The hardware version of the specified node
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Read the hardware version of STU 1
+
+        >>> async def read_hardware_version():
+        ...     async with Network() as network:
+        ...         return (await
+        ...                 network.read_eeprom_hardware_version(node='STU 1'))
+        >>> hardware_version = run(read_hardware_version())
+        >>> hardware_version.major >= 1
+        True
+
+        """
+
+        major, minor, patch = await self.read_eeprom(address=4,
+                                                     offset=13,
+                                                     length=3)
+        return Version(major=major, minor=minor, patch=patch)
 
 
 # -- Main ---------------------------------------------------------------------

@@ -7,7 +7,8 @@
 - Add the coroutines
 
   - `read_eeprom_advertisement_time_2`,
-  - `read_eeprom_gtin`, and
+  - `read_eeprom_gtin`,
+  - `read_eeprom_hardware_version`, and
   - `read_eeprom_sleep_time_2`,
 
   to read specific values of the EEPROM
