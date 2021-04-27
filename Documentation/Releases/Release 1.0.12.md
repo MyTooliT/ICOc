@@ -12,6 +12,7 @@
 ## ICOc
 
 - The menu for a connected STH now displays the correct STH name instead of the text “Tanja”.
+- The main menu now uses “ICOc” instead of “MyToolIt Terminal” as title
 
 ## Internal
 

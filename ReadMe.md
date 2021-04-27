@@ -98,7 +98,7 @@ icoc
 in your terminal, a text based interface shows you the currently available options. For example, the text
 
 ```
-MyToolIt Terminal
+ICOc
 
 1: 08:6b:d7:01:de:81(Blubb)@-52dBm
 

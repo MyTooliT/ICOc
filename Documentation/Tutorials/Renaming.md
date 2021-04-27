@@ -9,7 +9,7 @@
 2. The text based interface will show you a selection of the available STHs:
 
    ```
-   MyToolIt Terminal
+   ICOc
 
    1: 08:6b:d7:01:de:81(Serial)@-54dBm
 

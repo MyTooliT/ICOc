@@ -1271,7 +1271,7 @@ class mwt(myToolItWatch):
 
     def vTerminalHeader(self):
         self.stdscr.clear()
-        self.stdscr.addstr("MyToolIt Terminal\n\n")
+        self.stdscr.addstr("ICOc\n\n")
 
     def vTerminalNew(self):
         self.bTerminal = True
