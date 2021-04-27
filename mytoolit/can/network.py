@@ -2013,7 +2013,10 @@ class Network:
 
         """
 
-        return await self.read_eeprom_int(address=4, offset=0, length=8)
+        return await self.read_eeprom_int(address=4,
+                                          offset=0,
+                                          length=8,
+                                          node=node)
 
     async def write_eeprom_gtin(self,
                                 gtin: int,
@@ -2045,7 +2048,11 @@ class Network:
 
         """
 
-        await self.write_eeprom_int(address=4, offset=0, length=8, value=gtin)
+        await self.write_eeprom_int(address=4,
+                                    offset=0,
+                                    length=8,
+                                    value=gtin,
+                                    node=node)
 
     async def read_eeprom_hardware_version(self,
                                            node: Union[str, Node] = 'STU 1'
@@ -2082,7 +2089,8 @@ class Network:
 
         major, minor, patch = await self.read_eeprom(address=4,
                                                      offset=13,
-                                                     length=3)
+                                                     length=3,
+                                                     node=node)
         return Version(major=major, minor=minor, patch=patch)
 
     async def write_eeprom_hardware_version(self,
@@ -2125,7 +2133,8 @@ class Network:
             address=4,
             offset=13,
             length=3,
-            data=[version.major, version.minor, version.patch])
+            data=[version.major, version.minor, version.patch],
+            node=node)
 
     async def read_eeprom_firmware_version(self,
                                            node: Union[str, Node] = 'STU 1'
@@ -2162,7 +2171,8 @@ class Network:
 
         major, minor, patch = await self.read_eeprom(address=4,
                                                      offset=21,
-                                                     length=3)
+                                                     length=3,
+                                                     node=node)
         return Version(major=major, minor=minor, patch=patch)
 
     async def write_eeprom_firmware_version(
@@ -2207,7 +2217,8 @@ class Network:
             address=4,
             offset=21,
             length=3,
-            data=[version.major, version.minor, version.patch])
+            data=[version.major, version.minor, version.patch],
+            node=node)
 
     async def read_eeprom_release_name(self,
                                        node: Union[str,
