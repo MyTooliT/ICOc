@@ -2294,6 +2294,44 @@ class Network:
                                      text=name,
                                      node=node)
 
+    async def read_eeprom_serial_number(self,
+                                        node: Union[str,
+                                                    Node] = 'STU 1') -> str:
+        """Retrieve the serial number from the EEPROM
+
+        Parameters
+        ----------
+
+        node:
+            The node from which you want to retrieve the serial number
+
+        Returns
+        -------
+
+        The serial number of the specified node
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Read the serial number of STU 1
+
+        >>> async def read_serial_number():
+        ...     async with Network() as network:
+        ...         return await network.read_eeprom_serial_number(
+        ...                 node='STU 1')
+        >>> serial_number = run(read_serial_number())
+        >>> isinstance(serial_number, str)
+        True
+
+        """
+
+        return await self.read_eeprom_text(address=4,
+                                           offset=32,
+                                           length=32,
+                                           node=node)
+
 
 # -- Main ---------------------------------------------------------------------
 

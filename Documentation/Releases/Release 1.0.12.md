@@ -24,7 +24,8 @@
   - `read_eeprom_firmware_version`,
   - `read_eeprom_gtin`,
   - `read_eeprom_hardware_version`,
-  - `read_eeprom_release_name`, and
+  - `read_eeprom_release_name`,
+  - `read_eeprom_serial_number`, and
   - `read_eeprom_sleep_time_2`,
 
   to read specific values of the EEPROM
