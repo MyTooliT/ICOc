@@ -2027,7 +2027,7 @@ class Network:
         ----------
 
         gtin:
-            The new GTIN of the current receiver
+            The new GTIN of the specified receiver
 
         node:
             The node where you want to change the GTIN
@@ -2102,7 +2102,7 @@ class Network:
         ----------
 
         version:
-            The new hardware version of the current receiver
+            The new hardware version of the specified receiver
 
         node:
             The node where you want to change the hardware version
@@ -2341,7 +2341,7 @@ class Network:
         ----------
 
         serial_number:
-            The serial number of the current receiver
+            The serial number of the specified receiver
 
         node:
             The node where you want to change the release name
