@@ -1,5 +1,14 @@
 # Version 1.0.12
 
+## Config
+
+- We now use the common term “version” instead of “revision” to specify the current state of the hardware. We therefore renamed
+
+  - `STH` → `HARDWARE REVISION` to
+  - `STH` → `HARDWARE VERSION`
+
+  in the [configuration file](../../mytoolit/config/config.yaml).
+
 ## Internal
 
 ### Network

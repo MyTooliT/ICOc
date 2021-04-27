@@ -2190,13 +2190,13 @@ class Network(object):
                                           length=8,
                                           value=value)
 
-    def read_eeprom_hardware_revision(self):
-        """Read the current hardware revision from the EEPROM
+    def read_eeprom_hardware_version(self):
+        """Read the current hardware version from the EEPROM
 
         Returns
         -------
 
-        The hardware revision of the current receiver
+        The hardware version of the current receiver
 
         """
 
@@ -2204,14 +2204,14 @@ class Network(object):
 
         return Version(major=major, minor=minor, patch=patch)
 
-    def write_eeprom_hardware_revision(self, version):
-        """Write hardware revision to the EEPROM
+    def write_eeprom_hardware_version(self, version):
+        """Write hardware version to the EEPROM
 
         Parameters
         ----------
 
         version:
-            The new hardware revision of the current receiver
+            The new hardware version of the current receiver
 
         """
 

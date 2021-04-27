@@ -71,7 +71,7 @@ class TestNode(TestCase):
         create_attribute("Batch Number", "{cls.batch_number}", pdf=False),
         create_attribute("Bluetooth Address", "{cls.bluetooth_mac}"),
         create_attribute("RSSI", "{cls.bluetooth_rssi} dBm"),
-        create_attribute("Hardware Revision", "{cls.hardware_revision}"),
+        create_attribute("Hardware Version", "{cls.hardware_version}"),
         create_attribute("Firmware Version", "{cls.firmware_version}"),
         create_attribute("Release Name", "{cls.release_name}", pdf=False),
         create_attribute("Ratio Noise Maximum",
@@ -379,17 +379,17 @@ class TestNode(TestCase):
             gtin, cls.gtin,
             f"Written GTIN “{gtin}” does not match read GTIN “{cls.gtin}”")
 
-        # =====================
-        # = Hardware Revision =
-        # =====================
+        # ====================
+        # = Hardware Version =
+        # ====================
 
-        hardware_revision = config.hardware_revision
-        self.can.write_eeprom_hardware_revision(hardware_revision)
-        cls.hardware_revision = self.can.read_eeprom_hardware_revision()
+        hardware_version = config.hardware_version
+        self.can.write_eeprom_hardware_version(hardware_version)
+        cls.hardware_version = self.can.read_eeprom_hardware_version()
         self.assertEqual(
-            hardware_revision, f"{cls.hardware_revision}",
-            f"Written hardware revision “{hardware_revision}” does not " +
-            f"match read hardware revision “{cls.hardware_revision}”")
+            hardware_version, f"{cls.hardware_version}",
+            f"Written hardware version “{hardware_version}” does not " +
+            f"match read hardware version “{cls.hardware_version}”")
 
         # ====================
         # = Firmware Version =
