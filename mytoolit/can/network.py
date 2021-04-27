@@ -2480,6 +2480,43 @@ class Network:
                                       length=64,
                                       node=node)
 
+    async def write_eeprom_oem_data(self,
+                                    data: List[int],
+                                    node: Union[str, Node] = 'STU 1'):
+        """Write OEM data to the EEPROM
+
+        Parameters
+        ----------
+
+        data:
+            The OEM data that should be stored in the EEPROM
+
+        node:
+            The node where you want to store the OEM data
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Write and read the OEM data of STU 1
+
+        >>> async def write_read_oem_data(data):
+        ...     async with Network() as network:
+        ...         await network.write_eeprom_oem_data(data, node='STU 1')
+        ...         return await network.read_eeprom_oem_data(node='STU 1')
+        >>> data = [0] * 64
+        >>> run(write_read_oem_data(data)) == data
+        True
+
+        """
+
+        await self.write_eeprom(address=4,
+                                offset=192,
+                                length=64,
+                                data=data,
+                                node=node)
+
 
 # -- Main ---------------------------------------------------------------------
 
