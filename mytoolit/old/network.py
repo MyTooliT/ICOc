@@ -2442,7 +2442,7 @@ class Network(object):
         Returns
         -------
 
-        The number of time the voltage was too low for the current receiver
+        The number of times the voltage was too low for the current receiver
 
         """
 
