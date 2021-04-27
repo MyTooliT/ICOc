@@ -2737,6 +2737,45 @@ class Network:
                                     value=seconds,
                                     node=node)
 
+    async def read_eeprom_under_voltage_counter(self,
+                                                node: Union[str,
+                                                            Node] = 'STU 1'
+                                                ) -> int:
+        """Retrieve the under voltage counter value from the EEPROM
+
+        Parameters
+        ----------
+
+        node:
+            The node for which you want to retrieve the under voltage counter
+
+        Returns
+        -------
+
+        The number of times the voltage was too low for the specified node
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Read the under voltage counter of STU 1
+
+        >>> async def read_under_voltage_counter():
+        ...     async with Network() as network:
+        ...         return await network.read_eeprom_under_voltage_counter(
+        ...             node='STU 1')
+        >>> under_voltage_counter = run(read_under_voltage_counter())
+        >>> under_voltage_counter >= 0
+        True
+
+        """
+
+        return await self.read_eeprom_int(address=5,
+                                          offset=12,
+                                          length=4,
+                                          node=node)
+
 
 # -- Main ---------------------------------------------------------------------
 
