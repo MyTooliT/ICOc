@@ -2240,7 +2240,48 @@ class Network:
 
         """
 
-        return await self.read_eeprom_text(address=4, offset=24, length=8)
+        return await self.read_eeprom_text(address=4,
+                                           offset=24,
+                                           length=8,
+                                           node=node)
+
+    async def write_eeprom_release_name(self,
+                                        name: str,
+                                        node: Union[str, Node] = 'STU 1'):
+        """Write the release name to the EEPROM
+
+        Parameters
+        ----------
+
+        name:
+            The new name of the release
+
+        node:
+            The node where you want to change the the release name
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Write and read the release name of STU 1
+
+        >>> async def write_read_release_name(name):
+        ...     async with Network() as network:
+        ...         await network.write_eeprom_release_name(name=name,
+        ...                                                 node='STU 1')
+        ...         return (await
+        ...                 network.read_eeprom_release_name(node='STU 1'))
+        >>> run(write_read_release_name('Valerie'))
+        'Valerie'
+
+        """
+
+        await self.write_eeprom_text(address=4,
+                                     offset=24,
+                                     length=8,
+                                     text=name,
+                                     node=node)
 
 
 # -- Main ---------------------------------------------------------------------
