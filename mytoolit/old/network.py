@@ -1607,14 +1607,14 @@ class Network(object):
             if False != bLog:
                 self.Logger.Info("GTIN: " + str(iGtin))
             sReturn = str(iGtin)
-        elif "HardwareRevision" == name:
+        elif "HardwareVersion" == name:
             index = self.cmdSend(Node("STH1").value,
                                  MyToolItBlock["ProductData"],
-                                 MyToolItProductData["HardwareRevision"], [],
+                                 MyToolItProductData["HardwareVersion"], [],
                                  log=bLog)
             tHwRev = self.getReadMessageData(index)
             if False != bLog:
-                self.Logger.Info("Hardware Revision: " + str(tHwRev))
+                self.Logger.Info("Hardware Version: " + str(tHwRev))
             sReturn = str(tHwRev[5]) + "." + str(tHwRev[6]) + "." + str(
                 tHwRev[7])
         elif "FirmwareVersion" == name:

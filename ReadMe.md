@@ -121,7 +121,7 @@ To read data from an STH (or SHA), start the ICOc script, and connect to an STH.
 ```
 08:6b:d7:01:de:81(Tanja)
 Global Trade Identification Number (GTIN): 0
-Hardware Revision(Major.Minor.Build): 1.3.5
+Hardware Version(Major.Minor.Build): 1.3.5
 Firmware Version(Major.Minor.Build): 2.1.10
 Firmware Release Name: Tanja
 Serial: -

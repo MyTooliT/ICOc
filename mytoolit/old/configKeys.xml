@@ -284,41 +284,41 @@
                                     <format>unsigned</format>
                                     <description>Global Trade Identification Number (GTIN)</description>
                                     </entry>
-                                    <entry name="Hardware Revision - Reserved">
+                                    <entry name="Hardware Version - Reserved">
                                     <subAddress>8</subAddress>
                                     <length>5</length>
                                     <readOnly>True</readOnly>
                                     <value>0</value>
                                     <unit />
                                     <format>unsigned</format>
-                                    <description>Hardware Revision Number - Reserved</description>
+                                    <description>Hardware Version Number - Reserved</description>
                                     </entry>
-                                    <entry name="Hardware Revision - Major">
+                                    <entry name="Hardware Version - Major">
                                     <subAddress>13</subAddress>
                                     <length>1</length>
                                     <readOnly>True</readOnly>
                                     <value>1</value>
                                     <unit />
                                     <format>unsigned</format>
-                                    <description>Hardware Revision Number - Major</description>
+                                    <description>Hardware Version Number - Major</description>
                                     </entry>
-                                    <entry name="Hardware Revision - Minor">
+                                    <entry name="Hardware Version - Minor">
                                     <subAddress>14</subAddress>
                                     <length>1</length>
                                     <readOnly>True</readOnly>
                                     <value>3</value>
                                     <unit />
                                     <format>unsigned</format>
-                                    <description>Hardware Revision Number - Minor</description>
+                                    <description>Hardware Version Number - Minor</description>
                                     </entry>
-                                    <entry name="Hardware Revision - Build">
+                                    <entry name="Hardware Version - Build">
                                     <subAddress>15</subAddress>
                                     <length>1</length>
                                     <readOnly>True</readOnly>
                                     <value>4</value>
                                     <unit />
                                     <format>unsigned</format>
-                                    <description>Hardware Revision Number - Build</description>
+                                    <description>Hardware Version Number - Build</description>
                                     </entry>
                                     <entry name="Firmware Version Number - Reserved">
                                     <subAddress>16</subAddress>
@@ -677,41 +677,41 @@
                                     <format>unsigned</format>
                                     <description>Global Trade Identification Number (GTIN)</description>
                                     </entry>
-                                    <entry name="Hardware Revision - Reserved">
+                                    <entry name="Hardware Version - Reserved">
                                     <subAddress>8</subAddress>
                                     <length>5</length>
                                     <readOnly>True</readOnly>
                                     <value>0</value>
                                     <unit />
                                     <format>unsigned</format>
-                                    <description>Hardware Revision Number - Reserved</description>
+                                    <description>Hardware Version Number - Reserved</description>
                                     </entry>
-                                    <entry name="Hardware Revision - Major">
+                                    <entry name="Hardware Version - Major">
                                     <subAddress>13</subAddress>
                                     <length>1</length>
                                     <readOnly>True</readOnly>
                                     <value>1</value>
                                     <unit />
                                     <format>unsigned</format>
-                                    <description>Hardware Revision Number - Major</description>
+                                    <description>Hardware Version Number - Major</description>
                                     </entry>
-                                    <entry name="Hardware Revision - Minor">
+                                    <entry name="Hardware Version - Minor">
                                     <subAddress>14</subAddress>
                                     <length>1</length>
                                     <readOnly>True</readOnly>
                                     <value>3</value>
                                     <unit />
                                     <format>unsigned</format>
-                                    <description>Hardware Revision Number - Minor</description>
+                                    <description>Hardware Version Number - Minor</description>
                                     </entry>
-                                    <entry name="Hardware Revision - Build">
+                                    <entry name="Hardware Version - Build">
                                     <subAddress>15</subAddress>
                                     <length>1</length>
                                     <readOnly>True</readOnly>
                                     <value>4</value>
                                     <unit />
                                     <format>unsigned</format>
-                                    <description>Hardware Revision Number - Build</description>
+                                    <description>Hardware Version Number - Build</description>
                                     </entry>
                                     <entry name="Firmware Version Number - Reserved">
                                     <subAddress>16</subAddress>
@@ -1070,41 +1070,41 @@
                                     <format>unsigned</format>
                                     <description>Global Trade Identification Number (GTIN)</description>
                                     </entry>
-                                    <entry name="Hardware Revision - Reserved">
+                                    <entry name="Hardware Version - Reserved">
                                     <subAddress>8</subAddress>
                                     <length>5</length>
                                     <readOnly>True</readOnly>
                                     <value>0</value>
                                     <unit />
                                     <format>unsigned</format>
-                                    <description>Hardware Revision Number - Reserved</description>
+                                    <description>Hardware Version Number - Reserved</description>
                                     </entry>
-                                    <entry name="Hardware Revision - Major">
+                                    <entry name="Hardware Version - Major">
                                     <subAddress>13</subAddress>
                                     <length>1</length>
                                     <readOnly>True</readOnly>
                                     <value>1</value>
                                     <unit />
                                     <format>unsigned</format>
-                                    <description>Hardware Revision Number - Major</description>
+                                    <description>Hardware Version Number - Major</description>
                                     </entry>
-                                    <entry name="Hardware Revision - Minor">
+                                    <entry name="Hardware Version - Minor">
                                     <subAddress>14</subAddress>
                                     <length>1</length>
                                     <readOnly>True</readOnly>
                                     <value>3</value>
                                     <unit />
                                     <format>unsigned</format>
-                                    <description>Hardware Revision Number - Minor</description>
+                                    <description>Hardware Version Number - Minor</description>
                                     </entry>
-                                    <entry name="Hardware Revision - Build">
+                                    <entry name="Hardware Version - Build">
                                     <subAddress>15</subAddress>
                                     <length>1</length>
                                     <readOnly>True</readOnly>
                                     <value>4</value>
                                     <unit />
                                     <format>unsigned</format>
-                                    <description>Hardware Revision Number - Build</description>
+                                    <description>Hardware Version Number - Build</description>
                                     </entry>
                                     <entry name="Firmware Version Number - Reserved">
                                     <subAddress>16</subAddress>
@@ -1463,41 +1463,41 @@
                                     <format>unsigned</format>
                                     <description>Global Trade Identification Number (GTIN)</description>
                                     </entry>
-                                    <entry name="Hardware Revision - Reserved">
+                                    <entry name="Hardware Version - Reserved">
                                     <subAddress>8</subAddress>
                                     <length>5</length>
                                     <readOnly>True</readOnly>
                                     <value>0</value>
                                     <unit />
                                     <format>unsigned</format>
-                                    <description>Hardware Revision Number - Reserved</description>
+                                    <description>Hardware Version Number - Reserved</description>
                                     </entry>
-                                    <entry name="Hardware Revision - Major">
+                                    <entry name="Hardware Version - Major">
                                     <subAddress>13</subAddress>
                                     <length>1</length>
                                     <readOnly>True</readOnly>
                                     <value>1</value>
                                     <unit />
                                     <format>unsigned</format>
-                                    <description>Hardware Revision Number - Major</description>
+                                    <description>Hardware Version Number - Major</description>
                                     </entry>
-                                    <entry name="Hardware Revision - Minor">
+                                    <entry name="Hardware Version - Minor">
                                     <subAddress>14</subAddress>
                                     <length>1</length>
                                     <readOnly>True</readOnly>
                                     <value>3</value>
                                     <unit />
                                     <format>unsigned</format>
-                                    <description>Hardware Revision Number - Minor</description>
+                                    <description>Hardware Version Number - Minor</description>
                                     </entry>
-                                    <entry name="Hardware Revision - Build">
+                                    <entry name="Hardware Version - Build">
                                     <subAddress>15</subAddress>
                                     <length>1</length>
                                     <readOnly>True</readOnly>
                                     <value>4</value>
                                     <unit />
                                     <format>unsigned</format>
-                                    <description>Hardware Revision Number - Build</description>
+                                    <description>Hardware Version Number - Build</description>
                                     </entry>
                                     <entry name="Firmware Version Number - Reserved">
                                     <subAddress>16</subAddress>
@@ -1856,41 +1856,41 @@
                                     <format>unsigned</format>
                                     <description>Global Trade Identification Number (GTIN)</description>
                                     </entry>
-                                    <entry name="Hardware Revision - Reserved">
+                                    <entry name="Hardware Version - Reserved">
                                     <subAddress>8</subAddress>
                                     <length>5</length>
                                     <readOnly>True</readOnly>
                                     <value>0</value>
                                     <unit />
                                     <format>unsigned</format>
-                                    <description>Hardware Revision Number - Reserved</description>
+                                    <description>Hardware Version Number - Reserved</description>
                                     </entry>
-                                    <entry name="Hardware Revision - Major">
+                                    <entry name="Hardware Version - Major">
                                     <subAddress>13</subAddress>
                                     <length>1</length>
                                     <readOnly>True</readOnly>
                                     <value>1</value>
                                     <unit />
                                     <format>unsigned</format>
-                                    <description>Hardware Revision Number - Major</description>
+                                    <description>Hardware Version Number - Major</description>
                                     </entry>
-                                    <entry name="Hardware Revision - Minor">
+                                    <entry name="Hardware Version - Minor">
                                     <subAddress>14</subAddress>
                                     <length>1</length>
                                     <readOnly>True</readOnly>
                                     <value>3</value>
                                     <unit />
                                     <format>unsigned</format>
-                                    <description>Hardware Revision Number - Minor</description>
+                                    <description>Hardware Version Number - Minor</description>
                                     </entry>
-                                    <entry name="Hardware Revision - Build">
+                                    <entry name="Hardware Version - Build">
                                     <subAddress>15</subAddress>
                                     <length>1</length>
                                     <readOnly>True</readOnly>
                                     <value>4</value>
                                     <unit />
                                     <format>unsigned</format>
-                                    <description>Hardware Revision Number - Build</description>
+                                    <description>Hardware Version Number - Build</description>
                                     </entry>
                                     <entry name="Firmware Version Number - Reserved">
                                     <subAddress>16</subAddress>
@@ -2249,41 +2249,41 @@
                                     <format>unsigned</format>
                                     <description>Global Trade Identification Number (GTIN)</description>
                                     </entry>
-                                    <entry name="Hardware Revision - Reserved">
+                                    <entry name="Hardware Version - Reserved">
                                     <subAddress>8</subAddress>
                                     <length>5</length>
                                     <readOnly>True</readOnly>
                                     <value>0</value>
                                     <unit />
                                     <format>unsigned</format>
-                                    <description>Hardware Revision Number - Reserved</description>
+                                    <description>Hardware Version Number - Reserved</description>
                                     </entry>
-                                    <entry name="Hardware Revision - Major">
+                                    <entry name="Hardware Version - Major">
                                     <subAddress>13</subAddress>
                                     <length>1</length>
                                     <readOnly>True</readOnly>
                                     <value>1</value>
                                     <unit />
                                     <format>unsigned</format>
-                                    <description>Hardware Revision Number - Major</description>
+                                    <description>Hardware Version Number - Major</description>
                                     </entry>
-                                    <entry name="Hardware Revision - Minor">
+                                    <entry name="Hardware Version - Minor">
                                     <subAddress>14</subAddress>
                                     <length>1</length>
                                     <readOnly>True</readOnly>
                                     <value>3</value>
                                     <unit />
                                     <format>unsigned</format>
-                                    <description>Hardware Revision Number - Minor</description>
+                                    <description>Hardware Version Number - Minor</description>
                                     </entry>
-                                    <entry name="Hardware Revision - Build">
+                                    <entry name="Hardware Version - Build">
                                     <subAddress>15</subAddress>
                                     <length>1</length>
                                     <readOnly>True</readOnly>
                                     <value>4</value>
                                     <unit />
                                     <format>unsigned</format>
-                                    <description>Hardware Revision Number - Build</description>
+                                    <description>Hardware Version Number - Build</description>
                                     </entry>
                                     <entry name="Firmware Version Number - Reserved">
                                     <subAddress>16</subAddress>
@@ -2587,41 +2587,41 @@
                                     <format>unsigned</format>
                                     <description>Global Trade Identification Number (GTIN)</description>
                                     </entry>
-                                    <entry name="Hardware Revision - Reserved">
+                                    <entry name="Hardware Version - Reserved">
                                     <subAddress>8</subAddress>
                                     <length>5</length>
                                     <readOnly>True</readOnly>
                                     <value>0</value>
                                     <unit />
                                     <format>unsigned</format>
-                                    <description>Hardware Revision Number - Major</description>
+                                    <description>Hardware Version Number - Major</description>
                                     </entry>
-                                    <entry name="Hardware Revision - Major">
+                                    <entry name="Hardware Version - Major">
                                     <subAddress>13</subAddress>
                                     <length>1</length>
                                     <readOnly>True</readOnly>
                                     <value>1</value>
                                     <unit />
                                     <format>unsigned</format>
-                                    <description>Hardware Revision Number - Major</description>
+                                    <description>Hardware Version Number - Major</description>
                                     </entry>
-                                    <entry name="Hardware Revision - Minor">
+                                    <entry name="Hardware Version - Minor">
                                     <subAddress>14</subAddress>
                                     <length>1</length>
                                     <readOnly>True</readOnly>
                                     <value>3</value>
                                     <unit />
                                     <format>unsigned</format>
-                                    <description>Hardware Revision Number - Minor</description>
+                                    <description>Hardware Version Number - Minor</description>
                                     </entry>
-                                    <entry name="Hardware Revision - Revision">
+                                    <entry name="Hardware Version - Version">
                                     <subAddress>15</subAddress>
                                     <length>1</length>
                                     <readOnly>True</readOnly>
                                     <value>1</value>
                                     <unit />
                                     <format>unsigned</format>
-                                    <description>Hardware Revision Number - Build</description>
+                                    <description>Hardware Version Number - Build</description>
                                     </entry>
                                     <entry name="Firmware Version Number - Reserved">
                                     <subAddress>16</subAddress>
@@ -2772,41 +2772,41 @@
                                     <format>unsigned</format>
                                     <description>Global Trade Identification Number (GTIN)</description>
                                     </entry>
-                                    <entry name="Hardware Revision - Reserved">
+                                    <entry name="Hardware Version - Reserved">
                                     <subAddress>8</subAddress>
                                     <length>5</length>
                                     <readOnly>True</readOnly>
                                     <value>0</value>
                                     <unit />
                                     <format>unsigned</format>
-                                    <description>Hardware Revision Number - Major</description>
+                                    <description>Hardware Version Number - Major</description>
                                     </entry>
-                                    <entry name="Hardware Revision - Major">
+                                    <entry name="Hardware Version - Major">
                                     <subAddress>13</subAddress>
                                     <length>1</length>
                                     <readOnly>True</readOnly>
                                     <value>1</value>
                                     <unit />
                                     <format>unsigned</format>
-                                    <description>Hardware Revision Number - Major</description>
+                                    <description>Hardware Version Number - Major</description>
                                     </entry>
-                                    <entry name="Hardware Revision - Minor">
+                                    <entry name="Hardware Version - Minor">
                                     <subAddress>14</subAddress>
                                     <length>1</length>
                                     <readOnly>True</readOnly>
                                     <value>3</value>
                                     <unit />
                                     <format>unsigned</format>
-                                    <description>Hardware Revision Number - Minor</description>
+                                    <description>Hardware Version Number - Minor</description>
                                     </entry>
-                                    <entry name="Hardware Revision - Revision">
+                                    <entry name="Hardware Version - Version">
                                     <subAddress>15</subAddress>
                                     <length>1</length>
                                     <readOnly>True</readOnly>
                                     <value>2</value>
                                     <unit />
                                     <format>unsigned</format>
-                                    <description>Hardware Revision Number - Build</description>
+                                    <description>Hardware Version Number - Build</description>
                                     </entry>
                                     <entry name="Firmware Version Number - Reserved">
                                     <subAddress>16</subAddress>
@@ -2957,41 +2957,41 @@
                                     <format>unsigned</format>
                                     <description>Global Trade Identification Number (GTIN)</description>
                                     </entry>
-                                    <entry name="Hardware Revision - Reserved">
+                                    <entry name="Hardware Version - Reserved">
                                     <subAddress>8</subAddress>
                                     <length>5</length>
                                     <readOnly>True</readOnly>
                                     <value>0</value>
                                     <unit />
                                     <format>unsigned</format>
-                                    <description>Hardware Revision Number - Major</description>
+                                    <description>Hardware Version Number - Major</description>
                                     </entry>
-                                    <entry name="Hardware Revision - Major">
+                                    <entry name="Hardware Version - Major">
                                     <subAddress>13</subAddress>
                                     <length>1</length>
                                     <readOnly>True</readOnly>
                                     <value>1</value>
                                     <unit />
                                     <format>unsigned</format>
-                                    <description>Hardware Revision Number - Major</description>
+                                    <description>Hardware Version Number - Major</description>
                                     </entry>
-                                    <entry name="Hardware Revision - Minor">
+                                    <entry name="Hardware Version - Minor">
                                     <subAddress>14</subAddress>
                                     <length>1</length>
                                     <readOnly>True</readOnly>
                                     <value>3</value>
                                     <unit />
                                     <format>unsigned</format>
-                                    <description>Hardware Revision Number - Minor</description>
+                                    <description>Hardware Version Number - Minor</description>
                                     </entry>
-                                    <entry name="Hardware Revision - Revision">
+                                    <entry name="Hardware Version - Version">
                                     <subAddress>15</subAddress>
                                     <length>1</length>
                                     <readOnly>True</readOnly>
                                     <value>2</value>
                                     <unit />
                                     <format>unsigned</format>
-                                    <description>Hardware Revision Number - Build</description>
+                                    <description>Hardware Version Number - Build</description>
                                     </entry>
                                     <entry name="Firmware Version Number - Reserved">
                                     <subAddress>16</subAddress>

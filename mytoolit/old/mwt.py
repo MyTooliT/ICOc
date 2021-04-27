@@ -176,7 +176,7 @@ class mwt(myToolItWatch):
 
     def bTerminalHolderConnectCommandsShowDataValues(self):
         sGtin = self.Can.sProductData("GTIN", bLog=False)
-        sHwRev = self.Can.sProductData("HardwareRevision", bLog=False)
+        sHwRev = self.Can.sProductData("HardwareVersion", bLog=False)
         sSwVersion = self.Can.sProductData("FirmwareVersion", bLog=False)
         sReleaseName = self.Can.sProductData("ReleaseName", bLog=False)
         sSerialNumber = self.Can.sProductData("SerialNumber", bLog=False)
@@ -184,7 +184,7 @@ class mwt(myToolItWatch):
         sSerial = str(sSerialNumber + "-" + sName)
         self.stdscr.addstr("Global Trade Identification Number (GTIN): " +
                            sGtin + "\n")
-        self.stdscr.addstr("Hardware Revision(Major.Minor.Build): " + sHwRev +
+        self.stdscr.addstr("Hardware Version(Major.Minor.Build): " + sHwRev +
                            "\n")
         self.stdscr.addstr("Firmware Version(Major.Minor.Build): " +
                            sSwVersion + "\n")
