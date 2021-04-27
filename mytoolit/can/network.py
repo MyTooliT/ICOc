@@ -2045,10 +2045,7 @@ class Network:
 
         """
 
-        return await self.write_eeprom_int(address=4,
-                                           offset=0,
-                                           length=8,
-                                           value=gtin)
+        await self.write_eeprom_int(address=4, offset=0, length=8, value=gtin)
 
     async def read_eeprom_hardware_version(self,
                                            node: Union[str, Node] = 'STU 1'
