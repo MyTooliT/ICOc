@@ -2443,6 +2443,43 @@ class Network:
                                      text=name,
                                      node=node)
 
+    async def read_eeprom_oem_data(self,
+                                   node: Union[str,
+                                               Node] = 'STU 1') -> List[int]:
+        """Retrieve the OEM data from the EEPROM
+
+        Parameters
+        ----------
+
+        node:
+            The node from which you want to retrieve the OEM data
+
+        Returns
+        -------
+
+        The OEM data of the specified node
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Read the OEM data of STU 1
+
+        >>> async def read_oem_data():
+        ...     async with Network() as network:
+        ...         return await network.read_eeprom_oem_data(node='STU 1')
+        >>> oem_data = run(read_oem_data())
+        >>> len(oem_data) == 64
+        True
+
+        """
+
+        return await self.read_eeprom(address=4,
+                                      offset=192,
+                                      length=64,
+                                      node=node)
+
 
 # -- Main ---------------------------------------------------------------------
 
