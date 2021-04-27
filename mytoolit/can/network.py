@@ -2332,6 +2332,44 @@ class Network:
                                            length=32,
                                            node=node)
 
+    async def write_eeprom_serial_number(self,
+                                         serial_number: str,
+                                         node: Union[str, Node] = 'STU 1'):
+        """Write the serial number to the EEPROM
+
+        Parameters
+        ----------
+
+        serial_number:
+            The serial number of the current receiver
+
+        node:
+            The node where you want to change the release name
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Write and read the serial number of STU 1
+
+        >>> async def write_read_serial_number(serial):
+        ...     async with Network() as network:
+        ...         await network.write_eeprom_serial_number(serial,
+        ...                                                  node='STU 1')
+        ...         return (await
+        ...                 network.read_eeprom_serial_number(node='STU 1'))
+        >>> run(write_read_serial_number('0'))
+        '0'
+
+        """
+
+        await self.write_eeprom_text(address=4,
+                                     offset=32,
+                                     length=32,
+                                     text=serial_number,
+                                     node=node)
+
 
 # -- Main ---------------------------------------------------------------------
 
