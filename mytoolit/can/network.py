@@ -2776,6 +2776,45 @@ class Network:
                                           length=4,
                                           node=node)
 
+    async def write_eeprom_under_voltage_counter(self,
+                                                 times: int,
+                                                 node: Union[str,
+                                                             Node] = 'STU 1'):
+        """Write the under voltage counter value to the EEPROM
+
+        Parameters
+        ----------
+
+        times:
+            The number of times the voltage was too low
+
+        node:
+            The node for which you want to change the under voltage counter
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Write and read the under voltage counter of STU 1
+
+        >>> async def write_read_under_voltage_counter(times):
+        ...     async with Network() as network:
+        ...         await network.write_eeprom_under_voltage_counter(
+        ...                 times=times, node='STU 1')
+        ...         return await network.read_eeprom_under_voltage_counter(
+        ...                 node='STU 1')
+        >>> run(write_read_under_voltage_counter(0))
+        0
+
+        """
+
+        await self.write_eeprom_int(address=5,
+                                    offset=12,
+                                    length=4,
+                                    value=times,
+                                    node=node)
+
 
 # -- Main ---------------------------------------------------------------------
 

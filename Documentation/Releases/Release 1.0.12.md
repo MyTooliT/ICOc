@@ -48,7 +48,8 @@
   - `write_eeprom_power_on_cycles`,
   - `write_eeprom_product_name`,
   - `write_eeprom_release_name`,
-  - `write_eeprom_serial_number`, and
-  - `write_eeprom_sleep_time_2`
+  - `write_eeprom_serial_number`,
+  - `write_eeprom_sleep_time_2`, and
+  - `write_eeprom_under_voltage_counter`
 
   to change specific values in the EEPROM
