@@ -2590,6 +2590,43 @@ class Network:
                                     value=times,
                                     node=node)
 
+    async def read_eeprom_power_off_cycles(self,
+                                           node: Union[str,
+                                                       Node] = 'STU 1') -> int:
+        """Retrieve the number of power off cycles from the EEPROM
+
+        Parameters
+        ----------
+
+        node:
+            The node from which you want to retrieve number of power off cycles
+
+        Returns
+        -------
+
+        The number of power off cycles of the specified node
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Read the number of power off cycles of STU 1
+
+        >>> async def read_power_off_cycles():
+        ...     async with Network() as network:
+        ...         return await network.read_eeprom_power_off_cycles('STU 1')
+        >>> power_off_cycles = run(read_power_off_cycles())
+        >>> power_off_cycles >= 0
+        True
+
+        """
+
+        return await self.read_eeprom_int(address=5,
+                                          offset=4,
+                                          length=4,
+                                          node=node)
+
 
 # -- Main ---------------------------------------------------------------------
 
