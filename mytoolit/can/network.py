@@ -2105,7 +2105,7 @@ class Network:
             The new hardware version of the current receiver
 
         node:
-            The node where you want to change the the hardware version
+            The node where you want to change the hardware version
 
         Example
         -------
@@ -2188,7 +2188,7 @@ class Network:
             The new firmware version
 
         node:
-            The node where you want to change the the firmware version
+            The node where you want to change the firmware version
 
         Example
         -------
@@ -2268,7 +2268,7 @@ class Network:
             The new name of the release
 
         node:
-            The node where you want to change the the release name
+            The node where you want to change the release name
 
         Example
         -------
