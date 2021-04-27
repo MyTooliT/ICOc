@@ -2563,7 +2563,7 @@ class Network:
         ----------
 
         times:
-            The number of power on cycles of the specified node
+            The number of power on cycles that should be stored in the EEPROM
 
         node:
             The node where you want to change the number of power on cycles
