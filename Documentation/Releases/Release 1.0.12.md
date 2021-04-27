@@ -29,7 +29,8 @@
 - Add the coroutines
 
   - `write_eeprom_advertisement_time_2`,
-  - `write_eeprom_gtin`, and
+  - `write_eeprom_gtin`,
+  - `write_eeprom_hardware_version`, and
   - `write_eeprom_sleep_time_2`
 
   to change specific values in the EEPROM

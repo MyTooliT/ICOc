@@ -2085,6 +2085,48 @@ class Network:
                                                      length=3)
         return Version(major=major, minor=minor, patch=patch)
 
+    async def write_eeprom_hardware_version(self,
+                                            version: Union[str, Version],
+                                            node: Union[str, Node] = 'STU 1'):
+        """Write hardware version to the EEPROM
+
+        Parameters
+        ----------
+
+        version:
+            The new hardware version of the current receiver
+
+        node:
+            The node where you want to change the the hardware version
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Write and read the hardware version of STU 1
+
+        >>> async def write_read_hardware_version(version):
+        ...     async with Network() as network:
+        ...         await network.write_eeprom_hardware_version(
+        ...                 version=version, node='STU 1')
+        ...         return (await
+        ...                 network.read_eeprom_hardware_version(node='STU 1'))
+        >>> hardware_version = run(write_read_hardware_version('1.3.2'))
+        >>> hardware_version.patch == 2
+        True
+
+        """
+
+        if isinstance(version, str):
+            version = Version(version)
+
+        await self.write_eeprom(
+            address=4,
+            offset=13,
+            length=3,
+            data=[version.major, version.minor, version.patch])
+
 
 # -- Main ---------------------------------------------------------------------
 
