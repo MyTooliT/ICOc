@@ -2407,6 +2407,42 @@ class Network:
                                            length=128,
                                            node=node)
 
+    async def write_eeprom_product_name(self,
+                                        name: str,
+                                        node: Union[str, Node] = 'STU 1'):
+        """Write the product name to the EEPROM
+
+        Parameters
+        ----------
+
+        name:
+            The new product name of the specified receiver
+
+        node:
+            The node where you want to change the product name
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Write and read the product name of STU 1
+
+        >>> async def write_read_product_name(name):
+        ...     async with Network() as network:
+        ...         await network.write_eeprom_product_name(name, node='STU 1')
+        ...         return await network.read_eeprom_product_name(node='STU 1')
+        >>> run(write_read_product_name('0'))
+        '0'
+
+        """
+
+        await self.write_eeprom_text(address=4,
+                                     offset=64,
+                                     length=128,
+                                     text=name,
+                                     node=node)
+
 
 # -- Main ---------------------------------------------------------------------
 
