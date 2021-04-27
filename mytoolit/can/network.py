@@ -2127,6 +2127,44 @@ class Network:
             length=3,
             data=[version.major, version.minor, version.patch])
 
+    async def read_eeprom_firmware_version(self,
+                                           node: Union[str, Node] = 'STU 1'
+                                           ) -> Version:
+        """Retrieve the current firmware version from the EEPROM
+
+        Parameters
+        ----------
+
+        node:
+            The node from which you want to retrieve the firmware version
+
+        Returns
+        -------
+
+        The firmware version of the specified node
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Read the firmware version of STU 1
+
+        >>> async def read_firmware_version():
+        ...     async with Network() as network:
+        ...         return (await
+        ...                 network.read_eeprom_firmware_version(node='STU 1'))
+        >>> firmware_version = run(read_firmware_version())
+        >>> firmware_version.major >= 2
+        True
+
+        """
+
+        major, minor, patch = await self.read_eeprom(address=4,
+                                                     offset=21,
+                                                     length=3)
+        return Version(major=major, minor=minor, patch=patch)
+
 
 # -- Main ---------------------------------------------------------------------
 
