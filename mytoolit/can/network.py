@@ -2169,6 +2169,16 @@ class Network:
 # -- Main ---------------------------------------------------------------------
 
 if __name__ == '__main__':
-    from doctest import testmod
+    from doctest import run_docstring_examples, testmod
 
-    testmod()
+    # To debug a single doctest, please
+    # - set `run_all_doctests` to `False`, and
+    # - replace `read_eeprom_firmware_version` with the name of the method you
+    #   would like to test.
+    run_all_doctests = True
+    if run_all_doctests:
+        testmod()
+    else:
+        run_docstring_examples(Network.read_eeprom_firmware_version,
+                               globals(),
+                               verbose=True)
