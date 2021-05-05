@@ -49,6 +49,7 @@
   - `write_eeprom_power_off_cycles`,
   - `write_eeprom_power_on_cycles`,
   - `write_eeprom_product_name`,
+  - `write_eeprom_production_date`,
   - `write_eeprom_release_name`,
   - `write_eeprom_serial_number`,
   - `write_eeprom_sleep_time_2`,

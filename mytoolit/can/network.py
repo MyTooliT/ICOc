@@ -2935,6 +2935,45 @@ class Network:
                     month=int(date_values[4:6]),
                     day=int(date_values[6:8]))
 
+    async def write_eeprom_production_date(self,
+                                           date: date,
+                                           node: Union[str, Node] = 'STU 1'
+                                           ) -> None:
+        """Write the production date to the EEPROM
+
+        Parameters
+        ----------
+
+        date:
+            The production date of the specified node
+
+        node:
+            The node for which you want to change the production date
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Write and read the production date of STU 1
+
+        >>> async def write_read_production_date(date):
+        ...     async with Network() as network:
+        ...         await network.write_eeprom_production_date(
+        ...                 date=date, node='STU 1')
+        ...         return await network.read_eeprom_production_date(
+        ...                 node='STU 1')
+        >>> production_date = date(year=2020, month=10, day=5)
+        >>> str(run(write_read_production_date(production_date)))
+        '2020-10-05'
+
+        """
+
+        await self.write_eeprom_text(address=5,
+                                     offset=20,
+                                     length=8,
+                                     text=str(date).replace("-", ""))
+
 
 # -- Main ---------------------------------------------------------------------
 
