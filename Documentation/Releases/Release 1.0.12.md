@@ -31,8 +31,9 @@
   - `read_eeprom_product_name`,
   - `read_eeprom_release_name`,
   - `read_eeprom_serial_number`,
-  - `read_eeprom_sleep_time_2`, and
-  - `read_eeprom_under_voltage_counter`
+  - `read_eeprom_sleep_time_2`,
+  - `read_eeprom_under_voltage_counter`, and
+  - `read_eeprom_watchdog_reset_counter`
 
   to read specific values of the EEPROM
 

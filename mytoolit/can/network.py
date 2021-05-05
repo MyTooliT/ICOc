@@ -2815,6 +2815,45 @@ class Network:
                                     value=times,
                                     node=node)
 
+    async def read_eeprom_watchdog_reset_counter(self,
+                                                 node: Union[str,
+                                                             Node] = 'STU 1'
+                                                 ) -> int:
+        """Retrieve the watchdog reset counter value from the EEPROM
+
+        Parameters
+        ----------
+
+        node:
+            The node for which you want to retrieve the watchdog reset counter
+
+        Returns
+        -------
+
+        The watchdog reset counter value of the specified node
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Read the watchdog reset counter of STU 1
+
+        >>> async def read_watchdog_reset_counter():
+        ...     async with Network() as network:
+        ...         return await network.read_eeprom_watchdog_reset_counter(
+        ...             node='STU 1')
+        >>> watchdog_reset_counter = run(read_watchdog_reset_counter())
+        >>> watchdog_reset_counter >= 0
+        True
+
+        """
+
+        return await self.read_eeprom_int(address=5,
+                                          offset=16,
+                                          length=4,
+                                          node=node)
+
 
 # -- Main ---------------------------------------------------------------------
 
