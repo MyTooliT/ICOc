@@ -50,7 +50,8 @@
   - `write_eeprom_product_name`,
   - `write_eeprom_release_name`,
   - `write_eeprom_serial_number`,
-  - `write_eeprom_sleep_time_2`, and
-  - `write_eeprom_under_voltage_counter`
+  - `write_eeprom_sleep_time_2`,
+  - `write_eeprom_under_voltage_counter`, and
+  - `write_eeprom_watchdog_reset_counter`
 
   to change specific values in the EEPROM
