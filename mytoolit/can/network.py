@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from asyncio import (CancelledError, get_running_loop, sleep, TimeoutError,
                      Queue, wait_for)
+from datetime import date
 from logging import getLogger, FileHandler, Formatter
 from struct import pack, unpack
 from sys import platform
@@ -2893,6 +2894,46 @@ class Network:
                                     length=4,
                                     value=times,
                                     node=node)
+
+    async def read_eeprom_production_date(self,
+                                          node: Union[str,
+                                                      Node] = 'STU 1') -> date:
+        """Retrieve the production date from the EEPROM
+
+        Parameters
+        ----------
+
+        node:
+            The node for which you want to read the production date
+
+        Returns
+        -------
+
+        The production date of the specified node
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Read the production date of STU 1
+
+        >>> async def read_production_date():
+        ...     async with Network() as network:
+        ...         return await network.read_eeprom_production_date('STU 1')
+        >>> production_date = run(read_production_date())
+        >>> isinstance(production_date, date)
+        True
+
+        """
+
+        date_values = await self.read_eeprom_text(address=5,
+                                                  offset=20,
+                                                  length=8,
+                                                  node=node)
+        return date(year=int(date_values[0:4]),
+                    month=int(date_values[4:6]),
+                    day=int(date_values[6:8]))
 
 
 # -- Main ---------------------------------------------------------------------

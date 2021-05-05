@@ -29,6 +29,7 @@
   - `read_eeprom_power_off_cycles`,
   - `read_eeprom_power_on_cycles`,
   - `read_eeprom_product_name`,
+  - `read_eeprom_production_date`,
   - `read_eeprom_release_name`,
   - `read_eeprom_serial_number`,
   - `read_eeprom_sleep_time_2`,
