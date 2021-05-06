@@ -2974,6 +2974,43 @@ class Network:
                                      length=8,
                                      text=str(date).replace("-", ""))
 
+    async def read_eeprom_batch_number(self,
+                                       node: Union[str,
+                                                   Node] = 'STU 1') -> int:
+        """Retrieve the batch number from the EEPROM
+
+        Parameters
+        ----------
+
+        node:
+            The node for which you want to read the batch number
+
+        Returns
+        -------
+
+        The batch number of the specified node
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Read the batch number of STU 1
+
+        >>> async def read_batch_number():
+        ...     async with Network() as network:
+        ...         return await network.read_eeprom_batch_number('STU 1')
+        >>> batch_number = run(read_batch_number())
+        >>> isinstance(batch_number, int)
+        True
+
+        """
+
+        return await self.read_eeprom_int(address=5,
+                                          offset=28,
+                                          length=4,
+                                          node=node)
+
 
 # -- Main ---------------------------------------------------------------------
 
