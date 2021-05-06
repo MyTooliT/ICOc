@@ -3131,6 +3131,34 @@ class Network:
                                       value=slope,
                                       node='STH 1')
 
+    async def read_eeprom_x_axis_acceleration_offset(self) -> float:
+        """Retrieve the acceleration offset of the x-axis from the EEPROM
+
+        Returns
+        -------
+
+        The acceleration offset of the x-axis of STH 1
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Read the acceleration offset of STH 1
+
+        >>> async def read_x_axis_acceleration_offset():
+        ...     async with Network() as network:
+        ...         await network.connect_sth(0)
+        ...         return (await
+        ...                 network.read_eeprom_x_axis_acceleration_offset())
+        >>> x_axis_acceleration_offset = run(read_x_axis_acceleration_offset())
+        >>> isinstance(x_axis_acceleration_offset, float)
+        True
+
+        """
+
+        return await self.read_eeprom_float(address=8, offset=4, node='STH 1')
+
 
 # -- Main ---------------------------------------------------------------------
 

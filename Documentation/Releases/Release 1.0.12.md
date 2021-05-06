@@ -35,7 +35,8 @@
   - `read_eeprom_serial_number`,
   - `read_eeprom_sleep_time_2`,
   - `read_eeprom_under_voltage_counter`,
-  - `read_eeprom_watchdog_reset_counter`, and
+  - `read_eeprom_watchdog_reset_counter`,
+  - `read_eeprom_x_axis_acceleration_offset`, and
   - `read_eeprom_x_axis_acceleration_slope`
 
   to read specific values of the EEPROM
