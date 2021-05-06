@@ -3011,6 +3011,43 @@ class Network:
                                           length=4,
                                           node=node)
 
+    async def write_eeprom_batch_number(self,
+                                        number: int,
+                                        node: Union[str,
+                                                    Node] = 'STU 1') -> None:
+        """Write the batch number to the EEPROM
+
+        Parameters
+        ----------
+
+        number:
+            The batch number of the specified node
+
+        node:
+            The node for which you want to change the batch number
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Write and read the batch number of STU 1
+
+        >>> async def write_read_batch_number(number):
+        ...     async with Network() as network:
+        ...         await network.write_eeprom_batch_number(number, 'STU 1')
+        ...         return await network.read_eeprom_batch_number('STU 1')
+        >>> run(write_read_batch_number(1337))
+        1337
+
+        """
+
+        await self.write_eeprom_int(address=5,
+                                    offset=28,
+                                    length=4,
+                                    value=number,
+                                    node=node)
+
 
 # -- Main ---------------------------------------------------------------------
 
