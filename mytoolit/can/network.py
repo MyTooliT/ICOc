@@ -3159,6 +3159,44 @@ class Network:
 
         return await self.read_eeprom_float(address=8, offset=4, node='STH 1')
 
+    async def write_eeprom_x_axis_acceleration_offset(self,
+                                                      offset: int) -> None:
+        """Write the acceleration offset of the x-axis to the EEPROM
+
+        Parameters
+        ----------
+
+        offset:
+            The (negative) offset of the acceleration value in multiples of g₀
+
+        Example
+        -------
+
+        >>> from asyncio import run
+        >>> from math import isclose
+
+        Write and read the acceleration offset of STH 1
+
+        >>> async def write_read_x_axis_acceleration_offset(offset):
+        ...     async with Network() as network:
+        ...         await network.connect_sth(0)
+        ...         await network.write_eeprom_x_axis_acceleration_offset(
+        ...                 offset)
+        ...         return (await
+        ...                 network.read_eeprom_x_axis_acceleration_offset())
+        >>> acceleration_difference_max = 200
+        >>> offset = -(acceleration_difference_max/2)
+        >>> offset_read = run(write_read_x_axis_acceleration_offset(offset))
+        >>> isclose(offset, offset_read)
+        True
+
+        """
+
+        await self.write_eeprom_float(address=8,
+                                      offset=4,
+                                      value=offset,
+                                      node='STH 1')
+
 
 # -- Main ---------------------------------------------------------------------
 
