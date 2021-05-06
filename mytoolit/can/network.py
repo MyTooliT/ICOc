@@ -1588,6 +1588,10 @@ class Network:
         data = list(map(ord, list(text)))
         await self.write_eeprom(address, offset, data, length, node)
 
+    # ========================
+    # = System Configuration =
+    # ========================
+
     async def read_eeprom_status(self,
                                  node: Union[str,
                                              Node] = 'STU 1') -> EEPROMStatus:
@@ -1983,6 +1987,10 @@ class Network:
                                     value=milliseconds,
                                     length=2,
                                     node='STH 1')
+
+    # ================
+    # = Product Data =
+    # ================
 
     async def read_eeprom_gtin(self, node: Union[str, Node] = 'STU 1') -> int:
         """Read the global trade identifier number (GTIN) from the EEPROM
@@ -2517,6 +2525,10 @@ class Network:
                                 length=64,
                                 data=data,
                                 node=node)
+
+    # ==============
+    # = Statistics =
+    # ==============
 
     async def read_eeprom_power_on_cycles(self,
                                           node: Union[str,
