@@ -3060,6 +3060,38 @@ class Network:
                                     value=number,
                                     node=node)
 
+    # ===============
+    # = Calibration =
+    # ===============
+
+    async def read_eeprom_x_axis_acceleration_slope(self) -> float:
+        """Retrieve the acceleration slope of the x-axis from the EEPROM
+
+        Returns
+        -------
+
+        The x-axis acceleration slope of STH 1
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Read the acceleration slope of STH 1
+
+        >>> async def read_x_axis_acceleration_slope():
+        ...     async with Network() as network:
+        ...         await network.connect_sth(0)
+        ...         return (await
+        ...                 network.read_eeprom_x_axis_acceleration_slope())
+        >>> x_axis_acceleration_slope = run(read_x_axis_acceleration_slope())
+        >>> isinstance(x_axis_acceleration_slope, float)
+        True
+
+        """
+
+        return await self.read_eeprom_float(address=8, offset=0, node='STH 1')
+
 
 # -- Main ---------------------------------------------------------------------
 
