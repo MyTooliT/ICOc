@@ -66,6 +66,7 @@
 
 - Add the following coroutines to read product data:
 
-  | Name       | Data Item                                 |
-  | ---------- | ----------------------------------------- |
-  | `get_gtin` | GTIN (Global Trade Identification Number) |
+  | Name                   | Data Item                                 |
+  | ---------------------- | ----------------------------------------- |
+  | `get_gtin`             | GTIN (Global Trade Identification Number) |
+  | `get_hardware_version` | Hardware Version Number                   |

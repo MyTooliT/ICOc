@@ -3275,6 +3275,44 @@ class Network:
 
         return int.from_bytes(response.data, byteorder='little')
 
+    async def get_hardware_version(self, node: Union[str, Node]) -> Version:
+        """Retrieve the hardware version of a node
+
+        Parameters
+        ----------
+
+        node:
+            The node which should return its hardware version
+
+        Returns
+        -------
+
+        The hardware version of the specified node
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Read the hardware version of STU 1
+
+        >>> async def read_hardware_version():
+        ...     async with Network() as network:
+        ...         return await network.get_hardware_version('STU 1')
+        >>> hardware_version = run(read_hardware_version())
+        >>> hardware_version.major
+        1
+
+        """
+
+        response = await self._request_product_data(
+            node=node,
+            description=f"read hardware version of node “{node}”",
+            block_command="Hardware Version")
+
+        major, minor, patch = response.data[-3:]
+        return Version(major=major, minor=minor, patch=patch)
+
 
 # -- Main ---------------------------------------------------------------------
 
