@@ -202,7 +202,7 @@ MyToolItEeprom = bidict({"Read": 0x00, "Write": 0x01, "WriteRequest": 0x20})
 
 MyToolItProductData = bidict({
     "GTIN": 0x00,
-    "HardwareVersion": 0x01,
+    "Hardware Version": 0x01,
     "FirmwareVersion": 0x02,
     "ReleaseName": 0x03,
     "SerialNumber1": 0x04,
@@ -324,7 +324,7 @@ CommandBlockEeprom = {
 
 CommandBlockProductData = {
     MyToolItProductData["GTIN"]: "Product Data Command GTIN",
-    MyToolItProductData["HardwareVersion"]:
+    MyToolItProductData["Hardware Version"]:
     "Product Data Command Hardware Version",
     MyToolItProductData["FirmwareVersion"]:
     "Product Data Command Firmware Version",
