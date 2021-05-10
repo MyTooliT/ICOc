@@ -14,6 +14,32 @@ PROGRAMMING BOARD NUMBER: &serial 440120910
 # We assume that you use the same CAN bitrate on Linux and Windows
 CAN BITRATE: &bitrate 1000000
 
+# =============================================
+# = Parameter to be changed at the production =
+# =============================================
+
+#----------------------------------------------
+# User Name
+USER: &username Dummy user
+
+# Used Sensor (ADXL1001 = 100g ; ADXL1002 = 50g)
+SENSOR: &sensor ADXL1001
+#SENSOR: &sensor ADXL1002
+
+# Holder Type
+HOLDER TYPE: &holdertype D 10x130 HSK-A63
+
+# Holder name
+HOLDER NAME: &holdername BBBB1111
+
+# Holder serialnumber (Format: 4xLetters followed by 4 Numbers)
+HOLDER SERIALNUMBER: &serialnumber BBBB1111
+
+# PCB state (Bare PCB ; Epoxied)
+STATE: &state Epoxied
+#STATE: &state Bare PCB
+#-----------------------------------------------
+
 # =================
 # = Configuration =
 # =================
@@ -61,7 +87,7 @@ GUI:
 
 OPERATOR:
   # The name of the operator that executes the hardware tests
-  NAME: Dummy User
+  NAME: *username #Dummy User
 
 STH:
   ACCELERATION SENSOR:
@@ -109,7 +135,7 @@ STH:
     #  `STH` → `Acceleration Sensor` → `ADXL1001` → `Acceleration` → `Maximum`
     #
     # will be used as maximum acceleration value for the current STH.
-    SENSOR: ADXL1001
+    SENSOR: *sensor
 
   # An ever increasing (32 bit unsigned) number that describes the current
   # batch that this STH was a part of.
@@ -144,10 +170,10 @@ STH:
   HARDWARE VERSION: 1.4.0
 
   # The type of holder that contains the SHA
-  HOLDER TYPE: D 10x130 HSK-A63
+  HOLDER TYPE: *holdertype
 
   # This value specifies the current name of the STH unit
-  NAME: Serial
+  NAME: *holdername
 
   # OEM specific data
   OEM DATA: [
@@ -178,13 +204,13 @@ STH:
   # The STH test will rename the STH (from `STH` → `NAME`) to this value, if
   # you set the status (`STH` → `STATUS`) to `Epoxied`. Otherwise the test
   # will use the (Base64 encoded) MAC address as new name.
-  SERIAL NUMBER: Serial
+  SERIAL NUMBER: *serialnumber
 
   STATUS:
     # Describe the status of the current STH hardware. This scalar should either
     # store the value `Bare PCB` or `Epoxied`. If you use the value `Epoxied`,
     # then the flash test for the STH will be skipped.
-    Epoxied
+    *state
 
 STU:
 
