@@ -112,7 +112,7 @@ class TestSTH(TestNode):
         cls.bluetooth_rssi = self.can.BlueToothRssi(Node('STH 1').value)
 
         index = self.can.cmdSend(
-            Node('STH 1').value, MyToolItBlock['ProductData'],
+            Node('STH 1').value, MyToolItBlock['Product Data'],
             MyToolItProductData['FirmwareVersion'], [])
         version = self.can.getReadMessageData(index)[-3:]
 

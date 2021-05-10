@@ -26,7 +26,7 @@ class TestSTU(TestNode):
             self.can.BlueToothAddress(MyToolItNetworkNr['STU1']))
 
         index = self.can.cmdSend(MyToolItNetworkNr['STU1'],
-                                 MyToolItBlock['ProductData'],
+                                 MyToolItBlock['Product Data'],
                                  MyToolItProductData['FirmwareVersion'], [])
         version = self.can.getReadMessageData(index)[-3:]
         cls.firmware_version = '.'.join(map(str, version))
