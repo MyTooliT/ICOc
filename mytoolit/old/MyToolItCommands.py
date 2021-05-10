@@ -1,6 +1,7 @@
 from bidict import bidict
 
 import ctypes
+
 c_uint8 = ctypes.c_uint8
 
 from time import time
