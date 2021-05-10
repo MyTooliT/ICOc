@@ -406,6 +406,43 @@ class Network:
                                    description=description,
                                    response_data=expected_data)
 
+    async def _request_product_data(self, block_command: Union[str, int],
+                                    description: str,
+                                    node: Union[str, Node]) -> CANMessage:
+        """Send a request for product data
+
+        Parameters
+        ----------
+
+        node:
+            The node on which the block command should be executed
+
+        block_command:
+            The name or number of the block command
+
+        description:
+            A description of the request used in error messages
+
+        Returns
+        -------
+
+        The response message for the given request
+
+        """
+
+        message = Message(block='Product Data',
+                          block_command=block_command,
+                          sender=self.sender,
+                          receiver=node,
+                          request=True,
+                          data=[0] * 8)
+
+        return await self._request(message, description=description)
+
+    # ==========
+    # = System =
+    # ==========
+
     async def reset_node(self, node: Union[str, Node]) -> None:
         """Reset the specified node
 
@@ -3196,6 +3233,47 @@ class Network:
                                       offset=4,
                                       value=offset,
                                       node='STH 1')
+
+    # ================
+    # = Product Data =
+    # ================
+
+    async def get_gtin(self, node: Union[str, Node]) -> int:
+        """Retrieve the GTIN (Global Trade Identification Number) of a node
+
+        Parameters
+        ----------
+
+        node:
+            The node which should return its GTIN
+
+        Returns
+        -------
+
+        The Global Trade Identification Number of the specified node
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Read the GTIN of STU 1
+
+        >>> async def read_gtin():
+        ...     async with Network() as network:
+        ...         return await network.get_gtin('STU 1')
+        >>> gtin = run(read_gtin())
+        >>> isinstance(gtin, int)
+        True
+
+        """
+
+        response = await self._request_product_data(
+            node=node,
+            description=f"read GTIN of node “{node}”",
+            block_command="GTIN")
+
+        return int.from_bytes(response.data, byteorder='little')
 
 
 # -- Main ---------------------------------------------------------------------

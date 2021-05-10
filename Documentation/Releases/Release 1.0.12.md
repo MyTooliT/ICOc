@@ -63,3 +63,9 @@
   - `write_eeprom_x_axis_acceleration_slope`
 
   to change specific values in the EEPROM
+
+- Add the following coroutines to read product data:
+
+  | Name       | Data Item                                 |
+  | ---------- | ----------------------------------------- |
+  | `get_gtin` | GTIN (Global Trade Identification Number) |
