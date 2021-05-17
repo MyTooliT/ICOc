@@ -1,7 +1,7 @@
 # -- Functions ----------------------------------------------------------------
 
 
-def bytearray_to_text(data: bytearray, until_null: bool = False) -> str:
+def convert_bytes_to_text(data: bytearray, until_null: bool = False) -> str:
     """Convert byte array data to a string
 
     Please note, that this function ignores non ASCII data and control
@@ -25,15 +25,15 @@ def bytearray_to_text(data: bytearray, until_null: bool = False) -> str:
     Examples
     --------
 
-    >>> bytearray_to_text("test".encode('ASCII'))
+    >>> convert_bytes_to_text("test".encode('ASCII'))
     'test'
 
     >>> input = bytearray([0, 255, 10, 30]) + "something".encode('ASCII')
-    >>> bytearray_to_text(input)
+    >>> convert_bytes_to_text(input)
     'something'
 
     >>> input = bytearray([0, 255, 10, 30]) + "something".encode('ASCII')
-    >>> bytearray_to_text(input, until_null=True)
+    >>> convert_bytes_to_text(input, until_null=True)
     ''
 
     """

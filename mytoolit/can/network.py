@@ -27,7 +27,7 @@ from mytoolit.eeprom import EEPROMStatus
 from mytoolit.config import settings
 from mytoolit.can.message import Message
 from mytoolit.can.node import Node
-from mytoolit.utility import bytearray_to_text
+from mytoolit.utility import convert_bytes_to_text
 
 # -- Classes ------------------------------------------------------------------
 
@@ -596,7 +596,7 @@ class Network:
             subcommand=2,
             description=f"get available Bluetooth devices of node “{node}”")
 
-        available_devices = int(bytearray_to_text(answer.data[2:]))
+        available_devices = int(convert_bytes_to_text(answer.data[2:]))
 
         return available_devices
 
@@ -666,7 +666,7 @@ class Network:
             device_number=device_number,
             description=f"get first part of {description}")
 
-        first_part = bytearray_to_text(answer.data[2:])
+        first_part = convert_bytes_to_text(answer.data[2:])
 
         answer = await self._request_bluetooth(
             node=node,
@@ -674,7 +674,7 @@ class Network:
             device_number=device_number,
             description=f"get second part of {description}")
 
-        second_part = bytearray_to_text(answer.data[2:])
+        second_part = convert_bytes_to_text(answer.data[2:])
 
         return first_part + second_part
 

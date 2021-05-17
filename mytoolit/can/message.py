@@ -17,7 +17,7 @@ if __name__ == '__main__':
 from mytoolit.can.command import Command
 from mytoolit.can.identifier import Identifier
 from mytoolit.can.node import Node
-from mytoolit.utility import bytearray_to_text
+from mytoolit.utility import convert_bytes_to_text
 
 # -- Class --------------------------------------------------------------------
 
@@ -229,7 +229,7 @@ class Message:
                 data_explanation = (f"{verb} {part} part of name of device "
                                     f"with device number “{device_number}”")
                 if is_acknowledgment and len(self.data) >= 2:
-                    name = bytearray_to_text(self.data[2:])
+                    name = convert_bytes_to_text(self.data[2:])
                     data_explanation += f": “{name}”"
             elif subcommand == 7:
                 info = ("Acknowledge connection request"
