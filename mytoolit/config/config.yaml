@@ -32,8 +32,8 @@ HOLDER TYPE: &holdertype D 10x130 HSK-A63
 # Holder name
 HOLDER NAME: &holdername BBBB1111
 
-# Holder serialnumber (Format: 4xLetters followed by 4 Numbers)
-HOLDER SERIALNUMBER: &serialnumber BBBB1111
+# Holder serial number (Format: 4xLetters followed by 4 Numbers)
+HOLDER SERIAL NUMBER: &serial_number BBBB1111
 
 # PCB state (Bare PCB ; Epoxied)
 STATE: &state Epoxied
@@ -204,7 +204,7 @@ STH:
   # The STH test will rename the STH (from `STH` → `NAME`) to this value, if
   # you set the status (`STH` → `STATUS`) to `Epoxied`. Otherwise the test
   # will use the (Base64 encoded) MAC address as new name.
-  SERIAL NUMBER: *serialnumber
+  SERIAL NUMBER: *serial_number
 
   STATUS:
     # Describe the status of the current STH hardware. This scalar should either
