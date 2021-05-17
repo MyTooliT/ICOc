@@ -1592,7 +1592,7 @@ class Network(object):
         sendData.b.u3NetworkState = NetworkState["Standby"]
         self.Logger.Info("Send Standby Command")
         index = self.cmdSend(receiver, MyToolItBlock["System"],
-                             MyToolItSystem["ActiveState"], [sendData.asbyte])
+                             MyToolItSystem["Get/Set State"], [sendData.asbyte])
         self.Logger.Info("Received Payload " +
                          payload2Hex(self.getReadMessageData(index)))
 

@@ -113,7 +113,7 @@ MyToolItBlock = bidict({
 MyToolItSystem = bidict({
     "Verboten": 0x00,
     "Reset": 0x01,
-    "ActiveState": 0x02,
+    "Get/Set State": 0x02,
     "Mode": 0x03,
     "Alarm": 0x04,
     "Node Status": 0x05,
@@ -262,7 +262,7 @@ CommandBlock = {
 CommandBlockSystem = {
     MyToolItSystem["Verboten"]: "System Command Verboten",
     MyToolItSystem["Reset"]: "System Command Reset",
-    MyToolItSystem["ActiveState"]: "System Command Active State",
+    MyToolItSystem["Get/Set State"]: "System Command Get/Set State",
     MyToolItSystem["Mode"]: "System Command Mode",
     MyToolItSystem["Alarm"]: "System Command Alarm",
     MyToolItSystem["Node Status"]: "System Command Status Word0",

@@ -251,7 +251,7 @@ class TestNode(TestCase):
 
         # Send message to STH
         command = self.can.CanCmd(MyToolItBlock['System'],
-                                  MyToolItSystem['ActiveState'],
+                                  MyToolItSystem['Get/Set State'],
                                   request=True)
         expected_data = ActiveState()
         expected_data.asbyte = 0
@@ -270,7 +270,7 @@ class TestNode(TestCase):
 
         # Check for equivalence of message content
         command = self.can.CanCmd(MyToolItBlock['System'],
-                                  MyToolItSystem['ActiveState'],
+                                  MyToolItSystem['Get/Set State'],
                                   request=False)
         expected_id = (self.can.CanMessage20(command,
                                              MyToolItNetworkNr[f'{node}1'],
