@@ -1,7 +1,12 @@
+# -- Imports ------------------------------------------------------------------
+
+from typing import Iterable
+
 # -- Functions ----------------------------------------------------------------
 
 
-def convert_bytes_to_text(data: bytearray, until_null: bool = False) -> str:
+def convert_bytes_to_text(data: Iterable[int],
+                          until_null: bool = False) -> str:
     """Convert byte array data to a string
 
     Please note, that this function ignores non ASCII data and control
