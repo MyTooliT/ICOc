@@ -205,10 +205,10 @@ MyToolItProductData = bidict({
     "Hardware Version": 0x01,
     "Firmware Version": 0x02,
     "Release Name": 0x03,
-    "SerialNumber1": 0x04,
-    "SerialNumber2": 0x05,
-    "SerialNumber3": 0x06,
-    "SerialNumber4": 0x07,
+    "Serial Number 1": 0x04,
+    "Serial Number 2": 0x05,
+    "Serial Number 3": 0x06,
+    "Serial Number 4": 0x07,
     "Name1": 0x08,
     "Name2": 0x09,
     "Name3": 0x0A,
@@ -329,13 +329,13 @@ CommandBlockProductData = {
     MyToolItProductData["Firmware Version"]:
     "Product Data Command Firmware Version",
     MyToolItProductData["Release Name"]: "Product Data Command Release Name",
-    MyToolItProductData["SerialNumber1"]:
+    MyToolItProductData["Serial Number 1"]:
     "Product Data Command Serial Number 1",
-    MyToolItProductData["SerialNumber2"]:
+    MyToolItProductData["Serial Number 2"]:
     "Product Data Command Serial Number 2",
-    MyToolItProductData["SerialNumber3"]:
+    MyToolItProductData["Serial Number 3"]:
     "Product Data Command Serial Number 3",
-    MyToolItProductData["SerialNumber4"]:
+    MyToolItProductData["Serial Number 4"]:
     "Product Data Command Serial Number 4",
     MyToolItProductData["Name1"]: "Product Data Command Name1",
     MyToolItProductData["Name2"]: "Product Data Command Name2",

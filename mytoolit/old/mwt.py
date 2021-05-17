@@ -179,7 +179,7 @@ class mwt(myToolItWatch):
         sHwRev = self.Can.sProductData("Hardware Version", bLog=False)
         sSwVersion = self.Can.sProductData("Firmware Version", bLog=False)
         sReleaseName = self.Can.sProductData("Release Name", bLog=False)
-        sSerialNumber = self.Can.sProductData("SerialNumber", bLog=False)
+        sSerialNumber = self.Can.sProductData("Serial Number", bLog=False)
         sName = self.Can.sProductData("Name", bLog=False)
         sSerial = str(sSerialNumber + "-" + sName)
         self.stdscr.addstr("Global Trade Identification Number (GTIN): " +
