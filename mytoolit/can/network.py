@@ -1388,13 +1388,7 @@ class Network:
         """
 
         data = await self.read_eeprom(address, offset, length, node)
-        data_without_null = []
-        for byte in data:
-            if byte == 0:
-                break
-            data_without_null.append(byte)
-
-        return "".join(map(chr, data_without_null))
+        return convert_bytes_to_text(data, until_null=True)
 
     async def write_eeprom(self,
                            address: int,
