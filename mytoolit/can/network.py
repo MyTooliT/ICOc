@@ -3429,6 +3429,53 @@ class Network:
 
         return convert_bytes_to_text(serial_number_bytes)
 
+    async def get_product_name(self, node: Union[str, Node]) -> str:
+        """Retrieve the product name of a node
+
+        Parameters
+        ----------
+
+        node:
+            The node which should return its product name
+
+        Returns
+        -------
+
+        The product name of the specified node
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Read the product name of STU 1
+
+        >>> async def read_product_name():
+        ...     async with Network() as network:
+        ...         return await network.get_product_name('STU 1')
+        >>> product_name = run(read_product_name())
+        >>> isinstance(product_name, str)
+        True
+        >>> 0 <= len(product_name) <= 128
+        True
+
+        """
+
+        async def get_product_name_part(part: int) -> bytearray:
+            """Retrieve a part of the product name"""
+            response = await self._request_product_data(
+                node=node,
+                description=(f"read part {part} of the product name of "
+                             f"node “{node}”"),
+                block_command=f"Product Name {part}")
+            return response.data
+
+        product_name_bytes = bytearray()
+        for part in range(1, 17):
+            product_name_bytes.extend(await get_product_name_part(part))
+
+        return convert_bytes_to_text(product_name_bytes)
+
 
 # -- Main ---------------------------------------------------------------------
 

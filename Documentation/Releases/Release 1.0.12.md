@@ -73,3 +73,4 @@
   | `get_firmware_version`      | Firmware Version Number                   |
   | `get_firmware_release_name` | Firmware Release Name                     |
   | `get_serial_number`         | Serial Number                             |
+  | `get_product_name`          | Product Name                              |
