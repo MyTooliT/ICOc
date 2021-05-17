@@ -3382,6 +3382,53 @@ class Network:
         release_name = convert_bytes_to_text(response.data, until_null=True)
         return release_name
 
+    async def get_serial_number(self, node: Union[str, Node]) -> str:
+        """Retrieve the serial number of a node
+
+        Parameters
+        ----------
+
+        node:
+            The node which should return its serial number
+
+        Returns
+        -------
+
+        The serial number of the specified node
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Read the serial number of STU 1
+
+        >>> async def read_serial_number():
+        ...     async with Network() as network:
+        ...         return await network.get_serial_number('STU 1')
+        >>> serial_number = run(read_serial_number())
+        >>> isinstance(serial_number, str)
+        True
+        >>> 0 <= len(serial_number) <= 32
+        True
+
+        """
+
+        async def get_serial_number_part(part: int) -> bytearray:
+            """Retrieve a part of the serial number"""
+            response = await self._request_product_data(
+                node=node,
+                description=(f"read part {part} of the serial number of "
+                             f"node “{node}”"),
+                block_command=f"Serial Number {part}")
+            return response.data
+
+        serial_number_bytes = bytearray()
+        for part in range(1, 5):
+            serial_number_bytes.extend(await get_serial_number_part(part))
+
+        return convert_bytes_to_text(serial_number_bytes)
+
 
 # -- Main ---------------------------------------------------------------------
 
