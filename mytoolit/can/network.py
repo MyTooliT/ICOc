@@ -3351,6 +3351,43 @@ class Network:
         major, minor, patch = response.data[-3:]
         return Version(major=major, minor=minor, patch=patch)
 
+    async def get_firmware_release_name(self, node: Union[str, Node]) -> str:
+        """Retrieve the firmware release name of a node
+
+        Parameters
+        ----------
+
+        node:
+            The node which should return its firmware release name
+
+        Returns
+        -------
+
+        The firmware release name of the specified node
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Read the firmware release name of STU 1
+
+        >>> async def read_release_name():
+        ...     async with Network() as network:
+        ...         return await network.get_firmware_release_name('STU 1')
+        >>> run(read_release_name())
+        'Valerie'
+
+        """
+
+        response = await self._request_product_data(
+            node=node,
+            description=f"read firmware release name of node “{node}”",
+            block_command="Release Name")
+
+        release_name = convert_bytes_to_text(response.data, until_null=True)
+        return release_name
+
 
 # -- Main ---------------------------------------------------------------------
 
