@@ -1627,10 +1627,10 @@ class Network(object):
                 self.Logger.Info("Firmware Version: " + str(tFirmwareVersion))
             sReturn = str(tFirmwareVersion[5]) + "." + str(
                 tFirmwareVersion[6]) + "." + str(tFirmwareVersion[7])
-        elif "ReleaseName" == name:
+        elif "Release Name" == name:
             index = self.cmdSend(Node("STH1").value,
                                  MyToolItBlock["Product Data"],
-                                 MyToolItProductData["ReleaseName"], [],
+                                 MyToolItProductData["Release Name"], [],
                                  log=bLog)
             aiName = self.getReadMessageData(index)
             sReturn = sArray2String(aiName)
@@ -1757,7 +1757,7 @@ class Network(object):
 
         index = self.cmdSend(
             Node(node).value, MyToolItBlock["Product Data"],
-            MyToolItProductData["ReleaseName"], [])
+            MyToolItProductData["Release Name"], [])
         aiName = self.getReadMessageData(index)
         return sArray2String(aiName)
 
