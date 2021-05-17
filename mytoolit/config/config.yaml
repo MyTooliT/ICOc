@@ -247,7 +247,7 @@ STU:
   # The production date of the STH PCB in the format YYYY-MM-DD
   PRODUCTION DATE: 2020-08-20
 
-  # Product name for the  manufacturer (maximum of 64 byte UTF-8 encoded text)
+  # Product name for the  manufacturer (maximum of 128 byte UTF-8 encoded text)
   PRODUCT NAME: 0
 
   PROGRAMMING BOARD:
