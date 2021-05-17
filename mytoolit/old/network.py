@@ -1670,12 +1670,12 @@ class Network(object):
                 sReturn = ""
             if False != bLog:
                 self.Logger.Info("Name: " + str(sReturn))
-        elif "OemFreeUse" == name:
+        elif "OEM Free Use" == name:
             aiOemFreeUse = []
             for i in range(1, 9):
                 index = self.cmdSend(
                     Node("STH1").value, MyToolItBlock["Product Data"],
-                    MyToolItProductData["OemFreeUse" + str(i)], [])
+                    MyToolItProductData["OEM Free Use " + str(i)], [])
                 aiOemFreeUse.extend(self.getReadMessageData(index))
             sReturn = payload2Hex(aiOemFreeUse)
             if False != bLog:
