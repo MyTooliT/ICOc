@@ -1617,10 +1617,10 @@ class Network(object):
                 self.Logger.Info("Hardware Version: " + str(tHwRev))
             sReturn = str(tHwRev[5]) + "." + str(tHwRev[6]) + "." + str(
                 tHwRev[7])
-        elif "FirmwareVersion" == name:
+        elif "Firmware Version" == name:
             index = self.cmdSend(Node("STH1").value,
                                  MyToolItBlock["Product Data"],
-                                 MyToolItProductData["FirmwareVersion"], [],
+                                 MyToolItProductData["Firmware Version"], [],
                                  log=bLog)
             tFirmwareVersion = self.getReadMessageData(index)
             if False != bLog:

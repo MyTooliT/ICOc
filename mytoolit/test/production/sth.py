@@ -113,7 +113,7 @@ class TestSTH(TestNode):
 
         index = self.can.cmdSend(
             Node('STH 1').value, MyToolItBlock['Product Data'],
-            MyToolItProductData['FirmwareVersion'], [])
+            MyToolItProductData['Firmware Version'], [])
         version = self.can.getReadMessageData(index)[-3:]
 
         cls.firmware_version = '.'.join(map(str, version))

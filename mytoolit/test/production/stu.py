@@ -27,7 +27,7 @@ class TestSTU(TestNode):
 
         index = self.can.cmdSend(MyToolItNetworkNr['STU1'],
                                  MyToolItBlock['Product Data'],
-                                 MyToolItProductData['FirmwareVersion'], [])
+                                 MyToolItProductData['Firmware Version'], [])
         version = self.can.getReadMessageData(index)[-3:]
         cls.firmware_version = '.'.join(map(str, version))
 
