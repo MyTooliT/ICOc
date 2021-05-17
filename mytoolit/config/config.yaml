@@ -27,10 +27,10 @@ SENSOR: &sensor ADXL1001
 #SENSOR: &sensor ADXL1002
 
 # Holder Type
-HOLDER TYPE: &holdertype D 10x130 HSK-A63
+HOLDER TYPE: &holder_type D 10x130 HSK-A63
 
 # Holder name
-HOLDER NAME: &holdername BBBB1111
+HOLDER NAME: &holder_name BBBB1111
 
 # Holder serial number (Format: 4xLetters followed by 4 Numbers)
 HOLDER SERIAL NUMBER: &serial_number BBBB1111
@@ -170,10 +170,10 @@ STH:
   HARDWARE VERSION: 1.4.0
 
   # The type of holder that contains the SHA
-  HOLDER TYPE: *holdertype
+  HOLDER TYPE: *holder_type
 
   # This value specifies the current name of the STH unit
-  NAME: *holdername
+  NAME: *holder_name
 
   # OEM specific data
   OEM DATA: [
