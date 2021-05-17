@@ -8,7 +8,7 @@ from time import sleep
 from types import SimpleNamespace
 from unittest import TestCase
 
-from mytoolit.can import Identifier, Node
+from mytoolit.can import Identifier, Message, Node
 from mytoolit.config import settings
 from mytoolit import __version__
 from mytoolit.report import Report
@@ -250,16 +250,17 @@ class TestNode(TestCase):
             sleep(2)
 
         # Send message to STH
-        command = self.can.CanCmd(MyToolItBlock['System'],
-                                  MyToolItSystem['Get/Set State'],
-                                  request=True)
         expected_data = ActiveState()
         expected_data.asbyte = 0
         expected_data.b.u2NodeState = NodeState['Application']
         expected_data.b.u3NetworkState = NetworkState['Operating']
-        message = self.can.CanMessage20(command, MyToolItNetworkNr['SPU1'],
-                                        MyToolItNetworkNr[f'{node}1'],
-                                        [expected_data.asbyte])
+        message = Message(block='System',
+                          block_command='Get/Set State',
+                          sender='SPU 1',
+                          receiver=f'{node} 1',
+                          request=True,
+                          data=[expected_data.asbyte]).to_pcan()
+
         self.can.Logger.Info('Write message')
         self.can.WriteFrame(message)
         self.can.Logger.Info('Wait 200ms')
