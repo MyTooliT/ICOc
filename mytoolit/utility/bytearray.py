@@ -33,3 +33,9 @@ def bytearray_to_text(data: bytearray) -> str:
 
     return bytearray(filter(lambda byte: byte > ord(' ') and byte < 128,
                             data)).decode('ASCII')
+
+# -- Main ---------------------------------------------------------------------
+
+if __name__ == '__main__':
+    from doctest import testmod
+    testmod()
