@@ -1653,12 +1653,13 @@ class Network(object):
                 sReturn = ""
             if False != bLog:
                 self.Logger.Info("Serial Number: " + str(sReturn))
-        elif "Name" == name:
+        elif "Product Name" == name:
             aiName = []
             for i in range(1, 17):
                 index = self.cmdSend(Node("STH1").value,
                                      MyToolItBlock["Product Data"],
-                                     MyToolItProductData["Name" + str(i)], [],
+                                     MyToolItProductData["Product Name " +
+                                                         str(i)], [],
                                      log=bLog)
                 element = self.getReadMessageData(index)
                 aiName.extend(element)
