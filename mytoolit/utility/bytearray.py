@@ -1,7 +1,7 @@
 # -- Functions ----------------------------------------------------------------
 
 
-def bytearray_to_text(data: bytearray) -> str:
+def bytearray_to_text(data: bytearray, until_null: bool = False) -> str:
     """Convert byte array data to a string
 
     Please note, that this function ignores non ASCII data and control
@@ -10,13 +10,16 @@ def bytearray_to_text(data: bytearray) -> str:
     Parameters
     ----------
 
-    data
+    data:
         The byte array that should be converted
+
+    until_null:
+        Ignore data after the first `NULL` byte (`True`) or not `False`
 
     Returns
     -------
 
-    An string where each (valid) byte of the input is mapped to an ASCII
+    An string where the (valid) bytes of the input are mapped to an ASCII
     character
 
     Examples
@@ -29,10 +32,21 @@ def bytearray_to_text(data: bytearray) -> str:
     >>> bytearray_to_text(input)
     'something'
 
+    >>> input = bytearray([0, 255, 10, 30]) + "something".encode('ASCII')
+    >>> bytearray_to_text(input, until_null=True)
+    ''
+
     """
 
-    return bytearray(filter(lambda byte: byte > ord(' ') and byte < 128,
-                            data)).decode('ASCII')
+    ascii_bytes = bytearray()
+    for byte in data:
+        if byte == 0 and until_null:
+            break
+        elif byte > ord(' ') and byte < 128:
+            ascii_bytes.append(byte)
+
+    return ascii_bytes.decode('ASCII')
+
 
 # -- Main ---------------------------------------------------------------------
 
