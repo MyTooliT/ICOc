@@ -3313,6 +3313,44 @@ class Network:
         major, minor, patch = response.data[-3:]
         return Version(major=major, minor=minor, patch=patch)
 
+    async def get_firmware_version(self, node: Union[str, Node]) -> Version:
+        """Retrieve the firmware version of a node
+
+        Parameters
+        ----------
+
+        node:
+            The node which should return its firmware version
+
+        Returns
+        -------
+
+        The firmware version of the specified node
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Read the firmware version of STU 1
+
+        >>> async def read_firmware_version():
+        ...     async with Network() as network:
+        ...         return await network.get_firmware_version('STU 1')
+        >>> firmware_version = run(read_firmware_version())
+        >>> firmware_version.major
+        2
+
+        """
+
+        response = await self._request_product_data(
+            node=node,
+            description=f"read firmware version of node “{node}”",
+            block_command="Firmware Version")
+
+        major, minor, patch = response.data[-3:]
+        return Version(major=major, minor=minor, patch=patch)
+
 
 # -- Main ---------------------------------------------------------------------
 

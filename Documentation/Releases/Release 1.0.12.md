@@ -70,3 +70,4 @@
   | ---------------------- | ----------------------------------------- |
   | `get_gtin`             | GTIN (Global Trade Identification Number) |
   | `get_hardware_version` | Hardware Version Number                   |
+  | `get_firmware_version` | Firmware Version Number                   |
