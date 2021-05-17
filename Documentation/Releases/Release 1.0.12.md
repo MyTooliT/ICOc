@@ -74,3 +74,4 @@
   | `get_firmware_release_name` | Firmware Release Name                     |
   | `get_serial_number`         | Serial Number                             |
   | `get_product_name`          | Product Name                              |
+  | `get_oem_data`              | OEM (Free Use) Data                       |
