@@ -13,6 +13,10 @@ AdcMax = 0xFFFF
 
 
 class ActiveStateFlags(ctypes.BigEndianStructure):
+    """Byte format for get/set state data
+
+    See also: https://mytoolit.github.io/Documentation/#command:get-set-state
+    """
     _fields_ = [
         ("bSetState", c_uint8, 1),
         ("bReserved", c_uint8, 1),
