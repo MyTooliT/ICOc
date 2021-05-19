@@ -15,6 +15,31 @@ AdcMax = 0xFFFF
 class ActiveStateFlags(ctypes.BigEndianStructure):
     """Byte format for get/set state data
 
+    bSetState: Set or get state data
+        - 0: Get
+        - 1: Set
+
+    bReserved: Reserved bit
+
+    u2NodeState: Current state of the node
+        - 0: No Change/Init
+        - 1: BootLoader
+        - 2: Application
+        - 3: Reserved
+
+    bReserved2: Reserved bit
+
+    u3NetworkState: Current state of network
+        - 0: Failure (No acknowledgement will be sent;
+                      Only power on resets this state)
+        - 1: Error (No active communication)
+        - 2: Turn Off/Standby
+        - 3: Graceful degradation level 2
+        - 4: Graceful degradation level 1
+        - 5: Operating
+        - 6: Startup
+        - 7: No change
+
     See also: https://mytoolit.github.io/Documentation/#command:get-set-state
     """
     _fields_ = [
