@@ -23,8 +23,8 @@ class NodeStatus:
     def __init__(self, value: Union[List[int], int]) -> None:
         """Initialize the node status word using the given arguments
 
-        Arguments
-        ---------
+        Parameters
+        ----------
 
         value:
             A 32 bit integer or list of bytes that specifies the value of the
@@ -110,8 +110,8 @@ class NodeStatusSTH(NodeStatus):
     def __init__(self, value: Union[List[int], int]) -> None:
         """Initialize the node status word using the given arguments
 
-        Arguments
-        ---------
+        Parameters
+        ----------
 
         value:
             A 32 bit integer or list of bytes that specifies the value of the
@@ -143,8 +143,8 @@ class NodeStatusSTU(NodeStatus):
     def __init__(self, value: Union[List[int], int]) -> None:
         """Initialize the node status word using the given arguments
 
-        Arguments
-        ---------
+        Parameters
+        ----------
 
         value:
             A 32 bit integer or list of bytes that specifies the value of the
@@ -196,8 +196,8 @@ class ErrorStatus:
     def __init__(self, value: Union[List[int], int]) -> None:
         """Initialize the error status word using the given arguments
 
-        Arguments
-        ---------
+        Parameters
+        ----------
 
         value:
             A 32 bit integer or list of bytes that specifies the value of the
@@ -235,8 +235,8 @@ class ErrorStatusSTH(ErrorStatus):
     def __init__(self, value: Union[List[int], int]) -> None:
         """Initialize the error status word using the given arguments
 
-        Arguments
-        ---------
+        Parameters
+        ----------
 
         value:
             A 32 bit integer or list of bytes that specifies the value of the
@@ -308,8 +308,8 @@ class ErrorStatusSTU(ErrorStatus):
     def __init__(self, value: Union[List[int], int]) -> None:
         """Initialize the error status word using the given arguments
 
-        Arguments
-        ---------
+        Parameters
+        ----------
 
         value:
             A 32 bit integer or list of bytes that specifies the value of the
