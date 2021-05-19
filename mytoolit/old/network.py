@@ -370,8 +370,7 @@ class Network(object):
                 if returnMessage != "Error":
                     return returnMessage
 
-                pcan_message = CanMsg["CanMsg"]
-                warning = f"Retry request: {Message(pcan_message)}"
+                warning = f"Retry request: {Message(CanMsg)}"
                 self.Logger.Warning(warning)
 
             identifier = Identifier(CanMsg.ID)
