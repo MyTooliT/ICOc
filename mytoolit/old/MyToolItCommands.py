@@ -1,16 +1,13 @@
-from bidict import bidict
-
-import ctypes
-
-c_uint8 = ctypes.c_uint8
-
-from time import time
+from ctypes import BigEndianStructure, c_uint8, Union
 from datetime import datetime
+from time import time
+
+from bidict import bidict
 
 AdcMax = 0xFFFF
 
 
-class ActiveStateFlags(ctypes.BigEndianStructure):
+class ActiveStateFlags(BigEndianStructure):
     """Byte format for get/set state data
 
     bSetState: Set or get state data
@@ -49,11 +46,11 @@ class ActiveStateFlags(ctypes.BigEndianStructure):
     ]
 
 
-class ActiveState(ctypes.Union):
+class ActiveState(Union):
     _fields_ = [("b", ActiveStateFlags), ("asbyte", c_uint8)]
 
 
-class AtvcFormatFlags(ctypes.BigEndianStructure):
+class AtvcFormatFlags(BigEndianStructure):
     """Byte format for streaming data
 
     bStreaming: Streaming or single request (latest data)
@@ -99,11 +96,11 @@ class AtvcFormatFlags(ctypes.BigEndianStructure):
     ]
 
 
-class AtvcFormat(ctypes.Union):
+class AtvcFormat(Union):
     _fields_ = [("b", AtvcFormatFlags), ("asbyte", c_uint8)]
 
 
-class CalibrationMeassurementFormatFlags(ctypes.BigEndianStructure):
+class CalibrationMeassurementFormatFlags(BigEndianStructure):
     _fields_ = [
         ("bSet", c_uint8, 1),
         ("u2Action", c_uint8, 2),
@@ -112,18 +109,18 @@ class CalibrationMeassurementFormatFlags(ctypes.BigEndianStructure):
     ]
 
 
-class CalibrationMeassurement(ctypes.Union):
+class CalibrationMeassurement(Union):
     _fields_ = [("b", CalibrationMeassurementFormatFlags), ("asbyte", c_uint8)]
 
 
-class EepromSpecialConfigFlags(ctypes.BigEndianStructure):
+class EepromSpecialConfigFlags(BigEndianStructure):
     _fields_ = [
         ("bIgnoreErrors", c_uint8, 1),
         ("Reserved", c_uint8, 7),
     ]
 
 
-class EepromSpecialConfig(ctypes.Union):
+class EepromSpecialConfig(Union):
     _fields_ = [("b", EepromSpecialConfigFlags), ("asbyte", c_uint8)]
 
 
