@@ -2,12 +2,14 @@
 
 1. Make sure that **none** of the [tests](Test.md) fail
 
-   - **Note**: Also make sure, that you execute `test-sth` and `test-stu`:
+   - **Note**: Please execute `test-sth`
 
      1. once with `STH` → `Status` set to `Epoxied`, and
      2. once set to `Bare PCB`
 
-     in the [configuration](../../mytoolit/config/config.yaml). This way you make sure that the **flash test works** and there are **no unintentional consequences of (not) flashing the chip** before you run the other tests.
+     in the [configuration](../../mytoolit/config/config.yaml). To make sure, that the STU flash test also works, please use both STU test commands described in the section “STU Test” of the [test document](Test.md).
+
+     If you follow the steps above you make sure that the **flash tests work** for both STU and STH, and there are **no unintentional consequences of (not) flashing the chip** before you run the other parts of the test suite.
 
 2. Change the [`__version__`](../../mytoolit/__init__.py) number inside the [`mytoolit`](../../mytoolit) package
 3. Push the commit that changes the version number
