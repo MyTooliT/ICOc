@@ -7,8 +7,6 @@ c_uint8 = ctypes.c_uint8
 from time import time
 from datetime import datetime
 
-Config = {"DeviceNumberMax": 32}
-
 AdcMax = 0xFFFF
 
 
