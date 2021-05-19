@@ -18,6 +18,7 @@ class NodeStatus:
 
     Please do not use this class directly, but instead use one of the
     two specific status classes for the STH and STU.
+
     """
 
     def __init__(self, value: Union[List[int], int]) -> None:
@@ -29,6 +30,7 @@ class NodeStatus:
         value:
             A 32 bit integer or list of bytes that specifies the value of the
             node status word
+
         """
 
         # Currently only the first byte (of the little endian version) of
@@ -54,6 +56,7 @@ class NodeStatus:
 
         >>> NodeStatus(0b1)
         State: Failure, Error
+
         """
 
         attributes = [
@@ -79,6 +82,7 @@ class NodeStatus:
 
         >>> NodeStatus(0b1).error()
         True
+
         """
 
         return bool(self.value & 1)
@@ -99,6 +103,7 @@ class NodeStatus:
 
         >>> NodeStatus(0b1110).state_name()
         'No Change'
+
         """
 
         state = (self.value >> 1) & 0b111
@@ -116,6 +121,7 @@ class NodeStatusSTH(NodeStatus):
         value:
             A 32 bit integer or list of bytes that specifies the value of the
             node status word
+
         """
 
         super().__init__(value)
@@ -133,6 +139,7 @@ class NodeStatusSTH(NodeStatus):
 
         >>> NodeStatusSTH(0b0100)
         State: Standby, No Error
+
         """
 
         return super().__repr__()
@@ -149,6 +156,7 @@ class NodeStatusSTU(NodeStatus):
         value:
             A 32 bit integer or list of bytes that specifies the value of the
             node status word
+
         """
 
         super().__init__(value)
@@ -167,6 +175,7 @@ class NodeStatusSTU(NodeStatus):
         >>> NodeStatusSTU(0b1101010) # doctest:+NORMALIZE_WHITESPACE
         State: Operating, No Error, Radio Port Disabled,
         CAN Port Enabled, Bluetooth Connected
+
         """
 
         radio_port_enabled = self.value >> 4 & 1
@@ -202,6 +211,7 @@ class ErrorStatus:
         value:
             A 32 bit integer or list of bytes that specifies the value of the
             error status word
+
         """
 
         # Currently only the first byte (of the little endian version) of
@@ -224,6 +234,7 @@ class ErrorStatus:
 
         >>> ErrorStatus(0b1).transmission_error()
         True
+
         """
 
         return bool(self.value & 1)
@@ -241,6 +252,7 @@ class ErrorStatusSTH(ErrorStatus):
         value:
             A 32 bit integer or list of bytes that specifies the value of the
             error status word
+
         """
         super().__init__(value)
 
@@ -263,6 +275,7 @@ class ErrorStatusSTH(ErrorStatus):
 
         >>> ErrorStatusSTH(0b10)
         ADC Overrun Error
+
         """
 
         errors = []
@@ -297,6 +310,7 @@ class ErrorStatusSTH(ErrorStatus):
 
         >>> ErrorStatusSTH(0b01).adc_overrun()
         False
+
         """
 
         return bool((self.value >> 1) & 1)
@@ -314,6 +328,7 @@ class ErrorStatusSTU(ErrorStatus):
         value:
             A 32 bit integer or list of bytes that specifies the value of the
             error status word
+
         """
         super().__init__(value)
 
@@ -333,6 +348,7 @@ class ErrorStatusSTU(ErrorStatus):
 
         >>> ErrorStatusSTU(0b1)
         CAN Transmission Error
+
         """
 
         if self.transmission_error():
