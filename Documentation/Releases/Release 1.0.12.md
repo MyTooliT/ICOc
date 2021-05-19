@@ -75,3 +75,7 @@
   | `get_serial_number`         | Serial Number                             |
   | `get_product_name`          | Product Name                              |
   | `get_oem_data`              | OEM (Free Use) Data                       |
+
+### Status
+
+- Add wrapper class for the [`Get/Set State`](https://mytoolit.github.io/Documentation/#command-getset-state) command

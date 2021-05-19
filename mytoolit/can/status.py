@@ -8,9 +8,120 @@ if __name__ == '__main__':
     from sys import path
     path.append(str(Path(__file__).parent.parent.parent))
 
-from mytoolit.old.MyToolItCommands import NetworkStateName
+from mytoolit.old.MyToolItCommands import NetworkStateName, NodeState
 
 # -- Classes ------------------------------------------------------------------
+
+
+class State:
+    """Wrapper class for the byte returned by the Get/Set State command
+
+    See also: https://mytoolit.github.io/Documentation/#command:get-set-state
+
+    """
+
+    def __init__(self, value: int) -> None:
+        """Initialize the node status word using the given arguments
+
+        Parameters
+        -----------
+
+        value:
+            The value of the state byte
+
+        """
+
+        self.value = value
+
+    def is_set(self) -> bool:
+        """Check if the status should be set
+
+        If this method returns `False`, then the state should be retrieved
+        (get) instead.
+
+        Examples
+        --------
+
+        >>> State(0b1).is_set()
+        True
+        >>> State(0b0).is_set()
+        False
+        >>> State(0b0000_1110).is_set()
+        False
+
+        """
+
+        return bool(self.value & 1)
+
+    def node_state_name(self) -> str:
+        """Retrieve the name of the node state
+
+        Returns
+        -------
+
+        The name of the node state represented by this state object
+
+        Examples
+        --------
+
+        >>> State(0b00_01).node_state_name()
+        'NoChange'
+        >>> State(0b01_10).node_state_name()
+        'Bootloader'
+        >>> State(0b10_10).node_state_name()
+        'Application'
+
+        """
+
+        node_state = (self.value >> 2) & 0b11
+        return NodeState.inverse[node_state]
+
+    def network_state_name(self) -> str:
+        """Retrieve the name of the network state
+
+        Returns
+        -------
+
+        The name of the network state represented by this state object
+
+        Examples
+        --------
+
+        >>> State(0b000_10101).network_state_name()
+        'Failure'
+        >>> State(0b101_10101).network_state_name()
+        'Operating'
+
+        """
+
+        network_state = (self.value >> 5) & 0xf
+        return NetworkStateName[network_state]
+
+    def __repr__(self) -> str:
+        """Retrieve the textual representation of the state
+
+        Returns
+        -------
+
+        A string that describes the attributes of the state
+
+        Examples
+        --------
+
+        >>> State(0b110_1_01_0_1)
+        Set State, Node State: Bootloader, Network State: Startup
+        >>> State(0b001_1_11_0_0)
+        Get State, Node State: Reserved, Network State: Error
+
+        """
+
+        attributes = [
+            "{} State".format("Set" if self.is_set() else "Get"),
+            f"Node State: {self.node_state_name()}",
+            f"Network State: {self.network_state_name()}"
+        ]
+
+        return ", ".join(attributes)
 
 
 class NodeStatus:

@@ -554,12 +554,12 @@ Prescaler = {
     "Max": 127,
 }
 
-NodeState = {
+NodeState = bidict({
     "NoChange": 0,
     "Bootloader": 1,
     "Application": 2,
     "Reserved": 3,
-}
+})
 
 NetworkState = {
     "Failure": 0,
