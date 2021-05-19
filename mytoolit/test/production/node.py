@@ -16,8 +16,7 @@ from mytoolit.report import Report
 from mytoolit.old.network import Network
 from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
 from mytoolit.old.MyToolItCommands import (AdcOverSamplingRate, ActiveState,
-                                           NodeState, NetworkState,
-                                           MyToolItBlock, MyToolItSystem)
+                                           NodeState, NetworkState)
 
 # -- Functions ----------------------------------------------------------------
 
@@ -259,10 +258,10 @@ class TestNode(TestCase):
                           sender='SPU 1',
                           receiver=f'{node} 1',
                           request=True,
-                          data=[expected_data.asbyte]).to_pcan()
+                          data=[expected_data.asbyte])
 
         self.can.Logger.Info('Write message')
-        self.can.WriteFrame(message)
+        self.can.WriteFrame(message.to_pcan())
         self.can.Logger.Info('Wait 200ms')
         sleep(0.2)
 
@@ -270,13 +269,7 @@ class TestNode(TestCase):
         received_message = self.can.getReadMessage(-1)
 
         # Check for equivalence of message content
-        command = self.can.CanCmd(MyToolItBlock['System'],
-                                  MyToolItSystem['Get/Set State'],
-                                  request=False)
-        expected_id = (self.can.CanMessage20(command,
-                                             MyToolItNetworkNr[f'{node}1'],
-                                             MyToolItNetworkNr['SPU1'],
-                                             [0])).ID
+        expected_id = message.acknowledge().id()
         received_id = received_message.ID
 
         self.assertEqual(
