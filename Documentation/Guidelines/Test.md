@@ -89,8 +89,8 @@ While you need to run the test for ICOc manually, the other tests and checks can
 flake8 &&
 mypy --ignore-missing-imports mytoolit &&
 nosetests --with-doctest --stop --traverse-namespace mytoolit &&
-test-sth -v && # or `test-stu -k eeprom -k connect` to skip the flash test
-test-stu -v &&
+test-sth -v &&
+test-stu -v && # or `test-stu -k eeprom -k connect` to skip the flash test
 Invoke-Item 'STH Test.pdf' &&
 Invoke-Item 'STU Test.pdf'
 ```
