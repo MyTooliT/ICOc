@@ -1,6 +1,14 @@
 # Release
 
 1. Make sure that **none** of the [tests](Test.md) fail
+
+   - **Note**: Also make sure, that you execute `test-sth` and `test-stu`:
+
+     1. once with `STH` → `Status` set to `Epoxied`, and
+     2. once set to `Bare PCB`
+
+     in the [configuration](../../mytoolit/config/config.yaml).
+
 2. Change the [`__version__`](../../mytoolit/__init__.py) number inside the [`mytoolit`](../../mytoolit) package
 3. Push the commit that changes the version number
 4. Create a new release [here](https://github.com/MyTooliT/ICOc/releases/new)
