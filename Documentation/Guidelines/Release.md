@@ -7,7 +7,7 @@
      1. once with `STH` → `Status` set to `Epoxied`, and
      2. once set to `Bare PCB`
 
-     in the [configuration](../../mytoolit/config/config.yaml).
+     in the [configuration](../../mytoolit/config/config.yaml). This way you make sure that the **flash test works** and there are **no unintentional consequences of (not) flashing the chip** before you run the other tests.
 
 2. Change the [`__version__`](../../mytoolit/__init__.py) number inside the [`mytoolit`](../../mytoolit) package
 3. Push the commit that changes the version number
