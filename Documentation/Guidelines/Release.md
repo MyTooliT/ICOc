@@ -22,7 +22,7 @@
 
       For example instead of
 
-      - `../something.txt` use
+      - `../../something.txt` use
       - `https://github.com/MyTooliT/ICOc/blob/REVISION/something.txt`,
 
       where `REVISION` is the latest version of the master branch (e.g. `8568893f` for version `1.0.5`)
