@@ -17,6 +17,7 @@ if __name__ == '__main__':
 from mytoolit.can.command import Command
 from mytoolit.can.identifier import Identifier
 from mytoolit.can.node import Node
+from mytoolit.can.status import State
 from mytoolit.utility import convert_bytes_to_text
 
 # -- Class --------------------------------------------------------------------
@@ -207,64 +208,75 @@ class Message:
 
         identifier = self.identifier()
         data_explanation = ""
-        if (identifier.block_name() == 'System'
-                and identifier.block_command_name() == 'Bluetooth'):
+        if identifier.block_name() == 'System':
 
-            subcommand = self.data[0]
-            device_number = self.data[1]
-            is_acknowledgment = self.identifier().is_acknowledgment()
-            verb = "Return" if is_acknowledgment else "Get"
+            if identifier.block_command_name() == 'Get/Set State':
+                if len(self.data) < 1:
+                    return data_explanation
 
-            if subcommand == 1:
-                verb = "Acknowledge" if is_acknowledgment else "Request"
-                data_explanation = f"{verb} Bluetooth activation"
-            elif subcommand == 2:
-                data_explanation = f"{verb} number of available devices"
-                if is_acknowledgment:
-                    number_devices = int(chr(self.data[2]))
-                    data_explanation += f": {number_devices}"
+                data_explanation = repr(State(self.data[0]))
 
-            elif subcommand == 5 or subcommand == 6:
-                part = "first" if subcommand == 5 else "second"
-                data_explanation = (f"{verb} {part} part of name of device "
-                                    f"with device number “{device_number}”")
-                if is_acknowledgment and len(self.data) >= 2:
-                    name = convert_bytes_to_text(self.data[2:])
-                    data_explanation += f": “{name}”"
-            elif subcommand == 7:
-                info = ("Acknowledge connection request"
-                        if is_acknowledgment else "Request connection")
-                data_explanation = (f"{info} to device "
-                                    f"with device number “{device_number}”")
-            elif subcommand == 8:
-                data_explanation = f"{verb} Bluetooth connection status"
-                if is_acknowledgment and len(self.data) >= 3:
-                    connected = bool(self.data[2])
-                    data_explanation += ": {}".format(
-                        "Connected" if connected else "Not connected")
-            elif subcommand == 9:
-                verb = "Acknowledge" if is_acknowledgment else "Request"
-                data_explanation = f"{verb} Bluetooth deactivation"
-            elif subcommand == 12:
-                data_explanation = (f"{verb} RSSI of device "
-                                    f"with device number “{device_number}”")
-                if is_acknowledgment and len(self.data) >= 3:
-                    rssi = int.from_bytes(self.data[2:3],
-                                          byteorder='little',
-                                          signed=True)
-                    data_explanation += f": {rssi}"
-            elif subcommand == 17:
-                data_explanation = (f"{verb} MAC address of device "
-                                    f"with device number “{device_number}”")
-                if is_acknowledgment and len(self.data) >= 8:
-                    data_explanation += f": {mac_address()}"
-            elif subcommand == 18:
-                verb = ("Acknowledge connection request"
-                        if is_acknowledgment else "Request connection")
-                data_explanation = (f"{verb} to device "
-                                    f"with MAC address “{mac_address()}”")
+            if identifier.block_command_name() == 'Bluetooth':
 
-        if identifier.block_name() == 'EEPROM':
+                subcommand = self.data[0]
+                device_number = self.data[1]
+                is_acknowledgment = self.identifier().is_acknowledgment()
+                verb = "Return" if is_acknowledgment else "Get"
+
+                if subcommand == 1:
+                    verb = "Acknowledge" if is_acknowledgment else "Request"
+                    data_explanation = f"{verb} Bluetooth activation"
+                elif subcommand == 2:
+                    data_explanation = f"{verb} number of available devices"
+                    if is_acknowledgment:
+                        number_devices = int(chr(self.data[2]))
+                        data_explanation += f": {number_devices}"
+
+                elif subcommand == 5 or subcommand == 6:
+                    part = "first" if subcommand == 5 else "second"
+                    data_explanation = (
+                        f"{verb} {part} part of name of device "
+                        f"with device number “{device_number}”")
+                    if is_acknowledgment and len(self.data) >= 2:
+                        name = convert_bytes_to_text(self.data[2:])
+                        data_explanation += f": “{name}”"
+                elif subcommand == 7:
+                    info = ("Acknowledge connection request"
+                            if is_acknowledgment else "Request connection")
+                    data_explanation = (
+                        f"{info} to device "
+                        f"with device number “{device_number}”")
+                elif subcommand == 8:
+                    data_explanation = f"{verb} Bluetooth connection status"
+                    if is_acknowledgment and len(self.data) >= 3:
+                        connected = bool(self.data[2])
+                        data_explanation += ": {}".format(
+                            "Connected" if connected else "Not connected")
+                elif subcommand == 9:
+                    verb = "Acknowledge" if is_acknowledgment else "Request"
+                    data_explanation = f"{verb} Bluetooth deactivation"
+                elif subcommand == 12:
+                    data_explanation = (
+                        f"{verb} RSSI of device "
+                        f"with device number “{device_number}”")
+                    if is_acknowledgment and len(self.data) >= 3:
+                        rssi = int.from_bytes(self.data[2:3],
+                                              byteorder='little',
+                                              signed=True)
+                        data_explanation += f": {rssi}"
+                elif subcommand == 17:
+                    data_explanation = (
+                        f"{verb} MAC address of device "
+                        f"with device number “{device_number}”")
+                    if is_acknowledgment and len(self.data) >= 8:
+                        data_explanation += f": {mac_address()}"
+                elif subcommand == 18:
+                    verb = ("Acknowledge connection request"
+                            if is_acknowledgment else "Request connection")
+                    data_explanation = (f"{verb} to device "
+                                        f"with MAC address “{mac_address()}”")
+
+        elif identifier.block_name() == 'EEPROM':
             page = self.data[0]
             offset = self.data[1]
             length = self.data[2]
@@ -324,6 +336,17 @@ class Message:
         >>> search('# (.*)', representation)[1] # doctest:+NORMALIZE_WHITESPACE
         '[SPU 1 → STU 1, Block: System, Command: Bluetooth, Request]
          (Request Bluetooth activation)'
+
+        >>> representation = repr(
+        ...     Message(block='System',
+        ...             block_command='Get/Set State',
+        ...             sender='SPU 2',
+        ...             receiver='STU 1',
+        ...             request=True,
+        ...             data=[0b10_0_101]))
+        >>> search('# (.*)', representation)[1] # doctest:+NORMALIZE_WHITESPACE
+        '[SPU 2 → STU 1, Block: System, Command: Get/Set State, Request]
+         (Get State, Location: Application, State: Operating)'
 
         """
 
