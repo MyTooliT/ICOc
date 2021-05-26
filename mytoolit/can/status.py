@@ -23,6 +23,7 @@ class State:
     def __init__(self,
                  *value: int,
                  mode: Optional[str] = None,
+                 location: Union[None, int, str] = None,
                  state: Union[None, int, str] = None) -> None:
         """Initialize the node status word using the given arguments
 
@@ -34,6 +35,9 @@ class State:
 
         mode:
             Specifies if the state should be set or retrieved (get)
+
+        location:
+            A string or number that specifies the code location
 
         state:
             A string or number that specifies the network state
@@ -64,6 +68,19 @@ class State:
                 raise ValueError(f"Unknown mode “{mode}”")
 
             set_part(start=7, width=1, number=int(mode == 'Set'))
+
+        # ============
+        # = Location =
+        # ============
+
+        if isinstance(location, str):
+            try:
+                location = NodeState[location]
+            except KeyError:
+                raise ValueError(f"Unknown location “{location}”")
+
+        if location is not None:
+            set_part(start=4, width=2, number=location)
 
         # =========
         # = State =
@@ -115,7 +132,7 @@ class State:
         'No Change'
         >>> State(0b01_1010).location_name()
         'Bootloader'
-        >>> State(0b10_1010).location_name()
+        >>> State(location='Application').location_name()
         'Application'
 
         """
