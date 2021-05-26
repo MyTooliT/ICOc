@@ -20,7 +20,9 @@ class State:
 
     """
 
-    def __init__(self, value: int) -> None:
+    def __init__(self,
+                 *value: int,
+                 state: Union[None, int, str] = None) -> None:
         """Initialize the node status word using the given arguments
 
         Parameters
@@ -29,9 +31,34 @@ class State:
         value:
             The value of the state byte
 
+        state:
+            A string or number that specifies the network state
+
         """
 
-        self.value = value
+        def set_part(start, width, number):
+            """Store bit pattern number at bit start of the identifier"""
+
+            state_ones = 0xff
+            mask = (1 << width) - 1
+
+            # Set all bits for targeted part to 0
+            self.value &= (mask << start) ^ state_ones
+            # Make sure we use the correct number of bits for number
+            number = number & mask
+            # Set bits to given value
+            self.value |= number << start
+
+        self.value = value[0] if value else 0
+
+        if isinstance(state, str):
+            try:
+                state = NetworkState[state]
+            except KeyError:
+                raise ValueError(f"Unknown state “{state}”")
+
+        if state is not None:
+            set_part(start=0, width=3, number=state)
 
     def is_set(self) -> bool:
         """Check if the status should be set
@@ -53,8 +80,8 @@ class State:
 
         return bool((self.value >> 7) & 1)
 
-    def node_state_name(self) -> str:
-        """Retrieve the name of the node state
+    def location_name(self) -> str:
+        """Retrieve the name of the current (code) location
 
         Returns
         -------
@@ -64,19 +91,19 @@ class State:
         Examples
         --------
 
-        >>> State(0b00_1010).node_state_name()
+        >>> State(0b00_1010).location_name()
         'No Change'
-        >>> State(0b01_1010).node_state_name()
+        >>> State(0b01_1010).location_name()
         'Bootloader'
-        >>> State(0b10_1010).node_state_name()
+        >>> State(0b10_1010).location_name()
         'Application'
 
         """
 
-        node_state = (self.value >> 4) & 0b11
-        return NodeState.inverse[node_state]
+        location = (self.value >> 4) & 0b11
+        return NodeState.inverse[location]
 
-    def network_state_name(self) -> str:
+    def state_name(self) -> str:
         """Retrieve the name of the network state
 
         Returns
@@ -87,10 +114,12 @@ class State:
         Examples
         --------
 
-        >>> State(0b000).network_state_name()
+        >>> State(0b000).state_name()
         'Failure'
-        >>> State(0b101).network_state_name()
+        >>> State(0b101).state_name()
         'Operating'
+        >>> State(state='Startup').state_name()
+        'Startup'
 
         """
 
@@ -109,16 +138,15 @@ class State:
         --------
 
         >>> State(0b1_0_01_0_110)
-        Set State, Node State: Bootloader, Network State: Startup
+        Set State, Location: Bootloader, State: Startup
         >>> State(0b0_1_11_1_001)
-        Get State, Node State: Reserved, Network State: Error
+        Get State, Location: Reserved, State: Error
 
         """
 
         attributes = [
             "{} State".format("Set" if self.is_set() else "Get"),
-            f"Node State: {self.node_state_name()}",
-            f"Network State: {self.network_state_name()}"
+            f"Location: {self.location_name()}", f"State: {self.state_name()}"
         ]
 
         return ", ".join(attributes)
