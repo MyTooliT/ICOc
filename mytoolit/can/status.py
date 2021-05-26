@@ -1,6 +1,6 @@
 # -- Imports ------------------------------------------------------------------
 
-from typing import List, Union
+from typing import List, Optional, Union
 
 # Fix imports for script usage
 if __name__ == '__main__':
@@ -22,6 +22,7 @@ class State:
 
     def __init__(self,
                  *value: int,
+                 mode: Optional[str] = None,
                  state: Union[None, int, str] = None) -> None:
         """Initialize the node status word using the given arguments
 
@@ -30,6 +31,9 @@ class State:
 
         value:
             The value of the state byte
+
+        mode:
+            Specifies if the state should be set or retrieved (get)
 
         state:
             A string or number that specifies the network state
@@ -50,6 +54,20 @@ class State:
             self.value |= number << start
 
         self.value = value[0] if value else 0
+
+        # ========
+        # = Mode =
+        # ========
+
+        if mode is not None:
+            if mode not in {'Get', 'Set'}:
+                raise ValueError(f"Unknown mode “{mode}”")
+
+            set_part(start=7, width=1, number=int(mode == 'Set'))
+
+        # =========
+        # = State =
+        # =========
 
         if isinstance(state, str):
             try:
@@ -73,8 +91,10 @@ class State:
         True
         >>> State(0b0_0000000).is_set()
         False
-        >>> State(0b0000_1110).is_set()
+        >>> State(mode='Get').is_set()
         False
+        >>> State(mode='Set').is_set()
+        True
 
         """
 
