@@ -42,6 +42,15 @@ class State:
         state:
             A string or number that specifies the network state
 
+        Examples
+        --------
+
+        >>> State(mode='Get', location='Bootloader', state='Operating')
+        Get State, Location: Bootloader, State: Operating
+
+        >>> State(mode='Set', state='Operating').value == 0b1_0000_101
+        True
+
         """
 
         def set_part(start, width, number):
