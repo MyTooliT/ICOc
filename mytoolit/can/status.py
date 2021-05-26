@@ -42,16 +42,16 @@ class State:
         Examples
         --------
 
-        >>> State(0b1).is_set()
+        >>> State(0b1_0000000).is_set()
         True
-        >>> State(0b0).is_set()
+        >>> State(0b0_0000000).is_set()
         False
         >>> State(0b0000_1110).is_set()
         False
 
         """
 
-        return bool(self.value & 1)
+        return bool((self.value >> 7) & 1)
 
     def node_state_name(self) -> str:
         """Retrieve the name of the node state
@@ -64,16 +64,16 @@ class State:
         Examples
         --------
 
-        >>> State(0b00_01).node_state_name()
+        >>> State(0b00_1010).node_state_name()
         'NoChange'
-        >>> State(0b01_10).node_state_name()
+        >>> State(0b01_1010).node_state_name()
         'Bootloader'
-        >>> State(0b10_10).node_state_name()
+        >>> State(0b10_1010).node_state_name()
         'Application'
 
         """
 
-        node_state = (self.value >> 2) & 0b11
+        node_state = (self.value >> 4) & 0b11
         return NodeState.inverse[node_state]
 
     def network_state_name(self) -> str:
@@ -87,14 +87,14 @@ class State:
         Examples
         --------
 
-        >>> State(0b000_10101).network_state_name()
+        >>> State(0b000).network_state_name()
         'Failure'
-        >>> State(0b101_10101).network_state_name()
+        >>> State(0b101).network_state_name()
         'Operating'
 
         """
 
-        network_state = (self.value >> 5) & 0xf
+        network_state = self.value & 0b111
         return NetworkState.inverse[network_state]
 
     def __repr__(self) -> str:
@@ -108,9 +108,9 @@ class State:
         Examples
         --------
 
-        >>> State(0b110_1_01_0_1)
+        >>> State(0b1_0_01_0_110)
         Set State, Node State: Bootloader, Network State: Startup
-        >>> State(0b001_1_11_0_0)
+        >>> State(0b0_1_11_1_001)
         Get State, Node State: Reserved, Network State: Error
 
         """
