@@ -65,7 +65,7 @@ class State:
         --------
 
         >>> State(0b00_1010).node_state_name()
-        'NoChange'
+        'No Change'
         >>> State(0b01_1010).node_state_name()
         'Bootloader'
         >>> State(0b10_1010).node_state_name()

@@ -555,7 +555,7 @@ Prescaler = {
 }
 
 NodeState = bidict({
-    "NoChange": 0,
+    "No Change": 0,
     "Bootloader": 1,
     "Application": 2,
     "Reserved": 3,
@@ -569,7 +569,7 @@ NetworkState = bidict({
     "GracefulDegration1": 4,
     "Operating": 5,
     "Startup": 6,
-    "NoChange": 7,
+    "No Change": 7,
 })
 
 CalibrationFactor = {
