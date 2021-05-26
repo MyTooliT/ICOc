@@ -169,7 +169,7 @@ class Identifier:
         Returns
         -------
 
-        - True, if the given object is and identifier and it has the same
+        - True, if the given object is an identifier and it has the same
           value as this identifier
 
         - False, otherwise
