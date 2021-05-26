@@ -104,6 +104,46 @@ class State:
         if state is not None:
             set_part(start=0, width=3, number=state)
 
+    def __eq__(self, other: object) -> bool:
+        """Compare this state to another object
+
+        Parameters
+        ----------
+
+        other:
+            The other object this state should be compared to
+
+        Returns
+        -------
+
+        - True, if the given object is a state and it has the same
+          value as this state
+
+        - False, otherwise
+
+        Examples
+        --------
+
+        >>> state1 = State(mode='Get',
+        ...                location='Bootloader',
+        ...                state='Operating')
+        >>> state2 = State(mode='Set',
+        ...                location='Bootloader',
+        ...                state='Operating')
+
+        >>> state1 == state2
+        False
+
+        >>> state1 == State(state2.value, mode='Get')
+        True
+
+        """
+
+        if isinstance(other, State):
+            return self.value == other.value
+
+        return False
+
     def is_set(self) -> bool:
         """Check if the status should be set
 
