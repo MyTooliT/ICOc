@@ -1,5 +1,6 @@
 # -- Imports ------------------------------------------------------------------
 
+from asyncio import run
 from os import environ, pathsep
 from unittest import main as unittest_main
 
@@ -20,18 +21,31 @@ class TestSTU(TestNode):
     def _read_data(self):
         """Read data from connected STU"""
 
+        def read_data_old():
+            """Read data using the old network class"""
+            cls.bluetooth_mac = int_to_mac_address(
+                self.can.BlueToothAddress(MyToolItNetworkNr['STU1']))
+
+            index = self.can.cmdSend(MyToolItNetworkNr['STU1'],
+                                     MyToolItBlock['Product Data'],
+                                     MyToolItProductData['Firmware Version'],
+                                     [])
+            version = self.can.getReadMessageData(index)[-3:]
+            cls.firmware_version = '.'.join(map(str, version))
+
+            cls.release_name = self.can.get_node_release_name('STU1')
+
+        async def read_data_new():
+            """Read data using the new network class"""
+
+            node = 'STU 1'
+            cls.bluetooth_mac = await self.can.get_mac_address(node)
+            cls.firmware_version = await self.can.get_firmware_version(node)
+            cls.release_name = await self.can.get_firmware_release_name(node)
+
         cls = type(self)
-
-        cls.bluetooth_mac = int_to_mac_address(
-            self.can.BlueToothAddress(MyToolItNetworkNr['STU1']))
-
-        index = self.can.cmdSend(MyToolItNetworkNr['STU1'],
-                                 MyToolItBlock['Product Data'],
-                                 MyToolItProductData['Firmware Version'], [])
-        version = self.can.getReadMessageData(index)[-3:]
-        cls.firmware_version = '.'.join(map(str, version))
-
-        cls.release_name = self.can.get_node_release_name('STU1')
+        new_network = hasattr(self.can, 'bus')
+        run(read_data_new()) if new_network else read_data_old()
 
     def test__firmware_flash(self):
         """Upload bootloader and application into STU

@@ -311,9 +311,15 @@ class Network:
 
         # If there is no notifier yet, create it
         if self.notifier is None:
+            # We explicitly specify the event loop, since not doing so slows
+            # down the execution considerably (adding multiple seconds of
+            # delay)
             self.notifier = Notifier(self.bus,
                                      listeners=[],
                                      loop=get_running_loop())
+        else:
+            # The old event loop might be already closed
+            self.notifier._loop = get_running_loop()
         assert self.notifier is not None
 
         for attempt in range(5):

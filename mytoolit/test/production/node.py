@@ -1,19 +1,19 @@
 # -- Imports ------------------------------------------------------------------
 
+from asyncio import run as async_run, sleep as async_sleep
 from datetime import datetime
 from os.path import abspath, isfile, dirname, join
 from re import escape
 from subprocess import run
-from time import sleep
 from types import SimpleNamespace
 from unittest import TestCase
 
-from mytoolit.can import Identifier, Message, Node, State
+from mytoolit.can import Network, Node, State
 from mytoolit.config import settings
 from mytoolit import __version__
 from mytoolit.report import Report
 
-from mytoolit.old.network import Network
+from mytoolit.old.network import Network as OldNetwork
 from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
 from mytoolit.old.MyToolItCommands import AdcOverSamplingRate
 
@@ -210,77 +210,68 @@ class TestNode(TestCase):
     def _connect(self):
         """Create a connection to the STU"""
 
-        # Initialize CAN bus
-        log_filepath = f"{self._testMethodName}.txt"
-        log_filepath_error = f"{self._testMethodName}_Error.txt"
+        def connect_old():
+            """Create connection with old network class"""
+            # Initialize CAN bus
+            log_filepath = f"{self._testMethodName}.txt"
+            log_filepath_error = f"{self._testMethodName}_Error.txt"
 
-        cls = type(self)
-        node = cls.__name__[-3:]
-        receiver = Node(f'{node} 1').value
+            cls = type(self)
+            node = cls.__name__[-3:]
+            receiver = Node(f'{node} 1').value
 
-        self.can = Network(log_filepath,
-                           log_filepath_error,
-                           MyToolItNetworkNr['SPU1'],
-                           receiver,
-                           oversampling=AdcOverSamplingRate[64])
+            self.can = OldNetwork(log_filepath,
+                                  log_filepath_error,
+                                  MyToolItNetworkNr['SPU1'],
+                                  receiver,
+                                  oversampling=AdcOverSamplingRate[64])
 
-        # Reset STU (and STH)
-        self.can.bConnected = False
-        return_message = self.can.reset_node("STU 1")
-        self.can.CanTimeStampStart(return_message['CanTime'])
+            # Reset STU (and STH)
+            self.can.bConnected = False
+            return_message = self.can.reset_node("STU 1")
+            self.can.CanTimeStampStart(return_message['CanTime'])
+
+        async def connect_new():
+            """Create connection with new network class"""
+
+            self.can = Network()
+            await self.can.reset_node("STU 1")
+            # Wait for reset to take place
+            await async_sleep(2)
+
+        async_run(connect_new()) if (self._testMethodName
+                                     == 'test_connection') else connect_old()
 
     def _disconnect(self):
         """Tear down connection to STU"""
 
-        self.can.__exit__()
+        new_network = hasattr(self.can, 'bus')
+        async_run(self.can.shutdown()) if new_network else self.can.__exit__()
 
     def _test_connection(self):
         """Check connection to node"""
 
-        # The last three characters of the calling subclass (`TestSTU` or
-        # `TestSTH`) contain the name of the node (`STU` or `STH`)
-        cls = type(self)
-        node = cls.__name__[-3:]
+        async def test_connection():
+            # The last three characters of the calling subclass (`TestSTU` or
+            # `TestSTH`) contain the name of the node (`STU` or `STH`)
+            cls = type(self)
+            node = cls.__name__[-3:]
 
-        # Wait until there is no other traffic on the CAN bus for the STH.
-        # This is a **workaround** for the behaviour of the old Network class.
-        if node == 'STH':
-            sleep(2)
+            # Just send a request for the state and check if the result matches
+            # our expectations. The identifier of the answer will be checked by
+            # (the notifier in) the network class already.
+            state = await self.can.get_state(f'{node} 1')
 
-        # Send message to STH
-        expected_state = State(mode='Get',
-                               location='Application',
-                               state='Operating')
-        message = Message(block='System',
-                          block_command='Get/Set State',
-                          sender='SPU 1',
-                          receiver=f'{node} 1',
-                          request=True,
-                          data=[expected_state.value])
+            expected_state = State(mode='Get',
+                                   location='Application',
+                                   state='Operating')
 
-        self.can.Logger.Info('Write message')
-        self.can.WriteFrame(message.to_pcan())
-        self.can.Logger.Info('Wait 200ms')
-        sleep(0.2)
+            self.assertEqual(
+                expected_state, state,
+                f"Expected state “{expected_state}” does not match "
+                f"received state “{state}”")
 
-        # Receive message from STH
-        received_message = self.can.getReadMessage(-1)
-
-        # Check for equivalence of message content
-        expected_id = message.acknowledge().id()
-        received_id = received_message.ID
-
-        self.assertEqual(
-            expected_id, received_id,
-            f"Expected CAN identifier {Identifier(expected_id)} does not " +
-            f"match received CAN identifier {Identifier(received_id)}")
-
-        expected_data_byte = expected_state.value
-        received_data_byte = received_message.DATA[0]
-        self.assertEqual(
-            expected_data_byte, received_data_byte,
-            f"Expected state “{expected_state}” does not match " +
-            f"received state “{State(received_data_byte)}”")
+        async_run(test_connection())
 
     def _test_firmware_flash(self):
         """Upload bootloader and application into node"""
@@ -387,13 +378,10 @@ class TestNode(TestCase):
         # = Firmware Version =
         # ====================
 
-        # Nodes seem to define two different firmware version numbers. We
-        # overwrite the version stored in the EEPROM with the one read, when
-        # the test connected to the node.
         self.can.write_eeprom_firmware_version(cls.firmware_version)
         firmware_version = self.can.read_eeprom_firmware_version()
         self.assertEqual(
-            cls.firmware_version, f"{firmware_version}",
+            f"{cls.firmware_version}", f"{firmware_version}",
             f"Written firmware version “{cls.firmware_version}” does not " +
             f"match read firmware version “{firmware_version}”")
 

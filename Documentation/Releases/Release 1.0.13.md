@@ -1,5 +1,9 @@
 # Version 1.0.13
 
+## Production Test
+
+- The “connection test” now uses the [new network class](../../mytoolit/can/network.py) instead of the [old network class](../../mytoolit/old/network.py)
+
 ## Internal
 
 ### Message

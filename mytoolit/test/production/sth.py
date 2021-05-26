@@ -1,5 +1,6 @@
 # -- Imports ------------------------------------------------------------------
 
+from asyncio import run
 from os import environ, pathsep
 from time import sleep
 from unittest import main as unittest_main, skipIf
@@ -87,17 +88,14 @@ class TestSTH(TestNode):
 
         # Connect to STU
         super()._connect()
-
         # Connect to STH
-        self.can.bBlueToothConnectPollingName(Node('STU 1').value,
-                                              settings.sth_name(),
-                                              log=False)
+        new_network = hasattr(self.can, 'bus')
+        run(self.can.connect_sth(settings.sth_name())) if new_network else (
+            self.can.bBlueToothConnectPollingName(
+                Node('STU 1').value, settings.sth_name(), log=False))
 
     def _disconnect(self):
         """Tear down connection to STH"""
-
-        # Disconnect from STH
-        self.can.bBlueToothDisconnect(Node('STU 1').value)
 
         # Disconnect from STU
         super()._disconnect()
@@ -105,23 +103,36 @@ class TestSTH(TestNode):
     def _read_data(self):
         """Read data from connected STH"""
 
+        def read_data_old():
+            """Read data using the old network class"""
+
+            cls.bluetooth_mac = int_to_mac_address(
+                self.can.BlueToothAddress(Node('STH 1').value))
+            cls.bluetooth_rssi = self.can.BlueToothRssi(Node('STH 1').value)
+
+            index = self.can.cmdSend(
+                Node('STH 1').value, MyToolItBlock['Product Data'],
+                MyToolItProductData['Firmware Version'], [])
+            version = self.can.getReadMessageData(index)[-3:]
+
+            cls.firmware_version = '.'.join(map(str, version))
+
+        async def read_data_new():
+            """Read data using the old network class"""
+
+            node = 'STH 1'
+            cls.bluetooth_mac = await self.can.get_mac_address(node)
+            cls.bluetooth_rssi = await self.can.get_rssi(node)
+            cls.firmware_version = await self.can.get_firmware_version(node)
+
         cls = type(self)
-
-        cls.bluetooth_mac = int_to_mac_address(
-            self.can.BlueToothAddress(Node('STH 1').value))
-        cls.bluetooth_rssi = self.can.BlueToothRssi(Node('STH 1').value)
-
-        index = self.can.cmdSend(
-            Node('STH 1').value, MyToolItBlock['Product Data'],
-            MyToolItProductData['Firmware Version'], [])
-        version = self.can.getReadMessageData(index)[-3:]
-
-        cls.firmware_version = '.'.join(map(str, version))
-
         # This is more or less placeholder code, until we handle the naming
         # process gracefully. Currently the whole test requires that we know
         # the name of the STH in advance.
         cls.name = settings.sth_name()
+
+        new_network = hasattr(self.can, 'bus')
+        run(read_data_new()) if new_network else read_data_old()
 
     @skipIf(settings.sth.status == "Epoxied",
             f"Flash test skipped because of status “{settings.sth.status}”")
