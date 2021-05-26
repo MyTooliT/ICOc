@@ -8,7 +8,7 @@ if __name__ == '__main__':
     from sys import path
     path.append(str(Path(__file__).parent.parent.parent))
 
-from mytoolit.old.MyToolItCommands import NetworkStateName, NodeState
+from mytoolit.old.MyToolItCommands import NetworkState, NodeState
 
 # -- Classes ------------------------------------------------------------------
 
@@ -95,7 +95,7 @@ class State:
         """
 
         network_state = (self.value >> 5) & 0xf
-        return NetworkStateName[network_state]
+        return NetworkState.inverse[network_state]
 
     def __repr__(self) -> str:
         """Retrieve the textual representation of the state
@@ -218,7 +218,7 @@ class NodeStatus:
         """
 
         state = (self.value >> 1) & 0b111
-        return NetworkStateName[state]
+        return NetworkState.inverse[state]
 
 
 class NodeStatusSTH(NodeStatus):

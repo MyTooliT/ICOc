@@ -561,7 +561,7 @@ NodeState = bidict({
     "Reserved": 3,
 })
 
-NetworkState = {
+NetworkState = bidict({
     "Failure": 0,
     "Error": 1,
     "Standby": 2,
@@ -570,18 +570,7 @@ NetworkState = {
     "Operating": 5,
     "Startup": 6,
     "NoChange": 7,
-}
-
-NetworkStateName = {
-    0: "Failure",
-    1: "Error",
-    2: "Standby",
-    3: "Graceful Degradation 2",
-    4: "Graceful Degradation 1",
-    5: "Operating",
-    6: "Startup",
-    7: "No Change",
-}
+})
 
 CalibrationFactor = {
     "Acceleration": 0,
