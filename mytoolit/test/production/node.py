@@ -8,15 +8,14 @@ from time import sleep
 from types import SimpleNamespace
 from unittest import TestCase
 
-from mytoolit.can import Identifier, Message, Node
+from mytoolit.can import Identifier, Message, Node, State
 from mytoolit.config import settings
 from mytoolit import __version__
 from mytoolit.report import Report
 
 from mytoolit.old.network import Network
 from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
-from mytoolit.old.MyToolItCommands import (AdcOverSamplingRate, ActiveState,
-                                           NodeState, NetworkState)
+from mytoolit.old.MyToolItCommands import AdcOverSamplingRate
 
 # -- Functions ----------------------------------------------------------------
 
@@ -249,16 +248,15 @@ class TestNode(TestCase):
             sleep(2)
 
         # Send message to STH
-        expected_data = ActiveState()
-        expected_data.asbyte = 0
-        expected_data.b.u2NodeState = NodeState['Application']
-        expected_data.b.u3NetworkState = NetworkState['Operating']
+        expected_state = State(mode='Get',
+                               location='Application',
+                               state='Operating')
         message = Message(block='System',
                           block_command='Get/Set State',
                           sender='SPU 1',
                           receiver=f'{node} 1',
                           request=True,
-                          data=[expected_data.asbyte])
+                          data=[expected_state.value])
 
         self.can.Logger.Info('Write message')
         self.can.WriteFrame(message.to_pcan())
@@ -277,12 +275,12 @@ class TestNode(TestCase):
             f"Expected CAN identifier {Identifier(expected_id)} does not " +
             f"match received CAN identifier {Identifier(received_id)}")
 
-        expected_data_byte = expected_data.asbyte
+        expected_data_byte = expected_state.value
         received_data_byte = received_message.DATA[0]
         self.assertEqual(
             expected_data_byte, received_data_byte,
-            f"Expected data “{expected_data_byte}” does not match " +
-            f"received data “{received_data_byte}”")
+            f"Expected state “{expected_state}” does not match " +
+            f"received state “{State(received_data_byte)}”")
 
     def _test_firmware_flash(self):
         """Upload bootloader and application into node"""
