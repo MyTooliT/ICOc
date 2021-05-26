@@ -27,6 +27,7 @@ from mytoolit.eeprom import EEPROMStatus
 from mytoolit.config import settings
 from mytoolit.can.message import Message
 from mytoolit.can.node import Node
+from mytoolit.can.status import State
 from mytoolit.utility import convert_bytes_to_text
 
 # -- Classes ------------------------------------------------------------------
@@ -484,6 +485,46 @@ class Network:
         await self._request(message,
                             description=f"reset node “{node}”",
                             response_data=message.data)
+
+    # =================
+    # = Get/Set State =
+    # =================
+
+    async def get_state(self, node: Union[str, Node] = 'STU 1') -> State:
+        """Get the current state of the specified node
+
+        Parameters
+        ----------
+
+        node:
+            The node which should return its state
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Get state of STU 1
+
+        >>> async def get_state():
+        ...     async with Network() as network:
+        ...         return await network.get_state('STU 1')
+        >>> run(get_state())
+        Get State, Location: Application, State: Operating
+
+        """
+
+        message = Message(block='System',
+                          block_command='Get/Set State',
+                          sender=self.sender,
+                          receiver=node,
+                          request=True,
+                          data=[(State(mode='Get')).value])
+
+        message = await self._request(
+            message, description=f"get state of node “{node}”")
+
+        return State(message.data[0])
 
     # =============
     # = Bluetooth =
