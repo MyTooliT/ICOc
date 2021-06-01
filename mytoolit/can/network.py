@@ -3025,10 +3025,10 @@ class Network:
                     month=int(date_values[4:6]),
                     day=int(date_values[6:8]))
 
-    async def write_eeprom_production_date(self,
-                                           date: date,
-                                           node: Union[str, Node] = 'STU 1'
-                                           ) -> None:
+    async def write_eeprom_production_date(
+            self,
+            date: Union[date, str],
+            node: Union[str, Node] = 'STU 1') -> None:
         """Write the production date to the EEPROM
 
         Parameters
@@ -3053,11 +3053,25 @@ class Network:
         ...                 date=date, node='STU 1')
         ...         return await network.read_eeprom_production_date(
         ...                 node='STU 1')
+
         >>> production_date = date(year=2020, month=10, day=5)
         >>> str(run(write_read_production_date(production_date)))
         '2020-10-05'
 
+        >>> production_date = '2000-01-05'
+        >>> str(run(write_read_production_date(production_date)))
+        '2000-01-05'
+
         """
+
+        if isinstance(date, str):
+            # The identifier `date` refers to the variable `date` in the
+            # current scope
+            import datetime
+            try:
+                date = datetime.date.fromisoformat(date)
+            except ValueError:
+                raise ValueError(f"Invalid value for date argument: “{date}”")
 
         await self.write_eeprom_text(address=5,
                                      offset=20,
