@@ -255,6 +255,10 @@ class TestNode(TestCase):
         # `TestSTH`) contain the name of the node (`STU` or `STH`)
         cls = type(self)
         node = cls.__name__[-3:]
+        if node == 'STH':
+            # The STH needs a little more time to switch from the “Startup” to
+            # the “Operating” state
+            await async_sleep(1)
 
         # Just send a request for the state and check if the result matches
         # our expectations. The identifier of the answer will be checked by
