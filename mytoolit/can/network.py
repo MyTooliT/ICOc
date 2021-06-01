@@ -3076,7 +3076,8 @@ class Network:
         await self.write_eeprom_text(address=5,
                                      offset=20,
                                      length=8,
-                                     text=str(date).replace("-", ""))
+                                     text=str(date).replace("-", ""),
+                                     node=node)
 
     async def read_eeprom_batch_number(self,
                                        node: Union[str,
