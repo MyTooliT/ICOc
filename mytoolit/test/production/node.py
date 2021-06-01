@@ -248,30 +248,27 @@ class TestNode(TestCase):
         new_network = hasattr(self.can, 'bus')
         async_run(self.can.shutdown()) if new_network else self.can.__exit__()
 
-    def _test_connection(self):
+    async def _test_connection(self):
         """Check connection to node"""
 
-        async def test_connection():
-            # The last three characters of the calling subclass (`TestSTU` or
-            # `TestSTH`) contain the name of the node (`STU` or `STH`)
-            cls = type(self)
-            node = cls.__name__[-3:]
+        # The last three characters of the calling subclass (`TestSTU` or
+        # `TestSTH`) contain the name of the node (`STU` or `STH`)
+        cls = type(self)
+        node = cls.__name__[-3:]
 
-            # Just send a request for the state and check if the result matches
-            # our expectations. The identifier of the answer will be checked by
-            # (the notifier in) the network class already.
-            state = await self.can.get_state(f'{node} 1')
+        # Just send a request for the state and check if the result matches
+        # our expectations. The identifier of the answer will be checked by
+        # (the notifier in) the network class already.
+        state = await self.can.get_state(f'{node} 1')
 
-            expected_state = State(mode='Get',
-                                   location='Application',
-                                   state='Operating')
+        expected_state = State(mode='Get',
+                               location='Application',
+                               state='Operating')
 
-            self.assertEqual(
-                expected_state, state,
-                f"Expected state “{expected_state}” does not match "
-                f"received state “{state}”")
-
-        async_run(test_connection())
+        self.assertEqual(
+            expected_state, state,
+            f"Expected state “{expected_state}” does not match "
+            f"received state “{state}”")
 
     def _test_firmware_flash(self):
         """Upload bootloader and application into node"""

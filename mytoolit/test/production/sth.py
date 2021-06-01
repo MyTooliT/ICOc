@@ -154,7 +154,7 @@ class TestSTH(TestNode):
         sender/receiver and flipped acknowledgment bit).
         """
 
-        self._test_connection()
+        run(self._test_connection())
 
     def test_battery_voltage(self):
         """Test voltage of STH power source"""
