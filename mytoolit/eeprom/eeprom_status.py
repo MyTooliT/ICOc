@@ -1,10 +1,16 @@
+# -- Imports ------------------------------------------------------------------
+
+from __future__ import annotations
+
+from typing import Union
+
 # -- Class --------------------------------------------------------------------
 
 
 class EEPROMStatus:
     """This class represents an EEPROM status byte"""
 
-    def __init__(self, status):
+    def __init__(self, status: Union[int, str, EEPROMStatus]) -> None:
         """Create a new status byte from the given argument
 
         Parameters
@@ -63,7 +69,7 @@ class EEPROMStatus:
 
         self.value = status
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Return the string representation of the status byte
 
         Returns
@@ -92,7 +98,7 @@ class EEPROMStatus:
 
         return f"{description} (0x{value:02x})"
 
-    def is_locked(self):
+    def is_locked(self) -> bool:
         """Check if the EEPROM is locked
 
         Returns
@@ -117,7 +123,7 @@ class EEPROMStatus:
 
         return self.value == 0xca
 
-    def is_initialized(self):
+    def is_initialized(self) -> bool:
         """Check if the EEPROM is initialized
 
         Returns
