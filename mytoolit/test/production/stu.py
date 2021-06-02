@@ -64,38 +64,44 @@ class TestSTU(TestNode):
     def test_eeprom(self):
         """Test if reading and writing the EEPROM works"""
 
-        cls = type(self)
+        async def test_eeprom():
+            """Test the EERPOM of the STU"""
 
-        # ========
-        # = Name =
-        # ========
+            cls = type(self)
 
-        read_name = self.can.read_eeprom_name()
-        expected_name = "Valerie"
-        self.assertEqual(
-            read_name, expected_name,
-            f"Read name “{read_name}” does not match expected name " +
-            f"“{expected_name}”")
+            # ========
+            # = Name =
+            # ========
 
-        cls.name = read_name
+            read_name = await self.can.read_eeprom_name()
+            expected_name = "Valerie"
+            self.assertEqual(
+                read_name, expected_name,
+                f"Read name “{read_name}” does not match expected name " +
+                f"“{expected_name}”")
 
-        # ================
-        # = Product Data =
-        # ================
+            cls.name = read_name
 
-        super()._test_eeprom_product_data()
+            # ================
+            # = Product Data =
+            # ================
 
-        # ==============
-        # = Statistics =
-        # ==============
+            super_class = super(TestSTU, self)
+            await super_class._test_eeprom_product_data()
 
-        super()._test_eeprom_statistics()
+            # ==============
+            # = Statistics =
+            # ==============
 
-        # =================
-        # = EEPROM Status =
-        # =================
+            await super_class._test_eeprom_statistics()
 
-        super()._test_eeprom_status()
+            # =================
+            # = EEPROM Status =
+            # =================
+
+            await super_class._test_eeprom_status()
+
+        run(test_eeprom())
 
 
 # -- Main ---------------------------------------------------------------------

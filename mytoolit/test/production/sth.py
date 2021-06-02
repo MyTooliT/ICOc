@@ -323,122 +323,128 @@ class TestSTH(TestNode):
     def test_eeprom(self):
         """Test if reading and writing the EEPROM works"""
 
-        cls = type(self)
+        async def test_eeprom():
+            """Test the EERPOM of the STH"""
 
-        # ========
-        # = Name =
-        # ========
+            cls = type(self)
+            receiver = 'STH 1'
 
-        name = (settings.sth.serial_number if settings.sth.status == "Epoxied"
-                else convert_mac_base64(cls.bluetooth_mac))
+            # ========
+            # = Name =
+            # ========
 
-        self.can.write_eeprom_name(name)
-        read_name = self.can.read_eeprom_name()
+            name = (settings.sth.serial_number if settings.sth.status
+                    == "Epoxied" else convert_mac_base64(cls.bluetooth_mac))
 
-        self.assertEqual(
-            name, read_name,
-            f"Written name “{name}” does not match read name “{read_name}”")
+            await self.can.write_eeprom_name(name, receiver)
+            read_name = await self.can.read_eeprom_name(receiver)
 
-        cls.name = read_name
-
-        # We update the name also with the `System` → `Bluetooth` command.
-        # This way the STH takes the name change into account. Otherwise the
-        # device would still use the old name, although the name in the EEPROM
-        # was already updated.
-        #
-        # Before this approach we already tried to reset
-        # the node after we changed all the values. However, this way the name
-        # of the device often was not updated properly. For example, even
-        # though the name was written and read as “AAtXb+lp” it showed up as
-        # “IItYb+lq” after the test.
-        self.can.vBlueToothNameWrite(Node("STH1").value, 0, cls.name)
-
-        # =========================
-        # = Sleep & Advertisement =
-        # =========================
-
-        def read_write_time(read_function, write_function, variable,
-                            description, milliseconds):
-            write_function(milliseconds)
-            milliseconds_read = read_function()
-            setattr(type(self), variable, milliseconds_read)
             self.assertEqual(
-                milliseconds_read, milliseconds,
-                f"{description} {milliseconds_read} ms does not match "
-                f" written value of {milliseconds} ms")
+                name, read_name,
+                f"Written name “{name}” does not match read name “{read_name}”"
+            )
 
-        read_write_time(read_function=self.can.read_eeprom_sleep_time_1,
-                        write_function=self.can.write_eeprom_sleep_time_1,
-                        variable='sleep_time_1',
-                        description="Sleep Time 1",
-                        milliseconds=settings.sth.bluetooth.sleep_time_1)
+            cls.name = read_name
 
-        read_write_time(
-            read_function=self.can.read_eeprom_advertisement_time_1,
-            write_function=self.can.write_eeprom_advertisement_time_1,
-            variable='advertisement_time_1',
-            description="Advertisement Time 1",
-            milliseconds=settings.sth.bluetooth.advertisement_time_1)
+            # We update the name also with the `System` → `Bluetooth`
+            # command. This way the STH takes the name change into account.
+            # Otherwise the device would still use the old name, although the
+            # name in the EEPROM was already updated.
+            await self.can.set_name(cls.name, receiver)
 
-        read_write_time(read_function=self.can.read_eeprom_sleep_time_2,
-                        write_function=self.can.write_eeprom_sleep_time_2,
-                        variable='sleep_time_2',
-                        description="Sleep Time 2",
-                        milliseconds=settings.sth.bluetooth.sleep_time_2)
+            # =========================
+            # = Sleep & Advertisement =
+            # =========================
+            async def read_write_time(read_function, write_function, variable,
+                                      description, milliseconds):
+                await write_function(milliseconds)
+                milliseconds_read = await read_function()
+                setattr(type(self), variable, milliseconds_read)
+                self.assertEqual(
+                    milliseconds_read, milliseconds,
+                    f"{description} {milliseconds_read} ms does not match "
+                    f" written value of {milliseconds} ms")
 
-        read_write_time(
-            read_function=self.can.read_eeprom_advertisement_time_2,
-            write_function=self.can.write_eeprom_advertisement_time_2,
-            variable='advertisement_time_2',
-            description="Advertisement Time 2",
-            milliseconds=settings.sth.bluetooth.advertisement_time_2)
+            await read_write_time(
+                read_function=self.can.read_eeprom_sleep_time_1,
+                write_function=self.can.write_eeprom_sleep_time_1,
+                variable='sleep_time_1',
+                description="Sleep Time 1",
+                milliseconds=settings.sth.bluetooth.sleep_time_1)
 
-        # ================
-        # = Product Data =
-        # ================
+            await read_write_time(
+                read_function=self.can.read_eeprom_advertisement_time_1,
+                write_function=self.can.write_eeprom_advertisement_time_1,
+                variable='advertisement_time_1',
+                description="Advertisement Time 1",
+                milliseconds=settings.sth.bluetooth.advertisement_time_1)
 
-        super()._test_eeprom_product_data()
+            await read_write_time(
+                read_function=self.can.read_eeprom_sleep_time_2,
+                write_function=self.can.write_eeprom_sleep_time_2,
+                variable='sleep_time_2',
+                description="Sleep Time 2",
+                milliseconds=settings.sth.bluetooth.sleep_time_2)
 
-        # ==============
-        # = Statistics =
-        # ==============
+            await read_write_time(
+                read_function=self.can.read_eeprom_advertisement_time_2,
+                write_function=self.can.write_eeprom_advertisement_time_2,
+                variable='advertisement_time_2',
+                description="Advertisement Time 2",
+                milliseconds=settings.sth.bluetooth.advertisement_time_2)
 
-        super()._test_eeprom_statistics()
+            # ================
+            # = Product Data =
+            # ================
 
-        # ================
-        # = Acceleration =
-        # ================
+            super_class = super(TestSTH, self)
 
-        sensor = settings.acceleration_sensor()
-        acceleration_max = sensor.acceleration.maximum
-        adc_max = 0xffff
-        acceleration_slope = acceleration_max / adc_max
-        self.can.write_eeprom_x_axis_acceleration_slope(acceleration_slope)
-        cls.acceleration_slope = (
-            self.can.read_eeprom_x_axis_acceleration_slope())
-        self.assertAlmostEqual(
-            acceleration_slope,
-            cls.acceleration_slope,
-            msg=f"Written acceleration slope “{acceleration_slope:.5f}” "
-            "does not match read acceleration slope "
-            f"“{cls.acceleration_slope:.5f}”")
+            await super_class._test_eeprom_product_data()
 
-        acceleration_offset = -(acceleration_max / 2)
-        self.can.write_eeprom_x_axis_acceleration_offset(acceleration_offset)
-        cls.acceleration_offset = (
-            self.can.read_eeprom_x_axis_acceleration_offset())
-        self.assertAlmostEqual(
-            acceleration_offset,
-            cls.acceleration_offset,
-            msg=f"Written acceleration offset “{acceleration_offset:.3f}” "
-            "does not match read acceleration offset "
-            f"“{cls.acceleration_offset:.3f}”")
+            # ==============
+            # = Statistics =
+            # ==============
 
-        # =================
-        # = EEPROM Status =
-        # =================
+            await super_class._test_eeprom_statistics()
 
-        super()._test_eeprom_status()
+            # ================
+            # = Acceleration =
+            # ================
+
+            sensor = settings.acceleration_sensor()
+            acceleration_max = sensor.acceleration.maximum
+            adc_max = 0xffff
+            acceleration_slope = acceleration_max / adc_max
+            await self.can.write_eeprom_x_axis_acceleration_slope(
+                acceleration_slope)
+            cls.acceleration_slope = (
+                await self.can.read_eeprom_x_axis_acceleration_slope())
+            self.assertAlmostEqual(
+                acceleration_slope,
+                cls.acceleration_slope,
+                msg=f"Written acceleration slope “{acceleration_slope:.5f}” "
+                "does not match read acceleration slope "
+                f"“{cls.acceleration_slope:.5f}”")
+
+            acceleration_offset = -(acceleration_max / 2)
+            await self.can.write_eeprom_x_axis_acceleration_offset(
+                acceleration_offset)
+            cls.acceleration_offset = (
+                await self.can.read_eeprom_x_axis_acceleration_offset())
+            self.assertAlmostEqual(
+                acceleration_offset,
+                cls.acceleration_offset,
+                msg=f"Written acceleration offset “{acceleration_offset:.3f}” "
+                "does not match read acceleration offset "
+                f"“{cls.acceleration_offset:.3f}”")
+
+            # =================
+            # = EEPROM Status =
+            # =================
+
+            await super_class._test_eeprom_status()
+
+        run(test_eeprom())
 
 
 def main():
