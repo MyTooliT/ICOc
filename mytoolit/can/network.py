@@ -82,8 +82,8 @@ class ResponseListener(Listener):
         Parameters
         ----------
 
-            The sent message this listener should react to
         message:
+            The sent message this listener should react to
 
         expected_data:
            This optional field specifies the expected acknowledgment data.
