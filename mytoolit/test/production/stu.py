@@ -1,6 +1,5 @@
 # -- Imports ------------------------------------------------------------------
 
-from asyncio import run
 from os import environ, pathsep
 from unittest import main as unittest_main
 
@@ -45,7 +44,8 @@ class TestSTU(TestNode):
 
         cls = type(self)
         new_network = hasattr(self.can, 'bus')
-        run(read_data_new()) if new_network else read_data_old()
+        self.loop.run_until_complete(
+            read_data_new()) if new_network else read_data_old()
 
     def test__firmware_flash(self):
         """Upload bootloader and application into STU
@@ -59,7 +59,7 @@ class TestSTU(TestNode):
     def test_connection(self):
         """Check connection to STU"""
 
-        run(self._test_connection())
+        self.loop.run_until_complete(self._test_connection())
 
     def test_eeprom(self):
         """Test if reading and writing the EEPROM works"""
@@ -101,7 +101,7 @@ class TestSTU(TestNode):
 
             await super_class._test_eeprom_status()
 
-        run(test_eeprom())
+        self.loop.run_until_complete(test_eeprom())
 
 
 # -- Main ---------------------------------------------------------------------

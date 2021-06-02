@@ -1,6 +1,7 @@
 # -- Imports ------------------------------------------------------------------
 
-from asyncio import run as async_run, sleep as async_sleep
+from asyncio import (get_event_loop, new_event_loop, set_event_loop, sleep as
+                     async_sleep)
 from datetime import date, datetime
 from os.path import abspath, isfile, dirname, join
 from re import escape
@@ -239,15 +240,22 @@ class TestNode(TestCase):
             # Wait for reset to take place
             await async_sleep(2)
 
-        async_run(connect_new()) if (self._testMethodName in {
-            'test_connection', 'test_eeprom'
-        }) else connect_old()
+        if self._testMethodName in {'test_connection', 'test_eeprom'}:
+            set_event_loop(new_event_loop())
+            self.loop = get_event_loop()
+            self.loop.run_until_complete(connect_new())
+        else:
+            connect_old()
 
     def _disconnect(self):
         """Tear down connection to STU"""
 
         new_network = hasattr(self.can, 'bus')
-        async_run(self.can.shutdown()) if new_network else self.can.__exit__()
+        if new_network:
+            self.loop.run_until_complete(self.can.shutdown())
+            self.loop.close()
+        else:
+            self.can.__exit__()
 
     async def _test_connection(self):
         """Check connection to node"""

@@ -1,6 +1,5 @@
 # -- Imports ------------------------------------------------------------------
 
-from asyncio import run
 from os import environ, pathsep
 from time import sleep
 from unittest import main as unittest_main, skipIf
@@ -90,9 +89,10 @@ class TestSTH(TestNode):
         super()._connect()
         # Connect to STH
         new_network = hasattr(self.can, 'bus')
-        run(self.can.connect_sth(settings.sth_name())) if new_network else (
-            self.can.bBlueToothConnectPollingName(
-                Node('STU 1').value, settings.sth_name(), log=False))
+        self.loop.run_until_complete(self.can.connect_sth(
+            settings.sth_name())) if new_network else (
+                self.can.bBlueToothConnectPollingName(
+                    Node('STU 1').value, settings.sth_name(), log=False))
 
     def _disconnect(self):
         """Tear down connection to STH"""
@@ -132,7 +132,8 @@ class TestSTH(TestNode):
         cls.name = settings.sth_name()
 
         new_network = hasattr(self.can, 'bus')
-        run(read_data_new()) if new_network else read_data_old()
+        self.loop.run_until_complete(
+            read_data_new()) if new_network else read_data_old()
 
     @skipIf(settings.sth.status == "Epoxied",
             f"Flash test skipped because of status “{settings.sth.status}”")
@@ -154,7 +155,7 @@ class TestSTH(TestNode):
         sender/receiver and flipped acknowledgment bit).
         """
 
-        run(self._test_connection())
+        self.loop.run_until_complete(self._test_connection())
 
     def test_battery_voltage(self):
         """Test voltage of STH power source"""
@@ -444,7 +445,7 @@ class TestSTH(TestNode):
 
             await super_class._test_eeprom_status()
 
-        run(test_eeprom())
+        self.loop.run_until_complete(test_eeprom())
 
 
 def main():
