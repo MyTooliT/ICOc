@@ -492,9 +492,9 @@ class Network:
                             description=f"reset node “{node}”",
                             response_data=message.data)
 
-    # =================
-    # = Get/Set State =
-    # =================
+    # -----------------
+    # - Get/Set State -
+    # -----------------
 
     async def get_state(self, node: Union[str, Node] = 'STU 1') -> State:
         """Get the current state of the specified node
@@ -532,9 +532,9 @@ class Network:
 
         return State(message.data[0])
 
-    # =============
-    # = Bluetooth =
-    # =============
+    # -------------
+    # - Bluetooth -
+    # -------------
 
     async def activate_bluetooth(self, node: Union[str, Node] = 'STU 1'):
         """Activate Bluetooth on the specified node
