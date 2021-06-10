@@ -26,6 +26,9 @@ class StreamingFormat:
         Examples
         --------
 
+        >>> StreamingFormat(0)
+        Streaming Format: Stop Stream
+
         >>> StreamingFormat(0b001)
         Streaming Format: 1 Data Set
 
@@ -39,9 +42,11 @@ class StreamingFormat:
 
         data_set_bits = self.value & 0b111
         data_sets = to_number_data_sets(data_set_bits)
+        data_set_explanation = ("Stop Stream"
+                                if data_sets == 0 else "{} Data Set{}".format(
+                                    data_sets, "" if data_sets == 1 else "s"))
 
-        return "Streaming Format: {} Data Set{}".format(
-            data_sets, "" if data_sets == 1 else "s")
+        return f"Streaming Format: {data_set_explanation}"
 
 
 # -- Main ---------------------------------------------------------------------
