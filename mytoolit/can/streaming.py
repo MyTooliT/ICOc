@@ -14,6 +14,7 @@ class StreamingFormat:
     def __init__(self,
                  *value,
                  single: Optional[bool] = None,
+                 width: Optional[int] = 2,
                  first: Optional[bool] = None,
                  second: Optional[bool] = None,
                  third: Optional[bool] = None):
@@ -24,6 +25,9 @@ class StreamingFormat:
 
         single:
             Specifies if the request was for a single value or not
+
+        width:
+            Specifies the width of a single value (either 2 or 3 bytes)
 
         first:
             Specifies if the first data value should be transmitted or not
@@ -58,6 +62,16 @@ class StreamingFormat:
         if single:
             set_part(7, 1, int(single))
 
+        # =========
+        # = Width =
+        # =========
+
+        if width is not None:
+            if not (isinstance(width, int) and 2 <= width <= 3):
+                raise ValueError(f"Unsupported width value: {width}")
+
+            set_part(6, 1, 1 if width == 3 else 0)
+
         # =================
         # = Active Values =
         # =================
@@ -77,8 +91,8 @@ class StreamingFormat:
         Examples
         --------
 
-        >>> StreamingFormat(first=True)
-        Streaming, 2 Bytes, Stop Stream, Read Value 1
+        >>> StreamingFormat(first=True, width=3)
+        Streaming, 3 Bytes, Stop Stream, Read Value 1
 
         >>> StreamingFormat(0b001, single=True)
         Single Request, 2 Bytes, 1 Data Set
