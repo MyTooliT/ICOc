@@ -96,7 +96,7 @@ class StreamingFormat:
             for number, selection in enumerate([first, second, third], start=1)
             if selection
         ]
-        value_selection_explanation = ",".join(
+        value_selection_explanation = ", ".join(
             selected_values) if selected_values else ""
 
         parts = [
@@ -105,7 +105,7 @@ class StreamingFormat:
         if value_selection_explanation:
             parts.append(value_selection_explanation)
 
-        return ",".join(parts)
+        return ", ".join(parts)
 
 
 # -- Main ---------------------------------------------------------------------
