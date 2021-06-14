@@ -6,7 +6,7 @@ from typing import Optional
 
 
 class StreamingFormat:
-    """Support for specifying the streaming format of a node
+    """Support for specifying the data streaming format
 
     See also: https://mytoolit.github.io/Documentation/#block-streaming
     """
