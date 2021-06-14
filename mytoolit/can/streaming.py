@@ -1,3 +1,10 @@
+# -- Imports ------------------------------------------------------------------
+
+from typing import Optional
+
+# -- Class --------------------------------------------------------------------
+
+
 class StreamingFormat:
     """Support for specifying the streaming format of a node
 
@@ -6,9 +13,9 @@ class StreamingFormat:
 
     def __init__(self,
                  *value,
-                 first: bool = True,
-                 second: bool = False,
-                 third: bool = False):
+                 first: Optional[bool] = None,
+                 second: Optional[bool] = None,
+                 third: Optional[bool] = None):
         """Initialize the streaming format using the given arguments
 
         value:
@@ -44,8 +51,9 @@ class StreamingFormat:
         # = Active Values =
         # =================
 
-        value_selection = int(first) << 2 & int(second) << 1 & int(third)
-        set_part(3, 3, value_selection)
+        for shift, part in enumerate([third, second, first]):
+            if part is not None:
+                set_part(3 + shift, 1, part)
 
     def __repr__(self) -> str:
         """Retrieve the textual representation of the streaming format
