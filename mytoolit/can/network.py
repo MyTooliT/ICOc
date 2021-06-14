@@ -27,7 +27,9 @@ from mytoolit.eeprom import EEPROMStatus
 from mytoolit.config import settings
 from mytoolit.can.message import Message
 from mytoolit.can.node import Node
+from mytoolit.can.streaming import StreamingFormatVoltage
 from mytoolit.can.status import State
+from mytoolit.measurement import convert_voltage_adc_to_volts
 from mytoolit.utility import convert_bytes_to_text
 
 # -- Classes ------------------------------------------------------------------
@@ -1213,6 +1215,52 @@ class Network:
                                    f"“{sth}” in {connection_time} seconds")
 
             await sleep(0.1)
+
+    # =============
+    # = Streaming =
+    # =============
+
+    async def read_voltage(self) -> float:
+        """Read the current supply voltage of a connected STH
+
+        Returns
+        -------
+
+        The supply voltage of the specified node
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Read the supply voltage of STH 1
+
+        >>> async def read_supply_voltage():
+        ...     async with Network() as network:
+        ...         await network.connect_sth(0)
+        ...         return await network.read_voltage()
+        >>> supply_voltage = run(read_supply_voltage())
+        >>> 3 <= supply_voltage <= 4.2
+        True
+
+        """
+
+        streaming_format = StreamingFormatVoltage(first=True, sets=1)
+        node = 'STH 1'
+        message = Message(block='Streaming',
+                          block_command='Voltage',
+                          sender=self.sender,
+                          receiver=node,
+                          request=True,
+                          data=[streaming_format.value])
+
+        response = await self._request(message,
+                                       description=f"read voltage of “{node}”")
+
+        voltage_bytes = response.data[2:4]
+        voltage_raw = int.from_bytes(voltage_bytes, 'little')
+
+        return convert_voltage_adc_to_volts(voltage_raw)
 
     # ==========
     # = EEPROM =
