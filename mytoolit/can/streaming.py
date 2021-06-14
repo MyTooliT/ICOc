@@ -66,14 +66,14 @@ class StreamingFormat:
         Examples
         --------
 
-        >>> StreamingFormat(0)
-        Streaming Format: Stop Stream
+        >>> StreamingFormat(first=True)
+        Streaming Format: Stop Stream, Read Value 1
 
         >>> StreamingFormat(0b001)
         Streaming Format: 1 Data Set
 
-        >>> StreamingFormat(0b111)
-        Streaming Format: 30 Data Sets
+        >>> StreamingFormat(0b110111)
+        Streaming Format: 30 Data Sets, Read Value 1, Read Value 2
 
         """
 
