@@ -67,18 +67,21 @@ class StreamingFormat:
         --------
 
         >>> StreamingFormat(first=True)
-        Streaming Format: Stop Stream, Read Value 1
+        Streaming, 2 Bytes, Stop Stream, Read Value 1
 
         >>> StreamingFormat(0b001)
-        Streaming Format: 1 Data Set
+        Streaming, 2 Bytes, 1 Data Set
 
         >>> StreamingFormat(0b110111)
-        Streaming Format: 30 Data Sets, Read Value 1, Read Value 2
+        Streaming, 2 Bytes, 30 Data Sets, Read Value 1, Read Value 2
 
         """
 
         def to_number_data_sets(data_set_bits: int) -> int:
             return [0, 1, 3, 6, 10, 15, 20, 30][data_set_bits]
+
+        single_request = self.value >> 7
+        three_bytes = (self.value >> 6) & 1
 
         data_set_bits = self.value & 0b111
         data_sets = to_number_data_sets(data_set_bits)
@@ -86,11 +89,16 @@ class StreamingFormat:
                                 if data_sets == 0 else "{} Data Set{}".format(
                                     data_sets, "" if data_sets == 1 else "s"))
 
+        parts = [
+            "Single Request" if single_request else "Streaming",
+            "{} Bytes".format(3 if three_bytes else 2),
+            f"{data_set_explanation}",
+        ]
+
         value_selection = (self.value >> 3) & 0b111
         first = value_selection >> 2
         second = value_selection >> 1 & 1
         third = value_selection & 1
-
         selected_values = [
             f"Read Value {number}"
             for number, selection in enumerate([first, second, third], start=1)
@@ -98,10 +106,6 @@ class StreamingFormat:
         ]
         value_selection_explanation = ", ".join(
             selected_values) if selected_values else ""
-
-        parts = [
-            f"Streaming Format: {data_set_explanation}",
-        ]
         if value_selection_explanation:
             parts.append(value_selection_explanation)
 
