@@ -28,3 +28,4 @@
 ### Streaming Format
 
 - New class `StreamingFormat` to specify the format of [streaming data][streaming]
+- New class `StreamingFormatVoltage` to specify the format of voltage streaming data

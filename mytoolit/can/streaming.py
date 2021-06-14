@@ -179,6 +179,66 @@ class StreamingFormat:
         return ", ".join(parts)
 
 
+class StreamingFormatVoltage(StreamingFormat):
+    """Support for specifying the streaming format of voltage data"""
+
+    def __init__(self, *arguments, **keyword_arguments) -> None:
+        """Initialize the voltage streaming format using the given arguments
+
+        value:
+            The value of the streaming format byte
+
+        single:
+            Specifies if the request was for a single value or not
+
+        width:
+            Specifies the width of a single value (either 2 or 3 bytes)
+
+        first:
+            Specifies if the first voltage value should be transmitted or not
+
+        second:
+            Specifies if the second voltage value should be transmitted or not
+
+        third:
+            Specifies if the third voltage value should be transmitted or not
+
+        sets:
+            Specifies the number of data sets that should be transmitted
+
+            The value 0 stops the stream. Other possible values for the number
+            of sets are 1, 3, 6, 10, 15, 20 and 30.
+
+        """
+
+        super().__init__(*arguments,
+                         **keyword_arguments,
+                         value_explanations=("Voltage 1", "Voltage 2",
+                                             "Voltage 3"))
+
+    def __repr__(self) -> str:
+        """Retrieve the textual representation of the voltage streaming format
+
+        Returns
+        -------
+
+        A string that describes the voltage streaming format
+
+        Examples
+        --------
+
+        >>> StreamingFormatVoltage(single=True, width=2, second=True, sets=10)
+        Single Request, 2 Bytes, 10 Data Sets, Read Voltage 2
+
+        >>> StreamingFormatVoltage(single=False, width=3, first=False,
+        ...                        second=True, third=True, sets=3)
+        Streaming, 3 Bytes, 3 Data Sets, Read Voltage 2, Read Voltage 3
+
+        """
+
+        return super().__repr__()
+
+
 # -- Main ---------------------------------------------------------------------
 
 if __name__ == '__main__':
