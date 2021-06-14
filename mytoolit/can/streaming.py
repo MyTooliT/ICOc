@@ -1,6 +1,6 @@
 # -- Imports ------------------------------------------------------------------
 
-from typing import Optional
+from typing import Optional, Tuple
 
 # -- Class --------------------------------------------------------------------
 
@@ -14,14 +14,18 @@ class StreamingFormat:
     # Possible number of data sets
     data_set = [0, 1, 3, 6, 10, 15, 20, 30]
 
-    def __init__(self,
-                 *value,
-                 single: Optional[bool] = None,
-                 width: Optional[int] = 2,
-                 first: Optional[bool] = None,
-                 second: Optional[bool] = None,
-                 third: Optional[bool] = None,
-                 sets: Optional[int] = None) -> None:
+    def __init__(
+        self,
+        *value,
+        single: Optional[bool] = None,
+        width: Optional[int] = 2,
+        first: Optional[bool] = None,
+        second: Optional[bool] = None,
+        third: Optional[bool] = None,
+        sets: Optional[int] = None,
+        value_explanations: Tuple[str, str,
+                                  str] = ("Value 1", "Value 2", "Value 3")
+    ) -> None:
         """Initialize the streaming format using the given arguments
 
         value:
@@ -48,6 +52,10 @@ class StreamingFormat:
             The value 0 stops the stream. Other possible values for the number
             of sets are 1, 3, 6, 10, 15, 20 and 30.
 
+        value_explanations:
+            Three strings used to describe the first, second and third data
+            value
+
         """
 
         def set_part(start, width, number):
@@ -62,6 +70,8 @@ class StreamingFormat:
             number = number & mask
             # Set bits to given value
             self.value |= number << start
+
+        self.value_explanations = value_explanations
 
         self.value = value[0] if value else 0
 
@@ -141,18 +151,21 @@ class StreamingFormat:
         ]
 
         value_selection = (self.value >> 3) & 0b111
+
         first = value_selection >> 2
         second = value_selection >> 1 & 1
         third = value_selection & 1
+
         selected_values = [
-            f"Read Value {number}"
-            for number, selection in enumerate([first, second, third], start=1)
-            if selection
+            f"Read {value_explanation}"
+            for selected, value_explanation in zip((
+                first, second, third), self.value_explanations) if selected
         ]
-        value_selection_explanation = ", ".join(
-            selected_values) if selected_values else ""
-        if value_selection_explanation:
-            parts.append(value_selection_explanation)
+
+        value_explanation = (", ".join(selected_values)
+                             if selected_values else "")
+        if value_explanation:
+            parts.append(value_explanation)
 
         return ", ".join(parts)
 
