@@ -1,18 +1,23 @@
 from asyncio import run
 from time import time
 
+from netaddr import EUI
+
 from mytoolit.can import Network
 
 
-async def test():
+async def test(identifier=EUI("08:6b:d7:01:de:81")):
     async with Network() as network:
-        node = 'STU 1'
-        print(f"{node}\n{'=' * len(node)}\n")
+        node = 'STH 1'
         start_time = time()
-        print(f"State: “{await network.get_state(node)}”")
-        print(f"RSSI: “{await network.get_mac_address(node)}”")
-        print(f"Firmware: “{await network.get_firmware_release_name(node)}”")
-        print("\nExecution took {} seconds".format(time() - start_time))
+
+        await network.connect_sth(identifier)
+        name = await network.get_name(node)
+        print(f"Name of {node}: {name}")
+        supply_voltage = await network.read_voltage(node)
+        print(f"Supply voltage of {node}: {supply_voltage:.3} V")
+
+        print("\nExecution took {:.3} seconds".format(time() - start_time))
 
 
 if __name__ == '__main__':
