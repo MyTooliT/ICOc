@@ -11,13 +11,17 @@ class StreamingFormat:
     See also: https://mytoolit.github.io/Documentation/#block-streaming
     """
 
+    # Possible number of data sets
+    data_set = [0, 1, 3, 6, 10, 15, 20, 30]
+
     def __init__(self,
                  *value,
                  single: Optional[bool] = None,
                  width: Optional[int] = 2,
                  first: Optional[bool] = None,
                  second: Optional[bool] = None,
-                 third: Optional[bool] = None):
+                 third: Optional[bool] = None,
+                 sets: Optional[int] = None):
         """Initialize the streaming format using the given arguments
 
         value:
@@ -37,6 +41,12 @@ class StreamingFormat:
 
         third:
             Specifies if the third data value should be transmitted or not
+
+        sets:
+            Specifies the number of data sets that should be transmitted
+
+            The value 0 stops the stream. Other possible values for the number
+            of sets are 1, 3, 6, 10, 15, 20 and 30.
 
         """
 
@@ -80,6 +90,18 @@ class StreamingFormat:
             if part is not None:
                 set_part(3 + shift, 1, part)
 
+        # =============
+        # = Data Sets =
+        # =============
+
+        if sets is not None:
+            cls = type(self)
+
+            if sets not in cls.data_set:
+                raise ValueError(f"Unsupported number of data sets: {sets}")
+
+            set_part(0, 3, cls.data_set.index(sets))
+
     def __repr__(self) -> str:
         """Retrieve the textual representation of the streaming format
 
@@ -91,8 +113,8 @@ class StreamingFormat:
         Examples
         --------
 
-        >>> StreamingFormat(first=True, width=3)
-        Streaming, 3 Bytes, Stop Stream, Read Value 1
+        >>> StreamingFormat(width=3, first=True, sets=15)
+        Streaming, 3 Bytes, 15 Data Sets, Read Value 1
 
         >>> StreamingFormat(0b001, single=True)
         Single Request, 2 Bytes, 1 Data Set
@@ -102,14 +124,12 @@ class StreamingFormat:
 
         """
 
-        def to_number_data_sets(data_set_bits: int) -> int:
-            return [0, 1, 3, 6, 10, 15, 20, 30][data_set_bits]
-
         single_request = self.value >> 7
         three_bytes = (self.value >> 6) & 1
 
         data_set_bits = self.value & 0b111
-        data_sets = to_number_data_sets(data_set_bits)
+        cls = type(self)
+        data_sets = cls.data_set[data_set_bits]
         data_set_explanation = ("Stop Stream"
                                 if data_sets == 0 else "{} Data Set{}".format(
                                     data_sets, "" if data_sets == 1 else "s"))
