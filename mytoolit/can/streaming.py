@@ -21,7 +21,7 @@ class StreamingFormat:
                  first: Optional[bool] = None,
                  second: Optional[bool] = None,
                  third: Optional[bool] = None,
-                 sets: Optional[int] = None):
+                 sets: Optional[int] = None) -> None:
         """Initialize the streaming format using the given arguments
 
         value:
