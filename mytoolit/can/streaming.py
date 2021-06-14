@@ -28,8 +28,14 @@ class StreamingFormat:
     ) -> None:
         """Initialize the streaming format using the given arguments
 
+        Positional Arguments
+        --------------------
+
         value:
             The value of the streaming format byte
+
+        Keyword Arguments
+        -----------------
 
         single:
             Specifies if the request was for a single value or not
@@ -72,6 +78,9 @@ class StreamingFormat:
             self.value |= number << start
 
         self.value_explanations = value_explanations
+
+        if len(value) > 1:
+            raise ValueError("More than one positional argument")
 
         self.value = value[0] if value else 0
 
