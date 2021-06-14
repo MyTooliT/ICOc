@@ -13,6 +13,7 @@ class StreamingFormat:
 
     def __init__(self,
                  *value,
+                 single: Optional[bool] = None,
                  first: Optional[bool] = None,
                  second: Optional[bool] = None,
                  third: Optional[bool] = None):
@@ -20,6 +21,9 @@ class StreamingFormat:
 
         value:
             The value of the streaming format byte
+
+        single:
+            Specifies if the request was for a single value or not
 
         first:
             Specifies if the first data value should be transmitted or not
@@ -47,6 +51,13 @@ class StreamingFormat:
 
         self.value = value[0] if value else 0
 
+        # ==================
+        # = Single Request =
+        # ==================
+
+        if single:
+            set_part(7, 1, int(single))
+
         # =================
         # = Active Values =
         # =================
@@ -69,8 +80,8 @@ class StreamingFormat:
         >>> StreamingFormat(first=True)
         Streaming, 2 Bytes, Stop Stream, Read Value 1
 
-        >>> StreamingFormat(0b001)
-        Streaming, 2 Bytes, 1 Data Set
+        >>> StreamingFormat(0b001, single=True)
+        Single Request, 2 Bytes, 1 Data Set
 
         >>> StreamingFormat(0b110111)
         Streaming, 2 Bytes, 30 Data Sets, Read Value 1, Read Value 2
