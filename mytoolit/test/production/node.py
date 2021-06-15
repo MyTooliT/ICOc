@@ -240,7 +240,9 @@ class TestNode(TestCase):
             # Wait for reset to take place
             await async_sleep(2)
 
-        if self._testMethodName in {'test_connection', 'test_eeprom'}:
+        if self._testMethodName in {
+                'test_battery_voltage', 'test_connection', 'test_eeprom'
+        }:
             set_event_loop(new_event_loop())
             self.loop = get_event_loop()
             self.loop.run_until_complete(connect_new())

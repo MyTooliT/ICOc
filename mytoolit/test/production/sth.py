@@ -25,7 +25,6 @@ from mytoolit.old.MyToolItCommands import (
     MyToolItStreaming,
     int_to_mac_address,
 )
-from mytoolit.old.MyToolItSth import fVoltageBattery
 
 # -- Classes ------------------------------------------------------------------
 
@@ -160,43 +159,28 @@ class TestSTH(TestNode):
     def test_battery_voltage(self):
         """Test voltage of STH power source"""
 
-        # Read 2 byte voltage format
-        index = self.can.singleValueCollect(
-            Node('STH 1').value,
-            MyToolItStreaming['Voltage'],
-            # Read voltage 1
-            1,
-            # Do not read voltage 2
-            0,
-            # Do not read voltage 3
-            0,
-            log=False)
+        async def test_supply_voltage():
+            """Check the supply voltage of the STH"""
 
-        message = self.can.getReadMessageData(index)
-        self.assertEqual(len(message), 8,
-                         "Unable to read battery voltage data")
-        voltage_index_start = 2
-        voltage_index_end = voltage_index_start + 1
-        voltage_bytes = message[voltage_index_start:voltage_index_end + 1]
-        battery_voltage_raw = byte_list_to_int(voltage_bytes)
+            supply_voltage = await self.can.read_voltage()
 
-        expected_voltage = settings.sth.battery_voltage.average
-        tolerance_voltage = settings.sth.battery_voltage.tolerance
-        expected_minimum_voltage = expected_voltage - tolerance_voltage
-        expected_maximum_voltage = expected_voltage + tolerance_voltage
+            expected_voltage = settings.sth.battery_voltage.average
+            tolerance_voltage = settings.sth.battery_voltage.tolerance
+            expected_minimum_voltage = expected_voltage - tolerance_voltage
+            expected_maximum_voltage = expected_voltage + tolerance_voltage
 
-        battery_voltage = fVoltageBattery(battery_voltage_raw)
+            self.assertGreaterEqual(
+                supply_voltage, expected_minimum_voltage,
+                f"STH supply voltage of {supply_voltage:.3f} V is lower "
+                "than expected minimum voltage of "
+                f"{expected_minimum_voltage:.3f} V")
+            self.assertLessEqual(
+                supply_voltage, expected_maximum_voltage,
+                f"STH supply voltage of {supply_voltage:.3f} V is "
+                "greater than expected maximum voltage of "
+                f"{expected_minimum_voltage:.3f} V")
 
-        self.assertGreaterEqual(
-            battery_voltage, expected_minimum_voltage,
-            f"STH power source voltage of {battery_voltage:.3f} V is lower "
-            "than expected minimum voltage of "
-            f"{expected_minimum_voltage:.3f} V")
-        self.assertLessEqual(
-            battery_voltage, expected_maximum_voltage,
-            f"STH power source voltage of {battery_voltage:.3f} V is "
-            "greater than expected maximum voltage of "
-            f"{expected_minimum_voltage:.3f} V")
+        self.loop.run_until_complete(test_supply_voltage())
 
     def test_acceleration_single_value(self):
         """Test stationary acceleration value"""
