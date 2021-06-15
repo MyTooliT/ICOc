@@ -179,6 +179,77 @@ class StreamingFormat:
         return ", ".join(parts)
 
 
+class StreamingFormatAcceleration(StreamingFormat):
+    """Support for specifying the streaming format of acceleration data"""
+
+    def __init__(self, *arguments, **keyword_arguments) -> None:
+        """Initialize the acceleration streaming format
+
+        value:
+            The value of the streaming format byte
+
+        single:
+            Specifies if the request was for a single value or not
+
+        width:
+            Specifies the width of a single value (either 2 or 3 bytes)
+
+        x:
+            Specifies if the x acceleration value should be transmitted or not
+
+        y:
+            Specifies if the y acceleration value should be transmitted or not
+
+        z:
+            Specifies if the z acceleration value should be transmitted or not
+
+        sets:
+            Specifies the number of data sets that should be transmitted
+
+            The value 0 stops the stream. Other possible values for the number
+            of sets are 1, 3, 6, 10, 15, 20 and 30.
+
+        """
+
+        keyword_arguments['first'] = keyword_arguments.get('x', None)
+        keyword_arguments['second'] = keyword_arguments.get('y', None)
+        keyword_arguments['third'] = keyword_arguments.get('z', None)
+        for key in ('x', 'y', 'z'):
+            keyword_arguments.pop(key, None)
+
+        super().__init__(*arguments,
+                         **keyword_arguments,
+                         value_explanations=("X Acceleration",
+                                             "Y Acceleration",
+                                             "Z Acceleration"))
+
+    def __repr__(self) -> str:
+        """Retrieve the textual representation of the acceleration format
+
+        Returns
+        -------
+
+        A string that describes the acceleration streaming format
+
+        Examples
+        --------
+
+        >>> StreamingFormatAcceleration()
+        Streaming, 2 Bytes, Stop Stream
+
+        >>> StreamingFormatAcceleration(single=True, width=3, x=True, sets=6)
+        Single Request, 3 Bytes, 6 Data Sets, Read X Acceleration
+
+        >>> StreamingFormatAcceleration(width=2, x=False, y=True, z=True,
+        ...     sets=1) # doctest:+NORMALIZE_WHITESPACE
+        Streaming, 2 Bytes, 1 Data Set, Read Y Acceleration,
+        Read Z Acceleration
+
+        """
+
+        return super().__repr__()
+
+
 class StreamingFormatVoltage(StreamingFormat):
     """Support for specifying the streaming format of voltage data"""
 

@@ -30,3 +30,4 @@
 
 - New class `StreamingFormat` to specify the format of [streaming data][streaming]
 - New class `StreamingFormatVoltage` to specify the format of voltage streaming data
+- New class `StreamingFormatAcceleration` to specify the format of acceleration streaming data
