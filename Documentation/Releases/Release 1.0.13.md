@@ -25,6 +25,7 @@
 
 - Add the coroutine `get_state` to [retrieve information about the current state of a node](https://mytoolit.github.io/Documentation/#command:get-set-state)
 - Add the coroutine `read_voltage` to read the supply voltage of a connected STH
+- Add the coroutine `read_x_acceleration` to read the x acceleration of a connected STH
 
 ### Streaming Format
 

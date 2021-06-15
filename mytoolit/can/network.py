@@ -25,9 +25,11 @@ if __name__ == '__main__':
 
 from mytoolit.eeprom import EEPROMStatus
 from mytoolit.config import settings
+from mytoolit.measurement import convert_acceleration_adc_to_g
 from mytoolit.can.message import Message
 from mytoolit.can.node import Node
-from mytoolit.can.streaming import StreamingFormatVoltage
+from mytoolit.can.streaming import (StreamingFormatAcceleration,
+                                    StreamingFormatVoltage)
 from mytoolit.can.status import State
 from mytoolit.measurement import convert_voltage_adc_to_volts
 from mytoolit.utility import convert_bytes_to_text
@@ -1219,6 +1221,60 @@ class Network:
     # =============
     # = Streaming =
     # =============
+
+    async def read_x_acceleration(self, max: int) -> int:
+        """Read the current x acceleration value of a connected STH
+
+        The value will be returned as multiples of g₀ (gravity of earth)
+
+        Parameters
+        ----------
+
+        max:
+            Sum of the multiple of g₀ that the current acceleration sensor is
+            able to detect as multiples of the gravity of earth.
+
+            For a ± 100 g sensor this value would be (100 + 100 = 200).
+
+        Returns
+        -------
+
+        The current acceleration as multiples of the gravity of earth
+
+        Example
+        -------
+
+        >>> from asyncio import run
+        >>> from mytoolit.config import settings
+
+        Read the x acceleration of STH 1
+
+        >>> max = settings.acceleration_sensor().acceleration.maximum
+        >>> async def read_x_acceleration():
+        ...     async with Network() as network:
+        ...         await network.connect_sth(0)
+        ...         return await network.read_x_acceleration(max)
+        >>> x_acceleration = run(read_x_acceleration())
+        >>> -2 < x_acceleration < 2
+        True
+
+        """
+
+        streaming_format = StreamingFormatAcceleration(x=True, sets=1)
+        node = 'STH 1'
+        message = Message(block='Streaming',
+                          block_command='Acceleration',
+                          sender=self.sender,
+                          receiver=node,
+                          request=True,
+                          data=[streaming_format.value])
+
+        response = await self._request(
+            message, description=f"read x acceleration of “{node}”")
+
+        acceleration_bytes = response.data[2:4]
+        acceleration_raw = int.from_bytes(acceleration_bytes, 'little')
+        return convert_acceleration_adc_to_g(acceleration_raw, max)
 
     async def read_voltage(self) -> float:
         """Read the current supply voltage of a connected STH
