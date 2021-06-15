@@ -1226,7 +1226,7 @@ class Network:
         Returns
         -------
 
-        The supply voltage of the specified node
+        The supply voltage of the STH
 
         Example
         -------
