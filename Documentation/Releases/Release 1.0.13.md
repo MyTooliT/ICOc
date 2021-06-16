@@ -13,6 +13,10 @@
 
 ## Internal
 
+### Calibration
+
+- Add class `CalibrationMeasurementFormat` to specify the data bytes of a [calibration measurement command](https://mytoolit.github.io/Documentation/#command:Calibration-Measurement).
+
 ### Measurement
 
 - Add function `convert_voltage_adc_to_volts` to convert (2 byte) [streaming voltage][streaming] values to a supply voltage in volts
