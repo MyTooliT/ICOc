@@ -4,7 +4,8 @@
 
 - The
 
-  - connection test (`test_connection`) and
+  - supply voltage test (`test_battery_voltage`),
+  - connection test (`test_connection`), and
   - EEPROM test (`test_eeprom`)
 
   now use the [new network class](../../mytoolit/can/network.py) instead of the [old network class](../../mytoolit/old/network.py)
