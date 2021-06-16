@@ -4,6 +4,7 @@
 
 - The
 
+  - stationary acceleration test (`test_acceleration_single_value`),
   - supply voltage test (`test_battery_voltage`),
   - connection test (`test_connection`), and
   - EEPROM test (`test_eeprom`)

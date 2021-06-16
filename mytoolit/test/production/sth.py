@@ -5,8 +5,7 @@ from time import sleep
 from unittest import main as unittest_main, skipIf
 
 from mytoolit.can import Node
-from mytoolit.measurement import (convert_acceleration_adc_to_g,
-                                  ratio_noise_max)
+from mytoolit.measurement import ratio_noise_max
 from mytoolit.config import settings
 from mytoolit.test.production import TestNode
 from mytoolit.test.unit import ExtendedTestRunner
@@ -185,36 +184,34 @@ class TestSTH(TestNode):
     def test_acceleration_single_value(self):
         """Test stationary acceleration value"""
 
-        # Read acceleration at x-axis
-        index = self.can.singleValueCollect(
-            Node('STH 1').value, MyToolItStreaming['Acceleration'], 1, 0, 0)
-        acceleration_raw, _, _ = self.can.singleValueArray(
-            Node('STH 1').value, MyToolItStreaming['Acceleration'], 1, 0, 0,
-            index)
-        acceleration_value_raw = acceleration_raw[0]
-        sensor = settings.acceleration_sensor()
-        acceleration = convert_acceleration_adc_to_g(
-            acceleration_value_raw, sensor.acceleration.maximum)
+        async def test_acceleration_single():
+            """Test stationary x acceleration value"""
 
-        # We expect a stationary acceleration of the standard gravity
-        # (1 g₀ = 9.807 m/s²)
-        expected_acceleration = 1
-        tolerance_acceleration = sensor.acceleration.tolerance
-        expected_minimum_acceleration = (expected_acceleration -
-                                         tolerance_acceleration)
-        expected_maximum_acceleration = (expected_acceleration +
-                                         tolerance_acceleration)
+            sensor = settings.acceleration_sensor()
+            acceleration = await self.can.read_x_acceleration(
+                sensor.acceleration.maximum)
 
-        self.assertGreaterEqual(
-            acceleration, expected_minimum_acceleration,
-            f"Measured acceleration {acceleration:.3f} g is lower "
-            "than expected minimum acceleration "
-            f"{expected_minimum_acceleration} g")
-        self.assertLessEqual(
-            acceleration, expected_maximum_acceleration,
-            f"Measured acceleration {acceleration:.3f} g is greater "
-            "than expected maximum acceleration "
-            f"{expected_maximum_acceleration} g")
+            # We expect a stationary acceleration of the standard gravity
+            # (1 g₀ = 9.807 m/s²)
+            expected_acceleration = 1
+            tolerance_acceleration = sensor.acceleration.tolerance
+            expected_minimum_acceleration = (expected_acceleration -
+                                             tolerance_acceleration)
+            expected_maximum_acceleration = (expected_acceleration +
+                                             tolerance_acceleration)
+
+            self.assertGreaterEqual(
+                acceleration, expected_minimum_acceleration,
+                f"Measured acceleration {acceleration:.3f} g is lower "
+                "than expected minimum acceleration "
+                f"{expected_minimum_acceleration} g")
+            self.assertLessEqual(
+                acceleration, expected_maximum_acceleration,
+                f"Measured acceleration {acceleration:.3f} g is greater "
+                "than expected maximum acceleration "
+                f"{expected_maximum_acceleration} g")
+
+        self.loop.run_until_complete(test_acceleration_single())
 
     def test_acceleration_noise(self):
         """Test ratio of noise to maximal possible measurement value"""

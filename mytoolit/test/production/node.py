@@ -241,7 +241,10 @@ class TestNode(TestCase):
             await async_sleep(2)
 
         if self._testMethodName in {
-                'test_battery_voltage', 'test_connection', 'test_eeprom'
+                'test_acceleration_single_value',
+                'test_battery_voltage',
+                'test_connection',
+                'test_eeprom',
         }:
             set_event_loop(new_event_loop())
             self.loop = get_event_loop()
