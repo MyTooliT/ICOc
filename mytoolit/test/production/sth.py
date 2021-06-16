@@ -256,14 +256,14 @@ class TestSTH(TestNode):
 
         # Turn on self test and wait for activation
         self.can.calibMeasurement(
-            Node('STH 1').value, CalibMeassurementActionNr['Inject'],
+            Node('STH 1').value, CalibMeassurementActionNr['Activate'],
             CalibMeassurementTypeNr['Acc'], 1, AdcReference['VDD'])
         sleep(0.1)
 
         # Turn off self test and wait for deactivation
         voltage_at_test = measure_voltage()
         self.can.calibMeasurement(
-            Node('STH 1').value, CalibMeassurementActionNr['Eject'],
+            Node('STH 1').value, CalibMeassurementActionNr['Deactivate'],
             CalibMeassurementTypeNr['Acc'], 1, AdcReference['VDD'])
         sleep(0.1)
 

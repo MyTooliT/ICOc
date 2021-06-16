@@ -400,15 +400,15 @@ EepromPage = {
 
 CalibMeassurementActionNr = {
     "None": 0,
-    "Inject": 1,
-    "Eject": 2,
+    "Activate": 1,
+    "Deactivate": 2,
     "Measure": 3,
 }
 
 CalibMeassurementActionName = {
     0: "Calibration Measurement Action - None/Reset",
-    1: "Calibration Measurement Action - Inject",
-    2: "Calibration Measurement Action - Eject",
+    1: "Calibration Measurement Action - Activate",
+    2: "Calibration Measurement Action - Deactivate",
     3: "Calibration Measurement Action - Measure",
 }
 
