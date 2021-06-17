@@ -328,11 +328,11 @@ class TestSTH(TestNode):
 
             cls.name = read_name
 
-            # We update the name also with the `System` → `Bluetooth`
-            # command. This way the STH takes the name change into account.
-            # Otherwise the device would still use the old name, although the
-            # name in the EEPROM was already updated.
-            await self.can.set_name(cls.name, receiver)
+            # We reset the STU (and therefore the STH) to make sure the name
+            # change takes place and we can connect to the STH using the new
+            # name
+            await self.can.reset_node('STU 1')
+            await self.can.connect_sth(cls.name)  # Reconnect to STH
 
             # =========================
             # = Sleep & Advertisement =
