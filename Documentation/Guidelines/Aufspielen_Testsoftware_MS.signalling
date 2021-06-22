@@ -1,0 +1,35 @@
+text.wrap=yes;
+#numbering=yes;
+text.size.normal=12;
+
+#Definition der Agenten
+CB: Clemens;
+RS: Rene;
+Git: Github;
+MS: Model Shop;
+
+
+CB<>RS: writing the code;
+RS--RS: creating a commit;
+RS--RS: testing the commit
+{
+    RS--RS: code test with "Flake8";
+    RS--RS: code test with "Mypy";
+    RS--RS: automatic test with "Nose";
+    RS--RS: shake test with ICOc;
+    RS--RS: test-STH;
+    RS--RS: test-STU;
+};
+RS->Git: merge commit into online main branch;
+Git->CB: pull new master;
+CB--CB: testing the commit II
+{
+    CB--CB: test-STH: "BARE-PCB";
+    CB--CB: test-STH: "EPOXIED";
+    CB--CB: test-STU;
+    CB--CB: name change test with ICOc;
+    CB--CB: shake test with ICOc;
+};
+CB<->MS: set a date for the deployment of the new commit;
+CB->MS: oversee the deployment of the new commit;
+Git->MS: pull new master;
