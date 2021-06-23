@@ -1,5 +1,6 @@
 # -- Imports ------------------------------------------------------------------
 
+from asyncio import TimeoutError
 from os import environ, pathsep
 from time import sleep
 from unittest import main as unittest_main, skipIf
@@ -328,11 +329,16 @@ class TestSTH(TestNode):
 
             cls.name = read_name
 
-            # We reset the STU (and therefore the STH) to make sure the name
-            # change takes place and we can connect to the STH using the new
-            # name
+            # We reset the STH and STU to make sure the name change takes place
+            # and we can connect to the STH using the new name
+            await self.can.reset_node('STH 1')
             await self.can.reset_node('STU 1')
-            await self.can.connect_sth(cls.name)  # Reconnect to STH
+
+            try:
+                await self.can.connect_sth(cls.name)  # Reconnect to STH
+            except TimeoutError:
+                self.fail("Unable to reconnect to STH using updated name "
+                          f"“{cls.name}”")
 
             # =========================
             # = Sleep & Advertisement =
