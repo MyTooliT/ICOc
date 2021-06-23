@@ -1654,7 +1654,6 @@ class TestSth(unittest.TestCase):
     Test HMI
     """
 
-    @skip("Untested")
     def test0020HmiLedGeckoModule(self):
         self.Can.Logger.Info("Get LED state")
         cmd = self.Can.CanCmd(MyToolItBlock["Configuration"],
@@ -1737,7 +1736,6 @@ class TestSth(unittest.TestCase):
     Write each calibration factor k entry
     """
 
-    @skip("Untested")
     def test0030CalibrationFactorsKSingle(self):
         for _keyK, valueK in CalibrationFactor.items():
             b0 = 2
@@ -1796,7 +1794,6 @@ class TestSth(unittest.TestCase):
     Write each calibration factor D entry
     """
 
-    @skip("Untested")
     def test0031CalibrationFactorsDSingle(self):
         for _keyD, valueD in CalibrationFactor.items():
             b0 = 2
@@ -1855,7 +1852,6 @@ class TestSth(unittest.TestCase):
     Write all calibration factors and read them afterwards
     """
 
-    @skip("Untested")
     def test0032CalibrationFactorsKDWriteThenRead(self):
         b0 = 2 - 1
         b1 = 8 - 1
@@ -1948,7 +1944,6 @@ class TestSth(unittest.TestCase):
     Write name and get name (bluetooth command)
     """
 
-    @skip("Untested")
     def test0103BlueToothName(self):
         self.Can.Logger.Info("Bluetooth name command")
         self.Can.Logger.Info("Write Walther0")
@@ -1969,7 +1964,6 @@ class TestSth(unittest.TestCase):
     Bluetooth Address
     """
 
-    @skip("Untested")
     def test0104BlueToothAddress(self):
         self.Can.Logger.Info("Get Bluetooth Address")
         iAddress = int(self.Can.BlueToothAddress(MyToolItNetworkNr["STH1"]))
@@ -1980,7 +1974,6 @@ class TestSth(unittest.TestCase):
     Check Bluetooth connectivity for standard settings with minimum sleep time
     """
 
-    @skip("Untested")
     def test0105BlueToothConnectStandard(self):
         self.Can.BlueToothEnergyModeNr(SleepTime["Min"],
                                        SleepTime["AdvertisementReset1"], 1)
