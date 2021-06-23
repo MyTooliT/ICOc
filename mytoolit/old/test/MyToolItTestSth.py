@@ -33,7 +33,6 @@ from mytoolit.config import settings
 sVersion = TestConfig["Version"]
 sLogLocation = '../../'
 sHomeLocation = "../../SimplicityStudio/v4_workspace/STH/"
-sAdapterSerialNo = "440115849"
 sBoardType = "BGM113A256V2"
 iSensorAxis = 1
 bBattery = False
@@ -50,7 +49,8 @@ class TestSth(unittest.TestCase):
         self.sHomeLocation = sHomeLocation
         self.sBuildLocation = sHomeLocation + "builds/" + sVersion
         self.sBootloader = sHomeLocation + "builds/" + "BootloaderOtaBgm113.s37"
-        self.sAdapterSerialNo = sAdapterSerialNo
+        self.sAdapterSerialNo = str(
+            settings.sth.programming_board.serial_number)
         self.sBoardType = sBoardType
         self.sSilabsCommander = "commander"
         self.bError = False
