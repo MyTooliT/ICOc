@@ -30,6 +30,7 @@ This class is used for automated internal verification of the Stationary Transce
 
 
 class TestStu(unittest.TestCase):
+
     def setUp(self):
         self.sHomeLocation = sHomeLocation
         self.sBuildLocation = sHomeLocation + "builds/" + sVersion

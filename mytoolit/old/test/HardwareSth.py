@@ -38,6 +38,7 @@ This class is used for automated internal verification of the sensory tool holde
 
 
 class TestSth(unittest.TestCase):
+
     def setUp(self):
         self.tSthLimits = SthLimits()
         SthLimits(iSensorAxis, bBatteryExternalDcDc, uAdc2Acc, iRssiMin, 20,

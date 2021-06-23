@@ -20,6 +20,7 @@ This class supports the manual tests of the Stationary Transceiving Unit (STU)
 
 
 class TestSthManually(unittest.TestCase):
+
     def setUp(self):
         print("TestCase: ", self._testMethodName)
         input('Press Any Key to Continue')

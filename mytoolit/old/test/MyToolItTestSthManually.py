@@ -29,6 +29,7 @@ This class supports a manual tests of the Sensory Tool Holder (STH)
 
 
 class TestSthManually(unittest.TestCase):
+
     def setUp(self):
         print("TestCase: ", self._testMethodName)
         input('Press Any Key to Continue')

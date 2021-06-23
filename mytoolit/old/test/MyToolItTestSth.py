@@ -45,6 +45,7 @@ This class is used for automated internal verification of the sensory tool holde
 
 
 class TestSth(unittest.TestCase):
+
     def setUp(self):
         self.tSthLimits = SthLimits(iSensorAxis, bBattery, uAdc2Acc, iRssiMin)
         self.sHomeLocation = sHomeLocation
