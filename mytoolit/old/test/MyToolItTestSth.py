@@ -24,6 +24,7 @@ import time
 from os import environ, pathsep
 from pathlib import Path
 from sys import platform, path
+from unittest import skip
 
 # Add repository root to Python path
 repo_root = str(Path(__file__).parent.parent.parent)
@@ -797,6 +798,7 @@ class TestSth(unittest.TestCase):
     commander flash manufacturing_image.hex --address 0x0 --serialno 440116697 -d BGM113A256V2
     """
 
+    @skip("Already covered by test-sth")
     def test0000FirmwareFlash(self):
         try:
             os.remove(sLogLocation + "ManufacturingCreateResport.txt")
@@ -887,6 +889,7 @@ class TestSth(unittest.TestCase):
     Test the over the air update
     """
 
+    @skip("OTA update using `ota-dfu` is **very** unreliable")
     def test0001OverTheAirUpdate(self):
         iRuns = 4
         iRuns += 1
