@@ -7241,17 +7241,4 @@ class TestSth(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    sLogLocation = sys.argv[1]
-    sLogFile = sys.argv[2]
-    sVersion = sys.argv[3]
-    if '/' != sLogLocation[-1]:
-        sLogLocation += '/'
-    sLogFileLocation = sLogLocation + sLogFile
-    sDirName = os.path.dirname(sLogFileLocation)
-    sys.path.append(sDirName)
-
-    if not os.path.exists(sDirName):
-        os.makedirs(sDirName)
-    with open(sLogFileLocation, "w") as f:
-        runner = unittest.TextTestRunner(f)
-        unittest.main(argv=['first-arg-is-ignored'], testRunner=runner)
+    unittest.main()
