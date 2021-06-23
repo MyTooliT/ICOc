@@ -1186,7 +1186,7 @@ class Network:
 
         # We wait for a certain amount of time for the connection to the STH to
         # take place
-        timeout_in_s = 10
+        timeout_in_s = 20
         end_time = time() + timeout_in_s
 
         sth = None
