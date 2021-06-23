@@ -339,7 +339,7 @@ class TestStu(unittest.TestCase):
 
     def test0005Ack(self):
         cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["ActiveState"], 1, 0)
+                              MyToolItSystem["Get/Set State"], 1, 0)
         msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
                                     MyToolItNetworkNr["STU1"], [0])
         self.Can.Logger.Info("Write Message")
@@ -347,7 +347,7 @@ class TestStu(unittest.TestCase):
         self.Can.Logger.Info("Wait 200ms")
         time.sleep(0.25)
         cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["ActiveState"], 0, 0)
+                              MyToolItSystem["Get/Set State"], 0, 0)
         msgAckExpected = self.Can.CanMessage20(cmd, MyToolItNetworkNr["STU1"],
                                                MyToolItNetworkNr["SPU1"], [0])
         self.Can.Logger.Info("Send ID: " + hex(msg.ID) + "; Expected ID: " +
@@ -389,7 +389,8 @@ class TestStu(unittest.TestCase):
             for _j in range(1, 101):
                 if (1 == randint(0, 1)):
                     cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                                          MyToolItSystem["ActiveState"], 1, 0)
+                                          MyToolItSystem["Get/Set State"], 1,
+                                          0)
                     message = self.Can.CanMessage20(cmd,
                                                     MyToolItNetworkNr["SPU1"],
                                                     MyToolItNetworkNr["STU1"],
@@ -419,7 +420,7 @@ class TestStu(unittest.TestCase):
             self.Can.Logger.Info("Run: " + str(i))
             if (1 == randint(0, 1)):
                 cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                                      MyToolItSystem["ActiveState"], 1, 0)
+                                      MyToolItSystem["Get/Set State"], 1, 0)
                 msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
                                             MyToolItNetworkNr["STU1"], [0])
             else:
@@ -446,7 +447,7 @@ class TestStu(unittest.TestCase):
             self.Can.Logger.Info("Run: " + str(i))
             if (1 == randint(0, 1)):
                 cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                                      MyToolItSystem["ActiveState"], 1, 0)
+                                      MyToolItSystem["Get/Set State"], 1, 0)
                 msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
                                             MyToolItNetworkNr["STU1"], [0])
             else:
@@ -484,7 +485,7 @@ class TestStu(unittest.TestCase):
 
     def test0056SenderReceiver(self):
         cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["ActiveState"], 1, 0)
+                              MyToolItSystem["Get/Set State"], 1, 0)
         msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["STU1"],
                                     MyToolItNetworkNr["STU1"], [0])
         self.assertEqual("Error", self.Can.tWriteFrameWaitAck(msg)[0])
@@ -500,37 +501,37 @@ class TestStu(unittest.TestCase):
     def test0057ChristmasTree(self):
         self.Can.Logger.Info("Error Request Frame from STU1 to STU1")
         cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["ActiveState"], 1, 1)
+                              MyToolItSystem["Get/Set State"], 1, 1)
         msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["STU1"],
                                     MyToolItNetworkNr["STU1"], [0])
         self.assertEqual("Error", self.Can.tWriteFrameWaitAck(msg)[0])
         self.Can.Logger.Info("Error Request Frame from SPU1 to STU1")
         cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["ActiveState"], 1, 1)
+                              MyToolItSystem["Get/Set State"], 1, 1)
         msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
                                     MyToolItNetworkNr["STU1"], [0])
         self.assertEqual("Error", self.Can.tWriteFrameWaitAck(msg)[0])
         self.Can.Logger.Info("Error Ack Frame from STU1 to STU1")
         cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["ActiveState"], 0, 1)
+                              MyToolItSystem["Get/Set State"], 0, 1)
         msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["STU1"],
                                     MyToolItNetworkNr["STU1"], [0])
         self.assertEqual("Error", self.Can.tWriteFrameWaitAck(msg)[0])
         self.Can.Logger.Info("Error Ack Frame from SPU1 to STU1")
         cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["ActiveState"], 0, 1)
+                              MyToolItSystem["Get/Set State"], 0, 1)
         msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
                                     MyToolItNetworkNr["STU1"], [0])
         self.assertEqual("Error", self.Can.tWriteFrameWaitAck(msg)[0])
         self.Can.Logger.Info("Ack Frame from STU1 to STU1")
         cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["ActiveState"], 0, 0)
+                              MyToolItSystem["Get/Set State"], 0, 0)
         msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["STU1"],
                                     MyToolItNetworkNr["STU1"], [0])
         self.assertEqual("Error", self.Can.tWriteFrameWaitAck(msg)[0])
         self.Can.Logger.Info("Ack Frame from SPU1 to STU1")
         cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["ActiveState"], 0, 0)
+                              MyToolItSystem["Get/Set State"], 0, 0)
         msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
                                     MyToolItNetworkNr["STU1"], [0])
         self.assertEqual("Error", self.Can.tWriteFrameWaitAck(msg)[0])
@@ -538,7 +539,7 @@ class TestStu(unittest.TestCase):
         # Test that it still works
         self.Can.Logger.Info("Normal Request to STU1")
         cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["ActiveState"], 1, 0)
+                              MyToolItSystem["Get/Set State"], 1, 0)
         msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
                                     MyToolItNetworkNr["STU1"], [0])
         self.Can.tWriteFrameWaitAckRetries(msg, retries=0)
@@ -830,7 +831,7 @@ class TestStu(unittest.TestCase):
 
     def test0201MyToolItTestNotConnectedAck(self):
         cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["ActiveState"], 1, 0)
+                              MyToolItSystem["Get/Set State"], 1, 0)
         msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
                                     MyToolItNetworkNr["STH1"], [0])
         self.Can.Logger.Info("Write Message")
@@ -852,7 +853,7 @@ class TestStu(unittest.TestCase):
         self.vConnectSth1Dev0()
         time.sleep(3)
         cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["ActiveState"], 1, 0)
+                              MyToolItSystem["Get/Set State"], 1, 0)
         msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
                                     MyToolItNetworkNr["STH1"], [0])
         self.Can.Logger.Info("Write Message")
@@ -861,7 +862,7 @@ class TestStu(unittest.TestCase):
         self.Can.Logger.Info("Wait " + str(waitTime) + "s")
         time.sleep(waitTime)
         cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["ActiveState"], 0, 0)
+                              MyToolItSystem["Get/Set State"], 0, 0)
         msgAckExpected = self.Can.CanMessage20(cmd, MyToolItNetworkNr["STH1"],
                                                MyToolItNetworkNr["SPU1"],
                                                [expectedData.asbyte])
@@ -898,7 +899,7 @@ class TestStu(unittest.TestCase):
                 time.sleep(1)
         time.sleep(3)
         cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["ActiveState"], 1, 0)
+                              MyToolItSystem["Get/Set State"], 1, 0)
         for i in range(MyToolItNetworkNr["STH2"], 32):
             if (MyToolItNetworkNr["STU1"] != i):
                 msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], i,
@@ -938,7 +939,8 @@ class TestStu(unittest.TestCase):
             for _j in range(1, 101):
                 if (1 == randint(0, 1)):
                     cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                                          MyToolItSystem["ActiveState"], 1, 0)
+                                          MyToolItSystem["Get/Set State"], 1,
+                                          0)
                     message = self.Can.CanMessage20(cmd,
                                                     MyToolItNetworkNr["SPU1"],
                                                     MyToolItNetworkNr["STH1"],
@@ -981,7 +983,7 @@ class TestStu(unittest.TestCase):
             self.Can.Logger.Info("Run: " + str(i))
             if (1 == randint(0, 1)):
                 cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                                      MyToolItSystem["ActiveState"], 1, 0)
+                                      MyToolItSystem["Get/Set State"], 1, 0)
                 msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
                                             MyToolItNetworkNr["STH1"], [0])
             else:
@@ -1018,7 +1020,7 @@ class TestStu(unittest.TestCase):
             self.Can.Logger.Info("Run: " + str(i))
             if (1 == randint(0, 1)):
                 cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                                      MyToolItSystem["ActiveState"], 1, 0)
+                                      MyToolItSystem["Get/Set State"], 1, 0)
                 msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
                                             MyToolItNetworkNr["STH1"], [0])
             else:
@@ -1083,7 +1085,7 @@ class TestStu(unittest.TestCase):
                 time.sleep(1)
         time.sleep(3)
         cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["ActiveState"], 1, 0)
+                              MyToolItSystem["Get/Set State"], 1, 0)
         msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["STH1"],
                                     MyToolItNetworkNr["STH1"], [0])
         self.assertEqual("Error", self.Can.tWriteFrameWaitAck(msg)[0])
@@ -1113,37 +1115,37 @@ class TestStu(unittest.TestCase):
                 time.sleep(1)
         time.sleep(3)
         cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["ActiveState"], 1, 1)
+                              MyToolItSystem["Get/Set State"], 1, 1)
         msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["STH1"],
                                     MyToolItNetworkNr["STH1"], [0])
         self.assertEqual("Error", self.Can.tWriteFrameWaitAck(msg)[0])
         self.Can.Logger.Info("Error Request Frame from SPU1 to STH1")
         cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["ActiveState"], 1, 1)
+                              MyToolItSystem["Get/Set State"], 1, 1)
         msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
                                     MyToolItNetworkNr["STH1"], [0])
         self.assertEqual("Error", self.Can.tWriteFrameWaitAck(msg)[0])
         self.Can.Logger.Info("Error Ack Frame from STH1 to STH1")
         cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["ActiveState"], 0, 1)
+                              MyToolItSystem["Get/Set State"], 0, 1)
         msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["STH1"],
                                     MyToolItNetworkNr["STH1"], [0])
         self.assertEqual("Error", self.Can.tWriteFrameWaitAck(msg)[0])
         self.Can.Logger.Info("Error Ack Frame from SPU1 to STH1")
         cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["ActiveState"], 0, 1)
+                              MyToolItSystem["Get/Set State"], 0, 1)
         msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
                                     MyToolItNetworkNr["STH1"], [0])
         self.assertEqual("Error", self.Can.tWriteFrameWaitAck(msg)[0])
         self.Can.Logger.Info("Ack Frame from STH1 to STH1")
         cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["ActiveState"], 0, 0)
+                              MyToolItSystem["Get/Set State"], 0, 0)
         msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["STH1"],
                                     MyToolItNetworkNr["STH1"], [0])
         self.assertEqual("Error", self.Can.tWriteFrameWaitAck(msg)[0])
         self.Can.Logger.Info("Ack Frame from SPU1 to STH1")
         cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["ActiveState"], 0, 0)
+                              MyToolItSystem["Get/Set State"], 0, 0)
         msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
                                     MyToolItNetworkNr["STH1"], [0])
         self.assertEqual("Error", self.Can.tWriteFrameWaitAck(msg)[0])
@@ -1151,7 +1153,7 @@ class TestStu(unittest.TestCase):
         # Test that it still works
         self.Can.Logger.Info("Normal Request to STH1")
         cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["ActiveState"], 1, 0)
+                              MyToolItSystem["Get/Set State"], 1, 0)
         msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
                                     MyToolItNetworkNr["STH1"], [0])
         self.Can.tWriteFrameWaitAckRetries(msg, retries=0)

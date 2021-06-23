@@ -962,7 +962,7 @@ class TestSth(unittest.TestCase):
 
     def test0005Ack(self):
         cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["ActiveState"], 1, 0)
+                              MyToolItSystem["Get/Set State"], 1, 0)
         expectedData = ActiveState()
         expectedData.asbyte = 0
         expectedData.b.u2NodeState = NodeState["Application"]
@@ -975,7 +975,7 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("Wait 200ms")
         time.sleep(0.2)
         cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["ActiveState"], 0, 0)
+                              MyToolItSystem["Get/Set State"], 0, 0)
         msgAckExpected = self.Can.CanMessage20(cmd, MyToolItNetworkNr["STH1"],
                                                MyToolItNetworkNr["SPU1"], [0])
         self.Can.Logger.Info("Send ID: " + hex(msg.ID) + "; Expected ID: " +
@@ -999,7 +999,7 @@ class TestSth(unittest.TestCase):
         self.Can.cmdSend(
             MyToolItNetworkNr["STH1"],
             MyToolItBlock["System"],
-            MyToolItSystem["ActiveState"], [0x80],
+            MyToolItSystem["Get/Set State"], [0x80],
             bErrorExit=False)  # Not receiving gets  tested in cmdSend
         self.Can.Logger.Info("Connect to STH")
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
@@ -7073,7 +7073,7 @@ class TestSth(unittest.TestCase):
         activeState.asbyte = 0  # Set=0 ->Read
         indexAssumed = self.Can.cmdSend(MyToolItNetworkNr["STH1"],
                                         MyToolItBlock["System"],
-                                        MyToolItSystem["ActiveState"],
+                                        MyToolItSystem["Get/Set State"],
                                         [activeState.asbyte])
         activeState.asbyte = self.Can.getReadMessageData(indexAssumed)[0]
         self.Can.Logger.Info("STH Active State: " + hex(activeState.asbyte))
@@ -7106,7 +7106,7 @@ class TestSth(unittest.TestCase):
         activeState.b.bSetState = 1
         indexAssumed = self.Can.cmdSend(MyToolItNetworkNr["STH1"],
                                         MyToolItBlock["System"],
-                                        MyToolItSystem["ActiveState"],
+                                        MyToolItSystem["Get/Set State"],
                                         [activeState.asbyte])
         activeState.asbyte = self.Can.getReadMessageData(indexAssumed)[0]
         self.Can.Logger.Info("STH Active State(Write Ack): " +
@@ -7129,7 +7129,7 @@ class TestSth(unittest.TestCase):
         self.assertEqual(activeState.b.u3NetworkState, NetworkState["Error"])
         indexAssumed = self.Can.cmdSend(MyToolItNetworkNr["STH1"],
                                         MyToolItBlock["System"],
-                                        MyToolItSystem["ActiveState"], [0])
+                                        MyToolItSystem["Get/Set State"], [0])
         activeState.asbyte = self.Can.getReadMessageData(indexAssumed)[0]
         self.Can.Logger.Info("STH Active State(Read Ack): " +
                              hex(activeState.asbyte))

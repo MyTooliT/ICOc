@@ -181,7 +181,7 @@ class TestSthManually(unittest.TestCase):
     def testManually0001Ack(self):
         activeState = ActiveState()
         cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["ActiveState"], 1, 0)
+                              MyToolItSystem["Get/Set State"], 1, 0)
         msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
                                     MyToolItNetworkNr["STH1"], [0])
         self.Can.Logger.Info("Write Message")
@@ -189,7 +189,7 @@ class TestSthManually(unittest.TestCase):
         self.Can.Logger.Info("Wait 200ms")
         time.sleep(0.2)
         cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["ActiveState"], 0, 0)
+                              MyToolItSystem["Get/Set State"], 0, 0)
         msgAckExpected = self.Can.CanMessage20(cmd, MyToolItNetworkNr["STH1"],
                                                MyToolItNetworkNr["SPU1"], [0])
         activeState.asbyte = self.Can.getReadMessage(-1).DATA[0]
@@ -225,7 +225,7 @@ class TestSthManually(unittest.TestCase):
         failTry.b.u2NodeState = 2
         failTry.b.u3NetworkState = 6
         cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["ActiveState"], 1, 0)
+                              MyToolItSystem["Get/Set State"], 1, 0)
         message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
                                         MyToolItNetworkNr["STH1"],
                                         [sendData.asbyte])

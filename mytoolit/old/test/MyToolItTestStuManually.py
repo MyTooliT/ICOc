@@ -84,7 +84,7 @@ class TestSthManually(unittest.TestCase):
 
     def testManually0001Ack(self):
         cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["ActiveState"], 1, 0)
+                              MyToolItSystem["Get/Set State"], 1, 0)
         msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
                                     MyToolItNetworkNr["STU1"], [0])
         self.Can.Logger.Info("Write Message")
@@ -92,7 +92,7 @@ class TestSthManually(unittest.TestCase):
         self.Can.Logger.Info("Wait 200ms")
         time.sleep(0.25)
         cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["ActiveState"], 0, 0)
+                              MyToolItSystem["Get/Set State"], 0, 0)
         msgAckExpected = self.Can.CanMessage20(cmd, MyToolItNetworkNr["STU1"],
                                                MyToolItNetworkNr["SPU1"], [0])
         self.Can.Logger.Info("Send ID: " + hex(msg.ID) + "; Expected ID: " +
