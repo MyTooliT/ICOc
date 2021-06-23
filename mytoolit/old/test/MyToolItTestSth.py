@@ -1216,6 +1216,7 @@ class TestSth(unittest.TestCase):
     Power Consumption - Energy Save Mode Normal (Advertisement
     """
 
+    @skip("Untested")
     def test0013PowerConsumptionNormal(self):
         self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
         time.sleep(2)
@@ -1269,6 +1270,7 @@ class TestSth(unittest.TestCase):
     Power Consumption - Energy Save Mode 1
     """
 
+    @skip("Untested")
     def test0014PowerConsumptionEnergySaveMode1(self):
         try:
             os.remove("Aem1.txt")
@@ -1335,6 +1337,7 @@ class TestSth(unittest.TestCase):
     Power Consumption - Energy Save Mode 2
     """
 
+    @skip("Untested")
     def test0015PowerConsumptionEnergySaveMode2(self):
         try:
             os.remove("Aem2.txt")
@@ -1401,6 +1404,7 @@ class TestSth(unittest.TestCase):
     Power Consumption - Energy Save Mode Advertisement Time 4000ms
     """
 
+    @skip("Untested")
     def test0016PowerConsumptionEnergySaveModeAdv4000ms(self):
         try:
             os.remove("Aem3.txt")
@@ -1467,6 +1471,7 @@ class TestSth(unittest.TestCase):
     Power Consumption - Connected
     """
 
+    @skip("Untested")
     def test0017PowerConsumptionConnected(self):
         try:
             os.remove("Aem4.txt")
@@ -1523,6 +1528,7 @@ class TestSth(unittest.TestCase):
     Power Consumption - Measuring at reset conditions
     """
 
+    @skip("Untested")
     def test0018PowerConsumptionMeasuring(self):
         try:
             os.remove("Aem5.txt")
@@ -1584,6 +1590,7 @@ class TestSth(unittest.TestCase):
     Power Consumption - Measuring at reset conditions - LED turned off
     """
 
+    @skip("Untested")
     def test0019PowerConsumptionMeasuringLedOff(self):
         try:
             os.remove("Aem6.txt")
@@ -1647,6 +1654,7 @@ class TestSth(unittest.TestCase):
     Test HMI
     """
 
+    @skip("Untested")
     def test0020HmiLedGeckoModule(self):
         self.Can.Logger.Info("Get LED state")
         cmd = self.Can.CanCmd(MyToolItBlock["Configuration"],
@@ -1729,6 +1737,7 @@ class TestSth(unittest.TestCase):
     Write each calibration factor k entry
     """
 
+    @skip("Untested")
     def test0030CalibrationFactorsKSingle(self):
         for _keyK, valueK in CalibrationFactor.items():
             b0 = 2
@@ -1787,6 +1796,7 @@ class TestSth(unittest.TestCase):
     Write each calibration factor D entry
     """
 
+    @skip("Untested")
     def test0031CalibrationFactorsDSingle(self):
         for _keyD, valueD in CalibrationFactor.items():
             b0 = 2
@@ -1845,6 +1855,7 @@ class TestSth(unittest.TestCase):
     Write all calibration factors and read them afterwards
     """
 
+    @skip("Untested")
     def test0032CalibrationFactorsKDWriteThenRead(self):
         b0 = 2 - 1
         b1 = 8 - 1
@@ -1937,6 +1948,7 @@ class TestSth(unittest.TestCase):
     Write name and get name (bluetooth command)
     """
 
+    @skip("Untested")
     def test0103BlueToothName(self):
         self.Can.Logger.Info("Bluetooth name command")
         self.Can.Logger.Info("Write Walther0")
@@ -1957,6 +1969,7 @@ class TestSth(unittest.TestCase):
     Bluetooth Address
     """
 
+    @skip("Untested")
     def test0104BlueToothAddress(self):
         self.Can.Logger.Info("Get Bluetooth Address")
         iAddress = int(self.Can.BlueToothAddress(MyToolItNetworkNr["STH1"]))
@@ -1967,6 +1980,7 @@ class TestSth(unittest.TestCase):
     Check Bluetooth connectivity for standard settings with minimum sleep time
     """
 
+    @skip("Untested")
     def test0105BlueToothConnectStandard(self):
         self.Can.BlueToothEnergyModeNr(SleepTime["Min"],
                                        SleepTime["AdvertisementReset1"], 1)
@@ -2029,6 +2043,7 @@ class TestSth(unittest.TestCase):
     Check Bluetooth connectivity for maximum values
     """
 
+    @skip("Untested")
     def test0106BlueToothConnectMax(self):
         self.Can.BlueToothEnergyModeNr(SleepTime["Min"],
                                        SleepTime["AdvertisementMax"], 1)
@@ -2065,6 +2080,7 @@ class TestSth(unittest.TestCase):
     Check Bluetooth connectivity for Minimum values (Standard Setting at start, not configurable, 50ms atm)
     """
 
+    @skip("Untested")
     def test0107BlueToothConnectMin(self):
         self.Can.BlueToothEnergyModeNr(SleepTime["Reset1"],
                                        SleepTime["AdvertisementReset1"], 1)
@@ -2095,6 +2111,7 @@ class TestSth(unittest.TestCase):
     Check Minimum Sleeping Time
     """
 
+    @skip("Untested")
     def test0108BlueToothConnectWrongValues(self):
         # Do not take Time (Note that maximum is 2^32-1... Not testable due to 4Bytes Only
         [timeReset, timeAdvertisement
@@ -2180,6 +2197,7 @@ class TestSth(unittest.TestCase):
     Bluetooth Address
     """
 
+    @skip("Untested")
     def test0109BlueToothRssi(self):
         self.Can.Logger.Info("Get Bluetooth RSSI")
         iRssi = self.Can.BlueToothRssi(MyToolItNetworkNr["STH1"])
@@ -2191,6 +2209,7 @@ class TestSth(unittest.TestCase):
     Get Battery Voltage via single command
     """
 
+    @skip("Untested")
     def test0300GetSingleVoltageBattery(self):
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
                                             MyToolItStreaming["Voltage"], 1, 0,
@@ -2210,6 +2229,7 @@ class TestSth(unittest.TestCase):
     Test multi single battery measurement
     """
 
+    @skip("Untested")
     def test0301GetSingleVoltageBatteryMultipleTimes(self):
         for _i in range(0, 10):
             index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
@@ -2230,6 +2250,7 @@ class TestSth(unittest.TestCase):
     Test single battery Acceleration X-Axis measurement
     """
 
+    @skip("Untested")
     def test0302GetSingleAccX(self):
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
                                             MyToolItStreaming["Acceleration"],
@@ -2249,6 +2270,7 @@ class TestSth(unittest.TestCase):
     Test single battery Acceleration Y-Axis measurement
     """
 
+    @skip("Untested")
     def test0303GetSingleAccY(self):
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
                                             MyToolItStreaming["Acceleration"],
@@ -2268,6 +2290,7 @@ class TestSth(unittest.TestCase):
     Test single battery Acceleration Z-Axis measurement
     """
 
+    @skip("Untested")
     def test0304GetSingleAccZ(self):
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
                                             MyToolItStreaming["Acceleration"],
@@ -2287,6 +2310,7 @@ class TestSth(unittest.TestCase):
     Test multi single X Acc measurement
     """
 
+    @skip("Untested")
     def test0305GetSingleSingleAccXMultipleTimes(self):
         for _i in range(0, 10):
             index = self.Can.singleValueCollect(
@@ -2307,6 +2331,7 @@ class TestSth(unittest.TestCase):
     Test multi single Y Acc measurement
     """
 
+    @skip("Untested")
     def test0306GetSingleSingleAccYMultipleTimes(self):
         for _i in range(0, 10):
             index = self.Can.singleValueCollect(
@@ -2327,6 +2352,7 @@ class TestSth(unittest.TestCase):
     Test multi single Z Acc measurement
     """
 
+    @skip("Untested")
     def test0307GetSingleSingleAccZMultipleTimes(self):
         for _i in range(0, 10):
             index = self.Can.singleValueCollect(
@@ -2347,6 +2373,7 @@ class TestSth(unittest.TestCase):
     Test single XY-Axis measurement
     """
 
+    @skip("Untested")
     def test0308GetSingleAccXY(self):
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
                                             MyToolItStreaming["Acceleration"],
@@ -2368,6 +2395,7 @@ class TestSth(unittest.TestCase):
     Test single XZ-Axis measurement
     """
 
+    @skip("Untested")
     def test0309GetSingleAccXZ(self):
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
                                             MyToolItStreaming["Acceleration"],
@@ -2389,6 +2417,7 @@ class TestSth(unittest.TestCase):
     Test single XYZ-Axis measurement
     """
 
+    @skip("Untested")
     def test0310GetSingleAccXYZ(self):
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
                                             MyToolItStreaming["Acceleration"],
@@ -2409,6 +2438,7 @@ class TestSth(unittest.TestCase):
     Test single YZ-Axis measurement
     """
 
+    @skip("Untested")
     def test0310GetSingleAccYZ(self):
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
                                             MyToolItStreaming["Acceleration"],
@@ -2430,6 +2460,7 @@ class TestSth(unittest.TestCase):
     Test streaming battery measurement
     """
 
+    @skip("Untested")
     def test0320GetStreamingVoltageBattery(self):
         [indexStart, indexEnd] = self.Can.streamingValueCollect(
             MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"],
@@ -2456,6 +2487,7 @@ class TestSth(unittest.TestCase):
     Test streaming x-Axis measurement
     """
 
+    @skip("Untested")
     def test0321GetStreamingAccX(self):
         [indexStart, indexEnd] = self.Can.streamingValueCollect(
             MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
@@ -2480,6 +2512,7 @@ class TestSth(unittest.TestCase):
     Test streaming y-Axis measurement
     """
 
+    @skip("Untested")
     def test0322GetStreamingAccY(self):
         [indexStart, indexEnd] = self.Can.streamingValueCollect(
             MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
@@ -2504,6 +2537,7 @@ class TestSth(unittest.TestCase):
     Test streaming z-Axis measurement
     """
 
+    @skip("Untested")
     def test0323GetStreamingAccZ(self):
         [indexStart, indexEnd] = self.Can.streamingValueCollect(
             MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
@@ -2528,6 +2562,7 @@ class TestSth(unittest.TestCase):
     Test streaming xyz-Axis measurement
     """
 
+    @skip("Untested")
     def test0324GetStreamingAccXYZ(self):
         [indexStart, indexEnd] = self.Can.streamingValueCollect(
             MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
@@ -2553,6 +2588,7 @@ class TestSth(unittest.TestCase):
     Test streaming AccX+AccY measurement
     """
 
+    @skip("Untested")
     def test0325GetStreamingAccXY(self):
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"],
                            self.tSthLimits.uSamplingRateDoublePrescalerMax,
@@ -2584,6 +2620,7 @@ class TestSth(unittest.TestCase):
     Test streaming AccX+AccZ measurement
     """
 
+    @skip("Untested")
     def test0326GetStreamingAccXZ(self):
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"],
                            self.tSthLimits.uSamplingRateDoublePrescalerMax,
@@ -2615,6 +2652,7 @@ class TestSth(unittest.TestCase):
     Test streaming AccY+AccZ measurement
     """
 
+    @skip("Untested")
     def test0327GetStreamingAccYZ(self):
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"],
                            self.tSthLimits.uSamplingRateDoublePrescalerMax,
@@ -2646,6 +2684,7 @@ class TestSth(unittest.TestCase):
     Test Signal-to-Noise Ration - x
     """
 
+    @skip("Untested")
     def test0330SignalIndicatorsAccX(self):
         self.TurnOffLed()
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"],
@@ -2677,6 +2716,7 @@ class TestSth(unittest.TestCase):
     Test Signal-to-Noise Ration - Y
     """
 
+    @skip("Untested")
     def test0331SignalIndicatorsAccY(self):
         self.TurnOffLed()
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"],
@@ -2708,6 +2748,7 @@ class TestSth(unittest.TestCase):
     Test Signal-to-Noise Ration - Z
     """
 
+    @skip("Untested")
     def test0332SignalIndicatorsAccZ(self):
         self.TurnOffLed()
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"],
@@ -2739,6 +2780,7 @@ class TestSth(unittest.TestCase):
     Test Signal-to-Noise Ration - Z
     """
 
+    @skip("Untested")
     def test0333SignalIndicatorsBattery(self):
         self.TurnOffLed()
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"],
@@ -2773,6 +2815,7 @@ class TestSth(unittest.TestCase):
     Test Signal-to-Noise Ration - Acc Multi
     """
 
+    @skip("Untested")
     def test0334SignalIndicatorsMulti(self):
         [
             SigIndAccXQ1, SigIndAccXQ25, SigIndAccXMedL, SigIndAccXMedH,
@@ -2886,6 +2929,7 @@ class TestSth(unittest.TestCase):
     Test Streaming multiple Times
     """
 
+    @skip("Untested")
     def test0335GetStreamingMultipleTimes(self):
         for _i in range(0, 3):
             [indexStart, indexEnd
@@ -2954,6 +2998,7 @@ class TestSth(unittest.TestCase):
     Test multiple config battery, x, y, z
     """
 
+    @skip("Untested")
     def test0336StreamingMultiConfigBatAccXAccYAccZ(self):
         [indexStart, indexEnd
          ] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
@@ -3013,6 +3058,7 @@ class TestSth(unittest.TestCase):
     Test multiple config x-xyz-x
     """
 
+    @skip("Untested")
     def test0337StreamingMultiConfig(self):
         self.Can.Logger.Info("Streaming AccX starts")
         self.test0321GetStreamingAccX()
@@ -3028,6 +3074,7 @@ class TestSth(unittest.TestCase):
     Test long usage of data acquiring
     """
 
+    @skip("Untested")
     def test0338StreamingHeavyDuty(self):
         self.SamplingRate(self.tSthLimits.uSamplingRateSinglePrescalerMax,
                           self.tSthLimits.uSamplingRateSingleAcqTimeMax,
@@ -3039,6 +3086,7 @@ class TestSth(unittest.TestCase):
     Mixed Streaming - AccX + VoltageBattery
     """
 
+    @skip("Untested")
     def test0339MixedStreamingAccXVoltBat(self):
         self.Can.streamingStart(MyToolItNetworkNr["STH1"],
                                 MyToolItStreaming["Voltage"], DataSets[3], 1,
@@ -3097,6 +3145,7 @@ class TestSth(unittest.TestCase):
     Mixed Streaming - AccX + VoltageBattery; Requesting Reverse
     """
 
+    @skip("Untested")
     def test0340MixedStreamingAccXVoltBatInverse(self):
         self.Can.streamingStart(MyToolItNetworkNr["STH1"],
                                 MyToolItStreaming["Acceleration"], DataSets[3],
@@ -3155,6 +3204,7 @@ class TestSth(unittest.TestCase):
     Mixed Streaming - AccY + VoltageBattery
     """
 
+    @skip("Untested")
     def test0341MixedStreamingAccYVoltBat(self):
         self.Can.streamingStart(MyToolItNetworkNr["STH1"],
                                 MyToolItStreaming["Voltage"], DataSets[3], 1,
@@ -3213,6 +3263,7 @@ class TestSth(unittest.TestCase):
     Mixed Streaming - AccZ + VoltageBattery
     """
 
+    @skip("Untested")
     def test0342MixedStreamingAccZVoltBat(self):
         self.Can.streamingStart(MyToolItNetworkNr["STH1"],
                                 MyToolItStreaming["Voltage"], DataSets[3], 1,
@@ -3271,6 +3322,7 @@ class TestSth(unittest.TestCase):
     Mixed Streaming - AccX + AccZ + VoltageBattery
     """
 
+    @skip("Untested")
     def test0343MixedStreamingAccXZVoltBat(self):
         prescaler = self.tSthLimits.uSamplingRateDoublePrescalerMax
         acqTime = self.tSthLimits.uSamplingRateDoubleAcqTimeMax
@@ -3335,6 +3387,7 @@ class TestSth(unittest.TestCase):
     Mixed Streaming - AccX + AccY + VoltageBattery
     """
 
+    @skip("Untested")
     def test0344MixedStreamingAccXYVoltBat(self):
         prescaler = self.tSthLimits.uSamplingRateDoublePrescalerMax
         acqTime = self.tSthLimits.uSamplingRateDoubleAcqTimeMax
@@ -3399,6 +3452,7 @@ class TestSth(unittest.TestCase):
     Mixed Streaming - AccY + AccZ + VoltageBattery
     """
 
+    @skip("Untested")
     def test0345MixedStreamingAccYZVoltBat(self):
         prescaler = self.tSthLimits.uSamplingRateDoublePrescalerMax
         acqTime = self.tSthLimits.uSamplingRateDoubleAcqTimeMax
@@ -3470,6 +3524,7 @@ class TestSth(unittest.TestCase):
     Mixed Streaming - AccX + AccY + AccZ + VoltageBattery
     """
 
+    @skip("Untested")
     def test0346MixedStreamingAccXYZVoltBat(self):
         self.Can.streamingStart(MyToolItNetworkNr["STH1"],
                                 MyToolItStreaming["Voltage"], DataSets[3], 1,
@@ -3528,6 +3583,7 @@ class TestSth(unittest.TestCase):
     Stream Acceleration(X) and receive single sampling point for Battery
     """
 
+    @skip("Untested")
     def test0347StreamingAccXSingleBattery(self):
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
                                              MyToolItStreaming["Acceleration"],
@@ -3575,6 +3631,7 @@ class TestSth(unittest.TestCase):
     Stream Acceleration(Y) and receive single sampling point for Battery
     """
 
+    @skip("Untested")
     def test0348StreamingAccYSingleBattery(self):
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
                                              MyToolItStreaming["Acceleration"],
@@ -3622,6 +3679,7 @@ class TestSth(unittest.TestCase):
     Stream Acceleration(Z) and receive single sampling point for Battery
     """
 
+    @skip("Untested")
     def test0349StreamingAccZSingleBattery(self):
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
                                              MyToolItStreaming["Acceleration"],
@@ -3669,6 +3727,7 @@ class TestSth(unittest.TestCase):
     Stream Battery and receive single sampling point for AccX
     """
 
+    @skip("Untested")
     def test0350StreamingBatterySingleAccX(self):
         for _i in range(0, 1):
             indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
@@ -3723,6 +3782,7 @@ class TestSth(unittest.TestCase):
     Stream Battery and receive single sampling point for AccY
     """
 
+    @skip("Untested")
     def test0351StreamingBatterySingleAccY(self):
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
                                              MyToolItStreaming["Voltage"],
@@ -3773,6 +3833,7 @@ class TestSth(unittest.TestCase):
     Stream Battery and receive single sampling point for AccZ
     """
 
+    @skip("Untested")
     def test0352StreamingBatterySingleAccZ(self):
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
                                              MyToolItStreaming["Voltage"],
@@ -3824,6 +3885,7 @@ class TestSth(unittest.TestCase):
     Stream Battery and receive single sampling point for AccYZ
     """
 
+    @skip("Untested")
     def test0353StreamingBatterySingleAccYZ(self):
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
                                              MyToolItStreaming["Voltage"],
@@ -3876,6 +3938,7 @@ class TestSth(unittest.TestCase):
     Stream Battery and receive single sampling point for AccXZ
     """
 
+    @skip("Untested")
     def test0354StreamingBatterySingleAccXZ(self):
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
                                              MyToolItStreaming["Voltage"],
@@ -3928,6 +3991,7 @@ class TestSth(unittest.TestCase):
     Stream Battery and receive single sampling point for AccXY
     """
 
+    @skip("Untested")
     def test0355StreamingBatterySingleAccXY(self):
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
                                              MyToolItStreaming["Voltage"],
@@ -3980,6 +4044,7 @@ class TestSth(unittest.TestCase):
     Stream Battery and receive single sampling point for AccXYZ
     """
 
+    @skip("Untested")
     def test0356StreamingBatterySingleAccXYZ(self):
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
                                              MyToolItStreaming["Voltage"],
@@ -4033,6 +4098,7 @@ class TestSth(unittest.TestCase):
     Stream AccXY and receive single sampling point for Battery
     """
 
+    @skip("Untested")
     def test0357StreamingAccXYSingleBattery(self):
         prescaler = self.tSthLimits.uSamplingRateDoublePrescalerMax
         acqTime = self.tSthLimits.uSamplingRateDoubleAcqTimeMax
@@ -4085,6 +4151,7 @@ class TestSth(unittest.TestCase):
     Stream AccXZ and receive single sampling point for Battery
     """
 
+    @skip("Untested")
     def test0358StreamingAccXZSingleBattery(self):
         prescaler = self.tSthLimits.uSamplingRateDoublePrescalerMax
         acqTime = self.tSthLimits.uSamplingRateDoubleAcqTimeMax
@@ -4137,6 +4204,7 @@ class TestSth(unittest.TestCase):
     Stream AccYZ and receive single sampling point for Battery
     """
 
+    @skip("Untested")
     def test0359StreamingAccYZSingleBattery(self):
         prescaler = self.tSthLimits.uSamplingRateDoublePrescalerMax
         acqTime = self.tSthLimits.uSamplingRateDoubleAcqTimeMax
@@ -4189,6 +4257,7 @@ class TestSth(unittest.TestCase):
     Stream AccXXZ and receive single sampling point for Battery
     """
 
+    @skip("Untested")
     def test0360StreamingAccXYZSingleBattery(self):
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
                                              MyToolItStreaming["Acceleration"],
@@ -4239,6 +4308,7 @@ class TestSth(unittest.TestCase):
     Stream Start and Stop -> Test communication protocol to be ok and that HW fits(will fit)
     """
 
+    @skip("Untested")
     def test0370StreamingOnfOff(self):
         _runs = 100
         # single stream, data set 3
@@ -4299,6 +4369,7 @@ class TestSth(unittest.TestCase):
     Test x-Axis Line
     """
 
+    @skip("Untested")
     def test0380GetStreamingTestLineAccX(self):
         [indexStart, indexEnd] = self.streamingTestSignalCollect(
             MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"],
@@ -4328,6 +4399,7 @@ class TestSth(unittest.TestCase):
     Test y-Axis Line
     """
 
+    @skip("Untested")
     def test0381GetStreamingTestLineAccY(self):
         [indexStart, indexEnd] = self.streamingTestSignalCollect(
             MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"],
@@ -4357,6 +4429,7 @@ class TestSth(unittest.TestCase):
     Test z-Axis Line
     """
 
+    @skip("Untested")
     def test0382GetStreamingTestLineAccZ(self):
         [indexStart, indexEnd] = self.streamingTestSignalCollect(
             MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"],
@@ -4386,6 +4459,7 @@ class TestSth(unittest.TestCase):
     Test Battery Line
     """
 
+    @skip("Untested")
     def test0383GetStreamingTestLineBattery(self):
         [indexStart, indexEnd] = self.streamingTestSignalCollect(
             MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"],
@@ -4419,6 +4493,7 @@ class TestSth(unittest.TestCase):
     Test x-Axis Ramp
     """
 
+    @skip("Untested")
     def test0384GetStreamingTestRampAccX(self):
         [indexStart, indexEnd] = self.streamingTestSignalCollect(
             MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"],
@@ -4456,6 +4531,7 @@ class TestSth(unittest.TestCase):
     Test Y-Axis Ramp
     """
 
+    @skip("Untested")
     def test0385GetStreamingTestRampAccY(self):
         [indexStart, indexEnd] = self.streamingTestSignalCollect(
             MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"],
@@ -4493,6 +4569,7 @@ class TestSth(unittest.TestCase):
     Test Z-Axis Ramp
     """
 
+    @skip("Untested")
     def test0386GetStreamingTestRampAccZ(self):
         [indexStart, indexEnd] = self.streamingTestSignalCollect(
             MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"],
@@ -4530,6 +4607,7 @@ class TestSth(unittest.TestCase):
     Test Battery Ramp
     """
 
+    @skip("Untested")
     def test0387GetStreamingTestRampBattery(self):
         [indexStart, indexEnd] = self.streamingTestSignalCollect(
             MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"],
@@ -4569,6 +4647,7 @@ class TestSth(unittest.TestCase):
     Testing Sampling Rate - Reset
     """
 
+    @skip("Untested")
     def test0500SamplingRateReset(self):
         [indexStart, indexEnd] = self.Can.streamingValueCollect(
             MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
@@ -4613,6 +4692,7 @@ class TestSth(unittest.TestCase):
     Testing ADC Sampling Rate - Prescaler
     """
 
+    @skip("Untested")
     def test0501SamplingRatePreq(self):
         self.SamplingRate(5, self.tSthLimits.uSamplingRateSingleAcqTimeMax,
                           self.tSthLimits.uSamplingRateSingleOverSamplesMax,
@@ -4622,6 +4702,7 @@ class TestSth(unittest.TestCase):
     Testing ADC Sampling Rate - Acquisition Time
     """
 
+    @skip("Untested")
     def test0502SamplingRateAqu(self):
         self.SamplingRate(2, AdcAcquisitionTime[32], AdcOverSamplingRate[64],
                           AdcReference["VDD"])
@@ -4630,6 +4711,7 @@ class TestSth(unittest.TestCase):
     Testing ADC Sampling Rate - Oversampling Rate
     """
 
+    @skip("Untested")
     def test0503SamplingRateOverSampling(self):
         self.SamplingRate(5, AdcAcquisitionTime[8], AdcOverSamplingRate[32],
                           AdcReference["VDD"])
@@ -4638,6 +4720,7 @@ class TestSth(unittest.TestCase):
     Testing ADC Sampling Rate - Maximum(Single Data)
     """
 
+    @skip("Untested")
     def test0504SamplingRateDataSingleMax(self):
         self.SamplingRate(self.tSthLimits.uSamplingRateSinglePrescalerMax,
                           self.tSthLimits.uSamplingRateSingleAcqTimeMax,
@@ -4649,6 +4732,7 @@ class TestSth(unittest.TestCase):
     Testing ADC Sampling Rate - Maximum(Double Data)
     """
 
+    @skip("Untested")
     def test0505SamplingRateDataDoubleMax(self):
         self.SamplingRate(self.tSthLimits.uSamplingRateDoublePrescalerMax,
                           self.tSthLimits.uSamplingRateDoubleAcqTimeMax,
@@ -4663,6 +4747,7 @@ class TestSth(unittest.TestCase):
     Testing ADC Sampling Rate - Maximum(Tripple Data)
     """
 
+    @skip("Untested")
     def test0506SamplingRateDataTrippleMax(self):
         self.SamplingRate(self.tSthLimits.uSamplingRateTripplePrescalerMax,
                           self.tSthLimits.uSamplingRateTrippleAcqTimeMax,
@@ -4677,6 +4762,7 @@ class TestSth(unittest.TestCase):
     Testing ADC Reference voltagegs
     """
 
+    @skip("Untested")
     def test0507VRef(self):
         self.Can.Logger.Info("Warm Up")
         self.SamplingRate(self.tSthLimits.uSamplingRateTripplePrescalerMax,
@@ -4706,6 +4792,7 @@ class TestSth(unittest.TestCase):
     ADC Configuration Combine all possible settings - Single Axis (but only for prescaler 2)
     """
 
+    @skip("Untested")
     def test0508AdcConfigSingle(self):
         SamplingRateMaxDet = 0
         prescaler = 2
@@ -4777,6 +4864,7 @@ class TestSth(unittest.TestCase):
     Combine all possible settings - Double Axis (but only for prescaler 3)
     """
 
+    @skip("Untested")
     def test0509AdcConfigDouble(self):
         SamplingRateMaxDet = 0
         prescaler = self.tSthLimits.uSamplingRateDoublePrescalerMax
@@ -4848,6 +4936,7 @@ class TestSth(unittest.TestCase):
     Combine all possible settings - Tripple Axis (but only for prescaler 2)
     """
 
+    @skip("Untested")
     def test0510AdcConfigTripple(self):
         SamplingRateMaxDet = 0
         prescaler = 2
@@ -4921,6 +5010,7 @@ class TestSth(unittest.TestCase):
     Testing ADC Sampling Prescaler Min
     """
 
+    @skip("Untested")
     def test0511AdcPrescalerMin(self):
         self.SamplingRate(Prescaler["Min"],
                           self.tSthLimits.uSamplingRateSingleAcqTimeMax,
@@ -4935,6 +5025,7 @@ class TestSth(unittest.TestCase):
     Testing ADC Sampling Prescaler Min/Max
     """
 
+    @skip("Untested")
     def test0512AdcPrescalerMax(self):
         self.SamplingRate(Prescaler["Max"],
                           AdcAcquisitionTime[1],
@@ -4949,6 +5040,7 @@ class TestSth(unittest.TestCase):
     Testing ADC Sampling Acquisition Min
     """
 
+    @skip("Untested")
     def test0513AdcAcquisitionMin(self):
         self.SamplingRate(2,
                           AdcAcquisitionTime[1],
@@ -4963,6 +5055,7 @@ class TestSth(unittest.TestCase):
     Testing ADC Sampling Acquisition Max
     """
 
+    @skip("Untested")
     def test0514AdcAcquisitionMax(self):
         self.SamplingRate(2,
                           AdcAcquisitionTime[256],
@@ -4977,6 +5070,7 @@ class TestSth(unittest.TestCase):
     Testing ADC Sampling Oversampling Rate Min
     """
 
+    @skip("Untested")
     def test0515AdcOverSamplingRateMin(self):
         self.SamplingRate(32,
                           AdcAcquisitionTime[256],
@@ -4991,6 +5085,7 @@ class TestSth(unittest.TestCase):
     Testing ADC Sampling Oversampling Rate Max
     """
 
+    @skip("Untested")
     def test0516AdcOverSamplingRateMax(self):
         prescaler = 2
         acquisitionTime = AdcAcquisitionTime[1]
@@ -5017,6 +5112,7 @@ class TestSth(unittest.TestCase):
     Testing ADC Sampling Oversampling Rate None
     """
 
+    @skip("Untested")
     def test0517AdcOverSamplingRateNone(self):
         self.SamplingRate(64,
                           AdcAcquisitionTime[256],
@@ -5031,6 +5127,7 @@ class TestSth(unittest.TestCase):
     Inject oversampling Rate fault. See that error status word is set correctly and that the system still works
     """
 
+    @skip("Untested")
     def test0518AdcSamplingRateOverdrive(self):
         prescaler = 2
         acquisitionTime = AdcAcquisitionTime[1]
@@ -5070,6 +5167,7 @@ class TestSth(unittest.TestCase):
     Mixed Streaming - AccX + VoltageBattery
     """
 
+    @skip("Untested")
     def test0519SamplingRateMixedStreamingAccXBat(self):
         prescaler = self.tSthLimits.uSamplingRateDoublePrescalerMax
         acquisitionTime = self.tSthLimits.uSamplingRateDoubleAcqTimeMax
@@ -5147,6 +5245,7 @@ class TestSth(unittest.TestCase):
     Mixed Streaming - AccXY + VoltageBattery
     """
 
+    @skip("Untested")
     def test0520SamplingRateMixedStreamingAccXYBat(self):
         prescaler = self.tSthLimits.uSamplingRateDoublePrescalerMax
         acquisitionTime = self.tSthLimits.uSamplingRateDoubleAcqTimeMax
@@ -5231,6 +5330,7 @@ class TestSth(unittest.TestCase):
     Mixed Streaming - AccXYZ + VoltageBattery
     """
 
+    @skip("Untested")
     def test0521SamplingRateMixedStreamingAccXYZBat(self):
         prescaler = self.tSthLimits.uSamplingRateDoublePrescalerMax
         acquisitionTime = self.tSthLimits.uSamplingRateDoubleAcqTimeMax
@@ -5320,6 +5420,7 @@ class TestSth(unittest.TestCase):
     Message Counters Mixed Signals
     """
 
+    @skip("Untested")
     def test0522MessageCountersMixerdSignals(self):
         prescaler = self.tSthLimits.uSamplingRateDoublePrescalerMax
         acquisitionTime = self.tSthLimits.uSamplingRateDoubleAcqTimeMax
@@ -5403,6 +5504,7 @@ class TestSth(unittest.TestCase):
     Message Counters AccX
     """
 
+    @skip("Untested")
     def test0523MessageCounterAccX(self):
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"],
                            self.tSthLimits.uSamplingRateSinglePrescalerMax,
@@ -5439,6 +5541,7 @@ class TestSth(unittest.TestCase):
     Message Counters AccY
     """
 
+    @skip("Untested")
     def test0524MessageCounterAccY(self):
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"],
                            self.tSthLimits.uSamplingRateSinglePrescalerMax,
@@ -5475,6 +5578,7 @@ class TestSth(unittest.TestCase):
     Message Counters AccZ
     """
 
+    @skip("Untested")
     def test0525MessageCounterAccZ(self):
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"],
                            self.tSthLimits.uSamplingRateSinglePrescalerMax,
@@ -5511,6 +5615,7 @@ class TestSth(unittest.TestCase):
     Message Counters AccXY
     """
 
+    @skip("Untested")
     def test0526MessageCounterAccXY(self):
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"],
                            self.tSthLimits.uSamplingRateDoublePrescalerMax,
@@ -5543,6 +5648,7 @@ class TestSth(unittest.TestCase):
     Message Counters AccXZ
     """
 
+    @skip("Untested")
     def test0527MessageCounterAccXZ(self):
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"],
                            self.tSthLimits.uSamplingRateDoublePrescalerMax,
@@ -5575,6 +5681,7 @@ class TestSth(unittest.TestCase):
     Message Counters AccXZ
     """
 
+    @skip("Untested")
     def test0528MessageCounterAccYZ(self):
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"],
                            self.tSthLimits.uSamplingRateDoublePrescalerMax,
@@ -5607,6 +5714,7 @@ class TestSth(unittest.TestCase):
     Message Counters AccXYZ
     """
 
+    @skip("Untested")
     def test0529MessageCounterAccXYZ(self):
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"],
                            self.tSthLimits.uSamplingRateTripplePrescalerMax,
@@ -5639,6 +5747,7 @@ class TestSth(unittest.TestCase):
     Message Counters AccX Battery
     """
 
+    @skip("Untested")
     def test0530MessageCountersAccXBattery(self):
         prescaler = self.tSthLimits.uSamplingRateSinglePrescalerMax
         acquisitionTime = self.tSthLimits.uSamplingRateSingleAcqTimeMax
@@ -5726,6 +5835,7 @@ class TestSth(unittest.TestCase):
     Message Counters AccY Battery
     """
 
+    @skip("Untested")
     def test0531MessageCountersAccYBattery(self):
         prescaler = self.tSthLimits.uSamplingRateSinglePrescalerMax
         acquisitionTime = self.tSthLimits.uSamplingRateSingleAcqTimeMax
@@ -5813,6 +5923,7 @@ class TestSth(unittest.TestCase):
     Message Counters AccZ Battery
     """
 
+    @skip("Untested")
     def test0532MessageCountersAccZBattery(self):
         prescaler = self.tSthLimits.uSamplingRateSinglePrescalerMax
         acquisitionTime = self.tSthLimits.uSamplingRateSingleAcqTimeMax
@@ -5900,6 +6011,7 @@ class TestSth(unittest.TestCase):
     Message Counters Battery - Data Set 1
     """
 
+    @skip("Untested")
     def test0533MessageCounterBattery(self):
         [indexStart, indexEnd
          ] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
@@ -5932,6 +6044,7 @@ class TestSth(unittest.TestCase):
     Message Counters Battery with single Data Set
     """
 
+    @skip("Untested")
     def test0534MessageCounterAccBatteryDataSetSingle(self):
         self.Can.ConfigAdc(
             MyToolItNetworkNr["STH1"],
@@ -5966,6 +6079,7 @@ class TestSth(unittest.TestCase):
     Check Calibration Measurement
     """
 
+    @skip("Untested")
     def test0600CalibrationMeasurement(self):
         ret = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"],
                                         CalibMeassurementActionNr["Measure"],
@@ -6071,6 +6185,7 @@ class TestSth(unittest.TestCase):
     Calibration - Check On-Die Temperature
     """
 
+    @skip("Untested")
     def test0601CalibrationMeasurementTemperature(self):
         ret = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"],
                                         CalibMeassurementActionNr["Measure"],
@@ -6089,6 +6204,7 @@ class TestSth(unittest.TestCase):
     Calibration - Check all VRef combinations
     """
 
+    @skip("Untested")
     def test0602CalibrationMeasurementVRef(self):
         self.test0601CalibrationMeasurementTemperature()  # 1V25
         for vRefKey, vRefValue in AdcReference.items():
@@ -6117,6 +6233,7 @@ class TestSth(unittest.TestCase):
     Calibration - Check Injection and Ejection
     """
 
+    @skip("Untested")
     def test0603CalibrationMeasurementEjectInject(self):
         global iSensorAxis
         kX1ack = self.Can.calibMeasurement(
@@ -6377,6 +6494,7 @@ class TestSth(unittest.TestCase):
     Check State at startup without any action
     """
 
+    @skip("Untested")
     def test0604CalibrationMeasurementState(self):
         stateStartX = self.Can.calibMeasurement(
             MyToolItNetworkNr["STH1"],
@@ -6482,6 +6600,7 @@ class TestSth(unittest.TestCase):
     Check Reset Subcommand of Calibration Measurement Command
     """
 
+    @skip("Untested")
     def test0605StateCalibrationMeasurementReset(self):
         ackInjectX = self.Can.calibMeasurement(
             MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"],
@@ -6546,6 +6665,7 @@ class TestSth(unittest.TestCase):
     Check Power On and Power Off Counters
     """
 
+    @skip("Untested")
     def test0700StatisticsPowerOnCounterPowerOffCounter(self):
         PowerOnOff1 = self.Can.statisticalData(MyToolItNetworkNr["STH1"],
                                                MyToolItStatData["PocPof"])
@@ -6607,6 +6727,7 @@ class TestSth(unittest.TestCase):
     Check Operating Seconds
     """
 
+    @skip("Untested")
     def test0701StatisticsOperatingSeconds(self):
         self._resetSth()
         self.Can.Logger.Info("Connect to STH")
@@ -6681,6 +6802,7 @@ class TestSth(unittest.TestCase):
     Check Watchdog counter to not increment
     """
 
+    @skip("Untested")
     def test0702WdogNotIncrementing(self):
         WDogCounter1 = self._SthWDog()
         self._resetSth()
@@ -6706,6 +6828,7 @@ class TestSth(unittest.TestCase):
     Write actual production date and Check ProductionDate
     """
 
+    @skip("Untested")
     def test0703ProductionDate(self):
         sDate = date.today()
         sDate = str(sDate).replace('-', '')
@@ -6736,6 +6859,7 @@ class TestSth(unittest.TestCase):
     Check EEPROM Read/Write - Deterministic data
     """
 
+    @skip("Untested")
     def test0750StatisticPageWriteReadDeteministic(self):
         uLoopRuns = 25
         time.sleep(2)
@@ -6806,6 +6930,7 @@ class TestSth(unittest.TestCase):
     Check EEPROM Read/Write - Deterministic data
     """
 
+    @skip("Untested")
     def test0751StatisticPageWriteReadRandom(self):
         uLoopRuns = 100
         u32EepromWriteRequestCounterTestStart = self.Can.u32EepromWriteRequestCounter(
@@ -6874,6 +6999,7 @@ class TestSth(unittest.TestCase):
     Check single Write access at startup and off (Power On Counter and Power Off Counter)
     """
 
+    @skip("Untested")
     def test0752EepromWriteRequestCounterConnectDisconnect(self):
         u32EepromWriteRequestCounterTestStart = self.Can.u32EepromWriteRequestCounter(
             MyToolItNetworkNr["STH1"])
@@ -6891,6 +7017,7 @@ class TestSth(unittest.TestCase):
     Check that page switched do not yield to Writing EEPROM
     """
 
+    @skip("Untested")
     def test0753EepromWriteRequestCounterPageSwitches(self):
         time.sleep(1)
         uLoopRuns = 5
@@ -6919,6 +7046,7 @@ class TestSth(unittest.TestCase):
     Check that page switched with previews writes yield into to Writing EEPROM with the correct number of writes
     """
 
+    @skip("Untested")
     def test0754EepromWriteRequestCounterPageWriteSwitches(self):
         time.sleep(2)
         uLoopRuns = 5
@@ -6958,6 +7086,7 @@ class TestSth(unittest.TestCase):
     Status Word after Reset
     """
 
+    @skip("Untested")
     def test0800StatusWords0Reset(self):
         status0 = self.Can.node_status(MyToolItNetworkNr["STH1"])
         self.Can.Logger.Info(f"STH Status Word: {status0}")
@@ -6969,6 +7098,7 @@ class TestSth(unittest.TestCase):
     Status Word in ADC overrun error case
     """
 
+    @skip("Untested")
     def test0801StatusWords0AdcOverRun(self):
         prescaler = 2
         acquisitionTime = AdcAcquisitionTime[1]
@@ -7006,6 +7136,7 @@ class TestSth(unittest.TestCase):
     Status Word after Reset
     """
 
+    @skip("Untested")
     def test0820StatusWords1Reset(self):
         status = self.Can.error_status(MyToolItNetworkNr["STH1"])
         self.Can.Logger.Info(f"STH Error Word: {status}")
@@ -7015,6 +7146,7 @@ class TestSth(unittest.TestCase):
     Status Word after ADC Overrun
     """
 
+    @skip("Untested")
     def test0821StatusWords1AdcOverRun(self):
         prescaler = 2
         acquisitionTime = AdcAcquisitionTime[1]
@@ -7043,6 +7175,7 @@ class TestSth(unittest.TestCase):
     Status Word after Overspeed
     """
 
+    @skip("Untested")
     def test0822StatusWords1TxFail(self):
         prescaler = 2
         acquisitionTime = AdcAcquisitionTime[8]
@@ -7072,6 +7205,7 @@ class TestSth(unittest.TestCase):
     Active State
     """
 
+    @skip("Untested")
     def test0880ActiveStateReset(self):
         activeState = ActiveState()
         activeState.asbyte = 0  # Set=0 ->Read
@@ -7102,6 +7236,7 @@ class TestSth(unittest.TestCase):
     Active State
     """
 
+    @skip("Untested")
     def test0881ActiveStateError(self):
         activeState = ActiveState()
         activeState.asbyte = 0  # Set=0 ->Read
@@ -7176,6 +7311,7 @@ class TestSth(unittest.TestCase):
     Test that nothing happens when sending Command 0x0000 to STH1
     """
 
+    @skip("Untested")
     def test0900ErrorCmdVerbotenSth1(self):
         cmd = self.Can.CanCmd(0, 0, 1, 0)
         message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
@@ -7214,6 +7350,7 @@ class TestSth(unittest.TestCase):
     Test that nothing happens when sending Request(1) and bError(1) to STH1
     """
 
+    @skip("Untested")
     def test0901ErrorRequestErrorSth1(self):
         cmd = self.Can.CanCmd(MyToolItBlock["System"], MyToolItSystem["Reset"],
                               1, 1)
@@ -7238,6 +7375,7 @@ class TestSth(unittest.TestCase):
     Test Routing - Wrong Sender to STH1
     """
 
+    @skip("Untested")
     def test0902WrongSenderSth1(self):
         for numberKey, numberVal in MyToolItNetworkNr.items():
             if "SPU1" != numberKey:
