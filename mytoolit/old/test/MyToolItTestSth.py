@@ -15,11 +15,11 @@ sys.path.append(sDirName)
 from network import Network
 import math
 from MyToolItNetworkNumbers import MyToolItNetworkNr
-import time
 from MyToolItSth import TestConfig, SthModule, SleepTime, SthErrorWord, SthStateWord, fVoltageBattery, fAdcRawDat
 from MyToolItCommands import *
 from SthLimits import SthLimits
 from testSignal import *
+import time
 
 sVersion = TestConfig["Version"]
 sLogLocation = '../../'
