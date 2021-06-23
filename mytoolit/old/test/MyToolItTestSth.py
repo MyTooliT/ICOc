@@ -21,10 +21,18 @@ from SthLimits import SthLimits
 from testSignal import *
 import time
 
+from os import environ, pathsep
+from pathlib import Path
+from sys import platform, path
+
+# Add repository root to Python path
+path.append(str(Path(__file__).parent.parent.parent))
+
+from mytoolit.config import settings
+
 sVersion = TestConfig["Version"]
 sLogLocation = '../../'
 sHomeLocation = "../../SimplicityStudio/v4_workspace/STH/"
-sSilabsCommanderLocation = "../../SimplicityStudio/SimplicityCommander/"
 sAdapterSerialNo = "440115849"
 sBoardType = "BGM113A256V2"
 iSensorAxis = 1
@@ -44,7 +52,7 @@ class TestSth(unittest.TestCase):
         self.sBootloader = sHomeLocation + "builds/" + "BootloaderOtaBgm113.s37"
         self.sAdapterSerialNo = sAdapterSerialNo
         self.sBoardType = sBoardType
-        self.sSilabsCommander = sSilabsCommanderLocation + "commander"
+        self.sSilabsCommander = "commander"
         self.bError = False
         self.fileName = sLogLocation + self._testMethodName + ".txt"
         self.fileNameError = sLogLocation + "Error_" + self._testMethodName + ".txt"
@@ -7240,4 +7248,11 @@ class TestSth(unittest.TestCase):
 
 
 if __name__ == "__main__":
+    # Add path to Simplicity Commander (`commander`) — We do this to ensure,
+    # that we can call the command directly, without adding the path before
+    # the tool’s name.
+    path = settings.commands.path
+    paths = path.linux if platform == 'Linux' else path.windows
+    environ['PATH'] += (pathsep + pathsep.join(paths))
+
     unittest.main()
