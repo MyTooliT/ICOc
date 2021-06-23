@@ -1025,7 +1025,7 @@ class TestSth(unittest.TestCase):
     def test0008VersionNumber(self):
         iIndex = self.Can.cmdSend(MyToolItNetworkNr["STH1"],
                                   MyToolItBlock["Product Data"],
-                                  MyToolItProductData["FirmwareVersion"], [])
+                                  MyToolItProductData["Firmware Version"], [])
         au8Version = self.Can.getReadMessageData(iIndex)[-3:]
         sVersionReadBack = "v" + str(au8Version[0]) + "." + str(
             au8Version[1]) + "." + str(au8Version[2])
