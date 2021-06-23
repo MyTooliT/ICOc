@@ -1970,11 +1970,14 @@ class TestSth(unittest.TestCase):
         self.assertGreater(iAddress, 0)
         self.Can.Logger.Info("BlueTooth Address: " + hex(iAddress))
 
-    """
-    Check Bluetooth connectivity for standard settings with minimum sleep time
-    """
 
     def test0105BlueToothConnectStandard(self):
+        """
+        Check Bluetooth connectivity (test time: ~ 7 minutes)
+        for standard settings with minimum sleep time
+        """
+        #
+
         self.Can.BlueToothEnergyModeNr(SleepTime["Min"],
                                        SleepTime["AdvertisementReset1"], 1)
         self.Can.BlueToothEnergyModeNr(SleepTime["Min"],
