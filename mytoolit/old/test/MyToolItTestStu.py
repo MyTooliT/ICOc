@@ -368,7 +368,7 @@ class TestStu(unittest.TestCase):
 
     def test0006FirmwareVersion(self):
         iIndex = self.Can.cmdSend(MyToolItNetworkNr["STU1"],
-                                  MyToolItBlock["ProductData"],
+                                  MyToolItBlock["Product Data"],
                                   MyToolItProductData["FirmwareVersion"], [])
         au8Version = self.Can.getReadMessageData(iIndex)
         au8Version = au8Version[-3:]
@@ -1362,7 +1362,7 @@ class TestStu(unittest.TestCase):
             index = self.Can.cmdSend(
                 MyToolItNetworkNr["STU1"], MyToolItBlock["EEPROM"],
                 MyToolItEeprom["Read"],
-                [EepromPage["ProductData"], 0xFF & offset, 4, 0, 0, 0, 0, 0])
+                [EepromPage["Product Data"], 0xFF & offset, 4, 0, 0, 0, 0, 0])
             dataReadBack = self.Can.getReadMessageData(index)
             startData.extend(dataReadBack[4:])
 
@@ -1377,14 +1377,14 @@ class TestStu(unittest.TestCase):
                     u8Byte = int(random.random() * 0xFF)
                     au8Content.append(u8Byte)
                 au8ReadCheck.extend(au8Content)
-                au8Payload = [EepromPage["ProductData"], 0xFF & offset, 4, 0
+                au8Payload = [EepromPage["Product Data"], 0xFF & offset, 4, 0
                               ] + au8Content
                 self.Can.cmdSend(MyToolItNetworkNr["STU1"],
                                  MyToolItBlock["EEPROM"],
                                  MyToolItEeprom["Write"], au8Payload)
             for offset in range(0, 256, 4):
                 au8Payload = [
-                    EepromPage["ProductData"], 0xFF & offset, 4, 0, 0, 0, 0, 0
+                    EepromPage["Product Data"], 0xFF & offset, 4, 0, 0, 0, 0, 0
                 ]
                 index = self.Can.cmdSend(MyToolItNetworkNr["STU1"],
                                          MyToolItBlock["EEPROM"],
@@ -1398,7 +1398,7 @@ class TestStu(unittest.TestCase):
         # Write Back Page
         timeStamp = self.Can.get_elapsed_time()
         for offset in range(0, 256, 4):
-            payload = [EepromPage["ProductData"], 0xFF & offset, 4, 0]
+            payload = [EepromPage["Product Data"], 0xFF & offset, 4, 0]
             payload.extend(startData[offset:offset + 4])
             self.Can.cmdSend(MyToolItNetworkNr["STU1"],
                              MyToolItBlock["EEPROM"], MyToolItEeprom["Write"],
