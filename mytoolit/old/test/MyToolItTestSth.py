@@ -2075,10 +2075,9 @@ class TestSth(unittest.TestCase):
         self.assertLess(timeAverageSleep2, TestConfig["ConTimeMaximumMs"])
 
 
-    @skip("Untested")
     def test0107BlueToothConnectMin(self):
         """
-        Check Bluetooth connectivity for Minimum values
+        Check Bluetooth connectivity for Minimum values (~ 50 seconds)
         (Standard Setting at start, not configurable, 50ms atm)
         """
         self.Can.BlueToothEnergyModeNr(SleepTime["Reset1"],
