@@ -26,12 +26,13 @@ from pathlib import Path
 from sys import platform, path
 
 # Add repository root to Python path
-path.append(str(Path(__file__).parent.parent.parent))
+repo_root = str(Path(__file__).parent.parent.parent)
+path.append(repo_root)
 
 from mytoolit.config import settings
 
 sVersion = TestConfig["Version"]
-sLogLocation = '../../'
+sLogLocation = repo_root
 sHomeLocation = "../../SimplicityStudio/v4_workspace/STH/"
 sBoardType = "BGM113A256V2"
 iSensorAxis = 1
