@@ -1976,7 +1976,7 @@ class TestSth(unittest.TestCase):
 
     def test0105BlueToothConnectStandard(self):
         """
-        Check Bluetooth connectivity (test time: ~ 7 minutes)
+        Check Bluetooth connectivity (~ 7 minutes)
         for standard settings with minimum sleep time
         """
         #
