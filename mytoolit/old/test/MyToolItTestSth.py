@@ -22,7 +22,7 @@ from SthLimits import SthLimits
 from testSignal import *
 
 sVersion = TestConfig["Version"]
-sLogLocation = '../../Logs/STH/'
+sLogLocation = '../../'
 sHomeLocation = "../../SimplicityStudio/v4_workspace/STH/"
 sSilabsCommanderLocation = "../../SimplicityStudio/SimplicityCommander/"
 sAdapterSerialNo = "440115849"
