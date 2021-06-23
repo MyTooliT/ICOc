@@ -2039,7 +2039,6 @@ class TestSth(unittest.TestCase):
         self.assertLess(timeAverageSleep2, TestConfig["ConTimeSleep2MaxMs"])
 
 
-    @skip("Untested")
     def test0106BlueToothConnectMax(self):
         """
         Check Bluetooth connectivity for maximum values
