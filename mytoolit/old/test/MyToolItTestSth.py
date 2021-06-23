@@ -2041,7 +2041,7 @@ class TestSth(unittest.TestCase):
 
     def test0106BlueToothConnectMax(self):
         """
-        Check Bluetooth connectivity for maximum values
+        Check Bluetooth connectivity for maximum values (~ 5 minutes)
         """
         self.Can.BlueToothEnergyModeNr(SleepTime["Min"],
                                        SleepTime["AdvertisementMax"], 1)
