@@ -14,7 +14,25 @@ from random import randint
 import time
 
 from mytoolit.old.network import Network
-from mytoolit.old.MyToolItCommands import *
+from mytoolit.old.MyToolItCommands import (
+    ActiveState,
+    BlueToothDeviceNr,
+    BluetoothTime,
+    byte_list_to_int,
+    EepromPage,
+    int_to_mac_address,
+    MyToolItBlock,
+    MyToolItEeprom,
+    MyToolItProductData,
+    MyToolItStatData,
+    MyToolItStreaming,
+    MyToolItSystem,
+    NodeState,
+    NetworkState,
+    payload2Hex,
+    sArray2String,
+    SystemCommandBlueTooth,
+)
 from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
 from mytoolit.old.MyToolItStu import TestConfig
 

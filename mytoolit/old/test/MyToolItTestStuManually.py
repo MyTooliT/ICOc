@@ -11,8 +11,11 @@ sys.path.append(sDirName)
 import time
 
 from mytoolit.old.network import Network
+from mytoolit.old.MyToolItCommands import (ActiveState, byte_list_to_int,
+                                           MyToolItBlock, MyToolItStatData,
+                                           MyToolItSystem, NodeState,
+                                           NetworkState)
 from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
-from mytoolit.old.MyToolItCommands import *
 
 sLogLocation = '../../Logs/STU/'
 """

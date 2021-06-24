@@ -1,9 +1,6 @@
 import unittest
 import sys
 import os
-import random
-from datetime import date
-from numpy.core.arrayprint import array2string
 
 # Required to add peakcan
 sDirName = os.path.dirname('')
@@ -13,12 +10,32 @@ sDirName = os.path.dirname(file_path)
 sys.path.append(sDirName)
 
 import math
-from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
 import time
-from mytoolit.old.MyToolItSth import TestConfig, SthModule, SleepTime, SthErrorWord, SthStateWord, fVoltageBattery, fAdcRawDat
-from mytoolit.old.MyToolItCommands import *
+
+from mytoolit.old.MyToolItCommands import (
+    AdcMax,
+    AdcOverSamplingRate,
+    AdcReference,
+    AdcVRefValuemV,
+    AtvcFormat,
+    byte_list_to_int,
+    calcSamplingRate,
+    int_to_mac_address,
+    CalibMeassurementActionNr,
+    CalibMeassurementTypeNr,
+    MyToolItBlock,
+    MyToolItConfiguration,
+    MyToolItEeprom,
+    MyToolItStatData,
+    MyToolItStreaming,
+    MyToolItTest,
+    SystemCommandBlueTooth,
+    SystemCommandRouting,
+)
+from mytoolit.old.network import Network
+from mytoolit.old.MyToolItSth import TestConfig, fAdcRawDat
+from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
 from mytoolit.old.SthLimits import SthLimits
-from .testSignal import *
 
 sVersion = TestConfig["Version"]
 sLogLocation = '../../Logs/Hardware/'
@@ -51,7 +68,7 @@ class TestSth(unittest.TestCase):
         self.bError = False
         self.fileName = sLogLocation + self._testMethodName + ".txt"
         self.fileNameError = sLogLocation + "Error_" + self._testMethodName + ".txt"
-        self.Can = CAN.CAN(self.fileName,
+        self.Can = Network(self.fileName,
                            self.fileNameError,
                            MyToolItNetworkNr["SPU1"],
                            MyToolItNetworkNr["STH1"],
@@ -205,8 +222,6 @@ class TestSth(unittest.TestCase):
     """
 
     def _statusWords(self):
-        ErrorWord = SthErrorWord()
-
         self.Can.Logger.Info("STH Status Word: {}".format(
             self.Can.node_status(MyToolItNetworkNr["STH1"])))
         self.Can.Logger.Info("STU Status Word: {}".format(

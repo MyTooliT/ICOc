@@ -3,7 +3,6 @@ import sys
 import os
 import random
 from datetime import date
-from numpy.core.arrayprint import array2string
 
 # Required to add peakcan
 sDirName = os.path.dirname('')
@@ -13,12 +12,11 @@ sDirName = os.path.dirname(file_path)
 sys.path.append(sDirName)
 
 import math
-from .testSignal import *
+from .testSignal import testRampDim
 import time
 
-from os import environ, pathsep
 from pathlib import Path
-from sys import platform, path
+from sys import path
 from unittest import skip
 
 # Add repository root to Python path
@@ -27,11 +25,47 @@ path.append(repo_root)
 
 from mytoolit.config import settings
 from mytoolit.old.network import Network
-from mytoolit.old.MyToolItCommands import *
+from mytoolit.old.MyToolItCommands import (
+    AdcAcquisitionTime,
+    AdcAcquisitionTimeName,
+    AdcMax,
+    ActiveState,
+    AdcOverSamplingRate,
+    AdcOverSamplingRateName,
+    AdcReference,
+    AdcVRefValuemV,
+    AtvcFormat,
+    byte_list_to_int,
+    calcSamplingRate,
+    CalibrationFactor,
+    int_to_mac_address,
+    CalibMeassurementActionNr,
+    CalibMeassurementTypeNr,
+    DataSets,
+    EepromPage,
+    MyToolItBlock,
+    MyToolItConfiguration,
+    MyToolItEeprom,
+    MyToolItProductData,
+    MyToolItStatData,
+    MyToolItStreaming,
+    MyToolItSystem,
+    MyToolItTest,
+    NodeState,
+    NetworkState,
+    payload2Hex,
+    Prescaler,
+    sArray2String,
+    SystemCommandBlueTooth,
+    SystemCommandRouting,
+    TestCommandSignal,
+    VRefName,
+)
+
 from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
 from mytoolit.old.MyToolItSth import (TestConfig, SthModule, SleepTime,
-                                      SthErrorWord, SthStateWord,
-                                      fVoltageBattery, fAdcRawDat)
+                                      SthStateWord, fVoltageBattery,
+                                      fAdcRawDat)
 from mytoolit.old.SthLimits import SthLimits
 from mytoolit.utility import add_commander_path_to_environment
 
@@ -219,8 +253,6 @@ class TestSth(unittest.TestCase):
     """
 
     def _statusWords(self):
-        ErrorWord = SthErrorWord()
-
         self.Can.Logger.Info("STH Status Word: {}".format(
             self.Can.node_status(MyToolItNetworkNr["STH1"])))
         self.Can.Logger.Info("STU Status Word: {}".format(
@@ -272,7 +304,6 @@ class TestSth(unittest.TestCase):
         Rssi = self.Can.BlueToothRssi(MyToolItNetworkNr["STU1"])
         self.Can.Logger.Info("BlueTooth Rssi(STU1): " + str(Rssi) + "dBm")
 
-
     def _RoutingInformationSthSend(self):
         """
         Routing information of STH send ports
@@ -293,7 +324,6 @@ class TestSth(unittest.TestCase):
             MyToolItNetworkNr["STU1"])
         self.Can.Logger.Info("STH1 - Send Byte Counter(Port STU1): " +
                              str(SendCounter))
-
 
     def _RoutingInformationSthReceive(self):
         """
@@ -318,7 +348,6 @@ class TestSth(unittest.TestCase):
                              str(ReceiveCounter))
         return ReceiveFailCounter
 
-
     def _RoutingInformationSth(self):
         """
         Routing information of STH
@@ -326,7 +355,6 @@ class TestSth(unittest.TestCase):
         self._RoutingInformationSthSend()
         ReceiveFailCounter = self._RoutingInformationSthReceive()
         return ReceiveFailCounter
-
 
     def _RoutingInformationStuPortSpuSend(self):
         """
@@ -348,7 +376,6 @@ class TestSth(unittest.TestCase):
             MyToolItNetworkNr["SPU1"])
         self.Can.Logger.Info("STU1 - Send Byte Counter(Port SPU1): " +
                              str(SendCounter))
-
 
     def _RoutingInformationStuPortSpuReceive(self):
         """
@@ -373,7 +400,6 @@ class TestSth(unittest.TestCase):
                              str(ReceiveCounter))
         return ReceiveFailCounter
 
-
     def _RoutingInformationStuPortSpu(self):
         """
         Routing information of STU port SPU
@@ -381,7 +407,6 @@ class TestSth(unittest.TestCase):
         self._RoutingInformationStuPortSpuSend()
         ReceiveFailCounter = self._RoutingInformationStuPortSpuReceive()
         return ReceiveFailCounter
-
 
     def _RoutingInformationStuPortSthSend(self):
         """
@@ -403,7 +428,6 @@ class TestSth(unittest.TestCase):
             MyToolItNetworkNr["STH1"])
         self.Can.Logger.Info("STU1 - Send Byte Counter(Port STH1): " +
                              str(SendCounter))
-
 
     def _RoutingInformationStuPortSthReceive(self):
         """
@@ -428,7 +452,6 @@ class TestSth(unittest.TestCase):
                              str(ReceiveCounter))
         return ReceiveFailCounter
 
-
     def _RoutingInformationStuPortSth(self):
         """
         Routing information of STU port STH
@@ -436,7 +459,6 @@ class TestSth(unittest.TestCase):
         self._RoutingInformationStuPortSthSend()
         ReceiveFailCounter = self._RoutingInformationStuPortSthReceive()
         return ReceiveFailCounter
-
 
     def _RoutingInformation(self):
         """
@@ -446,7 +468,6 @@ class TestSth(unittest.TestCase):
         ReceiveFailCounter += self._RoutingInformationStuPortSth()
         ReceiveFailCounter += self._RoutingInformationStuPortSpu()
         return ReceiveFailCounter
-
 
     def singleValueCompare(self, array1, array2, array3, middle1, tolerance1,
                            middle2, tolerance2, middle3, tolerance3,
@@ -466,7 +487,6 @@ class TestSth(unittest.TestCase):
             self.assertGreaterEqual(middle3 + tolerance3,
                                     fCbfRecalc(array3[0]))
             self.assertLessEqual(middle3 - tolerance3, fCbfRecalc(array3[0]))
-
 
     def SamplingRate(self,
                      prescaler,
@@ -576,7 +596,6 @@ class TestSth(unittest.TestCase):
         }
         return result
 
-
     def TurnOffLed(self):
         """
         Turn off STH LED
@@ -589,7 +608,6 @@ class TestSth(unittest.TestCase):
                                         [129, 1, 2, 0, 0, 0, 0, 0])
         self.Can.tWriteFrameWaitAckRetries(message)
 
-
     def TurnOnLed(self):
         """
         Turn on STH LED
@@ -601,7 +619,6 @@ class TestSth(unittest.TestCase):
                                         MyToolItNetworkNr["STH1"],
                                         [129, 1, 1, 0, 0, 0, 0, 0])
         self.Can.tWriteFrameWaitAckRetries(message)
-
 
     def streamingTestSignalCollect(self,
                                    sender,
@@ -659,7 +676,6 @@ class TestSth(unittest.TestCase):
             self.Can.Logger.Info("indexEnd: " + str(indexEnd))
         return [indexStart, indexEnd]
 
-
     def streamingValueCompare(self, array1, array2, array3, middle1,
                               tolerance1, middle2, tolerance2, middle3,
                               tolerance3, fCbfRecalc):
@@ -694,7 +710,6 @@ class TestSth(unittest.TestCase):
                 self.assertLessEqual(middle3 - tolerance3,
                                      fCbfRecalc(array3[i]))
 
-
     def streamingValueCompareSignal(self, array, testSignal):
         """
         Compare collected streaming data with 1dimensional tube
@@ -707,7 +722,6 @@ class TestSth(unittest.TestCase):
         self.assertEqual(len(array), len(testSignal))
         for i in range(0, len(testSignal)):
             self.assertEqual(array[i], testSignal[i])
-
 
     def siginalIndicatorCheck(self, name, statistic, quantil1, quantil25,
                               medianL, medianH, quantil75, quantil99, variance,
@@ -745,7 +759,6 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info(
             "____________________________________________________")
 
-
     def vEepromWritePage(self, iPage, value):
         """
         Write Page by value
@@ -760,7 +773,6 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("Page Write Time: " +
                              str(self.Can.get_elapsed_time() - timeStamp) +
                              "ms")
-
 
     def vEepromReadPage(self, iPage, value):
         """
@@ -778,7 +790,6 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("Page Read Time: " +
                              str(self.Can.get_elapsed_time() - timeStamp) +
                              "ms")
-
 
     def vSilabsAdapterReset(self):
         """
@@ -888,7 +899,6 @@ class TestSth(unittest.TestCase):
                              asData[-2][10:])
             self.assertEqual("DONE\n", asData[-1])
 
-
     @skip("OTA update using `ota-dfu` is **very** unreliable")
     def test0001OverTheAirUpdate(self):
         """
@@ -963,7 +973,6 @@ class TestSth(unittest.TestCase):
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
                                               TestConfig["DevName"])
 
-
     def test0005Ack(self):
         """
         Test Acknowledgement from STH. Write message and check identifier to
@@ -997,7 +1006,6 @@ class TestSth(unittest.TestCase):
         self.assertEqual(expectedData.asbyte,
                          self.Can.getReadMessage(-1).DATA[0])
 
-
     def test0006SthReset(self):
         """
         Tests if STH gets properly reseted
@@ -1013,7 +1021,6 @@ class TestSth(unittest.TestCase):
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
                                               TestConfig["DevName"])
 
-
     def test0007SthTemperature(self):
         """
         Test Temperature to be in range
@@ -1021,7 +1028,6 @@ class TestSth(unittest.TestCase):
         temp = self._SthAdcTemp()
         self.assertGreaterEqual(self.tSthLimits.iTemperatureInternalMax, temp)
         self.assertLessEqual(self.tSthLimits.iTemperatureInternalMin, temp)
-
 
     def test0008VersionNumber(self):
         """
@@ -1035,7 +1041,6 @@ class TestSth(unittest.TestCase):
             au8Version[1]) + "." + str(au8Version[2])
         self.Can.Logger.Info("Version: " + sVersionReadBack)
         self.assertEqual(sVersion, sVersionReadBack)
-
 
     def test0011EnergySaveMode1(self):
         """
@@ -1120,7 +1125,6 @@ class TestSth(unittest.TestCase):
                              str(timeAdvertisement) + " ms")
         self.assertEqual(timeReset, SleepTime["Reset1"])
         self.assertEqual(timeAdvertisement, SleepTime["AdvertisementReset1"])
-
 
     def test0012EnergySaveMode2(self):
         """
@@ -1218,7 +1222,6 @@ class TestSth(unittest.TestCase):
             "Reset via test0011EnergySaveMode1 EM1 parameters")
         self.test0011EnergySaveMode1()
 
-
     @skip("Untested")
     def test0013PowerConsumptionNormal(self):
         """
@@ -1271,7 +1274,6 @@ class TestSth(unittest.TestCase):
         self.assertEqual(sCurrentUnit, "mA")
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
                                               TestConfig["DevName"])
-
 
     @skip("Untested")
     def test0014PowerConsumptionEnergySaveMode1(self):
@@ -1339,7 +1341,6 @@ class TestSth(unittest.TestCase):
         self.Can.BlueToothEnergyModeNr(SleepTime["Reset2"],
                                        SleepTime["AdvertisementReset2"], 2)
 
-
     @skip("Untested")
     def test0015PowerConsumptionEnergySaveMode2(self):
         """
@@ -1405,7 +1406,6 @@ class TestSth(unittest.TestCase):
                                        SleepTime["AdvertisementReset1"], 1)
         self.Can.BlueToothEnergyModeNr(SleepTime["Reset2"],
                                        SleepTime["AdvertisementReset2"], 2)
-
 
     @skip("Untested")
     def test0016PowerConsumptionEnergySaveModeAdv4000ms(self):
@@ -1473,7 +1473,6 @@ class TestSth(unittest.TestCase):
         self.Can.BlueToothEnergyModeNr(SleepTime["Reset2"],
                                        SleepTime["AdvertisementReset2"], 2)
 
-
     @skip("Untested")
     def test0017PowerConsumptionConnected(self):
         """
@@ -1529,7 +1528,6 @@ class TestSth(unittest.TestCase):
         self.assertLessEqual(float(sCurrentAverage),
                              TestConfig["EnergyConnectedCurrentMax"])
         self.assertEqual(sCurrentUnit, "mA")
-
 
     @skip("Untested")
     def test0018PowerConsumptionMeasuring(self):
@@ -1591,7 +1589,6 @@ class TestSth(unittest.TestCase):
         self.assertLessEqual(float(sCurrentAverage),
                              TestConfig["EnergyMeasuringCurrentMax"])
         self.assertEqual(sCurrentUnit, "mA")
-
 
     @skip("Untested")
     def test0019PowerConsumptionMeasuringLedOff(self):
@@ -1655,7 +1652,6 @@ class TestSth(unittest.TestCase):
         self.assertLessEqual(float(sCurrentAverage),
                              TestConfig["EnergyMeasuringLedOffCurrentMax"])
         self.assertEqual(sCurrentUnit, "mA")
-
 
     def test0020HmiLedGeckoModule(self):
         """
@@ -1738,7 +1734,6 @@ class TestSth(unittest.TestCase):
         self.assertEqual(1, LedNumber)
         self.assertEqual(1, LedState)
 
-
     def test0030CalibrationFactorsKSingle(self):
         """
         Write each calibration factor k entry
@@ -1796,7 +1791,6 @@ class TestSth(unittest.TestCase):
                 self.assertEqual(readK[6], 0)
                 self.assertEqual(readK[7], 0)
 
-
     def test0031CalibrationFactorsDSingle(self):
         """
         Write each calibration factor D entry
@@ -1853,7 +1847,6 @@ class TestSth(unittest.TestCase):
                 self.assertEqual(readD[5], 0)
                 self.assertEqual(readD[6], 0)
                 self.assertEqual(readD[7], 0)
-
 
     def test0032CalibrationFactorsKDWriteThenRead(self):
         """
@@ -1946,7 +1939,6 @@ class TestSth(unittest.TestCase):
                     self.assertEqual(readK[j], 0)
                     self.assertEqual(readD[j], 0)
 
-
     def test0103BlueToothName(self):
         """
         Write name and get name (bluetooth command)
@@ -1966,7 +1958,6 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("Received: " + Name)
         self.assertEqual(TestConfig["DevName"], Name)
 
-
     def test0104BlueToothAddress(self):
         """
         Bluetooth Address
@@ -1975,7 +1966,6 @@ class TestSth(unittest.TestCase):
         iAddress = int(self.Can.BlueToothAddress(MyToolItNetworkNr["STH1"]))
         self.assertGreater(iAddress, 0)
         self.Can.Logger.Info("BlueTooth Address: " + hex(iAddress))
-
 
     def test0105BlueToothConnectStandard(self):
         """
@@ -2041,7 +2031,6 @@ class TestSth(unittest.TestCase):
         self.assertLess(timeAverageSleep1, TestConfig["ConTimeSleep1MaxMs"])
         self.assertLess(timeAverageSleep2, TestConfig["ConTimeSleep2MaxMs"])
 
-
     def test0106BlueToothConnectMax(self):
         """
         Check Bluetooth connectivity for maximum values (~ 5 minutes)
@@ -2077,7 +2066,6 @@ class TestSth(unittest.TestCase):
                                        SleepTime["AdvertisementReset2"], 2)
         self.assertLess(timeAverageSleep2, TestConfig["ConTimeMaximumMs"])
 
-
     def test0107BlueToothConnectMin(self):
         """
         Check Bluetooth connectivity for Minimum values (~ 50 seconds)
@@ -2107,7 +2095,6 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("Average Connecting Time: " + str(timeAverage) +
                              "ms")
         self.assertLess(timeAverage, TestConfig["ConTimeNormalMaxMs"])
-
 
     @skip("Untested")
     def test0108BlueToothConnectWrongValues(self):
@@ -2194,7 +2181,6 @@ class TestSth(unittest.TestCase):
         self.Can.BlueToothEnergyModeNr(SleepTime["Reset2"],
                                        SleepTime["AdvertisementReset2"], 2)
 
-
     @skip("Untested")
     def test0109BlueToothRssi(self):
         """
@@ -2205,7 +2191,6 @@ class TestSth(unittest.TestCase):
         self.assertGreater(iRssi, -80)
         self.assertLess(iRssi, -20)
         self.Can.Logger.Info("BlueTooth RSSI: " + str(iRssi))
-
 
     @skip("Untested")
     def test0300GetSingleVoltageBattery(self):
@@ -2225,7 +2210,6 @@ class TestSth(unittest.TestCase):
                                 self.tSthLimits.uBatteryMiddle,
                                 self.tSthLimits.uBatteryTolerance, 0, 0, 0, 0,
                                 fVoltageBattery)
-
 
     @skip("Untested")
     def test0301GetSingleVoltageBatteryMultipleTimes(self):
@@ -2247,7 +2231,6 @@ class TestSth(unittest.TestCase):
                                     self.tSthLimits.uBatteryTolerance, 0, 0, 0,
                                     0, fVoltageBattery)
 
-
     @skip("Untested")
     def test0302GetSingleAccX(self):
         """
@@ -2266,7 +2249,6 @@ class TestSth(unittest.TestCase):
                                 self.tSthLimits.iAdcAccXMiddle,
                                 self.tSthLimits.iAdcAccXTolerance, 0, 0, 0, 0,
                                 self.tSthLimits.fAcceleration)
-
 
     @skip("Untested")
     def test0303GetSingleAccY(self):
@@ -2287,7 +2269,6 @@ class TestSth(unittest.TestCase):
                                 self.tSthLimits.iAdcAccYTolerance, 0, 0,
                                 self.tSthLimits.fAcceleration)
 
-
     @skip("Untested")
     def test0304GetSingleAccZ(self):
         """
@@ -2306,7 +2287,6 @@ class TestSth(unittest.TestCase):
                                 self.tSthLimits.iAdcAccZMiddle,
                                 self.tSthLimits.iAdcAccZTolerance,
                                 self.tSthLimits.fAcceleration)
-
 
     @skip("Untested")
     def test0305GetSingleSingleAccXMultipleTimes(self):
@@ -2328,7 +2308,6 @@ class TestSth(unittest.TestCase):
                                     self.tSthLimits.iAdcAccXTolerance, 0, 0, 0,
                                     0, self.tSthLimits.fAcceleration)
 
-
     @skip("Untested")
     def test0306GetSingleSingleAccYMultipleTimes(self):
         """
@@ -2349,7 +2328,6 @@ class TestSth(unittest.TestCase):
                                     self.tSthLimits.iAdcAccYTolerance, 0, 0,
                                     self.tSthLimits.fAcceleration)
 
-
     @skip("Untested")
     def test0307GetSingleSingleAccZMultipleTimes(self):
         """
@@ -2369,7 +2347,6 @@ class TestSth(unittest.TestCase):
                                     self.tSthLimits.iAdcAccZMiddle,
                                     self.tSthLimits.iAdcAccZTolerance,
                                     self.tSthLimits.fAcceleration)
-
 
     @skip("Untested")
     def test0308GetSingleAccXY(self):
@@ -2392,7 +2369,6 @@ class TestSth(unittest.TestCase):
                                 self.tSthLimits.iAdcAccYTolerance, 0, 0,
                                 self.tSthLimits.fAcceleration)
 
-
     @skip("Untested")
     def test0309GetSingleAccXZ(self):
         """
@@ -2414,7 +2390,6 @@ class TestSth(unittest.TestCase):
                                 self.tSthLimits.iAdcAccZTolerance,
                                 self.tSthLimits.fAcceleration)
 
-
     @skip("Untested")
     def test0310GetSingleAccXYZ(self):
         """
@@ -2434,7 +2409,6 @@ class TestSth(unittest.TestCase):
             self.tSthLimits.iAdcAccXTolerance, self.tSthLimits.iAdcAccYMiddle,
             self.tSthLimits.iAdcAccYTolerance, self.tSthLimits.iAdcAccZMiddle,
             self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
-
 
     @skip("Untested")
     def test0310GetSingleAccYZ(self):
@@ -2456,7 +2430,6 @@ class TestSth(unittest.TestCase):
                                 self.tSthLimits.iAdcAccZMiddle,
                                 self.tSthLimits.iAdcAccZTolerance,
                                 self.tSthLimits.fAcceleration)
-
 
     @skip("Untested")
     def test0320GetStreamingVoltageBattery(self):
@@ -2484,7 +2457,6 @@ class TestSth(unittest.TestCase):
                                    self.tSthLimits.uBatteryTolerance, 0, 0, 0,
                                    0, fVoltageBattery)
 
-
     @skip("Untested")
     def test0321GetStreamingAccX(self):
         """
@@ -2508,7 +2480,6 @@ class TestSth(unittest.TestCase):
                                    self.tSthLimits.iAdcAccXMiddle,
                                    self.tSthLimits.iAdcAccXTolerance, 0, 2**32,
                                    0, 2**32, self.tSthLimits.fAcceleration)
-
 
     @skip("Untested")
     def test0322GetStreamingAccY(self):
@@ -2534,7 +2505,6 @@ class TestSth(unittest.TestCase):
                                    self.tSthLimits.iAdcAccYTolerance, 0, 2**32,
                                    self.tSthLimits.fAcceleration)
 
-
     @skip("Untested")
     def test0323GetStreamingAccZ(self):
         """
@@ -2558,7 +2528,6 @@ class TestSth(unittest.TestCase):
                                    self.tSthLimits.iAdcAccZMiddle,
                                    self.tSthLimits.iAdcAccZTolerance,
                                    self.tSthLimits.fAcceleration)
-
 
     @skip("Untested")
     def test0324GetStreamingAccXYZ(self):
@@ -2584,7 +2553,6 @@ class TestSth(unittest.TestCase):
             self.tSthLimits.iAdcAccXTolerance, self.tSthLimits.iAdcAccYMiddle,
             self.tSthLimits.iAdcAccYTolerance, self.tSthLimits.iAdcAccZMiddle,
             self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
-
 
     @skip("Untested")
     def test0325GetStreamingAccXY(self):
@@ -2617,7 +2585,6 @@ class TestSth(unittest.TestCase):
             self.tSthLimits.iAdcAccYTolerance, self.tSthLimits.iAdcAccZMiddle,
             self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
 
-
     @skip("Untested")
     def test0326GetStreamingAccXZ(self):
         """
@@ -2648,7 +2615,6 @@ class TestSth(unittest.TestCase):
             self.tSthLimits.iAdcAccXTolerance, self.tSthLimits.iAdcAccYMiddle,
             self.tSthLimits.iAdcAccYTolerance, self.tSthLimits.iAdcAccZMiddle,
             self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
-
 
     @skip("Untested")
     def test0327GetStreamingAccYZ(self):
@@ -2681,7 +2647,6 @@ class TestSth(unittest.TestCase):
             self.tSthLimits.iAdcAccYTolerance, self.tSthLimits.iAdcAccZMiddle,
             self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
 
-
     @skip("Untested")
     def test0330SignalIndicatorsAccX(self):
         """
@@ -2712,7 +2677,6 @@ class TestSth(unittest.TestCase):
                                    SigIndAccXQ99, SigIndAccXVar,
                                    SigIndAccXSkewness, SigIndAccXSNR)
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Acc", "")
-
 
     @skip("Untested")
     def test0331SignalIndicatorsAccY(self):
@@ -2745,7 +2709,6 @@ class TestSth(unittest.TestCase):
                                    SigIndAccYSkewness, SigIndAccYSNR)
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Acc", "")
 
-
     @skip("Untested")
     def test0332SignalIndicatorsAccZ(self):
         """
@@ -2776,7 +2739,6 @@ class TestSth(unittest.TestCase):
                                    SigIndAccZQ99, SigIndAccZVar,
                                    SigIndAccZSkewness, SigIndAccZSNR)
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Acc", "")
-
 
     @skip("Untested")
     def test0333SignalIndicatorsBattery(self):
@@ -2811,7 +2773,6 @@ class TestSth(unittest.TestCase):
                                    SigIndBatteryVar, SigIndBatterySkewness,
                                    SigIndBatterySNR)
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Voltage", "")
-
 
     @skip("Untested")
     def test0334SignalIndicatorsMulti(self):
@@ -2926,7 +2887,6 @@ class TestSth(unittest.TestCase):
                                    SigIndAccZQ99, SigIndAccZVar,
                                    SigIndAccZSkewness, SigIndAccZSNR)
 
-
     @skip("Untested")
     def test0335GetStreamingMultipleTimes(self):
         """
@@ -2995,7 +2955,6 @@ class TestSth(unittest.TestCase):
                                        self.tSthLimits.iAdcAccZTolerance,
                                        self.tSthLimits.fAcceleration)
 
-
     @skip("Untested")
     def test0336StreamingMultiConfigBatAccXAccYAccZ(self):
         """
@@ -3055,7 +3014,6 @@ class TestSth(unittest.TestCase):
             self.tSthLimits.iAdcAccYTolerance, self.tSthLimits.iAdcAccZMiddle,
             self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
 
-
     @skip("Untested")
     def test0337StreamingMultiConfig(self):
         """
@@ -3071,7 +3029,6 @@ class TestSth(unittest.TestCase):
         self.test0321GetStreamingAccX()
         self.Can.ReadThreadReset()
 
-
     @skip("Untested")
     def test0338StreamingHeavyDuty(self):
         """
@@ -3082,7 +3039,6 @@ class TestSth(unittest.TestCase):
                           self.tSthLimits.uSamplingRateSingleOverSamplesMax,
                           AdcReference["VDD"],
                           runTime=1200000)
-
 
     @skip("Untested")
     def test0339MixedStreamingAccXVoltBat(self):
@@ -3142,7 +3098,6 @@ class TestSth(unittest.TestCase):
                                    self.tSthLimits.iAdcAccXTolerance, 0, 0, 0,
                                    0, self.tSthLimits.fAcceleration)
 
-
     @skip("Untested")
     def test0340MixedStreamingAccXVoltBatInverse(self):
         """
@@ -3200,7 +3155,6 @@ class TestSth(unittest.TestCase):
                                    self.tSthLimits.iAdcAccXMiddle,
                                    self.tSthLimits.iAdcAccXTolerance, 0, 0, 0,
                                    0, self.tSthLimits.fAcceleration)
-
 
     @skip("Untested")
     def test0341MixedStreamingAccYVoltBat(self):
@@ -3260,7 +3214,6 @@ class TestSth(unittest.TestCase):
                                    self.tSthLimits.iAdcAccYTolerance, 0, 0,
                                    self.tSthLimits.fAcceleration)
 
-
     @skip("Untested")
     def test0342MixedStreamingAccZVoltBat(self):
         """
@@ -3318,7 +3271,6 @@ class TestSth(unittest.TestCase):
                                    self.tSthLimits.iAdcAccZMiddle,
                                    self.tSthLimits.iAdcAccZTolerance,
                                    self.tSthLimits.fAcceleration)
-
 
     @skip("Untested")
     def test0343MixedStreamingAccXZVoltBat(self):
@@ -7126,7 +7078,7 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("STH State Word - bError: " +
                              str(StateWord.b.bError))
         self.Can.Logger.Info("STH State Word - " +
-                             NetworkStateName[StateWord.b.u3NetworkState])
+                             NetworkState.inverse[StateWord.b.u3NetworkState])
         self.assertEqual(StateWord.b.bError, 1)
         self.assertEqual(StateWord.b.u3NetworkState, NetworkState["Error"])
         self._resetStu()

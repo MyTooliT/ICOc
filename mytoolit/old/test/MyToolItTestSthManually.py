@@ -1,7 +1,6 @@
 import unittest
 import sys
 import os
-from array import array
 
 # Required to add peakcan
 sDirName = os.path.dirname('')
@@ -15,8 +14,23 @@ import time
 from mytoolit.old.network import Network
 from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
 from mytoolit.old.SthLimits import SthLimits
-from mytoolit.old.MyToolItSth import TestConfig, SthErrorWord, SleepTime, fAdcRawDat
-from mytoolit.old.MyToolItCommands import *
+from mytoolit.old.MyToolItSth import TestConfig, fAdcRawDat
+from mytoolit.old.MyToolItCommands import (
+    ActiveState,
+    AdcReference,
+    byte_list_to_int,
+    CalibMeassurementActionNr,
+    CalibMeassurementTypeNr,
+    DataSets,
+    MyToolItBlock,
+    MyToolItConfiguration,
+    MyToolItStatData,
+    MyToolItStreaming,
+    MyToolItSystem,
+    NodeState,
+    NetworkState,
+    payload2Hex,
+)
 
 sLogLocation = '../../Logs/STH/'
 
@@ -136,7 +150,6 @@ class TestSthManually(unittest.TestCase):
     """
 
     def _statusWords(self):
-        ErrorWord = SthErrorWord()
         psw0 = self.Can.node_status(MyToolItNetworkNr["STH1"])
         self.Can.Logger.Info("STH Status Word: " + hex(psw0))
         psw0 = self.Can.node_status(MyToolItNetworkNr["STU1"])
