@@ -38,3 +38,7 @@
 - New class `StreamingFormat` to specify the format of [streaming data][streaming]
 - New class `StreamingFormatVoltage` to specify the format of voltage streaming data
 - New class `StreamingFormatAcceleration` to specify the format of acceleration streaming data
+
+### Utility
+
+- The new function `add_commander_path_to_environment` adds the path to Simplicity Commander (`commander`) to the `PATH` environment variable

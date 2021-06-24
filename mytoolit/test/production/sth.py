@@ -1,7 +1,5 @@
 # -- Imports ------------------------------------------------------------------
 
-from asyncio import TimeoutError
-from os import environ, pathsep
 from time import sleep
 from unittest import main as unittest_main, skipIf
 
@@ -10,7 +8,8 @@ from mytoolit.measurement import ratio_noise_max
 from mytoolit.config import settings
 from mytoolit.test.production import TestNode
 from mytoolit.test.unit import ExtendedTestRunner
-from mytoolit.utility import convert_mac_base64
+from mytoolit.utility import (add_commander_path_to_environment,
+                              convert_mac_base64)
 
 from mytoolit.old.MyToolItCommands import (
     AdcMax,
@@ -436,11 +435,7 @@ class TestSTH(TestNode):
 
 
 def main():
-    # Add path to Simplicity Commander (`commander`) — We do this to ensure,
-    # that we can call the command directly, without adding the path before
-    # the tool’s name.
-    environ['PATH'] += (pathsep + pathsep.join(settings.commands.path.windows))
-
+    add_commander_path_to_environment()
     unittest_main(testRunner=ExtendedTestRunner,
                   module="mytoolit.test.production.sth")
 

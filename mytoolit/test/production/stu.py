@@ -1,11 +1,10 @@
 # -- Imports ------------------------------------------------------------------
 
-from os import environ, pathsep
 from unittest import main as unittest_main
 
-from mytoolit.config import settings
 from mytoolit.test.production import TestNode
 from mytoolit.test.unit import ExtendedTestRunner
+from mytoolit.utility import add_commander_path_to_environment
 
 from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
 from mytoolit.old.MyToolItCommands import (int_to_mac_address, MyToolItBlock,
@@ -108,11 +107,7 @@ class TestSTU(TestNode):
 
 
 def main():
-    # Add path to Simplicity Commander (`commander`) — We do this to ensure,
-    # that we can call the command directly, without adding the path before
-    # the tool’s name.
-    environ['PATH'] += (pathsep + pathsep.join(settings.commands.path.windows))
-
+    add_commander_path_to_environment()
     unittest_main(testRunner=ExtendedTestRunner,
                   module="mytoolit.test.production.stu")
 
