@@ -1,3 +1,7 @@
+from nose.tools import nottest
+
+
+@nottest
 def testRampDim(MaxValue, FirstDim, SecondDim, fRecalc):
     ramp = []
 
