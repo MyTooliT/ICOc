@@ -31,6 +31,7 @@ repo_root = str(Path(__file__).parent.parent.parent)
 path.append(repo_root)
 
 from mytoolit.config import settings
+from mytoolit.utility import add_commander_path_to_environment
 
 sVersion = TestConfig["Version"]
 sLogLocation = repo_root
@@ -7389,11 +7390,5 @@ class TestSth(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    # Add path to Simplicity Commander (`commander`) — We do this to ensure,
-    # that we can call the command directly, without adding the path before
-    # the tool’s name.
-    path = settings.commands.path
-    paths = path.linux if platform == 'Linux' else path.windows
-    environ['PATH'] += (pathsep + pathsep.join(paths))
-
+    add_commander_path_to_environment()
     unittest.main()
