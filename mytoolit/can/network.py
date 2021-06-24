@@ -334,7 +334,19 @@ class Network:
             self.bus.send(message.to_python_can())
 
             try:
-                response = await wait_for(listener.on_message(), timeout=1)
+                # We increase the timeout after the first and second try.
+                # This way we reduce the chance of the warning:
+                #
+                # - “Bus error: an error counter reached the 'heavy'/'warning'
+                #   limit”
+                #
+                # happening. This warning might show up after
+                #
+                # - we flashed the STU,
+                # - sent a reset command to the STU, and then
+                # - wait for the response of the STU.
+                response = await wait_for(listener.on_message(),
+                                          timeout=min(attempt * 2 + 1, 5))
                 assert response is not None
             except TimeoutError:
                 continue
