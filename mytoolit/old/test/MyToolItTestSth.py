@@ -12,13 +12,8 @@ file_path = '../'
 sDirName = os.path.dirname(file_path)
 sys.path.append(sDirName)
 
-from network import Network
 import math
-from MyToolItNetworkNumbers import MyToolItNetworkNr
-from MyToolItSth import TestConfig, SthModule, SleepTime, SthErrorWord, SthStateWord, fVoltageBattery, fAdcRawDat
-from MyToolItCommands import *
-from SthLimits import SthLimits
-from testSignal import *
+from .testSignal import *
 import time
 
 from os import environ, pathsep
@@ -31,6 +26,13 @@ repo_root = str(Path(__file__).parent.parent.parent)
 path.append(repo_root)
 
 from mytoolit.config import settings
+from mytoolit.old.network import Network
+from mytoolit.old.MyToolItCommands import *
+from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
+from mytoolit.old.MyToolItSth import (TestConfig, SthModule, SleepTime,
+                                      SthErrorWord, SthStateWord,
+                                      fVoltageBattery, fAdcRawDat)
+from mytoolit.old.SthLimits import SthLimits
 from mytoolit.utility import add_commander_path_to_environment
 
 sVersion = TestConfig["Version"]

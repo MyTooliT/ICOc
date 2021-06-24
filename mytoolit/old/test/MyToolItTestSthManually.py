@@ -10,12 +10,13 @@ file_path = '../'
 sDirName = os.path.dirname(file_path)
 sys.path.append(sDirName)
 
-from network import Network
-from MyToolItNetworkNumbers import MyToolItNetworkNr
-from SthLimits import SthLimits
 import time
-from MyToolItSth import TestConfig, SthErrorWord, SleepTime, fAdcRawDat
-from MyToolItCommands import *
+
+from mytoolit.old.network import Network
+from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
+from mytoolit.old.SthLimits import SthLimits
+from mytoolit.old.MyToolItSth import TestConfig, SthErrorWord, SleepTime, fAdcRawDat
+from mytoolit.old.MyToolItCommands import *
 
 sLogLocation = '../../Logs/STH/'
 

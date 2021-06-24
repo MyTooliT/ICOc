@@ -10,12 +10,13 @@ sDirName = os.path.dirname(file_path)
 sys.path.append(sDirName)
 
 # from PCANBasic import *
-from network import Network
-from MyToolItNetworkNumbers import MyToolItNetworkNr
-from MyToolItCommands import *
 from random import randint
 import time
-from MyToolItStu import TestConfig
+
+from mytoolit.old.network import Network
+from mytoolit.old.MyToolItCommands import *
+from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
+from mytoolit.old.MyToolItStu import TestConfig
 
 sVersion = TestConfig["Version"]
 sLogFile = 'TestStu.txt'

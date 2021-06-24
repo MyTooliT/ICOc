@@ -12,14 +12,13 @@ file_path = '../'
 sDirName = os.path.dirname(file_path)
 sys.path.append(sDirName)
 
-import CAN
 import math
-from MyToolItNetworkNumbers import MyToolItNetworkNr
+from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
 import time
-from MyToolItSth import TestConfig, SthModule, SleepTime, SthErrorWord, SthStateWord, fVoltageBattery, fAdcRawDat
-from MyToolItCommands import *
-from SthLimits import SthLimits
-from testSignal import *
+from mytoolit.old.MyToolItSth import TestConfig, SthModule, SleepTime, SthErrorWord, SthStateWord, fVoltageBattery, fAdcRawDat
+from mytoolit.old.MyToolItCommands import *
+from mytoolit.old.SthLimits import SthLimits
+from .testSignal import *
 
 sVersion = TestConfig["Version"]
 sLogLocation = '../../Logs/Hardware/'
