@@ -8,7 +8,7 @@ from threading import Lock, Thread
 from time import time, sleep
 
 from can.interfaces.pcan.basic import (PCAN_BAUD_1M, PCAN_BUSOFF_AUTORESET,
-                                       PCAN_ERROR_OK, PCAN_ERROR_QOVERRUN,
+                                       PCAN_ERROR_OK, PCAN_ERROR_QRCVEMPTY,
                                        PCAN_PARAMETER_ON, PCAN_USBBUS1,
                                        PCANBasic)
 from semantic_version import Version
@@ -1263,7 +1263,7 @@ class Network(object):
                 self.tCanReadWriteMutex.acquire()
                 status, message, timestamp = self.pcan.Read(self.m_PcanHandle)
                 self.tCanReadWriteMutex.release()
-                if status == PCAN_ERROR_OK:
+                while status == PCAN_ERROR_OK:
                     peakCanTimeStamp = (timestamp.millis_overflow * 2**32 +
                                         timestamp.millis +
                                         timestamp.micros / 1000)
@@ -1273,9 +1273,12 @@ class Network(object):
                         "PeakCanTime": peakCanTimeStamp
                     })
                     getLogger('can').debug(f"{Message(message)}")
-                elif status == PCAN_ERROR_QOVERRUN:
-                    self.Logger.Error("RxOverRun")
-                    print("RxOverRun")
+                    self.tCanReadWriteMutex.acquire()
+                    status, message, timestamp = self.pcan.Read(
+                        self.m_PcanHandle)
+                    self.tCanReadWriteMutex.release()
+                if status != PCAN_ERROR_QRCVEMPTY:
+                    self.Logger.Error(f"Unexpected Status: {status}")
                     self.RunReadThread = False
             except KeyboardInterrupt:
                 self.RunReadThread = False
