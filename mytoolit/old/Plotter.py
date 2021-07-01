@@ -182,7 +182,7 @@ def vPlotter(iSocketPort):
         cmd = cDict["Connection"].recv(2**16)
 
         if cmd is None:
-            timeout = cDict["TimeOutMs"] < (int(round(time())) - tLastTick())
+            timeout = cDict["TimeOutMs"] < int(round(time())) - tLastTick()
             if timeout:
                 tLogger.Error("Client time out")
                 cDict["Run"] = False
