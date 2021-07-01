@@ -118,7 +118,6 @@ def sPloterSocketInit(iSocketPort):
     cDict["Socket"].bind((HOST, iSocketPort))
     cDict["Socket"].listen(1)
     cDict["Connection"], cDict["add"] = cDict["Socket"].accept()
-    return cDict["add"]
 
 
 def vPlotterCommand(command, value):
