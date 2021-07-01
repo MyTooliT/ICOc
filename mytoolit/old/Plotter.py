@@ -186,10 +186,8 @@ def vPlotter(iSocketPort):
             if cmd is None:
                 continue
 
-            sCommand = cmd[0]
-            tValue = cmd[1]
-
-            if cmd[0] == "data":
+            sCommand, tValue = cmd
+            if sCommand == "data":
                 block_size = cDict["dataBlockSize"]
                 cDict["xAccPoints"] = cDict["xAccPoints"][block_size:]
                 cDict["yAccPoints"] = cDict["yAccPoints"][block_size:]
