@@ -185,14 +185,12 @@ def vPlotter(iSocketPort):
             cmd = tBinary2Array(cmd)
             sCommand = cmd[0]
             tValue = cmd[1]
-            if None != cmd:
-                if "data" == cmd[0]:
-                    cDict["xAccPoints"] = cDict["xAccPoints"][
-                        cDict["dataBlockSize"]:]
-                    cDict["yAccPoints"] = cDict["yAccPoints"][
-                        cDict["dataBlockSize"]:]
-                    cDict["zAccPoints"] = cDict["zAccPoints"][
-                        cDict["dataBlockSize"]:]
+            if cmd is not None:
+                if cmd[0] == "data":
+                    block_size = cDict["dataBlockSize"]
+                    cDict["xAccPoints"] = cDict["xAccPoints"][block_size:]
+                    cDict["yAccPoints"] = cDict["yAccPoints"][block_size:]
+                    cDict["zAccPoints"] = cDict["zAccPoints"][block_size:]
                     cDict["xAccPoints"] = np.hstack(
                         [cDict["xAccPoints"], tValue["X"]])
                     cDict["yAccPoints"] = np.hstack(
