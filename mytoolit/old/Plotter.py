@@ -180,37 +180,37 @@ def vPlotter(iSocketPort):
     tLogger.Info("Drawing started")
     while cDict["Run"]:
         cmd = cDict["Connection"].recv(2**16)
-        if cmd is not None:
-            tLastTick = int(round(time() * 1000))
-            cmd = tBinary2Array(cmd)
-            if cmd is None:
-                continue
 
-            sCommand, tValue = cmd
-            if sCommand == "data":
-                block_size = cDict["dataBlockSize"]
-                cDict["xAccPoints"] = cDict["xAccPoints"][block_size:]
-                cDict["yAccPoints"] = cDict["yAccPoints"][block_size:]
-                cDict["zAccPoints"] = cDict["zAccPoints"][block_size:]
-                cDict["xAccPoints"] = np.hstack(
-                    [cDict["xAccPoints"], tValue["X"]])
-                cDict["yAccPoints"] = np.hstack(
-                    [cDict["yAccPoints"], tValue["Y"]])
-                cDict["zAccPoints"] = np.hstack(
-                    [cDict["zAccPoints"], tValue["Z"]])
-                [line1, line2,
-                 line3] = vlivePlot(cDict["xAccPoints"], cDict["yAccPoints"],
-                                    cDict["zAccPoints"], line1, line2, line3,
-                                    pauseTime)
-            else:
-                tLogger.Info(f"Execute non-data command: {sCommand}; "
-                             f"value: {tValue}")
-                vPlotterCommand(sCommand, tValue)
-            cDict["Connection"].sendall(tArray2Binary([sCommand, tValue]))
-        else:
-            if cDict["TimeOutMs"] < (int(round(time())) - tLastTick()):
+        if cmd is None:
+            timeout = cDict["TimeOutMs"] < (int(round(time())) - tLastTick())
+            if timeout:
                 tLogger.Error("Client time out")
                 cDict["Run"] = False
+                break
+
+        tLastTick = int(round(time() * 1000))
+        cmd = tBinary2Array(cmd)
+        if cmd is None:
+            continue
+
+        sCommand, tValue = cmd
+        if sCommand == "data":
+            block_size = cDict["dataBlockSize"]
+            cDict["xAccPoints"] = cDict["xAccPoints"][block_size:]
+            cDict["yAccPoints"] = cDict["yAccPoints"][block_size:]
+            cDict["zAccPoints"] = cDict["zAccPoints"][block_size:]
+            cDict["xAccPoints"] = np.hstack([cDict["xAccPoints"], tValue["X"]])
+            cDict["yAccPoints"] = np.hstack([cDict["yAccPoints"], tValue["Y"]])
+            cDict["zAccPoints"] = np.hstack([cDict["zAccPoints"], tValue["Z"]])
+            [line1, line2,
+             line3] = vlivePlot(cDict["xAccPoints"], cDict["yAccPoints"],
+                                cDict["zAccPoints"], line1, line2, line3,
+                                pauseTime)
+        else:
+            tLogger.Info(f"Execute non-data command: {sCommand}; "
+                         f"value: {tValue}")
+            vPlotterCommand(sCommand, tValue)
+        cDict["Connection"].sendall(tArray2Binary([sCommand, tValue]))
 
     tLogger.Info("Closing connection ...")
     cDict["Connection"].close()
