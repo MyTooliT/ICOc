@@ -178,9 +178,9 @@ def vPlotter(iSocketPort):
     pauseTime = (1 / cDict["sampleInterval"]) / 4
     tLastTick = int(round(time()))
     tLogger.Info("Drawing started")
-    while False != cDict["Run"]:
+    while cDict["Run"]:
         cmd = cDict["Connection"].recv(2**16)
-        if None != cmd:
+        if cmd is not None:
             tLastTick = int(round(time() * 1000))
             cmd = tBinary2Array(cmd)
             sCommand = cmd[0]
