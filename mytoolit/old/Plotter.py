@@ -183,10 +183,11 @@ def vPlotter(iSocketPort):
         if cmd is not None:
             tLastTick = int(round(time() * 1000))
             cmd = tBinary2Array(cmd)
-            sCommand = cmd[0]
-            tValue = cmd[1]
             if cmd is None:
                 continue
+
+            sCommand = cmd[0]
+            tValue = cmd[1]
 
             if cmd[0] == "data":
                 block_size = cDict["dataBlockSize"]
