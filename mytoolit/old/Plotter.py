@@ -163,9 +163,9 @@ def vPlotter(iSocketPort):
     tLogger.Info("Socket Initialized")
     while cDict["Run"] and not cDict["Plot"]:
         cmd = cDict["Connection"].recv(2**10)
-        if None != cmd:
+        if cmd is not None:
             cmd = tBinary2Array(cmd)
-            if None != cmd:
+            if cmd is not None:
                 sCommand = cmd[0]
                 tValue = cmd[1]
                 tLogger.Info("Initialization command: " + sCommand +
