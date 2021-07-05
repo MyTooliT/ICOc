@@ -122,29 +122,23 @@ def sPloterSocketInit(iSocketPort):
 
 def vPlotterCommand(command, value):
     global cDict
-    if "Run" == command:
+    if command in {
+            "dataBlockSize",
+            "diagramName",
+            "figSizeX",
+            "figSizeY",
+            "lineNameX",
+            "lineNameY",
+            "lineNameZ",
+            "Plot",
+            "Run",
+            "sampleInterval",
+            "xDim",
+    }:
         cDict[command] = value
-    if "Plot" == command:
-        cDict[command] = value
-    if "diagramName" == command:
-        cDict[command] = value
-        if False != cDict["Plot"]:
-            plt.title('{}'.format(cDict["diagramName"]))
-    if "lineNameX" == command:
-        cDict[command] = value
-    if "lineNameY" == command:
-        cDict[command] = value
-    if "lineNameZ" == command:
-        cDict[command] = value
-    if "figSizeX" == command:
-        cDict[command] = value
-    if "figSizeY" == command:
-        cDict[command] = value
-    if "sampleInterval" == command:
-        cDict[command] = value
-    if "dataBlockSize" == command:
-        cDict[command] = value
-    if "xDim" == command:
+    if command == "diagramName" and cDict["Plot"]:
+        plt.title('{}'.format(cDict["diagramName"]))
+    if command == "xDim":
         dataPoints = 1000 * cDict["dataBlockSize"] * value / cDict[
             "sampleInterval"]
         cDict["timePoints"] = np.linspace(0, value, int(dataPoints))
