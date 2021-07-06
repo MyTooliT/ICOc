@@ -18,6 +18,6 @@
   - Streaming
 - Add instructions for operator to test output
   - Write down MAC address on PCB
-- Add SPU version to PDF report
+- Add STU version to PDF report
 - Fix premature termination (`SIGKILL`)
   - Clean up resources (read thread) automatically
