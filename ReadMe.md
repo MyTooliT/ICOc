@@ -62,7 +62,7 @@ In order to setup a test bench you need at least:
 
 ICOc requires at least Python `3.7`. Later versions should work too. You can download Python [here](https://www.python.org/downloads).
 
-When you install the package downloaded above, please do not forget to enable the checkbox “Add Python to PATH” in the setup window of the installer.
+When you install Python, please do not forget to enable the checkbox “Add Python to PATH” in the setup window of the installer.
 
 #### ICOc
 
