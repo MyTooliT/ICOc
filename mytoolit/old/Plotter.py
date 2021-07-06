@@ -28,7 +28,6 @@ cDict = {
     "Socket": None,
     "Connection": None,
     "TimeOutMs": 1500,
-    "addr": None,
 }
 
 
@@ -117,7 +116,7 @@ def sPloterSocketInit(iSocketPort):
     cDict["Socket"] = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     cDict["Socket"].bind((HOST, iSocketPort))
     cDict["Socket"].listen(1)
-    cDict["Connection"], cDict["add"] = cDict["Socket"].accept()
+    cDict["Connection"], _ = cDict["Socket"].accept()
 
 
 def vPlotterCommand(command, value):
