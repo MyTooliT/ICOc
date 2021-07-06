@@ -97,6 +97,8 @@ and make sure that it reports no test failures.
 3. Check that the command shows no error messages
 4. Open the PDF report (`STH Test.pdf`) in the repository root and make sure that it includes the correct test data
 
+<a name="development:section:stu-test"></a>
+
 #### STU Test
 
 1. Call the command `test-stu` (or `test-stu -k eeprom -k connect` when you want to skip the flash test) for a working STU
@@ -129,7 +131,7 @@ Afterwards make sure there were no (unexpected) errors in the output of the STH 
      1. once with `STH` → `Status` set to `Epoxied`, and
      2. once set to `Bare PCB`
 
-     in the [configuration](../mytoolit/config/config.yaml). To make sure, that the STU flash test also works, please use both STU test commands described in the section “STU Test” of the [test document](Test.md).
+     in the [configuration](../mytoolit/config/config.yaml). To make sure, that the STU flash test also works, please use both STU test commands described in the section [“STU Test”](#development:section:stu-test).
 
      If you follow the steps above you make sure that the **flash tests work** for both STU and STH, and there are **no unintentional consequences of (not) flashing the chip** before you run the other parts of the test suite.
 
