@@ -157,6 +157,8 @@ The text below gives you a more detailed step-by-step guide on how to run the te
 
 ### STU
 
+The following description shows you how to run the STU tests.
+
 1. > **Note:** You can **skip this step, if you do not want to run the flash test**.
 
    Please take a look at step 1 for the STH and replace every occurrence of STU with `STU`. In the end of this step the directory structure should look like something like this:
