@@ -7,6 +7,10 @@
 /STH Test.pdf
 /STU Test.pdf
 
+# Ignore bookdown output
+
+/Bookdown
+
 # Ideally the entries below should be part of your **global** .gitignore file,
 # since you do not want to repeat (DRY principle) these settings for every
 # Python project on your computer.
