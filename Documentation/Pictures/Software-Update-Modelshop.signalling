@@ -4,32 +4,32 @@ text.size.normal=12;
 
 #Definition der Agenten
 CB: Clemens;
-RS: Rene;
-Git: Github;
-MS: Model Shop;
+RS: René;
+Git: GitHub;
+MS: Modelshop;
 
 
-CB<>RS: writing the code;
-RS--RS: creating a commit;
-RS--RS: testing the commit
+CB<>RS: Write code;
+RS--RS: Commit code;
+RS--RS: Test most recent commit
 {
-    RS--RS: code test with "Flake8";
-    RS--RS: code test with "Mypy";
-    RS--RS: automatic test with "Nose";
-    RS--RS: shake test with ICOc;
-    RS--RS: test-STH;
-    RS--RS: test-STU;
+    RS--RS: Check code with Flake8;
+    RS--RS: Type check code with Mypy;
+    RS--RS: Run tests with nose;
+    RS--RS: Execute “shake test” with ICOc;
+    RS--RS: Run STH test;
+    RS--RS: Run STU test;
 };
-RS->Git: merge commit into online main branch;
-Git->CB: pull new master;
-CB--CB: testing the commit II
+RS->Git: Push to remote master branch;
+Git->CB: Pull new commits from master branch;
+CB--CB: Test updated code
 {
-    CB--CB: test-STH: "BARE-PCB";
-    CB--CB: test-STH: "EPOXIED";
-    CB--CB: test-STU;
-    CB--CB: name change test with ICOc;
-    CB--CB: shake test with ICOc;
+    CB--CB: Run STH test: “Bare PCB”;
+    CB--CB: Run STH test: “Epoxied”;
+    CB--CB: Run STU test;
+    CB--CB: Try to change name with ICOc;
+    CB--CB: Execute “shake test” with ICOc;
 };
-CB<->MS: set a date for the deployment of the new commit;
-CB->MS: oversee the deployment of the new commit;
-Git->MS: pull new master;
+CB<->MS: Set date for the deployment of the new code;
+CB->MS: Oversee the deployment of the new code;
+Git->MS: Pull master branch;
