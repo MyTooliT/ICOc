@@ -76,9 +76,49 @@
 
 This tutorial lists the usual steps to test a sensory holder assembly or a sensory tool holder.
 
-Before you start, please make sure that you installed the hardware and software mentioned under the section “Requirements” in the [main readme](../ReadMe.md).
+<a name=tutorials:section:general></a>
+
+### General
+
+To run the production tests for the STH, please execute the following command
+
+```sh
+test-sth
+```
+
+To run the tests for the STU, please use the command:
+
+```
+test-stu
+```
+
+instead.
+
+For a list of available command line options, please use the option `-h` after one of the commands:
+
+```sh
+test-sth -h
+```
+
+#### Specific Tests
+
+To only run a single test you need the specify its name. For example, to run the test `test__firmware_flash` of the STU you can use the following command:
+
+```sh
+test-stu TestSTU.test__firmware_flash
+```
+
+You can also run specific tests using pattern matching. To do that use the command line option `-k`. For example to run the firmware flash and the connection test of the STH test you can use the command:
+
+```sh
+test-sth -k flash -k connection
+```
+
+which executes all tests that contain the text `flash` or `connection`.
 
 ### STH
+
+The text below gives you a more detailed step-by-step guide on how to run the tests of the STH.
 
 1. > **Note:** You can **skip this step, if you do not want to run the flash test**. To skip the flash test, please set `STH` → `STATUS` in the [configuration file][config] to `Epoxied`.
 
@@ -105,7 +145,7 @@ Before you start, please make sure that you installed the hardware and software 
 
    - **Serial Number of Programming Board**: Please make sure, that the variable `STH` → `PROGRAMMING BOARD` → `SERIAL NUMBER` contains the serial number of the programming board connected to the STH. This serial number should be displayed on the bottom right of the LCD on the programming board.
 
-3. Now please open your favorite Terminal application and execute, the STH test using the command `test-sth`. For more information about this command, please take a look at the section “Production Tests” in the [main readme file](../../ReadMe.md).
+3. Now please open your favorite Terminal application and execute, the STH test using the command `test-sth`. For more information about this command, please take a look at the section [“General”](#tutorials:section:general) above.
 
    Please note, that the test will rename the tested STH
 
@@ -131,7 +171,7 @@ Before you start, please make sure that you installed the hardware and software 
 
    You can find the current version of the STU firmware [here](https://github.com/MyTooliT/STU/releases).
 
-2. Please take a look at the section “Production Tests” in the [main readme file](../../ReadMe.md) to find out how to execute the production tests for the STU. If you want to run the connection and EEPROM test (aka **all tests except the flash test**), then please execute the following command:
+2. Please take a look at the section [“General”](#tutorials:section:general) to find out how to execute the production tests for the STU. If you want to run the connection and EEPROM test (aka **all tests except the flash test**), then please execute the following command:
 
    ```sh
    test-stu -k eeprom -k connect
