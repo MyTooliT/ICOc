@@ -518,31 +518,33 @@ class myToolItWatch():
             self.aquireEndTime = self.Can.get_elapsed_time()
 
     def vGraphPacketLossUpdate(self, msgCounter):
-        if 0 < self.iDisplayTime:
-            self.iMsgCounterLast += 1
-            self.iMsgCounterLast %= 256
-            if self.iMsgCounterLast != msgCounter:
-                iLost = msgCounter - self.iMsgCounterLast
-                self.iMsgLoss += iLost
-                self.iMsgsTotal += iLost
-                if 0 > iLost:
-                    self.iMsgLoss += 256
-                    self.iMsgsTotal += 256
-                self.iMsgCounterLast = msgCounter
-            else:
-                self.iMsgsTotal += 1
-            iPacketLossTimeStamp = int(round(time() * 1000))
-            if 1000 <= (iPacketLossTimeStamp - self.iPacketLossTimeStamp):
-                self.iPacketLossTimeStamp = iPacketLossTimeStamp
-                sMsgLoss = "Acceleration(" + str(
-                    format(100 - (100 * self.iMsgLoss / self.iMsgsTotal),
-                           '3.3f')) + "%)"
-                if sMsgLoss != self.sMsgLoss:
-                    self.sMsgLoss = sMsgLoss
-                    self.tSocket.sendall(
-                        tArray2Binary(["diagramName", self.sMsgLoss]))
-                self.iMsgLoss = 0
-                self.iMsgsTotal = 0
+        if self.iDisplayTime <= 0:
+            return
+
+        self.iMsgCounterLast += 1
+        self.iMsgCounterLast %= 256
+        if self.iMsgCounterLast != msgCounter:
+            iLost = msgCounter - self.iMsgCounterLast
+            self.iMsgLoss += iLost
+            self.iMsgsTotal += iLost
+            if 0 > iLost:
+                self.iMsgLoss += 256
+                self.iMsgsTotal += 256
+            self.iMsgCounterLast = msgCounter
+        else:
+            self.iMsgsTotal += 1
+        iPacketLossTimeStamp = int(round(time() * 1000))
+        if 1000 <= (iPacketLossTimeStamp - self.iPacketLossTimeStamp):
+            self.iPacketLossTimeStamp = iPacketLossTimeStamp
+            sMsgLoss = "Acceleration(" + str(
+                format(100 -
+                       (100 * self.iMsgLoss / self.iMsgsTotal), '3.3f')) + "%)"
+            if sMsgLoss != self.sMsgLoss:
+                self.sMsgLoss = sMsgLoss
+                self.tSocket.sendall(
+                    tArray2Binary(["diagramName", self.sMsgLoss]))
+            self.iMsgLoss = 0
+            self.iMsgsTotal = 0
 
     def vVersion(self, major, minor, build):
         if 2 <= major and 1 <= minor:
