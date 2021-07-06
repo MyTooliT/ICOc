@@ -58,13 +58,19 @@ In order to setup a test bench you need at least:
 
 #### Python
 
-##### Interpreter
-
 ICOc requires at least Python `3.7`. Later versions should work too. You can download Python [here](https://www.python.org/downloads).
 
 When you install Python, please do not forget to enable the checkbox “Add Python to PATH” in the setup window of the installer.
 
-#### ICOc
+#### PCAN Driver
+
+To communicate with the STU you need to install the driver for the PCAN adapter. You can find the download link for Windows [here](https://www.peak-system.com/quick/DrvSetup). Please make sure that you include the “PCAN-Basic API” when you install the driver.
+
+#### Simplicity Studio
+
+For the tests that require a firmware flash you need to [install Simplicity Studio](https://www.silabs.com/products/development-tools/software/simplicity-studio). Please also make sure to install the Simplicity Commander tool inside Simplicity Studio.
+
+## Install
 
 Please clone [this repository](https://github.com/MyTooliT/ICOc) to a directory of your choice. You can either use the [command line tool `git`](https://git-scm.com/downloads):
 
@@ -90,17 +96,9 @@ pip install --user -e .
 
 Please note, that in this case you might have to add Python’s user script directory (e.g `%AppData%\Python\Python39\Scripts`) to the `PATH` environment variable.
 
-#### PCAN Driver
-
-To communicate with the STU you need to install the driver for the PCAN adapter. You can find the download link for Windows [here](https://www.peak-system.com/quick/DrvSetup). Please make sure that you include the “PCAN-Basic API” when you install the driver.
-
-#### Simplicity Studio
-
-For the tests that require a firmware flash you need to [install Simplicity Studio](https://www.silabs.com/products/development-tools/software/simplicity-studio). Please also make sure to install the Simplicity Commander tool inside Simplicity Studio.
-
 ## Control and Data Acquirement
 
-#### Start the Program
+### Start the Program
 
 The `ICOc` script can be used to control an STH (or SHA). After you enter the command
 
@@ -127,7 +125,7 @@ x: Xml Data Base
 
 shows that currently one STH was detected. The Bluetooth MAC address of the STH is `08:6b:d7:01:de:81`, while its advertisement name is “Blubb”. The last value after the `@` character shows the current received signal strength indication (RSSI). To exit the program use the key <kbd>q</kbd>.
 
-#### Read Acceleration Data
+### Read Acceleration Data
 
 To read data from an STH (or SHA), start the ICOc script, and connect to an STH. To do that, enter the number in front of an STH entry (e.g. `1` for the first detected STH) and use the return key <kbd>⮐</kbd> to confirm your selection. The text based interface will now show you something like this:
 
