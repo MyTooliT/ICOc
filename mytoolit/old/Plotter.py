@@ -203,7 +203,6 @@ def vPlotter(iSocketPort):
             tLogger.Info(f"Execute non-data command: {sCommand}; "
                          f"value: {tValue}")
             vPlotterCommand(sCommand, tValue)
-        cDict["Connection"].sendall(tArray2Binary([sCommand, tValue]))
 
     tLogger.Info("Closing connection ...")
     cDict["Connection"].close()
