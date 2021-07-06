@@ -1,0 +1,72 @@
+name: Documentation
+
+on:
+  push
+
+jobs:
+
+  bookdown:
+    name: 📘 Build Documentation
+    runs-on: ubuntu-20.04
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: Install R
+        uses: r-lib/actions/setup-r@v1
+
+      - name: Install Pandoc
+        uses: r-lib/actions/setup-pandoc@v1
+
+      - name: Install bookdown
+        run: |
+          Rscript -e "install.packages(c('rmarkdown', 'bookdown'))"
+          Rscript -e "install.packages('tinytex')"
+          Rscript -e "tinytex::install_tinytex()"
+
+      - name: Build documentation
+        run: make
+
+      - name: Upload documentation
+        uses: actions/upload-artifact@v2
+        with:
+          name: ICOc Manual
+          path: Bookdown
+
+      - name: Install WebDav support
+        run: sudo apt-get install davfs2
+
+      - name: Mount Bitrix24 drive
+        env:
+          MAIL: ${{ secrets.BITRIX24_DOKU_BOT_MAIL }}
+          PASSWORD: ${{ secrets.BITRIX24_DOKU_BOT_PASSWORD }}
+        run: |
+          sudo mkdir /media/Bitrix24
+          sudo chown "$(whoami)":"$(id -gn)" /media/Bitrix24
+          printf '%s\n%s\n' "$MAIL" "$PASSWORD" | \
+            sudo mount -t davfs -o noexec,gid="$(id -g)",uid="$(id -u)" \
+            https://mytoolit.bitrix24.de/docs/path /media/Bitrix24
+
+      - name: Copy documentation to Bitrix24 drive
+        run: |
+          DOCUMENTATION_DIRECTORY='/media/Bitrix24/Documentation Repositories'
+          mkdir -p "$DOCUMENTATION_DIRECTORY"
+          mkdir -p "$DOCUMENTATION_DIRECTORY/ICOc"
+          while true
+          do
+            FILES_SYNCED="$(rsync -a --info=none,name --delete \
+                            Bookdown \
+                            "$DOCUMENTATION_DIRECTORY/ICOc")"
+            if [ $? -ne 0 ] || [ "$FILES_SYNCED" == '' ]; then break; fi
+            printf "Synced Files:\n\n%s\n\n" "$FILES_SYNCED"
+          done
+
+      - name: Unmount Bitrix24 drive
+        run: |
+          fusermount -u /media/Bitrix24
+          sudo rmdir /media/Bitrix24
+
