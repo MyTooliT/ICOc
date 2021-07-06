@@ -1,3 +1,8 @@
+---
+title: ICOc Documentation
+author: MyTooliT
+---
+
 # ICOc
 
 The ICOc software is a collection of tools and scripts for the [ICOtronic system](https://www.mytoolit.com/ICOtronic/). Currently the main purpose of the software is
