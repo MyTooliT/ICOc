@@ -59,7 +59,7 @@ jobs:
           while true
           do
             FILES_SYNCED="$(rsync -a --info=none,name --delete \
-                            Bookdown \
+                            Bookdown/ \
                             "$DOCUMENTATION_DIRECTORY/ICOc")"
             if [ $? -ne 0 ] || [ "$FILES_SYNCED" == '' ]; then break; fi
             printf "Synced Files:\n\n%s\n\n" "$FILES_SYNCED"
