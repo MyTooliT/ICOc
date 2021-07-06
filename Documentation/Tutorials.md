@@ -94,7 +94,7 @@ test-stu
 
 instead.
 
-For a list of available command line options, please use the option `-h` after one of the commands:
+For a list of available command line options, please use the option `-h` after one of the commands e.g.:
 
 ```sh
 test-sth -h
