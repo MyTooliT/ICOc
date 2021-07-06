@@ -1,4 +1,5 @@
 bookdown::gitbook:
+  fig_caption: false
   split_by: none
   config:
       download: ["pdf", "epub"]
