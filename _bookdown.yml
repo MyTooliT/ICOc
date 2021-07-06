@@ -5,4 +5,5 @@ output_dir: Bookdown
 rmd_files:
   - ReadMe.md
   - Documentation/Tutorials.md
+  - Documentation/Scripts.md
   - Documentation/Development.md
