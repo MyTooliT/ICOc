@@ -493,24 +493,26 @@ class myToolItWatch():
             self.vGraphSend(["Plot", True])
 
     def vGraphPointNext(self, x, y, z):
-        if 0 < self.iDisplayTime:
-            if False != self.guiProcess.is_alive():
-                timeStampNow = int(round(time() * 1000))
-                if self.iGraphSampleInterval / self.iGraphBlockSize <= (
-                        timeStampNow - self.tDataPointTimeStamp):
-                    self.tDataPointTimeStamp = timeStampNow
-                    self.GuiPackage["X"].append(x)
-                    self.GuiPackage["Y"].append(y)
-                    self.GuiPackage["Z"].append(z)
-                    if self.iGraphBlockSize <= len(self.GuiPackage["X"]):
-                        try:
-                            self.tSocket.sendall(
-                                tArray2Binary(["data", self.GuiPackage]))
-                        except:
-                            pass
-                        self.GuiPackage = {"X": [], "Y": [], "Z": []}
-            else:
-                self.aquireEndTime = self.Can.get_elapsed_time()
+        if self.iDisplayTime <= 0:
+            return
+
+        if False != self.guiProcess.is_alive():
+            timeStampNow = int(round(time() * 1000))
+            if self.iGraphSampleInterval / self.iGraphBlockSize <= (
+                    timeStampNow - self.tDataPointTimeStamp):
+                self.tDataPointTimeStamp = timeStampNow
+                self.GuiPackage["X"].append(x)
+                self.GuiPackage["Y"].append(y)
+                self.GuiPackage["Z"].append(z)
+                if self.iGraphBlockSize <= len(self.GuiPackage["X"]):
+                    try:
+                        self.tSocket.sendall(
+                            tArray2Binary(["data", self.GuiPackage]))
+                    except:
+                        pass
+                    self.GuiPackage = {"X": [], "Y": [], "Z": []}
+        else:
+            self.aquireEndTime = self.Can.get_elapsed_time()
 
     def vGraphPacketLossUpdate(self, msgCounter):
         if 0 < self.iDisplayTime:
