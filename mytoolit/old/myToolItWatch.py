@@ -458,7 +458,7 @@ class myToolItWatch():
             self.tSocket.sendall(data)
             sleep(0.1)
             ack = self.tSocket.recv(2**10)
-            if ack != None and ack == data:
+            if ack is not None and ack == data:
                 bSend = False
 
     def guiProcessRestart(self):
