@@ -432,7 +432,7 @@ class myToolItWatch():
         """
         sampleInterval in ms
         """
-        self.tDataPointTimeStamp = 0
+        self.tDataPointTimeStamp = 0  # Time stamp of last data point
         self.iPacketLossTimeStamp = 0
         self.iGraphBlockSize = blockSize
         self.iGraphSampleInterval = sampleInterval
@@ -458,6 +458,8 @@ class myToolItWatch():
             self.tSocket.sendall(data)
             sleep(0.1)
             ack = self.tSocket.recv(2**10)
+            self.Can.Logger.Info(
+                f"{datetime.now().time()}: Received acknowledgment: {ack}")
             if ack is not None and ack == data:
                 bSend = False
 
@@ -498,8 +500,9 @@ class myToolItWatch():
 
         if self.guiProcess.is_alive():
             timeStampNow = int(round(time() * 1000))
-            if self.iGraphSampleInterval / self.iGraphBlockSize <= (
-                    timeStampNow - self.tDataPointTimeStamp):
+            elapsed_time_ms = timeStampNow - self.tDataPointTimeStamp
+            if (self.iGraphSampleInterval / self.iGraphBlockSize <=
+                    elapsed_time_ms):
                 self.tDataPointTimeStamp = timeStampNow
                 self.GuiPackage["X"].append(x)
                 self.GuiPackage["Y"].append(y)
