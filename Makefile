@@ -14,18 +14,20 @@ HTML_FILE := $(OUTPUT_DIRECTORY)/$(OUTPUT_NAME).html
 
 all: init $(EPUB_FILE) $(HTML_FILE) $(PDF_FILE) cleanup
 
-# Copy pictures to repository root
+# Copy pictures to repository root and create diagrams
 init:
 	Rscript -e "dir.create('Pictures')"
 	Rscript -e "file.copy('Documentation/Pictures', '.', recursive=T)"
+	msc-gen -T pdf Pictures/Software-Update-Modelshop.signalling
+	msc-gen -T svg Pictures/Software-Update-Modelshop.signalling
 
 # Remove pictures from repository root
 cleanup:
 	Rscript -e "unlink('Pictures', recursive = TRUE)"
 
-epub: $(EPUB_FILE)
-html: $(HTML_FILE)
-pdf: $(PDF_FILE)
+epub: init $(EPUB_FILE) cleanup
+html: init $(HTML_FILE) cleanup
+pdf: init $(PDF_FILE) cleanup
 
 # Generate EPUB document
 $(EPUB_FILE):
