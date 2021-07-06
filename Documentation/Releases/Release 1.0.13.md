@@ -1,5 +1,11 @@
 # Version 1.0.13
 
+## ICOc
+
+- The data acquisition should now [work more reliable](https://github.com/MyTooliT/ICOc/issues/18), since we fixed
+  - an [CAN message overflow bug](https://github.com/MyTooliT/ICOc/commit/108b7a64baae980cc24cbda41fd4ca9a979afd80), and
+  - a [bug that resulted in a “blocked” acceleration data window](https://github.com/MyTooliT/ICOc/commit/12fd083623e9c0b613d2db8e2a54e9b9cac06a28).
+
 ## Production Test
 
 - The
