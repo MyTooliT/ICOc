@@ -496,7 +496,7 @@ class myToolItWatch():
         if self.iDisplayTime <= 0:
             return
 
-        if False != self.guiProcess.is_alive():
+        if self.guiProcess.is_alive():
             timeStampNow = int(round(time() * 1000))
             if self.iGraphSampleInterval / self.iGraphBlockSize <= (
                     timeStampNow - self.tDataPointTimeStamp):
