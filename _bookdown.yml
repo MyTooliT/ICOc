@@ -4,8 +4,7 @@ delete_merged_file: true
 output_dir: Bookdown
 rmd_files:
   - ReadMe.md
-  - Documentation/Tutorials/Renaming.md
-  - Documentation/Tutorials/Testing.md
+  - Documentation/Tutorials.md
   - Documentation/Guidelines/Style.md
   - Documentation/Guidelines/Test.md
   - Documentation/Guidelines/Release.md
