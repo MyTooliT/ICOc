@@ -28,6 +28,12 @@ jobs:
           Rscript -e "install.packages('tinytex')"
           Rscript -e "tinytex::install_tinytex()"
 
+      - name: Install msc-gen
+        run: |
+          sudo add-apt-repository ppa:homar/ppa
+          sudo apt-get update
+          sudo apt-get install msc-generator
+
       - name: Build documentation
         run: make
 
