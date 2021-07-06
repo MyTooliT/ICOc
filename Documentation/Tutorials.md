@@ -105,7 +105,7 @@ Before you start, please make sure that you installed the hardware and software 
 
    - **Serial Number of Programming Board**: Please make sure, that the variable `STH` → `PROGRAMMING BOARD` → `SERIAL NUMBER` contains the serial number of the programming board connected to the STH. This serial number should be displayed on the bottom right of the LCD on the programming board.
 
-3. Now please open your favorite Terminal application and execute, the STH test using the command `test-th`. For more information about this command, please take a look at the section “Production Tests” in the [main readme file](../../ReadMe.md).
+3. Now please open your favorite Terminal application and execute, the STH test using the command `test-sth`. For more information about this command, please take a look at the section “Production Tests” in the [main readme file](../../ReadMe.md).
 
    Please note, that the test will rename the tested STH
 
