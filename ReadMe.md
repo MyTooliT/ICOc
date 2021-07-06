@@ -25,9 +25,17 @@ For more information about other required software components, please read the s
 
 In order to setup a test bench you need at least:
 
-- a [PCAN adapter](https://www.peak-system.com) including:
+- a [PCAN adapter](https://www.peak-system.com):
+
+  ![PCAN Adapter](Documentation/Pictures/PCAN.jpg)
+
+  including:
+
   - power injector, and
-  - power supply unit (for the power injector),
+  - power supply unit (for the power injector):
+
+    ![Power Injector](Documentation/Pictures/Power-Injector.jpg)
+
 - a [Stationary Transceiver Unit](https://www.mytoolit.com/ICOtronic/)
 
    <img src="https://cdn.bitrix24.de/b5488381/landing/5fa/5fa2ce04fd1326e07bf39866e44f4e61/IMG_6338_2x.jpg" alt="STU" width="400">
