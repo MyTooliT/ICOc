@@ -1739,7 +1739,7 @@ class TestSth(unittest.TestCase):
 
     def test0030CalibrationFactorsKSingle(self):
         """
-        Write each calibration factor k entry
+        Write each calibration factor k entry (⏱ 10 seconds)
         """
         for _keyK, valueK in CalibrationFactor.items():
             b0 = 2
