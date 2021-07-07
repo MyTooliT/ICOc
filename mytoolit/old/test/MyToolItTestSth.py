@@ -975,8 +975,9 @@ class TestSth(unittest.TestCase):
 
     def test0005Ack(self):
         """
-        Test Acknowledgement from STH. Write message and check identifier to
-        be ack (No bError)
+        Test acknowledgement from STH (~ 10 seconds)
+
+        Write message and check identifier to be acknowledgement (not error)
         """
         cmd = self.Can.CanCmd(MyToolItBlock["System"],
                               MyToolItSystem["Get/Set State"], 1, 0)
