@@ -1658,7 +1658,7 @@ class TestSth(unittest.TestCase):
 
     def test0020HmiLedGeckoModule(self):
         """
-        Test HMI
+        Test HMI (~ 20 seconds)
         """
         self.Can.Logger.Info("Get LED state")
         cmd = self.Can.CanCmd(MyToolItBlock["Configuration"],
@@ -1796,7 +1796,7 @@ class TestSth(unittest.TestCase):
 
     def test0031CalibrationFactorsDSingle(self):
         """
-        Write each calibration factor D entry
+        Write each calibration factor D entry (~ 10 seconds)
         """
         for _keyD, valueD in CalibrationFactor.items():
             b0 = 2
@@ -1853,7 +1853,7 @@ class TestSth(unittest.TestCase):
 
     def test0032CalibrationFactorsKDWriteThenRead(self):
         """
-        Write all calibration factors and read them afterwards
+        Write all calibration factors and read them afterwards (~ 15 seconds)
         """
         b0 = 2 - 1
         b1 = 8 - 1
@@ -1944,7 +1944,7 @@ class TestSth(unittest.TestCase):
 
     def test0103BlueToothName(self):
         """
-        Write name and get name (bluetooth command)
+        Write name and get name (bluetooth command) (~ 10 seconds)
         """
         self.Can.Logger.Info("Bluetooth name command")
         self.Can.Logger.Info("Write Walther0")
@@ -1963,7 +1963,7 @@ class TestSth(unittest.TestCase):
 
     def test0104BlueToothAddress(self):
         """
-        Bluetooth Address
+        Bluetooth Address (~ 10 seconds)
         """
         self.Can.Logger.Info("Get Bluetooth Address")
         iAddress = int(self.Can.BlueToothAddress(MyToolItNetworkNr["STH1"]))
