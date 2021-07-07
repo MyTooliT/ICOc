@@ -1024,7 +1024,7 @@ class TestSth(unittest.TestCase):
 
     def test0007SthTemperature(self):
         """
-        Test Temperature to be in range
+        Test Temperature to be in range (~ 10 seconds)
         """
         temp = self._SthAdcTemp()
         self.assertGreaterEqual(self.tSthLimits.iTemperatureInternalMax, temp)
@@ -1032,7 +1032,7 @@ class TestSth(unittest.TestCase):
 
     def test0008VersionNumber(self):
         """
-        Checks correct version number
+        Checks correct version number (~ 10 seconds)
         """
         iIndex = self.Can.cmdSend(MyToolItNetworkNr["STH1"],
                                   MyToolItBlock["Product Data"],
@@ -1045,8 +1045,9 @@ class TestSth(unittest.TestCase):
 
     def test0011EnergySaveMode1(self):
         """
-        Test Energy Mode 1 - If you like to evaluate power consumption:
-        Please do it manually
+        Test Energy Mode 1 (~ 25 seconds)
+
+        If you like to evaluate power consumption: Please do it manually
         """
         self.Can.Logger.Info("Read out parameters from EEPORM")
         [timeReset, timeAdvertisement] = self.Can.BlueToothEnergyMode([
@@ -1129,8 +1130,9 @@ class TestSth(unittest.TestCase):
 
     def test0012EnergySaveMode2(self):
         """
-        Test Energy Mode 2 - If you like to evaluate power consumption:
-        Please do it manually
+        Test Energy Mode 2 (~ 35 seconds)
+
+        If you like to evaluate power consumption: Please do it manually
         """
         self.Can.Logger.Info("Set Energy Mode1 parameters")
         self.Can.Logger.Info("Write EM1 parameters to EEPORM")
