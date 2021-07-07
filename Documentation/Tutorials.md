@@ -1,5 +1,7 @@
 # Tutorials
 
+<a name="tutorials:section:sth-renaming"></a>
+
 ## STH Renaming
 
 1. Please start ICOc:
@@ -178,3 +180,17 @@ The following description shows you how to run the STU tests.
    ```sh
    test-stu -k eeprom -k connect
    ```
+
+## Verification Tests
+
+### Preparation
+
+The tests assume that the STH is called `Tanja`. Please rename the STH accordingly. To do that you can use the steps described [here](#tutorials:section:sth-renaming).
+
+### Execution
+
+To run the verification tests, please enter the following command in the **root of the repository**:
+
+```sh
+py mytoolit/old/test/MyToolItTestSth.py
+```
