@@ -1,5 +1,9 @@
 # Version 1.0.13
 
+## Documentation
+
+- The repo now contains a [bookdown](https://bookdown.org) project for the documentation. The latest version of the bookdown output (HTML, PDF, and EPUB) is available at [GitHub](https://github.com/MyTooliT/ICOc/actions/workflows/documentation.yaml) (just click on the latest “run” and then on the link “ICOc Manual”) or in [the Bitrix24 drive](https://mytoolit.bitrix24.de/docs/path/Documentation%20Repositories/ICOc/).
+
 ## ICOc
 
 - The data acquisition should now [work more reliable](https://github.com/MyTooliT/ICOc/issues/18), since we fixed
