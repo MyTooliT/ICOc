@@ -1225,7 +1225,6 @@ class TestSth(unittest.TestCase):
             "Reset via test0011EnergySaveMode1 EM1 parameters")
         self.test0011EnergySaveMode1()
 
-    @skip("Untested")
     def test0013PowerConsumptionNormal(self):
         """
         Power Consumption - Energy Save Mode Normal (Advertisement
@@ -1237,7 +1236,7 @@ class TestSth(unittest.TestCase):
         sSystemCall = self.sSilabsCommander + " aem measure --windowlength 60000 "
         sSystemCall += "--serialno " + self.sAdapterSerialNo + " "
         sSystemCall += "-d " + self.sBoardType + " "
-        sSystemCall += ">> " + self._testMethodName + "Aem.txt"
+        sSystemCall += "> " + self._testMethodName + "Aem.txt"
         if os.name == 'nt':
             sSystemCall = sSystemCall.replace("/", "\\")
             os.system(sSystemCall)
