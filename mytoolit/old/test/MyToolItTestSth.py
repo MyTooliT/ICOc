@@ -975,7 +975,7 @@ class TestSth(unittest.TestCase):
 
     def test0005Ack(self):
         """
-        Test acknowledgement from STH (~ 10 seconds)
+        Test acknowledgement from STH (⏱ 10 seconds)
 
         Write message and check identifier to be acknowledgement (not error)
         """
@@ -1009,7 +1009,7 @@ class TestSth(unittest.TestCase):
 
     def test0006SthReset(self):
         """
-        Tests reset (~ 25 seconds)
+        Tests reset (⏱ 25 seconds)
         """
         self._resetSth()
         self.Can.Logger.Info("Try to get Active State (0x80")
@@ -1024,7 +1024,7 @@ class TestSth(unittest.TestCase):
 
     def test0007SthTemperature(self):
         """
-        Test Temperature to be in range (~ 10 seconds)
+        Test Temperature to be in range (⏱ 10 seconds)
         """
         temp = self._SthAdcTemp()
         self.assertGreaterEqual(self.tSthLimits.iTemperatureInternalMax, temp)
@@ -1032,7 +1032,7 @@ class TestSth(unittest.TestCase):
 
     def test0008VersionNumber(self):
         """
-        Checks correct version number (~ 10 seconds)
+        Checks correct version number (⏱ 10 seconds)
         """
         iIndex = self.Can.cmdSend(MyToolItNetworkNr["STH1"],
                                   MyToolItBlock["Product Data"],
@@ -1045,7 +1045,7 @@ class TestSth(unittest.TestCase):
 
     def test0011EnergySaveMode1(self):
         """
-        Test Energy Mode 1 (~ 25 seconds)
+        Test Energy Mode 1 (⏱ 25 seconds)
 
         If you like to evaluate power consumption: Please do it manually
         """
@@ -1130,7 +1130,7 @@ class TestSth(unittest.TestCase):
 
     def test0012EnergySaveMode2(self):
         """
-        Test Energy Mode 2 (~ 35 seconds)
+        Test Energy Mode 2 (⏱ 35 seconds)
 
         If you like to evaluate power consumption: Please do it manually
         """
@@ -1658,7 +1658,7 @@ class TestSth(unittest.TestCase):
 
     def test0020HmiLedGeckoModule(self):
         """
-        Test HMI (~ 20 seconds)
+        Test HMI (⏱ 20 seconds)
         """
         self.Can.Logger.Info("Get LED state")
         cmd = self.Can.CanCmd(MyToolItBlock["Configuration"],
@@ -1796,7 +1796,7 @@ class TestSth(unittest.TestCase):
 
     def test0031CalibrationFactorsDSingle(self):
         """
-        Write each calibration factor D entry (~ 10 seconds)
+        Write each calibration factor D entry (⏱ 10 seconds)
         """
         for _keyD, valueD in CalibrationFactor.items():
             b0 = 2
@@ -1853,7 +1853,7 @@ class TestSth(unittest.TestCase):
 
     def test0032CalibrationFactorsKDWriteThenRead(self):
         """
-        Write all calibration factors and read them afterwards (~ 15 seconds)
+        Write all calibration factors and read them afterwards (⏱ 15 seconds)
         """
         b0 = 2 - 1
         b1 = 8 - 1
@@ -1944,7 +1944,7 @@ class TestSth(unittest.TestCase):
 
     def test0103BlueToothName(self):
         """
-        Write name and get name (bluetooth command) (~ 10 seconds)
+        Write name and get name (bluetooth command) (⏱ 10 seconds)
         """
         self.Can.Logger.Info("Bluetooth name command")
         self.Can.Logger.Info("Write Walther0")
@@ -1963,7 +1963,7 @@ class TestSth(unittest.TestCase):
 
     def test0104BlueToothAddress(self):
         """
-        Bluetooth Address (~ 10 seconds)
+        Bluetooth Address (⏱ 10 seconds)
         """
         self.Can.Logger.Info("Get Bluetooth Address")
         iAddress = int(self.Can.BlueToothAddress(MyToolItNetworkNr["STH1"]))
@@ -1972,7 +1972,7 @@ class TestSth(unittest.TestCase):
 
     def test0105BlueToothConnectStandard(self):
         """
-        Check Bluetooth connectivity (~ 7 minutes)
+        Check Bluetooth connectivity (⏱ 7 minutes)
         for standard settings with minimum sleep time
         """
         #
@@ -2036,7 +2036,7 @@ class TestSth(unittest.TestCase):
 
     def test0106BlueToothConnectMax(self):
         """
-        Check Bluetooth connectivity for maximum values (~ 5 minutes)
+        Check Bluetooth connectivity for maximum values (⏱ 5 minutes)
         """
         self.Can.BlueToothEnergyModeNr(SleepTime["Min"],
                                        SleepTime["AdvertisementMax"], 1)
@@ -2071,7 +2071,7 @@ class TestSth(unittest.TestCase):
 
     def test0107BlueToothConnectMin(self):
         """
-        Check Bluetooth connectivity for Minimum values (~ 50 seconds)
+        Check Bluetooth connectivity for Minimum values (⏱ 50 seconds)
         (Standard Setting at start, not configurable, 50ms atm)
         """
         self.Can.BlueToothEnergyModeNr(SleepTime["Reset1"],
