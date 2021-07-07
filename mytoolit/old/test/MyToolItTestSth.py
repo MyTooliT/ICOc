@@ -1009,7 +1009,7 @@ class TestSth(unittest.TestCase):
 
     def test0006SthReset(self):
         """
-        Tests if STH gets properly reseted
+        Tests reset (~ 25 seconds)
         """
         self._resetSth()
         self.Can.Logger.Info("Try to get Active State (0x80")
