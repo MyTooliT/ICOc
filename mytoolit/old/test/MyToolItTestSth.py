@@ -1227,7 +1227,7 @@ class TestSth(unittest.TestCase):
 
     def test0013PowerConsumptionNormal(self):
         """
-        Power Consumption - Energy Save Mode Normal (Advertisement
+        Power Consumption - Energy Save Mode Normal (⏱ 75 seconds)
         """
         self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
         time.sleep(2)
