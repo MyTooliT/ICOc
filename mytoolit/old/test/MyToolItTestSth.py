@@ -12,7 +12,6 @@ sDirName = os.path.dirname(file_path)
 sys.path.append(sDirName)
 
 import math
-from .testSignal import testRampDim
 import time
 
 from pathlib import Path
@@ -23,6 +22,7 @@ from unittest import skip
 repo_root = str(Path(__file__).parent.parent.parent)
 path.append(repo_root)
 
+from mytoolit.old.test.testSignal import testRampDim
 from mytoolit.config import settings
 from mytoolit.old.network import Network
 from mytoolit.old.MyToolItCommands import (
