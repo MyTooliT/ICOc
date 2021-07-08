@@ -7345,6 +7345,10 @@ class TestSth(unittest.TestCase):
                 self.assertEqual("Error", msgAck)
 
 
-if __name__ == "__main__":
+def main():
     add_commander_path_to_environment()
-    unittest.main()
+    unittest.main(module=__name__)
+
+
+if __name__ == "__main__":
+    main()

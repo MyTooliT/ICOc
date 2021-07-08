@@ -192,5 +192,7 @@ The tests assume that the STH is called `Tanja`. Please rename the STH according
 To run the verification tests, please enter the following command in the **root of the repository**:
 
 ```sh
-py mytoolit/old/test/MyToolItTestSth.py
+test-sth-verification
 ```
+
+While you should be able to start the command in another directory, it will currently **write log files in the current working directory**. This is probably not something that you want.
