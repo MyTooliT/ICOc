@@ -8,6 +8,7 @@ rmd_files:
   - Documentation/Scripts.md
   - Documentation/Development.md
   - Documentation/Modelshop.md
+  - Documentation/Releases/Releases.md
   - Documentation/Releases/1.0.13.md
   - Documentation/Releases/1.0.12.md
   - Documentation/Releases/1.0.11.md
