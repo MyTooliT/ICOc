@@ -135,14 +135,10 @@ Afterwards make sure there were no (unexpected) errors in the output of the STH 
 
      If you follow the steps above you make sure that the **flash tests work** for both STU and STH, and there are **no unintentional consequences of (not) flashing the chip** before you run the other parts of the test suite.
 
-2. Change the [`__version__`](../mytoolit/__init__.py) number inside the [`mytoolit`](../mytoolit) package
-3. Push the commit that changes the version number
-4. Create a new release [here](https://github.com/MyTooliT/ICOc/releases/new)
+2. Create a new release [here](https://github.com/MyTooliT/ICOc/releases/new)
 
-   1. Copy the [release notes](Releases) for the latest version
-   2. Paste them into the main text
-   3. Decrease the header level of each section by two
-   4. Replace links with a permanent version:
+   1. Open the [release notes](Releases) for the latest version
+   2. Replace links with a permanent version:
 
       For example instead of
 
@@ -151,8 +147,15 @@ Afterwards make sure there were no (unexpected) errors in the output of the STH 
 
       where `REVISION` is the latest version of the master branch (e.g. `8568893f` for version `1.0.5`)
 
-   5. Check that all links work correctly
+   3. Commit your changes
+   4. Copy the release notes
+   5. Paste them into the main text of the release web page
+   6. Decrease the header level of each section by two
+   7. Remove the very first header
+   8. Check that all links work correctly
 
+3. Change the [`__version__`](../mytoolit/__init__.py) number inside the [`mytoolit`](../mytoolit) package
+4. Push the latest two commits
 5. Insert the version number (e.g. `1.0.5`) into the tag field
 6. For the release title use “Version VERSION”, where `VERSION` specifies the version number (e.g. “Version 1.0.5”)
 7. Click on “Publish Release”
