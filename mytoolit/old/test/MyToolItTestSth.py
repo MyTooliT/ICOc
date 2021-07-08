@@ -1,15 +1,7 @@
 import unittest
-import sys
 import os
 import random
 from datetime import date
-
-# Required to add peakcan
-sDirName = os.path.dirname('')
-sys.path.append(sDirName)
-file_path = '../'
-sDirName = os.path.dirname(file_path)
-sys.path.append(sDirName)
 
 import math
 import time
