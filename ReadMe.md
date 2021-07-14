@@ -115,13 +115,21 @@ Before you use the software you need to install it (in developer mode). To do th
 pip install -e .
 ```
 
-Afterwards you can use the various [scripts](Documentation/Scripts.md) included in the package. If you do not have sufficient rights to install the package you can also try to install the package in the user folder:
+Afterwards you can use the various [scripts](Documentation/Scripts.md) included in the package.
+
+### Troubleshooting
+
+**If you do not have sufficient rights** to install the package you can also try to install the package in the user folder:
 
 ```sh
 pip install --user -e .
 ```
 
-Please note, that in this case you might have to add Python’s user script directory (e.g `%AppData%\Python\Python39\Scripts`) to the `PATH` environment variable.
+If `pip install` prints **warnings about the path** that look like this:
+
+> The script … is installed in `'…\Scripts'` which is not on PATH.
+
+then please add the text between the single quotes (without the quotes) to your [PATH environment variable](https://helpdeskgeek.com/windows-10/add-windows-path-environment-variable/). Here `…\Scripts` is just a placeholder. Please use the value that `pip install` prints on your machine. If you used the [installer from the Python website](https://www.python.org/downloads) (and checked “Add Python to PATH”) or you used [winget](https://docs.microsoft.com/en-us/windows/package-manager/winget/) to install Python, then the warning above should not appear. On the other hand, the **Python version from the [Microsoft Store](https://www.microsoft.com/en-us/store/apps/windows) might not add the `Scripts` directory** to your path.
 
 ## Control and Data Acquirement
 
