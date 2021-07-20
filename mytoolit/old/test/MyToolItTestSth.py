@@ -1467,10 +1467,9 @@ class TestSth(unittest.TestCase):
         self.Can.BlueToothEnergyModeNr(SleepTime["Reset2"],
                                        SleepTime["AdvertisementReset2"], 2)
 
-    @skip("Untested")
     def test0017PowerConsumptionConnected(self):
         """
-        Power Consumption - Connected
+        Power Consumption - Connected (⏱ 85 seconds)
         """
         try:
             os.remove("Aem4.txt")
@@ -1484,7 +1483,7 @@ class TestSth(unittest.TestCase):
         sSystemCall = self.sSilabsCommander + " aem measure --windowlength 60000 "
         sSystemCall += "--serialno " + self.sAdapterSerialNo + " "
         sSystemCall += "-d " + self.sBoardType + " "
-        sSystemCall += ">> " + "Aem4.txt"
+        sSystemCall += "> " + "Aem4.txt"
         if os.name == 'nt':
             sSystemCall = sSystemCall.replace("/", "\\")
             os.system(sSystemCall)
