@@ -2172,10 +2172,9 @@ class TestSth(unittest.TestCase):
         self.Can.BlueToothEnergyModeNr(SleepTime["Reset2"],
                                        SleepTime["AdvertisementReset2"], 2)
 
-    @skip("Untested")
     def test0109BlueToothRssi(self):
         """
-        Bluetooth Address
+        Bluetooth Address (⏱ 7 seconds)
         """
         self.Can.Logger.Info("Get Bluetooth RSSI")
         iRssi = self.Can.BlueToothRssi(MyToolItNetworkNr["STH1"])
