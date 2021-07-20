@@ -2710,10 +2710,9 @@ class TestSth(unittest.TestCase):
                                    SigIndAccZSkewness, SigIndAccZSNR)
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Acc", "")
 
-    @skip("Untested")
     def test0333SignalIndicatorsBattery(self):
         """
-        Test Signal-to-Noise Ration - Z
+        Test Signal indicator battery (⏱ 25 seconds)
         """
         self.TurnOffLed()
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"],
