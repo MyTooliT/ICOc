@@ -2259,10 +2259,9 @@ class TestSth(unittest.TestCase):
                                 self.tSthLimits.iAdcAccYTolerance, 0, 0,
                                 self.tSthLimits.fAcceleration)
 
-    @skip("Untested")
     def test0304GetSingleAccZ(self):
         """
-        Test single battery Acceleration Z-Axis measurement
+        Test single Acceleration Z-Axis measurement (⏱ 9 seconds)
         """
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
                                             MyToolItStreaming["Acceleration"],
