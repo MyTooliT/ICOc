@@ -2620,10 +2620,9 @@ class TestSth(unittest.TestCase):
             self.tSthLimits.iAdcAccYTolerance, self.tSthLimits.iAdcAccZMiddle,
             self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
 
-    @skip("Untested")
     def test0330SignalIndicatorsAccX(self):
         """
-        Test Signal-to-Noise Ration - x
+        Test Signal-to-Noise Ratio - x (⏱ 25 seconds)
         """
         self.TurnOffLed()
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"],
@@ -2651,10 +2650,9 @@ class TestSth(unittest.TestCase):
                                    SigIndAccXSkewness, SigIndAccXSNR)
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Acc", "")
 
-    @skip("Untested")
     def test0331SignalIndicatorsAccY(self):
         """
-        Test Signal-to-Noise Ration - Y
+        Test Signal-to-Noise Ratio - Y (⏱ 25 seconds)
         """
         self.TurnOffLed()
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"],
@@ -2682,10 +2680,9 @@ class TestSth(unittest.TestCase):
                                    SigIndAccYSkewness, SigIndAccYSNR)
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Acc", "")
 
-    @skip("Untested")
     def test0332SignalIndicatorsAccZ(self):
         """
-        Test Signal-to-Noise Ration - Z
+        Test Signal-to-Noise Ratio - Z (⏱ 25 seconds)
         """
         self.TurnOffLed()
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"],
