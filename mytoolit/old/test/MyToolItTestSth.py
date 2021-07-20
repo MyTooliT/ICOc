@@ -1582,10 +1582,9 @@ class TestSth(unittest.TestCase):
                              TestConfig["EnergyMeasuringCurrentMax"])
         self.assertEqual(sCurrentUnit, "mA")
 
-    @skip("Untested")
     def test0019PowerConsumptionMeasuringLedOff(self):
         """
-        Power Consumption - Measuring at reset conditions - LED turned off
+        Power Consumption - Reset conditions, LED turned off (⏱ 85 seconds)
         """
         try:
             os.remove("Aem6.txt")
@@ -1604,7 +1603,7 @@ class TestSth(unittest.TestCase):
         sSystemCall = self.sSilabsCommander + " aem measure --windowlength 60000 "
         sSystemCall += "--serialno " + self.sAdapterSerialNo + " "
         sSystemCall += "-d " + self.sBoardType + " "
-        sSystemCall += ">> " + "Aem6.txt"
+        sSystemCall += "> " + "Aem6.txt"
         if os.name == 'nt':
             sSystemCall = sSystemCall.replace("/", "\\")
             os.system(sSystemCall)
