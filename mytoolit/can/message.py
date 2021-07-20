@@ -264,6 +264,17 @@ class Message:
                                               byteorder='little',
                                               signed=True)
                         data_explanation += f": {rssi}"
+                elif subcommand == 14:
+                    data_explanation = "Write energy mode reduced"
+                    if len(self.data) >= 8:
+                        time_normal_to_reduced_ms = int.from_bytes(
+                            self.data[2:6], byteorder='little')
+                        advertisement_time = int.from_bytes(self.data[6:],
+                                                            byteorder='little')
+                        data_explanation += ": " + ",".join([
+                            f"⟳ {time_normal_to_reduced_ms} ms",
+                            f"📢 {advertisement_time} ms"
+                        ])
                 elif subcommand == 17:
                     data_explanation = (
                         f"{verb} MAC address of device "
