@@ -2087,7 +2087,7 @@ class TestSth(unittest.TestCase):
                              "ms")
         self.assertLess(timeAverage, TestConfig["ConTimeNormalMaxMs"])
 
-    @skip("Untested")
+    @skip("STH does not react to “write energy mode reduced” command")
     def test0108BlueToothConnectWrongValues(self):
         """
         Check Minimum Sleeping Time
