@@ -288,20 +288,25 @@ class Message:
                                         f"with MAC address “{mac_address()}”")
 
         elif identifier.block_name() == 'EEPROM':
-            page = self.data[0]
-            offset = self.data[1]
-            length = self.data[2]
-            data = list(self.data[4:4 + min(length, 4)])
-            is_acknowledgment = self.identifier().is_acknowledgment()
+            if identifier.block_command_name() == "Read Write Request Counter":
+                counter = int.from_bytes(self.data[4:], 'little')
+                data_explanation = f"EEPROM Write Requests: {counter}"
+            else:
+                page = self.data[0]
+                offset = self.data[1]
+                length = self.data[2]
+                data = list(self.data[4:4 + min(length, 4)])
+                is_acknowledgment = self.identifier().is_acknowledgment()
 
-            info = ("Acknowledge request" if is_acknowledgment else "Request")
-            verb = identifier.block_command_name().lower()
-            data_explanation = (
-                f"{info} to {verb} {length} bytes at page {page} "
-                f"with offset {offset}")
-            read_request = verb == "read" and not is_acknowledgment
-            if not read_request:
-                data_explanation += f": {data}"
+                info = ("Acknowledge request"
+                        if is_acknowledgment else "Request")
+                verb = identifier.block_command_name().lower()
+                data_explanation = (
+                    f"{info} to {verb} {length} bytes at page {page} "
+                    f"with offset {offset}")
+                read_request = verb == "read" and not is_acknowledgment
+                if not read_request:
+                    data_explanation += f": {data}"
 
         return data_explanation
 
