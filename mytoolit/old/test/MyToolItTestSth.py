@@ -2204,10 +2204,9 @@ class TestSth(unittest.TestCase):
                                 self.tSthLimits.uBatteryTolerance, 0, 0, 0, 0,
                                 fVoltageBattery)
 
-    @skip("Untested")
     def test0301GetSingleVoltageBatteryMultipleTimes(self):
         """
-        Test multi single battery measurement
+        Test multi single battery measurement (⏱ 14 seconds)
         """
         for _i in range(0, 10):
             index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
