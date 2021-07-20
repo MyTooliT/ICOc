@@ -2276,10 +2276,9 @@ class TestSth(unittest.TestCase):
                                 self.tSthLimits.iAdcAccZTolerance,
                                 self.tSthLimits.fAcceleration)
 
-    @skip("Untested")
     def test0305GetSingleSingleAccXMultipleTimes(self):
         """
-        Test multi single X Acc measurement
+        Test multi single X Acc measurement (⏱ 16 seconds)
         """
         for _i in range(0, 10):
             index = self.Can.singleValueCollect(
@@ -2296,10 +2295,9 @@ class TestSth(unittest.TestCase):
                                     self.tSthLimits.iAdcAccXTolerance, 0, 0, 0,
                                     0, self.tSthLimits.fAcceleration)
 
-    @skip("Untested")
     def test0306GetSingleSingleAccYMultipleTimes(self):
         """
-        Test multi single Y Acc measurement
+        Test multi single Y Acc measurement (⏱ 18 seconds)
         """
         for _i in range(0, 10):
             index = self.Can.singleValueCollect(
@@ -2316,10 +2314,9 @@ class TestSth(unittest.TestCase):
                                     self.tSthLimits.iAdcAccYTolerance, 0, 0,
                                     self.tSthLimits.fAcceleration)
 
-    @skip("Untested")
     def test0307GetSingleSingleAccZMultipleTimes(self):
         """
-        Test multi single Z Acc measurement
+        Test multi single Z Acc measurement (⏱ 14 seconds)
         """
         for _i in range(0, 10):
             index = self.Can.singleValueCollect(
