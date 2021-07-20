@@ -2412,10 +2412,9 @@ class TestSth(unittest.TestCase):
                                 self.tSthLimits.iAdcAccZTolerance,
                                 self.tSthLimits.fAcceleration)
 
-    @skip("Untested")
     def test0320GetStreamingVoltageBattery(self):
         """
-        Test streaming battery measurement
+        Test streaming battery measurement (⏱ 30 seconds)
         """
         [indexStart, indexEnd] = self.Can.streamingValueCollect(
             MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"],
