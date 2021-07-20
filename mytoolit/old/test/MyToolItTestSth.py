@@ -101,7 +101,6 @@ class TestSth(unittest.TestCase):
                            self.tSthLimits.uSamplingRateOverSamplesReset,
                            FreshLog=True)
         self.Can.Logger.Info("TestCase: " + str(self._testMethodName))
-        self.vSilabsAdapterReset()
         if "test0000FirmwareFlash" != self._testMethodName:
             self.Can.CanTimeStampStart(
                 self._resetStu()["CanTime"])  # This will also reset to STH
