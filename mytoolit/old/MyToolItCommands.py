@@ -222,7 +222,11 @@ MyToolItConfiguration = bidict({
     "Hmi": 0xC0
 })
 
-MyToolItEeprom = bidict({"Read": 0x00, "Write": 0x01, "WriteRequest": 0x20})
+MyToolItEeprom = bidict({
+    "Read": 0x00,
+    "Write": 0x01,
+    "Read Write Request Counter": 0x20
+})
 
 MyToolItProductData = bidict({
     "GTIN": 0x00,
@@ -341,9 +345,12 @@ CommandBlockConfiguration = {
 }
 
 CommandBlockEeprom = {
-    MyToolItEeprom["Read"]: "EEPROM Command Read",
-    MyToolItEeprom["Write"]: "EEPROM Command Write",
-    MyToolItEeprom["WriteRequest"]: "EEPROM Command Write Request Counter",
+    MyToolItEeprom["Read"]:
+    "EEPROM Command Read",
+    MyToolItEeprom["Write"]:
+    "EEPROM Command Write",
+    MyToolItEeprom["Read Write Request Counter"]:
+    "EEPROM Command Write Request Counter",
 }
 
 CommandBlockProductData = {

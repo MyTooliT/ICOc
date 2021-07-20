@@ -490,7 +490,8 @@ class Network(object):
         power on
         """
         index = self.cmdSend(receiver, MyToolItBlock["EEPROM"],
-                             MyToolItEeprom["WriteRequest"], [0] * 8)
+                             MyToolItEeprom["Read Write Request Counter"],
+                             [0] * 8)
         dataReadBack = self.getReadMessageData(index)[4:]
         u32WriteRequestCounter = byte_list_to_int(dataReadBack)
         self.Logger.Info("EEPROM Write Request Counter: " +
