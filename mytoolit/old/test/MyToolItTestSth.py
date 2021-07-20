@@ -2223,10 +2223,9 @@ class TestSth(unittest.TestCase):
                                     self.tSthLimits.uBatteryTolerance, 0, 0, 0,
                                     0, fVoltageBattery)
 
-    @skip("Untested")
     def test0302GetSingleAccX(self):
         """
-        Test single battery Acceleration X-Axis measurement
+        Test single Acceleration X-Axis measurement (⏱ 10 seconds)
         """
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
                                             MyToolItStreaming["Acceleration"],
