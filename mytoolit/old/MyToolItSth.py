@@ -16,7 +16,7 @@ TestConfig = {
     "EnergyMode2CurrentMax": 0.45,  #in mA
     "EnergyModeMaxCurrentMax": 0.45,  #in mA
     "EnergyConnectedCurrentMax": 10,  #in mA
-    "EnergyMeasuringCurrentMax": 15,  #in mA
+    "EnergyMeasuringCurrentMax": 17,  #in mA
     "EnergyMeasuringLedOffCurrentMax": 14,  #in mA
 }
 
