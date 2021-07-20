@@ -2437,10 +2437,9 @@ class TestSth(unittest.TestCase):
                                    self.tSthLimits.uBatteryTolerance, 0, 0, 0,
                                    0, fVoltageBattery)
 
-    @skip("Untested")
     def test0321GetStreamingAccX(self):
         """
-        Test streaming x-Axis measurement
+        Test streaming x-Axis measurement (⏱ 25 seconds)
         """
         [indexStart, indexEnd] = self.Can.streamingValueCollect(
             MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
@@ -2461,10 +2460,9 @@ class TestSth(unittest.TestCase):
                                    self.tSthLimits.iAdcAccXTolerance, 0, 2**32,
                                    0, 2**32, self.tSthLimits.fAcceleration)
 
-    @skip("Untested")
     def test0322GetStreamingAccY(self):
         """
-        Test streaming y-Axis measurement
+        Test streaming y-Axis measurement (⏱ 25 seconds)
         """
         [indexStart, indexEnd] = self.Can.streamingValueCollect(
             MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
@@ -2485,10 +2483,9 @@ class TestSth(unittest.TestCase):
                                    self.tSthLimits.iAdcAccYTolerance, 0, 2**32,
                                    self.tSthLimits.fAcceleration)
 
-    @skip("Untested")
     def test0323GetStreamingAccZ(self):
         """
-        Test streaming z-Axis measurement
+        Test streaming z-Axis measurement (⏱ 25 seconds)
         """
         [indexStart, indexEnd] = self.Can.streamingValueCollect(
             MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
@@ -2509,10 +2506,9 @@ class TestSth(unittest.TestCase):
                                    self.tSthLimits.iAdcAccZTolerance,
                                    self.tSthLimits.fAcceleration)
 
-    @skip("Untested")
     def test0324GetStreamingAccXYZ(self):
         """
-        Test streaming xyz-Axis measurement
+        Test streaming xyz-Axis measurement (⏱ 25 seconds)
         """
         [indexStart, indexEnd] = self.Can.streamingValueCollect(
             MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
@@ -2534,10 +2530,9 @@ class TestSth(unittest.TestCase):
             self.tSthLimits.iAdcAccYTolerance, self.tSthLimits.iAdcAccZMiddle,
             self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
 
-    @skip("Untested")
     def test0325GetStreamingAccXY(self):
         """
-        Test streaming AccX+AccY measurement
+        Test streaming AccX+AccY measurement (⏱ 10 seconds)
         """
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"],
                            self.tSthLimits.uSamplingRateDoublePrescalerMax,
@@ -2565,10 +2560,9 @@ class TestSth(unittest.TestCase):
             self.tSthLimits.iAdcAccYTolerance, self.tSthLimits.iAdcAccZMiddle,
             self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
 
-    @skip("Untested")
     def test0326GetStreamingAccXZ(self):
         """
-        Test streaming AccX+AccZ measurement
+        Test streaming AccX+AccZ measurement (⏱ 10 seconds)
         """
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"],
                            self.tSthLimits.uSamplingRateDoublePrescalerMax,
@@ -2596,10 +2590,9 @@ class TestSth(unittest.TestCase):
             self.tSthLimits.iAdcAccYTolerance, self.tSthLimits.iAdcAccZMiddle,
             self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
 
-    @skip("Untested")
     def test0327GetStreamingAccYZ(self):
         """
-        Test streaming AccY+AccZ measurement
+        Test streaming AccY+AccZ measurement (⏱ 10 seconds)
         """
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"],
                            self.tSthLimits.uSamplingRateDoublePrescalerMax,
