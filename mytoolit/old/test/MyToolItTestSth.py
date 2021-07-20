@@ -77,7 +77,11 @@ This class is used for automated internal verification of the sensory tool holde
 class TestSth(unittest.TestCase):
 
     def setUp(self):
-        self.tSthLimits = SthLimits(iSensorAxis, uAdc2Acc, 20, 35)
+        self.tSthLimits = SthLimits(iSensorAxis,
+                                    uAdc2Acc,
+                                    20,
+                                    35,
+                                    battery=False)
         self.sHomeLocation = sHomeLocation
         self.sBuildLocation = sHomeLocation + "builds/" + sVersion
         self.sBootloader = sHomeLocation + "builds/" + "BootloaderOtaBgm113.s37"
@@ -2182,10 +2186,9 @@ class TestSth(unittest.TestCase):
         self.assertLess(iRssi, -20)
         self.Can.Logger.Info("BlueTooth RSSI: " + str(iRssi))
 
-    @skip("Untested")
     def test0300GetSingleVoltageBattery(self):
         """
-        Get Battery Voltage via single command
+        Get Battery Voltage via single command (⏱ 8 seconds)
         """
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
                                             MyToolItStreaming["Voltage"], 1, 0,
