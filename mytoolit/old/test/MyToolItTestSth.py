@@ -2333,10 +2333,9 @@ class TestSth(unittest.TestCase):
                                     self.tSthLimits.iAdcAccZTolerance,
                                     self.tSthLimits.fAcceleration)
 
-    @skip("Untested")
     def test0308GetSingleAccXY(self):
         """
-        Test single XY-Axis measurement
+        Test single XY-Axis measurement (⏱ 12 seconds)
         """
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
                                             MyToolItStreaming["Acceleration"],
@@ -2354,10 +2353,9 @@ class TestSth(unittest.TestCase):
                                 self.tSthLimits.iAdcAccYTolerance, 0, 0,
                                 self.tSthLimits.fAcceleration)
 
-    @skip("Untested")
     def test0309GetSingleAccXZ(self):
         """
-        Test single XZ-Axis measurement
+        Test single XZ-Axis measurement (⏱ 8 seconds)
         """
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
                                             MyToolItStreaming["Acceleration"],
@@ -2375,10 +2373,9 @@ class TestSth(unittest.TestCase):
                                 self.tSthLimits.iAdcAccZTolerance,
                                 self.tSthLimits.fAcceleration)
 
-    @skip("Untested")
     def test0310GetSingleAccXYZ(self):
         """
-        Test single XYZ-Axis measurement
+        Test single XYZ-Axis measurement (⏱ 9 seconds)
         """
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
                                             MyToolItStreaming["Acceleration"],
@@ -2395,10 +2392,9 @@ class TestSth(unittest.TestCase):
             self.tSthLimits.iAdcAccYTolerance, self.tSthLimits.iAdcAccZMiddle,
             self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
 
-    @skip("Untested")
     def test0310GetSingleAccYZ(self):
         """
-        Test single YZ-Axis measurement
+        Test single YZ-Axis measurement (⏱ 11 seconds)
         """
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
                                             MyToolItStreaming["Acceleration"],
