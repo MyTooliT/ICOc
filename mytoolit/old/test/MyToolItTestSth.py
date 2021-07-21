@@ -3300,12 +3300,11 @@ class TestSth(unittest.TestCase):
                                    self.tSthLimits.iAdcAccZTolerance,
                                    self.tSthLimits.fAcceleration)
 
-    """
-    Mixed Streaming - AccX + AccY + VoltageBattery
-    """
-
-    @skip("Untested")
     def test0344MixedStreamingAccXYVoltBat(self):
+        """
+        Mixed Streaming - AccX + AccY + VoltageBattery (⏱ 25 seconds)
+        """
+
         prescaler = self.tSthLimits.uSamplingRateDoublePrescalerMax
         acqTime = self.tSthLimits.uSamplingRateDoubleAcqTimeMax
         overSamples = self.tSthLimits.uSamplingRateDoubleOverSamplesMax
