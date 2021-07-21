@@ -2980,10 +2980,9 @@ class TestSth(unittest.TestCase):
             self.tSthLimits.iAdcAccYTolerance, self.tSthLimits.iAdcAccZMiddle,
             self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
 
-    @skip("Untested")
     def test0337StreamingMultiConfig(self):
         """
-        Test multiple config x-xyz-x
+        Test multiple config x-xyz-x  (⏱ 60 seconds)
         """
         self.Can.Logger.Info("Streaming AccX starts")
         self.test0321GetStreamingAccX()
