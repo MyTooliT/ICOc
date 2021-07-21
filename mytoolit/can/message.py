@@ -229,8 +229,16 @@ class Message:
                 elif subcommand == 2:
                     data_explanation = f"{verb} number of available devices"
                     if is_acknowledgment:
-                        number_devices = int(chr(self.data[2]))
-                        data_explanation += f": {number_devices}"
+                        number_devices_text = convert_bytes_to_text(
+                            self.data[2:])
+                        data_explanation += ": "
+                        try:
+                            number_devices = int(number_devices_text)
+                            data_explanation += f"{number_devices}"
+                        except ValueError:
+                            data_explanation += (
+                                "Unable to convert text "
+                                f"“{number_devices_text}” to number")
 
                 elif subcommand == 5 or subcommand == 6:
                     part = "first" if subcommand == 5 else "second"
