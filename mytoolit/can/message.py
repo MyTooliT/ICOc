@@ -425,6 +425,7 @@ class Message:
         """
 
         return Message(identifier=self.identifier().acknowledge(),
+                       error=error,
                        data=list(self.data))
 
     def id(self) -> int:
