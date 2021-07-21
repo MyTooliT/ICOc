@@ -2855,10 +2855,9 @@ class TestSth(unittest.TestCase):
                                    SigIndAccZQ99, SigIndAccZVar,
                                    SigIndAccZSkewness, SigIndAccZSNR)
 
-    @skip("Untested")
     def test0335GetStreamingMultipleTimes(self):
         """
-        Test Streaming multiple Times
+        Test Streaming multiple Times (⏱ 50 seconds)
         """
         for _i in range(0, 3):
             [indexStart, indexEnd
