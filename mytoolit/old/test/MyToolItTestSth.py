@@ -2994,11 +2994,13 @@ class TestSth(unittest.TestCase):
         self.test0321GetStreamingAccX()
         self.Can.ReadThreadReset()
 
-    @skip("Untested")
     def test0338StreamingHeavyDuty(self):
         """
-        Test long usage of data acquiring
+        Test long usage of data acquiring (⏱ 3 minutes)
         """
+        # The original run time was 10 times longer. Since the test would not
+        # finish successfully in two attempts we reduced it to the current
+        # value.
         self.SamplingRate(self.tSthLimits.uSamplingRateSinglePrescalerMax,
                           self.tSthLimits.uSamplingRateSingleAcqTimeMax,
                           self.tSthLimits.uSamplingRateSingleOverSamplesMax,
