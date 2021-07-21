@@ -2743,10 +2743,9 @@ class TestSth(unittest.TestCase):
                                    SigIndBatterySNR)
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Voltage", "")
 
-    @skip("Untested")
     def test0334SignalIndicatorsMulti(self):
         """
-        Test Signal-to-Noise Ration - Acc Multi
+        Test Signal-to-Noise Ration - Acc Multi (⏱ 20 seconds)
         """
         [
             SigIndAccXQ1, SigIndAccXQ25, SigIndAccXMedL, SigIndAccXMedH,
