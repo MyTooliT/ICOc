@@ -2922,10 +2922,9 @@ class TestSth(unittest.TestCase):
                                        self.tSthLimits.iAdcAccZTolerance,
                                        self.tSthLimits.fAcceleration)
 
-    @skip("Untested")
     def test0336StreamingMultiConfigBatAccXAccYAccZ(self):
         """
-        Test multiple config battery, x, y, z
+        Test multiple config battery, x, y, z (⏱ 25 seconds)
         """
         [indexStart, indexEnd
          ] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
