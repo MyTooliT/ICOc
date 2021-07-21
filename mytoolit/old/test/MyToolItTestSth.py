@@ -3007,10 +3007,9 @@ class TestSth(unittest.TestCase):
                           AdcReference["VDD"],
                           runTime=1200000)
 
-    @skip("Untested")
     def test0339MixedStreamingAccXVoltBat(self):
         """
-        Mixed Streaming - AccX + VoltageBattery
+        Mixed Streaming - AccX + VoltageBattery (⏱ 25 seconds)
         """
         self.Can.streamingStart(MyToolItNetworkNr["STH1"],
                                 MyToolItStreaming["Voltage"], DataSets[3], 1,
