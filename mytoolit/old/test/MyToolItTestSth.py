@@ -3434,12 +3434,10 @@ class TestSth(unittest.TestCase):
                                    self.tSthLimits.iAdcAccZTolerance,
                                    self.tSthLimits.fAcceleration)
 
-    """
-    Mixed Streaming - AccX + AccY + AccZ + VoltageBattery
-    """
-
-    @skip("Untested")
     def test0346MixedStreamingAccXYZVoltBat(self):
+        """
+        Mixed Streaming - AccX + AccY + AccZ + VoltageBattery (⏱ 25 seconds)
+        """
         self.Can.streamingStart(MyToolItNetworkNr["STH1"],
                                 MyToolItStreaming["Voltage"], DataSets[3], 1,
                                 0, 0)
