@@ -3491,12 +3491,10 @@ class TestSth(unittest.TestCase):
             self.tSthLimits.iAdcAccYTolerance, self.tSthLimits.iAdcAccZMiddle,
             self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
 
-    """
-    Stream Acceleration(X) and receive single sampling point for Battery
-    """
-
-    @skip("Untested")
     def test0347StreamingAccXSingleBattery(self):
+        """
+        Stream x-acceleration & read sampling point for battery (⏱ 20 seconds)
+        """
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
                                              MyToolItStreaming["Acceleration"],
                                              DataSets[3], 1, 0, 0)
