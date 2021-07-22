@@ -4783,7 +4783,6 @@ class TestSth(unittest.TestCase):
         self.assertEqual(SamplingRateMaxDet,
                          self.tSthLimits.uSamplingRateDoubleMax())
 
-
     @skip("Untested")
     def test0510AdcConfigTripple(self):
         """
@@ -4857,7 +4856,6 @@ class TestSth(unittest.TestCase):
         self.assertEqual(SamplingRateMaxDet,
                          self.tSthLimits.uSamplingRateTrippleMax())
 
-
     @skip("Untested")
     def test0511AdcPrescalerMin(self):
         """
@@ -4871,7 +4869,6 @@ class TestSth(unittest.TestCase):
                           b2=0,
                           b3=0,
                           runTime=self.tSthLimits.uStandardTestTimeMs)
-
 
     @skip("Untested")
     def test0512AdcPrescalerMax(self):
@@ -4887,7 +4884,6 @@ class TestSth(unittest.TestCase):
                           b3=0,
                           runTime=30000)
 
-
     @skip("Untested")
     def test0513AdcAcquisitionMin(self):
         """
@@ -4901,7 +4897,6 @@ class TestSth(unittest.TestCase):
                           b2=0,
                           b3=0,
                           runTime=self.tSthLimits.uStandardTestTimeMs)
-
 
     @skip("Untested")
     def test0514AdcAcquisitionMax(self):
@@ -4917,7 +4912,6 @@ class TestSth(unittest.TestCase):
                           b3=0,
                           runTime=self.tSthLimits.uStandardTestTimeMs)
 
-
     @skip("Untested")
     def test0515AdcOverSamplingRateMin(self):
         """
@@ -4931,7 +4925,6 @@ class TestSth(unittest.TestCase):
                           b2=0,
                           b3=0,
                           runTime=self.tSthLimits.uStandardTestTimeMs)
-
 
     @skip("Untested")
     def test0516AdcOverSamplingRateMax(self):
@@ -4959,7 +4952,6 @@ class TestSth(unittest.TestCase):
             calcRate * 1.1,
             result["SamplingRate"])  # Sampling Rate of 220 is very imprecise
 
-
     @skip("Untested")
     def test0517AdcOverSamplingRateNone(self):
         """
@@ -4973,7 +4965,6 @@ class TestSth(unittest.TestCase):
                           b2=0,
                           b3=0,
                           runTime=4000)
-
 
     @skip("Untested")
     def test0518AdcSamplingRateOverdrive(self):
@@ -5013,7 +5004,6 @@ class TestSth(unittest.TestCase):
         self._resetStu()
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
                                               TestConfig["DevName"])
-
 
     @skip("Untested")
     def test0519SamplingRateMixedStreamingAccXBat(self):
@@ -5091,7 +5081,6 @@ class TestSth(unittest.TestCase):
                         samplePointsAcceleration)
         self.assertGreater(calcRate * self.tSthLimits.uSamplingToleranceHigh,
                            samplePointsAcceleration)
-
 
     @skip("Untested")
     def test0520SamplingRateMixedStreamingAccXYBat(self):
@@ -5176,7 +5165,6 @@ class TestSth(unittest.TestCase):
                         samplePointsYAcceleration)
         self.assertGreater(calcRate * self.tSthLimits.uSamplingToleranceHigh,
                            samplePointsYAcceleration)
-
 
     @skip("Untested")
     def test0521SamplingRateMixedStreamingAccXYZBat(self):
@@ -5267,7 +5255,6 @@ class TestSth(unittest.TestCase):
         self.assertGreater(calcRate * self.tSthLimits.uSamplingToleranceHigh,
                            samplePointsZAcceleration)
 
-
     @skip("Untested")
     def test0522MessageCountersMixerdSignals(self):
         """
@@ -5351,7 +5338,6 @@ class TestSth(unittest.TestCase):
             count += 1
             count %= 256
 
-
     @skip("Untested")
     def test0523MessageCounterAccX(self):
         """
@@ -5387,7 +5373,6 @@ class TestSth(unittest.TestCase):
             i += 1
             count += 1
             count %= 256
-
 
     @skip("Untested")
     def test0524MessageCounterAccY(self):
@@ -5425,7 +5410,6 @@ class TestSth(unittest.TestCase):
             count += 1
             count %= 256
 
-
     @skip("Untested")
     def test0525MessageCounterAccZ(self):
         """
@@ -5462,7 +5446,6 @@ class TestSth(unittest.TestCase):
             count += 1
             count %= 256
 
-
     @skip("Untested")
     def test0526MessageCounterAccXY(self):
         """
@@ -5494,7 +5477,6 @@ class TestSth(unittest.TestCase):
             i += 1
             count += 1
             count %= 256
-
 
     @skip("Untested")
     def test0527MessageCounterAccXZ(self):
@@ -5528,7 +5510,6 @@ class TestSth(unittest.TestCase):
             count += 1
             count %= 256
 
-
     @skip("Untested")
     def test0528MessageCounterAccYZ(self):
         """
@@ -5561,7 +5542,6 @@ class TestSth(unittest.TestCase):
             count += 1
             count %= 256
 
-
     @skip("Untested")
     def test0529MessageCounterAccXYZ(self):
         """
@@ -5593,7 +5573,6 @@ class TestSth(unittest.TestCase):
             i += 1
             count += 1
             count %= 256
-
 
     @skip("Untested")
     def test0530MessageCountersAccXBattery(self):
@@ -5682,7 +5661,6 @@ class TestSth(unittest.TestCase):
             count += 1
             count %= 256
 
-
     @skip("Untested")
     def test0531MessageCountersAccYBattery(self):
         """
@@ -5769,7 +5747,6 @@ class TestSth(unittest.TestCase):
             i += 1
             count += 1
             count %= 256
-
 
     @skip("Untested")
     def test0532MessageCountersAccZBattery(self):
@@ -5858,7 +5835,6 @@ class TestSth(unittest.TestCase):
             count += 1
             count %= 256
 
-
     @skip("Untested")
     def test0533MessageCounterBattery(self):
         """
@@ -5890,7 +5866,6 @@ class TestSth(unittest.TestCase):
             i += 1
             count += 1
             count %= 256
-
 
     @skip("Untested")
     def test0534MessageCounterAccBatteryDataSetSingle(self):
@@ -5925,7 +5900,6 @@ class TestSth(unittest.TestCase):
             i += 1
             count += 1
             count %= 256
-
 
     @skip("Untested")
     def test0600CalibrationMeasurement(self):
@@ -6032,7 +6006,6 @@ class TestSth(unittest.TestCase):
             self.tSthLimits.uVoltRawOpa3Middle +
             self.tSthLimits.uVoltRawOpa3Tolerance, result)
 
-
     @skip("Untested")
     def test0601CalibrationMeasurementTemperature(self):
         """
@@ -6050,7 +6023,6 @@ class TestSth(unittest.TestCase):
         self.assertLessEqual(result, self.tSthLimits.iTemperatureInternalMax)
         self.assertGreaterEqual(result,
                                 self.tSthLimits.iTemperatureInternalMin)
-
 
     @skip("Untested")
     def test0602CalibrationMeasurementVRef(self):
@@ -6079,7 +6051,6 @@ class TestSth(unittest.TestCase):
                     self.tSthLimits.iAdcAccXRawMiddle +
                     self.tSthLimits.iAdcAccXRawTolerance,
                     result * self.tSthLimits.uSamplingToleranceLow)
-
 
     @skip("Untested")
     def test0603CalibrationMeasurementEjectInject(self):
@@ -6341,7 +6312,6 @@ class TestSth(unittest.TestCase):
             self.assertEqual(stateEjectY[i], 0x00)
             self.assertEqual(stateEjectZ[i], 0x00)
 
-
     @skip("Untested")
     def test0604CalibrationMeasurementState(self):
         """
@@ -6447,7 +6417,6 @@ class TestSth(unittest.TestCase):
             self.assertEqual(stateStartOpa1[i], ErrorPayloadAssumed[i])
             self.assertEqual(stateStartOpa2[i], ErrorPayloadAssumed[i])
 
-
     @skip("Untested")
     def test0605StateCalibrationMeasurementReset(self):
         """
@@ -6512,7 +6481,6 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("test0303GetSingleAccX")
         self.test0302GetSingleAccX()
 
-
     @skip("Untested")
     def test0700StatisticsPowerOnCounterPowerOffCounter(self):
         """
@@ -6573,7 +6541,6 @@ class TestSth(unittest.TestCase):
         self.assertEqual(PowerOff2 + 1, PowerOff3)
         self.assertEqual(PowerOn3 + 1, PowerOn4)
         self.assertEqual(PowerOff3 + 1, PowerOff4)
-
 
     @skip("Untested")
     def test0701StatisticsOperatingSeconds(self):
@@ -6649,7 +6616,6 @@ class TestSth(unittest.TestCase):
         self.assertGreaterEqual(SecondsOveral1 + 63, SecondsOveral3)
         self.assertEqual(SecondsOveral3 + 30 * 60, SecondsOveral4)
 
-
     @skip("Untested")
     def test0702WdogNotIncrementing(self):
         """
@@ -6674,7 +6640,6 @@ class TestSth(unittest.TestCase):
                              str(WDogCounter3))
         self.assertEqual(WDogCounter1, WDogCounter2)
         self.assertEqual(WDogCounter1, WDogCounter3)
-
 
     @skip("Untested")
     def test0703ProductionDate(self):
@@ -6705,7 +6670,6 @@ class TestSth(unittest.TestCase):
         sProductionDate = sArray2String(sProductionDate)
         self.Can.Logger.Info("Production Date: " + sProductionDate)
         self.assertEqual(sArray2String(au8ProductionDate), sProductionDate)
-
 
     @skip("Untested")
     def test0750StatisticPageWriteReadDeteministic(self):
@@ -6777,7 +6741,6 @@ class TestSth(unittest.TestCase):
                          u32EepromWriteRequestCounterTestEnd
                          )  # +1 due to incrementing at first write
 
-
     @skip("Untested")
     def test0751StatisticPageWriteReadRandom(self):
         """
@@ -6846,7 +6809,6 @@ class TestSth(unittest.TestCase):
                          u32EepromWriteRequestCounterTestEnd
                          )  # +1 due to incrementing at first write
 
-
     @skip("Untested")
     def test0752EepromWriteRequestCounterConnectDisconnect(self):
         """
@@ -6863,7 +6825,6 @@ class TestSth(unittest.TestCase):
             MyToolItNetworkNr["STH1"])
         self.assertEqual(u32EepromWriteRequestCounterTestStart + 2,
                          u32EepromWriteRequestCounterTestEnd)
-
 
     @skip("Untested")
     def test0753EepromWriteRequestCounterPageSwitches(self):
@@ -6932,7 +6893,6 @@ class TestSth(unittest.TestCase):
                              str(u32EepromWriteRequsts))
         self.assertEqual(uPageRuns * uLoopRuns, u32EepromWriteRequsts)
 
-
     @skip("Untested")
     def test0800StatusWords0Reset(self):
         """
@@ -6943,7 +6903,6 @@ class TestSth(unittest.TestCase):
 
         self.assertEqual(status0.error(), False)
         self.assertEqual(status0.state_name(), 'Operating')
-
 
     @skip("Untested")
     def test0801StatusWords0AdcOverRun(self):
@@ -6982,7 +6941,6 @@ class TestSth(unittest.TestCase):
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
                                               TestConfig["DevName"])
 
-
     @skip("Untested")
     def test0820StatusWords1Reset(self):
         """
@@ -6991,7 +6949,6 @@ class TestSth(unittest.TestCase):
         status = self.Can.error_status(MyToolItNetworkNr["STH1"])
         self.Can.Logger.Info(f"STH Error Word: {status}")
         self.assertEqual(status.value, 0)
-
 
     @skip("Untested")
     def test0821StatusWords1AdcOverRun(self):
@@ -7020,7 +6977,6 @@ class TestSth(unittest.TestCase):
         self._resetStu()
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
                                               TestConfig["DevName"])
-
 
     @skip("Untested")
     def test0822StatusWords1TxFail(self):
@@ -7051,7 +7007,6 @@ class TestSth(unittest.TestCase):
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
                                               TestConfig["DevName"])
 
-
     @skip("Untested")
     def test0880ActiveStateReset(self):
         """
@@ -7081,7 +7036,6 @@ class TestSth(unittest.TestCase):
         self.assertEqual(activeState.b.bReserved1, 0)
         self.assertEqual(activeState.b.u3NetworkState,
                          NetworkState["Operating"])
-
 
     @skip("Untested")
     def test0881ActiveStateError(self):
@@ -7157,7 +7111,6 @@ class TestSth(unittest.TestCase):
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
                                               TestConfig["DevName"])
 
-
     @skip("Untested")
     def test0900ErrorCmdVerbotenSth1(self):
         """
@@ -7196,7 +7149,6 @@ class TestSth(unittest.TestCase):
                                                     bErrorExit=False)
         self.assertEqual("Error", msgAck)
 
-
     @skip("Untested")
     def test0901ErrorRequestErrorSth1(self):
         """
@@ -7220,7 +7172,6 @@ class TestSth(unittest.TestCase):
                                                     retries=3,
                                                     bErrorExit=False)
         self.assertEqual("Error", msgAck)
-
 
     @skip("Untested")
     def test0902WrongSenderSth1(self):
