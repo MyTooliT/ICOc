@@ -4612,12 +4612,10 @@ class TestSth(unittest.TestCase):
                           b3=1,
                           runTime=10000)["SamplingRate"]
 
-    """
-    Testing ADC Reference voltagegs
-    """
-
-    @skip("Untested")
     def test0507VRef(self):
+        """
+        Testing ADC Reference voltages (⏱ 4 minutes)
+        """
         self.Can.Logger.Info("Warm Up")
         self.SamplingRate(self.tSthLimits.uSamplingRateTripplePrescalerMax,
                           self.tSthLimits.uSamplingRateTrippleAcqTimeMax,
