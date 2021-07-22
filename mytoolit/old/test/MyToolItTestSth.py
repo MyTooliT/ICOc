@@ -4249,12 +4249,10 @@ class TestSth(unittest.TestCase):
             self.Can.streamingStop(MyToolItNetworkNr["STH1"],
                                    MyToolItStreaming["Voltage"])
 
-    """
-    Test x-Axis Line
-    """
-
-    @skip("Untested")
     def test0380GetStreamingTestLineAccX(self):
+        """
+        Test x-Axis Line (⏱ 15 seconds)
+        """
         [indexStart, indexEnd] = self.streamingTestSignalCollect(
             MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"],
             MyToolItStreaming["Acceleration"], TestCommandSignal["Line"],
@@ -4279,12 +4277,10 @@ class TestSth(unittest.TestCase):
         self.streamingValueCompare(array1, array2, array3, 2**14, 0, 0, 0, 0,
                                    0, fAdcRawDat)
 
-    """
-    Test y-Axis Line
-    """
-
-    @skip("Untested")
     def test0381GetStreamingTestLineAccY(self):
+        """
+        Test y-Axis Line (⏱ 15 seconds)
+        """
         [indexStart, indexEnd] = self.streamingTestSignalCollect(
             MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"],
             MyToolItStreaming["Acceleration"], TestCommandSignal["Line"],
@@ -4309,12 +4305,10 @@ class TestSth(unittest.TestCase):
         self.streamingValueCompare(array1, array2, array3, 0, 0, 2**14, 0, 0,
                                    0, fAdcRawDat)
 
-    """
-    Test z-Axis Line
-    """
-
-    @skip("Untested")
     def test0382GetStreamingTestLineAccZ(self):
+        """
+        Test z-Axis Line (⏱ 15 seconds)
+        """
         [indexStart, indexEnd] = self.streamingTestSignalCollect(
             MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"],
             MyToolItStreaming["Acceleration"], TestCommandSignal["Line"],
@@ -4339,12 +4333,10 @@ class TestSth(unittest.TestCase):
         self.streamingValueCompare(array1, array2, array3, 0, 0, 0, 0, 2**14,
                                    0, fAdcRawDat)
 
-    """
-    Test Battery Line
-    """
-
-    @skip("Untested")
     def test0383GetStreamingTestLineBattery(self):
+        """
+        Test Battery Line (⏱ 15 seconds)
+        """
         [indexStart, indexEnd] = self.streamingTestSignalCollect(
             MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"],
             MyToolItStreaming["Voltage"], TestCommandSignal["Line"],
@@ -4373,12 +4365,10 @@ class TestSth(unittest.TestCase):
         self.streamingValueCompare(array1, array2, array3, 2**14, 0, 0, 0, 0,
                                    0, fAdcRawDat)
 
-    """
-    Test x-Axis Ramp
-    """
-
-    @skip("Untested")
     def test0384GetStreamingTestRampAccX(self):
+        """
+        Test x-Axis Ramp (⏱ 10 seconds)
+        """
         [indexStart, indexEnd] = self.streamingTestSignalCollect(
             MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"],
             MyToolItStreaming["Acceleration"], TestCommandSignal["Ramp"],
@@ -4411,12 +4401,10 @@ class TestSth(unittest.TestCase):
             testRampDim((2**16 - 1), self.tSthLimits.uAdcSizeX,
                         self.tSthLimits.uAdcSizeY, None))
 
-    """
-    Test Y-Axis Ramp
-    """
-
-    @skip("Untested")
     def test0385GetStreamingTestRampAccY(self):
+        """
+        Test Y-Axis Ramp (⏱ 10 seconds)
+        """
         [indexStart, indexEnd] = self.streamingTestSignalCollect(
             MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"],
             MyToolItStreaming["Acceleration"], TestCommandSignal["Ramp"],
@@ -4449,12 +4437,10 @@ class TestSth(unittest.TestCase):
             testRampDim((2**16 - 1), self.tSthLimits.uAdcSizeX,
                         self.tSthLimits.uAdcSizeY, None))
 
-    """
-    Test Z-Axis Ramp
-    """
-
-    @skip("Untested")
     def test0386GetStreamingTestRampAccZ(self):
+        """
+        Test Z-Axis Ramp (⏱ 10 seconds)
+        """
         [indexStart, indexEnd] = self.streamingTestSignalCollect(
             MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"],
             MyToolItStreaming["Acceleration"], TestCommandSignal["Ramp"],
@@ -4487,12 +4473,10 @@ class TestSth(unittest.TestCase):
             testRampDim((2**16 - 1), self.tSthLimits.uAdcSizeX,
                         self.tSthLimits.uAdcSizeY, None))
 
-    """
-    Test Battery Ramp
-    """
-
-    @skip("Untested")
     def test0387GetStreamingTestRampBattery(self):
+        """
+        Test Battery Ramp  (⏱ 10 seconds)
+        """
         [indexStart, indexEnd] = self.streamingTestSignalCollect(
             MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"],
             MyToolItStreaming["Voltage"], TestCommandSignal["Ramp"],
@@ -4527,12 +4511,10 @@ class TestSth(unittest.TestCase):
             testRampDim((2**16 - 1), self.tSthLimits.uAdcSizeX,
                         self.tSthLimits.uAdcSizeY, None))
 
-    """
-    Testing Sampling Rate - Reset
-    """
-
-    @skip("Untested")
     def test0500SamplingRateReset(self):
+        """
+        Testing Sampling Rate - Reset (⏱ 25 seconds)
+        """
         [indexStart, indexEnd] = self.Can.streamingValueCollect(
             MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
             DataSets[3], 1, 0, 0, self.tSthLimits.uStandardTestTimeMs)
@@ -4572,52 +4554,42 @@ class TestSth(unittest.TestCase):
             self.tSthLimits.uStandardTestTimeMs / 1000 * calcRate *
             self.tSthLimits.uSamplingToleranceHigh, samplingPoints)
 
-    """
-    Testing ADC Sampling Rate - Prescaler
-    """
-
-    @skip("Untested")
     def test0501SamplingRatePreq(self):
+        """
+        Testing ADC Sampling Rate - Prescaler (⏱ 25 seconds)
+        """
         self.SamplingRate(5, self.tSthLimits.uSamplingRateSingleAcqTimeMax,
                           self.tSthLimits.uSamplingRateSingleOverSamplesMax,
                           AdcReference["VDD"])
 
-    """
-    Testing ADC Sampling Rate - Acquisition Time
-    """
-
-    @skip("Untested")
     def test0502SamplingRateAqu(self):
+        """
+        Testing ADC Sampling Rate - Acquisition Time (⏱ 25 seconds)
+        """
         self.SamplingRate(2, AdcAcquisitionTime[32], AdcOverSamplingRate[64],
                           AdcReference["VDD"])
 
-    """
-    Testing ADC Sampling Rate - Oversampling Rate
-    """
-
-    @skip("Untested")
     def test0503SamplingRateOverSampling(self):
+        """
+        Testing ADC Sampling Rate - Oversampling Rate (⏱ 25 seconds)
+        """
         self.SamplingRate(5, AdcAcquisitionTime[8], AdcOverSamplingRate[32],
                           AdcReference["VDD"])
 
-    """
-    Testing ADC Sampling Rate - Maximum(Single Data)
-    """
-
-    @skip("Untested")
     def test0504SamplingRateDataSingleMax(self):
+        """
+        Testing ADC Sampling Rate - Maximum(Single Data) (⏱ 25 seconds)
+        """
         self.SamplingRate(self.tSthLimits.uSamplingRateSinglePrescalerMax,
                           self.tSthLimits.uSamplingRateSingleAcqTimeMax,
                           self.tSthLimits.uSamplingRateSingleOverSamplesMax,
                           AdcReference["VDD"],
                           runTime=10000)["SamplingRate"]
 
-    """
-    Testing ADC Sampling Rate - Maximum(Double Data)
-    """
-
-    @skip("Untested")
     def test0505SamplingRateDataDoubleMax(self):
+        """
+        Testing ADC Sampling Rate - Maximum(Double Data) (⏱ 25 seconds)
+        """
         self.SamplingRate(self.tSthLimits.uSamplingRateDoublePrescalerMax,
                           self.tSthLimits.uSamplingRateDoubleAcqTimeMax,
                           self.tSthLimits.uSamplingRateDoubleOverSamplesMax,
@@ -4627,12 +4599,10 @@ class TestSth(unittest.TestCase):
                           b3=0,
                           runTime=10000)["SamplingRate"]
 
-    """
-    Testing ADC Sampling Rate - Maximum(Tripple Data)
-    """
-
-    @skip("Untested")
     def test0506SamplingRateDataTrippleMax(self):
+        """
+        Testing ADC Sampling Rate - Maximum(Tripple Data) (⏱ 25 seconds)
+        """
         self.SamplingRate(self.tSthLimits.uSamplingRateTripplePrescalerMax,
                           self.tSthLimits.uSamplingRateTrippleAcqTimeMax,
                           self.tSthLimits.uSamplingRateTrippleOverSamplesMax,
