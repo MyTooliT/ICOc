@@ -4190,12 +4190,10 @@ class TestSth(unittest.TestCase):
         self.assertEqual(samplingPointsAccY, samplingPointsAccZ)
         self.assertEqual(samplingPointsAccX, samplingPointsAccZ)
 
-    """
-    Stream Start and Stop -> Test communication protocol to be ok and that HW fits(will fit)
-    """
-
-    @skip("Untested")
     def test0370StreamingOnfOff(self):
+        """
+        Stream Start and Stop -> Test communication protocol (⏱ 3 minutes)
+        """
         _runs = 100
         # single stream, data set 3
         for _i in range(0, _runs):
