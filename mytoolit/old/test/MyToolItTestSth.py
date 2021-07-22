@@ -4640,12 +4640,12 @@ class TestSth(unittest.TestCase):
                 compare=(AdcReference["Vfs1V65"] <= vRefVal),
                 startupTime=False)
 
-    """
-    ADC Configuration Combine all possible settings - Single Axis (but only for prescaler 2)
-    """
-
-    @skip("Untested")
     def test0508AdcConfigSingle(self):
+        """
+        ADC Configuration Combine all possible settings (⏱ 25 minutes)
+
+        Single Axis (but only for prescaler 2)
+        """
         SamplingRateMaxDet = 0
         prescaler = 2
         aquisitionTime = 0
