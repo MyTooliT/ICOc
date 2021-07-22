@@ -3936,12 +3936,10 @@ class TestSth(unittest.TestCase):
         self.assertGreater(calcRate * self.tSthLimits.uSamplingToleranceHigh,
                            samplingPointsBattery)
 
-    """
-    Stream Battery and receive single sampling point for AccXYZ
-    """
-
-    @skip("Untested")
     def test0356StreamingBatterySingleAccXYZ(self):
+        """
+        Stream Battery & receive sampling point for AccXYZ (⏱ 20 seconds)
+        """
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
                                              MyToolItStreaming["Voltage"],
                                              DataSets[3], 1, 0, 0)
@@ -3990,12 +3988,10 @@ class TestSth(unittest.TestCase):
         self.assertGreater(calcRate * self.tSthLimits.uSamplingToleranceHigh,
                            samplingPointsBattery)
 
-    """
-    Stream AccXY and receive single sampling point for Battery
-    """
-
-    @skip("Untested")
     def test0357StreamingAccXYSingleBattery(self):
+        """
+        Stream AccXY & receive sampling point for Battery (⏱ 20 seconds)
+        """
         prescaler = self.tSthLimits.uSamplingRateDoublePrescalerMax
         acqTime = self.tSthLimits.uSamplingRateDoubleAcqTimeMax
         overSamples = self.tSthLimits.uSamplingRateDoubleOverSamplesMax
@@ -4043,12 +4039,10 @@ class TestSth(unittest.TestCase):
                            samplingPointsAccX)
         self.assertEqual(samplingPointsAccX, samplingPointsAccY)
 
-    """
-    Stream AccXZ and receive single sampling point for Battery
-    """
-
-    @skip("Untested")
     def test0358StreamingAccXZSingleBattery(self):
+        """
+        Stream AccXZ & receive sampling point for Battery (⏱ 20 seconds)
+        """
         prescaler = self.tSthLimits.uSamplingRateDoublePrescalerMax
         acqTime = self.tSthLimits.uSamplingRateDoubleAcqTimeMax
         overSamples = self.tSthLimits.uSamplingRateDoubleOverSamplesMax
@@ -4096,12 +4090,10 @@ class TestSth(unittest.TestCase):
                            samplingPointsAccX)
         self.assertEqual(samplingPointsAccX, samplingPointsAccZ)
 
-    """
-    Stream AccYZ and receive single sampling point for Battery
-    """
-
-    @skip("Untested")
     def test0359StreamingAccYZSingleBattery(self):
+        """
+        Stream AccYZ & receive sampling point for Battery (⏱ 20 seconds)
+        """
         prescaler = self.tSthLimits.uSamplingRateDoublePrescalerMax
         acqTime = self.tSthLimits.uSamplingRateDoubleAcqTimeMax
         overSamples = self.tSthLimits.uSamplingRateDoubleOverSamplesMax
@@ -4149,12 +4141,10 @@ class TestSth(unittest.TestCase):
                            samplingPointsAccY)
         self.assertEqual(samplingPointsAccY, samplingPointsAccZ)
 
-    """
-    Stream AccXXZ and receive single sampling point for Battery
-    """
-
-    @skip("Untested")
     def test0360StreamingAccXYZSingleBattery(self):
+        """
+        Stream AccXXZ & receive sampling point for Battery (⏱ 20 seconds)
+        """
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
                                              MyToolItStreaming["Acceleration"],
                                              DataSets[1], 1, 1, 1)
