@@ -3782,12 +3782,10 @@ class TestSth(unittest.TestCase):
         self.assertGreater(calcRate * self.tSthLimits.uSamplingToleranceHigh,
                            samplingPointsBattery)
 
-    """
-    Stream Battery and receive single sampling point for AccYZ
-    """
-
-    @skip("Untested")
     def test0353StreamingBatterySingleAccYZ(self):
+        """
+        Stream Battery & receive single sampling point for AccYZ (⏱ 20 seconds)
+        """
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
                                              MyToolItStreaming["Voltage"],
                                              DataSets[3], 1, 0, 0)
