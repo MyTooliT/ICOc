@@ -4858,10 +4858,9 @@ class TestSth(unittest.TestCase):
         self.assertEqual(SamplingRateMaxDet,
                          self.tSthLimits.uSamplingRateTrippleMax())
 
-    @skip("Untested")
     def test0511AdcPrescalerMin(self):
         """
-        Testing ADC Sampling Prescaler Min
+        Testing ADC Sampling Prescaler Min (⏱ 30 seconds)
         """
         self.SamplingRate(Prescaler["Min"],
                           self.tSthLimits.uSamplingRateSingleAcqTimeMax,
