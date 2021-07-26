@@ -4910,10 +4910,9 @@ class TestSth(unittest.TestCase):
                           b3=0,
                           runTime=self.tSthLimits.uStandardTestTimeMs)
 
-    @skip("Untested")
     def test0515AdcOverSamplingRateMin(self):
         """
-        Testing ADC Sampling Oversampling Rate Min
+        Testing ADC Sampling Oversampling Rate Min (⏱ 25 seconds)
         """
         self.SamplingRate(32,
                           AdcAcquisitionTime[256],
