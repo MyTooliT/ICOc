@@ -5331,10 +5331,9 @@ class TestSth(unittest.TestCase):
             count += 1
             count %= 256
 
-    @skip("Untested")
     def test0523MessageCounterAccX(self):
         """
-        Message Counters AccX
+        Message Counters AccX (⏱ 25 seconds)
         """
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"],
                            self.tSthLimits.uSamplingRateSinglePrescalerMax,
@@ -5367,10 +5366,9 @@ class TestSth(unittest.TestCase):
             count += 1
             count %= 256
 
-    @skip("Untested")
     def test0524MessageCounterAccY(self):
         """
-        Message Counters AccY
+        Message Counters AccY (⏱ 11 seconds)
         """
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"],
                            self.tSthLimits.uSamplingRateSinglePrescalerMax,
@@ -5403,10 +5401,9 @@ class TestSth(unittest.TestCase):
             count += 1
             count %= 256
 
-    @skip("Untested")
     def test0525MessageCounterAccZ(self):
         """
-        Message Counters AccZ
+        Message Counters AccZ (⏱ 10 seconds)
         """
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"],
                            self.tSthLimits.uSamplingRateSinglePrescalerMax,
