@@ -5078,10 +5078,9 @@ class TestSth(unittest.TestCase):
         self.assertGreater(calcRate * self.tSthLimits.uSamplingToleranceHigh,
                            samplePointsAcceleration)
 
-    @skip("Untested")
     def test0520SamplingRateMixedStreamingAccXYBat(self):
         """
-        Mixed Streaming - AccXY + VoltageBattery
+        Mixed Streaming - AccXY + VoltageBattery (⏱ 20 seconds)
         """
         prescaler = self.tSthLimits.uSamplingRateDoublePrescalerMax
         acquisitionTime = self.tSthLimits.uSamplingRateDoubleAcqTimeMax
