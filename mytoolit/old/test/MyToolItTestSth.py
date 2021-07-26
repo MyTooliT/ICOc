@@ -4961,10 +4961,12 @@ class TestSth(unittest.TestCase):
                           b3=0,
                           runTime=4000)
 
-    @skip("Untested")
     def test0518AdcSamplingRateOverdrive(self):
         """
-        Inject oversampling Rate fault. See that error status word is set correctly and that the system still works
+        Inject oversampling Rate fault (⏱ 20 seconds)
+
+        See that error status word is set correctly and that the system still
+        works
         """
         prescaler = 2
         acquisitionTime = AdcAcquisitionTime[1]
