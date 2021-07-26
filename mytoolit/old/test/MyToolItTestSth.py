@@ -4884,10 +4884,9 @@ class TestSth(unittest.TestCase):
                           b3=0,
                           runTime=30000)
 
-    @skip("Untested")
     def test0513AdcAcquisitionMin(self):
         """
-        Testing ADC Sampling Acquisition Min
+        Testing ADC Sampling Acquisition Min (⏱ 25 seconds)
         """
         self.SamplingRate(2,
                           AdcAcquisitionTime[1],
