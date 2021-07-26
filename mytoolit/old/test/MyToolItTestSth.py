@@ -4712,10 +4712,11 @@ class TestSth(unittest.TestCase):
         self.assertEqual(SamplingRateMaxDet,
                          self.tSthLimits.uSamplingRateSingleMax())
 
-    @skip("Untested")
     def test0509AdcConfigDouble(self):
         """
-        Combine all possible settings - Double Axis (but only for prescaler 3)
+        Combine all possible settings - Double Axis (⏱ 25 minutes)
+
+        (but only for prescaler 3)
         """
         SamplingRateMaxDet = 0
         prescaler = self.tSthLimits.uSamplingRateDoublePrescalerMax
@@ -4783,10 +4784,11 @@ class TestSth(unittest.TestCase):
         self.assertEqual(SamplingRateMaxDet,
                          self.tSthLimits.uSamplingRateDoubleMax())
 
-    @skip("Untested")
     def test0510AdcConfigTripple(self):
         """
-        Combine all possible settings - Tripple Axis (but only for prescaler 2)
+        Combine all possible settings - Tripple Axis (⏱ 25 minutes)
+
+        (but only for prescaler 2)
         """
         SamplingRateMaxDet = 0
         prescaler = 2
