@@ -4948,10 +4948,9 @@ class TestSth(unittest.TestCase):
             calcRate * 1.1,
             result["SamplingRate"])  # Sampling Rate of 220 is very imprecise
 
-    @skip("Untested")
     def test0517AdcOverSamplingRateNone(self):
         """
-        Testing ADC Sampling Oversampling Rate None
+        Testing ADC Sampling Oversampling Rate None (⏱ 15 seconds)
         """
         self.SamplingRate(64,
                           AdcAcquisitionTime[256],
