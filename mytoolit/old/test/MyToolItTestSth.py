@@ -5436,10 +5436,9 @@ class TestSth(unittest.TestCase):
             count += 1
             count %= 256
 
-    @skip("Untested")
     def test0526MessageCounterAccXY(self):
         """
-        Message Counters AccXY
+        Message Counters AccXY (⏱ 12 seconds)
         """
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"],
                            self.tSthLimits.uSamplingRateDoublePrescalerMax,
@@ -5468,10 +5467,9 @@ class TestSth(unittest.TestCase):
             count += 1
             count %= 256
 
-    @skip("Untested")
     def test0527MessageCounterAccXZ(self):
         """
-        Message Counters AccXZ
+        Message Counters AccXZ (⏱ 12 seconds)
         """
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"],
                            self.tSthLimits.uSamplingRateDoublePrescalerMax,
@@ -5500,10 +5498,9 @@ class TestSth(unittest.TestCase):
             count += 1
             count %= 256
 
-    @skip("Untested")
     def test0528MessageCounterAccYZ(self):
         """
-        Message Counters AccXZ
+        Message Counters AccXZ (⏱ 12 seconds)
         """
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"],
                            self.tSthLimits.uSamplingRateDoublePrescalerMax,
@@ -5532,10 +5529,9 @@ class TestSth(unittest.TestCase):
             count += 1
             count %= 256
 
-    @skip("Untested")
     def test0529MessageCounterAccXYZ(self):
         """
-        Message Counters AccXYZ
+        Message Counters AccXYZ (⏱ 12 seconds)
         """
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"],
                            self.tSthLimits.uSamplingRateTripplePrescalerMax,
@@ -5564,10 +5560,9 @@ class TestSth(unittest.TestCase):
             count += 1
             count %= 256
 
-    @skip("Untested")
     def test0530MessageCountersAccXBattery(self):
         """
-        Message Counters AccX Battery
+        Message Counters AccX Battery (⏱ 25 seconds)
         """
         prescaler = self.tSthLimits.uSamplingRateSinglePrescalerMax
         acquisitionTime = self.tSthLimits.uSamplingRateSingleAcqTimeMax
@@ -5651,10 +5646,9 @@ class TestSth(unittest.TestCase):
             count += 1
             count %= 256
 
-    @skip("Untested")
     def test0531MessageCountersAccYBattery(self):
         """
-        Message Counters AccY Battery
+        Message Counters AccY Battery (⏱ 25 seconds)
         """
         prescaler = self.tSthLimits.uSamplingRateSinglePrescalerMax
         acquisitionTime = self.tSthLimits.uSamplingRateSingleAcqTimeMax
@@ -5738,10 +5732,9 @@ class TestSth(unittest.TestCase):
             count += 1
             count %= 256
 
-    @skip("Untested")
     def test0532MessageCountersAccZBattery(self):
         """
-        Message Counters AccZ Battery
+        Message Counters AccZ Battery (⏱ 30 seconds)
         """
         prescaler = self.tSthLimits.uSamplingRateSinglePrescalerMax
         acquisitionTime = self.tSthLimits.uSamplingRateSingleAcqTimeMax
@@ -5825,10 +5818,9 @@ class TestSth(unittest.TestCase):
             count += 1
             count %= 256
 
-    @skip("Untested")
     def test0533MessageCounterBattery(self):
         """
-        Message Counters Battery - Data Set 1
+        Message Counters Battery - Data Set 1 (⏱ 12 seconds)
         """
         [indexStart, indexEnd
          ] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
@@ -5857,10 +5849,9 @@ class TestSth(unittest.TestCase):
             count += 1
             count %= 256
 
-    @skip("Untested")
     def test0534MessageCounterAccBatteryDataSetSingle(self):
         """
-        Message Counters Battery with single Data Set
+        Message Counters Battery with single Data Set (⏱ 10 seconds)
         """
         self.Can.ConfigAdc(
             MyToolItNetworkNr["STH1"],
