@@ -4923,10 +4923,9 @@ class TestSth(unittest.TestCase):
                           b3=0,
                           runTime=self.tSthLimits.uStandardTestTimeMs)
 
-    @skip("Untested")
     def test0516AdcOverSamplingRateMax(self):
         """
-        Testing ADC Sampling Oversampling Rate Max
+        Testing ADC Sampling Oversampling Rate Max (⏱ 20 seconds)
         """
         prescaler = 2
         acquisitionTime = AdcAcquisitionTime[1]
