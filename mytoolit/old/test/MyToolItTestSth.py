@@ -5002,10 +5002,9 @@ class TestSth(unittest.TestCase):
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
                                               TestConfig["DevName"])
 
-    @skip("Untested")
     def test0519SamplingRateMixedStreamingAccXBat(self):
         """
-        Mixed Streaming - AccX + VoltageBattery
+        Mixed Streaming - AccX + VoltageBattery (⏱ 20 seconds)
         """
         prescaler = self.tSthLimits.uSamplingRateDoublePrescalerMax
         acquisitionTime = self.tSthLimits.uSamplingRateDoubleAcqTimeMax
