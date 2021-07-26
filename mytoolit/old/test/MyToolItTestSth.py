@@ -4897,10 +4897,9 @@ class TestSth(unittest.TestCase):
                           b3=0,
                           runTime=self.tSthLimits.uStandardTestTimeMs)
 
-    @skip("Untested")
     def test0514AdcAcquisitionMax(self):
         """
-        Testing ADC Sampling Acquisition Max
+        Testing ADC Sampling Acquisition Max (⏱ 20 seconds)
         """
         self.SamplingRate(2,
                           AdcAcquisitionTime[256],
