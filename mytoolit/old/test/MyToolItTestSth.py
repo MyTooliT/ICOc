@@ -5249,10 +5249,9 @@ class TestSth(unittest.TestCase):
         self.assertGreater(calcRate * self.tSthLimits.uSamplingToleranceHigh,
                            samplePointsZAcceleration)
 
-    @skip("Untested")
-    def test0522MessageCountersMixerdSignals(self):
+    def test0522MessageCountersMixedSignals(self):
         """
-        Message Counters Mixed Signals
+        Message Counters Mixed Signals (⏱ 25 seconds)
         """
         prescaler = self.tSthLimits.uSamplingRateDoublePrescalerMax
         acquisitionTime = self.tSthLimits.uSamplingRateDoubleAcqTimeMax
