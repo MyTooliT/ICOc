@@ -7174,7 +7174,7 @@ class TestSth(unittest.TestCase):
 
 def main():
     add_commander_path_to_environment()
-    unittest.main(module=__name__)
+    unittest.main(module=__name__, verbosity=2)
 
 
 if __name__ == "__main__":
