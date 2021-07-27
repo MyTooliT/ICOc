@@ -1,4 +1,7 @@
-from nose.tools import nottest
+try:
+    from nose.tools import nottest
+except ModuleNotFoundError:
+    nottest = lambda function: function
 
 
 @nottest
