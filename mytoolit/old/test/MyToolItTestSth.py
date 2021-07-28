@@ -300,8 +300,7 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("BlueTooth Rssi(STU1): " + str(Rssi) + "dBm")
 
     def _RoutingInformationSthSend(self):
-        """
-        Routing information of STH send ports
+        """Routing information of STH send ports
         """
         SendCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STH1"], SystemCommandRouting["SendCounter"],
@@ -321,8 +320,7 @@ class TestSth(unittest.TestCase):
                              str(SendCounter))
 
     def _RoutingInformationSthReceive(self):
-        """
-        Routing information of STU send ports
+        """Routing information of STU send ports
         """
         ReceiveCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STH1"], SystemCommandRouting["ReceiveCounter"],
@@ -344,16 +342,14 @@ class TestSth(unittest.TestCase):
         return ReceiveFailCounter
 
     def _RoutingInformationSth(self):
-        """
-        Routing information of STH
+        """Routing information of STH
         """
         self._RoutingInformationSthSend()
         ReceiveFailCounter = self._RoutingInformationSthReceive()
         return ReceiveFailCounter
 
     def _RoutingInformationStuPortSpuSend(self):
-        """
-        Routing information of STU send port SPU
+        """Routing information of STU send port SPU
         """
         SendCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STU1"], SystemCommandRouting["SendCounter"],
@@ -373,8 +369,7 @@ class TestSth(unittest.TestCase):
                              str(SendCounter))
 
     def _RoutingInformationStuPortSpuReceive(self):
-        """
-        Routing information of STU receive port SPU
+        """Routing information of STU receive port SPU
         """
         ReceiveCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STU1"], SystemCommandRouting["ReceiveCounter"],
@@ -396,16 +391,14 @@ class TestSth(unittest.TestCase):
         return ReceiveFailCounter
 
     def _RoutingInformationStuPortSpu(self):
-        """
-        Routing information of STU port SPU
+        """Routing information of STU port SPU
         """
         self._RoutingInformationStuPortSpuSend()
         ReceiveFailCounter = self._RoutingInformationStuPortSpuReceive()
         return ReceiveFailCounter
 
     def _RoutingInformationStuPortSthSend(self):
-        """
-        Routing information of STU send port STH
+        """Routing information of STU send port STH
         """
         SendCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STU1"], SystemCommandRouting["SendCounter"],
@@ -425,8 +418,7 @@ class TestSth(unittest.TestCase):
                              str(SendCounter))
 
     def _RoutingInformationStuPortSthReceive(self):
-        """
-        Routing information of STU receive port STH
+        """Routing information of STU receive port STH
         """
         ReceiveCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STU1"], SystemCommandRouting["ReceiveCounter"],
@@ -448,16 +440,14 @@ class TestSth(unittest.TestCase):
         return ReceiveFailCounter
 
     def _RoutingInformationStuPortSth(self):
-        """
-        Routing information of STU port STH
+        """Routing information of STU port STH
         """
         self._RoutingInformationStuPortSthSend()
         ReceiveFailCounter = self._RoutingInformationStuPortSthReceive()
         return ReceiveFailCounter
 
     def _RoutingInformation(self):
-        """
-        Routing information of system
+        """Routing information of system
         """
         ReceiveFailCounter = self._RoutingInformationSth()
         ReceiveFailCounter += self._RoutingInformationStuPortSth()
@@ -467,8 +457,7 @@ class TestSth(unittest.TestCase):
     def singleValueCompare(self, array1, array2, array3, middle1, tolerance1,
                            middle2, tolerance2, middle3, tolerance3,
                            fCbfRecalc):
-        """
-        Test single point in a three dimensional tube
+        """Test single point in a three dimensional tube
         """
         if 0 < len(array1):
             self.assertGreaterEqual(middle1 + tolerance1,
@@ -496,8 +485,7 @@ class TestSth(unittest.TestCase):
                      compareRate=True,
                      log=True,
                      startupTime=None):
-        """
-        Config ADC and determine correct sampling rate
+        """Config ADC and determine correct sampling rate
         """
         if None == runTime:
             runTime = self.tSthLimits.uStandardTestTimeMs
@@ -592,8 +580,7 @@ class TestSth(unittest.TestCase):
         return result
 
     def TurnOffLed(self):
-        """
-        Turn off STH LED
+        """Turn off STH LED
         """
         self.Can.Logger.Info("Turn Off LED")
         cmd = self.Can.CanCmd(MyToolItBlock["Configuration"],
@@ -604,8 +591,7 @@ class TestSth(unittest.TestCase):
         self.Can.tWriteFrameWaitAckRetries(message)
 
     def TurnOnLed(self):
-        """
-        Turn on STH LED
+        """Turn on STH LED
         """
         self.Can.Logger.Info("Turn On LED")
         cmd = self.Can.CanCmd(MyToolItBlock["Configuration"],
@@ -628,8 +614,7 @@ class TestSth(unittest.TestCase):
                                    b3,
                                    testTimeMs,
                                    log=True):
-        """
-        Get streaming Data and collect them
+        """Get streaming Data and collect them
         """
         self.Can.Logger.Info("Request Test Signal: " + str(testSignal))
         self.Can.Logger.Info("Test Module: " + str(testModule))
@@ -674,8 +659,7 @@ class TestSth(unittest.TestCase):
     def streamingValueCompare(self, array1, array2, array3, middle1,
                               tolerance1, middle2, tolerance2, middle3,
                               tolerance3, fCbfRecalc):
-        """
-        Compare collected streaming data with 3dimensional tube
+        """Compare collected streaming data with 3dimensional tube
         """
         samplingPoints1 = len(array1)
         samplingPoints2 = len(array2)
@@ -706,8 +690,7 @@ class TestSth(unittest.TestCase):
                                      fCbfRecalc(array3[i]))
 
     def streamingValueCompareSignal(self, array, testSignal):
-        """
-        Compare collected streaming data with 1dimensional tube
+        """Compare collected streaming data with 1dimensional tube
         """
         self.Can.Logger.Info(
             "Comparing to Test Signal(Test Signal/Received Signal)")
@@ -721,8 +704,7 @@ class TestSth(unittest.TestCase):
     def siginalIndicatorCheck(self, name, statistic, quantil1, quantil25,
                               medianL, medianH, quantil75, quantil99, variance,
                               skewness, SNR):
-        """
-        Compare calculated signal indicators of collected data e.g. Signal to
+        """Compare calculated signal indicators of collected data e.g. Signal to
         noice ratio (SNR)
         """
         self.Can.Logger.Info(
@@ -755,8 +737,7 @@ class TestSth(unittest.TestCase):
             "____________________________________________________")
 
     def vEepromWritePage(self, iPage, value):
-        """
-        Write Page by value
+        """Write Page by value
         """
         au8Content = [value] * 4
         timeStamp = self.Can.get_elapsed_time()
@@ -770,8 +751,7 @@ class TestSth(unittest.TestCase):
                              "ms")
 
     def vEepromReadPage(self, iPage, value):
-        """
-        Read page and check content
+        """Read page and check content
         """
         timeStamp = self.Can.get_elapsed_time()
         for offset in range(0, 256, 4):
@@ -787,8 +767,7 @@ class TestSth(unittest.TestCase):
                              "ms")
 
     def vSilabsAdapterReset(self):
-        """
-        Reset the Silicon Laps Adapter
+        """Reset the Silicon Laps Adapter
         """
         self.Can.Logger.Info("Reset Adapter " + self.sAdapterSerialNo)
         sSystemCall = self.sSilabsCommander + " adapter reset "
@@ -804,8 +783,7 @@ class TestSth(unittest.TestCase):
 
     @skip("Already covered by test-sth")
     def test0000FirmwareFlash(self):
-        """
-        https://www.silabs.com/community/wireless/zigbee-and-thread/knowledge-base.entry.html/2017/12/28/building_firmwareim-1OPr
+        """https://www.silabs.com/community/wireless/zigbee-and-thread/knowledge-base.entry.html/2017/12/28/building_firmwareim-1OPr
         commander.exe convert ..\v4_workspace\server_firmware\builds\BootloaderOtaBgm113.s37 ..\v4_workspace\server_firmware\builds\v2.1.5\Server.s37 --patch 0x0fe04000:0x00 --patch 0x0fe041F8:0xFD -o manufacturing_image.hex -d BGM113A256V2
         commander flash manufacturing_image.hex --address 0x0 --serialno 440116697 -d BGM113A256V2
         """
@@ -896,8 +874,7 @@ class TestSth(unittest.TestCase):
 
     @skip("OTA update using `ota-dfu` is **very** unreliable")
     def test0001OverTheAirUpdate(self):
-        """
-        Test the over the air update
+        """Test the over the air update
         """
         iRuns = 4
         iRuns += 1
@@ -969,8 +946,7 @@ class TestSth(unittest.TestCase):
                                               TestConfig["DevName"])
 
     def test0005Ack(self):
-        """
-        Test acknowledgement from STH (⏱ 10 seconds)
+        """Test acknowledgement from STH (⏱ 10 seconds)
 
         Write message and check identifier to be acknowledgement (not error)
         """
@@ -1003,8 +979,7 @@ class TestSth(unittest.TestCase):
                          self.Can.getReadMessage(-1).DATA[0])
 
     def test0006SthReset(self):
-        """
-        Tests reset (⏱ 25 seconds)
+        """Tests reset (⏱ 25 seconds)
         """
         self._resetSth()
         self.Can.Logger.Info("Try to get Active State (0x80")
@@ -1018,16 +993,14 @@ class TestSth(unittest.TestCase):
                                               TestConfig["DevName"])
 
     def test0007SthTemperature(self):
-        """
-        Test Temperature to be in range (⏱ 10 seconds)
+        """Test Temperature to be in range (⏱ 10 seconds)
         """
         temp = self._SthAdcTemp()
         self.assertGreaterEqual(self.tSthLimits.iTemperatureInternalMax, temp)
         self.assertLessEqual(self.tSthLimits.iTemperatureInternalMin, temp)
 
     def test0008VersionNumber(self):
-        """
-        Checks correct version number (⏱ 10 seconds)
+        """Checks correct version number (⏱ 10 seconds)
         """
         iIndex = self.Can.cmdSend(MyToolItNetworkNr["STH1"],
                                   MyToolItBlock["Product Data"],
@@ -1039,8 +1012,7 @@ class TestSth(unittest.TestCase):
         self.assertEqual(sVersion, sVersionReadBack)
 
     def test0011EnergySaveMode1(self):
-        """
-        Test Energy Mode 1 (⏱ 25 seconds)
+        """Test Energy Mode 1 (⏱ 25 seconds)
 
         If you like to evaluate power consumption: Please do it manually
         """
@@ -1124,8 +1096,7 @@ class TestSth(unittest.TestCase):
         self.assertEqual(timeAdvertisement, SleepTime["AdvertisementReset1"])
 
     def test0012EnergySaveMode2(self):
-        """
-        Test Energy Mode 2 (⏱ 35 seconds)
+        """Test Energy Mode 2 (⏱ 35 seconds)
 
         If you like to evaluate power consumption: Please do it manually
         """
@@ -1221,8 +1192,7 @@ class TestSth(unittest.TestCase):
         self.test0011EnergySaveMode1()
 
     def test0013PowerConsumptionNormal(self):
-        """
-        Power Consumption - Energy Save Mode Normal (⏱ 75 seconds)
+        """Power Consumption - Energy Save Mode Normal (⏱ 75 seconds)
         """
         self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
         time.sleep(2)
@@ -1273,8 +1243,7 @@ class TestSth(unittest.TestCase):
                                               TestConfig["DevName"])
 
     def test0014PowerConsumptionEnergySaveMode1(self):
-        """
-        Power Consumption - Energy Save Mode 1 (⏱ 85 seconds)
+        """Power Consumption - Energy Save Mode 1 (⏱ 85 seconds)
         """
         try:
             os.remove("Aem1.txt")
@@ -1338,8 +1307,7 @@ class TestSth(unittest.TestCase):
                                        SleepTime["AdvertisementReset2"], 2)
 
     def test0015PowerConsumptionEnergySaveMode2(self):
-        """
-        Power Consumption - Energy Save Mode 2  (⏱ 85 seconds)
+        """Power Consumption - Energy Save Mode 2  (⏱ 85 seconds)
         """
         try:
             os.remove("Aem2.txt")
@@ -1404,8 +1372,7 @@ class TestSth(unittest.TestCase):
 
     @skip("Causes a long and gruesome death of (my) Windows (VM)")
     def test0016PowerConsumptionEnergySaveModeAdv4000ms(self):
-        """
-        Power Consumption - Energy Save Mode ()
+        """Power Consumption - Energy Save Mode ()
 
         Advertisement Time 4000ms
         """
@@ -1471,8 +1438,7 @@ class TestSth(unittest.TestCase):
                                        SleepTime["AdvertisementReset2"], 2)
 
     def test0017PowerConsumptionConnected(self):
-        """
-        Power Consumption - Connected (⏱ 85 seconds)
+        """Power Consumption - Connected (⏱ 85 seconds)
         """
         try:
             os.remove("Aem4.txt")
@@ -1526,8 +1492,7 @@ class TestSth(unittest.TestCase):
         self.assertEqual(sCurrentUnit, "mA")
 
     def test0018PowerConsumptionMeasuring(self):
-        """
-        Power Consumption - Measuring at reset conditions (⏱ 85 seconds)
+        """Power Consumption - Measuring at reset conditions (⏱ 85 seconds)
         """
         try:
             os.remove("Aem5.txt")
@@ -1586,8 +1551,7 @@ class TestSth(unittest.TestCase):
         self.assertEqual(sCurrentUnit, "mA")
 
     def test0019PowerConsumptionMeasuringLedOff(self):
-        """
-        Power Consumption - Reset conditions, LED turned off (⏱ 85 seconds)
+        """Power Consumption - Reset conditions, LED turned off (⏱ 85 seconds)
         """
         try:
             os.remove("Aem6.txt")
@@ -1648,8 +1612,7 @@ class TestSth(unittest.TestCase):
         self.assertEqual(sCurrentUnit, "mA")
 
     def test0020HmiLedGeckoModule(self):
-        """
-        Test HMI (⏱ 20 seconds)
+        """Test HMI (⏱ 20 seconds)
         """
         self.Can.Logger.Info("Get LED state")
         cmd = self.Can.CanCmd(MyToolItBlock["Configuration"],
@@ -1729,8 +1692,7 @@ class TestSth(unittest.TestCase):
         self.assertEqual(1, LedState)
 
     def test0030CalibrationFactorsKSingle(self):
-        """
-        Write each calibration factor k entry (⏱ 10 seconds)
+        """Write each calibration factor k entry (⏱ 10 seconds)
         """
         for _keyK, valueK in CalibrationFactor.items():
             b0 = 2
@@ -1786,8 +1748,7 @@ class TestSth(unittest.TestCase):
                 self.assertEqual(readK[7], 0)
 
     def test0031CalibrationFactorsDSingle(self):
-        """
-        Write each calibration factor D entry (⏱ 10 seconds)
+        """Write each calibration factor D entry (⏱ 10 seconds)
         """
         for _keyD, valueD in CalibrationFactor.items():
             b0 = 2
@@ -1843,8 +1804,7 @@ class TestSth(unittest.TestCase):
                 self.assertEqual(readD[7], 0)
 
     def test0032CalibrationFactorsKDWriteThenRead(self):
-        """
-        Write all calibration factors and read them afterwards (⏱ 15 seconds)
+        """Write all calibration factors and read them afterwards (⏱ 15 seconds)
         """
         b0 = 2 - 1
         b1 = 8 - 1
@@ -1934,8 +1894,7 @@ class TestSth(unittest.TestCase):
                     self.assertEqual(readD[j], 0)
 
     def test0103BlueToothName(self):
-        """
-        Write name and get name (bluetooth command) (⏱ 10 seconds)
+        """Write name and get name (bluetooth command) (⏱ 10 seconds)
         """
         self.Can.Logger.Info("Bluetooth name command")
         self.Can.Logger.Info("Write Walther0")
@@ -1953,8 +1912,7 @@ class TestSth(unittest.TestCase):
         self.assertEqual(TestConfig["DevName"], Name)
 
     def test0104BlueToothAddress(self):
-        """
-        Bluetooth Address (⏱ 10 seconds)
+        """Bluetooth Address (⏱ 10 seconds)
         """
         self.Can.Logger.Info("Get Bluetooth Address")
         iAddress = int(self.Can.BlueToothAddress(MyToolItNetworkNr["STH1"]))
@@ -1962,8 +1920,7 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("BlueTooth Address: " + hex(iAddress))
 
     def test0105BlueToothConnectStandard(self):
-        """
-        Check Bluetooth connectivity (⏱ 7 minutes)
+        """Check Bluetooth connectivity (⏱ 7 minutes)
         for standard settings with minimum sleep time
         """
         #
@@ -2026,8 +1983,7 @@ class TestSth(unittest.TestCase):
         self.assertLess(timeAverageSleep2, TestConfig["ConTimeSleep2MaxMs"])
 
     def test0106BlueToothConnectMax(self):
-        """
-        Check Bluetooth connectivity for maximum values (⏱ 5 minutes)
+        """Check Bluetooth connectivity for maximum values (⏱ 5 minutes)
         """
         self.Can.BlueToothEnergyModeNr(SleepTime["Min"],
                                        SleepTime["AdvertisementMax"], 1)
@@ -2061,8 +2017,7 @@ class TestSth(unittest.TestCase):
         self.assertLess(timeAverageSleep2, TestConfig["ConTimeMaximumMs"])
 
     def test0107BlueToothConnectMin(self):
-        """
-        Check Bluetooth connectivity for Minimum values (⏱ 50 seconds)
+        """Check Bluetooth connectivity for Minimum values (⏱ 50 seconds)
         (Standard Setting at start, not configurable, 50ms atm)
         """
         self.Can.BlueToothEnergyModeNr(SleepTime["Reset1"],
@@ -2092,8 +2047,7 @@ class TestSth(unittest.TestCase):
 
     @skip("STH does not react to “write energy mode reduced” command")
     def test0108BlueToothConnectWrongValues(self):
-        """
-        Check Minimum Sleeping Time
+        """Check Minimum Sleeping Time
         """
         # Do not take Time (Note that maximum is 2^32-1... Not testable due to 4Bytes Only
         [timeReset, timeAdvertisement
@@ -2176,8 +2130,7 @@ class TestSth(unittest.TestCase):
                                        SleepTime["AdvertisementReset2"], 2)
 
     def test0109BlueToothRssi(self):
-        """
-        Bluetooth Address (⏱ 7 seconds)
+        """Bluetooth Address (⏱ 7 seconds)
         """
         self.Can.Logger.Info("Get Bluetooth RSSI")
         iRssi = self.Can.BlueToothRssi(MyToolItNetworkNr["STH1"])
@@ -2186,8 +2139,7 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("BlueTooth RSSI: " + str(iRssi))
 
     def test0300GetSingleVoltageBattery(self):
-        """
-        Get Battery Voltage via single command (⏱ 8 seconds)
+        """Get Battery Voltage via single command (⏱ 8 seconds)
         """
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
                                             MyToolItStreaming["Voltage"], 1, 0,
@@ -2204,8 +2156,7 @@ class TestSth(unittest.TestCase):
                                 fVoltageBattery)
 
     def test0301GetSingleVoltageBatteryMultipleTimes(self):
-        """
-        Test multi single battery measurement (⏱ 14 seconds)
+        """Test multi single battery measurement (⏱ 14 seconds)
         """
         for _i in range(0, 10):
             index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
@@ -2223,8 +2174,7 @@ class TestSth(unittest.TestCase):
                                     0, fVoltageBattery)
 
     def test0302GetSingleAccX(self):
-        """
-        Test single Acceleration X-Axis measurement (⏱ 10 seconds)
+        """Test single Acceleration X-Axis measurement (⏱ 10 seconds)
         """
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
                                             MyToolItStreaming["Acceleration"],
@@ -2241,8 +2191,7 @@ class TestSth(unittest.TestCase):
                                 self.tSthLimits.fAcceleration)
 
     def test0303GetSingleAccY(self):
-        """
-        Test single Acceleration Y-Axis measurement (⏱ 12 seconds)
+        """Test single Acceleration Y-Axis measurement (⏱ 12 seconds)
         """
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
                                             MyToolItStreaming["Acceleration"],
@@ -2259,8 +2208,7 @@ class TestSth(unittest.TestCase):
                                 self.tSthLimits.fAcceleration)
 
     def test0304GetSingleAccZ(self):
-        """
-        Test single Acceleration Z-Axis measurement (⏱ 9 seconds)
+        """Test single Acceleration Z-Axis measurement (⏱ 9 seconds)
         """
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
                                             MyToolItStreaming["Acceleration"],
@@ -2277,8 +2225,7 @@ class TestSth(unittest.TestCase):
                                 self.tSthLimits.fAcceleration)
 
     def test0305GetSingleSingleAccXMultipleTimes(self):
-        """
-        Test multi single X Acc measurement (⏱ 16 seconds)
+        """Test multi single X Acc measurement (⏱ 16 seconds)
         """
         for _i in range(0, 10):
             index = self.Can.singleValueCollect(
@@ -2296,8 +2243,7 @@ class TestSth(unittest.TestCase):
                                     0, self.tSthLimits.fAcceleration)
 
     def test0306GetSingleSingleAccYMultipleTimes(self):
-        """
-        Test multi single Y Acc measurement (⏱ 18 seconds)
+        """Test multi single Y Acc measurement (⏱ 18 seconds)
         """
         for _i in range(0, 10):
             index = self.Can.singleValueCollect(
@@ -2315,8 +2261,7 @@ class TestSth(unittest.TestCase):
                                     self.tSthLimits.fAcceleration)
 
     def test0307GetSingleSingleAccZMultipleTimes(self):
-        """
-        Test multi single Z Acc measurement (⏱ 14 seconds)
+        """Test multi single Z Acc measurement (⏱ 14 seconds)
         """
         for _i in range(0, 10):
             index = self.Can.singleValueCollect(
@@ -2334,8 +2279,7 @@ class TestSth(unittest.TestCase):
                                     self.tSthLimits.fAcceleration)
 
     def test0308GetSingleAccXY(self):
-        """
-        Test single XY-Axis measurement (⏱ 12 seconds)
+        """Test single XY-Axis measurement (⏱ 12 seconds)
         """
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
                                             MyToolItStreaming["Acceleration"],
@@ -2354,8 +2298,7 @@ class TestSth(unittest.TestCase):
                                 self.tSthLimits.fAcceleration)
 
     def test0309GetSingleAccXZ(self):
-        """
-        Test single XZ-Axis measurement (⏱ 8 seconds)
+        """Test single XZ-Axis measurement (⏱ 8 seconds)
         """
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
                                             MyToolItStreaming["Acceleration"],
@@ -2374,8 +2317,7 @@ class TestSth(unittest.TestCase):
                                 self.tSthLimits.fAcceleration)
 
     def test0310GetSingleAccXYZ(self):
-        """
-        Test single XYZ-Axis measurement (⏱ 9 seconds)
+        """Test single XYZ-Axis measurement (⏱ 9 seconds)
         """
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
                                             MyToolItStreaming["Acceleration"],
@@ -2393,8 +2335,7 @@ class TestSth(unittest.TestCase):
             self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
 
     def test0310GetSingleAccYZ(self):
-        """
-        Test single YZ-Axis measurement (⏱ 11 seconds)
+        """Test single YZ-Axis measurement (⏱ 11 seconds)
         """
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
                                             MyToolItStreaming["Acceleration"],
@@ -2413,8 +2354,7 @@ class TestSth(unittest.TestCase):
                                 self.tSthLimits.fAcceleration)
 
     def test0320GetStreamingVoltageBattery(self):
-        """
-        Test streaming battery measurement (⏱ 30 seconds)
+        """Test streaming battery measurement (⏱ 30 seconds)
         """
         [indexStart, indexEnd] = self.Can.streamingValueCollect(
             MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"],
@@ -2438,8 +2378,7 @@ class TestSth(unittest.TestCase):
                                    0, fVoltageBattery)
 
     def test0321GetStreamingAccX(self):
-        """
-        Test streaming x-Axis measurement (⏱ 25 seconds)
+        """Test streaming x-Axis measurement (⏱ 25 seconds)
         """
         [indexStart, indexEnd] = self.Can.streamingValueCollect(
             MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
@@ -2461,8 +2400,7 @@ class TestSth(unittest.TestCase):
                                    0, 2**32, self.tSthLimits.fAcceleration)
 
     def test0322GetStreamingAccY(self):
-        """
-        Test streaming y-Axis measurement (⏱ 25 seconds)
+        """Test streaming y-Axis measurement (⏱ 25 seconds)
         """
         [indexStart, indexEnd] = self.Can.streamingValueCollect(
             MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
@@ -2484,8 +2422,7 @@ class TestSth(unittest.TestCase):
                                    self.tSthLimits.fAcceleration)
 
     def test0323GetStreamingAccZ(self):
-        """
-        Test streaming z-Axis measurement (⏱ 25 seconds)
+        """Test streaming z-Axis measurement (⏱ 25 seconds)
         """
         [indexStart, indexEnd] = self.Can.streamingValueCollect(
             MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
@@ -2507,8 +2444,7 @@ class TestSth(unittest.TestCase):
                                    self.tSthLimits.fAcceleration)
 
     def test0324GetStreamingAccXYZ(self):
-        """
-        Test streaming xyz-Axis measurement (⏱ 25 seconds)
+        """Test streaming xyz-Axis measurement (⏱ 25 seconds)
         """
         [indexStart, indexEnd] = self.Can.streamingValueCollect(
             MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
@@ -2531,8 +2467,7 @@ class TestSth(unittest.TestCase):
             self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
 
     def test0325GetStreamingAccXY(self):
-        """
-        Test streaming AccX+AccY measurement (⏱ 10 seconds)
+        """Test streaming AccX+AccY measurement (⏱ 10 seconds)
         """
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"],
                            self.tSthLimits.uSamplingRateDoublePrescalerMax,
@@ -2561,8 +2496,7 @@ class TestSth(unittest.TestCase):
             self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
 
     def test0326GetStreamingAccXZ(self):
-        """
-        Test streaming AccX+AccZ measurement (⏱ 10 seconds)
+        """Test streaming AccX+AccZ measurement (⏱ 10 seconds)
         """
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"],
                            self.tSthLimits.uSamplingRateDoublePrescalerMax,
@@ -2591,8 +2525,7 @@ class TestSth(unittest.TestCase):
             self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
 
     def test0327GetStreamingAccYZ(self):
-        """
-        Test streaming AccY+AccZ measurement (⏱ 10 seconds)
+        """Test streaming AccY+AccZ measurement (⏱ 10 seconds)
         """
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"],
                            self.tSthLimits.uSamplingRateDoublePrescalerMax,
@@ -2621,8 +2554,7 @@ class TestSth(unittest.TestCase):
             self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
 
     def test0330SignalIndicatorsAccX(self):
-        """
-        Test Signal-to-Noise Ratio - x (⏱ 25 seconds)
+        """Test Signal-to-Noise Ratio - x (⏱ 25 seconds)
         """
         self.TurnOffLed()
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"],
@@ -2651,8 +2583,7 @@ class TestSth(unittest.TestCase):
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Acc", "")
 
     def test0331SignalIndicatorsAccY(self):
-        """
-        Test Signal-to-Noise Ratio - Y (⏱ 25 seconds)
+        """Test Signal-to-Noise Ratio - Y (⏱ 25 seconds)
         """
         self.TurnOffLed()
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"],
@@ -2681,8 +2612,7 @@ class TestSth(unittest.TestCase):
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Acc", "")
 
     def test0332SignalIndicatorsAccZ(self):
-        """
-        Test Signal-to-Noise Ratio - Z (⏱ 25 seconds)
+        """Test Signal-to-Noise Ratio - Z (⏱ 25 seconds)
         """
         self.TurnOffLed()
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"],
@@ -2711,8 +2641,7 @@ class TestSth(unittest.TestCase):
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Acc", "")
 
     def test0333SignalIndicatorsBattery(self):
-        """
-        Test Signal indicator battery (⏱ 25 seconds)
+        """Test Signal indicator battery (⏱ 25 seconds)
         """
         self.TurnOffLed()
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"],
@@ -2744,8 +2673,7 @@ class TestSth(unittest.TestCase):
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Voltage", "")
 
     def test0334SignalIndicatorsMulti(self):
-        """
-        Test Signal-to-Noise Ration - Acc Multi (⏱ 20 seconds)
+        """Test Signal-to-Noise Ration - Acc Multi (⏱ 20 seconds)
         """
         [
             SigIndAccXQ1, SigIndAccXQ25, SigIndAccXMedL, SigIndAccXMedH,
@@ -2856,8 +2784,7 @@ class TestSth(unittest.TestCase):
                                    SigIndAccZSkewness, SigIndAccZSNR)
 
     def test0335GetStreamingMultipleTimes(self):
-        """
-        Test Streaming multiple Times (⏱ 50 seconds)
+        """Test Streaming multiple Times (⏱ 50 seconds)
         """
         for _i in range(0, 3):
             [indexStart, indexEnd
@@ -2923,8 +2850,7 @@ class TestSth(unittest.TestCase):
                                        self.tSthLimits.fAcceleration)
 
     def test0336StreamingMultiConfigBatAccXAccYAccZ(self):
-        """
-        Test multiple config battery, x, y, z (⏱ 25 seconds)
+        """Test multiple config battery, x, y, z (⏱ 25 seconds)
         """
         [indexStart, indexEnd
          ] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
@@ -2981,8 +2907,7 @@ class TestSth(unittest.TestCase):
             self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
 
     def test0337StreamingMultiConfig(self):
-        """
-        Test multiple config x-xyz-x  (⏱ 60 seconds)
+        """Test multiple config x-xyz-x  (⏱ 60 seconds)
         """
         self.Can.Logger.Info("Streaming AccX starts")
         self.test0321GetStreamingAccX()
@@ -2995,8 +2920,7 @@ class TestSth(unittest.TestCase):
         self.Can.ReadThreadReset()
 
     def test0338StreamingHeavyDuty(self):
-        """
-        Test long usage of data acquiring (⏱ 3 minutes)
+        """Test long usage of data acquiring (⏱ 3 minutes)
         """
         # The original run time was 10 times longer. Since the test would not
         # finish successfully in two attempts we reduced it to the current
@@ -3008,8 +2932,7 @@ class TestSth(unittest.TestCase):
                           runTime=1200000)
 
     def test0339MixedStreamingAccXVoltBat(self):
-        """
-        Mixed Streaming - AccX + VoltageBattery (⏱ 25 seconds)
+        """Mixed Streaming - AccX + VoltageBattery (⏱ 25 seconds)
         """
         self.Can.streamingStart(MyToolItNetworkNr["STH1"],
                                 MyToolItStreaming["Voltage"], DataSets[3], 1,
@@ -3065,8 +2988,7 @@ class TestSth(unittest.TestCase):
                                    0, self.tSthLimits.fAcceleration)
 
     def test0340MixedStreamingAccXVoltBatInverse(self):
-        """
-        Mixed Streaming: AccX + VoltageBattery (⏱ 25 seconds)
+        """Mixed Streaming: AccX + VoltageBattery (⏱ 25 seconds)
 
         Requesting Reverse
         """
@@ -3124,8 +3046,7 @@ class TestSth(unittest.TestCase):
                                    0, self.tSthLimits.fAcceleration)
 
     def test0341MixedStreamingAccYVoltBat(self):
-        """
-        Mixed Streaming - AccY + VoltageBattery (⏱ 25 seconds)
+        """Mixed Streaming - AccY + VoltageBattery (⏱ 25 seconds)
         """
         self.Can.streamingStart(MyToolItNetworkNr["STH1"],
                                 MyToolItStreaming["Voltage"], DataSets[3], 1,
@@ -3181,8 +3102,7 @@ class TestSth(unittest.TestCase):
                                    self.tSthLimits.fAcceleration)
 
     def test0342MixedStreamingAccZVoltBat(self):
-        """
-        Mixed Streaming - AccZ + VoltageBattery (⏱ 25 seconds)
+        """Mixed Streaming - AccZ + VoltageBattery (⏱ 25 seconds)
         """
         self.Can.streamingStart(MyToolItNetworkNr["STH1"],
                                 MyToolItStreaming["Voltage"], DataSets[3], 1,
@@ -3238,8 +3158,7 @@ class TestSth(unittest.TestCase):
                                    self.tSthLimits.fAcceleration)
 
     def test0343MixedStreamingAccXZVoltBat(self):
-        """
-        Mixed Streaming - AccX + AccZ + VoltageBattery (⏱ 25 seconds)
+        """Mixed Streaming - AccX + AccZ + VoltageBattery (⏱ 25 seconds)
         """
         prescaler = self.tSthLimits.uSamplingRateDoublePrescalerMax
         acqTime = self.tSthLimits.uSamplingRateDoubleAcqTimeMax
@@ -3301,8 +3220,7 @@ class TestSth(unittest.TestCase):
                                    self.tSthLimits.fAcceleration)
 
     def test0344MixedStreamingAccXYVoltBat(self):
-        """
-        Mixed Streaming - AccX + AccY + VoltageBattery (⏱ 25 seconds)
+        """Mixed Streaming - AccX + AccY + VoltageBattery (⏱ 25 seconds)
         """
 
         prescaler = self.tSthLimits.uSamplingRateDoublePrescalerMax
@@ -3365,8 +3283,7 @@ class TestSth(unittest.TestCase):
                                    self.tSthLimits.fAcceleration)
 
     def test0345MixedStreamingAccYZVoltBat(self):
-        """
-        Mixed Streaming - AccY + AccZ + VoltageBattery (⏱ 35 seconds)
+        """Mixed Streaming - AccY + AccZ + VoltageBattery (⏱ 35 seconds)
         """
         prescaler = self.tSthLimits.uSamplingRateDoublePrescalerMax
         acqTime = self.tSthLimits.uSamplingRateDoubleAcqTimeMax
@@ -3435,8 +3352,7 @@ class TestSth(unittest.TestCase):
                                    self.tSthLimits.fAcceleration)
 
     def test0346MixedStreamingAccXYZVoltBat(self):
-        """
-        Mixed Streaming - AccX + AccY + AccZ + VoltageBattery (⏱ 25 seconds)
+        """Mixed Streaming - AccX + AccY + AccZ + VoltageBattery (⏱ 25 seconds)
         """
         self.Can.streamingStart(MyToolItNetworkNr["STH1"],
                                 MyToolItStreaming["Voltage"], DataSets[3], 1,
@@ -3492,8 +3408,7 @@ class TestSth(unittest.TestCase):
             self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
 
     def test0347StreamingAccXSingleBattery(self):
-        """
-        Stream x-acceleration & read sampling point for battery (⏱ 20 seconds)
+        """Stream x-acceleration & read sampling point for battery (⏱ 20 seconds)
         """
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
                                              MyToolItStreaming["Acceleration"],
@@ -3538,8 +3453,7 @@ class TestSth(unittest.TestCase):
                            samplingPointsAccX)
 
     def test0348StreamingAccYSingleBattery(self):
-        """
-        Stream y-acceleration & read sampling point for battery (⏱ 20 seconds)
+        """Stream y-acceleration & read sampling point for battery (⏱ 20 seconds)
         """
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
                                              MyToolItStreaming["Acceleration"],
@@ -3584,8 +3498,7 @@ class TestSth(unittest.TestCase):
                            samplingPointsAccY)
 
     def test0349StreamingAccZSingleBattery(self):
-        """
-        Stream z-acceleration & read sampling point for battery (⏱ 20 seconds)
+        """Stream z-acceleration & read sampling point for battery (⏱ 20 seconds)
         """
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
                                              MyToolItStreaming["Acceleration"],
@@ -3630,8 +3543,7 @@ class TestSth(unittest.TestCase):
                            samplingPointsAccZ)
 
     def test0350StreamingBatterySingleAccX(self):
-        """
-        Stream Battery & receive single sampling point for AccX (⏱ 20 seconds)
+        """Stream Battery & receive single sampling point for AccX (⏱ 20 seconds)
         """
         for _i in range(0, 1):
             indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
@@ -3683,8 +3595,7 @@ class TestSth(unittest.TestCase):
                 samplingPointsBattery)
 
     def test0351StreamingBatterySingleAccY(self):
-        """
-        Stream Battery & receive single sampling point for AccY (⏱ 20 seconds)
+        """Stream Battery & receive single sampling point for AccY (⏱ 20 seconds)
         """
 
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
@@ -3733,8 +3644,7 @@ class TestSth(unittest.TestCase):
                            samplingPointsBattery)
 
     def test0352StreamingBatterySingleAccZ(self):
-        """
-        Stream Battery & receive single sampling point for AccZ (⏱ 20 seconds)
+        """Stream Battery & receive single sampling point for AccZ (⏱ 20 seconds)
         """
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
                                              MyToolItStreaming["Voltage"],
@@ -3783,8 +3693,7 @@ class TestSth(unittest.TestCase):
                            samplingPointsBattery)
 
     def test0353StreamingBatterySingleAccYZ(self):
-        """
-        Stream Battery & receive single sampling point for AccYZ (⏱ 20 seconds)
+        """Stream Battery & receive single sampling point for AccYZ (⏱ 20 seconds)
         """
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
                                              MyToolItStreaming["Voltage"],
@@ -3834,8 +3743,7 @@ class TestSth(unittest.TestCase):
                            samplingPointsBattery)
 
     def test0354StreamingBatterySingleAccXZ(self):
-        """
-        Stream Battery & receive single sampling point for AccXZ (⏱ 20 seconds)
+        """Stream Battery & receive single sampling point for AccXZ (⏱ 20 seconds)
         """
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
                                              MyToolItStreaming["Voltage"],
@@ -3885,8 +3793,7 @@ class TestSth(unittest.TestCase):
                            samplingPointsBattery)
 
     def test0355StreamingBatterySingleAccXY(self):
-        """
-        Stream Battery & receive single sampling point for AccXY (⏱ 20 seconds)
+        """Stream Battery & receive single sampling point for AccXY (⏱ 20 seconds)
         """
 
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
@@ -3937,8 +3844,7 @@ class TestSth(unittest.TestCase):
                            samplingPointsBattery)
 
     def test0356StreamingBatterySingleAccXYZ(self):
-        """
-        Stream Battery & receive sampling point for AccXYZ (⏱ 20 seconds)
+        """Stream Battery & receive sampling point for AccXYZ (⏱ 20 seconds)
         """
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
                                              MyToolItStreaming["Voltage"],
@@ -3989,8 +3895,7 @@ class TestSth(unittest.TestCase):
                            samplingPointsBattery)
 
     def test0357StreamingAccXYSingleBattery(self):
-        """
-        Stream AccXY & receive sampling point for Battery (⏱ 20 seconds)
+        """Stream AccXY & receive sampling point for Battery (⏱ 20 seconds)
         """
         prescaler = self.tSthLimits.uSamplingRateDoublePrescalerMax
         acqTime = self.tSthLimits.uSamplingRateDoubleAcqTimeMax
@@ -4040,8 +3945,7 @@ class TestSth(unittest.TestCase):
         self.assertEqual(samplingPointsAccX, samplingPointsAccY)
 
     def test0358StreamingAccXZSingleBattery(self):
-        """
-        Stream AccXZ & receive sampling point for Battery (⏱ 20 seconds)
+        """Stream AccXZ & receive sampling point for Battery (⏱ 20 seconds)
         """
         prescaler = self.tSthLimits.uSamplingRateDoublePrescalerMax
         acqTime = self.tSthLimits.uSamplingRateDoubleAcqTimeMax
@@ -4091,8 +3995,7 @@ class TestSth(unittest.TestCase):
         self.assertEqual(samplingPointsAccX, samplingPointsAccZ)
 
     def test0359StreamingAccYZSingleBattery(self):
-        """
-        Stream AccYZ & receive sampling point for Battery (⏱ 20 seconds)
+        """Stream AccYZ & receive sampling point for Battery (⏱ 20 seconds)
         """
         prescaler = self.tSthLimits.uSamplingRateDoublePrescalerMax
         acqTime = self.tSthLimits.uSamplingRateDoubleAcqTimeMax
@@ -4142,8 +4045,7 @@ class TestSth(unittest.TestCase):
         self.assertEqual(samplingPointsAccY, samplingPointsAccZ)
 
     def test0360StreamingAccXYZSingleBattery(self):
-        """
-        Stream AccXXZ & receive sampling point for Battery (⏱ 20 seconds)
+        """Stream AccXXZ & receive sampling point for Battery (⏱ 20 seconds)
         """
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
                                              MyToolItStreaming["Acceleration"],
@@ -4191,8 +4093,7 @@ class TestSth(unittest.TestCase):
         self.assertEqual(samplingPointsAccX, samplingPointsAccZ)
 
     def test0370StreamingOnfOff(self):
-        """
-        Stream Start and Stop -> Test communication protocol (⏱ 3 minutes)
+        """Stream Start and Stop -> Test communication protocol (⏱ 3 minutes)
         """
         _runs = 100
         # single stream, data set 3
@@ -4250,8 +4151,7 @@ class TestSth(unittest.TestCase):
                                    MyToolItStreaming["Voltage"])
 
     def test0380GetStreamingTestLineAccX(self):
-        """
-        Test x-Axis Line (⏱ 15 seconds)
+        """Test x-Axis Line (⏱ 15 seconds)
         """
         [indexStart, indexEnd] = self.streamingTestSignalCollect(
             MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"],
@@ -4278,8 +4178,7 @@ class TestSth(unittest.TestCase):
                                    0, fAdcRawDat)
 
     def test0381GetStreamingTestLineAccY(self):
-        """
-        Test y-Axis Line (⏱ 15 seconds)
+        """Test y-Axis Line (⏱ 15 seconds)
         """
         [indexStart, indexEnd] = self.streamingTestSignalCollect(
             MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"],
@@ -4306,8 +4205,7 @@ class TestSth(unittest.TestCase):
                                    0, fAdcRawDat)
 
     def test0382GetStreamingTestLineAccZ(self):
-        """
-        Test z-Axis Line (⏱ 15 seconds)
+        """Test z-Axis Line (⏱ 15 seconds)
         """
         [indexStart, indexEnd] = self.streamingTestSignalCollect(
             MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"],
@@ -4334,8 +4232,7 @@ class TestSth(unittest.TestCase):
                                    0, fAdcRawDat)
 
     def test0383GetStreamingTestLineBattery(self):
-        """
-        Test Battery Line (⏱ 15 seconds)
+        """Test Battery Line (⏱ 15 seconds)
         """
         [indexStart, indexEnd] = self.streamingTestSignalCollect(
             MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"],
@@ -4366,8 +4263,7 @@ class TestSth(unittest.TestCase):
                                    0, fAdcRawDat)
 
     def test0384GetStreamingTestRampAccX(self):
-        """
-        Test x-Axis Ramp (⏱ 10 seconds)
+        """Test x-Axis Ramp (⏱ 10 seconds)
         """
         [indexStart, indexEnd] = self.streamingTestSignalCollect(
             MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"],
@@ -4402,8 +4298,7 @@ class TestSth(unittest.TestCase):
                         self.tSthLimits.uAdcSizeY, None))
 
     def test0385GetStreamingTestRampAccY(self):
-        """
-        Test Y-Axis Ramp (⏱ 10 seconds)
+        """Test Y-Axis Ramp (⏱ 10 seconds)
         """
         [indexStart, indexEnd] = self.streamingTestSignalCollect(
             MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"],
@@ -4438,8 +4333,7 @@ class TestSth(unittest.TestCase):
                         self.tSthLimits.uAdcSizeY, None))
 
     def test0386GetStreamingTestRampAccZ(self):
-        """
-        Test Z-Axis Ramp (⏱ 10 seconds)
+        """Test Z-Axis Ramp (⏱ 10 seconds)
         """
         [indexStart, indexEnd] = self.streamingTestSignalCollect(
             MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"],
@@ -4474,8 +4368,7 @@ class TestSth(unittest.TestCase):
                         self.tSthLimits.uAdcSizeY, None))
 
     def test0387GetStreamingTestRampBattery(self):
-        """
-        Test Battery Ramp  (⏱ 10 seconds)
+        """Test Battery Ramp  (⏱ 10 seconds)
         """
         [indexStart, indexEnd] = self.streamingTestSignalCollect(
             MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"],
@@ -4512,8 +4405,7 @@ class TestSth(unittest.TestCase):
                         self.tSthLimits.uAdcSizeY, None))
 
     def test0500SamplingRateReset(self):
-        """
-        Testing Sampling Rate - Reset (⏱ 25 seconds)
+        """Testing Sampling Rate - Reset (⏱ 25 seconds)
         """
         [indexStart, indexEnd] = self.Can.streamingValueCollect(
             MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
@@ -4555,30 +4447,26 @@ class TestSth(unittest.TestCase):
             self.tSthLimits.uSamplingToleranceHigh, samplingPoints)
 
     def test0501SamplingRatePreq(self):
-        """
-        Testing ADC Sampling Rate - Prescaler (⏱ 25 seconds)
+        """Testing ADC Sampling Rate - Prescaler (⏱ 25 seconds)
         """
         self.SamplingRate(5, self.tSthLimits.uSamplingRateSingleAcqTimeMax,
                           self.tSthLimits.uSamplingRateSingleOverSamplesMax,
                           AdcReference["VDD"])
 
     def test0502SamplingRateAqu(self):
-        """
-        Testing ADC Sampling Rate - Acquisition Time (⏱ 25 seconds)
+        """Testing ADC Sampling Rate - Acquisition Time (⏱ 25 seconds)
         """
         self.SamplingRate(2, AdcAcquisitionTime[32], AdcOverSamplingRate[64],
                           AdcReference["VDD"])
 
     def test0503SamplingRateOverSampling(self):
-        """
-        Testing ADC Sampling Rate - Oversampling Rate (⏱ 25 seconds)
+        """Testing ADC Sampling Rate - Oversampling Rate (⏱ 25 seconds)
         """
         self.SamplingRate(5, AdcAcquisitionTime[8], AdcOverSamplingRate[32],
                           AdcReference["VDD"])
 
     def test0504SamplingRateDataSingleMax(self):
-        """
-        Testing ADC Sampling Rate - Maximum(Single Data) (⏱ 25 seconds)
+        """Testing ADC Sampling Rate - Maximum(Single Data) (⏱ 25 seconds)
         """
         self.SamplingRate(self.tSthLimits.uSamplingRateSinglePrescalerMax,
                           self.tSthLimits.uSamplingRateSingleAcqTimeMax,
@@ -4587,8 +4475,7 @@ class TestSth(unittest.TestCase):
                           runTime=10000)["SamplingRate"]
 
     def test0505SamplingRateDataDoubleMax(self):
-        """
-        Testing ADC Sampling Rate - Maximum(Double Data) (⏱ 25 seconds)
+        """Testing ADC Sampling Rate - Maximum(Double Data) (⏱ 25 seconds)
         """
         self.SamplingRate(self.tSthLimits.uSamplingRateDoublePrescalerMax,
                           self.tSthLimits.uSamplingRateDoubleAcqTimeMax,
@@ -4600,8 +4487,7 @@ class TestSth(unittest.TestCase):
                           runTime=10000)["SamplingRate"]
 
     def test0506SamplingRateDataTrippleMax(self):
-        """
-        Testing ADC Sampling Rate - Maximum(Tripple Data) (⏱ 25 seconds)
+        """Testing ADC Sampling Rate - Maximum(Tripple Data) (⏱ 25 seconds)
         """
         self.SamplingRate(self.tSthLimits.uSamplingRateTripplePrescalerMax,
                           self.tSthLimits.uSamplingRateTrippleAcqTimeMax,
@@ -4613,8 +4499,7 @@ class TestSth(unittest.TestCase):
                           runTime=10000)["SamplingRate"]
 
     def test0507VRef(self):
-        """
-        Testing ADC Reference voltages (⏱ 4 minutes)
+        """Testing ADC Reference voltages (⏱ 4 minutes)
         """
         self.Can.Logger.Info("Warm Up")
         self.SamplingRate(self.tSthLimits.uSamplingRateTripplePrescalerMax,
@@ -4641,8 +4526,7 @@ class TestSth(unittest.TestCase):
                 startupTime=False)
 
     def test0508AdcConfigSingle(self):
-        """
-        ADC Configuration Combine all possible settings (⏱ 25 minutes)
+        """ADC Configuration Combine all possible settings (⏱ 25 minutes)
 
         Single Axis (but only for prescaler 2)
         """
@@ -4713,8 +4597,7 @@ class TestSth(unittest.TestCase):
                          self.tSthLimits.uSamplingRateSingleMax())
 
     def test0509AdcConfigDouble(self):
-        """
-        Combine all possible settings - Double Axis (⏱ 25 minutes)
+        """Combine all possible settings - Double Axis (⏱ 25 minutes)
 
         (but only for prescaler 3)
         """
@@ -4785,8 +4668,7 @@ class TestSth(unittest.TestCase):
                          self.tSthLimits.uSamplingRateDoubleMax())
 
     def test0510AdcConfigTripple(self):
-        """
-        Combine all possible settings - Tripple Axis (⏱ 25 minutes)
+        """Combine all possible settings - Tripple Axis (⏱ 25 minutes)
 
         (but only for prescaler 2)
         """
@@ -4859,8 +4741,7 @@ class TestSth(unittest.TestCase):
                          self.tSthLimits.uSamplingRateTrippleMax())
 
     def test0511AdcPrescalerMin(self):
-        """
-        Testing ADC Sampling Prescaler Min (⏱ 30 seconds)
+        """Testing ADC Sampling Prescaler Min (⏱ 30 seconds)
         """
         self.SamplingRate(Prescaler["Min"],
                           self.tSthLimits.uSamplingRateSingleAcqTimeMax,
@@ -4872,8 +4753,7 @@ class TestSth(unittest.TestCase):
                           runTime=self.tSthLimits.uStandardTestTimeMs)
 
     def test0512AdcPrescalerMax(self):
-        """
-        Testing ADC Sampling Prescaler Min/Max (⏱ 45 seconds)
+        """Testing ADC Sampling Prescaler Min/Max (⏱ 45 seconds)
         """
         self.SamplingRate(Prescaler["Max"],
                           AdcAcquisitionTime[1],
@@ -4885,8 +4765,7 @@ class TestSth(unittest.TestCase):
                           runTime=30000)
 
     def test0513AdcAcquisitionMin(self):
-        """
-        Testing ADC Sampling Acquisition Min (⏱ 25 seconds)
+        """Testing ADC Sampling Acquisition Min (⏱ 25 seconds)
         """
         self.SamplingRate(2,
                           AdcAcquisitionTime[1],
@@ -4898,8 +4777,7 @@ class TestSth(unittest.TestCase):
                           runTime=self.tSthLimits.uStandardTestTimeMs)
 
     def test0514AdcAcquisitionMax(self):
-        """
-        Testing ADC Sampling Acquisition Max (⏱ 20 seconds)
+        """Testing ADC Sampling Acquisition Max (⏱ 20 seconds)
         """
         self.SamplingRate(2,
                           AdcAcquisitionTime[256],
@@ -4911,8 +4789,7 @@ class TestSth(unittest.TestCase):
                           runTime=self.tSthLimits.uStandardTestTimeMs)
 
     def test0515AdcOverSamplingRateMin(self):
-        """
-        Testing ADC Sampling Oversampling Rate Min (⏱ 25 seconds)
+        """Testing ADC Sampling Oversampling Rate Min (⏱ 25 seconds)
         """
         self.SamplingRate(32,
                           AdcAcquisitionTime[256],
@@ -4924,8 +4801,7 @@ class TestSth(unittest.TestCase):
                           runTime=self.tSthLimits.uStandardTestTimeMs)
 
     def test0516AdcOverSamplingRateMax(self):
-        """
-        Testing ADC Sampling Oversampling Rate Max (⏱ 20 seconds)
+        """Testing ADC Sampling Oversampling Rate Max (⏱ 20 seconds)
         """
         prescaler = 2
         acquisitionTime = AdcAcquisitionTime[1]
@@ -4949,8 +4825,7 @@ class TestSth(unittest.TestCase):
             result["SamplingRate"])  # Sampling Rate of 220 is very imprecise
 
     def test0517AdcOverSamplingRateNone(self):
-        """
-        Testing ADC Sampling Oversampling Rate None (⏱ 15 seconds)
+        """Testing ADC Sampling Oversampling Rate None (⏱ 15 seconds)
         """
         self.SamplingRate(64,
                           AdcAcquisitionTime[256],
@@ -4962,8 +4837,7 @@ class TestSth(unittest.TestCase):
                           runTime=4000)
 
     def test0518AdcSamplingRateOverdrive(self):
-        """
-        Inject oversampling Rate fault (⏱ 20 seconds)
+        """Inject oversampling Rate fault (⏱ 20 seconds)
 
         See that error status word is set correctly and that the system still
         works
@@ -5003,8 +4877,7 @@ class TestSth(unittest.TestCase):
                                               TestConfig["DevName"])
 
     def test0519SamplingRateMixedStreamingAccXBat(self):
-        """
-        Mixed Streaming - AccX + VoltageBattery (⏱ 20 seconds)
+        """Mixed Streaming - AccX + VoltageBattery (⏱ 20 seconds)
         """
         prescaler = self.tSthLimits.uSamplingRateDoublePrescalerMax
         acquisitionTime = self.tSthLimits.uSamplingRateDoubleAcqTimeMax
@@ -5079,8 +4952,7 @@ class TestSth(unittest.TestCase):
                            samplePointsAcceleration)
 
     def test0520SamplingRateMixedStreamingAccXYBat(self):
-        """
-        Mixed Streaming - AccXY + VoltageBattery (⏱ 20 seconds)
+        """Mixed Streaming - AccXY + VoltageBattery (⏱ 20 seconds)
         """
         prescaler = self.tSthLimits.uSamplingRateDoublePrescalerMax
         acquisitionTime = self.tSthLimits.uSamplingRateDoubleAcqTimeMax
@@ -5162,8 +5034,7 @@ class TestSth(unittest.TestCase):
                            samplePointsYAcceleration)
 
     def test0521SamplingRateMixedStreamingAccXYZBat(self):
-        """
-        Mixed Streaming - AccXYZ + VoltageBattery (⏱ 20 seconds)
+        """Mixed Streaming - AccXYZ + VoltageBattery (⏱ 20 seconds)
         """
         prescaler = self.tSthLimits.uSamplingRateDoublePrescalerMax
         acquisitionTime = self.tSthLimits.uSamplingRateDoubleAcqTimeMax
@@ -5250,8 +5121,7 @@ class TestSth(unittest.TestCase):
                            samplePointsZAcceleration)
 
     def test0522MessageCountersMixedSignals(self):
-        """
-        Message Counters Mixed Signals (⏱ 25 seconds)
+        """Message Counters Mixed Signals (⏱ 25 seconds)
         """
         prescaler = self.tSthLimits.uSamplingRateDoublePrescalerMax
         acquisitionTime = self.tSthLimits.uSamplingRateDoubleAcqTimeMax
@@ -5332,8 +5202,7 @@ class TestSth(unittest.TestCase):
             count %= 256
 
     def test0523MessageCounterAccX(self):
-        """
-        Message Counters AccX (⏱ 25 seconds)
+        """Message Counters AccX (⏱ 25 seconds)
         """
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"],
                            self.tSthLimits.uSamplingRateSinglePrescalerMax,
@@ -5367,8 +5236,7 @@ class TestSth(unittest.TestCase):
             count %= 256
 
     def test0524MessageCounterAccY(self):
-        """
-        Message Counters AccY (⏱ 11 seconds)
+        """Message Counters AccY (⏱ 11 seconds)
         """
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"],
                            self.tSthLimits.uSamplingRateSinglePrescalerMax,
@@ -5402,8 +5270,7 @@ class TestSth(unittest.TestCase):
             count %= 256
 
     def test0525MessageCounterAccZ(self):
-        """
-        Message Counters AccZ (⏱ 10 seconds)
+        """Message Counters AccZ (⏱ 10 seconds)
         """
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"],
                            self.tSthLimits.uSamplingRateSinglePrescalerMax,
@@ -5437,8 +5304,7 @@ class TestSth(unittest.TestCase):
             count %= 256
 
     def test0526MessageCounterAccXY(self):
-        """
-        Message Counters AccXY (⏱ 12 seconds)
+        """Message Counters AccXY (⏱ 12 seconds)
         """
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"],
                            self.tSthLimits.uSamplingRateDoublePrescalerMax,
@@ -5468,8 +5334,7 @@ class TestSth(unittest.TestCase):
             count %= 256
 
     def test0527MessageCounterAccXZ(self):
-        """
-        Message Counters AccXZ (⏱ 12 seconds)
+        """Message Counters AccXZ (⏱ 12 seconds)
         """
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"],
                            self.tSthLimits.uSamplingRateDoublePrescalerMax,
@@ -5499,8 +5364,7 @@ class TestSth(unittest.TestCase):
             count %= 256
 
     def test0528MessageCounterAccYZ(self):
-        """
-        Message Counters AccXZ (⏱ 12 seconds)
+        """Message Counters AccXZ (⏱ 12 seconds)
         """
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"],
                            self.tSthLimits.uSamplingRateDoublePrescalerMax,
@@ -5530,8 +5394,7 @@ class TestSth(unittest.TestCase):
             count %= 256
 
     def test0529MessageCounterAccXYZ(self):
-        """
-        Message Counters AccXYZ (⏱ 12 seconds)
+        """Message Counters AccXYZ (⏱ 12 seconds)
         """
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"],
                            self.tSthLimits.uSamplingRateTripplePrescalerMax,
@@ -5561,8 +5424,7 @@ class TestSth(unittest.TestCase):
             count %= 256
 
     def test0530MessageCountersAccXBattery(self):
-        """
-        Message Counters AccX Battery (⏱ 25 seconds)
+        """Message Counters AccX Battery (⏱ 25 seconds)
         """
         prescaler = self.tSthLimits.uSamplingRateSinglePrescalerMax
         acquisitionTime = self.tSthLimits.uSamplingRateSingleAcqTimeMax
@@ -5647,8 +5509,7 @@ class TestSth(unittest.TestCase):
             count %= 256
 
     def test0531MessageCountersAccYBattery(self):
-        """
-        Message Counters AccY Battery (⏱ 25 seconds)
+        """Message Counters AccY Battery (⏱ 25 seconds)
         """
         prescaler = self.tSthLimits.uSamplingRateSinglePrescalerMax
         acquisitionTime = self.tSthLimits.uSamplingRateSingleAcqTimeMax
@@ -5733,8 +5594,7 @@ class TestSth(unittest.TestCase):
             count %= 256
 
     def test0532MessageCountersAccZBattery(self):
-        """
-        Message Counters AccZ Battery (⏱ 30 seconds)
+        """Message Counters AccZ Battery (⏱ 30 seconds)
         """
         prescaler = self.tSthLimits.uSamplingRateSinglePrescalerMax
         acquisitionTime = self.tSthLimits.uSamplingRateSingleAcqTimeMax
@@ -5819,8 +5679,7 @@ class TestSth(unittest.TestCase):
             count %= 256
 
     def test0533MessageCounterBattery(self):
-        """
-        Message Counters Battery - Data Set 1 (⏱ 12 seconds)
+        """Message Counters Battery - Data Set 1 (⏱ 12 seconds)
         """
         [indexStart, indexEnd
          ] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
@@ -5850,8 +5709,7 @@ class TestSth(unittest.TestCase):
             count %= 256
 
     def test0534MessageCounterAccBatteryDataSetSingle(self):
-        """
-        Message Counters Battery with single Data Set (⏱ 10 seconds)
+        """Message Counters Battery with single Data Set (⏱ 10 seconds)
         """
         self.Can.ConfigAdc(
             MyToolItNetworkNr["STH1"],
@@ -5884,8 +5742,7 @@ class TestSth(unittest.TestCase):
 
     @skip("Untested")
     def test0600CalibrationMeasurement(self):
-        """
-        Check Calibration Measurement
+        """Check Calibration Measurement
         """
         ret = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"],
                                         CalibMeassurementActionNr["Measure"],
@@ -5989,8 +5846,7 @@ class TestSth(unittest.TestCase):
 
     @skip("Untested")
     def test0601CalibrationMeasurementTemperature(self):
-        """
-        Calibration - Check On-Die Temperature
+        """Calibration - Check On-Die Temperature
         """
         ret = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"],
                                         CalibMeassurementActionNr["Measure"],
@@ -6007,8 +5863,7 @@ class TestSth(unittest.TestCase):
 
     @skip("Untested")
     def test0602CalibrationMeasurementVRef(self):
-        """
-        Calibration - Check all VRef combinations
+        """Calibration - Check all VRef combinations
         """
         self.test0601CalibrationMeasurementTemperature()  # 1V25
         for vRefKey, vRefValue in AdcReference.items():
@@ -6035,8 +5890,7 @@ class TestSth(unittest.TestCase):
 
     @skip("Untested")
     def test0603CalibrationMeasurementEjectInject(self):
-        """
-        Calibration - Check Injection and Ejection
+        """Calibration - Check Injection and Ejection
         """
         global iSensorAxis
         kX1ack = self.Can.calibMeasurement(
@@ -6295,8 +6149,7 @@ class TestSth(unittest.TestCase):
 
     @skip("Untested")
     def test0604CalibrationMeasurementState(self):
-        """
-        Check State at startup without any action
+        """Check State at startup without any action
         """
         stateStartX = self.Can.calibMeasurement(
             MyToolItNetworkNr["STH1"],
@@ -6400,8 +6253,7 @@ class TestSth(unittest.TestCase):
 
     @skip("Untested")
     def test0605StateCalibrationMeasurementReset(self):
-        """
-        Check Reset Subcommand of Calibration Measurement Command
+        """Check Reset Subcommand of Calibration Measurement Command
         """
         ackInjectX = self.Can.calibMeasurement(
             MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"],
@@ -6464,8 +6316,7 @@ class TestSth(unittest.TestCase):
 
     @skip("Untested")
     def test0700StatisticsPowerOnCounterPowerOffCounter(self):
-        """
-        Check Power On and Power Off Counters
+        """Check Power On and Power Off Counters
         """
         PowerOnOff1 = self.Can.statisticalData(MyToolItNetworkNr["STH1"],
                                                MyToolItStatData["PocPof"])
@@ -6525,8 +6376,7 @@ class TestSth(unittest.TestCase):
 
     @skip("Untested")
     def test0701StatisticsOperatingSeconds(self):
-        """
-        Check Operating Seconds
+        """Check Operating Seconds
         """
         self._resetSth()
         self.Can.Logger.Info("Connect to STH")
@@ -6599,8 +6449,7 @@ class TestSth(unittest.TestCase):
 
     @skip("Untested")
     def test0702WdogNotIncrementing(self):
-        """
-        Check Watchdog counter to not increment
+        """Check Watchdog counter to not increment
         """
         WDogCounter1 = self._SthWDog()
         self._resetSth()
@@ -6624,8 +6473,7 @@ class TestSth(unittest.TestCase):
 
     @skip("Untested")
     def test0703ProductionDate(self):
-        """
-        Write actual production date and Check ProductionDate
+        """Write actual production date and Check ProductionDate
         """
         sDate = date.today()
         sDate = str(sDate).replace('-', '')
@@ -6654,8 +6502,7 @@ class TestSth(unittest.TestCase):
 
     @skip("Untested")
     def test0750StatisticPageWriteReadDeteministic(self):
-        """
-        Check EEPROM Read/Write - Deterministic data
+        """Check EEPROM Read/Write - Deterministic data
         """
         uLoopRuns = 25
         time.sleep(2)
@@ -6724,8 +6571,7 @@ class TestSth(unittest.TestCase):
 
     @skip("Untested")
     def test0751StatisticPageWriteReadRandom(self):
-        """
-        Check EEPROM Read/Write - Deterministic data
+        """Check EEPROM Read/Write - Deterministic data
         """
         uLoopRuns = 100
         u32EepromWriteRequestCounterTestStart = self.Can.u32EepromWriteRequestCounter(
@@ -6792,8 +6638,7 @@ class TestSth(unittest.TestCase):
 
     @skip("Untested")
     def test0752EepromWriteRequestCounterConnectDisconnect(self):
-        """
-        Check single Write access at startup and off (Power On Counter and Power Off Counter)
+        """Check single Write access at startup and off (Power On Counter and Power Off Counter)
         """
         u32EepromWriteRequestCounterTestStart = self.Can.u32EepromWriteRequestCounter(
             MyToolItNetworkNr["STH1"])
@@ -6809,8 +6654,7 @@ class TestSth(unittest.TestCase):
 
     @skip("Untested")
     def test0753EepromWriteRequestCounterPageSwitches(self):
-        """
-        Check that page switched do not yield to Writing EEPROM
+        """Check that page switched do not yield to Writing EEPROM
         """
         time.sleep(1)
         uLoopRuns = 5
@@ -6837,8 +6681,7 @@ class TestSth(unittest.TestCase):
 
     @skip("Untested")
     def test0754EepromWriteRequestCounterPageWriteSwitches(self):
-        """
-        Check that page switched with previews writes yield into to Writing EEPROM with the correct number of writes
+        """Check that page switched with previews writes yield into to Writing EEPROM with the correct number of writes
         """
         time.sleep(2)
         uLoopRuns = 5
@@ -6876,8 +6719,7 @@ class TestSth(unittest.TestCase):
 
     @skip("Untested")
     def test0800StatusWords0Reset(self):
-        """
-        Status Word after Reset
+        """Status Word after Reset
         """
         status0 = self.Can.node_status(MyToolItNetworkNr["STH1"])
         self.Can.Logger.Info(f"STH Status Word: {status0}")
@@ -6887,8 +6729,7 @@ class TestSth(unittest.TestCase):
 
     @skip("Untested")
     def test0801StatusWords0AdcOverRun(self):
-        """
-        Status Word in ADC overrun error case
+        """Status Word in ADC overrun error case
         """
         prescaler = 2
         acquisitionTime = AdcAcquisitionTime[1]
@@ -6924,8 +6765,7 @@ class TestSth(unittest.TestCase):
 
     @skip("Untested")
     def test0820StatusWords1Reset(self):
-        """
-        Status Word after Reset
+        """Status Word after Reset
         """
         status = self.Can.error_status(MyToolItNetworkNr["STH1"])
         self.Can.Logger.Info(f"STH Error Word: {status}")
@@ -6933,8 +6773,7 @@ class TestSth(unittest.TestCase):
 
     @skip("Untested")
     def test0821StatusWords1AdcOverRun(self):
-        """
-        Status Word after ADC Overrun
+        """Status Word after ADC Overrun
         """
         prescaler = 2
         acquisitionTime = AdcAcquisitionTime[1]
@@ -6961,8 +6800,7 @@ class TestSth(unittest.TestCase):
 
     @skip("Untested")
     def test0822StatusWords1TxFail(self):
-        """
-        Status Word after Overspeed
+        """Status Word after Overspeed
         """
         prescaler = 2
         acquisitionTime = AdcAcquisitionTime[8]
@@ -6990,8 +6828,7 @@ class TestSth(unittest.TestCase):
 
     @skip("Untested")
     def test0880ActiveStateReset(self):
-        """
-        Active State
+        """Active State
         """
         activeState = ActiveState()
         activeState.asbyte = 0  # Set=0 ->Read
@@ -7020,8 +6857,7 @@ class TestSth(unittest.TestCase):
 
     @skip("Untested")
     def test0881ActiveStateError(self):
-        """
-        Active State
+        """Active State
         """
         activeState = ActiveState()
         activeState.asbyte = 0  # Set=0 ->Read
@@ -7094,8 +6930,7 @@ class TestSth(unittest.TestCase):
 
     @skip("Untested")
     def test0900ErrorCmdVerbotenSth1(self):
-        """
-        Test that nothing happens when sending Command 0x0000 to STH1
+        """Test that nothing happens when sending Command 0x0000 to STH1
         """
         cmd = self.Can.CanCmd(0, 0, 1, 0)
         message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
@@ -7132,8 +6967,7 @@ class TestSth(unittest.TestCase):
 
     @skip("Untested")
     def test0901ErrorRequestErrorSth1(self):
-        """
-        Test that nothing happens when sending Request(1) and bError(1) to STH1
+        """Test that nothing happens when sending Request(1) and bError(1) to STH1
         """
         cmd = self.Can.CanCmd(MyToolItBlock["System"], MyToolItSystem["Reset"],
                               1, 1)
@@ -7156,8 +6990,7 @@ class TestSth(unittest.TestCase):
 
     @skip("Untested")
     def test0902WrongSenderSth1(self):
-        """
-        Test Routing - Wrong Sender to STH1
+        """Test Routing - Wrong Sender to STH1
         """
         for numberKey, numberVal in MyToolItNetworkNr.items():
             if "SPU1" != numberKey:
