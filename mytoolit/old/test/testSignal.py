@@ -1,10 +1,3 @@
-try:
-    from nose.tools import nottest
-except ModuleNotFoundError:
-    nottest = lambda function: function
-
-
-@nottest
 def testRampDim(MaxValue, FirstDim, SecondDim, fRecalc):
     ramp = []
 

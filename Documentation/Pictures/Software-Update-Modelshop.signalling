@@ -15,7 +15,7 @@ RS--RS: Test most recent commit
 {
     RS--RS: Check code with Flake8;
     RS--RS: Type check code with Mypy;
-    RS--RS: Run tests with nose;
+    RS--RS: Run tests with pytest;
     RS--RS: Execute “shake test” with ICOc;
     RS--RS: Run STH test;
     RS--RS: Run STU test;

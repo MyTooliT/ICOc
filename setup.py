@@ -60,6 +60,4 @@ setup(name="icoc",
               'convert-base64-mac = mytoolit.scripts.name:main',
               'convert-mac-base64 = mytoolit.scripts.mac:main',
           ]
-      },
-      tests_require=['nose'],
-      test_suite='nose.collector')
+      })
