@@ -69,13 +69,12 @@ iSensorAxis = 1
 bBattery = False
 uAdc2Acc = 100
 iRssiMin = -75
-"""
-This class is used for automated internal verification of the sensory tool holder
-"""
+
 
 
 class TestSth(unittest.TestCase):
-
+    """This class is used for automated internal verification of the sensory tool holder
+    """
     def setUp(self):
         self.tSthLimits = SthLimits(iSensorAxis,
                                     uAdc2Acc,
@@ -180,11 +179,11 @@ class TestSth(unittest.TestCase):
             if os.path.isfile(self.fileName):
                 os.rename(self.fileName, self.fileNameError)
 
-    """
-    Checks if test has failed
-    """
+    
 
     def _test_has_failed(self):
+        """Checks if test has failed
+        """
         for _method, error in self._outcome.errors:
             if error:
                 return True
@@ -192,27 +191,27 @@ class TestSth(unittest.TestCase):
             return True
         return False
 
-    """
-    Reset STU
-    """
+    
 
     def _resetStu(self, retries=5, log=True):
+        """Reset STU
+        """
         self.Can.bConnected = False
         return self.Can.reset_node("STU1", retries=retries, log=log)
 
-    """
-    Reset STH
-    """
+    
 
     def _resetSth(self, retries=5, log=True):
+        """Reset STH
+        """
         self.Can.bConnected = False
         return self.Can.reset_node("STH1", retries=retries, log=log)
 
-    """
-    Retrieve BGM113 internal Chip Temperature from the STH
-    """
+    
 
     def _SthAdcTemp(self):
+        """Retrieve BGM113 internal Chip Temperature from the STH
+        """
         au8TempReturn = self.Can.calibMeasurement(
             MyToolItNetworkNr["STH1"],
             CalibMeassurementActionNr["Measure"],
@@ -232,22 +231,23 @@ class TestSth(unittest.TestCase):
                                   bReset=True)
         return iTemperature
 
-    """
-    Retrieve Watch Dog Counter
-    """
+    
 
     def _SthWDog(self):
+        """Retrieve Watch Dog Counter
+        """
         WdogCounter = byte_list_to_int(
             self.Can.statisticalData(MyToolItNetworkNr["STH1"],
                                      MyToolItStatData["Wdog"])[:4])
         self.Can.Logger.Info("WatchDog Counter: " + str(WdogCounter))
         return WdogCounter
 
-    """
-    Get all Status Words from STH and STU
-    """
+    
+    
 
     def _statusWords(self):
+        """Get all Status Words from STH and STU
+        """
         self.Can.Logger.Info("STH Status Word: {}".format(
             self.Can.node_status(MyToolItNetworkNr["STH1"])))
         self.Can.Logger.Info("STU Status Word: {}".format(
@@ -261,21 +261,21 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("STU Error Word: {}".format(
             self.Can.error_status(MyToolItNetworkNr["STU1"])))
 
-    """
-    Stop any streaming
-    """
+    
 
     def _streamingStop(self):
+        """Stop any streaming
+        """
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
                                MyToolItStreaming["Acceleration"])
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
                                MyToolItStreaming["Voltage"])
 
-    """
-    Get RSSI, receive and send message counters of Bluetooth
-    """
+    
 
     def _BlueToothStatistics(self):
+        """Get RSSI, receive and send message counters of Bluetooth
+        """
         SendCounter = self.Can.BlueToothCmd(
             MyToolItNetworkNr["STH1"], SystemCommandBlueTooth["SendCounter"])
         self.Can.Logger.Info("BlueTooth Send Counter(STH1): " +
