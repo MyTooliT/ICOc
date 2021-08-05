@@ -71,10 +71,10 @@ uAdc2Acc = 100
 iRssiMin = -75
 
 
-
 class TestSth(unittest.TestCase):
     """This class is used for automated internal verification of the sensory tool holder
     """
+
     def setUp(self):
         self.tSthLimits = SthLimits(iSensorAxis,
                                     uAdc2Acc,
@@ -179,8 +179,6 @@ class TestSth(unittest.TestCase):
             if os.path.isfile(self.fileName):
                 os.rename(self.fileName, self.fileNameError)
 
-    
-
     def _test_has_failed(self):
         """Checks if test has failed
         """
@@ -191,23 +189,17 @@ class TestSth(unittest.TestCase):
             return True
         return False
 
-    
-
     def _resetStu(self, retries=5, log=True):
         """Reset STU
         """
         self.Can.bConnected = False
         return self.Can.reset_node("STU1", retries=retries, log=log)
 
-    
-
     def _resetSth(self, retries=5, log=True):
         """Reset STH
         """
         self.Can.bConnected = False
         return self.Can.reset_node("STH1", retries=retries, log=log)
-
-    
 
     def _SthAdcTemp(self):
         """Retrieve BGM113 internal Chip Temperature from the STH
@@ -231,8 +223,6 @@ class TestSth(unittest.TestCase):
                                   bReset=True)
         return iTemperature
 
-    
-
     def _SthWDog(self):
         """Retrieve Watch Dog Counter
         """
@@ -241,9 +231,6 @@ class TestSth(unittest.TestCase):
                                      MyToolItStatData["Wdog"])[:4])
         self.Can.Logger.Info("WatchDog Counter: " + str(WdogCounter))
         return WdogCounter
-
-    
-    
 
     def _statusWords(self):
         """Get all Status Words from STH and STU
@@ -261,8 +248,6 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("STU Error Word: {}".format(
             self.Can.error_status(MyToolItNetworkNr["STU1"])))
 
-    
-
     def _streamingStop(self):
         """Stop any streaming
         """
@@ -270,8 +255,6 @@ class TestSth(unittest.TestCase):
                                MyToolItStreaming["Acceleration"])
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
                                MyToolItStreaming["Voltage"])
-
-    
 
     def _BlueToothStatistics(self):
         """Get RSSI, receive and send message counters of Bluetooth
