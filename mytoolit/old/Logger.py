@@ -22,9 +22,11 @@ class Logger():
         try:
             self.bFileOpen = False
             self.file.close()
-            if False != self.ErrorFlag:
-                if os.path.isfile(self.fileNameError) and os.path.isfile(
-                        self.fileName):
+
+            # If there was an error use the error filename instead of the
+            # normal filename
+            if self.ErrorFlag:
+                if os.path.isfile(self.fileNameError):
                     os.remove(self.fileNameError)
                 if os.path.isfile(self.fileName):
                     os.rename(self.fileName, self.fileNameError)
