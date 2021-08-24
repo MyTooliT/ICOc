@@ -34,32 +34,21 @@ class Logger():
     def getTimeStamp(self):
         return int(round(time.time() * 1000)) - int(self.startTime)
 
+    def write(self, prefix, message):
+        if not self.bFileOpen:
+            return
+
+        self.file.write(f"[{prefix}]({self.getTimeStamp()}ms): {message}\n")
+        self.file.flush()
+
     def Info(self, message):
-        if False != self.bFileOpen:
-            self.file.write("[I](")
-            self.file.write(str(self.getTimeStamp()))
-            self.file.write("ms): ")
-            self.file.write(message)
-            self.file.write("\n")
-            self.file.flush()
+        self.write("I", message)
 
     def Error(self, message):
-        if False != self.bFileOpen:
-            self.file.write("[E](")
-            self.file.write(str(self.getTimeStamp()))
-            self.file.write("ms): ")
-            self.file.write(message)
-            self.file.write("\n")
-            self.file.flush()
+        self.write("E", message)
 
     def Warning(self, message):
-        if False != self.bFileOpen:
-            self.file.write("[W](")
-            self.file.write(str(self.getTimeStamp()))
-            self.file.write("ms): ")
-            self.file.write(message)
-            self.file.write("\n")
-            self.file.flush()
+        self.write("W", message)
 
     def vRename(self, fileName, fileNameError, FreshLog=False):
         # Store log files in root of repository
