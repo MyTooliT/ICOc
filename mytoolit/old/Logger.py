@@ -98,6 +98,38 @@ class Logger():
         return int(round(time.time() * 1000)) - int(self.startTime)
 
     def write(self, prefix, message):
+        """Write a log message to the current file
+
+        Parameters
+        ----------
+
+        prefix:
+            The prefix that should be written before the message
+
+        message:
+            The text that should be added to the file
+
+        Example
+        -------
+
+        Write line
+
+        >>> filename = "test.log"
+        >>> logger = Logger("test.log")
+        >>> logger.write("Info", "hello")
+
+        Check written content
+
+        >>> line = open(filename, 'r').readline()
+        >>> from re import fullmatch
+        >>> fullmatch('\[Info\]\(\d+ms\): hello\\n', line) is not None
+        True
+
+        Remove written log file
+
+        >>> logger.vDel()
+
+        """
         if not self.bFileOpen:
             return
 
