@@ -6,6 +6,7 @@ import subprocess
 
 from pathlib import Path
 
+from mytoolit.config import settings
 from mytoolit.old.myToolItWatch import myToolItWatch
 from mytoolit.old.MyToolItCommands import (
     AdcReference, AdcAcquisitionTime, AdcOverSamplingRate, byte_list_to_int,
@@ -42,7 +43,7 @@ class mwt(myToolItWatch):
     def vOpenLastConfig(self):
         if False != self.bLastConfig():
             lastRun = self.tXmlConfig.tree.find('lastRun')
-            self.bLogSet(str(lastRun.find('LogName').text) + ".txt")
+            self.bLogSet(settings.Logger.icoc.filename)
             self.vConfigSet(str(lastRun.find('Product').text),
                             str(lastRun.find('Version').text))
             self.vNetworkNumberSet(str(lastRun.find('NetworkNumber').text))

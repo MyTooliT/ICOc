@@ -72,6 +72,18 @@ COMMANDS:
       - C:\SiliconLabs\SimplicityStudio\v5\developer\adapter_packs\commander
 
 LOGGER:
+  ICOC:
+    # This value specifies the filename for the logging files written by ICOc.
+    # Please note, that ICOc will always add a timestamp after the name and
+    # before the suffix. In case there were any problems the program will also
+    # add the postfix `_error` to the end of the filename.
+    #
+    # Examples (for the value `ICOc.txt`):
+    #
+    # - `ICOc_2021-08-25_10-23-04.txt` (no error)
+    # - `ICOc_2021-08-25_10-23-04_error.txt` (error)
+    #
+    FILENAME: ICOc.txt
   CAN:
     # The value below specifies the minimum level of messages logged to
     # `can.log`. Currently the logger only writes debug messages, which means
