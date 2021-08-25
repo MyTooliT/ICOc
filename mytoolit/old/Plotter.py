@@ -149,7 +149,7 @@ def vPlotterCommand(command, value):
 def vPlotter(iSocketPort):
     global cDict
 
-    tLogger = Logger("Plotter.txt", True)
+    tLogger = Logger("Plotter.txt", FreshLog=True)
     tLogger.Info("Application started")
     sPloterSocketInit(iSocketPort)
     tLogger.Info("Socket Initialized")
