@@ -30,6 +30,7 @@ class Logger():
         -------
 
         >>> logger = Logger("logging.txt")
+        >>> logger.vDel() # Remove empty log file
 
         """
 
@@ -70,6 +71,7 @@ class Logger():
         >>> # We assume the initialization takes 20 ms or less
         >>> 0 <= logger.getTimeStamp() <= 20
         True
+        >>> logger.vDel() # Remove empty log file
 
         """
 
