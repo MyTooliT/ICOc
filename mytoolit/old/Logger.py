@@ -66,6 +66,7 @@ class Logger():
         the end of the filename.
 
         """
+
         try:
             self.bFileOpen = False
             self.file.close()
@@ -134,6 +135,7 @@ class Logger():
         >>> logger.vDel()
 
         """
+
         if not self.bFileOpen:
             return
 
@@ -150,6 +152,7 @@ class Logger():
             The info text that should be added at the end of the file
 
         """
+
         self.write("I", message)
 
     def Error(self, message):
@@ -162,6 +165,7 @@ class Logger():
             The error text that should be added at the end of the file
 
         """
+
         self.write("E", message)
 
     def Warning(self, message):
