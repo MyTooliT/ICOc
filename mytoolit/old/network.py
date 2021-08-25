@@ -62,6 +62,7 @@ class Network(object):
 
     def __init__(self,
                  testMethodName='unknown_test_method.txt',
+                 log_directory='.',
                  sender=Node('SPU 1').value,
                  receiver=Node('STH 1').value,
                  prescaler=2,
@@ -74,7 +75,9 @@ class Network(object):
         self.sender = sender
         # Set default receiver (number) for CAN bus
         self.receiver = receiver
-        self.Logger = Logger(testMethodName, FreshLog=FreshLog)
+        self.Logger = Logger(testMethodName,
+                             directory=log_directory,
+                             FreshLog=FreshLog)
         self.Logger.Info(str(sDateClock()))
         self.start_time = int(round(time() * 1000))
         self.pcan = PCANBasic()

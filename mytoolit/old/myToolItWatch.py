@@ -66,6 +66,7 @@ class myToolItWatch():
         self.iMsgsTotal = 0
         self.iMsgCounterLast = 0
         self.Can = Network("init.txt",
+                           log_directory=settings.Logger.icoc.directory,
                            sender=MyToolItNetworkNr["SPU1"],
                            receiver=MyToolItNetworkNr["STH1"])
         self.vSave2Xml(False)

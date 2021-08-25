@@ -3,13 +3,6 @@ import time
 
 from pathlib import Path
 
-# Fix imports for script usage
-if __name__ == '__main__':
-    from sys import path
-    path.append(str(Path(__file__).parent.parent.parent))
-
-from mytoolit.config import settings
-
 
 class Logger():
     """A logging class used to store useful information in text files.
@@ -19,7 +12,7 @@ class Logger():
           https://docs.python.org/3/library/logging.html).
     """
 
-    def __init__(self, fileName, FreshLog=False):
+    def __init__(self, fileName, directory='.', FreshLog=False):
         """Create a new logger with the given arguments
 
         Parameters
@@ -27,6 +20,9 @@ class Logger():
 
         fileName:
             The name of the file where the logged information should be stored
+
+        directory:
+            The directory where the log file should be stored
 
         FreshLog:
             Specifies, if the information should be written to a new file
@@ -61,9 +57,10 @@ class Logger():
         self.file = None
         self.fileName = None
 
-        path = Path(settings.Logger.icoc.directory)
         repository = Path(__file__).parent.parent.parent
-        self.path = path if path.is_absolute() else repository.joinpath(path)
+        directory = Path(directory)
+        self.path = (directory if directory.is_absolute() else
+                     repository.joinpath(directory)).resolve()
 
         self.vRename(fileName, FreshLog=FreshLog)
 
