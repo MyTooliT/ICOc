@@ -214,6 +214,8 @@ class Logger():
         self.bFileOpen = True
 
     def vDel(self):
+        """Remove the log (and error log) file"""
+
         self.vClose()
         if os.path.isfile(self.fileName):
             os.remove(self.fileName)
@@ -221,6 +223,8 @@ class Logger():
             os.remove(self.fileNameError)
 
     def vClose(self):
+        """Close the log file"""
+
         try:
             self.__exit__()
         except:
