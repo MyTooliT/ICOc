@@ -103,7 +103,8 @@ class Logger():
         # Store log files in root of repository
         repository = Path(__file__).parent.parent.parent
         filepath = repository.joinpath(fileName)
-        filepath_error = filepath.with_stem(f"{filepath.stem}_error")
+        filepath_error = filepath.parent.joinpath(
+            f"{filepath.stem}_error{filepath.suffix}")
 
         fileName = str(filepath)
         fileNameError = str(filepath_error)
