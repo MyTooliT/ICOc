@@ -42,6 +42,12 @@ class Logger():
         self.vRename(fileName, FreshLog=FreshLog)
 
     def __exit__(self):
+        """Close the logging file
+
+        If there were any errors then this method adds the postfix `_error` to
+        the end of the filename.
+
+        """
         try:
             self.bFileOpen = False
             self.file.close()
