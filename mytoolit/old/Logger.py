@@ -53,6 +53,10 @@ class Logger():
         self.startTime = int(round(time.time() * 1000))
         self.file = None
         self.fileName = None
+
+        # Store log files in root of repository
+        self.path = Path(__file__).parent.parent.parent
+
         self.vRename(fileName, FreshLog=FreshLog)
 
     def __exit__(self):
@@ -184,10 +188,8 @@ class Logger():
 
         """
 
-        # Store log files in root of repository
-        repository = Path(__file__).parent.parent.parent
-        filepath = repository.joinpath(fileName)
-        filepath_error = filepath.parent.joinpath(
+        filepath = self.path.joinpath(fileName)
+        filepath_error = self.path.joinpath(
             f"{filepath.stem}_error{filepath.suffix}")
 
         fileName = str(filepath)
