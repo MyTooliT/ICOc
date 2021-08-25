@@ -56,6 +56,23 @@ class Logger():
             pass
 
     def getTimeStamp(self):
+        """Return the time since the logger was initialized
+
+        Returns
+        -------
+
+        The time since logger creation in milliseconds
+
+        Example
+        -------
+
+        >>> logger = Logger("something.log")
+        >>> # We assume the initialization takes 20 ms or less
+        >>> 0 <= logger.getTimeStamp() <= 20
+        True
+
+        """
+
         return int(round(time.time() * 1000)) - int(self.startTime)
 
     def write(self, prefix, message):
