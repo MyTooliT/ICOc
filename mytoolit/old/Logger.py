@@ -29,8 +29,22 @@ class Logger():
         Example
         -------
 
-        >>> logger = Logger("logging.txt")
-        >>> logger.vDel() # Remove empty log file
+        Create logger
+
+        >>> filename = "logging.txt"
+        >>> logger = Logger(filename)
+
+        Check if the logging file exists
+
+        >>> from glob import glob
+        >>> from os.path import isfile
+        >>> files = glob(filename)
+        >>> len(files) == 1 and isfile(files[0])
+        True
+
+        Remove empty log file
+
+        >>> logger.vDel()
 
         """
 
