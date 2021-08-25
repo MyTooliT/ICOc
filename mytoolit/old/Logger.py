@@ -5,17 +5,39 @@ from pathlib import Path
 
 
 class Logger():
-    """
-    Logger class used to create logs (in a .txt format)
+    """A logging class used to store useful information in text files.
+
+    Note: Please do not use this class in your code unless you have to.
+          Instead use the [logging facility of Python](
+          https://docs.python.org/3/library/logging.html).
     """
 
-    def __init__(self, fileName, fileNameError, FreshLog=False):
+    def __init__(self, fileName, FreshLog=False):
+        """Create a new logger with the given arguments
+
+        Parameters
+        ----------
+
+        fileName:
+            The name of the file where the logged information should be stored
+
+        FreshLog:
+            Specifies, if the information should be written to a new file
+            (`True`) or appended at the end of an already existing file
+            (`False`).
+
+        Example
+        -------
+
+        >>> logger = Logger("logging.txt")
+
+        """
+
         self.bFileOpen = False
         self.ErrorFlag = False
         self.startTime = int(round(time.time() * 1000))
         self.file = None
         self.fileName = None
-
         self.vRename(fileName, FreshLog=FreshLog)
 
     def __exit__(self):
@@ -98,3 +120,8 @@ class Logger():
             self.__exit__()
         except:
             pass
+
+
+if __name__ == '__main__':
+    from doctest import testmod
+    testmod()
