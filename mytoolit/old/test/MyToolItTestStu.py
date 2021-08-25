@@ -61,7 +61,6 @@ class TestStu(unittest.TestCase):
         self.fileNameError = sLogLocation + "Error_" + self._testMethodName + ".txt"
         self.bError = False
         self.Can = Network(self.fileName,
-                           self.fileNameError,
                            MyToolItNetworkNr["SPU1"],
                            MyToolItNetworkNr["STU1"],
                            FreshLog=True)

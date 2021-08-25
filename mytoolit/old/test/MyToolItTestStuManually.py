@@ -30,8 +30,7 @@ class TestSthManually(unittest.TestCase):
         input('Press Any Key to Continue')
         self.fileName = sLogLocation + self._testMethodName + ".txt"
         self.fileNameError = sLogLocation + "Error_" + self._testMethodName + ".txt"
-        self.Can = Network(self.fileName, self.fileNameError,
-                           MyToolItNetworkNr["SPU1"],
+        self.Can = Network(self.fileName, MyToolItNetworkNr["SPU1"],
                            MyToolItNetworkNr["STH1"])
         self.Can.Logger.Info("TestCase: " + str(self._testMethodName))
         self._resetStu()

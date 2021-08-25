@@ -65,8 +65,7 @@ class myToolItWatch():
         self.iMsgLoss = 0
         self.iMsgsTotal = 0
         self.iMsgCounterLast = 0
-        self.Can = Network("init.txt", "initError.txt",
-                           MyToolItNetworkNr["SPU1"],
+        self.Can = Network("init.txt", MyToolItNetworkNr["SPU1"],
                            MyToolItNetworkNr["STH1"])
         self.vSave2Xml(False)
         self.vSthAutoConnect(False)
@@ -342,18 +341,14 @@ class myToolItWatch():
         if -1 != sLogLocation.rfind('.'):
             sLogLocation = rreplace(sLogLocation, '.',
                                     "_" + self.sDateClock() + ".")
-            logNameError = sLogLocation
-            logNameError = rreplace(logNameError, '.', "bError.")
-            self.Can.vLogNameChange(sLogLocation, logNameError)
+            self.Can.vLogNameChange(sLogLocation)
             bOk = True
         return bOk
 
     def vLogCountInc(self):
         fileName = self.Can.Logger.fileName[:-24]
         fileName = fileName + "_" + self.sDateClock() + ".txt"
-        logNameError = fileName
-        logNameError = rreplace(logNameError, '.', "bError.")
-        self.Can.vLogNameCloseInterval(fileName, logNameError)
+        self.Can.vLogNameCloseInterval(fileName)
 
     def vSheetFileSet(self, sSheetFile):
         self.sSheetFile = sSheetFile

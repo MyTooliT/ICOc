@@ -62,7 +62,6 @@ class Network(object):
 
     def __init__(self,
                  testMethodName='unknown_test_method.txt',
-                 testMethodNameError='unknown_test_method_error.txt',
                  sender=Node('SPU 1').value,
                  receiver=Node('STH 1').value,
                  prescaler=2,
@@ -75,9 +74,7 @@ class Network(object):
         self.sender = sender
         # Set default receiver (number) for CAN bus
         self.receiver = receiver
-        self.Logger = Logger(testMethodName,
-                             testMethodNameError,
-                             FreshLog=FreshLog)
+        self.Logger = Logger(testMethodName, FreshLog=FreshLog)
         self.Logger.Info(str(sDateClock()))
         self.start_time = int(round(time() * 1000))
         self.pcan = PCANBasic()
@@ -186,12 +183,12 @@ class Network(object):
         translated_error_code = self.pcan.GetErrorText(error_code)[1].decode()
         return f"{description}: {translated_error_code}"
 
-    def vLogNameChange(self, testMethodName, testMethodNameError):
-        self.Logger.vRename(testMethodName, testMethodNameError)
+    def vLogNameChange(self, testMethodName):
+        self.Logger.vRename(testMethodName)
 
-    def vLogNameCloseInterval(self, testMethodName, testMethodNameError):
+    def vLogNameCloseInterval(self, testMethodName):
         self.Logger.vClose()
-        self.Logger = Logger(testMethodName, testMethodNameError)
+        self.Logger = Logger(testMethodName)
 
     def vLogDel(self):
         self.Logger.vDel()

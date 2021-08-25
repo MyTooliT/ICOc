@@ -53,7 +53,6 @@ class TestSthManually(unittest.TestCase):
         self.fileName = sLogLocation + self._testMethodName + ".txt"
         self.fileNameError = sLogLocation + "Error_" + self._testMethodName + ".txt"
         self.Can = Network(self.fileName,
-                           self.fileNameError,
                            MyToolItNetworkNr["SPU1"],
                            MyToolItNetworkNr["STH1"],
                            self.tSthLimits.uSamplingRatePrescalerReset,

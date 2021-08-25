@@ -16,7 +16,7 @@ class Logger():
         self.file = None
         self.fileName = None
 
-        self.vRename(fileName, fileNameError, FreshLog=FreshLog)
+        self.vRename(fileName, FreshLog=FreshLog)
 
     def __exit__(self):
         try:
@@ -52,11 +52,14 @@ class Logger():
     def Warning(self, message):
         self.write("W", message)
 
-    def vRename(self, fileName, fileNameError, FreshLog=False):
+    def vRename(self, fileName, FreshLog=False):
         # Store log files in root of repository
         repository = Path(__file__).parent.parent.parent
-        fileName = str(repository.joinpath(fileName))
-        fileNameError = str(repository.joinpath(fileNameError))
+        filepath = repository.joinpath(fileName)
+        filepath_error = filepath.with_stem(f"{filepath.stem}_error")
+
+        fileName = str(filepath)
+        fileNameError = str(filepath_error)
 
         if None != self.file:
             self.vClose()

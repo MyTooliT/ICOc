@@ -215,14 +215,12 @@ class TestNode(TestCase):
             """Create connection with old network class"""
             # Initialize CAN bus
             log_filepath = f"{self._testMethodName}.txt"
-            log_filepath_error = f"{self._testMethodName}_Error.txt"
 
             cls = type(self)
             node = cls.__name__[-3:]
             receiver = Node(f'{node} 1').value
 
             self.can = OldNetwork(log_filepath,
-                                  log_filepath_error,
                                   MyToolItNetworkNr['SPU1'],
                                   receiver,
                                   oversampling=AdcOverSamplingRate[64])
