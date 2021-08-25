@@ -5,8 +5,11 @@ from mytoolit.old.MyToolItCommands import (AdcAcquisitionTime,
 
 class SthLimits():
 
-    def __init__(self, iAccSensorAxis, uAccelerationToAccGravitity,
-                 iTemperatureInternalMin, iTemperatureInternalMax,
+    def __init__(self,
+                 iAccSensorAxis,
+                 uAccelerationToAccGravitity,
+                 iTemperatureInternalMin,
+                 iTemperatureInternalMax,
                  battery=True):
         self.vBatteryParameters(battery)
         self.vAccParameters(iAccSensorAxis, uAccelerationToAccGravitity)
