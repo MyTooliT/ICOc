@@ -3,6 +3,13 @@ import time
 
 from pathlib import Path
 
+# Fix imports for script usage
+if __name__ == '__main__':
+    from sys import path
+    path.append(str(Path(__file__).parent.parent.parent))
+
+from mytoolit.config import settings
+
 
 class Logger():
     """A logging class used to store useful information in text files.
@@ -54,8 +61,9 @@ class Logger():
         self.file = None
         self.fileName = None
 
-        # Store log files in root of repository
-        self.path = Path(__file__).parent.parent.parent
+        path = Path(settings.Logger.icoc.directory)
+        repository = Path(__file__).parent.parent.parent
+        self.path = path if path.is_absolute() else repository.joinpath(path)
 
         self.vRename(fileName, FreshLog=FreshLog)
 

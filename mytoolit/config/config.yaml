@@ -73,6 +73,12 @@ COMMANDS:
 
 LOGGER:
   ICOC:
+    # The directory where ICOc stores log files. Relative directories will be
+    # interpreted from the root of the repository. For example, if we
+    # assume that the ICOc repository is stored in `Documents/ICOc` in the
+    # user’s home directory, then the value `..` means that ICOc will
+    # store the log file in the directory `Documents` in the home directory.
+    DIRECTORY: .
     # This value specifies the filename for the logging files written by ICOc.
     # Please note, that ICOc will always add a timestamp after the name and
     # before the suffix. In case there were any problems the program will also
