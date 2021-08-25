@@ -137,12 +137,40 @@ class Logger():
         self.file.flush()
 
     def Info(self, message):
+        """Add a info message to the file
+
+        Parameters
+        ----------
+
+        message:
+            The info text that should be added at the end of the file
+
+        """
         self.write("I", message)
 
     def Error(self, message):
+        """Add an error message to the file
+
+        Parameters
+        ----------
+
+        message:
+            The error text that should be added at the end of the file
+
+        """
         self.write("E", message)
 
     def Warning(self, message):
+        """Add a warning message to the file
+
+        Parameters
+        ----------
+
+        message:
+            The warning text that should be added at the end of the file
+
+        """
+
         self.write("W", message)
 
     def vRename(self, fileName, FreshLog=False):
