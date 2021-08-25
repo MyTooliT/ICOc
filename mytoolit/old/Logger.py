@@ -195,30 +195,23 @@ class Logger():
         fileName = str(filepath)
         fileNameError = str(filepath_error)
 
-        if None != self.file:
+        # Close old file handle
+        if self.file is not None:
             self.vClose()
-        if not os.path.exists(os.path.dirname(fileName)) and os.path.isdir(
-                os.path.dirname(fileName)):
-            os.makedirs(os.path.dirname(fileName))
-        if None != self.fileName:
+
+        # Rename file
+        if self.fileName:
             os.rename(self.fileName, fileName)
         self.fileName = fileName
         self.fileNameError = fileNameError
-        if '/' in fileName:
-            tPath = fileName.rsplit('/', 1)[0]
-            if False == os.path.isdir(tPath):
-                os.mkdir(tPath)
+
+        # Open new file handle
+        try:
+            mode = 'w' if FreshLog else 'a'
+            self.file = open(fileName, mode, encoding='utf-8')
+        except:
+            self.file = open(fileName, "x", encoding='utf-8')
         self.bFileOpen = True
-        if False != FreshLog:
-            try:
-                self.file = open(fileName, "w", encoding='utf-8')
-            except:
-                self.file = open(fileName, "x", encoding='utf-8')
-        else:
-            try:
-                self.file = open(fileName, "a", encoding='utf-8')
-            except:
-                self.file = open(fileName, "x", encoding='utf-8')
 
     def vDel(self):
         self.vClose()
