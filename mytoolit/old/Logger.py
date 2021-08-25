@@ -174,6 +174,16 @@ class Logger():
         self.write("W", message)
 
     def vRename(self, fileName, FreshLog=False):
+        """Rename the logging file
+
+        Parameters
+        ----------
+
+        fileName:
+            The new (base) name of the logging file
+
+        """
+
         # Store log files in root of repository
         repository = Path(__file__).parent.parent.parent
         filepath = repository.joinpath(fileName)
