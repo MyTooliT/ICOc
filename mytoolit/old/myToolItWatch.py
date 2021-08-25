@@ -65,8 +65,9 @@ class myToolItWatch():
         self.iMsgLoss = 0
         self.iMsgsTotal = 0
         self.iMsgCounterLast = 0
-        self.Can = Network("init.txt", MyToolItNetworkNr["SPU1"],
-                           MyToolItNetworkNr["STH1"])
+        self.Can = Network("init.txt",
+                           sender=MyToolItNetworkNr["SPU1"],
+                           receiver=MyToolItNetworkNr["STH1"])
         self.vSave2Xml(False)
         self.vSthAutoConnect(False)
         self.Can.Logger.Info("Start Time: " + self.sDateClock())

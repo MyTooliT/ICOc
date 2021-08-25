@@ -61,8 +61,8 @@ class TestStu(unittest.TestCase):
         self.fileNameError = sLogLocation + "Error_" + self._testMethodName + ".txt"
         self.bError = False
         self.Can = Network(self.fileName,
-                           MyToolItNetworkNr["SPU1"],
-                           MyToolItNetworkNr["STU1"],
+                           sender=MyToolItNetworkNr["SPU1"],
+                           receiver=MyToolItNetworkNr["STU1"],
                            FreshLog=True)
         self.Can.Logger.Info("TestCase: " + str(self._testMethodName))
         self.vSilabsAdapterReset()

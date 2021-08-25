@@ -68,13 +68,14 @@ class TestSth(unittest.TestCase):
         self.bError = False
         self.fileName = sLogLocation + self._testMethodName + ".txt"
         self.fileNameError = sLogLocation + "Error_" + self._testMethodName + ".txt"
-        self.Can = Network(self.fileName,
-                           MyToolItNetworkNr["SPU1"],
-                           MyToolItNetworkNr["STH1"],
-                           self.tSthLimits.uSamplingRatePrescalerReset,
-                           self.tSthLimits.uSamplingRateAcqTimeReset,
-                           self.tSthLimits.uSamplingRateOverSamplesReset,
-                           FreshLog=True)
+        self.Can = Network(
+            self.fileName,
+            sender=MyToolItNetworkNr["SPU1"],
+            receiver=MyToolItNetworkNr["STH1"],
+            prescaler=self.tSthLimits.uSamplingRatePrescalerReset,
+            acquisition=self.tSthLimits.uSamplingRateAcqTimeReset,
+            oversampling=self.tSthLimits.uSamplingRateOverSamplesReset,
+            FreshLog=True)
         self.Can.Logger.Info("TestCase: " + str(self._testMethodName))
         self.vSilabsAdapterReset()
         self.Can.CanTimeStampStart(

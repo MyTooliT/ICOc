@@ -567,8 +567,9 @@ class mwt(myToolItWatch):
             except KeyboardInterrupt:
                 pass
                 #TODO: Kill process
-            self.Can = Network("init.txt", MyToolItNetworkNr["SPU1"],
-                               MyToolItNetworkNr["STH1"])
+            self.Can = Network("init.txt",
+                               sender=MyToolItNetworkNr["SPU1"],
+                               receiver=MyToolItNetworkNr["STH1"])
         return bContinue
 
     def bTerminalUpdateConnectExecute(self, sAddr):

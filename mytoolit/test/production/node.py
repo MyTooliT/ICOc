@@ -221,8 +221,8 @@ class TestNode(TestCase):
             receiver = Node(f'{node} 1').value
 
             self.can = OldNetwork(log_filepath,
-                                  MyToolItNetworkNr['SPU1'],
-                                  receiver,
+                                  sender=MyToolItNetworkNr['SPU1'],
+                                  receiver=receiver,
                                   oversampling=AdcOverSamplingRate[64])
 
             # Reset STU (and STH)
