@@ -29,8 +29,8 @@ class Logger():
             (`True`) or appended at the end of an already existing file
             (`False`).
 
-        Example
-        -------
+        Examples
+        --------
 
         Create logger
 
@@ -43,6 +43,16 @@ class Logger():
         >>> from os.path import isfile
         >>> files = glob(filename)
         >>> len(files) == 1 and isfile(files[0])
+        True
+
+        Remove empty log file
+
+        >>> logger.vDel()
+
+        Create logger that stores data in different directory
+
+        >>> logger = Logger(fileName=filename, directory='..')
+        >>> Path.cwd().joinpath('..').resolve().joinpath(filename).is_file()
         True
 
         Remove empty log file
