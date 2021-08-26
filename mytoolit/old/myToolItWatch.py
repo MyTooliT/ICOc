@@ -72,7 +72,6 @@ class myToolItWatch():
         self.vSave2Xml(False)
         self.vSthAutoConnect(False)
         self.Can.Logger.Info("Start Time: " + self.sDateClock())
-        self.bLogSet("init.txt")
         self.bSampleSetupSet(None)
         self.vConfigSet(None, None)
         self.vSheetFileSet(None)
