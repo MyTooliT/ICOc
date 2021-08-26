@@ -53,7 +53,7 @@ class mwt(myToolItWatch):
 
     def vCloseSaveStoreLastConfig(self):
         lastRun = self.tXmlConfig.tree.find('lastRun')
-        sLogName = self.Can.Logger.fileName.split('_')[0]
+        sLogName = self.Can.Logger.filepath.name.split('_')[0]
         sLogName = sLogName.split('.')[0]  # Just to be sure
         basename_log = Path(sLogName).name
         lastRun.find('LogName').text = str(basename_log)
@@ -491,12 +491,12 @@ class mwt(myToolItWatch):
         return bContinue
 
     def vTerminalLogFileName(self):
-        self.stdscr.addstr("Log File Name(" + self.Can.Logger.fileName[0:-4] +
-                           "): ")
+        self.stdscr.addstr("Log File Name(" +
+                           self.Can.Logger.filepath.name[0:-4] + "): ")
         sLogFileName = self.sTerminalInputStringIn()
         if "" != sLogFileName:
             self.bLogSet(sLogFileName + '.txt')
-        self.stdscr.addstr("" + self.Can.Logger.fileName)
+        self.stdscr.addstr("" + self.Can.Logger.filepath.name)
         self.stdscr.refresh()
         sleep(2)
 
@@ -975,7 +975,8 @@ class mwt(myToolItWatch):
                         self.stdscr.addstr(" : XML ADC Reference Voltage: " +
                                            setup.find('AdcRef').text + "\n")
                         self.stdscr.addstr("6: Log Name: " +
-                                           self.Can.Logger.fileName + "\n")
+                                           self.Can.Logger.filepath.name +
+                                           "\n")
                         self.stdscr.addstr(" : XML Log Name: " +
                                            setup.find('LogName').text + "\n")
                         self.stdscr.addstr("7: RunTime/IntervalTime: " +

@@ -66,7 +66,7 @@ class Logger():
         self.ErrorFlag = False
         self.startTime = int(round(time.time() * 1000))
         self.file = None
-        self.fileName = None
+        self.filepath = None
 
         repository = Path(__file__).parent.parent.parent
         directory = Path(directory)
@@ -74,15 +74,16 @@ class Logger():
                           repository.joinpath(directory)).resolve()
 
         # Try to create the log directory, if it does not already exist
-        if self.directory.exists() and not directory.is_dir():
+        if self.directory.exists() and not self.directory.is_dir():
             raise NotADirectoryError(
-                f"The log directory “{directory}” points to an existing file")
+                f"The log directory “{self.directory}” points to an "
+                "existing file")
 
-        if not directory.is_dir():
+        if not self.directory.is_dir():
             try:
                 makedirs(str(self.directory))
             except OSError as error:
-                raise error("Unable to create the log directory "
+                raise error(f"Unable to create the log directory "
                             f"“{self.directory}”: {error}")
 
         self.vRename(fileName, FreshLog=FreshLog)
@@ -102,10 +103,12 @@ class Logger():
             # If there was an error use the error filename instead of the
             # normal filename
             if self.ErrorFlag:
-                if os.path.isfile(self.fileNameError):
-                    os.remove(self.fileNameError)
-                if os.path.isfile(self.fileName):
-                    os.rename(self.fileName, self.fileNameError)
+                filepath_error = self.filepath.parent.joinpath(
+                    f"{self.filepath.stem}_error{self.filepath.suffix}")
+                if filepath_error.is_file():
+                    filepath_error.unlink()
+                if self.filepath.is_file():
+                    os.rename(self.filepath, filepath_error)
         except:
             pass
 
@@ -221,39 +224,36 @@ class Logger():
 
         """
 
-        filepath = self.directory.joinpath(fileName)
-        filepath_error = self.directory.joinpath(
-            f"{filepath.stem}_error{filepath.suffix}")
-
-        fileName = str(filepath)
-        fileNameError = str(filepath_error)
-
         # Close old file handle
         if self.file is not None:
             self.vClose()
 
         # Rename file
-        if self.fileName:
-            os.rename(self.fileName, fileName)
-        self.fileName = fileName
-        self.fileNameError = fileNameError
+        filepath = self.directory.joinpath(fileName)
+        if self.filepath:
+            os.rename(self.filepath, filepath)
+        self.filepath = filepath
 
         # Open new file handle
+        filepath = str(self.filepath)
         try:
             mode = 'w' if FreshLog else 'a'
-            self.file = open(fileName, mode, encoding='utf-8')
+            self.file = open(filepath, mode, encoding='utf-8')
         except:
-            self.file = open(fileName, "x", encoding='utf-8')
+            self.file = open(filepath, "x", encoding='utf-8')
         self.bFileOpen = True
 
     def vDel(self):
-        """Remove the log (and error log) file"""
+        """Remove the log (or error log) file"""
 
         self.vClose()
-        if os.path.isfile(self.fileName):
-            os.remove(self.fileName)
-        elif os.path.isfile(self.fileNameError):
-            os.remove(self.fileNameError)
+        filepath_error = self.filepath.parent.joinpath(
+            f"{self.filepath.stem}_error{self.filepath.suffix}")
+
+        if self.filepath.is_file():
+            self.filepath.unlink()
+        elif filepath_error().is_file():
+            filepath_error().unlink()
 
     def vClose(self):
         """Close the log file"""

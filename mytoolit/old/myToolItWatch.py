@@ -347,7 +347,7 @@ class myToolItWatch():
         return bOk
 
     def vLogCountInc(self):
-        fileName = self.Can.Logger.fileName[:-24]
+        fileName = self.Can.Logger.filepath.name[:-24]
         fileName = fileName + "_" + self.sDateClock() + ".txt"
         self.Can.vLogNameCloseInterval(fileName)
 
@@ -1737,7 +1737,7 @@ class myToolItWatch():
                 config.find('OverSamples').text = str(
                     AdcOverSamplingRate.inverse[self.iOversampling])
                 config.find('AdcRef').text = str(self.sAdcRef)
-                sFileName = self.Can.Logger.fileName
+                sFileName = self.Can.Logger.filepath.name
                 config.find('LogName').text = sFileName[:sFileName.find('_'):]
                 config.find('RunTime').text = str(self.iRunTime)
                 config.find('IntervalTime').text = str(self.iIntervalTime)
@@ -1818,7 +1818,7 @@ class myToolItWatch():
         print("Setup Configuration: " + str(self.sSetupConfig))
         print("AutoSave?: " + str(self.bSave))
         print("Table Calculation File: " + str(self.sSheetFile))
-        print("Log Name: " + str(self.Can.Logger.fileName))
+        print("Log Name: " + str(self.Can.Logger.filepath.name))
         print("Device Name (to be connected): " + str(self.sDevName))
         print("Bluetooth address(to be connected): " +
               str(self.iAddress))  # Todo machen
@@ -1846,7 +1846,7 @@ class myToolItWatch():
         self.Can.Logger.Info("Setup Configuration: " + str(self.sSetupConfig))
         self.Can.Logger.Info("AutoSave?: " + str(self.bSave))
         self.Can.Logger.Info("Table Calculation File: " + str(self.sSheetFile))
-        self.Can.Logger.Info("Log Name: " + str(self.Can.Logger.fileName))
+        self.Can.Logger.Info("Log Name: " + str(self.Can.Logger.filepath.name))
         self.Can.Logger.Info("Device Name (to be connected): " +
                              str(self.sDevName))
         self.Can.Logger.Info("Bluetooth address(to be connected): " +
