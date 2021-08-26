@@ -69,8 +69,8 @@ class Logger():
 
         repository = Path(__file__).parent.parent.parent
         directory = Path(directory)
-        self.path = (directory if directory.is_absolute() else
-                     repository.joinpath(directory)).resolve()
+        self.directory = (directory if directory.is_absolute() else
+                          repository.joinpath(directory)).resolve()
 
         self.vRename(fileName, FreshLog=FreshLog)
 
@@ -207,8 +207,8 @@ class Logger():
 
         """
 
-        filepath = self.path.joinpath(fileName)
-        filepath_error = self.path.joinpath(
+        filepath = self.directory.joinpath(fileName)
+        filepath_error = self.directory.joinpath(
             f"{filepath.stem}_error{filepath.suffix}")
 
         fileName = str(filepath)
