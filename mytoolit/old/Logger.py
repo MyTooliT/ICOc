@@ -1,6 +1,7 @@
 import os
 import time
 
+from os import makedirs
 from pathlib import Path
 
 
@@ -71,6 +72,18 @@ class Logger():
         directory = Path(directory)
         self.directory = (directory if directory.is_absolute() else
                           repository.joinpath(directory)).resolve()
+
+        # Try to create the log directory, if it does not already exist
+        if self.directory.exists() and not directory.is_dir():
+            raise NotADirectoryError(
+                f"The log directory “{directory}” points to an existing file")
+
+        if not directory.is_dir():
+            try:
+                makedirs(str(self.directory))
+            except OSError as error:
+                raise error("Unable to create the log directory "
+                            f"“{self.directory}”: {error}")
 
         self.vRename(fileName, FreshLog=FreshLog)
 
