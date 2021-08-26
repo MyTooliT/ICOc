@@ -153,9 +153,10 @@ class Logger():
 
         Check written content
 
-        >>> line = open(filename, 'r').readline()
         >>> from re import fullmatch
-        >>> fullmatch(r'\[Info\]\(\d+ms\): hello', line[:-1]) is not None
+        >>> with open(filename, 'r') as file:
+        ...     line = file.readline()
+        ...     fullmatch(r'\[Info\]\(\d+ms\): hello', line[:-1]) is not None
         True
 
         Remove written log file
