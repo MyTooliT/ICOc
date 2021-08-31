@@ -214,7 +214,9 @@ class Logger():
         self.write("W", message)
 
     def vRename(self, fileName, FreshLog=False):
-        """Rename the logging file
+        """Rename the current logging file
+
+        Note: This method also removes the old log file
 
         Parameters
         ----------
