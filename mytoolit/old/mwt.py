@@ -28,7 +28,6 @@ class mwt(myToolItWatch):
     def close(self):
         if None != self.process:
             self.process.terminate()
-        self.vCloseSaveStoreLastConfig()
         self.vTerminalTeardown()
         myToolItWatch.close(self)
 
@@ -50,23 +49,6 @@ class mwt(myToolItWatch):
             sFileName = str(lastRun.find('SheetFile').text) + ".xlsx"
             self.vSheetFileSet(sFileName)
             self.bSampleSetupSet(str(lastRun.find('Setup').text))
-
-    def vCloseSaveStoreLastConfig(self):
-        lastRun = self.tXmlConfig.tree.find('lastRun')
-        sLogName = self.Can.Logger.filepath.name.split('_')[0]
-        sLogName = sLogName.split('.')[0]  # Just to be sure
-        basename_log = Path(sLogName).name
-        lastRun.find('LogName').text = str(basename_log)
-        lastRun.find('Product').text = self.sProduct
-        lastRun.find('Version').text = self.sConfig
-        lastRun.find('NetworkNumber').text = self.sNetworkNumber
-        if None != self.sSheetFile:
-            sSheetFile = self.sSheetFile.split('.')[0]
-        else:
-            sSheetFile = self.sSheetFile
-        lastRun.find('SheetFile').text = str(sSheetFile)
-        lastRun.find('Setup').text = self.sSetupConfig
-        self.xmlSave()
 
     # setter methods
     def vNetworkNumberSet(self, sNetworkNumber):
