@@ -612,13 +612,10 @@ class myToolItWatch():
         )
         self.parser.add_argument(
             '-l',
-            '--log_location',
-            dest='log_name',
-            action='store',
-            nargs=1,
+            '--log_name',
             type=str,
             required=False,
-            help='Where to save Log Files (relative/absolute path+file name)')
+            help="(Base) name of the (acceleration) log file")
         self.parser.add_argument(
             '-n',
             '--name_connect',
@@ -751,8 +748,8 @@ class myToolItWatch():
         self.vParserConsoleArgumentsPassXml()
         if None != self.args_dict['gui_dim']:
             self.vDisplayTime(self.args_dict['gui_dim'][0])
-        if None != self.args_dict['log_name']:
-            self.bLogSet(self.args_dict['log_name'][0])
+        if self.args_dict['log_name'] is not None:
+            self.bLogSet(self.args_dict['log_name'])
         if None != self.args_dict['adc_config']:
             adcConfig = self.args_dict['adc_config']
             self.vAdcConfig(adcConfig[0], adcConfig[1], adcConfig[2])
