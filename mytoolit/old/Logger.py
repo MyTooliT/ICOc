@@ -222,6 +222,32 @@ class Logger():
         fileName:
             The new (base) name of the logging file
 
+        Example
+        -------
+
+        >>> old_file = Path('old.txt')
+        >>> new_file = Path('new.txt')
+
+        Create logger
+
+        >>> logger = Logger(old_file)
+        >>> old_file.is_file()
+        True
+
+        Rename file
+
+        >>> logger.vRename(new_file)
+        >>> old_file.is_file()
+        False
+        >>> new_file.is_file()
+        True
+
+        Remove current log file
+
+        >>> logger.vDel()
+        >>> new_file.is_file()
+        False
+
         """
 
         # Close old file handle
