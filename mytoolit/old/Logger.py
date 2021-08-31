@@ -69,7 +69,7 @@ class Logger():
         self.filepath = None
 
         repository = Path(__file__).parent.parent.parent
-        directory = Path(directory)
+        directory = Path(directory).expanduser()
         self.directory = (directory if directory.is_absolute() else
                           repository.joinpath(directory)).resolve()
 
