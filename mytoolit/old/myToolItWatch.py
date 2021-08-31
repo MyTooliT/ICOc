@@ -69,6 +69,9 @@ class myToolItWatch():
                            log_directory=settings.Logger.icoc.directory,
                            sender=MyToolItNetworkNr["SPU1"],
                            receiver=MyToolItNetworkNr["STH1"])
+        # This method call is currently required to add the timestamp to the
+        # log file name
+        self.bLogSet(settings.Logger.icoc.filename)
         self.vSave2Xml(False)
         self.vSthAutoConnect(False)
         self.Can.Logger.Info("Start Time: " + self.sDateClock())
