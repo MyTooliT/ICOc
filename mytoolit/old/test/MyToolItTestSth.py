@@ -1350,7 +1350,6 @@ class TestSth(unittest.TestCase):
         self.Can.BlueToothEnergyModeNr(SleepTime["Reset2"],
                                        SleepTime["AdvertisementReset2"], 2)
 
-    @skip("Causes a long and gruesome death of (my) Windows (VM)")
     def test0016PowerConsumptionEnergySaveModeAdv4000ms(self):
         """Power Consumption - Energy Save Mode ()
 
