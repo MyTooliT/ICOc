@@ -805,7 +805,7 @@ class myToolItWatch():
     def vDataAquisition(self):
         if False == self.KeyBoardInterrupt:
             try:
-                if False != self.Can.bConnected:
+                if self.Can.bConnected:
                     self.Can.ConfigAdc(MyToolItNetworkNr["STH1"],
                                        self.iPrescaler, self.iAquistionTime,
                                        self.iOversampling,
