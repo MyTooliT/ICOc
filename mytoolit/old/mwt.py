@@ -86,10 +86,10 @@ class mwt(myToolItWatch):
 
     def vTerminalHolderConnectCommandsRunTimeIntervalTime(self):
         self.stdscr.clear()
-        self.stdscr.addstr("Run Time(s): ")
+        self.stdscr.addstr("Run Time (in Seconds): ")
         self.stdscr.refresh()
         iRunTime = self.iTerminalInputNumberIn()
-        self.stdscr.addstr("Interval Time(s; 0=No Interval Files): ")
+        self.stdscr.addstr("Interval Time (in Seconds; 0=No Interval Files): ")
         self.stdscr.refresh()
         iIntervalTime = self.iTerminalInputNumberIn()
         self.vRunTime(iRunTime, iIntervalTime)
