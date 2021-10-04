@@ -46,7 +46,7 @@ from mytoolit.old.configKeys import ConfigKeys
 from mytoolit.old.Plotter import vPlotter, tArray2Binary
 
 Watch = {
-    "IntervalDimMinX": 10,  # Minimum interval time in ms
+    "IntervalDimMinX": 10,  # Minimum interval time (for log segmentation) in s
     "DisplayTimeMax": 10,  # Maximum display time of graphical plot in seconds
     "DisplaySampleRateMs": 1000,  # Maximum Display Time in ms
     "DisplayBlockSize": 100,
