@@ -131,6 +131,18 @@ If `pip install` prints **warnings about the path** that look like this:
 
 then please add the text between the single quotes (without the quotes) to your [PATH environment variable](https://helpdeskgeek.com/windows-10/add-windows-path-environment-variable/). Here `…\Scripts` is just a placeholder. Please use the value that `pip install` prints on your machine. If you used the [installer from the Python website](https://www.python.org/downloads) (and checked “Add Python to PATH”) or you used [winget](https://docs.microsoft.com/en-us/windows/package-manager/winget/) to install Python, then the warning above should not appear. On the other hand, the **Python version from the [Microsoft Store](https://www.microsoft.com/en-us/store/apps/windows) might not add the `Scripts` directory** to your path.
 
+If installing the `tables` ([PyTables](http://pytables.org)) package on your machine fails with the following error message:
+
+> ERROR:: Could not find a local HDF5 installation
+
+then you need to install the [HDF5 library](https://www.hdfgroup.org/downloads/hdf5/) and probably also a compiler. A much easier option is to just use a precompiled version of the package. You can find such a package for Windows [here](http://www.lfd.uci.edu/~gohlke/pythonlibs/#pytables). Just store the proper file for **your OS and Python version** in your **Downloads folder**.
+
+**Example:** For a 64 bit version of Python `3.9` and PyTables `3.6.1` download the file `tables‑3.6.1‑cp39‑cp39‑win_amd64.whl` and afterwards execute the following command in a PowerShell session:
+
+```pwsh
+pip install $HOME\Downloads\tables-3.6.1-cp39-cp39-win_amd64.whl
+```
+
 ## Control and Data Acquirement
 
 ### Start the Program
