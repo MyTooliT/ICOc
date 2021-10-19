@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from datetime import datetime
 from types import TracebackType
 from typing import Optional, Type, Union
 
@@ -42,7 +43,7 @@ class Storage:
 
         >>> filepath = Path("test.hdf5")
         >>> with Storage(filepath) as storage:
-        ...     pass
+        ...     storage.set_starttime()
         >>> filepath.unlink()
 
         """
@@ -85,6 +86,11 @@ class Storage:
 
         if isinstance(self.hdf, File) and self.hdf.isopen:
             self.hdf.close()
+
+    def set_starttime(self):
+        """Set the measurement start time to the current ISO date"""
+
+        self.data.attrs['Measurement_Start'] = datetime.now().isoformat()
 
 
 # -- Main ---------------------------------------------------------------------
