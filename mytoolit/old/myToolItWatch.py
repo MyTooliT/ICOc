@@ -10,8 +10,8 @@ from time import sleep, time
 from datetime import datetime
 from pathlib import Path
 
-import openpyxl
 from can.interfaces.pcan.basic import PCAN_ERROR_OK, PCAN_ERROR_QOVERRUN
+from openpyxl import load_workbook, Workbook
 from openpyxl.styles import Font
 
 from mytoolit import __version__
@@ -1204,7 +1204,7 @@ class myToolItWatch():
     def vExcelSheetCreate(self):
         atProductPages = self.atProductPages()
         if 0 < len(atProductPages):
-            workbook = openpyxl.Workbook()
+            workbook = Workbook()
             tFontRowRow = Font(bold=False, size=12)
             workbook.remove_sheet(workbook.get_sheet_by_name('Sheet'))
             for page in atProductPages:
@@ -1465,7 +1465,7 @@ class myToolItWatch():
 
     def vExcelProductVersion2XmlProductVersion(self):
         if None != self.sProduct and None != self.sConfig and None != self.sSheetFile:
-            tWorkbook = openpyxl.load_workbook(self.sSheetFile)
+            tWorkbook = load_workbook(self.sSheetFile)
             if tWorkbook:
                 try:
                     uLength = len(self.atProductPages())
@@ -1555,7 +1555,7 @@ class myToolItWatch():
     def atExcelSheetNames(self):
         workSheetNames = []
         try:
-            workbook = openpyxl.load_workbook(self.sSheetFile)
+            workbook = load_workbook(self.sSheetFile)
             if workbook:
                 for worksheetName in workbook.sheetnames:
                     sName = str(worksheetName).split('@')
@@ -1576,7 +1576,7 @@ class myToolItWatch():
         sError = None
         self.Can.Logger.Info("Read EEPROM Page " + str(namePage) + " from " +
                              MyToolItNetworkName[iReceiver])
-        workbook = openpyxl.load_workbook(self.sSheetFile)
+        workbook = load_workbook(self.sSheetFile)
         if workbook:
             for worksheetName in workbook.sheetnames:
                 name = str(worksheetName).split('@')
@@ -1665,7 +1665,7 @@ class myToolItWatch():
         sError = None
         self.Can.Logger.Info("Write Excel Page " + str(namePage) + " to " +
                              MyToolItNetworkName[iReceiver])
-        workbook = openpyxl.load_workbook(self.sSheetFile)
+        workbook = load_workbook(self.sSheetFile)
         if workbook:
             for worksheetName in workbook.sheetnames:
                 name = str(worksheetName).split('@')
