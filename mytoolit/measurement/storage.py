@@ -6,9 +6,22 @@ from pathlib import Path
 from types import TracebackType
 from typing import Optional, Type, Union
 
-from tables import File, Filters, open_file
+from tables import (File, Filters, IsDescription, open_file, UInt8Col,
+                    UInt16Col, UInt64Col)
+from tables.exceptions import HDF5ExtError
 
 # -- Classes ------------------------------------------------------------------
+
+
+class Acceleration(IsDescription):
+    """Description of HDF acceleration table"""
+    counter = UInt8Col()
+    timestamp = UInt64Col()
+    acceleration = UInt16Col()
+
+
+class StorageException(Exception):
+    pass
 
 
 class Storage:
@@ -39,7 +52,16 @@ class Storage:
     def __enter__(self) -> Storage:
         """Open the HDF file for writing"""
 
-        self.hdf = open_file(self.filepath, 'w', filters=Filters(4, 'zlib'))
+        try:
+            self.hdf = open_file(self.filepath,
+                                 'a',
+                                 filters=Filters(4, 'zlib'))
+        except HDF5ExtError as error:
+            raise StorageException(
+                f"Unable to open file “{self.filepath}”: {error}")
+
+        self.data = self.hdf.create_table(self.hdf.root, "acceleration",
+                                          Acceleration)
         return self
 
     def __exit__(self, exception_type: Optional[Type[BaseException]],
