@@ -19,6 +19,7 @@ required_packages = [
     "pdfrw",
     "python-can",
     "reportlab",
+    "tables>=3.6",
     "semantic_version",
 ]
 
