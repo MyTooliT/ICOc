@@ -89,7 +89,8 @@ class Storage:
                 f"Unable to open file “{self.filepath}”: {error}")
 
         self.data = self.hdf.create_table(self.hdf.root, "acceleration",
-                                          Acceleration)
+                                          Acceleration,
+                                          "STH Acceleration Data")
 
     def close(self) -> None:
         """Close the HDF file"""
