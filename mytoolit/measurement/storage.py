@@ -82,8 +82,9 @@ class Storage:
 
         try:
             self.hdf = open_file(self.filepath,
-                                 'a',
-                                 filters=Filters(4, 'zlib'))
+                                 mode='a',
+                                 filters=Filters(4, 'zlib'),
+                                 title='STH Measurement Data')
         except HDF5ExtError as error:
             raise StorageException(
                 f"Unable to open file “{self.filepath}”: {error}")
