@@ -53,16 +53,7 @@ class Storage:
     def __enter__(self) -> Storage:
         """Open the HDF file for writing"""
 
-        try:
-            self.hdf = open_file(self.filepath,
-                                 'a',
-                                 filters=Filters(4, 'zlib'))
-        except HDF5ExtError as error:
-            raise StorageException(
-                f"Unable to open file “{self.filepath}”: {error}")
-
-        self.data = self.hdf.create_table(self.hdf.root, "acceleration",
-                                          Acceleration)
+        self.open()
         return self
 
     def __exit__(self, exception_type: Optional[Type[BaseException]],
@@ -83,6 +74,25 @@ class Storage:
             The traceback in case of an exception
 
         """
+
+        self.close()
+
+    def open(self) -> None:
+        """Open and initialize the HDF file for writing"""
+
+        try:
+            self.hdf = open_file(self.filepath,
+                                 'a',
+                                 filters=Filters(4, 'zlib'))
+        except HDF5ExtError as error:
+            raise StorageException(
+                f"Unable to open file “{self.filepath}”: {error}")
+
+        self.data = self.hdf.create_table(self.hdf.root, "acceleration",
+                                          Acceleration)
+
+    def close(self) -> None:
+        """Close the HDF file"""
 
         if isinstance(self.hdf, File) and self.hdf.isopen:
             self.hdf.close()
