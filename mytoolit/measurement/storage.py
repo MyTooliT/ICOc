@@ -43,7 +43,7 @@ class Storage:
 
         >>> filepath = Path("test.hdf5")
         >>> with Storage(filepath) as storage:
-        ...     storage.set_starttime()
+        ...     pass
         >>> filepath.unlink()
 
         """
@@ -98,7 +98,17 @@ class Storage:
             self.hdf.close()
 
     def set_starttime(self):
-        """Set the measurement start time to the current ISO date"""
+        """Set the measurement start time to the current ISO date
+
+        Example
+        -------
+
+        >>> filepath = Path("test.hdf5")
+        >>> with Storage(filepath) as storage:
+        ...     storage.set_starttime()
+        >>> filepath.unlink()
+
+        """
 
         self.data.attrs['Measurement_Start'] = datetime.now().isoformat()
 
