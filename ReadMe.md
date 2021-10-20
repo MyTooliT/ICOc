@@ -164,7 +164,7 @@ then please add the text between the single quotes (without the quotes) to your 
 
 #### Installing `tables` Package Fails
 
-If installing ICOc, specifically the `tables` ([PyTables](http://pytables.org)) package on your machine fails with the following error message:
+If installing ICOc, specifically the `tables` ([PyTables](http://pytables.org)) package, on your machine fails with the following error message:
 
 > ERROR:: Could not find a local HDF5 installation
 
