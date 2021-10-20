@@ -22,7 +22,7 @@ class Acceleration(IsDescription):
 
 
 class StorageException(Exception):
-    pass
+    """Exception for HDF storage errors"""
 
 
 class Storage:
