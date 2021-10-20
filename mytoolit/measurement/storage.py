@@ -94,6 +94,34 @@ class Storage:
                                           description=Acceleration,
                                           title="STH Acceleration Data")
 
+    def append_row(self, **keyword_arguments) -> None:
+        """Append acceleration data
+
+        Parameters
+        ----------
+
+        keyword_arguments:
+            These key value pairs should include values for all the attributes
+            of the class `Acceleration`
+
+        Example
+        -------
+
+        >>> filepath = Path("test.hdf5")
+        >>> with Storage(filepath) as storage:
+        ...     storage.append_row(counter=1, timestamp=10, acceleration=100)
+        >>> filepath.unlink()
+
+        """
+
+        row = self.data.row
+        for key, value in keyword_arguments.items():
+            row[key] = value
+
+        # Flush data to disk every few values to keep memory usage in check
+        if self.data.nrows % 1000 == 0:
+            self.data.flush()
+
     def close(self) -> None:
         """Close the HDF file"""
 
