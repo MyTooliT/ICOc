@@ -7,8 +7,8 @@ from datetime import datetime
 from types import TracebackType
 from typing import Optional, Type, Union
 
-from tables import (File, Filters, IsDescription, open_file, UInt8Col,
-                    UInt16Col, UInt64Col)
+from tables import (File, Filters, IsDescription, NoSuchNodeError, open_file,
+                    UInt8Col, UInt16Col, UInt64Col)
 from tables.exceptions import HDF5ExtError
 
 # -- Classes ------------------------------------------------------------------
@@ -89,10 +89,14 @@ class Storage:
             raise StorageException(
                 f"Unable to open file “{self.filepath}”: {error}")
 
-        self.data = self.hdf.create_table(self.hdf.root,
-                                          name="acceleration",
-                                          description=Acceleration,
-                                          title="STH Acceleration Data")
+        name = "acceleration"
+        try:
+            self.data = self.hdf.get_node(f'/{name}')
+        except NoSuchNodeError:
+            self.data = self.hdf.create_table(self.hdf.root,
+                                              name=name,
+                                              description=Acceleration,
+                                              title="STH Acceleration Data")
 
     def append_row(self, **keyword_arguments) -> None:
         """Append acceleration data
