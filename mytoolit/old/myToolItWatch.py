@@ -968,21 +968,9 @@ class myToolItWatch():
         ackMsg = ("MsgCounter: " + str(format(canData[1], '3d')) + "; ")
         ackMsg += ("TimeStamp: " + format(canTimeStamp, '12.3f') + "ms; ")
         ackMsg += (prefix + ": ")
-        ackMsg += str(format(p1, '5d'))
-        ackMsg += "; "
-        self.Can.Logger.Info(ackMsg)
-        ackMsg = ("MsgCounter: " + str(format(canData[1], '3d')) + "; ")
-        ackMsg += ("TimeStamp: " + format(canTimeStamp, '12.3f') + "ms; ")
-        ackMsg += (prefix + ": ")
-        ackMsg += str(format(p2, '5d'))
-        ackMsg += "; "
-        self.Can.Logger.Info(ackMsg)
-        ackMsg = ("MsgCounter: " + str(format(canData[1], '3d')) + "; ")
-        ackMsg += ("TimeStamp: " + format(canTimeStamp, '12.3f') + "ms; ")
-        ackMsg += (prefix + ": ")
-        ackMsg += str(format(p3, '5d'))
-        ackMsg += "; "
-        self.Can.Logger.Info(ackMsg)
+        self.Can.Logger.Info(f"{ackMsg}{format(p1, '5d')}; ")
+        self.Can.Logger.Info(f"{ackMsg}{format(p2, '5d')}; ")
+        self.Can.Logger.Info(f"{ackMsg}{format(p3, '5d')}; ")
 
     def GetMessageDouble(self, prefix1, prefix2, canMsg):
         canData = canMsg["CanMsg"].DATA
