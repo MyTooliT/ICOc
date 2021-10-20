@@ -874,36 +874,37 @@ class myToolItWatch():
             self.__exit__()
 
     def vGetStreamingAccDataAccStart(self):
+        if not (self.bAccX or self.bAccY or self.bAccZ):
+            return True
+
         ack = None
-        if False != self.bAccX or False != self.bAccY or False != self.bAccZ:
-            accFormat = AtvcFormat()
-            accFormat.asbyte = 0
-            accFormat.b.bStreaming = 1
-            accFormat.b.bNumber1 = self.bAccX
-            accFormat.b.bNumber2 = self.bAccY
-            accFormat.b.bNumber3 = self.bAccZ
-            accFormat.b.u3DataSets = self.tAccDataFormat
-            cmd = self.Can.CanCmd(MyToolItBlock["Streaming"],
-                                  MyToolItStreaming["Acceleration"], 0, 0)
-            self.AccAckExpected = self.Can.CanMessage20(
-                cmd, MyToolItNetworkNr["STH1"], MyToolItNetworkNr["SPU1"],
-                [accFormat.asbyte])
-            cmd = self.Can.CanCmd(MyToolItBlock["Streaming"],
-                                  MyToolItStreaming["Acceleration"], 1, 0)
-            message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
-                                            MyToolItNetworkNr["STH1"],
-                                            [accFormat.asbyte])
-            self.Can.Logger.Info("MsgId/Subpayload(Acc): " + hex(message.ID) +
-                                 "/" + hex(accFormat.asbyte))
-            endTime = self.Can.get_elapsed_time() + 4000
-            while (None == ack) and (self.Can.get_elapsed_time() < endTime):
-                self.Can.WriteFrame(message)
-                readEndTime = self.Can.get_elapsed_time() + 500
-                while ((None == ack)
-                       and (self.Can.get_elapsed_time() < readEndTime)):
-                    ack = self.ReadMessage()
-        else:
-            ack = True
+        accFormat = AtvcFormat()
+        accFormat.asbyte = 0
+        accFormat.b.bStreaming = 1
+        accFormat.b.bNumber1 = self.bAccX
+        accFormat.b.bNumber2 = self.bAccY
+        accFormat.b.bNumber3 = self.bAccZ
+        accFormat.b.u3DataSets = self.tAccDataFormat
+        cmd = self.Can.CanCmd(MyToolItBlock["Streaming"],
+                              MyToolItStreaming["Acceleration"], 0, 0)
+        self.AccAckExpected = self.Can.CanMessage20(cmd,
+                                                    MyToolItNetworkNr["STH1"],
+                                                    MyToolItNetworkNr["SPU1"],
+                                                    [accFormat.asbyte])
+        cmd = self.Can.CanCmd(MyToolItBlock["Streaming"],
+                              MyToolItStreaming["Acceleration"], 1, 0)
+        message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
+                                        MyToolItNetworkNr["STH1"],
+                                        [accFormat.asbyte])
+        self.Can.Logger.Info("MsgId/Subpayload(Acc): " + hex(message.ID) +
+                             "/" + hex(accFormat.asbyte))
+        endTime = self.Can.get_elapsed_time() + 4000
+        while (None == ack) and (self.Can.get_elapsed_time() < endTime):
+            self.Can.WriteFrame(message)
+            readEndTime = self.Can.get_elapsed_time() + 500
+            while ((None == ack)
+                   and (self.Can.get_elapsed_time() < readEndTime)):
+                ack = self.ReadMessage()
         return ack
 
     def vGetStreamingAccDataVoltageStart(self):
