@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from datetime import datetime
+from time import monotonic_ns
 from types import TracebackType
 from typing import Optional, Type, Union
 
@@ -49,6 +50,7 @@ class Storage:
         """
 
         self.filepath = Path(filepath)
+        self.start_time = monotonic_ns()
 
     def __enter__(self) -> Storage:
         """Open the HDF file for writing"""
@@ -98,29 +100,36 @@ class Storage:
                                               description=Acceleration,
                                               title="STH Acceleration Data")
 
-    def append_row(self, **keyword_arguments) -> None:
+    def add_acceleration_value(self, counter: int, value: int) -> None:
         """Append acceleration data
 
         Parameters
         ----------
 
-        keyword_arguments:
-            These key value pairs should include values for all the attributes
-            of the class `Acceleration`
+        counter:
+            The message counter sent in the package that contained the
+            acceleration value
+
+        value:
+            The acceleration value that should be added
 
         Example
         -------
 
         >>> filepath = Path("test.hdf5")
         >>> with Storage(filepath) as storage:
-        ...     storage.append_row(counter=1, timestamp=10, acceleration=100)
+        ...     storage.add_acceleration_value(counter=1, value=100)
         >>> filepath.unlink()
 
         """
 
         row = self.data.row
-        for key, value in keyword_arguments.items():
-            row[key] = value
+        # TODO: Use time stamp of CAN message instead
+        timestamp = (monotonic_ns() - self.start_time) / 1000
+        row['timestamp'] = timestamp
+        row['counter'] = counter
+        row['acceleration'] = value
+        row.append()
 
         # Flush data to disk every few values to keep memory usage in check
         if self.data.nrows % 1000 == 0:
@@ -145,6 +154,7 @@ class Storage:
 
         """
 
+        self.start_time = monotonic_ns()
         self.data.attrs['Measurement_Start'] = datetime.now().isoformat()
 
 
