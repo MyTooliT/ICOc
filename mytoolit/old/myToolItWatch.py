@@ -16,6 +16,7 @@ from openpyxl.styles import Font
 
 from mytoolit import __version__
 from mytoolit.config import settings
+from mytoolit.measurement.storage import Storage
 from mytoolit.old.network import Network
 from mytoolit.old.MyToolItNetworkNumbers import (MyToolItNetworkName,
                                                  MyToolItNetworkNr)
@@ -90,8 +91,10 @@ class myToolItWatch():
         self.vStuAddr("")
         self.Can.readThreadStop()
         self.vXmlConfigurationPlotterHost()
+        self.storage = Storage("test.hdf5")
 
     def __exit__(self):
+        self.storage.close()
         self.guiProcessStop()
         self.Can.ReadThreadReset()
         if self.Can.bConnected:
@@ -899,6 +902,8 @@ class myToolItWatch():
         self.Can.Logger.Info("MsgId/Subpayload(Acc): " + hex(message.ID) +
                              "/" + hex(accFormat.asbyte))
         endTime = self.Can.get_elapsed_time() + 4000
+        self.storage.open()
+        self.storage.set_starttime()
         while (None == ack) and (self.Can.get_elapsed_time() < endTime):
             self.Can.WriteFrame(message)
             readEndTime = self.Can.get_elapsed_time() + 500
@@ -971,6 +976,11 @@ class myToolItWatch():
         self.Can.Logger.Info(f"{ackMsg}{format(p1, '5d')}; ")
         self.Can.Logger.Info(f"{ackMsg}{format(p2, '5d')}; ")
         self.Can.Logger.Info(f"{ackMsg}{format(p3, '5d')}; ")
+
+        counter = canData[1]
+        self.storage.add_acceleration_value(counter=counter, value=p1)
+        self.storage.add_acceleration_value(counter=counter, value=p2)
+        self.storage.add_acceleration_value(counter=counter, value=p3)
 
     def GetMessageDouble(self, prefix1, prefix2, canMsg):
         canData = canMsg["CanMsg"].DATA
