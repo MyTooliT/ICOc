@@ -904,11 +904,10 @@ class myToolItWatch():
         endTime = self.Can.get_elapsed_time() + 4000
         self.storage.open()
         self.storage.set_starttime()
-        while (None == ack) and (self.Can.get_elapsed_time() < endTime):
+        while ack is None and self.Can.get_elapsed_time() < endTime:
             self.Can.WriteFrame(message)
             readEndTime = self.Can.get_elapsed_time() + 500
-            while ((None == ack)
-                   and (self.Can.get_elapsed_time() < readEndTime)):
+            while ack is None and self.Can.get_elapsed_time() < readEndTime:
                 ack = self.ReadMessage()
         return ack
 
