@@ -826,7 +826,7 @@ class myToolItWatch():
 
     def vGetStreamingAccDataProcess(self):
         iIntervalTime = self.iIntervalTime * 1000
-        if 0 == self.iIntervalTime:
+        if self.iIntervalTime == 0:
             iIntervalTime += (1 << 32)
         startTime = self.Can.get_elapsed_time()
         tAliveTimeStamp = startTime
@@ -838,7 +838,7 @@ class myToolItWatch():
                         startTime = tTimeStamp
                         self.vLogCountInc()
                     ack = self.ReadMessage()
-                    if (None != ack):
+                    if ack is not None:
                         tAliveTimeStamp = self.Can.get_elapsed_time()
                         if (self.AccAckExpected.ID != ack["CanMsg"].ID
                                 and self.VoltageAckExpected.ID !=
@@ -951,7 +951,7 @@ class myToolItWatch():
         if None != ack:
             ack = self.vGetStreamingAccDataVoltageStart()
         currentTime = self.Can.get_elapsed_time()
-        if None == ack:
+        if ack is None:
             self.Can.Logger.Error("No Ack received from Device: " +
                                   str(self.iDevNr))
             self.aquireEndTime = currentTime
@@ -1023,18 +1023,15 @@ class myToolItWatch():
         self.vGraphPacketLossUpdate(msgCounter)
 
         if self.tAccDataFormat == DataSets[1]:
-            if (False != self.bAccX) and (False != self.bAccY) and (
-                    False == self.bAccZ):
+            if self.bAccX and self.bAccY and not self.bAccZ:
                 self.GetMessageDouble("AccX", "AccY", canData)
                 self.vGraphPointNext(byte_list_to_int(data[2:4]),
                                      byte_list_to_int(data[4:6]), 0)
-            elif (False != self.bAccX) and (False == self.bAccY) and (
-                    False != self.bAccZ):
+            elif self.bAccX and not self.bAccY and self.bAccZ:
                 self.GetMessageDouble("AccX", "AccZ", canData)
                 self.vGraphPointNext(byte_list_to_int(data[2:4]), 0,
                                      byte_list_to_int(data[4:6]))
-            elif (False == self.bAccX) and (False != self.bAccY) and (
-                    False != self.bAccZ):
+            elif not self.bAccX and self.bAccY and self.bAccZ:
                 self.GetMessageDouble("AccY", "AccZ", canData)
                 self.vGraphPointNext(0, byte_list_to_int(data[2:4]),
                                      byte_list_to_int(data[4:6]))
@@ -1044,13 +1041,13 @@ class myToolItWatch():
                                      byte_list_to_int(data[4:6]),
                                      byte_list_to_int(data[6:8]))
         elif self.tAccDataFormat == DataSets[3]:
-            if False != self.bAccX:
+            if self.bAccX:
                 self.GetMessageSingle("AccX", canData)
                 self.vGraphPointNext(byte_list_to_int(data[2:4]), 0, 0)
-            elif False != self.bAccY:
+            elif self.bAccY:
                 self.GetMessageSingle("AccY", canData)
                 self.vGraphPointNext(0, byte_list_to_int(data[2:4]), 0)
-            elif False != self.bAccZ:
+            elif self.bAccZ:
                 self.GetMessageSingle("AccZ", canData)
                 self.vGraphPointNext(0, 0, byte_list_to_int(data[2:4]))
         else:

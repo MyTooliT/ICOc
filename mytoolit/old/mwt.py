@@ -148,7 +148,7 @@ class mwt(myToolItWatch):
             self.vTerminalHolderConnectCommandsRunTimeIntervalTime()
         elif ord('s') == keyPress:
             self.stdscr.clear()
-            if False == self.KeyBoardInterrupt:
+            if not self.KeyBoardInterrupt:
                 try:
                     self.vDataAquisition()
                 except KeyboardInterrupt:
