@@ -3,8 +3,6 @@
 from __future__ import annotations
 
 from pathlib import Path
-from datetime import datetime
-from time import monotonic_ns
 from types import TracebackType
 from typing import Optional, Type, Union
 
@@ -50,7 +48,9 @@ class Storage:
         """
 
         self.filepath = Path(filepath)
-        self.start_time = monotonic_ns()
+        self.hdf = None
+        self.data = None
+        self.start_time = None
 
     def __enter__(self) -> Storage:
         """Open the HDF file for writing"""
@@ -91,6 +91,28 @@ class Storage:
             raise StorageException(
                 f"Unable to open file “{self.filepath}”: {error}")
 
+    def init_acceleration(self, start_time: float):
+        """Initialize the data storage for the collection of acceleration data
+
+        Parameters
+        ----------
+
+        start_time:
+            The start time of the data acquisition in milliseconds
+
+        Example
+        -------
+
+        >>> filepath = Path("test.hdf5")
+        >>> with Storage(filepath) as storage:
+        ...      storage.init_acceleration(1337.42)
+        >>> filepath.unlink()
+
+        """
+
+        if self.hdf is None:
+            self.open()
+
         name = "acceleration"
         try:
             self.data = self.hdf.get_node(f'/{name}')
@@ -99,33 +121,41 @@ class Storage:
                                               name=name,
                                               description=Acceleration,
                                               title="STH Acceleration Data")
+        self.start_time = start_time
 
-    def add_acceleration_value(self, counter: int, value: int) -> None:
+    def add_acceleration_value(self, value: int, counter: int,
+                               timestamp: float) -> None:
         """Append acceleration data
 
         Parameters
         ----------
 
+        value:
+            The acceleration value that should be added
+
         counter:
             The message counter sent in the package that contained the
             acceleration value
 
-        value:
-            The acceleration value that should be added
+        timestamp:
+            The timestamp of the acceleration message in milliseconds
 
         Example
         -------
 
         >>> filepath = Path("test.hdf5")
         >>> with Storage(filepath) as storage:
-        ...     storage.add_acceleration_value(counter=1, value=100)
+        ...     storage.add_acceleration_value(value=32000, counter=1,
+        ...                                    timestamp=4306978.449)
         >>> filepath.unlink()
 
         """
 
+        if self.data is None:
+            self.init_acceleration(timestamp)
+
         row = self.data.row
-        # TODO: Use time stamp of CAN message instead
-        timestamp = (monotonic_ns() - self.start_time) / 1000
+        timestamp = timestamp - self.start_time
         row['timestamp'] = timestamp
         row['counter'] = counter
         row['acceleration'] = value
@@ -140,22 +170,6 @@ class Storage:
 
         if isinstance(self.hdf, File) and self.hdf.isopen:
             self.hdf.close()
-
-    def set_starttime(self):
-        """Set the measurement start time to the current ISO date
-
-        Example
-        -------
-
-        >>> filepath = Path("test.hdf5")
-        >>> with Storage(filepath) as storage:
-        ...     storage.set_starttime()
-        >>> filepath.unlink()
-
-        """
-
-        self.start_time = monotonic_ns()
-        self.data.attrs['Measurement_Start'] = datetime.now().isoformat()
 
 
 # -- Main ---------------------------------------------------------------------
