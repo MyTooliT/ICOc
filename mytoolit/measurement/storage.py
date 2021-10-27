@@ -48,7 +48,11 @@ class Storage:
 
         """
 
-        self.filepath = Path(filepath)
+        repository = Path(__file__).parent.parent.parent
+        filepath = Path(filepath).expanduser()
+        self.filepath = (filepath if filepath.is_absolute() else
+                         repository.joinpath(filepath)).resolve()
+
         self.hdf: Optional[File] = None
         self.data: Optional[Node] = None
         self.start_time: Optional[float] = None
