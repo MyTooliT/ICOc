@@ -912,7 +912,7 @@ class myToolItWatch():
 
     def vGetStreamingAccDataVoltageStart(self):
         ack = None
-        if False != self.bVoltageX or False != self.bVoltageY or False != self.bVoltageZ:
+        if self.bVoltageX or self.bVoltageY or self.bVoltageZ:
             voltageFormat = AtvcFormat()
             voltageFormat.asbyte = 0
             voltageFormat.b.bStreaming = 1
@@ -947,14 +947,14 @@ class myToolItWatch():
 
     def vGetStreamingAccData(self):
         ack = self.vGetStreamingAccDataAccStart()
-        if None != ack:
+        if ack is not None:
             ack = self.vGetStreamingAccDataVoltageStart()
         currentTime = self.Can.get_elapsed_time()
         if ack is None:
             self.Can.Logger.Error("No Ack received from Device: " +
                                   str(self.iDevNr))
             self.aquireEndTime = currentTime
-        elif (0 == self.iRunTime):
+        elif self.iRunTime == 0:
             self.aquireEndTime = currentTime + (1 << 32)
         else:
             self.aquireEndTime = currentTime + self.iRunTime * 1000
