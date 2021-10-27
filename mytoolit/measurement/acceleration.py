@@ -2,11 +2,13 @@
 
 from math import log, sqrt
 from statistics import pvariance
+from typing import Iterable
 
 # -- Functions ----------------------------------------------------------------
 
 
-def convert_acceleration_adc_to_g(acceleration_raw, max_value):
+def convert_acceleration_adc_to_g(acceleration_raw: int,
+                                  max_value: int) -> float:
     """Convert an acceleration value sent by the STH into a factor
 
     The factor measures the amount of the gravitational force
@@ -40,7 +42,7 @@ def convert_acceleration_adc_to_g(acceleration_raw, max_value):
     return acceleration_in_g
 
 
-def ratio_noise_max(values):
+def ratio_noise_max(values: Iterable[int]) -> float:
     """Calculate the ratio noise to max ADC amplitude in dB
 
     Parameters
