@@ -91,7 +91,7 @@ class myToolItWatch():
         self.vStuAddr("")
         self.Can.readThreadStop()
         self.vXmlConfigurationPlotterHost()
-        self.storage = Storage("test.hdf5")
+        self.storage = Storage(settings.measurement.output.filepath)
 
     def __exit__(self):
         self.storage.close()

@@ -103,6 +103,13 @@ GUI:
   HOST: localhost # Socket address of Matplotlib GUI
   PORT: 50007 # Port of Matplotlib GUI
 
+MEASUREMENT:
+  OUTPUT:
+    FILEPATH:
+      # The filepath to the measurement data in HDF5 format. Please note that
+      # relative paths will be interpreted starting from the repository path.
+      Measurement.hdf5
+
 OPERATOR:
   # The name of the operator that executes the hardware tests
   NAME: *username
