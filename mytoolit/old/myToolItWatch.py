@@ -803,22 +803,23 @@ class myToolItWatch():
                 self.KeyBoardInterrupt = True
 
     def vDataAquisition(self):
-        if False == self.KeyBoardInterrupt:
-            try:
-                if self.Can.bConnected:
-                    self.Can.ConfigAdc(MyToolItNetworkNr["STH1"],
-                                       self.iPrescaler, self.iAquistionTime,
-                                       self.iOversampling,
-                                       AdcReference[self.sAdcRef])
-                    self.Can.readThreadStop()
-                    self.guiProcessRestart()
-                    self.Can.Logger.Info("Start Acquiring Data")
-                    self.vGetStreamingAccData()
-                else:
-                    self.Can.Logger.Error("Device not allocable")
-            except KeyboardInterrupt:
-                self.KeyBoardInterrupt = True
-            self.__exit__()
+        if self.KeyBoardInterrupt:
+            return
+
+        try:
+            if self.Can.bConnected:
+                self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], self.iPrescaler,
+                                   self.iAquistionTime, self.iOversampling,
+                                   AdcReference[self.sAdcRef])
+                self.Can.readThreadStop()
+                self.guiProcessRestart()
+                self.Can.Logger.Info("Start Acquiring Data")
+                self.vGetStreamingAccData()
+            else:
+                self.Can.Logger.Error("Device not allocable")
+        except KeyboardInterrupt:
+            self.KeyBoardInterrupt = True
+        self.__exit__()
 
     def close(self):
         if False != self.Can.RunReadThread:
