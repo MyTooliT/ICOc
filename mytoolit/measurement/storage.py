@@ -16,7 +16,7 @@ from tables.exceptions import HDF5ExtError
 class Acceleration(IsDescription):
     """Description of HDF acceleration table"""
     counter = UInt8Col()
-    timestamp = UInt64Col()
+    timestamp = UInt64Col()  # Microseconds since measurement start
     acceleration = UInt16Col()
 
 
@@ -155,7 +155,7 @@ class Storage:
             self.init_acceleration(timestamp)
 
         row = self.data.row
-        timestamp = timestamp - self.start_time
+        timestamp = (timestamp - self.start_time) * 100
         row['timestamp'] = timestamp
         row['counter'] = counter
         row['acceleration'] = value
