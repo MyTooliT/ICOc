@@ -656,5 +656,5 @@ def rreplace(s, old, new):
 
 def sDateClock():
     DataClockTimeStamp = datetime.fromtimestamp(
-        time()).strftime('%Y-%m-%d_%H:%M:%S')
+        time()).strftime('%Y-%m-%d_%H-%M-%S')
     return DataClockTimeStamp

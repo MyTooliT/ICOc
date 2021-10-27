@@ -1,4 +1,5 @@
 from array import array
+from datetime import datetime
 from ctypes import c_byte
 from logging import getLogger, FileHandler, Formatter
 from math import log
@@ -45,7 +46,6 @@ from mytoolit.old.MyToolItCommands import (
     NetworkState,
     payload2Hex,
     sArray2String,
-    sDateClock,
     SystemCommandBlueTooth,
     VRefName,
 )
@@ -78,7 +78,7 @@ class Network(object):
         self.Logger = Logger(testMethodName,
                              directory=log_directory,
                              FreshLog=FreshLog)
-        self.Logger.Info(str(sDateClock()))
+        self.Logger.Info(datetime.now().isoformat())
         self.start_time = int(round(time() * 1000))
         self.pcan = PCANBasic()
         self.m_PcanHandle = PCAN_USBBUS1

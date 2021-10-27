@@ -41,6 +41,7 @@ from mytoolit.old.MyToolItCommands import (
     sArray2String,
     SystemCommandBlueTooth,
     SystemCommandRouting,
+    sDateClock,
 )
 from mytoolit.old.MyToolItSth import TestConfig
 from mytoolit.old.configKeys import ConfigKeys
@@ -74,7 +75,7 @@ class myToolItWatch():
         self.bLogSet(settings.Logger.icoc.filename)
         self.vSave2Xml(False)
         self.vSthAutoConnect(False)
-        self.Can.Logger.Info("Start Time: " + self.sDateClock())
+        self.Can.Logger.Info("Start Time: " + sDateClock())
         self.bSampleSetupSet(None)
         self.vConfigSet(None, None)
         self.vSheetFileSet(None)
@@ -346,14 +347,14 @@ class myToolItWatch():
         bOk = False
         if -1 != sLogLocation.rfind('.'):
             sLogLocation = rreplace(sLogLocation, '.',
-                                    "_" + self.sDateClock() + ".")
+                                    "_" + sDateClock() + ".")
             self.Can.vLogNameChange(sLogLocation)
             bOk = True
         return bOk
 
     def vLogCountInc(self):
         fileName = self.Can.Logger.filepath.name[:-24]
-        fileName = fileName + "_" + self.sDateClock() + ".txt"
+        fileName = fileName + "_" + sDateClock() + ".txt"
         self.Can.vLogNameCloseInterval(fileName)
 
     def vSheetFileSet(self, sSheetFile):
@@ -550,11 +551,6 @@ class myToolItWatch():
             self.Major = major
             self.Minor = minor
             self.Build = build
-
-    def sDateClock(self):
-        DataClockTimeStamp = datetime.fromtimestamp(
-            time()).strftime('%Y-%m-%d_%H-%M-%S')
-        return DataClockTimeStamp
 
     def vParserInit(self):
         self.parser = argparse.ArgumentParser(
