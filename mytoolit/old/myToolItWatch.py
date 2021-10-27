@@ -92,7 +92,12 @@ class myToolItWatch():
         self.vStuAddr("")
         self.Can.readThreadStop()
         self.vXmlConfigurationPlotterHost()
-        self.storage = Storage(settings.measurement.output.filepath)
+
+        path = Path(settings.measurement.output.filepath)
+        timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+        filepath = path.parent.joinpath(
+            f"{path.stem}_{timestamp}{path.suffix}")
+        self.storage = Storage(filepath)
 
     def __exit__(self):
         self.storage.close()
