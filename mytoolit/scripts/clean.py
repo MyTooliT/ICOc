@@ -19,6 +19,7 @@ def main():
 
     repo_path = Path(__file__).parent.parent.parent
     files = glob(f"{repo_path}/*.txt")
+    files.extend(glob(f"{repo_path}/*.hdf5"))
     files.extend(glob(f"{repo_path}/*.pdf"))
     if verbose:
         print(f"Cleaning directory {repo_path}")
