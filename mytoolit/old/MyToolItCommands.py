@@ -1,6 +1,5 @@
 from ctypes import BigEndianStructure, c_uint8, Union
 from datetime import datetime
-from time import time
 
 from bidict import bidict
 
@@ -655,6 +654,4 @@ def rreplace(s, old, new):
 
 
 def sDateClock():
-    DataClockTimeStamp = datetime.fromtimestamp(
-        time()).strftime('%Y-%m-%d_%H-%M-%S')
-    return DataClockTimeStamp
+    return datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
