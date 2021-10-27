@@ -8,6 +8,7 @@ import struct
 import xml.etree.ElementTree as ET
 from time import sleep, time
 from datetime import datetime
+from functools import partial
 from pathlib import Path
 
 from can.interfaces.pcan.basic import PCAN_ERROR_OK, PCAN_ERROR_QOVERRUN
@@ -16,6 +17,7 @@ from openpyxl.styles import Font
 
 from mytoolit import __version__
 from mytoolit.config import settings
+from mytoolit.measurement.acceleration import convert_acceleration_adc_to_g
 from mytoolit.measurement.storage import Storage
 from mytoolit.old.network import Network
 from mytoolit.old.MyToolItNetworkNumbers import (MyToolItNetworkName,
@@ -98,6 +100,12 @@ class myToolItWatch():
         filepath = path.parent.joinpath(
             f"{path.stem}_{timestamp}{path.suffix}")
         self.storage = Storage(filepath)
+
+        # Maximum value of acceleration in multiples of g₀
+        # TODO: Determine max value of acceleration sensor from STH EEPROM
+        #       values
+        self.acceleration_max_value_g = settings.acceleration_sensor(
+        ).acceleration.maximum
 
     def __exit__(self):
         self.storage.close()
@@ -974,13 +982,15 @@ class myToolItWatch():
         self.Can.Logger.Info(f"{ackMsg}{format(p3, '5d')}; ")
 
         counter = canData[1]
-        self.storage.add_acceleration_value(value=p1,
+        convert_acceleration = partial(convert_acceleration_adc_to_g,
+                                       max_value=self.acceleration_max_value_g)
+        self.storage.add_acceleration_value(value=convert_acceleration(p1),
                                             counter=counter,
                                             timestamp=timestamp)
-        self.storage.add_acceleration_value(value=p2,
+        self.storage.add_acceleration_value(value=convert_acceleration(p2),
                                             counter=counter,
                                             timestamp=timestamp)
-        self.storage.add_acceleration_value(value=p3,
+        self.storage.add_acceleration_value(value=convert_acceleration(p3),
                                             counter=counter,
                                             timestamp=timestamp)
 

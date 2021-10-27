@@ -7,8 +7,8 @@ from pathlib import Path
 from types import TracebackType
 from typing import Optional, Type, Union
 
-from tables import (File, Filters, IsDescription, Node, NoSuchNodeError,
-                    open_file, UInt8Col, UInt16Col, UInt64Col)
+from tables import (File, Filters, Float32Col, IsDescription, Node,
+                    NoSuchNodeError, open_file, UInt8Col, UInt64Col)
 from tables.exceptions import HDF5ExtError
 
 # -- Classes ------------------------------------------------------------------
@@ -18,7 +18,7 @@ class Acceleration(IsDescription):
     """Description of HDF acceleration table"""
     counter = UInt8Col()
     timestamp = UInt64Col()  # Microseconds since measurement start
-    acceleration = UInt16Col()
+    acceleration = Float32Col()  # Acceleration value in multiples of g₀
 
 
 class StorageException(Exception):
@@ -132,7 +132,7 @@ class Storage:
         self.start_time = start_time
         self.data.attrs['Start_Time'] = datetime.now().isoformat()
 
-    def add_acceleration_value(self, value: int, counter: int,
+    def add_acceleration_value(self, value: float, counter: int,
                                timestamp: float) -> None:
         """Append acceleration data
 
