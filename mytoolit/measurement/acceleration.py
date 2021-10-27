@@ -22,6 +22,7 @@ def convert_acceleration_adc_to_g(acceleration_raw: int,
 
     max_value:
         The maximum acceleration value as factor of g₀
+        (e.g. 200 for a ±100 g sensor)
 
     Returns
     -------
