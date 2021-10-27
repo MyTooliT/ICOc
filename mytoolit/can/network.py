@@ -1234,7 +1234,7 @@ class Network:
     # = Streaming =
     # =============
 
-    async def read_x_acceleration(self, max: int) -> int:
+    async def read_x_acceleration(self, max: int) -> float:
         """Read the current x acceleration value of a connected STH
 
         The value will be returned as multiples of g₀ (gravity of earth)
