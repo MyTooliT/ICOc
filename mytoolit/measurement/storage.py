@@ -6,8 +6,8 @@ from pathlib import Path
 from types import TracebackType
 from typing import Optional, Type, Union
 
-from tables import (File, Filters, IsDescription, NoSuchNodeError, open_file,
-                    UInt8Col, UInt16Col, UInt64Col)
+from tables import (File, Filters, IsDescription, Node, NoSuchNodeError,
+                    open_file, UInt8Col, UInt16Col, UInt64Col)
 from tables.exceptions import HDF5ExtError
 
 # -- Classes ------------------------------------------------------------------
@@ -48,9 +48,9 @@ class Storage:
         """
 
         self.filepath = Path(filepath)
-        self.hdf = None
-        self.data = None
-        self.start_time = None
+        self.hdf: Optional[File] = None
+        self.data: Optional[Node] = None
+        self.start_time: Optional[float] = None
 
     def __enter__(self) -> Storage:
         """Open the HDF file for writing"""
@@ -113,6 +113,8 @@ class Storage:
         if self.hdf is None:
             self.open()
 
+        assert (isinstance(self.hdf, File))
+
         name = "acceleration"
         try:
             self.data = self.hdf.get_node(f'/{name}')
@@ -153,6 +155,9 @@ class Storage:
 
         if self.data is None:
             self.init_acceleration(timestamp)
+
+        assert (isinstance(self.data, Node))
+        assert (isinstance(self.start_time, float))
 
         row = self.data.row
         timestamp = (timestamp - self.start_time) * 100
