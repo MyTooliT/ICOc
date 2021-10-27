@@ -901,8 +901,6 @@ class myToolItWatch():
         self.Can.Logger.Info("MsgId/Subpayload(Acc): " + hex(message.ID) +
                              "/" + hex(accFormat.asbyte))
         endTime = self.Can.get_elapsed_time() + 4000
-        self.storage.open()
-        self.storage.set_starttime()
         while ack is None and self.Can.get_elapsed_time() < endTime:
             self.Can.WriteFrame(message)
             readEndTime = self.Can.get_elapsed_time() + 500
@@ -966,19 +964,24 @@ class myToolItWatch():
         p2 = byte_list_to_int(canData[6:8])
         p3 = byte_list_to_int(canData[4:6])
 
-        canTimeStamp = canMsg["PeakCanTime"]
-        canTimeStamp = round(canTimeStamp, 3)
+        timestamp = round(canMsg["PeakCanTime"], 3)
         ackMsg = ("MsgCounter: " + str(format(canData[1], '3d')) + "; ")
-        ackMsg += ("TimeStamp: " + format(canTimeStamp, '12.3f') + "ms; ")
+        ackMsg += ("TimeStamp: " + format(timestamp, '12.3f') + "ms; ")
         ackMsg += (prefix + ": ")
         self.Can.Logger.Info(f"{ackMsg}{format(p1, '5d')}; ")
         self.Can.Logger.Info(f"{ackMsg}{format(p2, '5d')}; ")
         self.Can.Logger.Info(f"{ackMsg}{format(p3, '5d')}; ")
 
         counter = canData[1]
-        self.storage.add_acceleration_value(counter=counter, value=p1)
-        self.storage.add_acceleration_value(counter=counter, value=p2)
-        self.storage.add_acceleration_value(counter=counter, value=p3)
+        self.storage.add_acceleration_value(value=p1,
+                                            counter=counter,
+                                            timestamp=timestamp)
+        self.storage.add_acceleration_value(value=p2,
+                                            counter=counter,
+                                            timestamp=timestamp)
+        self.storage.add_acceleration_value(value=p3,
+                                            counter=counter,
+                                            timestamp=timestamp)
 
     def GetMessageDouble(self, prefix1, prefix2, canMsg):
         canData = canMsg["CanMsg"].DATA
