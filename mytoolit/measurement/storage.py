@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import datetime
 from pathlib import Path
 from types import TracebackType
 from typing import Optional, Type, Union
@@ -123,7 +124,9 @@ class Storage:
                                               name=name,
                                               description=Acceleration,
                                               title="STH Acceleration Data")
+
         self.start_time = start_time
+        self.data.attrs['Start_Time'] = datetime.now().isoformat()
 
     def add_acceleration_value(self, value: int, counter: int,
                                timestamp: float) -> None:
