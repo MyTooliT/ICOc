@@ -863,12 +863,10 @@ class myToolItWatch():
                                 Watch["AliveTimeOutMs"]) < tTimeStamp:
                             self.Can.bConnected = False
                             self.aquireEndTime = tTimeStamp
-                            self.Can.Logger.Error(
-                                "Not received any streaming package for 4s. Terminated program execution."
-                            )
-                            print(
-                                "Not received any streaming package for 4s. Terminated program execution."
-                            )
+                            message = ("Not received any streaming package "
+                                       "for 4s. Terminated program execution.")
+                            self.Can.Logger.Error(message)
+                            print(message)
                 except KeyboardInterrupt:
                     pass
             self.__exit__()
