@@ -1767,6 +1767,10 @@ class Network(object):
         aiName = self.getReadMessageData(index)
         return sArray2String(aiName)
 
+    # ==========
+    # = EEPROM =
+    # ==========
+
     def read_eeprom(self, address, offset, length):
         """Read EEPROM data at a specific address
 
