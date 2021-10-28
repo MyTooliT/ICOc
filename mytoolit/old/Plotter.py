@@ -102,16 +102,15 @@ def tPlotterInit():
     return [line1, line2, line3]
 
 
-"""
-Init Server Socket such that Clients may connect
-
-@param iSocketPort Socket Port to be opened
-
-@return
-"""
-
-
 def sPloterSocketInit(iSocketPort):
+    """
+    Init Server Socket such that Clients may connect
+
+    @param iSocketPort Socket Port to be opened
+
+    @return
+    """
+
     global cDict
     cDict["Socket"] = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     cDict["Socket"].bind((HOST, iSocketPort))
