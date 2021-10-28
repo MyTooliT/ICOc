@@ -1035,34 +1035,32 @@ class myToolItWatch():
         msgCounter = data[1]
         self.vGraphPacketLossUpdate(msgCounter)
 
+        value1 = byte_list_to_int(data[2:4])
         if self.tAccDataFormat == DataSets[1]:
+            value2 = byte_list_to_int(data[4:6])
             if self.bAccX and self.bAccY and not self.bAccZ:
                 self.GetMessageDouble("AccX", "AccY", canData)
-                self.vGraphPointNext(byte_list_to_int(data[2:4]),
-                                     byte_list_to_int(data[4:6]), 0)
+                self.vGraphPointNext(value1, value2, 0)
             elif self.bAccX and not self.bAccY and self.bAccZ:
                 self.GetMessageDouble("AccX", "AccZ", canData)
-                self.vGraphPointNext(byte_list_to_int(data[2:4]), 0,
-                                     byte_list_to_int(data[4:6]))
+                self.vGraphPointNext(value1, 0, value2)
             elif not self.bAccX and self.bAccY and self.bAccZ:
                 self.GetMessageDouble("AccY", "AccZ", canData)
-                self.vGraphPointNext(0, byte_list_to_int(data[2:4]),
-                                     byte_list_to_int(data[4:6]))
+                self.vGraphPointNext(0, value1, value2)
             else:
+                value3 = byte_list_to_int(data[6:8])
                 self.GetMessageTripple("AccX", "AccY", "AccZ", canData)
-                self.vGraphPointNext(byte_list_to_int(data[2:4]),
-                                     byte_list_to_int(data[4:6]),
-                                     byte_list_to_int(data[6:8]))
+                self.vGraphPointNext(value1, value2, value3)
         elif self.tAccDataFormat == DataSets[3]:
             if self.bAccX:
                 self.GetMessageSingle("AccX", canData)
-                self.vGraphPointNext(byte_list_to_int(data[2:4]), 0, 0)
+                self.vGraphPointNext(value1, 0, 0)
             elif self.bAccY:
                 self.GetMessageSingle("AccY", canData)
-                self.vGraphPointNext(0, byte_list_to_int(data[2:4]), 0)
+                self.vGraphPointNext(0, value1, 0)
             elif self.bAccZ:
                 self.GetMessageSingle("AccZ", canData)
-                self.vGraphPointNext(0, 0, byte_list_to_int(data[2:4]))
+                self.vGraphPointNext(0, 0, value1)
         else:
             self.Can.Logger.Error("Wrong Ack format")
 
