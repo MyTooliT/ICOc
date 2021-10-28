@@ -101,12 +101,6 @@ class myToolItWatch():
             f"{path.stem}_{timestamp}{path.suffix}")
         self.storage = Storage(filepath)
 
-        # Maximum value of acceleration in multiples of g₀
-        # TODO: Determine max value of acceleration sensor from STH EEPROM
-        #       values
-        self.acceleration_max_value_g = settings.acceleration_sensor(
-        ).acceleration.maximum
-
     def __exit__(self):
         self.storage.close()
         self.guiProcessStop()
@@ -821,6 +815,10 @@ class myToolItWatch():
                 self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], self.iPrescaler,
                                    self.iAquistionTime, self.iOversampling,
                                    AdcReference[self.sAdcRef])
+                # We need the acceleration range later to convert the ADC
+                # acceleration values into multiples of g₀
+                self.acceleration_range_g = (
+                    self.Can.read_acceleration_sensor_range_in_g())
                 self.Can.readThreadStop()
                 self.guiProcessRestart()
                 self.Can.Logger.Info("Start Acquiring Data")
@@ -984,7 +982,7 @@ class myToolItWatch():
 
         counter = canData[1]
         convert_acceleration = partial(convert_acceleration_adc_to_g,
-                                       max_value=self.acceleration_max_value_g)
+                                       max_value=self.acceleration_range_g)
         self.storage.add_acceleration_value(value=convert_acceleration(p1),
                                             counter=counter,
                                             timestamp=timestamp)
@@ -1037,7 +1035,7 @@ class myToolItWatch():
         self.vGraphPacketLossUpdate(msgCounter)
 
         convert_acceleration = partial(convert_acceleration_adc_to_g,
-                                       max_value=self.acceleration_max_value_g)
+                                       max_value=self.acceleration_range_g)
 
         value1 = convert_acceleration(byte_list_to_int(data[2:4]))
         if self.tAccDataFormat == DataSets[1]:

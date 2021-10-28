@@ -2605,6 +2605,31 @@ class Network(object):
 
         self.write_eeprom_float(address=8, offset=4, value=offset)
 
+    def read_acceleration_sensor_range_in_g(self) -> int:
+        """Retrieve the maximum acceleration sensor range in multiples of g₀
+
+        - For a ±100 g₀ sensor this method returns 200 (100 + |-100|).
+        - For a ±50 g₀ sensor this method returns 100 (50 + |-50|).
+
+        For this to work correctly:
+
+        - STH 1 has to be connected via Bluetooth to the STU and
+        - the EEPROM value of the [x-axis acceleration offset][offset] has to
+          be set.
+
+        [offset]: https://mytoolit.github.io/Documentation/\
+        #value:acceleration-x-offset
+
+        Returns
+        -------
+
+        Range of current acceleration sensor in multiples of earth’s
+        gravitation
+
+        """
+
+        return round(abs(self.read_eeprom_x_axis_acceleration_offset()) * 2)
+
 
 # -- Main ---------------------------------------------------------------------
 
