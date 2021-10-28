@@ -323,11 +323,11 @@ class myToolItWatch():
             print("Send fail approximately: " + str(iSendFail) + "%")
         return ReceiveFailCounter
 
-    """
-    version
-    """
-
     def sVersion(self):
+        """
+        version
+        """
+
         return __version__
 
 
@@ -445,6 +445,7 @@ class myToolItWatch():
         """
         sampleInterval in ms
         """
+
         self.tDataPointTimeStamp = 0  # Time stamp of last data point
         self.iPacketLossTimeStamp = 0
         self.iGraphBlockSize = blockSize
@@ -1140,11 +1141,11 @@ class myToolItWatch():
                     columLetter].width or False == bSmaller:
                 worksheet.column_dimensions[columLetter].width = adjusted_width
 
-    """
-    Get Page Names from xml by product and versions as List - Version
-    """
-
     def atProductPagesVersion(self, version):
+        """
+        Get Page Names from xml by product and versions as List - Version
+        """
+
         atPageList = []
         if version.get('name') == self.sConfig:
             for page in version.find('Page'):
@@ -1155,11 +1156,11 @@ class myToolItWatch():
                 atPageList.append(tPageDict)
         return atPageList
 
-    """
-    Get Page Names from xml by product and versions as List - Product
-    """
-
     def atProductPagesProduct(self, product):
+        """
+        Get Page Names from xml by product and versions as List - Product
+        """
+
         atPageList = []
         if None != self.sConfig:
             for version in product.find('Version'):
@@ -1168,11 +1169,11 @@ class myToolItWatch():
                     break
         return atPageList
 
-    """
-    Get Page Names from xml by product and versions as List
-    """
-
     def atProductPages(self):
+        """
+        Get Page Names from xml by product and versions as List
+        """
+
         atPageList = []
         if None != self.sProduct:
             dataDef = self.tXmlConfig.root.find('Data')
@@ -1203,11 +1204,11 @@ class myToolItWatch():
         tWorkSheet['H1'].font = tFontRow
         return tWorkSheet
 
-    """
-    Create Excel Sheet by xml definition
-    """
-
     def vExcelSheetCreate(self):
+        """
+        Create Excel Sheet by xml definition
+        """
+
         atProductPages = self.atProductPages()
         if 0 < len(atProductPages):
             workbook = Workbook()
@@ -1250,11 +1251,11 @@ class myToolItWatch():
         if None != value:
             entry.find(key).text = str(value)
 
-    """
-    Set encoding
-    """
-
     def _XmlWriteEndoding(self):
+        """
+        Set encoding
+        """
+
         xml = (bytes('<?xml version="1.0" encoding="UTF-8"?>\n',
                      encoding='utf-8') + ET.tostring(self.tXmlConfig.root))
         xml = xml.decode('utf-8')
@@ -1262,33 +1263,33 @@ class myToolItWatch():
         with open(filepath, "w", encoding='utf-8') as f:
             f.write(xml)
 
-    """
-    Creates a new config
-    """
-
     def newXmlVersion(self, product, productVersion, sVersion):
+        """
+        Creates a new config
+        """
+
         cloneVersion = copy.deepcopy(productVersion)
         cloneVersion.set('name', sVersion)
         product.find('Version').append(cloneVersion)
         self.xmlSave()
         self.vConfigSet(product.get('name'), sVersion)
 
-    """
-    Save XML File (in any state)
-    """
-
     def xmlSave(self):
+        """
+        Save XML File (in any state)
+        """
+
         filepath = str(Path(__file__).parent.joinpath(self.sXmlFileName))
         self.tXmlConfig.tree.write(filepath)
         self._XmlWriteEndoding()
         del self.tXmlConfig
         self.tXmlConfig = ConfigKeys(self.args_dict['xml_file_name'][0])
 
-    """
-    Removes a config
-    """
-
     def removeXmlVersion(self, product, vesion):
+        """
+        Removes a config
+        """
+
         product.find('Version').remove(vesion)
         self.xmlSave()
 
@@ -1299,12 +1300,12 @@ class myToolItWatch():
             for version in product.find('Version'):
                 print("   " + version.get('name'))
 
-    """
-    Write xml entry by Excel Sheet entry
-    """
-
     def _vExcelProductVersion2XmlProductVersionEntry(self, tEntryXml,
                                                      tWorkSheet, iEntryExcel):
+        """
+        Write xml entry by Excel Sheet entry
+        """
+
         sExcelEntryName = str(tWorkSheet['A' + str(iEntryExcel)].value)
         if None != sExcelEntryName:
             tEntryXml.set('name', sExcelEntryName)
@@ -1325,11 +1326,11 @@ class myToolItWatch():
         self._excelSheetEntryFind(tEntryXml, 'description',
                                   tWorkSheet['H' + str(iEntryExcel)].value)
 
-    """
-    Create xml entry by Excel Sheet entry
-    """
-
     def _tExcelProductVersion2XmlProductVersionEntryNew(self, atEntries):
+        """
+        Create xml entry by Excel Sheet entry
+        """
+
         tEntry = self.tXmlChildNew(atEntries, 'entry')
         self.tXmlChildNew(tEntry, 'subAddress')
         self.tXmlChildNew(tEntry, 'length')
@@ -1340,12 +1341,12 @@ class myToolItWatch():
         self.tXmlChildNew(tEntry, 'description')
         return tEntry
 
-    """
-    Write xml definition by Excel Sheet - Excel Page Entries
-    """
-
     def _vExcelProductVersion2XmlProductVersionPageEntries(
             self, tWorkSheet, atXmlEntries):
+        """
+        Write xml definition by Excel Sheet - Excel Page Entries
+        """
+
         iEntryChild = 0
         iExcelRow = 2
         while None != tWorkSheet['A' + str(iExcelRow)].value:
@@ -1363,12 +1364,12 @@ class myToolItWatch():
             atXmlEntries.remove(atXmlEntries[iEntryChild])
             iEntryChild += 1
 
-    """
-    Write existing xml definition by Excel Sheet - Excel Entries
-    """
-
     def _bExcelProductVersion2XmlProductVersionPageExist(
             self, tWorkSheet, atProductPages, sName, sAddress):
+        """
+        Write existing xml definition by Excel Sheet - Excel Entries
+        """
+
         bFound = False
         for tPageDict in atProductPages:
             sXmlName = tPageDict["Name"]
@@ -1380,11 +1381,11 @@ class myToolItWatch():
                 break
         return bFound
 
-    """
-    Create xml page by Excel Work Sheet
-    """
-
     def _vExcelProductVersion2XmlProductVersionPageNew(self, sName, sAddress):
+        """
+        Create xml page by Excel Work Sheet
+        """
+
         if None != self.sProduct and None != self.sConfig:
             dataDef = self.tXmlConfig.root.find('Data')
             for product in dataDef.find('Product'):
@@ -1402,11 +1403,11 @@ class myToolItWatch():
                             self.xmlSave()
                             break
 
-    """
-    Write xml definition by Excel Sheet
-    """
-
     def vExcelProductVersion2XmlProductVersionPage(self, tWorkbook):
+        """
+        Write xml definition by Excel Sheet
+        """
+
         for tWorksheetName in tWorkbook.sheetnames:
             sName = str(tWorksheetName).split('@')
             sAddress = sName[1]
@@ -1427,12 +1428,12 @@ class myToolItWatch():
                         tWorkSheet, atProductPages, sName, sAddress):
                     break
 
-    """
-    Create xml page by Excel Work Sheet
-    """
-
     def _vExcelProductVersion2XmlProductVersionXmlPageRemoveAction(
             self, sName):
+        """
+        Create xml page by Excel Work Sheet
+        """
+
         if None != self.sProduct and None != self.sConfig:
             dataDef = self.tXmlConfig.root.find('Data')
             for product in dataDef.find('Product'):
@@ -1443,11 +1444,12 @@ class myToolItWatch():
                                 if page.get('name') == sName:
                                     version.find('Page').remove(page)
 
-    """
-    Write xml definition by Excel Sheet - Remove entries that are not part of an excel sheet
-    """
-
     def _vExcelProductVersion2XmlProductVersionXmlPageRemove(self, tWorkbook):
+        """
+        Write xml definition by Excel Sheet - Remove entries that are not
+        part of an excel sheet
+        """
+
         atProductPages = self.atProductPages()  # Reload to have up2Date Copy
         for i in range(0, len(atProductPages)):
             tPageDict = atProductPages[i]
@@ -1465,11 +1467,11 @@ class myToolItWatch():
                 self._vExcelProductVersion2XmlProductVersionXmlPageRemoveAction(
                     sXmlName)
 
-    """
-    Write xml definition by Excel Sheet and do checks
-    """
-
     def vExcelProductVersion2XmlProductVersion(self):
+        """
+        Write xml definition by Excel Sheet and do checks
+        """
+
         if None != self.sProduct and None != self.sConfig and None != self.sSheetFile:
             tWorkbook = load_workbook(self.sSheetFile)
             if tWorkbook:
@@ -1571,11 +1573,11 @@ class myToolItWatch():
             pass
         return workSheetNames
 
-    """
-    Read EEPROM page to write values in Excel Sheet
-    """
-
     def sExcelSheetRead(self, namePage, iReceiver):
+        """
+        Read EEPROM page to write values in Excel Sheet
+        """
+
         tEepromSpecialConfig = EepromSpecialConfig()
         tEepromSpecialConfig.asbyte = 0
         tEepromSpecialConfig.b.bIgnoreErrors = self.bEepromIgnoreReadErrors
@@ -1663,11 +1665,11 @@ class myToolItWatch():
                     byteArray[i] = int(value[i], 16)
         return byteArray
 
-    """
-    Read Excel Sheet to write values to EEPROM
-    """
-
     def sExcelSheetWrite(self, namePage, iReceiver):
+        """
+        Read Excel Sheet to write values to EEPROM
+        """
+
         sError = None
         self.Can.Logger.Info("Write Excel Page " + str(namePage) + " to " +
                              MyToolItNetworkName[iReceiver])
