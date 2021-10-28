@@ -167,7 +167,7 @@ class Storage:
         assert (isinstance(self.start_time, float))
 
         row = self.data.row
-        timestamp = (timestamp - self.start_time) * 100
+        timestamp = (timestamp - self.start_time) * 1000
         row['timestamp'] = timestamp
         row['counter'] = counter
         row['acceleration'] = value
