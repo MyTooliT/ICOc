@@ -1036,9 +1036,12 @@ class myToolItWatch():
         msgCounter = data[1]
         self.vGraphPacketLossUpdate(msgCounter)
 
-        value1 = byte_list_to_int(data[2:4])
+        convert_acceleration = partial(convert_acceleration_adc_to_g,
+                                       max_value=self.acceleration_max_value_g)
+
+        value1 = convert_acceleration(byte_list_to_int(data[2:4]))
         if self.tAccDataFormat == DataSets[1]:
-            value2 = byte_list_to_int(data[4:6])
+            value2 = convert_acceleration(byte_list_to_int(data[4:6]))
             if self.bAccX and self.bAccY and not self.bAccZ:
                 self.GetMessageDouble("AccX", "AccY", canData)
                 self.vGraphPointNext(value1, value2, 0)
@@ -1049,7 +1052,7 @@ class myToolItWatch():
                 self.GetMessageDouble("AccY", "AccZ", canData)
                 self.vGraphPointNext(0, value1, value2)
             else:
-                value3 = byte_list_to_int(data[6:8])
+                value3 = convert_acceleration(byte_list_to_int(data[6:8]))
                 self.GetMessageTripple("AccX", "AccY", "AccZ", canData)
                 self.vGraphPointNext(value1, value2, value3)
         elif self.tAccDataFormat == DataSets[3]:

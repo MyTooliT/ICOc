@@ -140,9 +140,9 @@ def vPlotterCommand(command, value):
         dataPoints = 1000 * cDict["dataBlockSize"] * value / cDict[
             "sampleInterval"]
         cDict["timePoints"] = np.linspace(0, value, int(dataPoints))
-        cDict["xAccPoints"] = np.linspace(2**15, 2**15, int(dataPoints))
-        cDict["yAccPoints"] = np.linspace(2**15, 2**15, int(dataPoints))
-        cDict["zAccPoints"] = np.linspace(2**15, 2**15, int(dataPoints))
+        cDict["xAccPoints"] = np.linspace(0, 0, int(dataPoints))
+        cDict["yAccPoints"] = np.linspace(0, 0, int(dataPoints))
+        cDict["zAccPoints"] = np.linspace(0, 0, int(dataPoints))
 
 
 def vPlotter(iSocketPort):
