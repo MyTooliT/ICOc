@@ -18,7 +18,7 @@ class Acceleration(IsDescription):
     """Description of HDF acceleration table"""
     counter = UInt8Col()
     timestamp = UInt64Col()  # Microseconds since measurement start
-    acceleration = Float32Col()  # Acceleration value in multiples of g₀
+    x = Float32Col()  # Acceleration value in multiples of g₀
 
 
 class StorageException(Exception):
@@ -170,7 +170,7 @@ class Storage:
         timestamp = (timestamp - self.start_time) * 1000
         row['timestamp'] = timestamp
         row['counter'] = counter
-        row['acceleration'] = value
+        row['x'] = value
         row.append()
 
         # Flush data to disk every few values to keep memory usage in check
