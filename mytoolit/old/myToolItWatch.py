@@ -967,24 +967,23 @@ class myToolItWatch():
         self.vGetStreamingAccDataProcess()
 
     def store_single_value(self, prefix, canMsg):
-        canData = canMsg["CanMsg"].DATA
-        p1 = byte_list_to_int(canData[2:4])
-        p2 = byte_list_to_int(canData[6:8])
-        p3 = byte_list_to_int(canData[4:6])
-
         timestamp = round(canMsg["PeakCanTime"], 3)
-        ackMsg = ("MsgCounter: " + str(format(canData[1], '3d')) + "; ")
-        ackMsg += ("TimeStamp: " + format(timestamp, '12.3f') + "ms; ")
-        ackMsg += (prefix + ": ")
-        self.Can.Logger.Info(f"{ackMsg}{format(p1, '5d')}; ")
-        self.Can.Logger.Info(f"{ackMsg}{format(p2, '5d')}; ")
-        self.Can.Logger.Info(f"{ackMsg}{format(p3, '5d')}; ")
+        data = canMsg["CanMsg"].DATA
 
-        counter = canData[1]
+        counter = data[1]
+        values = [
+            byte_list_to_int(data[start:start + 2])
+            for start in range(2, 8, 2)
+        ]
+        axis = prefix[-1].lower()
+
+        line = (f"MsgCounter: {counter:3}; TimeStamp: {timestamp:12} ms; "
+                f"{prefix}: ")
         convert_acceleration = partial(convert_acceleration_adc_to_g,
                                        max_value=self.acceleration_range_g)
-        axis = prefix[-1].lower()
-        for value in (p1, p2, p3):
+
+        for value in values:
+            self.Can.Logger.Info(f"{line}{value:5}; ")
             self.storage.add_acceleration(
                 values={axis: convert_acceleration(value)},
                 counter=counter,
