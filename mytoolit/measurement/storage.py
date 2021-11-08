@@ -28,7 +28,7 @@ class StorageException(Exception):
 class Storage:
     """Code to store measurement data in HDF5 format"""
 
-    def __init__(self, filepath: Union[Path, str]):
+    def __init__(self, filepath: Union[Path, str]) -> None:
         """Initialize the storage object using the given arguments
 
         Parameters
@@ -96,7 +96,7 @@ class Storage:
             raise StorageException(
                 f"Unable to open file “{self.filepath}”: {error}")
 
-    def init_acceleration(self, start_time: float):
+    def init_acceleration(self, start_time: float) -> None:
         """Initialize the data storage for the collection of acceleration data
 
         Parameters
