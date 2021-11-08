@@ -983,15 +983,11 @@ class myToolItWatch():
         counter = canData[1]
         convert_acceleration = partial(convert_acceleration_adc_to_g,
                                        max_value=self.acceleration_range_g)
-        self.storage.add_acceleration_value(value=convert_acceleration(p1),
-                                            counter=counter,
-                                            timestamp=timestamp)
-        self.storage.add_acceleration_value(value=convert_acceleration(p2),
-                                            counter=counter,
-                                            timestamp=timestamp)
-        self.storage.add_acceleration_value(value=convert_acceleration(p3),
-                                            counter=counter,
-                                            timestamp=timestamp)
+        for value in (p1, p2, p3):
+            self.storage.add_acceleration_value(
+                value=convert_acceleration(value),
+                counter=counter,
+                timestamp=timestamp)
 
     def GetMessageDouble(self, prefix1, prefix2, canMsg):
         canData = canMsg["CanMsg"].DATA
