@@ -5,11 +5,42 @@ from __future__ import annotations
 from datetime import datetime
 from pathlib import Path
 from types import TracebackType
-from typing import Optional, Type, Union
+from typing import Dict, Optional, Type, Union
 
-from tables import (File, Filters, Float32Col, IsDescription, Node,
-                    NoSuchNodeError, open_file, UInt8Col, UInt64Col)
+from tables import (File, Filters, Float32Col, IsDescription, MetaAtom,
+                    MetaIsDescription, Node, NoSuchNodeError, open_file,
+                    UInt8Col, UInt64Col)
 from tables.exceptions import HDF5ExtError
+
+# -- Functions ----------------------------------------------------------------
+
+
+def create_acceleration_description(
+        attributes: Dict[str, MetaAtom]) -> MetaIsDescription:
+    """Create a new `IsDescription` class to store acceleration data
+
+    Parameters
+    ----------
+
+    attributes:
+        A dictionary containing additional columns to store specific
+        acceleration data. The key specifies the name of the attribute, while
+        the value specifies the type.
+
+    Examples
+    --------
+
+    >>> description_x_acceleration = create_acceleration_description(
+    ...     dict(x=Float32Col()))
+    >>> list(description_x_acceleration.columns.keys())
+    ['counter', 'timestamp', 'x']
+
+    """
+
+    description_class = type('ExtendedAccelerationDescription',
+                             (AccelerationDescription, ), attributes)
+    return description_class
+
 
 # -- Classes ------------------------------------------------------------------
 
@@ -127,7 +158,8 @@ class Storage:
             self.data = self.hdf.create_table(
                 self.hdf.root,
                 name=name,
-                description=AccelerationDescription,
+                description=create_acceleration_description(
+                    dict(x=Float32Col())),
                 title="STH Acceleration Data")
 
         self.start_time = start_time
