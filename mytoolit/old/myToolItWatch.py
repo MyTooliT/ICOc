@@ -977,7 +977,7 @@ class myToolItWatch():
         ]
         axis = prefix[-1].lower()
 
-        line = (f"MsgCounter: {counter:3}; TimeStamp: {timestamp:12} ms; "
+        line = (f"MsgCounter: {counter:3}; TimeStamp: {timestamp:12.3f} ms; "
                 f"{prefix}: ")
         convert_acceleration = partial(convert_acceleration_adc_to_g,
                                        max_value=self.acceleration_range_g)
@@ -999,8 +999,9 @@ class myToolItWatch():
             for start in range(2, 6, 2)
         ]
 
-        message = (f"MsgCounter: {counter:3}; TimeStamp: {timestamp:12} ms; "
-                   f"{prefix1}: {values[0]:5}; {prefix2}: {values[1]:5}; ")
+        message = (
+            f"MsgCounter: {counter:3}; TimeStamp: {timestamp:12.3f} ms; "
+            f"{prefix1}: {values[0]:5}; {prefix2}: {values[1]:5}; ")
         self.Can.Logger.Info(message)
 
     def store_values_tripple(self, prefix1, prefix2, prefix3, canMsg):
@@ -1013,9 +1014,10 @@ class myToolItWatch():
             for start in range(2, 8, 2)
         ]
 
-        message = (f"MsgCounter: {counter:3}; TimeStamp: {timestamp:12} ms; "
-                   f"{prefix1}: {values[0]:5}; {prefix2}: {values[1]:5} "
-                   f"{prefix3}: {values[2]:5}; ")
+        message = (
+            f"MsgCounter: {counter:3}; TimeStamp: {timestamp:12.3f} ms; "
+            f"{prefix1}: {values[0]:5}; {prefix2}: {values[1]:5} "
+            f"{prefix3}: {values[2]:5}; ")
         self.Can.Logger.Info(message)
 
         convert_acceleration = partial(convert_acceleration_adc_to_g,
