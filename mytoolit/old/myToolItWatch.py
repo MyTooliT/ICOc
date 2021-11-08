@@ -1006,7 +1006,7 @@ class myToolItWatch():
         ackMsg += "; "
         self.Can.Logger.Info(ackMsg)
 
-    def GetMessageTripple(self, prefix1, prefix2, prefix3, canMsg):
+    def store_values_tripple(self, prefix1, prefix2, prefix3, canMsg):
         timestamp = round(canMsg["PeakCanTime"], 3)
         data = canMsg["CanMsg"].DATA
 
@@ -1055,7 +1055,7 @@ class myToolItWatch():
                 self.vGraphPointNext(0, value1, value2)
             else:
                 value3 = convert_acceleration(byte_list_to_int(data[6:8]))
-                self.GetMessageTripple("AccX", "AccY", "AccZ", canData)
+                self.store_values_tripple("AccX", "AccY", "AccZ", canData)
                 self.vGraphPointNext(value1, value2, value3)
         elif self.tAccDataFormat == DataSets[3]:
             if self.bAccX:
@@ -1082,8 +1082,8 @@ class myToolItWatch():
                     0 != self.bVoltageZ):
                 self.GetMessageDouble("VoltageY", "VoltageZ", canData)
             else:
-                self.GetMessageTripple("VoltageX", "VoltageY", "VoltageZ",
-                                       canData)
+                self.store_values_tripple("VoltageX", "VoltageY", "VoltageZ",
+                                          canData)
         elif self.tVoltageDataFormat == DataSets[3]:
             if 0 != self.bVoltageX:
                 self.store_values_single("VoltageX", canData)
