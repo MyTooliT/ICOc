@@ -1007,23 +1007,19 @@ class myToolItWatch():
         self.Can.Logger.Info(ackMsg)
 
     def GetMessageTripple(self, prefix1, prefix2, prefix3, canMsg):
-        canData = canMsg["CanMsg"].DATA
-        canTimeStamp = canMsg["PeakCanTime"]
-        canTimeStamp = round(canTimeStamp, 3)
-        ackMsg = ("MsgCounter: " + str(format(canData[1], '3d')) + "; ")
-        ackMsg += ("TimeStamp: " + format(canTimeStamp, '12.3f') + "ms; ")
-        ackMsg += (prefix1 + ": ")
-        ackMsg += str(format(byte_list_to_int(canData[2:4]), '5d'))
-        ackMsg += "; "
-        ackMsg += prefix2
-        ackMsg += ": "
-        ackMsg += str(format(byte_list_to_int(canData[4:6]), '5d'))
-        ackMsg += "; "
-        ackMsg += prefix3
-        ackMsg += ": "
-        ackMsg += str(format(byte_list_to_int(canData[6:8]), '5d'))
-        ackMsg += "; "
-        self.Can.Logger.Info(ackMsg)
+        timestamp = round(canMsg["PeakCanTime"], 3)
+        data = canMsg["CanMsg"].DATA
+
+        counter = data[1]
+        values = [
+            byte_list_to_int(data[start:start + 2])
+            for start in range(2, 8, 2)
+        ]
+
+        message = (f"MsgCounter: {counter:3}; TimeStamp: {timestamp:12} ms; "
+                   f"{prefix1}: {values[0]:5}; {prefix2}: {values[1]:5} "
+                   f"{prefix3}: {values[2]:5}; ")
+        self.Can.Logger.Info(message)
 
     def GetMessageAcc(self, canData):
         data = canData["CanMsg"].DATA
