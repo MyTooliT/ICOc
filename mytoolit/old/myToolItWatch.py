@@ -1021,6 +1021,18 @@ class myToolItWatch():
                    f"{prefix3}: {values[2]:5}; ")
         self.Can.Logger.Info(message)
 
+        convert_acceleration = partial(convert_acceleration_adc_to_g,
+                                       max_value=self.acceleration_range_g)
+
+        axes = [prefix[-1].lower() for prefix in (prefix1, prefix2, prefix3)]
+        values = {
+            axis: convert_acceleration(value)
+            for axis, value in zip(axes, values)
+        }
+        self.storage.add_acceleration(values=values,
+                                      counter=counter,
+                                      timestamp=timestamp)
+
     def GetMessageAcc(self, canData):
         data = canData["CanMsg"].DATA
         msgCounter = data[1]
