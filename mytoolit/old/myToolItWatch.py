@@ -984,8 +984,8 @@ class myToolItWatch():
         convert_acceleration = partial(convert_acceleration_adc_to_g,
                                        max_value=self.acceleration_range_g)
         for value in (p1, p2, p3):
-            self.storage.add_acceleration_value(
-                value=convert_acceleration(value),
+            self.storage.add_acceleration(
+                values={'x': convert_acceleration(value)},
                 counter=counter,
                 timestamp=timestamp)
 

@@ -5,7 +5,7 @@ from __future__ import annotations
 from datetime import datetime
 from pathlib import Path
 from types import TracebackType
-from typing import Dict, Optional, Type, Union
+from typing import Dict, Iterable, Optional, Type, Union
 
 from tables import (File, Filters, Float32Col, IsDescription, MetaAtom,
                     MetaIsDescription, Node, NoSuchNodeError, open_file,
@@ -127,11 +127,15 @@ class Storage:
             raise StorageException(
                 f"Unable to open file “{self.filepath}”: {error}")
 
-    def init_acceleration(self, start_time: float) -> None:
+    def init_acceleration(self, axes: Iterable[str],
+                          start_time: float) -> None:
         """Initialize the data storage for the collection of acceleration data
 
         Parameters
         ----------
+
+        axes:
+            All acceleration axes for which data should be collected
 
         start_time:
             The start time of the data acquisition in milliseconds
@@ -141,7 +145,7 @@ class Storage:
 
         >>> filepath = Path("test.hdf5")
         >>> with Storage(filepath) as storage:
-        ...      storage.init_acceleration(1337.42)
+        ...      storage.init_acceleration(axes = ['x'], start_time = 1337.42)
         >>> filepath.unlink()
 
         """
@@ -159,21 +163,25 @@ class Storage:
                 self.hdf.root,
                 name=name,
                 description=create_acceleration_description(
-                    dict(x=Float32Col())),
+                    attributes={axis: Float32Col()
+                                for axis in axes}),
                 title="STH Acceleration Data")
 
         self.start_time = start_time
         self.data.attrs['Start_Time'] = datetime.now().isoformat()
 
-    def add_acceleration_value(self, value: float, counter: int,
-                               timestamp: float) -> None:
+    def add_acceleration(self, values: Dict[str, float], counter: int,
+                         timestamp: float) -> None:
         """Append acceleration data
 
         Parameters
         ----------
 
-        value:
-            The acceleration value that should be added
+        values:
+            The acceleration values that should be added
+
+            - The key specifies the acceleration axis e.g. `x`, `y` or `z`
+            - The value specifies the acceleration in the given direction
 
         counter:
             The message counter sent in the package that contained the
@@ -187,14 +195,14 @@ class Storage:
 
         >>> filepath = Path("test.hdf5")
         >>> with Storage(filepath) as storage:
-        ...     storage.add_acceleration_value(value=32000, counter=1,
+        ...     storage.add_acceleration(values={'x': 12}, counter=1,
         ...                                    timestamp=4306978.449)
         >>> filepath.unlink()
 
         """
 
         if self.data is None:
-            self.init_acceleration(timestamp)
+            self.init_acceleration(values.keys(), timestamp)
 
         assert (isinstance(self.data, Node))
         assert (isinstance(self.start_time, float))
@@ -203,7 +211,8 @@ class Storage:
         timestamp = (timestamp - self.start_time) * 1000
         row['timestamp'] = timestamp
         row['counter'] = counter
-        row['x'] = value
+        for accelertation_type, value in values.items():
+            row[accelertation_type] = value
         row.append()
 
         # Flush data to disk every few values to keep memory usage in check
