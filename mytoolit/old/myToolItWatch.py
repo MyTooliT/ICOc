@@ -1004,6 +1004,18 @@ class myToolItWatch():
             f"{prefix1}: {values[0]:5}; {prefix2}: {values[1]:5}; ")
         self.Can.Logger.Info(message)
 
+        convert_acceleration = partial(convert_acceleration_adc_to_g,
+                                       max_value=self.acceleration_range_g)
+
+        axes = [prefix[-1].lower() for prefix in (prefix1, prefix2)]
+        values = {
+            axis: convert_acceleration(value)
+            for axis, value in zip(axes, values)
+        }
+        self.storage.add_acceleration(values=values,
+                                      counter=counter,
+                                      timestamp=timestamp)
+
     def store_values_tripple(self, prefix1, prefix2, prefix3, canMsg):
         timestamp = round(canMsg["PeakCanTime"], 3)
         data = canMsg["CanMsg"].DATA
