@@ -990,21 +990,18 @@ class myToolItWatch():
                 timestamp=timestamp)
 
     def GetMessageDouble(self, prefix1, prefix2, canMsg):
-        canData = canMsg["CanMsg"].DATA
-        canTimeStamp = canMsg["PeakCanTime"]
-        canTimeStamp = round(canTimeStamp, 3)
-        p1_1 = byte_list_to_int(canData[2:4])
-        p1_2 = byte_list_to_int(canData[4:6])
-        ackMsg = ("MsgCounter: " + str(format(canData[1], '3d')) + "; ")
-        ackMsg += ("TimeStamp: " + format(canTimeStamp, '12.3f') + "ms; ")
-        ackMsg += (prefix1 + ": ")
-        ackMsg += str(format(p1_1, '5d'))
-        ackMsg += "; "
-        ackMsg += prefix2
-        ackMsg += ": "
-        ackMsg += str(format(p1_2, '5d'))
-        ackMsg += "; "
-        self.Can.Logger.Info(ackMsg)
+        timestamp = round(canMsg["PeakCanTime"], 3)
+        data = canMsg["CanMsg"].DATA
+
+        counter = data[1]
+        values = [
+            byte_list_to_int(data[start:start + 2])
+            for start in range(2, 6, 2)
+        ]
+
+        message = (f"MsgCounter: {counter:3}; TimeStamp: {timestamp:12} ms; "
+                   f"{prefix1}: {values[0]:5}; {prefix2}: {values[1]:5}; ")
+        self.Can.Logger.Info(message)
 
     def store_values_tripple(self, prefix1, prefix2, prefix3, canMsg):
         timestamp = round(canMsg["PeakCanTime"], 3)
