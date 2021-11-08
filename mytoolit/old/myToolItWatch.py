@@ -989,7 +989,7 @@ class myToolItWatch():
                 counter=counter,
                 timestamp=timestamp)
 
-    def GetMessageDouble(self, prefix1, prefix2, canMsg):
+    def store_values_double(self, prefix1, prefix2, canMsg):
         timestamp = round(canMsg["PeakCanTime"], 3)
         data = canMsg["CanMsg"].DATA
 
@@ -1042,13 +1042,13 @@ class myToolItWatch():
         if self.tAccDataFormat == DataSets[1]:
             value2 = convert_acceleration(byte_list_to_int(data[4:6]))
             if self.bAccX and self.bAccY and not self.bAccZ:
-                self.GetMessageDouble("AccX", "AccY", canData)
+                self.store_values_double("AccX", "AccY", canData)
                 self.vGraphPointNext(value1, value2, 0)
             elif self.bAccX and not self.bAccY and self.bAccZ:
-                self.GetMessageDouble("AccX", "AccZ", canData)
+                self.store_values_double("AccX", "AccZ", canData)
                 self.vGraphPointNext(value1, 0, value2)
             elif not self.bAccX and self.bAccY and self.bAccZ:
-                self.GetMessageDouble("AccY", "AccZ", canData)
+                self.store_values_double("AccY", "AccZ", canData)
                 self.vGraphPointNext(0, value1, value2)
             else:
                 value3 = convert_acceleration(byte_list_to_int(data[6:8]))
@@ -1071,13 +1071,13 @@ class myToolItWatch():
         if self.tAccDataFormat == DataSets[1]:
             if (0 != self.bVoltageX) and (0 != self.bVoltageY) and (
                     0 == self.bVoltageZ):
-                self.GetMessageDouble("VoltageX", "VoltageY", canData)
+                self.store_values_double("VoltageX", "VoltageY", canData)
             elif (0 != self.bVoltageX) and (0 == self.bVoltageY) and (
                     0 != self.bVoltageZ):
-                self.GetMessageDouble("VoltageX", "VoltageZ", canData)
+                self.store_values_double("VoltageX", "VoltageZ", canData)
             elif (0 == self.bVoltageX) and (0 != self.bVoltageY) and (
                     0 != self.bVoltageZ):
-                self.GetMessageDouble("VoltageY", "VoltageZ", canData)
+                self.store_values_double("VoltageY", "VoltageZ", canData)
             else:
                 self.store_values_tripple("VoltageX", "VoltageY", "VoltageZ",
                                           canData)
