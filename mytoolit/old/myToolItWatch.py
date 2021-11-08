@@ -966,7 +966,7 @@ class myToolItWatch():
             self.aquireEndTime = currentTime + self.iRunTime * 1000
         self.vGetStreamingAccDataProcess()
 
-    def GetMessageSingle(self, prefix, canMsg):
+    def store_single_value(self, prefix, canMsg):
         canData = canMsg["CanMsg"].DATA
         p1 = byte_list_to_int(canData[2:4])
         p2 = byte_list_to_int(canData[6:8])
@@ -1052,13 +1052,13 @@ class myToolItWatch():
                 self.vGraphPointNext(value1, value2, value3)
         elif self.tAccDataFormat == DataSets[3]:
             if self.bAccX:
-                self.GetMessageSingle("AccX", canData)
+                self.store_single_value("AccX", canData)
                 self.vGraphPointNext(value1, 0, 0)
             elif self.bAccY:
-                self.GetMessageSingle("AccY", canData)
+                self.store_single_value("AccY", canData)
                 self.vGraphPointNext(0, value1, 0)
             elif self.bAccZ:
-                self.GetMessageSingle("AccZ", canData)
+                self.store_single_value("AccZ", canData)
                 self.vGraphPointNext(0, 0, value1)
         else:
             self.Can.Logger.Error("Wrong Ack format")
@@ -1079,11 +1079,11 @@ class myToolItWatch():
                                        canData)
         elif self.tVoltageDataFormat == DataSets[3]:
             if 0 != self.bVoltageX:
-                self.GetMessageSingle("VoltageX", canData)
+                self.store_single_value("VoltageX", canData)
             elif 0 != self.bVoltageY:
-                self.GetMessageSingle("VoltageY", canData)
+                self.store_single_value("VoltageY", canData)
             elif 0 != self.bVoltageZ:
-                self.GetMessageSingle("VoltageZ", canData)
+                self.store_single_value("VoltageZ", canData)
         else:
             self.Can.Logger.Error("Wrong Ack format")
 
