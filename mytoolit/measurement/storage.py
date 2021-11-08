@@ -14,7 +14,7 @@ from tables.exceptions import HDF5ExtError
 # -- Classes ------------------------------------------------------------------
 
 
-class Acceleration(IsDescription):
+class AccelerationDescription(IsDescription):
     """Description of HDF acceleration table"""
     counter = UInt8Col()
     timestamp = UInt64Col()  # Microseconds since measurement start
@@ -124,10 +124,11 @@ class Storage:
         try:
             self.data = self.hdf.get_node(f'/{name}')
         except NoSuchNodeError:
-            self.data = self.hdf.create_table(self.hdf.root,
-                                              name=name,
-                                              description=Acceleration,
-                                              title="STH Acceleration Data")
+            self.data = self.hdf.create_table(
+                self.hdf.root,
+                name=name,
+                description=AccelerationDescription,
+                title="STH Acceleration Data")
 
         self.start_time = start_time
         self.data.attrs['Start_Time'] = datetime.now().isoformat()
