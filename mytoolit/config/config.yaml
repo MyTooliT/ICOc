@@ -105,10 +105,14 @@ GUI:
 
 MEASUREMENT:
   OUTPUT:
-    FILEPATH:
-      # The filepath to the measurement data in HDF5 format. Please note that
-      # relative paths will be interpreted starting from the repository path.
-      Measurement.hdf5
+    # The directory where ICOc stores measurement data in HDF5 format. Relative
+    # directories will be interpreted from the root of the repository. For
+    # example, if we assume that the ICOc repository is stored in
+    # `Documents/ICOc` in the user’s home directory, then the value `..` means
+    # that ICOc will store the log file in the directory `Documents` in the home
+    # directory.
+    DIRECTORY: .
+    FILENAME: Measurement.hdf5 # The name of the HDF5 file
 
 OPERATOR:
   # The name of the operator that executes the hardware tests
