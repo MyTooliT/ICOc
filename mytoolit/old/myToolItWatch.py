@@ -841,9 +841,9 @@ class myToolItWatch():
         tAliveTimeStamp = startTime
         tTimeStamp = startTime
         try:
-            while (tTimeStamp < self.aquireEndTime):
+            while tTimeStamp < self.aquireEndTime:
                 try:
-                    if (tTimeStamp - startTime) >= iIntervalTime:
+                    if tTimeStamp - startTime >= iIntervalTime:
                         startTime = tTimeStamp
                         self.vLogCountInc()
                     ack = self.ReadMessage()
