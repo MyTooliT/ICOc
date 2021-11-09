@@ -82,15 +82,12 @@ class mwt(myToolItWatch):
         except:
             pass
 
-    def vTerminalHolderConnectCommandsRunTimeIntervalTime(self):
+    def change_runtime(self):
         self.stdscr.clear()
         self.stdscr.addstr("Run Time (in Seconds): ")
         self.stdscr.refresh()
         iRunTime = self.iTerminalInputNumberIn()
-        self.stdscr.addstr("Interval Time (in Seconds; 0=No Interval Files): ")
-        self.stdscr.refresh()
-        iIntervalTime = self.iTerminalInputNumberIn()
-        self.vRunTime(iRunTime, iIntervalTime)
+        self.vRunTime(iRunTime)
 
     def vTerminalHolderConnectCommandsRunTimeDisplayTime(self):
         self.stdscr.clear()
@@ -143,7 +140,7 @@ class mwt(myToolItWatch):
             bX = bool((iPoints >> 2) & 1)
             self.vAccSet(bX, bY, bZ, -1)
         elif ord('r') == keyPress:
-            self.vTerminalHolderConnectCommandsRunTimeIntervalTime()
+            self.change_runtime()
         elif ord('s') == keyPress:
             self.stdscr.clear()
             if not self.KeyBoardInterrupt:
@@ -214,8 +211,6 @@ class mwt(myToolItWatch):
                 str(self.sDevName) + ")\n")
             self.bTerminalHolderConnectCommandsShowDataValues()
             self.stdscr.addstr("Run Time: " + str(self.iRunTime) + "s\n")
-            self.stdscr.addstr("Interval Time: " + str(self.iIntervalTime) +
-                               "s\n")
             self.stdscr.addstr(
                 "Adc Prescaler/AcquisitionTime/OversamplingRate/Reference(Samples/s): "
                 + str(self.iPrescaler) + "/" +
@@ -235,7 +230,7 @@ class mwt(myToolItWatch):
             self.stdscr.addstr("n: Set Device Name\n")
             self.stdscr.addstr("O: Off(Standby)\n")
             self.stdscr.addstr("p: Config Acceleration Points(XYZ)\n")
-            self.stdscr.addstr("r: Config run time and interval time\n")
+            self.stdscr.addstr("r: Config run time\n")
             self.stdscr.addstr("s: Start Data Acquisition\n")
             self.stdscr.refresh()
             [bRun,
@@ -773,9 +768,8 @@ class mwt(myToolItWatch):
                                tSetup.find('AdcRef').text + "\n")
             self.stdscr.addstr("Log Name: " + tSetup.find('LogName').text +
                                "\n")
-            self.stdscr.addstr("RunTime/IntervalTime: " +
-                               tSetup.find('RunTime').text + "/" +
-                               tSetup.find('DisplayTime').text + "\n")
+            self.stdscr.addstr("RunTime: " + tSetup.find('RunTime').text +
+                               "\n")
             self.stdscr.addstr("Display Time: " +
                                tSetup.find('DisplayTime').text + "\n")
             self.stdscr.refresh()
@@ -849,12 +843,10 @@ class mwt(myToolItWatch):
     def vTerminalXmlSetupModifyLogName(self):
         self.vTerminalLogFileName()
 
-    def vTerminalXmlSetupModifyRunIntervalTime(self):
+    def vTerminalXmlSetupModifyRunTime(self):
         self.stdscr.addstr("Please Type in new Run Time: ")
         iRunTime = self.iTerminalInputNumberIn()
-        self.stdscr.addstr("Please Type in new Interval Time: ")
-        iIntervalTime = self.iTerminalInputNumberIn()
-        self.vRunTime(iRunTime, iIntervalTime)
+        self.vRunTime(iRunTime)
 
     def vTerminalXmlSetupModifyDisplayTime(self):
         self.stdscr.addstr("Please Type in new display time: ")
@@ -879,7 +871,7 @@ class mwt(myToolItWatch):
         elif 6 == iSelection:
             self.vTerminalXmlSetupModifyLogName()
         elif 7 == iSelection:
-            self.vTerminalXmlSetupModifyRunIntervalTime()
+            self.vTerminalXmlSetupModifyRunTime()
         elif 8 == iSelection:
             self.vTerminalXmlSetupModifyDisplayTime()
         elif 99 == iSelection:
@@ -959,13 +951,10 @@ class mwt(myToolItWatch):
                                            "\n")
                         self.stdscr.addstr(" : XML Log Name: " +
                                            setup.find('LogName').text + "\n")
-                        self.stdscr.addstr("7: RunTime/IntervalTime: " +
-                                           str(self.iRunTime) + "/" +
-                                           str(self.iIntervalTime) + "\n")
-                        self.stdscr.addstr(" : XML RunTime/IntervalTime: " +
-                                           setup.find('RunTime').text + "/" +
-                                           setup.find('DisplayTime').text +
-                                           "\n")
+                        self.stdscr.addstr("7: RunTime: " +
+                                           str(self.iRunTime) + "\n")
+                        self.stdscr.addstr(" : XML RunTime: " +
+                                           setup.find('RunTime').text + "\n")
                         self.stdscr.addstr("8: Display Time: " +
                                            str(self.iDisplayTime) + "\n")
                         self.stdscr.addstr(" : XML Display Time: " +

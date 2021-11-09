@@ -88,7 +88,7 @@ class myToolItWatch():
         self.vAdcConfig(2, 8, 64)
         self.vAdcRefVConfig("VDD")
         self.vDisplayTime(10)
-        self.vRunTime(0, 0)
+        self.vRunTime(0)
         self.vGraphInit(Watch["DisplaySampleRateMs"],
                         Watch["DisplayBlockSize"])
         self.vStuAddr("")
@@ -400,11 +400,6 @@ class myToolItWatch():
             bOk = True
         return bOk
 
-    def vLogCountInc(self):
-        fileName = self.Can.Logger.filepath.name[:-24]
-        fileName = fileName + "_" + sDateClock() + ".txt"
-        self.Can.vLogNameCloseInterval(fileName)
-
     def vSheetFileSet(self, sSheetFile):
         self.sSheetFile = sSheetFile
 
@@ -472,8 +467,7 @@ class myToolItWatch():
         """Set the length of the graphical plot in seconds"""
         self.iDisplayTime = int(min(iDisplayTime, Watch["DisplayTimeMax"]))
 
-    def vRunTime(self, runTime, intervalTime):
-        self.iIntervalTime = int(intervalTime)
+    def vRunTime(self, runTime):
         self.iRunTime = int(runTime)
 
     def vGraphInit(self, sampleInterval=200, blockSize=10):
@@ -647,17 +641,6 @@ class myToolItWatch():
             help=
             'Table Calculation File(xlsx) name for transferring data between PC and STH/STU'
         )
-        self.parser.add_argument(
-            '-i',
-            '--interval',
-            dest='interval',
-            action='store',
-            nargs=1,
-            type=int,
-            required=False,
-            help=
-            'Sets Interval Time (Output file is saved each interval time in seconds. Lower than 10 causes a single file'
-        )
         self.parser.add_argument('-f',
                                  '--filename',
                                  type=str,
@@ -804,13 +787,10 @@ class myToolItWatch():
             self.vAdcRefVConfig(self.args_dict['refv'][0])
         if None != self.args_dict['xlsx']:
             self.vSheetFileSet(self.args_dict['xlsx'][0])
-        iIntervalTime = self.iIntervalTime
-        if None != self.args_dict['interval']:
-            iIntervalTime = self.args_dict['interval'][0]
         iRunTime = self.iRunTime
         if None != self.args_dict['run_time']:
             iRunTime = self.args_dict['run_time'][0]
-        self.vRunTime(iRunTime, iIntervalTime)
+        self.vRunTime(iRunTime)
 
         if None != self.args_dict['name_connect']:
             self.vDeviceNameSet(self.args_dict['name_connect'][0])
@@ -876,18 +856,12 @@ class myToolItWatch():
             self.__exit__()
 
     def vGetStreamingAccDataProcess(self):
-        iIntervalTime = self.iIntervalTime * 1000
-        if self.iIntervalTime == 0:
-            iIntervalTime += (1 << 32)
         startTime = self.Can.get_elapsed_time()
         tAliveTimeStamp = startTime
         tTimeStamp = startTime
         try:
             while tTimeStamp < self.aquireEndTime:
                 try:
-                    if tTimeStamp - startTime >= iIntervalTime:
-                        startTime = tTimeStamp
-                        self.vLogCountInc()
                     ack = self.ReadMessage()
                     if ack is not None:
                         tAliveTimeStamp = self.Can.get_elapsed_time()
@@ -1797,7 +1771,6 @@ class myToolItWatch():
                 sFileName = self.Can.Logger.filepath.name
                 config.find('LogName').text = sFileName[:sFileName.find('_'):]
                 config.find('RunTime').text = str(self.iRunTime)
-                config.find('IntervalTime').text = str(self.iIntervalTime)
                 config.find('DisplayTime').text = str(self.iDisplayTime)
                 break
 
@@ -1822,9 +1795,7 @@ class myToolItWatch():
                                 int(config.find('AcquisitionTime').text),
                                 int(config.find('OverSamples').text))
                 self.vAdcRefVConfig(config.find('AdcRef').text)
-                self.bLogSet(str(config.find('LogName').text) + ".txt")
-                self.vRunTime(int(config.find('RunTime').text),
-                              int(config.find('IntervalTime').text))
+                self.vRunTime(int(config.find('RunTime').text))
                 self.vDisplayTime(int(config.find('DisplayTime').text))
                 break
 
@@ -1864,8 +1835,7 @@ class myToolItWatch():
                 setup.find('OverSamples').text + "(" + str(samplingRate) + ")")
             print("    ADC Reference Voltage: " + setup.find('AdcRef').text)
             print("    Log Name: " + setup.find('LogName').text)
-            print("    RunTime/IntervalTime: " + setup.find('RunTime').text +
-                  " " + setup.find('DisplayTime').text)
+            print("    RunTime: " + setup.find('RunTime').text)
             print("    Display Time: " + setup.find('DisplayTime').text)
 
     def _vRunConsoleStartupShow(self):
@@ -1881,7 +1851,6 @@ class myToolItWatch():
               str(self.iAddress))  # Todo machen
         print("AutoConnect?: " + str(self.bSthAutoConnect))
         print("Run Time: " + str(self.iRunTime) + "s")
-        print("Interval Time: " + str(self.iIntervalTime) + "s")
         print("Display Time: " + str(self.iDisplayTime) + "s")
         print(
             "Adc Prescaler/AcquisitionTime/OversamplingRate/Reference(Samples/s): "
@@ -1910,7 +1879,6 @@ class myToolItWatch():
                              str(self.iAddress))  # Todo machen
         self.Can.Logger.Info("AutoConnect?: " + str(self.bSthAutoConnect))
         self.Can.Logger.Info("Run Time: " + str(self.iRunTime) + "s")
-        self.Can.Logger.Info("Interval Time: " + str(self.iIntervalTime) + "s")
         self.Can.Logger.Info("Display Time: " + str(self.iDisplayTime) + "ms")
         self.Can.Logger.Info(
             "Adc Prescaler/AcquisitionTime/OversamplingRate/Reference(Samples/s): "
