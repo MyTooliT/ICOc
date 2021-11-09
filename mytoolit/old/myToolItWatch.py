@@ -140,8 +140,12 @@ class myToolItWatch():
 
         """
 
-        self.output_filename = Path(settings.measurement.output.filename
-                                    ) if name is None else Path(name)
+        filename = Path(settings.measurement.output.filename
+                        ) if name is None else Path(name)
+        if not filename.suffix:
+            filename = filename.with_suffix(".hdf5")
+
+        self.output_filename = filename
 
     def get_output_filepath(self) -> Path:
         """Get the filepath of the HDF output file

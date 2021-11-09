@@ -4,8 +4,6 @@ import curses
 import os
 import subprocess
 
-from pathlib import Path
-
 from mytoolit.config import settings
 from mytoolit.old.myToolItWatch import myToolItWatch
 from mytoolit.old.MyToolItCommands import (
@@ -477,9 +475,7 @@ class mwt(myToolItWatch):
         self.stdscr.addstr(f"HDF File Name ({filepath.stem}): ")
         filename = self.sTerminalInputStringIn()
         if filename != "":
-            filename = Path(filename)
-            self.set_output_filename(
-                filename if filename.suffix else filename.with_suffix(".hdf5"))
+            self.set_output_filename(filename)
         self.stdscr.addstr(str(self.get_output_filepath()))
         self.stdscr.refresh()
         sleep(2)
