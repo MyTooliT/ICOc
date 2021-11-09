@@ -877,6 +877,14 @@ class myToolItWatch():
                             print(message)
                 except KeyboardInterrupt:
                     pass
+
+            # We store the acceleration metadata at the end since, at this time
+            # the acceleration table should exist. Otherwise we would not be
+            # able to add the metadata to the table.
+            sensor_range = self.acceleration_range_g / 2
+            self.storage.add_acceleration_meta("Sensor_Range",
+                                               f"± {sensor_range} g₀")
+
             self.__exit__()
         except KeyboardInterrupt:
             self.KeyBoardInterrupt = True
