@@ -1028,13 +1028,10 @@ class myToolItWatch():
         ]
         axis = prefix[-1].lower()
 
-        line = (f"MsgCounter: {counter:3}; TimeStamp: {timestamp:12.3f} ms; "
-                f"{prefix}: ")
         convert_acceleration = partial(convert_acceleration_adc_to_g,
                                        max_value=self.acceleration_range_g)
 
         for value in values:
-            self.Can.Logger.Info(f"{line}{value:5}; ")
             self.storage.add_acceleration(
                 values={axis: convert_acceleration(value)},
                 counter=counter,
@@ -1049,11 +1046,6 @@ class myToolItWatch():
             byte_list_to_int(data[start:start + 2])
             for start in range(2, 6, 2)
         ]
-
-        message = (
-            f"MsgCounter: {counter:3}; TimeStamp: {timestamp:12.3f} ms; "
-            f"{prefix1}: {values[0]:5}; {prefix2}: {values[1]:5}; ")
-        self.Can.Logger.Info(message)
 
         convert_acceleration = partial(convert_acceleration_adc_to_g,
                                        max_value=self.acceleration_range_g)
@@ -1076,12 +1068,6 @@ class myToolItWatch():
             byte_list_to_int(data[start:start + 2])
             for start in range(2, 8, 2)
         ]
-
-        message = (
-            f"MsgCounter: {counter:3}; TimeStamp: {timestamp:12.3f} ms; "
-            f"{prefix1}: {values[0]:5}; {prefix2}: {values[1]:5} "
-            f"{prefix3}: {values[2]:5}; ")
-        self.Can.Logger.Info(message)
 
         convert_acceleration = partial(convert_acceleration_adc_to_g,
                                        max_value=self.acceleration_range_g)
