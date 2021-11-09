@@ -100,7 +100,8 @@ class myToolItWatch():
         self.set_output_filename()
 
     def __exit__(self):
-        self.storage.close()
+        if self.storage is not None:
+            self.storage.close()
         self.guiProcessStop()
         self.Can.ReadThreadReset()
         if self.Can.bConnected:
