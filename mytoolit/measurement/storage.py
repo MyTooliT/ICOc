@@ -85,7 +85,7 @@ class Storage:
                          repository.joinpath(filepath)).resolve()
 
         self.hdf: Optional[File] = None
-        self.data: Optional[Node] = None
+        self.acceleration: Optional[Node] = None
         self.start_time: Optional[float] = None
 
     def __enter__(self) -> Storage:
@@ -157,9 +157,9 @@ class Storage:
 
         name = "acceleration"
         try:
-            self.data = self.hdf.get_node(f'/{name}')
+            self.acceleration = self.hdf.get_node(f'/{name}')
         except NoSuchNodeError:
-            self.data = self.hdf.create_table(
+            self.acceleration = self.hdf.create_table(
                 self.hdf.root,
                 name=name,
                 description=create_acceleration_description(
@@ -168,7 +168,7 @@ class Storage:
                 title="STH Acceleration Data")
 
         self.start_time = start_time
-        self.data.attrs['Start_Time'] = datetime.now().isoformat()
+        self.acceleration.attrs['Start_Time'] = datetime.now().isoformat()
 
     def add_acceleration(self, values: Dict[str, float], counter: int,
                          timestamp: float) -> None:
@@ -201,13 +201,13 @@ class Storage:
 
         """
 
-        if self.data is None:
+        if self.acceleration is None:
             self.init_acceleration(values.keys(), timestamp)
 
-        assert (isinstance(self.data, Node))
+        assert (isinstance(self.acceleration, Node))
         assert (isinstance(self.start_time, float))
 
-        row = self.data.row
+        row = self.acceleration.row
         timestamp = (timestamp - self.start_time) * 1000
         row['timestamp'] = timestamp
         row['counter'] = counter
@@ -216,8 +216,8 @@ class Storage:
         row.append()
 
         # Flush data to disk every few values to keep memory usage in check
-        if self.data.nrows % 1000 == 0:
-            self.data.flush()
+        if self.acceleration.nrows % 1000 == 0:
+            self.acceleration.flush()
 
     def close(self) -> None:
         """Close the HDF file"""
