@@ -96,8 +96,8 @@ class myToolItWatch():
         self.Can.readThreadStop()
         self.vXmlConfigurationPlotterHost()
 
+        self.storage = None
         self.set_output_filename()
-        self.storage = Storage(self.get_output_filepath())
 
     def __exit__(self):
         self.storage.close()
@@ -852,6 +852,8 @@ class myToolItWatch():
                 self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], self.iPrescaler,
                                    self.iAquistionTime, self.iOversampling,
                                    AdcReference[self.sAdcRef])
+                # Initialize HDF output
+                self.storage = Storage(self.get_output_filepath())
                 # We need the acceleration range later to convert the ADC
                 # acceleration values into multiples of g₀
                 self.acceleration_range_g = (

@@ -473,12 +473,14 @@ class mwt(myToolItWatch):
         return bContinue
 
     def vTerminalLogFileName(self):
-        self.stdscr.addstr("Log File Name(" +
-                           self.Can.Logger.filepath.name[0:-4] + "): ")
-        sLogFileName = self.sTerminalInputStringIn()
-        if "" != sLogFileName:
-            self.bLogSet(sLogFileName + '.txt')
-        self.stdscr.addstr("" + self.Can.Logger.filepath.name)
+        filepath = self.get_output_filepath()
+        self.stdscr.addstr(f"HDF File Name ({filepath.stem}): ")
+        filename = self.sTerminalInputStringIn()
+        if filename != "":
+            filename = Path(filename)
+            self.set_output_filename(
+                filename if filename.suffix else filename.with_suffix(".hdf5"))
+        self.stdscr.addstr(str(self.get_output_filepath()))
         self.stdscr.refresh()
         sleep(2)
 
