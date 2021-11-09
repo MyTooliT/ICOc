@@ -645,7 +645,7 @@ class myToolItWatch():
                                  '--filename',
                                  type=str,
                                  required=False,
-                                 help="(Base) name of the output HDF file")
+                                 help="(Base) name of the output file")
         self.parser.add_argument(
             '-n',
             '--name_connect',

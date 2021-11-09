@@ -467,7 +467,7 @@ class mwt(myToolItWatch):
 
     def vTerminalLogFileName(self):
         filepath = self.get_output_filepath()
-        self.stdscr.addstr(f"HDF File Name ({filepath.stem}): ")
+        self.stdscr.addstr(f"Output File Name ({filepath.stem}): ")
         filename = self.sTerminalInputStringIn()
         if filename != "":
             self.set_output_filename(filename)
@@ -1119,7 +1119,7 @@ class mwt(myToolItWatch):
         self.stdscr.addstr("q: Quit program\n")
         self.stdscr.addstr("1-9: Connect to STH number (ENTER at input end)\n")
         self.stdscr.addstr("E: EEPROM (Permanent Storage)\n")
-        self.stdscr.addstr("f: HDF File Name\n")
+        self.stdscr.addstr("f: Output File Name\n")
         self.stdscr.addstr("n: Change Device Name\n")
         self.stdscr.addstr("t: Test Menu\n")
         self.stdscr.addstr("u: Update Menu\n")
