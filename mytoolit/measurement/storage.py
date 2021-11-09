@@ -219,6 +219,51 @@ class Storage:
         if self.acceleration.nrows % 1000 == 0:
             self.acceleration.flush()
 
+    def add_acceleration_meta(self, name: str, value: str) -> None:
+        """Add acceleration metadata
+
+        Precondition
+        ------------
+
+        Either the method
+
+        - init_acceleration or
+        - add_acceleration
+
+        have to be called once before you use this method. This is required
+        since otherwise the table that stores the acceleration (meta) data
+        does not exist.
+
+        Parameters
+        ----------
+
+        name:
+            The name of the meta attribute
+
+        value:
+            The value of the meta attribute
+
+        Example
+        -------
+
+        >>> filepath = Path("test.hdf5")
+        >>> with Storage(filepath) as storage:
+        ...     storage.add_acceleration(values={'x': 12}, counter=1,
+        ...                                    timestamp=4306978.449)
+        ...     storage.add_acceleration_meta('Sensor_Range', "± 100 g₀")
+        >>> filepath.unlink()
+
+        """
+
+        if self.acceleration is None:
+            raise UserWarning(
+                "Unable to add metadata to non existent "
+                "acceleration table.\n"
+                "Please call either `init_acceleration` or `add_acceleration` "
+                "before you use this function")
+
+        self.acceleration.attrs[name] = value
+
     def close(self) -> None:
         """Close the HDF file"""
 
