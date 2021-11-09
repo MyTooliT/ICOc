@@ -1,7 +1,6 @@
 import os
 import time
 
-from os import makedirs
 from pathlib import Path
 
 
@@ -13,7 +12,7 @@ class Logger():
           https://docs.python.org/3/library/logging.html).
     """
 
-    def __init__(self, fileName, directory='.', FreshLog=False):
+    def __init__(self, fileName, FreshLog=False):
         """Create a new logger with the given arguments
 
         Parameters
@@ -21,9 +20,6 @@ class Logger():
 
         fileName:
             The name of the file where the logged information should be stored
-
-        directory:
-            The directory where the log file should be stored
 
         FreshLog:
             Specifies, if the information should be written to a new file
@@ -50,16 +46,6 @@ class Logger():
 
         >>> logger.vDel()
 
-        Create logger that stores data in different directory
-
-        >>> logger = Logger(fileName=filename, directory='..')
-        >>> Path.cwd().joinpath('..').resolve().joinpath(filename).is_file()
-        True
-
-        Remove empty log file
-
-        >>> logger.vDel()
-
         """
 
         self.bFileOpen = False
@@ -69,22 +55,7 @@ class Logger():
         self.filepath = None
 
         repository = Path(__file__).parent.parent.parent
-        directory = Path(directory).expanduser()
-        self.directory = (directory if directory.is_absolute() else
-                          repository.joinpath(directory)).resolve()
-
-        # Try to create the log directory, if it does not already exist
-        if self.directory.exists() and not self.directory.is_dir():
-            raise NotADirectoryError(
-                f"The log directory “{self.directory}” points to an "
-                "existing file")
-
-        if not self.directory.is_dir():
-            try:
-                makedirs(str(self.directory))
-            except OSError as error:
-                raise error(f"Unable to create the log directory "
-                            f"“{self.directory}”: {error}")
+        self.directory = repository
 
         self.vRename(fileName, FreshLog=FreshLog)
 

@@ -548,7 +548,6 @@ class mwt(myToolItWatch):
                 pass
                 #TODO: Kill process
             self.Can = Network(settings.Logger.icoc.filename,
-                               log_directory=settings.Logger.icoc.directory,
                                sender=MyToolItNetworkNr["SPU1"],
                                receiver=MyToolItNetworkNr["STH1"])
         return bContinue
