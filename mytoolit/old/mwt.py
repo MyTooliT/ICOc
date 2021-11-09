@@ -1111,7 +1111,7 @@ class mwt(myToolItWatch):
             bRun = self.bTerminalHolderConnect(keyPress)
         elif ord('E') == keyPress:
             bRun = self.bTerminalEeprom()
-        elif ord('l') == keyPress:  # CTRL+C
+        elif ord('f') == keyPress:
             self.vTerminalLogFileName()
         elif ord('n') == keyPress:
             self.vConnect(devList)
@@ -1135,7 +1135,7 @@ class mwt(myToolItWatch):
         self.stdscr.addstr("q: Quit program\n")
         self.stdscr.addstr("1-9: Connect to STH number (ENTER at input end)\n")
         self.stdscr.addstr("E: EEPROM (Permanent Storage)\n")
-        self.stdscr.addstr("l: Log File Name\n")
+        self.stdscr.addstr("f: HDF File Name\n")
         self.stdscr.addstr("n: Change Device Name\n")
         self.stdscr.addstr("t: Test Menu\n")
         self.stdscr.addstr("u: Update Menu\n")
