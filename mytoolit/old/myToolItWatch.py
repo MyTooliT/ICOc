@@ -10,6 +10,7 @@ from time import sleep, time
 from datetime import datetime
 from functools import partial
 from pathlib import Path
+from typing import Optional
 
 from can.interfaces.pcan.basic import PCAN_ERROR_OK, PCAN_ERROR_QOVERRUN
 from openpyxl import load_workbook, Workbook
@@ -95,12 +96,8 @@ class myToolItWatch():
         self.Can.readThreadStop()
         self.vXmlConfigurationPlotterHost()
 
-        directory = Path(settings.measurement.output.directory)
-        filename = Path(settings.measurement.output.filename)
-        timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-        filepath = directory.joinpath(
-            f"{filename.stem}_{timestamp}{filename.suffix}")
-        self.storage = Storage(filepath)
+        self.set_output_filename()
+        self.storage = Storage(self.get_output_filepath())
 
     def __exit__(self):
         self.storage.close()
@@ -127,6 +124,45 @@ class myToolItWatch():
             raise
         if self.bSave:
             self.xmlSave()
+
+    def set_output_filename(self, name: Optional[str] = None) -> None:
+        """Set the (base) name of the HDF output file
+
+        Parameters
+        ----------
+
+        name:
+            A new (base) name for the output file
+
+            If you set this parameter to `None`, then the most recently set
+            filename will be used
+
+        """
+
+        self.output_filename = Path(settings.measurement.output.filename
+                                    ) if name is None else Path(name)
+
+    def get_output_filepath(self) -> Path:
+        """Get the filepath of the HDF output file
+
+        The filepath returned by this method will always include a current
+        timestamp to make sure that there are no conflicts with old output
+        files.
+
+        Returns
+        -------
+
+        The path to the current HDF file
+
+        """
+
+        directory = Path(settings.measurement.output.directory)
+        filename = self.output_filename
+        timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+        filepath = directory.joinpath(
+            f"{filename.stem}_{timestamp}{filename.suffix}")
+
+        return filepath
 
     def vXmlConfigSet(self, sXmlFileName):
         try:
