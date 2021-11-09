@@ -659,12 +659,11 @@ class myToolItWatch():
             help=
             'Sets Interval Time (Output file is saved each interval time in seconds. Lower than 10 causes a single file'
         )
-        self.parser.add_argument(
-            '-l',
-            '--log_name',
-            type=str,
-            required=False,
-            help="(Base) name of the (acceleration) log file")
+        self.parser.add_argument('-f',
+                                 '--filename',
+                                 type=str,
+                                 required=False,
+                                 help="(Base) name of the output HDF file")
         self.parser.add_argument(
             '-n',
             '--name_connect',
@@ -797,8 +796,8 @@ class myToolItWatch():
         self.vParserConsoleArgumentsPassXml()
         if None != self.args_dict['gui_dim']:
             self.vDisplayTime(self.args_dict['gui_dim'][0])
-        if self.args_dict['log_name'] is not None:
-            self.bLogSet(self.args_dict['log_name'])
+        if self.args_dict['filename'] is not None:
+            self.set_output_filename(self.args_dict['filename'])
         if None != self.args_dict['adc_config']:
             adcConfig = self.args_dict['adc_config']
             self.vAdcConfig(adcConfig[0], adcConfig[1], adcConfig[2])
