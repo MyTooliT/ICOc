@@ -85,9 +85,9 @@ In order to setup a test bench you need at least:
 
 #### Python
 
-ICOc requires at least Python `3.7`. Later versions should work too. You can download Python [here](https://www.python.org/downloads).
+ICOc requires at least Python `3.7`. The software also supports Python `3.8` and `3.9`. **Python `3.10` will currently not work** since the Curses package for Windows does [not support Python `3.10` yet](https://github.com/zephyrproject-rtos/windows-curses/issues/26).
 
-When you install Python, please do not forget to enable the checkbox **“Add Python to PATH”** in the setup window of the installer.
+You can download Python [here](https://www.python.org/downloads). When you install Python, please do not forget to enable the checkbox **“Add Python to PATH”** in the setup window of the installer.
 
 <a name="readme:section:pytables"></a>
 
