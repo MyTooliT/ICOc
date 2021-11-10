@@ -245,3 +245,28 @@ As you can see the table with the name `acceleration` stores the acceleration da
 
 - `Start_Time`, which contains the start time of the measurement run in ISO format, and
 - `Sensor_Range`, which specifies the range of the used acceleration sensor in multiples of earth’s gravitation (g₀ ≅ 9.81 m/s²).
+
+After you double click on the acceleration table on the left HDFView will show you the actual acceleration data:
+
+![Acceleration Table in HDFView](Documentation/Pictures/HDFView-Table.png)
+
+As you can infer from the `x` column above the table shows the acceleration measurement data (in multiples of g₀) for a single axis. The table below shows a description of the columns:
+
+| Column    | Description                                                                                    | Unit             |
+| --------- | ---------------------------------------------------------------------------------------------- | ---------------- |
+| counter   | A 8 bit cyclic counter value (0–255) sent with the acceleration data to recognize lost packets | –                |
+| timestamp | The timestamp for the measured value in microseconds since the measurement start               | μs               |
+| x         | Acceleration in the x direction as multiples of earth’s gravitation                            | g₀ (≅ 9.81 m/s²) |
+
+Depending on your sensor and your settings the table might also contain columns for the `y` and/or `z` axis.
+
+If you want you can also use HDFView to print a simple graph for your acceleration data. To do that:
+
+1. Select the values for the the ordinate (e.g. click on the x column to select all acceleration data for the x axis)
+2. Click on the graph icon in the top left corner
+3. Choose the data for the abscissa (e.g. the timestamp column)
+4. Click on the “OK” button
+
+The screenshot below shows an example of such a graph:
+
+![Acceleration Graph in HDFView](Documentation/Pictures/HDFView-Graph.png)
