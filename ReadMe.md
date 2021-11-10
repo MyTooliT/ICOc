@@ -246,7 +246,7 @@ As you can see the table with the name `acceleration` stores the acceleration da
 - `Start_Time`, which contains the start time of the measurement run in ISO format, and
 - `Sensor_Range`, which specifies the range of the used acceleration sensor in multiples of earth’s gravitation (g₀ ≅ 9.81 m/s²).
 
-After you double click on the acceleration table on the left HDFView will show you the actual acceleration data:
+After you double click on the acceleration table on the left, HDFView will show you the actual acceleration data:
 
 ![Acceleration Table in HDFView](Documentation/Pictures/HDFView-Table.png)
 
