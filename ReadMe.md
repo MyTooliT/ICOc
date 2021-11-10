@@ -235,58 +235,13 @@ To start the data acquisition press the key <kbd>s</kbd>. Afterwards a graphical
 
 will show the measured acceleration. To stop the data acquisition, click the close button on the top of the graph.
 
-## Logging
+## Measurement Data
 
-The ICOc script writes measured acceleration values and other data into log files at the root of the repository. Each log entry is time stamped and tagged.
+The ICOc script stores measured acceleration values in [HDF5](https://www.hdfgroup.org/solutions/hdf5/) files. By default these files will be stored in the root of the repository with a name starting with the text `Measurement` followed by a date/time-stamp and the extension `.hdf5`. To take a look at the measurement data you can use the tool [HDFView](https://www.hdfgroup.org/downloads/hdfview/). The screenshot below shows a measurement file produced by ICOc:
 
-Tags are separated into
+![Main Window of HDFView](Documentation/Pictures/HDFView-File.png)
 
-- information `[I]`,
-- warnings `[W]`,
-- and errors `[E]`.
+As you can see the table with the name `acceleration` stores the acceleration data. The screenshot above displays the metadata of the table. The most important meta attributes here are probably:
 
-For example, the following log entries
-
-```
-[I](2937092ms): MsgCounter: 8; TimeStamp: 236265914.467ms; AccX 32658;
-[I](2937092ms): MsgCounter: 8; TimeStamp: 236265914.467ms; AccX 32668;
-[I](2937092ms): MsgCounter: 8; TimeStamp: 236265914.467ms; AccX 32671;
-[I](2937092ms): MsgCounter: 9; TimeStamp: 236265914.665ms; AccX 32564;
-[I](2937092ms): MsgCounter: 9; TimeStamp: 236265914.665ms; AccX 32591;
-[I](2937092ms): MsgCounter: 9; TimeStamp: 236265914.665ms; AccX 32693;
-[I](2937092ms): MsgCounter: 10; TimeStamp: 236265914.857ms; AccX 32698;
-[I](2937092ms): MsgCounter: 10; TimeStamp: 236265914.857ms; AccX 32670;
-[I](2937092ms): MsgCounter: 10; TimeStamp: 236265914.857ms; AccX 32578;
-```
-
-show you data for 3 CAN messages (with message counter 8, 9 and 10) that the software received 2937092 milliseconds after the ICOc script started. As you can see every CAN message contains three acceleration values. Please note that
-
-- `AccX` specifies the acceleration in x direction,
-- `AccY` specifies the acceleration in y direction, and
-- `AccZ` specifies the acceleration in z direction.
-
-In our example ICOc only measured the acceleration in the x direction. The measured acceleration values around `32578` and `32698` show you that the sensor was probably in a stationary position. This assumption is based on the fact that a value of 0 represents the maximum negative acceleration value and the maximum ADC value (usually 2¹⁶-1 for a 16 bit ADC) represents the maximum positive acceleration value. For a 16 bit ADC, an acceleration of 0 m/s is represented by an value of about 2¹⁶/2 = 2¹⁵ = 32768. The 16 bit ADC acceleration value for the gravitational acceleration on Earth (1·g) should be around:
-
-$$(1+100) · \frac{2^{16}}{200} ≅ 33096$$
-
-if we assume a ±100g sensor, which is close to the measured values (`32578` and `32698`). The smallest measured value `32578` should be roughly equivalent to $-0.6 · g$:
-
-$$32578 · \frac{2^{16}}{200} - 100 ≅ -0.58 · g$$
-
-The time stamp inside the CAN message (`TimeStamp`) together with the cyclically incrementing message counter (0-255) may be used to determine
-
-- the correct sampling frequency,
-- message loss, and
-- the message jitter.
-
-For our example, the message jitter (maximum time - minimum time between messages) is 6µs (198µs-192µs).
-
-Currently most of the STHs (or SHAs) only measure the acceleration in the x direction. For those that measure the acceleration in different directions, the log format for the acceleration is a little bit different. For example, a sensor that measures the acceleration in all three directions produces log entries that look like this:
-
-```
-[I](1076702ms): MsgCounter: 197; TimeStamp: 238783540.943ms; AccX 32682; AccY 10904; AccZ 10957;
-[I](1076703ms): MsgCounter: 198; TimeStamp: 238783541.115ms; AccX 32654; AccY 10984; AccZ 10972;
-[I](1076703ms): MsgCounter: 199; TimeStamp: 238783541.285ms; AccX 32683; AccY 11006; AccZ 10902;
-```
-
-As you can see instead of transmitting three x acceleration values, the STH instead stores one acceleration value in x, y and z direction.
+- `Start_Time`, which contains the start time of the measurement run in ISO format, and
+- `Sensor_Range`, which specifies the range of the used acceleration sensor in multiples of earth’s gravitation (g₀ ≅ 9.81 m/s²).
