@@ -2,7 +2,7 @@
 
 After you installed the ICOc package various helper scripts are available:
 
-- [`clean-repo`](#section:remove-log-and-pdf-files): Remove log (`*.txt`) and PDF files (`*.pdf`) from the repository root
+- [`clean-repo`](#section:remove-log-and-pdf-files): Remove log (`*.txt`), HDF (`*.hdf5`) and PDF files (`*.pdf`) from the repository root
 - [`convert-base64-mac`](#section:mac-address-conversion): Utility to convert a Base64 encoded 8 character text into a Bluetooth MAC address
 - [`convert-mac-base64`](#section:mac-address-conversion): Convert Bluetooth MAC address into a (Base64) encoded 8 character string
 - [`check-eeprom`](#section:eeprom-check): Write a byte value into the cells of an EEPROM page an check how many of the values are read incorrectly after an reset
