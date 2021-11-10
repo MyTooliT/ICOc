@@ -190,7 +190,7 @@ ICOc
 q: Quit program
 1-9: Connect to STH number (ENTER at input end)
 E: EEPROM (Permanent Storage)
-l: Log File Name
+f: Output File Name
 n: Change Device Name
 t: Test Menu
 u: Update Menu
@@ -215,7 +215,6 @@ Battery Voltage: 3.05V
 Internal Chip Temperature: 29.6°C
 
 Run Time: 0s
-Interval Time: 0s
 Adc Prescaler/AcquisitionTime/OversamplingRate/Reference(Samples/s): 2/8/64/VDD(9524)
 Acc Config(XYZ/DataSets): 100/3
 
@@ -226,7 +225,7 @@ f: OEM Free Use
 n: Set Device Name
 O: Off(Standby)
 p: Config Acceleration Points(XYZ)
-r: Config run time and interval time
+r: Config run time
 s: Start Data Acquisition
 ```
 
