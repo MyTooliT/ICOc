@@ -93,7 +93,7 @@ You can download Python [here](https://www.python.org/downloads). When you insta
 
 ##### PyTables
 
-ICOc uses the [PyTables][] Python package. Unfortunately only binaries for Linux are available in the Python package index for [PyTables][]. This means installing PyTables (and therefore ICOc) in Windows without a C compiler and the [HDF5 library](https://www.hdfgroup.org/downloads/hdf5/) library will fail. Since compiling the C extension of the package is not trivial we **recommend downloading a prebuilt binary package** [here](http://www.lfd.uci.edu/~gohlke/pythonlibs/#pytables). Just store the proper file for **your OS and Python version** in your **Downloads folder**.
+ICOc uses the [PyTables][] Python package. Unfortunately the Python package index does not offer Windows binaries for the latest versions of Python in the moment. This means installing PyTables (and therefore ICOc) in Windows without a C compiler and the [HDF5 library](https://www.hdfgroup.org/downloads/hdf5/) library will fail. Since compiling the C extension of the package is not trivial we **recommend downloading a prebuilt binary package** [here](http://www.lfd.uci.edu/~gohlke/pythonlibs/#pytables). Just store the proper file for **your OS and Python version** in your **Downloads folder**.
 
 **Example:** For a 64 bit version of Python `3.9` and PyTables `3.6.1` download the file `tables‑3.6.1‑cp39‑cp39‑win_amd64.whl` and afterwards execute the following command in a PowerShell session:
 
