@@ -160,9 +160,7 @@ class myToolItWatch():
 
         """
 
-        directory = Path(settings.measurement.output.directory)
-        directory = (directory
-                     if directory.is_absolute() else directory.expanduser())
+        directory = settings.output_directory()
         filename = self.output_filename
         timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
         filepath = directory.joinpath(

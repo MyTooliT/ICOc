@@ -47,6 +47,20 @@ class Settings(Dynaconf):
 
         return str(self.sth.name)
 
+    def output_directory(self) -> Path:
+        """Get the HDF output directory
+
+        Returns
+        -------
+
+        The HDF output directory as path object
+
+        """
+
+        directory = Path(settings.measurement.output.directory)
+        return (directory
+                if directory.is_absolute() else directory.expanduser())
+
 
 # -- Attributes ---------------------------------------------------------------
 
