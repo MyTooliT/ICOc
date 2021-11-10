@@ -180,7 +180,7 @@ The `ICOc` script can be used to control an STH (or SHA). After you enter the co
 icoc
 ```
 
-in your terminal, a text based interface shows you the currently available options. For example, the text
+in your [terminal](https://aka.ms/terminal), a text based interface shows you the currently available options. For example, the text
 
 ```
 ICOc
