@@ -252,11 +252,11 @@ After you double click on the acceleration table on the left, HDFView will show 
 
 As you can infer from the `x` column above the table shows the acceleration measurement data (in multiples of g₀) for a single axis. The table below describes the meaning of the columns:
 
-| Column    | Description                                                                                    | Unit             |
-| --------- | ---------------------------------------------------------------------------------------------- | ---------------- |
-| counter   | A 8 bit cyclic counter value (0–255) sent with the acceleration data to recognize lost packets | –                |
-| timestamp | The timestamp for the measured value in microseconds since the measurement start               | μs               |
-| x         | Acceleration in the x direction as multiples of earth’s gravitation                            | g₀ (≅ 9.81 m/s²) |
+| Column    | Description                                                                              | Unit             |
+| --------- | ---------------------------------------------------------------------------------------- | ---------------- |
+| counter   | A cyclic counter value (0–255) sent with the acceleration data to recognize lost packets | –                |
+| timestamp | The timestamp for the measured value in microseconds since the measurement start         | μs               |
+| x         | Acceleration in the x direction as multiples of earth’s gravitation                      | g₀ (≅ 9.81 m/s²) |
 
 Depending on your sensor and your settings the table might also contain columns for the `y` and/or `z` axis.
 
