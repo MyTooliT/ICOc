@@ -123,7 +123,7 @@ class Storage:
                                  mode='a',
                                  filters=Filters(4, 'zlib'),
                                  title='STH Measurement Data')
-        except HDF5ExtError as error:
+        except (HDF5ExtError, OSError) as error:
             raise StorageException(
                 f"Unable to open file “{self.filepath}”: {error}")
 
