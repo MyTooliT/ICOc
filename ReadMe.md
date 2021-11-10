@@ -118,9 +118,9 @@ Remove-Item -Recurse -Force ICOc
 
 To communicate with the STU you need to install the driver for the PCAN adapter. You can find the download link for Windows [here](https://www.peak-system.com/quick/DrvSetup). Please make sure that you include the “PCAN-Basic API” when you install the driver.
 
-#### Simplicity Studio
+#### Simplicity Studio (Optional)
 
-For the tests that require a firmware flash you need to [install Simplicity Studio](https://www.silabs.com/products/development-tools/software/simplicity-studio). Please also make sure to install the Simplicity Commander tool inside Simplicity Studio.
+For the tests that require a firmware flash you need to [install Simplicity Studio](https://www.silabs.com/products/development-tools/software/simplicity-studio). Please also make sure to install the Simplicity Commander tool inside Simplicity Studio. Please note, that you do not need to install this software if you just want to measure data with ICOc.
 
 <a name="readme:section:install"></a>
 
