@@ -170,9 +170,9 @@ If installing ICOc, specifically the `tables` ([PyTables](http://pytables.org)) 
 
 then please take a look [here](#readme:section:pytables).
 
-## Control and Data Acquirement
+## Basic Usage
 
-### Start the Program
+### Starting the Program
 
 The `ICOc` script can be used to control an STH (or SHA). After you enter the command
 
@@ -199,7 +199,7 @@ x: Xml Data Base
 
 shows that currently one STH was detected. The Bluetooth MAC address of the STH is `08:6b:d7:01:de:81`, while its advertisement name is “Blubb”. The last value after the `@` character shows the current received signal strength indication (RSSI). To exit the program use the key <kbd>q</kbd>.
 
-### Read Acceleration Data
+### Reading Acceleration Data
 
 To read data from an STH (or SHA), start the ICOc script, and connect to an STH. To do that, enter the number in front of an STH entry (e.g. `1` for the first detected STH) and use the return key <kbd>⮐</kbd> to confirm your selection. The text based interface will now show you something like this:
 
