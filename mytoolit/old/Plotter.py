@@ -210,35 +210,52 @@ def vPlotter(iSocketPort):
 
 
 def vlivePlot(yX_data, yY_data, yZ_data, line1, line2, line3, pause_time):
-    # after the figure, axis, and line are created, we only need to update the y-data
+    # After the figure, axis, and line are created, we only need to update the
+    # y-data
+    update_bounds = False
+
     if None != line1:
         line1.set_ydata(yX_data)
-        # adjust limits if new data goes beyond bounds
         if np.min(yX_data) <= line1.axes.get_ylim()[0] or np.max(
                 yX_data) >= line1.axes.get_ylim()[1]:
-            plt.ylim([
-                np.min(yX_data) - np.std(yX_data),
-                np.max(yX_data) + np.std(yX_data)
-            ])
+            update_bounds = True
     if None != line2:
         line2.set_ydata(yY_data)
-        # adjust limits if new data goes beyond bounds
         if np.min(yY_data) <= line2.axes.get_ylim()[0] or np.max(
                 yY_data) >= line2.axes.get_ylim()[1]:
-            plt.ylim([
-                np.min(yY_data) - np.std(yY_data),
-                np.max(yY_data) + np.std(yY_data)
-            ])
+            update_bounds = True
     if None != line3:
         line3.set_ydata(yZ_data)
-        # adjust limits if new data goes beyond bounds
         if np.min(yZ_data) <= line3.axes.get_ylim()[0] or np.max(
                 yZ_data) >= line3.axes.get_ylim()[1]:
-            plt.ylim([
-                np.min(yZ_data) - np.std(yZ_data),
-                np.max(yZ_data) + np.std(yZ_data)
-            ])
-    # this pauses the data so the figure/axis can catch up - the amount of pause can be altered above
+            update_bounds = True
+
+    # Adjust limits if new data goes beyond bounds
+    if update_bounds:
+        min_bound = min([
+            value for value in (
+                np.min(yX_data) -
+                np.std(yX_data) if yX_data is not None else None,
+                np.min(yY_data) -
+                np.std(yY_data) if yY_data is not None else None,
+                np.min(yZ_data) -
+                np.std(yZ_data) if yZ_data is not None else None,
+            ) if value is not None
+        ])
+        max_bound = max([
+            value for value in (
+                np.max(yX_data) +
+                np.std(yX_data) if yX_data is not None else None,
+                np.max(yY_data) +
+                np.std(yY_data) if yY_data is not None else None,
+                np.max(yZ_data) +
+                np.std(yZ_data) if yZ_data is not None else None,
+            ) if value is not None
+        ])
+        plt.ylim(min_bound, max_bound)
+
+    # this pauses the data so the figure/axis can catch up - the amount of
+    # pause can be altered above
     plt.pause(pause_time)
 
     # return line so we can update it again in the next iteration
