@@ -250,7 +250,7 @@ After you double click on the acceleration table on the left, HDFView will show 
 
 ![Acceleration Table in HDFView](Documentation/Pictures/HDFView-Table.png)
 
-As you can infer from the `x` column above the table shows the acceleration measurement data (in multiples of g₀) for a single axis. The table below shows a description of the columns:
+As you can infer from the `x` column above the table shows the acceleration measurement data (in multiples of g₀) for a single axis. The table below describes the meaning of the columns:
 
 | Column    | Description                                                                                    | Unit             |
 | --------- | ---------------------------------------------------------------------------------------------- | ---------------- |
