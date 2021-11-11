@@ -730,13 +730,6 @@ class myToolItWatch():
             help='Saves a device configuration or sample setup in the xml file)'
         )
         self.parser.add_argument(
-            '--show_setups',
-            dest='show_setups',
-            action='store_true',
-            required=False,
-            help=
-            'Shows current configuration (including command line arguments)')
-        self.parser.add_argument(
             '--voltage_points',
             dest='voltage_points',
             action='store',
@@ -1803,28 +1796,6 @@ class myToolItWatch():
         new = ET.SubElement(tParrent, sName)
         return new
 
-    def xmlPrintSetups(self):
-        for setup in self.tXmlConfig.tree.find('Config'):
-            print(setup.get('name'))
-            print("    Device Name: " + setup.find('DeviceName').text)
-            print("    Acc: " + setup.find('Acc').text)
-            iAcquisitionTime = AdcAcquisitionTime[int(
-                setup.find('AcquisitionTime').text)]
-            iOversampling = AdcOverSamplingRate[int(
-                setup.find('OverSamples').text)]
-            samplingRate = int(
-                calcSamplingRate(int(setup.find('Prescaler').text),
-                                 iAcquisitionTime, iOversampling) + 0.5)
-            print(
-                "    ADC Prescaler/AcquisitionTime/OversamplingRate(Samples/s): "
-                + setup.find('Prescaler').text + "/" +
-                setup.find('AcquisitionTime').text + "/" +
-                setup.find('OverSamples').text + "(" + str(samplingRate) + ")")
-            print("    ADC Reference Voltage: " + setup.find('AdcRef').text)
-            print("    Log Name: " + setup.find('LogName').text)
-            print("    RunTime: " + setup.find('RunTime').text)
-            print("    Display Time: " + setup.find('DisplayTime').text)
-
     def _vRunConsoleStartupLoggerPrint(self):
         self.Can.Logger.Info("XML File: " + str(self.sXmlFileName))
         self.Can.Logger.Info("Product Configuration: " + str(self.sProduct) +
@@ -1859,8 +1830,6 @@ class myToolItWatch():
 
     def _vRunConsoleStartup(self):
         self._vRunConsoleStartupLoggerPrint()
-        if False != self.args_dict['show_setups']:
-            self.xmlPrintSetups()
 
     def clear(self):
         # for windows
