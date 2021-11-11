@@ -707,16 +707,6 @@ class myToolItWatch():
                                  type=str,
                                  required=False,
                                  help='ADC\'s Reference voltage, VDD=Standard')
-        self.parser.add_argument(
-            '--voltage_points',
-            dest='voltage_points',
-            action='store',
-            nargs=1,
-            type=int,
-            required=False,
-            help=
-            'PPP specifies which voltage axis (sample points; X/Y/Z) are active(1) or off(0). Note that x specifies the battery'
-        )
         args = self.parser.parse_args()
         self.args_dict = vars(args)
 
@@ -770,12 +760,6 @@ class myToolItWatch():
             bY = bool((points >> 1) & 1)
             bX = bool((points >> 2) & 1)
             self.vAccSet(bX, bY, bZ, -1)
-        if None != self.args_dict['voltage_points']:
-            points = self.args_dict['voltage_points'][0] & 0x07
-            bZ = bool(points & 1)
-            bY = bool((points >> 1) & 1)
-            bX = bool((points >> 2) & 1)
-            self.vVoltageSet(bX, bY, bZ, -1)
 
     def reset(self):
         if False == self.KeyBoardInterrupt:
