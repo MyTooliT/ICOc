@@ -286,187 +286,6 @@ class mwt(myToolItWatch):
             iKeyPress = -1
         return bContinue
 
-    def vTerminalEepromChange(self):
-        self.stdscr.addstr(
-            "Please enter Excel File name for new Excel Sheet(.xlsx will be added): "
-        )
-        sFileName = self.sTerminalInputStringIn()
-        if "" != sFileName:
-            sFileName += ".xlsx"
-            self.vSheetFileSet(sFileName)
-
-    def bTerminalEepromRead(self, iReceiver):
-        self.stdscr.addstr("Read ...\n")
-        self.stdscr.refresh()
-        pageNames = self.atExcelSheetNames()
-        sError = None
-        for pageName in pageNames:
-            sError = self.sExcelSheetRead(pageName, iReceiver)
-            if None != sError:
-                break
-
-        if None != sError:
-            self.stdscr.addstr(sError + "@ page: " + str(pageName) + "\n")
-            self.stdscr.refresh()
-            sleep(3)
-        return None == sError
-
-    def bTerminalEepromWrite(self, iReceiver):
-        self.stdscr.addstr("Write ...\n")
-        self.stdscr.refresh()
-        sError = None
-        pageNames = self.atExcelSheetNames()
-        for pageName in pageNames:
-            sError = self.sExcelSheetWrite(pageName, iReceiver)
-            if None != sError:
-                break
-        if None != sError:
-            self.stdscr.addstr(sError + "@ page: " + str(pageName) + "\n")
-            self.stdscr.refresh()
-            sleep(3)
-        return None == sError
-
-    def tTerminalEepromCreateOpenExcelSheet(self):
-        atExcelName = []
-        bProductEeprom = ("STU" == self.sProduct) or ("STH" == self.sProduct)
-        if None != self.sSheetFile and False != bProductEeprom and None != self.sConfig:
-            try:
-                atExcelName = self.atExcelSheetNames()
-                atXmlList = self.atProductPages()
-                bMatch = True
-                if len(atExcelName) == len(atXmlList):
-                    for i in range(0, len(atExcelName)):
-                        if atExcelName[i] != atXmlList[i]["Name"]:
-                            bMatch = False
-                else:
-                    bMatch = False
-                if False == bMatch:
-                    self.vExcelSheetCreate()
-            except:
-                try:
-                    self.vExcelSheetCreate()
-                    atExcelName = self.atExcelSheetNames()
-                except:
-                    self.stdscr.addstr(
-                        "Please close opened Excel File. Can create fresh one(different device)\n"
-                    )
-                    self.stdscr.refresh()
-                    sleep(5)
-        return atExcelName
-
-    def tTerminalEepromKeyEvaluation(self):
-        keyPress = self.stdscr.getch()
-        bRun = True
-        bContinue = False
-        if 0x03 == keyPress:
-            self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
-            bRun = False
-        elif ord('d') == keyPress:
-            self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
-        elif ord('e') == keyPress:
-            self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
-            bRun = False
-            bContinue = True
-        elif ord('l') == keyPress:
-            atList = self.atTerminalXmlProductVersionList()
-            self.vTerminalXmlProductVersionChange(atList)
-            if None != self.sProduct and None != self.sConfig:
-                self.stdscr.addstr("Please enter Network Number(1-14): ")
-                iNetworkNumber = self.iTerminalInputNumberIn()
-                if 0 < iNetworkNumber and 14 >= iNetworkNumber:
-                    self.vNetworkNumberSet(self.sProduct + str(iNetworkNumber))
-            else:
-                self.vNetworkNumberSet(None)
-            self.tTerminalEepromCreateOpenExcelSheet()
-        elif ord('R') == keyPress:
-            bShowReadWrite = (None != self.sSheetFile)
-            bShowReadWrite = bShowReadWrite and ("STU" == self.sProduct
-                                                 or "STH" == self.sProduct)
-            bShowReadWrite = bShowReadWrite and (None != self.sConfig)
-            bShowReadWrite = bShowReadWrite and (None != self.sNetworkNumber)
-            if False != bShowReadWrite:
-                if False != os.path.isfile(self.sSheetFile):
-                    iReceiver = MyToolItNetworkNr[self.sNetworkNumber]
-                    if MyToolItNetworkNr[
-                            "STH1"] <= iReceiver and MyToolItNetworkNr[
-                                "STH14"] >= iReceiver:
-                        self.stdscr.clear()
-                        self.vConnect()
-                    if None != self.process:
-                        self.process.terminate()
-                    if False != self.Can.bConnected or MyToolItNetworkNr[
-                            "STU1"] <= iReceiver:
-                        if False != self.bTerminalEepromRead(iReceiver):
-                            self.process = subprocess.Popen(
-                                ['excel', self.sSheetFile],
-                                stdout=subprocess.PIPE)
-        elif ord('W') == keyPress:
-            bShowReadWrite = (None != self.sSheetFile)
-            bShowReadWrite = bShowReadWrite and ("STU" == self.sProduct
-                                                 or "STH" == self.sProduct)
-            bShowReadWrite = bShowReadWrite and (None != self.sConfig)
-            bShowReadWrite = bShowReadWrite and (None != self.sNetworkNumber)
-            if False != bShowReadWrite:
-                if False != os.path.isfile(self.sSheetFile):
-                    iReceiver = MyToolItNetworkNr[self.sNetworkNumber]
-                    if MyToolItNetworkNr[
-                            "STH1"] <= iReceiver and MyToolItNetworkNr[
-                                "STH14"] >= iReceiver:
-                        self.stdscr.clear()
-                        self.vConnect()
-                    if False != self.Can.bConnected or MyToolItNetworkNr[
-                            "STU1"] <= iReceiver:
-                        self.bTerminalEepromWrite(iReceiver)
-        elif ord('I') == keyPress:
-            bShowReadWrite = (None != self.sSheetFile)
-            bShowReadWrite = bShowReadWrite and ("STU" == self.sProduct
-                                                 or "STH" == self.sProduct)
-            bShowReadWrite = bShowReadWrite and (None != self.sConfig)
-            bShowReadWrite = bShowReadWrite and (None != self.sNetworkNumber)
-            if False != bShowReadWrite:
-                self.bEepromIgnoreReadErrors = not self.bEepromIgnoreReadErrors
-        elif ord('x') == keyPress:
-            self.vTerminalEepromChange()
-            self.tTerminalEepromCreateOpenExcelSheet()
-        return [bRun, bContinue]
-
-    def bTerminalEeprom(self):
-        bRun = True
-        bContinue = False
-        self.bEepromIgnoreReadErrors = False
-        self.tTerminalEepromCreateOpenExcelSheet()
-        while False != bRun:
-            self.stdscr.clear()
-            if False != self.Can.bConnected:
-                self.stdscr.addstr("Connected: " + str(self.Can.iAddress) +
-                                   "(" + str(self.Can.sDevName) + ")" + "\n")
-                self.stdscr.addstr("d: Disconnect from device\n")
-            self.stdscr.addstr("Device: " + str(self.sProduct) + "\n")
-            self.stdscr.addstr("Version: " + str(self.sConfig) + "\n")
-            self.stdscr.addstr("Network Number: " + str(self.sNetworkNumber) +
-                               "\n")
-            self.stdscr.addstr("Excel Sheet Name: " + str(self.sSheetFile) +
-                               "\n")
-            if False != self.bEepromIgnoreReadErrors:
-                self.stdscr.addstr("EEPROM Read Errors will be ignored\n")
-            self.stdscr.addstr("e: Escape this menu\n")
-            self.stdscr.addstr(
-                "l: List devices and versions (an change current device/product)\n"
-            )
-            self.stdscr.addstr("x: Chance Excel Sheet Name(.xlsx)\n")
-            bShowReadWrite = (None != self.sSheetFile)
-            bShowReadWrite = bShowReadWrite and ("STU" == self.sProduct
-                                                 or "STH" == self.sProduct)
-            bShowReadWrite = bShowReadWrite and (None != self.sConfig)
-            bShowReadWrite = bShowReadWrite and (None != self.sNetworkNumber)
-            if False != bShowReadWrite:
-                self.stdscr.addstr("I: Ignore Read Errors\n")
-                self.stdscr.addstr("R: Read all from EEPROM to sheet\n")
-                self.stdscr.addstr("W: Write all from Sheet to EEPROM\n")
-                self.stdscr.refresh()
-            [bRun, bContinue] = self.tTerminalEepromKeyEvaluation()
-        return bContinue
-
     def vTerminalLogFileName(self):
         filepath = self.get_output_filepath()
         self.stdscr.addstr(f"Output File Name ({filepath.stem}): ")
@@ -1005,8 +824,6 @@ class mwt(myToolItWatch):
                 self.stdscr.addstr("Write...\n")
                 self.stdscr.refresh()
                 self.vExcelProductVersion2XmlProductVersion()
-        elif ord('x') == keyPress:
-            self.vTerminalEepromChange()
         elif ord('X') == keyPress:
             if None != self.sProduct and None != self.sConfig and None != self.sSheetFile:
                 try:
@@ -1095,8 +912,6 @@ class mwt(myToolItWatch):
             bRun = False
         elif ord('1') <= keyPress and ord('9') >= keyPress:
             bRun = self.bTerminalHolderConnect(keyPress)
-        elif ord('E') == keyPress:
-            bRun = self.bTerminalEeprom()
         elif ord('f') == keyPress:
             self.vTerminalLogFileName()
         elif ord('n') == keyPress:
@@ -1120,7 +935,6 @@ class mwt(myToolItWatch):
         self.stdscr.addstr("\n")
         self.stdscr.addstr("q: Quit program\n")
         self.stdscr.addstr("1-9: Connect to STH number (ENTER at input end)\n")
-        self.stdscr.addstr("E: EEPROM (Permanent Storage)\n")
         self.stdscr.addstr("f: Output File Name\n")
         self.stdscr.addstr("n: Change Device Name\n")
         self.stdscr.addstr("t: Test Menu\n")
