@@ -642,7 +642,7 @@ def int_to_mac_address(iAddr):
 
 def iBlueToothMacAddr(sAddr):
     au8Addr = sAddr.split(":")
-    au8Addr = au8Addr.reverse()
+    au8Addr.reverse()
     for i in range(0, len(au8Addr)):
         au8Addr[i] = int(au8Addr[i], 16)
     iAddr = byte_list_to_int(au8Addr)
