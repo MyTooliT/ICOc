@@ -678,17 +678,6 @@ class myToolItWatch():
             type=int,
             required=False,
             help='Sets RunTime in seconds. Below 10 specifies infinity')
-        self.parser.add_argument(
-            '-s',
-            '--sample_setup',
-            dest='sample_setup',
-            action='store',
-            nargs=1,
-            type=str,
-            required=False,
-            help=
-            'Starts sampling with configuration as given including additional command line arguments'
-        )
         self.parser.add_argument('--refv',
                                  dest='refv',
                                  action='store',
@@ -701,10 +690,6 @@ class myToolItWatch():
 
     def vParserConsoleArgumentsPassXml(self):
         self.vXmlConfigSet('configKeys.xml')
-        if None != self.args_dict['sample_setup']:
-            sSetup = self.args_dict['sample_setup'][0]
-            if False != self.bSampleSetupSet(sSetup):
-                self.vGetXmlSetup()
 
     def vParserConsoleArgumentsPass(self):
         self.vParserConsoleArgumentsPassXml()
