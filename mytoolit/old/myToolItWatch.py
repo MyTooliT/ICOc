@@ -621,16 +621,6 @@ class myToolItWatch():
             help=
             'Connect to device specified by Bluetooth address and starts sampling as configured'
         )
-        self.parser.add_argument(
-            '-d, --gui_dim',
-            dest='gui_dim',
-            action='store',
-            nargs=1,
-            type=int,
-            required=False,
-            help=
-            'Length of visualization interval in ms for the graphical acceleration view . Value below 10 turns it off'
-        )
         self.parser.add_argument('-f',
                                  '--filename',
                                  type=str,
@@ -682,8 +672,6 @@ class myToolItWatch():
 
     def vParserConsoleArgumentsPass(self):
         self.vParserConsoleArgumentsPassXml()
-        if None != self.args_dict['gui_dim']:
-            self.vDisplayTime(self.args_dict['gui_dim'][0])
         if self.args_dict['filename'] is not None:
             self.set_output_filename(self.args_dict['filename'])
         if None != self.args_dict['adc_config']:
