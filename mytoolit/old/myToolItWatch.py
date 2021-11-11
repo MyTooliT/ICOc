@@ -9,9 +9,7 @@ import xml.etree.ElementTree as ET
 from time import sleep, time
 from datetime import datetime
 from functools import partial
-from os import makedirs
 from pathlib import Path
-from sys import stderr
 from typing import Optional
 
 from can.interfaces.pcan.basic import PCAN_ERROR_OK, PCAN_ERROR_QOVERRUN
