@@ -1,6 +1,7 @@
 # -- Import -------------------------------------------------------------------
 
 from dynaconf import Dynaconf
+from os import makedirs
 from pathlib import Path
 
 # -- Class --------------------------------------------------------------------
@@ -60,6 +61,28 @@ class Settings(Dynaconf):
         directory = Path(settings.measurement.output.directory)
         return (directory
                 if directory.is_absolute() else directory.expanduser())
+
+    def check_output_directory(self) -> None:
+        """Check the output directory
+
+        If the directory does not already exist, then this function will try to
+        create it.
+
+        """
+
+        directory = self.output_directory()
+
+        if directory.exists() and not directory.is_dir():
+            raise NotADirectoryError(
+                f"The output directory “{directory}” points to an "
+                "existing file not an directory")
+
+        if not directory.is_dir():
+            try:
+                makedirs(str(directory))
+            except OSError as error:
+                raise OSError(f"Unable to create the output directory "
+                              f"“{directory}”: {error}")
 
 
 # -- Attributes ---------------------------------------------------------------

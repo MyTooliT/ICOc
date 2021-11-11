@@ -9,7 +9,9 @@ import xml.etree.ElementTree as ET
 from time import sleep, time
 from datetime import datetime
 from functools import partial
+from os import makedirs
 from pathlib import Path
+from sys import stderr
 from typing import Optional
 
 from can.interfaces.pcan.basic import PCAN_ERROR_OK, PCAN_ERROR_QOVERRUN
@@ -62,6 +64,13 @@ Watch = {
 class myToolItWatch():
 
     def __init__(self, *args, **kwargs):
+        # Check if output directory exists and try to create it, if it does not
+        # exist already
+        try:
+            settings.check_output_directory()
+        except (NotADirectoryError, OSError) as error:
+            raise error
+
         self.vXmlConfigSet('configKeys.xml')
         self.KeyBoardInterrupt = False
         self.bEepromIgnoreReadErrors = False
