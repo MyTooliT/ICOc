@@ -730,12 +730,6 @@ class myToolItWatch():
             help='Saves a device configuration or sample setup in the xml file)'
         )
         self.parser.add_argument(
-            '--show_products',
-            dest='show_products',
-            action='store_true',
-            required=False,
-            help='Shows all available devices and additional versions')
-        self.parser.add_argument(
             '--show_setups',
             dest='show_setups',
             action='store_true',
@@ -1319,13 +1313,6 @@ class myToolItWatch():
         product.find('Version').remove(vesion)
         self.xmlSave()
 
-    def xmlPrintVersions(self):
-        dataDef = self.tXmlConfig.root.find('Data')
-        for product in dataDef.find('Product'):
-            print(product.get('name') + ":")
-            for version in product.find('Version'):
-                print("   " + version.get('name'))
-
     def _vExcelProductVersion2XmlProductVersionEntry(self, tEntryXml,
                                                      tWorkSheet, iEntryExcel):
         """
@@ -1872,8 +1859,6 @@ class myToolItWatch():
 
     def _vRunConsoleStartup(self):
         self._vRunConsoleStartupLoggerPrint()
-        if False != self.args_dict['show_products']:
-            self.xmlPrintVersions()
         if False != self.args_dict['show_setups']:
             self.xmlPrintSetups()
 
