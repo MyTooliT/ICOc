@@ -1,8 +1,10 @@
-from time import sleep
 import glob
 import curses
 import os
 import subprocess
+
+from sys import stderr
+from time import sleep
 
 from mytoolit.config import settings
 from mytoolit.old.myToolItWatch import myToolItWatch
@@ -1277,10 +1279,15 @@ class mwt(myToolItWatch):
 
 
 def main():
-    watch_tool = mwt()
-    watch_tool.vParserInit()
-    watch_tool.vParserConsoleArgumentsPass()
-    watch_tool.vRunConsole()
+    try:
+        watch_tool = mwt()
+        watch_tool.vParserInit()
+        watch_tool.vParserConsoleArgumentsPass()
+        watch_tool.vRunConsole()
+    except Exception as error:
+        print(f"Error\n—————\n☹️ {error}\n", file=stderr)
+        print("Stack Trace\n———————————", file=stderr)
+        raise error
 
 
 if __name__ == "__main__":
