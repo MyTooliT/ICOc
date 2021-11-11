@@ -631,17 +631,6 @@ class myToolItWatch():
             help=
             'Length of visualization interval in ms for the graphical acceleration view . Value below 10 turns it off'
         )
-        self.parser.add_argument(
-            '-e',
-            '--xlsx',
-            dest='xlsx',
-            action='store',
-            nargs=1,
-            type=str,
-            required=False,
-            help=
-            'Table Calculation File(xlsx) name for transferring data between PC and STH/STU'
-        )
         self.parser.add_argument('-f',
                                  '--filename',
                                  type=str,
@@ -702,8 +691,6 @@ class myToolItWatch():
             self.vAdcConfig(adcConfig[0], adcConfig[1], adcConfig[2])
         if None != self.args_dict['refv']:
             self.vAdcRefVConfig(self.args_dict['refv'][0])
-        if None != self.args_dict['xlsx']:
-            self.vSheetFileSet(self.args_dict['xlsx'][0])
         iRunTime = self.iRunTime
         if None != self.args_dict['run_time']:
             iRunTime = self.args_dict['run_time'][0]
