@@ -730,13 +730,6 @@ class myToolItWatch():
             help='Saves a device configuration or sample setup in the xml file)'
         )
         self.parser.add_argument(
-            '--show_config',
-            dest='show_config',
-            action='store_true',
-            required=False,
-            help=
-            'Shows current configuration (including command line arguments)')
-        self.parser.add_argument(
             '--show_products',
             dest='show_products',
             action='store_true',
@@ -1845,33 +1838,6 @@ class myToolItWatch():
             print("    RunTime: " + setup.find('RunTime').text)
             print("    Display Time: " + setup.find('DisplayTime').text)
 
-    def _vRunConsoleStartupShow(self):
-        print("XML File: " + str(self.sXmlFileName))
-        print("Product Configuration: " + str(self.sProduct) + " " +
-              str(self.sConfig))
-        print("Setup Configuration: " + str(self.sSetupConfig))
-        print("AutoSave?: " + str(self.bSave))
-        print("Table Calculation File: " + str(self.sSheetFile))
-        print("Log Name: " + str(self.Can.Logger.filepath.name))
-        print("Device Name (to be connected): " + str(self.sDevName))
-        print("Bluetooth address(to be connected): " +
-              str(self.iAddress))  # Todo machen
-        print("AutoConnect?: " + str(self.bSthAutoConnect))
-        print("Run Time: " + str(self.iRunTime) + "s")
-        print("Display Time: " + str(self.iDisplayTime) + "s")
-        print(
-            "Adc Prescaler/AcquisitionTime/OversamplingRate/Reference(Samples/s): "
-            + str(self.iPrescaler) + "/" +
-            str(AdcAcquisitionTime.inverse[self.iAquistionTime]) + "/" +
-            str(AdcOverSamplingRate.inverse[self.iOversampling]) + "/" +
-            str(self.sAdcRef) + "(" + str(self.samplingRate) + ")")
-        print("Acc Config(XYZ/DataSets): " + str(int(self.bAccX)) +
-              str(int(self.bAccY)) + str(int(self.bAccZ)) + "/" +
-              str(DataSets.inverse[self.tAccDataFormat]))
-        print("Voltage Config(XYZ/DataSets): " + str(int(self.bVoltageX)) +
-              str(int(self.bVoltageY)) + str(int(self.bVoltageZ)) + "/" +
-              str(DataSets.inverse[self.tAccDataFormat]) + ("(X=Battery)"))
-
     def _vRunConsoleStartupLoggerPrint(self):
         self.Can.Logger.Info("XML File: " + str(self.sXmlFileName))
         self.Can.Logger.Info("Product Configuration: " + str(self.sProduct) +
@@ -1906,8 +1872,6 @@ class myToolItWatch():
 
     def _vRunConsoleStartup(self):
         self._vRunConsoleStartupLoggerPrint()
-        if False != self.args_dict['show_config']:
-            self._vRunConsoleStartupShow()
         if False != self.args_dict['show_products']:
             self.xmlPrintVersions()
         if False != self.args_dict['show_setups']:
