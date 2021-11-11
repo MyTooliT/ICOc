@@ -82,7 +82,6 @@ class myToolItWatch():
         # This method call is currently required to add the timestamp to the
         # log file name
         self.bLogSet(settings.Logger.icoc.filename)
-        self.vSave2Xml(False)
         self.vSthAutoConnect(False)
         self.Can.Logger.Info("Start Time: " + sDateClock())
         self.bSampleSetupSet(None)
@@ -129,8 +128,6 @@ class myToolItWatch():
         self.Can.__exit__()
         if self.bError:
             raise
-        if self.bSave:
-            self.xmlSave()
 
     def set_output_filename(self, name: Optional[str] = None) -> None:
         """Set the (base) name of the HDF output file
@@ -374,9 +371,6 @@ class myToolItWatch():
 
 
 # Setter Methods
-
-    def vSave2Xml(self, bSave):
-        self.bSave = bSave
 
     def vConfigSet(self, product, sConfig):
         self.sProduct = None
@@ -714,13 +708,6 @@ class myToolItWatch():
                                  required=False,
                                  help='ADC\'s Reference voltage, VDD=Standard')
         self.parser.add_argument(
-            '--save',
-            dest='save',
-            action='store_true',
-            required=False,
-            help='Saves a device configuration or sample setup in the xml file)'
-        )
-        self.parser.add_argument(
             '--voltage_points',
             dest='voltage_points',
             action='store',
@@ -742,8 +729,6 @@ class myToolItWatch():
             self.Can.vLogDel()
             self.__exit__()
         self.vXmlConfigSet('configKeys.xml')
-        if False != self.args_dict['save']:
-            self.vSave2Xml(True)
         if None != self.args_dict['sample_setup']:
             sSetup = self.args_dict['sample_setup'][0]
             if False != self.bSampleSetupSet(sSetup):
@@ -1792,7 +1777,6 @@ class myToolItWatch():
         self.Can.Logger.Info("Product Configuration: " + str(self.sProduct) +
                              " " + str(self.sConfig))
         self.Can.Logger.Info("Setup Configuration: " + str(self.sSetupConfig))
-        self.Can.Logger.Info("AutoSave?: " + str(self.bSave))
         self.Can.Logger.Info("Table Calculation File: " + str(self.sSheetFile))
         self.Can.Logger.Info("Log Name: " + str(self.Can.Logger.filepath.name))
         self.Can.Logger.Info("Device Name (to be connected): " +
