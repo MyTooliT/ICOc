@@ -706,15 +706,6 @@ class myToolItWatch():
             help=
             'Chooses product with version for handling Table Calculation Files (e.g. STH v2.1.2)'
         )
-        self.parser.add_argument(
-            '-x',
-            '--xml',
-            dest='xml_file_name',
-            action='store',
-            nargs=1,
-            type=str,
-            help='Selects xml configuration/data base file',
-            default=['configKeys.xml'])
         self.parser.add_argument('--refv',
                                  dest='refv',
                                  action='store',
@@ -750,7 +741,7 @@ class myToolItWatch():
             )
             self.Can.vLogDel()
             self.__exit__()
-        self.vXmlConfigSet(self.args_dict['xml_file_name'][0])
+        self.vXmlConfigSet('configKeys.xml')
         if False != self.args_dict['save']:
             self.vSave2Xml(True)
         if None != self.args_dict['sample_setup']:
