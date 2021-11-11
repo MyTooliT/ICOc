@@ -689,17 +689,6 @@ class myToolItWatch():
             help=
             'Starts sampling with configuration as given including additional command line arguments'
         )
-        self.parser.add_argument(
-            '-v',
-            '--version',
-            dest='version',
-            action='store',
-            nargs=2,
-            type=str,
-            required=False,
-            help=
-            'Chooses product with version for handling Table Calculation Files (e.g. STH v2.1.2)'
-        )
         self.parser.add_argument('--refv',
                                  dest='refv',
                                  action='store',
@@ -711,21 +700,11 @@ class myToolItWatch():
         self.args_dict = vars(args)
 
     def vParserConsoleArgumentsPassXml(self):
-        if None != self.args_dict['version'] and None != self.args_dict[
-                'sample_setup']:
-            print(
-                "You can't use sample setup and product/version simultaneously"
-            )
-            self.Can.vLogDel()
-            self.__exit__()
         self.vXmlConfigSet('configKeys.xml')
         if None != self.args_dict['sample_setup']:
             sSetup = self.args_dict['sample_setup'][0]
             if False != self.bSampleSetupSet(sSetup):
                 self.vGetXmlSetup()
-        if None != self.args_dict['version']:
-            self.vConfigSet(self.args_dict['version'][0],
-                            self.args_dict['version'][1])
 
     def vParserConsoleArgumentsPass(self):
         self.vParserConsoleArgumentsPassXml()
