@@ -598,7 +598,7 @@ class myToolItWatch():
 
     def vParserInit(self):
         self.parser = argparse.ArgumentParser(
-            description='Command Line Options')
+            description="Configure and measure data with the ICOtronic system")
         self.parser.add_argument(
             '-a',
             '--adc',
