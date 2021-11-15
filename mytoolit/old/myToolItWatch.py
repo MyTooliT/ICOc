@@ -607,16 +607,15 @@ class myToolItWatch():
             nargs=3,
             type=int,
             required=False,
-            help=(
-                "prescaler, acquisition time and oversampling rate for the ADC"
-                "(e.g. 2 8 64)"))
+            help=("prescaler, acquisition time and oversampling rate "
+                  "(e.g. “2 8 64”)"))
         self.parser.add_argument(
             '-b',
             '--bluetooth-address',
             type=str,
             required=False,
             help=("connect to device with specified Bluetooth address "
-                  "(e.g. 08:6b:d7:01:de:81)"))
+                  "(e.g. “08:6b:d7:01:de:81”)"))
         self.parser.add_argument('-f',
                                  '--filename',
                                  type=str,
