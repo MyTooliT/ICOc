@@ -622,17 +622,11 @@ class myToolItWatch():
                                  type=str,
                                  required=False,
                                  help="(Base) name of the output file")
-        self.parser.add_argument(
-            '-n',
-            '--name_connect',
-            dest='name_connect',
-            action='store',
-            nargs=1,
-            type=str,
-            required=False,
-            help=
-            'Connect to device specified by Name and starts sampling as configured'
-        )
+        self.parser.add_argument('-n',
+                                 '--name',
+                                 type=str,
+                                 required=False,
+                                 help="Connect to device specified by name")
         self.parser.add_argument(
             '-p',
             '--points',
@@ -671,8 +665,8 @@ class myToolItWatch():
             iRunTime = self.args_dict['run_time'][0]
         self.vRunTime(iRunTime)
 
-        if None != self.args_dict['name_connect']:
-            self.vDeviceNameSet(self.args_dict['name_connect'][0])
+        if 'name' in self.args_dict:
+            self.vDeviceNameSet(self.args_dict['name'])
             self.vSthAutoConnect(True)
         elif 'bluetooth_address' in self.args_dict:
             bluetooth_address = EUI(self.args_dict['bluetooth_address'])
