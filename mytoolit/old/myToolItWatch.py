@@ -631,13 +631,13 @@ class myToolItWatch():
             '-p',
             '--points',
             dest='points',
-            action='store',
-            nargs=1,
+            metavar='XYZ',
             type=int,
             required=False,
             help=
-            'PPP specifies which acceleration axis(X/Y/Z) are active(1) or off(0)'
-        )
+            ("specify the axes for which acceleration data should be acquired "
+             "(e.g. “101” to measure data for the x- and z-axis but not for "
+             "the y-axis)"))
         self.parser.add_argument('-r',
                                  '--run-time',
                                  type=int,
