@@ -33,10 +33,10 @@ class mwt(myToolItWatch):
 
     def bLastConfig(self):
         bLoadLastConfig = True
-        for key in self.args_dict.keys():
-            if None != self.args_dict[key] and False != self.args_dict[key]:
-                if 'xml_file_name' != key:
-                    bLoadLastConfig = False
+        arguments = vars(self.args)
+        for argument in arguments:
+            if arguments[argument] and argument != 'xml_file_name':
+                bLoadLastConfig = False
         return bLoadLastConfig
 
     def vOpenLastConfig(self):

@@ -643,35 +643,34 @@ class myToolItWatch():
                                  type=int,
                                  required=False,
                                  help="Run time in seconds")
-        args = self.parser.parse_args()
-        self.args_dict = vars(args)
+        self.args = self.parser.parse_args()
 
     def vParserConsoleArgumentsPassXml(self):
         self.vXmlConfigSet('configKeys.xml')
 
     def vParserConsoleArgumentsPass(self):
         self.vParserConsoleArgumentsPassXml()
-        if self.args_dict['filename'] is not None:
-            self.set_output_filename(self.args_dict['filename'])
-        if None != self.args_dict['adc_config']:
-            adcConfig = self.args_dict['adc_config']
+        if self.args.filename is not None:
+            self.set_output_filename(self.args.filename)
+        if self.args.adc_config is not None:
+            adcConfig = self.args.adc_config
             self.vAdcConfig(adcConfig[0], adcConfig[1], adcConfig[2])
         iRunTime = self.iRunTime
-        if 'run_time' in self.args_dict:
-            iRunTime = self.args_dict['run_time']
+        if self.args.run_time:
+            iRunTime = self.args.run_time
         self.vRunTime(iRunTime)
 
-        if 'name' in self.args_dict:
-            self.vDeviceNameSet(self.args_dict['name'])
+        if self.args.name is not None:
+            self.vDeviceNameSet(self.args.name)
             self.vSthAutoConnect(True)
-        elif 'bluetooth_address' in self.args_dict:
-            bluetooth_address = EUI(self.args_dict['bluetooth_address'])
+        elif self.args.bluetooth_address is not None:
+            bluetooth_address = EUI(self.args.bluetooth_address)
             self.vDeviceAddressSet(
                 str(int.from_bytes(bluetooth_address.packed, 'big')))
             self.vSthAutoConnect(True)
 
-        if None != self.args_dict['points']:
-            points = self.args_dict['points'][0] & 0x07
+        if self.args.points:
+            points = self.args.points[0] & 0x07
             bZ = bool(points & 1)
             bY = bool((points >> 1) & 1)
             bX = bool((points >> 2) & 1)
@@ -1172,7 +1171,7 @@ class myToolItWatch():
         self.tXmlConfig.tree.write(filepath)
         self._XmlWriteEndoding()
         del self.tXmlConfig
-        self.tXmlConfig = ConfigKeys(self.args_dict['xml_file_name'][0])
+        self.tXmlConfig = ConfigKeys(self.args.xml_file_name[0])
 
     def removeXmlVersion(self, product, vesion):
         """
