@@ -653,13 +653,6 @@ class myToolItWatch():
             type=int,
             required=False,
             help='Sets RunTime in seconds. Below 10 specifies infinity')
-        self.parser.add_argument('--refv',
-                                 dest='refv',
-                                 action='store',
-                                 nargs=1,
-                                 type=str,
-                                 required=False,
-                                 help='ADC\'s Reference voltage, VDD=Standard')
         args = self.parser.parse_args()
         self.args_dict = vars(args)
 
@@ -673,8 +666,6 @@ class myToolItWatch():
         if None != self.args_dict['adc_config']:
             adcConfig = self.args_dict['adc_config']
             self.vAdcConfig(adcConfig[0], adcConfig[1], adcConfig[2])
-        if None != self.args_dict['refv']:
-            self.vAdcRefVConfig(self.args_dict['refv'][0])
         iRunTime = self.iRunTime
         if None != self.args_dict['run_time']:
             iRunTime = self.args_dict['run_time'][0]
