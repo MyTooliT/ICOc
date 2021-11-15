@@ -608,25 +608,25 @@ class myToolItWatch():
             type=int,
             required=False,
             help=(
-                "Prescaler, acquisition time and oversampling rate for the ADC"
+                "prescaler, acquisition time and oversampling rate for the ADC"
                 "(e.g. 2 8 64)"))
         self.parser.add_argument(
             '-b',
             '--bluetooth-address',
             type=str,
             required=False,
-            help=("Connect to device specified by Bluetooth address "
+            help=("connect to device specified by Bluetooth address "
                   "(e.g. 08:6b:d7:01:de:81)"))
         self.parser.add_argument('-f',
                                  '--filename',
                                  type=str,
                                  required=False,
-                                 help="(Base) name of the output file")
+                                 help="base name of the output file")
         self.parser.add_argument('-n',
                                  '--name',
                                  type=str,
                                  required=False,
-                                 help="Connect to device specified by name")
+                                 help="connect to device specified by name")
         self.parser.add_argument(
             '-p',
             '--points',
@@ -642,7 +642,7 @@ class myToolItWatch():
                                  '--run-time',
                                  type=int,
                                  required=False,
-                                 help="Run time in seconds")
+                                 help="run time in seconds")
         self.args = self.parser.parse_args()
 
     def vParserConsoleArgumentsPassXml(self):
