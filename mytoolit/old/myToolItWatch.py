@@ -603,13 +603,13 @@ class myToolItWatch():
             '-a',
             '--adc',
             dest='adc_config',
-            action='store',
+            metavar=('PRESCALER', 'ACQUISITION', 'OVERSAMPLING'),
             nargs=3,
             type=int,
             required=False,
-            help=
-            'Prescaler AcquisitionTime OversamplingRate (3 inputs required in that order e.g. 2 8 64) - Note that acceleration and battery voltage measurements share a single ADC that samples up to 4 channels)'
-        )
+            help=(
+                "Prescaler, acquisition time and oversampling rate for the ADC"
+                "(e.g. 2 8 64)"))
         self.parser.add_argument(
             '-b',
             '--bluetooth-address',
