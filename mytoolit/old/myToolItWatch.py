@@ -599,6 +599,21 @@ class myToolItWatch():
     def vParserInit(self):
         self.parser = argparse.ArgumentParser(
             description="Configure and measure data with the ICOtronic system")
+
+        group = self.parser.add_mutually_exclusive_group()
+        group.add_argument(
+            '-b',
+            '--bluetooth-address',
+            type=str,
+            required=False,
+            help=("connect to device with specified Bluetooth address "
+                  "(e.g. “08:6b:d7:01:de:81”)"))
+        group.add_argument('-n',
+                           '--name',
+                           type=str,
+                           required=False,
+                           help="connect to device with specified name")
+
         self.parser.add_argument(
             '-a',
             '--adc',
@@ -609,23 +624,11 @@ class myToolItWatch():
             required=False,
             help=("prescaler, acquisition time and oversampling rate "
                   "(e.g. “2 8 64”)"))
-        self.parser.add_argument(
-            '-b',
-            '--bluetooth-address',
-            type=str,
-            required=False,
-            help=("connect to device with specified Bluetooth address "
-                  "(e.g. “08:6b:d7:01:de:81”)"))
         self.parser.add_argument('-f',
                                  '--filename',
                                  type=str,
                                  required=False,
                                  help="base name of the output file")
-        self.parser.add_argument('-n',
-                                 '--name',
-                                 type=str,
-                                 required=False,
-                                 help="connect to device with specified name")
         self.parser.add_argument(
             '-p',
             '--points',
