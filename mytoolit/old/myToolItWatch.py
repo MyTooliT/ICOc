@@ -615,7 +615,7 @@ class myToolItWatch():
             '--bluetooth-address',
             type=str,
             required=False,
-            help=("connect to device specified by Bluetooth address "
+            help=("connect to device with specified Bluetooth address "
                   "(e.g. 08:6b:d7:01:de:81)"))
         self.parser.add_argument('-f',
                                  '--filename',
@@ -626,7 +626,7 @@ class myToolItWatch():
                                  '--name',
                                  type=str,
                                  required=False,
-                                 help="connect to device specified by name")
+                                 help="connect to device with specified name")
         self.parser.add_argument(
             '-p',
             '--points',
