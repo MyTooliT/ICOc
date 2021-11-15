@@ -640,10 +640,7 @@ class myToolItWatch():
         )
         self.parser.add_argument(
             '-r',
-            '--run_time',
-            dest='run_time',
-            action='store',
-            nargs=1,
+            '--run-time',
             type=int,
             required=False,
             help='Sets RunTime in seconds. Below 10 specifies infinity')
@@ -661,8 +658,8 @@ class myToolItWatch():
             adcConfig = self.args_dict['adc_config']
             self.vAdcConfig(adcConfig[0], adcConfig[1], adcConfig[2])
         iRunTime = self.iRunTime
-        if None != self.args_dict['run_time']:
-            iRunTime = self.args_dict['run_time'][0]
+        if 'run_time' in self.args_dict:
+            iRunTime = self.args_dict['run_time']
         self.vRunTime(iRunTime)
 
         if 'name' in self.args_dict:
