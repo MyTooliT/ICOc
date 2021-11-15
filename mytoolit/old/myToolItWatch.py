@@ -600,36 +600,30 @@ class myToolItWatch():
         self.parser = argparse.ArgumentParser(
             description="Configure and measure data with the ICOtronic system")
 
-        group = self.parser.add_mutually_exclusive_group()
-        group.add_argument(
+        connection_group = self.parser.add_argument_group(title="Connection")
+        connection_group = connection_group.add_mutually_exclusive_group()
+        connection_group.add_argument(
             '-b',
             '--bluetooth-address',
             type=str,
             required=False,
             help=("connect to device with specified Bluetooth address "
                   "(e.g. “08:6b:d7:01:de:81”)"))
-        group.add_argument('-n',
-                           '--name',
-                           type=str,
-                           required=False,
-                           help="connect to device with specified name")
-
-        self.parser.add_argument(
-            '-a',
-            '--adc',
-            dest='adc_config',
-            metavar=('PRESCALER', 'ACQUISITION', 'OVERSAMPLING'),
-            nargs=3,
-            type=int,
+        connection_group.add_argument(
+            '-n',
+            '--name',
+            type=str,
             required=False,
-            help=("prescaler, acquisition time and oversampling rate "
-                  "(e.g. “2 8 64”)"))
-        self.parser.add_argument('-f',
-                                 '--filename',
-                                 type=str,
-                                 required=False,
-                                 help="base name of the output file")
-        self.parser.add_argument(
+            help="connect to device with specified name")
+
+        measurement_group = self.parser.add_argument_group(title="Measurement")
+        measurement_group.add_argument('-f',
+                                       '--filename',
+                                       type=str,
+                                       required=False,
+                                       help="base name of the output file")
+
+        measurement_group.add_argument(
             '-p',
             '--points',
             dest='points',
@@ -640,11 +634,24 @@ class myToolItWatch():
             ("specify the axes for which acceleration data should be acquired "
              "(e.g. “101” to measure data for the x- and z-axis but not for "
              "the y-axis)"))
-        self.parser.add_argument('-r',
-                                 '--run-time',
-                                 type=int,
-                                 required=False,
-                                 help="run time in seconds")
+        measurement_group.add_argument('-r',
+                                       '--run-time',
+                                       type=int,
+                                       required=False,
+                                       help="run time in seconds")
+
+        adc_group = self.parser.add_argument_group(title="ADC")
+        adc_group.add_argument(
+            '-a',
+            '--adc',
+            dest='adc_config',
+            metavar=('PRESCALER', 'ACQUISITION', 'OVERSAMPLING'),
+            nargs=3,
+            type=int,
+            required=False,
+            help=("prescaler, acquisition time and oversampling rate "
+                  "(e.g. “2 8 64”)"))
+
         self.args = self.parser.parse_args()
 
     def vParserConsoleArgumentsPassXml(self):
