@@ -612,15 +612,11 @@ class myToolItWatch():
         )
         self.parser.add_argument(
             '-b',
-            '--bluetooth_connect',
-            dest='bluetooth_connect',
-            action='store',
-            nargs=1,
+            '--bluetooth-address',
             type=str,
             required=False,
-            help=
-            'Connect to device specified by Bluetooth address and starts sampling as configured'
-        )
+            help=("Connect to device specified by Bluetooth address "
+                  "(e.g. 08:6b:d7:01:de:81)"))
         self.parser.add_argument('-f',
                                  '--filename',
                                  type=str,
@@ -687,9 +683,9 @@ class myToolItWatch():
         if None != self.args_dict['name_connect']:
             self.vDeviceNameSet(self.args_dict['name_connect'][0])
             self.vSthAutoConnect(True)
-        elif None != self.args_dict['bluetooth_connect']:
-            int_to_mac_address = str(
-                iBlueToothMacAddr(self.args_dict['bluetooth_connect'][0]))
+        elif 'bluetooth_address' in self.args_dict:
+            bluetooth_address = self.args_dict['bluetooth_address']
+            int_to_mac_address = str(iBlueToothMacAddr(bluetooth_address))
             self.vDeviceAddressSet(int_to_mac_address)
             self.vSthAutoConnect(True)
 
