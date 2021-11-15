@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import Optional
 
 from can.interfaces.pcan.basic import PCAN_ERROR_OK, PCAN_ERROR_QOVERRUN
+from netaddr import EUI
 from openpyxl import load_workbook, Workbook
 from openpyxl.styles import Font
 
@@ -32,7 +33,6 @@ from mytoolit.old.MyToolItCommands import (
     calcSamplingRate,
     DataSets,
     EepromSpecialConfig,
-    iBlueToothMacAddr,
     int_to_mac_address,
     int_to_byte_list,
     rreplace,
@@ -684,9 +684,9 @@ class myToolItWatch():
             self.vDeviceNameSet(self.args_dict['name_connect'][0])
             self.vSthAutoConnect(True)
         elif 'bluetooth_address' in self.args_dict:
-            bluetooth_address = self.args_dict['bluetooth_address']
-            int_to_mac_address = str(iBlueToothMacAddr(bluetooth_address))
-            self.vDeviceAddressSet(int_to_mac_address)
+            bluetooth_address = EUI(self.args_dict['bluetooth_address'])
+            self.vDeviceAddressSet(
+                str(int.from_bytes(bluetooth_address.packed, 'big')))
             self.vSthAutoConnect(True)
 
         if None != self.args_dict['points']:
