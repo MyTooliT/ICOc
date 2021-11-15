@@ -638,12 +638,11 @@ class myToolItWatch():
             help=
             'PPP specifies which acceleration axis(X/Y/Z) are active(1) or off(0)'
         )
-        self.parser.add_argument(
-            '-r',
-            '--run-time',
-            type=int,
-            required=False,
-            help='Sets RunTime in seconds. Below 10 specifies infinity')
+        self.parser.add_argument('-r',
+                                 '--run-time',
+                                 type=int,
+                                 required=False,
+                                 help="Run time in seconds")
         args = self.parser.parse_args()
         self.args_dict = vars(args)
 
