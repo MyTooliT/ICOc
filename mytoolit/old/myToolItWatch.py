@@ -35,7 +35,6 @@ from mytoolit.old.MyToolItCommands import (
     sDateClock,
 )
 from mytoolit.old.MyToolItSth import TestConfig
-from mytoolit.old.configKeys import ConfigKeys
 from mytoolit.old.Plotter import vPlotter, tArray2Binary
 
 Watch = {
@@ -57,7 +56,6 @@ class myToolItWatch():
         except (NotADirectoryError, OSError) as error:
             raise error
 
-        self.vXmlConfigSet('configKeys.xml')
         self.KeyBoardInterrupt = False
         self.bEepromIgnoreReadErrors = False
         self.bError = False
@@ -72,7 +70,6 @@ class myToolItWatch():
         self.bLogSet(settings.Logger.icoc.filename)
         self.vSthAutoConnect(False)
         self.Can.Logger.Info("Start Time: " + sDateClock())
-        self.bSampleSetupSet(None)
         self.vConfigSet(None, None)
         self.vAccSet(True, False, False, 3)
         self.vVoltageSet(False, False, False, 3)
@@ -158,14 +155,6 @@ class myToolItWatch():
             f"{filename.stem}_{timestamp}{filename.suffix}")
 
         return filepath
-
-    def vXmlConfigSet(self, sXmlFileName):
-        try:
-            self.tXmlConfig.close()
-        except:
-            pass
-        self.sXmlFileName = sXmlFileName
-        self.tXmlConfig = ConfigKeys(self.sXmlFileName)
 
     def vXmlConfigurationPlotterHost(self):
         """Set Matplotlib GUI host and port"""
@@ -369,15 +358,6 @@ class myToolItWatch():
             self.sProduct = "STU"
             self.Can.vSetReceiver(MyToolItNetworkNr["STU1"])
         self.sConfig = sConfig
-
-    def bSampleSetupSet(self, sSetup):
-        bReturn = False
-        self.sSetupConfig = sSetup
-        for config in self.tXmlConfig.tree.find('Config'):
-            if self.sSetupConfig == config.get('name'):
-                bReturn = True
-                break
-        return bReturn
 
     def bLogSet(self, sLogLocation):
         bOk = False
@@ -641,11 +621,7 @@ class myToolItWatch():
 
         self.args = self.parser.parse_args()
 
-    def vParserConsoleArgumentsPassXml(self):
-        self.vXmlConfigSet('configKeys.xml')
-
     def vParserConsoleArgumentsPass(self):
-        self.vParserConsoleArgumentsPassXml()
         if self.args.filename is not None:
             self.set_output_filename(self.args.filename)
         if self.args.adc is not None:
@@ -992,10 +968,6 @@ class myToolItWatch():
         return message
 
     def _vRunConsoleStartupLoggerPrint(self):
-        self.Can.Logger.Info("XML File: " + str(self.sXmlFileName))
-        self.Can.Logger.Info("Product Configuration: " + str(self.sProduct) +
-                             " " + str(self.sConfig))
-        self.Can.Logger.Info("Setup Configuration: " + str(self.sSetupConfig))
         self.Can.Logger.Info("Log Name: " + str(self.Can.Logger.filepath.name))
         self.Can.Logger.Info("Device Name (to be connected): " +
                              str(self.sDevName))

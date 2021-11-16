@@ -42,15 +42,6 @@ class mwt(myToolItWatch):
                 bLoadLastConfig = False
         return bLoadLastConfig
 
-    def vOpenLastConfig(self):
-        if False != self.bLastConfig():
-            lastRun = self.tXmlConfig.tree.find('lastRun')
-            self.bLogSet(settings.Logger.icoc.filename)
-            self.vConfigSet(str(lastRun.find('Product').text),
-                            str(lastRun.find('Version').text))
-            self.vNetworkNumberSet(str(lastRun.find('NetworkNumber').text))
-            self.bSampleSetupSet(str(lastRun.find('Setup').text))
-
     # setter methods
     def vNetworkNumberSet(self, sNetworkNumber):
         if sNetworkNumber in MyToolItNetworkNr:
@@ -446,7 +437,6 @@ class mwt(myToolItWatch):
         return iNumber
 
     def vTerminal(self):
-        self.vOpenLastConfig()
         self.vTerminalNew()
         self.stdscr.clear()
         bRun = True
