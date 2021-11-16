@@ -630,7 +630,6 @@ class myToolItWatch():
         measurement_group.add_argument(
             '-p',
             '--points',
-            dest='points',
             metavar='XYZ',
             type=int,
             required=False,
@@ -648,7 +647,6 @@ class myToolItWatch():
         adc_group.add_argument(
             '-a',
             '--adc',
-            dest='adc_config',
             metavar=('PRESCALER', 'ACQUISITION', 'OVERSAMPLING'),
             nargs=3,
             type=int,
@@ -665,8 +663,8 @@ class myToolItWatch():
         self.vParserConsoleArgumentsPassXml()
         if self.args.filename is not None:
             self.set_output_filename(self.args.filename)
-        if self.args.adc_config is not None:
-            self.vAdcConfig(*self.args.adc_config)
+        if self.args.adc is not None:
+            self.vAdcConfig(*self.args.adc)
         iRunTime = self.iRunTime
         if self.args.run_time:
             iRunTime = self.args.run_time
