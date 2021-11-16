@@ -639,6 +639,7 @@ class myToolItWatch():
              "the y-axis)"))
         measurement_group.add_argument('-r',
                                        '--run-time',
+                                       metavar='SECONDS',
                                        type=int,
                                        required=False,
                                        help="run time in seconds")
