@@ -19,12 +19,8 @@
 
    q: Quit program
    1-9: Connect to STH number (ENTER at input end)
-   E: EEPROM (Permanent Storage)
-   l: Log File Name
+   f: Output File Name
    n: Change Device Name
-   t: Test Menu
-   u: Update Menu
-   x: Xml Data Base
    ```
 
    Choose the STH you want to rename by entering the number to the left of the STH (here `1`). To confirm your selection press the return key <kbd>⮐</kbd>.
@@ -50,7 +46,6 @@
    a: Config ADC
    d: Display Time
    e: Exit and disconnect from holder
-   f: OEM Free Use
    n: Set Device Name
    O: Off(Standby)
    p: Config Acceleration Points(XYZ)

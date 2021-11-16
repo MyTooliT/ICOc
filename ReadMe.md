@@ -196,12 +196,8 @@ ICOc
 
 q: Quit program
 1-9: Connect to STH number (ENTER at input end)
-E: EEPROM (Permanent Storage)
 f: Output File Name
 n: Change Device Name
-t: Test Menu
-u: Update Menu
-x: Xml Data Base
 ```
 
 shows that currently one STH was detected. The Bluetooth MAC address of the STH is `08:6b:d7:01:de:81`, while its advertisement name is “Blubb”. The last value after the `@` character shows the current received signal strength indication (RSSI). To exit the program use the key <kbd>q</kbd>.
@@ -228,7 +224,6 @@ Acc Config(XYZ/DataSets): 100/3
 a: Config ADC
 d: Display Time
 e: Exit and disconnect from holder
-f: OEM Free Use
 n: Set Device Name
 O: Off(Standby)
 p: Config Acceleration Points(XYZ)
