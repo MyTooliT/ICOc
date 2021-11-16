@@ -2,7 +2,6 @@ import argparse
 import multiprocessing
 import os
 import socket
-import xml.etree.ElementTree as ET
 from time import sleep, time
 from datetime import datetime
 from functools import partial
@@ -991,29 +990,6 @@ class myToolItWatch():
         else:
             sleep(0.0002)
         return message
-
-    def _XmlWriteEndoding(self):
-        """
-        Set encoding
-        """
-
-        xml = (bytes('<?xml version="1.0" encoding="UTF-8"?>\n',
-                     encoding='utf-8') + ET.tostring(self.tXmlConfig.root))
-        xml = xml.decode('utf-8')
-        filepath = Path(__file__).parent.joinpath(self.sXmlFileName)
-        with open(filepath, "w", encoding='utf-8') as f:
-            f.write(xml)
-
-    def xmlSave(self):
-        """
-        Save XML File (in any state)
-        """
-
-        filepath = str(Path(__file__).parent.joinpath(self.sXmlFileName))
-        self.tXmlConfig.tree.write(filepath)
-        self._XmlWriteEndoding()
-        del self.tXmlConfig
-        self.tXmlConfig = ConfigKeys(self.args.xml_file_name[0])
 
     def _vRunConsoleStartupLoggerPrint(self):
         self.Can.Logger.Info("XML File: " + str(self.sXmlFileName))
