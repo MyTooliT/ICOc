@@ -554,12 +554,6 @@ class myToolItWatch():
             self.iMsgLoss = 0
             self.iMsgsTotal = 0
 
-    def vVersion(self, major, minor, build):
-        if 2 <= major and 1 <= minor:
-            self.Major = major
-            self.Minor = minor
-            self.Build = build
-
     def vParserInit(self):
         self.parser = argparse.ArgumentParser(
             description="Configure and measure data with the ICOtronic system")

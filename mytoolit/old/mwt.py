@@ -3,7 +3,6 @@ import curses
 from sys import stderr
 from time import sleep
 
-from mytoolit.config import settings
 from mytoolit.old.myToolItWatch import myToolItWatch
 from mytoolit.old.MyToolItCommands import (
     AdcAcquisitionTime,
@@ -33,14 +32,6 @@ class mwt(myToolItWatch):
             self.process.terminate()
         self.vTerminalTeardown()
         myToolItWatch.close(self)
-
-    def bLastConfig(self):
-        bLoadLastConfig = True
-        arguments = vars(self.args)
-        for argument in arguments:
-            if arguments[argument] and argument != 'xml_file_name':
-                bLoadLastConfig = False
-        return bLoadLastConfig
 
     # setter methods
     def vNetworkNumberSet(self, sNetworkNumber):
@@ -355,13 +346,6 @@ class mwt(myToolItWatch):
                 self.stdscr.addstr(str(key) + ", ")
             else:
                 self.stdscr.addstr(str(key) + "): ")
-
-    def vTerminalAnyKey(self):
-        self.stdscr.addstr("\nPress any key to continue\n")
-        self.stdscr.refresh()
-        iKeyPress = -1
-        while -1 == iKeyPress:
-            iKeyPress = self.stdscr.getch()
 
     def sTerminalInputStringIn(self):
         sString = ""
