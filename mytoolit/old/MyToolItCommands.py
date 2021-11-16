@@ -112,16 +112,6 @@ class CalibrationMeassurement(Union):
     _fields_ = [("b", CalibrationMeassurementFormatFlags), ("asbyte", c_uint8)]
 
 
-class EepromSpecialConfigFlags(BigEndianStructure):
-    _fields_ = [
-        ("bIgnoreErrors", c_uint8, 1),
-        ("Reserved", c_uint8, 7),
-    ]
-
-
-class EepromSpecialConfig(Union):
-    _fields_ = [("b", EepromSpecialConfigFlags), ("asbyte", c_uint8)]
-
 
 MyToolItBlock = bidict({
     "System": 0x00,

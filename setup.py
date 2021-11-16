@@ -15,7 +15,6 @@ required_packages = [
     "dynaconf",
     "matplotlib",
     "netaddr",
-    "openpyxl",
     "pdfrw",
     "python-can",
     "reportlab",

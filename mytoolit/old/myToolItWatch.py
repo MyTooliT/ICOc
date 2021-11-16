@@ -1,10 +1,8 @@
 import argparse
-import array
 import copy
 import multiprocessing
 import os
 import socket
-import struct
 import xml.etree.ElementTree as ET
 from time import sleep, time
 from datetime import datetime
@@ -14,16 +12,13 @@ from typing import Optional
 
 from can.interfaces.pcan.basic import PCAN_ERROR_OK, PCAN_ERROR_QOVERRUN
 from netaddr import EUI
-from openpyxl import load_workbook, Workbook
-from openpyxl.styles import Font
 
 from mytoolit import __version__
 from mytoolit.config import settings
 from mytoolit.measurement.acceleration import convert_acceleration_adc_to_g
 from mytoolit.measurement.storage import Storage
 from mytoolit.old.network import Network
-from mytoolit.old.MyToolItNetworkNumbers import (MyToolItNetworkName,
-                                                 MyToolItNetworkNr)
+from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
 from mytoolit.old.MyToolItCommands import (
     AdcAcquisitionTime,
     AdcOverSamplingRate,
@@ -32,16 +27,11 @@ from mytoolit.old.MyToolItCommands import (
     byte_list_to_int,
     calcSamplingRate,
     DataSets,
-    EepromSpecialConfig,
     int_to_mac_address,
-    int_to_byte_list,
     rreplace,
     MyToolItBlock,
-    MyToolItEeprom,
     MyToolItStreaming,
-    payload2Hex,
     Prescaler,
-    sArray2String,
     SystemCommandBlueTooth,
     SystemCommandRouting,
     sDateClock,
@@ -86,7 +76,6 @@ class myToolItWatch():
         self.Can.Logger.Info("Start Time: " + sDateClock())
         self.bSampleSetupSet(None)
         self.vConfigSet(None, None)
-        self.vSheetFileSet(None)
         self.vAccSet(True, False, False, 3)
         self.vVoltageSet(False, False, False, 3)
         self.vDeviceNameSet(TestConfig["DevName"])
@@ -400,9 +389,6 @@ class myToolItWatch():
             self.Can.vLogNameChange(sLogLocation)
             bOk = True
         return bOk
-
-    def vSheetFileSet(self, sSheetFile):
-        self.sSheetFile = sSheetFile
 
     def vAccSet(self, bX, bY, bZ, dataSets):
         self.bAccX = bool(bX)
@@ -1022,24 +1008,6 @@ class myToolItWatch():
             iProduct += 1
         return atProducts
 
-    def excelCellWidthAdjust(self, worksheet, factor=1.2, bSmaller=True):
-        for col in worksheet.columns:
-            max_length = 0
-            column = col[0].column  # Get the column name
-            for cell in col:
-                if cell.coordinate in worksheet.merged_cells:  # not check merge_cells
-                    continue
-                try:  # Necessary to avoid error on empty cells
-                    if len(str(cell.value)) > max_length:
-                        max_length = len(cell.value)
-                except:
-                    pass
-            adjusted_width = (max_length + 2) * factor
-            columLetter = chr(ord('A') + column - 1)
-            if adjusted_width > worksheet.column_dimensions[
-                    columLetter].width or False == bSmaller:
-                worksheet.column_dimensions[columLetter].width = adjusted_width
-
     def atProductPagesVersion(self, version):
         """
         Get Page Names from xml by product and versions as List - Version
@@ -1067,88 +1035,6 @@ class myToolItWatch():
                     atPageList = self.atProductPagesVersion(version)
                     break
         return atPageList
-
-    def atProductPages(self):
-        """
-        Get Page Names from xml by product and versions as List
-        """
-
-        atPageList = []
-        if None != self.sProduct:
-            dataDef = self.tXmlConfig.root.find('Data')
-            for product in dataDef.find('Product'):
-                if product.get('name') == self.sProduct:
-                    atPageList = self.atProductPagesProduct(product)
-                    break
-        return atPageList
-
-    def tExcelWorkSheetCreate(self, workbook, name, pageAddress):
-        tWorkSheet = workbook.create_sheet(name + "@" + hex(pageAddress))
-        tFontRow = Font(bold=True, size=20)
-        tWorkSheet['A1'] = 'Name'
-        tWorkSheet['A1'].font = tFontRow
-        tWorkSheet['B1'] = 'Address'
-        tWorkSheet['B1'].font = tFontRow
-        tWorkSheet['C1'] = 'Length'
-        tWorkSheet['C1'].font = tFontRow
-        tWorkSheet['D1'] = 'Read Only'
-        tWorkSheet['D1'].font = tFontRow
-        tWorkSheet['E1'] = 'Value'
-        tWorkSheet['E1'].font = tFontRow
-        tWorkSheet['F1'] = 'Unit'
-        tWorkSheet['F1'].font = tFontRow
-        tWorkSheet['G1'] = 'Format'
-        tWorkSheet['G1'].font = tFontRow
-        tWorkSheet['H1'] = 'Description'
-        tWorkSheet['H1'].font = tFontRow
-        return tWorkSheet
-
-    def vExcelSheetCreate(self):
-        """
-        Create Excel Sheet by xml definition
-        """
-
-        atProductPages = self.atProductPages()
-        if 0 < len(atProductPages):
-            workbook = Workbook()
-            tFontRowRow = Font(bold=False, size=12)
-            workbook.remove_sheet(workbook.get_sheet_by_name('Sheet'))
-            for page in atProductPages:
-                i = 2
-                name = page["Name"]
-                pageAddress = page["Address"]
-                tWorkSheet = self.tExcelWorkSheetCreate(
-                    workbook, name, pageAddress)
-                self.excelCellWidthAdjust(tWorkSheet, 1.6, False)
-                for entry in page["Entry"]:
-                    tWorkSheet['A' + str(i)] = entry.get('name')
-                    tWorkSheet['A' + str(i)].font = tFontRowRow
-                    tWorkSheet['B' + str(i)] = int(
-                        entry.find('subAddress').text)
-                    tWorkSheet['B' + str(i)].font = tFontRowRow
-                    tWorkSheet['C' + str(i)] = int(entry.find('length').text)
-                    tWorkSheet['C' + str(i)].font = tFontRowRow
-                    tWorkSheet['D' + str(i)] = entry.find('readOnly').text
-                    tWorkSheet['D' + str(i)].font = tFontRowRow
-                    try:
-                        tWorkSheet['E' + str(i)] = int(
-                            entry.find('value').text)
-                    except ValueError:
-                        tWorkSheet['E' + str(i)] = entry.find('value').text
-                    tWorkSheet['E' + str(i)].font = tFontRowRow
-                    tWorkSheet['F' + str(i)] = entry.find('unit').text
-                    tWorkSheet['F' + str(i)].font = tFontRowRow
-                    tWorkSheet['G' + str(i)] = entry.find('format').text
-                    tWorkSheet['G' + str(i)].font = tFontRowRow
-                    tWorkSheet['H' + str(i)] = entry.find('description').text
-                    tWorkSheet['H' + str(i)].font = tFontRowRow
-                    i += 1
-                self.excelCellWidthAdjust(tWorkSheet)
-            workbook.save(self.sSheetFile)
-
-    def _excelSheetEntryFind(self, entry, key, value):
-        if None != value:
-            entry.find(key).text = str(value)
 
     def _XmlWriteEndoding(self):
         """
@@ -1191,425 +1077,6 @@ class myToolItWatch():
 
         product.find('Version').remove(vesion)
         self.xmlSave()
-
-    def _vExcelProductVersion2XmlProductVersionEntry(self, tEntryXml,
-                                                     tWorkSheet, iEntryExcel):
-        """
-        Write xml entry by Excel Sheet entry
-        """
-
-        sExcelEntryName = str(tWorkSheet['A' + str(iEntryExcel)].value)
-        if None != sExcelEntryName:
-            tEntryXml.set('name', sExcelEntryName)
-        else:
-            tEntryXml.set('name', "")
-        self._excelSheetEntryFind(tEntryXml, 'subAddress',
-                                  tWorkSheet['B' + str(iEntryExcel)].value)
-        self._excelSheetEntryFind(tEntryXml, 'length',
-                                  tWorkSheet['C' + str(iEntryExcel)].value)
-        self._excelSheetEntryFind(tEntryXml, 'readOnly',
-                                  tWorkSheet['D' + str(iEntryExcel)].value)
-        self._excelSheetEntryFind(tEntryXml, 'value',
-                                  tWorkSheet['E' + str(iEntryExcel)].value)
-        self._excelSheetEntryFind(tEntryXml, 'unit',
-                                  tWorkSheet['F' + str(iEntryExcel)].value)
-        self._excelSheetEntryFind(tEntryXml, 'format',
-                                  tWorkSheet['G' + str(iEntryExcel)].value)
-        self._excelSheetEntryFind(tEntryXml, 'description',
-                                  tWorkSheet['H' + str(iEntryExcel)].value)
-
-    def _tExcelProductVersion2XmlProductVersionEntryNew(self, atEntries):
-        """
-        Create xml entry by Excel Sheet entry
-        """
-
-        tEntry = self.tXmlChildNew(atEntries, 'entry')
-        self.tXmlChildNew(tEntry, 'subAddress')
-        self.tXmlChildNew(tEntry, 'length')
-        self.tXmlChildNew(tEntry, 'readOnly')
-        self.tXmlChildNew(tEntry, 'value')
-        self.tXmlChildNew(tEntry, 'unit')
-        self.tXmlChildNew(tEntry, 'format')
-        self.tXmlChildNew(tEntry, 'description')
-        return tEntry
-
-    def _vExcelProductVersion2XmlProductVersionPageEntries(
-            self, tWorkSheet, atXmlEntries):
-        """
-        Write xml definition by Excel Sheet - Excel Page Entries
-        """
-
-        iEntryChild = 0
-        iExcelRow = 2
-        while None != tWorkSheet['A' + str(iExcelRow)].value:
-            if iEntryChild < len(atXmlEntries):
-                tEntry = atXmlEntries[iEntryChild]
-            else:
-                tEntry = self._tExcelProductVersion2XmlProductVersionEntryNew(
-                    atXmlEntries)
-            self._vExcelProductVersion2XmlProductVersionEntry(
-                tEntry, tWorkSheet, iExcelRow)
-            iEntryChild += 1
-            iExcelRow += 1
-        # Remove Delete entries
-        while iEntryChild < len(atXmlEntries):
-            atXmlEntries.remove(atXmlEntries[iEntryChild])
-            iEntryChild += 1
-
-    def _bExcelProductVersion2XmlProductVersionPageExist(
-            self, tWorkSheet, atProductPages, sName, sAddress):
-        """
-        Write existing xml definition by Excel Sheet - Excel Entries
-        """
-
-        bFound = False
-        for tPageDict in atProductPages:
-            sXmlName = tPageDict["Name"]
-            sXmlAddress = hex(tPageDict["Address"])
-            if sName == sXmlName and sXmlAddress == sAddress:
-                self._vExcelProductVersion2XmlProductVersionPageEntries(
-                    tWorkSheet, tPageDict["Entry"])
-                bFound = True
-                break
-        return bFound
-
-    def _vExcelProductVersion2XmlProductVersionPageNew(self, sName, sAddress):
-        """
-        Create xml page by Excel Work Sheet
-        """
-
-        if None != self.sProduct and None != self.sConfig:
-            dataDef = self.tXmlConfig.root.find('Data')
-            for product in dataDef.find('Product'):
-                if product.get('name') == self.sProduct:
-                    for version in product.find('Version'):
-                        if version.get('name') == self.sConfig:
-                            tPage = self.tXmlChildNew(version.find('Page'),
-                                                      'page')
-                            tPage.set('name', sName)
-                            self.tXmlChildNew(tPage, 'pageAddress')
-                            pageAddress = str(int(sAddress, 16))
-                            tPage.find('pageAddress').text = pageAddress
-                            self.tXmlChildNew(tPage, 'Entry')
-                            ET.dump(version.find('Page'))
-                            self.xmlSave()
-                            break
-
-    def vExcelProductVersion2XmlProductVersionPage(self, tWorkbook):
-        """
-        Write xml definition by Excel Sheet
-        """
-
-        for tWorksheetName in tWorkbook.sheetnames:
-            sName = str(tWorksheetName).split('@')
-            sAddress = sName[1]
-            sName = sName[0]
-            tWorkSheet = tWorkbook.get_sheet_by_name(tWorksheetName)
-            try:
-                atProductPages = self.atProductPages()
-            except:
-                self._vExcelProductVersion2XmlProductVersionPageNew(
-                    sName, sAddress)
-                atProductPages = self.atProductPages()
-            if False == self._bExcelProductVersion2XmlProductVersionPageExist(
-                    tWorkSheet, atProductPages, sName, sAddress):
-                self._vExcelProductVersion2XmlProductVersionPageNew(
-                    sName, sAddress)
-                atProductPages = self.atProductPages()
-                if False == self._bExcelProductVersion2XmlProductVersionPageExist(
-                        tWorkSheet, atProductPages, sName, sAddress):
-                    break
-
-    def _vExcelProductVersion2XmlProductVersionXmlPageRemoveAction(
-            self, sName):
-        """
-        Create xml page by Excel Work Sheet
-        """
-
-        if None != self.sProduct and None != self.sConfig:
-            dataDef = self.tXmlConfig.root.find('Data')
-            for product in dataDef.find('Product'):
-                if product.get('name') == self.sProduct:
-                    for version in product.find('Version'):
-                        if version.get('name') == self.sConfig:
-                            for page in version.find('Page'):
-                                if page.get('name') == sName:
-                                    version.find('Page').remove(page)
-
-    def _vExcelProductVersion2XmlProductVersionXmlPageRemove(self, tWorkbook):
-        """
-        Write xml definition by Excel Sheet - Remove entries that are not
-        part of an excel sheet
-        """
-
-        atProductPages = self.atProductPages()  # Reload to have up2Date Copy
-        for i in range(0, len(atProductPages)):
-            tPageDict = atProductPages[i]
-            sXmlName = tPageDict["Name"]
-            sXmlAddress = hex(tPageDict["Address"])
-            bFound = False
-            for tWorksheetName in tWorkbook.sheetnames:
-                sName = str(tWorksheetName).split('@')
-                sAddress = sName[1]
-                sName = sName[0]
-                if sName == sXmlName and sXmlAddress == sAddress:
-                    bFound = True
-                    break
-            if False == bFound:
-                self._vExcelProductVersion2XmlProductVersionXmlPageRemoveAction(
-                    sXmlName)
-
-    def vExcelProductVersion2XmlProductVersion(self):
-        """
-        Write xml definition by Excel Sheet and do checks
-        """
-
-        if None != self.sProduct and None != self.sConfig and None != self.sSheetFile:
-            tWorkbook = load_workbook(self.sSheetFile)
-            if tWorkbook:
-                try:
-                    uLength = len(self.atProductPages())
-                except:
-                    self.vExcelProductVersion2XmlProductVersionPage(tWorkbook)
-                    uLength = len(self.atProductPages())
-                if 0 < uLength:
-                    self.vExcelProductVersion2XmlProductVersionPage(tWorkbook)
-                else:
-                    for tProduct in self.tXmlConfig.root.find('Data').find(
-                            'Product'):
-                        if tProduct.get('name') == self.sProduct:
-                            for tVersion in tProduct.find('Version'):
-                                if tVersion.get('name') == self.sConfig:
-                                    self.newXmlVersion(tProduct, tVersion,
-                                                       self.sConfig)
-                                    self.xmlSave()
-                                    self.vExcelProductVersion2XmlProductVersion(
-                                    )
-                # Remove Deleted Pages
-                self._vExcelProductVersion2XmlProductVersionXmlPageRemove(
-                    tWorkbook)
-                self.xmlSave()
-
-    def iExcelSheetPageLength(self, worksheet):
-        totalLength = 0
-        for i in range(2, 256 + 2):
-            if None != worksheet['A' + str(i)].value:
-                length = int(worksheet['C' + str(i)].value)
-                totalLength += length
-            else:
-                break
-        return totalLength
-
-    def vUnicodeIllegalRemove(self, value, character):
-        while (True):
-            try:
-                value.remove(character)
-            except:
-                break
-        return value
-
-    def iExcelSheetPageValue(self, worksheet, aBytes):
-        i = 2
-        iTotalLength = 0
-        while len(aBytes) > iTotalLength:
-            if None != worksheet['A' + str(i)].value:
-                iLength = worksheet['C' + str(i)].value
-                value = aBytes[iTotalLength:iTotalLength + iLength]
-                if "UTF8" == worksheet['G' + str(i)].value:
-                    try:
-                        value = self.vUnicodeIllegalRemove(value, 0)
-                        value = self.vUnicodeIllegalRemove(value, 255)
-                        value = array.array('b', value).tostring().decode(
-                            'utf-8', 'replace')
-                    except Exception as e:
-                        self.Can.Logger.Info(str(e))
-                        value = ""
-                elif "ASCII" == worksheet['G' + str(i)].value:
-                    value = sArray2String(value)
-                elif "unsigned" == worksheet['G' + str(i)].value:
-                    value = str(byte_list_to_int(value))
-                elif "float" == worksheet['G' + str(i)].value:
-                    if None != value:
-                        pass
-                        # value = au8ChangeEndianOrder(value)
-                    else:
-                        value = 0.0
-                    self.Can.Logger.Info("Value from EEPROM: " + str(value))
-                    value = bytearray(value)
-                    value = struct.unpack('f', value)[0]
-                    value = str(value)
-                    self.Can.Logger.Info("Value as float: " + str(value))
-                else:
-                    value = payload2Hex(value)
-                value = str(value)
-                try:
-                    worksheet['E' + str(i)] = str(value)
-                except:
-                    pass
-                iTotalLength += iLength
-                i += 1
-            else:
-                break
-        return iTotalLength
-
-    def atExcelSheetNames(self):
-        workSheetNames = []
-        try:
-            workbook = load_workbook(self.sSheetFile)
-            if workbook:
-                for worksheetName in workbook.sheetnames:
-                    sName = str(worksheetName).split('@')
-                    sName = sName[0]
-                    workSheetNames.append(sName)
-        except:
-            pass
-        return workSheetNames
-
-    def sExcelSheetRead(self, namePage, iReceiver):
-        """
-        Read EEPROM page to write values in Excel Sheet
-        """
-
-        tEepromSpecialConfig = EepromSpecialConfig()
-        tEepromSpecialConfig.asbyte = 0
-        tEepromSpecialConfig.b.bIgnoreErrors = self.bEepromIgnoreReadErrors
-        sError = None
-        self.Can.Logger.Info("Read EEPROM Page " + str(namePage) + " from " +
-                             MyToolItNetworkName[iReceiver])
-        workbook = load_workbook(self.sSheetFile)
-        if workbook:
-            for worksheetName in workbook.sheetnames:
-                name = str(worksheetName).split('@')
-                address = int(name[1], base=16)
-                name = name[0]
-                if namePage == name:
-                    worksheet = workbook.get_sheet_by_name(worksheetName)
-                    pageContent = []
-                    readLength = self.iExcelSheetPageLength(worksheet)
-                    readLengthAlligned = readLength
-                    if 0 != readLengthAlligned % 4:
-                        readLengthAlligned += 4
-                        readLengthAlligned -= (readLengthAlligned % 4)
-                    for offset in range(0, readLengthAlligned, 4):
-                        payload = [
-                            address, 0xFF & offset, 4,
-                            tEepromSpecialConfig.asbyte, 0, 0, 0, 0
-                        ]
-                        index = self.Can.cmdSend(iReceiver,
-                                                 MyToolItBlock["EEPROM"],
-                                                 MyToolItEeprom["Read"],
-                                                 payload,
-                                                 log=False)
-                        readBackFrame = self.Can.getReadMessageData(index)[4:]
-                        pageContent.extend(readBackFrame)
-                    pageContent = pageContent[0:readLength]
-                    self.Can.Logger.Info("Read Data: " +
-                                         payload2Hex(pageContent))
-                    self.iExcelSheetPageValue(worksheet, pageContent)
-            try:
-                workbook.save(self.sSheetFile)
-            except Exception as e:
-                sError = "Could not save file(Opened by another application?): " + str(
-                    e)
-                self.Can.Logger.Info(sError)
-                print(sError)
-        return sError
-
-    def au8excelValueToByteArray(self, worksheet, iIndex):
-        iLength = int(worksheet['C' + str(iIndex)].value)
-        value = worksheet['E' + str(iIndex)].value
-        byteArray = [0] * iLength
-        if None != value:
-            if "UTF8" == worksheet['G' + str(iIndex)].value:
-                try:
-                    value = str(value).encode('utf-8')
-                except Exception as e:
-                    self.Can.Logger.Info(str(e))
-                    value = [0] * iLength
-                iCopyLength = len(value)
-                if iLength < iCopyLength:
-                    iCopyLength = iLength
-                for i in range(0, iCopyLength):
-                    byteArray[i] = value[i]
-            elif "ASCII" == worksheet['G' + str(iIndex)].value:
-                try:
-                    value = str(value).encode('ascii')
-                except Exception as e:
-                    self.Can.Logger.Info(str(e))
-                    value = [0] * iLength
-                iCopyLength = len(value)
-                if iLength < iCopyLength:
-                    iCopyLength = iLength
-                for i in range(0, iCopyLength):
-                    byteArray[i] = value[i]
-            elif "unsigned" == worksheet['G' + str(iIndex)].value:
-                byteArray = int_to_byte_list(int(value), iLength)
-            elif "float" == worksheet['G' + str(iIndex)].value:
-                value = float(value)
-                value = struct.pack('f', value)
-                value = int.from_bytes(value, byteorder='little')
-                byteArray = int_to_byte_list(int(value), 4)
-            else:
-                if "0" == value or 0 == value:
-                    value = "[0x0]"
-                value = value[1:-1].split(',')
-                for i in range(0, len(value)):
-                    byteArray[i] = int(value[i], 16)
-        return byteArray
-
-    def sExcelSheetWrite(self, namePage, iReceiver):
-        """
-        Read Excel Sheet to write values to EEPROM
-        """
-
-        sError = None
-        self.Can.Logger.Info("Write Excel Page " + str(namePage) + " to " +
-                             MyToolItNetworkName[iReceiver])
-        workbook = load_workbook(self.sSheetFile)
-        if workbook:
-            for worksheetName in workbook.sheetnames:
-                name = str(worksheetName).split('@')
-                address = int(name[1], base=16)
-                name = name[0]
-                if namePage == name:
-                    worksheet = workbook.get_sheet_by_name(worksheetName)
-                    # Prepare Write Data
-                    au8WriteData = [0] * 256
-                    iByteIndex = 0
-                    for i in range(2, 256 + 2, 1):
-                        if None != worksheet['A' + str(i)].value:
-                            au8ElementData = self.au8excelValueToByteArray(
-                                worksheet, i)
-                            for j in range(0, len(au8ElementData), 1):
-                                au8WriteData[iByteIndex +
-                                             j] = au8ElementData[j]
-                            iLength = int(worksheet['C' + str(i)].value)
-                            iByteIndex += iLength
-                        else:
-                            break
-                    iWriteLength = self.iExcelSheetPageLength(worksheet)
-                    if 0 != iWriteLength % 4:
-                        iWriteLength += 4
-                        iWriteLength -= (iWriteLength % 4)
-                    au8WriteData = au8WriteData[0:iWriteLength]
-                    self.Can.Logger.Info("Write Content: " +
-                                         payload2Hex(au8WriteData))
-                    for offset in range(0, iWriteLength, 4):
-                        au8WritePackage = au8WriteData[offset:offset + 4]
-                        au8Payload = [address, 0xFF & offset, 4, 0]
-                        au8Payload.extend(au8WritePackage)
-                        self.Can.cmdSend(iReceiver,
-                                         MyToolItBlock["EEPROM"],
-                                         MyToolItEeprom["Write"],
-                                         au8Payload,
-                                         log=False)
-            try:
-                workbook.close()
-            except Exception as e:
-                sError = "Could not close file: " + str(e)
-                self.Can.Logger.Info(sError)
-                print(sError)
-        return sError
 
     def atXmlSetup(self):
         asSetups = {}
@@ -1687,7 +1154,6 @@ class myToolItWatch():
         self.Can.Logger.Info("Product Configuration: " + str(self.sProduct) +
                              " " + str(self.sConfig))
         self.Can.Logger.Info("Setup Configuration: " + str(self.sSetupConfig))
-        self.Can.Logger.Info("Table Calculation File: " + str(self.sSheetFile))
         self.Can.Logger.Info("Log Name: " + str(self.Can.Logger.filepath.name))
         self.Can.Logger.Info("Device Name (to be connected): " +
                              str(self.sDevName))

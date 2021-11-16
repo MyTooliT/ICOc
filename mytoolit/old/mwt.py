@@ -49,8 +49,6 @@ class mwt(myToolItWatch):
             self.vConfigSet(str(lastRun.find('Product').text),
                             str(lastRun.find('Version').text))
             self.vNetworkNumberSet(str(lastRun.find('NetworkNumber').text))
-            sFileName = str(lastRun.find('SheetFile').text) + ".xlsx"
-            self.vSheetFileSet(sFileName)
             self.bSampleSetupSet(str(lastRun.find('Setup').text))
 
     # setter methods
