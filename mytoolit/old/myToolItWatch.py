@@ -600,6 +600,10 @@ class myToolItWatch():
         self.parser = argparse.ArgumentParser(
             description="Configure and measure data with the ICOtronic system")
 
+        # TODO: Check option arguments for valid inputs with custom type
+        # functions. For an example, please take a look at the function
+        # `base64_mac_address` and its usage in `mytoolit/scripts/name.py`.
+
         connection_group = self.parser.add_argument_group(title="Connection")
         connection_group = connection_group.add_mutually_exclusive_group()
         connection_group.add_argument(
