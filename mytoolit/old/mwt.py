@@ -1,4 +1,3 @@
-import glob
 import curses
 import os
 import subprocess
@@ -14,7 +13,6 @@ from mytoolit.old.MyToolItCommands import (
     BlueToothDeviceNr, DataSets, int_to_mac_address, MyToolItStreaming)
 from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
 from mytoolit.old.MyToolItSth import fVoltageBattery
-from mytoolit.old.network import Network
 
 
 class mwt(myToolItWatch):
@@ -303,70 +301,6 @@ class mwt(myToolItWatch):
         sName = self.sTerminalInputStringIn()
         self.vDeviceNameSet(sName)
         self.Can.vBlueToothNameWrite(MyToolItNetworkNr["STH1"], 0, sName)
-
-    def bTerminalTests(self):
-        bContinue = True
-        self.tTerminalHeaderExtended()
-        pyFiles = []
-        for file in glob.glob("./VerificationInternal/*.py"):
-            file = file.split("\\")
-            pyFiles.append(file[-1])
-        self.stdscr.addstr("\nVerificationInternal: \n")
-        iTestNumber = 1
-        for i in range(0, len(pyFiles)):
-            self.stdscr.addstr("    " + str(iTestNumber) + ": " + pyFiles[i] +
-                               "\n")
-            iTestNumber += 1
-        self.stdscr.refresh()
-        self.stdscr.addstr(
-            "Attention! If you want to kill the test press CTRL+Break(STRG+Pause)\n"
-        )
-        self.stdscr.addstr("Please pick a test number or 0 to escape: ")
-        iTestNumberRun = self.iTerminalInputNumberIn()
-        if 0 < iTestNumberRun and iTestNumberRun < iTestNumber:
-            self.Can.__exit__()
-            sDirPath = os.path.dirname(
-                os.path.realpath(pyFiles[iTestNumberRun - 1]))
-            sDirPath += "\\VerificationInternal\\"
-            sDirPath += pyFiles[iTestNumberRun - 1]
-            try:
-                sString = ""
-                self.stdscr.clear()
-                atList = self.atXmlProductVersion()
-                if -1 != sDirPath.find("Sth"):
-                    for key in atList[1]["Versions"]:
-                        version = atList[1]["Versions"][key]
-                        self.stdscr.addstr(
-                            str(key) + ": " + str(version.get('name')) + "\n")
-                        self.stdscr.refresh()
-                    iVersion = self.iTerminalInputNumberIn()
-                    if iVersion in atList[1]["Versions"] or True:
-                        version = atList[1]["Versions"][iVersion]
-                        sString = "python " + str(
-                            sDirPath) + " ../Logs/STH SthAuto.txt " + str(
-                                version.get('name'))
-                else:
-                    for key in atList[2]["Versions"]:
-                        version = atList[2]["Versions"][key]
-                        self.stdscr.addstr(
-                            str(key) + ": " + str(version.get('name')) + "\n")
-                        self.stdscr.refresh()
-                    iVersion = self.iTerminalInputNumberIn()
-                    if iVersion in atList[2]["Versions"] or True:
-                        version = atList[2]["Versions"][iVersion]
-                    sString = "python " + str(
-                        sDirPath) + " ../Logs/STU StuAuto.txt " + str(
-                            version.get('name'))
-                if "" != sString:
-                    os.system(sString)
-                    self.iTerminalInputNumberIn()
-            except KeyboardInterrupt:
-                pass
-                #TODO: Kill process
-            self.Can = Network(settings.Logger.icoc.filename,
-                               sender=MyToolItNetworkNr["SPU1"],
-                               receiver=MyToolItNetworkNr["STH1"])
-        return bContinue
 
     def bTerminalUpdateConnectExecute(self, sAddr):
         bDoIt = True
@@ -922,8 +856,6 @@ class mwt(myToolItWatch):
             else:
                 self.stdscr.addstr("Device was not available\n")
                 self.stdscr.refresh()
-        elif ord('t') == keyPress:
-            bRun = self.bTerminalTests()
         elif ord('u') == keyPress:
             bRun = self.bTerminalUpdate()
         elif ord('x') == keyPress:
@@ -937,7 +869,6 @@ class mwt(myToolItWatch):
         self.stdscr.addstr("1-9: Connect to STH number (ENTER at input end)\n")
         self.stdscr.addstr("f: Output File Name\n")
         self.stdscr.addstr("n: Change Device Name\n")
-        self.stdscr.addstr("t: Test Menu\n")
         self.stdscr.addstr("u: Update Menu\n")
         self.stdscr.addstr("x: Xml Data Base\n")
         self.stdscr.refresh()
