@@ -115,12 +115,6 @@ class mwt(myToolItWatch):
             bRun = False
             bContinue = True
             self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
-        elif ord('f') == keyPress:
-            self.stdscr.clear()
-            self.stdscr.refresh()
-            sOemFreeUse = self.Can.sProductData("OemFreeUse")
-            self.stdscr.addstr("OEM Free Use: \n" + sOemFreeUse + "\n")
-            self.vTerminalAnyKey()
         elif ord('n') == keyPress:
             self.vTerminalDeviceName()
         elif ord('O') == keyPress:
@@ -231,7 +225,6 @@ class mwt(myToolItWatch):
             self.stdscr.addstr("a: Config ADC\n")
             self.stdscr.addstr("d: Display Time\n")
             self.stdscr.addstr("e: Exit and disconnect from holder\n")
-            self.stdscr.addstr("f: OEM Free Use\n")
             self.stdscr.addstr("n: Set Device Name\n")
             self.stdscr.addstr("O: Off(Standby)\n")
             self.stdscr.addstr("p: Config Acceleration Points(XYZ)\n")
