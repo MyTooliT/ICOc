@@ -1,5 +1,4 @@
 import argparse
-import copy
 import multiprocessing
 import os
 import socket
@@ -993,49 +992,6 @@ class myToolItWatch():
             sleep(0.0002)
         return message
 
-    def atXmlProductVersion(self):
-        dataDef = self.tXmlConfig.root.find('Data')
-        atProducts = {}
-        iProduct = 1
-        for product in dataDef.find('Product'):
-            atProducts[iProduct] = {}
-            atProducts[iProduct]["Product"] = product
-            atProducts[iProduct]["Versions"] = {}
-            iVersion = 1
-            for version in product.find('Version'):
-                atProducts[iProduct]["Versions"][iVersion] = version
-                iVersion += 1
-            iProduct += 1
-        return atProducts
-
-    def atProductPagesVersion(self, version):
-        """
-        Get Page Names from xml by product and versions as List - Version
-        """
-
-        atPageList = []
-        if version.get('name') == self.sConfig:
-            for page in version.find('Page'):
-                tPageDict = {}
-                tPageDict["Name"] = str(page.get('name'))
-                tPageDict["Address"] = int(page.find('pageAddress').text)
-                tPageDict["Entry"] = page.find('Entry')
-                atPageList.append(tPageDict)
-        return atPageList
-
-    def atProductPagesProduct(self, product):
-        """
-        Get Page Names from xml by product and versions as List - Product
-        """
-
-        atPageList = []
-        if None != self.sConfig:
-            for version in product.find('Version'):
-                if version.get('name') == self.sConfig:
-                    atPageList = self.atProductPagesVersion(version)
-                    break
-        return atPageList
-
     def _XmlWriteEndoding(self):
         """
         Set encoding
@@ -1048,17 +1004,6 @@ class myToolItWatch():
         with open(filepath, "w", encoding='utf-8') as f:
             f.write(xml)
 
-    def newXmlVersion(self, product, productVersion, sVersion):
-        """
-        Creates a new config
-        """
-
-        cloneVersion = copy.deepcopy(productVersion)
-        cloneVersion.set('name', sVersion)
-        product.find('Version').append(cloneVersion)
-        self.xmlSave()
-        self.vConfigSet(product.get('name'), sVersion)
-
     def xmlSave(self):
         """
         Save XML File (in any state)
@@ -1069,85 +1014,6 @@ class myToolItWatch():
         self._XmlWriteEndoding()
         del self.tXmlConfig
         self.tXmlConfig = ConfigKeys(self.args.xml_file_name[0])
-
-    def removeXmlVersion(self, product, vesion):
-        """
-        Removes a config
-        """
-
-        product.find('Version').remove(vesion)
-        self.xmlSave()
-
-    def atXmlSetup(self):
-        asSetups = {}
-        iSetup = 1
-        for setup in self.tXmlConfig.tree.find('Config'):
-            asSetups[iSetup] = setup
-            iSetup += 1
-        return asSetups
-
-    def vSetXmlSetup(self):
-        for config in self.tXmlConfig.tree.find('Config'):
-            if config.get('name') == self.sSetupConfig:
-                config.find('DeviceName').text = str(self.sDevName)
-                config.find('DeviceAddress').text = str(self.iAddress)
-                config.find('Acc').text = str(int(self.bAccX)) + str(
-                    int(self.bAccY)) + str(int(self.bAccZ))
-                config.find('Voltage').text = str(int(self.bVoltageX)) + str(
-                    int(self.bVoltageY)) + str(int(self.bVoltageZ))
-                config.find('Prescaler').text = str(self.iPrescaler)
-                config.find('AcquisitionTime').text = str(
-                    AdcAcquisitionTime.inverse[self.iAquistionTime])
-                config.find('OverSamples').text = str(
-                    AdcOverSamplingRate.inverse[self.iOversampling])
-                config.find('AdcRef').text = str(self.sAdcRef)
-                sFileName = self.Can.Logger.filepath.name
-                config.find('LogName').text = sFileName[:sFileName.find('_'):]
-                config.find('RunTime').text = str(self.iRunTime)
-                config.find('DisplayTime').text = str(self.iDisplayTime)
-                break
-
-    def vGetXmlSetup(self):
-        for config in self.tXmlConfig.tree.find('Config'):
-            if config.get('name') == self.sSetupConfig:
-                self.vDeviceNameSet(config.find('DeviceName').text)
-                self.vDeviceAddressSet(config.find('DeviceAddress').text)
-                if ("" != self.sDevName or 0 < self.iAddress):
-                    self.vSthAutoConnect(True)
-                samplePoints = config.find('Acc').text
-                bAccX = int(samplePoints[0])
-                bAccY = int(samplePoints[1])
-                bAccZ = int(samplePoints[2])
-                self.vAccSet(bAccX, bAccY, bAccZ, -1)
-                samplePoints = config.find('Voltage').text
-                bVoltageX = int(samplePoints[0])
-                bVoltageY = int(samplePoints[1])
-                bVoltageZ = int(samplePoints[2])
-                self.vVoltageSet(bVoltageX, bVoltageY, bVoltageZ, -1)
-                self.vAdcConfig(int(config.find('Prescaler').text),
-                                int(config.find('AcquisitionTime').text),
-                                int(config.find('OverSamples').text))
-                self.vAdcRefVConfig(config.find('AdcRef').text)
-                self.vRunTime(int(config.find('RunTime').text))
-                self.vDisplayTime(int(config.find('DisplayTime').text))
-                break
-
-    def removeXmlSetup(self, setup):
-        if (setup.get('name') == self.sSetupConfig):
-            self.bSampleSetupSet(None)
-        self.tXmlConfig.tree.find('Config').remove(setup)
-        self.xmlSave()
-
-    def newXmlSetup(self, setup, sConfig):
-        cloneVersion = copy.deepcopy(setup)
-        cloneVersion.set('name', sConfig)
-        self.tXmlConfig.tree.find('Config').append(cloneVersion)
-        self.xmlSave()
-        self.bSampleSetupSet(sConfig)
-
-    def tXmlChildNew(self, tParrent, sName):
-        new = ET.SubElement(tParrent, sName)
-        return new
 
     def _vRunConsoleStartupLoggerPrint(self):
         self.Can.Logger.Info("XML File: " + str(self.sXmlFileName))
