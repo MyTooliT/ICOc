@@ -15,7 +15,12 @@ For these purposes the software reads data from the Stationary Transceiver Unit 
 The framework currently requires
 
 - [Microsoft Windows 10](https://microsoft.com/windows), and
-- [Python 3.7](https://www.python.org) or newer.
+- [Python 3](#readme:section:python).
+
+**Notes**:
+
+- In theory you can also use ICOc in Windows 11. However, we did not test the software on this operating system.
+- Parts of the test suite also works on Linux. The ICOc measurement software does [**not**](https://github.com/MyTooliT/ICOc/issues/4).
 
 For more information about other required software components, please read the subsection [“Software”](#section:software) in this document.
 
@@ -82,6 +87,8 @@ In order to setup a test bench you need at least:
 <a name="section:software"></a>
 
 ### Software
+
+<a name="readme:section:python"></a>
 
 #### Python
 
