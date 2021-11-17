@@ -428,11 +428,15 @@ class mwt(myToolItWatch):
         if None == devList:
             devList = self.Can.tDeviceList(MyToolItNetworkNr["STU1"],
                                            bLog=False)
+
+        self.stdscr.addstr("     Name     Address            RSSI\n")
+        self.stdscr.addstr("    ——————————————————————————————————\n")
         for dev in devList:
-            self.stdscr.addstr(
-                str(dev["DeviceNumber"] + 1) + ": " +
-                int_to_mac_address(dev["Address"]) + "(" + str(dev["Name"]) +
-                ")@" + str(dev["RSSI"]) + "dBm\n")
+            number = dev["DeviceNumber"] + 1
+            address = int_to_mac_address(dev["Address"])
+            name = dev["Name"]
+            rssi = dev["RSSI"]
+            self.stdscr.addstr(f"{number:3}: {name:8} {address} {rssi}dBm\n")
         return devList
 
     def vTerminalHeader(self):
