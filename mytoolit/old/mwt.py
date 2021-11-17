@@ -347,7 +347,7 @@ class mwt(myToolItWatch):
         sString = ""
         iKeyPress = -1
         bRun = True
-        cursorXPos = self.stdscr.getyx()[1] + 2
+        cursorXPos = self.stdscr.getyx()[1] + 1
         cursorYPos = self.stdscr.getyx()[0]
         while False != bRun:
             self.stdscr.addstr(cursorYPos, cursorXPos, sString)
@@ -381,7 +381,7 @@ class mwt(myToolItWatch):
     def iTerminalInputNumberIn(self, iNumber=0):
         iKeyPress = -1
         bRun = True
-        cursorXPos = self.stdscr.getyx()[1] + 2
+        cursorXPos = self.stdscr.getyx()[1] + 1
         cursorYPos = self.stdscr.getyx()[0]
         while False != bRun:
             self.stdscr.addstr(cursorYPos, cursorXPos, str(iNumber))
