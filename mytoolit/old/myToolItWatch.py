@@ -1,6 +1,5 @@
 import argparse
 import multiprocessing
-import os
 import socket
 from time import sleep, time
 from datetime import datetime
@@ -990,17 +989,7 @@ class myToolItWatch():
     def _vRunConsoleStartup(self):
         self._vRunConsoleStartupLoggerPrint()
 
-    def clear(self):
-        # for windows
-        if os.name == 'nt':
-            _ = os.system('cls')
-
-        # for mac and linux(here, os.name is 'posix')
-        else:
-            _ = os.system('clear')
-
     def vRunConsoleAutoConnect(self):
-        self.clear()
         if "0x0" != self.iAddress and 0 != self.iAddress and "0" != self.iAddress:
             self.Can.bBlueToothConnectPollingAddress(MyToolItNetworkNr["STU1"],
                                                      self.iAddress)
