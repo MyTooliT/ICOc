@@ -211,7 +211,7 @@ class mwt(myToolItWatch):
             self.stdscr.addstr("p: Configure Enabled Axes\n")
             self.stdscr.addstr("O: Set Standby Mode\n\n")
 
-            self.stdscr.addstr("e: Exit and disconnect from holder\n")
+            self.stdscr.addstr("e: Disconnect from STH\n")
             self.stdscr.refresh()
             [bRun,
              bContinue] = self.tTerminalHolderConnectCommandsKeyEvaluation()
