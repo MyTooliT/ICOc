@@ -133,7 +133,7 @@ class mwt(myToolItWatch):
         self.stdscr.addstr(f"Hardware Version:      {sHwRev}\n")
         self.stdscr.addstr(f"Firmware Version:      {sSwVersion}\n")
         self.stdscr.addstr(f"Firmware Release Name: {sReleaseName}\n")
-        self.stdscr.addstr(f"Serial:                {sSerial}\n\n")
+        self.stdscr.addstr(f"Serial Number:         {sSerial}\n\n")
 
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
                                             MyToolItStreaming["Voltage"],
