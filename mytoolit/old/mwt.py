@@ -239,16 +239,14 @@ class mwt(myToolItWatch):
                     iNumber = 0
             elif 0x0A == iKeyPress or 459 == iKeyPress:
                 if 0 < iNumber:
-                    self.stdscr.addstr("\nTry to connect to device number " +
-                                       str(iNumber) + "\n")
+                    device_number = iNumber - 1
+                    name = devList[device_number]['Name']
+                    self.stdscr.addstr(f"\nConnecting to device “{name}” …")
                     self.stdscr.refresh()
                     iNumber -= 1
                     for dev in devList:
                         if dev["DeviceNumber"] == iNumber:
                             self.vDeviceAddressSet(hex(dev["Address"]))
-                            self.stdscr.addstr("Connect to " +
-                                               hex(dev["Address"]) + "(" +
-                                               str(dev["Name"]) + ")\n")
                             self.sDevName = dev["Name"]
                             self.stdscr.refresh()
                             if False != self.Can.bBlueToothConnectPollingAddress(
