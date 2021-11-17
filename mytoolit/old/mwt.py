@@ -457,6 +457,12 @@ class mwt(myToolItWatch):
         curses.cbreak()
         # Enable easy key codes (will come back to this)
         self.stdscr.keypad(True)
+
+        # TODO: Do not refresh the whole display constantly
+        # Possible Solution:
+        # - Spawn two threads
+        # - One of them waits for input (blocking)
+        # - Other thread refresh list of devices
         self.stdscr.nodelay(1)
 
     def vTerminalTeardown(self):
