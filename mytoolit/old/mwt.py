@@ -47,18 +47,18 @@ class mwt(myToolItWatch):
 
     def vTerminalHolderConnectCommandsAdcConfig(self):
         self.stdscr.clear()
-        self.stdscr.addstr("Prescaler(2-127): ")
+        self.stdscr.addstr("Prescaler (2-127): ")
         self.stdscr.refresh()
         iPrescaler = self.iTerminalInputNumberIn()
-        self.stdscr.addstr("Acquisition Time")
+        self.stdscr.addstr("Acquisition Time ")
         self.vListKeys(AdcAcquisitionTime)
         self.stdscr.refresh()
         iAquisitionTime = self.iTerminalInputNumberIn()
-        self.stdscr.addstr("Oversampling Rate")
+        self.stdscr.addstr("Oversampling Rate ")
         self.vListKeys(AdcOverSamplingRate)
         self.stdscr.refresh()
         iOversamplingRate = self.iTerminalInputNumberIn()
-        self.stdscr.addstr("ADC Reference(VDD=3V3)")
+        self.stdscr.addstr("ADC Reference Voltage (VDD=3V3) ")
         self.vListKeys(AdcReference)
         self.stdscr.refresh()
         sAdcRef = self.sTerminalInputStringIn()
@@ -70,7 +70,7 @@ class mwt(myToolItWatch):
 
     def change_runtime(self):
         self.stdscr.clear()
-        self.stdscr.addstr("Run Time (in Seconds): ")
+        self.stdscr.addstr("Run time of data acquisition (in seconds):")
         self.stdscr.refresh()
         iRunTime = self.iTerminalInputNumberIn()
         self.vRunTime(iRunTime)
@@ -104,7 +104,7 @@ class mwt(myToolItWatch):
         elif ord('p') == keyPress:
             self.stdscr.clear()
             self.stdscr.addstr(
-                "New sample axis (xyz; 0=off, 1=on; e.g. 100): ")
+                "Set enabled axes (xyz; 0=off, 1=on; e.g. “100”): ")
             iPoints = self.iTerminalInputNumberIn()
             bZ = bool(iPoints & 1)
             bY = bool((iPoints >> 1) & 1)
@@ -276,7 +276,7 @@ class mwt(myToolItWatch):
 
     def vTerminalDeviceName(self):
         self.stdscr.clear()
-        self.stdscr.addstr("New Device Name (max. 8 characters): ")
+        self.stdscr.addstr("New STH name (max. 8 characters):")
         self.stdscr.refresh()
         sName = self.sTerminalInputStringIn()
         self.vDeviceNameSet(sName)
