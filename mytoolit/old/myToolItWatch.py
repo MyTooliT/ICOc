@@ -958,7 +958,7 @@ class myToolItWatch():
             print("RxOverRun")
             raise Exception("RxOverRun")
         else:
-            sleep(0.0002)
+            sleep(0.001)
         return message
 
     def _vRunConsoleStartupLoggerPrint(self):
