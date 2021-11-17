@@ -330,9 +330,9 @@ class mwt(myToolItWatch):
         devList = self.tTerminalHeaderExtended()
         self.stdscr.addstr("\n")
         self.stdscr.addstr("1-9: Connect to STH\n")
-        self.stdscr.addstr("f  : Output File Name\n")
-        self.stdscr.addstr("n  : Change Device Name\n")
-        self.stdscr.addstr("q  : Quit program")
+        self.stdscr.addstr("f  : Change Output File Name\n")
+        self.stdscr.addstr("n  : Change STH Name\n")
+        self.stdscr.addstr("q  : Quit Program")
         self.stdscr.refresh()
         return self.bTerminalMainMenuKeyEvaluation(devList)
 
