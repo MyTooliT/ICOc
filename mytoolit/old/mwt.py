@@ -202,7 +202,7 @@ class mwt(myToolItWatch):
                 f"Enabled Ax{'i' if len(axes) <= 1 else 'e'}s:{' ' * 10}"
                 f"{axes}\n")
 
-            self.stdscr.addstr("\n\n")
+            self.stdscr.addstr(f"\n{'—'*30}\n")
             self.stdscr.addstr("s: Start Data Acquisition\n\n")
 
             self.stdscr.addstr("n: Change Device Name\n")
@@ -326,7 +326,7 @@ class mwt(myToolItWatch):
         curs_set(False)  # Disable cursor
 
         devList = self.tTerminalHeaderExtended()
-        self.stdscr.addstr("\n")
+        self.stdscr.addstr(f"\n{'—'*30}\n")
         self.stdscr.addstr("1-9: Connect to STH\n")
         self.stdscr.addstr("f  : Change Output File Name\n")
         self.stdscr.addstr("n  : Change STH Name\n")
