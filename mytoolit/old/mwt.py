@@ -218,6 +218,7 @@ class mwt(myToolItWatch):
         return bContinue
 
     def bTerminalHolderConnect(self, iKeyPress):
+        curs_set(True)  # Enable cursor
         iNumber = int(iKeyPress - ord('0'))
         iKeyPress = -1
         bRun = True
