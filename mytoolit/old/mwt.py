@@ -433,14 +433,15 @@ class mwt(myToolItWatch):
             devList = self.Can.tDeviceList(MyToolItNetworkNr["STU1"],
                                            bLog=False)
 
-        self.stdscr.addstr("     Name     Address            RSSI\n")
-        self.stdscr.addstr("    ——————————————————————————————————\n")
+        self.stdscr.addstr("     Name      Address            RSSI\n")
+        self.stdscr.addstr("    ——————————————————————————————————————\n")
         for dev in devList:
             number = dev["DeviceNumber"] + 1
             address = int_to_mac_address(dev["Address"])
             name = dev["Name"]
             rssi = dev["RSSI"]
-            self.stdscr.addstr(f"{number:3}: {name:8} {address} {rssi}dBm\n")
+            self.stdscr.addstr(
+                f"{number:3}: {name:8}  {address}  {rssi} dBm\n")
         return devList
 
     def vTerminalHeader(self):
