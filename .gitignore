@@ -2,6 +2,9 @@
 /*.txt
 !/requirements.txt
 
+# Ignore measurement output in HDF5 format
+*.hdf5
+
 # Ignore PDF test reports
 
 /STH Test.pdf
