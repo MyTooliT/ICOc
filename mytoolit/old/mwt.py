@@ -3,6 +3,8 @@ import curses
 from sys import stderr
 from time import sleep
 
+from curses import curs_set
+
 from mytoolit.old.myToolItWatch import myToolItWatch
 from mytoolit.old.MyToolItCommands import (
     AdcAcquisitionTime,
@@ -322,6 +324,8 @@ class mwt(myToolItWatch):
         return bRun
 
     def bTerminalMainMenu(self):
+        curs_set(False)  # Disable cursor
+
         devList = self.tTerminalHeaderExtended()
         self.stdscr.addstr("\n")
         self.stdscr.addstr("1-9: Connect to STH\n")
