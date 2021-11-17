@@ -265,12 +265,16 @@ class mwt(myToolItWatch):
         return bContinue
 
     def vTerminalLogFileName(self):
+        curs_set(True)  # Enable cursor
+        self.stdscr.clear()
         filepath = self.get_output_filepath()
-        self.stdscr.addstr(f"Output File Name ({filepath.stem}): ")
+        self.stdscr.addstr(f"Set output file name ({filepath.stem}):")
+        self.stdscr.refresh()
         filename = self.sTerminalInputStringIn()
         if filename != "":
             self.set_output_filename(filename)
-        self.stdscr.addstr(str(self.get_output_filepath()))
+        self.stdscr.addstr("New full name (including time stamp): "
+                           f"“{self.get_output_filepath()}”")
         self.stdscr.refresh()
         sleep(2)
 
@@ -332,7 +336,7 @@ class mwt(myToolItWatch):
         self.stdscr.addstr("f  : Change Output File Name\n")
         self.stdscr.addstr("n  : Change STH Name\n\n")
 
-        self.stdscr.addstr("q  : Quit Program")
+        self.stdscr.addstr("q  : Quit Program\n")
         self.stdscr.refresh()
         return self.bTerminalMainMenuKeyEvaluation(devList)
 
