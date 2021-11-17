@@ -83,7 +83,7 @@ class mwt(myToolItWatch):
             bRun = False
         elif ord('a') == keyPress:
             self.vTerminalHolderConnectCommandsAdcConfig()
-        elif ord('e') == keyPress:
+        elif ord('q') == keyPress:
             bRun = False
             bContinue = True
             self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
@@ -211,7 +211,7 @@ class mwt(myToolItWatch):
             self.stdscr.addstr("p: Configure Enabled Axes\n")
             self.stdscr.addstr("O: Set Standby Mode\n\n")
 
-            self.stdscr.addstr("e: Disconnect from STH\n")
+            self.stdscr.addstr("q: Disconnect from STH\n")
             self.stdscr.refresh()
             [bRun,
              bContinue] = self.tTerminalHolderConnectCommandsKeyEvaluation()
