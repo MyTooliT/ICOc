@@ -75,13 +75,6 @@ class mwt(myToolItWatch):
         iRunTime = self.iTerminalInputNumberIn()
         self.vRunTime(iRunTime)
 
-    def vTerminalHolderConnectCommandsRunTimeDisplayTime(self):
-        self.stdscr.clear()
-        self.stdscr.addstr("Display Time(1-10s, 0=Off): ")
-        self.stdscr.refresh()
-        iDisplayTime = self.iTerminalInputNumberIn()
-        self.vDisplayTime(iDisplayTime)
-
     def tTerminalHolderConnectCommandsKeyEvaluation(self):
         keyPress = self.stdscr.getch()
         bRun = True
@@ -90,8 +83,6 @@ class mwt(myToolItWatch):
             bRun = False
         elif ord('a') == keyPress:
             self.vTerminalHolderConnectCommandsAdcConfig()
-        elif ord('d') == keyPress:
-            self.vTerminalHolderConnectCommandsRunTimeDisplayTime()
         elif ord('e') == keyPress:
             bRun = False
             bContinue = True
@@ -216,7 +207,6 @@ class mwt(myToolItWatch):
 
             self.stdscr.addstr("n: Change Device Name\n")
             self.stdscr.addstr("r: Change Run Time\n")
-            self.stdscr.addstr("d: Change Display Time\n")
             self.stdscr.addstr("a: Configure ADC\n")
             self.stdscr.addstr("p: Configure Enabled Axes\n")
             self.stdscr.addstr("O: Set Standby Mode\n\n")
