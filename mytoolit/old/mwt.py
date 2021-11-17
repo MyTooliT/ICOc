@@ -223,7 +223,8 @@ class mwt(myToolItWatch):
         devList = None
         while False != bRun:
             devList = self.tTerminalHeaderExtended(devList)
-            self.stdscr.addstr(str(iNumber))
+            self.stdscr.addstr(
+                f"\nChoose STH number (Use ⏎ to connect): {iNumber}")
             self.stdscr.refresh()
             iKeyPress = self.stdscr.getch()
             if ord('0') <= iKeyPress and ord('9') >= iKeyPress:
@@ -323,10 +324,10 @@ class mwt(myToolItWatch):
     def bTerminalMainMenu(self):
         devList = self.tTerminalHeaderExtended()
         self.stdscr.addstr("\n")
-        self.stdscr.addstr("1-9: Connect to STH number (ENTER at input end)\n")
-        self.stdscr.addstr("f:   Output File Name\n")
-        self.stdscr.addstr("n:   Change Device Name\n")
-        self.stdscr.addstr("q:   Quit program\n")
+        self.stdscr.addstr("1-9: Connect to STH\n")
+        self.stdscr.addstr("f  : Output File Name\n")
+        self.stdscr.addstr("n  : Change Device Name\n")
+        self.stdscr.addstr("q  : Quit program")
         self.stdscr.refresh()
         return self.bTerminalMainMenuKeyEvaluation(devList)
 
