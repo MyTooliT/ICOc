@@ -281,14 +281,6 @@ class mwt(myToolItWatch):
         self.Can.vBlueToothNameWrite(MyToolItNetworkNr["STH1"], 0, sName)
 
     def vConnect(self, devList=None):
-        if None == devList:
-            devList = self.Can.tDeviceList(MyToolItNetworkNr["STU1"],
-                                           bLog=False)
-            for dev in devList:
-                self.stdscr.addstr(
-                    str(dev["DeviceNumber"] + 1) + ": " +
-                    int_to_mac_address(dev["Address"]) + "(" +
-                    str(dev["Name"]) + ")@" + str(dev["RSSI"]) + "dBm\n")
         if False == self.Can.bConnected:
             self.stdscr.addstr("Pick a device number from the list: ")
             self.stdscr.refresh()
