@@ -13,7 +13,6 @@ from mytoolit.old.MyToolItCommands import (
     byte_list_to_int,
     CalibMeassurementActionNr,
     CalibMeassurementTypeNr,
-    DataSets,
     int_to_mac_address,
     MyToolItStreaming,
 )
@@ -134,21 +133,17 @@ class mwt(myToolItWatch):
         return [bRun, bContinue]
 
     def bTerminalHolderConnectCommandsShowDataValues(self):
-        sGtin = self.Can.sProductData("GTIN", bLog=False)
         sHwRev = self.Can.sProductData("Hardware Version", bLog=False)
         sSwVersion = self.Can.sProductData("Firmware Version", bLog=False)
         sReleaseName = self.Can.sProductData("Release Name", bLog=False)
         sSerialNumber = self.Can.sProductData("Serial Number", bLog=False)
         sName = self.Can.sProductData("Product Name", bLog=False)
         sSerial = str(sSerialNumber + "-" + sName)
-        self.stdscr.addstr("Global Trade Identification Number (GTIN): " +
-                           sGtin + "\n")
-        self.stdscr.addstr("Hardware Version(Major.Minor.Build): " + sHwRev +
-                           "\n")
-        self.stdscr.addstr("Firmware Version(Major.Minor.Build): " +
-                           sSwVersion + "\n")
-        self.stdscr.addstr("Firmware Release Name: " + sReleaseName + "\n")
-        self.stdscr.addstr("Serial: " + sSerial + "\n\n")
+        self.stdscr.addstr(f"Hardware Version:      {sHwRev}\n")
+        self.stdscr.addstr(f"Firmware Version:      {sSwVersion}\n")
+        self.stdscr.addstr(f"Firmware Release Name: {sReleaseName}\n")
+        self.stdscr.addstr(f"Serial:                {sSerial}\n\n")
+
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
                                             MyToolItStreaming["Voltage"],
                                             1,
@@ -159,8 +154,8 @@ class mwt(myToolItWatch):
             self.Can.getReadMessageData(index)[2:4])
         if None != iBatteryVoltage:
             fBatteryVoltage = fVoltageBattery(iBatteryVoltage)
-            self.stdscr.addstr("Battery Voltage: " +
-                               '{:02.2f}'.format(fBatteryVoltage) + "V\n")
+            self.stdscr.addstr(
+                f"Battery Voltage:{' '*6}{fBatteryVoltage: 4.2f} V\n")
         au8TempReturn = self.Can.calibMeasurement(
             MyToolItNetworkNr["STH1"],
             CalibMeassurementActionNr["Measure"],
@@ -178,31 +173,44 @@ class mwt(myToolItWatch):
                                   log=False,
                                   bReset=True)
         if None != iTemperature:
-            self.stdscr.addstr("Internal Chip Temperature: " +
-                               '{:02.1f}'.format(iTemperature) + "°C\n\n")
+            self.stdscr.addstr(
+                f"Chip Temperature:{' '*6}{iTemperature:4.1f} °C\n\n")
 
     def bTerminalHolderConnectCommands(self):
         bContinue = True
         bRun = True
         self.vDisplayTime(10)
         while False != bRun:
-            self.stdscr.clear()
-            self.stdscr.addstr(
-                int_to_mac_address(int(self.iAddress, 16)) + "(" +
-                str(self.sDevName) + ")\n")
+            self.vTerminalHeader()
+            address = int_to_mac_address(int(self.iAddress, 16))
+            name = self.sDevName
+            self.stdscr.addstr(f"STH “{name}” ({address})\n\n")
             self.bTerminalHolderConnectCommandsShowDataValues()
-            self.stdscr.addstr("Run Time: " + str(self.iRunTime) + "s\n")
+            self.stdscr.addstr(f"Run Time:              {self.iRunTime} s\n\n")
+            prescaler = self.iPrescaler
+            acquistion_time = AdcAcquisitionTime.inverse[self.iAquistionTime]
+            oversampling_rate = AdcOverSamplingRate.inverse[self.iOversampling]
+            sampling_rate = self.samplingRate
+            adc_reference = self.sAdcRef
+
+            self.stdscr.addstr(f"Prescaler:             {prescaler}\n")
+            self.stdscr.addstr(f"Acquisition Time:      {acquistion_time}\n")
+            self.stdscr.addstr(f"Oversampling Rate:     {oversampling_rate}\n")
+            self.stdscr.addstr(f"⇒ Sampling Rate:       {sampling_rate}\n")
+            self.stdscr.addstr(f"Reference Voltage:     {adc_reference}\n\n")
+
+            x_enabled = "X" if self.bAccX else ""
+            y_enabled = "Y" if self.bAccY else ""
+            z_enabled = "Z" if self.bAccZ else ""
+            axes = [axis for axis in (x_enabled, y_enabled, z_enabled) if axis]
+            last_two_axes = " & ".join(axes[-2:])
+            axes = (f"{axes[0]}, {last_two_axes}"
+                    if len(axes) >= 3 else last_two_axes)
+
             self.stdscr.addstr(
-                "Adc Prescaler/AcquisitionTime/OversamplingRate/Reference(Samples/s): "
-                + str(self.iPrescaler) + "/" +
-                str(AdcAcquisitionTime.inverse[self.iAquistionTime]) + "/" +
-                str(AdcOverSamplingRate.inverse[self.iOversampling]) + "/" +
-                str(self.sAdcRef) + "(" + str(self.samplingRate) + ")\n")
-            self.stdscr.addstr("Acc Config(XYZ/DataSets): " +
-                               str(int(self.bAccX)) + str(int(self.bAccY)) +
-                               str(int(self.bAccZ)) + "/" +
-                               str(DataSets.inverse[self.tAccDataFormat]) +
-                               "\n")
+                f"Enabled Ax{'i' if len(axes) <= 1 else 'e'}s:{' ' * 10}"
+                f"{axes}\n")
+
             self.stdscr.addstr("\n")
             self.stdscr.addstr("a: Config ADC\n")
             self.stdscr.addstr("d: Display Time\n")
