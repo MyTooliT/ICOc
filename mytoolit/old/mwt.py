@@ -211,15 +211,17 @@ class mwt(myToolItWatch):
                 f"Enabled Ax{'i' if len(axes) <= 1 else 'e'}s:{' ' * 10}"
                 f"{axes}\n")
 
-            self.stdscr.addstr("\n")
-            self.stdscr.addstr("a: Config ADC\n")
-            self.stdscr.addstr("d: Display Time\n")
+            self.stdscr.addstr("\n\n")
+            self.stdscr.addstr("s: Start Data Acquisition\n\n")
+
+            self.stdscr.addstr("n: Change Device Name\n")
+            self.stdscr.addstr("r: Change Run Time\n")
+            self.stdscr.addstr("d: Change Display Time\n")
+            self.stdscr.addstr("a: Configure ADC\n")
+            self.stdscr.addstr("p: Configure Enabled Axes\n")
+            self.stdscr.addstr("O: Set Standby Mode\n\n")
+
             self.stdscr.addstr("e: Exit and disconnect from holder\n")
-            self.stdscr.addstr("n: Set Device Name\n")
-            self.stdscr.addstr("O: Off(Standby)\n")
-            self.stdscr.addstr("p: Config Acceleration Points(XYZ)\n")
-            self.stdscr.addstr("r: Config run time\n")
-            self.stdscr.addstr("s: Start Data Acquisition\n")
             self.stdscr.refresh()
             [bRun,
              bContinue] = self.tTerminalHolderConnectCommandsKeyEvaluation()
