@@ -876,7 +876,7 @@ class myToolItWatch():
         self._vRunConsoleStartupLoggerPrint()
 
     def vRunConsoleAutoConnect(self):
-        if "0x0" != self.iAddress and 0 != self.iAddress and "0" != self.iAddress:
+        if self.iAddress not in {0, "0", "0x0"}:
             self.Can.bBlueToothConnectPollingAddress(MyToolItNetworkNr["STU1"],
                                                      self.iAddress)
         else:
