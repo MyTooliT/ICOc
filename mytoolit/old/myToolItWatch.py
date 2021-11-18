@@ -590,16 +590,18 @@ class myToolItWatch():
             self.vAccSet(bX, bY, bZ, -1)
 
     def reset(self):
-        if False == self.KeyBoardInterrupt:
-            try:
-                self.Can.ReadThreadReset()
-                self.Can.reset_node("STU1")
-                self.vStuAddr(
-                    int_to_mac_address(
-                        self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"])))
-                self.guiProcessStop()
-            except KeyboardInterrupt:
-                self.KeyBoardInterrupt = True
+        if self.KeyBoardInterrupt:
+            return
+
+        try:
+            self.Can.ReadThreadReset()
+            self.Can.reset_node("STU1")
+            self.vStuAddr(
+                int_to_mac_address(
+                    self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"])))
+            self.guiProcessStop()
+        except KeyboardInterrupt:
+            self.KeyBoardInterrupt = True
 
     def vDataAquisition(self):
         if self.KeyBoardInterrupt:
