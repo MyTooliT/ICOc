@@ -680,7 +680,7 @@ class myToolItWatch():
             self.__exit__()
         except KeyboardInterrupt:
             self.KeyBoardInterrupt = True
-            print("Data acquisition determined")
+            print("Data acquisition terminated")
             self.__exit__()
 
     def vGetStreamingAccDataAccStart(self):
