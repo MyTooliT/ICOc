@@ -72,7 +72,6 @@ class myToolItWatch():
         self.vRunTime(0)
         self.vGraphInit(Watch["DisplaySampleRateMs"],
                         Watch["DisplayBlockSize"])
-        self.vStuAddr("")
         self.Can.readThreadStop()
         # Set plotter host and port
         self.sPloterSocketHost = settings.gui.host
