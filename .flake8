@@ -11,14 +11,13 @@ exclude =
   ._*,
   Documentation,
   *mytoolit/old/Logger.py,
-  *mytoolit/old/mwt.py,
   *mytoolit/old/MyToolItSth.py,
   *mytoolit/old/network.py
   *mytoolit/old/Plotter.py,
   *mytoolit/old/SthLimits.py,
-  *mytoolit/old/test/testSignal.py,
   *mytoolit/old/test/HardwareSth.py,
   *mytoolit/old/test/MyToolItTestSth.py,
   *mytoolit/old/test/MyToolItTestSthManually.py,
   *mytoolit/old/test/MyToolItTestStu.py,
   *mytoolit/old/test/MyToolItTestStuManually.py,
+  *mytoolit/old/test/testSignal.py
