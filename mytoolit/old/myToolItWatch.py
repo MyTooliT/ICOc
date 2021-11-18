@@ -491,11 +491,11 @@ class myToolItWatch():
         else:
             self.iMsgsTotal += 1
         iPacketLossTimeStamp = int(round(time() * 1000))
-        if 1000 <= iPacketLossTimeStamp - self.iPacketLossTimeStamp:
+        time_since_update = iPacketLossTimeStamp - self.iPacketLossTimeStamp
+        if time_since_update >= 1000:
             self.iPacketLossTimeStamp = iPacketLossTimeStamp
-            sMsgLoss = "Acceleration(" + str(
-                format(100 -
-                       (100 * self.iMsgLoss / self.iMsgsTotal), '3.3f')) + "%)"
+            pakets_received = (1 - self.iMsgLoss / self.iMsgsTotal) * 100
+            sMsgLoss = f"Acceleration ({pakets_received:3.3f} %)"
             if sMsgLoss != self.sMsgLoss:
                 self.sMsgLoss = sMsgLoss
                 self.tSocket.sendall(
