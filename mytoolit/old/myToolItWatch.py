@@ -31,7 +31,6 @@ from mytoolit.old.MyToolItCommands import (
     SystemCommandBlueTooth,
     SystemCommandRouting,
 )
-from mytoolit.old.MyToolItSth import TestConfig
 from mytoolit.old.Plotter import vPlotter, tArray2Binary
 
 Watch = {
@@ -65,7 +64,7 @@ class myToolItWatch():
         self.vSthAutoConnect(False)
         self.Can.Logger.Info("Start Time: {datetime.now().isoformat()}")
         self.vAccSet(True, False, False, 3)
-        self.vDeviceNameSet(TestConfig["DevName"])
+        self.vDeviceNameSet('')
         self.vDeviceAddressSet("0")
         self.vAdcConfig(2, 8, 64)
         self.vAdcRefVConfig("VDD")
