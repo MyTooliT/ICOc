@@ -82,7 +82,9 @@ class myToolItWatch():
                         Watch["DisplayBlockSize"])
         self.vStuAddr("")
         self.Can.readThreadStop()
-        self.vXmlConfigurationPlotterHost()
+        # Set plotter host and port
+        self.sPloterSocketHost = settings.gui.host
+        self.iPloterSocketPort = settings.gui.port
 
         self.storage = None
         self.set_output_filename()
@@ -154,11 +156,6 @@ class myToolItWatch():
             f"{filename.stem}_{timestamp}{filename.suffix}")
 
         return filepath
-
-    def vXmlConfigurationPlotterHost(self):
-        """Set Matplotlib GUI host and port"""
-        self.sPloterSocketHost = settings.gui.host
-        self.iPloterSocketPort = settings.gui.port
 
     def _statusWords(self):
         self.Can.Logger.Info("STH Status Word: {}".format(
