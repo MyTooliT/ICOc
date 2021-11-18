@@ -25,7 +25,6 @@ from mytoolit.old.MyToolItCommands import (
     calcSamplingRate,
     DataSets,
     int_to_mac_address,
-    rreplace,
     MyToolItBlock,
     MyToolItStreaming,
     Prescaler,
@@ -60,12 +59,9 @@ class myToolItWatch():
         self.iMsgLoss = 0
         self.iMsgsTotal = 0
         self.iMsgCounterLast = 0
-        self.Can = Network(settings.Logger.icoc.filename,
+        self.Can = Network('ICOc.log',
                            sender=MyToolItNetworkNr["SPU1"],
                            receiver=MyToolItNetworkNr["STH1"])
-        # This method call is currently required to add the timestamp to the
-        # log file name
-        self.bLogSet(settings.Logger.icoc.filename)
         self.vSthAutoConnect(False)
         self.Can.Logger.Info("Start Time: " + sDateClock())
         self.vConfigSet(None, None)
@@ -353,15 +349,6 @@ class myToolItWatch():
             self.sProduct = "STU"
             self.Can.vSetReceiver(MyToolItNetworkNr["STU1"])
         self.sConfig = sConfig
-
-    def bLogSet(self, sLogLocation):
-        bOk = False
-        if -1 != sLogLocation.rfind('.'):
-            sLogLocation = rreplace(sLogLocation, '.',
-                                    "_" + sDateClock() + ".")
-            self.Can.vLogNameChange(sLogLocation)
-            bOk = True
-        return bOk
 
     def vAccSet(self, bX, bY, bZ, dataSets):
         self.bAccX = bool(bX)

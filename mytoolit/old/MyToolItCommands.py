@@ -112,7 +112,6 @@ class CalibrationMeassurement(Union):
     _fields_ = [("b", CalibrationMeassurementFormatFlags), ("asbyte", c_uint8)]
 
 
-
 MyToolItBlock = bidict({
     "System": 0x00,
     "Streaming": 0x04,
@@ -628,10 +627,6 @@ def sArray2String(Name):
 def int_to_mac_address(iAddr):
     return ":".join(f"{byte:02x}"
                     for byte in int_to_byte_list(iAddr, 6, 'big'))
-
-
-def rreplace(s, old, new):
-    return (s[::-1].replace(old[::-1], new[::-1], 1))[::-1]
 
 
 def sDateClock():

@@ -183,16 +183,6 @@ class Network(object):
         translated_error_code = self.pcan.GetErrorText(error_code)[1].decode()
         return f"{description}: {translated_error_code}"
 
-    def vLogNameChange(self, testMethodName):
-        self.Logger.vRename(testMethodName)
-
-    def vLogNameCloseInterval(self, testMethodName):
-        self.Logger.vClose()
-        self.Logger = Logger(testMethodName)
-
-    def vLogDel(self):
-        self.Logger.vDel()
-
     def vSetReceiver(self, receiver):
         self.receiver = receiver
 
