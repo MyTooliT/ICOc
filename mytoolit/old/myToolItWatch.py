@@ -359,17 +359,15 @@ class myToolItWatch():
             iPrescaler = Prescaler["Min"]
         elif Prescaler["Max"] < iPrescaler:
             iPrescaler = Prescaler["Max"]
-        try:
-            iAcquisitionTime = AdcAcquisitionTime[iAquistionTime]
-            iOversampling = AdcOverSamplingRate[iOversampling]
-            self.samplingRate = int(
-                calcSamplingRate(iPrescaler, iAcquisitionTime, iOversampling) +
-                0.5)
-            self.iPrescaler = iPrescaler
-            self.iAquistionTime = iAcquisitionTime
-            self.iOversampling = iOversampling
-        except:
-            pass
+
+        iAcquisitionTime = AdcAcquisitionTime[iAquistionTime]
+        iOversampling = AdcOverSamplingRate[iOversampling]
+        self.samplingRate = int(
+            calcSamplingRate(iPrescaler, iAcquisitionTime, iOversampling) +
+            0.5)
+        self.iPrescaler = iPrescaler
+        self.iAquistionTime = iAcquisitionTime
+        self.iOversampling = iOversampling
 
     def vAdcRefVConfig(self, sAdcRef):
         self.sAdcRef = sAdcRef
@@ -397,18 +395,20 @@ class myToolItWatch():
         self.sStuAddr = sStuAddr
 
     def guiProcessStop(self):
-        try:
-            self.vGraphSend(["Run", False])
+        if hasattr(self, 'tSocket'):
+            try:
+                self.vGraphSend(["Run", False])
+            except (ConnectionAbortedError, OSError):
+                pass
             self.tSocket.close()
+        if hasattr(self, 'guiProcess'):
             self.guiProcess.terminate()
             self.guiProcess.join()
-        except:
-            pass
 
     def vGraphSend(self, data):
         bSend = True
         data = tArray2Binary(data)
-        while bSend == True:
+        while bSend:
             self.tSocket.sendall(data)
             sleep(0.1)
             ack = self.tSocket.recv(2**10)
@@ -442,11 +442,11 @@ class myToolItWatch():
         self.vGraphSend(["sampleInterval", self.iGraphSampleInterval])
         self.vGraphSend(["xDim", self.iDisplayTime])
         self.vGraphPacketLossUpdate(0)
-        if False != self.bAccX:
+        if self.bAccX:
             self.vGraphSend(["lineNameX", "AccX"])
-        if False != self.bAccY:
+        if self.bAccY:
             self.vGraphSend(["lineNameY", "AccY"])
-        if False != self.bAccZ:
+        if self.bAccZ:
             self.vGraphSend(["lineNameZ", "AccZ"])
         self.vGraphSend(["Plot", True])
 
@@ -469,10 +469,7 @@ class myToolItWatch():
         self.GuiPackage["Y"].append(y)
         self.GuiPackage["Z"].append(z)
         if self.iGraphBlockSize <= len(self.GuiPackage["X"]):
-            try:
-                self.tSocket.sendall(tArray2Binary(["data", self.GuiPackage]))
-            except:
-                pass
+            self.tSocket.sendall(tArray2Binary(["data", self.GuiPackage]))
             self.GuiPackage = {"X": [], "Y": [], "Z": []}
 
     def vGraphPacketLossUpdate(self, msgCounter):
@@ -541,10 +538,9 @@ class myToolItWatch():
             metavar='XYZ',
             type=int,
             required=False,
-            help=
-            ("specify the axes for which acceleration data should be acquired "
-             "(e.g. “101” to measure data for the x- and z-axis but not for "
-             "the y-axis)"))
+            help=("specify the axes for which acceleration data should be "
+                  "acquired (e.g. “101” to measure data for the x- and "
+                  "z-axis but not for the y-axis)"))
         measurement_group.add_argument('-r',
                                        '--run-time',
                                        metavar='SECONDS',
@@ -883,7 +879,7 @@ class myToolItWatch():
             self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
                                                   self.sDevName,
                                                   log=False)
-        if False != self.Can.bConnected:
+        if self.Can.bConnected:
             self.vDataAquisition()
 
     def vRunConsole(self):
