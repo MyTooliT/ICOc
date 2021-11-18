@@ -60,6 +60,7 @@ class myToolItWatch():
         self.iMsgsTotal = 0
         self.iMsgCounterLast = 0
         self.Can = Network('ICOc.log',
+                           FreshLog=True,
                            sender=MyToolItNetworkNr["SPU1"],
                            receiver=MyToolItNetworkNr["STH1"])
         self.vSthAutoConnect(False)
