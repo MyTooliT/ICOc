@@ -28,7 +28,7 @@ class mwt(myToolItWatch):
         self.bTerminal = False
 
     def close(self):
-        if None != self.process:
+        if self.process is not None:
             self.process.terminate()
         self.vTerminalTeardown()
         myToolItWatch.close(self)
@@ -53,7 +53,7 @@ class mwt(myToolItWatch):
         try:
             self.vAdcConfig(iPrescaler, iAquisitionTime, iOversamplingRate)
             self.vAdcRefVConfig(sAdcRef)
-        except:
+        except KeyError:
             pass
 
     def change_runtime(self):
@@ -131,7 +131,7 @@ class mwt(myToolItWatch):
                                             log=False)
         iBatteryVoltage = byte_list_to_int(
             self.Can.getReadMessageData(index)[2:4])
-        if None != iBatteryVoltage:
+        if iBatteryVoltage is not None:
             fBatteryVoltage = fVoltageBattery(iBatteryVoltage)
             self.stdscr.addstr(
                 f"Battery Voltage:{' '*6}{fBatteryVoltage: 4.2f} V\n")
@@ -151,15 +151,14 @@ class mwt(myToolItWatch):
                                   AdcReference["VDD"],
                                   log=False,
                                   bReset=True)
-        if None != iTemperature:
-            self.stdscr.addstr(
-                f"Chip Temperature:{' '*6}{iTemperature:4.1f} °C\n\n")
+        self.stdscr.addstr(
+            f"Chip Temperature:{' '*6}{iTemperature:4.1f} °C\n\n")
 
     def bTerminalHolderConnectCommands(self):
         bContinue = True
         bRun = True
         self.vDisplayTime(10)
-        while False != bRun:
+        while bRun:
             self.vTerminalHeader()
             address = int_to_mac_address(int(self.iAddress, 16))
             name = self.sDevName
@@ -212,7 +211,7 @@ class mwt(myToolItWatch):
         bRun = True
         bContinue = False
         devList = None
-        while False != bRun:
+        while bRun:
             devList = self.tTerminalHeaderExtended(devList)
             self.stdscr.addstr(
                 f"\nChoose STH number (Use ⏎ to connect): {iNumber}")
@@ -237,10 +236,10 @@ class mwt(myToolItWatch):
                             self.vDeviceAddressSet(hex(dev["Address"]))
                             self.sDevName = dev["Name"]
                             self.stdscr.refresh()
-                            if False != self.Can.bBlueToothConnectPollingAddress(
+                            if self.Can.bBlueToothConnectPollingAddress(
                                     MyToolItNetworkNr["STU1"], self.iAddress):
-                                bContinue = self.bTerminalHolderConnectCommands(
-                                )
+                                bContinue = (
+                                    self.bTerminalHolderConnectCommands())
                 else:
                     bContinue = True
                 bRun = False
@@ -275,23 +274,24 @@ class mwt(myToolItWatch):
         self.Can.vBlueToothNameWrite(MyToolItNetworkNr["STH1"], 0, sName)
 
     def vConnect(self, devList=None):
-        if False == self.Can.bConnected:
-            self.stdscr.addstr("Pick a device number from the list: ")
-            self.stdscr.refresh()
-            iDevice = self.iTerminalInputNumberIn()
-            if 0 < iDevice:
-                iDevice -= 1
-                for dev in devList:
-                    iDevNumber = int(dev["DeviceNumber"])
-                    if iDevNumber == iDevice:
-                        self.vDeviceAddressSet(str(dev["Address"]))
-                        self.stdscr.addstr("Connect to " +
-                                           hex(dev["Address"]) + "(" +
-                                           str(dev["Name"]) + ")\n")
-                        self.stdscr.refresh()
-                        self.Can.bBlueToothConnectPollingAddress(
-                            MyToolItNetworkNr["STU1"], self.iAddress)
-                        sleep(1)
+        if self.Can.bConnected:
+            return
+
+        self.stdscr.addstr("Pick a device number from the list: ")
+        self.stdscr.refresh()
+        iDevice = self.iTerminalInputNumberIn()
+        if 0 < iDevice:
+            iDevice -= 1
+            for dev in devList:
+                iDevNumber = int(dev["DeviceNumber"])
+                if iDevNumber == iDevice:
+                    self.vDeviceAddressSet(str(dev["Address"]))
+                    self.stdscr.addstr("Connect to " + hex(dev["Address"]) +
+                                       "(" + str(dev["Name"]) + ")\n")
+                    self.stdscr.refresh()
+                    self.Can.bBlueToothConnectPollingAddress(
+                        MyToolItNetworkNr["STU1"], self.iAddress)
+                    sleep(1)
 
     def bTerminalMainMenuKeyEvaluation(self, devList):
         bRun = True
@@ -306,7 +306,7 @@ class mwt(myToolItWatch):
             self.vTerminalLogFileName()
         elif ord('n') == keyPress:
             self.vConnect(devList)
-            if False != self.Can.bConnected:
+            if self.Can.bConnected:
                 self.vTerminalDeviceName()
                 self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
             else:
@@ -343,7 +343,7 @@ class mwt(myToolItWatch):
         bRun = True
         cursorXPos = self.stdscr.getyx()[1] + 1
         cursorYPos = self.stdscr.getyx()[0]
-        while False != bRun:
+        while bRun:
             self.stdscr.addstr(cursorYPos, cursorXPos, sString)
             self.stdscr.refresh()
             iKeyPress = self.stdscr.getch()
@@ -377,7 +377,7 @@ class mwt(myToolItWatch):
         bRun = True
         cursorXPos = self.stdscr.getyx()[1] + 1
         cursorYPos = self.stdscr.getyx()[0]
-        while False != bRun:
+        while bRun:
             self.stdscr.addstr(cursorYPos, cursorXPos, str(iNumber))
             self.stdscr.refresh()
             iKeyPress = self.stdscr.getch()
@@ -414,7 +414,7 @@ class mwt(myToolItWatch):
         self.vTerminalNew()
         self.stdscr.clear()
         bRun = True
-        while False != bRun:
+        while bRun:
             try:
                 bRun = self.bTerminalMainMenu()
             except KeyboardInterrupt:
@@ -423,7 +423,7 @@ class mwt(myToolItWatch):
 
     def tTerminalHeaderExtended(self, devList=None):
         self.vTerminalHeader()
-        if None == devList:
+        if devList is None:
             devList = self.Can.tDeviceList(MyToolItNetworkNr["STU1"],
                                            bLog=False)
 
@@ -461,7 +461,7 @@ class mwt(myToolItWatch):
         self.stdscr.nodelay(1)
 
     def vTerminalTeardown(self):
-        if False != self.bTerminal:
+        if self.bTerminal:
             # reverse everything that you changed about the terminal
             curses.nocbreak()
             self.stdscr.keypad(False)
@@ -473,7 +473,7 @@ class mwt(myToolItWatch):
     def vRunConsole(self):
         self._vRunConsoleStartup()
         self.reset()
-        if False != self.bSthAutoConnect:
+        if self.bSthAutoConnect:
             self.vRunConsoleAutoConnect()
         else:
             self.vTerminal()
