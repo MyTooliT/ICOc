@@ -5,6 +5,7 @@ from time import sleep, time
 from datetime import datetime
 from functools import partial
 from pathlib import Path
+from sys import stderr
 from typing import Optional
 
 from can.interfaces.pcan.basic import PCAN_ERROR_OK, PCAN_ERROR_QOVERRUN
@@ -666,7 +667,7 @@ class myToolItWatch():
                                 "Did not receive any streaming data for 4s — "
                                 "Terminating program execution")
                             self.Can.Logger.Error(message)
-                            print(message)
+                            print(message, file=stderr)
                 except KeyboardInterrupt:
                     pass
 
