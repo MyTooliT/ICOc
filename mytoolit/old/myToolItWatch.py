@@ -453,24 +453,25 @@ class myToolItWatch():
         if self.iDisplayTime <= 0:
             return
 
-        if self.guiProcess.is_alive():
-            timeStampNow = int(round(time() * 1000))
-            elapsed_time_ms = timeStampNow - self.tDataPointTimeStamp
-            if (self.iGraphSampleInterval / self.iGraphBlockSize <=
-                    elapsed_time_ms):
-                self.tDataPointTimeStamp = timeStampNow
-                self.GuiPackage["X"].append(x)
-                self.GuiPackage["Y"].append(y)
-                self.GuiPackage["Z"].append(z)
-                if self.iGraphBlockSize <= len(self.GuiPackage["X"]):
-                    try:
-                        self.tSocket.sendall(
-                            tArray2Binary(["data", self.GuiPackage]))
-                    except:
-                        pass
-                    self.GuiPackage = {"X": [], "Y": [], "Z": []}
-        else:
+        if not self.guiProcess.is_alive():
             self.aquireEndTime = self.Can.get_elapsed_time()
+            return
+
+        timeStampNow = int(round(time() * 1000))
+        elapsed_time_ms = timeStampNow - self.tDataPointTimeStamp
+        if (self.iGraphSampleInterval / self.iGraphBlockSize <=
+                elapsed_time_ms):
+            self.tDataPointTimeStamp = timeStampNow
+            self.GuiPackage["X"].append(x)
+            self.GuiPackage["Y"].append(y)
+            self.GuiPackage["Z"].append(z)
+            if self.iGraphBlockSize <= len(self.GuiPackage["X"]):
+                try:
+                    self.tSocket.sendall(
+                        tArray2Binary(["data", self.GuiPackage]))
+                except:
+                    pass
+                self.GuiPackage = {"X": [], "Y": [], "Z": []}
 
     def vGraphPacketLossUpdate(self, msgCounter):
         if self.iDisplayTime <= 0:
