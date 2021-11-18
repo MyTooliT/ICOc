@@ -889,7 +889,7 @@ class myToolItWatch():
     def vRunConsole(self):
         self._vRunConsoleStartup()
         self.reset()
-        if False != self.bSthAutoConnect:
+        if self.bSthAutoConnect:
             self.vRunConsoleAutoConnect()
         self.close()
 
