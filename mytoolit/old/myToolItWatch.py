@@ -65,7 +65,6 @@ class myToolItWatch():
         self.vSthAutoConnect(False)
         self.Can.Logger.Info("Start Time: {datetime.now().isoformat()}")
         self.vAccSet(True, False, False, 3)
-        self.vVoltageSet(False, False, False, 3)
         self.vDeviceNameSet(TestConfig["DevName"])
         self.vDeviceAddressSet("0")
         self.vAdcConfig(2, 8, 64)
@@ -345,17 +344,6 @@ class myToolItWatch():
         else:
             dataSets = self.Can.dataSetsCan20(bX, bY, bZ)
             self.tAccDataFormat = DataSets[dataSets]
-
-    def vVoltageSet(self, bX, bY, bZ, dataSets):
-        self.bVoltageX = bool(bX)
-        self.bVoltageY = bool(bY)
-        self.bVoltageZ = bool(bZ)
-
-        if dataSets in DataSets:
-            self.tVoltageDataFormat = DataSets[dataSets]
-        else:
-            dataSets = self.Can.dataSetsCan20(bX, bY, bZ)
-            self.tVoltageDataFormat = DataSets[dataSets]
 
     def vSthAutoConnect(self, bSthAutoConnect):
         self.bSthAutoConnect = bool(bSthAutoConnect)
@@ -732,45 +720,8 @@ class myToolItWatch():
                 ack = self.ReadMessage()
         return ack
 
-    def vGetStreamingAccDataVoltageStart(self):
-        ack = None
-        if self.bVoltageX or self.bVoltageY or self.bVoltageZ:
-            voltageFormat = AtvcFormat()
-            voltageFormat.asbyte = 0
-            voltageFormat.b.bStreaming = 1
-            voltageFormat.b.bNumber1 = self.bVoltageX
-            voltageFormat.b.bNumber2 = self.bVoltageY
-            voltageFormat.b.bNumber3 = self.bVoltageZ
-            voltageFormat.b.u3DataSets = self.tVoltageDataFormat
-            cmd = self.Can.CanCmd(MyToolItBlock["Streaming"],
-                                  MyToolItStreaming["Voltage"], 0, 0)
-            self.VoltageAckExpected = self.Can.CanMessage20(
-                cmd, MyToolItNetworkNr["STH1"], MyToolItNetworkNr["SPU1"],
-                [voltageFormat.asbyte])
-            cmd = self.Can.CanCmd(MyToolItBlock["Streaming"],
-                                  MyToolItStreaming["Voltage"], 1, 0)
-            message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
-                                            MyToolItNetworkNr["STH1"],
-                                            [voltageFormat.asbyte])
-            self.Can.Logger.Info("MsgId/Subpayload(Voltage): " +
-                                 hex(message.ID) + "/" +
-                                 hex(voltageFormat.asbyte))
-
-            endTime = self.Can.get_elapsed_time() + 4000
-            while (None == ack) and (self.Can.get_elapsed_time() < endTime):
-                self.Can.WriteFrame(message)
-                readEndTime = self.Can.get_elapsed_time() + 500
-                while ((None == ack)
-                       and (self.Can.get_elapsed_time() < readEndTime)):
-                    ack = self.ReadMessage()
-        else:
-            ack = True
-        return ack
-
     def vGetStreamingAccData(self):
         ack = self.vGetStreamingAccDataAccStart()
-        if ack is not None:
-            ack = self.vGetStreamingAccDataVoltageStart()
         currentTime = self.Can.get_elapsed_time()
         if ack is None:
             self.Can.Logger.Error("No Ack received from Device: " +
@@ -921,12 +872,6 @@ class myToolItWatch():
                              str(int(self.bAccX)) + str(int(self.bAccY)) +
                              str(int(self.bAccZ)) + "/" +
                              str(DataSets.inverse[self.tAccDataFormat]))
-        self.Can.Logger.Info("Voltage Config(XYZ/DataSets): " +
-                             str(int(self.bVoltageX)) +
-                             str(int(self.bVoltageY)) +
-                             str(int(self.bVoltageZ)) + "/" +
-                             str(DataSets.inverse[self.tAccDataFormat]) +
-                             ("(X=Battery)"))
 
     def _vRunConsoleStartup(self):
         self._vRunConsoleStartupLoggerPrint()
