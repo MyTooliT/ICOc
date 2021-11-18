@@ -491,7 +491,7 @@ class myToolItWatch():
         else:
             self.iMsgsTotal += 1
         iPacketLossTimeStamp = int(round(time() * 1000))
-        if 1000 <= (iPacketLossTimeStamp - self.iPacketLossTimeStamp):
+        if 1000 <= iPacketLossTimeStamp - self.iPacketLossTimeStamp:
             self.iPacketLossTimeStamp = iPacketLossTimeStamp
             sMsgLoss = "Acceleration(" + str(
                 format(100 -
