@@ -21,6 +21,7 @@ def main():
     files = glob(f"{repo_path}/*.txt")
     files.extend(glob(f"{repo_path}/*.hdf5"))
     files.extend(glob(f"{repo_path}/*.pdf"))
+    files.append("ICOc.log")
     if verbose:
         print(f"Cleaning directory {repo_path}")
     for filepath in files:
