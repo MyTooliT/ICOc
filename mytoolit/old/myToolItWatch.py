@@ -56,7 +56,6 @@ class myToolItWatch():
             raise error
 
         self.KeyBoardInterrupt = False
-        self.bEepromIgnoreReadErrors = False
         self.bError = False
         self.iMsgLoss = 0
         self.iMsgsTotal = 0
