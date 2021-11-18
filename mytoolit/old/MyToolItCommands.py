@@ -1,5 +1,4 @@
 from ctypes import BigEndianStructure, c_uint8, Union
-from datetime import datetime
 
 from bidict import bidict
 
@@ -627,7 +626,3 @@ def sArray2String(Name):
 def int_to_mac_address(iAddr):
     return ":".join(f"{byte:02x}"
                     for byte in int_to_byte_list(iAddr, 6, 'big'))
-
-
-def sDateClock():
-    return datetime.now().strftime('%Y-%m-%d_%H-%M-%S')

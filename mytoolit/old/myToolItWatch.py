@@ -30,7 +30,6 @@ from mytoolit.old.MyToolItCommands import (
     Prescaler,
     SystemCommandBlueTooth,
     SystemCommandRouting,
-    sDateClock,
 )
 from mytoolit.old.MyToolItSth import TestConfig
 from mytoolit.old.Plotter import vPlotter, tArray2Binary
@@ -64,7 +63,7 @@ class myToolItWatch():
                            sender=MyToolItNetworkNr["SPU1"],
                            receiver=MyToolItNetworkNr["STH1"])
         self.vSthAutoConnect(False)
-        self.Can.Logger.Info("Start Time: " + sDateClock())
+        self.Can.Logger.Info("Start Time: {datetime.now().isoformat()}")
         self.vConfigSet(None, None)
         self.vAccSet(True, False, False, 3)
         self.vVoltageSet(False, False, False, 3)
