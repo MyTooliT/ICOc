@@ -418,34 +418,36 @@ class myToolItWatch():
 
     def guiProcessRestart(self):
         self.guiProcessStop()
-        if 0 < self.iDisplayTime:
-            self.guiProcess = multiprocessing.Process(
-                target=vPlotter, args=(self.iPloterSocketPort, ))
-            self.guiProcess.start()
+        if self.iDisplayTime <= 0:
+            return
 
-            # Wait until socket of GUI application is ready
-            connection_established = False
-            while not connection_established:
-                try:
-                    self.tSocket = socket.socket(socket.AF_INET,
-                                                 socket.SOCK_STREAM)
-                    self.tSocket.connect(
-                        (self.sPloterSocketHost, self.iPloterSocketPort))
-                    connection_established = True
-                except ConnectionError:
-                    sleep(0.1)
+        self.guiProcess = multiprocessing.Process(
+            target=vPlotter, args=(self.iPloterSocketPort, ))
+        self.guiProcess.start()
 
-            self.vGraphSend(["dataBlockSize", self.iGraphBlockSize])
-            self.vGraphSend(["sampleInterval", self.iGraphSampleInterval])
-            self.vGraphSend(["xDim", self.iDisplayTime])
-            self.vGraphPacketLossUpdate(0)
-            if False != self.bAccX:
-                self.vGraphSend(["lineNameX", "AccX"])
-            if False != self.bAccY:
-                self.vGraphSend(["lineNameY", "AccY"])
-            if False != self.bAccZ:
-                self.vGraphSend(["lineNameZ", "AccZ"])
-            self.vGraphSend(["Plot", True])
+        # Wait until socket of GUI application is ready
+        connection_established = False
+        while not connection_established:
+            try:
+                self.tSocket = socket.socket(socket.AF_INET,
+                                             socket.SOCK_STREAM)
+                self.tSocket.connect(
+                    (self.sPloterSocketHost, self.iPloterSocketPort))
+                connection_established = True
+            except ConnectionError:
+                sleep(0.1)
+
+        self.vGraphSend(["dataBlockSize", self.iGraphBlockSize])
+        self.vGraphSend(["sampleInterval", self.iGraphSampleInterval])
+        self.vGraphSend(["xDim", self.iDisplayTime])
+        self.vGraphPacketLossUpdate(0)
+        if False != self.bAccX:
+            self.vGraphSend(["lineNameX", "AccX"])
+        if False != self.bAccY:
+            self.vGraphSend(["lineNameY", "AccY"])
+        if False != self.bAccZ:
+            self.vGraphSend(["lineNameZ", "AccZ"])
+        self.vGraphSend(["Plot", True])
 
     def vGraphPointNext(self, x, y, z):
         if self.iDisplayTime <= 0:
