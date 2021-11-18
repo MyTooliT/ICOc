@@ -569,10 +569,9 @@ class myToolItWatch():
             self.set_output_filename(self.args.filename)
         if self.args.adc is not None:
             self.vAdcConfig(*self.args.adc)
-        iRunTime = self.iRunTime
-        if self.args.run_time:
-            iRunTime = self.args.run_time
-        self.vRunTime(iRunTime)
+
+        self.vRunTime(
+            self.args.run_time if self.args.run_time else self.iRunTime)
 
         if self.args.name is not None:
             self.vDeviceNameSet(self.args.name)
