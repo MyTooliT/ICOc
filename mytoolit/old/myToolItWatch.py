@@ -851,24 +851,26 @@ class myToolItWatch():
         return message
 
     def _vRunConsoleStartupLoggerPrint(self):
-        self.Can.Logger.Info("Log Name: " + str(self.Can.Logger.filepath.name))
-        self.Can.Logger.Info("Device Name (to be connected): " +
-                             str(self.sDevName))
-        self.Can.Logger.Info("Bluetooth address(to be connected): " +
-                             str(self.iAddress))  # Todo machen
-        self.Can.Logger.Info("AutoConnect?: " + str(self.bSthAutoConnect))
-        self.Can.Logger.Info("Run Time: " + str(self.iRunTime) + "s")
-        self.Can.Logger.Info("Display Time: " + str(self.iDisplayTime) + "ms")
+        self.Can.Logger.Info(f"Log File: {self.Can.Logger.filepath.name}")
+        self.Can.Logger.Info(f"STH Name: {self.sDevName}")
+        self.Can.Logger.Info(f"Bluetooth Address: {self.iAddress}")
+        self.Can.Logger.Info(f"Connect to STH: {str(self.bSthAutoConnect)}")
+        self.Can.Logger.Info(f"Run Time: {self.iRunTime} s")
+        self.Can.Logger.Info(f"Prescaler: {self.iPrescaler}")
+        aqcuisition_time = AdcAcquisitionTime.inverse[self.iAquistionTime]
+        oversampling_rate = AdcOverSamplingRate.inverse[self.iOversampling]
+        self.Can.Logger.Info(f"Acquisition Time: {aqcuisition_time}")
+        self.Can.Logger.Info(f"Oversampling Rate: {oversampling_rate}")
+        self.Can.Logger.Info(f"Reference Voltage: {self.sAdcRef}")
+        data_sets = DataSets.inverse[self.tAccDataFormat]
+        self.Can.Logger.Info(f"Data Sets: {data_sets}")
+        axes = "".join([
+            axis if active else ""
+            for active, axis in ((self.bAccX, "X"), (self.bAccY, "Y"),
+                                 (self.bAccZ, "Z"))
+        ])
         self.Can.Logger.Info(
-            "Adc Prescaler/AcquisitionTime/OversamplingRate/Reference(Samples/s): "
-            + str(self.iPrescaler) + "/" +
-            str(AdcAcquisitionTime.inverse[self.iAquistionTime]) + "/" +
-            str(AdcOverSamplingRate.inverse[self.iOversampling]) + "/" +
-            str(self.sAdcRef) + "(" + str(self.samplingRate) + ")")
-        self.Can.Logger.Info("Acc Config(XYZ/DataSets): " +
-                             str(int(self.bAccX)) + str(int(self.bAccY)) +
-                             str(int(self.bAccZ)) + "/" +
-                             str(DataSets.inverse[self.tAccDataFormat]))
+            f"Active Ax{'i' if len(axes) == 1 else 'e'}s: {axes}")
 
     def _vRunConsoleStartup(self):
         self._vRunConsoleStartupLoggerPrint()
