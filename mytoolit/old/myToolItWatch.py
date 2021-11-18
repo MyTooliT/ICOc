@@ -10,7 +10,6 @@ from typing import Optional
 from can.interfaces.pcan.basic import PCAN_ERROR_OK, PCAN_ERROR_QOVERRUN
 from netaddr import EUI
 
-from mytoolit import __version__
 from mytoolit.config import settings
 from mytoolit.measurement.acceleration import convert_acceleration_adc_to_g
 from mytoolit.measurement.storage import Storage
@@ -324,13 +323,6 @@ class myToolItWatch():
         if 0 < iSendFail:
             print("Send fail approximately: " + str(iSendFail) + "%")
         return ReceiveFailCounter
-
-    def sVersion(self):
-        """
-        version
-        """
-
-        return __version__
 
     def vAccSet(self, bX, bY, bZ, dataSets):
         self.bAccX = bool(bX)
