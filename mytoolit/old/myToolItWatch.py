@@ -64,7 +64,6 @@ class myToolItWatch():
                            receiver=MyToolItNetworkNr["STH1"])
         self.vSthAutoConnect(False)
         self.Can.Logger.Info("Start Time: {datetime.now().isoformat()}")
-        self.vConfigSet(None, None)
         self.vAccSet(True, False, False, 3)
         self.vVoltageSet(False, False, False, 3)
         self.vDeviceNameSet(TestConfig["DevName"])
@@ -335,20 +334,6 @@ class myToolItWatch():
         """
 
         return __version__
-
-
-# Setter Methods
-
-    def vConfigSet(self, product, sConfig):
-        self.sProduct = None
-        self.sConfig = None
-        if "STH" == product:
-            self.sProduct = "STH"
-            self.Can.vSetReceiver(MyToolItNetworkNr["STH1"])
-        elif "STU" == product:
-            self.sProduct = "STU"
-            self.Can.vSetReceiver(MyToolItNetworkNr["STU1"])
-        self.sConfig = sConfig
 
     def vAccSet(self, bX, bY, bZ, dataSets):
         self.bAccX = bool(bX)
@@ -963,6 +948,7 @@ class myToolItWatch():
         if False != self.bSthAutoConnect:
             self.vRunConsoleAutoConnect()
         self.close()
+
 
 if __name__ == "__main__":
     watch = myToolItWatch()
