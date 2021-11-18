@@ -26,24 +26,12 @@ class mwt(myToolItWatch):
         myToolItWatch.__init__(self)
         self.process = None
         self.bTerminal = False
-        self.vNetworkNumberSet(None)
 
     def close(self):
         if None != self.process:
             self.process.terminate()
         self.vTerminalTeardown()
         myToolItWatch.close(self)
-
-    # setter methods
-    def vNetworkNumberSet(self, sNetworkNumber):
-        if sNetworkNumber in MyToolItNetworkNr:
-            self.sNetworkNumber = sNetworkNumber
-        elif "0" == sNetworkNumber:
-            self.sNetworkNumber = "BroadCast"
-        elif "31" == sNetworkNumber:
-            self.sNetworkNumber = "BroadCastNoAck"
-        else:
-            self.sNetworkNumber = None
 
     def vTerminalHolderConnectCommandsAdcConfig(self):
         self.stdscr.clear()
