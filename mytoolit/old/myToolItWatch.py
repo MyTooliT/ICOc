@@ -629,7 +629,7 @@ class myToolItWatch():
         self.__exit__()
 
     def close(self):
-        if False != self.Can.RunReadThread:
+        if self.Can.RunReadThread:
             self.__exit__()
 
     def vGetStreamingAccDataProcess(self):
