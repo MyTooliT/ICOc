@@ -62,7 +62,7 @@ class myToolItWatch():
                            sender=MyToolItNetworkNr["SPU1"],
                            receiver=MyToolItNetworkNr["STH1"])
         self.vSthAutoConnect(False)
-        self.Can.Logger.Info("Start Time: {datetime.now().isoformat()}")
+        self.Can.Logger.Info(f"Start Time: {datetime.now().isoformat()}")
         self.vAccSet(True, False, False, 3)
         self.vDeviceNameSet('')
         self.vDeviceAddressSet("0")
