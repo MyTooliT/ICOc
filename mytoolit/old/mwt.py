@@ -40,22 +40,32 @@ class mwt(myToolItWatch):
         myToolItWatch.close(self)
 
     def vTerminalHolderConnectCommandsAdcConfig(self):
+
+        def list_keys(dictionary):
+            keys = map(str, dictionary.keys())
+            return ', '.join(keys)
+
         self.stdscr.clear()
-        self.stdscr.addstr("Prescaler (2-127): ")
+
+        self.stdscr.addstr("Prescaler (2–127): ")
         self.stdscr.refresh()
         iPrescaler = self.read_number()
-        self.stdscr.addstr("Acquisition Time ")
-        self.vListKeys(AdcAcquisitionTime)
+
+        self.stdscr.addstr(
+            f"Acquisition Time ({list_keys(AdcAcquisitionTime)}): ")
         self.stdscr.refresh()
         iAquisitionTime = self.read_number()
-        self.stdscr.addstr("Oversampling Rate ")
-        self.vListKeys(AdcOverSamplingRate)
+
+        self.stdscr.addstr(
+            f"Oversampling Rate ({list_keys(AdcOverSamplingRate)}): ")
         self.stdscr.refresh()
         iOversamplingRate = self.read_number()
-        self.stdscr.addstr("ADC Reference Voltage (VDD=3V3) ")
-        self.vListKeys(AdcReference)
+
+        self.stdscr.addstr(
+            f"ADC Reference Voltage (VDD=3V3) ({list_keys(AdcReference)}): ")
         self.stdscr.refresh()
         sAdcRef = self.read_text()
+
         try:
             self.vAdcConfig(iPrescaler, iAquisitionTime, iOversamplingRate)
             self.vAdcRefVConfig(sAdcRef)
@@ -335,15 +345,6 @@ class mwt(myToolItWatch):
         self.stdscr.addstr("  q: Quit Program\n")
         self.stdscr.refresh()
         return self.bTerminalMainMenuKeyEvaluation(devList)
-
-    def vListKeys(self, tDict):
-        if 0 < len(tDict):
-            self.stdscr.addstr("(")
-        for key in sorted(tDict):
-            if key != sorted(tDict)[-1]:
-                self.stdscr.addstr(str(key) + ", ")
-            else:
-                self.stdscr.addstr(str(key) + "): ")
 
     def read_input(self,
                    allowed: Callable[[int], bool],
