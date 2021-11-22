@@ -67,7 +67,7 @@ class mwt(myToolItWatch):
         keyPress = self.stdscr.getch()
         bRun = True
         bContinue = False
-        if (0x03 == keyPress):
+        if keyPress == 0x03:  # `Ctrl` + `C`
             bRun = False
         elif ord('a') == keyPress:
             self.vTerminalHolderConnectCommandsAdcConfig()
