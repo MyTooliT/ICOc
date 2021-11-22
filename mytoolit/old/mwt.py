@@ -461,14 +461,16 @@ class mwt(myToolItWatch):
         self.stdscr.nodelay(1)
 
     def vTerminalTeardown(self):
-        if self.bTerminal:
-            # reverse everything that you changed about the terminal
-            curses.nocbreak()
-            self.stdscr.keypad(False)
-            curses.echo()
-            # restore the terminal to its original state
-            curses.endwin()
-            self.bTerminal = False
+        if not self.bTerminal:
+            return
+
+        # Restore the terminal to its original state
+        curses.nocbreak()
+        self.stdscr.keypad(False)
+        curses.echo()
+        curses.endwin()
+
+        self.bTerminal = False
 
     def vRunConsole(self):
         self._vRunConsoleStartup()
