@@ -55,7 +55,7 @@ class mwt(myToolItWatch):
         self.stdscr.addstr("ADC Reference Voltage (VDD=3V3) ")
         self.vListKeys(AdcReference)
         self.stdscr.refresh()
-        sAdcRef = self.sTerminalInputStringIn()
+        sAdcRef = self.read_text()
         try:
             self.vAdcConfig(iPrescaler, iAquisitionTime, iOversamplingRate)
             self.vAdcRefVConfig(sAdcRef)
@@ -89,7 +89,7 @@ class mwt(myToolItWatch):
             self.stdscr.addstr("Only charing will leave this state!!!!\n")
             self.stdscr.addstr("Pressing y will trigger standby: ")
             self.stdscr.refresh()
-            sYes = self.sTerminalInputStringIn()
+            sYes = self.read_text()
             if "y" == sYes:
                 self.Can.Standby(MyToolItNetworkNr["STH1"])
                 bRun = False
@@ -265,7 +265,7 @@ class mwt(myToolItWatch):
         filepath = self.get_output_filepath()
         self.stdscr.addstr(f"Set output file name ({filepath.stem}):")
         self.stdscr.refresh()
-        filename = self.sTerminalInputStringIn()
+        filename = self.read_text()
         if filename != "":
             self.set_output_filename(filename)
         self.stdscr.addstr("New full name (including time stamp): "
@@ -277,7 +277,7 @@ class mwt(myToolItWatch):
         self.stdscr.clear()
         self.stdscr.addstr("New STH name (max. 8 characters):")
         self.stdscr.refresh()
-        sName = self.sTerminalInputStringIn()
+        sName = self.read_text()
         self.vDeviceNameSet(sName)
         self.Can.vBlueToothNameWrite(MyToolItNetworkNr["STH1"], 0, sName)
 
@@ -344,41 +344,6 @@ class mwt(myToolItWatch):
                 self.stdscr.addstr(str(key) + ", ")
             else:
                 self.stdscr.addstr(str(key) + "): ")
-
-    def sTerminalInputStringIn(self):
-        sString = ""
-        iKeyPress = -1
-        bRun = True
-        cursorXPos = self.stdscr.getyx()[1] + 1
-        cursorYPos = self.stdscr.getyx()[0]
-        while bRun:
-            self.stdscr.addstr(cursorYPos, cursorXPos, sString)
-            self.stdscr.refresh()
-            iKeyPress = self.stdscr.getch()
-
-            if 0x03 == iKeyPress:  # CTRL+C
-                bRun = False
-            elif 0x0A == iKeyPress or 459 == iKeyPress:
-                bRun = False
-            elif 0x0B == iKeyPress:
-                bRun = False
-            elif (ord(' ') <= iKeyPress and ord('~') >= iKeyPress):
-                sString = sString + chr(iKeyPress)
-            elif 0x08 == iKeyPress:
-                if 1 < len(sString):
-                    sString = sString[:-1]
-                else:
-                    sString = ""
-                self.stdscr.addstr(" ")
-                for i in range(0, len(sString) + 1):
-                    self.stdscr.addstr(cursorYPos, cursorXPos + i, " ")
-                self.stdscr.refresh()
-            else:
-                pass
-
-        self.stdscr.addstr("\n")
-        self.stdscr.refresh()
-        return sString
 
     def read_input(self,
                    allowed: Callable[[int], bool],
@@ -448,6 +413,18 @@ class mwt(myToolItWatch):
             allowed=lambda key: ord('0') <= key <= ord('9'), placeholder='0')
 
         return int(number_text)
+
+    def read_text(self) -> str:
+        """Read a text at the current position
+
+        Returns
+        -------
+
+        The read text
+
+        """
+
+        return self.read_input(allowed=lambda key: ord(' ') <= key <= ord('~'))
 
     def vTerminal(self, stdscr):
         self.stdscr = stdscr
