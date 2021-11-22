@@ -32,12 +32,10 @@ class mwt(myToolItWatch):
     def __init__(self):
         myToolItWatch.__init__(self)
         self.process = None
-        self.bTerminal = False
 
     def close(self):
         if self.process is not None:
             self.process.terminate()
-        self.vTerminalTeardown()
         myToolItWatch.close(self)
 
     def vTerminalHolderConnectCommandsAdcConfig(self):
@@ -419,8 +417,15 @@ class mwt(myToolItWatch):
 
     def vTerminal(self, stdscr):
         self.stdscr = stdscr
-        self.vTerminalNew()
+
+        # TODO: Do not refresh the whole display constantly
+        # Possible Solution:
+        # - Spawn two threads
+        # - One of them waits for input (blocking)
+        # - Other thread refreshes list of devices
+        self.stdscr.nodelay(1)
         self.stdscr.clear()
+
         bRun = True
         while bRun:
             try:
@@ -449,19 +454,6 @@ class mwt(myToolItWatch):
     def vTerminalHeader(self):
         self.stdscr.clear()
         self.stdscr.addstr(f"{' '*16}ICOc\n\n")
-
-    def vTerminalNew(self):
-        self.bTerminal = True
-
-        # TODO: Do not refresh the whole display constantly
-        # Possible Solution:
-        # - Spawn two threads
-        # - One of them waits for input (blocking)
-        # - Other thread refreshes list of devices
-        self.stdscr.nodelay(1)
-
-    def vTerminalTeardown(self):
-        self.bTerminal = False
 
     def vRunConsole(self):
         self._vRunConsoleStartup()
