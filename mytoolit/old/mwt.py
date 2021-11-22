@@ -231,6 +231,7 @@ class mwt(myToolItWatch):
                 else:
                     iNumber = 0
             elif 0x0A == iKeyPress or 459 == iKeyPress:
+                # TODO: Handle incorrect device numbers properly
                 if 0 < iNumber:
                     device_number = iNumber - 1
                     name = devList[device_number]['Name']
