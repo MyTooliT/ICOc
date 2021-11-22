@@ -45,21 +45,18 @@ class mwt(myToolItWatch):
             keys = map(str, dictionary.keys())
             return ', '.join(keys)
 
+        def read_value(description):
+            self.stdscr.addstr(description)
+            self.stdscr.refresh()
+            return self.read_number()
+
         self.stdscr.clear()
 
-        self.stdscr.addstr("Prescaler (2–127): ")
-        self.stdscr.refresh()
-        iPrescaler = self.read_number()
-
-        self.stdscr.addstr(
+        iPrescaler = read_value("Prescaler (2–127): ")
+        iAquisitionTime = read_value(
             f"Acquisition Time ({list_keys(AdcAcquisitionTime)}): ")
-        self.stdscr.refresh()
-        iAquisitionTime = self.read_number()
-
-        self.stdscr.addstr(
+        iOversamplingRate = read_value(
             f"Oversampling Rate ({list_keys(AdcOverSamplingRate)}): ")
-        self.stdscr.refresh()
-        iOversamplingRate = self.read_number()
 
         self.stdscr.addstr(
             f"ADC Reference Voltage (VDD=3V3) ({list_keys(AdcReference)}): ")
