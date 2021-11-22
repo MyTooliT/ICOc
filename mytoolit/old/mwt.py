@@ -377,37 +377,36 @@ class mwt(myToolItWatch):
         self.stdscr.refresh()
         return sString
 
-    def iTerminalInputNumberIn(self, iNumber=0):
-        iKeyPress = -1
-        bRun = True
-        cursorXPos = self.stdscr.getyx()[1] + 1
-        cursorYPos = self.stdscr.getyx()[0]
-        while bRun:
-            self.stdscr.addstr(cursorYPos, cursorXPos, str(iNumber))
+    def iTerminalInputNumberIn(self, number=0):
+        position = self.stdscr.getyx()
+        x_position = position[1] + 1
+        y_position = position[0]
+
+        ctrl_c = 0x03
+        backspace = 0x08
+        line_feed = 0x0A
+        enter = 459
+
+        while True:
+            self.stdscr.addstr(y_position, x_position, str(number))
             self.stdscr.refresh()
-            iKeyPress = self.stdscr.getch()
-            if ord('q') == iKeyPress:
-                bRun = False
-            elif 0x03 == iKeyPress:  # CTRL+C
-                bRun = False
-            elif 0x0A == iKeyPress or 459 == iKeyPress:
-                bRun = False
-            elif ord('0') <= iKeyPress and ord('9') >= iKeyPress:
-                iNumber = self.iTerminalInputNumber(iNumber, iKeyPress)
-            elif 0x08 == iKeyPress:
-                if 1 < len(str(iNumber)):
-                    iNumber = int(str(iNumber)[:-1])
-                else:
-                    iNumber = 0
-                self.stdscr.addstr(" ")
-                for i in range(0, len(str(iNumber)) + 1):
-                    self.stdscr.addstr(cursorYPos, cursorXPos + i, " ")
+            key = self.stdscr.getch()
+
+            if key in {ord('q'), ctrl_c, line_feed, enter}:
+                break
+
+            if ord('0') <= key <= ord('9'):
+                number = self.iTerminalInputNumber(number, key)
+            elif key == backspace:
+                text = str(number)
+                number = int(text[:-1]) if len(text) > 1 else 0
+                self.stdscr.addstr(y_position, x_position + len(str(number)),
+                                   " ")
                 self.stdscr.refresh()
-            else:
-                pass
+
         self.stdscr.addstr("\n")
         self.stdscr.refresh()
-        return iNumber
+        return number
 
     def iTerminalInputNumber(self, iNumber, keyPress):
         iDigit = int(keyPress - ord('0'))
