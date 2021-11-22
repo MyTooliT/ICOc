@@ -42,15 +42,15 @@ class mwt(myToolItWatch):
         self.stdscr.clear()
         self.stdscr.addstr("Prescaler (2-127): ")
         self.stdscr.refresh()
-        iPrescaler = self.iTerminalInputNumberIn()
+        iPrescaler = self.read_number()
         self.stdscr.addstr("Acquisition Time ")
         self.vListKeys(AdcAcquisitionTime)
         self.stdscr.refresh()
-        iAquisitionTime = self.iTerminalInputNumberIn()
+        iAquisitionTime = self.read_number()
         self.stdscr.addstr("Oversampling Rate ")
         self.vListKeys(AdcOverSamplingRate)
         self.stdscr.refresh()
-        iOversamplingRate = self.iTerminalInputNumberIn()
+        iOversamplingRate = self.read_number()
         self.stdscr.addstr("ADC Reference Voltage (VDD=3V3) ")
         self.vListKeys(AdcReference)
         self.stdscr.refresh()
@@ -65,7 +65,7 @@ class mwt(myToolItWatch):
         self.stdscr.clear()
         self.stdscr.addstr("Run time of data acquisition (in seconds):")
         self.stdscr.refresh()
-        iRunTime = self.iTerminalInputNumberIn()
+        iRunTime = self.read_number()
         self.vRunTime(iRunTime)
 
     def tTerminalHolderConnectCommandsKeyEvaluation(self):
@@ -98,7 +98,7 @@ class mwt(myToolItWatch):
             self.stdscr.clear()
             self.stdscr.addstr(
                 "Set enabled axes (xyz; 0=off, 1=on; e.g. “100”): ")
-            iPoints = self.iTerminalInputNumberIn()
+            iPoints = self.read_number()
             bZ = bool(iPoints & 1)
             bY = bool((iPoints >> 1) & 1)
             bX = bool((iPoints >> 2) & 1)
@@ -286,7 +286,7 @@ class mwt(myToolItWatch):
 
         self.stdscr.addstr("Pick a device number from the list: ")
         self.stdscr.refresh()
-        iDevice = self.iTerminalInputNumberIn()
+        iDevice = self.read_number()
         if 0 < iDevice:
             iDevice -= 1
             for dev in devList:
@@ -379,7 +379,7 @@ class mwt(myToolItWatch):
         self.stdscr.refresh()
         return sString
 
-    def iTerminalInputNumberIn(self, number=0):
+    def read_number(self, number=0):
         position = self.stdscr.getyx()
         x_position = position[1] + 1
         y_position = position[0]
