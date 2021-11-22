@@ -1,3 +1,6 @@
 [tool.pytest.ini_options]
-addopts = "--doctest-modules -x"
+# Use doctests
+# Fail after first errors
+# Ignore macOS metadata files
+addopts = "--doctest-modules -x --ignore-glob='*._*.py'"
 minversion = "6.0"
