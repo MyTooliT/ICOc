@@ -466,7 +466,7 @@ class mwt(myToolItWatch):
         # Possible Solution:
         # - Spawn two threads
         # - One of them waits for input (blocking)
-        # - Other thread refresh list of devices
+        # - Other thread refreshes list of devices
         self.stdscr.nodelay(1)
 
     def vTerminalTeardown(self):
