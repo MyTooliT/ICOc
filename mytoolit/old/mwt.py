@@ -21,6 +21,15 @@ from mytoolit.old.MyToolItSth import fVoltageBattery
 
 
 class mwt(myToolItWatch):
+    """ICOc command line & curses interface
+
+    This class can be used to connect to the ICOtronic system and acquire
+    measurement data using
+
+    - a command line interface and
+    - a menu based curses interface.
+
+    """
 
     def __init__(self):
         myToolItWatch.__init__(self)

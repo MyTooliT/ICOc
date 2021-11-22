@@ -43,6 +43,12 @@ Watch = {
 
 
 class myToolItWatch():
+    """ICOc command line interface
+
+    Use this class to connect to the ICOtronic system and acquire measurement
+    data using a command line interface.
+
+    """
 
     def __init__(self, *args, **kwargs):
         # Check if output directory exists and try to create it, if it does not
