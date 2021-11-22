@@ -1,9 +1,7 @@
-import curses
-
 from sys import stderr
 from time import sleep
 
-from curses import curs_set
+from curses import curs_set, wrapper
 
 from mytoolit.old.myToolItWatch import myToolItWatch
 from mytoolit.old.MyToolItCommands import (
@@ -419,7 +417,8 @@ class mwt(myToolItWatch):
         iNumber += iDigit
         return iNumber
 
-    def vTerminal(self):
+    def vTerminal(self, stdscr):
+        self.stdscr = stdscr
         self.vTerminalNew()
         self.stdscr.clear()
         bRun = True
@@ -453,14 +452,6 @@ class mwt(myToolItWatch):
 
     def vTerminalNew(self):
         self.bTerminal = True
-        # create a window object that represents the terminal window
-        self.stdscr = curses.initscr()
-        # Don't print what I type on the terminal
-        curses.noecho()
-        # React to every key press, not just when pressing "enter"
-        curses.cbreak()
-        # Enable easy key codes (will come back to this)
-        self.stdscr.keypad(True)
 
         # TODO: Do not refresh the whole display constantly
         # Possible Solution:
@@ -470,15 +461,6 @@ class mwt(myToolItWatch):
         self.stdscr.nodelay(1)
 
     def vTerminalTeardown(self):
-        if not self.bTerminal:
-            return
-
-        # Restore the terminal to its original state
-        curses.nocbreak()
-        self.stdscr.keypad(False)
-        curses.echo()
-        curses.endwin()
-
         self.bTerminal = False
 
     def vRunConsole(self):
@@ -487,7 +469,7 @@ class mwt(myToolItWatch):
         if self.bSthAutoConnect:
             self.vRunConsoleAutoConnect()
         else:
-            self.vTerminal()
+            wrapper(self.vTerminal)
         self.close()
 
 
