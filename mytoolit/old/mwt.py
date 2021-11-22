@@ -1,5 +1,6 @@
 from sys import stderr
 from time import sleep
+from typing import Callable
 
 from curses import curs_set, wrapper
 
@@ -379,7 +380,29 @@ class mwt(myToolItWatch):
         self.stdscr.refresh()
         return sString
 
-    def read_number(self, number=0):
+    def read_input(self,
+                   allowed: Callable[[int], bool],
+                   placeholder: str = "") -> str:
+        """Read textual input at the current position
+
+        Arguments
+        ---------
+
+        allowed:
+            A function that specifies if a given input character is allowed to
+            occur in the input or not
+
+        placeholder:
+            A single placeholder character (or an empty string) that will be
+            shown initially or if the user deletes all input characters
+
+        Returns
+        -------
+
+        The read input
+
+        """
+
         position = self.stdscr.getyx()
         x_position = position[1] + 1
         y_position = position[0]
@@ -389,27 +412,42 @@ class mwt(myToolItWatch):
         line_feed = 0x0A
         enter = 459
 
+        text = placeholder
         while True:
-            self.stdscr.addstr(y_position, x_position, str(number))
+            self.stdscr.addstr(y_position, x_position, text)
             self.stdscr.refresh()
             key = self.stdscr.getch()
 
-            if key in {ord('q'), ctrl_c, line_feed, enter}:
+            if key in {ctrl_c, line_feed, enter}:
                 break
 
-            if ord('0') <= key <= ord('9'):
-                digit = int(key) - ord('0')
-                number = number * 10 + digit
+            if allowed(key):
+                text = chr(key) if text == placeholder else text + chr(key)
             elif key == backspace:
-                text = str(number)
-                number = int(text[:-1]) if len(text) > 1 else 0
-                self.stdscr.addstr(y_position, x_position + len(str(number)),
-                                   " ")
+                text = (text[:-1]
+                        if len(text) > len(placeholder) else placeholder)
+                self.stdscr.addstr(y_position, x_position + len(text), " ")
                 self.stdscr.refresh()
 
         self.stdscr.addstr("\n")
         self.stdscr.refresh()
-        return number
+        return text
+
+    def read_number(self) -> int:
+        """Read a number at the current position
+
+        Returns
+        -------
+
+        The read number, or `0` if there was no user input (apart from
+        `Enter`, `Return` or `Ctrl` + `C`)
+
+        """
+
+        number_text = self.read_input(
+            allowed=lambda key: ord('0') <= key <= ord('9'), placeholder='0')
+
+        return int(number_text)
 
     def vTerminal(self, stdscr):
         self.stdscr = stdscr
