@@ -223,7 +223,8 @@ class mwt(myToolItWatch):
             self.stdscr.refresh()
             iKeyPress = self.stdscr.getch()
             if ord('0') <= iKeyPress and ord('9') >= iKeyPress:
-                iNumber = self.iTerminalInputNumber(iNumber, iKeyPress)
+                digit = int(iKeyPress) - ord('0')
+                iNumber = iNumber * 10 + digit
             elif 0x08 == iKeyPress:
                 if 1 < len(str(iNumber)):
                     iNumber = int(str(iNumber)[:-1])
@@ -396,7 +397,8 @@ class mwt(myToolItWatch):
                 break
 
             if ord('0') <= key <= ord('9'):
-                number = self.iTerminalInputNumber(number, key)
+                digit = int(key) - ord('0')
+                number = number * 10 + digit
             elif key == backspace:
                 text = str(number)
                 number = int(text[:-1]) if len(text) > 1 else 0
@@ -407,12 +409,6 @@ class mwt(myToolItWatch):
         self.stdscr.addstr("\n")
         self.stdscr.refresh()
         return number
-
-    def iTerminalInputNumber(self, iNumber, keyPress):
-        iDigit = int(keyPress - ord('0'))
-        iNumber *= 10
-        iNumber += iDigit
-        return iNumber
 
     def vTerminal(self, stdscr):
         self.stdscr = stdscr
