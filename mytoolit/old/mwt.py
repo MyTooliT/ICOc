@@ -229,7 +229,7 @@ class mwt(myToolItWatch):
              bContinue] = self.tTerminalHolderConnectCommandsKeyEvaluation()
         return bContinue
 
-    def bTerminalHolderConnect(self, iKeyPress):
+    def connect_sth(self, iKeyPress):
         curs_set(True)  # Enable cursor
         iNumber = int(iKeyPress - ord('0'))
         iKeyPress = -1
@@ -330,7 +330,7 @@ class mwt(myToolItWatch):
         elif 0x03 == keyPress:  # CTRL+C
             bRun = False
         elif ord('1') <= keyPress and ord('9') >= keyPress:
-            bRun = self.bTerminalHolderConnect(keyPress)
+            bRun = self.connect_sth(keyPress)
         elif ord('f') == keyPress:
             self.vTerminalLogFileName()
         elif ord('n') == keyPress:
