@@ -178,7 +178,8 @@ class mwt(myToolItWatch):
             name = self.sDevName
             self.stdscr.addstr(f"STH “{name}” ({address})\n\n")
             self.bTerminalHolderConnectCommandsShowDataValues()
-            self.stdscr.addstr(f"Run Time:              {self.iRunTime} s\n\n")
+            runtime = '∞' if self.iRunTime == 0 else str(self.iRunTime)
+            self.stdscr.addstr(f"Run Time:              {runtime} s\n\n")
             prescaler = self.iPrescaler
             acquistion_time = AdcAcquisitionTime.inverse[self.iAquistionTime]
             oversampling_rate = AdcOverSamplingRate.inverse[self.iOversampling]
