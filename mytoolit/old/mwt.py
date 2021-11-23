@@ -328,7 +328,7 @@ class mwt(myToolItWatch):
         elif ord('1') <= keyPress and ord('9') >= keyPress:
             connected = self.connect_sth(int(keyPress - ord('0')))
             bRun = (self.bTerminalHolderConnectCommands()
-                    if connected else connected)
+                    if connected else True)
         elif ord('f') == keyPress:
             self.change_filename()
         elif ord('n') == keyPress:
