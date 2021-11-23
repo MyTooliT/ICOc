@@ -45,23 +45,23 @@ class mwt(myToolItWatch):
             keys = map(str, dictionary.keys())
             return ', '.join(keys)
 
-        def read_value(description):
+        def read_value(description, default):
             self.stdscr.addstr(description)
             self.stdscr.refresh()
-            return self.read_number()
+            return self.read_number(default)
 
         self.stdscr.clear()
 
-        iPrescaler = read_value("Prescaler (2–127): ")
+        iPrescaler = read_value("Prescaler (2–127): ", 2)
         iAquisitionTime = read_value(
-            f"Acquisition Time ({list_keys(AdcAcquisitionTime)}): ")
+            f"Acquisition Time ({list_keys(AdcAcquisitionTime)}): ", 8)
         iOversamplingRate = read_value(
-            f"Oversampling Rate ({list_keys(AdcOverSamplingRate)}): ")
+            f"Oversampling Rate ({list_keys(AdcOverSamplingRate)}): ", 64)
 
         self.stdscr.addstr(
             f"ADC Reference Voltage (VDD=3V3) ({list_keys(AdcReference)}): ")
         self.stdscr.refresh()
-        sAdcRef = self.read_text()
+        sAdcRef = self.read_text('VDD')
 
         try:
             self.vAdcConfig(iPrescaler, iAquisitionTime, iOversamplingRate)
@@ -345,7 +345,7 @@ class mwt(myToolItWatch):
 
     def read_input(self,
                    allowed: Callable[[int], bool],
-                   placeholder: str = "") -> str:
+                   default: str = "") -> str:
         """Read textual input at the current position
 
         Arguments
@@ -355,9 +355,8 @@ class mwt(myToolItWatch):
             A function that specifies if a given input character is allowed to
             occur in the input or not
 
-        placeholder:
-            A single placeholder character (or an empty string) that will be
-            shown initially or if the user deletes all input characters
+        default:
+            This text will be be used as initial value for the input
 
         Returns
         -------
@@ -375,7 +374,8 @@ class mwt(myToolItWatch):
         line_feed = 0x0A
         enter = 459
 
-        text = placeholder
+        text = default
+        x_position += len(text)
         while True:
             self.stdscr.addstr(y_position, x_position, text)
             self.stdscr.refresh()
@@ -385,10 +385,9 @@ class mwt(myToolItWatch):
                 break
 
             if allowed(key):
-                text = chr(key) if text == placeholder else text + chr(key)
+                text += chr(key)
             elif key == backspace:
-                text = (text[:-1]
-                        if len(text) > len(placeholder) else placeholder)
+                text = text[:-1] if len(text) > 1 else ''
                 self.stdscr.addstr(y_position, x_position + len(text), " ")
                 self.stdscr.refresh()
 
@@ -396,8 +395,14 @@ class mwt(myToolItWatch):
         self.stdscr.refresh()
         return text
 
-    def read_number(self) -> int:
+    def read_number(self, default: int = 0) -> int:
         """Read a number at the current position
+
+        Arguments
+        ---------
+
+        default:
+            A number that will be used as initial value
 
         Returns
         -------
@@ -408,12 +413,20 @@ class mwt(myToolItWatch):
         """
 
         number_text = self.read_input(
-            allowed=lambda key: ord('0') <= key <= ord('9'), placeholder='0')
+            allowed=lambda key: ord('0') <= key <= ord('9'),
+            default=str(default))
 
         return int(number_text)
 
-    def read_text(self) -> str:
+    def read_text(self, default: str = '') -> str:
         """Read a text at the current position
+
+
+        Parameters
+        ----------
+
+        default:
+            The initial value for the text
 
         Returns
         -------
@@ -422,7 +435,8 @@ class mwt(myToolItWatch):
 
         """
 
-        return self.read_input(allowed=lambda key: ord(' ') <= key <= ord('~'))
+        return self.read_input(allowed=lambda key: ord(' ') <= key <= ord('~'),
+                               default=default)
 
     def vTerminal(self, stdscr):
         self.stdscr = stdscr
