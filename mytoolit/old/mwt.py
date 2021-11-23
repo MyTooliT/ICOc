@@ -100,7 +100,7 @@ class mwt(myToolItWatch):
             bContinue = True
             self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
         elif ord('n') == keyPress:
-            self.vTerminalDeviceName()
+            self.change_sth_name()
         elif ord('O') == keyPress:
             self.stdscr.clear()
             self.stdscr.addstr("Are you really sure?\n")
@@ -296,13 +296,17 @@ class mwt(myToolItWatch):
         self.stdscr.refresh()
         sleep(2)
 
-    def vTerminalDeviceName(self):
+    def change_sth_name(self):
         self.stdscr.clear()
         self.stdscr.addstr("New STH name (max. 8 characters):")
         self.stdscr.refresh()
-        sName = self.read_text()[1]
-        self.vDeviceNameSet(sName)
-        self.Can.vBlueToothNameWrite(MyToolItNetworkNr["STH1"], 0, sName)
+        name_valid, name = self.read_text(allowed=lambda text: len(text) <= 8)
+
+        if not name_valid:
+            return
+
+        self.vDeviceNameSet(name)
+        self.Can.vBlueToothNameWrite(MyToolItNetworkNr["STH1"], 0, name)
 
     def vConnect(self, devList=None):
         if self.Can.bConnected:
@@ -338,7 +342,7 @@ class mwt(myToolItWatch):
         elif ord('n') == keyPress:
             self.vConnect(devList)
             if self.Can.bConnected:
-                self.vTerminalDeviceName()
+                self.change_sth_name()
                 self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
             else:
                 self.stdscr.addstr("Device was not available\n")
