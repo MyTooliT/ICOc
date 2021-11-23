@@ -107,7 +107,7 @@ class mwt(myToolItWatch):
             self.stdscr.addstr("Only charing will leave this state!!!!\n")
             self.stdscr.addstr("Pressing y will trigger standby: ")
             self.stdscr.refresh()
-            sYes = self.read_text()
+            sYes = self.read_text()[1]
             if "y" == sYes:
                 self.Can.Standby(MyToolItNetworkNr["STH1"])
                 bRun = False
@@ -288,7 +288,7 @@ class mwt(myToolItWatch):
         filepath = self.get_output_filepath()
         self.stdscr.addstr(f"Set output file name ({filepath.stem}):")
         self.stdscr.refresh()
-        filename = self.read_text()
+        filename = self.read_text()[1]
         if filename != "":
             self.set_output_filename(filename)
         self.stdscr.addstr("New full name (including time stamp): "
@@ -300,7 +300,7 @@ class mwt(myToolItWatch):
         self.stdscr.clear()
         self.stdscr.addstr("New STH name (max. 8 characters):")
         self.stdscr.refresh()
-        sName = self.read_text()
+        sName = self.read_text()[1]
         self.vDeviceNameSet(sName)
         self.Can.vBlueToothNameWrite(MyToolItNetworkNr["STH1"], 0, sName)
 
