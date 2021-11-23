@@ -259,25 +259,21 @@ class mwt(myToolItWatch):
                     if dev["DeviceNumber"] == device_number:
                         device = dev
 
-                if device:
-                    name = device['Name']
-                    self.stdscr.addstr(f"\nConnecting to device “{name}” …")
-                    self.stdscr.refresh()
+                if not device:
+                    return False
 
-                    self.vDeviceAddressSet(hex(device["Address"]))
-                    self.sDevName = name
-                    self.stdscr.refresh()
-                    if self.Can.bBlueToothConnectPollingAddress(
-                            MyToolItNetworkNr["STU1"], self.iAddress):
-                        return self.bTerminalHolderConnectCommands()
+                name = device['Name']
+                self.stdscr.addstr(f"\nConnecting to device “{name}” …")
+                self.stdscr.refresh()
 
-                return True
+                self.vDeviceAddressSet(hex(device["Address"]))
+                self.sDevName = name
+                self.stdscr.refresh()
+                return self.Can.bBlueToothConnectPollingAddress(
+                    MyToolItNetworkNr["STU1"], self.iAddress)
 
             elif key in {ctrl_c, ord('q')}:
-                return True
-
-            else:
-                devList = None
+                return False
 
         return False
 
@@ -335,7 +331,9 @@ class mwt(myToolItWatch):
         elif 0x03 == keyPress:  # CTRL+C
             bRun = False
         elif ord('1') <= keyPress and ord('9') >= keyPress:
-            bRun = self.connect_sth(int(keyPress - ord('0')))
+            connected = self.connect_sth(int(keyPress - ord('0')))
+            bRun = (self.bTerminalHolderConnectCommands()
+                    if connected else connected)
         elif ord('f') == keyPress:
             self.vTerminalLogFileName()
         elif ord('n') == keyPress:
