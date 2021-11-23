@@ -365,17 +365,13 @@ class mwt(myToolItWatch):
 
         """
 
-        position = self.stdscr.getyx()
-        x_position = position[1] + 1
-        y_position = position[0]
-
+        y_position, x_position = self.stdscr.getyx()
         ctrl_c = 0x03
         backspace = 0x08
         line_feed = 0x0A
         enter = 459
 
         text = default
-        x_position += len(text)
         while True:
             self.stdscr.addstr(y_position, x_position, text)
             self.stdscr.refresh()
