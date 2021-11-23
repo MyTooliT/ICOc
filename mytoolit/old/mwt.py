@@ -84,8 +84,8 @@ class mwt(myToolItWatch):
         self.stdscr.addstr("Run time of data acquisition "
                            "(in seconds; 0 for infinite runtime): ")
         self.stdscr.refresh()
-        iRunTime = self.read_number()
-        self.vRunTime(iRunTime)
+        runtime = self.read_number()[1]
+        self.vRunTime(runtime)
 
     def tTerminalHolderConnectCommandsKeyEvaluation(self):
         keyPress = self.stdscr.getch()
@@ -117,7 +117,7 @@ class mwt(myToolItWatch):
             self.stdscr.clear()
             self.stdscr.addstr(
                 "Set enabled axes (xyz; 0=off, 1=on; e.g. “100”): ")
-            iPoints = self.read_number()
+            iPoints = self.read_number()[1]
             bZ = bool(iPoints & 1)
             bY = bool((iPoints >> 1) & 1)
             bX = bool((iPoints >> 2) & 1)
@@ -310,7 +310,7 @@ class mwt(myToolItWatch):
 
         self.stdscr.addstr("Pick a device number from the list: ")
         self.stdscr.refresh()
-        iDevice = self.read_number()
+        iDevice = self.read_number()[1]
         if 0 < iDevice:
             iDevice -= 1
             for dev in devList:
