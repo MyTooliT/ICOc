@@ -277,14 +277,19 @@ class mwt(myToolItWatch):
 
         return False
 
-    def vTerminalLogFileName(self):
+    def change_filename(self):
         curs_set(True)  # Enable cursor
         self.stdscr.clear()
-        filepath = self.get_output_filepath()
-        self.stdscr.addstr(f"Set output file name ({filepath.stem}):")
+
+        self.stdscr.addstr("Set base output file name: ")
         self.stdscr.refresh()
-        filename = self.read_text()[1]
-        if filename != "":
+
+        forbidden_characters = set("<>:\"/\\|?*")
+        input_valid, filename = self.read_text(
+            default=str(self.output_filename.stem),
+            allowed=lambda filename: 1 <= len(filename) <= 200 >= 1 and
+            not set(filename).intersection(forbidden_characters))
+        if input_valid:
             self.set_output_filename(filename)
         self.stdscr.addstr("New full name (including time stamp): "
                            f"“{self.get_output_filepath()}”")
@@ -315,7 +320,7 @@ class mwt(myToolItWatch):
             bRun = (self.bTerminalHolderConnectCommands()
                     if connected else connected)
         elif ord('f') == keyPress:
-            self.vTerminalLogFileName()
+            self.change_filename()
         elif ord('n') == keyPress:
             self.connect_sth(0)
             if self.Can.bConnected:
