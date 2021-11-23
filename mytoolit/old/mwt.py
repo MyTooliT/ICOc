@@ -109,8 +109,8 @@ class mwt(myToolItWatch):
         elif ord('O') == keyPress:
             self.stdscr.clear()
             self.stdscr.addstr("Are you really sure?\n")
-            self.stdscr.addstr("Only charing will leave this state!!!!\n")
-            self.stdscr.addstr("Pressing y will trigger standby: ")
+            self.stdscr.addstr("Only charing will leave this state!\n")
+            self.stdscr.addstr("Pressing “y” will trigger standby: ")
             self.stdscr.refresh()
             sYes = self.read_text()[1]
             if "y" == sYes:
