@@ -71,7 +71,8 @@ class mwt(myToolItWatch):
 
     def change_runtime(self):
         self.stdscr.clear()
-        self.stdscr.addstr("Run time of data acquisition (in seconds):")
+        self.stdscr.addstr("Run time of data acquisition "
+                           "(in seconds; 0 for infinite runtime): ")
         self.stdscr.refresh()
         iRunTime = self.read_number()
         self.vRunTime(iRunTime)
