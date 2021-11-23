@@ -303,26 +303,6 @@ class mwt(myToolItWatch):
         self.vDeviceNameSet(name)
         self.Can.vBlueToothNameWrite(MyToolItNetworkNr["STH1"], 0, name)
 
-    def vConnect(self, devList=None):
-        if self.Can.bConnected:
-            return
-
-        self.stdscr.addstr("Pick a device number from the list: ")
-        self.stdscr.refresh()
-        iDevice = self.read_number()[1]
-        if 0 < iDevice:
-            iDevice -= 1
-            for dev in devList:
-                iDevNumber = int(dev["DeviceNumber"])
-                if iDevNumber == iDevice:
-                    self.vDeviceAddressSet(str(dev["Address"]))
-                    self.stdscr.addstr("Connect to " + hex(dev["Address"]) +
-                                       "(" + str(dev["Name"]) + ")\n")
-                    self.stdscr.refresh()
-                    self.Can.bBlueToothConnectPollingAddress(
-                        MyToolItNetworkNr["STU1"], self.iAddress)
-                    sleep(1)
-
     def bTerminalMainMenuKeyEvaluation(self, devList):
         bRun = True
         keyPress = self.stdscr.getch()
@@ -337,7 +317,7 @@ class mwt(myToolItWatch):
         elif ord('f') == keyPress:
             self.vTerminalLogFileName()
         elif ord('n') == keyPress:
-            self.vConnect(devList)
+            self.connect_sth(0)
             if self.Can.bConnected:
                 self.change_sth_name()
                 self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
