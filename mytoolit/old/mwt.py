@@ -1,6 +1,6 @@
 from sys import stderr
 from time import sleep
-from typing import Callable
+from typing import Callable, Tuple
 
 from curses import curs_set, wrapper
 
@@ -45,29 +45,39 @@ class mwt(myToolItWatch):
             keys = map(str, dictionary.keys())
             return ', '.join(keys)
 
-        def read_value(description, default):
+        def read_value(description, default, allowed):
             self.stdscr.addstr(description)
             self.stdscr.refresh()
-            return (self.read_number(default)
-                    if isinstance(default, int) else self.read_text(default))
+
+            valid_input, value = (self.read_number(default, allowed) if
+                                  isinstance(default, int) else self.read_text(
+                                      default, allowed))
+
+            if not valid_input:
+                self.stdscr.addstr(
+                    f"“{value}” is not a valid value; "
+                    f"Using default value “{default}” instead\n")
+                value = default
+
+            return value
 
         self.stdscr.clear()
 
-        prescalar = read_value("Prescaler (2–127): ", 2)
+        prescalar = read_value("Prescaler (2–127): ", 2,
+                               lambda value: 2 <= value <= 127)
         acquistion_time = read_value(
-            f"Acquisition Time ({list_keys(AdcAcquisitionTime)}): ", 8)
+            f"Acquisition Time ({list_keys(AdcAcquisitionTime)}): ", 8,
+            lambda value: value in AdcAcquisitionTime)
         oversampling_rate = read_value(
-            f"Oversampling Rate ({list_keys(AdcOverSamplingRate)}): ", 64)
+            f"Oversampling Rate ({list_keys(AdcOverSamplingRate)}): ", 64,
+            lambda value: value in AdcOverSamplingRate)
 
         adc_reference = read_value(
             f"ADC Reference Voltage (VDD=3V3) ({list_keys(AdcReference)}): ",
-            'VDD')
+            'VDD', lambda value: value in AdcReference)
 
-        try:
-            self.vAdcConfig(prescalar, acquistion_time, oversampling_rate)
-            self.vAdcRefVConfig(adc_reference)
-        except KeyError:
-            pass
+        self.vAdcConfig(prescalar, acquistion_time, oversampling_rate)
+        self.vAdcRefVConfig(adc_reference)
 
     def change_runtime(self):
         self.stdscr.clear()
@@ -346,16 +356,26 @@ class mwt(myToolItWatch):
         return self.bTerminalMainMenuKeyEvaluation(devList)
 
     def read_input(self,
-                   allowed: Callable[[int], bool],
-                   default: str = "") -> str:
+                   allowed_key: Callable[[int], bool],
+                   allowed_value: Callable[[str], bool],
+                   default: str = "") -> Tuple[bool, str]:
         """Read textual input at the current position
+
+        The function will read input until
+
+        - the user enters an allowed value followed by the Enter/Return key, or
+        - the user enters `Ctrl` + `C` to stop the input reading.
 
         Arguments
         ---------
 
-        allowed:
-            A function that specifies if a given input character is allowed to
+        allowed_key:
+            A function that specifies if a given key character is allowed to
             occur in the input or not
+
+        allowed_value:
+            A function that specifies if the whole read input is an allowed
+            value or not
 
         default:
             This text will be be used as initial value for the input
@@ -363,7 +383,11 @@ class mwt(myToolItWatch):
         Returns
         -------
 
-        The read input
+        A pair containing:
+
+        - a boolean that specifies if the input is valid according to the
+          function `allowed_value`, and
+        - the read number.
 
         """
 
@@ -379,10 +403,13 @@ class mwt(myToolItWatch):
             self.stdscr.refresh()
             key = self.stdscr.getch()
 
-            if key in {ctrl_c, line_feed, enter}:
+            if key == ctrl_c:
                 break
 
-            if allowed(key):
+            if key in {line_feed, enter}:
+                if allowed_value(text):
+                    break
+            elif allowed_key(key):
                 text += chr(key)
             elif key == backspace:
                 text = text[:-1] if len(text) > 1 else ''
@@ -391,10 +418,20 @@ class mwt(myToolItWatch):
 
         self.stdscr.addstr("\n")
         self.stdscr.refresh()
-        return text
+        return (allowed_value(text), text)
 
-    def read_number(self, default: int = 0) -> int:
+    def read_number(
+        self,
+        default: int = 0,
+        allowed: Callable[[int],
+                          bool] = lambda value: True) -> Tuple[bool, int]:
         """Read a number at the current position
+
+        The function will read input until
+
+        - the user enters an allowed number followed by the Enter/Return key,
+          or
+        - the user enters `Ctrl` + `C` to stop the input reading.
 
         Arguments
         ---------
@@ -402,23 +439,39 @@ class mwt(myToolItWatch):
         default:
             A number that will be used as initial value
 
+        allowed:
+            A function that determines if the current read value is valid or
+            not
+
         Returns
         -------
 
-        The read number, or `0` if there was no user input (apart from
-        `Enter`, `Return` or `Ctrl` + `C`)
+        A pair containing:
+
+        - a boolean that specifies if the read number is valid according to the
+          function `allowed`, and
+        - the read number.
 
         """
 
-        number_text = self.read_input(
-            allowed=lambda key: ord('0') <= key <= ord('9'),
+        valid, number_text = self.read_input(
+            allowed_key=lambda key: ord('0') <= key <= ord('9'),
+            allowed_value=lambda value: allowed(int(value)),
             default=str(default))
 
-        return int(number_text)
+        return (valid, int(number_text))
 
-    def read_text(self, default: str = '') -> str:
+    def read_text(
+        self,
+        default: str = '',
+        allowed: Callable[[str],
+                          bool] = lambda value: True) -> Tuple[bool, str]:
         """Read a text at the current position
 
+        The function will read input until
+
+        - the user enters an allowed value followed by the Enter/Return key, or
+        - the user enters `Ctrl` + `C` to stop the input reading.
 
         Parameters
         ----------
@@ -426,15 +479,25 @@ class mwt(myToolItWatch):
         default:
             The initial value for the text
 
+        allowed:
+            A function that determines if the current read text is valid or
+            not
+
         Returns
         -------
 
-        The read text
+        A pair containing:
+
+        - a boolean that specifies if the read text is valid according to the
+          function `allowed`, and
+        - the read number.
 
         """
 
-        return self.read_input(allowed=lambda key: ord(' ') <= key <= ord('~'),
-                               default=default)
+        return self.read_input(
+            allowed_key=lambda key: ord(' ') <= key <= ord('~'),
+            allowed_value=allowed,
+            default=default)
 
     def vTerminal(self, stdscr):
         self.stdscr = stdscr
