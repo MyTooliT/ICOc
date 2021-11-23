@@ -120,13 +120,13 @@ class mwt(myToolItWatch):
                 bContinue = True
         elif ord('p') == keyPress:
             self.stdscr.clear()
-            self.stdscr.addstr(
-                "Set enabled axes (xyz; 0=off, 1=on; e.g. “100”): ")
-            iPoints = self.read_number()[1]
-            bZ = bool(iPoints & 1)
-            bY = bool((iPoints >> 1) & 1)
-            bX = bool((iPoints >> 2) & 1)
-            self.vAccSet(bX, bY, bZ, -1)
+            self.stdscr.addstr("Set enabled axes (xyz; 0=off, 1=on): ")
+            valid_input, xyz = self.read_input(
+                default="100",
+                allowed_key=lambda key: key in {ord('0'), ord('1')},
+                allowed_value=lambda value: 1 <= len(value) <= 3)
+            if valid_input:
+                self.vAccSet(*map(int, xyz), -1)
         elif ord('r') == keyPress:
             self.change_runtime()
         elif ord('s') == keyPress:
