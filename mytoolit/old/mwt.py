@@ -251,24 +251,26 @@ class mwt(myToolItWatch):
                 else:
                     iNumber = 0
             elif 0x0A == iKeyPress or 459 == iKeyPress:
-                # TODO: Handle incorrect device numbers properly
-                if 0 < iNumber:
-                    device_number = iNumber - 1
-                    name = devList[device_number]['Name']
+                device_number = iNumber - 1
+                device = None
+                for dev in devList:
+                    if dev["DeviceNumber"] == device_number:
+                        device = dev
+
+                if device:
+                    name = device['Name']
                     self.stdscr.addstr(f"\nConnecting to device “{name}” …")
                     self.stdscr.refresh()
-                    iNumber -= 1
-                    for dev in devList:
-                        if dev["DeviceNumber"] == iNumber:
-                            self.vDeviceAddressSet(hex(dev["Address"]))
-                            self.sDevName = dev["Name"]
-                            self.stdscr.refresh()
-                            if self.Can.bBlueToothConnectPollingAddress(
-                                    MyToolItNetworkNr["STU1"], self.iAddress):
-                                bContinue = (
-                                    self.bTerminalHolderConnectCommands())
+
+                    self.vDeviceAddressSet(hex(device["Address"]))
+                    self.sDevName = name
+                    self.stdscr.refresh()
+                    if self.Can.bBlueToothConnectPollingAddress(
+                            MyToolItNetworkNr["STU1"], self.iAddress):
+                        bContinue = (self.bTerminalHolderConnectCommands())
                 else:
                     bContinue = True
+
                 bRun = False
             elif (0x03 == iKeyPress) or (ord('q') == iKeyPress):
                 bRun = False
