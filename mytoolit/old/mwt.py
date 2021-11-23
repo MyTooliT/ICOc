@@ -31,13 +31,13 @@ class mwt(myToolItWatch):
     """
 
     def __init__(self):
-        myToolItWatch.__init__(self)
+        super().__init__()
         self.process = None
 
     def close(self):
         if self.process is not None:
             self.process.terminate()
-        myToolItWatch.close(self)
+        super().close()
 
     def vTerminalHolderConnectCommandsAdcConfig(self):
 
