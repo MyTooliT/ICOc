@@ -298,7 +298,7 @@ class mwt(myToolItWatch):
 
     def change_sth_name(self):
         self.stdscr.clear()
-        self.stdscr.addstr("New STH name (max. 8 characters):")
+        self.stdscr.addstr("New STH name (max. 8 characters): ")
         self.stdscr.refresh()
         name_valid, name = self.read_text(allowed=lambda text: len(text) <= 8)
 
