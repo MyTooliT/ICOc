@@ -48,24 +48,24 @@ class mwt(myToolItWatch):
         def read_value(description, default):
             self.stdscr.addstr(description)
             self.stdscr.refresh()
-            return self.read_number(default)
+            return (self.read_number(default)
+                    if isinstance(default, int) else self.read_text(default))
 
         self.stdscr.clear()
 
-        iPrescaler = read_value("Prescaler (2–127): ", 2)
-        iAquisitionTime = read_value(
+        prescalar = read_value("Prescaler (2–127): ", 2)
+        acquistion_time = read_value(
             f"Acquisition Time ({list_keys(AdcAcquisitionTime)}): ", 8)
-        iOversamplingRate = read_value(
+        oversampling_rate = read_value(
             f"Oversampling Rate ({list_keys(AdcOverSamplingRate)}): ", 64)
 
-        self.stdscr.addstr(
-            f"ADC Reference Voltage (VDD=3V3) ({list_keys(AdcReference)}): ")
-        self.stdscr.refresh()
-        sAdcRef = self.read_text('VDD')
+        adc_reference = read_value(
+            f"ADC Reference Voltage (VDD=3V3) ({list_keys(AdcReference)}): ",
+            'VDD')
 
         try:
-            self.vAdcConfig(iPrescaler, iAquisitionTime, iOversamplingRate)
-            self.vAdcRefVConfig(sAdcRef)
+            self.vAdcConfig(prescalar, acquistion_time, oversampling_rate)
+            self.vAdcRefVConfig(adc_reference)
         except KeyError:
             pass
 
