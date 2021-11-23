@@ -273,7 +273,7 @@ class mwt(myToolItWatch):
                     return False
 
                 name = device['Name']
-                self.stdscr.addstr(f"\nConnecting to device “{name}” …")
+                self.stdscr.addstr(f"\nConnecting to device “{name}”…")
                 self.stdscr.refresh()
 
                 self.vDeviceAddressSet(hex(device["Address"]))
