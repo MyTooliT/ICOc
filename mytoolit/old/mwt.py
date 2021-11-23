@@ -229,29 +229,32 @@ class mwt(myToolItWatch):
              bContinue] = self.tTerminalHolderConnectCommandsKeyEvaluation()
         return bContinue
 
-    def connect_sth(self, iKeyPress):
+    def connect_sth(self, key):
         curs_set(True)  # Enable cursor
-        iNumber = int(iKeyPress - ord('0'))
-        iKeyPress = -1
-        bRun = True
-        bContinue = False
+        number = int(key - ord('0'))
         devList = None
-        while bRun:
+
+        ctrl_c = 3
+        line_feed = 0x0A
+        enter = 459
+        delete = 0x08
+
+        while True:
             devList = self.tTerminalHeaderExtended(devList)
             self.stdscr.addstr(
-                f"\nChoose STH number (Use ⏎ to connect): {iNumber}")
+                f"\nChoose STH number (Use ⏎ to connect): {number}")
             self.stdscr.refresh()
-            iKeyPress = self.stdscr.getch()
-            if ord('0') <= iKeyPress and ord('9') >= iKeyPress:
-                digit = int(iKeyPress) - ord('0')
-                iNumber = iNumber * 10 + digit
-            elif 0x08 == iKeyPress:
-                if 1 < len(str(iNumber)):
-                    iNumber = int(str(iNumber)[:-1])
-                else:
-                    iNumber = 0
-            elif 0x0A == iKeyPress or 459 == iKeyPress:
-                device_number = iNumber - 1
+            key = self.stdscr.getch()
+
+            if ord('0') <= key <= ord('9'):
+                digit = int(key) - ord('0')
+                number = number * 10 + digit
+
+            elif key == delete:
+                number = int(str(number)[:-1]) if len(str(number)) > 1 else 0
+
+            elif key in {line_feed, enter}:
+                device_number = number - 1
                 device = None
                 for dev in devList:
                     if dev["DeviceNumber"] == device_number:
@@ -267,18 +270,17 @@ class mwt(myToolItWatch):
                     self.stdscr.refresh()
                     if self.Can.bBlueToothConnectPollingAddress(
                             MyToolItNetworkNr["STU1"], self.iAddress):
-                        bContinue = (self.bTerminalHolderConnectCommands())
-                else:
-                    bContinue = True
+                        return self.bTerminalHolderConnectCommands()
 
-                bRun = False
-            elif (0x03 == iKeyPress) or (ord('q') == iKeyPress):
-                bRun = False
-                bContinue = True
+                return True
+
+            elif key in {ctrl_c, ord('q')}:
+                return True
+
             else:
                 devList = None
-            iKeyPress = -1
-        return bContinue
+
+        return False
 
     def vTerminalLogFileName(self):
         curs_set(True)  # Enable cursor
