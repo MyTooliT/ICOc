@@ -39,7 +39,7 @@ class mwt(myToolItWatch):
             self.process.terminate()
         super().close()
 
-    def vTerminalHolderConnectCommandsAdcConfig(self):
+    def change_adc_values(self):
 
         def list_keys(dictionary):
             keys = map(str, dictionary.keys())
@@ -84,7 +84,7 @@ class mwt(myToolItWatch):
         if keyPress == 0x03:  # `Ctrl` + `C`
             bRun = False
         elif ord('a') == keyPress:
-            self.vTerminalHolderConnectCommandsAdcConfig()
+            self.change_adc_values()
         elif ord('q') == keyPress:
             bRun = False
             bContinue = True
