@@ -61,6 +61,7 @@ class mwt(myToolItWatch):
 
             return value
 
+        curs_set(True)
         self.stdscr.clear()
 
         prescalar = read_value("Prescaler (2–127): ", 2,
@@ -80,7 +81,9 @@ class mwt(myToolItWatch):
         self.vAdcRefVConfig(adc_reference)
 
     def change_runtime(self):
+        curs_set(True)
         self.stdscr.clear()
+
         self.stdscr.addstr("Run time of data acquisition "
                            "(in seconds; 0 for infinite runtime): ")
         self.stdscr.refresh()
@@ -88,6 +91,8 @@ class mwt(myToolItWatch):
         self.vRunTime(runtime)
 
     def tTerminalHolderConnectCommandsKeyEvaluation(self):
+        curs_set(False)
+
         keyPress = self.stdscr.getch()
         bRun = True
         bContinue = False
@@ -230,7 +235,7 @@ class mwt(myToolItWatch):
         return bContinue
 
     def connect_sth(self, number):
-        curs_set(True)  # Enable cursor
+        curs_set(True)
         devList = None
 
         ctrl_c = 3
@@ -253,6 +258,8 @@ class mwt(myToolItWatch):
                 number = int(str(number)[:-1]) if len(str(number)) > 1 else 0
 
             elif key in {line_feed, enter}:
+                curs_set(False)
+
                 device_number = number - 1
                 device = None
                 for dev in devList:
@@ -278,7 +285,7 @@ class mwt(myToolItWatch):
         return False
 
     def change_filename(self):
-        curs_set(True)  # Enable cursor
+        curs_set(True)
         self.stdscr.clear()
 
         self.stdscr.addstr("Set base output file name: ")
@@ -289,6 +296,8 @@ class mwt(myToolItWatch):
             default=str(self.output_filename.stem),
             allowed=lambda filename: 1 <= len(filename) <= 200 >= 1 and
             not set(filename).intersection(forbidden_characters))
+
+        curs_set(False)
         if input_valid:
             self.set_output_filename(filename)
         self.stdscr.addstr("New full name (including time stamp): "
@@ -297,6 +306,7 @@ class mwt(myToolItWatch):
         sleep(2)
 
     def change_sth_name(self):
+        curs_set(True)
         self.stdscr.clear()
         self.stdscr.addstr("New STH name (max. 8 characters): ")
         self.stdscr.refresh()
@@ -332,7 +342,7 @@ class mwt(myToolItWatch):
         return bRun
 
     def bTerminalMainMenu(self):
-        curs_set(False)  # Disable cursor
+        curs_set(False)
 
         devList = self.tTerminalHeaderExtended()
         self.stdscr.addstr(f"\n{'—'*30}\n")
