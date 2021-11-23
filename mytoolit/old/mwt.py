@@ -131,6 +131,8 @@ class mwt(myToolItWatch):
             self.change_runtime()
         elif ord('s') == keyPress:
             self.stdscr.clear()
+            self.stdscr.addstr("Collecting measurement data…")
+            self.stdscr.refresh()
             if not self.KeyBoardInterrupt:
                 try:
                     self.vDataAquisition()
