@@ -124,7 +124,8 @@ class mwt(myToolItWatch):
             valid_input, xyz = self.read_input(
                 default="100",
                 allowed_key=lambda key: key in {ord('0'), ord('1')},
-                allowed_value=lambda value: 1 <= len(value) <= 3)
+                allowed_value=lambda value: 1 <= len(value) <= 3 and int(
+                    value) != 0)
             if valid_input:
                 self.vAccSet(*map(int, xyz), -1)
         elif ord('r') == keyPress:
