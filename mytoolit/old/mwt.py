@@ -225,7 +225,7 @@ class mwt(myToolItWatch):
             self.stdscr.addstr(f"\n{'—'*30}\n")
             self.stdscr.addstr("s: Start Data Acquisition\n\n")
 
-            self.stdscr.addstr("n: Change Device Name\n")
+            self.stdscr.addstr("n: Change STH Name\n")
             self.stdscr.addstr("r: Change Run Time\n")
             self.stdscr.addstr("a: Configure ADC\n")
             self.stdscr.addstr("p: Configure Enabled Axes\n")
