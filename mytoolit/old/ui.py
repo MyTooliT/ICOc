@@ -549,7 +549,7 @@ class UserInterface(CommandLineInterface):
             "1-9: Connect to STH\n",
             "  f: Change Output File Name",
             "  n: Change STH Name\n",
-            "  q: Quit Program",
+            "  q: Quit ICOc",
         ]
 
         self.stdscr.addstr(f"\n{'—'*max(map(len, choices))}\n")
