@@ -389,7 +389,21 @@ class UserInterface(CommandLineInterface):
             "q: Disconnect from STH",
         ])
 
-    def sth_window_key_evaluation(self):
+    def sth_window_key_evaluation(self) -> Tuple[bool, bool]:
+        """Evaluate key input in the STH window
+
+        Returns
+        -------
+
+        A tuple containing boolean values, where
+
+        - the first value specifies if the program should stay in the STH
+          window, and
+        - the second value specifies if the program execution should continue
+          (in the main menu)
+
+        """
+
         curs_set(False)
 
         bRun = True
