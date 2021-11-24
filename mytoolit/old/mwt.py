@@ -25,6 +25,14 @@ class Key:
     CTRL_C = 3
     DELETE = 8
     RETURN = 10
+
+    ZERO = ord('0')
+    ONE = ord('1')
+    NINE = ord('9')
+    F = ord('f')
+    N = ord('n')
+    Q = ord('q')
+
     ENTER = 459
 
 
@@ -467,27 +475,30 @@ class mwt(myToolItWatch):
         self.Can.vBlueToothNameWrite(MyToolItNetworkNr["STH1"], 0, name)
 
     def main_menu_key_evaluation(self, devList):
-        bRun = True
-        keyPress = self.stdscr.getch()
-        if ord('q') == keyPress:
-            bRun = False
-        elif 0x03 == keyPress:  # CTRL+C
-            bRun = False
-        elif ord('1') <= keyPress and ord('9') >= keyPress:
-            connected = self.connect_sth(int(keyPress - ord('0')))
-            bRun = (self.bTerminalHolderConnectCommands()
-                    if connected else True)
-        elif ord('f') == keyPress:
+
+        key = self.stdscr.getch()
+
+        if key in {Key.Q, Key.CTRL_C}:
+            return False
+
+        if Key.ONE <= key <= Key.NINE:
+            return self.bTerminalHolderConnectCommands() if self.connect_sth(
+                int(key - Key.ZERO)) else True
+
+        if key == Key.F:
             self.change_filename()
-        elif ord('n') == keyPress:
-            self.connect_sth(0)
-            if self.Can.bConnected:
+            return True
+
+        if key == Key.N:
+
+            if self.connect_sth(0):
                 self.change_sth_name()
                 self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
             else:
                 self.stdscr.addstr("Device was not available\n")
                 self.stdscr.refresh()
-        return bRun
+
+        return True
 
     def window_header(self):
         self.stdscr.clear()
