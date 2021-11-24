@@ -558,7 +558,16 @@ class UserInterface(CommandLineInterface):
 
         self.stdscr.refresh()
 
-    def main_menu_key_evaluation(self, devList):
+    def main_menu_key_evaluation(self, devList) -> bool:
+        """Evaluate key input in the main window
+
+        Returns
+        -------
+
+        - True, if the execution of the main menu should continue
+        - False, if the user interface should be closed
+
+        """
 
         key = self.stdscr.getch()
 
