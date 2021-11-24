@@ -1,6 +1,6 @@
 from sys import stderr
 from time import sleep
-from typing import Callable, Tuple
+from typing import Callable, Iterable, Tuple
 
 from curses import curs_set, wrapper
 
@@ -203,6 +203,23 @@ class UserInterface(CommandLineInterface):
             allowed_value=allowed,
             default=default)
 
+    def draw_menu(self, choices: Iterable[str]) -> None:
+        """Draw a menu displaying the given choices at the current location
+
+        Parameters
+        ----------
+
+        choices:
+            A list containing the different choices available
+
+        """
+
+        self.stdscr.addstr(f"\n{'—'*max(map(len, choices))}\n")
+        for choice in choices:
+            self.stdscr.addstr(f"{choice}\n")
+
+        self.stdscr.refresh()
+
     def change_adc_values(self):
 
         def list_keys(dictionary):
@@ -353,20 +370,17 @@ class UserInterface(CommandLineInterface):
             self.stdscr.addstr(f"{description}{' '*fill}{value}\n")
 
     def sth_window_menu(self):
-        choices = [
-            "s: Start Data Acquisition\n",
+        self.draw_menu([
+            "s: Start Data Acquisition",
+            "",
             "n: Change STH Name",
             "r: Change Run Time",
             "a: Configure ADC",
             "p: Configure Enabled Axes",
-            "O: Set Standby Mode\n",
+            "O: Set Standby Mode",
+            "",
             "q: Disconnect from STH",
-        ]
-
-        self.stdscr.addstr(f"\n{'—'*(max(map(len, choices))-1)}\n")
-        for choice in choices:
-            self.stdscr.addstr(f"{choice}\n")
-        self.stdscr.refresh()
+        ])
 
     def sth_window_key_evaluation(self):
         curs_set(False)
@@ -544,19 +558,14 @@ class UserInterface(CommandLineInterface):
         return devices
 
     def main_window_menu(self):
-
-        choices = [
-            "1-9: Connect to STH\n",
+        self.draw_menu([
+            "1-9: Connect to STH",
+            "",
             "  f: Change Output File Name",
-            "  n: Change STH Name\n",
+            "  n: Change STH Name",
+            "",
             "  q: Quit ICOc",
-        ]
-
-        self.stdscr.addstr(f"\n{'—'*max(map(len, choices))}\n")
-        for choice in choices:
-            self.stdscr.addstr(f"{choice}\n")
-
-        self.stdscr.refresh()
+        ])
 
     def main_menu_key_evaluation(self) -> bool:
         """Evaluate key input in the main window
