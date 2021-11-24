@@ -503,7 +503,7 @@ class mwt(myToolItWatch):
             allowed_value=allowed,
             default=default)
 
-    def vTerminal(self, stdscr):
+    def user_interface(self, stdscr):
         self.stdscr = stdscr
 
         # TODO: Do not refresh the whole display constantly
@@ -549,7 +549,7 @@ class mwt(myToolItWatch):
         if self.bSthAutoConnect:
             self.vRunConsoleAutoConnect()
         else:
-            wrapper(self.vTerminal)
+            wrapper(self.user_interface)
         self.close()
 
 
