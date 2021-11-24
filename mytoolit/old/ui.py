@@ -338,7 +338,10 @@ class UserInterface(CommandLineInterface):
 
         address = int_to_mac_address(int(self.iAddress, 16))
         name = self.sDevName
-        self.stdscr.addstr(f"STH “{name}” ({address})\n\n")
+        device_description = f"STH “{name}” ({address})"
+        for value in (device_description, "\n", '—' * len(device_description),
+                      "\n\n"):
+            self.stdscr.addstr(value)
 
         hardware_version = self.Can.sProductData("Hardware Version",
                                                  bLog=False)
@@ -347,7 +350,7 @@ class UserInterface(CommandLineInterface):
         release_name = self.Can.sProductData("Release Name", bLog=False)
         serial_number = self.Can.sProductData("Serial Number", bLog=False)
         product_name = self.Can.sProductData("Product Name", bLog=False)
-        serial = f"{serial_number}-{product_name}"
+        serial = f"{serial_number}–{product_name}"
 
         infos = [
             ("Hardware Version", hardware_version),
