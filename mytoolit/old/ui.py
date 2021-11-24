@@ -442,7 +442,8 @@ class UserInterface(CommandLineInterface):
                 allowed_value=lambda value: len(value) == 3 and int(value
                                                                     ) != 0)
             if valid_input:
-                self.vAccSet(*map(int, xyz), -1)
+                x, y, z = map(int, xyz)
+                self.vAccSet(x, y, z, -1)
         elif key == Key.R:
             self.change_runtime()
         elif key == Key.S:
