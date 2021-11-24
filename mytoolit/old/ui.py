@@ -247,59 +247,6 @@ class UserInterface(CommandLineInterface):
         runtime = self.read_number()[1]
         self.vRunTime(runtime)
 
-    def sth_window_key_evaluation(self):
-        curs_set(False)
-
-        keyPress = self.stdscr.getch()
-        bRun = True
-        bContinue = False
-        if keyPress == 0x03:  # `Ctrl` + `C`
-            bRun = False
-        elif ord('a') == keyPress:
-            self.change_adc_values()
-        elif ord('q') == keyPress:
-            bRun = False
-            bContinue = True
-            self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
-        elif ord('n') == keyPress:
-            self.change_sth_name_window()
-        elif ord('O') == keyPress:
-            self.stdscr.clear()
-            self.stdscr.addstr("Are you really sure?\n")
-            self.stdscr.addstr("Only charing will leave this state!\n")
-            self.stdscr.addstr("Pressing “y” will trigger standby: ")
-            self.stdscr.refresh()
-            sYes = self.read_text()[1]
-            if "y" == sYes:
-                self.Can.Standby(MyToolItNetworkNr["STH1"])
-                bRun = False
-                self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
-                bContinue = True
-        elif ord('p') == keyPress:
-            self.stdscr.clear()
-            self.stdscr.addstr("Set enabled axes (xyz; 0=off, 1=on): ")
-            valid_input, xyz = self.read_input(
-                default="100",
-                allowed_key=lambda key: key in {ord('0'), ord('1')},
-                allowed_value=lambda value: len(value) == 3 and int(value
-                                                                    ) != 0)
-            if valid_input:
-                self.vAccSet(*map(int, xyz), -1)
-        elif ord('r') == keyPress:
-            self.change_runtime()
-        elif ord('s') == keyPress:
-            self.stdscr.clear()
-            self.stdscr.addstr("Collecting measurement data…")
-            self.stdscr.refresh()
-            if not self.KeyBoardInterrupt:
-                try:
-                    self.vDataAquisition()
-                except KeyboardInterrupt:
-                    self.KeyBoardInterrupt = True
-                    self.__exit__()
-                bRun = False
-        return [bRun, bContinue]
-
     def sth_window_information(self):
 
         def read_voltage() -> str:
@@ -413,6 +360,59 @@ class UserInterface(CommandLineInterface):
         for choice in choices:
             self.stdscr.addstr(f"{choice}\n")
         self.stdscr.refresh()
+
+    def sth_window_key_evaluation(self):
+        curs_set(False)
+
+        keyPress = self.stdscr.getch()
+        bRun = True
+        bContinue = False
+        if keyPress == 0x03:  # `Ctrl` + `C`
+            bRun = False
+        elif ord('a') == keyPress:
+            self.change_adc_values()
+        elif ord('q') == keyPress:
+            bRun = False
+            bContinue = True
+            self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
+        elif ord('n') == keyPress:
+            self.change_sth_name_window()
+        elif ord('O') == keyPress:
+            self.stdscr.clear()
+            self.stdscr.addstr("Are you really sure?\n")
+            self.stdscr.addstr("Only charing will leave this state!\n")
+            self.stdscr.addstr("Pressing “y” will trigger standby: ")
+            self.stdscr.refresh()
+            sYes = self.read_text()[1]
+            if "y" == sYes:
+                self.Can.Standby(MyToolItNetworkNr["STH1"])
+                bRun = False
+                self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
+                bContinue = True
+        elif ord('p') == keyPress:
+            self.stdscr.clear()
+            self.stdscr.addstr("Set enabled axes (xyz; 0=off, 1=on): ")
+            valid_input, xyz = self.read_input(
+                default="100",
+                allowed_key=lambda key: key in {ord('0'), ord('1')},
+                allowed_value=lambda value: len(value) == 3 and int(value
+                                                                    ) != 0)
+            if valid_input:
+                self.vAccSet(*map(int, xyz), -1)
+        elif ord('r') == keyPress:
+            self.change_runtime()
+        elif ord('s') == keyPress:
+            self.stdscr.clear()
+            self.stdscr.addstr("Collecting measurement data…")
+            self.stdscr.refresh()
+            if not self.KeyBoardInterrupt:
+                try:
+                    self.vDataAquisition()
+                except KeyboardInterrupt:
+                    self.KeyBoardInterrupt = True
+                    self.__exit__()
+                bRun = False
+        return [bRun, bContinue]
 
     def sth_window(self):
         bContinue = True
