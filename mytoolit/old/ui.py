@@ -4,7 +4,7 @@ from typing import Callable, Tuple
 
 from curses import curs_set, wrapper
 
-from mytoolit.old.myToolItWatch import myToolItWatch
+from mytoolit.old.cli import CommandLineInterface
 from mytoolit.old.MyToolItCommands import (
     AdcAcquisitionTime,
     AdcOverSamplingRate,
@@ -36,7 +36,7 @@ class Key:
     ENTER = 459
 
 
-class mwt(myToolItWatch):
+class UserInterface(CommandLineInterface):
     """ICOc command line & curses interface
 
     This class can be used to connect to the ICOtronic system and acquire
@@ -575,7 +575,7 @@ class mwt(myToolItWatch):
 
 def main():
     try:
-        watch_tool = mwt()
+        watch_tool = UserInterface()
         watch_tool.vParserInit()
         watch_tool.vParserConsoleArgumentsPass()
         watch_tool.vRunConsole()

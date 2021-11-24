@@ -32,7 +32,7 @@ check-eeprom 08:6b:d7:01:de:81 --value 42
 
 ## ICOc
 
-The command `icoc` calls `mwt.py`. All command line arguments to the script will be directly forwarded to `mwt.py`. For example, to read acceleration data for 10 seconds from the STH with the (Bluetooth advertisement) name `CGvXAd6B`, you can use the following command:
+The command `icoc` calls `ui.py`. All command line arguments to the script will be directly forwarded to `ui.py`. For example, to read acceleration data for 10 seconds from the STH with the (Bluetooth advertisement) name `CGvXAd6B`, you can use the following command:
 
 ```sh
 icoc -n CGvXAd6B -r 10

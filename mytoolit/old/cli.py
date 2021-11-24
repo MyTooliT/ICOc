@@ -42,7 +42,7 @@ Watch = {
 }
 
 
-class myToolItWatch():
+class CommandLineInterface():
     """ICOc command line interface
 
     Use this class to connect to the ICOtronic system and acquire measurement
@@ -897,7 +897,7 @@ class myToolItWatch():
 
 
 if __name__ == "__main__":
-    watch = myToolItWatch()
+    watch = CommandLineInterface()
     watch.vParserInit()
     watch.vParserConsoleArgumentsPass()
     watch.vRunConsole()

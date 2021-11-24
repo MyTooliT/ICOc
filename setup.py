@@ -51,7 +51,7 @@ setup(name="icoc",
       python_requires='>=3.7',
       entry_points={
           'console_scripts': [
-              'icoc = mytoolit.old.mwt:main',
+              'icoc = mytoolit.old.ui:main',
               'check-eeprom = mytoolit.scripts.eeprom:main',
               'clean-repo = mytoolit.scripts.clean:main',
               'test-sth = mytoolit.test.production.sth:main',
