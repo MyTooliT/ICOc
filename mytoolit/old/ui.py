@@ -214,9 +214,16 @@ class UserInterface(CommandLineInterface):
 
         """
 
-        self.stdscr.addstr(f"\n{'—'*max(map(len, choices))}\n")
+        ruler = '─' * (max(map(len, choices)) + 2)
+        max_length_choices = max(map(len, choices))
+
+        self.stdscr.addstr(f"\n┌{ruler}┐\n")
+
         for choice in choices:
-            self.stdscr.addstr(f"{choice}\n")
+            fill = max_length_choices - len(choice)
+            self.stdscr.addstr(f"│ {choice}{' '*fill} │\n")
+
+        self.stdscr.addstr(f"└{ruler}┘")
 
         self.stdscr.refresh()
 
