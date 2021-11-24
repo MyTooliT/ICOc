@@ -391,7 +391,7 @@ class mwt(myToolItWatch):
         devList = None
 
         while True:
-            devList = self.tTerminalHeaderExtended(devList)
+            devList = self.main_window_sth_list(devList)
             self.stdscr.addstr(
                 f"\nChoose STH number (Use ⏎ to connect): {number}")
             self.stdscr.refresh()
@@ -493,7 +493,7 @@ class mwt(myToolItWatch):
         self.stdscr.clear()
         self.stdscr.addstr(f"{' '*16}ICOc\n\n")
 
-    def tTerminalHeaderExtended(self, devList=None):
+    def main_window_sth_list(self, devList=None):
         self.window_header()
         if devList is None:
             devList = self.Can.tDeviceList(MyToolItNetworkNr["STU1"],
@@ -513,7 +513,7 @@ class mwt(myToolItWatch):
     def main_window(self):
         curs_set(False)
 
-        devList = self.tTerminalHeaderExtended()
+        devList = self.main_window_sth_list()
         self.stdscr.addstr(f"\n{'—'*30}\n")
         self.stdscr.addstr("1-9: Connect to STH\n\n")
 
