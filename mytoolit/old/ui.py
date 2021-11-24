@@ -528,8 +528,11 @@ class UserInterface(CommandLineInterface):
 
         devices = self.Can.tDeviceList(MyToolItNetworkNr["STU1"], bLog=False)
 
-        self.stdscr.addstr("     Name      Address            RSSI\n")
-        self.stdscr.addstr("    ——————————————————————————————————————\n")
+        header = f"{' '*5}Name      Address            RSSI{' '*5}"
+        ruler = "—" * len(header)
+        for line in (header, ruler):
+            self.stdscr.addstr(f"{line}\n")
+
         for device in devices:
             number = device["DeviceNumber"] + 1
             address = int_to_mac_address(device["Address"])
