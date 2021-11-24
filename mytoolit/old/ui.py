@@ -343,6 +343,43 @@ class UserInterface(CommandLineInterface):
         self.stdscr.addstr(
             f"Chip Temperature:{' '*6}{iTemperature:4.1f} °C\n\n")
 
+    def sth_window_information(self):
+        self.window_header()
+
+        address = int_to_mac_address(int(self.iAddress, 16))
+        name = self.sDevName
+        self.stdscr.addstr(f"STH “{name}” ({address})\n\n")
+
+        self.bTerminalHolderConnectCommandsShowDataValues()
+
+        runtime = '∞' if self.iRunTime == 0 else str(self.iRunTime)
+        prescaler = self.iPrescaler
+        acquistion_time = AdcAcquisitionTime.inverse[self.iAquistionTime]
+        oversampling_rate = AdcOverSamplingRate.inverse[self.iOversampling]
+        sampling_rate = self.samplingRate
+        adc_reference = self.sAdcRef
+
+        x_enabled = "X" if self.bAccX else ""
+        y_enabled = "Y" if self.bAccY else ""
+        z_enabled = "Z" if self.bAccZ else ""
+        axes = [axis for axis in (x_enabled, y_enabled, z_enabled) if axis]
+        last_two_axes = " & ".join(axes[-2:])
+        axes = (f"{axes[0]}, {last_two_axes}"
+                if len(axes) >= 3 else last_two_axes)
+
+        infos = [
+            f"Run Time:              {runtime} s\n",
+            f"Prescaler:             {prescaler}",
+            f"Acquisition Time:      {acquistion_time}",
+            f"Oversampling Rate:     {oversampling_rate}",
+            f"⇒ Sampling Rate:       {sampling_rate}",
+            f"Reference Voltage:     {adc_reference}\n",
+            f"Enabled Ax{'i' if len(axes) <= 1 else 'e'}s:{' '*10}{axes}"
+        ]
+
+        for info in infos:
+            self.stdscr.addstr(f"{info}\n")
+
     def sth_window_menu(self):
         choices = [
             "s: Start Data Acquisition\n",
@@ -357,51 +394,15 @@ class UserInterface(CommandLineInterface):
         self.stdscr.addstr(f"\n{'—'*(max(map(len, choices))-1)}\n")
         for choice in choices:
             self.stdscr.addstr(f"{choice}\n")
+        self.stdscr.refresh()
 
     def sth_window(self):
         bContinue = True
         bRun = True
 
         while bRun:
-            self.window_header()
-
-            address = int_to_mac_address(int(self.iAddress, 16))
-            name = self.sDevName
-            self.stdscr.addstr(f"STH “{name}” ({address})\n\n")
-
-            self.bTerminalHolderConnectCommandsShowDataValues()
-
-            runtime = '∞' if self.iRunTime == 0 else str(self.iRunTime)
-            prescaler = self.iPrescaler
-            acquistion_time = AdcAcquisitionTime.inverse[self.iAquistionTime]
-            oversampling_rate = AdcOverSamplingRate.inverse[self.iOversampling]
-            sampling_rate = self.samplingRate
-            adc_reference = self.sAdcRef
-
-            x_enabled = "X" if self.bAccX else ""
-            y_enabled = "Y" if self.bAccY else ""
-            z_enabled = "Z" if self.bAccZ else ""
-            axes = [axis for axis in (x_enabled, y_enabled, z_enabled) if axis]
-            last_two_axes = " & ".join(axes[-2:])
-            axes = (f"{axes[0]}, {last_two_axes}"
-                    if len(axes) >= 3 else last_two_axes)
-
-            infos = [
-                f"Run Time:              {runtime} s\n",
-                f"Prescaler:             {prescaler}",
-                f"Acquisition Time:      {acquistion_time}",
-                f"Oversampling Rate:     {oversampling_rate}",
-                f"⇒ Sampling Rate:       {sampling_rate}",
-                f"Reference Voltage:     {adc_reference}\n",
-                f"Enabled Ax{'i' if len(axes) <= 1 else 'e'}s:{' '*10}{axes}"
-            ]
-
-            for info in infos:
-                self.stdscr.addstr(f"{info}\n")
-
+            self.sth_window_information()
             self.sth_window_menu()
-
-            self.stdscr.refresh()
             [bRun, bContinue] = self.sth_window_key_evaluation()
 
         return bContinue
