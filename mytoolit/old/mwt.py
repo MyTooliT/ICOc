@@ -514,13 +514,11 @@ class mwt(myToolItWatch):
         self.stdscr.nodelay(1)
         self.stdscr.clear()
 
-        bRun = True
-        while bRun:
-            try:
-                bRun = self.bTerminalMainMenu()
-            except KeyboardInterrupt:
-                self.KeyBoardInterrupt = True
-                break
+        try:
+            while self.bTerminalMainMenu():
+                pass
+        except KeyboardInterrupt:
+            self.KeyBoardInterrupt = True
 
     def tTerminalHeaderExtended(self, devList=None):
         self.vTerminalHeader()
