@@ -343,6 +343,21 @@ class UserInterface(CommandLineInterface):
         self.stdscr.addstr(
             f"Chip Temperature:{' '*6}{iTemperature:4.1f} °C\n\n")
 
+    def sth_window_menu(self):
+        choices = [
+            "s: Start Data Acquisition\n",
+            "n: Change STH Name",
+            "r: Change Run Time",
+            "a: Configure ADC",
+            "p: Configure Enabled Axes",
+            "O: Set Standby Mode\n",
+            "q: Disconnect from STH",
+        ]
+
+        self.stdscr.addstr(f"\n{'—'*(max(map(len, choices))-1)}\n")
+        for choice in choices:
+            self.stdscr.addstr(f"{choice}\n")
+
     def sth_window(self):
         bContinue = True
         bRun = True
@@ -384,19 +399,7 @@ class UserInterface(CommandLineInterface):
             for info in infos:
                 self.stdscr.addstr(f"{info}\n")
 
-            choices = [
-                "s: Start Data Acquisition\n",
-                "n: Change STH Name",
-                "r: Change Run Time",
-                "a: Configure ADC",
-                "p: Configure Enabled Axes",
-                "O: Set Standby Mode\n",
-                "q: Disconnect from STH",
-            ]
-
-            self.stdscr.addstr(f"\n{'—'*(max(map(len, choices))-1)}\n")
-            for choice in choices:
-                self.stdscr.addstr(f"{choice}\n")
+            self.sth_window_menu()
 
             self.stdscr.refresh()
             [bRun,
