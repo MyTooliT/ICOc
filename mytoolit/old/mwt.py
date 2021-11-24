@@ -391,7 +391,7 @@ class mwt(myToolItWatch):
         devList = None
 
         while True:
-            devList = self.main_window_sth_list(devList)
+            devList = self.main_window_information(devList)
             self.stdscr.addstr(
                 f"\nChoose STH number (Use ⏎ to connect): {number}")
             self.stdscr.refresh()
@@ -466,7 +466,7 @@ class mwt(myToolItWatch):
         self.vDeviceNameSet(name)
         self.Can.vBlueToothNameWrite(MyToolItNetworkNr["STH1"], 0, name)
 
-    def bTerminalMainMenuKeyEvaluation(self, devList):
+    def main_menu_key_evaluation(self, devList):
         bRun = True
         keyPress = self.stdscr.getch()
         if ord('q') == keyPress:
@@ -493,27 +493,26 @@ class mwt(myToolItWatch):
         self.stdscr.clear()
         self.stdscr.addstr(f"{' '*16}ICOc\n\n")
 
-    def main_window_sth_list(self, devList=None):
+    def main_window_information(self, devices=None):
         self.window_header()
-        if devList is None:
-            devList = self.Can.tDeviceList(MyToolItNetworkNr["STU1"],
+
+        if devices is None:
+            devices = self.Can.tDeviceList(MyToolItNetworkNr["STU1"],
                                            bLog=False)
 
         self.stdscr.addstr("     Name      Address            RSSI\n")
         self.stdscr.addstr("    ——————————————————————————————————————\n")
-        for dev in devList:
-            number = dev["DeviceNumber"] + 1
-            address = int_to_mac_address(dev["Address"])
-            name = dev["Name"]
-            rssi = dev["RSSI"]
+        for device in devices:
+            number = device["DeviceNumber"] + 1
+            address = int_to_mac_address(device["Address"])
+            name = device["Name"]
+            rssi = device["RSSI"]
             self.stdscr.addstr(
                 f"{number:3}: {name:8}  {address}  {rssi} dBm\n")
-        return devList
 
-    def main_window(self):
-        curs_set(False)
+        return devices
 
-        devList = self.main_window_sth_list()
+    def main_window_menu(self):
         self.stdscr.addstr(f"\n{'—'*30}\n")
         self.stdscr.addstr("1-9: Connect to STH\n\n")
 
@@ -522,7 +521,14 @@ class mwt(myToolItWatch):
 
         self.stdscr.addstr("  q: Quit Program\n")
         self.stdscr.refresh()
-        return self.bTerminalMainMenuKeyEvaluation(devList)
+
+    def main_window(self):
+        curs_set(False)
+
+        devices = self.main_window_information()
+        self.main_window_menu()
+
+        return self.main_menu_key_evaluation(devices)
 
     def user_interface(self, stdscr):
         self.stdscr = stdscr
