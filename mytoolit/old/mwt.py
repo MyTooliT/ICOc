@@ -474,32 +474,6 @@ class mwt(myToolItWatch):
         self.vDeviceNameSet(name)
         self.Can.vBlueToothNameWrite(MyToolItNetworkNr["STH1"], 0, name)
 
-    def main_menu_key_evaluation(self, devList):
-
-        key = self.stdscr.getch()
-
-        if key in {Key.Q, Key.CTRL_C}:
-            return False
-
-        if Key.ONE <= key <= Key.NINE:
-            return self.bTerminalHolderConnectCommands() if self.connect_sth(
-                int(key - Key.ZERO)) else True
-
-        if key == Key.F:
-            self.change_filename()
-            return True
-
-        if key == Key.N:
-
-            if self.connect_sth(0):
-                self.change_sth_name_window()
-                self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
-            else:
-                self.stdscr.addstr("Device was not available\n")
-                self.stdscr.refresh()
-
-        return True
-
     def window_header(self):
         self.stdscr.clear()
         self.stdscr.addstr(f"{' '*16}ICOc\n\n")
@@ -537,6 +511,32 @@ class mwt(myToolItWatch):
             self.stdscr.addstr(f"{choice}\n")
 
         self.stdscr.refresh()
+
+    def main_menu_key_evaluation(self, devList):
+
+        key = self.stdscr.getch()
+
+        if key in {Key.Q, Key.CTRL_C}:
+            return False
+
+        if Key.ONE <= key <= Key.NINE:
+            return self.bTerminalHolderConnectCommands() if self.connect_sth(
+                int(key - Key.ZERO)) else True
+
+        if key == Key.F:
+            self.change_filename()
+            return True
+
+        if key == Key.N:
+
+            if self.connect_sth(0):
+                self.change_sth_name_window()
+                self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
+            else:
+                self.stdscr.addstr("Device was not available\n")
+                self.stdscr.refresh()
+
+        return True
 
     def main_window(self):
         curs_set(False)
