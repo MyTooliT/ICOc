@@ -19,6 +19,15 @@ from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
 from mytoolit.old.MyToolItSth import fVoltageBattery
 
 
+class Key:
+    """Store key constants"""
+
+    CTRL_C = 3
+    DELETE = 8
+    RETURN = 10
+    ENTER = 459
+
+
 class mwt(myToolItWatch):
     """ICOc command line & curses interface
 
@@ -241,11 +250,6 @@ class mwt(myToolItWatch):
         curs_set(True)
         devList = None
 
-        ctrl_c = 3
-        line_feed = 0x0A
-        enter = 459
-        delete = 0x08
-
         while True:
             devList = self.tTerminalHeaderExtended(devList)
             self.stdscr.addstr(
@@ -257,10 +261,10 @@ class mwt(myToolItWatch):
                 digit = int(key) - ord('0')
                 number = number * 10 + digit
 
-            elif key == delete:
+            elif key == Key.DELETE:
                 number = int(str(number)[:-1]) if len(str(number)) > 1 else 0
 
-            elif key in {line_feed, enter}:
+            elif key in {Key.RETURN, Key.ENTER}:
                 curs_set(False)
 
                 device_number = number - 1
@@ -282,7 +286,7 @@ class mwt(myToolItWatch):
                 return self.Can.bBlueToothConnectPollingAddress(
                     MyToolItNetworkNr["STU1"], self.iAddress)
 
-            elif key in {ctrl_c, ord('q')}:
+            elif key in {Key.CTRL_C, ord('q')}:
                 return False
 
         return False
@@ -396,10 +400,6 @@ class mwt(myToolItWatch):
         """
 
         y_position, x_position = self.stdscr.getyx()
-        ctrl_c = 0x03
-        backspace = 0x08
-        line_feed = 0x0A
-        enter = 459
 
         text = default
         while True:
@@ -407,15 +407,15 @@ class mwt(myToolItWatch):
             self.stdscr.refresh()
             key = self.stdscr.getch()
 
-            if key == ctrl_c:
+            if key == Key.CTRL_C:
                 break
 
-            if key in {line_feed, enter}:
+            if key in {Key.RETURN, Key.ENTER}:
                 if allowed_value(text):
                     break
             elif allowed_key(key):
                 text += chr(key)
-            elif key == backspace:
+            elif key == Key.DELETE:
                 text = text[:-1] if len(text) > 1 else ''
                 self.stdscr.addstr(y_position, x_position + len(text), " ")
                 self.stdscr.refresh()
