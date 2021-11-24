@@ -505,7 +505,7 @@ class UserInterface(CommandLineInterface):
 
         return False
 
-    def change_filename(self):
+    def change_filename_window(self):
         curs_set(True)
         self.stdscr.clear()
 
@@ -595,7 +595,7 @@ class UserInterface(CommandLineInterface):
                 int(key - Key.ZERO)) else True
 
         if key == Key.F:
-            self.change_filename()
+            self.change_filename_window()
             return True
 
         if key == Key.N:
