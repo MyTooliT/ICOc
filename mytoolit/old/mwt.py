@@ -262,7 +262,7 @@ class mwt(myToolItWatch):
             bContinue = True
             self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
         elif ord('n') == keyPress:
-            self.change_sth_name()
+            self.change_sth_name_window()
         elif ord('O') == keyPress:
             self.stdscr.clear()
             self.stdscr.addstr("Are you really sure?\n")
@@ -460,7 +460,7 @@ class mwt(myToolItWatch):
         self.stdscr.refresh()
         sleep(2)
 
-    def change_sth_name(self):
+    def change_sth_name_window(self):
         curs_set(True)
         self.stdscr.clear()
         self.stdscr.addstr("New STH name (max. 8 characters): ")
@@ -492,7 +492,7 @@ class mwt(myToolItWatch):
         if key == Key.N:
 
             if self.connect_sth(0):
-                self.change_sth_name()
+                self.change_sth_name_window()
                 self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
             else:
                 self.stdscr.addstr("Device was not available\n")
