@@ -489,7 +489,28 @@ class mwt(myToolItWatch):
                 self.stdscr.refresh()
         return bRun
 
-    def main_menu(self):
+    def window_header(self):
+        self.stdscr.clear()
+        self.stdscr.addstr(f"{' '*16}ICOc\n\n")
+
+    def tTerminalHeaderExtended(self, devList=None):
+        self.window_header()
+        if devList is None:
+            devList = self.Can.tDeviceList(MyToolItNetworkNr["STU1"],
+                                           bLog=False)
+
+        self.stdscr.addstr("     Name      Address            RSSI\n")
+        self.stdscr.addstr("    ——————————————————————————————————————\n")
+        for dev in devList:
+            number = dev["DeviceNumber"] + 1
+            address = int_to_mac_address(dev["Address"])
+            name = dev["Name"]
+            rssi = dev["RSSI"]
+            self.stdscr.addstr(
+                f"{number:3}: {name:8}  {address}  {rssi} dBm\n")
+        return devList
+
+    def main_window(self):
         curs_set(False)
 
         devList = self.tTerminalHeaderExtended()
@@ -515,31 +536,10 @@ class mwt(myToolItWatch):
         self.stdscr.clear()
 
         try:
-            while self.main_menu():
+            while self.main_window():
                 pass
         except KeyboardInterrupt:
             self.KeyBoardInterrupt = True
-
-    def tTerminalHeaderExtended(self, devList=None):
-        self.window_header()
-        if devList is None:
-            devList = self.Can.tDeviceList(MyToolItNetworkNr["STU1"],
-                                           bLog=False)
-
-        self.stdscr.addstr("     Name      Address            RSSI\n")
-        self.stdscr.addstr("    ——————————————————————————————————————\n")
-        for dev in devList:
-            number = dev["DeviceNumber"] + 1
-            address = int_to_mac_address(dev["Address"])
-            name = dev["Name"]
-            rssi = dev["RSSI"]
-            self.stdscr.addstr(
-                f"{number:3}: {name:8}  {address}  {rssi} dBm\n")
-        return devList
-
-    def window_header(self):
-        self.stdscr.clear()
-        self.stdscr.addstr(f"{' '*16}ICOc\n\n")
 
     def vRunConsole(self):
         self._vRunConsoleStartup()
