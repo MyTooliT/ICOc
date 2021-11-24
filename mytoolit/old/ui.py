@@ -438,10 +438,9 @@ class UserInterface(CommandLineInterface):
 
     def connect_sth(self, number):
         curs_set(True)
-        devList = None
 
         while True:
-            devList = self.main_window_information(devList)
+            devList = self.main_window_information()
 
             self.stdscr.addstr("\n")
             y_position = self.stdscr.getyx()[0]
@@ -524,12 +523,10 @@ class UserInterface(CommandLineInterface):
         self.stdscr.clear()
         self.stdscr.addstr(f"{' '*16}ICOc\n\n")
 
-    def main_window_information(self, devices=None):
+    def main_window_information(self):
         self.window_header()
 
-        if devices is None:
-            devices = self.Can.tDeviceList(MyToolItNetworkNr["STU1"],
-                                           bLog=False)
+        devices = self.Can.tDeviceList(MyToolItNetworkNr["STU1"], bLog=False)
 
         self.stdscr.addstr("     Name      Address            RSSI\n")
         self.stdscr.addstr("    ——————————————————————————————————————\n")
@@ -558,7 +555,7 @@ class UserInterface(CommandLineInterface):
 
         self.stdscr.refresh()
 
-    def main_menu_key_evaluation(self, devList) -> bool:
+    def main_menu_key_evaluation(self) -> bool:
         """Evaluate key input in the main window
 
         Returns
@@ -596,10 +593,10 @@ class UserInterface(CommandLineInterface):
     def main_window(self):
         curs_set(False)
 
-        devices = self.main_window_information()
+        self.main_window_information()
         self.main_window_menu()
 
-        return self.main_menu_key_evaluation(devices)
+        return self.main_menu_key_evaluation()
 
     def user_interface(self, stdscr):
         self.stdscr = stdscr
