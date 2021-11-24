@@ -349,7 +349,7 @@ class mwt(myToolItWatch):
                 self.stdscr.refresh()
         return bRun
 
-    def bTerminalMainMenu(self):
+    def main_menu(self):
         curs_set(False)
 
         devList = self.tTerminalHeaderExtended()
@@ -515,7 +515,7 @@ class mwt(myToolItWatch):
         self.stdscr.clear()
 
         try:
-            while self.bTerminalMainMenu():
+            while self.main_menu():
                 pass
         except KeyboardInterrupt:
             self.KeyBoardInterrupt = True
