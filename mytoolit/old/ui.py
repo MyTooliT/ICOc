@@ -300,57 +300,69 @@ class UserInterface(CommandLineInterface):
                 bRun = False
         return [bRun, bContinue]
 
-    def bTerminalHolderConnectCommandsShowDataValues(self):
-        sHwRev = self.Can.sProductData("Hardware Version", bLog=False)
-        sSwVersion = self.Can.sProductData("Firmware Version", bLog=False)
-        sReleaseName = self.Can.sProductData("Release Name", bLog=False)
-        sSerialNumber = self.Can.sProductData("Serial Number", bLog=False)
-        sName = self.Can.sProductData("Product Name", bLog=False)
-        sSerial = str(sSerialNumber + "-" + sName)
-        self.stdscr.addstr(f"Hardware Version:      {sHwRev}\n")
-        self.stdscr.addstr(f"Firmware Version:      {sSwVersion}\n")
-        self.stdscr.addstr(f"Firmware Release Name: {sReleaseName}\n")
-        self.stdscr.addstr(f"Serial Number:         {sSerial}\n\n")
-
-        index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
-                                            MyToolItStreaming["Voltage"],
-                                            1,
-                                            0,
-                                            0,
-                                            log=False)
-        iBatteryVoltage = byte_list_to_int(
-            self.Can.getReadMessageData(index)[2:4])
-        if iBatteryVoltage is not None:
-            fBatteryVoltage = fVoltageBattery(iBatteryVoltage)
-            self.stdscr.addstr(
-                f"Battery Voltage:{' '*6}{fBatteryVoltage: 4.2f} V\n")
-        au8TempReturn = self.Can.calibMeasurement(
-            MyToolItNetworkNr["STH1"],
-            CalibMeassurementActionNr["Measure"],
-            CalibMeassurementTypeNr["Temp"],
-            1,
-            AdcReference["1V25"],
-            log=False)
-        iTemperature = float(byte_list_to_int(au8TempReturn[4:]))
-        iTemperature /= 1000
-        self.Can.calibMeasurement(MyToolItNetworkNr["STH1"],
-                                  CalibMeassurementActionNr["None"],
-                                  CalibMeassurementTypeNr["Temp"],
-                                  1,
-                                  AdcReference["VDD"],
-                                  log=False,
-                                  bReset=True)
-        self.stdscr.addstr(
-            f"Chip Temperature:{' '*6}{iTemperature:4.1f} °C\n\n")
-
     def sth_window_information(self):
+
+        def read_voltage() -> str:
+            index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
+                                                MyToolItStreaming["Voltage"],
+                                                1,
+                                                0,
+                                                0,
+                                                log=False)
+            iBatteryVoltage = byte_list_to_int(
+                self.Can.getReadMessageData(index)[2:4])
+            if iBatteryVoltage is not None:
+                return f"{fVoltageBattery(iBatteryVoltage):4.2f}"
+
+            return "–"
+
+        def read_temperature() -> float:
+            au8TempReturn = self.Can.calibMeasurement(
+                MyToolItNetworkNr["STH1"],
+                CalibMeassurementActionNr["Measure"],
+                CalibMeassurementTypeNr["Temp"],
+                1,
+                AdcReference["1V25"],
+                log=False)
+            self.Can.calibMeasurement(MyToolItNetworkNr["STH1"],
+                                      CalibMeassurementActionNr["None"],
+                                      CalibMeassurementTypeNr["Temp"],
+                                      1,
+                                      AdcReference["VDD"],
+                                      log=False,
+                                      bReset=True)
+            iTemperature = float(byte_list_to_int(au8TempReturn[4:]))
+            return iTemperature / 1000
+
         self.window_header()
 
         address = int_to_mac_address(int(self.iAddress, 16))
         name = self.sDevName
         self.stdscr.addstr(f"STH “{name}” ({address})\n\n")
 
-        self.bTerminalHolderConnectCommandsShowDataValues()
+        hardware_version = self.Can.sProductData("Hardware Version",
+                                                 bLog=False)
+        software_version = self.Can.sProductData("Firmware Version",
+                                                 bLog=False)
+        release_name = self.Can.sProductData("Release Name", bLog=False)
+        serial_number = self.Can.sProductData("Serial Number", bLog=False)
+        product_name = self.Can.sProductData("Product Name", bLog=False)
+        serial = f"{serial_number}-{product_name}"
+
+        infos = [
+            ("Hardware Version", hardware_version),
+            ("Firmware Version", software_version),
+            ("Firmware Release Name", release_name),
+            ("Serial Number", f"{serial}\n"),
+        ]
+
+        voltage = read_voltage()
+        temperature = read_temperature()
+
+        infos.extend([
+            ("Battery Voltage", f"{voltage} V"),
+            ("Chip Temperature", f"{temperature:4.1f} °C\n"),
+        ])
 
         runtime = '∞' if self.iRunTime == 0 else str(self.iRunTime)
         prescaler = self.iPrescaler
@@ -367,18 +379,21 @@ class UserInterface(CommandLineInterface):
         axes = (f"{axes[0]}, {last_two_axes}"
                 if len(axes) >= 3 else last_two_axes)
 
-        infos = [
-            f"Run Time:              {runtime} s\n",
-            f"Prescaler:             {prescaler}",
-            f"Acquisition Time:      {acquistion_time}",
-            f"Oversampling Rate:     {oversampling_rate}",
-            f"⇒ Sampling Rate:       {sampling_rate}",
-            f"Reference Voltage:     {adc_reference}\n",
-            f"Enabled Ax{'i' if len(axes) <= 1 else 'e'}s:{' '*10}{axes}"
-        ]
+        infos.extend([
+            ("Run Time", f"{runtime} s\n"),
+            ("Prescaler", prescaler),
+            ("Acquisition Time", acquistion_time),
+            ("Oversampling Rate", oversampling_rate),
+            ("⇒ Sampling Rate", sampling_rate),
+            ("Reference Voltage", f"{adc_reference}\n"),
+            (f"Enabled Ax{'i' if len(axes) <= 1 else 'e'}s", axes),
+        ])
 
-        for info in infos:
-            self.stdscr.addstr(f"{info}\n")
+        max_description_length = max(
+            len(description) for description, _ in infos)
+        for description, value in infos:
+            fill = max_description_length - len(description) + 1
+            self.stdscr.addstr(f"{description}{' '*fill}{value}\n")
 
     def sth_window_menu(self):
         choices = [
