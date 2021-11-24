@@ -549,7 +549,7 @@ class UserInterface(CommandLineInterface):
 
         devices = self.Can.tDeviceList(MyToolItNetworkNr["STU1"], bLog=False)
 
-        header = f"{' '*5}Name      Address            RSSI{' '*5}"
+        header = f"{' '*7}Name      Address            RSSI{' '*7}"
         ruler = "—" * len(header)
         for line in (header, ruler):
             self.stdscr.addstr(f"{line}\n")
@@ -560,7 +560,7 @@ class UserInterface(CommandLineInterface):
             name = device["Name"]
             rssi = device["RSSI"]
             self.stdscr.addstr(
-                f"{number:3}: {name:8}  {address}  {rssi} dBm\n")
+                f"{number:5}: {name:8}  {address}  {rssi} dBm\n")
 
         return devices
 
