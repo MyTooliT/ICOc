@@ -200,7 +200,7 @@ class mwt(myToolItWatch):
         bRun = True
         self.vDisplayTime(10)
         while bRun:
-            self.vTerminalHeader()
+            self.menu_header()
             address = int_to_mac_address(int(self.iAddress, 16))
             name = self.sDevName
             self.stdscr.addstr(f"STH “{name}” ({address})\n\n")
@@ -521,7 +521,7 @@ class mwt(myToolItWatch):
             self.KeyBoardInterrupt = True
 
     def tTerminalHeaderExtended(self, devList=None):
-        self.vTerminalHeader()
+        self.menu_header()
         if devList is None:
             devList = self.Can.tDeviceList(MyToolItNetworkNr["STU1"],
                                            bLog=False)
@@ -537,7 +537,7 @@ class mwt(myToolItWatch):
                 f"{number:3}: {name:8}  {address}  {rssi} dBm\n")
         return devList
 
-    def vTerminalHeader(self):
+    def menu_header(self):
         self.stdscr.clear()
         self.stdscr.addstr(f"{' '*16}ICOc\n\n")
 
