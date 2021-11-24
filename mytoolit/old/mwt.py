@@ -343,7 +343,7 @@ class mwt(myToolItWatch):
         self.stdscr.addstr(
             f"Chip Temperature:{' '*6}{iTemperature:4.1f} °C\n\n")
 
-    def bTerminalHolderConnectCommands(self):
+    def sth_window(self):
         bContinue = True
         bRun = True
         self.vDisplayTime(10)
@@ -520,7 +520,7 @@ class mwt(myToolItWatch):
             return False
 
         if Key.ONE <= key <= Key.NINE:
-            return self.bTerminalHolderConnectCommands() if self.connect_sth(
+            return self.sth_window() if self.connect_sth(
                 int(key - Key.ZERO)) else True
 
         if key == Key.F:
