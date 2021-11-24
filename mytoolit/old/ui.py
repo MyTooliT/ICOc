@@ -247,7 +247,7 @@ class UserInterface(CommandLineInterface):
         runtime = self.read_number()[1]
         self.vRunTime(runtime)
 
-    def tTerminalHolderConnectCommandsKeyEvaluation(self):
+    def sth_window_key_evaluation(self):
         curs_set(False)
 
         keyPress = self.stdscr.getch()
@@ -402,8 +402,7 @@ class UserInterface(CommandLineInterface):
             self.sth_window_menu()
 
             self.stdscr.refresh()
-            [bRun,
-             bContinue] = self.tTerminalHolderConnectCommandsKeyEvaluation()
+            [bRun, bContinue] = self.sth_window_key_evaluation()
 
         return bContinue
 
