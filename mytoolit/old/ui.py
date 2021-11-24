@@ -29,9 +29,16 @@ class Key:
     ZERO = ord('0')
     ONE = ord('1')
     NINE = ord('9')
+
+    A = ord('a')
     F = ord('f')
     N = ord('n')
+    P = ord('p')
     Q = ord('q')
+    R = ord('r')
+    S = ord('s')
+
+    UPPERCASE_O = ord('O')
 
     ENTER = 459
 
@@ -364,32 +371,35 @@ class UserInterface(CommandLineInterface):
     def sth_window_key_evaluation(self):
         curs_set(False)
 
-        keyPress = self.stdscr.getch()
         bRun = True
         bContinue = False
-        if keyPress == 0x03:  # `Ctrl` + `C`
+
+        key = self.stdscr.getch()
+
+        if key == Key.CTRL_C:
             bRun = False
-        elif ord('a') == keyPress:
+        elif key == Key.A:
             self.change_adc_values()
-        elif ord('q') == keyPress:
+        elif key == Key.Q:
             bRun = False
             bContinue = True
             self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
-        elif ord('n') == keyPress:
+        elif key == Key.N:
             self.change_sth_name_window()
-        elif ord('O') == keyPress:
+        elif key == Key.UPPERCASE_O:
             self.stdscr.clear()
             self.stdscr.addstr("Are you really sure?\n")
             self.stdscr.addstr("Only charing will leave this state!\n")
             self.stdscr.addstr("Pressing “y” will trigger standby: ")
             self.stdscr.refresh()
-            sYes = self.read_text()[1]
-            if "y" == sYes:
+
+            if self.read_text()[1] == "y":
                 self.Can.Standby(MyToolItNetworkNr["STH1"])
                 bRun = False
                 self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
                 bContinue = True
-        elif ord('p') == keyPress:
+
+        elif key == Key.P:
             self.stdscr.clear()
             self.stdscr.addstr("Set enabled axes (xyz; 0=off, 1=on): ")
             valid_input, xyz = self.read_input(
@@ -399,9 +409,9 @@ class UserInterface(CommandLineInterface):
                                                                     ) != 0)
             if valid_input:
                 self.vAccSet(*map(int, xyz), -1)
-        elif ord('r') == keyPress:
+        elif key == Key.R:
             self.change_runtime()
-        elif ord('s') == keyPress:
+        elif key == Key.S:
             self.stdscr.clear()
             self.stdscr.addstr("Collecting measurement data…")
             self.stdscr.refresh()
@@ -412,7 +422,8 @@ class UserInterface(CommandLineInterface):
                     self.KeyBoardInterrupt = True
                     self.__exit__()
                 bRun = False
-        return [bRun, bContinue]
+
+        return (bRun, bContinue)
 
     def sth_window(self):
         bContinue = True
