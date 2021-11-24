@@ -346,26 +346,22 @@ class UserInterface(CommandLineInterface):
     def sth_window(self):
         bContinue = True
         bRun = True
-        self.vDisplayTime(10)
+
         while bRun:
             self.window_header()
+
             address = int_to_mac_address(int(self.iAddress, 16))
             name = self.sDevName
             self.stdscr.addstr(f"STH “{name}” ({address})\n\n")
+
             self.bTerminalHolderConnectCommandsShowDataValues()
+
             runtime = '∞' if self.iRunTime == 0 else str(self.iRunTime)
-            self.stdscr.addstr(f"Run Time:              {runtime} s\n\n")
             prescaler = self.iPrescaler
             acquistion_time = AdcAcquisitionTime.inverse[self.iAquistionTime]
             oversampling_rate = AdcOverSamplingRate.inverse[self.iOversampling]
             sampling_rate = self.samplingRate
             adc_reference = self.sAdcRef
-
-            self.stdscr.addstr(f"Prescaler:             {prescaler}\n")
-            self.stdscr.addstr(f"Acquisition Time:      {acquistion_time}\n")
-            self.stdscr.addstr(f"Oversampling Rate:     {oversampling_rate}\n")
-            self.stdscr.addstr(f"⇒ Sampling Rate:       {sampling_rate}\n")
-            self.stdscr.addstr(f"Reference Voltage:     {adc_reference}\n\n")
 
             x_enabled = "X" if self.bAccX else ""
             y_enabled = "Y" if self.bAccY else ""
@@ -375,23 +371,37 @@ class UserInterface(CommandLineInterface):
             axes = (f"{axes[0]}, {last_two_axes}"
                     if len(axes) >= 3 else last_two_axes)
 
-            self.stdscr.addstr(
-                f"Enabled Ax{'i' if len(axes) <= 1 else 'e'}s:{' ' * 10}"
-                f"{axes}\n")
+            infos = [
+                f"Run Time:              {runtime} s\n",
+                f"Prescaler:             {prescaler}",
+                f"Acquisition Time:      {acquistion_time}",
+                f"Oversampling Rate:     {oversampling_rate}",
+                f"⇒ Sampling Rate:       {sampling_rate}",
+                f"Reference Voltage:     {adc_reference}\n",
+                f"Enabled Ax{'i' if len(axes) <= 1 else 'e'}s:{' '*10}{axes}"
+            ]
 
-            self.stdscr.addstr(f"\n{'—'*30}\n")
-            self.stdscr.addstr("s: Start Data Acquisition\n\n")
+            for info in infos:
+                self.stdscr.addstr(f"{info}\n")
 
-            self.stdscr.addstr("n: Change STH Name\n")
-            self.stdscr.addstr("r: Change Run Time\n")
-            self.stdscr.addstr("a: Configure ADC\n")
-            self.stdscr.addstr("p: Configure Enabled Axes\n")
-            self.stdscr.addstr("O: Set Standby Mode\n\n")
+            choices = [
+                "s: Start Data Acquisition\n",
+                "n: Change STH Name",
+                "r: Change Run Time",
+                "a: Configure ADC",
+                "p: Configure Enabled Axes",
+                "O: Set Standby Mode\n",
+                "q: Disconnect from STH",
+            ]
 
-            self.stdscr.addstr("q: Disconnect from STH\n")
+            self.stdscr.addstr(f"\n{'—'*(max(map(len, choices))-1)}\n")
+            for choice in choices:
+                self.stdscr.addstr(f"{choice}\n")
+
             self.stdscr.refresh()
             [bRun,
              bContinue] = self.tTerminalHolderConnectCommandsKeyEvaluation()
+
         return bContinue
 
     def connect_sth(self, number):
