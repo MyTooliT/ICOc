@@ -406,18 +406,18 @@ class UserInterface(CommandLineInterface):
 
         curs_set(False)
 
-        bRun = True
-        bContinue = False
+        continue_sth_window = True
+        continue_program = True
 
         key = self.stdscr.getch()
 
         if key == Key.CTRL_C:
-            bRun = False
+            continue_program = False
+            continue_sth_window = False
         elif key == Key.A:
             self.change_adc_values()
         elif key == Key.Q:
-            bRun = False
-            bContinue = True
+            continue_sth_window = False
             self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
         elif key == Key.N:
             self.change_sth_name_window()
@@ -430,9 +430,8 @@ class UserInterface(CommandLineInterface):
 
             if self.read_text()[1] == "y":
                 self.Can.Standby(MyToolItNetworkNr["STH1"])
-                bRun = False
                 self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
-                bContinue = True
+                continue_sth_window = False
 
         elif key == Key.P:
             self.stdscr.clear()
@@ -456,20 +455,21 @@ class UserInterface(CommandLineInterface):
                 except KeyboardInterrupt:
                     self.KeyBoardInterrupt = True
                     self.__exit__()
-                bRun = False
+                continue_sth_window = False
+                continue_program = False
 
-        return (bRun, bContinue)
+        return (continue_sth_window, continue_program)
 
     def sth_window(self):
-        bContinue = True
-        bRun = True
+        continue_main = True
+        continue_sth = True
 
-        while bRun:
+        while continue_sth:
             self.sth_window_information()
             self.sth_window_menu()
-            [bRun, bContinue] = self.sth_window_key_evaluation()
+            continue_sth, continue_main = self.sth_window_key_evaluation()
 
-        return bContinue
+        return continue_main
 
     def connect_sth(self, number):
         curs_set(True)
