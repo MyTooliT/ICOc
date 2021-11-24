@@ -513,13 +513,18 @@ class mwt(myToolItWatch):
         return devices
 
     def main_window_menu(self):
-        self.stdscr.addstr(f"\n{'—'*30}\n")
-        self.stdscr.addstr("1-9: Connect to STH\n\n")
 
-        self.stdscr.addstr("  f: Change Output File Name\n")
-        self.stdscr.addstr("  n: Change STH Name\n\n")
+        choices = [
+            "1-9: Connect to STH\n",
+            "  f: Change Output File Name",
+            "  n: Change STH Name\n",
+            "  q: Quit Program",
+        ]
 
-        self.stdscr.addstr("  q: Quit Program\n")
+        self.stdscr.addstr(f"\n{'—'*max(map(len, choices))}\n")
+        for choice in choices:
+            self.stdscr.addstr(f"{choice}\n")
+
         self.stdscr.refresh()
 
     def main_window(self):
