@@ -431,8 +431,11 @@ class UserInterface(CommandLineInterface):
 
         while True:
             devList = self.main_window_information(devList)
+
+            self.stdscr.addstr("\n")
+            y_position = self.stdscr.getyx()[0]
             self.stdscr.addstr(
-                f"\nChoose STH number (Use ⏎ to connect): {number}")
+                f"Choose STH number (Use ⏎ to connect): {number}")
             self.stdscr.refresh()
             key = self.stdscr.getch()
 
@@ -456,7 +459,8 @@ class UserInterface(CommandLineInterface):
                     return False
 
                 name = device['Name']
-                self.stdscr.addstr(f"\nConnecting to device “{name}”…")
+                self.stdscr.addstr(y_position, 0,
+                                   f"Connecting to device “{name}”…{' '*20}")
                 self.stdscr.refresh()
 
                 self.vDeviceAddressSet(hex(device["Address"]))
