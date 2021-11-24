@@ -48,6 +48,146 @@ class mwt(myToolItWatch):
             self.process.terminate()
         super().close()
 
+    def read_input(self,
+                   allowed_key: Callable[[int], bool],
+                   allowed_value: Callable[[str], bool],
+                   default: str = "") -> Tuple[bool, str]:
+        """Read textual input at the current position
+
+        The function will read input until
+
+        - the user enters an allowed value followed by the Enter/Return key, or
+        - the user enters `Ctrl` + `C` to stop the input reading.
+
+        Arguments
+        ---------
+
+        allowed_key:
+            A function that specifies if a given key character is allowed to
+            occur in the input or not
+
+        allowed_value:
+            A function that specifies if the whole read input is an allowed
+            value or not
+
+        default:
+            This text will be be used as initial value for the input
+
+        Returns
+        -------
+
+        A pair containing:
+
+        - a boolean that specifies if the input is valid according to the
+          function `allowed_value`, and
+        - the read number.
+
+        """
+
+        y_position, x_position = self.stdscr.getyx()
+
+        text = default
+        while True:
+            self.stdscr.addstr(y_position, x_position, text)
+            self.stdscr.refresh()
+            key = self.stdscr.getch()
+
+            if key == Key.CTRL_C:
+                break
+
+            if key in {Key.RETURN, Key.ENTER}:
+                if allowed_value(text):
+                    break
+            elif allowed_key(key):
+                text += chr(key)
+            elif key == Key.DELETE:
+                text = text[:-1] if len(text) > 1 else ''
+                self.stdscr.addstr(y_position, x_position + len(text), " ")
+                self.stdscr.refresh()
+
+        self.stdscr.addstr("\n")
+        self.stdscr.refresh()
+        return (allowed_value(text), text)
+
+    def read_number(
+        self,
+        default: int = 0,
+        allowed: Callable[[int],
+                          bool] = lambda value: True) -> Tuple[bool, int]:
+        """Read a number at the current position
+
+        The function will read input until
+
+        - the user enters an allowed number followed by the Enter/Return key,
+          or
+        - the user enters `Ctrl` + `C` to stop the input reading.
+
+        Arguments
+        ---------
+
+        default:
+            A number that will be used as initial value
+
+        allowed:
+            A function that determines if the current read value is valid or
+            not
+
+        Returns
+        -------
+
+        A pair containing:
+
+        - a boolean that specifies if the read number is valid according to the
+          function `allowed`, and
+        - the read number.
+
+        """
+
+        valid, number_text = self.read_input(
+            allowed_key=lambda key: ord('0') <= key <= ord('9'),
+            allowed_value=lambda value: allowed(int(value)),
+            default=str(default))
+
+        return (valid, int(number_text))
+
+    def read_text(
+        self,
+        default: str = '',
+        allowed: Callable[[str],
+                          bool] = lambda value: True) -> Tuple[bool, str]:
+        """Read a text at the current position
+
+        The function will read input until
+
+        - the user enters an allowed value followed by the Enter/Return key, or
+        - the user enters `Ctrl` + `C` to stop the input reading.
+
+        Parameters
+        ----------
+
+        default:
+            The initial value for the text
+
+        allowed:
+            A function that determines if the current read text is valid or
+            not
+
+        Returns
+        -------
+
+        A pair containing:
+
+        - a boolean that specifies if the read text is valid according to the
+          function `allowed`, and
+        - the read number.
+
+        """
+
+        return self.read_input(
+            allowed_key=lambda key: ord(' ') <= key <= ord('~'),
+            allowed_value=allowed,
+            default=default)
+
     def change_adc_values(self):
 
         def list_keys(dictionary):
@@ -362,146 +502,6 @@ class mwt(myToolItWatch):
         self.stdscr.addstr("  q: Quit Program\n")
         self.stdscr.refresh()
         return self.bTerminalMainMenuKeyEvaluation(devList)
-
-    def read_input(self,
-                   allowed_key: Callable[[int], bool],
-                   allowed_value: Callable[[str], bool],
-                   default: str = "") -> Tuple[bool, str]:
-        """Read textual input at the current position
-
-        The function will read input until
-
-        - the user enters an allowed value followed by the Enter/Return key, or
-        - the user enters `Ctrl` + `C` to stop the input reading.
-
-        Arguments
-        ---------
-
-        allowed_key:
-            A function that specifies if a given key character is allowed to
-            occur in the input or not
-
-        allowed_value:
-            A function that specifies if the whole read input is an allowed
-            value or not
-
-        default:
-            This text will be be used as initial value for the input
-
-        Returns
-        -------
-
-        A pair containing:
-
-        - a boolean that specifies if the input is valid according to the
-          function `allowed_value`, and
-        - the read number.
-
-        """
-
-        y_position, x_position = self.stdscr.getyx()
-
-        text = default
-        while True:
-            self.stdscr.addstr(y_position, x_position, text)
-            self.stdscr.refresh()
-            key = self.stdscr.getch()
-
-            if key == Key.CTRL_C:
-                break
-
-            if key in {Key.RETURN, Key.ENTER}:
-                if allowed_value(text):
-                    break
-            elif allowed_key(key):
-                text += chr(key)
-            elif key == Key.DELETE:
-                text = text[:-1] if len(text) > 1 else ''
-                self.stdscr.addstr(y_position, x_position + len(text), " ")
-                self.stdscr.refresh()
-
-        self.stdscr.addstr("\n")
-        self.stdscr.refresh()
-        return (allowed_value(text), text)
-
-    def read_number(
-        self,
-        default: int = 0,
-        allowed: Callable[[int],
-                          bool] = lambda value: True) -> Tuple[bool, int]:
-        """Read a number at the current position
-
-        The function will read input until
-
-        - the user enters an allowed number followed by the Enter/Return key,
-          or
-        - the user enters `Ctrl` + `C` to stop the input reading.
-
-        Arguments
-        ---------
-
-        default:
-            A number that will be used as initial value
-
-        allowed:
-            A function that determines if the current read value is valid or
-            not
-
-        Returns
-        -------
-
-        A pair containing:
-
-        - a boolean that specifies if the read number is valid according to the
-          function `allowed`, and
-        - the read number.
-
-        """
-
-        valid, number_text = self.read_input(
-            allowed_key=lambda key: ord('0') <= key <= ord('9'),
-            allowed_value=lambda value: allowed(int(value)),
-            default=str(default))
-
-        return (valid, int(number_text))
-
-    def read_text(
-        self,
-        default: str = '',
-        allowed: Callable[[str],
-                          bool] = lambda value: True) -> Tuple[bool, str]:
-        """Read a text at the current position
-
-        The function will read input until
-
-        - the user enters an allowed value followed by the Enter/Return key, or
-        - the user enters `Ctrl` + `C` to stop the input reading.
-
-        Parameters
-        ----------
-
-        default:
-            The initial value for the text
-
-        allowed:
-            A function that determines if the current read text is valid or
-            not
-
-        Returns
-        -------
-
-        A pair containing:
-
-        - a boolean that specifies if the read text is valid according to the
-          function `allowed`, and
-        - the read number.
-
-        """
-
-        return self.read_input(
-            allowed_key=lambda key: ord(' ') <= key <= ord('~'),
-            allowed_value=allowed,
-            default=default)
 
     def user_interface(self, stdscr):
         self.stdscr = stdscr
