@@ -94,8 +94,8 @@ class UserInterface(CommandLineInterface):
         - the user enters an allowed value followed by the Enter/Return key, or
         - the user enters `Ctrl` + `C` to stop the input reading.
 
-        Arguments
-        ---------
+        Parameters
+        ----------
 
         allowed_key:
             A function that specifies if a given key character is allowed to
@@ -157,8 +157,8 @@ class UserInterface(CommandLineInterface):
           or
         - the user enters `Ctrl` + `C` to stop the input reading.
 
-        Arguments
-        ---------
+        Parameters
+        ----------
 
         default:
             A number that will be used as initial value

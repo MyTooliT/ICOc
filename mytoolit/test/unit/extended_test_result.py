@@ -91,8 +91,8 @@ class ExtendedTestResult(TextTestResult):
     def addFailure(self, test, error):
         """Add information about the latest failure
 
-        Arguments
-        ---------
+        Parameters
+        ----------
 
         test:
             The test case that produced the failure
@@ -119,8 +119,8 @@ class ExtendedTestResult(TextTestResult):
         This should usually not happen unless there are problems with the
         connection or the syntax of the current code base.
 
-        Arguments
-        ---------
+        Parameters
+        ----------
 
         test:
             The test case that produced the error
@@ -137,8 +137,8 @@ class ExtendedTestResult(TextTestResult):
     def addSuccess(self, test):
         """Add information about latest successful test
 
-        Arguments
-        ---------
+        Parameters
+        ----------
 
         test:
             The successful test

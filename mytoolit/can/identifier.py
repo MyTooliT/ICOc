@@ -423,8 +423,8 @@ class Identifier:
     def set_acknowledgment(self, value: bool = True) -> Identifier:
         """Set the acknowledgment bit to the given value
 
-        Arguments
-        ---------
+        Parameters
+        ----------
 
         value:
             A boolean that specifies if this identifier should represent an
@@ -456,8 +456,8 @@ class Identifier:
     def set_error(self, error: bool = True) -> Identifier:
         """Set the error bit to the given value
 
-        Arguments
-        ---------
+        Parameters
+        ----------
 
         error:
             A boolean that specifies if this identifier should indicate an

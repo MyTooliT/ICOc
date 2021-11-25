@@ -63,8 +63,8 @@ class Report:
     def __init__(self, node):
         """Initialize the report
 
-        Arguments
-        ---------
+        Parameters
+        ----------
 
         node:
             A text that specifies the node (either STU or STH) for which a

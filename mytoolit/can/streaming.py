@@ -28,14 +28,14 @@ class StreamingFormat:
     ) -> None:
         """Initialize the streaming format using the given arguments
 
-        Positional Arguments
-        --------------------
+        Positional Parameters
+        ---------------------
 
         value:
             The value of the streaming format byte
 
-        Keyword Arguments
-        -----------------
+        Keyword Parameters
+        ------------------
 
         single:
             Specifies if the request was for a single value or not

@@ -46,8 +46,8 @@ class EEPROMCheck:
     def __init__(self, mac, value):
         """Initialize the EEPROM check with the given arguments
 
-        Arguments
-        ---------
+        Parameters
+        ----------
 
         mac
             The MAC address of an STH as text of the form `xx:xx:xx:xx:xx:xx`,

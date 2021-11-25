@@ -37,7 +37,7 @@ class Command:
         take a look at the examples.
 
 
-        Arguments
+        Parameters
         ---------
 
         command:
@@ -316,7 +316,7 @@ class Command:
     def set_acknowledgment(self, value: bool = True) -> Command:
         """Set the acknowledgment bit to the given value
 
-        Arguments
+        Parameters
         ---------
 
         value:
@@ -356,8 +356,8 @@ class Command:
     def set_error(self, error: bool = True) -> Command:
         """Set the error bit to the given value
 
-        Arguments
-        ---------
+        Parameters
+        ----------
 
         error:
             A boolean that specifies if the command represents an error or not
