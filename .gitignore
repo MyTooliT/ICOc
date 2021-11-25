@@ -1,6 +1,7 @@
 # Ignore log files in repository root
 /*.txt
 !/requirements.txt
+/ICOc.log
 
 # Ignore measurement output in HDF5 format
 *.hdf5
