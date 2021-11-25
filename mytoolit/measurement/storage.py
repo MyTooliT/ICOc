@@ -49,7 +49,6 @@ class AccelerationDescription(IsDescription):
     """Description of HDF acceleration table"""
     counter = UInt8Col()
     timestamp = UInt64Col()  # Microseconds since measurement start
-    x = Float32Col()  # Acceleration value in multiples of g₀
 
 
 class StorageException(Exception):
