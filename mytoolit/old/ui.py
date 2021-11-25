@@ -2,7 +2,7 @@ from sys import stderr
 from time import sleep
 from typing import Callable, Iterable, Tuple
 
-from curses import curs_set, wrapper
+from curses import curs_set, error, wrapper
 
 from mytoolit.old.cli import CommandLineInterface
 from mytoolit.old.MyToolItCommands import (
@@ -63,6 +63,26 @@ class UserInterface(CommandLineInterface):
             self.process.terminate()
         super().close()
 
+    def add_string(self, *arguments) -> None:
+        """Add a string to the terminal window
+
+        This is basically a wrapper around the `addstr` method that ignores
+        errors (about drawing strings outside the visible area)
+
+        Parameters
+        ----------
+
+        arguments:
+            A list of argument for the `addstr` method
+
+        """
+
+        try:
+            self.stdscr.addstr(*arguments)
+        except error:
+            # Ignore errors about drawing strings outside terminal window
+            pass
+
     def read_input(self,
                    allowed_key: Callable[[int], bool],
                    allowed_value: Callable[[str], bool],
@@ -103,7 +123,7 @@ class UserInterface(CommandLineInterface):
 
         text = default
         while True:
-            self.stdscr.addstr(y_position, x_position, text)
+            self.add_string(y_position, x_position, text)
             self.stdscr.refresh()
             key = self.stdscr.getch()
 
@@ -117,10 +137,10 @@ class UserInterface(CommandLineInterface):
                 text += chr(key)
             elif key == Key.DELETE:
                 text = text[:-1] if len(text) > 1 else ''
-                self.stdscr.addstr(y_position, x_position + len(text), " ")
+                self.add_string(y_position, x_position + len(text), " ")
                 self.stdscr.refresh()
 
-        self.stdscr.addstr("\n")
+        self.add_string("\n")
         self.stdscr.refresh()
         return (allowed_value(text), text)
 
@@ -217,13 +237,13 @@ class UserInterface(CommandLineInterface):
         ruler = '─' * (max(map(len, choices)) + 2)
         max_length_choices = max(map(len, choices))
 
-        self.stdscr.addstr(f"\n┌{ruler}┐\n")
+        self.add_string(f"\n┌{ruler}┐\n")
 
         for choice in choices:
             fill = max_length_choices - len(choice)
-            self.stdscr.addstr(f"│ {choice}{' '*fill} │\n")
+            self.add_string(f"│ {choice}{' '*fill} │\n")
 
-        self.stdscr.addstr(f"└{ruler}┘")
+        self.add_string(f"└{ruler}┘")
 
         self.stdscr.refresh()
 
@@ -234,7 +254,7 @@ class UserInterface(CommandLineInterface):
             return ', '.join(keys)
 
         def read_value(description, default, allowed):
-            self.stdscr.addstr(description)
+            self.add_string(description)
             self.stdscr.refresh()
 
             valid_input, value = (self.read_number(default, allowed) if
@@ -242,9 +262,8 @@ class UserInterface(CommandLineInterface):
                                       default, allowed))
 
             if not valid_input:
-                self.stdscr.addstr(
-                    f"“{value}” is not a valid value; "
-                    f"Using default value “{default}” instead\n")
+                self.add_string(f"“{value}” is not a valid value; "
+                                f"Using default value “{default}” instead\n")
                 value = default
 
             return value
@@ -272,8 +291,8 @@ class UserInterface(CommandLineInterface):
         curs_set(True)
         self.stdscr.clear()
 
-        self.stdscr.addstr("Run time of data acquisition "
-                           "(in seconds; 0 for infinite runtime): ")
+        self.add_string("Run time of data acquisition "
+                        "(in seconds; 0 for infinite runtime): ")
         self.stdscr.refresh()
         runtime = self.read_number()[1]
         self.vRunTime(runtime)
@@ -319,7 +338,7 @@ class UserInterface(CommandLineInterface):
         device_description = f"STH “{name}” ({address})"
         for value in (device_description, "\n", '—' * len(device_description),
                       "\n\n"):
-            self.stdscr.addstr(value)
+            self.add_string(value)
 
         hardware_version = self.Can.sProductData("Hardware Version",
                                                  bLog=False)
@@ -374,7 +393,7 @@ class UserInterface(CommandLineInterface):
             len(description) for description, _ in infos)
         for description, value in infos:
             fill = max_description_length - len(description) + 1
-            self.stdscr.addstr(f"{description}{' '*fill}{value}\n")
+            self.add_string(f"{description}{' '*fill}{value}\n")
 
     def sth_window_menu(self):
         self.draw_menu([
@@ -423,9 +442,9 @@ class UserInterface(CommandLineInterface):
             self.change_sth_name_window()
         elif key == Key.UPPERCASE_O:
             self.stdscr.clear()
-            self.stdscr.addstr("Are you really sure?\n")
-            self.stdscr.addstr("Only charing will leave this state!\n")
-            self.stdscr.addstr("Pressing “y” will trigger standby: ")
+            self.add_string("Are you really sure?\n")
+            self.add_string("Only charing will leave this state!\n")
+            self.add_string("Pressing “y” will trigger standby: ")
             self.stdscr.refresh()
 
             if self.read_text()[1] == "y":
@@ -435,7 +454,7 @@ class UserInterface(CommandLineInterface):
 
         elif key == Key.P:
             self.stdscr.clear()
-            self.stdscr.addstr("Set enabled axes (xyz; 0=off, 1=on): ")
+            self.add_string("Set enabled axes (xyz; 0=off, 1=on): ")
             valid_input, xyz = self.read_input(
                 default="100",
                 allowed_key=lambda key: key in {ord('0'), ord('1')},
@@ -448,7 +467,7 @@ class UserInterface(CommandLineInterface):
             self.change_runtime_window()
         elif key == Key.S:
             self.stdscr.clear()
-            self.stdscr.addstr("Collecting measurement data…")
+            self.add_string("Collecting measurement data…")
             self.stdscr.refresh()
             if not self.KeyBoardInterrupt:
                 try:
@@ -478,10 +497,9 @@ class UserInterface(CommandLineInterface):
         while True:
             devList = self.main_window_information()
 
-            self.stdscr.addstr("\n")
+            self.add_string("\n")
             y_position = self.stdscr.getyx()[0]
-            self.stdscr.addstr(
-                f"Choose STH number (Use ⏎ to connect): {number}")
+            self.add_string(f"Choose STH number (Use ⏎ to connect): {number}")
             self.stdscr.refresh()
             key = self.stdscr.getch()
 
@@ -505,8 +523,8 @@ class UserInterface(CommandLineInterface):
                     return False
 
                 name = device['Name']
-                self.stdscr.addstr(y_position, 0,
-                                   f"Connecting to device “{name}”…{' '*20}")
+                self.add_string(y_position, 0,
+                                f"Connecting to device “{name}”…{' '*20}")
                 self.stdscr.refresh()
 
                 self.vDeviceAddressSet(hex(device["Address"]))
@@ -524,7 +542,7 @@ class UserInterface(CommandLineInterface):
         curs_set(True)
         self.stdscr.clear()
 
-        self.stdscr.addstr("Set base output file name: ")
+        self.add_string("Set base output file name: ")
         self.stdscr.refresh()
 
         forbidden_characters = set("<>:\"/\\|?*")
@@ -536,15 +554,15 @@ class UserInterface(CommandLineInterface):
         curs_set(False)
         if input_valid:
             self.set_output_filename(filename)
-        self.stdscr.addstr("New full name (including time stamp): "
-                           f"“{self.get_output_filepath()}”")
+        self.add_string("New full name (including time stamp): "
+                        f"“{self.get_output_filepath()}”")
         self.stdscr.refresh()
         sleep(2)
 
     def change_sth_name_window(self):
         curs_set(True)
         self.stdscr.clear()
-        self.stdscr.addstr("New STH name (max. 8 characters): ")
+        self.add_string("New STH name (max. 8 characters): ")
         self.stdscr.refresh()
         name_valid, name = self.read_text(default=self.Can.sDevName,
                                           allowed=lambda text: len(text) <= 8)
@@ -557,7 +575,7 @@ class UserInterface(CommandLineInterface):
 
     def window_header(self):
         self.stdscr.clear()
-        self.stdscr.addstr(f"{' '*16}ICOc\n\n")
+        self.add_string(f"{' '*16}ICOc\n\n")
 
     def main_window_information(self):
         self.window_header()
@@ -567,15 +585,14 @@ class UserInterface(CommandLineInterface):
         header = f"{' '*7}Name      Address            RSSI{' '*7}"
         ruler = "—" * len(header)
         for line in (header, ruler):
-            self.stdscr.addstr(f"{line}\n")
+            self.add_string(f"{line}\n")
 
         for device in devices:
             number = device["DeviceNumber"] + 1
             address = int_to_mac_address(device["Address"])
             name = device["Name"]
             rssi = device["RSSI"]
-            self.stdscr.addstr(
-                f"{number:5}: {name:8}  {address}  {rssi} dBm\n")
+            self.add_string(f"{number:5}: {name:8}  {address}  {rssi} dBm\n")
 
         return devices
 
@@ -619,7 +636,7 @@ class UserInterface(CommandLineInterface):
                 self.change_sth_name_window()
                 self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
             else:
-                self.stdscr.addstr("Device was not available\n")
+                self.add_string("Device was not available\n")
                 self.stdscr.refresh()
 
         return True
