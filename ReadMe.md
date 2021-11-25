@@ -100,19 +100,19 @@ ICOc requires at least Python `3.7`. The software also supports Python `3.8`, `3
 
 ICOc uses the [PyTables][] Python package. Unfortunately the Python package index does not offer Windows binaries for the latest versions of Python in the moment. This means installing PyTables (and therefore ICOc) in Windows without a C compiler and the [HDF5 library](https://www.hdfgroup.org/downloads/hdf5/) library will fail. Since compiling the C extension of the package is not trivial we **recommend downloading a prebuilt binary package** [here](http://www.lfd.uci.edu/~gohlke/pythonlibs/#pytables). Just store the proper file for **your OS and Python version** in your **Downloads folder**.
 
-**Example:** For a 64 bit version of Python `3.9` and PyTables `3.6.1` download the file `tables‑3.6.1‑cp39‑cp39‑win_amd64.whl` and afterwards execute the following command in a PowerShell session:
+**Example:** For a 64 bit version of Python `3.10` and PyTables `3.6.1` download the file `tables-3.6.1-cp310-cp310-win_amd64.whl` and afterwards execute the following command in a PowerShell session:
 
 ```pwsh
-pip install $HOME\Downloads\tables-3.6.1-cp39-cp39-win_amd64.whl
+pip install $HOME\Downloads\tables-3.6.1-cp310-cp310-win_amd64.whl
 ```
 
-We also offer **the same binaries** for all supported 64 bit Python versions in the [**branch binaries**](https://github.com/mytoolit/ICOc/tree/binaries) of the repository. For example, to **install [PyTables][] on Python 3.9** you can use the following commands in a PowerShell session:
+We also offer **the same binaries** for all supported 64 bit Python versions in the [**branch binaries**](https://github.com/mytoolit/ICOc/tree/binaries) of the repository. For example, to **install [PyTables][] on Python 3.10** you can use the following commands in a PowerShell session:
 
 ```sh
 cd "$HOME/Downloads"
 git clone -b binaries https://github.com/MyTooliT/ICOc.git
 cd ICOc
-pip install tables-3.6.1-cp39-cp39-win_amd64.whl
+pip install tables-3.6.1-cp310-cp310-win_amd64.whl
 cd ..
 Remove-Item -Recurse -Force ICOc
 ```
