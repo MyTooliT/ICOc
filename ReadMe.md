@@ -188,14 +188,20 @@ icoc
 in your [terminal](https://aka.ms/terminal), a text based interface shows you the currently available options. For example, the text
 
 ```
-ICOc
+                ICOc
 
-1: 08:6b:d7:01:de:81(Blubb)@-52dBm
+       Name      Address            RSSI
+———————————————————————————————————————————————
+    1: Blubb     08:6b:d7:01:de:81  -44 dBm
 
-q: Quit program
-1-9: Connect to STH number (ENTER at input end)
-f: Output File Name
-n: Change Device Name
+┌──────────────────────────────┐
+│ 1-9: Connect to STH          │
+│                              │
+│   f: Change Output File Name │
+│   n: Change STH Name         │
+│                              │
+│   q: Quit ICOc               │
+└──────────────────────────────┘
 ```
 
 shows that currently one STH was detected. The Bluetooth MAC address of the STH is `08:6b:d7:01:de:81`, while its advertisement name is “Blubb”. The last value after the `@` character shows the current received signal strength indication (RSSI). To exit the program use the key <kbd>q</kbd>.
@@ -205,28 +211,39 @@ shows that currently one STH was detected. The Bluetooth MAC address of the STH 
 To read data from an STH (or SHA), start the ICOc script, and connect to an STH. To do that, enter the number in front of an STH entry (e.g. `1` for the first detected STH) and use the return key <kbd>⮐</kbd> to confirm your selection. The text based interface will now show you something like this:
 
 ```
-08:6b:d7:01:de:81(Blubb)
-Global Trade Identification Number (GTIN): 0
-Hardware Version(Major.Minor.Build): 1.3.5
-Firmware Version(Major.Minor.Build): 2.1.10
-Firmware Release Name: Tanja
-Serial: -
+                ICOc
+STH “Blubb” (08:6b:d7:01:de:81)
+———————————————————————————————
 
-Battery Voltage: 3.05V
-Internal Chip Temperature: 29.6°C
+Hardware Version      1.4.0
+Firmware Version      2.1.10
+Firmware Release Name Tanja
+Serial Number         –
 
-Run Time: 0s
-Adc Prescaler/AcquisitionTime/OversamplingRate/Reference(Samples/s): 2/8/64/VDD(9524)
-Acc Config(XYZ/DataSets): 100/3
+Battery Voltage       3.16 V
+Chip Temperature      26.2 °C
 
-a: Config ADC
-d: Display Time
-e: Exit and disconnect from holder
-n: Set Device Name
-O: Off(Standby)
-p: Config Acceleration Points(XYZ)
-r: Config run time
-s: Start Data Acquisition
+Run Time              ∞ s
+
+Prescaler             2
+Acquisition Time      8
+Oversampling Rate     64
+⇒ Sampling Rate       9524
+Reference Voltage     VDD
+
+Enabled Axis          X
+
+┌───────────────────────────┐
+│ s: Start Data Acquisition │
+│                           │
+│ n: Change STH Name        │
+│ r: Change Run Time        │
+│ a: Configure ADC          │
+│ p: Configure Enabled Axes │
+│ O: Set Standby Mode       │
+│                           │
+│ q: Disconnect from STH    │
+└───────────────────────────┘
 ```
 
 To start the data acquisition press the key <kbd>s</kbd>. Afterwards a graphical window

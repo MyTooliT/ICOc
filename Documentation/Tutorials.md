@@ -13,14 +13,20 @@
 2. The text based interface will show you a selection of the available STHs:
 
    ```
-   ICOc
+                   ICOc
 
-   1: 08:6b:d7:01:de:81(Serial)@-54dBm
+          Name      Address            RSSI
+   ———————————————————————————————————————————————
+       1: Serial    08:6b:d7:01:de:81  -44 dBm
 
-   q: Quit program
-   1-9: Connect to STH number (ENTER at input end)
-   f: Output File Name
-   n: Change Device Name
+   ┌──────────────────────────────┐
+   │ 1-9: Connect to STH          │
+   │                              │
+   │   f: Change Output File Name │
+   │   n: Change STH Name         │
+   │                              │
+   │   q: Quit ICOc               │
+   └──────────────────────────────┘
    ```
 
    Choose the STH you want to rename by entering the number to the left of the STH (here `1`). To confirm your selection press the return key <kbd>⮐</kbd>.
@@ -28,37 +34,47 @@
 3. Now the menu should look like this:
 
    ```
-   08:6b:d7:01:de:81(Serial)
-   Global Trade Identification Number (GTIN): 0
-   Hardware Version(Major.Minor.Build): 1.4.0
-   Firmware Version(Major.Minor.Build): 2.1.10
-   Firmware Release Name: Tanja
-   Serial: -
+                   ICOc
+   STH “Serial” (08:6b:d7:01:de:81)
+   ————————————————————————————————
 
-   Battery Voltage: 3.15V
-   Internal Chip Temperature: 22.3°C
+   Hardware Version      1.4.0
+   Firmware Version      2.1.10
+   Firmware Release Name Tanja
+   Serial Number         –
 
-   Run Time: 0s
-   Interval Time: 0s
-   Adc Prescaler/AcquisitionTime/OversamplingRate/Reference(Samples/s): 2/8/64/VDD(9524)
-   Acc Config(XYZ/DataSets): 100/3
+   Battery Voltage       3.16 V
+   Chip Temperature      26.2 °C
 
-   a: Config ADC
-   d: Display Time
-   e: Exit and disconnect from holder
-   n: Set Device Name
-   O: Off(Standby)
-   p: Config Acceleration Points(XYZ)
-   r: Config run time and interval time
-   s: Start Data Acquisition
+   Run Time              ∞ s
+
+   Prescaler             2
+   Acquisition Time      8
+   Oversampling Rate     64
+   ⇒ Sampling Rate       9524
+   Reference Voltage     VDD
+
+   Enabled Axis          X
+
+   ┌───────────────────────────┐
+   │ s: Start Data Acquisition │
+   │                           │
+   │ n: Change STH Name        │
+   │ r: Change Run Time        │
+   │ a: Configure ADC          │
+   │ p: Configure Enabled Axes │
+   │ O: Set Standby Mode       │
+   │                           │
+   │ q: Disconnect from STH    │
+   └───────────────────────────┘
    ```
 
    Press the button `n` to change the name.
 
-4. Enter the new device name.
+4. Enter the new STH name.
 
    ```
-   New Device Name (max. 8 characters): Blubb
+   New STH name (max. 8 characters): Blubb
    ```
 
    Confirm the name with the return key <kbd>⮐</kbd>.
