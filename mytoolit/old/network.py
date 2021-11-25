@@ -1268,6 +1268,11 @@ class Network(object):
                 if status != PCAN_ERROR_QRCVEMPTY:
                     self.Logger.Error(f"Unexpected Status: {status}")
                     self.RunReadThread = False
+                # Wait a little bit before trying to read new values –
+                # This reduces the CPU consumption of the read thread
+                # significantly while the buffer of the CAN controller should
+                # still be able to hold new messages in the meantime.
+                sleep(0.000_1)
             except KeyboardInterrupt:
                 self.RunReadThread = False
 
