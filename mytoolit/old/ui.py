@@ -495,7 +495,7 @@ class UserInterface(CommandLineInterface):
         curs_set(True)
 
         while True:
-            devList = self.main_window_information()
+            devices = self.main_window_information()
 
             self.add_string("\n")
             y_position = self.stdscr.getyx()[0]
@@ -515,7 +515,7 @@ class UserInterface(CommandLineInterface):
 
                 device_number = number - 1
                 device = None
-                for dev in devList:
+                for dev in devices:
                     if dev["DeviceNumber"] == device_number:
                         device = dev
 
