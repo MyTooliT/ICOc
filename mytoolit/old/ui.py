@@ -227,7 +227,7 @@ class UserInterface(CommandLineInterface):
 
         self.stdscr.refresh()
 
-    def change_adc_values(self):
+    def change_adc_values_window(self):
 
         def list_keys(dictionary):
             keys = map(str, dictionary.keys())
@@ -268,7 +268,7 @@ class UserInterface(CommandLineInterface):
         self.vAdcConfig(prescalar, acquistion_time, oversampling_rate)
         self.vAdcRefVConfig(adc_reference)
 
-    def change_runtime(self):
+    def change_runtime_window(self):
         curs_set(True)
         self.stdscr.clear()
 
@@ -415,7 +415,7 @@ class UserInterface(CommandLineInterface):
             continue_program = False
             continue_sth_window = False
         elif key == Key.A:
-            self.change_adc_values()
+            self.change_adc_values_window()
         elif key == Key.Q:
             continue_sth_window = False
             self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
@@ -445,7 +445,7 @@ class UserInterface(CommandLineInterface):
                 x, y, z = map(int, xyz)
                 self.vAccSet(x, y, z, -1)
         elif key == Key.R:
-            self.change_runtime()
+            self.change_runtime_window()
         elif key == Key.S:
             self.stdscr.clear()
             self.stdscr.addstr("Collecting measurement data…")
