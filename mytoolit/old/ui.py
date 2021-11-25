@@ -491,7 +491,7 @@ class UserInterface(CommandLineInterface):
 
         return continue_main
 
-    def connect_sth(self, number):
+    def connect_sth_window(self, number):
         curs_set(True)
 
         while True:
@@ -623,7 +623,7 @@ class UserInterface(CommandLineInterface):
             return False
 
         if Key.ONE <= key <= Key.NINE:
-            return self.sth_window() if self.connect_sth(
+            return self.sth_window() if self.connect_sth_window(
                 int(key - Key.ZERO)) else True
 
         if key == Key.F:
@@ -632,7 +632,7 @@ class UserInterface(CommandLineInterface):
 
         if key == Key.N:
 
-            if self.connect_sth(0):
+            if self.connect_sth_window(0):
                 self.change_sth_name_window()
                 self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
             else:
