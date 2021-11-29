@@ -1,7 +1,6 @@
 # -- Imports ------------------------------------------------------------------
 
-from asyncio import (get_event_loop, new_event_loop, set_event_loop, sleep as
-                     async_sleep)
+from asyncio import new_event_loop, set_event_loop, sleep as async_sleep
 from datetime import date, datetime
 from os.path import abspath, isfile, dirname, join
 from re import escape
@@ -244,8 +243,9 @@ class TestNode(TestCase):
                 'test_connection',
                 'test_eeprom',
         }:
-            set_event_loop(new_event_loop())
-            self.loop = get_event_loop()
+            loop = new_event_loop()
+            set_event_loop(loop)
+            self.loop = loop
             self.loop.run_until_complete(connect_new())
         else:
             connect_old()
