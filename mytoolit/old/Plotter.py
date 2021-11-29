@@ -6,8 +6,6 @@ from time import time
 
 from mytoolit.old.Logger import Logger
 
-HOST = ''  # Symbolic name meaning all available interfaces
-
 cDict = {
     "Run": True,
     "Plot": False,
@@ -113,7 +111,9 @@ def sPloterSocketInit(iSocketPort):
 
     global cDict
     cDict["Socket"] = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    cDict["Socket"].bind((HOST, iSocketPort))
+    cDict["Socket"].bind((
+        '',  # Symbolic name meaning all available interfaces
+        iSocketPort))
     cDict["Socket"].listen(1)
     cDict["Connection"], _ = cDict["Socket"].accept()
 
