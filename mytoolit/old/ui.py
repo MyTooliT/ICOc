@@ -56,11 +56,8 @@ class UserInterface(CommandLineInterface):
 
     def __init__(self):
         super().__init__()
-        self.process = None
 
     def close(self):
-        if self.process is not None:
-            self.process.terminate()
         super().close()
 
     def add_string(self, *arguments) -> None:
