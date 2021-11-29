@@ -449,11 +449,11 @@ class CommandLineInterface():
         self.vGraphSend(["xDim", self.iDisplayTime])
         self.vGraphPacketLossUpdate(0)
         if self.bAccX:
-            self.vGraphSend(["lineNameX", "AccX"])
+            self.vGraphSend(["lineNameX", "Acceleration X-Axis"])
         if self.bAccY:
-            self.vGraphSend(["lineNameY", "AccY"])
+            self.vGraphSend(["lineNameY", "Acceleration Y-Axis"])
         if self.bAccZ:
-            self.vGraphSend(["lineNameZ", "AccZ"])
+            self.vGraphSend(["lineNameZ", "Acceleration Z-Axis"])
         self.vGraphSend(["Plot", True])
 
     def vGraphPointNext(self, x, y, z):
