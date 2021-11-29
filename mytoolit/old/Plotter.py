@@ -17,7 +17,7 @@ cDict = {
     "figSizeX": 13,
     "figSizeY": 6,
     "X-Label": "s",
-    "Y-Label": "",
+    "Y-Label": "g",
     "timePoints": None,
     "dataBlockSize": 0,
     "xAccPoints": None,
