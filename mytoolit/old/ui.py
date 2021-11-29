@@ -603,7 +603,7 @@ class UserInterface(CommandLineInterface):
             "  q: Quit ICOc",
         ])
 
-    def main_menu_key_evaluation(self) -> bool:
+    def main_window_key_evaluation(self) -> bool:
         """Evaluate key input in the main window
 
         Returns
@@ -644,7 +644,7 @@ class UserInterface(CommandLineInterface):
         self.main_window_information()
         self.main_window_menu()
 
-        return self.main_menu_key_evaluation()
+        return self.main_window_key_evaluation()
 
     def user_interface(self, stdscr):
         self.stdscr = stdscr
