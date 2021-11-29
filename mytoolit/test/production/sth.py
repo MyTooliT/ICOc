@@ -342,10 +342,11 @@ class TestSTH(TestNode):
             # =========================
             # = Sleep & Advertisement =
             # =========================
+
             async def read_write_time(read_function, write_function, variable,
                                       description, milliseconds):
                 await write_function(milliseconds)
-                milliseconds_read = await read_function()
+                milliseconds_read = round(await read_function())
                 setattr(type(self), variable, milliseconds_read)
                 self.assertEqual(
                     milliseconds_read, milliseconds,

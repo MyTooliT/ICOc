@@ -162,9 +162,9 @@ STH:
     TOLERANCE: 0.6 # Tolerance for expected power source voltage in Volt
   BLUETOOTH:
     # Advertisement time 1 in ms
-    ADVERTISEMENT TIME 1: 2000
+    ADVERTISEMENT TIME 1: 1250
     # Advertisement time 2 in ms
-    ADVERTISEMENT TIME 2: 4000
+    ADVERTISEMENT TIME 2: 2500
     # Time to from disconnect or power on to sleep mode 1 in ms
     SLEEP TIME 1: 300000
     # Time to/from entering sleep mode 1 to sleep mode 2 in ms

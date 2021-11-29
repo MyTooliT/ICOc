@@ -171,6 +171,10 @@ class ResponseListener(Listener):
 class Network:
     """Basic class to communicate with STU and STH devices"""
 
+    # Stores the conversion rate for the EEPROM advertisement times:
+    # - https://mytoolit.github.io/Documentation/#page-system-configuration
+    ADVERTISEMENT_TIME_EEPROM_TO_MS = 0.625
+
     def __init__(self, sender: Union[str, Node] = 'SPU 1') -> None:
         """Create a new network from the given arguments
 
@@ -1992,7 +1996,7 @@ class Network:
                                     length=4,
                                     node='STH 1')
 
-    async def read_eeprom_advertisement_time_1(self) -> int:
+    async def read_eeprom_advertisement_time_1(self) -> float:
         """Retrieve advertisement time 1 from the EEPROM
 
         Returns
@@ -2012,17 +2016,19 @@ class Network:
         ...         await network.connect_sth(0)
         ...         return await network.read_eeprom_advertisement_time_1()
         >>> advertisement_time = run(read_advertisement_time_1())
-        >>> isinstance(advertisement_time, int)
+        >>> isinstance(advertisement_time, float)
         True
         >>> advertisement_time > 0
         True
 
         """
 
-        return await self.read_eeprom_int(address=0,
-                                          offset=13,
-                                          length=2,
-                                          node='STH 1')
+        advertisement_time_eeprom = await self.read_eeprom_int(address=0,
+                                                               offset=13,
+                                                               length=2,
+                                                               node='STH 1')
+        return (advertisement_time_eeprom *
+                type(self).ADVERTISEMENT_TIME_EEPROM_TO_MS)
 
     async def write_eeprom_advertisement_time_1(self, milliseconds: int):
         """Write the value of advertisement time 1 to the EEPROM
@@ -2046,14 +2052,17 @@ class Network:
         ...         await network.write_eeprom_advertisement_time_1(
         ...                 milliseconds)
         ...         return await network.read_eeprom_advertisement_time_1()
-        >>> run(write_read_advertisement_time_1(2000))
-        2000
+        >>> run(write_read_advertisement_time_1(1250))
+        1250.0
 
         """
 
+        advertisement_time_eeprom = round(
+            milliseconds / type(self).ADVERTISEMENT_TIME_EEPROM_TO_MS)
+
         await self.write_eeprom_int(address=0,
                                     offset=13,
-                                    value=milliseconds,
+                                    value=advertisement_time_eeprom,
                                     length=2,
                                     node='STH 1')
 
@@ -2119,7 +2128,7 @@ class Network:
                                     length=4,
                                     node='STH 1')
 
-    async def read_eeprom_advertisement_time_2(self) -> int:
+    async def read_eeprom_advertisement_time_2(self) -> float:
         """Retrieve advertisement time 2 from the EEPROM
 
         Returns
@@ -2139,15 +2148,18 @@ class Network:
         ...         await network.connect_sth(0)
         ...         return await network.read_eeprom_advertisement_time_2()
         >>> advertisement_time = run(read_advertisement_time_2())
-        >>> isinstance(advertisement_time, int)
+        >>> isinstance(advertisement_time, float)
         True
 
         """
 
-        return await self.read_eeprom_int(address=0,
-                                          offset=19,
-                                          length=2,
-                                          node='STH 1')
+        advertisement_time_eeprom = await self.read_eeprom_int(address=0,
+                                                               offset=19,
+                                                               length=2,
+                                                               node='STH 1')
+
+        return (advertisement_time_eeprom *
+                type(self).ADVERTISEMENT_TIME_EEPROM_TO_MS)
 
     async def write_eeprom_advertisement_time_2(self, milliseconds: int):
         """Write the value of advertisement time 2 to the EEPROM
@@ -2171,14 +2183,17 @@ class Network:
         ...         await network.write_eeprom_advertisement_time_2(
         ...                 milliseconds)
         ...         return await network.read_eeprom_advertisement_time_2()
-        >>> run(write_read_advertisement_time_2(4000))
-        4000
+        >>> run(write_read_advertisement_time_2(2500))
+        2500.0
 
         """
 
+        advertisement_time_eeprom = round(
+            milliseconds / type(self).ADVERTISEMENT_TIME_EEPROM_TO_MS)
+
         await self.write_eeprom_int(address=0,
                                     offset=19,
-                                    value=milliseconds,
+                                    value=advertisement_time_eeprom,
                                     length=2,
                                     node='STH 1')
 
