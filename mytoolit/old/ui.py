@@ -123,6 +123,7 @@ class UserInterface(CommandLineInterface):
             self.add_string(y_position, x_position, text)
             self.stdscr.refresh()
             key = self.stdscr.getch()
+            sleep(0.001)  # Sleep a little bit to reduce CPU usage
 
             if key == Key.CTRL_C:
                 break
