@@ -43,21 +43,20 @@ def parse_arguments():
 class EEPROMCheck:
     """Write and check the content of a certain page in EEPROM of an STH"""
 
-    def __init__(self, mac, value):
+    def __init__(self, mac: EUI, value):
         """Initialize the EEPROM check with the given arguments
 
         Parameters
         ----------
 
         mac
-            The MAC address of an STH as text of the form `xx:xx:xx:xx:xx:xx`,
-            where `x` represents a hexadecimal number.
+            The MAC address of an STH
 
         value:
             The value that the EEPROM checker should write into the EEPROM
         """
 
-        self.mac_address = EUI(mac)
+        self.mac_address = mac
         self.eeprom_address = 1
         self.eeprom_length = 256
         self.eeprom_value = value
