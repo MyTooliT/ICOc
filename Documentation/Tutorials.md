@@ -85,6 +85,45 @@
 
 7. To exit ICOc, please use the key <kbd>q</kbd>.
 
+## Command Line Usage of ICOc
+
+The ICOc program accepts optional command line arguments at startup. This way you can use the tool without the interactive user interface, which allows you to automate the measurement process. To show the available command line options you can use the option `-h`:
+
+```sh
+icoc -h
+```
+
+which should show you the following output:
+
+```
+usage: icoc [-h] [-b BLUETOOTH_ADDRESS | -n NAME] [-f FILENAME] [-p XYZ] [-r SECONDS]
+            [-a PRESCALER ACQUISITION OVERSAMPLING]
+
+Configure and measure data with the ICOtronic system
+
+options:
+  -h, --help            show this help message and exit
+
+Connection:
+  -b BLUETOOTH_ADDRESS, --bluetooth-address BLUETOOTH_ADDRESS
+                        connect to device with specified Bluetooth address (e.g.
+                        “08:6b:d7:01:de:81”)
+  -n NAME, --name NAME  connect to device with specified name
+
+Measurement:
+  -f FILENAME, --filename FILENAME
+                        base name of the output file
+  -p XYZ, --points XYZ  specify the axes for which acceleration data should be acquired
+                        (e.g. “101” to measure data for the x- and z-axis but not for the
+                        y-axis)
+  -r SECONDS, --run-time SECONDS
+                        run time in seconds
+
+ADC:
+  -a PRESCALER ACQUISITION OVERSAMPLING, --adc PRESCALER ACQUISITION OVERSAMPLING
+                        prescaler, acquisition time and oversampling rate (e.g. “2 8 64”)
+```
+
 ## Production Tests
 
 This tutorial lists the usual steps to test a sensory holder assembly or a sensory tool holder.
