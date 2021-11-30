@@ -67,7 +67,7 @@ class CommandLineInterface():
                            FreshLog=True,
                            sender=MyToolItNetworkNr["SPU1"],
                            receiver=MyToolItNetworkNr["STH1"])
-        self.vSthAutoConnect(False)
+        self.connect = False
         self.Can.Logger.Info(f"Start Time: {datetime.now().isoformat()}")
         self.vAccSet(True, False, False, 3)
         self.vDeviceNameSet('')
@@ -342,9 +342,6 @@ class CommandLineInterface():
             dataSets = self.Can.dataSetsCan20(bX, bY, bZ)
             self.tAccDataFormat = DataSets[dataSets]
 
-    def vSthAutoConnect(self, bSthAutoConnect):
-        self.bSthAutoConnect = bool(bSthAutoConnect)
-
     def vDeviceNameSet(self, sDevName):
         if 8 < len(sDevName):
             sDevName = sDevName[:8]
@@ -578,12 +575,12 @@ class CommandLineInterface():
 
         if self.args.name is not None:
             self.vDeviceNameSet(self.args.name)
-            self.vSthAutoConnect(True)
+            self.connect = True
         elif self.args.bluetooth_address is not None:
             bluetooth_address = EUI(self.args.bluetooth_address)
             self.vDeviceAddressSet(
                 str(int.from_bytes(bluetooth_address.packed, 'big')))
-            self.vSthAutoConnect(True)
+            self.connect = True
 
         if self.args.points:
             points = self.args.points[0] & 0x07
@@ -856,7 +853,7 @@ class CommandLineInterface():
         self.Can.Logger.Info(f"Log File: {self.Can.Logger.filepath.name}")
         self.Can.Logger.Info(f"STH Name: {self.sDevName}")
         self.Can.Logger.Info(f"Bluetooth Address: {self.iAddress}")
-        self.Can.Logger.Info(f"Connect to STH: {str(self.bSthAutoConnect)}")
+        self.Can.Logger.Info(f"Connect to STH: {self.connect}")
         self.Can.Logger.Info(f"Run Time: {self.iRunTime} s")
         self.Can.Logger.Info(f"Prescaler: {self.iPrescaler}")
         aqcuisition_time = AdcAcquisitionTime.inverse[self.iAquistionTime]
@@ -891,7 +888,7 @@ class CommandLineInterface():
     def vRunConsole(self):
         self._vRunConsoleStartup()
         self.reset()
-        if self.bSthAutoConnect:
+        if self.connect:
             self.vRunConsoleAutoConnect()
         self.close()
 

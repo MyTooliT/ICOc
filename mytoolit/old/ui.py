@@ -667,7 +667,7 @@ class UserInterface(CommandLineInterface):
     def vRunConsole(self):
         self._vRunConsoleStartup()
         self.reset()
-        if self.bSthAutoConnect:
+        if self.connect:
             self.vRunConsoleAutoConnect()
         else:
             wrapper(self.user_interface)
