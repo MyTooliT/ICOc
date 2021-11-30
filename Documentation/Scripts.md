@@ -1,3 +1,5 @@
+<a name="scripts:section:scripts"></a>
+
 # Scripts
 
 After you installed the ICOc package various helper scripts are available:

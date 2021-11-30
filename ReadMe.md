@@ -149,7 +149,7 @@ Before you use the software you need to install it (in developer mode). To do th
 pip install -e .
 ```
 
-Afterwards you can use the various [scripts](Documentation/Scripts.md) included in the package.
+Afterwards you can use the various [scripts](#scripts:section:scripts) included in the package.
 
 ### Troubleshooting
 
