@@ -11,6 +11,7 @@ from typing import Optional
 from can.interfaces.pcan.basic import PCAN_ERROR_OK, PCAN_ERROR_QOVERRUN
 from netaddr import EUI
 
+from mytoolit.cmdline import sth_name
 from mytoolit.config import settings
 from mytoolit.measurement.acceleration import convert_acceleration_adc_to_g
 from mytoolit.measurement.storage import Storage
@@ -524,7 +525,7 @@ class CommandLineInterface():
         connection_group.add_argument(
             '-n',
             '--name',
-            type=str,
+            type=sth_name,
             required=False,
             help="connect to device with specified name")
 

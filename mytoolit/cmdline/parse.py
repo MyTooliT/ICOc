@@ -113,6 +113,52 @@ def mac_address(address):
     raise ArgumentTypeError(f"“{address}” is not a valid MAC address")
 
 
+def sth_name(name: str) -> str:
+    """Check if the given text is a valid STH name
+
+    Throws
+    ------
+
+    An argument type error in case the given text does not store a valid STH
+    name. This is the case, if the name
+
+    - is longer than 8 characters or
+    - contains non-ASCII data.
+
+    Returns
+    -------
+
+    The given name on success
+
+    Examples
+    --------
+
+    >>> sth_name("Blubb")
+    'Blubb'
+
+    >>> sth_name("Blübb")
+    Traceback (most recent call last):
+       ...
+    argparse.ArgumentTypeError: “Blübb” is not a valid STH name
+
+    >>> sth_name("123456789")
+    Traceback (most recent call last):
+       ...
+    argparse.ArgumentTypeError: “123456789” is too long to be a valid STH name
+
+    """
+
+    try:
+        name.encode('ascii')
+    except UnicodeEncodeError:
+        raise ArgumentTypeError(f"“{name}” is not a valid STH name")
+
+    if len(name) > 8:
+        raise ArgumentTypeError(f"“{name}” is too long to be a valid STH name")
+
+    return name
+
+
 # -- Main ---------------------------------------------------------------------
 
 if __name__ == '__main__':
