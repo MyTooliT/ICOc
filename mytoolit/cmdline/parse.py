@@ -23,7 +23,7 @@ def axes_spec(spec: str) -> str:
     ------
 
     An argument type error in case the given value does not represent an
-    axes specification
+    axes specification or if none of the axes is enabled.
 
     Returns
     -------
@@ -54,6 +54,11 @@ def axes_spec(spec: str) -> str:
     argparse.ArgumentTypeError: The axis specification “120” contains invalid
                                 characters (only “0” and “1” are allowed)
 
+    >>> axes_spec("000") # doctest:+NORMALIZE_WHITESPACE
+    Traceback (most recent call last):
+       ...
+    argparse.ArgumentTypeError: At least one axis has to be enabled
+
     """
 
     allowed_chars_regex = compile("[01]+$")
@@ -66,6 +71,9 @@ def axes_spec(spec: str) -> str:
         description = "not enough" if len(spec) < 3 else "too many"
         raise ArgumentTypeError(f"“{spec}” contains {description} digits "
                                 "for an axis specification")
+
+    if int(spec) == 0:
+        raise ArgumentTypeError("At least one axis has to be enabled")
 
     return spec
 
