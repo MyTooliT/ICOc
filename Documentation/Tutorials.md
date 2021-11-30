@@ -108,15 +108,15 @@ options:
 Connection:
   -b BLUETOOTH_ADDRESS, --bluetooth-address BLUETOOTH_ADDRESS
                         connect to device with specified Bluetooth address (e.g.
-                        “08:6b:d7:01:de:81”) (default: None)
-  -n NAME, --name NAME  connect to device with specified name (default: None)
+                        “08:6b:d7:01:de:81”)
+  -n NAME, --name NAME  connect to device with specified name
 
 Measurement:
   -f FILENAME, --filename FILENAME
-                        base name of the output file (default: None)
+                        base name of the output file (default: Measurement)
   -p XYZ, --points XYZ  specify the axes for which acceleration data should be acquired
                         (e.g. “101” to measure data for the x- and z-axis but not for the
-                        y-axis) (default: None)
+                        y-axis) (default: 100)
   -r SECONDS, --run-time SECONDS
                         run time in seconds (values equal or below “0” specify infinite
                         runtime) (default: 0)
