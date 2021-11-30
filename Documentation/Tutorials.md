@@ -97,7 +97,8 @@ which should show you the following output:
 
 ```
 usage: icoc [-h] [-b BLUETOOTH_ADDRESS | -n NAME] [-f FILENAME] [-p XYZ] [-r SECONDS]
-            [-a PRESCALER ACQUISITION OVERSAMPLING]
+            [-s 2–127] [-a {1,2,3,4,8,16,32,64,128,256}]
+            [-o {1,2,4,8,16,32,64,128,256,512,1024,2048,4096}]
 
 Configure and measure data with the ICOtronic system
 
@@ -120,8 +121,12 @@ Measurement:
                         run time in seconds
 
 ADC:
-  -a PRESCALER ACQUISITION OVERSAMPLING, --adc PRESCALER ACQUISITION OVERSAMPLING
-                        prescaler, acquisition time and oversampling rate (e.g. “2 8 64”)
+  -s 2–127, --prescaler 2–127
+                        Prescaler value (default: 2)
+  -a {1,2,3,4,8,16,32,64,128,256}, --acquisition {1,2,3,4,8,16,32,64,128,256}
+                        Acquisition time value (default: 8)
+  -o {1,2,4,8,16,32,64,128,256,512,1024,2048,4096}, --oversampling {1,2,4,8,16,32,64,128,256,512,1024,2048,4096}
+                        Oversampling rate value (default: 64)
 ```
 
 ## Production Tests

@@ -1,6 +1,8 @@
 import argparse
 import multiprocessing
 import socket
+
+from argparse import ArgumentDefaultsHelpFormatter
 from time import sleep, time
 from datetime import datetime
 from functools import partial
@@ -500,7 +502,8 @@ class CommandLineInterface():
 
     def parse_arguments(self):
         self.parser = argparse.ArgumentParser(
-            description="Configure and measure data with the ICOtronic system")
+            description="Configure and measure data with the ICOtronic system",
+            formatter_class=ArgumentDefaultsHelpFormatter)
 
         # TODO: Check option arguments for valid inputs with custom type
         # functions. For an example, please take a look at the function
@@ -546,23 +549,38 @@ class CommandLineInterface():
                                        help="run time in seconds")
 
         adc_group = self.parser.add_argument_group(title="ADC")
-        adc_group.add_argument(
-            '-a',
-            '--adc',
-            metavar=('PRESCALER', 'ACQUISITION', 'OVERSAMPLING'),
-            nargs=3,
-            type=int,
-            required=False,
-            help=("prescaler, acquisition time and oversampling rate "
-                  "(e.g. “2 8 64”)"))
+
+        adc_group.add_argument('-s',
+                               '--prescaler',
+                               type=int,
+                               choices=range(2, 128),
+                               metavar='2–127',
+                               default=2,
+                               required=False,
+                               help="Prescaler value")
+        adc_group.add_argument('-a',
+                               '--acquisition',
+                               type=int,
+                               choices=AdcAcquisitionTime.keys(),
+                               default=8,
+                               required=False,
+                               help="Acquisition time value")
+        adc_group.add_argument('-o',
+                               '--oversampling',
+                               type=int,
+                               choices=AdcOverSamplingRate.keys(),
+                               default=64,
+                               required=False,
+                               help="Oversampling rate value")
 
         self.args = self.parser.parse_args()
 
     def vParserConsoleArgumentsPass(self):
         if self.args.filename is not None:
             self.set_output_filename(self.args.filename)
-        if self.args.adc is not None:
-            self.vAdcConfig(*self.args.adc)
+
+        self.vAdcConfig(self.args.prescaler, self.args.acquisition,
+                        self.args.oversampling)
 
         self.vRunTime(
             self.args.run_time if self.args.run_time else self.iRunTime)
