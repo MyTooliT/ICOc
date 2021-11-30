@@ -534,6 +534,7 @@ class CommandLineInterface():
             '--points',
             metavar='XYZ',
             type=axes_spec,
+            default='100',
             required=False,
             help=("specify the axes for which acceleration data should be "
                   "acquired (e.g. “101” to measure data for the x- and "
