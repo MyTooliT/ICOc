@@ -9,7 +9,6 @@ from sys import stderr
 from typing import Optional
 
 from can.interfaces.pcan.basic import PCAN_ERROR_OK, PCAN_ERROR_QOVERRUN
-from netaddr import EUI
 
 from mytoolit.cmdline import mac_address, sth_name
 from mytoolit.config import settings
@@ -572,7 +571,7 @@ class CommandLineInterface():
             self.sth_name = self.args.name
             self.connect = True
         elif self.args.bluetooth_address is not None:
-            bluetooth_address = EUI(self.args.bluetooth_address)
+            bluetooth_address = self.args.bluetooth_address
             self.vDeviceAddressSet(
                 str(int.from_bytes(bluetooth_address.packed, 'big')))
             self.connect = True
