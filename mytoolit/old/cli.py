@@ -503,6 +503,7 @@ class CommandLineInterface():
     def parse_arguments(self):
         self.parser = argparse.ArgumentParser(
             description="Configure and measure data with the ICOtronic system",
+            argument_default=argparse.SUPPRESS,
             formatter_class=ArgumentDefaultsHelpFormatter)
 
         connection_group = self.parser.add_argument_group(title="Connection")
@@ -585,10 +586,10 @@ class CommandLineInterface():
 
         self.vRunTime(0 if self.args.run_time <= 0 else self.iRunTime)
 
-        if self.args.name is not None:
+        if 'name' in self.args:
             self.sth_name = self.args.name
             self.connect = True
-        elif self.args.bluetooth_address is not None:
+        elif 'bluetooth_address' in self.args:
             bluetooth_address = self.args.bluetooth_address
             self.vDeviceAddressSet(
                 str(int.from_bytes(bluetooth_address.packed, 'big')))
