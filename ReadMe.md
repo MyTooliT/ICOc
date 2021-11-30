@@ -7,8 +7,8 @@ author: MyTooliT
 
 The ICOc software is a collection of tools and scripts for the [ICOtronic system](https://www.mytoolit.com/ICOtronic/). Currently the main purpose of the software is
 
-- data collection (via the script `icoc`)
-- and testing the functionality of the Sensory Holder Assembly (SHA) and Sensory Tool Holder (STH).
+- **data collection** (via the script `icoc`) and
+- **testing** the functionality of the Sensory Holder Assembly (SHA) and Sensory Tool Holder (STH).
 
 For these purposes the software reads data from the Stationary Transceiver Unit (STU) via CAN using the MyTooliT protocol. The STU itself reads from and writes data to the SHA/STH via Bluetooth.
 
