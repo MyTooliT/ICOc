@@ -499,7 +499,7 @@ class CommandLineInterface():
             self.iMsgLoss = 0
             self.iMsgsTotal = 0
 
-    def vParserInit(self):
+    def parse_arguments(self):
         self.parser = argparse.ArgumentParser(
             description="Configure and measure data with the ICOtronic system")
 
@@ -890,6 +890,6 @@ class CommandLineInterface():
 
 if __name__ == "__main__":
     watch = CommandLineInterface()
-    watch.vParserInit()
+    watch.parse_arguments()
     watch.vParserConsoleArgumentsPass()
     watch.vRunConsole()
