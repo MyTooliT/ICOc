@@ -206,7 +206,12 @@ in your [terminal](https://aka.ms/terminal), a text based interface shows you th
 └──────────────────────────────┘
 ```
 
-shows that currently one STH was detected. The Bluetooth MAC address of the STH is `08:6b:d7:01:de:81`, while its advertisement name is “Blubb”. The last value after the `@` character shows the current received signal strength indication (RSSI). To exit the program use the key <kbd>q</kbd>.
+shows that currently one STH was detected. The
+
+- Bluetooth MAC address of the STH is `08:6b:d7:01:de:81`, while its
+- advertisement name is “Blubb”.
+
+The last value “-44” is the current [received signal strength indication (RSSI)](https://en.wikipedia.org/wiki/Received_signal_strength_indication). To exit the program use the key <kbd>q</kbd>.
 
 ### Reading Acceleration Data
 
