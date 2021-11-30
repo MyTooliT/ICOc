@@ -525,6 +525,7 @@ class CommandLineInterface():
         measurement_group.add_argument('-f',
                                        '--filename',
                                        type=str,
+                                       default='Measurement',
                                        required=False,
                                        help="base name of the output file")
 
