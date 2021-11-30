@@ -71,7 +71,7 @@ class CommandLineInterface():
         self.connect = False
         self.Can.Logger.Info(f"Start Time: {datetime.now().isoformat()}")
         self.vAccSet(True, False, False, 3)
-        self.vDeviceNameSet('')
+        self.sth_name = ""
         self.vDeviceAddressSet("0")
         self.vAdcConfig(2, 8, 64)
         self.vAdcRefVConfig("VDD")
@@ -343,12 +343,6 @@ class CommandLineInterface():
             dataSets = self.Can.dataSetsCan20(bX, bY, bZ)
             self.tAccDataFormat = DataSets[dataSets]
 
-    def vDeviceNameSet(self, sDevName):
-        if 8 < len(sDevName):
-            sDevName = sDevName[:8]
-        self.sDevName = sDevName
-        self.iDevNr = None
-
     def vDeviceAddressSet(self, iAddress):
         """Set bluetooth device address"""
         iAddress = int(iAddress, base=0)
@@ -575,7 +569,7 @@ class CommandLineInterface():
             self.args.run_time if self.args.run_time else self.iRunTime)
 
         if self.args.name is not None:
-            self.vDeviceNameSet(self.args.name)
+            self.sth_name = self.args.name
             self.connect = True
         elif self.args.bluetooth_address is not None:
             bluetooth_address = EUI(self.args.bluetooth_address)
@@ -721,8 +715,8 @@ class CommandLineInterface():
         ack = self.vGetStreamingAccDataAccStart()
         currentTime = self.Can.get_elapsed_time()
         if ack is None:
-            self.Can.Logger.Error("No Ack received from Device: " +
-                                  str(self.iDevNr))
+            self.Can.Logger.Error(
+                f"No acknowledge received from STH “{self.iAddress}”")
             self.aquireEndTime = currentTime
         elif self.iRunTime == 0:
             self.aquireEndTime = currentTime + (1 << 32)
@@ -852,7 +846,7 @@ class CommandLineInterface():
 
     def _vRunConsoleStartupLoggerPrint(self):
         self.Can.Logger.Info(f"Log File: {self.Can.Logger.filepath.name}")
-        self.Can.Logger.Info(f"STH Name: {self.sDevName}")
+        self.Can.Logger.Info(f"STH Name: {self.sth_name}")
         self.Can.Logger.Info(f"Bluetooth Address: {self.iAddress}")
         self.Can.Logger.Info(f"Connect to STH: {self.connect}")
         self.Can.Logger.Info(f"Run Time: {self.iRunTime} s")
@@ -881,7 +875,7 @@ class CommandLineInterface():
                                                      self.iAddress)
         else:
             self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
-                                                  self.sDevName,
+                                                  self.sth_name,
                                                   log=False)
         if self.Can.bConnected:
             self.vDataAquisition()

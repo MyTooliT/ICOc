@@ -332,7 +332,7 @@ class UserInterface(CommandLineInterface):
         self.window_header()
 
         address = int_to_mac_address(int(self.iAddress, 16))
-        name = self.sDevName
+        name = self.sth_name
         device_description = f"STH “{name}” ({address})"
         for value in (device_description, "\n", '—' * len(device_description),
                       "\n\n"):
@@ -526,7 +526,7 @@ class UserInterface(CommandLineInterface):
                 self.stdscr.refresh()
 
                 self.vDeviceAddressSet(hex(device["Address"]))
-                self.sDevName = name
+                self.sth_name = name
                 self.stdscr.refresh()
                 return self.Can.bBlueToothConnectPollingAddress(
                     MyToolItNetworkNr["STU1"], self.iAddress)
@@ -568,7 +568,7 @@ class UserInterface(CommandLineInterface):
         if not name_valid:
             return
 
-        self.vDeviceNameSet(name)
+        self.sth_name = name
         self.Can.vBlueToothNameWrite(MyToolItNetworkNr["STH1"], 0, name)
 
     def window_header(self):
