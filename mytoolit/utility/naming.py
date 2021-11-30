@@ -1,12 +1,14 @@
 # -- Imports ------------------------------------------------------------------
 
 from base64 import b64encode, b64decode
+from typing import Union
+
 from netaddr import EUI
 
 # -- Functions ----------------------------------------------------------------
 
 
-def convert_mac_base64(mac: str) -> str:
+def convert_mac_base64(mac: Union[str, EUI]) -> str:
     """Convert a Bluetooth MAC address to a Base64 encoded text
 
     Parameters
