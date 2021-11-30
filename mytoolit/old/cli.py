@@ -505,10 +505,6 @@ class CommandLineInterface():
             description="Configure and measure data with the ICOtronic system",
             formatter_class=ArgumentDefaultsHelpFormatter)
 
-        # TODO: Check option arguments for valid inputs with custom type
-        # functions. For an example, please take a look at the function
-        # `base64_mac_address` and its usage in `mytoolit/scripts/name.py`.
-
         connection_group = self.parser.add_argument_group(title="Connection")
         connection_group = connection_group.add_mutually_exclusive_group()
         connection_group.add_argument(
@@ -541,12 +537,15 @@ class CommandLineInterface():
             help=("specify the axes for which acceleration data should be "
                   "acquired (e.g. “101” to measure data for the x- and "
                   "z-axis but not for the y-axis)"))
-        measurement_group.add_argument('-r',
-                                       '--run-time',
-                                       metavar='SECONDS',
-                                       type=int,
-                                       required=False,
-                                       help="run time in seconds")
+        measurement_group.add_argument(
+            '-r',
+            '--run-time',
+            metavar='SECONDS',
+            type=int,
+            default=0,
+            required=False,
+            help=("run time in seconds "
+                  "(values equal or below “0” specify infinite runtime)"))
 
         adc_group = self.parser.add_argument_group(title="ADC")
 
@@ -582,8 +581,7 @@ class CommandLineInterface():
         self.vAdcConfig(self.args.prescaler, self.args.acquisition,
                         self.args.oversampling)
 
-        self.vRunTime(
-            self.args.run_time if self.args.run_time else self.iRunTime)
+        self.vRunTime(0 if self.args.run_time <= 0 else self.iRunTime)
 
         if self.args.name is not None:
             self.sth_name = self.args.name
