@@ -3,6 +3,8 @@
 from argparse import ArgumentTypeError
 from re import compile
 
+from netaddr import AddrFormatError, EUI
+
 # -- Functions ----------------------------------------------------------------
 
 
@@ -79,7 +81,7 @@ def byte_value(value):
         raise ArgumentTypeError(f"“{value}” is not a valid byte value")
 
 
-def mac_address(address):
+def mac_address(address: str) -> EUI:
     """Check if the given text represents a MAC address
 
     Throws
@@ -98,19 +100,21 @@ def mac_address(address):
     --------
 
     >>> mac_address("08:6b:d7:01:de:81")
-    '08:6b:d7:01:de:81'
+    EUI('08-6B-D7-01-DE-81')
 
-    >>> mac_address("08:6b:d7:01:de:8")
+    >>> mac_address("08:6b:d7:01:de:666")
     Traceback (most recent call last):
        ...
-    argparse.ArgumentTypeError: “08:6b:d7:01:de:8” is not a valid MAC address
+    argparse.ArgumentTypeError: “08:6b:d7:01:de:666” is not a valid MAC address
 
     """
 
-    mac_regex = compile("[0-9a-fA-F]{2}(?:[:-][0-9a-fA-F]{2}){5}$")
-    if mac_regex.match(address):
-        return address
-    raise ArgumentTypeError(f"“{address}” is not a valid MAC address")
+    try:
+        mac_address = EUI(address)
+    except AddrFormatError:
+        raise ArgumentTypeError(f"“{address}” is not a valid MAC address")
+
+    return mac_address
 
 
 def sth_name(name: str) -> str:
