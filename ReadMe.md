@@ -55,7 +55,7 @@ in the repo root.
 
 ### Hardware
 
-In order to setup a test bench you need at least:
+In order to use ICOc you need at least:
 
 - a [PCAN adapter](https://www.peak-system.com):
 
