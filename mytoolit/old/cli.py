@@ -583,7 +583,7 @@ class CommandLineInterface():
             self.connect = True
 
         if self.args.points:
-            points = self.args.points[0] & 0x07
+            points = self.args.points & 0x07
             bZ = bool(points & 1)
             bY = bool((points >> 1) & 1)
             bX = bool((points >> 2) & 1)
