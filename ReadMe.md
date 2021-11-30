@@ -261,7 +261,11 @@ will show the measured acceleration. To stop the data acquisition, click the clo
 
 ## Measurement Data
 
-The ICOc script stores measured acceleration values in [HDF5](https://www.hdfgroup.org/solutions/hdf5/) files. By default these files will be stored in the root of the repository with a name starting with the text `Measurement` followed by a date/time-stamp and the extension `.hdf5`.
+The ICOc script stores measured acceleration values in [HDF5](https://www.hdfgroup.org/solutions/hdf5/) files. By default these files will be stored in the root of the repository with a
+
+- name starting with the text `Measurement`
+- followed by a date/time-stamp,
+- and the extension `.hdf5`.
 
 To take a look at the measurement data you can use the tool [HDFView](https://www.hdfgroup.org/downloads/hdfview/). Unfortunately you need to create a free account to download the program. If you do not want to register, then you can try if [one of the accounts listed at BugMeNot](http://bugmenot.com/view/hdfgroup.org) works.
 
