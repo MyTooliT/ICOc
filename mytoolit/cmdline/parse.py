@@ -8,6 +8,68 @@ from netaddr import AddrFormatError, EUI
 # -- Functions ----------------------------------------------------------------
 
 
+def axes_spec(spec: str) -> str:
+    """Check if the given text represents a spec for acceleration axes
+
+    An axes spec contains three digits, where each digit is either `0` or `1`.
+    Every digit specifies if a certain axis is enabled (`1`) or not (`0`).
+    The first digit represents the x-axis, the second one the y-axis and the
+    last one the z-axis.
+
+    For example the value `110` specifies that the x-axis and y-axis are
+    enabled, while the z-axis is not.
+
+    Throws
+    ------
+
+    An argument type error in case the given value does not represent an
+    axes specification
+
+    Returns
+    -------
+
+    The given specification on success
+
+    Examples
+    --------
+
+    >>> axes_spec("101")
+    '101'
+
+    >>> axes_spec("01") # doctest:+NORMALIZE_WHITESPACE
+    Traceback (most recent call last):
+       ...
+    argparse.ArgumentTypeError: “01” contains not enough digits for an axis
+                                specification
+
+    >>> axes_spec("1111") # doctest:+NORMALIZE_WHITESPACE
+    Traceback (most recent call last):
+       ...
+    argparse.ArgumentTypeError: “1111” contains too many digits for an axis
+                                specification
+
+    >>> axes_spec("120") # doctest:+NORMALIZE_WHITESPACE
+    Traceback (most recent call last):
+       ...
+    argparse.ArgumentTypeError: The axis specification “120” contains invalid
+                                characters (only “0” and “1” are allowed)
+
+    """
+
+    allowed_chars_regex = compile("[01]+$")
+    if not allowed_chars_regex.fullmatch(spec):
+        raise ArgumentTypeError(
+            f"The axis specification “{spec}” contains invalid characters "
+            "(only “0” and “1” are allowed)")
+
+    if len(spec) != 3:
+        description = "not enough" if len(spec) < 3 else "too many"
+        raise ArgumentTypeError(f"“{spec}” contains {description} digits "
+                                "for an axis specification")
+
+    return spec
+
+
 def base64_mac_address(name):
     """Check if the given text represents a Base64 encoded MAC address
 

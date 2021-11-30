@@ -10,7 +10,7 @@ from typing import Optional
 
 from can.interfaces.pcan.basic import PCAN_ERROR_OK, PCAN_ERROR_QOVERRUN
 
-from mytoolit.cmdline import mac_address, sth_name
+from mytoolit.cmdline import axes_spec, mac_address, sth_name
 from mytoolit.config import settings
 from mytoolit.measurement.acceleration import convert_acceleration_adc_to_g
 from mytoolit.measurement.storage import Storage
@@ -533,7 +533,7 @@ class CommandLineInterface():
             '-p',
             '--points',
             metavar='XYZ',
-            type=int,
+            type=axes_spec,
             required=False,
             help=("specify the axes for which acceleration data should be "
                   "acquired (e.g. “101” to measure data for the x- and "
@@ -577,11 +577,8 @@ class CommandLineInterface():
             self.connect = True
 
         if self.args.points:
-            points = self.args.points & 0x07
-            bZ = bool(points & 1)
-            bY = bool((points >> 1) & 1)
-            bX = bool((points >> 2) & 1)
-            self.vAccSet(bX, bY, bZ, -1)
+            x, y, z = map(int, self.args.points)
+            self.vAccSet(x, y, z, -1)
 
     def reset(self):
         if self.KeyBoardInterrupt:
