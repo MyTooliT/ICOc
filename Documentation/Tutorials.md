@@ -87,7 +87,16 @@
 
 ## Command Line Usage of ICOc
 
-The ICOc program accepts optional command line arguments at startup. This way you can use the tool without the interactive user interface, which allows you to automate the measurement process. To show the available command line options you can use the option `-h`:
+The ICOc program accepts optional command line arguments at startup. This way you can set default values for often used options. If you specify
+
+- the name or
+- Bluetooth address
+
+of an STH, then you can even use ICOc without any user interaction, since in this case the program will immediately connect to the specified STH and start the measurement process.
+
+### Available Options
+
+To show the available command line options you can use the option `-h`:
 
 ```sh
 icoc -h
