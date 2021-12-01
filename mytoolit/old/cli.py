@@ -584,7 +584,7 @@ class CommandLineInterface():
         self.vAdcConfig(self.args.prescaler, self.args.acquisition,
                         self.args.oversampling)
 
-        self.vRunTime(0 if self.args.run_time <= 0 else self.iRunTime)
+        self.vRunTime(0 if self.args.run_time <= 0 else self.args.run_time)
 
         if 'name' in self.args:
             self.sth_name = self.args.name
