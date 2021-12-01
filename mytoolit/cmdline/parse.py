@@ -2,13 +2,14 @@
 
 from argparse import ArgumentTypeError
 from re import compile
+from typing import Tuple
 
 from netaddr import AddrFormatError, EUI
 
 # -- Functions ----------------------------------------------------------------
 
 
-def axes_spec(spec: str) -> tuple[bool, bool, bool]:
+def axes_spec(spec: str) -> Tuple[bool, bool, bool]:
     """Check if the given text represents a spec for acceleration axes
 
     An axes spec contains three digits, where each digit is either `0` or `1`.
