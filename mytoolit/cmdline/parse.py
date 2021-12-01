@@ -8,7 +8,7 @@ from netaddr import AddrFormatError, EUI
 # -- Functions ----------------------------------------------------------------
 
 
-def axes_spec(spec: str) -> str:
+def axes_spec(spec: str) -> tuple[bool, bool, bool]:
     """Check if the given text represents a spec for acceleration axes
 
     An axes spec contains three digits, where each digit is either `0` or `1`.
@@ -28,13 +28,14 @@ def axes_spec(spec: str) -> str:
     Returns
     -------
 
-    The given specification on success
+    A tuple containing three boolean values that specify if the x-, y- and
+    z-axis are enabled or not
 
     Examples
     --------
 
     >>> axes_spec("101")
-    '101'
+    (True, False, True)
 
     >>> axes_spec("01") # doctest:+NORMALIZE_WHITESPACE
     Traceback (most recent call last):
@@ -75,7 +76,8 @@ def axes_spec(spec: str) -> str:
     if int(spec) == 0:
         raise ArgumentTypeError("At least one axis has to be enabled")
 
-    return spec
+    x, y, z = (bool(int(axis)) for axis in spec)
+    return (x, y, z)
 
 
 def base64_mac_address(name):

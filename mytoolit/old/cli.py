@@ -74,8 +74,7 @@ class CommandLineInterface():
         self.connect = False
         self.Can.Logger.Info(f"Start Time: {datetime.now().isoformat()}")
 
-        x, y, z = map(int, self.args.points)
-        self.vAccSet(x, y, z, -1)
+        self.vAccSet(*self.args.points, -1)
 
         self.sth_name = ""
         self.vDeviceAddressSet("0")
