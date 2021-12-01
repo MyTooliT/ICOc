@@ -71,7 +71,6 @@ class CommandLineInterface():
                            FreshLog=True,
                            sender=MyToolItNetworkNr["SPU1"],
                            receiver=MyToolItNetworkNr["STH1"])
-        self.connect = False
         self.Can.Logger.Info(f"Start Time: {datetime.now().isoformat()}")
 
         self.vAccSet(*self.args.points, -1)
