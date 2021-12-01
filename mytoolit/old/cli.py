@@ -76,7 +76,8 @@ class CommandLineInterface():
         self.vAccSet(True, False, False, 3)
         self.sth_name = ""
         self.vDeviceAddressSet("0")
-        self.vAdcConfig(2, 8, 64)
+        self.vAdcConfig(self.args.prescaler, self.args.acquisition,
+                        self.args.oversampling)
         self.vAdcRefVConfig("VDD")
         self.vDisplayTime(10)
         self.vRunTime(0)
@@ -89,9 +90,6 @@ class CommandLineInterface():
 
         self.storage = None
         self.set_output_filename(self.args.filename)
-
-        self.vAdcConfig(self.args.prescaler, self.args.acquisition,
-                        self.args.oversampling)
 
         self.vRunTime(0 if self.args.run_time <= 0 else self.args.run_time)
 
