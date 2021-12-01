@@ -112,6 +112,8 @@ and make sure that it reports no test failures.
 
 The text below specifies extended manual test that should be executed before we [release a new version of ICOc](#development:section:release). Please note that the tests assume that you use more or less the [default configuration values](https://github.com/MyTooliT/ICOc/blob/master/mytoolit/config/config.yaml).
 
+<a name="development:section:check-command-line-interface"></a>
+
 ###### Check Command Line Interface
 
 1. Open your favorite terminal application and change your working directory to the root of the repository
@@ -158,6 +160,21 @@ The text below specifies extended manual test that should be executed before we 
     icoc -p 0
     icoc -p 0001
     ```
+
+###### Check User Interface
+
+1. Repeat steps 1. – 4. from the [test above](#development:section:check-command-line-interface)
+2. Open ICOc using the following command:
+
+   ```sh
+   icoc
+   ```
+
+3. The main menu of ICOc should show up
+
+4. Try to connect to a non-existent STH by entering the text “1234” followed by <kbd>⏎<kbd>
+
+5. ICOc should ignore the incorrect input and just display the main window
 
 ### Combined Checks & Tests
 
