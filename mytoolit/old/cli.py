@@ -78,6 +78,16 @@ class CommandLineInterface():
 
         self.sth_name = ""
         self.vDeviceAddressSet("0")
+
+        if 'name' in self.args:
+            self.sth_name = self.args.name
+            self.connect = True
+        elif 'bluetooth_address' in self.args:
+            bluetooth_address = self.args.bluetooth_address
+            self.vDeviceAddressSet(
+                str(int.from_bytes(bluetooth_address.packed, 'big')))
+            self.connect = True
+
         self.vAdcConfig(self.args.prescaler, self.args.acquisition,
                         self.args.oversampling)
         self.vAdcRefVConfig("VDD")
@@ -92,15 +102,6 @@ class CommandLineInterface():
 
         self.storage = None
         self.set_output_filename(self.args.filename)
-
-        if 'name' in self.args:
-            self.sth_name = self.args.name
-            self.connect = True
-        elif 'bluetooth_address' in self.args:
-            bluetooth_address = self.args.bluetooth_address
-            self.vDeviceAddressSet(
-                str(int.from_bytes(bluetooth_address.packed, 'big')))
-            self.connect = True
 
     def __exit__(self):
         if self.storage is not None:
