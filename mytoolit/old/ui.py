@@ -677,8 +677,6 @@ class UserInterface(CommandLineInterface):
 def main():
     try:
         watch_tool = UserInterface()
-        watch_tool.parse_arguments()
-        watch_tool.vParserConsoleArgumentsPass()
         watch_tool.vRunConsole()
     except Exception as error:
         print(f"Error\n—————\n☹️ {error}\n", file=stderr)

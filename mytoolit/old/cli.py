@@ -60,6 +60,8 @@ class CommandLineInterface():
         except (NotADirectoryError, OSError) as error:
             raise error
 
+        self.parse_arguments()
+
         self.KeyBoardInterrupt = False
         self.bError = False
         self.iMsgLoss = 0
@@ -88,6 +90,8 @@ class CommandLineInterface():
         self.storage = None
         self.set_output_filename()
 
+        self.vParserConsoleArgumentsPass()
+
     def __exit__(self):
         if self.storage is not None:
             self.storage.close()
@@ -112,6 +116,83 @@ class CommandLineInterface():
         self.Can.__exit__()
         if self.bError:
             raise
+
+    def parse_arguments(self):
+        self.parser = argparse.ArgumentParser(
+            description="Configure and measure data with the ICOtronic system",
+            argument_default=argparse.SUPPRESS,
+            formatter_class=ArgumentDefaultsHelpFormatter)
+
+        connection_group = self.parser.add_argument_group(title="Connection")
+        connection_group = connection_group.add_mutually_exclusive_group()
+        connection_group.add_argument(
+            '-b',
+            '--bluetooth-address',
+            type=mac_address,
+            required=False,
+            help=("connect to device with specified Bluetooth address "
+                  "(e.g. “08:6b:d7:01:de:81”)"))
+        connection_group.add_argument(
+            '-n',
+            '--name',
+            type=sth_name,
+            required=False,
+            help="connect to device with specified name")
+
+        measurement_group = self.parser.add_argument_group(title="Measurement")
+        measurement_group.add_argument('-f',
+                                       '--filename',
+                                       type=str,
+                                       default='Measurement',
+                                       required=False,
+                                       help="base name of the output file")
+
+        measurement_group.add_argument(
+            '-p',
+            '--points',
+            metavar='XYZ',
+            type=axes_spec,
+            default='100',
+            required=False,
+            help=("specify the axes for which acceleration data should be "
+                  "acquired (e.g. “101” to measure data for the x- and "
+                  "z-axis but not for the y-axis)"))
+        measurement_group.add_argument(
+            '-r',
+            '--run-time',
+            metavar='SECONDS',
+            type=int,
+            default=0,
+            required=False,
+            help=("run time in seconds "
+                  "(values equal or below “0” specify infinite runtime)"))
+
+        adc_group = self.parser.add_argument_group(title="ADC")
+
+        adc_group.add_argument('-s',
+                               '--prescaler',
+                               type=int,
+                               choices=range(2, 128),
+                               metavar='2–127',
+                               default=2,
+                               required=False,
+                               help="Prescaler value")
+        adc_group.add_argument('-a',
+                               '--acquisition',
+                               type=int,
+                               choices=AdcAcquisitionTime.keys(),
+                               default=8,
+                               required=False,
+                               help="Acquisition time value")
+        adc_group.add_argument('-o',
+                               '--oversampling',
+                               type=int,
+                               choices=AdcOverSamplingRate.keys(),
+                               default=64,
+                               required=False,
+                               help="Oversampling rate value")
+
+        self.args = self.parser.parse_args()
 
     def set_output_filename(self, name: Optional[str] = None) -> None:
         """Set the (base) name of the HDF output file
@@ -500,83 +581,6 @@ class CommandLineInterface():
             self.iMsgLoss = 0
             self.iMsgsTotal = 0
 
-    def parse_arguments(self):
-        self.parser = argparse.ArgumentParser(
-            description="Configure and measure data with the ICOtronic system",
-            argument_default=argparse.SUPPRESS,
-            formatter_class=ArgumentDefaultsHelpFormatter)
-
-        connection_group = self.parser.add_argument_group(title="Connection")
-        connection_group = connection_group.add_mutually_exclusive_group()
-        connection_group.add_argument(
-            '-b',
-            '--bluetooth-address',
-            type=mac_address,
-            required=False,
-            help=("connect to device with specified Bluetooth address "
-                  "(e.g. “08:6b:d7:01:de:81”)"))
-        connection_group.add_argument(
-            '-n',
-            '--name',
-            type=sth_name,
-            required=False,
-            help="connect to device with specified name")
-
-        measurement_group = self.parser.add_argument_group(title="Measurement")
-        measurement_group.add_argument('-f',
-                                       '--filename',
-                                       type=str,
-                                       default='Measurement',
-                                       required=False,
-                                       help="base name of the output file")
-
-        measurement_group.add_argument(
-            '-p',
-            '--points',
-            metavar='XYZ',
-            type=axes_spec,
-            default='100',
-            required=False,
-            help=("specify the axes for which acceleration data should be "
-                  "acquired (e.g. “101” to measure data for the x- and "
-                  "z-axis but not for the y-axis)"))
-        measurement_group.add_argument(
-            '-r',
-            '--run-time',
-            metavar='SECONDS',
-            type=int,
-            default=0,
-            required=False,
-            help=("run time in seconds "
-                  "(values equal or below “0” specify infinite runtime)"))
-
-        adc_group = self.parser.add_argument_group(title="ADC")
-
-        adc_group.add_argument('-s',
-                               '--prescaler',
-                               type=int,
-                               choices=range(2, 128),
-                               metavar='2–127',
-                               default=2,
-                               required=False,
-                               help="Prescaler value")
-        adc_group.add_argument('-a',
-                               '--acquisition',
-                               type=int,
-                               choices=AdcAcquisitionTime.keys(),
-                               default=8,
-                               required=False,
-                               help="Acquisition time value")
-        adc_group.add_argument('-o',
-                               '--oversampling',
-                               type=int,
-                               choices=AdcOverSamplingRate.keys(),
-                               default=64,
-                               required=False,
-                               help="Oversampling rate value")
-
-        self.args = self.parser.parse_args()
-
     def vParserConsoleArgumentsPass(self):
         if self.args.filename is not None:
             self.set_output_filename(self.args.filename)
@@ -905,6 +909,4 @@ class CommandLineInterface():
 
 if __name__ == "__main__":
     watch = CommandLineInterface()
-    watch.parse_arguments()
-    watch.vParserConsoleArgumentsPass()
     watch.vRunConsole()
