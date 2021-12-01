@@ -94,6 +94,8 @@ The ICOc program accepts optional command line arguments at startup. This way yo
 
 of an STH, then you can even use ICOc without any user interaction, since in this case the program will immediately connect to the specified STH and start the measurement process.
 
+<a name="tutorials:section:available-options"></a>
+
 ### Available Options
 
 To show the available command line options you can use the option `-h`:
@@ -137,6 +139,41 @@ ADC:
                         Acquisition time value (default: 8)
   -o {1,2,4,8,16,32,64,128,256,512,1024,2048,4096}, --oversampling {1,2,4,8,16,32,64,128,256,512,1024,2048,4096}
                         Oversampling rate value (default: 64)
+```
+
+### Provide Default Values
+
+All options below the section “Measurement” and “ADC” in the [help output of ICOc](tutorials:section:available-options) allow you to change the value of a specific configuration values before you start ICOc. For example, to enable the measurement for the x-axis and y-axis of an STH you can use the following command:
+
+```sh
+icoc -p 110
+```
+
+To change the run time of the measurement you can use the option `-r`, which takes the runtime in seconds as argument. The command
+
+```sh
+icoc -r 300
+```
+
+for example, would change the runtime to 5 minutes (5·60 seconds = 300 seconds).
+
+### Start the Measurement
+
+If you specify one of the options
+
+- `-b`/`--bluetooth-address` or
+- `-n`/`--name`
+
+then ICOC will try to connect immediately to the specified STH and start the measurement run. For example, to acquire acceleration data from the STH with the (Bluetooth advertisement) **name “Blubb”** you can use the following command:
+
+```sh
+icoc -n Blubb
+```
+
+To read acceleration values for **`5` seconds** from the STH with the **Bluetooth address `08:6b:d7:01:de:81`** you can use the following command:
+
+```sh
+icoc -b 08:6b:d7:01:de:81 -r 5
 ```
 
 ## Production Tests
