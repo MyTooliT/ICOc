@@ -88,10 +88,7 @@ class CommandLineInterface():
         self.iPloterSocketPort = settings.gui.port
 
         self.storage = None
-        self.set_output_filename()
-
-        if self.args.filename is not None:
-            self.set_output_filename(self.args.filename)
+        self.set_output_filename(self.args.filename)
 
         self.vAdcConfig(self.args.prescaler, self.args.acquisition,
                         self.args.oversampling)
