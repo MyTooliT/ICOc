@@ -76,17 +76,12 @@ class CommandLineInterface():
 
         self.vAccSet(*self.args.points, -1)
 
-        self.sth_name = ""
-        self.vDeviceAddressSet("0")
-
-        if 'name' in self.args:
-            self.sth_name = self.args.name
-            self.connect = True
-        elif 'bluetooth_address' in self.args:
-            bluetooth_address = self.args.bluetooth_address
-            self.vDeviceAddressSet(
-                str(int.from_bytes(bluetooth_address.packed, 'big')))
-            self.connect = True
+        self.connect = (True if 'name' in self.args
+                        or 'bluetooth_address' in self.args else False)
+        self.sth_name = self.args.name if 'name' in self.args else ""
+        self.vDeviceAddressSet(
+            str(int.from_bytes(self.args.bluetooth_address, 'big')
+                ) if 'bluetooth_address' in self.args else "0")
 
         self.vAdcConfig(self.args.prescaler, self.args.acquisition,
                         self.args.oversampling)
