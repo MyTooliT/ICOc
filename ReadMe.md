@@ -259,6 +259,8 @@ To start the data acquisition press the key <kbd>s</kbd>. Afterwards a graphical
 
 will show the measured acceleration. To stop the data acquisition, click the close button on the top of the graph.
 
+<a name="readme:section:measurement-data"></a>
+
 ## Measurement Data
 
 The ICOc script stores measured acceleration values in [HDF5](https://www.hdfgroup.org/solutions/hdf5/) files. By default these files will be stored in the root of the repository with a

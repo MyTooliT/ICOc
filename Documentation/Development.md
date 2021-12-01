@@ -106,6 +106,48 @@ and make sure that it reports no test failures.
 3. Check that the command shows no error messages
 4. Open the PDF report (`STU Test.pdf`) in the repository root and make sure that it includes the correct test data
 
+<a name="development:section:extended-tests"></a>
+
+##### Extended Tests
+
+The text below specifies extended manual test that should be executed before we [release a new version of ICOc](#development:section:release). Please note that the tests assume that you use more or less the [default configuration values](https://github.com/MyTooliT/ICOc/blob/master/mytoolit/config/config.yaml).
+
+###### Check Command Line Interface
+
+1. Open your favorite terminal application and change your working directory to the root of the repository
+
+2. Remove log and data files from the repository:
+
+   ```sh
+   clean-repo
+   ```
+
+3. Check that no HDF5 files exist in the repository. The following command should not produce any output:
+
+   ```sh
+   ls *.hdf5
+   ```
+
+4. Give your test STH the [name](#tutorials:section:sth-renaming) “Test-STH”
+5. Measure data for 10 seconds using the following command:
+
+   ```sh
+   icoc -n 'Test-STH' -r 10
+   ```
+
+6. Check that the repo now contains a HDF5 (`*.hdf5`) file
+
+   ```sh
+   ls *.hdf5
+   ```
+
+7. Open the file in [HDFView](#readme:section:measurement-data)
+8. Check that the table `acceleration` contains about 95 000 values
+9. Check that the table contains three columns
+10. Check that the meta attributes `Sensor_Range` and `Start_Time` exist
+11. Check that `Sensor_Range` contains the correct maximum acceleration values for “Test-STH”
+12. Check that `Start_Time` contains (roughly) the date and time when you executed the command from step 5
+
 ### Combined Checks & Tests
 
 While you need to run the test for ICOc manually, the other tests and checks can be automated at least partially. To run all checks, the STH test and the STU test use the following command in a shell with support for the `&&` operator (e.g. [PowerShell **Core**](https://github.com/PowerShell/PowerShell)):
@@ -122,6 +164,8 @@ Invoke-Item 'STU Test.pdf'
 
 Afterwards make sure there were no (unexpected) errors in the output of the STH and STU test.
 
+<a name="development:section:release"></a>
+
 ## Release
 
 1. Make sure that **none** of the [tests](#development:section:tests) fail
@@ -135,7 +179,9 @@ Afterwards make sure there were no (unexpected) errors in the output of the STH 
 
      If you follow the steps above you make sure that the **flash tests work** for both STU and STH, and there are **no unintentional consequences of (not) flashing the chip** before you run the other parts of the test suite.
 
-2. Create a new release [here](https://github.com/MyTooliT/ICOc/releases/new)
+2. Execute the [extended manual tests](#development:section:extended-tests) and check that everything works as expected
+
+3. Create a new release [here](https://github.com/MyTooliT/ICOc/releases/new)
 
    1. Open the [release notes](Releases) for the latest version
    2. Replace links with a permanent version:
@@ -154,8 +200,8 @@ Afterwards make sure there were no (unexpected) errors in the output of the STH 
    7. Remove the very first header
    8. Check that all links work correctly
 
-3. Change the [`__version__`](../mytoolit/__init__.py) number inside the [`mytoolit`](../mytoolit) package
-4. Push the latest two commits
-5. Insert the version number (e.g. `1.0.5`) into the tag field
-6. For the release title use “Version VERSION”, where `VERSION` specifies the version number (e.g. “Version 1.0.5”)
-7. Click on “Publish Release”
+4. Change the [`__version__`](../mytoolit/__init__.py) number inside the [`mytoolit`](../mytoolit) package
+5. Push the latest two commits
+6. Insert the version number (e.g. `1.0.5`) into the tag field
+7. For the release title use “Version VERSION”, where `VERSION` specifies the version number (e.g. “Version 1.0.5”)
+8. Click on “Publish Release”
