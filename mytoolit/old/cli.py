@@ -73,7 +73,13 @@ class CommandLineInterface():
                            receiver=MyToolItNetworkNr["STH1"])
         self.connect = False
         self.Can.Logger.Info(f"Start Time: {datetime.now().isoformat()}")
-        self.vAccSet(True, False, False, 3)
+
+        if self.args.points:
+            x, y, z = map(int, self.args.points)
+            self.vAccSet(x, y, z, -1)
+        else:
+            self.vAccSet(True, False, False, 3)
+
         self.sth_name = ""
         self.vDeviceAddressSet("0")
         self.vAdcConfig(self.args.prescaler, self.args.acquisition,
@@ -99,10 +105,6 @@ class CommandLineInterface():
             self.vDeviceAddressSet(
                 str(int.from_bytes(bluetooth_address.packed, 'big')))
             self.connect = True
-
-        if self.args.points:
-            x, y, z = map(int, self.args.points)
-            self.vAccSet(x, y, z, -1)
 
     def __exit__(self):
         if self.storage is not None:
