@@ -80,7 +80,7 @@ class CommandLineInterface():
                         self.args.oversampling)
         self.vAdcRefVConfig("VDD")
         self.vDisplayTime(10)
-        self.vRunTime(0)
+        self.vRunTime(0 if self.args.run_time <= 0 else self.args.run_time)
         self.vGraphInit(Watch["DisplaySampleRateMs"],
                         Watch["DisplayBlockSize"])
         self.Can.readThreadStop()
@@ -90,8 +90,6 @@ class CommandLineInterface():
 
         self.storage = None
         self.set_output_filename(self.args.filename)
-
-        self.vRunTime(0 if self.args.run_time <= 0 else self.args.run_time)
 
         if 'name' in self.args:
             self.sth_name = self.args.name
