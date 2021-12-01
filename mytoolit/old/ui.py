@@ -664,7 +664,7 @@ class UserInterface(CommandLineInterface):
         except KeyboardInterrupt:
             self.KeyBoardInterrupt = True
 
-    def vRunConsole(self):
+    def run(self):
         self._vRunConsoleStartup()
         self.reset()
         if self.connect:
@@ -676,8 +676,7 @@ class UserInterface(CommandLineInterface):
 
 def main():
     try:
-        watch_tool = UserInterface()
-        watch_tool.vRunConsole()
+        UserInterface().run()
     except Exception as error:
         print(f"Error\n—————\n☹️ {error}\n", file=stderr)
         print("Stack Trace\n———————————", file=stderr)

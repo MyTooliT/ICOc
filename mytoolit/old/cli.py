@@ -869,7 +869,7 @@ class CommandLineInterface():
         if self.Can.bConnected:
             self.vDataAquisition()
 
-    def vRunConsole(self):
+    def run(self):
         self._vRunConsoleStartup()
         self.reset()
         if self.connect:
@@ -878,5 +878,4 @@ class CommandLineInterface():
 
 
 if __name__ == "__main__":
-    watch = CommandLineInterface()
-    watch.vRunConsole()
+    CommandLineInterface().run()
