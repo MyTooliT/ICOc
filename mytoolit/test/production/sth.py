@@ -328,21 +328,9 @@ class TestSTH(TestNode):
 
             cls.name = read_name
 
-            # We reset the STH and STU to make sure the name change takes place
-            # and we can connect to the STH using the new name
-            await self.can.reset_node('STH 1')
-            await self.can.reset_node('STU 1')
-
-            try:
-                await self.can.connect_sth(cls.name)  # Reconnect to STH
-            except TimeoutError:
-                self.fail("Unable to reconnect to STH using updated name "
-                          f"“{cls.name}”")
-
             # =========================
             # = Sleep & Advertisement =
             # =========================
-
             async def read_write_time(read_function, write_function, variable,
                                       description, milliseconds):
                 await write_function(milliseconds)
@@ -431,6 +419,24 @@ class TestSTH(TestNode):
             # =================
 
             await super_class._test_eeprom_status()
+
+            # =========
+            # = Reset =
+            # =========
+
+            # We reset the STH and STU to make sure
+            # - the name change takes place and we can connect to the STH
+            #   using the new name
+            # - the STH also takes the other changed EEPROM values (such as
+            #   the changed advertisement times) into account.
+            await self.can.reset_node('STH 1')
+            await self.can.reset_node('STU 1')
+
+            try:
+                await self.can.connect_sth(cls.name)  # Reconnect to STH
+            except TimeoutError:
+                self.fail("Unable to reconnect to STH using updated name "
+                          f"“{cls.name}”")
 
         self.loop.run_until_complete(test_eeprom())
 
