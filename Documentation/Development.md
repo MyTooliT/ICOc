@@ -147,6 +147,17 @@ The text below specifies extended manual test that should be executed before we 
 10. Check that the meta attributes `Sensor_Range` and `Start_Time` exist
 11. Check that `Sensor_Range` contains the correct maximum acceleration values for “Test-STH”
 12. Check that `Start_Time` contains (roughly) the date and time when you executed the command from step 5
+13. Check that ICOc handles the following incorrect program calls. The program should **not crash** and print a (helpful) **error description** (not a stak trace) before it exits.
+
+    ```sh
+    icoc -b '12-12-12-12-12'
+    icoc -n 'TooooLong'
+    icoc -s 1
+    icoc -a 257
+    icoc -o -1
+    icoc -p 0
+    icoc -p 0001
+    ```
 
 ### Combined Checks & Tests
 
