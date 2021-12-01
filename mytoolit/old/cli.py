@@ -90,7 +90,26 @@ class CommandLineInterface():
         self.storage = None
         self.set_output_filename()
 
-        self.vParserConsoleArgumentsPass()
+        if self.args.filename is not None:
+            self.set_output_filename(self.args.filename)
+
+        self.vAdcConfig(self.args.prescaler, self.args.acquisition,
+                        self.args.oversampling)
+
+        self.vRunTime(0 if self.args.run_time <= 0 else self.args.run_time)
+
+        if 'name' in self.args:
+            self.sth_name = self.args.name
+            self.connect = True
+        elif 'bluetooth_address' in self.args:
+            bluetooth_address = self.args.bluetooth_address
+            self.vDeviceAddressSet(
+                str(int.from_bytes(bluetooth_address.packed, 'big')))
+            self.connect = True
+
+        if self.args.points:
+            x, y, z = map(int, self.args.points)
+            self.vAccSet(x, y, z, -1)
 
     def __exit__(self):
         if self.storage is not None:
@@ -580,28 +599,6 @@ class CommandLineInterface():
                     tArray2Binary(["diagramName", self.sMsgLoss]))
             self.iMsgLoss = 0
             self.iMsgsTotal = 0
-
-    def vParserConsoleArgumentsPass(self):
-        if self.args.filename is not None:
-            self.set_output_filename(self.args.filename)
-
-        self.vAdcConfig(self.args.prescaler, self.args.acquisition,
-                        self.args.oversampling)
-
-        self.vRunTime(0 if self.args.run_time <= 0 else self.args.run_time)
-
-        if 'name' in self.args:
-            self.sth_name = self.args.name
-            self.connect = True
-        elif 'bluetooth_address' in self.args:
-            bluetooth_address = self.args.bluetooth_address
-            self.vDeviceAddressSet(
-                str(int.from_bytes(bluetooth_address.packed, 'big')))
-            self.connect = True
-
-        if self.args.points:
-            x, y, z = map(int, self.args.points)
-            self.vAccSet(x, y, z, -1)
 
     def reset(self):
         if self.KeyBoardInterrupt:
