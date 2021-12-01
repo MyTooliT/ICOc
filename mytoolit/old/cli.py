@@ -86,7 +86,6 @@ class CommandLineInterface():
         self.vAdcConfig(self.args.prescaler, self.args.acquisition,
                         self.args.oversampling)
         self.vAdcRefVConfig("VDD")
-        self.vDisplayTime(10)
         self.vRunTime(0 if self.args.run_time <= 0 else self.args.run_time)
         self.vGraphInit(Watch["DisplaySampleRateMs"],
                         Watch["DisplayBlockSize"])
@@ -458,10 +457,6 @@ class CommandLineInterface():
     def vAdcRefVConfig(self, sAdcRef):
         self.sAdcRef = sAdcRef
 
-    def vDisplayTime(self, iDisplayTime):
-        """Set the length of the graphical plot in seconds"""
-        self.iDisplayTime = int(min(iDisplayTime, Watch["DisplayTimeMax"]))
-
     def vRunTime(self, runTime):
         self.iRunTime = int(runTime)
 
@@ -505,8 +500,6 @@ class CommandLineInterface():
 
     def guiProcessRestart(self):
         self.guiProcessStop()
-        if self.iDisplayTime <= 0:
-            return
 
         self.guiProcess = multiprocessing.Process(
             target=vPlotter, args=(self.iPloterSocketPort, ))
@@ -526,7 +519,7 @@ class CommandLineInterface():
 
         self.vGraphSend(["dataBlockSize", self.iGraphBlockSize])
         self.vGraphSend(["sampleInterval", self.iGraphSampleInterval])
-        self.vGraphSend(["xDim", self.iDisplayTime])
+        self.vGraphSend(["xDim", Watch["DisplayTimeMax"]])
         self.vGraphPacketLossUpdate(0)
         if self.bAccX:
             self.vGraphSend(["lineNameX", "Acceleration X-Axis"])
@@ -537,9 +530,6 @@ class CommandLineInterface():
         self.vGraphSend(["Plot", True])
 
     def vGraphPointNext(self, x, y, z):
-        if self.iDisplayTime <= 0:
-            return
-
         if not self.guiProcess.is_alive():
             self.aquireEndTime = self.Can.get_elapsed_time()
             return
@@ -559,9 +549,6 @@ class CommandLineInterface():
             self.GuiPackage = {"X": [], "Y": [], "Z": []}
 
     def vGraphPacketLossUpdate(self, msgCounter):
-        if self.iDisplayTime <= 0:
-            return
-
         self.iMsgCounterLast += 1
         self.iMsgCounterLast %= 256
         if self.iMsgCounterLast != msgCounter:
