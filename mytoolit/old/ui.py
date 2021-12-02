@@ -443,6 +443,7 @@ class UserInterface(CommandLineInterface):
             self.add_string("Are you really sure?\n")
             self.add_string("Only charing will leave this state!\n")
             self.add_string("Pressing “y” will trigger standby: ")
+            curs_set(True)
             self.stdscr.refresh()
 
             if self.read_text()[1] == "y":
@@ -452,7 +453,10 @@ class UserInterface(CommandLineInterface):
 
         elif key == Key.P:
             self.stdscr.clear()
+            curs_set(True)
             self.add_string("Set enabled axes (xyz; 0=off, 1=on): ")
+            self.stdscr.refresh()
+
             valid_input, xyz = self.read_input(
                 default="100",
                 allowed_key=lambda key: key in {ord('0'), ord('1')},
