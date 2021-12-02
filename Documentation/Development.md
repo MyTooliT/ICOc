@@ -172,9 +172,57 @@ The text below specifies extended manual test that should be executed before we 
 
 3. The main menu of ICOc should show up
 
-4. Try to connect to a non-existent STH by entering the text “1234” followed by <kbd>⏎<kbd>
+4. Try to connect to a non-existent STH
 
-5. ICOc should ignore the incorrect input and just display the main window
+   1. Enter the text “1234”
+   2. Press <kbd>⏎</kbd>
+   3. ICOc should ignore the incorrect input and just display the main window
+
+5. Change the output file name to “Test”
+
+   1. Press <kbd>f</kbd>
+   2. Remove the default name and enter the text “Test”
+   3. Press <kbd>⏎</kbd>
+   4. After two seconds ICOc should show the main menu again
+
+6. Connect to your test STH/SHA
+
+   1. Enter the number besides “Test-STH”: Usually this will be the number “1”
+   2. Press <kbd>⏎</kbd>
+   3. You should now be in the STH menu
+
+7. Change the runtime to 20 seconds
+
+   2. Press <kbd>r</kbd>
+   3. Enter the text “hello”
+   4. The last step should not have changed the default runtime of “0”
+   5. Remove the default runtime (press <kbd>⌫</kbd>)
+   6. Enter the text “20”
+   7. Press <kbd>⏎</kbd>
+
+8. Enable the x-axis and y-axis
+
+   1. Press <kbd>p</kbd>
+   2. Remove the default axis config (press <kbd>⌫</kbd> at least three times)
+   3. Enter the characters “23456789ab”
+   4. The last step should not have changed the empty input value
+   5. Enter the right config values: “110”
+   6. Press <kbd>⏎</kbd>
+
+9. Start the data acquisition
+
+   1. Press <kbd>s</kbd>
+   2. Shake the STH
+   3. Make sure that shaking the STH changes (at least) the displayed value for the x-axis
+   4. Wait until the measurement took place
+
+10. Check the output file
+
+    1. Check that the HDF5 output file exists: The filename should start with the characters “Test” followed by a timestamp and the extension “.hdf5”
+    2. Open the HDF measurement file in [HDFView](#readme:section:measurement-data)
+    3. Check that the table contains four columns
+    4. One of the columns should have the name `x`
+    5. Another column should have the name `y`
 
 ### Combined Checks & Tests
 
