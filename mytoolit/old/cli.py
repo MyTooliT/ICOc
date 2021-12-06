@@ -587,6 +587,30 @@ class CommandLineInterface():
         except KeyboardInterrupt:
             self.KeyBoardInterrupt = True
 
+    def read_acceleration_range(self) -> int:
+        """Read the range of the acceleration sensor
+
+        Returns
+        -------
+
+        The acceleration range in multiples of g₀
+
+        """
+
+        # Default value
+        acceleration_range_g = 200
+
+        try:
+            acceleration_range_g = int(
+                self.Can.read_acceleration_sensor_range_in_g())
+        except ValueError:
+            print(
+                "Warning: Unable to determine sensor range from "
+                "EEPROM value — Assuming ± 100 g sensor",
+                file=stderr)
+
+        return acceleration_range_g
+
     def vDataAquisition(self):
         if self.KeyBoardInterrupt:
             return
@@ -598,18 +622,9 @@ class CommandLineInterface():
                                    AdcReference[self.sAdcRef])
                 # Initialize HDF output
                 self.storage = Storage(self.get_output_filepath())
-                try:
-                    # We need the acceleration range later to convert the ADC
-                    # acceleration values into multiples of g₀
-                    self.acceleration_range_g = (
-                        self.Can.read_acceleration_sensor_range_in_g())
-                except ValueError:
-                    print(
-                        "Warning: Unable to determine sensor range from "
-                        "EEPROM value — Assuming ± 100 g sensor",
-                        file=stderr)
-                    self.acceleration_range_g = 200
-
+                # We need the acceleration range later to convert the ADC
+                # acceleration values into multiples of g₀
+                self.acceleration_range_g = self.read_acceleration_range()
                 self.Can.readThreadStop()
                 self.guiProcessRestart()
                 self.Can.Logger.Info("Start Acquiring Data")
