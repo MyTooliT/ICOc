@@ -6292,9 +6292,8 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info("test0303GetSingleAccX")
         self.test0302GetSingleAccX()
 
-    @skip("Untested")
     def test0700StatisticsPowerOnCounterPowerOffCounter(self):
-        """Check Power On and Power Off Counters
+        """Check Power On and Power Off Counters (⏱ 20 seconds)
         """
         PowerOnOff1 = self.Can.statisticalData(MyToolItNetworkNr["STH1"],
                                                MyToolItStatData["PocPof"])
