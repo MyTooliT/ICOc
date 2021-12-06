@@ -8,7 +8,7 @@ from datetime import datetime
 from functools import partial
 from pathlib import Path
 from sys import stderr
-from typing import Optional
+from typing import Optional, Tuple
 
 from can.interfaces.pcan.basic import PCAN_ERROR_OK, PCAN_ERROR_QOVERRUN
 
@@ -587,29 +587,33 @@ class CommandLineInterface():
         except KeyboardInterrupt:
             self.KeyBoardInterrupt = True
 
-    def read_acceleration_range(self) -> int:
+    def read_acceleration_range(self) -> Tuple[int, bool]:
         """Read the range of the acceleration sensor
 
         Returns
         -------
 
-        The acceleration range in multiples of g₀
+        A tuple containing
+
+        - the acceleration range in multiples of g₀ or a default value for a ±
+          100 g₀ sensor, if reading the EEPROM value was unsuccessful,
+        - a boolean that specifies if reading was successful (`True`) or not
+          (`False`).
 
         """
 
-        # Default value
+        # Default values
         acceleration_range_g = 200
+        success = False
 
         try:
             acceleration_range_g = int(
                 self.Can.read_acceleration_sensor_range_in_g())
+            success = True
         except ValueError:
-            print(
-                "Warning: Unable to determine sensor range from "
-                "EEPROM value — Assuming ± 100 g sensor",
-                file=stderr)
+            pass
 
-        return acceleration_range_g
+        return (acceleration_range_g, success)
 
     def vDataAquisition(self):
         if self.KeyBoardInterrupt:
@@ -624,7 +628,14 @@ class CommandLineInterface():
                 self.storage = Storage(self.get_output_filepath())
                 # We need the acceleration range later to convert the ADC
                 # acceleration values into multiples of g₀
-                self.acceleration_range_g = self.read_acceleration_range()
+                self.acceleration_range_g, success = (
+                    self.read_acceleration_range())
+                if not success:
+                    print(
+                        "Warning: Unable to determine sensor range from "
+                        "EEPROM value — Assuming ± 100 g sensor",
+                        file=stderr)
+
                 self.Can.readThreadStop()
                 self.guiProcessRestart()
                 self.Can.Logger.Info("Start Acquiring Data")
