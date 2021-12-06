@@ -583,6 +583,7 @@ class UserInterface(CommandLineInterface):
         self.window_header()
 
         devices = self.Can.tDeviceList(MyToolItNetworkNr["STU1"], bLog=False)
+        sleep(0.02)  # Sleep a little bit to reduce CPU usage
 
         header = f"{' '*7}Name      Address            RSSI{' '*7}"
         ruler = "—" * len(header)
