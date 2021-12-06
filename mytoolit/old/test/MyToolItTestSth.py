@@ -6230,9 +6230,8 @@ class TestSth(unittest.TestCase):
             self.assertEqual(stateStartOpa1[i], ErrorPayloadAssumed[i])
             self.assertEqual(stateStartOpa2[i], ErrorPayloadAssumed[i])
 
-    @skip("Untested")
     def test0605StateCalibrationMeasurementReset(self):
-        """Check Reset Subcommand of Calibration Measurement Command
+        """Check Reset Subcommand of Calibration Measurement Command (⏱ 6 seconds)
         """
         ackInjectX = self.Can.calibMeasurement(
             MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Activate"],
