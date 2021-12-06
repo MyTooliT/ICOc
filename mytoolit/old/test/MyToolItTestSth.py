@@ -5719,9 +5719,13 @@ class TestSth(unittest.TestCase):
             count += 1
             count %= 256
 
-    @skip("Untested")
+    @skip("Reads uninitialized EEPROM calibration values")
     def test0600CalibrationMeasurement(self):
         """Check Calibration Measurement
+
+        This tests reads calibration values we currently do not
+        write in the EEPROM part of the STH test, such as the offset and
+        and slope values for the y-axis and z-axis. 
         """
         ret = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"],
                                         CalibMeassurementActionNr["Measure"],
