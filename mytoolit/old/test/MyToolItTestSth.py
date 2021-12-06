@@ -5827,9 +5827,8 @@ class TestSth(unittest.TestCase):
             self.tSthLimits.uVoltRawOpa3Middle +
             self.tSthLimits.uVoltRawOpa3Tolerance, result)
 
-    @skip("Untested")
     def test0601CalibrationMeasurementTemperature(self):
-        """Calibration - Check On-Die Temperature
+        """Calibration - Check On-Die Temperature (⏱ 10 seconds)
         """
         ret = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"],
                                         CalibMeassurementActionNr["Measure"],
