@@ -598,10 +598,18 @@ class CommandLineInterface():
                                    AdcReference[self.sAdcRef])
                 # Initialize HDF output
                 self.storage = Storage(self.get_output_filepath())
-                # We need the acceleration range later to convert the ADC
-                # acceleration values into multiples of g₀
-                self.acceleration_range_g = (
-                    self.Can.read_acceleration_sensor_range_in_g())
+                try:
+                    # We need the acceleration range later to convert the ADC
+                    # acceleration values into multiples of g₀
+                    self.acceleration_range_g = (
+                        self.Can.read_acceleration_sensor_range_in_g())
+                except ValueError:
+                    print(
+                        "Warning: Unable to determine sensor range from "
+                        "EEPROM value — Assuming ± 100 g sensor",
+                        file=stderr)
+                    self.acceleration_range_g = 200
+
                 self.Can.readThreadStop()
                 self.guiProcessRestart()
                 self.Can.Logger.Info("Start Acquiring Data")
