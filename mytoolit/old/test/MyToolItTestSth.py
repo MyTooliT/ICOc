@@ -6351,9 +6351,8 @@ class TestSth(unittest.TestCase):
         self.assertEqual(PowerOn3 + 1, PowerOn4)
         self.assertEqual(PowerOff3 + 1, PowerOff4)
 
-    @skip("Untested")
     def test0701StatisticsOperatingSeconds(self):
-        """Check Operating Seconds
+        """Check Operating Seconds (⏱ 32 minutes)
         """
         self._resetSth()
         self.Can.Logger.Info("Connect to STH")
