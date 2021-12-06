@@ -6127,9 +6127,8 @@ class TestSth(unittest.TestCase):
             self.assertEqual(stateEjectY[i], 0x00)
             self.assertEqual(stateEjectZ[i], 0x00)
 
-    @skip("Untested")
     def test0604CalibrationMeasurementState(self):
-        """Check State at startup without any action
+        """Check State at startup without any action  (⏱ 6 seconds)
         """
         stateStartX = self.Can.calibMeasurement(
             MyToolItNetworkNr["STH1"],
