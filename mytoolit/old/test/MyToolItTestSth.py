@@ -5887,31 +5887,31 @@ class TestSth(unittest.TestCase):
             CalibMeassurementTypeNr["Acc"], 3, AdcReference["VDD"])
         kZ1 = byte_list_to_int(kZ1ack[4:])
         ackInjectX = self.Can.calibMeasurement(
-            MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"],
+            MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Activate"],
             CalibMeassurementTypeNr["Acc"], 1, AdcReference["VDD"])
         stateInjectX = self.Can.calibMeasurement(
             MyToolItNetworkNr["STH1"],
-            CalibMeassurementActionNr["Inject"],
+            CalibMeassurementActionNr["Activate"],
             CalibMeassurementTypeNr["Acc"],
             1,
             AdcReference["VDD"],
             bSet=False)
         ackInjectY = self.Can.calibMeasurement(
-            MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"],
+            MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Activate"],
             CalibMeassurementTypeNr["Acc"], 2, AdcReference["VDD"])
         stateInjectY = self.Can.calibMeasurement(
             MyToolItNetworkNr["STH1"],
-            CalibMeassurementActionNr["Inject"],
+            CalibMeassurementActionNr["Activate"],
             CalibMeassurementTypeNr["Acc"],
             2,
             AdcReference["VDD"],
             bSet=False)
         ackInjectZ = self.Can.calibMeasurement(
-            MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"],
+            MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Activate"],
             CalibMeassurementTypeNr["Acc"], 3, AdcReference["VDD"])
         stateInjectZ = self.Can.calibMeasurement(
             MyToolItNetworkNr["STH1"],
-            CalibMeassurementActionNr["Inject"],
+            CalibMeassurementActionNr["Activate"],
             CalibMeassurementTypeNr["Acc"],
             3,
             AdcReference["VDD"],
@@ -5930,31 +5930,31 @@ class TestSth(unittest.TestCase):
             CalibMeassurementTypeNr["Acc"], 3, AdcReference["VDD"])
         kZ2 = byte_list_to_int(kZ2ack[4:])
         ackEjectX = self.Can.calibMeasurement(
-            MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Eject"],
+            MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Deactivate"],
             CalibMeassurementTypeNr["Acc"], 1, AdcReference["VDD"])
         stateEjectX = self.Can.calibMeasurement(
             MyToolItNetworkNr["STH1"],
-            CalibMeassurementActionNr["Inject"],
+            CalibMeassurementActionNr["Activate"],
             CalibMeassurementTypeNr["Acc"],
             1,
             AdcReference["VDD"],
             bSet=False)
         ackEjectY = self.Can.calibMeasurement(
-            MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Eject"],
+            MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Deactivate"],
             CalibMeassurementTypeNr["Acc"], 2, AdcReference["VDD"])
         stateEjectY = self.Can.calibMeasurement(
             MyToolItNetworkNr["STH1"],
-            CalibMeassurementActionNr["Inject"],
+            CalibMeassurementActionNr["Activate"],
             CalibMeassurementTypeNr["Acc"],
             2,
             AdcReference["VDD"],
             bSet=False)
         ackEjectZ = self.Can.calibMeasurement(
-            MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Eject"],
+            MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Deactivate"],
             CalibMeassurementTypeNr["Acc"], 3, AdcReference["VDD"])
         stateEjectZ = self.Can.calibMeasurement(
             MyToolItNetworkNr["STH1"],
-            CalibMeassurementActionNr["Inject"],
+            CalibMeassurementActionNr["Activate"],
             CalibMeassurementTypeNr["Acc"],
             3,
             AdcReference["VDD"],
@@ -6134,7 +6134,7 @@ class TestSth(unittest.TestCase):
         """
         stateStartX = self.Can.calibMeasurement(
             MyToolItNetworkNr["STH1"],
-            CalibMeassurementActionNr["Inject"],
+            CalibMeassurementActionNr["Activate"],
             CalibMeassurementTypeNr["Acc"],
             1,
             AdcReference["VDD"],
@@ -6142,7 +6142,7 @@ class TestSth(unittest.TestCase):
             bErrorAck=True)
         stateStartY = self.Can.calibMeasurement(
             MyToolItNetworkNr["STH1"],
-            CalibMeassurementActionNr["Inject"],
+            CalibMeassurementActionNr["Activate"],
             CalibMeassurementTypeNr["Acc"],
             2,
             AdcReference["VDD"],
@@ -6150,7 +6150,7 @@ class TestSth(unittest.TestCase):
             bErrorAck=True)
         stateStartZ = self.Can.calibMeasurement(
             MyToolItNetworkNr["STH1"],
-            CalibMeassurementActionNr["Inject"],
+            CalibMeassurementActionNr["Activate"],
             CalibMeassurementTypeNr["Acc"],
             3,
             AdcReference["VDD"],
@@ -6158,7 +6158,7 @@ class TestSth(unittest.TestCase):
             bErrorAck=True)
         stateStartTemp = self.Can.calibMeasurement(
             MyToolItNetworkNr["STH1"],
-            CalibMeassurementActionNr["Inject"],
+            CalibMeassurementActionNr["Activate"],
             CalibMeassurementTypeNr["Temp"],
             1,
             AdcReference["VDD"],
@@ -6166,7 +6166,7 @@ class TestSth(unittest.TestCase):
             bErrorAck=True)
         stateStartVoltage = self.Can.calibMeasurement(
             MyToolItNetworkNr["STH1"],
-            CalibMeassurementActionNr["Inject"],
+            CalibMeassurementActionNr["Activate"],
             CalibMeassurementTypeNr["Voltage"],
             1,
             AdcReference["VDD"],
@@ -6174,7 +6174,7 @@ class TestSth(unittest.TestCase):
             bErrorAck=True)
         stateStartVss = self.Can.calibMeasurement(
             MyToolItNetworkNr["STH1"],
-            CalibMeassurementActionNr["Inject"],
+            CalibMeassurementActionNr["Activate"],
             CalibMeassurementTypeNr["Vss"],
             1,
             AdcReference["VDD"],
@@ -6182,7 +6182,7 @@ class TestSth(unittest.TestCase):
             bErrorAck=True)
         stateStartAvdd = self.Can.calibMeasurement(
             MyToolItNetworkNr["STH1"],
-            CalibMeassurementActionNr["Inject"],
+            CalibMeassurementActionNr["Activate"],
             CalibMeassurementTypeNr["Avdd"],
             1,
             AdcReference["VDD"],
@@ -6190,7 +6190,7 @@ class TestSth(unittest.TestCase):
             bErrorAck=True)
         stateStartOpa1 = self.Can.calibMeasurement(
             MyToolItNetworkNr["STH1"],
-            CalibMeassurementActionNr["Inject"],
+            CalibMeassurementActionNr["Activate"],
             CalibMeassurementTypeNr["OpvOutput"],
             1,
             AdcReference["VDD"],
@@ -6198,7 +6198,7 @@ class TestSth(unittest.TestCase):
             bErrorAck=True)
         stateStartOpa2 = self.Can.calibMeasurement(
             MyToolItNetworkNr["STH1"],
-            CalibMeassurementActionNr["Inject"],
+            CalibMeassurementActionNr["Activate"],
             CalibMeassurementTypeNr["OpvOutput"],
             2,
             AdcReference["VDD"],
@@ -6237,25 +6237,25 @@ class TestSth(unittest.TestCase):
         """Check Reset Subcommand of Calibration Measurement Command
         """
         ackInjectX = self.Can.calibMeasurement(
-            MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Inject"],
+            MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Activate"],
             CalibMeassurementTypeNr["Acc"], 1, AdcReference["VDD"])
         stateInjectX = self.Can.calibMeasurement(
             MyToolItNetworkNr["STH1"],
-            CalibMeassurementActionNr["Inject"],
+            CalibMeassurementActionNr["Activate"],
             CalibMeassurementTypeNr["Acc"],
             1,
             AdcReference["VDD"],
             bSet=False)
         ackReset = self.Can.calibMeasurement(
             MyToolItNetworkNr["STH1"],
-            CalibMeassurementActionNr["Inject"],
+            CalibMeassurementActionNr["Activate"],
             CalibMeassurementTypeNr["Acc"],
             1,
             AdcReference["VDD"],
             bReset=True)
         stateStartX = self.Can.calibMeasurement(
             MyToolItNetworkNr["STH1"],
-            CalibMeassurementActionNr["Inject"],
+            CalibMeassurementActionNr["Activate"],
             CalibMeassurementTypeNr["Acc"],
             1,
             AdcReference["VDD"],
@@ -6263,7 +6263,7 @@ class TestSth(unittest.TestCase):
             bErrorAck=True)
         stateStartAvdd = self.Can.calibMeasurement(
             MyToolItNetworkNr["STH1"],
-            CalibMeassurementActionNr["Inject"],
+            CalibMeassurementActionNr["Activate"],
             CalibMeassurementTypeNr["Avdd"],
             1,
             AdcReference["VDD"],
