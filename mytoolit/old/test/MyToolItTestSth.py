@@ -5869,9 +5869,8 @@ class TestSth(unittest.TestCase):
                     self.tSthLimits.iAdcAccXRawTolerance,
                     result * self.tSthLimits.uSamplingToleranceLow)
 
-    @skip("Untested")
     def test0603CalibrationMeasurementEjectInject(self):
-        """Calibration - Check Injection and Ejection
+        """Calibration - Check Activation and Deactivation (⏱ 10 seconds)
         """
         global iSensorAxis
         kX1ack = self.Can.calibMeasurement(
