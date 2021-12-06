@@ -5843,9 +5843,8 @@ class TestSth(unittest.TestCase):
         self.assertGreaterEqual(result,
                                 self.tSthLimits.iTemperatureInternalMin)
 
-    @skip("Untested")
     def test0602CalibrationMeasurementVRef(self):
-        """Calibration - Check all VRef combinations
+        """Calibration - Check all VRef combinations (⏱ 10 seconds)
         """
         self.test0601CalibrationMeasurementTemperature()  # 1V25
         for vRefKey, vRefValue in AdcReference.items():
