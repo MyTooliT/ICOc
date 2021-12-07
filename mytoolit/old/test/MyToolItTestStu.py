@@ -420,9 +420,11 @@ class TestStu(unittest.TestCase):
             time.sleep(0.5)
             self.Can.tWriteFrameWaitAckRetries(message, retries=0)
 
-    @skip("Untested")
     def test0053MultiSendAck(self):
-        """ Send Multiple Frames with waiting for an ACK: Send->Ack->Send->Ack"""
+        """Send Multiple Frames with waiting for an ACK (⏱ 13 seconds)
+
+        Send->Ack->Send->Ack
+        """
 
         self.Can.Logger.Info(
             "Send and get ACK for 1000 times AND do it with two messages randomly "
