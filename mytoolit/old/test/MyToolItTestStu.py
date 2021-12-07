@@ -1117,10 +1117,9 @@ class TestStu(unittest.TestCase):
                                     MyToolItNetworkNr["STH1"], [0])
         self.Can.tWriteFrameWaitAckRetries(msg, retries=0, bErrorExit=False)
 
-    @skip("Untested")
     def test0209RoutingChristmasTree(self):
         """
-        "Christmas Tree" packages via routing
+        "Christmas Tree" packages via routing (⏱ 20 seconds)
         """
         self.Can.Logger.Info("Error Request Frame from STH1 to STH1")
         self.Can.vBlueToothConnectConnect(MyToolItNetworkNr["STU1"])
