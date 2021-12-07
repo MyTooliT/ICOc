@@ -6688,9 +6688,8 @@ class TestSth(unittest.TestCase):
                              str(u32EepromWriteRequsts))
         self.assertEqual(uPageRuns * uLoopRuns, u32EepromWriteRequsts)
 
-    @skip("Untested")
     def test0800StatusWords0Reset(self):
-        """Status Word after Reset
+        """Status Word after Reset (⏱ 7 seconds)
         """
         status0 = self.Can.node_status(MyToolItNetworkNr["STH1"])
         self.Can.Logger.Info(f"STH Status Word: {status0}")
