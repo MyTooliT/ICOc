@@ -1180,10 +1180,9 @@ class TestStu(unittest.TestCase):
                                     MyToolItNetworkNr["STH1"], [0])
         self.Can.tWriteFrameWaitAckRetries(msg, retries=0)
 
-    @skip("Untested")
     def test0700StatisticsPowerOnCounterPowerOffCounter(self):
         """
-        Check Power On and Power Off Counters
+        Check Power On and Power Off Counters  (⏱ 10 seconds)
         """
         PowerOnOff1 = self.Can.statisticalData(MyToolItNetworkNr["STU1"],
                                                MyToolItStatData["PocPof"])
