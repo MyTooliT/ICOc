@@ -1274,10 +1274,9 @@ class TestStu(unittest.TestCase):
         self.assertLess(SecondsOveral3 + 30 * 60 - 3, SecondsOveral4)
         self.assertGreater(SecondsOveral3 + 30 * 60 + 4, SecondsOveral4)
 
-    @skip("Untested")
     def test0702WdogNotIncrementing(self):
         """
-        Check Watchdog counter to not increment
+        Check Watchdog counter to not increment (⏱ 12 seconds)
         """
         WDogCounter1 = self._StuWDog()
         self._resetStu()
