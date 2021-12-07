@@ -723,10 +723,9 @@ class TestStu(unittest.TestCase):
         Rssi.sort()
         self.assertNotEqual(Rssi[1], Rssi[-2])
 
-    @skip("Untested")
     def test0107BluetoothNameAddressRssi(self):
         """
-        Check that correct Bluetooth name, addresses and RSSIs are (correctly) listed
+        Check Bluetooth name, addresses and RSSIs 
         """
         self.Can.vBlueToothConnectConnect(MyToolItNetworkNr["STU1"])
         endTime = time.time() + 5
