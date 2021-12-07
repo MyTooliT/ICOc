@@ -685,10 +685,9 @@ class TestStu(unittest.TestCase):
             self.assertGreater(Address, 0)
             self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
 
-    @skip("Untested")
     def test0105BluetoothRssi(self):
         """
-        Check that correct Bluetooth RSSIs are listed
+        Check that correct Bluetooth RSSIs are listed (⏱ 20 seconds)
         """
         for _i in range(0, 10):
             self.Can.vBlueToothConnectConnect(MyToolItNetworkNr["STU1"])
