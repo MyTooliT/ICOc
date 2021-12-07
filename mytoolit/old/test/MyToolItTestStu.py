@@ -627,10 +627,9 @@ class TestStu(unittest.TestCase):
         self.Can.Logger.Info("Average Time to connect and disconnect: " +
                              str(totalConnectDisconnectTime) + "ms")
 
-    @skip("Untested")
     def test0103BlueToothName(self):
         """
-        Write name and get name (bluetooth command)
+        Write name and get name (bluetooth command) (⏱ 3 minutes)
         """
         self.Can.Logger.Info("Bluetooth name command to STH")
         for _i in range(0, 10):
