@@ -291,10 +291,10 @@ The tests assume that the STH is called `Tanja`. Please rename the STH according
 
 ### Execution
 
-To run the verification tests, please enter the following command in the **root of the repository**:
+To run the verification tests, please enter the following command:
 
 ```sh
 test-sth-verification
 ```
 
-While you should be able to start the command in another directory, it will currently **write log files in the current working directory**. This is probably not something that you want.
+The script will currently write log files into the root of the repository. To remove these log files you can use the script [clean-repo](#section:remove-log-and-pdf-files).
