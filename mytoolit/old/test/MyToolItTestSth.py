@@ -6741,9 +6741,8 @@ class TestSth(unittest.TestCase):
         self.Can.Logger.Info(f"STH Error Word: {status}")
         self.assertEqual(status.value, 0)
 
-    @skip("Untested")
     def test0821StatusWords1AdcOverRun(self):
-        """Status Word after ADC Overrun
+        """Status Word after ADC Overrun (⏱ 12 seconds)
         """
         prescaler = 2
         acquisitionTime = AdcAcquisitionTime[1]
