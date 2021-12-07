@@ -763,10 +763,9 @@ class TestStu(unittest.TestCase):
         self.Can.Logger.Info("Average Time for connect and disconnect: " +
                              str(ConnectDisconnectTime) + "ms")
 
-    @skip("Untested")
     def test0111BlueToothAddress(self):
         """
-        Get Bluetooth Address
+        Get Bluetooth Address (⏱ 8 seconds)
         """
         self.Can.Logger.Info("Get Bluetooth Address")
         self.Can.Logger.Info(
