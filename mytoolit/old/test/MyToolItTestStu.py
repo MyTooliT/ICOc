@@ -36,7 +36,8 @@ from mytoolit.utility import add_commander_path_to_environment
 
 sVersion = TestConfig["Version"]
 sLogFile = 'TestStu.txt'
-sLogLocation = '../../Logs/STU/'
+repo_root = str(Path(__file__).parent.parent.parent.parent)
+sLogLocation = f"{repo_root}/"
 sHomeLocation = "../../SimplicityStudio/v4_workspace/STU/"
 sSilabsCommanderLocation = "../../SimplicityStudio/SimplicityCommander/"
 sAdapterSerialNo = "440116697"
@@ -54,7 +55,7 @@ class TestStu(unittest.TestCase):
         self.sBootloader = sHomeLocation + "builds/" + "BootloaderOtaBgm111.s37"
         self.sAdapterSerialNo = sAdapterSerialNo
         self.sBoardType = sBoardType
-        self.sSilabsCommander = sSilabsCommanderLocation + "commander"
+        self.sSilabsCommander = "commander"
         self.fileName = sLogLocation + self._testMethodName + ".txt"
         self.fileNameError = sLogLocation + "Error_" + self._testMethodName + ".txt"
         self.bError = False
