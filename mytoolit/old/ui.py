@@ -571,7 +571,7 @@ class UserInterface(CommandLineInterface):
         self.stdscr.clear()
         self.add_string("New STH name (max. 8 characters): ")
         self.stdscr.refresh()
-        name_valid, name = self.read_text(default=self.Can.sDevName,
+        name_valid, name = self.read_text(default=self.sth_name,
                                           allowed=lambda text: len(text) <= 8)
 
         if not name_valid:
