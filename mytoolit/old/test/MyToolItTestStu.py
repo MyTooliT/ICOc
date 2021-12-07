@@ -1087,10 +1087,9 @@ class TestStu(unittest.TestCase):
             self.assertNotEqual(
                 "bError", self.Can.tWriteFrameWaitAckRetries(msg, retries=0))
 
-    @skip("Untested")
     def test0208RoutingSenderReceiver(self):
         """
-        Send addressing same sender and receiver via Routing
+        Send addressing same sender and receiver via Routing (⏱ 14 seconds)
         """
         self.Can.Logger.Info(
             "Connect to STH and send message with STH1=sender/receiver")
