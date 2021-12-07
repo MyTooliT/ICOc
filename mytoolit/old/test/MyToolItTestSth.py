@@ -6767,9 +6767,8 @@ class TestSth(unittest.TestCase):
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
                                               TestConfig["DevName"])
 
-    @skip("Untested")
     def test0822StatusWords1TxFail(self):
-        """Status Word after Overspeed
+        """Status Word after Overspeed (⏱ 20 seconds)
         """
         prescaler = 2
         acquisitionTime = AdcAcquisitionTime[8]
