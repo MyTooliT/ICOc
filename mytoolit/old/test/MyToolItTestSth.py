@@ -6651,9 +6651,8 @@ class TestSth(unittest.TestCase):
                          u32EepromWriteRequestCounterTestEnd
                          )  # +1 due to incrementing at first write
 
-    @skip("Untested")
     def test0754EepromWriteRequestCounterPageWriteSwitches(self):
-        """Check that page switched with previews writes yield into to Writing EEPROM with the correct number of writes
+        """Check that page switched with previews writes yield into to Writing EEPROM with the correct number of writes (⏱ 15 seconds)
         """
         time.sleep(2)
         uLoopRuns = 5
