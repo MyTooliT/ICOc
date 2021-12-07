@@ -725,7 +725,7 @@ class TestStu(unittest.TestCase):
 
     def test0107BluetoothNameAddressRssi(self):
         """
-        Check Bluetooth name, addresses and RSSIs 
+        Check Bluetooth name, addresses and RSSIs (⏱ 9 seconds)
         """
         self.Can.vBlueToothConnectConnect(MyToolItNetworkNr["STU1"])
         endTime = time.time() + 5
