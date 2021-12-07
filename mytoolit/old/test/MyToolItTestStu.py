@@ -192,7 +192,7 @@ class TestStu(unittest.TestCase):
 
     def vSilabsAdapterReset(self):
         """
-        Reset the Silicon Laps Adapter
+        Reset the Silicon Labs Adapter
         """
         self.Can.Logger.Info("Reset Adapter " + self.sAdapterSerialNo)
         sSystemCall = self.sSilabsCommander + " adapter reset "
