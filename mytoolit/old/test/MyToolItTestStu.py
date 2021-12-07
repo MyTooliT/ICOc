@@ -926,9 +926,11 @@ class TestStu(unittest.TestCase):
                                     MyToolItNetworkNr["STH1"], [0])
         self.Can.tWriteFrameWaitAckRetries(msg, retries=0)
 
-    @skip("Untested")
     def test0204RoutingMultiSend(self):
-        """ Send Multiple Frames without waiting for an ACK via routing, do ACK after 100 times send flooding to check functionality"""
+        """Send Multiple Frames without waiting for an ACK (⏱ 45 seconds)
+        
+        do ACK after 100 times send flooding to check functionality
+        """
         self.Can.Logger.Info(
             "Send command 100 times over STU to STH, check number of write/reads and do ack test at the end; do that for 1000 times"
         )
