@@ -892,10 +892,11 @@ class TestStu(unittest.TestCase):
         self.Can.tWriteFrameWaitAckRetries(msg, retries=0)
         self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
 
-    @skip("Untested")
     def test0203MyToolItTestWrongReceiver(self):
         """
-        Send Message to STH with connecting. Assumed result = receive correct ack. This especially tests the routing functionality.
+        Send Message to STH with connecting (⏱ 45 seconds)
+        
+        Assumed result = receive correct ack. This especially tests the routing functionality.
         """
         self.Can.vBlueToothConnectConnect(MyToolItNetworkNr["STU1"])
         for _i in range(0, BluetoothTime["Connect"]):
