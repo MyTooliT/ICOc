@@ -4,6 +4,7 @@ import random
 
 from os import chdir
 from pathlib import Path
+from unittest import skip
 
 # from PCANBasic import *
 from random import randint
@@ -205,6 +206,7 @@ class TestStu(unittest.TestCase):
             os.system(sSystemCall)
         time.sleep(4)
 
+    @skip("Untested")
     def test0000FirmwareFlash(self):
         """
         https://www.silabs.com/community/wireless/zigbee-and-thread/knowledge-base.entry.html/2017/12/28/building_firmwareim-1OPr
@@ -262,6 +264,7 @@ class TestStu(unittest.TestCase):
         self.assertEqual("DONE\n", asData[-1])
         time.sleep(4)
 
+    @skip("Untested")
     def test0001OverTheAirUpdate(self):
         """
         Test the over the air update
@@ -339,6 +342,7 @@ class TestStu(unittest.TestCase):
             self.assertEqual("Finishing DFU block...OK\n", asData[-2])
             self.assertEqual("Closing connection...OK\n", asData[-1])
 
+    @skip("Untested")
     def test0005Ack(self):
         """
         Test Acknowledgement from STU. Write message and check identifier to be ack (No bError)
@@ -370,6 +374,7 @@ class TestStu(unittest.TestCase):
         self.assertEqual(expectedData.asbyte,
                          self.Can.getReadMessage(-1).DATA[0])
 
+    @skip("Untested")
     def test0006FirmwareVersion(self):
         iIndex = self.Can.cmdSend(MyToolItNetworkNr["STU1"],
                                   MyToolItBlock["Product Data"],
@@ -381,6 +386,7 @@ class TestStu(unittest.TestCase):
         self.Can.Logger.Info("Version: " + sVersionRead)
         self.assertEqual(sVersion, sVersionRead)
 
+    @skip("Untested")
     def test0052MultiSend(self):
         """ Send Multiple Frames without waiting for an ACK, do ACK after 100 times send flooding to check functionality"""
         self.Can.Logger.Info(
@@ -412,6 +418,7 @@ class TestStu(unittest.TestCase):
             time.sleep(0.5)
             self.Can.tWriteFrameWaitAckRetries(message, retries=0)
 
+    @skip("Untested")
     def test0053MultiSendAck(self):
         """ Send Multiple Frames with waiting for an ACK: Send->Ack->Send->Ack"""
 
@@ -439,6 +446,7 @@ class TestStu(unittest.TestCase):
             self.assertNotEqual("bError", self.Can.tWriteFrameWaitAck(msg))
         self.test0005Ack()  # Test that it still works
 
+    @skip("Untested")
     def test0054MultiSendMultiAckRetries(self):
         """ Send Multiple Frames with waiting for an ACK: Send->Ack->Send->Ack, this also do a retry, tests the test framework - Multiple Messages"""
         self.Can.Logger.Info(
@@ -466,6 +474,7 @@ class TestStu(unittest.TestCase):
                 "bError", self.Can.tWriteFrameWaitAckRetries(msg, retries=3))
         self.test0005Ack()  # Test that it still works
 
+    @skip("Untested")
     def test0055MultiSendSingleAckRetries(self):
         """ Send Multiple Frames with waiting for an ACK: Send->Ack->Send->Ack, this also do a retry, tests the test framework - Single Message"""
         self.Can.Logger.Info(
@@ -482,6 +491,7 @@ class TestStu(unittest.TestCase):
                 retries=0)
         self.test0005Ack()  # Test that it still works
 
+    @skip("Untested")
     def test0056SenderReceiver(self):
         """
         Send addressing same sender and receiver
@@ -496,6 +506,7 @@ class TestStu(unittest.TestCase):
                                     MyToolItNetworkNr["STU1"], [0])
         self.Can.tWriteFrameWaitAckRetries(msg, retries=0)
 
+    @skip("Untested")
     def test0057ChristmasTree(self):
         """
         "Christmas Tree" packages
@@ -545,6 +556,7 @@ class TestStu(unittest.TestCase):
                                     MyToolItNetworkNr["STU1"], [0])
         self.Can.tWriteFrameWaitAckRetries(msg, retries=0)
 
+    @skip("Untested")
     def test0101BlueToothConncectDeviceNr(self):
         """
         Connect and disconnect device, check device number after each connect/disconnect to check correctness
@@ -574,6 +586,7 @@ class TestStu(unittest.TestCase):
                                  str(deviceNumbers))
             self.assertEqual(deviceNumbers, 0)
 
+    @skip("Untested")
     def test0102BlueToothConnectDisconnectDevice(self):
         """
         Connect and disconnect to device 30 times
@@ -608,6 +621,7 @@ class TestStu(unittest.TestCase):
         self.Can.Logger.Info("Average Time to connect and disconnect: " +
                              str(totalConnectDisconnectTime) + "ms")
 
+    @skip("Untested")
     def test0103BlueToothName(self):
         """
         Write name and get name (bluetooth command)
@@ -644,6 +658,7 @@ class TestStu(unittest.TestCase):
             self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
             time.sleep(2)
 
+    @skip("Untested")
     def test0104BluetoothAddressDevices(self):
         """
         Check that correct Bluetooth addresses are (correctly)  listed
@@ -666,6 +681,7 @@ class TestStu(unittest.TestCase):
             self.assertGreater(Address, 0)
             self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
 
+    @skip("Untested")
     def test0105BluetoothRssi(self):
         """
         Check that correct Bluetooth RSSIs are listed
@@ -683,6 +699,7 @@ class TestStu(unittest.TestCase):
             self.assertNotEqual(Rssi, 127)
             self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
 
+    @skip("Untested")
     def test0106BluetoothRssiChange(self):
         """
         Check that correct Bluetooth RSSIs change
@@ -704,6 +721,7 @@ class TestStu(unittest.TestCase):
         Rssi.sort()
         self.assertNotEqual(Rssi[1], Rssi[-2])
 
+    @skip("Untested")
     def test0107BluetoothNameAddressRssi(self):
         """
         Check that correct Bluetooth name, addresses and RSSIs are (correctly) listed
@@ -722,6 +740,7 @@ class TestStu(unittest.TestCase):
         self.Can.Logger.Info("RSSI: " + str(Rssi))
         self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
 
+    @skip("Untested")
     def test0110BlueToothConnectDisconnectDevicePolling(self):
         """
         Connect and disconnect to device 100 times, do it without time out, use connection check
@@ -742,6 +761,7 @@ class TestStu(unittest.TestCase):
         self.Can.Logger.Info("Average Time for connect and disconnect: " +
                              str(ConnectDisconnectTime) + "ms")
 
+    @skip("Untested")
     def test0111BlueToothAddress(self):
         """
         Get Bluetooth Address
@@ -751,6 +771,7 @@ class TestStu(unittest.TestCase):
             "BlueTooth Address: " +
             hex(self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"])))
 
+    @skip("Untested")
     def test0112BlueToothConnectMac(self):
         """
         Connect to STH via Bluetooth Address
@@ -788,6 +809,7 @@ class TestStu(unittest.TestCase):
         self.Can.bBlueToothCheckConnect(MyToolItNetworkNr["STU1"])
         self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
 
+    @skip("Untested")
     def test0113DeviceNameChangeSTU(self):
         """
         Change Device Name of STU
@@ -815,6 +837,7 @@ class TestStu(unittest.TestCase):
             self.assertEqual(TestConfig["StuName"], Name)
             time.sleep(1)
 
+    @skip("Untested")
     def test0201MyToolItTestNotConnectedAck(self):
         """
         Send Message to STH without connecting. Assumed result = not receiving anything. This especially tests the routing functionality.
@@ -830,6 +853,7 @@ class TestStu(unittest.TestCase):
         time.sleep(2)
         self.assertEqual(self.Can.GetReadArrayIndex(), lastIndex)
 
+    @skip("Untested")
     def test0202MyToolItTestAck(self):
         """
         Send Message to STH with connecting. Assumed result = receive correct ack. This especially tests the routing functionality.
@@ -867,6 +891,7 @@ class TestStu(unittest.TestCase):
         self.Can.tWriteFrameWaitAckRetries(msg, retries=0)
         self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
 
+    @skip("Untested")
     def test0203MyToolItTestWrongReceiver(self):
         """
         Send Message to STH with connecting. Assumed result = receive correct ack. This especially tests the routing functionality.
@@ -899,6 +924,7 @@ class TestStu(unittest.TestCase):
                                     MyToolItNetworkNr["STH1"], [0])
         self.Can.tWriteFrameWaitAckRetries(msg, retries=0)
 
+    @skip("Untested")
     def test0204RoutingMultiSend(self):
         """ Send Multiple Frames without waiting for an ACK via routing, do ACK after 100 times send flooding to check functionality"""
         self.Can.Logger.Info(
@@ -943,6 +969,7 @@ class TestStu(unittest.TestCase):
             time.sleep(0.25)
             self.Can.tWriteFrameWaitAckRetries(message, retries=0)
 
+    @skip("Untested")
     def test0205RoutingMultiSendAck(self):
         """ Send Multiple Frames with waiting for an ACK with routing: Send->Ack->Send->Ack"""
         self.Can.Logger.Info(
@@ -979,6 +1006,7 @@ class TestStu(unittest.TestCase):
                                             [0, 0, 0, 0, 0, 0, 0, 0])
             self.assertNotEqual("bError", self.Can.tWriteFrameWaitAck(msg))
 
+    @skip("Untested")
     def test0206RoutingMultiSendAckRetries(self):
         """ Send Multiple Frames with waiting for an ACK: Send->Ack->Send->Ack with routing, this also do a retry, tests the test framework - Multiple Messages"""
         self.Can.Logger.Info(
@@ -1016,6 +1044,7 @@ class TestStu(unittest.TestCase):
             self.assertNotEqual(
                 "bError", self.Can.tWriteFrameWaitAckRetries(msg, retries=0))
 
+    @skip("Untested")
     def test0207RoutingMultiSendSingleAckRetries(self):
         """ Send Multiple Frames with waiting for an ACK: Send->Ack->Send->Ack with routing, this also do a retry, tests the test framework - Single Message"""
 
@@ -1048,6 +1077,7 @@ class TestStu(unittest.TestCase):
             self.assertNotEqual(
                 "bError", self.Can.tWriteFrameWaitAckRetries(msg, retries=0))
 
+    @skip("Untested")
     def test0208RoutingSenderReceiver(self):
         """
         Send addressing same sender and receiver via Routing
@@ -1078,6 +1108,7 @@ class TestStu(unittest.TestCase):
                                     MyToolItNetworkNr["STH1"], [0])
         self.Can.tWriteFrameWaitAckRetries(msg, retries=0, bErrorExit=False)
 
+    @skip("Untested")
     def test0209RoutingChristmasTree(self):
         """
         "Christmas Tree" packages via routing
@@ -1141,6 +1172,7 @@ class TestStu(unittest.TestCase):
                                     MyToolItNetworkNr["STH1"], [0])
         self.Can.tWriteFrameWaitAckRetries(msg, retries=0)
 
+    @skip("Untested")
     def test0700StatisticsPowerOnCounterPowerOffCounter(self):
         """
         Check Power On and Power Off Counters
@@ -1169,6 +1201,7 @@ class TestStu(unittest.TestCase):
         self.assertEqual(PowerOn1 + 1, PowerOn2)
         self.assertEqual(PowerOff1, PowerOff2)
 
+    @skip("Untested")
     def test0701StatisticsOperatingSeconds(self):
         """
         Check Operating Seconds
@@ -1235,6 +1268,7 @@ class TestStu(unittest.TestCase):
         self.assertLess(SecondsOveral3 + 30 * 60 - 3, SecondsOveral4)
         self.assertGreater(SecondsOveral3 + 30 * 60 + 4, SecondsOveral4)
 
+    @skip("Untested")
     def test0702WdogNotIncrementing(self):
         """
         Check Watchdog counter to not increment
@@ -1248,6 +1282,7 @@ class TestStu(unittest.TestCase):
                              str(WDogCounter2))
         self.assertEqual(WDogCounter1, WDogCounter2)
 
+    @skip("Untested")
     def test0703ProductionDate(self):
         """
         Check ProductionDate
@@ -1258,6 +1293,7 @@ class TestStu(unittest.TestCase):
         self.Can.Logger.Info("Production Date: " + sProductionDate)
         self.assertEqual(TestConfig["ProductionDate"], sProductionDate)
 
+    @skip("Untested")
     def test0750StatisticPageWriteReadDeteministic(self):
         """
         Check EEPROM Read/Write - Deterministic data
@@ -1325,6 +1361,7 @@ class TestStu(unittest.TestCase):
                          u32EepromWriteRequestCounterTestEnd
                          )  # +1 due to incrementing at first write
 
+    @skip("Untested")
     def test0751StatisticPageWriteReadRandom(self):
         """
         Check EEPROM Read/Write - Deterministic data
@@ -1392,6 +1429,7 @@ class TestStu(unittest.TestCase):
                          u32EepromWriteRequestCounterTestEnd
                          )  # +1 due to incrementing at first write
 
+    @skip("Untested")
     def test0753EepromWriteRequestCounterPageSwitches(self):
         """
         Check that page switched do not yield to Writing EEPROM
@@ -1419,6 +1457,7 @@ class TestStu(unittest.TestCase):
                          u32EepromWriteRequestCounterTestEnd
                          )  # +1 due to incrementing at first write
 
+    @skip("Untested")
     def test0754EepromWriteRequestCounterPageWriteSwitches(self):
         """
         Check that page switched with previews writes yield into to Writing EEPROM with the correct number of wirtes
@@ -1457,6 +1496,7 @@ class TestStu(unittest.TestCase):
                              str(u32EepromWriteRequsts))
         self.assertEqual(uPageRuns * uLoopRuns, u32EepromWriteRequsts)
 
+    @skip("Untested")
     def test0900ErrorCmdVerbotenStu1(self):
         """
         Test that nothing happens when sending Command 0x0000 to STU1
@@ -1494,6 +1534,7 @@ class TestStu(unittest.TestCase):
                                                     bErrorExit=False)
         self.assertEqual("Error", msgAck)
 
+    @skip("Untested")
     def test0901ErrorRequestErrorStu1(self):
         """
         Test that nothing happens when sending Request(1) and Error(1) to STU1
