@@ -261,7 +261,7 @@ class TestStu(unittest.TestCase):
         self.assertEqual("DONE\n", asData[-1])
         time.sleep(4)
 
-    @skip("Untested")
+    @skip("OTA update using `ota-dfu` is **very** unreliable")
     def test0001OverTheAirUpdate(self):
         """
         Test the over the air update
