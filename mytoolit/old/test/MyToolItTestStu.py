@@ -1208,10 +1208,9 @@ class TestStu(unittest.TestCase):
         self.assertEqual(PowerOn1 + 1, PowerOn2)
         self.assertEqual(PowerOff1, PowerOff2)
 
-    @skip("Untested")
     def test0701StatisticsOperatingSeconds(self):
         """
-        Check Operating Seconds
+        Check Operating Seconds (⏱ 33 minutes)
         """
         u32EepromWriteRequestCounterTestStart = self.Can.u32EepromWriteRequestCounter(
             MyToolItNetworkNr["STU1"])
