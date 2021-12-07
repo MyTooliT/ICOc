@@ -741,10 +741,11 @@ class TestStu(unittest.TestCase):
         self.Can.Logger.Info("RSSI: " + str(Rssi))
         self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
 
-    @skip("Untested")
     def test0110BlueToothConnectDisconnectDevicePolling(self):
         """
-        Connect and disconnect to device 100 times, do it without time out, use connection check
+        Connect and disconnect to device 100 times (⏱ 3 minutes)
+        
+        Do it without time out, use connection check
         """
         self.Can.Logger.Info(
             "Bluetooth connect command and check connected command and disconnect command"
