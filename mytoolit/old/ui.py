@@ -347,7 +347,7 @@ class UserInterface(CommandLineInterface):
         product_name = self.Can.sProductData("Product Name", bLog=False)
         serial = f"{serial_number}–{product_name}"
         sensor_range, success = self.read_acceleration_range()
-        sensor_range_output = f"± {sensor_range/2} g₀"
+        sensor_range_output = f"± {sensor_range/2} g"
         if not success:
             sensor_range_output += " (EEPROM Read Error)"
 
