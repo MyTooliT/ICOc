@@ -702,10 +702,9 @@ class TestStu(unittest.TestCase):
             self.assertNotEqual(Rssi, 127)
             self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
 
-    @skip("Untested")
     def test0106BluetoothRssiChange(self):
         """
-        Check that correct Bluetooth RSSIs change
+        Check that correct Bluetooth RSSIs change (⏱ 11 seconds)
         """
         self.Can.vBlueToothConnectConnect(MyToolItNetworkNr["STU1"])
         endTime = time.time() + 5
