@@ -853,10 +853,11 @@ class TestStu(unittest.TestCase):
         time.sleep(2)
         self.assertEqual(self.Can.GetReadArrayIndex(), lastIndex)
 
-    @skip("Untested")
     def test0202MyToolItTestAck(self):
         """
-        Send Message to STH with connecting. Assumed result = receive correct ack. This especially tests the routing functionality.
+        Send Message to STH with connecting (⏱ 16 seconds)
+        
+        Assumed result = receive correct ack. This especially tests the routing functionality.
         """
         expectedData = ActiveState()
         expectedData.asbyte = 0
