@@ -6608,9 +6608,10 @@ class TestSth(unittest.TestCase):
                          u32EepromWriteRequestCounterTestEnd
                          )  # +1 due to incrementing at first write
 
-    @skip("Untested")
     def test0752EepromWriteRequestCounterConnectDisconnect(self):
-        """Check single Write access at startup and off (Power On Counter and Power Off Counter)
+        """Check single Write access at startup and off (⏱ 10 seconds) 
+        
+        (Power On Counter and Power Off Counter)
         """
         u32EepromWriteRequestCounterTestStart = self.Can.u32EepromWriteRequestCounter(
             MyToolItNetworkNr["STH1"])
