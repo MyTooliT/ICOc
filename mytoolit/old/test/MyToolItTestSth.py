@@ -6698,9 +6698,8 @@ class TestSth(unittest.TestCase):
         self.assertEqual(status0.error(), False)
         self.assertEqual(status0.state_name(), 'Operating')
 
-    @skip("Untested")
     def test0801StatusWords0AdcOverRun(self):
-        """Status Word in ADC overrun error case
+        """Status Word in ADC overrun error case (⏱ 11 seconds)
         """
         prescaler = 2
         acquisitionTime = AdcAcquisitionTime[1]
@@ -6722,7 +6721,8 @@ class TestSth(unittest.TestCase):
                                      bErrorExit=False)
         self.assertNotEqual("Error", ack)
         StateWord = SthStateWord()
-        StateWord.asword = self.Can.node_status(MyToolItNetworkNr["STH1"])
+        StateWord.asword = self.Can.node_status(
+            MyToolItNetworkNr["STH1"]).value
         self.Can.Logger.Info("STH State Word: " + hex(StateWord.asword))
         self.Can.Logger.Info("STH State Word - bError: " +
                              str(StateWord.b.bError))
