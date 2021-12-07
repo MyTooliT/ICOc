@@ -809,10 +809,9 @@ class TestStu(unittest.TestCase):
         self.Can.bBlueToothCheckConnect(MyToolItNetworkNr["STU1"])
         self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
 
-    @skip("Untested")
     def test0113DeviceNameChangeSTU(self):
         """
-        Change Device Name of STU
+        Change Device Name of STU (⏱ 40 seconds)
         """
         self.Can.Logger.Info("Bluetooth name command to STU")
         for _i in range(0, 10):
