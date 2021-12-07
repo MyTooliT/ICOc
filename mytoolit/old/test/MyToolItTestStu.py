@@ -499,10 +499,9 @@ class TestStu(unittest.TestCase):
                 retries=0)
         self.test0005Ack()  # Test that it still works
 
-    @skip("Untested")
     def test0056SenderReceiver(self):
         """
-        Send addressing same sender and receiver
+        Send addressing same sender and receiver (⏱ 9 seconds)
         """
         cmd = self.Can.CanCmd(MyToolItBlock["System"],
                               MyToolItSystem["Get/Set State"], 1, 0)
