@@ -663,10 +663,9 @@ class TestStu(unittest.TestCase):
             self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
             time.sleep(2)
 
-    @skip("Untested")
     def test0104BluetoothAddressDevices(self):
         """
-        Check that correct Bluetooth addresses are (correctly)  listed
+        Check that Bluetooth addresses are listed correctly (⏱ 20 seconds)
         """
         for _i in range(0, 10):
             self.Can.vBlueToothConnectConnect(MyToolItNetworkNr["STU1"])
