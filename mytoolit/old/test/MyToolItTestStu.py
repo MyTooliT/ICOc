@@ -836,10 +836,11 @@ class TestStu(unittest.TestCase):
             self.assertEqual(TestConfig["StuName"], Name)
             time.sleep(1)
 
-    @skip("Untested")
     def test0201MyToolItTestNotConnectedAck(self):
         """
-        Send Message to STH without connecting. Assumed result = not receiving anything. This especially tests the routing functionality.
+        Send Message to STH without connecting (⏱ 10 seconds) 
+        
+        Assumed result = not receiving anything. This especially tests the routing functionality.
         """
         cmd = self.Can.CanCmd(MyToolItBlock["System"],
                               MyToolItSystem["Get/Set State"], 1, 0)
