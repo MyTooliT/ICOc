@@ -6625,9 +6625,8 @@ class TestSth(unittest.TestCase):
         self.assertEqual(u32EepromWriteRequestCounterTestStart + 2,
                          u32EepromWriteRequestCounterTestEnd)
 
-    @skip("Untested")
     def test0753EepromWriteRequestCounterPageSwitches(self):
-        """Check that page switched do not yield to Writing EEPROM
+        """Check that page switched do not yield to Writing EEPROM (⏱ 30 seconds)
         """
         time.sleep(1)
         uLoopRuns = 5
