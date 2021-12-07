@@ -1012,9 +1012,11 @@ class TestStu(unittest.TestCase):
                                             [0, 0, 0, 0, 0, 0, 0, 0])
             self.assertNotEqual("bError", self.Can.tWriteFrameWaitAck(msg))
 
-    @skip("Untested")
     def test0206RoutingMultiSendAckRetries(self):
-        """ Send Multiple Frames with waiting for an ACK: Send->Ack->Send->Ack with routing, this also do a retry, tests the test framework - Multiple Messages"""
+        """ Send Multiple Frames with waiting for an ACK (⏱ 30 seconds)
+        
+        Send->Ack->Send->Ack with routing, this also do a retry, tests the test framework - Multiple Messages
+        """
         self.Can.Logger.Info(
             "Send and get ACK for 10000 times AND do it with two messages randomly "
         )
