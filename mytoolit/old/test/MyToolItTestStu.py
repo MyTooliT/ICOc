@@ -562,10 +562,11 @@ class TestStu(unittest.TestCase):
                                     MyToolItNetworkNr["STU1"], [0])
         self.Can.tWriteFrameWaitAckRetries(msg, retries=0)
 
-    @skip("Untested")
     def test0101BlueToothConncectDeviceNr(self):
         """
-        Connect and disconnect device, check device number after each connect/disconnect to check correctness
+        Connect and disconnect device (⏱ 7 minutes)
+        
+        check device number after each connect/disconnect to check correctness
         """
         self.Can.Logger.Info(
             "Connect and get Device Number, disconnect and get device number")
