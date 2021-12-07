@@ -593,10 +593,9 @@ class TestStu(unittest.TestCase):
                                  str(deviceNumbers))
             self.assertEqual(deviceNumbers, 0)
 
-    @skip("Untested")
     def test0102BlueToothConnectDisconnectDevice(self):
         """
-        Connect and disconnect to device 30 times
+        Connect and disconnect to device 500 times (⏱ 30 minutes)
         """
         self.Can.Logger.Info(
             "Bluetooth connect command and check connected command and disconnect command"
