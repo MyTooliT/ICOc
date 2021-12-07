@@ -6894,9 +6894,8 @@ class TestSth(unittest.TestCase):
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
                                               TestConfig["DevName"])
 
-    @skip("Untested")
     def test0900ErrorCmdVerbotenSth1(self):
-        """Test that nothing happens when sending Command 0x0000 to STH1
+        """Test that nothing happens when sending Command 0x0000 to STH1 (⏱ 22 seconds)
         """
         cmd = self.Can.CanCmd(0, 0, 1, 0)
         message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
