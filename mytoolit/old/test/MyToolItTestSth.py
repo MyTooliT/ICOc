@@ -5726,7 +5726,7 @@ class TestSth(unittest.TestCase):
 
         This tests reads calibration values we currently do not
         write in the EEPROM part of the STH test, such as the offset and
-        and slope values for the y-axis and z-axis. 
+        and slope values for the y-axis and z-axis.
         """
         ret = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"],
                                         CalibMeassurementActionNr["Measure"],
@@ -6610,8 +6610,8 @@ class TestSth(unittest.TestCase):
                          )  # +1 due to incrementing at first write
 
     def test0752EepromWriteRequestCounterConnectDisconnect(self):
-        """Check single Write access at startup and off (⏱ 10 seconds) 
-        
+        """Check single Write access at startup and off (⏱ 10 seconds)
+
         (Power On Counter and Power Off Counter)
         """
         u32EepromWriteRequestCounterTestStart = self.Can.u32EepromWriteRequestCounter(
