@@ -6794,9 +6794,8 @@ class TestSth(unittest.TestCase):
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
                                               TestConfig["DevName"])
 
-    @skip("Untested")
     def test0880ActiveStateReset(self):
-        """Active State
+        """Active State (⏱ 6 seconds)
         """
         activeState = ActiveState()
         activeState.asbyte = 0  # Set=0 ->Read
