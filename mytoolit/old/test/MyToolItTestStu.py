@@ -513,10 +513,9 @@ class TestStu(unittest.TestCase):
                                     MyToolItNetworkNr["STU1"], [0])
         self.Can.tWriteFrameWaitAckRetries(msg, retries=0)
 
-    @skip("Untested")
     def test0057ChristmasTree(self):
         """
-        "Christmas Tree" packages
+        "Christmas Tree" packages (⏱ 14 seconds)
         """
         self.Can.Logger.Info("Error Request Frame from STU1 to STU1")
         cmd = self.Can.CanCmd(MyToolItBlock["System"],
