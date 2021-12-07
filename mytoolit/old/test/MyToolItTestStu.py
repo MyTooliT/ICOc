@@ -386,9 +386,11 @@ class TestStu(unittest.TestCase):
         self.Can.Logger.Info("Version: " + sVersionRead)
         self.assertEqual(sVersion, sVersionRead)
 
-    @skip("Untested")
     def test0052MultiSend(self):
-        """ Send Multiple Frames without waiting for an ACK, do ACK after 100 times send flooding to check functionality"""
+        """Send Multiple Frames without waiting for an ACK (⏱ 60 seconds)
+        
+        do ACK after 100 times send flooding to check functionality
+        """
         self.Can.Logger.Info(
             "Send command 100 times, check number of write/reads and do ack test at the end; do that for 100 times"
         )
