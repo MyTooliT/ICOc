@@ -6423,9 +6423,8 @@ class TestSth(unittest.TestCase):
         self.assertGreaterEqual(SecondsOveral1 + 63, SecondsOveral3)
         self.assertEqual(SecondsOveral3 + 30 * 60, SecondsOveral4)
 
-    @skip("Untested")
     def test0702WdogNotIncrementing(self):
-        """Check Watchdog counter to not increment
+        """Check Watchdog counter to not increment (⏱ 30 seconds)
         """
         WDogCounter1 = self._SthWDog()
         self._resetSth()
