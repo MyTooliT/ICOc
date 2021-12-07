@@ -772,10 +772,9 @@ class TestStu(unittest.TestCase):
             "BlueTooth Address: " +
             hex(self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"])))
 
-    @skip("Untested")
     def test0112BlueToothConnectMac(self):
         """
-        Connect to STH via Bluetooth Address
+        Connect to STH via Bluetooth Address (⏱ 13 seconds)
         """
         iRssiLimit = -80
         self.Can.Logger.Info("Connect via bluetooth address")
