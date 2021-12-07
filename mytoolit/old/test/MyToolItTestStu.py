@@ -206,13 +206,10 @@ class TestStu(unittest.TestCase):
             os.system(sSystemCall)
         time.sleep(4)
 
-    @skip("Untested")
+    @skip("Already covered by test-stu")
     def test0000FirmwareFlash(self):
-        """
-        https://www.silabs.com/community/wireless/zigbee-and-thread/knowledge-base.entry.html/2017/12/28/building_firmwareim-1OPr
-        commander.exe convert ..\v4_workspace\client_firmware\builds\BootloaderOtaBgm111.s37 ..\v4_workspace\client_firmware\builds\v2.1.4\Client.s37 --patch 0x0fe04000:0x00 --patch 0x0fe041F8:0xFD -o manufacturing_image.hex -d BGM111A256V2
-        commander flash manufacturing_image.hex --address 0x0 --serialno 440116697 -d BGM111A256V2
-        """
+        """Upload firmware"""
+
         try:
             os.remove(sLogLocation + "ManufacturingCreateResport.txt")
         except:
