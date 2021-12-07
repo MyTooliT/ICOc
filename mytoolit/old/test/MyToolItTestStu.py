@@ -373,11 +373,12 @@ class TestStu(unittest.TestCase):
         self.assertEqual(expectedData.asbyte,
                          self.Can.getReadMessage(-1).DATA[0])
 
-    @skip("Untested")
     def test0006FirmwareVersion(self):
+        """Check firmware version (⏱ 8 seconds)"""
+
         iIndex = self.Can.cmdSend(MyToolItNetworkNr["STU1"],
                                   MyToolItBlock["Product Data"],
-                                  MyToolItProductData["FirmwareVersion"], [])
+                                  MyToolItProductData["Firmware Version"], [])
         au8Version = self.Can.getReadMessageData(iIndex)
         au8Version = au8Version[-3:]
         sVersionRead = "v" + str(au8Version[0]) + "." + str(
