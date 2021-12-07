@@ -6952,9 +6952,8 @@ class TestSth(unittest.TestCase):
                                                     bErrorExit=False)
         self.assertEqual("Error", msgAck)
 
-    @skip("Untested")
     def test0902WrongSenderSth1(self):
-        """Test Routing - Wrong Sender to STH1
+        """Test Routing - Wrong Sender to STH1 (⏱ 3 minutes)
         """
         for numberKey, numberVal in MyToolItNetworkNr.items():
             if "SPU1" != numberKey:
