@@ -6930,9 +6930,8 @@ class TestSth(unittest.TestCase):
                                                     bErrorExit=False)
         self.assertEqual("Error", msgAck)
 
-    @skip("Untested")
     def test0901ErrorRequestErrorSth1(self):
-        """Test that nothing happens when sending Request(1) and bError(1) to STH1
+        """Test that nothing happens when sending Request(1) and bError(1) to STH1 (⏱ 15 seconds)
         """
         cmd = self.Can.CanCmd(MyToolItBlock["System"], MyToolItSystem["Reset"],
                               1, 1)
