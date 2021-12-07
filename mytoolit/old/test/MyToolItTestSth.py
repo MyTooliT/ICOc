@@ -6446,9 +6446,8 @@ class TestSth(unittest.TestCase):
         self.assertEqual(WDogCounter1, WDogCounter2)
         self.assertEqual(WDogCounter1, WDogCounter3)
 
-    @skip("Untested")
     def test0703ProductionDate(self):
-        """Write actual production date and Check ProductionDate
+        """Write actual production date and Check ProductionDate (⏱ 7 seconds)
         """
         sDate = date.today()
         sDate = str(sDate).replace('-', '')
