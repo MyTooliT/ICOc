@@ -340,10 +340,11 @@ class TestStu(unittest.TestCase):
             self.assertEqual("Finishing DFU block...OK\n", asData[-2])
             self.assertEqual("Closing connection...OK\n", asData[-1])
 
-    @skip("Untested")
     def test0005Ack(self):
         """
-        Test Acknowledgement from STU. Write message and check identifier to be ack (No bError)
+        Test Acknowledgement from STU  (⏱ 9 seconds)
+
+        Write message and check identifier to be ack (No bError)
         """
         cmd = self.Can.CanCmd(MyToolItBlock["System"],
                               MyToolItSystem["Get/Set State"], 1, 0)
