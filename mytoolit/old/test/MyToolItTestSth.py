@@ -6734,9 +6734,8 @@ class TestSth(unittest.TestCase):
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
                                               TestConfig["DevName"])
 
-    @skip("Untested")
     def test0820StatusWords1Reset(self):
-        """Status Word after Reset
+        """Status Word after Reset (⏱ 8 seconds)
         """
         status = self.Can.error_status(MyToolItNetworkNr["STH1"])
         self.Can.Logger.Info(f"STH Error Word: {status}")
