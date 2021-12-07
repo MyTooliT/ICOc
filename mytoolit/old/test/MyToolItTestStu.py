@@ -2,12 +2,9 @@ import unittest
 import sys
 import os
 import random
-# Required to add peakcan
-sDirName = os.path.dirname('')
-sys.path.append(sDirName)
-file_path = '../'
-sDirName = os.path.dirname(file_path)
-sys.path.append(sDirName)
+
+from os import chdir
+from pathlib import Path
 
 # from PCANBasic import *
 from random import randint
@@ -35,6 +32,7 @@ from mytoolit.old.MyToolItCommands import (
 )
 from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
 from mytoolit.old.MyToolItStu import TestConfig
+from mytoolit.utility import add_commander_path_to_environment
 
 sVersion = TestConfig["Version"]
 sLogFile = 'TestStu.txt'
@@ -1564,18 +1562,13 @@ class TestStu(unittest.TestCase):
         self.assertEqual("Error", msgAck)
 
 
-if __name__ == "__main__":
-    sLogLocation = sys.argv[1]
-    sLogFile = sys.argv[2]
-    sVersion = sys.argv[3]
-    if '/' != sLogLocation[-1]:
-        sLogLocation += '/'
-    sLogFileLocation = sLogLocation + sLogFile
-    sDirName = os.path.dirname(sLogFileLocation)
-    sys.path.append(sDirName)
+def main():
+    add_commander_path_to_environment()
+    # Always run the tests in the repo root to make sure we do not clutter the
+    # the current directory with log files
+    chdir(str(Path(__file__).parent.parent.parent))
+    unittest.main(module=__name__, verbosity=2)
 
-    if not os.path.exists(sDirName):
-        os.makedirs(sDirName)
-    with open(sLogFileLocation, "w") as f:
-        runner = unittest.TextTestRunner(f)
-        unittest.main(argv=['first-arg-is-ignored'], testRunner=runner)
+
+if __name__ == "__main__":
+    main()
