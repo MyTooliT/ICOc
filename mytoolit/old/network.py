@@ -372,6 +372,8 @@ class Network(object):
         except KeyboardInterrupt:
             self.RunReadThread = False
 
+        return returnMessage
+
     def cmdSend(self,
                 receiver,
                 blockCmd,
