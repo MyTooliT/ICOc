@@ -6822,9 +6822,8 @@ class TestSth(unittest.TestCase):
         self.assertEqual(activeState.b.u3NetworkState,
                          NetworkState["Operating"])
 
-    @skip("Untested")
     def test0881ActiveStateError(self):
-        """Active State
+        """Active State (⏱ 21 seconds)
         """
         activeState = ActiveState()
         activeState.asbyte = 0  # Set=0 ->Read
