@@ -1370,10 +1370,9 @@ class TestStu(unittest.TestCase):
                          u32EepromWriteRequestCounterTestEnd
                          )  # +1 due to incrementing at first write
 
-    @skip("Untested")
     def test0751StatisticPageWriteReadRandom(self):
         """
-        Check EEPROM Read/Write - Deterministic data
+        Check EEPROM Read/Write - Deterministic data (⏱ 75 seconds)
         """
         uLoopRuns = 100
         u32EepromWriteRequestCounterTestStart = self.Can.u32EepromWriteRequestCounter(
