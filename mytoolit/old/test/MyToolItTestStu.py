@@ -1541,10 +1541,9 @@ class TestStu(unittest.TestCase):
                                                     bErrorExit=False)
         self.assertEqual("Error", msgAck)
 
-    @skip("Untested")
     def test0901ErrorRequestErrorStu1(self):
         """
-        Test that nothing happens when sending Request(1) and Error(1) to STU1
+        Test that nothing happens when sending Request(1)/Error(1) (⏱ 16 seconds)
         """
         cmd = self.Can.CanCmd(MyToolItBlock["System"], MyToolItSystem["Reset"],
                               1, 1)
