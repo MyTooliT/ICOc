@@ -1,5 +1,7 @@
 # -- Imports ------------------------------------------------------------------
 
+from typing import List, Optional
+
 from bidict import bidict
 
 # -- Class --------------------------------------------------------------------
@@ -25,14 +27,26 @@ class CalibrationMeasurementFormat:
     })
 
     def __init__(self,
-                 set: bool,
-                 element: str,
-                 method: str = 'Reserved',
-                 dimension: int = 1) -> None:
+                 *data: List[int],
+                 set: Optional[bool] = None,
+                 element: Optional[str] = None,
+                 method: Optional[str] = None,
+                 dimension: Optional[int] = None) -> None:
         """Initialize the calibration measurement format
+
+        This class allows you to specify the message bytes directly as first
+        argument. Alternatively you can use the other arguments of the
+        initializer to  either
+
+        - overwrite specific parts of the given message bytes or
+        - create a calibration format without specifying the message bytes.
 
         Parameters
         ----------
+
+        data:
+            A list containing the (first three) bytes of the calibration
+            measurement format
 
         set:
             Specifies if we want to set or retrieve (get) calibration
@@ -61,20 +75,48 @@ class CalibrationMeasurementFormat:
 
         """
 
+        if data:
+            data = data[0]
+            if not isinstance(data, list):
+                raise ValueError("Unsupported object type for argument data: "
+                                 f"“{type(data)}”")
+            if not len(data) == 3:
+                raise ValueError(
+                    f"Data length has to be “3” not “{len(data)}”")
+
+            self.data = data
+        else:
+            self.data = [0, 0, 1]
+
         cls = type(self)
 
-        if method not in cls.methods:
-            raise ValueError(f"Unknown method “{method}”")
+        if set is not None:
+            method_byte = self.data[0]
+            # Set get/set to 0
+            method_byte &= 0b01111111
+            # Set value
+            method_byte |= int(set) << 7
+            self.data[0] = method_byte
 
-        if element not in cls.elements:
-            raise ValueError(f"Unknown element “{element}”")
+        if method is not None:
+            if method not in cls.methods:
+                raise ValueError(f"Unknown method “{method}”")
+            method_byte = self.data[0]
+            # Set method bits to 0
+            method_byte &= 0b10011111
+            # Set value
+            method_byte |= cls.methods.index(method) << 5
+            self.data[0] = method_byte
 
-        if dimension not in {1, 2, 3}:
-            raise ValueError(f"Unknown dimension “{dimension}”")
+        if element is not None:
+            if element not in cls.elements:
+                raise ValueError(f"Unknown element “{element}”")
+            self.data[1] = cls.elements[element]
 
-        method_byte = (int(set) << 7) | cls.methods.index(method) << 5
-        element_byte = cls.elements[element]
-        self.data = [method_byte, element_byte, dimension]
+        if dimension is not None:
+            if dimension not in {1, 2, 3}:
+                raise ValueError(f"Unknown dimension “{dimension}”")
+            self.data[2] = dimension
 
     def __repr__(self) -> str:
         """
