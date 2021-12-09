@@ -3,7 +3,6 @@ import os
 import random
 
 from datetime import date
-from os import chdir
 from pathlib import Path
 from unittest import skip
 
@@ -1567,9 +1566,6 @@ class TestStu(unittest.TestCase):
 
 def main():
     add_commander_path_to_environment()
-    # Always run the tests in the repo root to make sure we do not clutter the
-    # the current directory with log files
-    chdir(str(Path(__file__).parent.parent.parent))
     unittest.main(module=__name__, verbosity=2)
 
 
