@@ -1437,10 +1437,9 @@ class TestStu(unittest.TestCase):
                          u32EepromWriteRequestCounterTestEnd
                          )  # +1 due to incrementing at first write
 
-    @skip("Untested")
     def test0753EepromWriteRequestCounterPageSwitches(self):
         """
-        Check that page switched do not yield to Writing EEPROM
+        Check that page switched do not yield to Writing EEPROM (⏱ 16 seconds)
         """
         time.sleep(1)
         uLoopRuns = 5
