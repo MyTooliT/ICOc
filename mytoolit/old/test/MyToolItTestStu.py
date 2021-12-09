@@ -57,10 +57,8 @@ class TestStu(unittest.TestCase):
         self.sAdapterSerialNo = sAdapterSerialNo
         self.sBoardType = sBoardType
         self.sSilabsCommander = "commander"
-        self.fileName = sLogLocation + self._testMethodName + ".txt"
-        self.fileNameError = sLogLocation + "Error_" + self._testMethodName + ".txt"
         self.bError = False
-        self.Can = Network(self.fileName,
+        self.Can = Network(f"{self._testMethodName}.txt",
                            sender=MyToolItNetworkNr["SPU1"],
                            receiver=MyToolItNetworkNr["STU1"],
                            FreshLog=True)
@@ -97,12 +95,6 @@ class TestStu(unittest.TestCase):
         if False != self.Can.bError:
             self.bError = True
         self.Can.__exit__()
-        if self._test_has_failed():
-            if os.path.isfile(self.fileNameError) and os.path.isfile(
-                    self.fileName):
-                os.remove(self.fileNameError)
-            if os.path.isfile(self.fileName):
-                os.rename(self.fileName, self.fileNameError)
 
     def _test_has_failed(self):
         """
