@@ -31,7 +31,8 @@ class CalibrationMeasurementFormat:
                  set: Optional[bool] = None,
                  element: Optional[str] = None,
                  method: Optional[str] = None,
-                 dimension: Optional[int] = None) -> None:
+                 dimension: Optional[int] = None,
+                 reference_voltage: Optional[int] = None) -> None:
         """Initialize the calibration measurement format
 
         This class allows you to specify the message bytes directly as first
@@ -45,7 +46,7 @@ class CalibrationMeasurementFormat:
         ----------
 
         data:
-            A list containing the (first three) bytes of the calibration
+            A list containing the (first four) bytes of the calibration
             measurement format
 
         set:
@@ -73,6 +74,9 @@ class CalibrationMeasurementFormat:
             Specifies the measurement dimension respectively the axis
             (1, 2 or 3)
 
+        reference_voltage:
+            The reference voltage in Volt
+
         """
 
         if data:
@@ -86,7 +90,7 @@ class CalibrationMeasurementFormat:
 
             self.data = data
         else:
-            self.data = [0, 0, 1]
+            self.data = [0, 0, 1, 0]
 
         cls = type(self)
 
@@ -118,6 +122,9 @@ class CalibrationMeasurementFormat:
                 raise ValueError(f"Unknown dimension “{dimension}”")
             self.data[2] = dimension
 
+        if reference_voltage is not None:
+            self.data[3] = round(reference_voltage * 20) & 0xff
+
     def __repr__(self) -> str:
         """
         Retrieve the textual representation of the calibration format
@@ -131,11 +138,11 @@ class CalibrationMeasurementFormat:
         --------
 
         >>> CalibrationMeasurementFormat(set=False, element='Acceleration')
-        Get, Acceleration, Dimension: 1
+        Get, Acceleration, Dimension: 1, Reference Voltage: 0.0 V
 
         >>> CalibrationMeasurementFormat(set=True, method='Measure',
-        ...     element='Temperature', dimension=2)
-        Set, Measure, Temperature, Dimension: 2
+        ...     element='Temperature', dimension=2, reference_voltage=3.3)
+        Set, Measure, Temperature, Dimension: 2, Reference Voltage: 3.3 V
 
         """
 
@@ -146,8 +153,12 @@ class CalibrationMeasurementFormat:
         set = method_byte >> 7
         element = cls.elements.inverse[self.data[1]]
         dimension = self.data[2]
+        reference_voltage = round(self.data[3] / 20, 1)
 
-        parts = ["Set" if set else "Get", element, f"Dimension: {dimension}"]
+        parts = [
+            "Set" if set else "Get", element, f"Dimension: {dimension}",
+            f"Reference Voltage: {reference_voltage} V"
+        ]
         if set:
             method = cls.methods[(method_byte >> 5) & 0b11]
             parts.insert(1, method)
