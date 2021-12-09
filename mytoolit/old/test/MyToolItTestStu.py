@@ -1504,10 +1504,9 @@ class TestStu(unittest.TestCase):
                              str(u32EepromWriteRequsts))
         self.assertEqual(uPageRuns * uLoopRuns, u32EepromWriteRequsts)
 
-    @skip("Untested")
     def test0900ErrorCmdVerbotenStu1(self):
         """
-        Test that nothing happens when sending Command 0x0000 to STU1
+        Test that nothing happens when sending 0x0000 to STU1 (⏱ 24 seconds)
         """
         cmd = self.Can.CanCmd(0, 0, 1, 0)
         message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
