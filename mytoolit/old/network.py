@@ -403,8 +403,9 @@ class Network(object):
         if msgAck == "Error" and bErrorExit:
             self.__exitError("Unable to send command")
         if log:
-            can_time_stamp = (msgAck["CanTime"] - self.PeakCanTimeStampStart
-                              ) if msgAck is not None else 'Unknown'
+            can_time_stamp = (
+                msgAck["CanTime"] - self.PeakCanTimeStampStart
+            ) if msgAck is not None and msgAck != "Error" else 'Unknown'
             prefix = "Unable to send message: " if msgAck == "Error" else ""
             log_message = f"{prefix}{message} (CAN time: {can_time_stamp})"
             self.Logger.Info(log_message)
