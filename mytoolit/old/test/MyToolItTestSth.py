@@ -1343,7 +1343,7 @@ class TestSth(unittest.TestCase):
                                        SleepTime["AdvertisementReset2"], 2)
 
     def test0016PowerConsumptionEnergySaveModeAdv4000ms(self):
-        """Power Consumption - Energy Save Mode ()
+        """Power Consumption - Energy Save Mode (⏱ 85 seconds)
 
         Advertisement Time 4000ms
         """
