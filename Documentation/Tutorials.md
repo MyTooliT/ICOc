@@ -287,14 +287,28 @@ The following description shows you how to run the STU tests.
 
 ### Preparation
 
-The tests assume that the STH is called `Tanja`. Please rename the STH accordingly. To do that you can use the steps described [here](#tutorials:section:sth-renaming).
+- The tests assume that the STH is called `Tanja`. Please rename the STH accordingly. To do that you can use the steps described [here](#tutorials:section:sth-renaming).
+
+- Some of the STH tests assume that you connected the SHA/STH via the programming cable. Please do that, since otherwise these tests will fail.
 
 ### Execution
 
-To run the verification tests, please enter the following command:
+To run the verification tests for the STH, please enter the following command:
 
 ```sh
-test-sth-verification
+test-sth-verification -v
 ```
 
-The script will currently write log files into the root of the repository. To remove these log files you can use the script [clean-repo](#section:remove-log-and-pdf-files).
+To execute the STU verification tests, you can use the command:
+
+```sh
+test-stu-verification -v
+```
+
+The scripts above will currently write log files into the root of the repository. To remove these log files you can use the script [clean-repo](#section:remove-log-and-pdf-files).
+
+Please note that while most of the tests should run successfully, if you use a working SHA/STH, some of them might fail occasionally. In this case please rerun the specific test by using the option `-k` and specifying a text that matches the name of the test. For example to return the STH test `test0107BlueToothConnectMin` you can use the following command:
+
+```sh
+test-sth-verification -v -k test0107
+```
