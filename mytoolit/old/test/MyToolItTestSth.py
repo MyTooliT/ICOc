@@ -89,10 +89,8 @@ class TestSth(unittest.TestCase):
         self.sBoardType = sBoardType
         self.sSilabsCommander = "commander"
         self.bError = False
-        self.fileName = sLogLocation + self._testMethodName + ".txt"
-        self.fileNameError = sLogLocation + "Error_" + self._testMethodName + ".txt"
         self.Can = Network(
-            self.fileName,
+            f"{self._testMethodName}.txt",
             sender=MyToolItNetworkNr["SPU1"],
             receiver=MyToolItNetworkNr["STH1"],
             prescaler=self.tSthLimits.uSamplingRatePrescalerReset,
@@ -172,12 +170,6 @@ class TestSth(unittest.TestCase):
         if False != self.Can.bError:
             self.bError = True
         self.Can.__exit__()
-        if self._test_has_failed():
-            if os.path.isfile(self.fileNameError) and os.path.isfile(
-                    self.fileName):
-                os.remove(self.fileNameError)
-            if os.path.isfile(self.fileName):
-                os.rename(self.fileName, self.fileNameError)
 
     def _test_has_failed(self):
         """Checks if test has failed
