@@ -62,7 +62,7 @@ from mytoolit.old.SthLimits import SthLimits
 from mytoolit.utility import add_commander_path_to_environment
 
 sVersion = TestConfig["Version"]
-sLogLocation = repo_root
+sLogLocation = f"{repo_root}/"
 sHomeLocation = "../../SimplicityStudio/v4_workspace/STH/"
 sBoardType = "BGM113A256V2"
 iSensorAxis = 1
