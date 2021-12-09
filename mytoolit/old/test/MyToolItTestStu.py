@@ -1303,10 +1303,9 @@ class TestStu(unittest.TestCase):
         self.Can.Logger.Info(f"Production Date: {production_date}")
         self.assertEqual(settings.stu.production_date, production_date)
 
-    @skip("Untested")
     def test0750StatisticPageWriteReadDeteministic(self):
         """
-        Check EEPROM Read/Write - Deterministic data
+        Check EEPROM Read/Write - Deterministic data (⏱ 4 minutes)
         """
         uLoopRuns = 25
         time.sleep(2)
