@@ -2,6 +2,7 @@ import unittest
 import os
 import random
 
+from datetime import date
 from os import chdir
 from pathlib import Path
 from unittest import skip
@@ -32,6 +33,7 @@ from mytoolit.old.MyToolItCommands import (
 )
 from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
 from mytoolit.old.MyToolItStu import TestConfig
+from mytoolit.config import settings
 from mytoolit.utility import add_commander_path_to_environment
 
 sVersion = TestConfig["Version"]
@@ -1287,16 +1289,19 @@ class TestStu(unittest.TestCase):
                              str(WDogCounter2))
         self.assertEqual(WDogCounter1, WDogCounter2)
 
-    @skip("Untested")
     def test0703ProductionDate(self):
         """
-        Check ProductionDate
+        Check ProductionDate (⏱ 8 seconds)
         """
         sProductionDate = self.Can.statisticalData(
             MyToolItNetworkNr["STU1"], MyToolItStatData["ProductionDate"])
         sProductionDate = sArray2String(sProductionDate)
-        self.Can.Logger.Info("Production Date: " + sProductionDate)
-        self.assertEqual(TestConfig["ProductionDate"], sProductionDate)
+        year = int(sProductionDate[0:4])
+        month = int(sProductionDate[4:6])
+        day = int(sProductionDate[6:8])
+        production_date = date(year, month, day)
+        self.Can.Logger.Info(f"Production Date: {production_date}")
+        self.assertEqual(settings.stu.production_date, production_date)
 
     @skip("Untested")
     def test0750StatisticPageWriteReadDeteministic(self):
