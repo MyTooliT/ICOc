@@ -2,8 +2,7 @@
 
 from __future__ import annotations
 
-from asyncio import (CancelledError, get_running_loop, sleep, TimeoutError,
-                     Queue, wait_for)
+from asyncio import get_running_loop, Queue, sleep, TimeoutError, wait_for
 from datetime import date
 from logging import getLogger, FileHandler, Formatter
 from struct import pack, unpack
@@ -162,10 +161,7 @@ class ResponseListener(Listener):
 
         """
 
-        try:
-            return await self.queue.get()
-        except CancelledError:
-            raise
+        return await self.queue.get()
 
 
 class Network:
