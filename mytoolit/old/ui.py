@@ -387,7 +387,7 @@ class UserInterface(CommandLineInterface):
             ("Prescaler", prescaler),
             ("Acquisition Time", acquistion_time),
             ("Oversampling Rate", oversampling_rate),
-            ("⇒ Sampling Rate", sampling_rate),
+            ("Sampling Rate", sampling_rate),
             ("Reference Voltage", f"{adc_reference}\n"),
             (f"Enabled Ax{'i' if len(axes) <= 1 else 'e'}s", axes),
         ])
@@ -506,7 +506,8 @@ class UserInterface(CommandLineInterface):
 
             self.add_string("\n")
             y_position = self.stdscr.getyx()[0]
-            self.add_string(f"Choose STH number (Use ⏎ to connect): {number}")
+            self.add_string(
+                f"Choose STH number (Use “return” to connect): {number}")
             self.stdscr.refresh()
             key = self.stdscr.getch()
 
