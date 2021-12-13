@@ -165,7 +165,7 @@ class ResponseListener(Listener):
         try:
             return await self.queue.get()
         except CancelledError:
-            return None
+            raise
 
 
 class Network:
