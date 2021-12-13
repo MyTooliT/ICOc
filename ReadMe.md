@@ -309,7 +309,7 @@ The screenshot below shows an example of such a graph:
 
 ### Adding Custom Metadata
 
-Sometimes you also want to add additional data about a measurement. To do that you can use also use [HDFView][]. Since the tool opens files in read-only mode by default you need to change the default file access mode to “Read/Write” first:
+Sometimes you also want to add additional data about a measurement. To do that you can also use [HDFView][]. Since the tool opens files in read-only mode by default you need to change the default file access mode to “Read/Write” first:
 
 1. Open [HDFView][]
 2. Click on “Tools” → “User Options”
@@ -327,18 +327,18 @@ Now you should be able to add and modify attributes. For example, to add a revol
 6. In the field “Value” enter the text “15000”
 7. The “Datatype Class” should be set to “INTEGER”
 8. For the size (in bits) choose a bit length that is large enough to store the value. In our example everything equal to or larger than 16 bits should work.
-9. Optionally you can also set the checkmark “Unsigned”, if you are sure that you only want to store positive values
+9. Optionally you can also check “Unsigned”, if you are sure that you only want to store positive values
 10. Click the button “OK”
 
 ![HDFView: RPM Attribute](Documentation/Pictures/HDFView-RPM.png)
 
-Sometimes you also want to add some general purpose data. For that you can use the “STRING” datatype class. E.g. to store the text “hello world” in an attribute called “Comment” you can do the following
+Sometimes you also want to add some general purpose data. For that you can use the “STRING” datatype class. For example, to store the text “hello world” in an attribute called “Comment” you can do the following
 
 1. Repeat steps 1. – 4. from above
 2. Choose “STRING” as “Datatype Class”
-3. Under “Array Size” choose a length that is large enough to store the text (every value larger than or equal to 11 characters should work), such as “1000”
+3. Under “Array Size” choose a length that is large enough to store the text such as “1000” (every size larger than or equal to 11 characters should work)
 4. Click the button “OK”
 
 ![HDFView: Comment Attribute](Documentation/Pictures/HDFView-Comment.png)
 
-If you want you can also add multiline text. Since you can not add newlines using <kbd>⏎</kbd> in HDFView directly, we recommend you open your favorite text editor to write the text and then copy and paste the text into the value field. HDFView will only show the last line of the pasted text. However after you copy and paste the text into another program you will see that HDFView stored the text including the newlines.
+If you want you can also add multiline text. Since you can not add newlines using <kbd>⏎</kbd> in HDFView directly, we recommend you open your favorite text editor to write the text and then copy and paste the text into the value field. HDFView will only show the last line of the pasted text. However, after you copy and paste the text into another program you will see that HDFView stored the text including the newlines.
