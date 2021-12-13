@@ -269,7 +269,9 @@ The ICOc script stores measured acceleration values in [HDF5](https://www.hdfgro
 - followed by a date/time-stamp,
 - and the extension `.hdf5`.
 
-To take a look at the measurement data you can use the tool [HDFView](https://www.hdfgroup.org/downloads/hdfview/). Unfortunately you need to create a free account to download the program. If you do not want to register, then you can try if [one of the accounts listed at BugMeNot](http://bugmenot.com/view/hdfgroup.org) works.
+To take a look at the measurement data you can use the tool [HDFView][]. Unfortunately you need to create a free account to download the program. If you do not want to register, then you can try if [one of the accounts listed at BugMeNot](http://bugmenot.com/view/hdfgroup.org) works.
+
+[hdfview]: https://www.hdfgroup.org/downloads/hdfview/
 
 The screenshot below shows a measurement file produced by ICOc:
 
@@ -304,3 +306,39 @@ If you want you can also use HDFView to print a simple graph for your accelerati
 The screenshot below shows an example of such a graph:
 
 ![Acceleration Graph in HDFView](Documentation/Pictures/HDFView-Graph.png)
+
+### Adding Custom Metadata
+
+Sometimes you also want to add additional data about a measurement. To do that you can use also use [HDFView][]. Since the tool opens files in read-only mode by default you need to change the default file access mode to “Read/Write” first:
+
+1. Open [HDFView][]
+2. Click on “Tools” → “User Options”
+3. Select “General Settings”
+4. Under the text “Default File Access Mode” choose “Read/Write”
+5. Close HDFView
+
+Now you should be able to add and modify attributes. For example, to add a revolutions per minute (RPM) value of `15000` you can use the following steps:
+
+1. Open the measurement file in [HDFView][]
+2. Click on the table “acceleration” in the left part of the window
+3. In the tab “Object Attribute Info” on the right, click on the button “Add attribute”
+4. Check that “Object List” contains the value “/acceleration”
+5. Enter the text “RPM” in the field “Name”
+6. In the field “Value” enter the text “15000”
+7. The “Datatype Class” should be set to “INTEGER”
+8. For the size (in bits) choose a bit length that is large enough to store the value. In our example everything equal to or larger than 16 bits should work.
+9. Optionally you can also set the checkmark “Unsigned”, if you are sure that you only want to store positive values
+10. Click the button “OK”
+
+![HDFView: RPM Attribute](Documentation/Pictures/HDFView-RPM.png)
+
+Sometimes you also want to add some general purpose data. For that you can use the “STRING” datatype class. E.g. to store the text “hello world” in an attribute called “Comment” you can do the following
+
+1. Repeat steps 1. – 4. from above
+2. Choose “STRING” as “Datatype Class”
+3. Under “Array Size” choose a length that is large enough to store the text (every value larger than or equal to 11 characters should work), such as “1000”
+4. Click the button “OK”
+
+![HDFView: Comment Attribute](Documentation/Pictures/HDFView-Comment.png)
+
+If you want you can also add multiline text. Since you can not add newlines using <kbd>⏎</kbd> in HDFView directly, we recommend you open your favorite text editor to write the text and then copy and paste the text into the value field. HDFView will only show the last line of the pasted text. However after you copy and paste the text into another program you will see that HDFView stored the text including the newlines.
