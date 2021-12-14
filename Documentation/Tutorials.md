@@ -289,7 +289,7 @@ The following description shows you how to run the STU tests.
 
 - The tests assume that the STH is called `Tanja`. Please rename the STH accordingly. To do that you can use the steps described [here](#tutorials:section:sth-renaming).
 
-- Some of the STH tests assume that you connected the SHA/STH via the programming cable. Please do that, since otherwise these tests will fail.
+- Some of the STH tests assume that you connected the SHA/STH or STU via the programming cable. Please do that, since otherwise these tests will fail.
 
 ### Execution
 
@@ -307,8 +307,34 @@ test-stu-verification -v
 
 The scripts above will currently write log files into the root of the repository. To remove these log files you can use the script [clean-repo](#section:remove-log-and-pdf-files).
 
-Please note that while most of the tests should run successfully, if you use a working SHA/STH, some of them might fail occasionally. In this case please rerun the specific test by using the option `-k` and specifying a text that matches the name of the test. For example to return the STH test `test0107BlueToothConnectMin` you can use the following command:
+Please note that while most of the tests should run successfully, if you use working hardware and firmware, some of them might fail occasionally. In this case please rerun the specific test using the option `-k` and specifying a text that matches the name of the test. For example to return the STH test `test0107BlueToothConnectMin` you can use the following command:
 
 ```sh
 test-sth-verification -v -k test0107
 ```
+
+### Problematic Tests
+
+The tables below contains a list of tests that failed using a working SHA/STH and STU before. It should provide you with a good overview of which of the verification tests might fail, even if the hardware and firmware works correctly.
+
+#### STH
+
+| Date       | Failed Tests                                                                                                                                                                                                 |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 2021-09-29 | • test0107BlueToothConnectMin <br/> • test0332SignalIndicatorsAccZ <br/> • test0334SignalIndicatorsMulti <br/> • test0345MixedStreamingAccYZVoltBat                                                          |
+| 2021-09-30 | • test0332SignalIndicatorsAccZ <br/> • test0334SignalIndicatorsMulti <br/> • test0345MixedStreamingAccYZVoltBat                                                                                              |
+| 2021-09-30 | • test0332SignalIndicatorsAccZ <br/> • test0334SignalIndicatorsMulti <br/> • test0532MessageCountersAccZBattery                                                                                              |
+| 2021-10-05 | • test0334SignalIndicatorsMulti <br/> • test0347StreamingAccXSingleBattery                                                                                                                                   |
+| 2021-10-06 | • test0109BlueToothRssi <br/> • test0334SignalIndicatorsMulti                                                                                                                                                |
+| 2021-10-06 | • test0107BlueToothConnectMin <br/> • test0334SignalIndicatorsMulti <br/> • test0345MixedStreamingAccYZVoltBat                                                                                               |
+| 2021-10-07 | • test0107BlueToothConnectMin <br/> • test0332SignalIndicatorsAccZ <br/> • test0334SignalIndicatorsMulti <br/> • test0344MixedStreamingAccXYVoltBat <br/> • test0345MixedStreamingAccYZVoltBat               |
+| 2021-10-11 | • test0015PowerConsumptionEnergySaveMode2 <br/> • test0016PowerConsumptionEnergySaveModeAdv4000ms <br/> • test0332SignalIndicatorsAccZ <br/> • test0334SignalIndicatorsMulti <br/> • test0508AdcConfigSingle |
+| 2021-10-12 | • test0332SignalIndicatorsAccZ <br/> • test0334SignalIndicatorsMulti <br/> • test0532MessageCountersAccZBattery                                                                                              |
+| 2021-10-13 | • test0332SignalIndicatorsAccZ <br/> • test0334SignalIndicatorsMulti <br/> • test0508AdcConfigSingle <br/> • test0509AdcConfigDouble <br/> • test0510AdcConfigTripple <br/> • test0525MessageCounterAccZ     |
+| 2021-12-09 | • test0107BlueToothConnectMin <br/> • test0510AdcConfigTripple <br/> • test0523MessageCounterAccX <br/> • test0527MessageCounterAccXZ <br/> • test0529MessageCounterAccXYZ <br/>                             |
+
+#### STU
+
+| Date       | Failed Tests                               |
+| ---------- | ------------------------------------------ |
+| 2021-12-14 | • test0102BlueToothConnectDisconnectDevice |
