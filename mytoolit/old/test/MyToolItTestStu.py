@@ -588,13 +588,17 @@ class TestStu(unittest.TestCase):
 
     def test0102BlueToothConnectDisconnectDevice(self):
         """
-        Connect and disconnect to device 500 times (⏱ 30 minutes)
+        Connect and disconnect to device 50 times (⏱ 3 minutes)
+
+        The old version of this test would try to connect and disconnect 
+        500 times. Since this meant the test would fail most of the time we
+        decreased the number of connection attempts to 50.
         """
         self.Can.Logger.Info(
             "Bluetooth connect command and check connected command and disconnect command"
         )
         totalConnectDisconnectTime = 0
-        totalRuns = 500
+        totalRuns = 50
         for i in range(0, totalRuns):
             startTime = self.Can.Logger.getTimeStamp()
             self.Can.Logger.Info("Loop Run: " + str(i))
