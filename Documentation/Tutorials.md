@@ -287,8 +287,7 @@ The following description shows you how to run the STU tests.
 
 ### Preparation
 
-- The tests assume that the STH is called `Tanja`. Please rename the STH accordingly. To do that you can use the steps described [here](#tutorials:section:sth-renaming).
-
+- The tests assume that the name of the STH is stored in `STH` → `NAME` in the configuration file `config.yaml`.
 - Some of the STH tests assume that you connected the SHA/STH or STU via the programming cable. Please do that, since otherwise these tests will fail.
 
 ### Execution

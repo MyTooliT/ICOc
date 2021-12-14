@@ -4,7 +4,6 @@ c_uint8 = ctypes.c_uint8
 c_uint32 = ctypes.c_uint32
 
 TestConfig = {
-    "DevName": "Tanja",
     "Version": "v2.1.10",
     "AdcConfigAllPrescalerMax": 4,
     "ConTimeNormalMaxMs": 5000,

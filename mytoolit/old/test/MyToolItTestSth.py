@@ -59,6 +59,7 @@ from mytoolit.old.MyToolItSth import (TestConfig, SthModule, SleepTime,
                                       SthStateWord, fVoltageBattery,
                                       fAdcRawDat)
 from mytoolit.old.SthLimits import SthLimits
+from mytoolit.config import settings
 from mytoolit.utility import add_commander_path_to_environment
 
 sVersion = TestConfig["Version"]
@@ -103,7 +104,7 @@ class TestSth(unittest.TestCase):
                 self._resetStu()["CanTime"])  # This will also reset to STH
             self.Can.Logger.Info("Connect to STH")
             self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
-                                                  TestConfig["DevName"])
+                                                  settings.sth.name)
             self.sStuAddr = int_to_mac_address(
                 self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"]))
             self.sSthAddr = int_to_mac_address(
@@ -915,7 +916,7 @@ class TestSth(unittest.TestCase):
             self.assertEqual("Finishing DFU block...OK\n", asData[-2])
             self.assertEqual("Closing connection...OK\n", asData[-1])
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
-                                              TestConfig["DevName"])
+                                              settings.sth.name)
 
     def test0005Ack(self):
         """Test acknowledgement from STH (⏱ 10 seconds)
@@ -962,7 +963,7 @@ class TestSth(unittest.TestCase):
             bErrorExit=False)  # Not receiving gets  tested in cmdSend
         self.Can.Logger.Info("Connect to STH")
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
-                                              TestConfig["DevName"])
+                                              settings.sth.name)
 
     def test0007SthTemperature(self):
         """Test Temperature to be in range (⏱ 10 seconds)
@@ -1017,7 +1018,7 @@ class TestSth(unittest.TestCase):
         self.assertEqual(timeAdvertisement, 1000)
         self._resetSth()
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
-                                              TestConfig["DevName"])
+                                              settings.sth.name)
         [timeReset, timeAdvertisement] = self.Can.BlueToothEnergyMode([
             SystemCommandBlueTooth["EnergyModeReducedRead"], self.Can.DeviceNr,
             0, 0, 0, 0, 0, 0
@@ -1055,7 +1056,7 @@ class TestSth(unittest.TestCase):
         self.assertEqual(timeAdvertisement, SleepTime["AdvertisementReset1"])
         self._resetSth()
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
-                                              TestConfig["DevName"])
+                                              settings.sth.name)
         [timeReset, timeAdvertisement] = self.Can.BlueToothEnergyMode([
             SystemCommandBlueTooth["EnergyModeReducedRead"], self.Can.DeviceNr,
             0, 0, 0, 0, 0, 0
@@ -1110,7 +1111,7 @@ class TestSth(unittest.TestCase):
         self.assertEqual(timeAdvertisement, 2000)
         self._resetSth()
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
-                                              TestConfig["DevName"])
+                                              settings.sth.name)
         [timeReset, timeAdvertisement] = self.Can.BlueToothEnergyMode([
             SystemCommandBlueTooth["EnergyModeLowestRead"], self.Can.DeviceNr,
             0, 0, 0, 0, 0, 0
@@ -1148,7 +1149,7 @@ class TestSth(unittest.TestCase):
         self.assertEqual(timeAdvertisement, SleepTime["AdvertisementReset2"])
         self._resetSth()
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
-                                              TestConfig["DevName"])
+                                              settings.sth.name)
         [timeReset, timeAdvertisement] = self.Can.BlueToothEnergyMode([
             SystemCommandBlueTooth["EnergyModeLowestRead"], self.Can.DeviceNr,
             0, 0, 0, 0, 0, 0
@@ -1212,7 +1213,7 @@ class TestSth(unittest.TestCase):
                              TestConfig["DisconnectedCurrentMax"])
         self.assertEqual(sCurrentUnit, "mA")
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
-                                              TestConfig["DevName"])
+                                              settings.sth.name)
 
     def test0014PowerConsumptionEnergySaveMode1(self):
         """Power Consumption - Energy Save Mode 1 (⏱ 85 seconds)
@@ -1272,7 +1273,7 @@ class TestSth(unittest.TestCase):
                              TestConfig["EnergyMode1CurrentMax"])
         self.assertEqual(sCurrentUnit, "mA")
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
-                                              TestConfig["DevName"])
+                                              settings.sth.name)
         self.Can.BlueToothEnergyModeNr(SleepTime["Reset1"],
                                        SleepTime["AdvertisementReset1"], 1)
         self.Can.BlueToothEnergyModeNr(SleepTime["Reset2"],
@@ -1336,7 +1337,7 @@ class TestSth(unittest.TestCase):
                              TestConfig["EnergyMode2CurrentMax"])
         self.assertEqual(sCurrentUnit, "mA")
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
-                                              TestConfig["DevName"])
+                                              settings.sth.name)
         self.Can.BlueToothEnergyModeNr(SleepTime["Reset1"],
                                        SleepTime["AdvertisementReset1"], 1)
         self.Can.BlueToothEnergyModeNr(SleepTime["Reset2"],
@@ -1402,7 +1403,7 @@ class TestSth(unittest.TestCase):
                              TestConfig["EnergyModeMaxCurrentMax"])
         self.assertEqual(sCurrentUnit, "mA")
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
-                                              TestConfig["DevName"])
+                                              settings.sth.name)
         self.Can.BlueToothEnergyModeNr(SleepTime["Reset1"],
                                        SleepTime["AdvertisementReset1"], 1)
         self.Can.BlueToothEnergyModeNr(SleepTime["Reset2"],
@@ -1874,13 +1875,13 @@ class TestSth(unittest.TestCase):
         Name = self.Can.BlueToothNameGet(MyToolItNetworkNr["STH1"], 0)[0:8]
         self.Can.Logger.Info("Received: " + Name)
         self.assertEqual("Walther0", Name)
-        self.Can.Logger.Info("Write " + TestConfig["DevName"])
+        self.Can.Logger.Info("Write " + settings.sth.name)
         self.Can.vBlueToothNameWrite(MyToolItNetworkNr["STH1"], 0,
-                                     TestConfig["DevName"])
-        self.Can.Logger.Info("Check " + TestConfig["DevName"])
+                                     settings.sth.name)
+        self.Can.Logger.Info("Check " + settings.sth.name)
         Name = self.Can.BlueToothNameGet(MyToolItNetworkNr["STH1"], 0)[0:8]
         self.Can.Logger.Info("Received: " + Name)
-        self.assertEqual(TestConfig["DevName"], Name)
+        self.assertEqual(settings.sth.name, Name)
 
     def test0104BlueToothAddress(self):
         """Bluetooth Address (⏱ 10 seconds)
@@ -1908,7 +1909,7 @@ class TestSth(unittest.TestCase):
             time.sleep(2 * SleepTime["Min"] / 1000)
             timeStampDisconnected = self.Can.Logger.getTimeStamp()
             self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
-                                                  TestConfig["DevName"])
+                                                  settings.sth.name)
             timeStampConnected = self.Can.Logger.getTimeStamp()
             timeConnect = timeStampConnected - timeStampDisconnected
             timeAverageSleep2 += timeConnect
@@ -1933,7 +1934,7 @@ class TestSth(unittest.TestCase):
             time.sleep(SleepTime["Min"] / 1000)
             timeStampDisconnected = self.Can.Logger.getTimeStamp()
             self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
-                                                  TestConfig["DevName"])
+                                                  settings.sth.name)
             timeStampConnected = self.Can.Logger.getTimeStamp()
             timeConnect = timeStampConnected - timeStampDisconnected
             timeAverageSleep1 += timeConnect
@@ -1968,7 +1969,7 @@ class TestSth(unittest.TestCase):
             time.sleep(2 * SleepTime["Min"] / 1000)
             timeStampDisconnected = self.Can.Logger.getTimeStamp()
             self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
-                                                  TestConfig["DevName"])
+                                                  settings.sth.name)
             timeStampConnected = self.Can.Logger.getTimeStamp()
             timeConnect = timeStampConnected - timeStampDisconnected
             timeAverageSleep2 += timeConnect
@@ -2001,7 +2002,7 @@ class TestSth(unittest.TestCase):
             self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
             timeStampDisconnected = self.Can.Logger.getTimeStamp()
             self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
-                                                  TestConfig["DevName"])
+                                                  settings.sth.name)
             timeStampConnected = self.Can.Logger.getTimeStamp()
             timeConnect = timeStampConnected - timeStampDisconnected
             timeAverage += timeConnect
@@ -4559,7 +4560,7 @@ class TestSth(unittest.TestCase):
                     self._resetStu()
                     self.Can.Logger.Info("Connect to STH")
                     self.Can.bBlueToothConnectPollingName(
-                        MyToolItNetworkNr["STU1"], TestConfig["DevName"])
+                        MyToolItNetworkNr["STU1"], settings.sth.name)
         self.Can.Logger.Info("Maximum Single Sampling Rate: " +
                              str(SamplingRateMaxDet) + "(" + str(prescaler) +
                              "/" + str(aquisitionTime) + "/" +
@@ -4630,7 +4631,7 @@ class TestSth(unittest.TestCase):
                     self._resetStu()
                     self.Can.Logger.Info("Connect to STH")
                     self.Can.bBlueToothConnectPollingName(
-                        MyToolItNetworkNr["STU1"], TestConfig["DevName"])
+                        MyToolItNetworkNr["STU1"], settings.sth.name)
         self.Can.Logger.Info("Maximum Double Sampling Rate: " +
                              str(SamplingRateMaxDet) + "(" + str(prescaler) +
                              "/" + str(aquisitionTime) + "/" +
@@ -4701,7 +4702,7 @@ class TestSth(unittest.TestCase):
                     self._resetStu()
                     self.Can.Logger.Info("Connect to STH")
                     self.Can.bBlueToothConnectPollingName(
-                        MyToolItNetworkNr["STU1"], TestConfig["DevName"])
+                        MyToolItNetworkNr["STU1"], settings.sth.name)
         self.Can.Logger.Info("Maximum Tripple Sampling Rate: " +
                              str(SamplingRateMaxDet))
         self.Can.Logger.Info("Maximum Tripple Sampling Rate: " +
@@ -4845,7 +4846,7 @@ class TestSth(unittest.TestCase):
         self.assertEqual(status.adc_overrun(), True)
         self._resetStu()
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
-                                              TestConfig["DevName"])
+                                              settings.sth.name)
 
     def test0519SamplingRateMixedStreamingAccXBat(self):
         """Mixed Streaming - AccX + VoltageBattery (⏱ 20 seconds)
@@ -6293,21 +6294,21 @@ class TestSth(unittest.TestCase):
         PowerOff1 = byte_list_to_int(PowerOnOff1[4:])
         self._resetSth()
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
-                                              TestConfig["DevName"])
+                                              settings.sth.name)
         PowerOnOff2 = self.Can.statisticalData(MyToolItNetworkNr["STH1"],
                                                MyToolItStatData["PocPof"])
         PowerOn2 = byte_list_to_int(PowerOnOff2[:4])
         PowerOff2 = byte_list_to_int(PowerOnOff2[4:])
         self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
-                                              TestConfig["DevName"])
+                                              settings.sth.name)
         PowerOnOff3 = self.Can.statisticalData(MyToolItNetworkNr["STH1"],
                                                MyToolItStatData["PocPof"])
         PowerOn3 = byte_list_to_int(PowerOnOff3[:4])
         PowerOff3 = byte_list_to_int(PowerOnOff3[4:])
         self._resetStu()
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
-                                              TestConfig["DevName"])
+                                              settings.sth.name)
         PowerOnOff4 = self.Can.statisticalData(MyToolItNetworkNr["STH1"],
                                                MyToolItStatData["PocPof"])
         PowerOn4 = byte_list_to_int(PowerOnOff4[:4])
@@ -6349,7 +6350,7 @@ class TestSth(unittest.TestCase):
         self._resetSth()
         self.Can.Logger.Info("Connect to STH")
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
-                                              TestConfig["DevName"])
+                                              settings.sth.name)
         time.sleep(2)
         u32EepromWriteRequestCounterTestStart = self.Can.u32EepromWriteRequestCounter(
             MyToolItNetworkNr["STH1"])
@@ -6364,7 +6365,7 @@ class TestSth(unittest.TestCase):
         SecondsOveral2 = byte_list_to_int(OperatingSeconds[4:])
         self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
-                                              TestConfig["DevName"])
+                                              settings.sth.name)
         OperatingSeconds = self.Can.statisticalData(
             MyToolItNetworkNr["STH1"], MyToolItStatData["OperatingTime"])
         SecondsReset3 = byte_list_to_int(OperatingSeconds[:4])
@@ -6421,15 +6422,15 @@ class TestSth(unittest.TestCase):
         WDogCounter1 = self._SthWDog()
         self._resetSth()
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
-                                              TestConfig["DevName"])
+                                              settings.sth.name)
         WDogCounter2 = self._SthWDog()
         self._resetSth()
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
-                                              TestConfig["DevName"])
+                                              settings.sth.name)
         WDogCounter3 = self._SthWDog()
         self._resetSth()
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
-                                              TestConfig["DevName"])
+                                              settings.sth.name)
         self.Can.Logger.Info("Watchdog Counter at start: " + str(WDogCounter1))
         self.Can.Logger.Info("Watchdog Counter after first reset: " +
                              str(WDogCounter2))
@@ -6610,7 +6611,7 @@ class TestSth(unittest.TestCase):
         time.sleep(1)
         self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
-                                              TestConfig["DevName"])
+                                              settings.sth.name)
         time.sleep(1)
         u32EepromWriteRequestCounterTestEnd = self.Can.u32EepromWriteRequestCounter(
             MyToolItNetworkNr["STH1"])
@@ -6723,7 +6724,7 @@ class TestSth(unittest.TestCase):
         self.assertEqual(StateWord.b.u3NetworkState, NetworkState["Error"])
         self._resetStu()
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
-                                              TestConfig["DevName"])
+                                              settings.sth.name)
 
     def test0820StatusWords1Reset(self):
         """Status Word after Reset (⏱ 8 seconds)
@@ -6756,7 +6757,7 @@ class TestSth(unittest.TestCase):
 
         self._resetStu()
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
-                                              TestConfig["DevName"])
+                                              settings.sth.name)
 
     def test0822StatusWords1TxFail(self):
         """Status Word after Overspeed (⏱ 20 seconds)
@@ -6783,7 +6784,7 @@ class TestSth(unittest.TestCase):
 
         self._resetStu()
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
-                                              TestConfig["DevName"])
+                                              settings.sth.name)
 
     def test0880ActiveStateReset(self):
         """Active State (⏱ 6 seconds)
@@ -6883,7 +6884,7 @@ class TestSth(unittest.TestCase):
         self.Can.CanTimeStampStart(self._resetStu()["CanTime"])
         self.Can.Logger.Info("Connect to STH")
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
-                                              TestConfig["DevName"])
+                                              settings.sth.name)
 
     def test0900ErrorCmdVerbotenSth1(self):
         """Test that nothing happens when sending Command 0x0000 to STH1 (⏱ 22 seconds)
