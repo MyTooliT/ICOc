@@ -145,6 +145,9 @@ class CalibrationMeasurementFormat:
         ...     element='Temperature', dimension=2, reference_voltage=3.3)
         Set, Measure, Temperature, Dimension: 2, Reference Voltage: 3.3 V
 
+        >>> CalibrationMeasurementFormat([10, 20, 30, 40])
+        Get, Unknown Element, Dimension: 30, Reference Voltage: 2.0 V
+
         """
 
         cls = type(self)
@@ -152,7 +155,7 @@ class CalibrationMeasurementFormat:
         method_byte = self.data[0]
 
         set = method_byte >> 7
-        element = cls.elements.inverse[self.data[1]]
+        element = cls.elements.inverse.get(self.data[1], 'Unknown Element')
         dimension = self.data[2]
         reference_voltage = round(self.data[3] / 20, 1)
 
