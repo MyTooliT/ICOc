@@ -79,20 +79,21 @@ class CalibrationMeasurementFormat:
 
         """
 
-        if data:
-            data = data[0]
-            if not isinstance(data, list):
-                raise ValueError("Unsupported object type for argument data: "
-                                 f"“{type(data)}”")
-            if not len(data) == 3:
-                raise ValueError(
-                    f"Data length has to be “3” not “{len(data)}”")
+        cls = type(self)
 
-            self.data = data
+        if data:
+            data_bytes = data[0]
+            if not isinstance(data_bytes, list):
+                raise ValueError("Unsupported object type for argument data: "
+                                 f"“{type(data_bytes)}”")
+            required_length = 4
+            if len(data_bytes) != required_length:
+                raise ValueError(f"Data length has to be “{required_length}” "
+                                 f"not “{len(data_bytes)}”")
+
+            self.data = data_bytes
         else:
             self.data = [0, 0, 1, 0]
-
-        cls = type(self)
 
         if set is not None:
             method_byte = self.data[0]
