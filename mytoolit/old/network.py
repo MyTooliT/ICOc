@@ -1069,7 +1069,7 @@ class Network(object):
 
         messageIdFilter = hex(
             Identifier(command=Command(block="Configuration",
-                                       block_command="CalibrateMeasurement",
+                                       block_command="Calibration Measurement",
                                        error=bErrorAck),
                        sender=receiver,
                        receiver=self.sender).value)
@@ -1087,7 +1087,7 @@ class Network(object):
         indexAssumed = self.cmdSend(
             receiver,
             MyToolItBlock["Configuration"],
-            MyToolItConfiguration["CalibrateMeasurement"],
+            MyToolItConfiguration["Calibration Measurement"],
             calibPayload,
             log=log,
             retries=retries,

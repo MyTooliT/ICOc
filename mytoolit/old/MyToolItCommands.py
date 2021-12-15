@@ -204,7 +204,7 @@ MyToolItConfiguration = bidict({
     "Current": 0x40,
     "CalibrationFactorK": 0x60,
     "CalibrationFactorD": 0x61,
-    "CalibrateMeasurement": 0x62,
+    "Calibration Measurement": 0x62,
     "Alarm": 0x80,
     "Hmi": 0xC0
 })
@@ -325,7 +325,7 @@ CommandBlockConfiguration = {
     "Configuration Command Calibration Factor K",
     MyToolItConfiguration["CalibrationFactorD"]:
     "Configuration Command Calibration Factor D",
-    MyToolItConfiguration["CalibrateMeasurement"]:
+    MyToolItConfiguration["Calibration Measurement"]:
     "Configuration Command Calibration Measurement",
     MyToolItConfiguration["Alarm"]: "Configuration Command Alarm",
     MyToolItConfiguration["Hmi"]: "Configuration Command HMI",
