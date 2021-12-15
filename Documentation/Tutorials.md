@@ -283,6 +283,10 @@ The following description shows you how to run the STU tests.
    test-stu -k eeprom -k connect
    ```
 
+**Note:** For the STU (flash) test to work correctly please connect the **programming board** to the USB port of the computer and the programming port of the STU **first**. Only after that connect the power injector to the power adapter. If you reverse this order, then the programmer might not work. If you do not connect the power injector, then the STU test might fail because of a CAN bus error:
+
+> Bus error: an error counter reached the 'heavy'/'warning' limit
+
 ## Verification Tests
 
 ### Preparation
