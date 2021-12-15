@@ -331,6 +331,7 @@ The tables below contains a list of tests that failed using a working SHA/STH an
 | 2021-10-12 | • test0332SignalIndicatorsAccZ <br/> • test0334SignalIndicatorsMulti <br/> • test0532MessageCountersAccZBattery                                                                                              |
 | 2021-10-13 | • test0332SignalIndicatorsAccZ <br/> • test0334SignalIndicatorsMulti <br/> • test0508AdcConfigSingle <br/> • test0509AdcConfigDouble <br/> • test0510AdcConfigTripple <br/> • test0525MessageCounterAccZ     |
 | 2021-12-09 | • test0107BlueToothConnectMin <br/> • test0510AdcConfigTripple <br/> • test0523MessageCounterAccX <br/> • test0527MessageCounterAccXZ <br/> • test0529MessageCounterAccXYZ <br/>                             |
+| 2021-12-14 | • test0107BlueToothConnectMin                                                                                                                                                                                |
 
 #### STU
 
