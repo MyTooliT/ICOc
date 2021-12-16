@@ -24,7 +24,7 @@ if __name__ == '__main__':
 
 from mytoolit.eeprom import EEPROMStatus
 from mytoolit.config import settings
-from mytoolit.measurement import convert_acceleration_adc_to_g
+from mytoolit.measurement import ADC_MAX_VALUE, convert_acceleration_adc_to_g
 from mytoolit.can.calibration import CalibrationMeasurementFormat
 from mytoolit.can.message import Message
 from mytoolit.can.node import Node
@@ -1378,6 +1378,37 @@ class Network:
         """Deactivate self test of STH accelerometer"""
 
         await self._self_test(activate=False)
+
+    async def read_acceleration_voltage(self) -> float:
+        """Retrieve the current voltage in Volt
+
+        Returns
+        -------
+
+        The voltage of the acceleration sensor in Volt
+
+        """
+
+        node = 'STH 1'
+        reference_voltage = 3.3  # VDD = 3.3V
+
+        message = Message(block='Configuration',
+                          block_command='Calibration Measurement',
+                          sender=self.sender,
+                          receiver=node,
+                          request=True,
+                          data=CalibrationMeasurementFormat(
+                              set=True,
+                              element='Acceleration',
+                              method='Measure',
+                              reference_voltage=reference_voltage,
+                              dimension=1).data)
+
+        response = await self._request(
+            message, description=f"retrieve acceleration voltage of “{node}”")
+
+        adc_value = int.from_bytes(response.data[4:], 'little')
+        return adc_value / ADC_MAX_VALUE * reference_voltage
 
     # ==========
     # = EEPROM =
