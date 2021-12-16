@@ -32,7 +32,7 @@ class CalibrationMeasurementFormat:
                  element: Optional[str] = None,
                  method: Optional[str] = None,
                  dimension: Optional[int] = None,
-                 reference_voltage: Optional[int] = None) -> None:
+                 reference_voltage: Optional[float] = None) -> None:
         """Initialize the calibration measurement format
 
         This class allows you to specify the message bytes directly as first
