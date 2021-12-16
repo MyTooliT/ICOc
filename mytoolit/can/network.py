@@ -1289,7 +1289,7 @@ class Network:
         acceleration_raw = int.from_bytes(acceleration_bytes, 'little')
         return convert_acceleration_adc_to_g(acceleration_raw, max)
 
-    async def read_voltage(self) -> float:
+    async def read_supply_voltage(self) -> float:
         """Read the current supply voltage of a connected STH
 
         Returns
@@ -1307,7 +1307,7 @@ class Network:
         >>> async def read_supply_voltage():
         ...     async with Network() as network:
         ...         await network.connect_sth(0)
-        ...         return await network.read_voltage()
+        ...         return await network.read_supply_voltage()
         >>> supply_voltage = run(read_supply_voltage())
         >>> 3 <= supply_voltage <= 4.2
         True

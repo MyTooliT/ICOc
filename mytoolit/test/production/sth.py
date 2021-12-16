@@ -161,7 +161,7 @@ class TestSTH(TestNode):
         async def test_supply_voltage():
             """Check the supply voltage of the STH"""
 
-            supply_voltage = await self.can.read_voltage()
+            supply_voltage = await self.can.read_supply_voltage()
 
             expected_voltage = settings.sth.battery_voltage.average
             tolerance_voltage = settings.sth.battery_voltage.tolerance
