@@ -15,11 +15,20 @@ async def test(identifier=EUI("08:6b:d7:01:de:81")):
         name = await network.get_name(node)
         print(f"Name of {node}: {name}")
 
+        voltage = await network.read_acceleration_voltage()
+        print(f"Acceleration Voltage Before: {voltage} V")
+
         print("Activate self test")
         await network.activate_acceleration_self_test()
 
+        voltage = await network.read_acceleration_voltage()
+        print(f"Acceleration Voltage Between: {voltage} V")
+
         print("Deactivate self test")
         await network.deactivate_acceleration_self_test()
+
+        voltage = await network.read_acceleration_voltage()
+        print(f"Acceleration Voltage After: {voltage} V")
 
         print("\nExecution took {:.3} seconds".format(time() - start_time))
 
