@@ -288,6 +288,42 @@ class Message:
 
         return data_explanation
 
+    def _data_explanation_eeprom(self) -> str:
+        """Retrieve a textual representation of EEPROM messages
+
+        Returns
+        -------
+
+        A textual description of the data contained in the message
+
+        """
+
+        identifier = self.identifier()
+        data_explanation = ""
+
+        if identifier.block_command_name() == "Read Write Request Counter":
+            counter = int.from_bytes(self.data[4:], 'little')
+            data_explanation = f"EEPROM Write Requests: {counter}"
+        elif (identifier.block_command_name() in {"Read", "Write"}
+              and len(self.data) >= 8):
+
+            page = self.data[0]
+            offset = self.data[1]
+            length = self.data[2]
+            data = list(self.data[4:4 + min(length, 4)])
+            is_acknowledgment = self.identifier().is_acknowledgment()
+
+            info = ("Acknowledge request" if is_acknowledgment else "Request")
+            verb = identifier.block_command_name().lower()
+            data_explanation = (
+                f"{info} to {verb} {length} bytes at page {page} "
+                f"with offset {offset}")
+            read_request = verb == "read" and not is_acknowledgment
+            if not read_request:
+                data_explanation += f": {data}"
+
+        return data_explanation
+
     def _data_explanation(self) -> str:
         """Retrieve a textual representation of the message data
 
@@ -302,32 +338,13 @@ class Message:
             return ""
 
         identifier = self.identifier()
-        data_explanation = ""
 
         if identifier.block_name() == 'System':
             return self._data_explanation_system()
         elif identifier.block_name() == 'EEPROM':
-            if identifier.block_command_name() == "Read Write Request Counter":
-                counter = int.from_bytes(self.data[4:], 'little')
-                data_explanation = f"EEPROM Write Requests: {counter}"
-            else:
-                page = self.data[0]
-                offset = self.data[1]
-                length = self.data[2]
-                data = list(self.data[4:4 + min(length, 4)])
-                is_acknowledgment = self.identifier().is_acknowledgment()
+            return self._data_explanation_eeprom()
 
-                info = ("Acknowledge request"
-                        if is_acknowledgment else "Request")
-                verb = identifier.block_command_name().lower()
-                data_explanation = (
-                    f"{info} to {verb} {length} bytes at page {page} "
-                    f"with offset {offset}")
-                read_request = verb == "read" and not is_acknowledgment
-                if not read_request:
-                    data_explanation += f": {data}"
-
-        return data_explanation
+        return ""
 
     def __repr__(self) -> str:
         """Get a textual representation of the current message
