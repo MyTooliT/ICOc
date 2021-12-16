@@ -4,7 +4,6 @@ from time import time
 from netaddr import EUI
 
 from mytoolit.can import Network
-from mytoolit.config import settings
 
 
 async def test(identifier=EUI("08:6b:d7:01:de:81")):
@@ -15,9 +14,12 @@ async def test(identifier=EUI("08:6b:d7:01:de:81")):
         await network.connect_sth(identifier)
         name = await network.get_name(node)
         print(f"Name of {node}: {name}")
-        acceleration = await network.read_x_acceleration(
-            settings.acceleration_sensor().acceleration.maximum)
-        print(f"Acceleration of {node}: {acceleration}·g₀")
+
+        print("Activate self test")
+        await network.activate_self_test()
+
+        print("Deactivate self test")
+        await network.deactivate_self_test()
 
         print("\nExecution took {:.3} seconds".format(time() - start_time))
 
