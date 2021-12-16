@@ -16,10 +16,10 @@ async def test(identifier=EUI("08:6b:d7:01:de:81")):
         print(f"Name of {node}: {name}")
 
         print("Activate self test")
-        await network.activate_self_test()
+        await network.activate_acceleration_self_test()
 
         print("Deactivate self test")
-        await network.deactivate_self_test()
+        await network.deactivate_acceleration_self_test()
 
         print("\nExecution took {:.3} seconds".format(time() - start_time))
 

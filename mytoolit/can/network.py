@@ -1339,7 +1339,7 @@ class Network:
     # - Calibration Measurement -
     # ---------------------------
 
-    async def _self_test(self, activate: bool = True) -> None:
+    async def _acceleration_self_test(self, activate: bool = True) -> None:
         """Activate/Deactivate the accelerometer self test
 
         Parameters
@@ -1369,15 +1369,15 @@ class Network:
         await self._request(
             message, description=f"{method.lower()} self test of “{node}”")
 
-    async def activate_self_test(self) -> None:
+    async def activate_acceleration_self_test(self) -> None:
         """Activate self test of STH accelerometer"""
 
-        await self._self_test(activate=True)
+        await self._acceleration_self_test(activate=True)
 
-    async def deactivate_self_test(self) -> None:
+    async def deactivate_acceleration_self_test(self) -> None:
         """Deactivate self test of STH accelerometer"""
 
-        await self._self_test(activate=False)
+        await self._acceleration_self_test(activate=False)
 
     async def read_acceleration_voltage(self) -> float:
         """Retrieve the current voltage in Volt
