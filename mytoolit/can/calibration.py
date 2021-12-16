@@ -1,6 +1,6 @@
 # -- Imports ------------------------------------------------------------------
 
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from bidict import bidict
 
@@ -27,7 +27,7 @@ class CalibrationMeasurementFormat:
     })
 
     def __init__(self,
-                 *data: List[int],
+                 *data: Union[bytearray, List[int]],
                  set: Optional[bool] = None,
                  element: Optional[str] = None,
                  method: Optional[str] = None,
@@ -82,7 +82,7 @@ class CalibrationMeasurementFormat:
         cls = type(self)
 
         if data:
-            data_bytes = data[0]
+            data_bytes = list(data[0])
             if not isinstance(data_bytes, list):
                 raise ValueError("Unsupported object type for argument data: "
                                  f"“{type(data_bytes)}”")
