@@ -189,8 +189,8 @@ class Message:
         self.message.data = bytearray(data)
         self.message.dlc = len(self.data)
 
-    def _data_explanation(self) -> str:
-        """Retrieve a textual representation of the message data
+    def _data_explanation_system(self) -> str:
+        """Retrieve a textual representation of system messages
 
         Returns
         -------
@@ -203,98 +203,109 @@ class Message:
             """Convert the message data into a MAC address"""
             return EUI("-".join((f"{byte:0x}" for byte in self.data[7:1:-1])))
 
+        identifier = self.identifier()
+        data_explanation = ""
+
+        if identifier.block_command_name() == 'Get/Set State':
+            if len(self.data) < 1:
+                return ""
+
+            data_explanation = repr(State(self.data[0]))
+
+        if identifier.block_command_name() == 'Bluetooth':
+
+            subcommand = self.data[0]
+            device_number = self.data[1]
+            is_acknowledgment = self.identifier().is_acknowledgment()
+            verb = "Return" if is_acknowledgment else "Get"
+
+            if subcommand == 1:
+                verb = "Acknowledge" if is_acknowledgment else "Request"
+                data_explanation = f"{verb} Bluetooth activation"
+            elif subcommand == 2:
+                data_explanation = f"{verb} number of available devices"
+                if is_acknowledgment:
+                    number_devices_text = convert_bytes_to_text(self.data[2:])
+                    data_explanation += ": "
+                    try:
+                        number_devices = int(number_devices_text)
+                        data_explanation += f"{number_devices}"
+                    except ValueError:
+                        data_explanation += (
+                            "Unable to convert text "
+                            f"“{number_devices_text}” to number")
+
+            elif subcommand == 5 or subcommand == 6:
+                part = "first" if subcommand == 5 else "second"
+                data_explanation = (f"{verb} {part} part of name of device "
+                                    f"with device number “{device_number}”")
+                if is_acknowledgment and len(self.data) >= 2:
+                    name = convert_bytes_to_text(self.data[2:])
+                    data_explanation += f": “{name}”"
+            elif subcommand == 7:
+                info = ("Acknowledge connection request"
+                        if is_acknowledgment else "Request connection")
+                data_explanation = (f"{info} to device "
+                                    f"with device number “{device_number}”")
+            elif subcommand == 8:
+                data_explanation = f"{verb} Bluetooth connection status"
+                if is_acknowledgment and len(self.data) >= 3:
+                    connected = bool(self.data[2])
+                    data_explanation += ": {}".format(
+                        "Connected" if connected else "Not connected")
+            elif subcommand == 9:
+                verb = "Acknowledge" if is_acknowledgment else "Request"
+                data_explanation = f"{verb} Bluetooth deactivation"
+            elif subcommand == 12:
+                data_explanation = (f"{verb} RSSI of device "
+                                    f"with device number “{device_number}”")
+                if is_acknowledgment and len(self.data) >= 3:
+                    rssi = int.from_bytes(self.data[2:3],
+                                          byteorder='little',
+                                          signed=True)
+                    data_explanation += f": {rssi}"
+            elif subcommand == 14:
+                data_explanation = "Write energy mode reduced"
+                if len(self.data) >= 8:
+                    time_normal_to_reduced_ms = int.from_bytes(
+                        self.data[2:6], byteorder='little')
+                    advertisement_time = int.from_bytes(self.data[6:],
+                                                        byteorder='little')
+                    data_explanation += ": " + ",".join([
+                        f"⟳ {time_normal_to_reduced_ms} ms",
+                        f"📢 {advertisement_time} ms"
+                    ])
+            elif subcommand == 17:
+                data_explanation = (f"{verb} MAC address of device "
+                                    f"with device number “{device_number}”")
+                if is_acknowledgment and len(self.data) >= 8:
+                    data_explanation += f": {mac_address()}"
+            elif subcommand == 18:
+                verb = ("Acknowledge connection request"
+                        if is_acknowledgment else "Request connection")
+                data_explanation = (f"{verb} to device "
+                                    f"with MAC address “{mac_address()}”")
+
+        return data_explanation
+
+    def _data_explanation(self) -> str:
+        """Retrieve a textual representation of the message data
+
+        Returns
+        -------
+
+        A textual description of the data contained in the message
+
+        """
+
         if len(self.data) <= 0:
             return ""
 
         identifier = self.identifier()
         data_explanation = ""
+
         if identifier.block_name() == 'System':
-
-            if identifier.block_command_name() == 'Get/Set State':
-                if len(self.data) < 1:
-                    return data_explanation
-
-                data_explanation = repr(State(self.data[0]))
-
-            if identifier.block_command_name() == 'Bluetooth':
-
-                subcommand = self.data[0]
-                device_number = self.data[1]
-                is_acknowledgment = self.identifier().is_acknowledgment()
-                verb = "Return" if is_acknowledgment else "Get"
-
-                if subcommand == 1:
-                    verb = "Acknowledge" if is_acknowledgment else "Request"
-                    data_explanation = f"{verb} Bluetooth activation"
-                elif subcommand == 2:
-                    data_explanation = f"{verb} number of available devices"
-                    if is_acknowledgment:
-                        number_devices_text = convert_bytes_to_text(
-                            self.data[2:])
-                        data_explanation += ": "
-                        try:
-                            number_devices = int(number_devices_text)
-                            data_explanation += f"{number_devices}"
-                        except ValueError:
-                            data_explanation += (
-                                "Unable to convert text "
-                                f"“{number_devices_text}” to number")
-
-                elif subcommand == 5 or subcommand == 6:
-                    part = "first" if subcommand == 5 else "second"
-                    data_explanation = (
-                        f"{verb} {part} part of name of device "
-                        f"with device number “{device_number}”")
-                    if is_acknowledgment and len(self.data) >= 2:
-                        name = convert_bytes_to_text(self.data[2:])
-                        data_explanation += f": “{name}”"
-                elif subcommand == 7:
-                    info = ("Acknowledge connection request"
-                            if is_acknowledgment else "Request connection")
-                    data_explanation = (
-                        f"{info} to device "
-                        f"with device number “{device_number}”")
-                elif subcommand == 8:
-                    data_explanation = f"{verb} Bluetooth connection status"
-                    if is_acknowledgment and len(self.data) >= 3:
-                        connected = bool(self.data[2])
-                        data_explanation += ": {}".format(
-                            "Connected" if connected else "Not connected")
-                elif subcommand == 9:
-                    verb = "Acknowledge" if is_acknowledgment else "Request"
-                    data_explanation = f"{verb} Bluetooth deactivation"
-                elif subcommand == 12:
-                    data_explanation = (
-                        f"{verb} RSSI of device "
-                        f"with device number “{device_number}”")
-                    if is_acknowledgment and len(self.data) >= 3:
-                        rssi = int.from_bytes(self.data[2:3],
-                                              byteorder='little',
-                                              signed=True)
-                        data_explanation += f": {rssi}"
-                elif subcommand == 14:
-                    data_explanation = "Write energy mode reduced"
-                    if len(self.data) >= 8:
-                        time_normal_to_reduced_ms = int.from_bytes(
-                            self.data[2:6], byteorder='little')
-                        advertisement_time = int.from_bytes(self.data[6:],
-                                                            byteorder='little')
-                        data_explanation += ": " + ",".join([
-                            f"⟳ {time_normal_to_reduced_ms} ms",
-                            f"📢 {advertisement_time} ms"
-                        ])
-                elif subcommand == 17:
-                    data_explanation = (
-                        f"{verb} MAC address of device "
-                        f"with device number “{device_number}”")
-                    if is_acknowledgment and len(self.data) >= 8:
-                        data_explanation += f": {mac_address()}"
-                elif subcommand == 18:
-                    verb = ("Acknowledge connection request"
-                            if is_acknowledgment else "Request connection")
-                    data_explanation = (f"{verb} to device "
-                                        f"with MAC address “{mac_address()}”")
-
+            return self._data_explanation_system()
         elif identifier.block_name() == 'EEPROM':
             if identifier.block_command_name() == "Read Write Request Counter":
                 counter = int.from_bytes(self.data[4:], 'little')
