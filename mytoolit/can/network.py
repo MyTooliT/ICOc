@@ -25,6 +25,7 @@ if __name__ == '__main__':
 from mytoolit.eeprom import EEPROMStatus
 from mytoolit.config import settings
 from mytoolit.measurement import convert_acceleration_adc_to_g
+from mytoolit.can.calibration import CalibrationMeasurementFormat
 from mytoolit.can.message import Message
 from mytoolit.can.node import Node
 from mytoolit.can.streaming import (StreamingFormatAcceleration,
@@ -1329,6 +1330,54 @@ class Network:
         voltage_raw = int.from_bytes(voltage_bytes, 'little')
 
         return convert_voltage_adc_to_volts(voltage_raw)
+
+    # =================
+    # = Configuration =
+    # =================
+
+    # ---------------------------
+    # - Calibration Measurement -
+    # ---------------------------
+
+    async def _self_test(self, activate: bool = True) -> None:
+        """Activate/Deactivate the accelerometer self test
+
+        Parameters
+        ----------
+
+        activate:
+            Either `True` to activate the self test or `False` to
+            deactivate the self test
+
+        """
+        node = 'STH 1'
+        method = 'Activate' if activate else 'Deactivate'
+
+        message = Message(
+            block='Configuration',
+            block_command='Calibration Measurement',
+            sender=self.sender,
+            receiver=node,
+            request=True,
+            data=CalibrationMeasurementFormat(
+                set=True,
+                element='Acceleration',
+                method=method,
+                reference_voltage=3.3,  # VDD = 3.3V
+                dimension=1).data)
+
+        await self._request(
+            message, description=f"{method.lower()} self test of “{node}”")
+
+    async def activate_self_test(self) -> None:
+        """Activate self test of STH accelerometer"""
+
+        await self._self_test(activate=True)
+
+    async def deactivate_self_test(self) -> None:
+        """Deactivate self test of STH accelerometer"""
+
+        await self._self_test(activate=False)
 
     # ==========
     # = EEPROM =
