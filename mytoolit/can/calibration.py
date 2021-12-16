@@ -91,9 +91,9 @@ class CalibrationMeasurementFormat:
                 raise ValueError(f"Data length of {len(data_bytes)} is too "
                                  "small, at least length of "
                                  f"“{required_length}” required")
-            self.data = data_bytes[0:4]
+            self.data = data_bytes[0:4] + [0] * 4
         else:
-            self.data = [0, 0, 1, 0]
+            self.data = [0, 0, 1, 0] + [0] * 4
 
         if set is not None:
             method_byte = self.data[0]
