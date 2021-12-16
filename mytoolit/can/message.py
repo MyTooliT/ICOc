@@ -271,6 +271,9 @@ class Message:
                         self.data[2:6], byteorder='little')
                     advertisement_time = int.from_bytes(self.data[6:],
                                                         byteorder='little')
+                    # TODO: Look up if the advertisement time reported by the
+                    #       command uses factor of 0.625 ms or reports value
+                    #       directly in milliseconds.
                     data_explanation += ": " + ",".join([
                         f"⟳ {time_normal_to_reduced_ms} ms",
                         f"📢 {advertisement_time} ms"
