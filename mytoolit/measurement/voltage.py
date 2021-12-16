@@ -30,6 +30,9 @@ def convert_voltage_adc_to_volts(voltage_raw: int) -> float:
         return 0
 
     reference_voltage = 3.3
+    # TODO: Determine why the value is multiplied by 57/10 = 5.7
+    #       This peculiar value was taken from the function `fVoltageBattery`
+    #       from the file `MyToolItTestSth.py`.
     return voltage_raw * 5.7 * reference_voltage / ADC_MAX_VALUE
 
 
