@@ -4,6 +4,8 @@ from math import log, sqrt
 from statistics import pvariance
 from typing import Iterable
 
+from mytoolit.measurement.constants import ADC_MAX_VALUE
+
 # -- Functions ----------------------------------------------------------------
 
 
@@ -30,7 +32,6 @@ def convert_acceleration_adc_to_g(acceleration_raw: int,
     The acceleration in multiples of the standard gravity g₀
     """
 
-    max_value_adc = 0xffff
     acceleration_to_gravity = max_value
 
     # The code subtracts 1/2 from the computed value, since the STH linearly
@@ -38,7 +39,7 @@ def convert_acceleration_adc_to_g(acceleration_raw: int,
     # acceleration to the maximum ADC value. Currently the stationary
     # acceleration value seems to be slightly negative (-4·g₀ <
     # acceleration_in_g 0 < 0 ), while in theory it should have a value of g₀.
-    acceleration_in_g = (acceleration_raw / max_value_adc -
+    acceleration_in_g = (acceleration_raw / ADC_MAX_VALUE -
                          1 / 2) * acceleration_to_gravity
     return acceleration_in_g
 
@@ -59,7 +60,6 @@ def ratio_noise_max(values: Iterable[int]) -> float:
     The ratio of the average noise to the highest possible measured value
     """
 
-    adc_max = 0xffff
-    max_value = adc_max / 2
+    max_value = ADC_MAX_VALUE / 2
     standard_deviation = sqrt(pvariance(values))
     return 20 * log(standard_deviation / max_value, 10)

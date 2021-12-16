@@ -1,3 +1,7 @@
+# -- Imports ------------------------------------------------------------------
+
+from mytoolit.measurement.constants import ADC_MAX_VALUE
+
 # -- Functions ----------------------------------------------------------------
 
 
@@ -25,10 +29,8 @@ def convert_voltage_adc_to_volts(voltage_raw: int) -> float:
     if voltage_raw <= 0:
         return 0
 
-    adc_bits = 16
-    number_intervals = 2**adc_bits
     reference_voltage = 3.3
-    return voltage_raw * 5.7 * reference_voltage / number_intervals
+    return voltage_raw * 5.7 * reference_voltage / ADC_MAX_VALUE
 
 
 # -- Main ---------------------------------------------------------------------
