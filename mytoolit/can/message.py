@@ -14,6 +14,7 @@ if __name__ == '__main__':
     from sys import path
     path.append(str(Path(__file__).parent.parent.parent))
 
+from mytoolit.can.calibration import CalibrationMeasurementFormat
 from mytoolit.can.command import Command
 from mytoolit.can.identifier import Identifier
 from mytoolit.can.node import Node
@@ -291,6 +292,16 @@ class Message:
 
         return data_explanation
 
+    def _data_explanation_configuration(self) -> str:
+        identifier = self.identifier()
+        data_explanation = ""
+
+        if (identifier.block_command_name() == "Calibration Measurement"
+                and len(self.data) >= 4):
+            return repr(CalibrationMeasurementFormat(self.data))
+
+        return data_explanation
+
     def _data_explanation_eeprom(self) -> str:
         """Retrieve a textual representation of EEPROM messages
 
@@ -344,6 +355,8 @@ class Message:
 
         if identifier.block_name() == 'System':
             return self._data_explanation_system()
+        elif identifier.block_name() == 'Configuration':
+            return self._data_explanation_configuration()
         elif identifier.block_name() == 'EEPROM':
             return self._data_explanation_eeprom()
 
