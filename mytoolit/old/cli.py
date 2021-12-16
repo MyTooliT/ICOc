@@ -635,6 +635,12 @@ class CommandLineInterface():
                         "Warning: Unable to determine sensor range from "
                         "EEPROM value — Assuming ± 100 g sensor",
                         file=stderr)
+                if self.acceleration_range_g < 1:
+                    print(
+                        f"Warning: Sensor range “{self.acceleration_range_g}” "
+                        "below 1 g — Using range 200 instead (± 100 g sensor)",
+                        file=stderr)
+                    self.acceleration_range_g = 200
 
                 self.Can.readThreadStop()
                 self.guiProcessRestart()
