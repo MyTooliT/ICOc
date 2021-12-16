@@ -363,7 +363,7 @@ class UserInterface(CommandLineInterface):
         temperature = read_temperature()
 
         infos.extend([
-            ("Battery Voltage", f"{voltage} V"),
+            ("Supply Voltage", f"{voltage} V"),
             ("Chip Temperature", f"{temperature:4.1f} °C\n"),
         ])
 
