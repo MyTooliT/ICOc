@@ -289,20 +289,21 @@ class TestNode(TestCase):
         cls = type(self)
         node = cls.__name__[-3:]
 
-        programming_board_serial_number = (
-            settings.sth.programming_board.serial_number
-            if node == 'STH' else settings.stu.programming_board.serial_number)
+        programming_board_serial_number = str(
+            settings.sth.programming_board.serial_number if node ==
+            'STH' else settings.stu.programming_board.serial_number)
 
         chip = "BGM113A256V2" if node == 'STH' else 'BGM111A256V2'
 
-        identification_arguments = (
-            f"--serialno {programming_board_serial_number} -d {chip}")
+        identification_arguments = [
+            "--serialno", programming_board_serial_number, "-d", chip
+        ]
 
         # Set debug mode to out, to make sure we flash the STH (connected via
         # debug cable) and not another microcontroller connected to the
         # programmer board.
-        change_mode_command = (
-            f"commander adapter dbgmode OUT {identification_arguments}")
+        change_mode_command = ("commander adapter dbgmode OUT".split() +
+                               identification_arguments)
         status = run(change_mode_command, capture_output=True, text=True)
         self.assertEqual(
             status.returncode, 0,
@@ -312,8 +313,8 @@ class TestNode(TestCase):
             f"({programming_board_serial_number}) is incorrect")
 
         # Unlock debug access
-        unlock_command = (
-            f"commander device unlock {identification_arguments}")
+        unlock_command = ("commander device unlock".split() +
+                          identification_arguments)
         status = run(unlock_command, capture_output=True, text=True)
         self.assertEqual(
             status.returncode, 0,
@@ -331,8 +332,9 @@ class TestNode(TestCase):
         self.assertTrue(isfile(image_filepath),
                         f"Firmware file {image_filepath} does not exist")
 
-        flash_command = (f"commander flash {image_filepath} " +
-                         f"--address 0x0 {identification_arguments}")
+        flash_command = [
+            "commander", "flash", image_filepath, "--address", "0x0"
+        ] + identification_arguments
         status = run(flash_command, capture_output=True, text=True)
         self.assertEqual(
             status.returncode, 0,
