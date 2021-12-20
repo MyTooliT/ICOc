@@ -1,5 +1,6 @@
 # -- Imports ------------------------------------------------------------------
 
+from platform import system
 from typing import List
 from unittest import main as unittest_main, skipIf
 
@@ -207,6 +208,9 @@ class TestSTH(TestNode):
 
         self.loop.run_until_complete(test_acceleration_single())
 
+    @skipIf(system() == "Linux",
+            "Noise test skipped because it is currently not supported on Linux"
+            )
     def test_acceleration_noise(self):
         """Test ratio of noise to maximal possible measurement value"""
 
