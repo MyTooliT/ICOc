@@ -1387,6 +1387,28 @@ class Network:
 
         The voltage of the acceleration sensor in Volt
 
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Read the acceleration voltage of STH 1
+
+        >>> async def read_acceleration_voltage():
+        ...     async with Network() as network:
+        ...         await network.connect_sth(0)
+        ...
+        ...         before = await network.read_acceleration_voltage()
+        ...         await network.activate_acceleration_self_test()
+        ...         between = await network.read_acceleration_voltage()
+        ...         await network.deactivate_acceleration_self_test()
+        ...         after = await network.read_acceleration_voltage()
+        ...
+        ...         return (before, between, after)
+        >>> before, between, after = run(read_acceleration_voltage())
+        >>> before < between and after < between
+        True
+
         """
 
         node = 'STH 1'
@@ -3802,10 +3824,10 @@ if __name__ == '__main__':
     # - set `run_all_doctests` to `False`, and
     # - replace `read_eeprom_firmware_version` with the name of the method you
     #   would like to test.
-    run_all_doctests = True
+    run_all_doctests = False
     if run_all_doctests:
         testmod()
     else:
-        run_docstring_examples(Network.read_eeprom_firmware_version,
+        run_docstring_examples(Network.read_acceleration_voltage,
                                globals(),
                                verbose=True)
