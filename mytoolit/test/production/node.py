@@ -239,6 +239,7 @@ class TestNode(TestCase):
 
         if self._testMethodName in {
                 'test_acceleration_single_value',
+                'test_acceleration_self_test',
                 'test_battery_voltage',
                 'test_connection',
                 'test_eeprom',

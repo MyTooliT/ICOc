@@ -1,6 +1,6 @@
 # -- Imports ------------------------------------------------------------------
 
-from time import sleep
+from typing import List
 from unittest import main as unittest_main, skipIf
 
 from mytoolit.can import Node
@@ -12,13 +12,7 @@ from mytoolit.utility import (add_commander_path_to_environment,
                               convert_mac_base64)
 
 from mytoolit.old.MyToolItCommands import (
-    AdcMax,
-    AdcVRefValuemV,
-    AdcReference,
-    CalibMeassurementActionNr,
-    CalibMeassurementTypeNr,
     DataSets,
-    byte_list_to_int,
     MyToolItBlock,
     MyToolItProductData,
     MyToolItStreaming,
@@ -239,39 +233,25 @@ class TestSTH(TestNode):
     def test_acceleration_self_test(self):
         """Execute self test of accelerometer"""
 
-        def measure_voltage():
-            """Measure the accelerometer voltage in mV"""
-            response = self.can.calibMeasurement(
-                Node('STH 1').value,
-                CalibMeassurementActionNr['Measure'],
-                CalibMeassurementTypeNr['Acc'],
-                # Measure x-dimension
-                1,
-                AdcReference['VDD'])
-            index_result = 4
-            adc_value = byte_list_to_int(response[index_result:])
-            return AdcVRefValuemV[AdcReference["VDD"]] * adc_value / AdcMax
+        async def read_voltages() -> List[int]:
+            """Read acceleration voltages in Millivolts"""
+            before = await self.can.read_acceleration_voltage()
 
-        voltage_before_test = measure_voltage()
+            await self.can.activate_acceleration_self_test()
+            between = await self.can.read_acceleration_voltage()
 
-        # Turn on self test and wait for activation
-        self.can.calibMeasurement(
-            Node('STH 1').value, CalibMeassurementActionNr['Activate'],
-            CalibMeassurementTypeNr['Acc'], 1, AdcReference['VDD'])
-        sleep(0.1)
+            await self.can.deactivate_acceleration_self_test()
+            after = await self.can.read_acceleration_voltage()
 
-        # Turn off self test and wait for deactivation
-        voltage_at_test = measure_voltage()
-        self.can.calibMeasurement(
-            Node('STH 1').value, CalibMeassurementActionNr['Deactivate'],
-            CalibMeassurementTypeNr['Acc'], 1, AdcReference['VDD'])
-        sleep(0.1)
+            return [round(value * 1000) for value in (before, between, after)]
 
-        voltage_after_test = measure_voltage()
+        voltage_before_test, voltage_at_test, voltage_after_test = (
+            self.loop.run_until_complete(read_voltages()))
 
         voltage_diff = voltage_at_test - voltage_before_test
 
         sensor = settings.acceleration_sensor()
+
         voltage_diff_expected = sensor.self_test.voltage.difference
         voltage_diff_tolerance = sensor.self_test.voltage.tolerance
 
@@ -281,11 +261,11 @@ class TestSTH(TestNode):
         self.assertLess(
             voltage_before_test, voltage_at_test,
             f"Self test voltage of {voltage_at_test:.0f} mV was lower "
-            f"than voltage before test {voltage_before_test:.0f} mv")
+            f"than voltage before test {voltage_before_test:.0f} mV")
         self.assertLess(
             voltage_after_test, voltage_at_test,
             f"Self test voltage of {voltage_at_test:.0f} mV was lower "
-            f"than voltage after test {voltage_before_test:.0f} mv")
+            f"than voltage after test {voltage_before_test:.0f} mV")
 
         possible_failure_reason = (
             "\n\nPossible Reason:\n\n• Acceleration sensor config value "
