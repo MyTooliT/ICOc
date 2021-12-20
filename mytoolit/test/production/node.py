@@ -237,19 +237,13 @@ class TestNode(TestCase):
             # Wait for reset to take place
             await async_sleep(2)
 
-        if self._testMethodName in {
-                'test_acceleration_single_value',
-                'test_acceleration_self_test',
-                'test_battery_voltage',
-                'test_connection',
-                'test_eeprom',
-        }:
+        if self._testMethodName == 'test_acceleration_noise':
+            connect_old()
+        else:
             loop = new_event_loop()
             set_event_loop(loop)
             self.loop = loop
             self.loop.run_until_complete(connect_new())
-        else:
-            connect_old()
 
     def _disconnect(self):
         """Tear down connection to STU"""
