@@ -351,7 +351,7 @@ class Network:
                 # - sent a reset command to the STU, and then
                 # - wait for the response of the STU.
                 response = await wait_for(listener.on_message(),
-                                          timeout=min(attempt * 2 + 1, 5))
+                                          timeout=min(attempt * 1 + 1, 5))
                 assert response is not None
             except TimeoutError:
                 continue
