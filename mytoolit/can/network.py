@@ -335,7 +335,7 @@ class Network:
             self.notifier._loop = get_running_loop()
         assert self.notifier is not None
 
-        for attempt in range(5):
+        for attempt in range(10):
 
             listener = ResponseListener(message, response_data)
             self.notifier.add_listener(listener)
