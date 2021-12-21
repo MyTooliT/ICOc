@@ -1165,6 +1165,11 @@ class Network(object):
         Example
         -------
 
+        >>> from pytest import skip
+        >>> from platform import system
+        >>> if system() != "Windows":
+        ...     skip("Old network class only works on Windows")
+
         >>> network = Network()
         >>> elapsed_time = network.get_elapsed_time()
         >>> 0 <= elapsed_time < 1000
