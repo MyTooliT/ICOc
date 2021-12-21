@@ -354,7 +354,7 @@ class Network:
                 # - we flashed the STU,
                 # - sent a reset command to the STU, and then
                 # - wait for the response of the STU.
-                timeout = max(min(attempt * 1 + 1, 2), minimum_timeout)
+                timeout = max(min(attempt * 0.1 + 0.5, 2), minimum_timeout)
                 response = await wait_for(listener.on_message(),
                                           timeout=timeout)
                 assert response is not None
