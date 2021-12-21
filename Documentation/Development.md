@@ -72,7 +72,7 @@ pip install pytest
 Please run the following command in the root of the repository:
 
 ```sh
-pytest
+pytest -v
 ```
 
 and make sure that it reports no test failures.
@@ -231,7 +231,7 @@ While you need to run the test for ICOc manually, the other tests and checks can
 ```sh
 flake8 &&
 mypy --ignore-missing-imports mytoolit &&
-pytest &&
+pytest -v &&
 test-sth -v &&
 test-stu -v && # or `test-stu -k eeprom -k connect` to skip the flash test
 Invoke-Item 'STH Test.pdf' &&
