@@ -281,12 +281,12 @@ class Network:
 
         self.bus.shutdown()
 
-    async def _request(
-        self,
-        message: Message,
-        description: str,
-        response_data: Union[bytearray, List[Union[int, None]], None] = None
-    ) -> CANMessage:
+    async def _request(self,
+                       message: Message,
+                       description: str,
+                       response_data: Union[bytearray, List[Union[int, None]],
+                                            None] = None,
+                       minimum_timeout: float = 0) -> CANMessage:
         """Send a request message and wait for the response
 
         Parameters
@@ -300,6 +300,10 @@ class Network:
 
         response_data:
            Specifies the expected data in the acknowledgment message
+
+        minimum_timeout:
+           Minimum time before attempting additional connection attempt
+           in seconds
 
         Returns
         -------
@@ -350,8 +354,9 @@ class Network:
                 # - we flashed the STU,
                 # - sent a reset command to the STU, and then
                 # - wait for the response of the STU.
+                timeout = max(min(attempt * 1 + 1, 2), minimum_timeout)
                 response = await wait_for(listener.on_message(),
-                                          timeout=min(attempt * 1 + 1, 5))
+                                          timeout=timeout)
                 assert response is not None
             except TimeoutError:
                 continue
@@ -511,7 +516,8 @@ class Network:
                           request=True)
         await self._request(message,
                             description=f"reset node “{node}”",
-                            response_data=message.data)
+                            response_data=message.data,
+                            minimum_timeout=1)
 
     # -----------------
     # - Get/Set State -
