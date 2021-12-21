@@ -78,8 +78,7 @@ LOGGER:
     # ICOc will write CAN messages to `can.log`, if you specify the value
     # `DEBUG`. If you use a different allowed value, such as `INFO` or `WARNING`
     # no messages will be logged.
-    LEVEL:
-      INFO
+    LEVEL: DEBUG
 
 GUI:
   HOST: localhost # Socket address of Matplotlib GUI
@@ -192,6 +191,7 @@ STH:
   NAME: *holder_name
 
   # OEM specific data
+  # prettier-ignore
   OEM DATA: [
      0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
      0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
@@ -229,7 +229,6 @@ STH:
     *state
 
 STU:
-
   # An ever increasing (32 bit unsigned) number that describes the current
   # batch that this STU was a part of.
   BATCH NUMBER: 100
@@ -249,6 +248,7 @@ STU:
   HARDWARE VERSION: 1.3.3
 
   # OEM specific data
+  # prettier-ignore
   OEM DATA: [
      0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
      0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
@@ -275,4 +275,3 @@ STU:
 
   # Serial number for the manufacturer (maximum of 32 byte UTF-8 encoded text)
   SERIAL NUMBER: 0
-
