@@ -70,6 +70,9 @@ COMMANDS:
       # Windows
       - C:\SiliconLabs\SimplicityStudio\v4\developer\adapter_packs\commander
       - C:\SiliconLabs\SimplicityStudio\v5\developer\adapter_packs\commander
+      # We assume that you moved the unzipped Simplicity Commander directory
+      # into the standard Silicon Labs install directory
+      - C:\SiliconLabs\Simplicity Commander
 
 LOGGER:
   CAN:
