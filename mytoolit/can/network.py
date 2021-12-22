@@ -1231,15 +1231,21 @@ class Network:
             if sth is None:
                 await sleep(0.1)
 
-        await self.connect_with_device_number(sth.device_number)
         connection_attempt_time = time()
-        while not await self.is_connected('STU 1'):
-            if time() > end_time:
-                connection_time = time() - connection_attempt_time
-                raise TimeoutError("Unable to connect to STH "
-                                   f"“{sth}” in {connection_time} seconds")
+        while True:
+            await self.connect_with_device_number(sth.device_number)
+            retry_time_s = 3
+            end_time_retry = time() + retry_time_s
+            while time() < end_time_retry:
+                if time() > end_time:
+                    connection_time = time() - connection_attempt_time
+                    raise TimeoutError("Unable to connect to STH “{sth}” "
+                                       f"in {connection_time:.3f} seconds")
 
-            await sleep(0.1)
+                if await self.is_connected('STU 1'):
+                    return
+
+                await sleep(0.1)
 
     # =============
     # = Streaming =
