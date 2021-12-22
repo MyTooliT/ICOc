@@ -1339,8 +1339,8 @@ class Network:
                           request=True,
                           data=[streaming_format.value])
 
-        response = await self._request(message,
-                                       description=f"read voltage of “{node}”")
+        response = await self._request(
+            message, description=f"read supply voltage of “{node}”")
 
         voltage_bytes = response.data[2:4]
         voltage_raw = int.from_bytes(voltage_bytes, 'little')
