@@ -30,10 +30,14 @@ def convert_voltage_adc_to_volts(voltage_raw: int) -> float:
         return 0
 
     reference_voltage = 3.3
-    # TODO: Determine why the value is multiplied by 57/10 = 5.7
-    #       This peculiar value was taken from the function `fVoltageBattery`
-    #       from the file `MyToolItTestSth.py`.
-    return voltage_raw * 5.7 * reference_voltage / ADC_MAX_VALUE
+    # The value below is the result of the voltage divider circuit, which
+    # uses a 4.7 kΩ and 1 kΩ resistor: (4.7 + 1)/1 = 5.7
+    # If you want to know why we used these resistor values, then please
+    # take a look
+    # [here](https://en.wikipedia.org/wiki/E_series_of_preferred_numbers).
+    voltage_divider_factor = 5.7
+    return (voltage_raw * voltage_divider_factor * reference_voltage /
+            ADC_MAX_VALUE)
 
 
 # -- Main ---------------------------------------------------------------------
