@@ -31,7 +31,7 @@ def convert_voltage_adc_to_volts(voltage_raw: int) -> float:
 
     reference_voltage = 3.3
     # The value below is the result of the voltage divider circuit, which
-    # uses a 4.7 kΩ and 1 kΩ resistor: (4.7 + 1)/1 = 5.7
+    # uses a 4.7 kΩ and 1 kΩ resistor: (470 kΩ + 100 kΩ) / 100 kΩ = 5.7
     # If you want to know why we used these resistor values, then please
     # take a look
     # [here](https://en.wikipedia.org/wiki/E_series_of_preferred_numbers).
