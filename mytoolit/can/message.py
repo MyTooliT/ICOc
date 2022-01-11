@@ -311,13 +311,13 @@ class Message:
         identifier = self.identifier()
         data_explanation = ""
 
-        if identifier.block_command_name() == "Acceleration":
-            streaming_format = StreamingFormatAcceleration(self.data[0])
-        elif identifier.block_command_name() == "Voltage":
-            streaming_format = StreamingFormatVoltage(self.data[0])
-        else:
-            streaming_format = StreamingFormat(self.data[0])
-        data_explanation += repr(streaming_format)
+        block_command = identifier.block_command_name()
+
+        StreamingFormatClass = (StreamingFormatAcceleration
+                                if block_command == 'Acceleration' else
+                                StreamingFormatVoltage if block_command
+                                == 'Voltage' else StreamingFormat)
+        data_explanation += repr(StreamingFormatClass(self.data[0]))
 
         if identifier.is_acknowledgment() and len(self.data) >= 2:
             sequence_counter = self.data[1]
