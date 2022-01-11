@@ -30,28 +30,6 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    - name: Download PyTables wheels
-      uses: actions/checkout@v2
-      with:
-        ref: binaries
-        path: binaries
-
-    # Please note, that the additional “m” in the file name of the Python 3.7
-    # wheel is important. If we rename the file pip will complain that the wheel
-    # is not supported on this platform.
-
-    - name: Install PyTables
-      env:
-          python_version: ${{ matrix.python-version }}
-      run: |
-          $version = echo "${env:python_version}" | %{$_ -replace "(\d+)\.(\d+)", '$1$2'}
-
-          $wheel = "binaries/tables-3.6.1-cp${version}-cp${version}"
-          if ( $version -eq '37' ) { $wheel = "${wheel}m" }
-          $wheel = "$wheel-win_amd64.whl"
-
-          pip install "$wheel"
-
     - name: Install dependencies
       run: |
         pip install flake8 mypy pytest
