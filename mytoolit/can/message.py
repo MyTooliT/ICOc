@@ -319,6 +319,10 @@ class Message:
             streaming_format = StreamingFormat(self.data[0])
         data_explanation += repr(streaming_format)
 
+        if identifier.is_acknowledgment() and len(self.data) >= 2:
+            sequence_counter = self.data[1]
+            data_explanation += f", Sequence Counter: {sequence_counter}"
+
         return data_explanation
 
     def _data_explanation_configuration(self) -> str:
