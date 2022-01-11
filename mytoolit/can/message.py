@@ -19,6 +19,8 @@ from mytoolit.can.command import Command
 from mytoolit.can.identifier import Identifier
 from mytoolit.can.node import Node
 from mytoolit.can.status import State
+from mytoolit.can.streaming import (StreamingFormatAcceleration,
+                                    StreamingFormatVoltage)
 from mytoolit.utility import convert_bytes_to_text
 
 # -- Class --------------------------------------------------------------------
@@ -292,6 +294,29 @@ class Message:
 
         return data_explanation
 
+    def _data_explanation_streaming(self) -> str:
+        """Retrieve a textual representation of streaming messages
+
+        Returns
+        -------
+
+        A textual description of the data contained in the message
+
+        """
+
+        if len(self.data) < 1:
+            return ""
+
+        identifier = self.identifier()
+        data_explanation = ""
+
+        if identifier.block_command_name() == "Acceleration":
+            data_explanation += repr(StreamingFormatAcceleration(self.data[0]))
+        elif identifier.block_command_name() == "Voltage":
+            data_explanation += repr(StreamingFormatVoltage(self.data[0]))
+
+        return data_explanation
+
     def _data_explanation_configuration(self) -> str:
         identifier = self.identifier()
         data_explanation = ""
@@ -355,6 +380,8 @@ class Message:
 
         if identifier.block_name() == 'System':
             return self._data_explanation_system()
+        elif identifier.block_name() == 'Streaming':
+            return self._data_explanation_streaming()
         elif identifier.block_name() == 'Configuration':
             return self._data_explanation_configuration()
         elif identifier.block_name() == 'EEPROM':
