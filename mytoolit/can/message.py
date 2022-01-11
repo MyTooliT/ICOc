@@ -19,7 +19,8 @@ from mytoolit.can.command import Command
 from mytoolit.can.identifier import Identifier
 from mytoolit.can.node import Node
 from mytoolit.can.status import State
-from mytoolit.can.streaming import (StreamingFormatAcceleration,
+from mytoolit.can.streaming import (StreamingFormat,
+                                    StreamingFormatAcceleration,
                                     StreamingFormatVoltage)
 from mytoolit.utility import convert_bytes_to_text
 
@@ -311,9 +312,12 @@ class Message:
         data_explanation = ""
 
         if identifier.block_command_name() == "Acceleration":
-            data_explanation += repr(StreamingFormatAcceleration(self.data[0]))
+            streaming_format = StreamingFormatAcceleration(self.data[0])
         elif identifier.block_command_name() == "Voltage":
-            data_explanation += repr(StreamingFormatVoltage(self.data[0]))
+            streaming_format = StreamingFormatVoltage(self.data[0])
+        else:
+            streaming_format = StreamingFormat(self.data[0])
+        data_explanation += repr(streaming_format)
 
         return data_explanation
 
