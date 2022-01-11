@@ -144,7 +144,6 @@ class StreamingFormat:
         """
 
         single_request = self.value >> 7
-        three_bytes = (self.value >> 6) & 1
 
         data_sets = self.data_sets()
         data_set_explanation = ("Stop Stream"
@@ -153,7 +152,7 @@ class StreamingFormat:
 
         parts = [
             "Single Request" if single_request else "Streaming",
-            "{} Bytes".format(3 if three_bytes else 2),
+            f"{self.data_bytes()} Bytes",
             f"{data_set_explanation}",
         ]
 
@@ -199,6 +198,27 @@ class StreamingFormat:
         cls = type(self)
 
         return cls.data_set[data_set_bits]
+
+    def data_bytes(self) -> int:
+        """Get the number of data bytes used for a single value
+
+        Returns
+        -------
+
+        The number of data bytes that represent a single streaming value
+
+        Examples
+        --------
+
+        >>> StreamingFormat(width=3, first=True, sets=15).data_bytes()
+        3
+
+        >>> StreamingFormat(first=True, second=False, width=2).data_bytes()
+        2
+
+        """
+
+        return 3 if (self.value >> 6) & 1 else 2
 
 
 class StreamingFormatAcceleration(StreamingFormat):
