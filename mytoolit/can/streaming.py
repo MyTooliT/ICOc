@@ -146,9 +146,7 @@ class StreamingFormat:
         single_request = self.value >> 7
         three_bytes = (self.value >> 6) & 1
 
-        data_set_bits = self.value & 0b111
-        cls = type(self)
-        data_sets = cls.data_set[data_set_bits]
+        data_sets = self.data_sets()
         data_set_explanation = ("Stop Stream"
                                 if data_sets == 0 else "{} Data Set{}".format(
                                     data_sets, "" if data_sets == 1 else "s"))
@@ -177,6 +175,30 @@ class StreamingFormat:
             parts.append(value_explanation)
 
         return ", ".join(parts)
+
+    def data_sets(self) -> int:
+        """Get the number of data sets of the streaming format
+
+        Returns
+        -------
+
+        The number of data sets
+
+        Examples
+        --------
+
+        >>> StreamingFormat(width=3, first=True, sets=15).data_sets()
+        15
+
+        >>> StreamingFormat(first=True, second=False, sets=3).data_sets()
+        3
+
+        """
+
+        data_set_bits = self.value & 0b111
+        cls = type(self)
+
+        return cls.data_set[data_set_bits]
 
 
 class StreamingFormatAcceleration(StreamingFormat):
