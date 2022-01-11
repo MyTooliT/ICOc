@@ -98,29 +98,6 @@ ICOc requires at least Python `3.7`. The software also supports Python `3.8`, `3
 
 <a name="readme:section:pytables"></a>
 
-##### PyTables
-
-ICOc uses the [PyTables][] Python package. Unfortunately the Python package index does not offer Windows binaries for the latest versions of Python in the moment. This means installing PyTables (and therefore ICOc) in Windows without a C compiler and the [HDF5 library](https://www.hdfgroup.org/downloads/hdf5/) library will fail. Since compiling the C extension of the package is not trivial we **recommend downloading a prebuilt binary package** [here](http://www.lfd.uci.edu/~gohlke/pythonlibs/#pytables). Just store the proper file for **your OS and Python version** in your **Downloads folder**.
-
-**Example:** For a 64 bit version of Python `3.10` and PyTables `3.6.1` download the file `tables-3.6.1-cp310-cp310-win_amd64.whl` and afterwards execute the following command in a PowerShell session:
-
-```pwsh
-pip install $HOME\Downloads\tables-3.6.1-cp310-cp310-win_amd64.whl
-```
-
-We also offer **the same binaries** for all supported 64 bit Python versions in the [**branch binaries**](https://github.com/mytoolit/ICOc/tree/binaries) of the repository. For example, to **install [PyTables][] on Python 3.10** you can use the following commands in a PowerShell session:
-
-```sh
-cd "$HOME/Downloads"
-git clone -b binaries https://github.com/MyTooliT/ICOc.git
-cd ICOc
-pip install tables-3.6.1-cp310-cp310-win_amd64.whl
-cd ..
-Remove-Item -Recurse -Force ICOc
-```
-
-[pytables]: http://www.pytables.org
-
 #### PCAN Driver
 
 To communicate with the STU you need to install the driver for the PCAN adapter. You can find the download link for Windows [here](https://www.peak-system.com/quick/DrvSetup). Please make sure that you include the “PCAN-Basic API” when you install the driver.
@@ -177,14 +154,6 @@ If `pip install` prints **warnings about the path** that look like this:
 > The script … is installed in `'…\Scripts'` which is not on PATH.
 
 then please add the text between the single quotes (without the quotes) to your [PATH environment variable](https://helpdeskgeek.com/windows-10/add-windows-path-environment-variable/). Here `…\Scripts` is just a placeholder. Please use the value that `pip install` prints on your machine. If you used the [installer from the Python website](https://www.python.org/downloads) (and checked “Add Python to PATH”) or you used [winget](https://docs.microsoft.com/en-us/windows/package-manager/winget/) to install Python, then the warning above should not appear. On the other hand, the **Python version from the [Microsoft Store](https://www.microsoft.com/en-us/store/apps/windows) might not add the `Scripts` directory** to your path.
-
-#### Installing `tables` Package Fails
-
-If installing ICOc, specifically the `tables` ([PyTables](http://pytables.org)) package, on your machine fails with the following error message:
-
-> ERROR:: Could not find a local HDF5 installation
-
-then please take a look [here](#readme:section:pytables).
 
 ## Basic Usage
 
