@@ -66,7 +66,7 @@ class CommandLineInterface():
         self.bError = False
         self.iMsgLoss = 0
         self.iMsgsTotal = 0
-        self.iMsgCounterLast = 0
+        self.iMsgCounterLast = -1
         self.Can = Network('ICOc.log',
                            FreshLog=True,
                            sender=MyToolItNetworkNr["SPU1"],
@@ -519,7 +519,7 @@ class CommandLineInterface():
         self.vGraphSend(["dataBlockSize", self.iGraphBlockSize])
         self.vGraphSend(["sampleInterval", self.iGraphSampleInterval])
         self.vGraphSend(["xDim", Watch["DisplayTimeMax"]])
-        self.vGraphPacketLossUpdate(0)
+        self.vGraphPacketLossUpdate()
         if self.bAccX:
             self.vGraphSend(["lineNameX", "Acceleration X-Axis"])
         if self.bAccY:
@@ -547,9 +547,12 @@ class CommandLineInterface():
             self.tSocket.sendall(tArray2Binary(["data", self.GuiPackage]))
             self.GuiPackage = {"X": [], "Y": [], "Z": []}
 
-    def vGraphPacketLossUpdate(self, msgCounter):
-        self.iMsgCounterLast += 1
-        self.iMsgCounterLast %= 256
+    def vGraphPacketLossUpdate(self, msgCounter=-1):
+        if self.iMsgCounterLast == -1:
+            self.iMsgCounterLast = msgCounter
+        else:
+            self.iMsgCounterLast += 1
+            self.iMsgCounterLast %= 256
         if self.iMsgCounterLast != msgCounter:
             iLost = msgCounter - self.iMsgCounterLast
             self.iMsgLoss += iLost
