@@ -23,6 +23,7 @@ def main():
     files.extend(glob(f"{repo_path}/*.pdf"))
     files.extend(glob(f"{repo_path}/*ICOc*.log"))
     files.extend(glob(f"{repo_path}/can.log"))
+    files.extend(glob(f"{repo_path}/streaming.log"))
     if verbose:
         print(f"Cleaning directory {repo_path}")
     for filepath in files:
