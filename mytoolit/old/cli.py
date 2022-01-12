@@ -647,6 +647,10 @@ class CommandLineInterface():
                         file=stderr)
                     self.acceleration_range_g = 200
 
+                # ICOc does not use the network class to read the streaming
+                # data but uses the `Read` method of the PCAN API directly.
+                # This means we have to disable the read thread of the CAN
+                # class first.
                 self.Can.readThreadStop()
                 self.guiProcessRestart()
                 self.Can.Logger.Info("Start Acquiring Data")
