@@ -528,7 +528,7 @@ class CommandLineInterface():
             self.vGraphSend(["lineNameZ", "Acceleration Z-Axis"])
         self.vGraphSend(["Plot", True])
 
-    def vGraphPointNext(self, x, y, z):
+    def vGraphPointNext(self, x=0, y=0, z=0):
         if not self.guiProcess.is_alive():
             self.aquireEndTime = self.Can.get_elapsed_time()
             return
@@ -753,104 +753,41 @@ class CommandLineInterface():
             self.aquireEndTime = currentTime + self.iRunTime * 1000
         self.vGetStreamingAccDataProcess()
 
-    def store_values_single(self, prefix, canMsg):
-        timestamp = round(canMsg["PeakCanTime"], 3)
-        data = canMsg["CanMsg"].DATA
-
-        counter = data[1]
-        values = [
-            byte_list_to_int(data[start:start + 2])
-            for start in range(2, 8, 2)
-        ]
-        axis = prefix[-1].lower()
-
-        convert_acceleration = partial(convert_acceleration_adc_to_g,
-                                       max_value=self.acceleration_range_g)
-
-        for value in values:
-            self.storage.add_acceleration(
-                values={axis: convert_acceleration(value)},
-                counter=counter,
-                timestamp=timestamp)
-
-    def store_values_double(self, prefix1, prefix2, canMsg):
-        timestamp = round(canMsg["PeakCanTime"], 3)
-        data = canMsg["CanMsg"].DATA
-
-        counter = data[1]
-        values = [
-            byte_list_to_int(data[start:start + 2])
-            for start in range(2, 6, 2)
-        ]
-
-        convert_acceleration = partial(convert_acceleration_adc_to_g,
-                                       max_value=self.acceleration_range_g)
-
-        axes = [prefix[-1].lower() for prefix in (prefix1, prefix2)]
-        values = {
-            axis: convert_acceleration(value)
-            for axis, value in zip(axes, values)
-        }
-        self.storage.add_acceleration(values=values,
-                                      counter=counter,
-                                      timestamp=timestamp)
-
-    def store_values_tripple(self, prefix1, prefix2, prefix3, canMsg):
-        timestamp = round(canMsg["PeakCanTime"], 3)
-        data = canMsg["CanMsg"].DATA
-
-        counter = data[1]
-        values = [
-            byte_list_to_int(data[start:start + 2])
-            for start in range(2, 8, 2)
-        ]
-
-        convert_acceleration = partial(convert_acceleration_adc_to_g,
-                                       max_value=self.acceleration_range_g)
-
-        axes = [prefix[-1].lower() for prefix in (prefix1, prefix2, prefix3)]
-        values = {
-            axis: convert_acceleration(value)
-            for axis, value in zip(axes, values)
-        }
-        self.storage.add_acceleration(values=values,
-                                      counter=counter,
-                                      timestamp=timestamp)
-
     def GetMessageAcc(self, canData):
         data = canData["CanMsg"].DATA
-        msgCounter = data[1]
-        self.vGraphPacketLossUpdate(msgCounter)
+        timestamp = round(canData["PeakCanTime"], 3)
+        counter = data[1]
+        self.vGraphPacketLossUpdate(counter)
+
+        axes = [
+            axis for axis, activated in (('x', self.bAccX), ('y', self.bAccY),
+                                         ('z', self.bAccZ)) if activated
+        ]
+
+        if len(axes) <= 0:
+            return
 
         convert_acceleration = partial(convert_acceleration_adc_to_g,
                                        max_value=self.acceleration_range_g)
+        number_values = 3 if self.tAccDataFormat == DataSets[3] else len(axes)
+        values = [
+            convert_acceleration(byte_list_to_int(data[start:start + 2]))
+            for start in range(2, 2 + number_values * 2, 2)
+        ]
 
-        value1 = convert_acceleration(byte_list_to_int(data[2:4]))
         if self.tAccDataFormat == DataSets[1]:
-            value2 = convert_acceleration(byte_list_to_int(data[4:6]))
-            if self.bAccX and self.bAccY and not self.bAccZ:
-                self.store_values_double("AccX", "AccY", canData)
-                self.vGraphPointNext(value1, value2, 0)
-            elif self.bAccX and not self.bAccY and self.bAccZ:
-                self.store_values_double("AccX", "AccZ", canData)
-                self.vGraphPointNext(value1, 0, value2)
-            elif not self.bAccX and self.bAccY and self.bAccZ:
-                self.store_values_double("AccY", "AccZ", canData)
-                self.vGraphPointNext(0, value1, value2)
-            else:
-                value3 = convert_acceleration(byte_list_to_int(data[6:8]))
-                self.store_values_tripple("AccX", "AccY", "AccZ", canData)
-                self.vGraphPointNext(value1, value2, value3)
+            axis_values = {axis: value for axis, value in zip(axes, values)}
+            self.storage.add_acceleration(values=axis_values,
+                                          counter=counter,
+                                          timestamp=timestamp)
+            self.vGraphPointNext(**axis_values)
         elif self.tAccDataFormat == DataSets[3]:
-            if self.bAccX:
-                self.store_values_single("AccX", canData)
-                self.vGraphPointNext(value1, 0, 0)
-            elif self.bAccY:
-                self.store_values_single("AccY", canData)
-                self.vGraphPointNext(0, value1, 0)
-            elif self.bAccZ:
-                self.store_values_single("AccZ", canData)
-                self.vGraphPointNext(0, 0, value1)
+            axis = axes[0]
+            for value in values:
+                self.storage.add_acceleration(values={axis: value},
+                                              counter=counter,
+                                              timestamp=timestamp)
+            self.vGraphPointNext(**{axis: values[0]})
         else:
             self.Can.Logger.Error("Wrong Ack format")
 
