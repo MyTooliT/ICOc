@@ -554,7 +554,9 @@ class CommandLineInterface():
             self.iMsgCounterLast += 1
             self.iMsgCounterLast %= 256
         if self.iMsgCounterLast != msgCounter:
-            iLost = msgCounter - self.iMsgCounterLast
+            iLost = (msgCounter - self.iMsgCounterLast
+                     if msgCounter > self.iMsgCounterLast else 0xff -
+                     self.iMsgCounterLast + msgCounter)
             self.iMsgLoss += iLost
             self.iMsgsTotal += iLost
             if 0 > iLost:
