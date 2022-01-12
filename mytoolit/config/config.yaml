@@ -77,10 +77,10 @@ COMMANDS:
 LOGGER:
   CAN:
     # The value below specifies the minimum level of messages logged to
-    # `can.log`. Currently the logger only writes debug messages, which means
-    # ICOc will write CAN messages to `can.log`, if you specify the value
-    # `DEBUG`. If you use a different allowed value, such as `INFO` or `WARNING`
-    # no messages will be logged.
+    # `can.log` and `streaming.log`. Currently the logger only writes debug
+    # messages, which means ICOc will write CAN messages, if you specify the
+    # value `DEBUG`. If you use a different allowed value, such as `INFO` or
+    # `WARNING` no messages will be logged.
     LEVEL: INFO
 
 GUI:

@@ -6,12 +6,14 @@ from argparse import ArgumentDefaultsHelpFormatter
 from time import sleep, time
 from datetime import datetime
 from functools import partial
+from logging import getLogger, FileHandler, Formatter
 from pathlib import Path
 from sys import stderr
 from typing import Optional, Tuple
 
 from can.interfaces.pcan.basic import PCAN_ERROR_OK, PCAN_ERROR_QOVERRUN
 
+from mytoolit.can.message import Message
 from mytoolit.cmdline import axes_spec, mac_address, sth_name
 from mytoolit.config import settings
 from mytoolit.measurement.acceleration import convert_acceleration_adc_to_g
@@ -95,6 +97,14 @@ class CommandLineInterface():
 
         self.storage = None
         self.set_output_filename(self.args.filename)
+
+        logger = getLogger('cli')
+        # We use `Logger` in the code below, since the `.logger` attribute
+        # stores internal DynaConf data
+        logger.setLevel(settings.Logger.can.level)
+        handler = FileHandler('streaming.log', 'w', 'utf-8', delay=True)
+        handler.setFormatter(Formatter('{asctime} {message}', style='{'))
+        logger.addHandler(handler)
 
     def __exit__(self):
         if self.storage is not None:
@@ -811,6 +821,7 @@ class CommandLineInterface():
                 "PcTime": self.Can.get_elapsed_time(),
                 "PeakCanTime": peakCanTimeStamp
             }
+            getLogger('cli').debug(f"{Message(result[1])}")
         elif result[0] == PCAN_ERROR_QOVERRUN:
             self.Can.Logger.Error("RxOverRun")
             print("RxOverRun")
