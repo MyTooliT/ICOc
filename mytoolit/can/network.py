@@ -57,6 +57,13 @@ class Response(NamedTuple):
     error_message: str  # Optional explanation for the error reason
 
 
+class Times(NamedTuple):
+    """Advertisement time and time until deeper sleep mode"""
+
+    advertisement: float
+    sleep: int
+
+
 class STHDeviceInfo(NamedTuple):
     """Used to store information about a (disconnected) STH"""
 
@@ -933,6 +940,82 @@ class Network:
         return int.from_bytes(response.data[2:3],
                               byteorder='little',
                               signed=True)
+
+    async def read_energy_mode_reduced(self,
+                                       node: Union[str, Node] = 'STH 1',
+                                       device_number: int = 0xff) -> Times:
+        """Read the reduced energy mode (mode 1) time values of a device
+
+        The two values returned by this coroutine are also known as
+        advertisement time 1 and sleep time 1 in other parts of the code and
+        documentation.
+
+        You can use this method to retrieve these times for both
+
+        1. disconnected and
+        2. connected
+
+        devices.
+
+        1. For disconnected devices (STHs) you will usually use the STU (e.g.
+           `STU 1`) and the device number at the STU (in the range `0` up to
+           the number of devices - 1) to retrieve the time values.
+
+        2. For connected devices you will use the device name and the special
+           “self addressing” device number (`0xff`) to ask a device about its
+           own reduced energy mode time values.
+
+        Parameters
+        ----------
+
+        node:
+            The node which should retrieve the time values
+
+        device_number:
+            The number of the Bluetooth device (0 up to the number of
+            available devices - 1; 0xff for self addressing).
+
+        Example
+        -------
+
+        >>> from asyncio import run, sleep
+
+        Retrieve the time values of a disconnected STH
+
+        >>> async def read_energy_mode_reduced():
+        ...     async with Network() as network:
+        ...         await network.activate_bluetooth('STU 1')
+        ...
+        ...         # We assume that at least one STH is available
+        ...         # Get the timing values of device “0”
+        ...         return await network.read_energy_mode_reduced('STU 1', 0)
+        >>> times = run(read_energy_mode_reduced())
+        >>> times.advertisement == 1250
+        True
+        >>> times.sleep == 300000
+        True
+
+        Returns
+        -------
+
+        A tuple containing the advertisement time in the reduced energy mode
+        in milliseconds and the time until the device will go into the low
+        energy mode (mode 2) in milliseconds, if there is no activity
+
+        """
+
+        response = await self._request_bluetooth(
+            node=node,
+            subcommand=13,
+            description=("read reduced energy time values of "
+                         f"“{device_number}” from “{node}”"))
+
+        wait_time = int.from_bytes(response.data[2:6], byteorder='little')
+        advertisement_time = (
+            int.from_bytes(response.data[6:], byteorder='little') *
+            type(self).ADVERTISEMENT_TIME_EEPROM_TO_MS)
+
+        return Times(sleep=wait_time, advertisement=advertisement_time)
 
     async def get_sths(self,
                        node: Union[str,
