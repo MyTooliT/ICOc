@@ -260,6 +260,12 @@ class Message:
             elif subcommand == 9:
                 verb = "Acknowledge" if is_acknowledgment else "Request"
                 data_explanation = f"{verb} Bluetooth deactivation"
+            elif subcommand == 10:
+                verb = "Return" if is_acknowledgment else "Get"
+                data_explanation = f"{verb} Bluetooth send counter"
+                if is_acknowledgment and len(self.data) >= 8:
+                    counter = int.from_bytes(self.data[2:], byteorder='big')
+                    data_explanation += f": {counter}"
             elif subcommand == 12:
                 data_explanation = (f"{verb} RSSI of device "
                                     f"with device number “{device_number}”")
