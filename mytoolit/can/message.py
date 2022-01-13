@@ -279,11 +279,10 @@ class Message:
                 if len(self.data) >= 8:
                     time_normal_to_reduced_ms = int.from_bytes(
                         self.data[2:6], byteorder='little')
-                    advertisement_time = int.from_bytes(self.data[6:],
-                                                        byteorder='little')
-                    # TODO: Look up if the advertisement time reported by the
-                    #       command uses factor of 0.625 ms or reports value
-                    #       directly in milliseconds.
+                    ADVERTISEMENT_TIME_EEPROM_TO_MS = 0.625
+                    advertisement_time = (
+                        int.from_bytes(self.data[6:], byteorder='little') *
+                        ADVERTISEMENT_TIME_EEPROM_TO_MS)
                     data_explanation += ": " + ",".join([
                         f"⟳ {time_normal_to_reduced_ms} ms",
                         f"📢 {advertisement_time} ms"
