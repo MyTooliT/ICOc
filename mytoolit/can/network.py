@@ -230,7 +230,7 @@ class Network:
 
         # We create the notifier when we need it for the first time, since
         # there might not be an active loop when you create the network object
-        self.notifier = None
+        self._notifier = None
         self.sender = Node(sender)
 
         logger = getLogger('network.can')
@@ -283,10 +283,37 @@ class Network:
 
         await self.deactivate_bluetooth('STU 1')
 
-        if self.notifier is not None:
-            self.notifier.stop()
+        if self._notifier is not None:
+            self._notifier.stop()
 
         self.bus.shutdown()
+
+    @property
+    def notifier(self) -> Notifier:
+        """Access the CAN notifier
+
+        Returns
+        -------
+
+        The notifier object of this CAN class
+
+        """
+
+        # If there is no notifier yet, create it
+        if self._notifier is None:
+            # We explicitly specify the event loop, since not doing so slows
+            # down the execution considerably (adding multiple seconds of
+            # delay)
+            self._notifier = Notifier(self.bus,
+                                      listeners=[],
+                                      loop=get_running_loop())
+        else:
+            # The old event loop might be already closed
+            self._notifier._loop = get_running_loop()
+
+        assert self._notifier is not None
+
+        return self._notifier
 
     async def _request(self,
                        message: Message,
@@ -328,19 +355,6 @@ class Network:
             If the receiver answered with an error message
 
         """
-
-        # If there is no notifier yet, create it
-        if self.notifier is None:
-            # We explicitly specify the event loop, since not doing so slows
-            # down the execution considerably (adding multiple seconds of
-            # delay)
-            self.notifier = Notifier(self.bus,
-                                     listeners=[],
-                                     loop=get_running_loop())
-        else:
-            # The old event loop might be already closed
-            self.notifier._loop = get_running_loop()
-        assert self.notifier is not None
 
         for attempt in range(10):
 
