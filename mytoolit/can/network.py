@@ -81,6 +81,38 @@ class STHDeviceInfo(NamedTuple):
         ]))
 
 
+class Logger(Listener):
+    """Log ICOtronic CAN messages in a machine and human readable format"""
+
+    def __init__(self):
+        """Initialize the logger"""
+
+        logger = getLogger('network.can')
+        # We use `Logger` in the code below, since the `.logger` attribute
+        # stores internal DynaConf data
+        logger.setLevel(settings.Logger.can.level)
+        repo_root = Path(__file__).parent.parent.parent
+        handler = FileHandler(str(repo_root / "can.log"),
+                              'w',
+                              'utf-8',
+                              delay=True)
+        handler.setFormatter(Formatter('{asctime} {message}', style='{'))
+        logger.addHandler(handler)
+
+    def on_message_received(self, message: CANMessage) -> None:
+        """React to a received message on the bus
+
+        Parameters
+        ----------
+
+        message:
+            The received CAN message the notifier should react to
+
+        """
+
+        getLogger('network.can').debug(f"{Message(message)}")
+
+
 class ResponseListener(Listener):
     """A listener that reacts to messages containing a certain id"""
 
@@ -123,8 +155,6 @@ class ResponseListener(Listener):
             The received CAN message the notifier should react to
 
         """
-
-        getLogger('network.can').debug(f"{Message(message)}")
 
         identifier = message.arbitration_id
         error_response = identifier == self.error_identifier.value
@@ -233,18 +263,6 @@ class Network:
         self._notifier = None
         self.sender = Node(sender)
 
-        logger = getLogger('network.can')
-        # We use `Logger` in the code below, since the `.logger` attribute
-        # stores internal DynaConf data
-        logger.setLevel(settings.Logger.can.level)
-        repo_root = Path(__file__).parent.parent.parent
-        handler = FileHandler(str(repo_root / "can.log"),
-                              'w',
-                              'utf-8',
-                              delay=True)
-        handler.setFormatter(Formatter('{asctime} {message}', style='{'))
-        logger.addHandler(handler)
-
     async def __aenter__(self) -> Network:
         """Initialize the network
 
@@ -305,7 +323,7 @@ class Network:
             # down the execution considerably (adding multiple seconds of
             # delay)
             self._notifier = Notifier(self.bus,
-                                      listeners=[],
+                                      listeners=[Logger()],
                                       loop=get_running_loop())
         else:
             # The old event loop might be already closed
