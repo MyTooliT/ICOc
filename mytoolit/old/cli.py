@@ -698,7 +698,7 @@ class CommandLineInterface():
                                 "Wrong Subheader-Format(Acceleration Format): "
                                 + str(ack["CanMsg"].ID))
                         elif self.AccAckExpected.ID == ack["CanMsg"].ID:
-                            self.GetMessageAcc(ack)
+                            self.read_acceleration_data(ack)
                     else:
                         tTimeStamp = self.Can.get_elapsed_time()
                         if (tAliveTimeStamp +
@@ -772,7 +772,7 @@ class CommandLineInterface():
             self.aquireEndTime = currentTime + self.iRunTime * 1000
         self.vGetStreamingAccDataProcess()
 
-    def GetMessageAcc(self, canData):
+    def read_acceleration_data(self, canData):
         data = canData["CanMsg"].DATA
         timestamp = round(canData["PeakCanTime"], 3)
         counter = data[1]
