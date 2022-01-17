@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from asyncio import get_running_loop, Queue, sleep, TimeoutError, wait_for
 from datetime import date
+from functools import partial
 from logging import getLogger, FileHandler, Formatter
 from pathlib import Path
 from struct import pack, unpack
@@ -1538,6 +1539,70 @@ class Network:
         voltage_raw = int.from_bytes(voltage_bytes, 'little')
 
         return convert_voltage_adc_to_volts(voltage_raw)
+
+    async def start_streaming_acceleration(self):
+        """Start streaming acceleration data"""
+
+        streaming_format = StreamingFormatAcceleration(x=True,
+                                                       streaming=True,
+                                                       sets=1)
+        node = 'STH 1'
+        message = Message(block='Streaming',
+                          block_command='Acceleration',
+                          sender=self.sender,
+                          receiver=node,
+                          request=True,
+                          data=[streaming_format.value])
+
+        await self._request(
+            message,
+            description=f"enable acceleration data streaming of “{node}”")
+
+    async def stop_streaming_acceleration(self):
+        """Start streaming acceleration data"""
+
+        streaming_format = StreamingFormatAcceleration(x=True,
+                                                       streaming=True,
+                                                       sets=0)
+        node = 'STH 1'
+        message = Message(block='Streaming',
+                          block_command='Acceleration',
+                          sender=self.sender,
+                          receiver=node,
+                          request=True,
+                          data=[streaming_format.value])
+
+        await self._request(
+            message,
+            description=f"disable acceleration data streaming of “{node}”")
+
+    async def read_acceleration(self):
+        """Read x acceleration data"""
+
+        def read_acceleration_value(bytes):
+            pass
+
+        sensor_range_g = await self.read_acceleration_sensor_range_in_g()
+        convert_acceleration = partial(convert_acceleration_adc_to_g,
+                                       max_value=sensor_range_g)
+
+        reader = AsyncBufferedReader()
+        self.notifier.add_listener(reader)
+
+        await self.start_streaming_acceleration()
+
+        number_messages = 10
+        async for message in reader:
+            if number_messages <= 0:
+                break
+            x_acceleration = convert_acceleration(
+                int.from_bytes(message.data[2:4], byteorder='little'))
+            print(f"X Acceleration: {x_acceleration}")
+            number_messages -= 1
+
+        self.notifier.remove_listener(reader)
+
+        await self.stop_streaming_acceleration()
 
     # =================
     # = Configuration =
@@ -3726,6 +3791,32 @@ class Network:
                                       offset=4,
                                       value=offset,
                                       node='STH 1')
+
+    async def read_acceleration_sensor_range_in_g(self) -> int:
+        """Retrieve the maximum acceleration sensor range in multiples of g₀
+
+        - For a ±100 g₀ sensor this method returns 200 (100 + |-100|).
+        - For a ±50 g₀ sensor this method returns 100 (50 + |-50|).
+
+        For this to work correctly:
+
+        - STH 1 has to be connected via Bluetooth to the STU and
+        - the EEPROM value of the [x-axis acceleration offset][offset] has to
+          be set.
+
+        [offset]: https://mytoolit.github.io/Documentation/\
+        #value:acceleration-x-offset
+
+        Returns
+        -------
+
+        Range of current acceleration sensor in multiples of earth’s
+        gravitation
+
+        """
+
+        return round(
+            abs(await self.read_eeprom_x_axis_acceleration_offset()) * 2)
 
     # ================
     # = Product Data =
