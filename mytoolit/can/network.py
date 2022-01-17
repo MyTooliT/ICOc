@@ -10,7 +10,8 @@ from struct import pack, unpack
 from sys import platform
 from time import time
 from types import TracebackType
-from typing import List, NamedTuple, Optional, Sequence, Tuple, Type, Union
+from typing import (Any, Awaitable, AsyncIterator, List, NamedTuple, Optional,
+                    Sequence, Tuple, Type, Union)
 
 from can import Bus, Listener, Message as CANMessage, Notifier
 from can.interfaces.pcan.pcan import PcanError
@@ -36,6 +37,47 @@ from mytoolit.measurement import convert_voltage_adc_to_volts
 from mytoolit.utility import convert_bytes_to_text
 
 # -- Classes ------------------------------------------------------------------
+
+
+# -----------------------------------------------------------------------------
+# TODO: Remove the class `AsyncBufferedReader` below as soon as a new
+#       version of python-can that contains this fixed version of
+#       `AsyncBufferedReader` is released.
+#
+# Source: https://github.com/hardbyte/python-can/blob/can/listener.py
+# Commit: 2e24af08326ecd69fba9f02fed7b9c26f233c92b
+#
+# -----------------------------------------------------------------------------
+class AsyncBufferedReader(Listener):
+    """A message buffer for use with :mod:`asyncio`.
+    See :ref:`asyncio` for how to use with :class:`can.Notifier`.
+    Can also be used as an asynchronous iterator::
+        async for msg in reader:
+            print(msg)
+    """
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.buffer: Queue[Message] = Queue()
+
+    def on_message_received(self, msg: Message) -> None:
+        """Append a message to the buffer.
+        Must only be called inside an event loop!
+        """
+        self.buffer.put_nowait(msg)
+
+    async def get_message(self) -> Message:
+        """
+        Retrieve the latest message when awaited for::
+            msg = await reader.get_message()
+        :return: The CAN message.
+        """
+        return await self.buffer.get()
+
+    def __aiter__(self) -> AsyncIterator[Message]:
+        return self
+
+    def __anext__(self) -> Awaitable[Message]:
+        return self.buffer.get()
 
 
 class NetworkError(Exception):
