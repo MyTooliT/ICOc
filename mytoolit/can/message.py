@@ -322,11 +322,23 @@ class Message:
                                 if block_command == 'Acceleration' else
                                 StreamingFormatVoltage if block_command
                                 == 'Voltage' else StreamingFormat)
-        data_explanation += repr(StreamingFormatClass(self.data[0]))
+        streaming_format: StreamingFormat = StreamingFormatClass(self.data[0])
+        data_explanation += repr(streaming_format)
 
         if identifier.is_acknowledgment() and len(self.data) >= 2:
             sequence_counter = self.data[1]
-            data_explanation += f", Sequence Counter: {sequence_counter}"
+            explanations = [f"Sequence Counter: {sequence_counter}"]
+            size_value = streaming_format.data_bytes()
+            values = [
+                int.from_bytes(self.data[start:start + size_value],
+                               byteorder='little')
+                for start in range(2, len(self.data), size_value)
+            ]
+            explanations.extend([
+                f"{explanation}: {value}" for explanation, value in zip(
+                    streaming_format.value_explanations, values)
+            ])
+            data_explanation += ", " + ", ".join(explanations)
 
         return data_explanation
 
