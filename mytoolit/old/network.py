@@ -88,13 +88,13 @@ class Network(object):
             "OverSamplingRate": oversampling
         }
         # Configuration for acceleration streaming
-        # - Single Request
+        # - Streaming
         # - Do not collect any data (axes inactive)
         self.AccConfig = AtvcFormat()
         self.AccConfig.asbyte = 0
         self.AccConfig.b.bStreaming = 1
         # Configuration for voltage streaming
-        # - Single Request
+        # - Streaming
         # - Do not collect any data (voltages inactive)
         self.VoltageConfig = AtvcFormat()
         self.VoltageConfig.asbyte = 0

@@ -52,8 +52,8 @@ class AtvcFormatFlags(BigEndianStructure):
     """Byte format for streaming data
 
     bStreaming: Streaming or single request (latest data)
-        - 0: Streaming
-        - 1: Single request
+        - 0: Single request
+        - 1: Streaming
 
     bDataSetBytes: Number of bytes per data set
         - 0: 2 Bytes
