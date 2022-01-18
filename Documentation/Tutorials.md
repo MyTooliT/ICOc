@@ -149,7 +149,12 @@ All options below the section “Measurement” and “ADC” in the [help outpu
 icoc -p 110
 ```
 
-> **Note:** Due to a bug in the current firmware the amount of **paket loss is much higher**, if you enable data transmission for **exactly 2 axis (channels)**. We strongly recommend you **use either one or three channels**.
+> **Note:** Due to a problem in the current firmware the amount of **paket loss is much higher**, if you
+>
+> - use the standard ADC configuration values, and
+> - enable data transmission for **exactly 2 axes (channels)**.
+>
+> We strongly recommend you **use either one or three channels**.
 
 To change the run time of the measurement you can use the option `-r`, which takes the runtime in seconds as argument. The command
 
