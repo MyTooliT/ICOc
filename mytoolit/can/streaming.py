@@ -17,7 +17,7 @@ class StreamingFormat:
     def __init__(
         self,
         *value,
-        single: Optional[bool] = None,
+        streaming: Optional[bool] = None,
         width: Optional[int] = 2,
         first: Optional[bool] = None,
         second: Optional[bool] = None,
@@ -37,8 +37,10 @@ class StreamingFormat:
         Keyword Parameters
         ------------------
 
-        single:
-            Specifies if the request was for a single value or not
+        streaming:
+            Specifies if this is a request for a stream of data bytes;
+            If this value is not set or set to `False`, then the request is
+            only for a single value (or set of values).
 
         width:
             Specifies the width of a single value (either 2 or 3 bytes)
@@ -84,12 +86,12 @@ class StreamingFormat:
 
         self.value = value[0] if value else 0
 
-        # ==================
-        # = Single Request =
-        # ==================
+        # =============
+        # = Streaming =
+        # =============
 
-        if single:
-            set_part(7, 1, int(single))
+        if streaming:
+            set_part(7, 1, int(streaming))
 
         # =========
         # = Width =
@@ -133,17 +135,17 @@ class StreamingFormat:
         --------
 
         >>> StreamingFormat(width=3, first=True, sets=15)
-        Streaming, 3 Bytes, 15 Data Sets, Read Value 1
+        Single Request, 3 Bytes, 15 Data Sets, Read Value 1
 
-        >>> StreamingFormat(0b001, single=True)
-        Single Request, 2 Bytes, 1 Data Set
+        >>> StreamingFormat(0b001, streaming=True)
+        Streaming, 2 Bytes, 1 Data Set
 
         >>> StreamingFormat(0b110111)
-        Streaming, 2 Bytes, 30 Data Sets, Read Value 1, Read Value 2
+        Single Request, 2 Bytes, 30 Data Sets, Read Value 1, Read Value 2
 
         """
 
-        single_request = self.value >> 7
+        streaming = self.value >> 7
 
         data_sets = self.data_sets()
         data_set_explanation = ("Stop Stream"
@@ -151,7 +153,7 @@ class StreamingFormat:
                                     data_sets, "" if data_sets == 1 else "s"))
 
         parts = [
-            "Single Request" if single_request else "Streaming",
+            "Streaming" if streaming else "Single Request",
             f"{self.data_bytes()} Bytes",
             f"{data_set_explanation}",
         ]
@@ -277,14 +279,15 @@ class StreamingFormatAcceleration(StreamingFormat):
         --------
 
         >>> StreamingFormatAcceleration()
-        Streaming, 2 Bytes, Stop Stream
+        Single Request, 2 Bytes, Stop Stream
 
-        >>> StreamingFormatAcceleration(single=True, width=3, x=True, sets=6)
-        Single Request, 3 Bytes, 6 Data Sets, Read X Acceleration
+        >>> StreamingFormatAcceleration(streaming=True, width=3,
+        ...                             x=True, sets=6)
+        Streaming, 3 Bytes, 6 Data Sets, Read X Acceleration
 
         >>> StreamingFormatAcceleration(width=2, x=False, y=True, z=True,
         ...     sets=1) # doctest:+NORMALIZE_WHITESPACE
-        Streaming, 2 Bytes, 1 Data Set, Read Y Acceleration,
+        Single Request, 2 Bytes, 1 Data Set, Read Y Acceleration,
         Read Z Acceleration
 
         """
@@ -340,12 +343,13 @@ class StreamingFormatVoltage(StreamingFormat):
         Examples
         --------
 
-        >>> StreamingFormatVoltage(single=True, width=2, second=True, sets=10)
-        Single Request, 2 Bytes, 10 Data Sets, Read Voltage 2
+        >>> StreamingFormatVoltage(streaming=True, width=2, second=True,
+        ...                        sets=10)
+        Streaming, 2 Bytes, 10 Data Sets, Read Voltage 2
 
-        >>> StreamingFormatVoltage(single=False, width=3, first=False,
+        >>> StreamingFormatVoltage(streaming=False, width=3, first=False,
         ...                        second=True, third=True, sets=3)
-        Streaming, 3 Bytes, 3 Data Sets, Read Voltage 2, Read Voltage 3
+        Single Request, 3 Bytes, 3 Data Sets, Read Voltage 2, Read Voltage 3
 
         """
 
