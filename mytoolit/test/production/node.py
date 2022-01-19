@@ -224,7 +224,7 @@ class TestNode(TestCase):
                                   receiver=receiver,
                                   oversampling=AdcOverSamplingRate[64])
 
-            # Reset STU (and STH)
+            # Reset STU (and SMH/STH)
             self.can.bConnected = False
             return_message = self.can.reset_node("STU 1")
             self.can.CanTimeStampStart(return_message['CanTime'])
@@ -258,13 +258,16 @@ class TestNode(TestCase):
     async def _test_connection(self):
         """Check connection to node"""
 
-        # The last three characters of the calling subclass (`TestSTU` or
-        # `TestSTH`) contain the name of the node (`STU` or `STH`)
+        # The last three characters of the calling subclass (`TestMHS`,
+        # `TestSTU` or `TestSTH`) contains the name of the node (`SMH`, `STU`,
+        # `STH`)
         cls = type(self)
         node = cls.__name__[-3:]
+        # For this test the sensory milling head acts the same way as an STH
+        node = 'STH' if node == 'SMH' else node
         if node == 'STH':
-            # The STH needs a little more time to switch from the “Startup” to
-            # the “Operating” state
+            # The sensor devices need a little more time to switch from the
+            # “Startup” to the “Operating” state
             await async_sleep(1)
 
         # Just send a request for the state and check if the result matches

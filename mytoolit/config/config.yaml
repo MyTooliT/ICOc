@@ -107,6 +107,10 @@ OPERATOR:
   # The name of the operator that executes the hardware tests
   NAME: *username
 
+SMH:
+  # This value specifies the current name of the milling head sensor
+  NAME: D125_001
+
 STH:
   ACCELERATION SENSOR:
     # Values for the Analog Devices ± 100g analog accelerometer sensor ADXL1001.
