@@ -7,23 +7,17 @@ from unittest import main as unittest_main, skipIf
 from mytoolit.can import Node
 from mytoolit.measurement import ratio_noise_max
 from mytoolit.config import settings
-from mytoolit.test.production import TestNode
+from mytoolit.test.production import TestSensorDevice
 from mytoolit.test.unit import ExtendedTestRunner
 from mytoolit.utility import (add_commander_path_to_environment,
                               convert_mac_base64)
 
-from mytoolit.old.MyToolItCommands import (
-    DataSets,
-    MyToolItBlock,
-    MyToolItProductData,
-    MyToolItStreaming,
-    int_to_mac_address,
-)
+from mytoolit.old.MyToolItCommands import DataSets, MyToolItStreaming
 
 # -- Classes ------------------------------------------------------------------
 
 
-class TestSTH(TestNode):
+class TestSTH(TestSensorDevice):
     """This class contains tests for the Sensory Tool Holder (STH)"""
 
     @classmethod
@@ -78,55 +72,7 @@ class TestSTH(TestNode):
     def _connect(self):
         """Create a connection to the STH"""
 
-        # Connect to STU
-        super()._connect()
-        # Connect to STH
-        new_network = hasattr(self.can, 'bus')
-        self.loop.run_until_complete(self.can.connect_sth(
-            settings.sth_name())) if new_network else (
-                self.can.bBlueToothConnectPollingName(
-                    Node('STU 1').value, settings.sth_name(), log=False))
-
-    def _disconnect(self):
-        """Tear down connection to STH"""
-
-        # Disconnect from STU
-        super()._disconnect()
-
-    def _read_data(self):
-        """Read data from connected STH"""
-
-        def read_data_old():
-            """Read data using the old network class"""
-
-            cls.bluetooth_mac = int_to_mac_address(
-                self.can.BlueToothAddress(Node('STH 1').value))
-            cls.bluetooth_rssi = self.can.BlueToothRssi(Node('STH 1').value)
-
-            index = self.can.cmdSend(
-                Node('STH 1').value, MyToolItBlock['Product Data'],
-                MyToolItProductData['Firmware Version'], [])
-            version = self.can.getReadMessageData(index)[-3:]
-
-            cls.firmware_version = '.'.join(map(str, version))
-
-        async def read_data_new():
-            """Read data using the old network class"""
-
-            node = 'STH 1'
-            cls.bluetooth_mac = await self.can.get_mac_address(node)
-            cls.bluetooth_rssi = await self.can.get_rssi(node)
-            cls.firmware_version = await self.can.get_firmware_version(node)
-
-        cls = type(self)
-        # This is more or less placeholder code, until we handle the naming
-        # process gracefully. Currently the whole test requires that we know
-        # the name of the STH in advance.
-        cls.name = settings.sth_name()
-
-        new_network = hasattr(self.can, 'bus')
-        self.loop.run_until_complete(
-            read_data_new()) if new_network else read_data_old()
+        super()._connect_device(settings.sth_name())
 
     @skipIf(settings.sth.status == "Epoxied",
             f"Flash test skipped because of status “{settings.sth.status}”")
