@@ -2,7 +2,7 @@
 
 from mytoolit.can import Node
 from mytoolit.config import settings
-from mytoolit.test.production import TestNode
+from mytoolit.test.production import create_attribute, TestNode
 
 from mytoolit.old.MyToolItCommands import (
     MyToolItBlock,
@@ -15,6 +15,19 @@ from mytoolit.old.MyToolItCommands import (
 
 class TestSensorDevice(TestNode):
     """This class contains support code for sensor devices (SMH & STH)"""
+
+    possible_attributes = TestNode.possible_attributes + [
+        create_attribute("Ratio Noise Maximum",
+                         "{cls.ratio_noise_max:.3f} dB"),
+        create_attribute("Sleep Time 1", "{cls.sleep_time_1} ms", pdf=False),
+        create_attribute("Advertisement Time 1",
+                         "{cls.advertisement_time_1} ms",
+                         pdf=False),
+        create_attribute("Sleep Time 2", "{cls.sleep_time_2} ms", pdf=False),
+        create_attribute("Advertisement Time 2",
+                         "{cls.advertisement_time_2} ms",
+                         pdf=False),
+    ]
 
     def _connect_device(self, name: str) -> None:
         """Create a connection to the device with the specified name
