@@ -2,6 +2,7 @@
 
 from unittest import main as unittest_main
 
+from mytoolit.config import settings
 from mytoolit.test.production import TestNode
 from mytoolit.test.unit import ExtendedTestRunner
 from mytoolit.utility import add_commander_path_to_environment
@@ -53,7 +54,12 @@ class TestSTU(TestNode):
         sure this test case is executed before all other test cases.
         """
 
-        self._test_firmware_flash()
+        self._test_firmware_flash(
+            node='STU',
+            flash_location=settings.stu.firmware.location.flash,
+            programmmer_serial_number=settings.stu.programming_board.
+            serial_number,
+            chip='BGM111A256V2')
 
     def test_connection(self):
         """Check connection to STU"""

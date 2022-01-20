@@ -3,9 +3,11 @@
 from asyncio import new_event_loop, set_event_loop, sleep as async_sleep
 from datetime import date, datetime
 from os.path import abspath, isfile, dirname, join
+from pathlib import Path
 from re import escape
 from subprocess import run
 from types import SimpleNamespace
+from typing import Union
 from unittest import TestCase
 
 from mytoolit.can import Network, Node, State
@@ -264,22 +266,13 @@ class TestNode(TestCase):
             f"Expected state “{expected_state}” does not match "
             f"received state “{state}”")
 
-    def _test_firmware_flash(self):
+    def _test_firmware_flash(self, node: str, flash_location: Union[str, Path],
+                             programmmer_serial_number: int, chip: str):
         """Upload bootloader and application into node"""
 
-        # The last three characters of the calling subclass (`TestSTU` or
-        # `TestSTH`) contain the name of the node (`STU` or `STH`)
-        cls = type(self)
-        node = cls.__name__[-3:]
-
-        programming_board_serial_number = str(
-            settings.sth.programming_board.serial_number if node ==
-            'STH' else settings.stu.programming_board.serial_number)
-
-        chip = "BGM113A256V2" if node == 'STH' else 'BGM111A256V2'
-
         identification_arguments = [
-            "--serialno", programming_board_serial_number, "-d", chip
+            "--serialno",
+            str(programmmer_serial_number), "-d", chip
         ]
 
         # Set debug mode to out, to make sure we flash the STH (connected via
@@ -293,7 +286,7 @@ class TestNode(TestCase):
             "Unable to change debug mode of programming board\n\n" +
             "Possible Reasons:\n\n• No programming board connected\n" +
             "• Serial Number of programming board " +
-            f"({programming_board_serial_number}) is incorrect")
+            f"({programmmer_serial_number}) is incorrect")
 
         # Unlock debug access
         unlock_command = ("commander device unlock".split() +
@@ -307,9 +300,6 @@ class TestNode(TestCase):
         self.assertRegex(status.stdout, "Chip successfully unlocked",
                          "Unable to unlock debug access of chip")
 
-        # Upload bootloader and application data
-        flash_location = (settings.sth.firmware.location.flash if node == 'STH'
-                          else settings.stu.firmware.location.flash)
         repository_root = dirname(dirname(dirname(dirname(abspath(__file__)))))
         image_filepath = join(repository_root, flash_location)
         self.assertTrue(isfile(image_filepath),

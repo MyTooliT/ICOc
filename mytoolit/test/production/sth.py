@@ -101,7 +101,12 @@ class TestSTH(TestSensorDevice):
         sure this test case is executed before all other test cases.
         """
 
-        self._test_firmware_flash()
+        self._test_firmware_flash(
+            node='STH',
+            flash_location=settings.sth.firmware.location.flash,
+            programmmer_serial_number=settings.sth.programming_board.
+            serial_number,
+            chip='BGM113A256V2')
 
     def test_connection(self):
         """Check connection to STH"""
