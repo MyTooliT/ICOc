@@ -62,7 +62,6 @@ class TestSensorDevice(TestNode):
             cls.firmware_version = await self.can.get_firmware_version(node)
 
         cls = type(self)
-        cls.name = settings.sth_name()
 
         new_network = hasattr(self.can, 'bus')
         self.loop.run_until_complete(

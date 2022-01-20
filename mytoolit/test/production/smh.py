@@ -18,6 +18,14 @@ class TestSMH(TestSensorDevice):
 
         super()._connect_device(settings.smh.name)
 
+    def _read_data(self):
+        """Read data from connected SMH"""
+
+        super()._read_data()
+
+        cls = type(self)
+        cls.name = settings.smh.name
+
     def test_connection(self):
         """Check connection to SMH"""
 
