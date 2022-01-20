@@ -67,3 +67,44 @@ class TestSensorDevice(TestNode):
         new_network = hasattr(self.can, 'bus')
         self.loop.run_until_complete(
             read_data_new()) if new_network else read_data_old()
+
+    async def _test_eeprom_sleep_advertisement_times(self):
+        """Test if reading and writing of sleep/advertisement times works"""
+
+        async def read_write_time(read_function, write_function, variable,
+                                  description, milliseconds):
+            await write_function(milliseconds)
+            milliseconds_read = round(await read_function())
+            setattr(type(self), variable, milliseconds_read)
+            self.assertEqual(
+                milliseconds_read, milliseconds,
+                f"{description} {milliseconds_read} ms does not match "
+                f" written value of {milliseconds} ms")
+
+        await read_write_time(
+            read_function=self.can.read_eeprom_sleep_time_1,
+            write_function=self.can.write_eeprom_sleep_time_1,
+            variable='sleep_time_1',
+            description="Sleep Time 1",
+            milliseconds=settings.sth.bluetooth.sleep_time_1)
+
+        await read_write_time(
+            read_function=self.can.read_eeprom_advertisement_time_1,
+            write_function=self.can.write_eeprom_advertisement_time_1,
+            variable='advertisement_time_1',
+            description="Advertisement Time 1",
+            milliseconds=settings.sth.bluetooth.advertisement_time_1)
+
+        await read_write_time(
+            read_function=self.can.read_eeprom_sleep_time_2,
+            write_function=self.can.write_eeprom_sleep_time_2,
+            variable='sleep_time_2',
+            description="Sleep Time 2",
+            milliseconds=settings.sth.bluetooth.sleep_time_2)
+
+        await read_write_time(
+            read_function=self.can.read_eeprom_advertisement_time_2,
+            write_function=self.can.write_eeprom_advertisement_time_2,
+            variable='advertisement_time_2',
+            description="Advertisement Time 2",
+            milliseconds=settings.sth.bluetooth.advertisement_time_2)
