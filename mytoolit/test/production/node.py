@@ -341,16 +341,24 @@ class TestNode(TestCase):
             f"Flash output did not contain expected output “{expected_output}”"
         )
 
-    async def _test_eeprom_product_data(self):
-        """Test if reading and writing the product data EEPROM page works"""
+    async def _test_eeprom_product_data(self, node, config):
+        """Test if reading and writing the product data EEPROM page works
+
+        Parameters
+        ----------
+
+        node:
+            The node to which this method writes to and reads from
+
+        config
+            A configuration object that stores the various product data
+            attributes
+
+        """
 
         cls = type(self)
 
-        # The last three characters of the calling subclass (`TestSTU` or
-        # `TestSTH`) contain the name of the node (`STU` or `STH`)
-        node = cls.__name__[-3:]
-        config = settings.sth if node == 'STH' else settings.stu
-        receiver = f"{node} 1"
+        receiver = node
 
         # ========
         # = GTIN =

@@ -287,7 +287,7 @@ class TestSTH(TestSensorDevice):
             # = Product Data =
             # ================
 
-            await super_class._test_eeprom_product_data()
+            await super_class._test_eeprom_product_data(receiver, settings.sth)
 
             # ==============
             # = Statistics =
