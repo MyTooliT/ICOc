@@ -1,5 +1,7 @@
 # -- Imports ------------------------------------------------------------------
 
+from time import sleep
+
 from mytoolit.can import Node
 from mytoolit.config import settings
 from mytoolit.test.production import create_attribute, TestNode
@@ -79,6 +81,21 @@ class TestSensorDevice(TestNode):
         new_network = hasattr(self.can, 'bus')
         self.loop.run_until_complete(
             read_data_new()) if new_network else read_data_old()
+
+    def _test_connection_device(self):
+        """Check connection to sensor device
+
+        This tests sends a command from the STU (with the identifier of SPU1)
+        to the STH/Smh and checks if the acknowledgment message from the STH
+        contains the same data as the sent message (, except for switched
+        sender/receiver and flipped acknowledgment bit).
+        """
+
+        # The sensor devices need a little more time to switch from the
+        # “Startup” to the “Operating” state
+        sleep(1)
+
+        self.loop.run_until_complete(self._test_connection('STH 1'))
 
     async def _test_eeprom_sleep_advertisement_times(self):
         """Test if reading and writing of sleep/advertisement times works"""

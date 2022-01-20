@@ -58,7 +58,7 @@ class TestSTU(TestNode):
     def test_connection(self):
         """Check connection to STU"""
 
-        self.loop.run_until_complete(self._test_connection())
+        self.loop.run_until_complete(self._test_connection('STU 1'))
 
     def test_eeprom(self):
         """Test if reading and writing the EEPROM works"""

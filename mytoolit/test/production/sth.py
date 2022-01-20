@@ -104,15 +104,9 @@ class TestSTH(TestSensorDevice):
         self._test_firmware_flash()
 
     def test_connection(self):
-        """Check connection to STH
+        """Check connection to STH"""
 
-        This tests sends a command from the STU (with the identifier of SPU1)
-        to the STH and checks if the acknowledgment message from the STH
-        contains the same data as the sent message (, except for switched
-        sender/receiver and flipped acknowledgment bit).
-        """
-
-        self.loop.run_until_complete(self._test_connection())
+        super()._test_connection_device()
 
     def test_battery_voltage(self):
         """Test voltage of STH power source"""

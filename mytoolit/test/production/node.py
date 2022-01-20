@@ -235,25 +235,25 @@ class TestNode(TestCase):
         else:
             self.can.__exit__()
 
-    async def _test_connection(self):
-        """Check connection to node"""
+    async def _test_connection(self, node: str):
+        """Check connection to node
 
-        # The last three characters of the calling subclass (`TestMHS`,
-        # `TestSTU` or `TestSTH`) contains the name of the node (`SMH`, `STU`,
-        # `STH`)
-        cls = type(self)
-        node = cls.__name__[-3:]
-        # For this test the sensory milling head acts the same way as an STH
-        node = 'STH' if node == 'SMH' else node
-        if node == 'STH':
-            # The sensor devices need a little more time to switch from the
-            # “Startup” to the “Operating” state
-            await async_sleep(1)
+        Parameters
+        ----------
+
+        node:
+            The node for which the connection should be checked
+
+        """
+
+        # The sensor devices need a little more time to switch from the
+        # “Startup” to the “Operating” state
+        await async_sleep(1)
 
         # Just send a request for the state and check if the result matches
         # our expectations. The identifier of the answer will be checked by
         # (the notifier in) the network class already.
-        state = await self.can.get_state(f'{node} 1')
+        state = await self.can.get_state(node)
 
         expected_state = State(mode='Get',
                                location='Application',
