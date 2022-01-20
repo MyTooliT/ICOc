@@ -31,6 +31,41 @@ class TestSMH(TestSensorDevice):
 
         self.loop.run_until_complete(self._test_connection())
 
+    def test_eeprom(self):
+        """Test if reading and writing the EEPROM works"""
+
+        async def test_eeprom():
+            """Test the EERPOM of the SMH"""
+
+            cls = type(self)
+            receiver = 'STH 1'
+
+            # ========
+            # = Name =
+            # ========
+
+            name = settings.smh.name
+
+            await self.can.write_eeprom_name(name, receiver)
+            read_name = await self.can.read_eeprom_name(receiver)
+
+            self.assertEqual(
+                name, read_name,
+                f"Written name “{name}” does not match read name “{read_name}”"
+            )
+
+            cls.name = read_name
+
+            super_class = super(cls, self)
+
+            # =========================
+            # = Sleep & Advertisement =
+            # =========================
+
+            await super_class._test_eeprom_sleep_advertisement_times()
+
+        self.loop.run_until_complete(test_eeprom())
+
 
 # -- Main ---------------------------------------------------------------------
 

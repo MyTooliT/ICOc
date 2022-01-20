@@ -107,6 +107,18 @@ OPERATOR:
   # The name of the operator that executes the hardware tests
   NAME: *username
 
+# Shared values for SMH/STH
+SENSORY_DEVICE:
+  BLUETOOTH:
+    # Advertisement time 1 in ms
+    ADVERTISEMENT TIME 1: 1250
+    # Advertisement time 2 in ms
+    ADVERTISEMENT TIME 2: 2500
+    # Time to from disconnect or power on to sleep mode 1 in ms
+    SLEEP TIME 1: 300000
+    # Time to/from entering sleep mode 1 to sleep mode 2 in ms
+    SLEEP TIME 2: 259200000
+
 SMH:
   # This value specifies the current name of the milling head sensor
   NAME: D125_001
@@ -166,15 +178,6 @@ STH:
   BATTERY VOLTAGE:
     AVERAGE: 3.6 # Expected value of power source voltage in Volt
     TOLERANCE: 0.6 # Tolerance for expected power source voltage in Volt
-  BLUETOOTH:
-    # Advertisement time 1 in ms
-    ADVERTISEMENT TIME 1: 1250
-    # Advertisement time 2 in ms
-    ADVERTISEMENT TIME 2: 2500
-    # Time to from disconnect or power on to sleep mode 1 in ms
-    SLEEP TIME 1: 300000
-    # Time to/from entering sleep mode 1 to sleep mode 2 in ms
-    SLEEP TIME 2: 259200000
 
   FIRMWARE:
     LOCATION:
