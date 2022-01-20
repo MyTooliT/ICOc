@@ -268,7 +268,24 @@ class TestNode(TestCase):
 
     def _test_firmware_flash(self, node: str, flash_location: Union[str, Path],
                              programmmer_serial_number: int, chip: str):
-        """Upload bootloader and application into node"""
+        """Upload bootloader and application into node
+
+        Parameters
+        ----------
+
+        node:
+            A textual description of the device/node that will be flashed
+
+        flash_location:
+            The location of the flash image
+
+        programmer_serial_number:
+            The serial number of the programming board
+
+        chip:
+            The name of the chip that should be flashed
+
+        """
 
         identification_arguments = [
             "--serialno",
