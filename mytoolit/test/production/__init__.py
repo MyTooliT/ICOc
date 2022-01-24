@@ -1,4 +1,4 @@
 # -- Exports ------------------------------------------------------------------
 
 from .node import create_attribute, TestNode
-from .sensor_device import TestSensorDevice
+from .sensor_node import TestSensorNode

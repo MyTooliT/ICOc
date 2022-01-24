@@ -15,7 +15,7 @@ from mytoolit.old.MyToolItCommands import (
 # -- Classes ------------------------------------------------------------------
 
 
-class TestSensorDevice(TestNode):
+class TestSensorNode(TestNode):
     """This class contains support code for sensor devices (SMH & STH)"""
 
     possible_attributes = TestNode.possible_attributes + [

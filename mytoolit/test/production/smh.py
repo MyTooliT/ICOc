@@ -3,14 +3,14 @@
 from unittest import main as unittest_main
 
 from mytoolit.config import settings
-from mytoolit.test.production import TestSensorDevice
+from mytoolit.test.production import TestSensorNode
 from mytoolit.test.unit import ExtendedTestRunner
 from mytoolit.utility import add_commander_path_to_environment
 
 # -- Class --------------------------------------------------------------------
 
 
-class TestSMH(TestSensorDevice):
+class TestSMH(TestSensorNode):
     """This class contains tests for the milling head sensor (PCB)"""
 
     def _connect(self):

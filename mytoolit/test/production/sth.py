@@ -7,7 +7,7 @@ from unittest import main as unittest_main, skipIf
 from mytoolit.can import Node
 from mytoolit.measurement import ratio_noise_max
 from mytoolit.config import settings
-from mytoolit.test.production import create_attribute, TestSensorDevice
+from mytoolit.test.production import create_attribute, TestSensorNode
 from mytoolit.test.unit import ExtendedTestRunner
 from mytoolit.utility import (add_commander_path_to_environment,
                               convert_mac_base64)
@@ -17,10 +17,10 @@ from mytoolit.old.MyToolItCommands import DataSets, MyToolItStreaming
 # -- Classes ------------------------------------------------------------------
 
 
-class TestSTH(TestSensorDevice):
+class TestSTH(TestSensorNode):
     """This class contains tests for the Sensory Tool Holder (STH)"""
 
-    possible_attributes = TestSensorDevice.possible_attributes + [
+    possible_attributes = TestSensorNode.possible_attributes + [
         create_attribute("Holder Type", "{cls.holder_type}", pdf=True),
         create_attribute(
             "Acceleration Sensor", "{cls.acceleration_sensor}", pdf=True),
