@@ -4,7 +4,7 @@ from time import sleep
 
 from mytoolit.can import Node
 from mytoolit.config import settings
-from mytoolit.test.production import create_attribute, TestNode
+from mytoolit.test.production import TestNode
 
 from mytoolit.old.MyToolItCommands import (
     MyToolItBlock,
@@ -18,19 +18,23 @@ from mytoolit.old.MyToolItCommands import (
 class TestSensorNode(TestNode):
     """This class contains support code for sensor devices (SMH & STH)"""
 
-    possible_attributes = TestNode.possible_attributes + [
-        create_attribute("Serial Number", "{cls.serial_number}", pdf=True),
-        create_attribute("Ratio Noise Maximum",
-                         "{cls.ratio_noise_max:.3f} dB"),
-        create_attribute("Sleep Time 1", "{cls.sleep_time_1} ms", pdf=False),
-        create_attribute("Advertisement Time 1",
-                         "{cls.advertisement_time_1} ms",
-                         pdf=False),
-        create_attribute("Sleep Time 2", "{cls.sleep_time_2} ms", pdf=False),
-        create_attribute("Advertisement Time 2",
-                         "{cls.advertisement_time_2} ms",
-                         pdf=False),
-    ]
+    @classmethod
+    def setUpClass(cls):
+        """Set up data for whole test"""
+
+        super().setUpClass()
+
+        cls.add_attribute("Serial Number", "{cls.serial_number}", pdf=True)
+        cls.add_attribute("Ratio Noise Maximum",
+                          "{cls.ratio_noise_max:.3f} dB")
+        cls.add_attribute("Sleep Time 1", "{cls.sleep_time_1} ms", pdf=False)
+        cls.add_attribute("Advertisement Time 1",
+                          "{cls.advertisement_time_1} ms",
+                          pdf=False)
+        cls.add_attribute("Sleep Time 2", "{cls.sleep_time_2} ms", pdf=False)
+        cls.add_attribute("Advertisement Time 2",
+                          "{cls.advertisement_time_2} ms",
+                          pdf=False)
 
     def _connect_device(self, name: str) -> None:
         """Create a connection to the device with the specified name

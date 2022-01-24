@@ -7,7 +7,7 @@ from pathlib import Path
 from re import escape
 from subprocess import run
 from types import SimpleNamespace
-from typing import Union
+from typing import List, Union
 from unittest import TestCase
 
 from dynaconf.utils.boxing import DynaBox
@@ -21,35 +21,6 @@ from mytoolit.eeprom import EEPROMStatus
 from mytoolit.old.network import Network as OldNetwork
 from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
 from mytoolit.old.MyToolItCommands import AdcOverSamplingRate
-
-# -- Functions ----------------------------------------------------------------
-
-
-def create_attribute(description, value, pdf=True):
-    """Create a simple object that stores test attributes
-
-
-    Parameters
-    ----------
-
-    description:
-        The description (name) of the attribute
-
-    value:
-        The value of the attribute
-
-    pdf:
-        True if the attribute should be added to the PDF report
-
-
-    Returns
-    -------
-
-    A simple namespace object that stores the specified data
-    """
-
-    return SimpleNamespace(description=description, value=str(value), pdf=pdf)
-
 
 # -- Class --------------------------------------------------------------------
 
@@ -77,39 +48,42 @@ class TestNode(TestCase):
     under_voltage_counter: int
     watchdog_reset_counter: int
 
-    possible_attributes = [
-        create_attribute("EEPROM Status", "{cls.eeprom_status}", pdf=False),
-        create_attribute("Name", "{cls.name}"),
-        create_attribute("Status", "{cls.status}"),
-        create_attribute("Production Date", "{cls.production_date}",
-                         pdf=False),
-        create_attribute("GTIN", "{cls.gtin}", pdf=False),
-        create_attribute("Product Name", "{cls.product_name}", pdf=False),
-        create_attribute("Batch Number", "{cls.batch_number}", pdf=False),
-        create_attribute("Bluetooth Address", "{cls.bluetooth_mac}"),
-        create_attribute("RSSI", "{cls.bluetooth_rssi} dBm"),
-        create_attribute("Hardware Version", "{cls.hardware_version}"),
-        create_attribute("Firmware Version", "{cls.firmware_version}"),
-        create_attribute("Release Name", "{cls.release_name}", pdf=False),
-        create_attribute("OEM Data", "{cls.oem_data}", pdf=False),
-        create_attribute("Power On Cycles", "{cls.power_on_cycles}",
-                         pdf=False),
-        create_attribute("Power Off Cycles",
-                         "{cls.power_off_cycles}",
-                         pdf=False),
-        create_attribute("Under Voltage Counter",
-                         "{cls.under_voltage_counter}",
-                         pdf=False),
-        create_attribute("Watchdog Reset Counter",
-                         "{cls.watchdog_reset_counter}",
-                         pdf=False),
-        create_attribute("Operating Time", "{cls.operating_time} s",
-                         pdf=False),
-    ]
+    possible_attributes: List[SimpleNamespace] = []
 
     @classmethod
     def setUpClass(cls):
         """Set up data for whole test"""
+
+        cls.add_attribute("EEPROM Status", "{cls.eeprom_status}", pdf=False)
+        cls.add_attribute("Name", "{cls.name}")
+        cls.add_attribute("Status", "{cls.status}")
+        cls.add_attribute("Production Date",
+                          "{cls.production_date}",
+                          pdf=False)
+        cls.add_attribute("GTIN", "{cls.gtin}", pdf=False)
+        cls.add_attribute("Product Name", "{cls.product_name}", pdf=False)
+        cls.add_attribute("Batch Number", "{cls.batch_number}", pdf=False)
+        cls.add_attribute("Bluetooth Address", "{cls.bluetooth_mac}")
+        cls.add_attribute("RSSI", "{cls.bluetooth_rssi} dBm")
+        cls.add_attribute("Hardware Version", "{cls.hardware_version}")
+        cls.add_attribute("Firmware Version", "{cls.firmware_version}")
+        cls.add_attribute("Release Name", "{cls.release_name}", pdf=False)
+        cls.add_attribute("OEM Data", "{cls.oem_data}", pdf=False)
+        cls.add_attribute("Power On Cycles",
+                          "{cls.power_on_cycles}",
+                          pdf=False)
+        cls.add_attribute("Power Off Cycles",
+                          "{cls.power_off_cycles}",
+                          pdf=False)
+        cls.add_attribute("Under Voltage Counter",
+                          "{cls.under_voltage_counter}",
+                          pdf=False)
+        cls.add_attribute("Watchdog Reset Counter",
+                          "{cls.watchdog_reset_counter}",
+                          pdf=False)
+        cls.add_attribute("Operating Time",
+                          "{cls.operating_time} s",
+                          pdf=False)
 
         # We store attributes related to the connection, such as MAC address
         # only once. To do that we set `read_attributes` to true after
@@ -135,10 +109,12 @@ class TestNode(TestCase):
         operator = settings.operator.name
 
         attributes = [
-            create_attribute("ICOc Version", __version__),
-            create_attribute("Date", date),
-            create_attribute("Time", time),
-            create_attribute("Operator", operator),
+            SimpleNamespace(description="ICOc Version",
+                            value=__version__,
+                            pdf=True),
+            SimpleNamespace(description="Date", value=date, pdf=True),
+            SimpleNamespace(description="Time", value=time, pdf=True),
+            SimpleNamespace(description="Operator", value=operator, pdf=True),
         ]
 
         cls.__output_data(attributes, node_data=False)
@@ -198,6 +174,27 @@ class TestNode(TestCase):
         for attribute in attributes_pdf:
             cls.report.add_attribute(attribute.description, attribute.value,
                                      node_data)
+
+    @classmethod
+    def add_attribute(cls, name: str, value: object, pdf: bool = True) -> None:
+        """Add a test attribute
+
+        Parameters
+        ----------
+
+        name:
+            The description (name) of the attribute
+
+        value:
+            The value of the attribute
+
+        pdf:
+            True if the attribute should be added to the PDF report
+
+        """
+
+        cls.possible_attributes.append(
+            SimpleNamespace(description=name, value=str(value), pdf=pdf))
 
     def _connect(self):
         """Create a connection to the STU"""

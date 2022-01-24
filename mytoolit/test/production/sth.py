@@ -8,7 +8,7 @@ from mytoolit.can import Node
 from mytoolit.measurement import ratio_noise_max
 from mytoolit.config import settings
 from mytoolit.report import Report
-from mytoolit.test.production import create_attribute, TestSensorNode
+from mytoolit.test.production import TestSensorNode
 from mytoolit.test.unit import ExtendedTestRunner
 from mytoolit.utility import (add_commander_path_to_environment,
                               convert_mac_base64)
@@ -21,21 +21,22 @@ from mytoolit.old.MyToolItCommands import DataSets, MyToolItStreaming
 class TestSTH(TestSensorNode):
     """This class contains tests for the Sensory Tool Holder (STH)"""
 
-    possible_attributes = TestSensorNode.possible_attributes + [
-        create_attribute("Holder Type", "{cls.holder_type}", pdf=True),
-        create_attribute(
-            "Acceleration Sensor", "{cls.acceleration_sensor}", pdf=True),
-        create_attribute(
-            "Acceleration Slope", "{cls.acceleration_slope:.5f}", pdf=False),
-        create_attribute(
-            "Acceleration Offset", "{cls.acceleration_offset:.3f}", pdf=False),
-    ]
-
     @classmethod
     def setUpClass(cls):
         """Set up data for whole test"""
 
         super().setUpClass()
+
+        cls.add_attribute("Holder Type", "{cls.holder_type}", pdf=True)
+        cls.add_attribute("Acceleration Sensor",
+                          "{cls.acceleration_sensor}",
+                          pdf=True)
+        cls.add_attribute("Acceleration Slope",
+                          "{cls.acceleration_slope:.5f}",
+                          pdf=False)
+        cls.add_attribute("Acceleration Offset",
+                          "{cls.acceleration_offset:.3f}",
+                          pdf=False)
 
         cls.report = Report(node='STH')
 
