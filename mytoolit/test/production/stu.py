@@ -6,6 +6,7 @@ from mytoolit.can.node import Node
 from mytoolit.config import settings
 from mytoolit.test.production import TestNode
 from mytoolit.report import Report
+from mytoolit.test.production import create_attribute
 from mytoolit.test.unit import ExtendedTestRunner
 from mytoolit.utility import add_commander_path_to_environment
 
@@ -18,6 +19,10 @@ from mytoolit.old.MyToolItCommands import (int_to_mac_address, MyToolItBlock,
 
 class TestSTU(TestNode):
     """This class contains tests for the Stationary Transceiver Unit (STU)"""
+
+    possible_attributes = TestNode.possible_attributes + [
+        create_attribute("Serial Number", "{cls.serial_number}", pdf=False),
+    ]
 
     @classmethod
     def setUpClass(cls):

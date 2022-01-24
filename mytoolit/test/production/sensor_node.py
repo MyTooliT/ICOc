@@ -19,6 +19,7 @@ class TestSensorNode(TestNode):
     """This class contains support code for sensor devices (SMH & STH)"""
 
     possible_attributes = TestNode.possible_attributes + [
+        create_attribute("Serial Number", "{cls.serial_number}", pdf=True),
         create_attribute("Ratio Noise Maximum",
                          "{cls.ratio_noise_max:.3f} dB"),
         create_attribute("Sleep Time 1", "{cls.sleep_time_1} ms", pdf=False),
