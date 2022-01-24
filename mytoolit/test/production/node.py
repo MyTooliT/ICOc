@@ -67,7 +67,7 @@ class TestNode(TestCase):
     firmware_version: Version
     gtin: int
     hardware_version: Version
-    oem_data: list[int]
+    oem_data: str
     operating_time: int
     power_off_cycles: int
     power_on_cycles: int
@@ -361,7 +361,8 @@ class TestNode(TestCase):
             f"Flash output did not contain expected output “{expected_output}”"
         )
 
-    async def _test_eeprom_product_data(self, node: Node, config: DynaBox):
+    async def _test_eeprom_product_data(self, node: Node,
+                                        config: DynaBox) -> None:
         """Test if reading and writing the product data EEPROM page works
 
         Parameters
@@ -463,16 +464,16 @@ class TestNode(TestCase):
 
         oem_data = config.oem_data
         await self.can.write_eeprom_oem_data(oem_data, receiver)
-        cls.oem_data = await self.can.read_eeprom_oem_data(receiver)
+        oem_data_list = await self.can.read_eeprom_oem_data(receiver)
         self.assertListEqual(
-            oem_data, cls.oem_data,
+            oem_data, oem_data_list,
             f"Written OEM data “{oem_data}” does not " +
-            f"match read OEM data “{cls.oem_data}”")
+            f"match read OEM data “{oem_data_list}”")
         # We currently store the data in text format, to improve the
         # readability of null bytes in the shell. Please notice, that this will
         # not always work (depending on the binary data stored in EEPROM
         # region).
-        cls.oem_data = ''.join(map(chr, cls.oem_data)).replace('\x00', '')
+        cls.oem_data = ''.join(map(chr, oem_data_list)).replace('\x00', '')
 
     async def _test_eeprom_statistics(self, node: Node, production_date: date,
                                       batch_number: int) -> None:
