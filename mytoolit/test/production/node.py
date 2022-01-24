@@ -212,13 +212,9 @@ class TestNode(TestCase):
             # Initialize CAN bus
             log_filepath = f"{self._testMethodName}.txt"
 
-            cls = type(self)
-            node = cls.__name__[-3:]
-            receiver = Node(f'{node} 1').value
-
             self.can = OldNetwork(log_filepath,
                                   sender=MyToolItNetworkNr['SPU1'],
-                                  receiver=receiver,
+                                  receiver=Node('STU 1').value,
                                   oversampling=AdcOverSamplingRate[64])
 
             # Reset STU (and SMH/STH)
