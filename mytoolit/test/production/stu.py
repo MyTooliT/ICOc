@@ -94,7 +94,8 @@ class TestSTU(TestNode):
             # ================
 
             super_class = super(TestSTU, self)
-            await super_class._test_eeprom_product_data('STU 1', settings.stu)
+            await super_class._test_eeprom_product_data(
+                Node('STU 1'), settings.stu)
 
             # ==============
             # = Statistics =

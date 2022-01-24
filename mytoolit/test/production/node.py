@@ -10,6 +10,9 @@ from types import SimpleNamespace
 from typing import Union
 from unittest import TestCase
 
+from dynaconf.utils.boxing import DynaBox
+from semantic_version import Version
+
 from mytoolit import __version__
 from mytoolit.can import Network, Node, State
 from mytoolit.config import settings
@@ -61,10 +64,17 @@ class TestNode(TestCase):
 
     batch_number: int
     eeprom_status: EEPROMStatus
+    firmware_version: Version
+    gtin: int
+    hardware_version: Version
+    oem_data: list[int]
     operating_time: int
     power_off_cycles: int
     power_on_cycles: int
     production_date: date
+    product_name: str
+    release_name: str
+    serial_number: str
     under_voltage_counter: int
     watchdog_reset_counter: int
 
@@ -351,7 +361,7 @@ class TestNode(TestCase):
             f"Flash output did not contain expected output “{expected_output}”"
         )
 
-    async def _test_eeprom_product_data(self, node, config):
+    async def _test_eeprom_product_data(self, node: Node, config: DynaBox):
         """Test if reading and writing the product data EEPROM page works
 
         Parameters
