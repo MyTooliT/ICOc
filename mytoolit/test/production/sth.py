@@ -293,7 +293,9 @@ class TestSTH(TestSensorNode):
             # = Statistics =
             # ==============
 
-            await super_class._test_eeprom_statistics()
+            await super_class._test_eeprom_statistics(
+                Node(receiver), settings.sth.production_date,
+                settings.sth.batch_number)
 
             # ================
             # = Acceleration =

@@ -2,6 +2,7 @@
 
 from unittest import main as unittest_main
 
+from mytoolit.can.node import Node
 from mytoolit.config import settings
 from mytoolit.test.production import TestNode
 from mytoolit.test.unit import ExtendedTestRunner
@@ -73,6 +74,7 @@ class TestSTU(TestNode):
             """Test the EERPOM of the STU"""
 
             cls = type(self)
+            receiver = 'STU 1'
 
             # ========
             # = Name =
@@ -98,7 +100,9 @@ class TestSTU(TestNode):
             # = Statistics =
             # ==============
 
-            await super_class._test_eeprom_statistics()
+            await super_class._test_eeprom_statistics(
+                Node(receiver), settings.stu.production_date,
+                settings.stu.batch_number)
 
             # =================
             # = EEPROM Status =

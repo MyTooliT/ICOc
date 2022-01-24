@@ -58,6 +58,14 @@ class TestNode(TestCase):
     the method `_read_data`.
     """
 
+    batch_number: int
+    operating_time: int
+    power_off_cycles: int
+    power_on_cycles: int
+    production_date: date
+    under_voltage_counter: int
+    watchdog_reset_counter: int
+
     possible_attributes = [
         create_attribute("EEPROM Status", "{cls.eeprom_status}", pdf=False),
         create_attribute("Name", "{cls.name}"),
@@ -454,16 +462,29 @@ class TestNode(TestCase):
         # region).
         cls.oem_data = ''.join(map(chr, cls.oem_data)).replace('\x00', '')
 
-    async def _test_eeprom_statistics(self):
-        """Test if reading and writing the statistics EEPROM page works"""
+    async def _test_eeprom_statistics(self, node: Node, production_date: date,
+                                      batch_number: int) -> None:
+        """Test if reading and writing the statistics EEPROM page works
+
+        For this purpose this method writes (default) values into the EEPROM,
+        reads them and then checks if the written and read values are equal.
+
+        Parameters
+        ----------
+
+        node:
+            The device where the EEPROM statistics page should be updated
+
+        production_date:
+            The production date of the node
+
+        batch_number:
+            The batch number of the node
+
+        """
 
         cls = type(self)
-
-        # The last three characters of the calling subclass (`TestSTU` or
-        # `TestSTH`) contain the name of the node (`STU` or `STH`)
-        node = cls.__name__[-3:]
-        config = settings.sth if node == 'STH' else settings.stu
-        receiver = f"{node} 1"
+        receiver = repr(node)
 
         # =======================
         # = Power On/Off Cycles =
@@ -537,10 +558,9 @@ class TestNode(TestCase):
         # = Production Date =
         # ===================
 
-        production_date = date.fromisoformat(str(config.production_date))
         await self.can.write_eeprom_production_date(production_date, receiver)
-        cls.production_date = await self.can.read_eeprom_production_date(
-            receiver)
+        cls.production_date = (await
+                               self.can.read_eeprom_production_date(receiver))
         self.assertEqual(
             production_date, cls.production_date,
             f"Written production date “{production_date}” does not match " +
@@ -550,7 +570,6 @@ class TestNode(TestCase):
         # = Batch Number =
         # ================
 
-        batch_number = settings.sth.batch_number
         await self.can.write_eeprom_batch_number(batch_number, receiver)
         cls.batch_number = await self.can.read_eeprom_batch_number(receiver)
         self.assertEqual(
