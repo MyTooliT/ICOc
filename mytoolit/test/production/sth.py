@@ -7,6 +7,7 @@ from unittest import main as unittest_main, skipIf
 from mytoolit.can import Node
 from mytoolit.measurement import ratio_noise_max
 from mytoolit.config import settings
+from mytoolit.report import Report
 from mytoolit.test.production import create_attribute, TestSensorNode
 from mytoolit.test.unit import ExtendedTestRunner
 from mytoolit.utility import (add_commander_path_to_environment,
@@ -35,6 +36,8 @@ class TestSTH(TestSensorNode):
         """Set up data for whole test"""
 
         super().setUpClass()
+
+        cls.report = Report(node='STH')
 
         # Add data that only applies to the STH
         cls.holder_type = settings.sth.holder_type

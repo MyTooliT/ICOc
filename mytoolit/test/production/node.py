@@ -17,7 +17,6 @@ from mytoolit import __version__
 from mytoolit.can import Network, Node, State
 from mytoolit.config import settings
 from mytoolit.eeprom import EEPROMStatus
-from mytoolit.report import Report
 
 from mytoolit.old.network import Network as OldNetwork
 from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
@@ -112,10 +111,6 @@ class TestNode(TestCase):
     @classmethod
     def setUpClass(cls):
         """Set up data for whole test"""
-
-        # We assume that the last three characters of the subclass name
-        # specifies the node (STU or STH).
-        cls.report = Report(node=cls.__name__[-3:])
 
         # We store attributes related to the connection, such as MAC address
         # only once. To do that we set `read_attributes` to true after
