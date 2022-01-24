@@ -332,7 +332,7 @@ class TestSTH(TestSensorNode):
             # = EEPROM Status =
             # =================
 
-            await super_class._test_eeprom_status()
+            await super_class._test_eeprom_status(Node(receiver))
 
             # =========
             # = Reset =

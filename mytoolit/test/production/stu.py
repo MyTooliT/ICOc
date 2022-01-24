@@ -108,7 +108,7 @@ class TestSTU(TestNode):
             # = EEPROM Status =
             # =================
 
-            await super_class._test_eeprom_status()
+            await super_class._test_eeprom_status(Node(receiver))
 
         self.loop.run_until_complete(test_eeprom())
 

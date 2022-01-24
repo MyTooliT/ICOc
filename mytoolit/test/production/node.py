@@ -10,9 +10,10 @@ from types import SimpleNamespace
 from typing import Union
 from unittest import TestCase
 
+from mytoolit import __version__
 from mytoolit.can import Network, Node, State
 from mytoolit.config import settings
-from mytoolit import __version__
+from mytoolit.eeprom import EEPROMStatus
 from mytoolit.report import Report
 
 from mytoolit.old.network import Network as OldNetwork
@@ -59,6 +60,7 @@ class TestNode(TestCase):
     """
 
     batch_number: int
+    eeprom_status: EEPROMStatus
     operating_time: int
     power_off_cycles: int
     power_on_cycles: int
@@ -577,21 +579,25 @@ class TestNode(TestCase):
             f"Written batch “{batch_number}” does not match " +
             f"read batch number “{cls.batch_number}”")
 
-    async def _test_eeprom_status(self):
-        """Test if reading and writing the EEPROM status byte works"""
+    async def _test_eeprom_status(self, node: Node) -> None:
+        """Test if reading and writing the EEPROM status byte works
+
+        Attributes
+        ----------
+
+        node:
+            The node where the status byte should be checked
+
+        """
 
         cls = type(self)
-        # The last three characters of the calling subclass (`TestSTU` or
-        # `TestSTH`) contain the name of the node (`STU` or `STH`)
-        node = cls.__name__[-3:]
-        receiver = f"{node} 1"
 
         # =================
         # = EEPROM Status =
         # =================
 
-        await self.can.write_eeprom_status('Initialized', receiver)
-        cls.eeprom_status = await self.can.read_eeprom_status(receiver)
+        await self.can.write_eeprom_status('Initialized', node)
+        cls.eeprom_status = await self.can.read_eeprom_status(node)
         self.assertTrue(
             cls.eeprom_status.is_initialized(),
             f"Setting EEPROM status to “Initialized” failed. "
