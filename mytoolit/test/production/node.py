@@ -17,6 +17,7 @@ from mytoolit import __version__
 from mytoolit.can import Network, Node, State
 from mytoolit.config import settings
 from mytoolit.eeprom import EEPROMStatus
+from mytoolit.report import Report
 
 from mytoolit.old.network import Network as OldNetwork
 from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
@@ -84,6 +85,11 @@ class TestNode(TestCase):
         cls.add_attribute("Operating Time",
                           "{cls.operating_time} s",
                           pdf=False)
+
+        # Add a basic PDF report
+        # Subclasses should overwrite this attribute, if you want to change
+        # the default arguments of the report class
+        cls.report = Report()
 
         # We store attributes related to the connection, such as MAC address
         # only once. To do that we set `read_attributes` to true after

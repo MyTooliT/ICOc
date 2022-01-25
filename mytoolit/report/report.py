@@ -60,15 +60,16 @@ class Report:
 
     story: List[Flowable]  # Improve happiness of PyCharm type checker
 
-    def __init__(self, node):
+    def __init__(self, node='Device'):
         """Initialize the report
 
         Parameters
         ----------
 
         node:
-            A text that specifies the node (either STU or STH) for which a
-            report should be generated
+            A text that specifies the node (e.g. STH) for which a report
+            should be generated
+
         """
 
         self.node = node
