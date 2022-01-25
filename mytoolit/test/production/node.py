@@ -29,8 +29,32 @@ from mytoolit.old.MyToolItCommands import AdcOverSamplingRate
 class TestNode(TestCase):
     """This class contains shared test code for STH and STU
 
-    Please note that every subclass of this class has to implement
-    the method `_read_data`.
+    You are not supposed to use this class directly. Instead use it as base
+    class for your test class.
+
+    Every subclass of this class has to implement the method `_read_data`,
+    which sets the **class** attributes:
+
+    - bluetooth_mac
+    - bluetooth_rssi
+    - firmware_version
+
+    The method `_read_data` will be called after connection took place (the
+    method `_connect` has been called). Please note, that this class only
+    connects to the STU. If you also want to connect to a sensor node, please
+    overwrite the method `_connect`.
+
+    To add additional test attributes show in the standard output and
+    optionally the PDF, add them as **class** variables to the subclass. Then
+    use the **class** method `add_attribute` in the method `setUpClass` and
+    use a format string where you reference the class variable as value
+    argument. Please do not forget to call `setUpClass` of the superclass
+    before you do that.
+
+    The various `_test` methods in this class can be used to run certain tests
+    for a device as part of a test method (i.e. a method that starts with the
+    string `test`).
+
     """
 
     batch_number: int
