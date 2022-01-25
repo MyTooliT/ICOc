@@ -102,23 +102,21 @@ class TestSTU(TestNode):
             # = Product Data =
             # ================
 
-            super_class = super(TestSTU, self)
-            await super_class._test_eeprom_product_data(
-                Node('STU 1'), settings.stu)
+            await self._test_eeprom_product_data(Node('STU 1'), settings.stu)
 
             # ==============
             # = Statistics =
             # ==============
 
-            await super_class._test_eeprom_statistics(
-                Node(receiver), settings.stu.production_date,
-                settings.stu.batch_number)
+            await self._test_eeprom_statistics(Node(receiver),
+                                               settings.stu.production_date,
+                                               settings.stu.batch_number)
 
             # =================
             # = EEPROM Status =
             # =================
 
-            await super_class._test_eeprom_status(Node(receiver))
+            await self._test_eeprom_status(Node(receiver))
 
         self.loop.run_until_complete(test_eeprom())
 
