@@ -203,6 +203,39 @@ class TestNode(TestCase):
         cls.possible_attributes.append(
             SimpleNamespace(description=name, value=str(value), pdf=pdf))
 
+    def setUp(self):
+        """Set up hardware before a single test case"""
+
+        # We do not need a CAN connection for the firmware flash test
+        if self._testMethodName == 'test__firmware_flash':
+            return
+
+        self._connect()
+
+        if not type(self).read_attributes:
+            # Read data of specific node (STH or STU). Subclasses must
+            # implement this method.
+            self._read_data()
+            type(self).read_attributes = True
+
+    def tearDown(self):
+        """Clean up after single test case"""
+
+        # The firmware flash does not initiate a connection.
+        if self._testMethodName.find("flash") >= 0:
+            return
+
+        self._disconnect()
+
+    def run(self, result=None):
+        """Execute a single test
+
+        We override this method to store data about the test outcome.
+        """
+
+        super().run(result)
+        type(self).report.add_test_result(self.shortDescription(), result)
+
     def _connect(self):
         """Create a connection to the STU"""
 
@@ -604,36 +637,3 @@ class TestNode(TestCase):
             f"Setting EEPROM status to “Initialized” failed. "
             "EEPROM status byte currently stores the value "
             f"“{cls.eeprom_status}”")
-
-    def setUp(self):
-        """Set up hardware before a single test case"""
-
-        # We do not need a CAN connection for the firmware flash test
-        if self._testMethodName == 'test__firmware_flash':
-            return
-
-        self._connect()
-
-        if not type(self).read_attributes:
-            # Read data of specific node (STH or STU). Subclasses must
-            # implement this method.
-            self._read_data()
-            type(self).read_attributes = True
-
-    def tearDown(self):
-        """Clean up after single test case"""
-
-        # The firmware flash does not initiate a connection.
-        if self._testMethodName.find("flash") >= 0:
-            return
-
-        self._disconnect()
-
-    def run(self, result=None):
-        """Execute a single test
-
-        We override this method to store data about the test outcome.
-        """
-
-        super().run(result)
-        type(self).report.add_test_result(self.shortDescription(), result)
