@@ -2,7 +2,7 @@
 
 <a name="tutorials:section:sth-renaming"></a>
 
-## STH Renaming
+## Sensor Device Renaming
 
 1. Please start ICOc:
 
@@ -10,7 +10,7 @@
    icoc
    ```
 
-2. The text based interface will show you a selection of the available STHs:
+2. The text based interface will show you a selection of the available devices:
 
    ```
                    ICOc
@@ -29,7 +29,7 @@
    └──────────────────────────────┘
    ```
 
-   Choose the STH you want to rename by entering the number to the left of the STH (here `1`). To confirm your selection press the return key <kbd>⮐</kbd>.
+   Choose the STH you want to rename by entering the number to the left of the device (here `1`). To confirm your selection press the return key <kbd>⮐</kbd>.
 
 3. Now the menu should look like this:
 
@@ -71,7 +71,7 @@
 
    Press the button `n` to change the name.
 
-4. Enter the new STH name.
+4. Enter the new device name.
 
    ```
    New STH name (max. 8 characters): Blubb
@@ -92,7 +92,7 @@ The ICOc program accepts optional command line arguments at startup. This way yo
 - the name or
 - Bluetooth address
 
-of an STH, then you can even use ICOc without any user interaction, since in this case the program will immediately connect to the specified STH and start the measurement process.
+of a sensor device, then you can even use ICOc without any user interaction, since in this case the program will immediately connect to the specified device and start the measurement process.
 
 <a name="tutorials:section:available-options"></a>
 
@@ -171,13 +171,13 @@ If you specify one of the options
 - `-b`/`--bluetooth-address` or
 - `-n`/`--name`
 
-then ICOC will try to connect immediately to the specified STH and start the measurement run. For example, to acquire acceleration data from the STH with the (Bluetooth advertisement) **name “Blubb”** you can use the following command:
+then ICOC will try to connect immediately to the specified device and start the measurement run. For example, to acquire acceleration data from the device with the (Bluetooth advertisement) **name “Blubb”** you can use the following command:
 
 ```sh
 icoc -n Blubb
 ```
 
-To read acceleration values for **`5` seconds** from the STH with the **Bluetooth address `08:6b:d7:01:de:81`** you can use the following command:
+To read acceleration values for **`5` seconds** from the device with the **Bluetooth address `08:6b:d7:01:de:81`** you can use the following command:
 
 ```sh
 icoc -b 08:6b:d7:01:de:81 -r 5

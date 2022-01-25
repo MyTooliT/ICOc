@@ -163,7 +163,7 @@ then please add the text between the single quotes (without the quotes) to your 
 
 ### Starting the Program
 
-The `ICOc` script can be used to control an STH (or SHA). After you enter the command
+The `ICOc` script can be used to control a sensor device. After you enter the command
 
 ```sh
 icoc
@@ -188,9 +188,9 @@ in your [terminal](https://aka.ms/terminal), a text based interface shows you th
 └──────────────────────────────┘
 ```
 
-shows that currently one STH was detected. The
+shows that currently one sensor device was detected. The
 
-- Bluetooth MAC address of the STH is `08:6b:d7:01:de:81`, while its
+- Bluetooth MAC address of the device is `08:6b:d7:01:de:81`, while its
 - advertisement name is “Blubb”.
 
 The last value “-44” is the current [received signal strength indication (RSSI)](https://en.wikipedia.org/wiki/Received_signal_strength_indication). To exit the program use the key <kbd>q</kbd>.
