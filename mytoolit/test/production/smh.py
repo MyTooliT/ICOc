@@ -56,13 +56,11 @@ class TestSMH(TestSensorNode):
 
             cls.name = read_name
 
-            super_class = super(cls, self)
-
             # =========================
             # = Sleep & Advertisement =
             # =========================
 
-            await super_class._test_eeprom_sleep_advertisement_times()
+            await self._test_eeprom_sleep_advertisement_times()
 
         self.loop.run_until_complete(test_eeprom())
 
