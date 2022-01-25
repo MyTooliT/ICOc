@@ -55,6 +55,7 @@ class TestNode(TestCase):
     def setUpClass(cls):
         """Set up data for whole test"""
 
+        # Add basic test attributes that all devices share
         cls.add_attribute("EEPROM Status", "{cls.eeprom_status}", pdf=False)
         cls.add_attribute("Name", "{cls.name}")
         cls.add_attribute("Status", "{cls.status}")
