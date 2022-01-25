@@ -16,7 +16,13 @@ from mytoolit.old.MyToolItCommands import (
 
 
 class TestSensorNode(TestNode):
-    """This class contains support code for sensor devices (SMH & STH)"""
+    """This class contains support code for sensor node (SMH & STH)
+
+    You are not supposed to use this class directly, but instead use it as
+    superclass for your test class. For more information, please take a look
+    at the documentation of `TestNode`.
+
+    """
 
     @classmethod
     def setUpClass(cls):
