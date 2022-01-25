@@ -279,28 +279,25 @@ class TestSTH(TestSensorNode):
 
             cls.name = read_name
 
-            super_class = super(TestSTH, self)
-
             # =========================
             # = Sleep & Advertisement =
             # =========================
 
-            await super_class._test_eeprom_sleep_advertisement_times()
+            await self._test_eeprom_sleep_advertisement_times()
 
             # ================
             # = Product Data =
             # ================
 
-            await super_class._test_eeprom_product_data(
-                Node(receiver), settings.sth)
+            await self._test_eeprom_product_data(Node(receiver), settings.sth)
 
             # ==============
             # = Statistics =
             # ==============
 
-            await super_class._test_eeprom_statistics(
-                Node(receiver), settings.sth.production_date,
-                settings.sth.batch_number)
+            await self._test_eeprom_statistics(Node(receiver),
+                                               settings.sth.production_date,
+                                               settings.sth.batch_number)
 
             # ================
             # = Acceleration =
@@ -337,7 +334,7 @@ class TestSTH(TestSensorNode):
             # = EEPROM Status =
             # =================
 
-            await super_class._test_eeprom_status(Node(receiver))
+            await self._test_eeprom_status(Node(receiver))
 
             # =========
             # = Reset =
