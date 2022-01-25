@@ -191,19 +191,13 @@ This tutorial lists the usual steps to test a sensory holder assembly or a senso
 
 ### General
 
-To run the production tests for the STH, please execute the following command
+To run the production tests for one of the ICOtronic devices, please execute one of the following commands:
 
-```sh
-test-sth
-```
-
-To run the tests for the STU, please use the command:
-
-```
-test-stu
-```
-
-instead.
+| Device                                                   | Command    |
+| -------------------------------------------------------- | ---------- |
+| Stationary Transceiver Unit (STU)                        | `test-stu` |
+| Sensory Holder Assembly (SHA), Sensory Tool Holder (STH) | `test-sth` |
+| Sensory Milling Head (SMH)                               | `test-smh` |
 
 For a list of available command line options, please use the option `-h` after one of the commands e.g.:
 

@@ -9,6 +9,7 @@ After you installed the ICOc package various helper scripts are available:
 - [`convert-mac-base64`](#section:mac-address-conversion): Convert Bluetooth MAC address into a (Base64) encoded 8 character string
 - [`check-eeprom`](#section:eeprom-check): Write a byte value into the cells of an EEPROM page an check how many of the values are read incorrectly after an reset
 - [`icoc`](#section:icoc): Controller and measurement software for the ICOtronic system
+- [`test-smh`](#section:test-smh): Test code for the SMH
 - [`test-sth`](#section:test-sth): Test code for the STH/SHA
 - [`test-stu`](#section:test-stu): Test code for the STU
 
@@ -101,3 +102,11 @@ The command `test-sth` is a command that executes the tests for the STH ([`sth.p
 The command `test-stu` is a wrapper that executes the tests for the STU ([`stu.py`][]). All command line arguments of the wrapper will be forwarded to [`stu.py`][].
 
 [`stu.py`]: ../mytoolit/test/production/stu.py
+
+<a name="section:test-smh"></a>
+
+## Test-SMH
+
+The command `test-smh` is a wrapper that executes the tests for the SMH ([`smh.py`][]). All command line arguments of the wrapper will be forwarded to [`smh.py`][].
+
+[`smh.py`]: ../mytoolit/test/production/smh.py
