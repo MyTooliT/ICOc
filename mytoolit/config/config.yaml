@@ -134,7 +134,7 @@ SMH:
   GTIN: 0
 
   # The current version of the PCB design
-  HARDWARE VERSION: 2.1.0
+  HARDWARE VERSION: 1.0.1
 
   # OEM specific data
   # prettier-ignore
