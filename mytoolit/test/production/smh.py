@@ -69,6 +69,14 @@ class TestSMH(TestSensorNode):
 
             await self._test_eeprom_product_data(receiver, settings.smh)
 
+            # ==============
+            # = Statistics =
+            # ==============
+
+            await self._test_eeprom_statistics(receiver,
+                                               settings.smh.production_date,
+                                               settings.smh.batch_number)
+
         self.loop.run_until_complete(test_eeprom())
 
 
