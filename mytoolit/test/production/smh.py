@@ -2,6 +2,7 @@
 
 from unittest import main as unittest_main
 
+from mytoolit.can.node import Node
 from mytoolit.config import settings
 from mytoolit.test.production import TestSensorNode
 from mytoolit.test.unit import ExtendedTestRunner
@@ -38,7 +39,7 @@ class TestSMH(TestSensorNode):
             """Test the EERPOM of the SMH"""
 
             cls = type(self)
-            receiver = 'STH 1'
+            receiver = Node('STH 1')
 
             # ========
             # = Name =
@@ -61,6 +62,12 @@ class TestSMH(TestSensorNode):
             # =========================
 
             await self._test_eeprom_sleep_advertisement_times()
+
+            # ================
+            # = Product Data =
+            # ================
+
+            await self._test_eeprom_product_data(receiver, settings.smh)
 
         self.loop.run_until_complete(test_eeprom())
 
