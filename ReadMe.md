@@ -72,11 +72,11 @@ In order to use ICOc you need at least:
 
     ![Power Injector](Documentation/Pictures/Power-Injector.jpg)
 
-- a [Stationary Transceiver Unit](https://www.mytoolit.com/ICOtronic/)
+- a [Stationary Transceiver Unit](https://www.mytoolit.com/ICOtronic/):
 
    <img src="https://cdn.bitrix24.de/b5488381/landing/5fa/5fa2ce04fd1326e07bf39866e44f4e61/IMG_6338_2x.jpg" alt="STU" width="400">
 
-- a Sensory Holder Assembly or [Sensory Tool Holder](https://www.mytoolit.com/ICOtronic/)
+- a sensor device, such as a Sensory Holder Assembly or [Sensory Tool Holder](https://www.mytoolit.com/ICOtronic/):
 
   <img src="Documentation/Pictures/SHA.png" alt="Sensory Holder Assembly" width="400">
 
@@ -88,7 +88,7 @@ In order to use ICOc you need at least:
    1. to the PCAN adapter, and
    2. the power supply unit.
 2. Connect the USB connector of the PCAN adapter to your computer.
-3. Make sure that your SHA/STH is connected to a power source. For an STH this usually means that you should check that the battery is (fully) charged.
+3. Make sure that your sensor device (SHA/STH/SMH) is connected to a power source. For an STH this usually means that you should check that the battery is (fully) charged.
 
 <a name="section:software"></a>
 
