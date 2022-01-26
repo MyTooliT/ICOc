@@ -1398,7 +1398,8 @@ class Network:
             int.from_bytes(response.data[start:start + 2], 'little')
             for start in range(2, 8, 2))
 
-        return adc_values
+        # mypy is not able to infer that `adc_values` contains 3 values
+        return adc_values  # type: ignore
 
     async def read_x_acceleration(self, max: int) -> float:
         """Read the current x acceleration value of a connected STH
