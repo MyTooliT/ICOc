@@ -6,7 +6,7 @@ from netaddr import EUI
 from mytoolit.can import Network
 
 
-async def test(identifier=EUI("08:6b:d7:01:de:81")):
+async def test(identifier):
     async with Network() as network:
         node = 'STH 1'
         start_time = time()
@@ -15,12 +15,14 @@ async def test(identifier=EUI("08:6b:d7:01:de:81")):
         name = await network.get_name(node)
         print(f"Name of {node}: {name}\n")
 
-        times = await network.read_energy_mode_reduced()
-        print(f"Sleep Time:         {times.sleep} ms")
-        print(f"Advertisement Time: {times.advertisement} ms")
+        values = await network.read_sensor_values()
+        print(f"Sensor Values: {values}")
 
-        print("\nExecution took {:.3} seconds".format(time() - start_time))
+        print(f"\nExecution took {time() - start_time:.3f} seconds")
 
 
 if __name__ == '__main__':
-    run(test())
+    sth_mac = EUI("08:6b:d7:01:de:81")
+    smh_mac = EUI("94-DE-B8-ED-70-37")
+
+    run(test(identifier=smh_mac))
