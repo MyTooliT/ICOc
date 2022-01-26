@@ -10,7 +10,7 @@ from struct import pack, unpack
 from sys import platform
 from time import time
 from types import TracebackType
-from typing import List, NamedTuple, Optional, Sequence, Type, Union
+from typing import List, NamedTuple, Optional, Sequence, Tuple, Type, Union
 
 from can import Bus, Listener, Message as CANMessage, Notifier
 from can.interfaces.pcan.pcan import PcanError
@@ -28,7 +28,8 @@ from mytoolit.measurement import ADC_MAX_VALUE, convert_acceleration_adc_to_g
 from mytoolit.can.calibration import CalibrationMeasurementFormat
 from mytoolit.can.message import Message
 from mytoolit.can.node import Node
-from mytoolit.can.streaming import (StreamingFormatAcceleration,
+from mytoolit.can.streaming import (StreamingFormat,
+                                    StreamingFormatAcceleration,
                                     StreamingFormatVoltage)
 from mytoolit.can.status import State
 from mytoolit.measurement import convert_voltage_adc_to_volts
@@ -1365,6 +1366,40 @@ class Network:
     # =============
     # = Streaming =
     # =============
+
+    async def read_sensor_values(self) -> Tuple[int, int, int]:
+        """Read a single set of raw ADC values from a connected sensor device
+
+        Returns
+        -------
+
+        The latest three ADC values measured by the sensor device
+
+        """
+
+        streaming_format = StreamingFormat(first=True,
+                                           second=True,
+                                           third=True,
+                                           sets=1)
+
+        node = 'STH 1'
+
+        # While the block command
+        message = Message(block='Streaming',
+                          block_command='Acceleration',
+                          sender=self.sender,
+                          receiver=node,
+                          request=True,
+                          data=[streaming_format.value])
+
+        response = await self._request(
+            message, description=f"read single streaming value from “{node}”")
+        adc_values = [
+            int.from_bytes(response.data[start:start + 2], 'little')
+            for start in range(2, 8, 2)
+        ]
+
+        return tuple(adc_values)
 
     async def read_x_acceleration(self, max: int) -> float:
         """Read the current x acceleration value of a connected STH
