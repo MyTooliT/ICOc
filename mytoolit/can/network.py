@@ -1394,12 +1394,11 @@ class Network:
 
         response = await self._request(
             message, description=f"read single streaming value from “{node}”")
-        adc_values = [
+        adc_values = tuple(
             int.from_bytes(response.data[start:start + 2], 'little')
-            for start in range(2, 8, 2)
-        ]
+            for start in range(2, 8, 2))
 
-        return tuple(adc_values)
+        return adc_values
 
     async def read_x_acceleration(self, max: int) -> float:
         """Read the current x acceleration value of a connected STH
