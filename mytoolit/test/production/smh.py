@@ -4,6 +4,7 @@ from unittest import main as unittest_main
 
 from mytoolit.can.node import Node
 from mytoolit.config import settings
+from mytoolit.measurement import ADC_MAX_VALUE
 from mytoolit.report import Report
 from mytoolit.test.production import TestSensorNode
 from mytoolit.test.unit import ExtendedTestRunner
@@ -86,6 +87,47 @@ class TestSMH(TestSensorNode):
                                                settings.smh.batch_number)
 
         self.loop.run_until_complete(test_eeprom())
+
+    def test_adc_values(self):
+        """Test raw ADC sensor values"""
+
+        async def test_adc_values():
+
+            def check_value(value,
+                            channel,
+                            expected_value,
+                            tolerance=round(ADC_MAX_VALUE * 0.05)):
+                """Check if an ADC value is roughly equal to another value"""
+
+                expected_minimum_value = expected_value - tolerance
+                expected_maximum_value = expected_value + tolerance
+
+                self.assertGreaterEqual(
+                    value, expected_minimum_value,
+                    f"Measured ADC value for channel {channel} “{value}” is "
+                    "lower than expected minimum value "
+                    f"“{expected_minimum_value}”")
+                self.assertLessEqual(
+                    value, expected_maximum_value,
+                    f"Measured ADC value for channel {channel} “{value}” is "
+                    "higher than expected maximum value "
+                    f"“{expected_maximum_value}”")
+
+            # The values below represent roughly the read values from a
+            # working SMH
+            expected_value_piezo = 38300
+            expected_value_thermistor = 10780
+
+            values = await self.can.read_sensor_values()
+            expected_values = (expected_value_piezo, expected_value_piezo,
+                               expected_value_thermistor)
+
+            for channel, (value,
+                          expected) in enumerate(zip(values, expected_values),
+                                                 start=1):
+                check_value(value, channel, expected)
+
+        self.loop.run_until_complete(test_adc_values())
 
 
 # -- Main ---------------------------------------------------------------------
