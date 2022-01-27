@@ -97,6 +97,19 @@ class Commander:
 
         result = run(command, capture_output=True, text=True)
 
+        if result.returncode != 0:
+            error_message = ("Execution of Simplicity Commander power "
+                             "measurement command failed with return code "
+                             f"“{result.returncode}”")
+
+            combined_output = ("\n".join(
+                (result.stdout,
+                 result.stderr)) if result.stdout or result.stderr else "")
+            if combined_output:
+                error_message += f":\n{combined_output}"
+
+            raise CommanderException(error_message)
+
         regex = compile(r"Power\s*\[mW\]\s*:\s*(?P<milliwatts>\d+\.\d+)")
         pattern_match = regex.search(result.stdout)
         if pattern_match is None:
