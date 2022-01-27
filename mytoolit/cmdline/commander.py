@@ -17,10 +17,25 @@ class CommanderException(Exception):
 class Commander:
     """Wrapper for the Simplicity Commander commandline tool"""
 
-    def __init__(self):
-        """Initialize the Simplicity Commander wrapper"""
+    def __init__(self, serial_number: int, chip: str):
+        """Initialize the Simplicity Commander wrapper
+
+        serial_number:
+            The serial number of the programming board that is connected to
+            the hardware
+
+        chip:
+            The identifier of the chip on the PCB e.g. “BGM121A256V2”
+
+        """
 
         self._add_path_to_environment()
+        self.identification_arguments = [
+            "--serialno",
+            f"{serial_number}",
+            "-d",
+            chip,
+        ]
 
     def _add_path_to_environment(self) -> None:
         """Add path to Simplicity Commander (`commander`) to `PATH`
@@ -32,7 +47,9 @@ class Commander:
         Example
         -------
 
-        >>> Commander()._add_path_to_environment()
+        >>> commander = Commander(
+        ...     serial_number=settings.sth.programming_board.serial_number,
+        ...     chip='BGM121A256V2')
 
         >>> from subprocess import run
         >>> result = run("commander --version".split(), capture_output=True)
@@ -45,21 +62,11 @@ class Commander:
         paths = path.linux if platform == 'Linux' else path.windows
         environ['PATH'] += (pathsep + pathsep.join(paths))
 
-    def read_power_usage(self,
-                         serial_number: int,
-                         chip: str,
-                         milliseconds: float = 1000) -> float:
+    def read_power_usage(self, milliseconds: float = 1000) -> float:
         """Read the power usage of the connected hardware
 
         Parameters
         ----------
-
-        serial_number:
-            The serial number of the programming board that is connected to
-            the hardware
-
-        chip:
-            The identifier of the chip on the PCB e.g. “BGM121A256V2”
 
         milliseconds:
             The amount of time the power usage should be measured for
@@ -74,26 +81,20 @@ class Commander:
 
         Measure power usage of connected STH
 
-        >>> from mytoolit.config import settings
+        >>> from mytoolit.config import  settings
 
-        >>> serial_number = settings.sth.programming_board.serial_number
-        >>> chip = 'BGM121A256V2'
-        >>> Commander().read_power_usage(serial_number, chip) > 0
+        >>> commander = Commander(
+        ...     serial_number=settings.sth.programming_board.serial_number,
+        ...     chip='BGM121A256V2')
+        >>> commander.read_power_usage() > 0
         True
 
         """
 
-        identification_arguments = [
-            "--serialno",
-            f"{serial_number}",
-            "-d",
-            chip,
-        ]
-
         command = [
             "commander", "aem", "measure", "--windowlength",
             str(milliseconds)
-        ] + identification_arguments
+        ] + self.identification_arguments
 
         result = run(command, capture_output=True, text=True)
 
