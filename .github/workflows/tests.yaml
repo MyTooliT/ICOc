@@ -43,7 +43,7 @@ jobs:
 
     - name: Test with pytest
       run: | # Run all tests that do not require actual hardware
-        pytest --ignore-glob='*network.py'
+        pytest --ignore-glob='*network.py' --ignore-glob='*commander.py'
 
   linux:
 
@@ -76,4 +76,4 @@ jobs:
 
     - name: Test with pytest
       run: | # Run all tests that do not require actual hardware
-        pytest --ignore-glob='*network.py'
+        pytest --ignore-glob='*network.py' --ignore-glob='*commander.py'
