@@ -155,6 +155,13 @@ SMH:
   # Product name for the  manufacturer (maximum of 128 byte UTF-8 encoded text)
   PRODUCT NAME: 0
 
+  PROGRAMMING BOARD:
+    # Please store the serial number of the programming board that is connected
+    # to the SMH here. This number should be displayed in the right bottom
+    # corner of the LC display, after you connect the programmer to a power
+    # source.
+    SERIAL NUMBER: *serial
+
   # Serial number for the manufacturer
   SERIAL NUMBER: SMH
 

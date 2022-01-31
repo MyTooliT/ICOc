@@ -3,6 +3,7 @@
 from unittest import main as unittest_main
 
 from mytoolit.can.node import Node
+from mytoolit.cmdline.commander import Commander
 from mytoolit.config import settings
 from mytoolit.measurement import ADC_MAX_VALUE
 from mytoolit.report import Report
@@ -128,6 +129,22 @@ class TestSMH(TestSensorNode):
                 check_value(value, channel, expected)
 
         self.loop.run_until_complete(test_adc_values())
+
+    def test_power_uage(self) -> None:
+        """Check power usage"""
+
+        commander = Commander(
+            serial_number=settings.smh.programming_board.serial_number,
+            chip='BGM121A256V2')
+
+        commander.enable_debug_mode()
+        power_usage_mw = commander.read_power_usage()
+        expected_maxmimum_usage_mw = 40
+        self.assertLess(
+            power_usage_mw, expected_maxmimum_usage_mw,
+            f"Measured power usage of {power_usage_mw} mW is "
+            "higher than expected maximum value "
+            f"{expected_maxmimum_usage_mw} mW")
 
 
 # -- Main ---------------------------------------------------------------------
