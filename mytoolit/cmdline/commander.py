@@ -40,7 +40,10 @@ class Commander:
         self.error_reasons = {
             'incorrect serial':
             f"Serial number of programming board “{serial_number}” incorrect",
-            'not connected': "Programming board is not connected to computer"
+            'programmer not connected':
+            "Programming board is not connected to computer",
+            'device not connected':
+            "Programming board is not connected to device"
         }
 
     def _add_path_to_environment(self) -> None:
@@ -142,11 +145,38 @@ class Commander:
 
         """
 
+        self._run_command(command="adapter dbgmode OUT".split() +
+                          self.identification_arguments,
+                          description="enable debug mode",
+                          possible_error_reasons=[
+                              'programmer not connected', 'incorrect serial'
+                          ])
+
+    def unlock_device(self) -> None:
+        """Unlock device for debugging
+
+        Example
+        -------
+
+        Unlock STH
+
+        >>> from mytoolit.config import settings
+
+        >>> commander = Commander(
+        ...     serial_number=settings.sth.programming_board.serial_number,
+        ...     chip='BGM121A256V2')
+        >>> commander.enable_debug_mode()
+        >>> commander.unlock_device()
+
+        """
+
         self._run_command(
-            command="adapter dbgmode OUT".split() +
-            self.identification_arguments,
-            description="enable debug mode",
-            possible_error_reasons=['not connected', 'incorrect serial'])
+            command="device unlock".split() + self.identification_arguments,
+            description="unlock device",
+            possible_error_reasons=[
+                'device not connected', 'programmer not connected',
+                'incorrect serial'
+            ])
 
     def read_power_usage(self, milliseconds: float = 1000) -> float:
         """Read the power usage of the connected hardware
@@ -180,10 +210,12 @@ class Commander:
         command = ["aem", "measure", "--windowlength",
                    str(milliseconds)] + self.identification_arguments
 
-        output = self._run_command(
-            command=command,
-            description="read power usage",
-            possible_error_reasons=['not connected', 'incorrect serial'])
+        output = self._run_command(command=command,
+                                   description="read power usage",
+                                   possible_error_reasons=[
+                                       'programmer not connected',
+                                       'incorrect serial'
+                                   ])
 
         regex = compile(r"Power\s*\[mW\]\s*:\s*(?P<milliwatts>\d+\.\d+)")
         pattern_match = regex.search(output)
