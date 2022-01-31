@@ -8,5 +8,7 @@ if __name__ == '__main__':
     try:
         commander.enable_debug_mode()
         print("Successfully enabled debug mode for STH")
+        commander.unlock_device()
+        print("Successfully unlocked STH")
     except CommanderException as exception:
         print(str(exception))
