@@ -4,6 +4,7 @@ from os import environ, pathsep
 from re import compile
 from subprocess import run
 from sys import platform
+from typing import List
 
 from mytoolit.config import settings
 
@@ -36,7 +37,7 @@ class Commander:
             "-d",
             chip,
         ]
-        self.failure_reasons = {
+        self.error_reasons = {
             'incorrect serial':
             f"Serial number of programming board “{serial_number}” incorrect",
             'not connected': "Programming board is not connected to computer"
@@ -67,6 +68,63 @@ class Commander:
         paths = path.linux if platform == 'Linux' else path.windows
         environ['PATH'] += (pathsep + pathsep.join(paths))
 
+    def _run_command(self, command: List[str], description: str,
+                     possible_error_reasons: List[str]) -> str:
+        """Run a Simplicity Commander command
+
+        Parameters
+        ----------
+
+        command:
+            The Simplicity Commander subcommand including all necessary
+            arguments
+
+        description:
+            A textual description of the purpose of the command
+            e.g. “enable debug mode”
+
+        possible_error_reasons:
+            A list of dictionary keys that describe why the command might have
+            failed
+
+        Raises
+        ------
+
+        An `CommanderException` if the command returned unsuccessfully
+
+        Returns
+        -------
+
+        The standard output of the command
+
+        """
+
+        for reason in possible_error_reasons:
+            if reason not in self.error_reasons:
+                raise ValueError(
+                    "“{reason}” is not a valid possible error reason")
+
+        result = run(["commander"] + command, capture_output=True, text=True)
+        if result.returncode != 0:
+            error_message = ("Execution of Simplicity Commander command to "
+                             f"{description} failed with return code "
+                             f"“{result.returncode}”")
+            combined_output = ("\n".join(
+                (result.stdout,
+                 result.stderr)) if result.stdout or result.stderr else "")
+            if combined_output:
+                error_message += f":\n{combined_output.rstrip()}"
+
+            error_reasons = "\n".join([
+                f"• {self.error_reasons[reason]}"
+                for reason in possible_error_reasons
+            ])
+            error_message += f"\n\nPossible error reasons:\n\n{error_reasons}"
+
+            raise CommanderException(error_message)
+
+        return result.stdout
+
     def enable_debug_mode(self) -> None:
         """Enable debug mode for external device
 
@@ -84,25 +142,11 @@ class Commander:
 
         """
 
-        command = ("commander adapter dbgmode OUT".split() +
-                   self.identification_arguments)
-        result = run(command, capture_output=True, text=True)
-        if result.returncode != 0:
-            error_message = ("Execution of Simplicity Commander command to "
-                             "change debug mode failed with return code "
-                             f"“{result.returncode}”")
-            combined_output = ("\n".join(
-                (result.stdout,
-                 result.stderr)) if result.stdout or result.stderr else "")
-            if combined_output:
-                error_message += f":\n{combined_output.rstrip()}"
-
-            error_message += (
-                "\n\nPossible failure reasons:\n\n"
-                f"• {self.failure_reasons['not connected']}\n"
-                f"• {self.failure_reasons['incorrect serial']}\n")
-
-            raise CommanderException(error_message)
+        self._run_command(
+            command="adapter dbgmode OUT".split() +
+            self.identification_arguments,
+            description="enable debug mode",
+            possible_error_reasons=['not connected', 'incorrect serial'])
 
     def read_power_usage(self, milliseconds: float = 1000) -> float:
         """Read the power usage of the connected hardware
@@ -133,33 +177,16 @@ class Commander:
 
         """
 
-        command = [
-            "commander", "aem", "measure", "--windowlength",
-            str(milliseconds)
-        ] + self.identification_arguments
+        command = ["aem", "measure", "--windowlength",
+                   str(milliseconds)] + self.identification_arguments
 
-        result = run(command, capture_output=True, text=True)
-
-        if result.returncode != 0:
-            error_message = ("Execution of Simplicity Commander power "
-                             "measurement command failed with return code "
-                             f"“{result.returncode}”")
-
-            combined_output = ("\n".join(
-                (result.stdout,
-                 result.stderr)) if result.stdout or result.stderr else "")
-            if combined_output:
-                error_message += f":\n{combined_output.rstrip()}"
-
-            error_message += (
-                "\n\nPossible failure reasons:\n\n"
-                f"• {self.failure_reasons['not connected']}\n"
-                f"• {self.failure_reasons['incorrect serial']}\n")
-
-            raise CommanderException(error_message)
+        output = self._run_command(
+            command=command,
+            description="read power usage",
+            possible_error_reasons=['not connected', 'incorrect serial'])
 
         regex = compile(r"Power\s*\[mW\]\s*:\s*(?P<milliwatts>\d+\.\d+)")
-        pattern_match = regex.search(result.stdout)
+        pattern_match = regex.search(output)
         if pattern_match is None:
             raise CommanderException("Unable to extract power usage "
                                      "from Simplicity Commander output")
