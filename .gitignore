@@ -8,6 +8,7 @@
 
 # Ignore PDF test reports
 
+/SMH Test.pdf
 /STH Test.pdf
 /STU Test.pdf
 
