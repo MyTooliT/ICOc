@@ -86,7 +86,7 @@ class Commander:
 
         Measure power usage of connected STH
 
-        >>> from mytoolit.config import  settings
+        >>> from mytoolit.config import settings
 
         >>> commander = Commander(
         ...     serial_number=settings.sth.programming_board.serial_number,
