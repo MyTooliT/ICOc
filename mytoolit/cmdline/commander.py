@@ -102,7 +102,7 @@ class Commander:
         for reason in possible_error_reasons:
             if reason not in self.error_reasons:
                 raise ValueError(
-                    "“{reason}” is not a valid possible error reason")
+                    f"“{reason}” is not a valid possible error reason")
 
         result = run(["commander"] + command, capture_output=True, text=True)
         if result.returncode != 0:
