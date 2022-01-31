@@ -67,6 +67,43 @@ class Commander:
         paths = path.linux if platform == 'Linux' else path.windows
         environ['PATH'] += (pathsep + pathsep.join(paths))
 
+    def enable_debug_mode(self) -> None:
+        """Enable debug mode for external device
+
+        Example
+        -------
+
+        Enable debug mode of STH programming board
+
+        >>> from mytoolit.config import settings
+
+        >>> commander = Commander(
+        ...     serial_number=settings.sth.programming_board.serial_number,
+        ...     chip='BGM121A256V2')
+        >>> commander.enable_debug_mode()
+
+        """
+
+        command = ("commander adapter dbgmode OUT".split() +
+                   self.identification_arguments)
+        result = run(command, capture_output=True, text=True)
+        if result.returncode != 0:
+            error_message = ("Execution of Simplicity Commander command to "
+                             "change debug mode failed with return code "
+                             f"“{result.returncode}”")
+            combined_output = ("\n".join(
+                (result.stdout,
+                 result.stderr)) if result.stdout or result.stderr else "")
+            if combined_output:
+                error_message += f":\n{combined_output.rstrip()}"
+
+            error_message += (
+                "\n\nPossible failure reasons:\n\n"
+                f"• {self.failure_reasons['not connected']}\n"
+                f"• {self.failure_reasons['incorrect serial']}\n")
+
+            raise CommanderException(error_message)
+
     def read_power_usage(self, milliseconds: float = 1000) -> float:
         """Read the power usage of the connected hardware
 
