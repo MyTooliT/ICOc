@@ -36,6 +36,11 @@ class Commander:
             "-d",
             chip,
         ]
+        self.failure_reasons = {
+            'incorrect serial':
+            f"Serial number of programming board “{serial_number}” incorrect",
+            'not connected': "Programming board is not connected to computer"
+        }
 
     def _add_path_to_environment(self) -> None:
         """Add path to Simplicity Commander (`commander`) to `PATH`
@@ -107,7 +112,12 @@ class Commander:
                 (result.stdout,
                  result.stderr)) if result.stdout or result.stderr else "")
             if combined_output:
-                error_message += f":\n{combined_output}"
+                error_message += f":\n{combined_output.rstrip()}"
+
+            error_message += (
+                "\n\nPossible failure reasons:\n\n"
+                f"• {self.failure_reasons['not connected']}\n"
+                f"• {self.failure_reasons['incorrect serial']}\n")
 
             raise CommanderException(error_message)
 
