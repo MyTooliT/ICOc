@@ -15,6 +15,7 @@ from semantic_version import Version
 
 from mytoolit import __version__
 from mytoolit.can import Network, Node, State
+from mytoolit.cmdline.commander import Commander
 from mytoolit.config import settings
 from mytoolit.eeprom import EEPROMStatus
 from mytoolit.report import Report
@@ -354,23 +355,18 @@ class TestNode(TestCase):
 
         """
 
-        identification_arguments = [
-            "--serialno",
-            str(programmmer_serial_number), "-d", chip
-        ]
+        commander = Commander(serial_number=programmmer_serial_number,
+                              chip=chip)
 
         # Set debug mode to out, to make sure we flash the STH (connected via
         # debug cable) and not another microcontroller connected to the
         # programmer board.
-        change_mode_command = ("commander adapter dbgmode OUT".split() +
-                               identification_arguments)
-        status = run(change_mode_command, capture_output=True, text=True)
-        self.assertEqual(
-            status.returncode, 0,
-            "Unable to change debug mode of programming board\n\n" +
-            "Possible Reasons:\n\n• No programming board connected\n" +
-            "• Serial Number of programming board " +
-            f"({programmmer_serial_number}) is incorrect")
+        commander.enable_debug_mode()
+
+        identification_arguments = [
+            "--serialno",
+            str(programmmer_serial_number), "-d", chip
+        ]
 
         # Unlock debug access
         unlock_command = ("commander device unlock".split() +
