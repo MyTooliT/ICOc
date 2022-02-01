@@ -145,12 +145,11 @@ class Commander:
 
         """
 
+        error_reasons = ['programmer not connected', 'incorrect serial']
         self._run_command(command="adapter dbgmode OUT".split() +
                           self.identification_arguments,
                           description="enable debug mode",
-                          possible_error_reasons=[
-                              'programmer not connected', 'incorrect serial'
-                          ])
+                          possible_error_reasons=error_reasons)
 
     def unlock_device(self) -> None:
         """Unlock device for debugging
