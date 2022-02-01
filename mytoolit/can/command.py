@@ -114,6 +114,7 @@ class Command:
         if isinstance(block, str):
             try:
                 block = MyToolItBlock[block]
+                assert isinstance(block, int)
             except KeyError:
                 raise ValueError(f"Unknown block: {block}")
 
@@ -126,10 +127,7 @@ class Command:
 
         if isinstance(block_command, str):
             try:
-                # Block has type `int`, otherwise the code beforehand would
-                # have thrown an exception
-                block_command_names = blocknumber_to_commands[
-                    block]  # type: ignore
+                block_command_names = blocknumber_to_commands[self.block()]
             except KeyError:
                 raise ValueError(f"Unknown block number: {block}")
             else:
