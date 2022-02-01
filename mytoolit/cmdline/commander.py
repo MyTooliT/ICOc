@@ -154,18 +154,7 @@ class Commander:
     def unlock_device(self) -> None:
         """Unlock device for debugging
 
-        Example
-        -------
-
-        Unlock STH
-
-        >>> from mytoolit.config import settings
-
-        >>> commander = Commander(
-        ...     serial_number=settings.sth.programming_board.serial_number,
-        ...     chip='BGM121A256V2')
-        >>> commander.enable_debug_mode()
-        >>> commander.unlock_device()
+        Calling this method will erase the flash of the device!
 
         """
 
