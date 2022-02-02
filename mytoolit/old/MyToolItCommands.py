@@ -199,7 +199,7 @@ MyToolItStatData = bidict({
 
 MyToolItConfiguration = bidict({
     "Acceleration": 0x00,
-    "Temperature": 0x01,
+    "Channel Configuration": 0x01,
     "Voltage": 0x20,
     "Current": 0x40,
     "CalibrationFactorK": 0x60,
@@ -315,8 +315,8 @@ CommandBlockStatisticalData = {
 CommandBlockConfiguration = {
     MyToolItConfiguration["Acceleration"]:
     "Configuration Command Acceleration Configuration",
-    MyToolItConfiguration["Temperature"]:
-    "Configuration Command Temperature Configuration",
+    MyToolItConfiguration["Channel Configuration"]:
+    "Configuration Command Channel Configuration",
     MyToolItConfiguration["Voltage"]:
     "Configuration Command Voltage Configuration",
     MyToolItConfiguration["Current"]:
