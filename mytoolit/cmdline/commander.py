@@ -177,7 +177,8 @@ class Commander:
         self._run_command(command="adapter dbgmode OUT".split() +
                           self.identification_arguments,
                           description="enable debug mode",
-                          possible_error_reasons=error_reasons)
+                          possible_error_reasons=error_reasons,
+                          regex_output="Setting debug mode to OUT")
 
     def unlock_device(self) -> None:
         """Unlock device for debugging
