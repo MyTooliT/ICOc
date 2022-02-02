@@ -1,7 +1,7 @@
 # -- Imports ------------------------------------------------------------------
 
 from os import environ, pathsep
-from re import compile, Pattern
+from re import compile
 from subprocess import run
 from sys import platform
 from typing import List, Optional
@@ -83,7 +83,7 @@ class Commander:
                      command: List[str],
                      description: str,
                      possible_error_reasons: List[str],
-                     regex_output: Optional[Pattern] = None) -> str:
+                     regex_output: Optional[str] = None) -> str:
         """Run a Simplicity Commander command
 
         Parameters
@@ -146,12 +146,12 @@ class Commander:
 
             raise CommanderReturnCodeException(error_message)
 
-        if regex_output is not None and regex_output.search(
+        if regex_output is not None and compile(regex_output).search(
                 result.stdout) is None:
             error_message = ("Output of Simplicity Commander command to "
                              f"{description}:\n{result.stdout}\n"
                              "did not match the expected regular expression "
-                             "“{regex_output}”")
+                             f"“{regex_output}”")
             raise CommanderOutputMatchException(error_message)
 
         return result.stdout
@@ -226,8 +226,7 @@ class Commander:
         command = ["aem", "measure", "--windowlength",
                    str(milliseconds)] + self.identification_arguments
 
-        regex = compile(r"Power\s*\[mW\]\s*:\s*(?P<milliwatts>\d+\.\d+)")
-
+        regex = r"Power\s*\[mW\]\s*:\s*(?P<milliwatts>\d+\.\d+)"
         try:
             output = self._run_command(command=command,
                                        description="read power usage",
@@ -241,7 +240,7 @@ class Commander:
                 "Unable to extract power usage "
                 "from Simplicity Commander output")
 
-        pattern_match = regex.search(output)
+        pattern_match = compile(regex).search(output)
         assert pattern_match is not None
         milliwatts = pattern_match['milliwatts']
 
