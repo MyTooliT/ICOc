@@ -1,10 +1,10 @@
 # -- Imports ------------------------------------------------------------------
 
 from os import environ, pathsep
-from re import compile
+from re import compile, Pattern
 from subprocess import run
 from sys import platform
-from typing import List
+from typing import List, Optional
 
 from mytoolit.config import settings
 
@@ -13,6 +13,14 @@ from mytoolit.config import settings
 
 class CommanderException(Exception):
     """Describes problems regarding the execution of Simplicity Commander"""
+
+
+class CommanderReturnCodeException(CommanderException):
+    """A Simplicity Commander command did not return the success status code"""
+
+
+class CommanderOutputMatchException(CommanderException):
+    """The Simplicity Commander output did not contain an expected value"""
 
 
 class Commander:
@@ -71,8 +79,11 @@ class Commander:
         paths = path.linux if platform == 'Linux' else path.windows
         environ['PATH'] += (pathsep + pathsep.join(paths))
 
-    def _run_command(self, command: List[str], description: str,
-                     possible_error_reasons: List[str]) -> str:
+    def _run_command(self,
+                     command: List[str],
+                     description: str,
+                     possible_error_reasons: List[str],
+                     regex_output: Optional[Pattern] = None) -> str:
         """Run a Simplicity Commander command
 
         Parameters
@@ -90,10 +101,18 @@ class Commander:
             A list of dictionary keys that describe why the command might have
             failed
 
+        regex_output:
+            An optional regular expression that has to match part of the
+            standard output of the command
+
         Raises
         ------
 
-        An `CommanderException` if the command returned unsuccessfully
+        A `CommanderException` if
+
+        - the command returned unsuccessfully or
+        - the standard output did not match the optional regular expression
+          specified in `regex_output`
 
         Returns
         -------
@@ -108,6 +127,7 @@ class Commander:
                     f"“{reason}” is not a valid possible error reason")
 
         result = run(["commander"] + command, capture_output=True, text=True)
+
         if result.returncode != 0:
             error_message = ("Execution of Simplicity Commander command to "
                              f"{description} failed with return code "
@@ -124,7 +144,15 @@ class Commander:
             ])
             error_message += f"\n\nPossible error reasons:\n\n{error_reasons}"
 
-            raise CommanderException(error_message)
+            raise CommanderReturnCodeException(error_message)
+
+        if regex_output is not None and regex_output.search(
+                result.stdout) is None:
+            error_message = ("Output of Simplicity Commander command to "
+                             f"{description}:\n{result.stdout}\n"
+                             "did not match the expected regular expression "
+                             "“{regex_output}”")
+            raise CommanderOutputMatchException(error_message)
 
         return result.stdout
 
@@ -198,19 +226,22 @@ class Commander:
         command = ["aem", "measure", "--windowlength",
                    str(milliseconds)] + self.identification_arguments
 
-        output = self._run_command(command=command,
-                                   description="read power usage",
-                                   possible_error_reasons=[
-                                       'programmer not connected',
-                                       'incorrect serial'
-                                   ])
-
         regex = compile(r"Power\s*\[mW\]\s*:\s*(?P<milliwatts>\d+\.\d+)")
-        pattern_match = regex.search(output)
-        if pattern_match is None:
-            raise CommanderException("Unable to extract power usage "
-                                     "from Simplicity Commander output")
 
+        try:
+            output = self._run_command(command=command,
+                                       description="read power usage",
+                                       possible_error_reasons=[
+                                           'programmer not connected',
+                                           'incorrect serial'
+                                       ],
+                                       regex_output=regex)
+        except CommanderOutputMatchException:
+            raise CommanderOutputMatchException(
+                "Unable to extract power usage "
+                "from Simplicity Commander output")
+
+        pattern_match = regex.search(output)
         assert pattern_match is not None
         milliwatts = pattern_match['milliwatts']
 
