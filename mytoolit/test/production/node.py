@@ -4,8 +4,6 @@ from asyncio import new_event_loop, set_event_loop, sleep as async_sleep
 from datetime import date, datetime
 from os.path import abspath, isfile, dirname, join
 from pathlib import Path
-from re import escape
-from subprocess import run
 from types import SimpleNamespace
 from typing import List, Union
 from unittest import TestCase
@@ -355,45 +353,15 @@ class TestNode(TestCase):
 
         """
 
-        commander = Commander(serial_number=programmmer_serial_number,
-                              chip=chip)
-
-        # Set debug mode to out, to make sure we flash the STH (connected via
-        # debug cable) and not another microcontroller connected to the
-        # programmer board.
-        commander.enable_debug_mode()
-
-        # Unlock device (triggers flash erase)
-        commander.unlock_device()
-
-        identification_arguments = [
-            "--serialno",
-            str(programmmer_serial_number), "-d", chip
-        ]
-
         repository_root = dirname(dirname(dirname(dirname(abspath(__file__)))))
         image_filepath = join(repository_root, flash_location)
         self.assertTrue(isfile(image_filepath),
                         f"Firmware file {image_filepath} does not exist")
 
-        flash_command = [
-            "commander", "flash", image_filepath, "--address", "0x0"
-        ] + identification_arguments
-        status = run(flash_command, capture_output=True, text=True)
-        self.assertEqual(
-            status.returncode, 0,
-            "Flash program command returned non-zero exit code " +
-            f"{status.returncode}")
-        expected_output = "range 0x0FE04000 - 0x0FE047FF (2 KB)"
-        self.assertRegex(
-            status.stdout, escape(expected_output),
-            f"Flash output did not contain expected output “{expected_output}”"
-        )
-        expected_output = "DONE"
-        self.assertRegex(
-            status.stdout, expected_output,
-            f"Flash output did not contain expected output “{expected_output}”"
-        )
+        commander = Commander(serial_number=programmmer_serial_number,
+                              chip=chip)
+
+        commander.upload_flash(image_filepath)
 
     async def _test_eeprom_product_data(self, node: Node,
                                         config: DynaBox) -> None:
