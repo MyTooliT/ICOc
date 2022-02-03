@@ -137,7 +137,8 @@ class Commander:
                 (result.stdout,
                  result.stderr)) if result.stdout or result.stderr else "")
             if combined_output:
-                error_message += f":\n{combined_output.rstrip()}"
+                error_message += ("\n\nSimplicity Commander output:\n\n"
+                                  f"{combined_output.rstrip()}")
 
             if possible_error_reasons:
                 error_reasons = "\n".join([
