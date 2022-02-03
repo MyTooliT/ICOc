@@ -4,6 +4,7 @@ from os import environ, pathsep
 from platform import system
 from re import compile
 from subprocess import run
+from sys import byteorder
 from typing import List, Optional
 
 from mytoolit.config import settings
@@ -130,9 +131,15 @@ class Commander:
         result = run(["commander"] + command, capture_output=True, text=True)
 
         if result.returncode != 0:
+            # Since Windows seems to return the exit code as unsigned number we
+            # need to convert it first to the “real” signed number.
+            returncode = int.from_bytes(
+                result.returncode.to_bytes(4, byteorder),
+                byteorder,
+                signed=True) if system() == 'Windows' else result.returncode
             error_message = ("Execution of Simplicity Commander command to "
                              f"{description} failed with return code "
-                             f"“{result.returncode}”")
+                             f"“{returncode}”")
             combined_output = ("\n".join(
                 (result.stdout,
                  result.stderr)) if result.stdout or result.stderr else "")
