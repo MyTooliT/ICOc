@@ -193,7 +193,8 @@ class Commander:
             possible_error_reasons=[
                 'device not connected', 'programmer not connected',
                 'incorrect serial'
-            ])
+            ],
+            regex_output="Chip successfully unlocked")
 
     def read_power_usage(self, milliseconds: float = 1000) -> float:
         """Read the power usage of the connected hardware
