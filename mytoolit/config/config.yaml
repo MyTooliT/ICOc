@@ -65,6 +65,7 @@ COMMANDS:
     # OS does not do that, then the STH test will fail, unless the commands are
     # already accessible via the path environment variable (`$Env:Path` in
     # Windows or `$PATH` in Unix).
+    LINUX: []
     WINDOWS:
       # The paths below are the default install locations of `commander` in
       # Windows
