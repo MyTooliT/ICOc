@@ -82,7 +82,7 @@ class Commander:
     def _run_command(self,
                      command: List[str],
                      description: str,
-                     possible_error_reasons: List[str],
+                     possible_error_reasons: Optional[List[str]] = None,
                      regex_output: Optional[str] = None) -> str:
         """Run a Simplicity Commander command
 
@@ -121,10 +121,11 @@ class Commander:
 
         """
 
-        for reason in possible_error_reasons:
-            if reason not in self.error_reasons:
-                raise ValueError(
-                    f"“{reason}” is not a valid possible error reason")
+        if possible_error_reasons:
+            for reason in possible_error_reasons:
+                if reason not in self.error_reasons:
+                    raise ValueError(
+                        f"“{reason}” is not a valid possible error reason")
 
         result = run(["commander"] + command, capture_output=True, text=True)
 
@@ -138,11 +139,13 @@ class Commander:
             if combined_output:
                 error_message += f":\n{combined_output.rstrip()}"
 
-            error_reasons = "\n".join([
-                f"• {self.error_reasons[reason]}"
-                for reason in possible_error_reasons
-            ])
-            error_message += f"\n\nPossible error reasons:\n\n{error_reasons}"
+            if possible_error_reasons:
+                error_reasons = "\n".join([
+                    f"• {self.error_reasons[reason]}"
+                    for reason in possible_error_reasons
+                ])
+                error_message += ("\n\nPossible error reasons:"
+                                  f"\n\n{error_reasons}")
 
             raise CommanderReturnCodeException(error_message)
 
