@@ -1,9 +1,9 @@
 # -- Imports ------------------------------------------------------------------
 
 from os import environ, pathsep
+from platform import system
 from re import compile
 from subprocess import run
-from sys import platform
 from typing import List, Optional
 
 from mytoolit.config import settings
@@ -76,7 +76,7 @@ class Commander:
         """
 
         path = settings.commands.path
-        paths = path.linux if platform == 'Linux' else path.windows
+        paths = path.linux if system() == 'Linux' else path.windows
         environ['PATH'] += (pathsep + pathsep.join(paths))
 
     def _run_command(self,
