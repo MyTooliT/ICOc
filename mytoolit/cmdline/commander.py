@@ -199,6 +199,31 @@ class Commander:
             ],
             regex_output="Chip successfully unlocked")
 
+    def upload_flash(self, filepath: str) -> None:
+        """Upload code into the flash memory of the device
+
+        Parameters
+        ----------
+
+        filepath:
+            The filepath of the flash image
+
+        """
+
+        # Set debug mode to out, to make sure we flash the STH (connected via
+        # debug cable) and not another microcontroller connected to the
+        # programmer board.
+        self.enable_debug_mode()
+
+        # Unlock device (triggers flash erase)
+        self.unlock_device()
+
+        self._run_command(
+            command=["flash", f"{filepath}", "--address", "0x0"] +
+            self.identification_arguments,
+            description="upload firmware",
+        )
+
     def read_power_usage(self, milliseconds: float = 1000) -> float:
         """Read the power usage of the connected hardware
 
