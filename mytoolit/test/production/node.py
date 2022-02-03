@@ -363,22 +363,13 @@ class TestNode(TestCase):
         # programmer board.
         commander.enable_debug_mode()
 
+        # Unlock device (triggers flash erase)
+        commander.unlock_device()
+
         identification_arguments = [
             "--serialno",
             str(programmmer_serial_number), "-d", chip
         ]
-
-        # Unlock debug access
-        unlock_command = ("commander device unlock".split() +
-                          identification_arguments)
-        status = run(unlock_command, capture_output=True, text=True)
-        self.assertEqual(
-            status.returncode, 0,
-            "Unlock command returned non-zero exit code " +
-            f"{status.returncode}\n\n" +
-            f"Possible Reason:\n\n• {node} not connected to programming board")
-        self.assertRegex(status.stdout, "Chip successfully unlocked",
-                         "Unable to unlock debug access of chip")
 
         repository_root = dirname(dirname(dirname(dirname(abspath(__file__)))))
         image_filepath = join(repository_root, flash_location)
