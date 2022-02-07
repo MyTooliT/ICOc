@@ -1110,6 +1110,69 @@ class Network:
 
         return Times(sleep=wait_time, advertisement=advertisement_time)
 
+    async def write_energy_mode_reduced(self,
+                                        node: Union[str, Node] = 'STH 1',
+                                        device_number: int = 0xff,
+                                        times: Optional[Times] = None) -> None:
+        """Writes the time values for the reduced energy mode (mode 1)
+
+        You can use this method to set these times for both
+
+        1. disconnected and
+        2. connected
+
+        devices.
+
+        1. For disconnected devices you will usually use the STU (e.g.
+           `STU 1`) and the device number at the STU (in the range `0` up to
+           the number of devices - 1) to set the time values.
+
+        2. For connected devices you will use the device name and the special
+           “self addressing” device number (`0xff`) to set the reduced energy
+           mode time values.
+
+        Parameters
+        ----------
+
+        node:
+            The node which should set the time values
+
+        device_number:
+            The number of the Bluetooth device (0 up to the number of
+            available devices - 1; 0xff for self addressing).
+
+        times:
+            The values for the advertisement time in the reduced energy mode
+            in milliseconds and the time until the device will go into the low
+            energy mode (mode 2) – if there is no activity – in milliseconds.
+
+            If you do not specify these values then the default values from
+            the configuration will be used
+
+        """
+
+        if times is None:
+            time_settings = settings.sensory_device.bluetooth
+            times = Times(sleep=time_settings.sleep_time_1,
+                          advertisement=time_settings.advertisement_time_1)
+
+        sleep_time = times.sleep
+        advertisement_time = round(times.advertisement /
+                                   type(self).ADVERTISEMENT_TIME_EEPROM_TO_MS)
+
+        data = list(
+            sleep_time.to_bytes(4, 'little') +
+            advertisement_time.to_bytes(2, 'little'))
+
+        await self._request_bluetooth(
+            node=node,
+            device_number=device_number,
+            subcommand=14,
+            data=data,
+            response_data=list(data),
+            description=("write reduced energy time values of "
+                         f"“{device_number}” from “{node}”"))
+
     async def get_sths(self,
                        node: Union[str,
                                    Node] = 'STU 1') -> List[STHDeviceInfo]:
