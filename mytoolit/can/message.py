@@ -283,7 +283,7 @@ class Message:
                     advertisement_time = (
                         int.from_bytes(self.data[6:], byteorder='little') *
                         ADVERTISEMENT_TIME_EEPROM_TO_MS)
-                    data_explanation += ": " + ",".join([
+                    data_explanation += ": " + ", ".join([
                         f"⟳ {time_normal_to_reduced_ms} ms",
                         f"📢 {advertisement_time} ms"
                     ])
