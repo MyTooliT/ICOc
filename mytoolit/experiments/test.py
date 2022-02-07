@@ -3,7 +3,7 @@ from time import time
 
 from netaddr import EUI
 
-from mytoolit.can import Network
+from mytoolit.can.network import Network, Times
 
 
 async def test(identifier=EUI("08:6b:d7:01:de:81")):
@@ -13,10 +13,19 @@ async def test(identifier=EUI("08:6b:d7:01:de:81")):
 
         await network.connect_sth(identifier)
         name = await network.get_name(node)
-        print(f"Name of {node}: {name}")
+        print(f"Name of {node}: {name}\n")
 
-        print("Read acceleration data")
-        await network.read_acceleration()
+        times = Times(
+            sleep=300000,
+            advertisement=1250,
+        )
+        print(f"Set time values for reduced energy mode to “{times}”")
+
+        await network.write_energy_mode_reduced(node=node, times=times)
+
+        times = await network.read_energy_mode_reduced(node)
+        print(f"Advertisement Time: {times.advertisement} ms")
+        print(f"Sleep Time:         {times.sleep} ms")
 
         print("\nExecution took {:.3} seconds".format(time() - start_time))
 
