@@ -842,8 +842,8 @@ class Network:
 
         answer = await self._request_bluetooth(
             node=node,
-            subcommand=6,
             device_number=device_number,
+            subcommand=6,
             description=f"get second part of {description}")
 
         second_part = convert_bytes_to_text(answer.data[2:])
@@ -1025,6 +1025,7 @@ class Network:
 
         response = await self._request_bluetooth(
             node=node,
+            device_number=device_number,
             subcommand=12,
             description=f"get RSSI of “{device_number}” from “{node}”")
 
@@ -1097,6 +1098,7 @@ class Network:
 
         response = await self._request_bluetooth(
             node=node,
+            device_number=device_number,
             subcommand=13,
             description=("read reduced energy time values of "
                          f"“{device_number}” from “{node}”"))
