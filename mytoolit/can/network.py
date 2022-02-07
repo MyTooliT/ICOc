@@ -519,16 +519,27 @@ class Network:
                           data=[subcommand, device_number] + data)
 
         # The bluetooth subcommand and device number should be the same in the
-        # response message. Unfortunately the device number is currently not
-        # the same for:
+        # response message.
+        #
+        # Unfortunately the device number is currently not the same for:
         # - the subcommand that sets the second part of the name, and
         # - the subcommand that retrieves the MAC address
-        expected_data: List[Optional[int]] = list(message.data[:1])
+        # - the subcommand that writes the time values for the reduced energy
+        #   mode
+        #
+        # The subcommand number in the response message for the command to set
+        # the time values for the reduced energy mode is unfortunately also
+        # not correct.
         set_second_part_name = 4
+        set_times_reduced_energy = 14
         get_mac_address = 17
-        expected_data.append(
-            None if subcommand in
-            [get_mac_address, set_second_part_name] else message.data[1])
+        expected_data: List[Optional[int]]
+        if subcommand in {get_mac_address, set_second_part_name}:
+            expected_data = [subcommand, None]
+        elif subcommand == set_times_reduced_energy:
+            expected_data = [None, None]
+        else:
+            expected_data = [subcommand, device_number]
 
         if response_data is not None:
             expected_data.extend(response_data)
