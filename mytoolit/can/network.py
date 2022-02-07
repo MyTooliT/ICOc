@@ -1056,7 +1056,7 @@ class Network:
 
         A tuple containing the advertisement time in the reduced energy mode
         in milliseconds and the time until the device will go into the low
-        energy mode (mode 2) in milliseconds, if there is no activity
+        energy mode (mode 2) – if there is no activity – in milliseconds
 
         Example
         -------
