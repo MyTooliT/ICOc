@@ -884,7 +884,7 @@ class Network:
         bytes_name = list(name.encode('utf-8'))
         length_name = len(bytes_name)
         if length_name > 8:
-            raise ValueError("Name is too long ({length_name} bytes). "
+            raise ValueError(f"Name is too long ({length_name} bytes). "
                              "Please use a name between 0 and 8 bytes.")
 
         # Use 0 bytes at end of names that are shorter than 8 bytes
