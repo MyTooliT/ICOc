@@ -107,6 +107,21 @@ class Times(NamedTuple):
     advertisement: float
     sleep: int
 
+    def __repr__(self) -> str:
+        """Return a string representation of the object
+
+        Returns
+        -------
+
+        A string that contains the advertisement time and sleep time values
+
+        """
+
+        return ", ".join([
+            f"Advertisement Time: {self.advertisement} ms",
+            f"Sleep Time: {self.sleep} ms"
+        ])
+
 
 class STHDeviceInfo(NamedTuple):
     """Used to store information about a (disconnected) STH"""
