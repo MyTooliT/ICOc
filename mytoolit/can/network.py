@@ -1051,6 +1051,13 @@ class Network:
             The number of the Bluetooth device (0 up to the number of
             available devices - 1; 0xff for self addressing).
 
+        Returns
+        -------
+
+        A tuple containing the advertisement time in the reduced energy mode
+        in milliseconds and the time until the device will go into the low
+        energy mode (mode 2) in milliseconds, if there is no activity
+
         Example
         -------
 
@@ -1070,13 +1077,6 @@ class Network:
         True
         >>> times.sleep == 300000
         True
-
-        Returns
-        -------
-
-        A tuple containing the advertisement time in the reduced energy mode
-        in milliseconds and the time until the device will go into the low
-        energy mode (mode 2) in milliseconds, if there is no activity
 
         """
 
