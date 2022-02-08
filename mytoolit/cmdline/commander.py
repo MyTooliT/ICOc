@@ -1,11 +1,12 @@
 # -- Imports ------------------------------------------------------------------
 
 from os import environ, pathsep
+from pathlib import Path
 from platform import system
 from re import compile
 from subprocess import run
 from sys import byteorder
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from mytoolit.config import settings
 
@@ -207,7 +208,7 @@ class Commander:
             ],
             regex_output="Chip successfully unlocked")
 
-    def upload_flash(self, filepath: str) -> None:
+    def upload_flash(self, filepath: Union[str, Path]) -> None:
         """Upload code into the flash memory of the device
 
         Parameters
