@@ -1146,18 +1146,14 @@ class Network:
         return Times(sleep=wait_time, advertisement=advertisement_time)
 
     async def write_energy_mode_reduced(self,
-                                        node: Union[str, Node] = 'STH 1',
                                         times: Optional[Times] = None) -> None:
         """Writes the time values for the reduced energy mode (mode 1)
 
-        To change the time values of a sensor device such as an STH you need
-        to connect to it first.
+        To change the time values of the sensor device you need to connect to
+        it first.
 
         Parameters
         ----------
-
-        node:
-            The node where the new time values should be used
 
         times:
             The values for the advertisement time in the reduced energy mode
@@ -1182,18 +1178,14 @@ class Network:
             sleep_time.to_bytes(4, 'little') +
             advertisement_time.to_bytes(2, 'little'))
 
-        # At least in my tests you can not change the time values for a
-        # disconnected device using its device number (at the STU). Changing
-        # the device number does not affect the behavior. Just to be sure we
-        # use the “self addressing” device number.
         self_addressing = 0xff
         await self._request_bluetooth(
-            node=node,
+            node='STH 1',
             device_number=self_addressing,
             subcommand=14,
             data=data,
             response_data=list(data),
-            description=(f"write reduced energy time values of “{node}”"))
+            description="write reduced energy time values of sensor device")
 
     async def get_mac_address(self,
                               node: Union[str, Node] = 'STH 1',
