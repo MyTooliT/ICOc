@@ -106,6 +106,8 @@ ICOc requires at least Python `3.7`. The software also supports Python `3.8`, `3
 
 To communicate with the STU you need to install the driver for the PCAN adapter. You can find the download link for Windows [here](https://www.peak-system.com/quick/DrvSetup). Please make sure that you include the “PCAN-Basic API” when you install the driver.
 
+> Note: The parts of the package that work on Linux do not use the PCAN interface. Instead you need to make sure that your CAN adapter is available using the [SocketCAN](https://en.wikipedia.org/wiki/SocketCAN) interface.
+
 #### Simplicity Commander (Optional)
 
 For the tests that require a firmware flash you need to **either** install
