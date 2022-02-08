@@ -2,7 +2,6 @@
 
 from asyncio import new_event_loop, set_event_loop, sleep as async_sleep
 from datetime import date, datetime
-from os.path import abspath, isfile, dirname, join
 from pathlib import Path
 from types import SimpleNamespace
 from typing import List, Union
@@ -353,9 +352,9 @@ class TestNode(TestCase):
 
         """
 
-        repository_root = dirname(dirname(dirname(dirname(abspath(__file__)))))
-        image_filepath = join(repository_root, flash_location)
-        self.assertTrue(isfile(image_filepath),
+        repository_root = Path(__file__).parent.parent.parent.parent
+        image_filepath = repository_root / flash_location
+        self.assertTrue(image_filepath.is_file(),
                         f"Firmware file {image_filepath} does not exist")
 
         commander = Commander(serial_number=programmmer_serial_number,
