@@ -15,7 +15,7 @@ async def test(identifier=EUI("08:6b:d7:01:de:81")):
         name = await network.get_name(node)
         print(f"Name of {node}: {name}\n")
 
-        times = await network.read_energy_mode_reduced(node=node)
+        times = await network.read_energy_mode_reduced()
         print(f"Advertisement Time: {times.advertisement} ms")
         print(f"Sleep Time:         {times.sleep} ms")
 

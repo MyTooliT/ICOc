@@ -1098,19 +1098,11 @@ class Network:
                               byteorder='little',
                               signed=True)
 
-    async def read_energy_mode_reduced(self,
-                                       node: Union[str,
-                                                   Node] = 'STH 1') -> Times:
-        """Read the reduced energy mode (mode 1) time values of a device
+    async def read_energy_mode_reduced(self) -> Times:
+        """Read the reduced energy mode (mode 1) sensor device time values
 
-        To change the time values of a sensor device such as an STH you need
-        to connect to it first.
-
-        Parameters
-        ----------
-
-        node:
-            The node for which you want to retrieve the time values
+        To read the time values of the sensor device you need to connect to it
+        first.
 
         Returns
         -------
@@ -1124,15 +1116,13 @@ class Network:
 
         >>> from asyncio import run, sleep
 
-        Retrieve the time values of an STH
+        Retrieve the reduced energy time values of a sensor device
 
         >>> async def read_energy_mode_reduced():
         ...     async with Network() as network:
-        ...         # We assume that at least one STH is available
+        ...         # We assume that at least one sensor device is available
         ...         await network.connect_sth(0)
-        ...
-        ...
-        ...         return await network.read_energy_mode_reduced('STH 1')
+        ...         return await network.read_energy_mode_reduced()
         >>> times = run(read_energy_mode_reduced())
         >>> times.advertisement == 1250
         True
@@ -1143,10 +1133,10 @@ class Network:
 
         self_addressing = 0xff
         response = await self._request_bluetooth(
-            node=node,
+            node='STH 1',
             device_number=self_addressing,
             subcommand=13,
-            description=f"read reduced energy time values of “{node}”")
+            description="read reduced energy time values of sensor device")
 
         wait_time = int.from_bytes(response.data[2:6], byteorder='little')
         advertisement_time = (
