@@ -112,7 +112,7 @@ class TestSMH(TestSensorNode):
             def check_value(value,
                             channel,
                             expected_value,
-                            tolerance=round(ADC_MAX_VALUE * 0.05)):
+                            tolerance=round(ADC_MAX_VALUE * 0.1)):
                 """Check if an ADC value is roughly equal to another value"""
 
                 expected_minimum_value = expected_value - tolerance
