@@ -1124,10 +1124,10 @@ class Network:
         ...         await network.connect_sth(0)
         ...         return await network.read_energy_mode_reduced()
         >>> times = run(read_energy_mode_reduced())
-        >>> times.advertisement == 1250
-        True
-        >>> times.sleep == 300000
-        True
+        >>> round(times.advertisement)
+        1250
+        >>> times.sleep
+        300000
 
         """
 
