@@ -1123,34 +1123,17 @@ class Network:
 
     async def write_energy_mode_reduced(self,
                                         node: Union[str, Node] = 'STH 1',
-                                        device_number: int = 0xff,
                                         times: Optional[Times] = None) -> None:
         """Writes the time values for the reduced energy mode (mode 1)
 
-        You can use this method to set these times for both
-
-        1. disconnected and
-        2. connected
-
-        devices.
-
-        1. For disconnected devices you will usually use the STU (e.g.
-           `STU 1`) and the device number at the STU (in the range `0` up to
-           the number of devices - 1) to set the time values.
-
-        2. For connected devices you will use the device name and the special
-           “self addressing” device number (`0xff`) to set the reduced energy
-           mode time values.
+        To change the time values of a sensor device such as an STH you need
+        to connect to it first.
 
         Parameters
         ----------
 
         node:
-            The node which should set the time values
-
-        device_number:
-            The number of the Bluetooth device (0 up to the number of
-            available devices - 1; 0xff for self addressing).
+            The node where the new time values should be used
 
         times:
             The values for the advertisement time in the reduced energy mode
@@ -1175,14 +1158,18 @@ class Network:
             sleep_time.to_bytes(4, 'little') +
             advertisement_time.to_bytes(2, 'little'))
 
+        # At least in my tests you can not change the time values for a
+        # disconnected device using its device number (at the STU). Changing
+        # the device number does not affect the behavior. Just to be sure we
+        # use the “self addressing” device number.
+        self_addressing = 0xff
         await self._request_bluetooth(
             node=node,
-            device_number=device_number,
+            device_number=self_addressing,
             subcommand=14,
             data=data,
             response_data=list(data),
-            description=("write reduced energy time values of "
-                         f"“{device_number}” from “{node}”"))
+            description=(f"write reduced energy time values of “{node}”"))
 
     async def get_sths(self,
                        node: Union[str,
