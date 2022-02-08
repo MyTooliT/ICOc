@@ -156,6 +156,12 @@ Afterwards you can use the various [scripts](#scripts:section:scripts) included 
 pip install --user -e .
 ```
 
+The command above might not work on Linux due to [a bug in `pip`](https://github.com/pypa/pip/issues/7953). In that case you can try the following [workaround](https://github.com/pypa/pip/issues/7953#issuecomment-1027704899) to install ICOc:
+
+```sh
+python3 -m pip install --prefix=$(python3 -m site --user-base) -e .
+```
+
 #### Unknown Command `icoc`
 
 If `pip install` prints **warnings about the path** that look like this:
