@@ -19,11 +19,15 @@ async def test(identifier=EUI("08:6b:d7:01:de:81")):
             sleep=300000,
             advertisement=1250,
         )
-        print(f"Set time values for reduced energy mode to “{times}”")
-
+        node = 'STU 1'
+        device_number = 0xff
+        print(f"Set time values for “{node}” (device number: {device_number}) "
+              f" to “{times}”\n")
         await network.write_energy_mode_reduced(node=node, times=times)
 
-        times = await network.read_energy_mode_reduced(node)
+        times = await network.read_energy_mode_reduced(
+            node=node, device_number=device_number)
+        print(f"{node}\n{'—' * len(node)}")
         print(f"Advertisement Time: {times.advertisement} ms")
         print(f"Sleep Time:         {times.sleep} ms")
 
