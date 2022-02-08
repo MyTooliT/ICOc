@@ -221,6 +221,8 @@ test-sth -k flash -k connection
 
 which executes all tests that contain the text `flash` or `connection`.
 
+<a name="tutorials:section:sth"></a>
+
 ### STH
 
 The text below gives you a more detailed step-by-step guide on how to run the tests of the STH.
@@ -259,6 +261,20 @@ The text below gives you a more detailed step-by-step guide on how to run the te
    - to the **serial number** (`STH` → `PROGRAMMING BOARD` → `SERIAL NUMBER`), if you set the status to `Bare PCB`.
 
 [config]: ../../mytoolit/config/config.yaml
+
+### SMH
+
+The preparation steps for the SMH test are very similar to the ones of the [STH test](#tutorials:section:sth).
+
+1. Please make sure that the config value that stores the SMH firmware filepath (`SMH` → `Firmware` → `Location` → `Flash`) points to the correct firmware. If you have not downloaded a firmware image for the SMH you can do so [here](https://github.com/MyTooliT/STH/releases).
+
+2. Check that the [configuration values][config] like SMH name (`SMH` → `NAME`) and programming board serial number (`SMH` → `PROGRAMMING BOARD` → `SERIAL NUMBER`) are set correctly.
+
+3. Please execute the test using the following command:
+
+   ```sh
+   test-smh
+   ```
 
 ### STU
 
