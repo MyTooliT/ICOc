@@ -1163,6 +1163,32 @@ class Network:
             If you do not specify these values then the default values from
             the configuration will be used
 
+        Example
+        -------
+
+        >>> from asyncio import run, sleep
+
+        Read and write the reduced energy time values of a sensor device
+
+        >>> async def read_write_energy_mode_reduced(sleep, advertisement):
+        ...     async with Network() as network:
+        ...         # We assume that at least one sensor device is available
+        ...         await network.connect_sth(0)
+        ...
+        ...         await network.write_energy_mode_reduced(
+        ...             Times(sleep=sleep, advertisement=advertisement))
+        ...         times = await network.read_energy_mode_reduced()
+        ...
+        ...         # Overwrite changed values with default config values
+        ...         await network.write_energy_mode_reduced()
+        ...
+        ...         return times
+        >>> times = run(read_write_energy_mode_reduced(200_000, 2000))
+        >>> times.sleep
+        200000
+        >>> round(times.advertisement)
+        2000
+
         """
 
         if times is None:
