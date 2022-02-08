@@ -115,7 +115,10 @@ For the tests that require a firmware flash you need to **either** install
 
 If you choose the first option, then please make sure to install the Simplicity Commander tool inside Simplicity Studio. If you download Simplicity Commander directly, then the tests assume that you unzipped the files into the directory `C:\SiliconLabs\Simplicity Commander` on Windows.
 
-If you used a different install path then please add the path to `commander.exe` to the list `COMMANDS` → `PATH` → `WINDOWS` in the configuration file `config.yaml`. This currently only works on Windows. If you use Linux or do not want to change the config file, then please just make sure that `commander` is accessible via the `PATH` environment variable
+- If you do not use the standard install path on **Windows**, then please add the path to `commander.exe` to the list `COMMANDS` → `PATH` → `WINDOWS` in the configuration file `config.yaml`.
+- If you use **Linux**, then please add the path to `commander` to the list `COMMANDS` → `PATH` → `LINUX`.
+
+If you do not want to change the config file, then please just make sure that `commander` is accessible via the `PATH` environment variable.
 
 Please note, that you do not need to install Simplicity Commander if you just want to measure data with ICOc.
 
