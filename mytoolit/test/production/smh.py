@@ -37,6 +37,21 @@ class TestSMH(TestSensorNode):
         cls = type(self)
         cls.name = settings.smh.name
 
+    def test__firmware_flash(self):
+        """Upload bootloader and application into SMH
+
+        Please note the additional underscore in the method name that makes
+        sure this test case is executed before all other test cases.
+
+        """
+
+        self._test_firmware_flash(
+            node='SMH',
+            flash_location=settings.smh.firmware.location.flash,
+            programmmer_serial_number=settings.smh.programming_board.
+            serial_number,
+            chip='BGM121A256V2')
+
     def test_connection(self):
         """Check connection to SMH"""
 
