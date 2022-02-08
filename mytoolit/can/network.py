@@ -917,67 +917,121 @@ class Network:
             data=bytes_name[6:] + [0] * 4,
             description=f"set second part of {description}")
 
-    async def get_mac_address(self,
-                              node: Union[str, Node] = 'STH 1',
-                              device_number: int = 0xff) -> EUI:
-        """Retrieve the Bluetooth MAC address of a device
-
-        You can use this method to retrieve the address of both
-
-        1. disconnected and
-        2. connected
-
-        devices.
-
-        1. For disconnected devices (STHs) you will usually use the STU (e.g.
-           `STU 1`) and the device number at the STU (in the range `0` up to
-           the number of devices - 1) to retrieve the MAC address.
-
-        2. For connected devices you will use the device name and the special
-           “self addressing” device number (`0xff`) to ask a device about its
-           own device number. **Note**: A connected STH will return its own
-           MAC address, regardless of the value of the device number.
+    async def connect_with_device_number(
+            self,
+            device_number: int = 0,
+            node: Union[str, Node] = 'STU 1') -> bool:
+        """Connect to a Bluetooth device using a device number
 
         Parameters
         ----------
 
-        node:
-            The node which should retrieve the MAC address
-
         device_number:
             The number of the Bluetooth device (0 up to the number of
-            available devices - 1; 0xff for self addressing).
+            available devices - 1; 0x00 for self addressing).
+
+        node:
+            The node which should connect to the Bluetooth device
 
         Returns
         -------
 
-        The MAC address of the device specified via node and device number
+        - True, if
+          1. in search mode,
+          2. at least single device was found,
+          3. no legacy mode,
+          4. and scanning mode active
+        - False, otherwise
 
         Example
         -------
 
         >>> from asyncio import run, sleep
 
-        Retrieve the MAC address of STH 1
+        Connect to device “0” of STU 1
 
-        >>> async def get_bluetooth_mac():
+        >>> async def connect_bluetooth_device_number():
         ...     async with Network() as network:
+        ...         await network.activate_bluetooth('STU 1')
         ...         # We assume that at least one STH is available
-        ...         await network.connect_sth(0)
-        ...         return await network.get_mac_address('STH 1')
-        >>> mac_address = run(get_bluetooth_mac())
-        >>> isinstance(mac_address, EUI)
+        ...         status = False
+        ...         while not status:
+        ...             status = await network.connect_with_device_number(
+        ...                         device_number=0, node='STU 1')
+        ...
+        ...         # Return status of Bluetooth device connect response
+        ...         return status
+        >>> run(connect_bluetooth_device_number())
         True
 
         """
 
         response = await self._request_bluetooth(
             node=node,
+            subcommand=7,
             device_number=device_number,
-            subcommand=17,
-            description=f"get MAC address of “{device_number}” from “{node}”")
+            description=f"connect to “{device_number}” from “{node}”")
 
-        return EUI(":".join(f"{byte:02x}" for byte in response.data[:1:-1]))
+        return bool(response.data[2])
+
+    async def is_connected(self, node: Union[str, Node] = 'STU 1') -> bool:
+        """Check if the node is connected to a Bluetooth device
+
+        Parameters
+        ----------
+
+        node:
+            The node which should check if it is connected to a Bluetooth
+            device
+
+        Returns
+        -------
+
+        - True, if a Bluetooth device is connected to the node
+        - False, otherwise
+
+        Example
+        -------
+
+        >>> from asyncio import run, sleep
+
+        Check connection of device “0” to STU 1
+
+        >>> async def check_bluetooth_connection():
+        ...     async with Network() as network:
+        ...         await network.activate_bluetooth('STU 1')
+        ...         await sleep(0.1)
+        ...         connected_start = await network.is_connected('STU 1')
+        ...
+        ...         # We assume that at least one STH is available
+        ...         await network.connect_with_device_number(0)
+        ...         # Wait for device connection
+        ...         connected_between = False
+        ...         while not connected_between:
+        ...             connected_between = await network.is_connected()
+        ...             await sleep(0.1)
+        ...             await network.connect_with_device_number(0)
+        ...
+        ...         # Deactivate Bluetooth connection
+        ...         await network.deactivate_bluetooth('STU 1')
+        ...         # Wait until device is disconnected
+        ...         await sleep(0.1)
+        ...         connected_after = await network.is_connected('STU 1')
+        ...
+        ...         return connected_start, connected_between, connected_after
+        >>> run(check_bluetooth_connection())
+        (False, True, False)
+
+        """
+
+        response = await self._request_bluetooth(
+            node=node,
+            subcommand=8,
+            response_data=[None, *(5 * [0])],
+            description=f"check if “{node}” is connected to a Bluetooth device"
+        )
+
+        return bool(response.data[2])
 
     async def get_rssi(self,
                        node: Union[str, Node] = 'STH 1',
@@ -1151,6 +1205,94 @@ class Network:
             response_data=list(data),
             description=(f"write reduced energy time values of “{node}”"))
 
+    async def get_mac_address(self,
+                              node: Union[str, Node] = 'STH 1',
+                              device_number: int = 0xff) -> EUI:
+        """Retrieve the Bluetooth MAC address of a device
+
+        You can use this method to retrieve the address of both
+
+        1. disconnected and
+        2. connected
+
+        devices.
+
+        1. For disconnected devices (STHs) you will usually use the STU (e.g.
+           `STU 1`) and the device number at the STU (in the range `0` up to
+           the number of devices - 1) to retrieve the MAC address.
+
+        2. For connected devices you will use the device name and the special
+           “self addressing” device number (`0xff`) to ask a device about its
+           own device number. **Note**: A connected STH will return its own
+           MAC address, regardless of the value of the device number.
+
+        Parameters
+        ----------
+
+        node:
+            The node which should retrieve the MAC address
+
+        device_number:
+            The number of the Bluetooth device (0 up to the number of
+            available devices - 1; 0xff for self addressing).
+
+        Returns
+        -------
+
+        The MAC address of the device specified via node and device number
+
+        Example
+        -------
+
+        >>> from asyncio import run, sleep
+
+        Retrieve the MAC address of STH 1
+
+        >>> async def get_bluetooth_mac():
+        ...     async with Network() as network:
+        ...         # We assume that at least one STH is available
+        ...         await network.connect_sth(0)
+        ...         return await network.get_mac_address('STH 1')
+        >>> mac_address = run(get_bluetooth_mac())
+        >>> isinstance(mac_address, EUI)
+        True
+
+        """
+
+        response = await self._request_bluetooth(
+            node=node,
+            device_number=device_number,
+            subcommand=17,
+            description=f"get MAC address of “{device_number}” from “{node}”")
+
+        return EUI(":".join(f"{byte:02x}" for byte in response.data[:1:-1]))
+
+    async def connect_with_mac_address(self,
+                                       mac_address: EUI,
+                                       node: Union[str,
+                                                   Node] = 'STU 1') -> None:
+        """Connect to a Bluetooth device using its MAC address
+
+        Parameters
+        ----------
+
+        mac_address:
+            The MAC address of the Bluetooth device
+
+        node:
+            The node which should connect to the Bluetooth device
+
+        """
+
+        mac_address_bytes_reversed = list(reversed(mac_address.packed))
+
+        await self._request_bluetooth(
+            node=node,
+            subcommand=18,
+            data=mac_address_bytes_reversed,
+            response_data=mac_address_bytes_reversed,
+            description=f"connect to device “{mac_address}” from “{node}”")
+
     async def get_sths(self,
                        node: Union[str,
                                    Node] = 'STU 1') -> List[STHDeviceInfo]:
@@ -1229,148 +1371,6 @@ class Network:
                               rssi=rssi))
 
         return devices
-
-    async def connect_with_device_number(
-            self,
-            device_number: int = 0,
-            node: Union[str, Node] = 'STU 1') -> bool:
-        """Connect to a Bluetooth device using a device number
-
-        Parameters
-        ----------
-
-        device_number:
-            The number of the Bluetooth device (0 up to the number of
-            available devices - 1; 0x00 for self addressing).
-
-        node:
-            The node which should connect to the Bluetooth device
-
-        Returns
-        -------
-
-        - True, if
-          1. in search mode,
-          2. at least single device was found,
-          3. no legacy mode,
-          4. and scanning mode active
-        - False, otherwise
-
-        Example
-        -------
-
-        >>> from asyncio import run, sleep
-
-        Connect to device “0” of STU 1
-
-        >>> async def connect_bluetooth_device_number():
-        ...     async with Network() as network:
-        ...         await network.activate_bluetooth('STU 1')
-        ...         # We assume that at least one STH is available
-        ...         status = False
-        ...         while not status:
-        ...             status = await network.connect_with_device_number(
-        ...                         device_number=0, node='STU 1')
-        ...
-        ...         # Return status of Bluetooth device connect response
-        ...         return status
-        >>> run(connect_bluetooth_device_number())
-        True
-
-        """
-
-        response = await self._request_bluetooth(
-            node=node,
-            subcommand=7,
-            device_number=device_number,
-            description=f"connect to “{device_number}” from “{node}”")
-
-        return bool(response.data[2])
-
-    async def connect_with_mac_address(self,
-                                       mac_address: EUI,
-                                       node: Union[str,
-                                                   Node] = 'STU 1') -> None:
-        """Connect to a Bluetooth device using its MAC address
-
-        Parameters
-        ----------
-
-        mac_address:
-            The MAC address of the Bluetooth device
-
-        node:
-            The node which should connect to the Bluetooth device
-
-        """
-
-        mac_address_bytes_reversed = list(reversed(mac_address.packed))
-
-        await self._request_bluetooth(
-            node=node,
-            subcommand=18,
-            data=mac_address_bytes_reversed,
-            response_data=mac_address_bytes_reversed,
-            description=f"connect to device “{mac_address}” from “{node}”")
-
-    async def is_connected(self, node: Union[str, Node] = 'STU 1') -> bool:
-        """Check if the node is connected to a Bluetooth device
-
-        Parameters
-        ----------
-
-        node:
-            The node which should check if it is connected to a Bluetooth
-            device
-
-        Returns
-        -------
-
-        - True, if a Bluetooth device is connected to the node
-        - False, otherwise
-
-        Example
-        -------
-
-        >>> from asyncio import run, sleep
-
-        Check connection of device “0” to STU 1
-
-        >>> async def check_bluetooth_connection():
-        ...     async with Network() as network:
-        ...         await network.activate_bluetooth('STU 1')
-        ...         await sleep(0.1)
-        ...         connected_start = await network.is_connected('STU 1')
-        ...
-        ...         # We assume that at least one STH is available
-        ...         await network.connect_with_device_number(0)
-        ...         # Wait for device connection
-        ...         connected_between = False
-        ...         while not connected_between:
-        ...             connected_between = await network.is_connected()
-        ...             await sleep(0.1)
-        ...             await network.connect_with_device_number(0)
-        ...
-        ...         # Deactivate Bluetooth connection
-        ...         await network.deactivate_bluetooth('STU 1')
-        ...         # Wait until device is disconnected
-        ...         await sleep(0.1)
-        ...         connected_after = await network.is_connected('STU 1')
-        ...
-        ...         return connected_start, connected_between, connected_after
-        >>> run(check_bluetooth_connection())
-        (False, True, False)
-
-        """
-
-        response = await self._request_bluetooth(
-            node=node,
-            subcommand=8,
-            response_data=[None, *(5 * [0])],
-            description=f"check if “{node}” is connected to a Bluetooth device"
-        )
-
-        return bool(response.data[2])
 
     async def connect_sth(self, identifier: Union[int, str, EUI]) -> None:
         """Connect to an STH
