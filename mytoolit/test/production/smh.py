@@ -148,8 +148,8 @@ class TestSMH(TestSensorNode):
 
         self.loop.run_until_complete(test_adc_values())
 
-    def test_power_uage(self) -> None:
-        """Check power usage"""
+    def test_power_uage_disconnected(self) -> None:
+        """Check power usage in disconnected state"""
 
         commander = Commander(
             serial_number=settings.smh.programming_board.serial_number,
@@ -157,7 +157,11 @@ class TestSMH(TestSensorNode):
 
         commander.enable_debug_mode()
         power_usage_mw = commander.read_power_usage()
-        expected_maxmimum_usage_mw = 40
+
+        # TODO: Decrease the expected value after we
+        #       - find out why the LED on my current SMH is active all the time
+        #       - add code to the “new” Network class to disable the LED.
+        expected_maxmimum_usage_mw = 10
         self.assertLess(
             power_usage_mw, expected_maxmimum_usage_mw,
             f"Measured power usage of {power_usage_mw} mW is "
