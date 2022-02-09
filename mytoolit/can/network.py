@@ -1104,6 +1104,10 @@ class Network:
         To read the time values of the sensor device you need to connect to it
         first.
 
+        See also:
+
+        - https://mytoolit.github.io/Documentation/#sleep-advertisement-times
+
         Returns
         -------
 
@@ -1152,6 +1156,10 @@ class Network:
 
         To change the time values of the sensor device you need to connect to
         it first.
+
+        See also:
+
+        - https://mytoolit.github.io/Documentation/#sleep-advertisement-times
 
         Parameters
         ----------
