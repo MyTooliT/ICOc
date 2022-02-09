@@ -1108,8 +1108,9 @@ class Network:
         -------
 
         A tuple containing the advertisement time in the reduced energy mode
-        in milliseconds and the time until the device will go into the low
-        energy mode (mode 2) – if there is no activity – in milliseconds
+        in milliseconds and the time until the device will switch from the
+        disconnected state to the low energy mode (mode 1) – if there is no
+        activity – in milliseconds
 
         Example
         -------
@@ -1158,7 +1159,8 @@ class Network:
         times:
             The values for the advertisement time in the reduced energy mode
             in milliseconds and the time until the device will go into the low
-            energy mode (mode 2) – if there is no activity – in milliseconds.
+            energy mode (mode 1) from the disconnected state – if there is no
+            activity – in milliseconds.
 
             If you do not specify these values then the default values from
             the configuration will be used
