@@ -229,7 +229,7 @@ class TestNode(TestCase):
         """Set up hardware before a single test case"""
 
         # We do not need a CAN connection for the firmware flash test
-        if self._testMethodName == 'test__firmware_flash':
+        if self._testMethodName.find("flash") >= 0:
             return
 
         self._connect()
