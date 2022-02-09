@@ -518,25 +518,33 @@ class Network:
                           request=True,
                           data=[subcommand, device_number] + data)
 
-        # The bluetooth subcommand and device number should be the same in the
+        # The Bluetooth subcommand and device number should be the same in the
         # response message.
         #
         # Unfortunately the device number is currently not the same for:
+        #
         # - the subcommand that sets the second part of the name, and
         # - the subcommand that retrieves the MAC address
         # - the subcommand that writes the time values for the reduced energy
         #   mode
         #
-        # The subcommand number in the response message for the command to set
-        # the time values for the reduced energy mode is unfortunately also
-        # not correct.
+        # The subcommand number in the response message for the commands to
+        # set the time values for
+        #
+        # - the reduced energy mode and
+        # - the lowest energy mode
+        #
+        # are unfortunately also not correct.
         set_second_part_name = 4
         set_times_reduced_energy = 14
+        set_times_reduced_lowest = 16
         get_mac_address = 17
         expected_data: List[Optional[int]]
         if subcommand in {get_mac_address, set_second_part_name}:
             expected_data = [subcommand, None]
-        elif subcommand == set_times_reduced_energy:
+        elif subcommand in {
+                set_times_reduced_energy, set_times_reduced_lowest
+        }:
             expected_data = [None, None]
         else:
             expected_data = [subcommand, device_number]
@@ -1274,6 +1282,79 @@ class Network:
             type(self).ADVERTISEMENT_TIME_EEPROM_TO_MS)
 
         return Times(sleep=wait_time, advertisement=advertisement_time)
+
+    async def write_energy_mode_lowest(self,
+                                       times: Optional[Times] = None) -> None:
+        """Writes the time values for the lowest energy mode (mode 2)
+
+        To change the time values of the sensor device you need to connect to
+        it first.
+
+        See also:
+
+        - https://mytoolit.github.io/Documentation/#sleep-advertisement-times
+
+        Parameters
+        ----------
+
+        times:
+            The values for the advertisement time in the reduced energy mode
+            in milliseconds and the time until the device will go into the
+            lowest energy mode (mode 2) from the reduced energy mode (mode 1)
+            – if there is no activity – in milliseconds.
+
+            If you do not specify these values then the default values from
+            the configuration will be used
+
+        Example
+        -------
+
+        >>> from asyncio import run, sleep
+
+        Read and write the reduced energy time values of a sensor device
+
+        >>> async def read_write_energy_mode_lowest(sleep, advertisement):
+        ...     async with Network() as network:
+        ...         # We assume that at least one sensor device is available
+        ...         await network.connect_sth(0)
+        ...
+        ...         await network.write_energy_mode_lowest(
+        ...             Times(sleep=sleep, advertisement=advertisement))
+        ...         times = await network.read_energy_mode_lowest()
+        ...
+        ...         # Overwrite changed values with default config values
+        ...         await network.write_energy_mode_lowest()
+        ...
+        ...         return times
+        >>> times = run(read_write_energy_mode_lowest(200_000, 2000))
+        >>> times.sleep
+        200000
+        >>> round(times.advertisement)
+        2000
+
+        """
+
+        if times is None:
+            time_settings = settings.sensory_device.bluetooth
+            times = Times(sleep=time_settings.sleep_time_2,
+                          advertisement=time_settings.advertisement_time_2)
+
+        sleep_time = times.sleep
+        advertisement_time = round(times.advertisement /
+                                   type(self).ADVERTISEMENT_TIME_EEPROM_TO_MS)
+
+        data = list(
+            sleep_time.to_bytes(4, 'little') +
+            advertisement_time.to_bytes(2, 'little'))
+
+        self_addressing = 0xff
+        await self._request_bluetooth(
+            node='STH 1',
+            device_number=self_addressing,
+            subcommand=16,
+            data=data,
+            response_data=list(data),
+            description="write reduced energy time values of sensor device")
 
     async def get_mac_address(self,
                               node: Union[str, Node] = 'STH 1',
