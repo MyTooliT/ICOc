@@ -1223,6 +1223,58 @@ class Network:
             response_data=list(data),
             description="write reduced energy time values of sensor device")
 
+    async def read_energy_mode_lowest(self) -> Times:
+        """Read the reduced lowest energy mode (mode 2) time values
+
+        To read the time values of the sensor device you need to connect to it
+        first.
+
+        See also:
+
+        - https://mytoolit.github.io/Documentation/#sleep-advertisement-times
+
+        Returns
+        -------
+
+        A tuple containing the advertisement time in the lowest energy mode in
+        milliseconds and the time until the device will switch from the
+        reduced energy mode (mode 1) to the lowest energy mode (mode 2) – if
+        there is no activity – in milliseconds
+
+        Example
+        -------
+
+        >>> from asyncio import run, sleep
+
+        Retrieve the reduced energy time values of a sensor device
+
+        >>> async def read_energy_mode_lowest():
+        ...     async with Network() as network:
+        ...         # We assume that at least one sensor device is available
+        ...         await network.connect_sth(0)
+        ...         return await network.read_energy_mode_lowest()
+        >>> times = run(read_energy_mode_lowest())
+        >>> round(times.advertisement)
+        2500
+        >>> times.sleep
+        259200000
+
+        """
+
+        self_addressing = 0xff
+        response = await self._request_bluetooth(
+            node='STH 1',
+            device_number=self_addressing,
+            subcommand=15,
+            description="read lowest energy mode time values of sensor device")
+
+        wait_time = int.from_bytes(response.data[2:6], byteorder='little')
+        advertisement_time = (
+            int.from_bytes(response.data[6:], byteorder='little') *
+            type(self).ADVERTISEMENT_TIME_EEPROM_TO_MS)
+
+        return Times(sleep=wait_time, advertisement=advertisement_time)
+
     async def get_mac_address(self,
                               node: Union[str, Node] = 'STH 1',
                               device_number: int = 0xff) -> EUI:
