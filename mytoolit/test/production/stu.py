@@ -57,11 +57,15 @@ class TestSTU(TestNode):
         self.loop.run_until_complete(
             read_data_new()) if new_network else read_data_old()
 
-    def test__firmware_flash(self):
+    def test__firmware_flash_disconnected(self):
         """Upload bootloader and application into STU
 
         Please note the additional underscore in the method name that makes
         sure this test case is executed before all other test cases.
+
+        The text `disconnected` in the method name make sure that the test
+        framework does not initialize a connection.
+
         """
 
         self._test_firmware_flash(

@@ -98,11 +98,15 @@ class TestSTH(TestSensorNode):
 
     @skipIf(settings.sth.status == "Epoxied",
             f"Flash test skipped because of status “{settings.sth.status}”")
-    def test__firmware_flash(self):
+    def test__firmware_flash_disconnected(self):
         """Upload bootloader and application into STH
 
         Please note the additional underscore in the method name that makes
         sure this test case is executed before all other test cases.
+
+        The text `disconnected` in the method name make sure that the test
+        framework does not initialize a connection.
+
         """
 
         self._test_firmware_flash(

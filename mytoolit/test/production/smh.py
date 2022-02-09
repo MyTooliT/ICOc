@@ -37,11 +37,14 @@ class TestSMH(TestSensorNode):
         cls = type(self)
         cls.name = settings.smh.name
 
-    def test__firmware_flash(self):
+    def test__firmware_flash_disconnected(self):
         """Upload bootloader and application into SMH
 
         Please note the additional underscore in the method name that makes
         sure this test case is executed before all other test cases.
+
+        The text `disconnected` in the method name make sure that the test
+        framework does not initialize a connection.
 
         """
 
