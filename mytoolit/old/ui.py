@@ -31,6 +31,7 @@ class Key:
     NINE = ord('9')
 
     A = ord('a')
+    C = ord('c')
     F = ord('f')
     N = ord('n')
     P = ord('p')
@@ -285,6 +286,28 @@ class UserInterface(CommandLineInterface):
         self.vAdcConfig(prescalar, acquistion_time, oversampling_rate)
         self.vAdcRefVConfig(adc_reference)
 
+    def change_channel_window(self):
+        """Update the channel configuration"""
+
+        def read_channel_value(axis, default):
+            self.add_string(f"Channel for “{axis}” value (1 – 8): ")
+
+            value = self.read_input(
+                default=str(default),
+                allowed_key=lambda key: ord('1') <= key <= ord('8'),
+                allowed_value=lambda value: len(value) == 1)[1]
+
+            return int(value)
+
+        curs_set(True)
+        self.stdscr.clear()
+
+        channels = [
+            read_channel_value(axis, default_value)
+            for default_value, axis in enumerate(list("XYZ"), start=1)
+        ]
+        self.Can.change_sensor_config(*channels)
+
     def change_runtime_window(self):
         curs_set(True)
         self.stdscr.clear()
@@ -382,15 +405,13 @@ class UserInterface(CommandLineInterface):
         axes = (f"{axes[0]}, {last_two_axes}"
                 if len(axes) >= 3 else last_two_axes)
 
-        infos.extend([
-            ("Run Time", f"{runtime} s\n"),
-            ("Prescaler", prescaler),
-            ("Acquisition Time", acquistion_time),
-            ("Oversampling Rate", oversampling_rate),
-            ("Sampling Rate", sampling_rate),
-            ("Reference Voltage", f"{adc_reference}\n"),
-            (f"Enabled Ax{'i' if len(axes) <= 1 else 'e'}s", axes),
-        ])
+        infos.extend([("Run Time", f"{runtime} s\n"), ("Prescaler", prescaler),
+                      ("Acquisition Time", acquistion_time),
+                      ("Oversampling Rate", oversampling_rate),
+                      ("Sampling Rate", sampling_rate),
+                      ("Reference Voltage", f"{adc_reference}\n"),
+                      (f"Enabled Ax{'i' if len(axes) <= 1 else 'e'}s", axes),
+                      ("Sensors", self.Can.read_sensor_config())])
 
         max_description_length = max(
             len(description) for description, _ in infos)
@@ -405,6 +426,7 @@ class UserInterface(CommandLineInterface):
             "n: Change STH Name",
             "r: Change Run Time",
             "a: Configure ADC",
+            "c: Configure Sensors",
             "p: Configure Enabled Axes",
             "O: Set Standby Mode",
             "",
@@ -438,6 +460,8 @@ class UserInterface(CommandLineInterface):
             continue_sth_window = False
         elif key == Key.A:
             self.change_adc_values_window()
+        elif key == Key.C:
+            self.change_channel_window()
         elif key == Key.Q:
             continue_sth_window = False
             self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
