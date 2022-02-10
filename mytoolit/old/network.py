@@ -1769,6 +1769,45 @@ class Network(object):
         aiName = self.getReadMessageData(index)
         return sArray2String(aiName)
 
+    # =================
+    # = Configuration =
+    # =================
+
+    def change_channel_config(self,
+                              x: int = 1,
+                              y: int = 2,
+                              z: int = 3) -> None:
+        """Change the channel numbers for the different “axes”
+
+        Parameters
+        ----------
+
+        x:
+          The channel number for the x axis
+
+        y:
+          The channel number for the y axis
+
+        z:
+          The channel number for the z axis
+
+        """
+
+        for axis, value in zip(list("xyz"), (x, y, z)):
+            if not isinstance(value, int) or value < 1 or value > 8:
+                raise ValueError(
+                    f"Incorrect value for argument {axis}: {value}")
+
+        data = [0b1000_0000, x, y, z, *(4 * [0])]
+        message = Message(block='Configuration',
+                          block_command=0x01,
+                          sender='SPU 1',
+                          receiver='STH 1',
+                          request=True,
+                          data=data)
+
+        self.tWriteFrameWaitAckRetries(message.to_pcan(), retries=2)
+
     # ==========
     # = EEPROM =
     # ==========
