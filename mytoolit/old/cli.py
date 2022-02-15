@@ -11,7 +11,7 @@ from pathlib import Path
 from sys import stderr
 from typing import Optional, Tuple
 
-from can.interfaces.pcan.basic import PCAN_ERROR_OK, PCAN_ERROR_QOVERRUN
+from can.interfaces.pcan.basic import PCAN_ERROR_OK, PCAN_ERROR_QRCVEMPTY
 
 from mytoolit.can.message import Message
 from mytoolit.cmdline import axes_spec, mac_address, sth_name
@@ -811,24 +811,29 @@ class CommandLineInterface():
             self.Can.Logger.Error("Wrong Ack format")
 
     def ReadMessage(self):
-        message = None
-        result = self.Can.pcan.Read(self.Can.m_PcanHandle)
-        if result[0] == PCAN_ERROR_OK:
-            peakCanTimeStamp = result[2].millis_overflow * (
-                2**32) + result[2].millis + result[2].micros / 1000
-            message = {
-                "CanMsg": result[1],
+        status, message, timestamp = self.Can.pcan.Read(self.Can.m_PcanHandle)
+        if status == PCAN_ERROR_OK:
+            peakCanTimeStamp = timestamp.millis_overflow * (
+                2**32) + timestamp.millis + timestamp.micros / 1000
+            result = {
+                "CanMsg": message,
                 "PcTime": self.Can.get_elapsed_time(),
                 "PeakCanTime": peakCanTimeStamp
             }
-            getLogger('cli').debug(f"{Message(result[1])}")
-        elif result[0] == PCAN_ERROR_QOVERRUN:
-            self.Can.Logger.Error("RxOverRun")
-            print("RxOverRun")
-            raise Exception("RxOverRun")
-        else:
+            getLogger('cli').debug(f"{Message(message)}")
+            return result
+
+        if status == PCAN_ERROR_QRCVEMPTY:
+            # Sleep a little bit when there are no messages in the buffer
             sleep(0.001)
-        return message
+        else:
+            explanation = self.Can.pcan.GetErrorText(status)[1].decode()
+            error_message = f"Unexpected CAN status value: {explanation}"
+            self.Can.Logger.Error(error_message)
+            print(error_message, file=stderr)
+            raise Exception(error_message)
+
+        return None
 
     def _vRunConsoleStartupLoggerPrint(self):
         self.Can.Logger.Info(f"Log File: {self.Can.Logger.filepath.name}")
