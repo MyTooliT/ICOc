@@ -530,6 +530,8 @@ class CommandLineInterface():
 
     def vGraphPointNext(self, x=0, y=0, z=0):
         if not self.guiProcess.is_alive():
+            # Set end time to current time to close program after plotter
+            # window was closed
             self.aquireEndTime = self.Can.get_elapsed_time()
             return
 
