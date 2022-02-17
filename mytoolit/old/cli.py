@@ -690,6 +690,7 @@ class CommandLineInterface():
                                 "Wrong Subheader-Format(Acceleration Format): "
                                 + str(ack["CanMsg"].ID))
                         elif self.AccAckExpected.ID == ack["CanMsg"].ID:
+                            self.vGraphPacketLossUpdate(ack["CanMsg"].DATA[1])
                             self.read_acceleration_data(ack)
                     else:
                         tTimeStamp = self.Can.get_elapsed_time()
@@ -768,7 +769,6 @@ class CommandLineInterface():
         data = canData["CanMsg"].DATA
         timestamp = round(canData["PeakCanTime"], 3)
         counter = data[1]
-        self.vGraphPacketLossUpdate(counter)
 
         axes = [
             axis for axis, activated in (('x', self.bAccX), ('y', self.bAccY),
