@@ -23,7 +23,7 @@ required_packages = [
 ]
 
 if system() == "Windows":
-    required_packages.append("windows-curses")
+    required_packages.extend(["pywin32", "windows-curses"])
 
 setup(name="icoc",
       version=version,
