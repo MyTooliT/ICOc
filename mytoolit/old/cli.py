@@ -691,7 +691,7 @@ class CommandLineInterface():
                                 + str(ack["CanMsg"].ID))
                         elif self.AccAckExpected.ID == ack["CanMsg"].ID:
                             self.vGraphPacketLossUpdate(ack["CanMsg"].DATA[1])
-                            self.read_acceleration_data(ack)
+                            self.update_acceleration_data(ack)
                     else:
                         tTimeStamp = self.Can.get_elapsed_time()
                         if (tAliveTimeStamp +
@@ -765,7 +765,7 @@ class CommandLineInterface():
             self.aquireEndTime = currentTime + self.iRunTime * 1000
         self.vGetStreamingAccDataProcess()
 
-    def read_acceleration_data(self, canData):
+    def update_acceleration_data(self, canData):
         data = canData["CanMsg"].DATA
         timestamp = round(canData["PeakCanTime"], 3)
         counter = data[1]
