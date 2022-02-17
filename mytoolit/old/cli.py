@@ -529,11 +529,6 @@ class CommandLineInterface():
         self.vGraphSend(["Plot", True])
 
     def vGraphPointNext(self, x=0, y=0, z=0):
-        if not self.guiProcess.is_alive():
-            # Set end time to current time to close program after plotter
-            # window was closed
-            self.aquireEndTime = self.Can.get_elapsed_time()
-            return
 
         timeStampNow = int(round(time() * 1000))
         elapsed_time_ms = timeStampNow - self.tDataPointTimeStamp
@@ -674,6 +669,10 @@ class CommandLineInterface():
         try:
             while tTimeStamp < self.aquireEndTime:
                 try:
+                    if not self.guiProcess.is_alive():
+                        # End program after plotter window was closed
+                        break
+
                     ack = self.ReadMessage()
                     if ack is not None:
                         tAliveTimeStamp = self.Can.get_elapsed_time()
@@ -703,6 +702,7 @@ class CommandLineInterface():
                                 "Terminating program execution")
                             self.Can.Logger.Error(message)
                             print(message, file=stderr)
+
                 except KeyboardInterrupt:
                     pass
 
