@@ -151,10 +151,7 @@ class Logger(Listener):
         # stores internal DynaConf data
         logger.setLevel(settings.Logger.can.level)
         repo_root = Path(__file__).parent.parent.parent
-        handler = FileHandler(str(repo_root / "can.log"),
-                              'w',
-                              'utf-8',
-                              delay=True)
+        handler = FileHandler(repo_root / "can.log", 'w', 'utf-8', delay=True)
         handler.setFormatter(Formatter('{asctime} {message}', style='{'))
         logger.addHandler(handler)
 
