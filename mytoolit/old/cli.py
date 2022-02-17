@@ -8,6 +8,7 @@ from datetime import datetime
 from functools import partial
 from pathlib import Path
 from sys import stderr
+from threading import Thread
 from typing import Optional, Tuple
 
 from can.interfaces.pcan.basic import PCAN_ERROR_OK, PCAN_ERROR_QRCVEMPTY
@@ -662,7 +663,13 @@ class CommandLineInterface():
         if self.Can.RunReadThread:
             self.__exit__()
 
+    def read_streaming_messages(self):
+        pass
+
     def vGetStreamingAccDataProcess(self):
+        streaming_read_thread = Thread(target=self.read_streaming_messages)
+        streaming_read_thread.start()
+
         startTime = self.Can.get_elapsed_time()
         tAliveTimeStamp = startTime
         tTimeStamp = startTime
@@ -712,6 +719,8 @@ class CommandLineInterface():
             sensor_range = self.acceleration_range_g / 2
             self.storage.add_acceleration_meta("Sensor_Range",
                                                f"± {sensor_range} g₀")
+
+            streaming_read_thread.join()
 
             self.__exit__()
         except KeyboardInterrupt:
