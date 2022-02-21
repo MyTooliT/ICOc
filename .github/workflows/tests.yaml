@@ -75,5 +75,11 @@ jobs:
       run: mypy --ignore-missing-imports mytoolit
 
     - name: Test with pytest
-      run: | # Run all tests that do not require actual hardware
-        pytest --ignore-glob='*network.py' --ignore-glob='*commander.py'
+      # - Run all tests that do not require actual hardware
+      # - Ignore ICOc user interface which uses Windows event library
+      run: >
+        pytest
+        --ignore-glob='*network.py'
+        --ignore-glob='*commander.py'
+        --ignore-glob='*cli.py'
+        --ignore-glob='*ui.py'
