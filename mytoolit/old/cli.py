@@ -665,15 +665,39 @@ class CommandLineInterface():
         if self.Can.RunReadThread:
             self.__exit__()
 
+    def get_can_error_message(self,
+                              status: int,
+                              prefix: Optional[str] = None) -> str:
+        """Retrieve a human readable CAN error message
+
+        Parameters
+        ----------
+
+        status:
+            The status number returned by a call to the PCAN-Basic API
+
+        prefix:
+            An optional description of the error condition
+
+        Returns
+        -------
+
+        A textual description of the CAN error
+
+        """
+
+        error_message = self.Can.pcan.GetErrorText(status)[1].decode()
+        description = "" if prefix is None else "{prefix}: "
+        return f"{description}{error_message}"
+
     def read_streaming(self):
         """Read streaming messages"""
         receive_event = CreateEvent(None, 0, 0, None)
         status = self.Can.pcan.SetValue(self.Can.m_PcanHandle,
                                         PCAN_RECEIVE_EVENT, int(receive_event))
         if status != PCAN_ERROR_OK:
-            explanation = self.Can.pcan.GetErrorText(status)[1].decode()
-            error_message = f"Unexpected CAN status value: {explanation}"
-            self.Can.Logger.Error(error_message)
+            error_message = self.get_can_error(
+                status, "Unable to set CAN receive event")
             raise Exception(error_message)
 
         start_time = self.Can.get_elapsed_time()
@@ -690,9 +714,8 @@ class CommandLineInterface():
         while status != PCAN_ERROR_QRCVEMPTY:
             status = self.read_streaming_message()
             if status not in {PCAN_ERROR_OK, PCAN_ERROR_QRCVEMPTY}:
-                explanation = self.Can.pcan.GetErrorText(status)[1].decode()
-                error_message = f"Unexpected CAN status value: {explanation}"
-                self.Can.Logger.Error(error_message)
+                error_message = self.get_can_error(
+                    status, "Unable to read streaming message")
                 raise Exception(error_message)
 
     def read_streaming_message(self):
