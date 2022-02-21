@@ -16,7 +16,7 @@ required_packages = [
     "matplotlib",
     "netaddr",
     "pdfrw",
-    "python-can",
+    "python-can>=4.0",
     "reportlab",
     "tables>=3.6",
     "semantic_version",
