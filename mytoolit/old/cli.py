@@ -846,8 +846,8 @@ class CommandLineInterface():
             return result
 
         if status != PCAN_ERROR_QRCVEMPTY:
-            explanation = self.Can.pcan.GetErrorText(status)[1].decode()
-            error_message = f"Unexpected CAN status value: {explanation}"
+            error_message = self.get_can_error_message(
+                status, "Unexpected CAN status value")
             self.Can.Logger.Error(error_message)
             print(error_message, file=stderr)
             raise Exception(error_message)
