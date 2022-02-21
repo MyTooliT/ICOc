@@ -700,8 +700,8 @@ class CommandLineInterface():
                 status, "Unable to set CAN receive event")
             raise Exception(error_message)
 
-        start_time = self.Can.get_elapsed_time()
-        while start_time < self.aquireEndTime and self.guiProcess.is_alive():
+        while (self.Can.get_elapsed_time() < self.aquireEndTime
+               and self.guiProcess.is_alive()):
             if WaitForSingleObject(receive_event, 50) == WAIT_OBJECT_0:
                 self.read_streaming_messages()
 
