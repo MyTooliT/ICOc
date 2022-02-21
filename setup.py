@@ -20,6 +20,7 @@ required_packages = [
     "reportlab",
     "tables>=3.6",
     "semantic_version",
+    "uptime",
 ]
 
 if system() == "Windows":
