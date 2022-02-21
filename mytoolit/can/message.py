@@ -578,7 +578,7 @@ class Message:
         >>> can_message = message.to_python_can()
         >>> can_message # doctest:+NORMALIZE_WHITESPACE
         can.Message(timestamp=0.0, arbitration_id=0xf4003c0,
-                    extended_id=True, dlc=3, data=[0x1, 0x2, 0x3])
+                    is_extended_id=True, dlc=3, data=[0x1, 0x2, 0x3])
 
         >>> message.id() == can_message.arbitration_id
         True
