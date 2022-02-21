@@ -101,7 +101,7 @@ and make sure that it reports no test failures.
 
 #### STU Test
 
-1. Call the command `test-stu` (or `test-stu -k eeprom -k connect` when you want to skip the flash test) for a working STU
+1. Call the command `test-stu` (or `test-stu -k eeprom -k connection` when you want to skip the flash test) for a working STU
 2. Wait for the command execution
 3. Check that the command shows no error messages
 4. Open the PDF report (`STU Test.pdf`) in the repository root and make sure that it includes the correct test data
@@ -233,7 +233,7 @@ flake8 &&
 mypy --ignore-missing-imports mytoolit &&
 pytest -v &&
 test-sth -v &&
-test-stu -v && # or `test-stu -k eeprom -k connect` to skip the flash test
+test-stu -v && # or `test-stu -k eeprom -k connection` to skip the flash test
 Invoke-Item 'STH Test.pdf' &&
 Invoke-Item 'STU Test.pdf'
 ```

@@ -297,7 +297,7 @@ The following description shows you how to run the STU tests.
 2. Please take a look at the section [“General”](#tutorials:section:general) to find out how to execute the production tests for the STU. If you want to run the connection and EEPROM test (aka **all tests except the flash test**), then please execute the following command:
 
    ```sh
-   test-stu -k eeprom -k connect
+   test-stu -k eeprom -k connection
    ```
 
 **Note:** For the STU (flash) test to work correctly please connect the **programming board** to the USB port of the computer and the programming port of the STU **first**. Only after that connect the power injector to the power adapter. If you reverse this order, then the programmer might not work. If you do not connect the power injector, then the STU test might fail because of a CAN bus error:
