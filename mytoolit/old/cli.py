@@ -10,8 +10,10 @@ from pathlib import Path
 from sys import stderr
 from threading import Thread
 from typing import Optional, Tuple
+from _overlapped import CreateEvent
 
-from can.interfaces.pcan.basic import PCAN_ERROR_OK, PCAN_ERROR_QRCVEMPTY
+from can.interfaces.pcan.basic import (PCAN_ERROR_OK, PCAN_ERROR_QRCVEMPTY,
+                                       PCAN_RECEIVE_EVENT)
 
 from mytoolit.cmdline import axes_spec, mac_address, sth_name
 from mytoolit.config import settings
@@ -664,7 +666,14 @@ class CommandLineInterface():
             self.__exit__()
 
     def read_streaming_messages(self):
-        pass
+        self.receive_event = CreateEvent(None, 0, 0, None)
+        status = self.Can.pcan.SetValue(self.Can.m_PcanHandle,
+                                        PCAN_RECEIVE_EVENT, self.receive_event)
+        if status != PCAN_ERROR_OK:
+            explanation = self.Can.pcan.GetErrorText(status)[1].decode()
+            error_message = f"Unexpected CAN status value: {explanation}"
+            self.Can.Logger.Error(error_message)
+            raise Exception(error_message)
 
     def vGetStreamingAccDataProcess(self):
         streaming_read_thread = Thread(target=self.read_streaming_messages)
