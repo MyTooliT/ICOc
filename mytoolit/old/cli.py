@@ -8,7 +8,6 @@ from datetime import datetime
 from functools import partial
 from pathlib import Path
 from sys import stderr
-from threading import Thread
 from typing import Optional, Tuple
 
 from win32event import CreateEvent, WaitForSingleObject, WAIT_OBJECT_0
@@ -667,6 +666,7 @@ class CommandLineInterface():
             self.__exit__()
 
     def read_streaming(self):
+        """Read streaming messages"""
         receive_event = CreateEvent(None, 0, 0, None)
         status = self.Can.pcan.SetValue(self.Can.m_PcanHandle,
                                         PCAN_RECEIVE_EVENT, int(receive_event))
@@ -677,7 +677,6 @@ class CommandLineInterface():
             raise Exception(error_message)
 
         start_time = self.Can.get_elapsed_time()
-
         while start_time < self.aquireEndTime and self.guiProcess.is_alive():
             if WaitForSingleObject(receive_event, 50) == WAIT_OBJECT_0:
                 self.read_streaming_messages()
@@ -685,54 +684,36 @@ class CommandLineInterface():
         self.Can.pcan.SetValue(self.Can.m_PcanHandle, PCAN_RECEIVE_EVENT, 0)
 
     def read_streaming_messages(self):
-        pass
+        """Read multiple streaming messages"""
+        status = PCAN_ERROR_OK
+
+        while status != PCAN_ERROR_QRCVEMPTY:
+            status = self.read_streaming_message()
+            if status not in {PCAN_ERROR_OK, PCAN_ERROR_QRCVEMPTY}:
+                explanation = self.Can.pcan.GetErrorText(status)[1].decode()
+                error_message = f"Unexpected CAN status value: {explanation}"
+                self.Can.Logger.Error(error_message)
+                raise Exception(error_message)
+
+    def read_streaming_message(self):
+        """Read single streaming message"""
+
+        status, message, timestamp = self.Can.pcan.Read(self.Can.m_PcanHandle)
+        if status == PCAN_ERROR_OK:
+            timestamp_ms = timestamp.millis_overflow * (
+                2**32) + timestamp.millis + timestamp.micros / 1000
+            if message.ID == self.AccAckExpected.ID:
+                self.vGraphPacketLossUpdate(message.DATA[1])
+                self.update_acceleration_data(message.DATA, timestamp_ms)
+
+        return status
 
     def vGetStreamingAccDataProcess(self):
-        streaming_read_thread = Thread(target=self.read_streaming)
-        streaming_read_thread.start()
-
-        startTime = self.Can.get_elapsed_time()
-        tAliveTimeStamp = startTime
-        tTimeStamp = startTime
         try:
-            while tTimeStamp < self.aquireEndTime:
-                try:
-                    if not self.guiProcess.is_alive():
-                        # End program after plotter window was closed
-                        break
-
-                    ack = self.ReadMessage()
-                    if ack is not None:
-                        tAliveTimeStamp = self.Can.get_elapsed_time()
-                        if (self.AccAckExpected.ID != ack["CanMsg"].ID
-                                and self.VoltageAckExpected.ID !=
-                                ack["CanMsg"].ID):
-                            self.Can.Logger.Error("CanId bError: " +
-                                                  str(ack["CanMsg"].ID))
-                        elif (self.AccAckExpected.DATA[0] !=
-                              ack["CanMsg"].DATA[0]
-                              and self.VoltageAckExpected.DATA[0] !=
-                              ack["CanMsg"].DATA[0]):
-                            self.Can.Logger.Error(
-                                "Wrong Subheader-Format(Acceleration Format): "
-                                + str(ack["CanMsg"].ID))
-                        elif self.AccAckExpected.ID == ack["CanMsg"].ID:
-                            self.vGraphPacketLossUpdate(ack["CanMsg"].DATA[1])
-                            self.update_acceleration_data(ack)
-                    else:
-                        tTimeStamp = self.Can.get_elapsed_time()
-                        if (tAliveTimeStamp +
-                                Watch["AliveTimeOutMs"]) < tTimeStamp:
-                            self.Can.bConnected = False
-                            self.aquireEndTime = tTimeStamp
-                            message = (
-                                "Did not receive any streaming data for 4s — "
-                                "Terminating program execution")
-                            self.Can.Logger.Error(message)
-                            print(message, file=stderr)
-
-                except KeyboardInterrupt:
-                    pass
+            # Read streaming messages until
+            # - plotter window is closed or
+            # - runtime is up.
+            self.read_streaming()
 
             # We store the acceleration metadata at the end since, at this time
             # the acceleration table should exist. Otherwise we would not be
@@ -740,8 +721,6 @@ class CommandLineInterface():
             sensor_range = self.acceleration_range_g / 2
             self.storage.add_acceleration_meta("Sensor_Range",
                                                f"± {sensor_range} g₀")
-
-            streaming_read_thread.join()
 
             self.__exit__()
         except KeyboardInterrupt:
@@ -795,9 +774,8 @@ class CommandLineInterface():
             self.aquireEndTime = currentTime + self.iRunTime * 1000
         self.vGetStreamingAccDataProcess()
 
-    def update_acceleration_data(self, canData):
-        data = canData["CanMsg"].DATA
-        timestamp = round(canData["PeakCanTime"], 3)
+    def update_acceleration_data(self, data, timestamp_ms):
+        timestamp = round(timestamp_ms, 3)
         counter = data[1]
 
         axes = [
