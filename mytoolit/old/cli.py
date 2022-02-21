@@ -11,7 +11,7 @@ from sys import stderr
 from threading import Thread
 from typing import Optional, Tuple
 
-from win32event import CreateEvent
+from win32event import CreateEvent, WaitForSingleObject, WAIT_OBJECT_0
 
 from can.interfaces.pcan.basic import (PCAN_ERROR_OK, PCAN_ERROR_QRCVEMPTY,
                                        PCAN_RECEIVE_EVENT)
@@ -666,19 +666,29 @@ class CommandLineInterface():
         if self.Can.RunReadThread:
             self.__exit__()
 
-    def read_streaming_messages(self):
-        self.receive_event = CreateEvent(None, 0, 0, None)
+    def read_streaming(self):
+        receive_event = CreateEvent(None, 0, 0, None)
         status = self.Can.pcan.SetValue(self.Can.m_PcanHandle,
-                                        PCAN_RECEIVE_EVENT,
-                                        int(self.receive_event))
+                                        PCAN_RECEIVE_EVENT, int(receive_event))
         if status != PCAN_ERROR_OK:
             explanation = self.Can.pcan.GetErrorText(status)[1].decode()
             error_message = f"Unexpected CAN status value: {explanation}"
             self.Can.Logger.Error(error_message)
             raise Exception(error_message)
 
+        start_time = self.Can.get_elapsed_time()
+
+        while start_time < self.aquireEndTime and self.guiProcess.is_alive():
+            if WaitForSingleObject(receive_event, 50) == WAIT_OBJECT_0:
+                self.read_streaming_messages()
+
+        self.Can.pcan.SetValue(self.Can.m_PcanHandle, PCAN_RECEIVE_EVENT, 0)
+
+    def read_streaming_messages(self):
+        pass
+
     def vGetStreamingAccDataProcess(self):
-        streaming_read_thread = Thread(target=self.read_streaming_messages)
+        streaming_read_thread = Thread(target=self.read_streaming)
         streaming_read_thread.start()
 
         startTime = self.Can.get_elapsed_time()
