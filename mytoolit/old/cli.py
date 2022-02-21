@@ -845,10 +845,7 @@ class CommandLineInterface():
             }
             return result
 
-        if status == PCAN_ERROR_QRCVEMPTY:
-            # Sleep a little bit when there are no messages in the buffer
-            sleep(0.000_001)
-        else:
+        if status != PCAN_ERROR_QRCVEMPTY:
             explanation = self.Can.pcan.GetErrorText(status)[1].decode()
             error_message = f"Unexpected CAN status value: {explanation}"
             self.Can.Logger.Error(error_message)
