@@ -700,10 +700,22 @@ class CommandLineInterface():
                 status, "Unable to set CAN receive event")
             raise Exception(error_message)
 
+        TIMEOUT_SECONDS = 4
+        time_last_read = time()
+        time_since_read = 0
         while (self.Can.get_elapsed_time() < self.aquireEndTime
+               and time_since_read <= TIMEOUT_SECONDS
                and self.guiProcess.is_alive()):
             if WaitForSingleObject(receive_event, 50) == WAIT_OBJECT_0:
                 self.read_streaming_messages()
+                time_last_read = time()
+            time_since_read = time() - time_last_read
+
+        if time_since_read >= TIMEOUT_SECONDS:
+            print(
+                "Exiting program since no streaming data was received "
+                f"in the last {round(time_since_read, 2)} seconds",
+                file=stderr)
 
         self.Can.pcan.SetValue(self.Can.m_PcanHandle, PCAN_RECEIVE_EVENT, 0)
 
