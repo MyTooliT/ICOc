@@ -54,7 +54,7 @@ pip install mypy
 Please use the following command in the root of the repository to check the code base for type problems:
 
 ```sh
-mypy --ignore-missing-imports mytoolit
+mypy mytoolit
 ```
 
 ### Automatic Tests
@@ -230,7 +230,7 @@ While you need to run the test for ICOc manually, the other tests and checks can
 
 ```sh
 flake8 &&
-mypy --ignore-missing-imports mytoolit &&
+mypy mytoolit &&
 pytest -v &&
 test-sth -v &&
 test-stu -v && # or `test-stu -k eeprom -k connection` to skip the flash test

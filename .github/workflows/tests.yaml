@@ -39,7 +39,7 @@ jobs:
       run: flake8
 
     - name: Check with Mypy
-      run: mypy --ignore-missing-imports mytoolit
+      run: mypy mytoolit
 
     - name: Test with pytest
       run: | # Run all tests that do not require actual hardware
@@ -72,7 +72,7 @@ jobs:
       run: flake8
 
     - name: Check with Mypy
-      run: mypy --ignore-missing-imports mytoolit
+      run: mypy mytoolit
 
     - name: Test with pytest
       # - Run all tests that do not require actual hardware
