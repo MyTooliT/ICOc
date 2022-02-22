@@ -8,6 +8,7 @@ from struct import pack, unpack
 from sys import stderr
 from threading import Lock, Thread
 from time import time, sleep
+from typing import NamedTuple
 
 from can.interfaces.pcan.basic import (PCAN_BAUD_1M, PCAN_BUSOFF_AUTORESET,
                                        PCAN_ERROR_OK, PCAN_ERROR_QRCVEMPTY,
@@ -50,6 +51,14 @@ from mytoolit.old.MyToolItCommands import (
     SystemCommandBlueTooth,
     VRefName,
 )
+
+
+class SensorConfig(NamedTuple):
+    """Used to store the configuration of the three sensor axes"""
+
+    x: int
+    y: int
+    z: int
 
 
 class Network(object):
@@ -1807,6 +1816,31 @@ class Network(object):
                           data=data)
 
         self.tWriteFrameWaitAckRetries(message.to_pcan(), retries=2)
+
+    def read_channel_config(self) -> SensorConfig:
+        """Read the current channel configuration
+
+        Returns
+        -------
+
+        The number of the sensors for the different axes
+
+        """
+
+        message = Message(block='Configuration',
+                          block_command=0x01,
+                          sender='SPU 1',
+                          receiver='STH 1',
+                          request=True,
+                          data=[0] * 8)
+
+        data = self.tWriteFrameWaitAckRetries(message.to_pcan())["Payload"]
+        channels = data[1:4]
+        config = {
+            axis: channel
+            for axis, channel in zip(tuple("xyz"), channels)
+        }
+        return SensorConfig(**config)
 
     # ==========
     # = EEPROM =
