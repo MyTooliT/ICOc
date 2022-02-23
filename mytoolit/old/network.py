@@ -1794,30 +1794,27 @@ class Network(object):
     # = Configuration =
     # =================
 
-    def change_channel_config(self,
-                              x: int = 1,
-                              y: int = 2,
-                              z: int = 3) -> None:
-        """Change the channel numbers for the different “axes”
+    def change_sensor_config(self, x: int = 1, y: int = 2, z: int = 3) -> None:
+        """Change the sensor numbers for the different “axes”
 
         Parameters
         ----------
 
         x:
-          The channel number for the x axis
+          The sensor number for the x axis
 
         y:
-          The channel number for the y axis
+          The sensor number for the y axis
 
         z:
-          The channel number for the z axis
+          The sensor number for the z axis
 
         """
 
-        for axis, value in zip(list("xyz"), (x, y, z)):
-            if not isinstance(value, int) or value < 1 or value > 8:
+        for axis, sensor in zip(list("xyz"), (x, y, z)):
+            if not isinstance(sensor, int) or sensor < 1 or sensor > 8:
                 raise ValueError(
-                    f"Incorrect value for argument {axis}: {value}")
+                    f"Incorrect value for argument {axis}: {sensor}")
 
         data = [0b1000_0000, x, y, z, *(4 * [0])]
         message = Message(block='Configuration',
@@ -1829,8 +1826,8 @@ class Network(object):
 
         self.tWriteFrameWaitAckRetries(message.to_pcan(), retries=2)
 
-    def read_channel_config(self) -> SensorConfig:
-        """Read the current channel configuration
+    def read_sensor_config(self) -> SensorConfig:
+        """Read the current sensor configuration
 
         Returns
         -------
