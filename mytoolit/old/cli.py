@@ -76,7 +76,7 @@ class CommandLineInterface():
                            receiver=MyToolItNetworkNr["STH1"])
         self.Can.Logger.Info(f"Start Time: {datetime.now().isoformat()}")
 
-        self.vAccSet(*self.args.points)
+        self.set_enabled_axes(*self.args.points)
 
         self.connect = (True if 'name' in self.args
                         or 'bluetooth_address' in self.args else False)
@@ -421,7 +421,7 @@ class CommandLineInterface():
             print("Send fail approximately: " + str(iSendFail) + "%")
         return ReceiveFailCounter
 
-    def vAccSet(self, bX, bY, bZ):
+    def set_enabled_axes(self, bX, bY, bZ):
         self.bAccX = bool(bX)
         self.bAccY = bool(bY)
         self.bAccZ = bool(bZ)
