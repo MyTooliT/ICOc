@@ -9,75 +9,79 @@ from netaddr import AddrFormatError, EUI
 # -- Functions ----------------------------------------------------------------
 
 
-def axes_spec(spec: str) -> Tuple[bool, bool, bool]:
-    """Check if the given text represents a spec for acceleration axes
+def sensor_spec(spec: str) -> Tuple[int, int, int]:
+    """Check if the given text represents a sensor number spec
 
-    An axes spec contains three digits, where each digit is either `0` or `1`.
-    Every digit specifies if a certain axis is enabled (`1`) or not (`0`).
-    The first digit represents the x-axis, the second one the y-axis and the
-    last one the z-axis.
+    A sensor spec contains three digits, where each digit is a number between
+    `0` and `8`. Every digit either specifies the sensor number for a specific
+    axis (`1` – `8`) or that the sensor for the axis is disabled (`0`). The
+    first digit represents the x-axis, the second one the y-axis and the last
+    one the z-axis.
 
-    For example the value `110` specifies that the x-axis and y-axis are
-    enabled, while the z-axis is not.
+    For example, the value `120` specifies that
+    - the x-axis uses sensor 1,
+    - the y-axis uses sensor 2, and
+    - the sensor for the z-axis is disabled.
 
-    Throws
+    Raises
     ------
 
-    An argument type error in case the given value does not represent an
-    axes specification or if none of the axes is enabled.
+    An argument type error in case the given value does not represent a
+    sensor specification or if none of the axes is enabled.
 
     Returns
     -------
 
-    A tuple containing three boolean values that specify if the x-, y- and
-    z-axis are enabled or not
+    A tuple containing three digits that specify the sensor of the x-, y- and
+    z-axis
 
     Examples
     --------
 
-    >>> axes_spec("101")
-    (True, False, True)
+    >>> sensor_spec("103")
+    (1, 0, 3)
 
-    >>> axes_spec("01") # doctest:+NORMALIZE_WHITESPACE
+    >>> sensor_spec("01") # doctest:+NORMALIZE_WHITESPACE
     Traceback (most recent call last):
        ...
-    argparse.ArgumentTypeError: “01” contains not enough digits for an axis
+    argparse.ArgumentTypeError: “01” contains not enough digits for a sensor
                                 specification
 
-    >>> axes_spec("1111") # doctest:+NORMALIZE_WHITESPACE
+    >>> sensor_spec("1234") # doctest:+NORMALIZE_WHITESPACE
     Traceback (most recent call last):
        ...
-    argparse.ArgumentTypeError: “1111” contains too many digits for an axis
+    argparse.ArgumentTypeError: “1234” contains too many digits for a sensor
                                 specification
 
-    >>> axes_spec("120") # doctest:+NORMALIZE_WHITESPACE
+    >>> sensor_spec("190") # doctest:+NORMALIZE_WHITESPACE
     Traceback (most recent call last):
        ...
-    argparse.ArgumentTypeError: The axis specification “120” contains invalid
-                                characters (only “0” and “1” are allowed)
+    argparse.ArgumentTypeError: The axis specification “190” contains invalid
+                                characters (only numbers between “0”
+                                and “8” are allowed)
 
-    >>> axes_spec("000") # doctest:+NORMALIZE_WHITESPACE
+    >>> sensor_spec("000") # doctest:+NORMALIZE_WHITESPACE
     Traceback (most recent call last):
        ...
     argparse.ArgumentTypeError: At least one axis has to be enabled
 
     """
 
-    allowed_chars_regex = compile("[01]+$")
+    allowed_chars_regex = compile("[0-8]+$")
     if not allowed_chars_regex.fullmatch(spec):
         raise ArgumentTypeError(
             f"The axis specification “{spec}” contains invalid characters "
-            "(only “0” and “1” are allowed)")
+            "(only numbers between “0” and “8” are allowed)")
 
     if len(spec) != 3:
         description = "not enough" if len(spec) < 3 else "too many"
         raise ArgumentTypeError(f"“{spec}” contains {description} digits "
-                                "for an axis specification")
+                                "for a sensor specification")
 
     if int(spec) == 0:
         raise ArgumentTypeError("At least one axis has to be enabled")
 
-    x, y, z = (bool(int(axis)) for axis in spec)
+    x, y, z = (int(axis) for axis in spec)
     return (x, y, z)
 
 

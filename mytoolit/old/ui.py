@@ -308,7 +308,7 @@ class UserInterface(CommandLineInterface):
             for default_value, axis in enumerate(list("XYZ"), start=1)
         ]
         # Enable/disable axes for transmission
-        self.set_enabled_axes(*map(bool, sensors))
+        self.set_sensors(*sensors)
         # We use sensor number 1 for disabled sensors
         self.Can.change_sensor_config(
             *[1 if sensor <= 0 else sensor for sensor in sensors])
@@ -406,8 +406,8 @@ class UserInterface(CommandLineInterface):
         sensors = ", ".join([
             f"{axis}: {number}"
             for axis, number, enabled in zip(list("XYZ"), (
-                sensor.x, sensor.y, sensor.z), (self.bAccX, self.bAccY,
-                                                self.bAccZ)) if enabled
+                sensor.x, sensor.y, sensor.z), (self.sensor.x, self.sensor.y,
+                                                self.sensor.z)) if enabled
         ])
 
         infos.extend([("Run Time", f"{runtime} s\n"), ("Prescaler", prescaler),
@@ -502,6 +502,8 @@ class UserInterface(CommandLineInterface):
     def sth_window(self):
         continue_main = True
         continue_sth = True
+
+        self.update_sensor_config()
 
         while continue_sth:
             self.sth_window_information()

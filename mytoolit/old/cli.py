@@ -15,11 +15,11 @@ from win32event import CreateEvent, WaitForSingleObject, WAIT_OBJECT_0
 from can.interfaces.pcan.basic import (PCAN_ERROR_OK, PCAN_ERROR_QRCVEMPTY,
                                        PCAN_RECEIVE_EVENT)
 
-from mytoolit.cmdline import axes_spec, mac_address, sth_name
+from mytoolit.cmdline import sensor_spec, mac_address, sth_name
 from mytoolit.config import settings
 from mytoolit.measurement.acceleration import convert_acceleration_adc_to_g
 from mytoolit.measurement.storage import Storage
-from mytoolit.old.network import Network
+from mytoolit.old.network import Network, SensorConfig
 from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
 from mytoolit.old.MyToolItCommands import (
     AdcAcquisitionTime,
@@ -81,7 +81,7 @@ class CommandLineInterface():
                            receiver=MyToolItNetworkNr["STH1"])
         self.Can.Logger.Info(f"Start Time: {datetime.now().isoformat()}")
 
-        self.set_enabled_axes(*self.args.points)
+        self.set_sensors(*self.args.points)
 
         self.connect = (True if 'name' in self.args
                         or 'bluetooth_address' in self.args else False)
@@ -163,12 +163,13 @@ class CommandLineInterface():
             '-p',
             '--points',
             metavar='XYZ',
-            type=axes_spec,
+            type=sensor_spec,
             default='100',
             required=False,
-            help=("specify the axes for which acceleration data should be "
-                  "acquired (e.g. “101” to measure data for the x- and "
-                  "z-axis but not for the y-axis)"))
+            help=("specify the sensor number (1 – 8) for each axis; "
+                  "use 0 to disable the measurement for an axis "
+                  "(e.g. “104” to use sensor 1 for the x-axis and sensor 4 "
+                  "for the z-axis)"))
         measurement_group.add_argument(
             '-r',
             '--run-time',
@@ -426,12 +427,10 @@ class CommandLineInterface():
             print("Send fail approximately: " + str(iSendFail) + "%")
         return ReceiveFailCounter
 
-    def set_enabled_axes(self, x: bool, y: bool, z: bool) -> None:
-        self.bAccX = x
-        self.bAccY = y
-        self.bAccZ = z
+    def set_sensors(self, x: int, y: int, z: int) -> None:
+        self.sensor = SensorConfig(x, y, z)
 
-        dataSets = self.Can.dataSetsCan20(x, y, z)
+        dataSets = self.Can.dataSetsCan20(*map(bool, (x, y, z)))
         self.tAccDataFormat = DataSets[dataSets]
 
     def vDeviceAddressSet(self, iAddress):
@@ -525,11 +524,11 @@ class CommandLineInterface():
         self.vGraphSend(["sampleInterval", self.iGraphSampleInterval])
         self.vGraphSend(["xDim", Watch["DisplayTimeMax"]])
         self.update_packet_loss()
-        if self.bAccX:
+        if self.sensor.x:
             self.vGraphSend(["lineNameX", "Acceleration X-Axis"])
-        if self.bAccY:
+        if self.sensor.y:
             self.vGraphSend(["lineNameY", "Acceleration Y-Axis"])
-        if self.bAccZ:
+        if self.sensor.z:
             self.vGraphSend(["lineNameZ", "Acceleration Z-Axis"])
         self.vGraphSend(["Plot", True])
 
@@ -636,6 +635,13 @@ class CommandLineInterface():
             pass
 
         return (acceleration_range_g, success)
+
+    def update_sensor_config(self) -> None:
+        """Update sensor configuration in the connected sensor device"""
+
+        # Use specified sensor configuration
+        self.Can.change_sensor_config(
+            *[1 if sensor <= 0 else sensor for sensor in self.sensor[0:3]])
 
     def vDataAquisition(self):
         if self.KeyBoardInterrupt:
@@ -781,16 +787,16 @@ class CommandLineInterface():
             self.__exit__()
 
     def vGetStreamingAccDataAccStart(self):
-        if not (self.bAccX or self.bAccY or self.bAccZ):
+        if not (self.sensor.x or self.sensor.y or self.sensor.z):
             return True
 
         ack = None
         accFormat = AtvcFormat()
         accFormat.asbyte = 0
         accFormat.b.bStreaming = 1
-        accFormat.b.bNumber1 = self.bAccX
-        accFormat.b.bNumber2 = self.bAccY
-        accFormat.b.bNumber3 = self.bAccZ
+        accFormat.b.bNumber1 = int(bool(self.sensor.x))
+        accFormat.b.bNumber2 = int(bool(self.sensor.y))
+        accFormat.b.bNumber3 = int(bool(self.sensor.z))
         accFormat.b.u3DataSets = self.tAccDataFormat
         cmd = self.Can.CanCmd(MyToolItBlock["Streaming"],
                               MyToolItStreaming["Acceleration"], 0, 0)
@@ -831,8 +837,9 @@ class CommandLineInterface():
         counter = data[1]
 
         axes = [
-            axis for axis, activated in (('x', self.bAccX), ('y', self.bAccY),
-                                         ('z', self.bAccZ)) if activated
+            axis
+            for axis, activated in (('x', self.sensor.x), ('y', self.sensor.y),
+                                    ('z', self.sensor.z)) if activated
         ]
 
         if len(axes) <= 0:
@@ -897,13 +904,12 @@ class CommandLineInterface():
         self.Can.Logger.Info(f"Reference Voltage: {self.sAdcRef}")
         data_sets = DataSets.inverse[self.tAccDataFormat]
         self.Can.Logger.Info(f"Data Sets: {data_sets}")
-        axes = "".join([
-            axis if active else ""
-            for active, axis in ((self.bAccX, "X"), (self.bAccY, "Y"),
-                                 (self.bAccZ, "Z"))
+        sensors = "".join([
+            f"{axis}: {sensor}" if sensor else ""
+            for sensor, axis in ((self.sensor.x, "X"), (self.sensor.y, "Y"),
+                                 (self.sensor.z, "Z"))
         ])
-        self.Can.Logger.Info(
-            f"Active Ax{'i' if len(axes) == 1 else 'e'}s: {axes}")
+        self.Can.Logger.Info(f"Sensors: {sensors}")
 
     def _vRunConsoleStartup(self):
         self._vRunConsoleStartupLoggerPrint()
@@ -917,6 +923,7 @@ class CommandLineInterface():
                                                   self.sth_name,
                                                   log=False)
         if self.Can.bConnected:
+            self.update_sensor_config()
             self.vDataAquisition()
 
     def run(self):
