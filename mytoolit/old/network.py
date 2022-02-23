@@ -60,6 +60,18 @@ class SensorConfig(NamedTuple):
     y: int
     z: int
 
+    def __repr__(self) -> str:
+        """The string representation of the sensor configuration
+
+        Returns
+        -------
+
+        A textual representation of the sensor configuration
+
+        """
+
+        return f"X: {self.x}, Y: {self.y}, Z: {self.z}"
+
 
 class Network(object):
     """A class used to communicate over CAN
