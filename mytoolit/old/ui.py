@@ -286,15 +286,16 @@ class UserInterface(CommandLineInterface):
         self.vAdcConfig(prescalar, acquistion_time, oversampling_rate)
         self.vAdcRefVConfig(adc_reference)
 
-    def change_channel_window(self):
-        """Update the channel configuration"""
+    def change_sensors_window(self):
+        """Update sensor configuration"""
 
         def read_channel_value(axis, default):
-            self.add_string(f"Channel for “{axis}” value (1 – 8): ")
+            self.add_string(f"Sensor number (1 – 8) for “{axis}” axis "
+                            "(0 to disable): ")
 
             value = self.read_input(
                 default=str(default),
-                allowed_key=lambda key: ord('1') <= key <= ord('8'),
+                allowed_key=lambda key: ord('0') <= key <= ord('8'),
                 allowed_value=lambda value: len(value) == 1)[1]
 
             return int(value)
@@ -302,11 +303,15 @@ class UserInterface(CommandLineInterface):
         curs_set(True)
         self.stdscr.clear()
 
-        channels = [
+        sensors = [
             read_channel_value(axis, default_value)
             for default_value, axis in enumerate(list("XYZ"), start=1)
         ]
-        self.Can.change_sensor_config(*channels)
+        # Enable/disable axes for transmission
+        self.set_enabled_axes(*map(bool, sensors))
+        # We use sensor number 1 for disabled sensors
+        self.Can.change_sensor_config(
+            *[1 if sensor <= 0 else sensor for sensor in sensors])
 
     def change_runtime_window(self):
         curs_set(True)
@@ -397,21 +402,20 @@ class UserInterface(CommandLineInterface):
         sampling_rate = self.samplingRate
         adc_reference = self.sAdcRef
 
-        x_enabled = "X" if self.bAccX else ""
-        y_enabled = "Y" if self.bAccY else ""
-        z_enabled = "Z" if self.bAccZ else ""
-        axes = [axis for axis in (x_enabled, y_enabled, z_enabled) if axis]
-        last_two_axes = " & ".join(axes[-2:])
-        axes = (f"{axes[0]}, {last_two_axes}"
-                if len(axes) >= 3 else last_two_axes)
+        sensor = self.Can.read_sensor_config()
+        sensors = ", ".join([
+            f"{axis}: {number}"
+            for axis, number, enabled in zip(list("XYZ"), (
+                sensor.x, sensor.y, sensor.z), (self.bAccX, self.bAccY,
+                                                self.bAccZ)) if enabled
+        ])
 
         infos.extend([("Run Time", f"{runtime} s\n"), ("Prescaler", prescaler),
                       ("Acquisition Time", acquistion_time),
                       ("Oversampling Rate", oversampling_rate),
                       ("Sampling Rate", sampling_rate),
                       ("Reference Voltage", f"{adc_reference}\n"),
-                      (f"Enabled Ax{'i' if len(axes) <= 1 else 'e'}s", axes),
-                      ("Sensors", self.Can.read_sensor_config())])
+                      ("Sensors", sensors)])
 
         max_description_length = max(
             len(description) for description, _ in infos)
@@ -427,7 +431,6 @@ class UserInterface(CommandLineInterface):
             "r: Change Run Time",
             "a: Configure ADC",
             "c: Configure Sensors",
-            "p: Configure Enabled Axes",
             "O: Set Standby Mode",
             "",
             "q: Disconnect from STH",
@@ -461,7 +464,7 @@ class UserInterface(CommandLineInterface):
         elif key == Key.A:
             self.change_adc_values_window()
         elif key == Key.C:
-            self.change_channel_window()
+            self.change_sensors_window()
         elif key == Key.Q:
             continue_sth_window = False
             self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
@@ -479,21 +482,6 @@ class UserInterface(CommandLineInterface):
                 self.Can.Standby(MyToolItNetworkNr["STH1"])
                 self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
                 continue_sth_window = False
-
-        elif key == Key.P:
-            self.stdscr.clear()
-            curs_set(True)
-            self.add_string("Set enabled axes (xyz; 0=off, 1=on): ")
-            self.stdscr.refresh()
-
-            valid_input, xyz = self.read_input(
-                default="100",
-                allowed_key=lambda key: key in {ord('0'), ord('1')},
-                allowed_value=lambda value: len(value) == 3 and int(value
-                                                                    ) != 0)
-            if valid_input:
-                x, y, z = [bool(int(axis)) for axis in xyz]
-                self.set_enabled_axes(x, y, z)
         elif key == Key.R:
             self.change_runtime_window()
         elif key == Key.S:
