@@ -421,10 +421,10 @@ class CommandLineInterface():
             print("Send fail approximately: " + str(iSendFail) + "%")
         return ReceiveFailCounter
 
-    def set_enabled_axes(self, x, y, z):
-        self.bAccX = bool(x)
-        self.bAccY = bool(y)
-        self.bAccZ = bool(z)
+    def set_enabled_axes(self, x: bool, y: bool, z: bool) -> None:
+        self.bAccX = x
+        self.bAccY = y
+        self.bAccZ = z
 
         dataSets = self.Can.dataSetsCan20(x, y, z)
         self.tAccDataFormat = DataSets[dataSets]
