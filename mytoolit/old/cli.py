@@ -76,7 +76,7 @@ class CommandLineInterface():
                            receiver=MyToolItNetworkNr["STH1"])
         self.Can.Logger.Info(f"Start Time: {datetime.now().isoformat()}")
 
-        self.vAccSet(*self.args.points, -1)
+        self.vAccSet(*self.args.points)
 
         self.connect = (True if 'name' in self.args
                         or 'bluetooth_address' in self.args else False)
@@ -421,16 +421,13 @@ class CommandLineInterface():
             print("Send fail approximately: " + str(iSendFail) + "%")
         return ReceiveFailCounter
 
-    def vAccSet(self, bX, bY, bZ, dataSets):
+    def vAccSet(self, bX, bY, bZ):
         self.bAccX = bool(bX)
         self.bAccY = bool(bY)
         self.bAccZ = bool(bZ)
 
-        if dataSets in DataSets:
-            self.tAccDataFormat = DataSets[dataSets]
-        else:
-            dataSets = self.Can.dataSetsCan20(bX, bY, bZ)
-            self.tAccDataFormat = DataSets[dataSets]
+        dataSets = self.Can.dataSetsCan20(bX, bY, bZ)
+        self.tAccDataFormat = DataSets[dataSets]
 
     def vDeviceAddressSet(self, iAddress):
         """Set bluetooth device address"""

@@ -469,7 +469,7 @@ class UserInterface(CommandLineInterface):
                                                                     ) != 0)
             if valid_input:
                 x, y, z = map(int, xyz)
-                self.vAccSet(x, y, z, -1)
+                self.vAccSet(x, y, z)
         elif key == Key.R:
             self.change_runtime_window()
         elif key == Key.S:
