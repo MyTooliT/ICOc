@@ -1511,17 +1511,17 @@ class Network:
 
         """
 
-        def get_sth(
-                sths: List[STHDeviceInfo],
+        def get_sensor_device(
+                devices: List[STHDeviceInfo],
                 identifier: Union[int, str, EUI]) -> Optional[STHDeviceInfo]:
-            """Get the MAC address of an STH"""
+            """Get the MAC address of a sensor device"""
 
-            for sth in sths:
-                if (isinstance(identifier, str) and sth.name == identifier
+            for device in devices:
+                if (isinstance(identifier, str) and device.name == identifier
                         or isinstance(identifier, int)
-                        and sth.device_number == identifier
-                        or sth.mac_address == identifier):
-                    return sth
+                        and device.device_number == identifier
+                        or device.mac_address == identifier):
+                    return device
 
             return None
 
@@ -1532,40 +1532,46 @@ class Network:
 
         await self.activate_bluetooth('STU 1')
 
-        # We wait for a certain amount of time for the connection to the STH to
-        # take place
+        # We wait for a certain amount of time for the connection to the
+        # device to take place
         timeout_in_s = 20
         end_time = time() + timeout_in_s
 
-        sth = None
-        sths: List[STHDeviceInfo] = []
-        while sth is None:
+        sensor_device = None
+        sensor_devices: List[STHDeviceInfo] = []
+        while sensor_device is None:
             if time() > end_time:
-                sths_representation = '\n'.join([repr(sth) for sth in sths])
-                sth_info = (f"Found the following STHs:\n{sths_representation}"
-                            if len(sths) > 0 else "No STHs found")
+                sensor_devices_representation = '\n'.join(
+                    [repr(device) for device in sensor_devices])
+                device_info = ("Found the following sensor devices:\n"
+                               f"{sensor_devices_representation}"
+                               if len(sensor_devices) > 0 else
+                               "No sensor devices found")
 
+                identifier_description = (
+                    "MAC address" if isinstance(identifier, EUI) else
+                    "device_number" if isinstance(identifier, int) else "name")
                 raise TimeoutError(
-                    "Unable to find STH with {} “{}” in {} seconds".format(
-                        "MAC address" if isinstance(identifier, EUI) else
-                        "device_number" if isinstance(identifier, int) else
-                        "name", identifier, timeout_in_s) + f"\n\n{sth_info}")
+                    "Unable to find sensor device with "
+                    f"{identifier_description} “{identifier}” in "
+                    f" {timeout_in_s} seconds\n\n{device_info}")
 
-            sths = await self.get_sths()
-            sth = get_sth(sths, identifier)
-            if sth is None:
+            sensor_devices = await self.get_sths()
+            sensor_device = get_sensor_device(sensor_devices, identifier)
+            if sensor_device is None:
                 await sleep(0.1)
 
         connection_attempt_time = time()
         while True:
-            await self.connect_with_device_number(sth.device_number)
+            await self.connect_with_device_number(sensor_device.device_number)
             retry_time_s = 3
             end_time_retry = time() + retry_time_s
             while time() < end_time_retry:
                 if time() > end_time:
                     connection_time = time() - connection_attempt_time
-                    raise TimeoutError("Unable to connect to STH “{sth}” "
-                                       f"in {connection_time:.3f} seconds")
+                    raise TimeoutError(
+                        "Unable to connect to sensor device “{sensor_device}” "
+                        f"in {connection_time:.3f} seconds")
 
                 if await self.is_connected('STU 1'):
                     return
