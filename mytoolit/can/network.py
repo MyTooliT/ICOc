@@ -1751,9 +1751,6 @@ class Network:
     async def read_acceleration(self):
         """Read x acceleration data"""
 
-        def read_acceleration_value(bytes):
-            pass
-
         sensor_range_g = await self.read_acceleration_sensor_range_in_g()
         convert_acceleration = partial(convert_acceleration_adc_to_g,
                                        max_value=sensor_range_g)
