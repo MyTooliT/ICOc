@@ -158,9 +158,6 @@ class TestSMH(TestSensorNode):
         commander.enable_debug_mode()
         power_usage_mw = commander.read_power_usage()
 
-        # TODO: Decrease the expected value after we
-        #       - find out why the LED on my current SMH is active all the time
-        #       - add code to the “new” Network class to disable the LED.
         expected_maxmimum_usage_mw = 10
         self.assertLess(
             power_usage_mw, expected_maxmimum_usage_mw,
