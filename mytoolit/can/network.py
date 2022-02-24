@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from asyncio import get_running_loop, Queue, sleep, TimeoutError, wait_for
 from datetime import date
-from functools import partial
 from logging import getLogger, FileHandler, Formatter
 from pathlib import Path
 from struct import pack, unpack
@@ -1712,12 +1711,12 @@ class Network:
 
         return convert_voltage_adc_to_volts(voltage_raw)
 
-    async def start_streaming_acceleration(self):
-        """Start streaming acceleration data"""
+    async def start_streaming_x_acceleration(self) -> None:
+        """Start streaming acceleration data for the x-axis"""
 
         streaming_format = StreamingFormatAcceleration(x=True,
                                                        streaming=True,
-                                                       sets=1)
+                                                       sets=3)
         node = 'STH 1'
         message = Message(block='Streaming',
                           block_command='Acceleration',
@@ -1728,9 +1727,9 @@ class Network:
 
         await self._request(
             message,
-            description=f"enable acceleration data streaming of “{node}”")
+            description=f"enable x-acceleration data streaming of “{node}”")
 
-    async def stop_streaming_acceleration(self):
+    async def stop_streaming_acceleration(self) -> None:
         """Start streaming acceleration data"""
 
         streaming_format = StreamingFormatAcceleration(x=True,
@@ -1748,30 +1747,58 @@ class Network:
             message,
             description=f"disable acceleration data streaming of “{node}”")
 
-    async def read_acceleration(self):
-        """Read x acceleration data"""
+    async def read_x_acceleration_raw(self, seconds: float) -> List[int]:
+        """Read raw x acceleration data for a certain amount of time
 
-        sensor_range_g = await self.read_acceleration_sensor_range_in_g()
-        convert_acceleration = partial(convert_acceleration_adc_to_g,
-                                       max_value=sensor_range_g)
+        Parameters
+        ----------
+
+        seconds:
+            The amount of time acceleration data should be read in seconds
+
+        Returns
+        -------
+
+        A list containing the raw acceleration data read in the specified time
+
+        Example
+        -------
+
+        >>> from asyncio import run
+        >>> from statistics import mean
+
+        Read the acceleration data of a STH for one second
+
+        >>> async def read_raw_acceleration():
+        ...     async with Network() as network:
+        ...         await network.connect_sensor_device(0)
+        ...         return await network.read_x_acceleration_raw(1)
+        >>> acceleration = run(read_raw_acceleration())
+        >>> 32000 < mean(acceleration) < 33000
+        True
+
+        """
 
         reader = AsyncBufferedReader()
         self.notifier.add_listener(reader)
 
-        await self.start_streaming_acceleration()
+        await self.start_streaming_x_acceleration()
 
-        number_messages = 10
+        end_time = time() + seconds
+        acceleration_data = []
         async for message in reader:
-            if number_messages <= 0:
+            for raw_acceleration in (message.data[2:4], message.data[4:6],
+                                     message.data[6:8]):
+                acceleration_data.append(
+                    int.from_bytes(raw_acceleration, byteorder='little'))
+            if time() > end_time:
                 break
-            x_acceleration = convert_acceleration(
-                int.from_bytes(message.data[2:4], byteorder='little'))
-            print(f"X Acceleration: {x_acceleration}")
-            number_messages -= 1
 
         self.notifier.remove_listener(reader)
 
         await self.stop_streaming_acceleration()
+
+        return acceleration_data
 
     # =================
     # = Configuration =

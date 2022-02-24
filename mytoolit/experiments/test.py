@@ -15,8 +15,10 @@ async def test(identifier=EUI("08:6b:d7:01:de:81")):
         name = await network.get_name(node)
         print(f"Name of {node}: {name}")
 
-        print("Read acceleration data")
-        await network.read_acceleration()
+        seconds = 1
+        print(f"Read raw x acceleration data for {seconds} s")
+        data = await network.read_x_acceleration_raw(seconds)
+        print(f"Read Data: {data}")
 
         print("\nExecution took {:.3} seconds".format(time() - start_time))
 
