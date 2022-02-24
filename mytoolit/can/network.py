@@ -1400,10 +1400,10 @@ class Network:
             response_data=mac_address_bytes_reversed,
             description=f"connect to device “{mac_address}” from “{node}”")
 
-    async def get_sths(self,
-                       node: Union[str,
-                                   Node] = 'STU 1') -> List[STHDeviceInfo]:
-        """Retrieve a list of available STHs
+    async def get_sensor_devices(self,
+                                 node: Union[str, Node] = 'STU 1'
+                                 ) -> List[STHDeviceInfo]:
+        """Retrieve a list of available sensor devices
 
         Parameters
         ----------
@@ -1432,33 +1432,33 @@ class Network:
 
         Retrieve the list of Bluetooth devices at STU 1
 
-        >>> async def get_sths():
+        >>> async def get_sensor_devices():
         ...     async with Network() as network:
         ...
-        ...         # We assume that at least one STH is available
+        ...         # We assume that at least one sensor device is available
         ...         devices = []
         ...         while not devices:
-        ...             devices = await network.get_sths()
+        ...             devices = await network.get_sensor_devices()
         ...             await sleep(0.1)
         ...
         ...         return devices
-        >>> sths = run(get_sths())
-        >>> len(sths) >= 1
+        >>> devices = run(get_sensor_devices())
+        >>> len(devices) >= 1
         True
-        >>> sth = sths[0]
+        >>> device = devices[0]
 
-        >>> sth.device_number
+        >>> device.device_number
         0
 
-        >>> isinstance(sth.name, str)
+        >>> isinstance(device.name, str)
         True
-        >>> 0 <= len(sth.name) <= 8
-        True
-
-        >>> -70 < sth.rssi < 0
+        >>> 0 <= len(device.name) <= 8
         True
 
-        >>> isinstance(sth.mac_address, EUI)
+        >>> -70 < device.rssi < 0
+        True
+
+        >>> isinstance(device.mac_address, EUI)
         True
 
         """
@@ -1556,7 +1556,7 @@ class Network:
                     f"{identifier_description} “{identifier}” in "
                     f" {timeout_in_s} seconds\n\n{device_info}")
 
-            sensor_devices = await self.get_sths()
+            sensor_devices = await self.get_sensor_devices()
             sensor_device = get_sensor_device(sensor_devices, identifier)
             if sensor_device is None:
                 await sleep(0.1)
