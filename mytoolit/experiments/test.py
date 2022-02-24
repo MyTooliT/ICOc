@@ -1,24 +1,24 @@
 from asyncio import run
+from time import time
 
-from mytoolit.can import Message, Network
+from netaddr import EUI
+
+from mytoolit.can import Network
 
 
-async def test(identifier='Aladdin'):
+async def test(identifier=EUI("08:6b:d7:01:de:81")):
     async with Network() as network:
         node = 'STH 1'
+        start_time = time()
+
         await network.connect_sth(identifier)
         name = await network.get_name(node)
-        print(f"Connected to “{name}”")
+        print(f"Name of {node}: {name}")
 
-        message = Message(block='Configuration',
-                          block_command=0x01,
-                          sender='SPU 1',
-                          receiver='STH 1',
-                          request=True,
-                          data=8 * [0])
-        print(f"Send message: {message}")
-        answer = await network._request(message, "read channel configuration")
-        print(f"Received message: {Message(answer)}")
+        print("Read acceleration data")
+        await network.read_acceleration()
+
+        print("\nExecution took {:.3} seconds".format(time() - start_time))
 
 
 if __name__ == '__main__':
