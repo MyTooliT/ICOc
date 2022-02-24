@@ -17,10 +17,6 @@ from mytoolit.config import settings
 from mytoolit.eeprom import EEPROMStatus
 from mytoolit.report import Report
 
-from mytoolit.old.network import Network as OldNetwork
-from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
-from mytoolit.old.MyToolItCommands import AdcOverSamplingRate
-
 # -- Class --------------------------------------------------------------------
 
 
@@ -263,22 +259,7 @@ class TestNode(TestCase):
     def _connect(self):
         """Create a connection to the STU"""
 
-        def connect_old():
-            """Create connection with old network class"""
-            # Initialize CAN bus
-            log_filepath = f"{self._testMethodName}.txt"
-
-            self.can = OldNetwork(log_filepath,
-                                  sender=MyToolItNetworkNr['SPU1'],
-                                  receiver=Node('STU 1').value,
-                                  oversampling=AdcOverSamplingRate[64])
-
-            # Reset STU (and SMH/STH)
-            self.can.bConnected = False
-            return_message = self.can.reset_node("STU 1")
-            self.can.CanTimeStampStart(return_message['CanTime'])
-
-        async def connect_new():
+        async def connect():
             """Create connection with new network class"""
 
             self.can = Network()
@@ -286,13 +267,10 @@ class TestNode(TestCase):
             # Wait for reset to take place
             await async_sleep(2)
 
-        if self._testMethodName == 'test_acceleration_noise':
-            connect_old()
-        else:
-            loop = new_event_loop()
-            set_event_loop(loop)
-            self.loop = loop
-            self.loop.run_until_complete(connect_new())
+        loop = new_event_loop()
+        set_event_loop(loop)
+        self.loop = loop
+        self.loop.run_until_complete(connect())
 
     def _disconnect(self):
         """Tear down connection to STU"""

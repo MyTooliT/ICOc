@@ -1,6 +1,5 @@
 # -- Imports ------------------------------------------------------------------
 
-from platform import system
 from typing import List
 from unittest import main as unittest_main, skipIf
 
@@ -12,8 +11,6 @@ from mytoolit.test.production import TestSensorNode
 from mytoolit.test.unit import ExtendedTestRunner
 from mytoolit.utility import (add_commander_path_to_environment,
                               convert_mac_base64)
-
-from mytoolit.old.MyToolItCommands import DataSets, MyToolItStreaming
 
 # -- Classes ------------------------------------------------------------------
 
@@ -179,20 +176,11 @@ class TestSTH(TestSensorNode):
 
         self.loop.run_until_complete(test_acceleration_single())
 
-    @skipIf(system() == "Linux",
-            "Noise test skipped because it is currently not supported on Linux"
-            )
     def test_acceleration_noise(self):
         """Test ratio of noise to maximal possible measurement value"""
 
-        # Read x-acceleration values in single data sets for 4 seconds
-        streaming_arguments = (Node("STH 1").value,
-                               MyToolItStreaming["Acceleration"], DataSets[1],
-                               1, 0, 0)
-        index_start, index_end = self.can.streamingValueCollect(
-            *streaming_arguments, 4000)
-        acceleration, _, _ = self.can.streamingValueArray(
-            *streaming_arguments, index_start, index_end)
+        acceleration = self.loop.run_until_complete(
+            self.can.read_x_acceleration_raw(seconds=4))
 
         cls = type(self)
         cls.ratio_noise_max = ratio_noise_max(acceleration)

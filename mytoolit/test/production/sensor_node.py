@@ -2,15 +2,8 @@
 
 from time import sleep
 
-from mytoolit.can import Node
 from mytoolit.config import settings
 from mytoolit.test.production import TestNode
-
-from mytoolit.old.MyToolItCommands import (
-    MyToolItBlock,
-    MyToolItProductData,
-    int_to_mac_address,
-)
 
 # -- Classes ------------------------------------------------------------------
 
@@ -53,34 +46,14 @@ class TestSensorNode(TestNode):
 
         """
 
-        # Connect to STU
-        super()._connect()
-        # Connect to STH
-        new_network = hasattr(self.can, 'bus')
-        self.loop.run_until_complete(
-            self.can.connect_sensor_device(name)) if new_network else (
-                self.can.bBlueToothConnectPollingName(
-                    Node('STU 1').value, name, log=False))
+        super()._connect()  # Connect to STU
+        self.loop.run_until_complete(self.can.connect_sensor_device(name))
 
     def _read_data(self):
         """Read data from connected sensor device"""
 
-        def read_data_old():
-            """Read data using the old network class"""
-
-            cls.bluetooth_mac = int_to_mac_address(
-                self.can.BlueToothAddress(Node('STH 1').value))
-            cls.bluetooth_rssi = self.can.BlueToothRssi(Node('STH 1').value)
-
-            index = self.can.cmdSend(
-                Node('STH 1').value, MyToolItBlock['Product Data'],
-                MyToolItProductData['Firmware Version'], [])
-            version = self.can.getReadMessageData(index)[-3:]
-
-            cls.firmware_version = '.'.join(map(str, version))
-
-        async def read_data_new():
-            """Read data using the old network class"""
+        async def read_data():
+            """Read data using the new network class"""
 
             node = 'STH 1'
             cls.bluetooth_mac = await self.can.get_mac_address(node)
@@ -88,10 +61,7 @@ class TestSensorNode(TestNode):
             cls.firmware_version = await self.can.get_firmware_version(node)
 
         cls = type(self)
-
-        new_network = hasattr(self.can, 'bus')
-        self.loop.run_until_complete(
-            read_data_new()) if new_network else read_data_old()
+        self.loop.run_until_complete(read_data())
 
     def _test_connection_device(self):
         """Check connection to sensor device
