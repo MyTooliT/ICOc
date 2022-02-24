@@ -353,7 +353,8 @@ class TestSTH(TestSensorNode):
             await self.can.reset_node('STU 1')
 
             try:
-                await self.can.connect_sth(cls.name)  # Reconnect to STH
+                await self.can.connect_sensor_device(cls.name
+                                                     )  # Reconnect to STH
             except TimeoutError:
                 self.fail("Unable to reconnect to STH using updated name "
                           f"“{cls.name}”")

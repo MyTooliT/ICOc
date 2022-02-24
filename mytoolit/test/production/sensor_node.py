@@ -58,7 +58,7 @@ class TestSensorNode(TestNode):
         # Connect to STH
         new_network = hasattr(self.can, 'bus')
         self.loop.run_until_complete(
-            self.can.connect_sth(name)) if new_network else (
+            self.can.connect_sensor_device(name)) if new_network else (
                 self.can.bBlueToothConnectPollingName(
                     Node('STU 1').value, name, log=False))
 

@@ -77,7 +77,7 @@ class EEPROMCheck:
     async def connect_bluetooth(self):
         """Connect to the STH"""
 
-        await self.network.connect_sth(self.mac_address)
+        await self.network.connect_sensor_device(self.mac_address)
         print(f"Connected to “{await self.network.read_eeprom_name('STH 1')}”")
 
     async def reset_sth(self):

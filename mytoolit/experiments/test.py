@@ -11,7 +11,7 @@ async def test(identifier=EUI("08:6b:d7:01:de:81")):
         node = 'STH 1'
         start_time = time()
 
-        await network.connect_sth(identifier)
+        await network.connect_sensor_device(identifier)
         name = await network.get_name(node)
         print(f"Name of {node}: {name}")
 

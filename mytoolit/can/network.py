@@ -1090,7 +1090,7 @@ class Network:
         >>> async def read_energy_mode_reduced():
         ...     async with Network() as network:
         ...         # We assume that at least one sensor device is available
-        ...         await network.connect_sth(0)
+        ...         await network.connect_sensor_device(0)
         ...         return await network.read_energy_mode_reduced()
         >>> times = run(read_energy_mode_reduced())
         >>> round(times.advertisement)
@@ -1147,7 +1147,7 @@ class Network:
         >>> async def read_write_energy_mode_reduced(sleep, advertisement):
         ...     async with Network() as network:
         ...         # We assume that at least one sensor device is available
-        ...         await network.connect_sth(0)
+        ...         await network.connect_sensor_device(0)
         ...
         ...         await network.write_energy_mode_reduced(
         ...             Times(sleep=sleep, advertisement=advertisement))
@@ -1215,7 +1215,7 @@ class Network:
         >>> async def read_energy_mode_lowest():
         ...     async with Network() as network:
         ...         # We assume that at least one sensor device is available
-        ...         await network.connect_sth(0)
+        ...         await network.connect_sensor_device(0)
         ...         return await network.read_energy_mode_lowest()
         >>> times = run(read_energy_mode_lowest())
         >>> round(times.advertisement)
@@ -1272,7 +1272,7 @@ class Network:
         >>> async def read_write_energy_mode_lowest(sleep, advertisement):
         ...     async with Network() as network:
         ...         # We assume that at least one sensor device is available
-        ...         await network.connect_sth(0)
+        ...         await network.connect_sensor_device(0)
         ...
         ...         await network.write_energy_mode_lowest(
         ...             Times(sleep=sleep, advertisement=advertisement))
@@ -1358,7 +1358,7 @@ class Network:
         >>> async def get_bluetooth_mac():
         ...     async with Network() as network:
         ...         # We assume that at least one STH is available
-        ...         await network.connect_sth(0)
+        ...         await network.connect_sensor_device(0)
         ...         return await network.get_mac_address('STH 1')
         >>> mac_address = run(get_bluetooth_mac())
         >>> isinstance(mac_address, EUI)
@@ -1479,8 +1479,9 @@ class Network:
 
         return devices
 
-    async def connect_sth(self, identifier: Union[int, str, EUI]) -> None:
-        """Connect to an STH
+    async def connect_sensor_device(self, identifier: Union[int, str,
+                                                            EUI]) -> None:
+        """Connect to a sensor device (e.g. SHA, SMH or STH)
 
         Parameters
         ----------
@@ -1492,20 +1493,20 @@ class Network:
             - name (`str`), or
             - device number (`int`)
 
-            of the STH we want to connect to
+            of the sensor device we want to connect to
 
         Example
         -------
 
         >>> from asyncio import run
 
-        Connect to the STH with device number `0`
+        Connect to the sensor device with device number `0`
 
-        >>> async def connect_sth():
+        >>> async def connect_sensor_device():
         ...     async with Network() as network:
-        ...         await network.connect_sth(0)
+        ...         await network.connect_sensor_device(0)
         ...         return await network.is_connected()
-        >>> run(connect_sth())
+        >>> run(connect_sensor_device())
         True
 
         """
@@ -1639,7 +1640,7 @@ class Network:
         >>> max = settings.acceleration_sensor().acceleration.maximum
         >>> async def read_x_acceleration():
         ...     async with Network() as network:
-        ...         await network.connect_sth(0)
+        ...         await network.connect_sensor_device(0)
         ...         return await network.read_x_acceleration(max)
         >>> x_acceleration = run(read_x_acceleration())
         >>> -2 < x_acceleration < 2
@@ -1680,7 +1681,7 @@ class Network:
 
         >>> async def read_supply_voltage():
         ...     async with Network() as network:
-        ...         await network.connect_sth(0)
+        ...         await network.connect_sensor_device(0)
         ...         return await network.read_supply_voltage()
         >>> supply_voltage = run(read_supply_voltage())
         >>> 3 <= supply_voltage <= 4.2
@@ -1834,7 +1835,7 @@ class Network:
 
         >>> async def read_acceleration_voltage():
         ...     async with Network() as network:
-        ...         await network.connect_sth(0)
+        ...         await network.connect_sensor_device(0)
         ...
         ...         before = await network.read_acceleration_voltage()
         ...         await network.activate_acceleration_self_test()
@@ -1975,7 +1976,7 @@ class Network:
 
         >>> async def read_slope():
         ...     async with Network() as network:
-        ...         await network.connect_sth(0)
+        ...         await network.connect_sensor_device(0)
         ...         return await network.read_eeprom_float(
         ...             address=8, offset=0, node='STH 1')
         >>> slope = run(read_slope())
@@ -2487,7 +2488,7 @@ class Network:
 
         >>> async def read_sleep_time_1():
         ...     async with Network() as network:
-        ...         await network.connect_sth(0)
+        ...         await network.connect_sensor_device(0)
         ...         return await network.read_eeprom_sleep_time_1()
         >>> sleep_time = run(read_sleep_time_1())
         >>> isinstance(sleep_time, int)
@@ -2518,7 +2519,7 @@ class Network:
 
         >>> async def write_read_sleep_time_1(milliseconds):
         ...     async with Network() as network:
-        ...         await network.connect_sth(0)
+        ...         await network.connect_sensor_device(0)
         ...         await network.write_eeprom_sleep_time_1(milliseconds)
         ...         return await network.read_eeprom_sleep_time_1()
         >>> run(write_read_sleep_time_1(300_000))
@@ -2549,7 +2550,7 @@ class Network:
 
         >>> async def read_advertisement_time_1():
         ...     async with Network() as network:
-        ...         await network.connect_sth(0)
+        ...         await network.connect_sensor_device(0)
         ...         return await network.read_eeprom_advertisement_time_1()
         >>> advertisement_time = run(read_advertisement_time_1())
         >>> isinstance(advertisement_time, float)
@@ -2584,7 +2585,7 @@ class Network:
 
         >>> async def write_read_advertisement_time_1(milliseconds):
         ...     async with Network() as network:
-        ...         await network.connect_sth(0)
+        ...         await network.connect_sensor_device(0)
         ...         await network.write_eeprom_advertisement_time_1(
         ...                 milliseconds)
         ...         return await network.read_eeprom_advertisement_time_1()
@@ -2619,7 +2620,7 @@ class Network:
 
         >>> async def read_sleep_time_2():
         ...     async with Network() as network:
-        ...         await network.connect_sth(0)
+        ...         await network.connect_sensor_device(0)
         ...         return await network.read_eeprom_sleep_time_2()
         >>> sleep_time = run(read_sleep_time_2())
         >>> isinstance(sleep_time, int)
@@ -2650,7 +2651,7 @@ class Network:
 
         >>> async def write_read_sleep_time_2(milliseconds):
         ...     async with Network() as network:
-        ...         await network.connect_sth(0)
+        ...         await network.connect_sensor_device(0)
         ...         await network.write_eeprom_sleep_time_2(milliseconds)
         ...         return await network.read_eeprom_sleep_time_2()
         >>> run(write_read_sleep_time_2(259_200_000))
@@ -2681,7 +2682,7 @@ class Network:
 
         >>> async def read_advertisement_time_2():
         ...     async with Network() as network:
-        ...         await network.connect_sth(0)
+        ...         await network.connect_sensor_device(0)
         ...         return await network.read_eeprom_advertisement_time_2()
         >>> advertisement_time = run(read_advertisement_time_2())
         >>> isinstance(advertisement_time, float)
@@ -2715,7 +2716,7 @@ class Network:
 
         >>> async def write_read_advertisement_time_2(milliseconds):
         ...     async with Network() as network:
-        ...         await network.connect_sth(0)
+        ...         await network.connect_sensor_device(0)
         ...         await network.write_eeprom_advertisement_time_2(
         ...                 milliseconds)
         ...         return await network.read_eeprom_advertisement_time_2()
@@ -3841,7 +3842,7 @@ class Network:
 
         >>> async def read_x_axis_acceleration_slope():
         ...     async with Network() as network:
-        ...         await network.connect_sth(0)
+        ...         await network.connect_sensor_device(0)
         ...         return (await
         ...                 network.read_eeprom_x_axis_acceleration_slope())
         >>> x_axis_acceleration_slope = run(read_x_axis_acceleration_slope())
@@ -3873,7 +3874,7 @@ class Network:
 
         >>> async def write_read_x_axis_acceleration_slope(slope):
         ...     async with Network() as network:
-        ...         await network.connect_sth(0)
+        ...         await network.connect_sensor_device(0)
         ...         await network.write_eeprom_x_axis_acceleration_slope(slope)
         ...         return (await
         ...                 network.read_eeprom_x_axis_acceleration_slope())
@@ -3908,7 +3909,7 @@ class Network:
 
         >>> async def read_x_axis_acceleration_offset():
         ...     async with Network() as network:
-        ...         await network.connect_sth(0)
+        ...         await network.connect_sensor_device(0)
         ...         return (await
         ...                 network.read_eeprom_x_axis_acceleration_offset())
         >>> x_axis_acceleration_offset = run(read_x_axis_acceleration_offset())
@@ -3939,7 +3940,7 @@ class Network:
 
         >>> async def write_read_x_axis_acceleration_offset(offset):
         ...     async with Network() as network:
-        ...         await network.connect_sth(0)
+        ...         await network.connect_sensor_device(0)
         ...         await network.write_eeprom_x_axis_acceleration_offset(
         ...                 offset)
         ...         return (await
