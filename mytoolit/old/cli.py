@@ -40,7 +40,7 @@ from mytoolit.old.Plotter import vPlotter, tArray2Binary
 
 Watch = {
     "DisplayTimeMax": 10,  # Maximum display time of graphical plot in seconds
-    "DisplaySampleRateMs": 1000,  # Maximum Display Time in ms
+    "DisplaySampleRateMs": 100,  # Maximum Display Time in ms
     "DisplayBlockSize": 100,
     "AliveTimeOutMs":
     4000,  # Time Out after receiving no data in acquiring mode
