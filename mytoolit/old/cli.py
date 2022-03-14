@@ -42,7 +42,8 @@ Watch = {
     # Time period displayed in the graph in seconds,
     # i.e. “length” of abscissa (“x-coordinate”)
     "DisplayTimeMax": 10,
-    "DisplaySampleRateMs": 100,  # Maximum Display Time in ms
+    # Time after which graph data will be updated again in milliseconds
+    "DisplaySampleRateMs": 1 / 25 * 1000,
     "DisplayBlockSize": 100,
     # Time out after receiving no data in acquiring mode in seconds
     "AliveTimeOutMs": 4000,
