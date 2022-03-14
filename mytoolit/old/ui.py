@@ -430,7 +430,7 @@ class UserInterface(CommandLineInterface):
             "n: Change STH Name",
             "r: Change Run Time",
             "a: Configure ADC",
-            "c: Configure Sensors",
+            "p: Configure Sensors",
             "O: Set Standby Mode",
             "",
             "q: Disconnect from STH",
@@ -463,7 +463,7 @@ class UserInterface(CommandLineInterface):
             continue_sth_window = False
         elif key == Key.A:
             self.change_adc_values_window()
-        elif key == Key.C:
+        elif key == Key.P:
             self.change_sensors_window()
         elif key == Key.Q:
             continue_sth_window = False
