@@ -519,7 +519,7 @@ class CommandLineInterface():
         self.vGraphSend(["dataBlockSize", self.iGraphBlockSize])
         self.vGraphSend(["sampleInterval", self.iGraphSampleInterval])
         self.vGraphSend(["xDim", Watch["DisplayTimeMax"]])
-        self.vGraphPacketLossUpdate()
+        self.update_packet_loss()
         if self.bAccX:
             self.vGraphSend(["lineNameX", "Acceleration X-Axis"])
         if self.bAccY:
@@ -544,7 +544,7 @@ class CommandLineInterface():
             self.tSocket.sendall(tArray2Binary(["data", self.GuiPackage]))
             self.GuiPackage = {"X": [], "Y": [], "Z": []}
 
-    def vGraphPacketLossUpdate(self, msgCounter=-1):
+    def update_packet_loss(self, msgCounter=-1):
         if self.iMsgCounterLast == -1:
             self.iMsgCounterLast = msgCounter
         else:
@@ -735,7 +735,7 @@ class CommandLineInterface():
             timestamp_ms = timestamp.millis_overflow * (
                 2**32) + timestamp.millis + timestamp.micros / 1000
             if message.ID == self.AccAckExpected.ID:
-                self.vGraphPacketLossUpdate(message.DATA[1])
+                self.update_packet_loss(message.DATA[1])
                 self.update_acceleration_data(message.DATA, timestamp_ms)
 
         return status
