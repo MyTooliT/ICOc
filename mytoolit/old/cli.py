@@ -39,11 +39,13 @@ from mytoolit.old.MyToolItCommands import (
 from mytoolit.old.Plotter import vPlotter, tArray2Binary
 
 Watch = {
-    "DisplayTimeMax": 10,  # Maximum display time of graphical plot in seconds
+    # Time period displayed in the graph in seconds,
+    # i.e. “length” of abscissa (“x-coordinate”)
+    "DisplayTimeMax": 10,
     "DisplaySampleRateMs": 100,  # Maximum Display Time in ms
     "DisplayBlockSize": 100,
-    "AliveTimeOutMs":
-    4000,  # Time Out after receiving no data in acquiring mode
+    # Time out after receiving no data in acquiring mode in seconds
+    "AliveTimeOutMs": 4000,
 }
 
 
