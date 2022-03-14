@@ -44,7 +44,9 @@ Watch = {
     "DisplayTimeMax": 10,
     # Time after which graph data will be updated again in milliseconds
     "DisplaySampleRateMs": 1 / 25 * 1000,
-    "DisplayBlockSize": 100,
+    # Number of data samples printed in a block,
+    # i.e in the time span specified above
+    "DisplayBlockSize": 10,
     # Time out after receiving no data in acquiring mode in seconds
     "AliveTimeOutMs": 4000,
 }
