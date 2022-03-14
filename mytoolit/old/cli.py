@@ -528,7 +528,7 @@ class CommandLineInterface():
             self.vGraphSend(["lineNameZ", "Acceleration Z-Axis"])
         self.vGraphSend(["Plot", True])
 
-    def vGraphPointNext(self, x=0, y=0, z=0):
+    def update_graph_data(self, x=0, y=0, z=0):
 
         timeStampNow = int(round(time() * 1000))
         elapsed_time_ms = timeStampNow - self.tDataPointTimeStamp
@@ -831,14 +831,14 @@ class CommandLineInterface():
             self.storage.add_acceleration(values=axis_values,
                                           counter=counter,
                                           timestamp=timestamp)
-            self.vGraphPointNext(**axis_values)
+            self.update_graph_data(**axis_values)
         elif self.tAccDataFormat == DataSets[3]:
             axis = axes[0]
             for value in values:
                 self.storage.add_acceleration(values={axis: value},
                                               counter=counter,
                                               timestamp=timestamp)
-            self.vGraphPointNext(**{axis: values[0]})
+            self.update_graph_data(**{axis: values[0]})
         else:
             self.Can.Logger.Error("Wrong Ack format")
 
