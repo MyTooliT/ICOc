@@ -542,7 +542,7 @@ class CommandLineInterface():
         self.GuiPackage["X"].append(x)
         self.GuiPackage["Y"].append(y)
         self.GuiPackage["Z"].append(z)
-        if self.iGraphBlockSize <= len(self.GuiPackage["X"]):
+        if len(self.GuiPackage["X"]) >= self.iGraphBlockSize:
             self.tSocket.sendall(tArray2Binary(["data", self.GuiPackage]))
             self.GuiPackage = {"X": [], "Y": [], "Z": []}
 
