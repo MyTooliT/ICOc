@@ -534,6 +534,7 @@ class CommandLineInterface():
 
         timeStampNow = int(round(time() * 1000))
         elapsed_time_ms = timeStampNow - self.tDataPointTimeStamp
+        # Only add a single data sample for each part of the current block
         if (elapsed_time_ms <=
                 self.iGraphSampleInterval / self.iGraphBlockSize):
             return
@@ -542,6 +543,8 @@ class CommandLineInterface():
         self.GuiPackage["X"].append(x)
         self.GuiPackage["Y"].append(y)
         self.GuiPackage["Z"].append(z)
+        # Send the data to the plotter, after we collected all samples for the
+        # current block
         if len(self.GuiPackage["X"]) >= self.iGraphBlockSize:
             try:
                 self.tSocket.sendall(tArray2Binary(["data", self.GuiPackage]))
