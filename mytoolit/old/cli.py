@@ -543,7 +543,13 @@ class CommandLineInterface():
         self.GuiPackage["Y"].append(y)
         self.GuiPackage["Z"].append(z)
         if len(self.GuiPackage["X"]) >= self.iGraphBlockSize:
-            self.tSocket.sendall(tArray2Binary(["data", self.GuiPackage]))
+            try:
+                self.tSocket.sendall(tArray2Binary(["data", self.GuiPackage]))
+            except ConnectionResetError:
+                # Closing the plotter window quits the plotter process and
+                # there might be not socket to send data to after that
+                pass
+
             self.GuiPackage = {"X": [], "Y": [], "Z": []}
 
     def update_packet_loss(self, msgCounter=-1):
@@ -572,8 +578,14 @@ class CommandLineInterface():
             sMsgLoss = f"Acceleration (▂▄▇ {pakets_received:3.2f} %)"
             if sMsgLoss != self.sMsgLoss:
                 self.sMsgLoss = sMsgLoss
-                self.tSocket.sendall(
-                    tArray2Binary(["diagramName", self.sMsgLoss]))
+                try:
+                    self.tSocket.sendall(
+                        tArray2Binary(["diagramName", self.sMsgLoss]))
+                except ConnectionResetError:
+                    # Closing the plotter window quits the plotter process and
+                    # there might be not socket to send data to after that
+                    pass
+
             self.iMsgLoss = 0
             self.iMsgsTotal = 0
 
