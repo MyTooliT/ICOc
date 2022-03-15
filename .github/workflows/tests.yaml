@@ -31,8 +31,11 @@ jobs:
         python-version: ${{ matrix.python-version }}
 
     - name: Install dependencies
+      # The latest versions of mypy (> 0.931) report spurious errors about
+      # attributes such as `curs_set` not existing in the Windows `curses`
+      # package
       run: |
-        pip install flake8 mypy pytest
+        pip install flake8 mypy==0.931 pytest
         pip install -e .
 
     - name: Check with flake8
