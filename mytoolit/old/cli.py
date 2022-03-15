@@ -551,7 +551,7 @@ class CommandLineInterface():
         if len(self.GuiPackage["X"]) >= self.iGraphBlockSize:
             try:
                 self.tSocket.sendall(tArray2Binary(["data", self.GuiPackage]))
-            except ConnectionResetError:
+            except (ConnectionAbortedError, ConnectionResetError):
                 # Closing the plotter window quits the plotter process and
                 # there might be not socket to send data to after that
                 pass
@@ -587,7 +587,7 @@ class CommandLineInterface():
                 try:
                     self.tSocket.sendall(
                         tArray2Binary(["diagramName", self.sMsgLoss]))
-                except ConnectionResetError:
+                except (ConnectionAbortedError, ConnectionResetError):
                     # Closing the plotter window quits the plotter process and
                     # there might be not socket to send data to after that
                     pass
