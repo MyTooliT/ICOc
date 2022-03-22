@@ -70,7 +70,6 @@ def tPlotterInit():
     if "" != cDict["lineNameX"]:
         line1, = ax.plot(cDict["timePoints"],
                          cDict["xAccPoints"],
-                         '-o',
                          alpha=0.8,
                          label='x')
         legendHandles.append(line1)
@@ -78,7 +77,6 @@ def tPlotterInit():
     if "" != cDict["lineNameY"]:
         line2, = ax.plot(cDict["timePoints"],
                          cDict["yAccPoints"],
-                         '-o',
                          alpha=0.8,
                          label='Y')
         legendHandles.append(line2)
@@ -86,7 +84,6 @@ def tPlotterInit():
     if "" != cDict["lineNameZ"]:
         line3, = ax.plot(cDict["timePoints"],
                          cDict["zAccPoints"],
-                         '-o',
                          alpha=0.8,
                          label='Z')
         legendHandles.append(line3)
