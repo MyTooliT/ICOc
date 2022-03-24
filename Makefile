@@ -10,7 +10,7 @@ HTML_FILE := $(OUTPUT_DIRECTORY)/$(OUTPUT_NAME).html
 # -- Rules ---------------------------------------------------------------------
 
 # Always regenerate output files
-.PHONY: $(EPUB_FILE) $(HTML_FILE) $(PDF_FILE)
+.PHONY: clean $(EPUB_FILE) $(HTML_FILE) $(PDF_FILE)
 
 all: init $(EPUB_FILE) $(HTML_FILE) $(PDF_FILE) cleanup
 
