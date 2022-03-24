@@ -43,7 +43,7 @@ Watch = {
     # i.e. “length” of abscissa (“x-coordinate”)
     "DisplayTimeMax": 10,
     # Time after which graph data will be updated again in milliseconds
-    "DisplaySampleRateMs": 1 / 25 * 1000,
+    "DisplaySampleRateMs": 1 / 5 * 1000,
     # Number of data samples printed in a block,
     # i.e in the time span specified above
     "DisplayBlockSize": 10,
