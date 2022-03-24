@@ -46,7 +46,7 @@ Watch = {
     "DisplaySampleRateMs": 1 / 5 * 1000,
     # Number of data samples printed in a block,
     # i.e in the time span specified above
-    "DisplayBlockSize": 10,
+    "DisplayBlockSize": 20,
     # Time out after receiving no data in acquiring mode in seconds
     "AliveTimeOutMs": 4000,
 }
