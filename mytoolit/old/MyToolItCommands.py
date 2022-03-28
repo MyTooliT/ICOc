@@ -252,6 +252,7 @@ MyToolItProductData = bidict({
 
 MyToolItTest = bidict({
     "Signal": 0x01,
+    "Pfeifferl": 0x69,
 })
 
 blocknumber_to_commands = {
@@ -383,6 +384,7 @@ CommandBlockProductData = {
 
 CommandBlockTest = {
     MyToolItTest["Signal"]: "Test Command Signal",
+    MyToolItTest["Pfeifferl"]: "Test Command Pfeifferl",
 }
 
 EepromPage = {
