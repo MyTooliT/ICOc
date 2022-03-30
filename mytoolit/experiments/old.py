@@ -37,3 +37,4 @@ if __name__ == '__main__':
     sth_name = "Test-STH"
     with Network(sth_name) as network:
         print(f"Connected to “{sth_name}”")
+        network.read_sensor_config()
