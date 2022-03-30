@@ -275,12 +275,8 @@ class TestNode(TestCase):
     def _disconnect(self):
         """Tear down connection to STU"""
 
-        new_network = hasattr(self.can, 'bus')
-        if new_network:
-            self.loop.run_until_complete(self.can.shutdown())
-            self.loop.close()
-        else:
-            self.can.__exit__()
+        self.loop.run_until_complete(self.can.shutdown())
+        self.loop.close()
 
     async def _test_connection(self, node: str):
         """Check connection to node
