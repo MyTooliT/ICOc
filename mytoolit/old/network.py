@@ -73,6 +73,10 @@ class SensorConfig(NamedTuple):
         return f"X: {self.x}, Y: {self.y}, Z: {self.z}"
 
 
+class UnsupportedFeatureException(Exception):
+    """Indicate that a certain feature is not supported by a device"""
+
+
 class Network(object):
     """A class used to communicate over CAN
 
@@ -1829,10 +1833,16 @@ class Network(object):
     def read_sensor_config(self) -> SensorConfig:
         """Read the current sensor configuration
 
+        Raises
+        ------
+
+        A `UnsupportedFeatureException` in case the sensor node replies with
+        an error message
+
         Returns
         -------
 
-        The number of the sensors for the different axes
+        The sensor number for the different axes
 
         """
 
@@ -1843,7 +1853,13 @@ class Network(object):
                           request=True,
                           data=[0] * 8)
 
-        data = self.tWriteFrameWaitAckRetries(message.to_pcan())["Payload"]
+        reply = self.tWriteFrameWaitAck(message.to_pcan())[0]
+        unsupported = Identifier(int(reply['ID'], 16)).is_error()
+        if unsupported:
+            raise UnsupportedFeatureException(
+                "Unable to read channel configuration")
+
+        data = reply["Payload"]
         channels = data[1:4]
         config = {
             axis: channel
