@@ -30,7 +30,7 @@ For more information about other required software components, please read the s
 
 ## Documentation
 
-While you should be able to read the various Markdown files of the documentation (this file and the files in the directory `Documentation`) separately, we recommend you read the [bookdown](https://bookdown.org) manual instead. We provide a prebuilt version of the documentation [here](https://github.com/MyTooliT/ICOc/actions/workflows/documentation.yaml) (just select the latest run and click on the link “ICOc Manual”) or in the [Bitrix24 drive of MyToolit](https://mytoolit.bitrix24.de/docs/path/Documentation%20Repositories/ICOc/).
+While you should be able to read the various Markdown files of the documentation (this file and the files in the directory `Documentation`) separately, we recommend you read the [bookdown](https://bookdown.org) manual instead. We provide a prebuilt version of the documentation [**here**](https://mytoolit.github.io/ICOc/). You can also download the documentation [under the GitHub Actions tab](https://github.com/MyTooliT/ICOc/actions/workflows/documentation.yaml) (just select the latest run and click on the link “ICOc Manual”), and in the [Bitrix24 drive of MyToolit](https://mytoolit.bitrix24.de/docs/path/Documentation%20Repositories/ICOc/).
 
 ### Build
 
