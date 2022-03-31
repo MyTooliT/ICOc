@@ -1,0 +1,2322 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>ICOc Documentation</title>
+  <meta name="description" content="ICOc Documentation" />
+  <meta name="generator" content="bookdown 0.25 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="ICOc Documentation" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="ICOc Documentation" />
+  
+  
+  
+
+<meta name="author" content="MyTooliT" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+
+
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+<style type="text/css">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="1" data-path=""><a href="#icoc"><i class="fa fa-check"></i><b>1</b> ICOc<span></span></a><ul>
+<li class="chapter" data-level="1.1" data-path=""><a href="#documentation"><i class="fa fa-check"></i><b>1.1</b> Documentation<span></span></a><ul>
+<li class="chapter" data-level="1.1.1" data-path=""><a href="#build"><i class="fa fa-check"></i><b>1.1.1</b> Build<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path=""><a href="#requirements"><i class="fa fa-check"></i><b>1.2</b> Requirements<span></span></a><ul>
+<li class="chapter" data-level="1.2.1" data-path=""><a href="#hardware"><i class="fa fa-check"></i><b>1.2.1</b> Hardware<span></span></a></li>
+<li class="chapter" data-level="1.2.2" data-path=""><a href="#software"><i class="fa fa-check"></i><b>1.2.2</b> Software<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="1.3" data-path=""><a href="#install"><i class="fa fa-check"></i><b>1.3</b> Install<span></span></a><ul>
+<li class="chapter" data-level="1.3.1" data-path=""><a href="#troubleshooting"><i class="fa fa-check"></i><b>1.3.1</b> Troubleshooting<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="1.4" data-path=""><a href="#basic-usage"><i class="fa fa-check"></i><b>1.4</b> Basic Usage<span></span></a><ul>
+<li class="chapter" data-level="1.4.1" data-path=""><a href="#starting-the-program"><i class="fa fa-check"></i><b>1.4.1</b> Starting the Program<span></span></a></li>
+<li class="chapter" data-level="1.4.2" data-path=""><a href="#reading-acceleration-data"><i class="fa fa-check"></i><b>1.4.2</b> Reading Acceleration Data<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="1.5" data-path=""><a href="#measurement-data"><i class="fa fa-check"></i><b>1.5</b> Measurement Data<span></span></a><ul>
+<li class="chapter" data-level="1.5.1" data-path=""><a href="#adding-custom-metadata"><i class="fa fa-check"></i><b>1.5.1</b> Adding Custom Metadata<span></span></a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path=""><a href="#tutorials"><i class="fa fa-check"></i><b>2</b> Tutorials<span></span></a><ul>
+<li class="chapter" data-level="2.1" data-path=""><a href="#sensor-device-renaming"><i class="fa fa-check"></i><b>2.1</b> Sensor Device Renaming<span></span></a></li>
+<li class="chapter" data-level="2.2" data-path=""><a href="#command-line-usage-of-icoc"><i class="fa fa-check"></i><b>2.2</b> Command Line Usage of ICOc<span></span></a><ul>
+<li class="chapter" data-level="2.2.1" data-path=""><a href="#available-options"><i class="fa fa-check"></i><b>2.2.1</b> Available Options<span></span></a></li>
+<li class="chapter" data-level="2.2.2" data-path=""><a href="#provide-default-values"><i class="fa fa-check"></i><b>2.2.2</b> Provide Default Values<span></span></a></li>
+<li class="chapter" data-level="2.2.3" data-path=""><a href="#start-the-measurement"><i class="fa fa-check"></i><b>2.2.3</b> Start the Measurement<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path=""><a href="#production-tests"><i class="fa fa-check"></i><b>2.3</b> Production Tests<span></span></a><ul>
+<li class="chapter" data-level="2.3.1" data-path=""><a href="#general"><i class="fa fa-check"></i><b>2.3.1</b> General<span></span></a></li>
+<li class="chapter" data-level="2.3.2" data-path=""><a href="#sth"><i class="fa fa-check"></i><b>2.3.2</b> STH<span></span></a></li>
+<li class="chapter" data-level="2.3.3" data-path=""><a href="#smh"><i class="fa fa-check"></i><b>2.3.3</b> SMH<span></span></a></li>
+<li class="chapter" data-level="2.3.4" data-path=""><a href="#stu"><i class="fa fa-check"></i><b>2.3.4</b> STU<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path=""><a href="#verification-tests"><i class="fa fa-check"></i><b>2.4</b> Verification Tests<span></span></a><ul>
+<li class="chapter" data-level="2.4.1" data-path=""><a href="#preparation"><i class="fa fa-check"></i><b>2.4.1</b> Preparation<span></span></a></li>
+<li class="chapter" data-level="2.4.2" data-path=""><a href="#execution"><i class="fa fa-check"></i><b>2.4.2</b> Execution<span></span></a></li>
+<li class="chapter" data-level="2.4.3" data-path=""><a href="#problematic-tests"><i class="fa fa-check"></i><b>2.4.3</b> Problematic Tests<span></span></a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path=""><a href="#scripts"><i class="fa fa-check"></i><b>3</b> Scripts<span></span></a><ul>
+<li class="chapter" data-level="3.1" data-path=""><a href="#eeprom-check"><i class="fa fa-check"></i><b>3.1</b> EEPROM Check<span></span></a></li>
+<li class="chapter" data-level="3.2" data-path=""><a href="#icoc-1"><i class="fa fa-check"></i><b>3.2</b> ICOc<span></span></a></li>
+<li class="chapter" data-level="3.3" data-path=""><a href="#mac-address-conversion"><i class="fa fa-check"></i><b>3.3</b> MAC Address Conversion<span></span></a><ul>
+<li class="chapter" data-level="3.3.1" data-path=""><a href="#examples"><i class="fa fa-check"></i><b>3.3.1</b> Examples<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path=""><a href="#remove-log-and-pdf-files"><i class="fa fa-check"></i><b>3.4</b> Remove Log and PDF Files<span></span></a></li>
+<li class="chapter" data-level="3.5" data-path=""><a href="#test-sth"><i class="fa fa-check"></i><b>3.5</b> Test-STH<span></span></a></li>
+<li class="chapter" data-level="3.6" data-path=""><a href="#test-stu"><i class="fa fa-check"></i><b>3.6</b> Test-STU<span></span></a></li>
+<li class="chapter" data-level="3.7" data-path=""><a href="#test-smh"><i class="fa fa-check"></i><b>3.7</b> Test-SMH<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path=""><a href="#development"><i class="fa fa-check"></i><b>4</b> Development<span></span></a><ul>
+<li class="chapter" data-level="4.1" data-path=""><a href="#style"><i class="fa fa-check"></i><b>4.1</b> Style<span></span></a></li>
+<li class="chapter" data-level="4.2" data-path=""><a href="#tests"><i class="fa fa-check"></i><b>4.2</b> Tests<span></span></a><ul>
+<li class="chapter" data-level="4.2.1" data-path=""><a href="#code-checks"><i class="fa fa-check"></i><b>4.2.1</b> Code Checks<span></span></a></li>
+<li class="chapter" data-level="4.2.2" data-path=""><a href="#automatic-tests"><i class="fa fa-check"></i><b>4.2.2</b> Automatic Tests<span></span></a></li>
+<li class="chapter" data-level="4.2.3" data-path=""><a href="#manual-tests"><i class="fa fa-check"></i><b>4.2.3</b> Manual Tests<span></span></a></li>
+<li class="chapter" data-level="4.2.4" data-path=""><a href="#combined-checks-tests"><i class="fa fa-check"></i><b>4.2.4</b> Combined Checks &amp; Tests<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path=""><a href="#release"><i class="fa fa-check"></i><b>4.3</b> Release<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path=""><a href="#modelshop-software-update"><i class="fa fa-check"></i><b>5</b> Modelshop Software Update<span></span></a></li>
+<li class="chapter" data-level="6" data-path=""><a href="#releases"><i class="fa fa-check"></i><b>6</b> Releases<span></span></a><ul>
+<li class="chapter" data-level="6.1" data-path=""><a href="#version-1.3.0"><i class="fa fa-check"></i><b>6.1</b> Version 1.3.0<span></span></a><ul>
+<li class="chapter" data-level="6.1.1" data-path=""><a href="#sth-test-1"><i class="fa fa-check"></i><b>6.1.1</b> STH Test<span></span></a></li>
+<li class="chapter" data-level="6.1.2" data-path=""><a href="#smh-test"><i class="fa fa-check"></i><b>6.1.2</b> SMH Test<span></span></a></li>
+<li class="chapter" data-level="6.1.3" data-path=""><a href="#internal"><i class="fa fa-check"></i><b>6.1.3</b> Internal<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path=""><a href="#version-1.2.0"><i class="fa fa-check"></i><b>6.2</b> Version 1.2.0<span></span></a><ul>
+<li class="chapter" data-level="6.2.1" data-path=""><a href="#icoc-4"><i class="fa fa-check"></i><b>6.2.1</b> ICOc<span></span></a></li>
+<li class="chapter" data-level="6.2.2" data-path=""><a href="#sth-test-2"><i class="fa fa-check"></i><b>6.2.2</b> STH Test<span></span></a></li>
+<li class="chapter" data-level="6.2.3" data-path=""><a href="#smh-test-1"><i class="fa fa-check"></i><b>6.2.3</b> SMH Test<span></span></a></li>
+<li class="chapter" data-level="6.2.4" data-path=""><a href="#internal-1"><i class="fa fa-check"></i><b>6.2.4</b> Internal<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="6.3" data-path=""><a href="#version-1.1.0"><i class="fa fa-check"></i><b>6.3</b> Version 1.1.0<span></span></a><ul>
+<li class="chapter" data-level="6.3.1" data-path=""><a href="#icoc-5"><i class="fa fa-check"></i><b>6.3.1</b> ICOc<span></span></a></li>
+<li class="chapter" data-level="6.3.2" data-path=""><a href="#verification-test"><i class="fa fa-check"></i><b>6.3.2</b> Verification Test<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path=""><a href="#version-1.0.14"><i class="fa fa-check"></i><b>6.4</b> Version 1.0.14<span></span></a><ul>
+<li class="chapter" data-level="6.4.1" data-path=""><a href="#logger"><i class="fa fa-check"></i><b>6.4.1</b> Logger<span></span></a></li>
+<li class="chapter" data-level="6.4.2" data-path=""><a href="#verification-tests-1"><i class="fa fa-check"></i><b>6.4.2</b> Verification Tests<span></span></a></li>
+<li class="chapter" data-level="6.4.3" data-path=""><a href="#internal-2"><i class="fa fa-check"></i><b>6.4.3</b> Internal<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="6.5" data-path=""><a href="#version-1.0.13"><i class="fa fa-check"></i><b>6.5</b> Version 1.0.13<span></span></a><ul>
+<li class="chapter" data-level="6.5.1" data-path=""><a href="#documentation-1"><i class="fa fa-check"></i><b>6.5.1</b> Documentation<span></span></a></li>
+<li class="chapter" data-level="6.5.2" data-path=""><a href="#icoc-6"><i class="fa fa-check"></i><b>6.5.2</b> ICOc<span></span></a></li>
+<li class="chapter" data-level="6.5.3" data-path=""><a href="#production-test"><i class="fa fa-check"></i><b>6.5.3</b> Production Test<span></span></a></li>
+<li class="chapter" data-level="6.5.4" data-path=""><a href="#internal-3"><i class="fa fa-check"></i><b>6.5.4</b> Internal<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="6.6" data-path=""><a href="#version-1.0.12"><i class="fa fa-check"></i><b>6.6</b> Version 1.0.12<span></span></a><ul>
+<li class="chapter" data-level="6.6.1" data-path=""><a href="#config"><i class="fa fa-check"></i><b>6.6.1</b> Config<span></span></a></li>
+<li class="chapter" data-level="6.6.2" data-path=""><a href="#icoc-7"><i class="fa fa-check"></i><b>6.6.2</b> ICOc<span></span></a></li>
+<li class="chapter" data-level="6.6.3" data-path=""><a href="#internal-4"><i class="fa fa-check"></i><b>6.6.3</b> Internal<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="6.7" data-path=""><a href="#version-1.0.11"><i class="fa fa-check"></i><b>6.7</b> Version 1.0.11<span></span></a><ul>
+<li class="chapter" data-level="6.7.1" data-path=""><a href="#documentation-2"><i class="fa fa-check"></i><b>6.7.1</b> Documentation<span></span></a></li>
+<li class="chapter" data-level="6.7.2" data-path=""><a href="#eeprom-checker"><i class="fa fa-check"></i><b>6.7.2</b> EEPROM Checker<span></span></a></li>
+<li class="chapter" data-level="6.7.3" data-path=""><a href="#icoc-8"><i class="fa fa-check"></i><b>6.7.3</b> ICOc<span></span></a></li>
+<li class="chapter" data-level="6.7.4" data-path=""><a href="#sth-test-3"><i class="fa fa-check"></i><b>6.7.4</b> STH Test<span></span></a></li>
+<li class="chapter" data-level="6.7.5" data-path=""><a href="#internal-5"><i class="fa fa-check"></i><b>6.7.5</b> Internal<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="6.8" data-path=""><a href="#version-1.0.10"><i class="fa fa-check"></i><b>6.8</b> Version 1.0.10<span></span></a><ul>
+<li class="chapter" data-level="6.8.1" data-path=""><a href="#checks"><i class="fa fa-check"></i><b>6.8.1</b> Checks<span></span></a></li>
+<li class="chapter" data-level="6.8.2" data-path=""><a href="#github-actions"><i class="fa fa-check"></i><b>6.8.2</b> GitHub Actions<span></span></a></li>
+<li class="chapter" data-level="6.8.3" data-path=""><a href="#package"><i class="fa fa-check"></i><b>6.8.3</b> Package<span></span></a></li>
+<li class="chapter" data-level="6.8.4" data-path=""><a href="#requirements-2"><i class="fa fa-check"></i><b>6.8.4</b> Requirements<span></span></a></li>
+<li class="chapter" data-level="6.8.5" data-path=""><a href="#scripts-1"><i class="fa fa-check"></i><b>6.8.5</b> Scripts<span></span></a></li>
+<li class="chapter" data-level="6.8.6" data-path=""><a href="#internal-6"><i class="fa fa-check"></i><b>6.8.6</b> Internal<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="6.9" data-path=""><a href="#version-1.0.9"><i class="fa fa-check"></i><b>6.9</b> Version 1.0.9<span></span></a><ul>
+<li class="chapter" data-level="6.9.1" data-path=""><a href="#configuration"><i class="fa fa-check"></i><b>6.9.1</b> Configuration<span></span></a></li>
+<li class="chapter" data-level="6.9.2" data-path=""><a href="#compatibility"><i class="fa fa-check"></i><b>6.9.2</b> Compatibility<span></span></a></li>
+<li class="chapter" data-level="6.9.3" data-path=""><a href="#package-1"><i class="fa fa-check"></i><b>6.9.3</b> Package<span></span></a></li>
+<li class="chapter" data-level="6.9.4" data-path=""><a href="#scripts-2"><i class="fa fa-check"></i><b>6.9.4</b> Scripts<span></span></a></li>
+<li class="chapter" data-level="6.9.5" data-path=""><a href="#internal-7"><i class="fa fa-check"></i><b>6.9.5</b> Internal<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="6.10" data-path=""><a href="#version-1.0.8"><i class="fa fa-check"></i><b>6.10</b> Version 1.0.8<span></span></a><ul>
+<li class="chapter" data-level="6.10.1" data-path=""><a href="#internal-8"><i class="fa fa-check"></i><b>6.10.1</b> Internal<span></span></a></li>
+<li class="chapter" data-level="6.10.2" data-path=""><a href="#production-test-1"><i class="fa fa-check"></i><b>6.10.2</b> Production Test<span></span></a></li>
+<li class="chapter" data-level="6.10.3" data-path=""><a href="#sth-test-5"><i class="fa fa-check"></i><b>6.10.3</b> STH Test<span></span></a></li>
+<li class="chapter" data-level="6.10.4" data-path=""><a href="#tests-1"><i class="fa fa-check"></i><b>6.10.4</b> Tests<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="6.11" data-path=""><a href="#version-1.0.7"><i class="fa fa-check"></i><b>6.11</b> Version 1.0.7<span></span></a><ul>
+<li class="chapter" data-level="6.11.1" data-path=""><a href="#logging-1"><i class="fa fa-check"></i><b>6.11.1</b> Logging<span></span></a></li>
+<li class="chapter" data-level="6.11.2" data-path=""><a href="#sth-test-6"><i class="fa fa-check"></i><b>6.11.2</b> STH Test<span></span></a></li>
+<li class="chapter" data-level="6.11.3" data-path=""><a href="#stu-test-1"><i class="fa fa-check"></i><b>6.11.3</b> STU Test<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="6.12" data-path=""><a href="#version-1.0.6"><i class="fa fa-check"></i><b>6.12</b> Version 1.0.6<span></span></a><ul>
+<li class="chapter" data-level="6.12.1" data-path=""><a href="#documentation-3"><i class="fa fa-check"></i><b>6.12.1</b> Documentation<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="6.13" data-path=""><a href="#version-1.0.5"><i class="fa fa-check"></i><b>6.13</b> Version 1.0.5<span></span></a><ul>
+<li class="chapter" data-level="6.13.1" data-path=""><a href="#configuration-1"><i class="fa fa-check"></i><b>6.13.1</b> Configuration<span></span></a></li>
+<li class="chapter" data-level="6.13.2" data-path=""><a href="#documentation-4"><i class="fa fa-check"></i><b>6.13.2</b> Documentation<span></span></a></li>
+<li class="chapter" data-level="6.13.3" data-path=""><a href="#sth-test-7"><i class="fa fa-check"></i><b>6.13.3</b> STH Test<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="6.14" data-path=""><a href="#version-1.0.4"><i class="fa fa-check"></i><b>6.14</b> Version 1.0.4<span></span></a><ul>
+<li class="chapter" data-level="6.14.1" data-path=""><a href="#documentation-5"><i class="fa fa-check"></i><b>6.14.1</b> Documentation<span></span></a></li>
+<li class="chapter" data-level="6.14.2" data-path=""><a href="#install-1"><i class="fa fa-check"></i><b>6.14.2</b> Install<span></span></a></li>
+<li class="chapter" data-level="6.14.3" data-path=""><a href="#scripts-3"><i class="fa fa-check"></i><b>6.14.3</b> Scripts<span></span></a></li>
+<li class="chapter" data-level="6.14.4" data-path=""><a href="#style-1"><i class="fa fa-check"></i><b>6.14.4</b> Style<span></span></a></li>
+<li class="chapter" data-level="6.14.5" data-path=""><a href="#sth-test-8"><i class="fa fa-check"></i><b>6.14.5</b> STH Test<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="6.15" data-path=""><a href="#version-1.0.3"><i class="fa fa-check"></i><b>6.15</b> Version 1.0.3<span></span></a><ul>
+<li class="chapter" data-level="6.15.1" data-path=""><a href="#bug-fixes"><i class="fa fa-check"></i><b>6.15.1</b> Bug Fixes<span></span></a></li>
+<li class="chapter" data-level="6.15.2" data-path=""><a href="#compatibility-1"><i class="fa fa-check"></i><b>6.15.2</b> Compatibility<span></span></a></li>
+<li class="chapter" data-level="6.15.3" data-path=""><a href="#requirements-3"><i class="fa fa-check"></i><b>6.15.3</b> Requirements<span></span></a></li>
+<li class="chapter" data-level="6.15.4" data-path=""><a href="#sth-test-9"><i class="fa fa-check"></i><b>6.15.4</b> STH Test<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="6.16" data-path=""><a href="#version-1.0.2"><i class="fa fa-check"></i><b>6.16</b> Version 1.0.2<span></span></a></li>
+<li class="chapter" data-level="6.17" data-path=""><a href="#version-1.0.0"><i class="fa fa-check"></i><b>6.17</b> Version 1.0.0<span></span></a></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">ICOc Documentation</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="header">
+<h1 class="title">ICOc Documentation</h1>
+<p class="author"><em>MyTooliT</em></p>
+</div>
+<div id="icoc" class="section level1 hasAnchor">
+<h1><span class="header-section-number">1</span> ICOc<a href="#icoc" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>The ICOc software is a collection of tools and scripts for the <a href="https://www.mytoolit.com/ICOtronic/">ICOtronic system</a>. Currently the main purpose of the software is</p>
+<ul>
+<li><strong>data collection</strong> (via the script <code>icoc</code>) and</li>
+<li><strong>testing</strong> the functionality of
+<ul>
+<li>Stationary Transceiver Unit (STU) and</li>
+<li>sensor devices/nodes, such as
+<ul>
+<li>Sensory Holder Assembly (SHA)/Sensory Tool Holder (STH)</li>
+<li>Sensory Milling Head (SMH)</li>
+</ul></li>
+</ul></li>
+</ul>
+<p>The software reads data from the Stationary Transceiver Unit (STU) via CAN using the MyTooliT protocol. The STU itself reads from and writes data to the sensor devices via Bluetooth.</p>
+<p>The framework currently requires</p>
+<ul>
+<li><a href="https://microsoft.com/windows">Microsoft Windows 10</a>, and</li>
+<li><a href="#readme:section:python">Python 3</a>.</li>
+</ul>
+<p><strong>Notes</strong>:</p>
+<ul>
+<li>In theory you can also use ICOc in Windows 11. However, we did not test the software on this operating system.</li>
+<li>Parts of the test suite also works on Linux. The ICOc measurement software does <a href="https://github.com/MyTooliT/ICOc/issues/4"><strong>not</strong></a>.</li>
+</ul>
+<p>For more information about other required software components, please read the subsection <a href="#section:software">“Software”</a> in this document.</p>
+<div id="documentation" class="section level2 hasAnchor">
+<h2><span class="header-section-number">1.1</span> Documentation<a href="#documentation" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>While you should be able to read the various Markdown files of the documentation (this file and the files in the directory <code>Documentation</code>) separately, we recommend you read the <a href="https://bookdown.org">bookdown</a> manual instead. We provide a prebuilt version of the documentation <a href="https://github.com/MyTooliT/ICOc/actions/workflows/documentation.yaml">here</a> (just select the latest run and click on the link “ICOc Manual”) or in the <a href="https://mytoolit.bitrix24.de/docs/path/Documentation%20Repositories/ICOc/">Bitrix24 drive of MyToolit</a>.</p>
+<div id="build" class="section level3 hasAnchor">
+<h3><span class="header-section-number">1.1.1</span> Build<a href="#build" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>If you want to build the documentation yourself, you need the following software:</p>
+<ul>
+<li><a href="https://www.r-project.org">R</a>,</li>
+<li><a href="https://bookdown.org">bookdown</a>,</li>
+<li><a href="https://en.wikipedia.org/wiki/Make_(software)">make</a>, and</li>
+<li>(optionally for the PDF version of the manual) the <a href="https://yihui.org/tinytex/">TinyTeX R package</a>.</li>
+</ul>
+<p>After you installed the required software you can build the</p>
+<ul>
+<li>HTML (<code>make html</code>),</li>
+<li>EPUB (<code>make epub</code>), and</li>
+<li>PDF (<code>make pdf</code>)</li>
+</ul>
+<p>version of the documentation. The output will be stored in the folder <code>Bookdown</code> in the root of the repository. If you want to build all versions of the documentation, just use the command</p>
+<pre><code>make</code></pre>
+<p>in the repo root.</p>
+</div>
+</div>
+<div id="requirements" class="section level2 hasAnchor">
+<h2><span class="header-section-number">1.2</span> Requirements<a href="#requirements" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="hardware" class="section level3 hasAnchor">
+<h3><span class="header-section-number">1.2.1</span> Hardware<a href="#hardware" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>In order to use ICOc you need at least:</p>
+<ul>
+<li><p>a <a href="https://www.peak-system.com">PCAN adapter</a>:</p>
+<p><img src="Documentation/Pictures/PCAN.jpg" alt="PCAN Adapter" /></p>
+<p>including:</p>
+<ul>
+<li><p>power injector, and</p></li>
+<li><p>power supply unit (for the power injector):</p>
+<p><img src="Documentation/Pictures/Power-Injector.jpg" alt="Power Injector" /></p></li>
+</ul></li>
+<li><p>a <a href="https://www.mytoolit.com/ICOtronic/">Stationary Transceiver Unit</a>:</p>
+<p><img src="https://cdn.bitrix24.de/b5488381/landing/5fa/5fa2ce04fd1326e07bf39866e44f4e61/IMG_6338_2x.jpg" alt="STU" width="400"></p></li>
+<li><p>a sensor device, such as a Sensory Holder Assembly or <a href="https://www.mytoolit.com/ICOtronic/">Sensory Tool Holder</a>:</p>
+<p><img src="Documentation/Pictures/SHA.png" alt="Sensory Holder Assembly" width="400"></p>
+<p><img src="https://cdn.bitrix24.de/b5488381/landing/cbe/cbe07df56cea688299533819c1e8a8d3/IMG_6350_2x_2x.jpg" alt="Sensory Tool Holder" width="400"></p></li>
+</ul>
+<div id="setup" class="section level4 hasAnchor">
+<h4><span class="header-section-number">1.2.1.1</span> Setup<a href="#setup" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<ol style="list-style-type: decimal">
+<li>Connect the power injector
+<ol style="list-style-type: decimal">
+<li>to the PCAN adapter, and</li>
+<li>the power supply unit.</li>
+</ol></li>
+<li>Connect the USB connector of the PCAN adapter to your computer.</li>
+<li>Make sure that your sensor device (SHA/STH/SMH) is connected to a power source. For an STH this usually means that you should check that the battery is (fully) charged.</li>
+</ol>
+<p><a name="section:software"></a></p>
+</div>
+</div>
+<div id="software" class="section level3 hasAnchor">
+<h3><span class="header-section-number">1.2.2</span> Software<a href="#software" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><a name="readme:section:python"></a></p>
+<div id="python" class="section level4 hasAnchor">
+<h4><span class="header-section-number">1.2.2.1</span> Python<a href="#python" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>ICOc requires at least Python <code>3.7</code>. The software also supports Python <code>3.8</code>, <code>3.9</code> and <code>3.10</code>. You can download Python <a href="https://www.python.org/downloads">here</a>. When you install the software, please do not forget to enable the checkbox <strong>“Add Python to PATH”</strong> in the setup window of the installer.</p>
+<p><a name="readme:section:pytables"></a></p>
+</div>
+<div id="pcan-driver" class="section level4 hasAnchor">
+<h4><span class="header-section-number">1.2.2.2</span> PCAN Driver<a href="#pcan-driver" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>To communicate with the STU you need to install the driver for the PCAN adapter. You can find the download link for Windows <a href="https://www.peak-system.com/quick/DrvSetup">here</a>. Please make sure that you include the “PCAN-Basic API” when you install the driver.</p>
+<blockquote>
+<p>Note: The parts of the package that work on Linux do not use the PCAN interface. Instead you need to make sure that your CAN adapter is available using the <a href="https://en.wikipedia.org/wiki/SocketCAN">SocketCAN</a> interface.</p>
+</blockquote>
+</div>
+<div id="simplicity-commander-optional" class="section level4 hasAnchor">
+<h4><span class="header-section-number">1.2.2.3</span> Simplicity Commander (Optional)<a href="#simplicity-commander-optional" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>For the tests that require a firmware flash you need to <strong>either</strong> install</p>
+<ul>
+<li><a href="https://www.silabs.com/products/development-tools/software/simplicity-studio">Simplicity Studio</a> or</li>
+<li><a href="https://www.silabs.com/developers/mcu-programming-options">Simplicity Commander</a>.</li>
+</ul>
+<p>If you choose the first option, then please make sure to install the Simplicity Commander tool inside Simplicity Studio. If you download Simplicity Commander directly, then the tests assume that you unzipped the files into the directory <code>C:\SiliconLabs\Simplicity Commander</code> on Windows.</p>
+<ul>
+<li>If you do not use the standard install path on <strong>Windows</strong>, then please add the path to <code>commander.exe</code> to the list <code>COMMANDS</code> → <code>PATH</code> → <code>WINDOWS</code> in the configuration file <code>config.yaml</code>.</li>
+<li>If you use <strong>Linux</strong>, then please add the path to <code>commander</code> to the list <code>COMMANDS</code> → <code>PATH</code> → <code>LINUX</code>.</li>
+</ul>
+<p>If you do not want to change the config file, then please just make sure that <code>commander</code> is accessible via the <code>PATH</code> environment variable.</p>
+<p>Please note, that you do not need to install Simplicity Commander if you just want to measure data with ICOc.</p>
+<p><a name="readme:section:install"></a></p>
+</div>
+</div>
+</div>
+<div id="install" class="section level2 hasAnchor">
+<h2><span class="header-section-number">1.3</span> Install<a href="#install" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Please clone <a href="https://github.com/MyTooliT/ICOc">this repository</a> to a directory of your choice. You can either use the <a href="https://git-scm.com/downloads">command line tool <code>git</code></a>:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1"></a><span class="fu">git</span> clone https://github.com/MyTooliT/ICOc.git</span></code></pre></div>
+<p>or one of the many available <a href="https://git-scm.com/downloads/guis">graphical user interfaces for Git</a> to do that.</p>
+<p>The repository contains everything necessary to communicate with an STU over CAN to retrieve data from an STH.</p>
+<p>Before you use the software you need to install it (in developer mode). To do that please run the following command in the root of the repository:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1"></a><span class="ex">pip</span> install -e .</span></code></pre></div>
+<p>Afterwards you can use the various <a href="#scripts:section:scripts">scripts</a> included in the package.</p>
+<div id="troubleshooting" class="section level3 hasAnchor">
+<h3><span class="header-section-number">1.3.1</span> Troubleshooting<a href="#troubleshooting" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="insufficient-rights" class="section level4 hasAnchor">
+<h4><span class="header-section-number">1.3.1.1</span> Insufficient Rights<a href="#insufficient-rights" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p><strong>If you do not have sufficient rights</strong> to install the package you can also try to install the package in the user folder:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1"></a><span class="ex">pip</span> install --user -e .</span></code></pre></div>
+<p>The command above might not work on Linux due to <a href="https://github.com/pypa/pip/issues/7953">a bug in <code>pip</code></a>. In that case you can try the following <a href="https://github.com/pypa/pip/issues/7953#issuecomment-1027704899">workaround</a> to install ICOc:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1"></a><span class="ex">python3</span> -m pip install --prefix=<span class="va">$(</span><span class="ex">python3</span> -m site --user-base<span class="va">)</span> -e .</span></code></pre></div>
+</div>
+<div id="unknown-command-icoc" class="section level4 hasAnchor">
+<h4><span class="header-section-number">1.3.1.2</span> Unknown Command <code>icoc</code><a href="#unknown-command-icoc" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>If <code>pip install</code> prints <strong>warnings about the path</strong> that look like this:</p>
+<blockquote>
+<p>The script … is installed in <code>'…\Scripts'</code> which is not on PATH.</p>
+</blockquote>
+<p>then please add the text between the single quotes (without the quotes) to your <a href="https://helpdeskgeek.com/windows-10/add-windows-path-environment-variable/">PATH environment variable</a>. Here <code>…\Scripts</code> is just a placeholder. Please use the value that <code>pip install</code> prints on your machine. If you used the <a href="https://www.python.org/downloads">installer from the Python website</a> (and checked “Add Python to PATH”) or you used <a href="https://docs.microsoft.com/en-us/windows/package-manager/winget/">winget</a> to install Python, then the warning above should not appear. On the other hand, the <strong>Python version from the <a href="https://www.microsoft.com/en-us/store/apps/windows">Microsoft Store</a> might not add the <code>Scripts</code> directory</strong> to your path.</p>
+</div>
+</div>
+</div>
+<div id="basic-usage" class="section level2 hasAnchor">
+<h2><span class="header-section-number">1.4</span> Basic Usage<a href="#basic-usage" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="starting-the-program" class="section level3 hasAnchor">
+<h3><span class="header-section-number">1.4.1</span> Starting the Program<a href="#starting-the-program" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The <code>ICOc</code> script can be used to control a sensor device. After you enter the command</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1"></a><span class="ex">icoc</span></span></code></pre></div>
+<p>in your <a href="https://aka.ms/terminal">terminal</a>, a text based interface shows you the currently available options. For example, the text</p>
+<pre><code>                ICOc
+
+       Name      Address            RSSI
+———————————————————————————————————————————————
+    1: Blubb     08:6b:d7:01:de:81  -44 dBm
+
+┌──────────────────────────────┐
+│ 1-9: Connect to STH          │
+│                              │
+│   f: Change Output File Name │
+│   n: Change STH Name         │
+│                              │
+│   q: Quit ICOc               │
+└──────────────────────────────┘</code></pre>
+<p>shows that currently one sensor device was detected. The</p>
+<ul>
+<li>Bluetooth MAC address of the device is <code>08:6b:d7:01:de:81</code>, while its</li>
+<li>advertisement name is “Blubb”.</li>
+</ul>
+<p>The last value “-44” is the current <a href="https://en.wikipedia.org/wiki/Received_signal_strength_indication">received signal strength indication (RSSI)</a>. To exit the program use the key <kbd>q</kbd>.</p>
+</div>
+<div id="reading-acceleration-data" class="section level3 hasAnchor">
+<h3><span class="header-section-number">1.4.2</span> Reading Acceleration Data<a href="#reading-acceleration-data" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>To read data from an STH (or SHA), start the ICOc script, and connect to an STH. To do that, enter the number in front of an STH entry (e.g. <code>1</code> for the first detected STH) and use the return key <kbd>⮐</kbd> to confirm your selection. The text based interface will now show you something like this:</p>
+<pre><code>                ICOc
+STH “Blubb” (08:6b:d7:01:de:81)
+———————————————————————————————
+
+Hardware Version      1.4.0
+Firmware Version      2.1.10
+Firmware Release Name Tanja
+Serial Number         –
+
+Battery Voltage       3.16 V
+Chip Temperature      26.2 °C
+
+Run Time              ∞ s
+
+Prescaler             2
+Acquisition Time      8
+Oversampling Rate     64
+⇒ Sampling Rate       9524
+Reference Voltage     VDD
+
+Enabled Axis          X
+
+┌───────────────────────────┐
+│ s: Start Data Acquisition │
+│                           │
+│ n: Change STH Name        │
+│ r: Change Run Time        │
+│ a: Configure ADC          │
+│ p: Configure Enabled Axes │
+│ O: Set Standby Mode       │
+│                           │
+│ q: Disconnect from STH    │
+└───────────────────────────┘</code></pre>
+<p>To start the data acquisition press the key <kbd>s</kbd>. Afterwards a graphical window</p>
+<p><img src="Documentation/Pictures/Acceleration.png" alt="Acceleration" /></p>
+<p>will show the measured acceleration. To stop the data acquisition, click the close button on the top of the graph.</p>
+<p><a name="readme:section:measurement-data"></a></p>
+</div>
+</div>
+<div id="measurement-data" class="section level2 hasAnchor">
+<h2><span class="header-section-number">1.5</span> Measurement Data<a href="#measurement-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The ICOc script stores measured acceleration values in <a href="https://www.hdfgroup.org/solutions/hdf5/">HDF5</a> files. By default these files will be stored in the root of the repository with a</p>
+<ul>
+<li>name starting with the text <code>Measurement</code></li>
+<li>followed by a date/time-stamp,</li>
+<li>and the extension <code>.hdf5</code>.</li>
+</ul>
+<p>To take a look at the measurement data you can use the tool <a href="https://www.hdfgroup.org/downloads/hdfview/">HDFView</a>. Unfortunately you need to create a free account to download the program. If you do not want to register, then you can try if <a href="http://bugmenot.com/view/hdfgroup.org">one of the accounts listed at BugMeNot</a> works.</p>
+<p>The screenshot below shows a measurement file produced by ICOc:</p>
+<p><img src="Documentation/Pictures/HDFView-File.png" alt="Main Window of HDFView" /></p>
+<p>As you can see the table with the name <code>acceleration</code> stores the acceleration data. The screenshot above displays the metadata of the table. The most important meta attributes here are probably:</p>
+<ul>
+<li><code>Start_Time</code>, which contains the start time of the measurement run in ISO format, and</li>
+<li><code>Sensor_Range</code>, which specifies the range of the used acceleration sensor in multiples of earth’s gravitation (g₀ ≅ 9.81 m/s²).</li>
+</ul>
+<p>After you double click on the acceleration table on the left, HDFView will show you the actual acceleration data:</p>
+<p><img src="Documentation/Pictures/HDFView-Table.png" alt="Acceleration Table in HDFView" /></p>
+<p>As you can infer from the <code>x</code> column above the table shows the acceleration measurement data (in multiples of g₀) for a single axis. The table below describes the meaning of the columns:</p>
+<table>
+<colgroup>
+<col width="7%" />
+<col width="77%" />
+<col width="14%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Column</th>
+<th>Description</th>
+<th>Unit</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>counter</td>
+<td>A cyclic counter value (0–255) sent with the acceleration data to recognize lost packets</td>
+<td>–</td>
+</tr>
+<tr class="even">
+<td>timestamp</td>
+<td>The timestamp for the measured value in microseconds since the measurement start</td>
+<td>μs</td>
+</tr>
+<tr class="odd">
+<td>x</td>
+<td>Acceleration in the x direction as multiples of earth’s gravitation</td>
+<td>g₀ (≅ 9.81 m/s²)</td>
+</tr>
+</tbody>
+</table>
+<p>Depending on your sensor and your settings the table might also contain columns for the <code>y</code> and/or <code>z</code> axis.</p>
+<p>If you want you can also use HDFView to print a simple graph for your acceleration data. To do that:</p>
+<ol style="list-style-type: decimal">
+<li>Select the values for the the ordinate (e.g. click on the x column to select all acceleration data for the x axis)</li>
+<li>Click on the graph icon in the top left corner</li>
+<li>Choose the data for the abscissa (e.g. the timestamp column)</li>
+<li>Click on the “OK” button</li>
+</ol>
+<p>The screenshot below shows an example of such a graph:</p>
+<p><img src="Documentation/Pictures/HDFView-Graph.png" alt="Acceleration Graph in HDFView" /></p>
+<div id="adding-custom-metadata" class="section level3 hasAnchor">
+<h3><span class="header-section-number">1.5.1</span> Adding Custom Metadata<a href="#adding-custom-metadata" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Sometimes you also want to add additional data about a measurement. To do that you can also use <a href="https://www.hdfgroup.org/downloads/hdfview/">HDFView</a>. Since the tool opens files in read-only mode by default you need to change the default file access mode to “Read/Write” first:</p>
+<ol style="list-style-type: decimal">
+<li>Open <a href="https://www.hdfgroup.org/downloads/hdfview/">HDFView</a></li>
+<li>Click on “Tools” → “User Options”</li>
+<li>Select “General Settings”</li>
+<li>Under the text “Default File Access Mode” choose “Read/Write”</li>
+<li>Close HDFView</li>
+</ol>
+<p>Now you should be able to add and modify attributes. For example, to add a revolutions per minute (RPM) value of <code>15000</code> you can use the following steps:</p>
+<ol style="list-style-type: decimal">
+<li>Open the measurement file in <a href="https://www.hdfgroup.org/downloads/hdfview/">HDFView</a></li>
+<li>Click on the table “acceleration” in the left part of the window</li>
+<li>In the tab “Object Attribute Info” on the right, click on the button “Add attribute”</li>
+<li>Check that “Object List” contains the value “/acceleration”</li>
+<li>Enter the text “RPM” in the field “Name”</li>
+<li>In the field “Value” enter the text “15000”</li>
+<li>The “Datatype Class” should be set to “INTEGER”</li>
+<li>For the size (in bits) choose a bit length that is large enough to store the value. In our example everything equal to or larger than 16 bits should work.</li>
+<li>Optionally you can also check “Unsigned”, if you are sure that you only want to store positive values</li>
+<li>Click the button “OK”</li>
+</ol>
+<p><img src="Documentation/Pictures/HDFView-RPM.png" alt="HDFView: RPM Attribute" /></p>
+<p>Sometimes you also want to add some general purpose data. For that you can use the “STRING” datatype class. For example, to store the text “hello world” in an attribute called “Comment” you can do the following</p>
+<ol style="list-style-type: decimal">
+<li>Repeat steps 1. – 4. from above</li>
+<li>Choose “STRING” as “Datatype Class”</li>
+<li>Under “Array Size” choose a length that is large enough to store the text such as “1000” (every size larger than or equal to 11 characters should work)</li>
+<li>Click the button “OK”</li>
+</ol>
+<p><img src="Documentation/Pictures/HDFView-Comment.png" alt="HDFView: Comment Attribute" /></p>
+<p>If you want you can also add multiline text. Since you can not add newlines using <kbd>⏎</kbd> in HDFView directly, we recommend you open your favorite text editor to write the text and then copy and paste the text into the value field. HDFView will only show the last line of the pasted text. However, after you copy and paste the text into another program you will see that HDFView stored the text including the newlines.</p>
+
+</div>
+</div>
+</div>
+<div id="tutorials" class="section level1 hasAnchor">
+<h1><span class="header-section-number">2</span> Tutorials<a href="#tutorials" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p><a name="tutorials:section:sth-renaming"></a></p>
+<div id="sensor-device-renaming" class="section level2 hasAnchor">
+<h2><span class="header-section-number">2.1</span> Sensor Device Renaming<a href="#sensor-device-renaming" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<ol style="list-style-type: decimal">
+<li><p>Please start ICOc:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1"></a><span class="ex">icoc</span></span></code></pre></div></li>
+<li><p>The text based interface will show you a selection of the available devices:</p>
+<pre><code>                ICOc
+
+       Name      Address            RSSI
+———————————————————————————————————————————————
+    1: Serial    08:6b:d7:01:de:81  -44 dBm
+
+┌──────────────────────────────┐
+│ 1-9: Connect to STH          │
+│                              │
+│   f: Change Output File Name │
+│   n: Change STH Name         │
+│                              │
+│   q: Quit ICOc               │
+└──────────────────────────────┘</code></pre>
+<p>Choose the STH you want to rename by entering the number to the left of the device (here <code>1</code>). To confirm your selection press the return key <kbd>⮐</kbd>.</p></li>
+<li><p>Now the menu should look like this:</p>
+<pre><code>                ICOc
+STH “Serial” (08:6b:d7:01:de:81)
+————————————————————————————————
+
+Hardware Version      1.4.0
+Firmware Version      2.1.10
+Firmware Release Name Tanja
+Serial Number         –
+
+Battery Voltage       3.16 V
+Chip Temperature      26.2 °C
+
+Run Time              ∞ s
+
+Prescaler             2
+Acquisition Time      8
+Oversampling Rate     64
+⇒ Sampling Rate       9524
+Reference Voltage     VDD
+
+Enabled Axis          X
+
+┌───────────────────────────┐
+│ s: Start Data Acquisition │
+│                           │
+│ n: Change STH Name        │
+│ r: Change Run Time        │
+│ a: Configure ADC          │
+│ p: Configure Enabled Axes │
+│ O: Set Standby Mode       │
+│                           │
+│ q: Disconnect from STH    │
+└───────────────────────────┘</code></pre>
+<p>Press the button <code>n</code> to change the name.</p></li>
+<li><p>Enter the new device name.</p>
+<pre><code>New STH name (max. 8 characters): Blubb</code></pre>
+<p>Confirm the name with the return key <kbd>⮐</kbd>.</p></li>
+<li><p>The interface should now show you the menu of step 3. To disconnect from the holder press <kbd>e</kbd>.</p></li>
+<li><p>Now you see the main menu of ICOc. The STH will show up under the name you used in step 4.</p></li>
+<li><p>To exit ICOc, please use the key <kbd>q</kbd>.</p></li>
+</ol>
+</div>
+<div id="command-line-usage-of-icoc" class="section level2 hasAnchor">
+<h2><span class="header-section-number">2.2</span> Command Line Usage of ICOc<a href="#command-line-usage-of-icoc" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The ICOc program accepts optional command line arguments at startup. This way you can set default values for often used options. If you specify</p>
+<ul>
+<li>the name or</li>
+<li>Bluetooth address</li>
+</ul>
+<p>of a sensor device, then you can even use ICOc without any user interaction, since in this case the program will immediately connect to the specified device and start the measurement process.</p>
+<p><a name="tutorials:section:available-options"></a></p>
+<div id="available-options" class="section level3 hasAnchor">
+<h3><span class="header-section-number">2.2.1</span> Available Options<a href="#available-options" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>To show the available command line options you can use the option <code>-h</code>:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1"></a><span class="ex">icoc</span> -h</span></code></pre></div>
+<p>which should show you the following output:</p>
+<pre><code>usage: icoc [-h] [-b BLUETOOTH_ADDRESS | -n NAME] [-f FILENAME] [-p XYZ] [-r SECONDS]
+            [-s 2–127] [-a {1,2,3,4,8,16,32,64,128,256}]
+            [-o {1,2,4,8,16,32,64,128,256,512,1024,2048,4096}]
+
+Configure and measure data with the ICOtronic system
+
+options:
+  -h, --help            show this help message and exit
+
+Connection:
+  -b BLUETOOTH_ADDRESS, --bluetooth-address BLUETOOTH_ADDRESS
+                        connect to device with specified Bluetooth address (e.g.
+                        “08:6b:d7:01:de:81”)
+  -n NAME, --name NAME  connect to device with specified name
+
+Measurement:
+  -f FILENAME, --filename FILENAME
+                        base name of the output file (default: Measurement)
+  -p XYZ, --points XYZ  specify the axes for which acceleration data should be acquired
+                        (e.g. “101” to measure data for the x- and z-axis but not for the
+                        y-axis) (default: 100)
+  -r SECONDS, --run-time SECONDS
+                        run time in seconds (values equal or below “0” specify infinite
+                        runtime) (default: 0)
+
+ADC:
+  -s 2–127, --prescaler 2–127
+                        Prescaler value (default: 2)
+  -a {1,2,3,4,8,16,32,64,128,256}, --acquisition {1,2,3,4,8,16,32,64,128,256}
+                        Acquisition time value (default: 8)
+  -o {1,2,4,8,16,32,64,128,256,512,1024,2048,4096}, --oversampling {1,2,4,8,16,32,64,128,256,512,1024,2048,4096}
+                        Oversampling rate value (default: 64)</code></pre>
+</div>
+<div id="provide-default-values" class="section level3 hasAnchor">
+<h3><span class="header-section-number">2.2.2</span> Provide Default Values<a href="#provide-default-values" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>All options below the section “Measurement” and “ADC” in the <a href="tutorials:section:available-options">help output of ICOc</a> allow you to change the value of a specific configuration values before you start ICOc. For example, to enable the measurement for the x-axis and y-axis of an STH you can use the following command:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1"></a><span class="ex">icoc</span> -p 110</span></code></pre></div>
+<blockquote>
+<p><strong>Note:</strong> Due to a problem in the current firmware the amount of <strong>paket loss is much higher</strong>, if you</p>
+<ul>
+<li>use the standard ADC configuration values, and</li>
+<li>enable data transmission for <strong>exactly 2 axes (channels)</strong>.</li>
+</ul>
+<p>We strongly recommend you <strong>use either one or three channels</strong>.</p>
+</blockquote>
+<p>To change the run time of the measurement you can use the option <code>-r</code>, which takes the runtime in seconds as argument. The command</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1"></a><span class="ex">icoc</span> -r 300</span></code></pre></div>
+<p>for example, would change the runtime to 5 minutes (5·60 seconds = 300 seconds).</p>
+</div>
+<div id="start-the-measurement" class="section level3 hasAnchor">
+<h3><span class="header-section-number">2.2.3</span> Start the Measurement<a href="#start-the-measurement" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>If you specify one of the options</p>
+<ul>
+<li><code>-b</code>/<code>--bluetooth-address</code> or</li>
+<li><code>-n</code>/<code>--name</code></li>
+</ul>
+<p>then ICOC will try to connect immediately to the specified device and start the measurement run. For example, to acquire acceleration data from the device with the (Bluetooth advertisement) <strong>name “Blubb”</strong> you can use the following command:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1"></a><span class="ex">icoc</span> -n Blubb</span></code></pre></div>
+<p>To read acceleration values for <strong><code>5</code> seconds</strong> from the device with the <strong>Bluetooth address <code>08:6b:d7:01:de:81</code></strong> you can use the following command:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1"></a><span class="ex">icoc</span> -b 08:6b:d7:01:de:81 -r 5</span></code></pre></div>
+</div>
+</div>
+<div id="production-tests" class="section level2 hasAnchor">
+<h2><span class="header-section-number">2.3</span> Production Tests<a href="#production-tests" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>This tutorial lists the usual steps to test a sensory holder assembly or a sensory tool holder.</p>
+<p><a name=tutorials:section:general></a></p>
+<div id="general" class="section level3 hasAnchor">
+<h3><span class="header-section-number">2.3.1</span> General<a href="#general" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>To run the production tests for one of the ICOtronic devices, please execute one of the following commands:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Device</th>
+<th>Command</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Stationary Transceiver Unit (STU)</td>
+<td><code>test-stu</code></td>
+</tr>
+<tr class="even">
+<td>Sensory Holder Assembly (SHA), Sensory Tool Holder (STH)</td>
+<td><code>test-sth</code></td>
+</tr>
+<tr class="odd">
+<td>Sensory Milling Head (SMH)</td>
+<td><code>test-smh</code></td>
+</tr>
+</tbody>
+</table>
+<p>For a list of available command line options, please use the option <code>-h</code> after one of the commands e.g.:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1"></a><span class="ex">test-sth</span> -h</span></code></pre></div>
+<div id="specific-tests" class="section level4 hasAnchor">
+<h4><span class="header-section-number">2.3.1.1</span> Specific Tests<a href="#specific-tests" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>To only run a single test you need the specify its name. For example, to run the test <code>test__firmware_flash</code> of the STU you can use the following command:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1"></a><span class="ex">test-stu</span> TestSTU.test__firmware_flash</span></code></pre></div>
+<p>You can also run specific tests using pattern matching. To do that use the command line option <code>-k</code>. For example to run the firmware flash and the connection test of the STH test you can use the command:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1"></a><span class="ex">test-sth</span> -k flash -k connection</span></code></pre></div>
+<p>which executes all tests that contain the text <code>flash</code> or <code>connection</code>.</p>
+<p><a name="tutorials:section:sth"></a></p>
+</div>
+</div>
+<div id="sth" class="section level3 hasAnchor">
+<h3><span class="header-section-number">2.3.2</span> STH<a href="#sth" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The text below gives you a more detailed step-by-step guide on how to run the tests of the STH.</p>
+<ol style="list-style-type: decimal">
+<li><blockquote>
+<p><strong>Note:</strong> You can <strong>skip this step, if you do not want to run the flash test</strong>. To skip the flash test, please set <code>STH</code> → <code>STATUS</code> in the <a href="../../mytoolit/config/config.yaml">configuration file</a> to <code>Epoxied</code>.</p>
+</blockquote>
+<p>Please either</p>
+<ul>
+<li>create a directory called <code>STH</code>, or</li>
+<li>clone the <a href="https://github.com/mytoolit/STH">STH repository</a> to a location</li>
+</ul>
+<p>beside this repository inside your file system. Then create a directory called <code>builds</code> and put the <a href="https://github.com/MyTooliT/STH/releases/download/2.1.10/manufacturingImageSthv2.1.10.hex">current version of the STH firmware</a> into this directory. Afterwards the directory and file structure should look like this.</p>
+<pre><code>.
+├── ICOc
+└── STH
+    └── builds
+          └── manufacturingImageSthv2.1.10.hex</code></pre>
+<p>As alternative to the steps above you can also change the variable <code>STH</code> → <code>Firmware</code> → <code>Location</code> → <code>Flash</code> in the <a href="../../mytoolit/config/config.yaml">configuration file</a> to point to the firmware that should be used for the flash test.</p></li>
+<li><p>Make sure that the configuration value in the <a href="../../mytoolit/config/config.yaml">config file</a> are set correctly. You probably need to change at least the following variables:</p>
+<ul>
+<li><p><strong>Name</strong>: Please change the Bluetooth advertisement name (<code>STH</code> → <code>NAME</code> ) to the name of the STH you want to test.</p></li>
+<li><p><strong>Serial Number of Programming Board</strong>: Please make sure, that the variable <code>STH</code> → <code>PROGRAMMING BOARD</code> → <code>SERIAL NUMBER</code> contains the serial number of the programming board connected to the STH. This serial number should be displayed on the bottom right of the LCD on the programming board.</p></li>
+</ul></li>
+<li><p>Now please open your favorite Terminal application and execute, the STH test using the command <code>test-sth</code>. For more information about this command, please take a look at the section <a href="#tutorials:section:general">“General”</a> above.</p>
+<p>Please note, that the test will rename the tested STH</p>
+<ul>
+<li><p>to a <a href="#section:mac-address-conversion"><strong>Base64 encoded version of the Bluetooth MAC address</strong></a>, if <code>STH</code> → <code>STATUS</code> is set to <code>Epoxied</code>, or</p></li>
+<li><p>to the <strong>serial number</strong> (<code>STH</code> → <code>PROGRAMMING BOARD</code> → <code>SERIAL NUMBER</code>), if you set the status to <code>Bare PCB</code>.</p></li>
+</ul></li>
+</ol>
+</div>
+<div id="smh" class="section level3 hasAnchor">
+<h3><span class="header-section-number">2.3.3</span> SMH<a href="#smh" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The preparation steps for the SMH test are very similar to the ones of the <a href="#tutorials:section:sth">STH test</a>.</p>
+<ol style="list-style-type: decimal">
+<li><p>Please make sure that the config value that stores the SMH firmware filepath (<code>SMH</code> → <code>Firmware</code> → <code>Location</code> → <code>Flash</code>) points to the correct firmware. If you have not downloaded a firmware image for the SMH you can do so <a href="https://github.com/MyTooliT/STH/releases">here</a>.</p></li>
+<li><p>Check that the <a href="../../mytoolit/config/config.yaml">configuration values</a> like SMH name (<code>SMH</code> → <code>NAME</code>) and programming board serial number (<code>SMH</code> → <code>PROGRAMMING BOARD</code> → <code>SERIAL NUMBER</code>) are set correctly.</p></li>
+<li><p>Please execute the test using the following command:</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1"></a><span class="ex">test-smh</span></span></code></pre></div></li>
+</ol>
+</div>
+<div id="stu" class="section level3 hasAnchor">
+<h3><span class="header-section-number">2.3.4</span> STU<a href="#stu" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The following description shows you how to run the STU tests.</p>
+<ol style="list-style-type: decimal">
+<li><blockquote>
+<p><strong>Note:</strong> You can <strong>skip this step, if you do not want to run the flash test</strong>.</p>
+</blockquote>
+<p>Please take a look at step 1 for the STH and replace every occurrence of STU with <code>STU</code>. In the end of this step the directory structure should look like something like this:</p>
+<pre><code>.
+├── ICOc
+└── STU
+    └── builds
+          └── manufacturingImageStuv2.1.10.hex</code></pre>
+<p>You can find the current version of the STU firmware <a href="https://github.com/MyTooliT/STU/releases">here</a>.</p></li>
+<li><p>Please take a look at the section <a href="#tutorials:section:general">“General”</a> to find out how to execute the production tests for the STU. If you want to run the connection and EEPROM test (aka <strong>all tests except the flash test</strong>), then please execute the following command:</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1"></a><span class="ex">test-stu</span> -k eeprom -k connection</span></code></pre></div></li>
+</ol>
+<p><strong>Note:</strong> For the STU (flash) test to work correctly please connect the <strong>programming board</strong> to the USB port of the computer and the programming port of the STU <strong>first</strong>. Only after that connect the power injector to the power adapter. If you reverse this order, then the programmer might not work. If you do not connect the power injector, then the STU test might fail because of a CAN bus error:</p>
+<blockquote>
+<p>Bus error: an error counter reached the ‘heavy’/‘warning’ limit</p>
+</blockquote>
+</div>
+</div>
+<div id="verification-tests" class="section level2 hasAnchor">
+<h2><span class="header-section-number">2.4</span> Verification Tests<a href="#verification-tests" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="preparation" class="section level3 hasAnchor">
+<h3><span class="header-section-number">2.4.1</span> Preparation<a href="#preparation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li>The tests assume that the name of the STH is stored in <code>STH</code> → <code>NAME</code> in the configuration file <code>config.yaml</code>.</li>
+<li>Some of the STH tests assume that you connected the SHA/STH or STU via the programming cable. Please do that, since otherwise these tests will fail.</li>
+</ul>
+</div>
+<div id="execution" class="section level3 hasAnchor">
+<h3><span class="header-section-number">2.4.2</span> Execution<a href="#execution" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>To run the verification tests for the STH, please enter the following command:</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1"></a><span class="ex">test-sth-verification</span> -v</span></code></pre></div>
+<p>To execute the STU verification tests, you can use the command:</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb27-1"><a href="#cb27-1"></a><span class="ex">test-stu-verification</span> -v</span></code></pre></div>
+<p>The scripts above will currently write log files into the root of the repository. To remove these log files you can use the script <a href="#section:remove-log-and-pdf-files">clean-repo</a>.</p>
+<p>Please note that while most of the tests should run successfully, if you use working hardware and firmware, some of them might fail occasionally. In this case please rerun the specific test using the option <code>-k</code> and specifying a text that matches the name of the test. For example to return the STH test <code>test0107BlueToothConnectMin</code> you can use the following command:</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1"></a><span class="ex">test-sth-verification</span> -v -k test0107</span></code></pre></div>
+</div>
+<div id="problematic-tests" class="section level3 hasAnchor">
+<h3><span class="header-section-number">2.4.3</span> Problematic Tests<a href="#problematic-tests" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The tables below contains a list of tests that failed using a working SHA/STH and STU before. It should provide you with a good overview of which of the verification tests might fail, even if the hardware and firmware works correctly.</p>
+<div id="sth-1" class="section level4 hasAnchor">
+<h4><span class="header-section-number">2.4.3.1</span> STH<a href="#sth-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<table>
+<colgroup>
+<col width="4%" />
+<col width="95%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Date</th>
+<th>Failed Tests</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>2021-09-29</td>
+<td>• test0107BlueToothConnectMin <br/> • test0332SignalIndicatorsAccZ <br/> • test0334SignalIndicatorsMulti <br/> • test0345MixedStreamingAccYZVoltBat</td>
+</tr>
+<tr class="even">
+<td>2021-09-30</td>
+<td>• test0332SignalIndicatorsAccZ <br/> • test0334SignalIndicatorsMulti <br/> • test0345MixedStreamingAccYZVoltBat</td>
+</tr>
+<tr class="odd">
+<td>2021-09-30</td>
+<td>• test0332SignalIndicatorsAccZ <br/> • test0334SignalIndicatorsMulti <br/> • test0532MessageCountersAccZBattery</td>
+</tr>
+<tr class="even">
+<td>2021-10-05</td>
+<td>• test0334SignalIndicatorsMulti <br/> • test0347StreamingAccXSingleBattery</td>
+</tr>
+<tr class="odd">
+<td>2021-10-06</td>
+<td>• test0109BlueToothRssi <br/> • test0334SignalIndicatorsMulti</td>
+</tr>
+<tr class="even">
+<td>2021-10-06</td>
+<td>• test0107BlueToothConnectMin <br/> • test0334SignalIndicatorsMulti <br/> • test0345MixedStreamingAccYZVoltBat</td>
+</tr>
+<tr class="odd">
+<td>2021-10-07</td>
+<td>• test0107BlueToothConnectMin <br/> • test0332SignalIndicatorsAccZ <br/> • test0334SignalIndicatorsMulti <br/> • test0344MixedStreamingAccXYVoltBat <br/> • test0345MixedStreamingAccYZVoltBat</td>
+</tr>
+<tr class="even">
+<td>2021-10-11</td>
+<td>• test0015PowerConsumptionEnergySaveMode2 <br/> • test0016PowerConsumptionEnergySaveModeAdv4000ms <br/> • test0332SignalIndicatorsAccZ <br/> • test0334SignalIndicatorsMulti <br/> • test0508AdcConfigSingle</td>
+</tr>
+<tr class="odd">
+<td>2021-10-12</td>
+<td>• test0332SignalIndicatorsAccZ <br/> • test0334SignalIndicatorsMulti <br/> • test0532MessageCountersAccZBattery</td>
+</tr>
+<tr class="even">
+<td>2021-10-13</td>
+<td>• test0332SignalIndicatorsAccZ <br/> • test0334SignalIndicatorsMulti <br/> • test0508AdcConfigSingle <br/> • test0509AdcConfigDouble <br/> • test0510AdcConfigTripple <br/> • test0525MessageCounterAccZ</td>
+</tr>
+<tr class="odd">
+<td>2021-12-09</td>
+<td>• test0107BlueToothConnectMin <br/> • test0510AdcConfigTripple <br/> • test0523MessageCounterAccX <br/> • test0527MessageCounterAccXZ <br/> • test0529MessageCounterAccXYZ <br/></td>
+</tr>
+<tr class="even">
+<td>2021-12-14</td>
+<td>• test0107BlueToothConnectMin </td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="stu-1" class="section level4 hasAnchor">
+<h4><span class="header-section-number">2.4.3.2</span> STU<a href="#stu-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<table>
+<thead>
+<tr class="header">
+<th>Date</th>
+<th>Failed Tests</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>2021-12-14</td>
+<td>• test0102BlueToothConnectDisconnectDevice</td>
+</tr>
+</tbody>
+</table>
+
+<p><a name="scripts:section:scripts"></a></p>
+</div>
+</div>
+</div>
+</div>
+<div id="scripts" class="section level1 hasAnchor">
+<h1><span class="header-section-number">3</span> Scripts<a href="#scripts" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>After you installed the ICOc package various helper scripts are available:</p>
+<ul>
+<li><a href="#section:remove-log-and-pdf-files"><code>clean-repo</code></a>: Remove log (<code>*.txt</code>), HDF (<code>*.hdf5</code>) and PDF files (<code>*.pdf</code>) from the repository root</li>
+<li><a href="#section:mac-address-conversion"><code>convert-base64-mac</code></a>: Utility to convert a Base64 encoded 8 character text into a Bluetooth MAC address</li>
+<li><a href="#section:mac-address-conversion"><code>convert-mac-base64</code></a>: Convert Bluetooth MAC address into a (Base64) encoded 8 character string</li>
+<li><a href="#section:eeprom-check"><code>check-eeprom</code></a>: Write a byte value into the cells of an EEPROM page an check how many of the values are read incorrectly after an reset</li>
+<li><a href="#section:icoc"><code>icoc</code></a>: Controller and measurement software for the ICOtronic system</li>
+<li><a href="#section:test-smh"><code>test-smh</code></a>: Test code for the SMH</li>
+<li><a href="#section:test-sth"><code>test-sth</code></a>: Test code for the STH/SHA</li>
+<li><a href="#section:test-stu"><code>test-stu</code></a>: Test code for the STU</li>
+</ul>
+<p><a name="section:eeprom-check"></a></p>
+<div id="eeprom-check" class="section level2 hasAnchor">
+<h2><span class="header-section-number">3.1</span> EEPROM Check<a href="#eeprom-check" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The script <code>check-eeprom</code> connects to an STH using its MAC address. Afterwards it writes a given byte value (default: <code>10</code>) into all the cells of an EEPROM page. It then resets the STH, connects again and shows the amount of incorrect EEPROM bytes. It repeats the last steps 5 times before it prints all values in the EEPROM page.</p>
+<p>The command below shows how to execute the EEPROM check for the STH with MAC address <code>08:6b:d7:01:de:81</code>:</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb29-1"><a href="#cb29-1"></a><span class="ex">check-eeprom</span> 08:6b:d7:01:de:81</span></code></pre></div>
+<p>You can specify the value that should be written into the EEPROM cells using the option <code>--value</code>:</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb30-1"><a href="#cb30-1"></a><span class="ex">check-eeprom</span> 08:6b:d7:01:de:81 --value 42</span></code></pre></div>
+<p><a name="section:icoc"></a></p>
+</div>
+<div id="icoc-1" class="section level2 hasAnchor">
+<h2><span class="header-section-number">3.2</span> ICOc<a href="#icoc-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The command <code>icoc</code> calls <code>ui.py</code>. All command line arguments to the script will be directly forwarded to <code>ui.py</code>. For example, to read acceleration data for 10 seconds from the STH with the (Bluetooth advertisement) name <code>CGvXAd6B</code>, you can use the following command:</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb31-1"><a href="#cb31-1"></a><span class="ex">icoc</span> -n CGvXAd6B -r 10</span></code></pre></div>
+<p><a name="section:mac-address-conversion"></a></p>
+</div>
+<div id="mac-address-conversion" class="section level2 hasAnchor">
+<h2><span class="header-section-number">3.3</span> MAC Address Conversion<a href="#mac-address-conversion" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The utility <code>convert-mac-base64</code> returns the Base64 encoded version of a MAC address. We use the encoded addresses as unique Bluetooth advertisement name for the STH (or SHA). Unfortunately we can not use the MAC address directly because the maximum length of the name is limited to 8 characters. To decode the Base64 name back into a Bluetooth address you can use the script <code>convert-base64-mac</code>.</p>
+<div id="examples" class="section level3 hasAnchor">
+<h3><span class="header-section-number">3.3.1</span> Examples<a href="#examples" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div class="sourceCode" id="cb32"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb32-1"><a href="#cb32-1"></a><span class="co"># Convert a MAC address into an 8 character name</span></span>
+<span id="cb32-2"><a href="#cb32-2"></a><span class="ex">convert-mac-base64</span> 08:6b:d7:01:de:81</span>
+<span id="cb32-3"><a href="#cb32-3"></a><span class="co">#&gt; CGvXAd6B</span></span>
+<span id="cb32-4"><a href="#cb32-4"></a></span>
+<span id="cb32-5"><a href="#cb32-5"></a><span class="co"># Convert the Base64 encoded name back into a MAC address</span></span>
+<span id="cb32-6"><a href="#cb32-6"></a><span class="ex">convert-base64-mac</span> CGvXAd6B</span>
+<span id="cb32-7"><a href="#cb32-7"></a><span class="co">#&gt; 08:6b:d7:01:de:81</span></span></code></pre></div>
+<p><a name="section:remove-log-and-pdf-files"></a></p>
+</div>
+</div>
+<div id="remove-log-and-pdf-files" class="section level2 hasAnchor">
+<h2><span class="header-section-number">3.4</span> Remove Log and PDF Files<a href="#remove-log-and-pdf-files" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The script <code>clean-repo</code> removes</p>
+<ul>
+<li>HDF files (<code>*.hdf5</code>),</li>
+<li>PDF files (<code>*.pdf</code>), and</li>
+<li>log files (<code>*.txt</code>)</li>
+</ul>
+<p>from the repository root folder. To show the names of the removed files add the option <code>-v</code> (or <code>--verbose</code>):</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb33-1"><a href="#cb33-1"></a><span class="ex">clean-repo</span> -v</span></code></pre></div>
+<p>If you also want to remove Python bytecode files from the repository we recommend you install <a href="https://pypi.org/project/pyclean/"><code>pyclean</code></a>:</p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb34-1"><a href="#cb34-1"></a><span class="ex">pip</span> install pyclean</span></code></pre></div>
+<p>and run the following commands in the root of the repository:</p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb35-1"><a href="#cb35-1"></a><span class="ex">clean-repo</span> -v<span class="kw">;</span> <span class="ex">pyclean</span> -v .</span></code></pre></div>
+<p><a name="section:test-sth"></a></p>
+</div>
+<div id="test-sth" class="section level2 hasAnchor">
+<h2><span class="header-section-number">3.5</span> Test-STH<a href="#test-sth" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The command <code>test-sth</code> is a command that executes the tests for the STH (<a href="../mytoolit/test/production/sth.py"><code>sth.py</code></a>). All command line arguments of the wrapper will be forwarded to <a href="../mytoolit/test/production/sth.py"><code>sth.py</code></a>.</p>
+<p><a name="section:test-stu"></a></p>
+</div>
+<div id="test-stu" class="section level2 hasAnchor">
+<h2><span class="header-section-number">3.6</span> Test-STU<a href="#test-stu" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The command <code>test-stu</code> is a wrapper that executes the tests for the STU (<a href="../mytoolit/test/production/stu.py"><code>stu.py</code></a>). All command line arguments of the wrapper will be forwarded to <a href="../mytoolit/test/production/stu.py"><code>stu.py</code></a>.</p>
+<p><a name="section:test-smh"></a></p>
+</div>
+<div id="test-smh" class="section level2 hasAnchor">
+<h2><span class="header-section-number">3.7</span> Test-SMH<a href="#test-smh" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The command <code>test-smh</code> is a wrapper that executes the tests for the SMH (<a href="../mytoolit/test/production/smh.py"><code>smh.py</code></a>). All command line arguments of the wrapper will be forwarded to <a href="../mytoolit/test/production/smh.py"><code>smh.py</code></a>.</p>
+
+</div>
+</div>
+<div id="development" class="section level1 hasAnchor">
+<h1><span class="header-section-number">4</span> Development<a href="#development" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="style" class="section level2 hasAnchor">
+<h2><span class="header-section-number">4.1</span> Style<a href="#style" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Please use the guidelines from <a href="https://www.python.org/dev/peps/pep-0008/">PEP 8</a>. For code formatting we currently use <a href="https://github.com/google/yapf">YAPF</a>, which should format code according to PEP 8 by default.</p>
+<p>To format the whole code base you can use the following command in the root of the repository:</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb36-1"><a href="#cb36-1"></a><span class="ex">yapf</span> --in-place --parallel --recursive .</span></code></pre></div>
+<p>YAPF will not</p>
+<ul>
+<li>split long strings and</li>
+<li>add newlines to long lines not surrounded by parentheses.</li>
+</ul>
+<p>To make sure that code has a maximum line length of <code>79</code> characters please split up long strings and add parentheses yourself.</p>
+<p>For development we recommend that you use a tool or plugin that reformats your code with YAPF every time you save. This way we can ensure that we use a consistent style for the whole code base.</p>
+<p><a name="development:section:tests"></a></p>
+</div>
+<div id="tests" class="section level2 hasAnchor">
+<h2><span class="header-section-number">4.2</span> Tests<a href="#tests" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The following text describes some of the measures we should take to keep the software stable.</p>
+<p>Please only push your changes to the <code>master</code> branch, if you think there are no new bugs or regressions. The <code>master</code> branch <strong>should always contain a working version of the software</strong>. Please <strong>always run the automatic and manual tests</strong> described below before you push to the <code>master</code> branch.</p>
+<div id="code-checks" class="section level3 hasAnchor">
+<h3><span class="header-section-number">4.2.1</span> Code Checks<a href="#code-checks" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="flake8" class="section level4 hasAnchor">
+<h4><span class="header-section-number">4.2.1.1</span> Flake8<a href="#flake8" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>We check the code with <a href="https://flake8.pycqa.org">flake8</a>:</p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb37-1"><a href="#cb37-1"></a><span class="ex">pip</span> install flake8</span></code></pre></div>
+<p>Please use the following command in the root of the repository to make sure you did not add any code that introduces warnings:</p>
+<div class="sourceCode" id="cb38"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb38-1"><a href="#cb38-1"></a><span class="ex">flake8</span></span></code></pre></div>
+</div>
+<div id="mypy" class="section level4 hasAnchor">
+<h4><span class="header-section-number">4.2.1.2</span> Mypy<a href="#mypy" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>To check the type hint in the code base we use the static code checker <a href="https://mypy.readthedocs.io">Mypy</a>:</p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb39-1"><a href="#cb39-1"></a><span class="ex">pip</span> install mypy</span></code></pre></div>
+<p>Please use the following command in the root of the repository to check the code base for type problems:</p>
+<div class="sourceCode" id="cb40"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb40-1"><a href="#cb40-1"></a><span class="ex">mypy</span> mytoolit</span></code></pre></div>
+</div>
+</div>
+<div id="automatic-tests" class="section level3 hasAnchor">
+<h3><span class="header-section-number">4.2.2</span> Automatic Tests<a href="#automatic-tests" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="requirements-1" class="section level4 hasAnchor">
+<h4><span class="header-section-number">4.2.2.1</span> Requirements<a href="#requirements-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Please install the <a href="https://docs.pytest.org">pytest testing module</a>:</p>
+<div class="sourceCode" id="cb41"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb41-1"><a href="#cb41-1"></a><span class="ex">pip</span> install pytest</span></code></pre></div>
+<div id="usage" class="section level5 hasAnchor">
+<h5><span class="header-section-number">4.2.2.1.1</span> Usage<a href="#usage" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<p>Please run the following command in the root of the repository:</p>
+<div class="sourceCode" id="cb42"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb42-1"><a href="#cb42-1"></a><span class="ex">pytest</span> -v</span></code></pre></div>
+<p>and make sure that it reports no test failures.</p>
+</div>
+</div>
+</div>
+<div id="manual-tests" class="section level3 hasAnchor">
+<h3><span class="header-section-number">4.2.3</span> Manual Tests<a href="#manual-tests" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="icoc-2" class="section level4 hasAnchor">
+<h4><span class="header-section-number">4.2.3.1</span> ICOc<a href="#icoc-2" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<ol style="list-style-type: decimal">
+<li>Call the command <code>icoc</code>.</li>
+<li>Connect to a working STH (Enter the number and press <kbd>⏎</kbd>)</li>
+<li>Start the data acquisition (<kbd>s</kbd>)</li>
+<li>After some time a window displaying the current acceleration of the STH (or SHA) should show up</li>
+<li>Shake the STH</li>
+<li>Make sure the window shows the increased acceleration</li>
+<li>Close the window</li>
+<li>The programm should now exit, without any error messages</li>
+</ol>
+</div>
+<div id="sth-test" class="section level4 hasAnchor">
+<h4><span class="header-section-number">4.2.3.2</span> STH Test<a href="#sth-test" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<ol style="list-style-type: decimal">
+<li>Call the command <code>test-sth</code> for a working STH</li>
+<li>Wait for the command execution</li>
+<li>Check that the command shows no error messages</li>
+<li>Open the PDF report (<code>STH Test.pdf</code>) in the repository root and make sure that it includes the correct test data</li>
+</ol>
+<p><a name="development:section:stu-test"></a></p>
+</div>
+<div id="stu-test" class="section level4 hasAnchor">
+<h4><span class="header-section-number">4.2.3.3</span> STU Test<a href="#stu-test" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<ol style="list-style-type: decimal">
+<li>Call the command <code>test-stu</code> (or <code>test-stu -k eeprom -k connection</code> when you want to skip the flash test) for a working STU</li>
+<li>Wait for the command execution</li>
+<li>Check that the command shows no error messages</li>
+<li>Open the PDF report (<code>STU Test.pdf</code>) in the repository root and make sure that it includes the correct test data</li>
+</ol>
+<p><a name="development:section:extended-tests"></a></p>
+<div id="extended-tests" class="section level5 hasAnchor">
+<h5><span class="header-section-number">4.2.3.3.1</span> Extended Tests<a href="#extended-tests" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<p>The text below specifies extended manual test that should be executed before we <a href="#development:section:release">release a new version of ICOc</a>. Please note that the tests assume that you use more or less the <a href="https://github.com/MyTooliT/ICOc/blob/master/mytoolit/config/config.yaml">default configuration values</a>.</p>
+<p><a name="development:section:check-command-line-interface"></a></p>
+<div id="check-command-line-interface" class="section level6 hasAnchor">
+<h6><span class="header-section-number">4.2.3.3.1.1</span> Check Command Line Interface<a href="#check-command-line-interface" class="anchor-section" aria-label="Anchor link to header"></a></h6>
+<ol style="list-style-type: decimal">
+<li><p>Open your favorite terminal application and change your working directory to the root of the repository</p></li>
+<li><p>Remove log and data files from the repository:</p>
+<div class="sourceCode" id="cb43"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb43-1"><a href="#cb43-1"></a><span class="ex">clean-repo</span></span></code></pre></div></li>
+<li><p>Check that no HDF5 files exist in the repository. The following command should not produce any output:</p>
+<div class="sourceCode" id="cb44"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb44-1"><a href="#cb44-1"></a><span class="fu">ls</span> *.hdf5</span></code></pre></div></li>
+<li><p>Give your test STH the <a href="#tutorials:section:sth-renaming">name</a> “Test-STH”</p></li>
+<li><p>Measure data for 10 seconds using the following command:</p>
+<div class="sourceCode" id="cb45"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb45-1"><a href="#cb45-1"></a><span class="ex">icoc</span> -n <span class="st">&#39;Test-STH&#39;</span> -r 10</span></code></pre></div></li>
+<li><p>Check that the repo now contains a HDF5 (<code>*.hdf5</code>) file</p>
+<div class="sourceCode" id="cb46"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb46-1"><a href="#cb46-1"></a><span class="fu">ls</span> *.hdf5</span></code></pre></div></li>
+<li><p>Open the file in <a href="#readme:section:measurement-data">HDFView</a></p></li>
+<li><p>Check that the table <code>acceleration</code> contains about 95 000 values</p></li>
+<li><p>Check that the table contains three columns</p></li>
+<li><p>Check that the meta attributes <code>Sensor_Range</code> and <code>Start_Time</code> exist</p></li>
+<li><p>Check that <code>Sensor_Range</code> contains the correct maximum acceleration values for “Test-STH”</p></li>
+<li><p>Check that <code>Start_Time</code> contains (roughly) the date and time when you executed the command from step 5</p></li>
+<li><p>Check that ICOc handles the following incorrect program calls. The program should <strong>not crash</strong> and print a (helpful) <strong>error description</strong> (not a stak trace) before it exits.</p>
+<div class="sourceCode" id="cb47"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb47-1"><a href="#cb47-1"></a><span class="ex">icoc</span> -b <span class="st">&#39;12-12-12-12-12&#39;</span></span>
+<span id="cb47-2"><a href="#cb47-2"></a><span class="ex">icoc</span> -n <span class="st">&#39;TooooLong&#39;</span></span>
+<span id="cb47-3"><a href="#cb47-3"></a><span class="ex">icoc</span> -s 1</span>
+<span id="cb47-4"><a href="#cb47-4"></a><span class="ex">icoc</span> -a 257</span>
+<span id="cb47-5"><a href="#cb47-5"></a><span class="ex">icoc</span> -o -1</span>
+<span id="cb47-6"><a href="#cb47-6"></a><span class="ex">icoc</span> -p 0</span>
+<span id="cb47-7"><a href="#cb47-7"></a><span class="ex">icoc</span> -p 0001</span></code></pre></div></li>
+</ol>
+</div>
+<div id="check-user-interface" class="section level6 hasAnchor">
+<h6><span class="header-section-number">4.2.3.3.1.2</span> Check User Interface<a href="#check-user-interface" class="anchor-section" aria-label="Anchor link to header"></a></h6>
+<ol style="list-style-type: decimal">
+<li><p>Repeat steps 1. – 4. from the <a href="#development:section:check-command-line-interface">test above</a></p></li>
+<li><p>Open ICOc using the following command:</p>
+<div class="sourceCode" id="cb48"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb48-1"><a href="#cb48-1"></a><span class="ex">icoc</span></span></code></pre></div></li>
+<li><p>The main menu of ICOc should show up</p></li>
+<li><p>Try to connect to a non-existent STH</p>
+<ol style="list-style-type: decimal">
+<li>Enter the text “1234”</li>
+<li>Press <kbd>⏎</kbd></li>
+<li>ICOc should ignore the incorrect input and just display the main window</li>
+</ol></li>
+<li><p>Change the output file name to “Test”</p>
+<ol style="list-style-type: decimal">
+<li>Press <kbd>f</kbd></li>
+<li>Remove the default name and enter the text “Test”</li>
+<li>Press <kbd>⏎</kbd></li>
+<li>After two seconds ICOc should show the main menu again</li>
+</ol></li>
+<li><p>Connect to your test STH/SHA</p>
+<ol style="list-style-type: decimal">
+<li>Enter the number besides “Test-STH”: Usually this will be the number “1”</li>
+<li>Press <kbd>⏎</kbd></li>
+<li>You should now be in the STH menu</li>
+</ol></li>
+<li><p>Change the runtime to 20 seconds</p>
+<ol start="2" style="list-style-type: decimal">
+<li>Press <kbd>r</kbd></li>
+<li>Enter the text “hello”</li>
+<li>The last step should not have changed the default runtime of “0”</li>
+<li>Remove the default runtime (press <kbd>⌫</kbd>)</li>
+<li>Enter the text “20”</li>
+<li>Press <kbd>⏎</kbd></li>
+</ol></li>
+<li><p>Enable the x-axis and y-axis</p>
+<ol style="list-style-type: decimal">
+<li>Press <kbd>p</kbd></li>
+<li>Remove the default axis config (press <kbd>⌫</kbd> at least three times)</li>
+<li>Enter the characters “23456789ab”</li>
+<li>The last step should not have changed the empty input value</li>
+<li>Enter the right config values: “110”</li>
+<li>Press <kbd>⏎</kbd></li>
+</ol></li>
+<li><p>Start the data acquisition</p>
+<ol style="list-style-type: decimal">
+<li>Press <kbd>s</kbd></li>
+<li>Shake the STH</li>
+<li>Make sure that shaking the STH changes (at least) the displayed value for the x-axis</li>
+<li>Wait until the measurement took place</li>
+</ol></li>
+<li><p>Check the output file</p>
+<ol style="list-style-type: decimal">
+<li>Check that the HDF5 output file exists: The filename should start with the characters “Test” followed by a timestamp and the extension “.hdf5”</li>
+<li>Open the HDF measurement file in <a href="#readme:section:measurement-data">HDFView</a></li>
+<li>Check that the table contains four columns</li>
+<li>One of the columns should have the name <code>x</code></li>
+<li>Another column should have the name <code>y</code></li>
+</ol></li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+<div id="combined-checks-tests" class="section level3 hasAnchor">
+<h3><span class="header-section-number">4.2.4</span> Combined Checks &amp; Tests<a href="#combined-checks-tests" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>While you need to run the test for ICOc manually, the other tests and checks can be automated at least partially. To run all checks, the STH test and the STU test use the following command in a shell with support for the <code>&amp;&amp;</code> operator (e.g. <a href="https://github.com/PowerShell/PowerShell">PowerShell <strong>Core</strong></a>):</p>
+<div class="sourceCode" id="cb49"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb49-1"><a href="#cb49-1"></a><span class="ex">flake8</span> <span class="kw">&amp;&amp;</span></span>
+<span id="cb49-2"><a href="#cb49-2"></a><span class="ex">mypy</span> mytoolit <span class="kw">&amp;&amp;</span></span>
+<span id="cb49-3"><a href="#cb49-3"></a><span class="ex">pytest</span> -v <span class="kw">&amp;&amp;</span></span>
+<span id="cb49-4"><a href="#cb49-4"></a><span class="ex">test-sth</span> -v <span class="kw">&amp;&amp;</span></span>
+<span id="cb49-5"><a href="#cb49-5"></a><span class="ex">test-stu</span> -v <span class="kw">&amp;&amp;</span> <span class="co"># or `test-stu -k eeprom -k connection` to skip the flash test</span></span>
+<span id="cb49-6"><a href="#cb49-6"></a><span class="ex">Invoke-Item</span> <span class="st">&#39;STH Test.pdf&#39;</span> <span class="kw">&amp;&amp;</span></span>
+<span id="cb49-7"><a href="#cb49-7"></a><span class="ex">Invoke-Item</span> <span class="st">&#39;STU Test.pdf&#39;</span></span></code></pre></div>
+<p>Afterwards make sure there were no (unexpected) errors in the output of the STH and STU test.</p>
+<p><a name="development:section:release"></a></p>
+</div>
+</div>
+<div id="release" class="section level2 hasAnchor">
+<h2><span class="header-section-number">4.3</span> Release<a href="#release" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<ol style="list-style-type: decimal">
+<li><p>Make sure that <strong>none</strong> of the <a href="#development:section:tests">tests</a> fail</p>
+<ul>
+<li><p><strong>Note</strong>: Please execute <code>test-sth</code></p>
+<ol style="list-style-type: decimal">
+<li>once with <code>STH</code> → <code>Status</code> set to <code>Epoxied</code>, and</li>
+<li>once set to <code>Bare PCB</code></li>
+</ol>
+<p>in the <a href="../mytoolit/config/config.yaml">configuration</a>. To make sure, that the STU flash test also works, please use both STU test commands described in the section <a href="#development:section:stu-test">“STU Test”</a>.</p>
+<p>If you follow the steps above you make sure that the <strong>flash tests work</strong> for both STU and STH, and there are <strong>no unintentional consequences of (not) flashing the chip</strong> before you run the other parts of the test suite.</p></li>
+</ul></li>
+<li><p>Execute the <a href="#development:section:extended-tests">extended manual tests</a> and check that everything works as expected</p></li>
+<li><p>Create a new release <a href="https://github.com/MyTooliT/ICOc/releases/new">here</a></p>
+<ol style="list-style-type: decimal">
+<li><p>Open the <a href="Releases">release notes</a> for the latest version</p></li>
+<li><p>Replace links with a permanent version:</p>
+<p>For example instead of</p>
+<ul>
+<li><code>../../something.txt</code> use</li>
+<li><code>https://github.com/MyTooliT/ICOc/blob/REVISION/something.txt</code>,</li>
+</ul>
+<p>where <code>REVISION</code> is the latest version of the master branch (e.g. <code>8568893f</code> for version <code>1.0.5</code>)</p></li>
+<li><p>Commit your changes</p></li>
+<li><p>Copy the release notes</p></li>
+<li><p>Paste them into the main text of the release web page</p></li>
+<li><p>Decrease the header level of each section by two</p></li>
+<li><p>Remove the very first header</p></li>
+<li><p>Check that all links work correctly</p></li>
+</ol></li>
+<li><p>Change the <a href="../mytoolit/__init__.py"><code>__version__</code></a> number inside the <a href="../mytoolit"><code>mytoolit</code></a> package</p></li>
+<li><p>Push the latest two commits</p></li>
+<li><p>Insert the version number (e.g. <code>1.0.5</code>) into the tag field</p></li>
+<li><p>For the release title use “Version VERSION”, where <code>VERSION</code> specifies the version number (e.g. “Version 1.0.5”)</p></li>
+<li><p>Click on “Publish Release”</p></li>
+</ol>
+
+</div>
+</div>
+<div id="modelshop-software-update" class="section level1 hasAnchor">
+<h1><span class="header-section-number">5</span> Modelshop Software Update<a href="#modelshop-software-update" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>The following diagram shows the procedure for updating the ICOc test software at the <a href="https://modelshop.at">Modelshop</a>.</p>
+<p><img src="Pictures/Software-Update-Modelshop.svg" style="display: block; margin: auto;" /></p>
+
+</div>
+<div id="releases" class="section level1 hasAnchor">
+<h1><span class="header-section-number">6</span> Releases<a href="#releases" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+
+<div id="version-1.3.0" class="section level2 hasAnchor">
+<h2><span class="header-section-number">6.1</span> Version 1.3.0<a href="#version-1.3.0" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="sth-test-1" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.1.1</span> STH Test<a href="#sth-test-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li>All code of the (STH test) should now use the new network class.</li>
+</ul>
+</div>
+<div id="smh-test" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.1.2</span> SMH Test<a href="#smh-test" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li><p>We added a flash upload test for the sensory milling head PCB. To only execute this part of the SMH test you can use the following command:</p>
+<div class="sourceCode" id="cb50"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb50-1"><a href="#cb50-1"></a><span class="ex">test-smh</span> -k flash</span></code></pre></div></li>
+</ul>
+</div>
+<div id="internal" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.1.3</span> Internal<a href="#internal" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="icoc-3" class="section level4 hasAnchor">
+<h4><span class="header-section-number">6.1.3.1</span> ICOc<a href="#icoc-3" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<ul>
+<li>The streaming code now uses CAN read events instead of polling.</li>
+</ul>
+</div>
+<div id="logging" class="section level4 hasAnchor">
+<h4><span class="header-section-number">6.1.3.2</span> Logging<a href="#logging" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<ul>
+<li>We do not log the CAN streaming messages (every CAN message after you chose “Start Data Acquisition” in ICOc) any more. The reason behind this change is that ICOc is currently not able to handle logging and writing the data into a HFD5 file at the same time on “slower” processors (such as Intel’s Core i5-5300 @ 2.3 GHz).</li>
+</ul>
+</div>
+<div id="network" class="section level4 hasAnchor">
+<h4><span class="header-section-number">6.1.3.3</span> Network<a href="#network" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<ul>
+<li><p>We added methods to read and write the sleep and advertisement time values of a sensor device using <a href="https://mytoolit.github.io/Documentation/#command:bluetooth"><code>System</code> (Bluetooth)</a> commands</p></li>
+<li><p>We renamed the following methods:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Old Name</th>
+<th>New Name</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>connect_sth</code></td>
+<td><code>connect_sensor_device</code></td>
+</tr>
+<tr class="even">
+<td><code>get_sths</code></td>
+<td><code>get_sensor_devices</code></td>
+</tr>
+</tbody>
+</table></li>
+</ul>
+
+</div>
+</div>
+</div>
+<div id="version-1.2.0" class="section level2 hasAnchor">
+<h2><span class="header-section-number">6.2</span> Version 1.2.0<a href="#version-1.2.0" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="icoc-4" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.2.1</span> ICOc<a href="#icoc-4" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li>ICOc now assumes that sensor ranges reported by an STH below 1 (i.e. ± 0.5 g) are incorrect. In this case ICOc will assume that the range is ± 100 g instead.</li>
+</ul>
+</div>
+<div id="sth-test-2" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.2.2</span> STH Test<a href="#sth-test-2" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li>The acceleration sensor self test (<code>test_acceleration_self_test</code>) now uses the <a href="https://github.com/MyTooliT/ICOc/blob/8f995cbd/mytoolit/can/network.py">new CAN class</a>.</li>
+</ul>
+</div>
+<div id="smh-test-1" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.2.3</span> SMH Test<a href="#smh-test-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li><p>We added a basic test for the new sensory milling hardware (SMH). To execute the test, please use the command</p>
+<div class="sourceCode" id="cb51"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb51-1"><a href="#cb51-1"></a><span class="ex">test-smh</span></span></code></pre></div>
+<p>Currently the test:</p>
+<ul>
+<li>checks if the STU is able to <strong>connect</strong> to the device,</li>
+<li>checks if the raw <strong>ADC sensor values</strong> are roughly equal to the expected values, and</li>
+<li>writes, reads and checks the <strong>EEPROM</strong> values of the SMH.</li>
+</ul></li>
+</ul>
+</div>
+<div id="internal-1" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.2.4</span> Internal<a href="#internal-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="calibration" class="section level4 hasAnchor">
+<h4><span class="header-section-number">6.2.4.1</span> Calibration<a href="#calibration" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<ul>
+<li>We added a class to create <a href="https://mytoolit.github.io/Documentation/#command:Calibration-Measurement">“Calibration Measurement”</a> message data bytes</li>
+</ul>
+</div>
+<div id="message" class="section level4 hasAnchor">
+<h4><span class="header-section-number">6.2.4.2</span> Message<a href="#message" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<ul>
+<li><p>The textual representation of the message class now includes an extended description for</p>
+<ul>
+<li><a href="https://mytoolit.github.io/Documentation/#command-bluetooth">Bluetooth commands</a></li>
+<li><a href="https://mytoolit.github.io/Documentation/#command:Calibration-Measurement">“Calibration Measurement” commands</a> , and</li>
+<li><a href="https://mytoolit.github.io/Documentation/#block-streaming">streaming commands</a>.</li>
+</ul></li>
+</ul>
+</div>
+<div id="network-1" class="section level4 hasAnchor">
+<h4><span class="header-section-number">6.2.4.3</span> Network<a href="#network-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>We added methods</p>
+<ul>
+<li>to activate and deactivate the self test of the accelerometer</li>
+<li>to measure the acceleration voltage</li>
+<li>to read the advertisement time and sleep time of the reduced energy mode (mode 1)</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div id="version-1.1.0" class="section level2 hasAnchor">
+<h2><span class="header-section-number">6.3</span> Version 1.1.0<a href="#version-1.1.0" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="icoc-5" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.3.1</span> ICOc<a href="#icoc-5" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="command-line-interface" class="section level4 hasAnchor">
+<h4><span class="header-section-number">6.3.1.1</span> Command Line Interface<a href="#command-line-interface" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<ul>
+<li><p><strong>Removed unused options</strong> from the command line interface</p></li>
+<li><p>All command line arguments should now be <strong>checked for validity</strong> before starting ICOc</p></li>
+<li><p>You do not need to connect the PCAN interface to list the help message of the command line interface:</p>
+<div class="sourceCode" id="cb52"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb52-1"><a href="#cb52-1"></a><span class="ex">icoc</span> -h</span></code></pre></div>
+<p>anymore</p></li>
+</ul>
+</div>
+<div id="user-interface" class="section level4 hasAnchor">
+<h4><span class="header-section-number">6.3.1.2</span> User Interface<a href="#user-interface" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<ul>
+<li><p>ICOc should now use considerably <strong>less CPU power</strong>.</p></li>
+<li><p>The window for a connected STH now also displays the <strong>sensor range</strong> of the acceleration sensor (in multiples of <a href="https://en.wikipedia.org/wiki/Gravity_of_Earth">g₀</a>)</p></li>
+<li><p>We <strong>removed unused menu items</strong> from the user interface</p></li>
+<li><p>The <strong>menu</strong> part of the interface now uses a <strong>border</strong> to distinguish itself from the rest of the interface:</p>
+<pre><code>┌──────────────────────────────┐
+│ 1-9: Connect to STH          │
+│                              │
+│   f: Change Output File Name │
+│   n: Change STH Name         │
+│                              │
+│   q: Quit ICOc               │
+└──────────────────────────────┘</code></pre></li>
+<li><p>ICOc now provides <strong>default values</strong> for nearly all configuration inputs</p></li>
+<li><p>ICOc does <strong>not crash</strong> any more if your <strong>terminal window is too small</strong> to display the whole interface. The interface will look garbled if you resize the window to a size that does not fit the whole interface. However, it will look fine after you resize the window to a proper size afterwards, <strong>as long as you do not make the window “really small”</strong> (e.g. leave only two lines for ICOc).</p></li>
+</ul>
+</div>
+<div id="errors" class="section level4 hasAnchor">
+<h4><span class="header-section-number">6.3.1.3</span> Errors<a href="#errors" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<ul>
+<li>ICOc now prints the error messages at the top of the output. This should make it easier to check the reason of an error.</li>
+</ul>
+</div>
+<div id="output" class="section level4 hasAnchor">
+<h4><span class="header-section-number">6.3.1.4</span> Output<a href="#output" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<ul>
+<li>ICOc now stores <strong>acceleration data in <a href="https://www.hdfgroup.org/solutions/hdf5">HDF5</a></strong> format. For more information please take a look at the <a href="https://github.com/mytoolit/ICOc/#documentation">documentation</a>.</li>
+</ul>
+</div>
+<div id="plotter" class="section level4 hasAnchor">
+<h4><span class="header-section-number">6.3.1.5</span> Plotter<a href="#plotter" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<ul>
+<li>The <strong>plotter window now displays the acceleration values as multiples of g₀</strong> (9.81 m/s²).</li>
+</ul>
+</div>
+<div id="removed-functionality" class="section level4 hasAnchor">
+<h4><span class="header-section-number">6.3.1.6</span> Removed Functionality<a href="#removed-functionality" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<ul>
+<li>We <strong>removed</strong> a lot of the <strong>unused, untested and unmaintained functionality</strong> of ICOc:
+<ul>
+<li>XML configuration</li>
+<li>Code to write and read EEPROM data using Excel files</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="verification-test" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.3.2</span> Verification Test<a href="#verification-test" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li>We enabled most parts of the STH verification test again</li>
+<li>The STH and STU verification tests now use the STH name from the configuration file <code>config.yaml</code> (<code>STH</code> → <code>NAME</code>).</li>
+</ul>
+
+</div>
+</div>
+<div id="version-1.0.14" class="section level2 hasAnchor">
+<h2><span class="header-section-number">6.4</span> Version 1.0.14<a href="#version-1.0.14" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="logger" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.4.1</span> Logger<a href="#logger" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li><p>ICOc now always extend the logging file name with the postfix <code>_error</code>, if there was a problem.</p>
+<p>For example, if you use the default name ICOc.txt, then the logging file will be named</p>
+<ul>
+<li><code>ICOc_TIMESTAMP_error.txt</code> (e.g. <code>ICOc_2021-08-25_10-23-04_error.txt</code>) instead of</li>
+<li><code>ICOc_TIMESTAMP.txt</code> (e.g. <code>ICOc_2021-08-25_10-23-04.txt</code>)</li>
+</ul>
+<p>if there were any problems. The behavior of ICOc was similar before. However, the name of the error file could be chosen freely.</p></li>
+<li><p>You can now specify the default (base) name of the logging file in the <a href="https://github.com/MyTooliT/ICOc/blob/e818e5fa/mytoolit/config/config.yaml">configuration</a> (<code>Logger</code> → <code>ICOC</code> → <code>FILENAME</code>).</p></li>
+<li><p>You can now specify the directory where ICOc stores acceleration data in the <a href="https://github.com/MyTooliT/ICOc/blob/e818e5fa/mytoolit/config/config.yaml">configuration</a> (<code>Logger</code> → <code>ICOC</code> → <code>DIRECTORY</code>).</p></li>
+</ul>
+</div>
+<div id="verification-tests-1" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.4.2</span> Verification Tests<a href="#verification-tests-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>We added the old code of the STH verification tests. You can now execute these tests using the command</p>
+<div class="sourceCode" id="cb54"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb54-1"><a href="#cb54-1"></a><span class="ex">test-sth-verification</span></span></code></pre></div>
+<p>For more information about these tests, please take a look at the section “Verification Tests” <a href="https://github.com/MyTooliT/ICOc/blob/e818e5fa/Documentation/Tutorials.md">here</a>.</p>
+</div>
+<div id="internal-2" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.4.3</span> Internal<a href="#internal-2" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="message-1" class="section level4 hasAnchor">
+<h4><span class="header-section-number">6.4.3.1</span> Message<a href="#message-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<ul>
+<li>The string representation of a message (<code>repr</code>) now includes additional information for
+<ul>
+<li>the <a href="https://mytoolit.github.io/Documentation/#command:get-set-state">“Bluetooth Write Energy Mode Reduced”</a> command</li>
+<li>the EEPROM command <a href="https://mytoolit.github.io/Documentation/#command-read-write-request-counter">“Read Write Request Counter”</a></li>
+</ul></li>
+<li>The code for the string representation now handles incorrect device number values for the acknowledgment message of the <a href="https://mytoolit.github.io/Documentation/#command:bluetooth:2"><code>Get number of available devices</code></a> properly</li>
+<li>The method <code>acknowledge</code> does not ignore the value of the <code>error</code> parameter any more</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div id="version-1.0.13" class="section level2 hasAnchor">
+<h2><span class="header-section-number">6.5</span> Version 1.0.13<a href="#version-1.0.13" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="documentation-1" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.5.1</span> Documentation<a href="#documentation-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li>The repo now contains a <a href="https://bookdown.org">bookdown</a> project for the documentation. The latest version of the bookdown output (HTML, PDF, and EPUB) is available at <a href="https://github.com/MyTooliT/ICOc/actions/workflows/documentation.yaml">GitHub</a> (just click on the latest “run” and then on the link “ICOc Manual”) or in <a href="https://mytoolit.bitrix24.de/docs/path/Documentation%20Repositories/ICOc/">the Bitrix24 drive</a>.</li>
+</ul>
+</div>
+<div id="icoc-6" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.5.2</span> ICOc<a href="#icoc-6" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li>The data acquisition should now <a href="https://github.com/MyTooliT/ICOc/issues/18">work more reliable</a>, since we fixed
+<ul>
+<li>an <a href="https://github.com/MyTooliT/ICOc/commit/108b7a64baae980cc24cbda41fd4ca9a979afd80">CAN message overflow bug</a>, and</li>
+<li>a <a href="https://github.com/MyTooliT/ICOc/commit/12fd083623e9c0b613d2db8e2a54e9b9cac06a28">bug that resulted in a “blocked” acceleration data window</a>.</li>
+</ul></li>
+</ul>
+</div>
+<div id="production-test" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.5.3</span> Production Test<a href="#production-test" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li><p>The</p>
+<ul>
+<li>stationary acceleration test (<code>test_acceleration_single_value</code>),</li>
+<li>supply voltage test (<code>test_battery_voltage</code>),</li>
+<li>connection test (<code>test_connection</code>), and</li>
+<li>EEPROM test (<code>test_eeprom</code>)</li>
+</ul>
+<p>now use the <a href="https://github.com/MyTooliT/ICOc/blob/7b00bcc3f7f56cbbe233ba84e9f55ee82521c88f/mytoolit/can/network.py">new network class</a> instead of the <a href="https://github.com/MyTooliT/ICOc/blob/7b00bcc3f7f56cbbe233ba84e9f55ee82521c88f/mytoolit/old/network.py">old network class</a></p></li>
+</ul>
+</div>
+<div id="internal-3" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.5.4</span> Internal<a href="#internal-3" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="calibration-1" class="section level4 hasAnchor">
+<h4><span class="header-section-number">6.5.4.1</span> Calibration<a href="#calibration-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<ul>
+<li>Add class <code>CalibrationMeasurementFormat</code> to specify the data bytes of a <a href="https://mytoolit.github.io/Documentation/#command:Calibration-Measurement">calibration measurement command</a>.</li>
+</ul>
+</div>
+<div id="measurement" class="section level4 hasAnchor">
+<h4><span class="header-section-number">6.5.4.2</span> Measurement<a href="#measurement" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<ul>
+<li>Add function <code>convert_voltage_adc_to_volts</code> to convert (2 byte) <a href="https://mytoolit.github.io/Documentation/#block-streaming">streaming voltage</a> values to a supply voltage in volts</li>
+</ul>
+</div>
+<div id="message-2" class="section level4 hasAnchor">
+<h4><span class="header-section-number">6.5.4.3</span> Message<a href="#message-2" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<ul>
+<li>The string representation of a message (<code>repr</code>) now includes additional information for the <a href="https://mytoolit.github.io/Documentation/#command:get-set-state">Get/Set State</a> block command</li>
+</ul>
+</div>
+<div id="network-2" class="section level4 hasAnchor">
+<h4><span class="header-section-number">6.5.4.4</span> Network<a href="#network-2" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<ul>
+<li>Add the coroutine <code>get_state</code> to <a href="https://mytoolit.github.io/Documentation/#command:get-set-state">retrieve information about the current state of a node</a></li>
+<li>Add the coroutine <code>read_voltage</code> to read the supply voltage of a connected STH</li>
+<li>Add the coroutine <code>read_x_acceleration</code> to read the x acceleration of a connected STH</li>
+</ul>
+</div>
+<div id="streaming-format" class="section level4 hasAnchor">
+<h4><span class="header-section-number">6.5.4.5</span> Streaming Format<a href="#streaming-format" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<ul>
+<li>New class <code>StreamingFormat</code> to specify the format of <a href="https://mytoolit.github.io/Documentation/#block-streaming">streaming data</a></li>
+<li>New class <code>StreamingFormatVoltage</code> to specify the format of voltage streaming data</li>
+<li>New class <code>StreamingFormatAcceleration</code> to specify the format of acceleration streaming data</li>
+</ul>
+</div>
+<div id="utility" class="section level4 hasAnchor">
+<h4><span class="header-section-number">6.5.4.6</span> Utility<a href="#utility" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<ul>
+<li>The new function <code>add_commander_path_to_environment</code> adds the path to Simplicity Commander (<code>commander</code>) to the <code>PATH</code> environment variable</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div id="version-1.0.12" class="section level2 hasAnchor">
+<h2><span class="header-section-number">6.6</span> Version 1.0.12<a href="#version-1.0.12" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="config" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.6.1</span> Config<a href="#config" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li><p>We now use the common term “version” instead of “revision” to specify the current state of the hardware. We therefore renamed</p>
+<ul>
+<li><code>STH</code> → <code>HARDWARE REVISION</code> to</li>
+<li><code>STH</code> → <code>HARDWARE VERSION</code></li>
+</ul>
+<p>in the <a href="https://github.com/MyTooliT/ICOc/blob/f7f90ac6c1be218acc450ddc0a115473180dbe95/mytoolit/config/config.yaml">configuration file</a>.</p></li>
+</ul>
+</div>
+<div id="icoc-7" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.6.2</span> ICOc<a href="#icoc-7" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li>The menu for a connected STH now displays the correct STH name instead of the text “Tanja”.</li>
+<li>The main menu now uses “ICOc” instead of “MyToolIt Terminal” as title</li>
+</ul>
+</div>
+<div id="internal-4" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.6.3</span> Internal<a href="#internal-4" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="network-3" class="section level4 hasAnchor">
+<h4><span class="header-section-number">6.6.3.1</span> Network<a href="#network-3" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<ul>
+<li><p>Add the coroutines</p>
+<ul>
+<li><code>read_eeprom_advertisement_time_2</code>,</li>
+<li><code>read_eeprom_batch_number</code>,</li>
+<li><code>read_eeprom_firmware_version</code>,</li>
+<li><code>read_eeprom_gtin</code>,</li>
+<li><code>read_eeprom_hardware_version</code>,</li>
+<li><code>read_eeprom_oem_data</code>,</li>
+<li><code>read_eeprom_operating_time</code>,</li>
+<li><code>read_eeprom_power_off_cycles</code>,</li>
+<li><code>read_eeprom_power_on_cycles</code>,</li>
+<li><code>read_eeprom_product_name</code>,</li>
+<li><code>read_eeprom_production_date</code>,</li>
+<li><code>read_eeprom_release_name</code>,</li>
+<li><code>read_eeprom_serial_number</code>,</li>
+<li><code>read_eeprom_sleep_time_2</code>,</li>
+<li><code>read_eeprom_under_voltage_counter</code>,</li>
+<li><code>read_eeprom_watchdog_reset_counter</code>,</li>
+<li><code>read_eeprom_x_axis_acceleration_offset</code>, and</li>
+<li><code>read_eeprom_x_axis_acceleration_slope</code></li>
+</ul>
+<p>to read specific values of the EEPROM</p></li>
+<li><p>Add the coroutines</p>
+<ul>
+<li><code>write_eeprom_advertisement_time_2</code>,</li>
+<li><code>write_eeprom_batch_number</code>,</li>
+<li><code>write_eeprom_firmware_version</code>,</li>
+<li><code>write_eeprom_gtin</code>,</li>
+<li><code>write_eeprom_hardware_version</code>,</li>
+<li><code>write_eeprom_oem_data</code>,</li>
+<li><code>write_eeprom_operating_time</code>,</li>
+<li><code>write_eeprom_power_off_cycles</code>,</li>
+<li><code>write_eeprom_power_on_cycles</code>,</li>
+<li><code>write_eeprom_product_name</code>,</li>
+<li><code>write_eeprom_production_date</code>,</li>
+<li><code>write_eeprom_release_name</code>,</li>
+<li><code>write_eeprom_serial_number</code>,</li>
+<li><code>write_eeprom_sleep_time_2</code>,</li>
+<li><code>write_eeprom_under_voltage_counter</code>,</li>
+<li><code>write_eeprom_watchdog_reset_counter</code>,</li>
+<li><code>write_eeprom_x_axis_acceleration_offset</code>, and</li>
+<li><code>write_eeprom_x_axis_acceleration_slope</code></li>
+</ul>
+<p>to change specific values in the EEPROM</p></li>
+<li><p>Add the following coroutines to read product data:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Data Item</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>get_gtin</code></td>
+<td>GTIN (Global Trade Identification Number)</td>
+</tr>
+<tr class="even">
+<td><code>get_hardware_version</code></td>
+<td>Hardware Version Number</td>
+</tr>
+<tr class="odd">
+<td><code>get_firmware_version</code></td>
+<td>Firmware Version Number</td>
+</tr>
+<tr class="even">
+<td><code>get_firmware_release_name</code></td>
+<td>Firmware Release Name</td>
+</tr>
+<tr class="odd">
+<td><code>get_serial_number</code></td>
+<td>Serial Number</td>
+</tr>
+<tr class="even">
+<td><code>get_product_name</code></td>
+<td>Product Name</td>
+</tr>
+<tr class="odd">
+<td><code>get_oem_data</code></td>
+<td>OEM (Free Use) Data</td>
+</tr>
+</tbody>
+</table></li>
+</ul>
+</div>
+<div id="status" class="section level4 hasAnchor">
+<h4><span class="header-section-number">6.6.3.2</span> Status<a href="#status" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<ul>
+<li>Add wrapper class for the <a href="https://mytoolit.github.io/Documentation/#command-getset-state"><code>Get/Set State</code></a> command</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div id="version-1.0.11" class="section level2 hasAnchor">
+<h2><span class="header-section-number">6.7</span> Version 1.0.11<a href="#version-1.0.11" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="documentation-2" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.7.1</span> Documentation<a href="#documentation-2" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li>Add <a href="https://github.com/MyTooliT/ICOc/blob/4028eefd/Documentation/Tutorials/Renaming.md">STH renaming tutorial</a></li>
+</ul>
+</div>
+<div id="eeprom-checker" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.7.2</span> EEPROM Checker<a href="#eeprom-checker" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li>The EEPROM checker (<code>check-eeprom</code>) now uses <a href="https://github.com/MyTooliT/ICOc/blob/4028eefd/mytoolit/can/network.py">the new network class</a>.</li>
+</ul>
+</div>
+<div id="icoc-8" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.7.3</span> ICOc<a href="#icoc-8" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li>We fixed the sporadic crashes of the graphical plotter interface. You should not see messages about “WinError 10061” any more, when you try to read acceleration data with <code>icoc</code>.</li>
+</ul>
+</div>
+<div id="sth-test-3" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.7.4</span> STH Test<a href="#sth-test-3" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li>The test now uses the serial number (<code>STH</code> → <code>SERIAL NUMBER</code>) as new name, if you set the status (<code>STH</code> → <code>STATUS</code>) to <code>Epoxied</code> in the <a href="https://github.com/MyTooliT/ICOc/blob/4028eefd/mytoolit/config/config.yaml">configuration</a>. If you use use a different status, then the test will still use the <a href="https://github.com/MyTooliT/ICOc/issues/1">Base64 encoded MAC address</a> as new (Bluetooth advertisement) name.</li>
+<li>Remove wait time (of 2 seconds) after Bluetooth connection was established. In theory this should make the test execution quite a bit faster, without any adverse effects.</li>
+</ul>
+</div>
+<div id="internal-5" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.7.5</span> Internal<a href="#internal-5" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="message-3" class="section level4 hasAnchor">
+<h4><span class="header-section-number">6.7.5.1</span> Message<a href="#message-3" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<ul>
+<li><p>The string representation of a message (<code>repr</code>) now includes additional information for:</p>
+<ul>
+<li><a href="https://mytoolit.github.io/Documentation/#block-eeprom">EEPROM commands</a>, and</li>
+<li>the <a href="https://mytoolit.github.io/Documentation/#command:bluetooth">Bluetooth commands</a>:
+<ul>
+<li><a href="https://mytoolit.github.io/Documentation/#command:bluetooth:7">to request a connection</a>,</li>
+<li><a href="https://mytoolit.github.io/Documentation/#command:bluetooth:8">to check the connection status</a>,</li>
+<li><a href="https://mytoolit.github.io/Documentation/#command:bluetooth:9">to deactivate the Bluetooth connection</a>,</li>
+<li><a href="https://mytoolit.github.io/Documentation/#command:bluetooth:12">to retrieve the RSSI</a>, and</li>
+<li><a href="https://mytoolit.github.io/Documentation/#command:bluetooth:17">to retrieve the MAC address</a></li>
+<li><a href="https://mytoolit.github.io/Documentation/#command:bluetooth:18">to connect to a device using a MAC address</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+<div id="network-old" class="section level4 hasAnchor">
+<h4><span class="header-section-number">6.7.5.2</span> Network (Old)<a href="#network-old" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<ul>
+<li>Improve error message for disconnected CAN adapter</li>
+</ul>
+</div>
+<div id="network-new" class="section level4 hasAnchor">
+<h4><span class="header-section-number">6.7.5.3</span> Network (New)<a href="#network-new" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<ul>
+<li><p>The class now sends requests multiple times, if it does not receive an answer in a certain amount of time</p></li>
+<li><p>Improve error message for disconnected CAN adapter</p></li>
+<li><p>The class now logs sent and received messages on the CAN bus, if you change the logger level to <code>DEBUG</code> (<code>LOGGER</code>→<code>CAN</code>→<code>LEVEL</code> in the <a href="https://github.com/MyTooliT/ICOc/blob/4028eefd/mytoolit/config/config.yaml">configuration</a>)</p></li>
+<li><p>Renamed the following coroutines:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Old Name</th>
+<th>New Name</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>get_available_devices_bluetooth</code></td>
+<td><code>get_available_devices</code></td>
+</tr>
+<tr class="even">
+<td><code>get_device_name_bluetooth</code></td>
+<td><code>get_name</code></td>
+</tr>
+<tr class="odd">
+<td><code>get_mac_address_bluetooth</code></td>
+<td><code>get_mac_address</code></td>
+</tr>
+<tr class="even">
+<td><code>connect_device_number_bluetooth</code></td>
+<td><code>connect_with_device_number</code></td>
+</tr>
+<tr class="odd">
+<td><code>check_connection_device_bluetooth</code></td>
+<td><code>is_connected</code></td>
+</tr>
+</tbody>
+</table></li>
+<li><p>Add the following coroutines</p>
+<table>
+<colgroup>
+<col width="21%" />
+<col width="78%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>connect_with_mac_address</code></td>
+<td>Connect to a device using its MAC address</td>
+</tr>
+<tr class="even">
+<td><code>get_rssi</code></td>
+<td>Retrieve the RSSI (Received Signal Strength Indication) of a device</td>
+</tr>
+<tr class="odd">
+<td><code>get_sths</code></td>
+<td>Retrieve a list of available STHs</td>
+</tr>
+<tr class="even">
+<td><code>connect_sth</code></td>
+<td>Directly connect to an STH using its<br/>• MAC address,<br/> • device number, or<br/> • name<br/></td>
+</tr>
+<tr class="odd">
+<td><code>set_name</code></td>
+<td>Set the (Bluetooth advertisement) name of an STU or STH</td>
+</tr>
+</tbody>
+</table></li>
+<li><p>Add coroutines:</p>
+<ul>
+<li><code>read_eeprom</code>,</li>
+<li><code>read_eeprom_float</code>,</li>
+<li><code>read_eeprom_int</code>, and</li>
+<li><code>read_eeprom_text</code></li>
+</ul>
+<p>to read EEPROM data</p></li>
+<li><p>Add coroutines</p>
+<ul>
+<li><code>write_eeprom</code>,</li>
+<li><code>write_eeprom_float</code>,</li>
+<li><code>write_eeprom_int</code>, and</li>
+<li><code>write_eeprom_text</code>,</li>
+</ul>
+<p>to write EEPROM data</p></li>
+<li><p>Add the coroutines:</p>
+<ul>
+<li><code>read_eeprom_advertisement_time_1</code>,</li>
+<li><code>read_eeprom_name</code>,</li>
+<li><code>read_eeprom_sleep_time_1</code>, and</li>
+<li><code>read_eeprom_status</code></li>
+</ul>
+<p>to read specific parts of the EEPROM</p></li>
+<li><p>Add the coroutines:</p>
+<ul>
+<li><code>write_eeprom_advertisement_time_1</code>,</li>
+<li><code>write_eeprom_name</code>,</li>
+<li><code>write_eeprom_sleep_time_1</code>, and</li>
+<li><code>write_eeprom_status</code></li>
+</ul>
+<p>to write specific parts of the EEPROM</p></li>
+</ul>
+
+</div>
+</div>
+</div>
+<div id="version-1.0.10" class="section level2 hasAnchor">
+<h2><span class="header-section-number">6.8</span> Version 1.0.10<a href="#version-1.0.10" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="checks" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.8.1</span> Checks<a href="#checks" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li>We also check the code base with the static type checker <a href="https://mypy.readthedocs.io">Mypy</a></li>
+</ul>
+</div>
+<div id="github-actions" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.8.2</span> GitHub Actions<a href="#github-actions" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li>We now also test ICOc on Ubuntu Linux</li>
+</ul>
+</div>
+<div id="package" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.8.3</span> Package<a href="#package" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li>We now use the version number specified in the <a href="https://github.com/MyTooliT/ICOc/blob/5490bce1/mytoolit/__init__.py">init file of the package</a> for the package version number.</li>
+<li>You can now also install the Package on Linux (and macOS)</li>
+</ul>
+</div>
+<div id="requirements-2" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.8.4</span> Requirements<a href="#requirements-2" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li>The package now uses the <code>EUI</code> (Extended Unique Identifier) class of the <a href="https://netaddr.readthedocs.io"><code>netaddr</code></a> package to handle MAC addresses</li>
+</ul>
+</div>
+<div id="scripts-1" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.8.5</span> Scripts<a href="#scripts-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li>We added a script that removes log and PDF files from the repository root. For more information please take a look at the section “Remove Log and PDF Files” of the <a href="https://github.com/MyTooliT/ICOc/blob/5490bce1/Documentation/Scripts.md">script documentation</a>.</li>
+</ul>
+<div id="sth-test-4" class="section level4 hasAnchor">
+<h4><span class="header-section-number">6.8.5.1</span> STH Test<a href="#sth-test-4" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<ul>
+<li>The report of the STH test now also contains information about the used acceleration sensor (±100 g or ± 50 g)</li>
+<li>We added a <a href="https://github.com/MyTooliT/ICOc/blob/5490bce1/mytoolit/config/config.yaml">configuration item</a> for the holder type (<code>STH</code> → <code>HOLDER TYPE</code>)</li>
+<li>We added the holder type and the serial number to the PDF report</li>
+<li>Removed extra space before and after headers in PDF report</li>
+<li>The PDF report now contains a list of tables with checkboxes for manual checks</li>
+</ul>
+</div>
+</div>
+<div id="internal-6" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.8.6</span> Internal<a href="#internal-6" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="checkbox" class="section level4 hasAnchor">
+<h4><span class="header-section-number">6.8.6.1</span> Checkbox<a href="#checkbox" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<ul>
+<li>New <code>Flowable</code> class that can be used to add a checkbox to a PDF report</li>
+</ul>
+</div>
+<div id="command" class="section level4 hasAnchor">
+<h4><span class="header-section-number">6.8.6.2</span> Command<a href="#command" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<ul>
+<li>Add method <code>is_error</code> to check if the current command represents an error</li>
+<li>Add method <code>set_error</code> to set or unset the error bit</li>
+</ul>
+</div>
+<div id="identifier" class="section level4 hasAnchor">
+<h4><span class="header-section-number">6.8.6.3</span> Identifier<a href="#identifier" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<ul>
+<li>Add method <code>acknowledge</code> to retrieve expected acknowledgment identifier for id</li>
+<li>Add method <code>is_error</code> to check if the current identifier represents an error message</li>
+<li>Add method <code>set_error</code> to set or unset the error bit</li>
+<li>Support comparison with other identifiers (<code>==</code>)</li>
+</ul>
+</div>
+<div id="message-4" class="section level4 hasAnchor">
+<h4><span class="header-section-number">6.8.6.4</span> Message<a href="#message-4" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<ul>
+<li>The class now uses the class <code>Message</code> of python-can to store data instead of the class <code>TPCANMsg</code> of the PCAN-Basic API</li>
+<li>Add method <code>identifier</code> to receive an identifier object for the current message</li>
+<li>Add accessor to set and retrieve message data (<code>.data</code>)</li>
+<li>The method <code>acknowledge</code> now stores the data of the message in the acknowledgment message</li>
+<li>Fix conversion into <code>python-can</code> message for non-empty data field</li>
+<li>Add explanation to string representation for Bluetooth “Activate” and “Get number of available devices” <a href="https://mytoolit.github.io/Documentation/#value:bluetooth-subcommand">subcommand</a></li>
+</ul>
+</div>
+<div id="network-new-1" class="section level4 hasAnchor">
+<h4><span class="header-section-number">6.8.6.5</span> Network (New)<a href="#network-new-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<ul>
+<li>Add coroutine (<code>reset_node</code>) to reset a node in the network</li>
+<li>Add coroutine (<code>activate_bluetooth</code>) to activate Bluetooth on a node in the network</li>
+<li>Add coroutine (<code>get_available_devices_bluetooth</code>) to retrieve the number of available Bluetooth devices</li>
+<li>Add coroutine (<code>get_device_name_bluetooth</code>) to retrieve the Bluetooth advertisement name of a device</li>
+<li>Add coroutine (<code>connect_device_number_bluetooth</code>) to connect to a Bluetooth device using the device number</li>
+<li>Add coroutine (<code>deactivate_bluetooth</code>) to deactivate the Bluetooth connection of a node</li>
+<li>Add coroutine (<code>check_connection_device_bluetooth</code>) to check if a Bluetooth device is connected to a node</li>
+<li>Add coroutine (<code>get_mac_address_bluetooth</code>) to retrieve the MAC address of a connected Bluetooth device</li>
+<li>Implement context manager interface (<code>with … as</code>)</li>
+<li>The code now checks part of the acknowledgement data for the Bluetooth and reset commands of the <code>System</code> block</li>
+</ul>
+</div>
+<div id="report" class="section level4 hasAnchor">
+<h4><span class="header-section-number">6.8.6.6</span> Report<a href="#report" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<ul>
+<li>Add method <code>add_checkbox_list</code> to add a list of checkboxes at the end of the PDF report</li>
+</ul>
+</div>
+<div id="utility-1" class="section level4 hasAnchor">
+<h4><span class="header-section-number">6.8.6.7</span> Utility<a href="#utility-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<ul>
+<li>Add function <code>bytearray_to_text</code> to convert byte data to a string</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div id="version-1.0.9" class="section level2 hasAnchor">
+<h2><span class="header-section-number">6.9</span> Version 1.0.9<a href="#version-1.0.9" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="configuration" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.9.1</span> Configuration<a href="#configuration" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li>We moved the <a href="https://github.com/MyTooliT/ICOc/blob/7035ff18/mytoolit/config/config.yaml">configuration file for the test scripts</a> into the <code>mytoolit</code> package.</li>
+<li>We moved the <a href="https://github.com/MyTooliT/ICOc/blob/7035ff18/mytoolit/old/configKeys.xml">configuration file for ICOc</a> into the <code>mytoolit</code> package.</li>
+<li>We now use uppercase letters for all configuration keys in <a href="https://github.com/MyTooliT/ICOc/blob/7035ff18/mytoolit/config/config.yaml"><code>config.yaml</code></a>. The reason behind this update is that we can overwrite these values using environment variables – with the prefix <code>DYNACONF_</code> – even on Windows. Unfortunately Windows <a href="https://www.dynaconf.com/configuration">converts all environment variables to uppercase</a>.</li>
+</ul>
+</div>
+<div id="compatibility" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.9.2</span> Compatibility<a href="#compatibility" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li>This version of ICOc requires at least Python <code>3.7</code>, since we use the <code>annotations</code> directive from the <code>__futures__</code> module</li>
+</ul>
+</div>
+<div id="package-1" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.9.3</span> Package<a href="#package-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li>We added a <a href="https://github.com/MyTooliT/ICOc/blob/7035ff18/setup.py">package description</a> for ICOc. You can now install the software using <code>pip install -e .</code> in the root of the repository. To uninstall the package use <code>pip uninstall icoc</code>.</li>
+</ul>
+</div>
+<div id="scripts-2" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.9.4</span> Scripts<a href="#scripts-2" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li>We added a new EEPROM checking tool. For more information please take a look at the section “EEPROM Check” of the <a href="https://github.com/MyTooliT/ICOc/blob/7035ff18/Documentation/Scripts.md">script documentation</a>.</li>
+</ul>
+</div>
+<div id="internal-7" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.9.5</span> Internal<a href="#internal-7" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li>We removed old hardware test code</li>
+</ul>
+<div id="network-old-1" class="section level4 hasAnchor">
+<h4><span class="header-section-number">6.9.5.1</span> Network (Old)<a href="#network-old-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<ul>
+<li>Simplified code</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div id="version-1.0.8" class="section level2 hasAnchor">
+<h2><span class="header-section-number">6.10</span> Version 1.0.8<a href="#version-1.0.8" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="internal-8" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.10.1</span> Internal<a href="#internal-8" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="message-5" class="section level4 hasAnchor">
+<h4><span class="header-section-number">6.10.1.1</span> Message<a href="#message-5" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<ul>
+<li>Added method to convert message to python-can message object</li>
+<li>Renamed initialization attribute <code>payload</code> to <code>data</code></li>
+<li>Added support to initialize a message object with a message object of <a href="https://python-can.readthedocs.io">python-can</a></li>
+</ul>
+</div>
+</div>
+<div id="production-test-1" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.10.2</span> Production Test<a href="#production-test-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li>The name of the PDF test report now reflects the tested node. The latest test data for the STH will be stored in a file called <code>STH Test.pdf</code>, while the STU test data is stored in a file called <code>STU Test.pdf</code>. Before this update both tests would use the file name <code>Report.pdf</code>.</li>
+</ul>
+</div>
+<div id="sth-test-5" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.10.3</span> STH Test<a href="#sth-test-5" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li><p>We now always assume the name of the STH (<code>STH</code> → <code>Name</code>) in the <a href="https://github.com/MyTooliT/ICOc/blob/d89c5a59/Configuration/config.yaml">configuration</a> is given as string. This improves the usability of the tests, since otherwise you might specify an integer as name (e.g. <code>1337</code>) and wonder why the test is unable to connect to the STH.</p></li>
+<li><p>The STH test now prints a message about a possible incorrect config value for the acceleration sensor (<code>STH</code> → <code>Acceleration Sensor</code> → <code>Sensor</code>), if <a href="https://github.com/MyTooliT/ICOc/issues/13">the self test of the accelerometer failed</a>.</p></li>
+<li><p>The STH test fails, if you use an sensor value (<code>STH</code> → <code>Acceleration Sensor</code> → <code>Sensor</code>) that is not one of the supported values</p>
+<ul>
+<li><code>ADXL1001</code> or</li>
+<li><code>ADXL1002</code>.</li>
+</ul></li>
+</ul>
+</div>
+<div id="tests-1" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.10.4</span> Tests<a href="#tests-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li>We now check the code base with <a href="https://flake8.pycqa.org">flake8</a>.</li>
+<li>We use <a href="https://github.com/MyTooliT/ICOc/actions">GitHub actions</a>
+<ul>
+<li>to run non-hardware dependent parts of the automated tests, and</li>
+<li>to check the code base with <a href="https://flake8.pycqa.org">flake8</a></li>
+</ul></li>
+</ul>
+
+</div>
+</div>
+<div id="version-1.0.7" class="section level2 hasAnchor">
+<h2><span class="header-section-number">6.11</span> Version 1.0.7<a href="#version-1.0.7" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="logging-1" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.11.1</span> Logging<a href="#logging-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li>The <a href="https://github.com/MyTooliT/ICOc/blob/d89c5a59/network.py">main CAN class</a> now logs the received CAN messages in a file called <code>can.log</code>, if you specify the level <code>DEBUG</code> in the <a href="https://github.com/MyTooliT/ICOc/blob/d89c5a59/Configuration/config.yaml">configuration file</a>.</li>
+</ul>
+</div>
+<div id="sth-test-6" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.11.2</span> STH Test<a href="#sth-test-6" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li>The STH test case now skips the flash test if the status in the <a href="https://github.com/MyTooliT/ICOc/blob/d89c5a59/Configuration/config.yaml">configuration file</a> (<code>STH</code> → <code>Status</code>) is set to <code>Epoxied</code>.</li>
+<li>The test now also supports the ±50 g digital accelerometer <a href="https://www.analog.com/media/en/technical-documentation/data-sheets/ADXL1001-1002.pdf">ADXL1002</a>. To choose which sensor is part of the STH (or SHA), please change the value <code>STH</code> → <code>Acceleration Sensor</code> → <code>Sensor</code> to the appropriate value in the <a href="https://github.com/MyTooliT/ICOc/blob/d89c5a59/Configuration/config.yaml">configuration file</a>.</li>
+<li>Removed the over the air (OTA) test, since it requires the command <code>ota-dfu</code>, which needs to be compiled first, and often does not work reliable.</li>
+<li>The <a href="https://github.com/MyTooliT/ICOc/issues/10">renaming of the STH in the EEPROM test</a> should now work more reliable.</li>
+</ul>
+</div>
+<div id="stu-test-1" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.11.3</span> STU Test<a href="#stu-test-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li>Add first version of <a href="https://github.com/MyTooliT/ICOc/blob/d89c5a59/mytoolit/test/production/stu.py">new test for the STU</a>. For more information, please take a look at the section “Production Tests” of the <a href="https://github.com/MyTooliT/ICOc/blob/d89c5a59/ReadMe.md">main readme</a>.</li>
+</ul>
+
+</div>
+</div>
+<div id="version-1.0.6" class="section level2 hasAnchor">
+<h2><span class="header-section-number">6.12</span> Version 1.0.6<a href="#version-1.0.6" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="documentation-3" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.12.1</span> Documentation<a href="#documentation-3" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li>We added a <a href="https://github.com/MyTooliT/ICOc/blob/cdfed9f94c94cfe17ce42abc8db7a2130e4ede51/Documentation/Guidelines/Release.md">tutorial</a> that explains the necessary steps for releasing a new version of ICOc</li>
+</ul>
+
+</div>
+</div>
+<div id="version-1.0.5" class="section level2 hasAnchor">
+<h2><span class="header-section-number">6.13</span> Version 1.0.5<a href="#version-1.0.5" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="configuration-1" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.13.1</span> Configuration<a href="#configuration-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li>We moved the host and port configuration values of the <a href="https://matplotlib.org">Matplotlib</a> GUI from the XML configuration file into the <a href="https://github.com/MyTooliT/ICOc/blob/8568893f/Configuration/config.yaml">YAML configuration</a>.</li>
+</ul>
+</div>
+<div id="documentation-4" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.13.2</span> Documentation<a href="#documentation-4" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li>We documented how to execute the <a href="https://github.com/MyTooliT/ICOc/blob/8568893f/Documentation/Guidelines/Test.md">automatic tests</a> for software.</li>
+</ul>
+</div>
+<div id="sth-test-7" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.13.3</span> STH Test<a href="#sth-test-7" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li><p>The EEPROM tests now also writes the firmware release name (<code>STH</code> → <code>Firmware</code> → <code>Release Name</code> in the <a href="https://github.com/MyTooliT/ICOc/blob/8568893f/Configuration/config.yaml">configuration</a>) into the EEPROM.</p></li>
+<li><p>The EEPROM test now sets the</p>
+<ul>
+<li>operating time,</li>
+<li>power on cycles,</li>
+<li>power off cycles,</li>
+<li>under voltage counter, and the</li>
+<li>watchdog reset counter</li>
+</ul>
+<p>to <code>0</code>.</p></li>
+</ul>
+
+</div>
+</div>
+<div id="version-1.0.4" class="section level2 hasAnchor">
+<h2><span class="header-section-number">6.14</span> Version 1.0.4<a href="#version-1.0.4" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="documentation-5" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.14.1</span> Documentation<a href="#documentation-5" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li>We moved the release notes from the init code of the <a href="https://github.com/MyTooliT/ICOc/blob/b93b2763aff36f02c89ddd502673d017a7096d5e/mytoolit"><code>mytoolit</code> package</a> into <a href="https://github.com/MyTooliT/ICOc/blob/b93b2763aff36f02c89ddd502673d017a7096d5e/Documentation/Release%20Notes.md">this file</a>.</li>
+<li>We added an <a href="https://github.com/MyTooliT/ICOc/blob/b93b2763aff36f02c89ddd502673d017a7096d5e/Documentation/FAQ.md">FAQ</a> text that should answer questions not covered by the main ReadMe.</li>
+<li>We rewrote the main readme file. The document should now contain more information that is relevant for the typical user of ICOc. Before this update the text contained more technical information that is only interesting for developers of the ICOc application, such as ADC settings and hardware configuration steps.</li>
+<li>We added a <a href="https://github.com/MyTooliT/ICOc/blob/b93b2763aff36f02c89ddd502673d017a7096d5e/Documentation/Tutorials/Testing.md">tutorial</a> that shows you how to test an STH (or SHA).</li>
+<li>The documentation now includes a description of <a href="https://github.com/MyTooliT/ICOc/blob/b93b2763aff36f02c89ddd502673d017a7096d5e/Documentation/Guidelines/Test.md">manual tests for the software</a>.</li>
+<li>We added a document that describes the <a href="https://github.com/MyTooliT/ICOc/blob/b93b2763aff36f02c89ddd502673d017a7096d5e/Documentation/Guidelines/Style.md">style guidelines</a> for the code base.</li>
+</ul>
+</div>
+<div id="install-1" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.14.2</span> Install<a href="#install-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li>We forgot to add the <a href="https://github.com/MyTooliT/ICOc/blob/b93b2763aff36f02c89ddd502673d017a7096d5e/requirements.txt">requirements file</a> for pip in the last release. This problem should now be fixed.</li>
+<li>We now use the <a href="https://python-can.readthedocs.io">Python CAN package</a> to access the PCAN-Basic API instead of including a copy of the Python API file in the repository.</li>
+</ul>
+</div>
+<div id="scripts-3" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.14.3</span> Scripts<a href="#scripts-3" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li>Add a simple wrapper script for the STH test. If you add its parent folder to your path you will be able to execute the test regardless of your current path. For more information, please take a look at the <a href="https://github.com/MyTooliT/ICOc/blob/b93b2763aff36f02c89ddd502673d017a7096d5e/ReadMe.md">ReadMe</a>.</li>
+<li>We added a simple wrapper script for <a href="https://github.com/MyTooliT/ICOc/blob/b93b2763aff36f02c89ddd502673d017a7096d5e/mwt.py"><code>mwt.py</code></a>. For more information, please take a look <a href="https://github.com/MyTooliT/ICOc/blob/b93b2763aff36f02c89ddd502673d017a7096d5e/Scripts/ReadMe.md">here</a>.</li>
+<li>The new scripts <a href="https://github.com/MyTooliT/ICOc/blob/b93b2763aff36f02c89ddd502673d017a7096d5e/Scripts/ReadMe.md"><code>Convert-MAC-Base64</code></a> and <a href="https://github.com/MyTooliT/ICOc/blob/b93b2763aff36f02c89ddd502673d017a7096d5e/Scripts/ReadMe.md"><code>Convert-Base64-MAC</code></a> convert a MAC address (e.g. <code>08:6b:d7:01:de:81</code>) into a Base64 encoded (8 character long) text (e.g. <code>CGvXAd6B</code>) and back. We use the Base64 encoded MAC address as Bluetooth advertisement name to uniquely identify a STH (or SHA).</li>
+</ul>
+</div>
+<div id="style-1" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.14.4</span> Style<a href="#style-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li>We formatted the code base with <a href="https://github.com/google/yapf">YAPF</a>.</li>
+</ul>
+</div>
+<div id="sth-test-8" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.14.5</span> STH Test<a href="#sth-test-8" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li>We added a test that checks, if updating the over the air update via the <a href="https://www.silabs.com/documents/public/application-notes/an1086-gecko-bootloader-bluetooth.pdf">ota-dfu</a> command line application works correctly. Currently this test is not activated by default, since it requires that the operator compiles the <code>ota-dfu</code> application.</li>
+<li>The test now uses the Base64 encoded version of the MAC address as default name. The rationale behind this update was that the name we used until now was not unique for a certain STH (or SHA). For more information, please take a look <a href="https://github.com/MyTooliT/ICOc/issues/1">here</a>.</li>
+<li>The EEPROM test now resets the STH at the end. This way the STH will already use the Base64 encoded MAC address as name after the test was executed. Before this update we had to do a manual reset for the name change to take place.</li>
+</ul>
+
+</div>
+</div>
+<div id="version-1.0.3" class="section level2 hasAnchor">
+<h2><span class="header-section-number">6.15</span> Version 1.0.3<a href="#version-1.0.3" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="bug-fixes" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.15.1</span> Bug Fixes<a href="#bug-fixes" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li>The data acquisition should now work on additional machines</li>
+</ul>
+</div>
+<div id="compatibility-1" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.15.2</span> Compatibility<a href="#compatibility-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li>Since the latest code base uses f-Strings the software now requires at least
+Python 3.6.</li>
+</ul>
+</div>
+<div id="requirements-3" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.15.3</span> Requirements<a href="#requirements-3" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li><p>You can now install the required Python packages using the command</p>
+<div class="sourceCode" id="cb55"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb55-1"><a href="#cb55-1"></a><span class="ex">pip</span> install -r requirements.txt</span></code></pre></div>
+<p>in the root of the repository.</p></li>
+</ul>
+</div>
+<div id="sth-test-9" class="section level3 hasAnchor">
+<h3><span class="header-section-number">6.15.4</span> STH Test<a href="#sth-test-9" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li><p>The test prints it output to the</p>
+<ul>
+<li>standard and</li>
+<li>standard error output</li>
+</ul>
+<p>instead of a log file. The program will still produces log files for the
+individual parts of the test, since the class that handles the CAN
+communication currently requires this behavior.</p></li>
+<li><p>The program now prints the various attributes of the tested STH, such as
+name and RSSI, on the standard output.</p></li>
+<li><p>The program stores the most important attributes of the STH and the result
+of the test in a PDF report (in the root of the repository).</p></li>
+<li><p>The various configuration data for the test is now stored in a single YAML
+file (<code>Configuration/config.yaml</code>).</p></li>
+<li><p>The test program is now location independent. This means you do not need to
+change the working directory to call the script any more. For example,
+executing the command:</p>
+<div class="sourceCode" id="cb56"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb56-1"><a href="#cb56-1"></a><span class="ex">py</span> mytoolit/test/production/sth.py -k battery -k connect</span></code></pre></div>
+<p>or the commands:</p>
+<div class="sourceCode" id="cb57"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb57-1"><a href="#cb57-1"></a><span class="bu">cd</span> mytoolit/test/production</span>
+<span id="cb57-2"><a href="#cb57-2"></a><span class="ex">py</span> sth.py -k battery -k connect</span></code></pre></div>
+<p>in the root of repository should have the same effect.</p></li>
+</ul>
+
+</div>
+</div>
+<div id="version-1.0.2" class="section level2 hasAnchor">
+<h2><span class="header-section-number">6.16</span> Version 1.0.2<a href="#version-1.0.2" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<ul>
+<li>Bug Elimination</li>
+</ul>
+
+</div>
+<div id="version-1.0.0" class="section level2 hasAnchor">
+<h2><span class="header-section-number">6.17</span> Version 1.0.0<a href="#version-1.0.0" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Initial Release:</p>
+<ul>
+<li><p>Release Date: 6. September 2019</p></li>
+<li><p>MyToolIt Watch(MyToolItWatch.py): Supports MyToolIt Watch
+functionality</p></li>
+<li><p>MyToolItTerminal (<code>mwt.py</code>): Terminal access to MyToolIt functionality</p></li>
+<li><p>Data Base Functionality: configKeys.xml</p></li>
+<li><p>Access to EEPROM via Excel interface</p></li>
+<li><p>Uses CanFd.py module to access MyToolIt protocol</p></li>
+<li><p>Supports Tests for internal verification:</p>
+<ul>
+<li><code>MyToolItTestSth.py</code></li>
+<li><code>MyToolItTestSthManually.py</code></li>
+<li><code>MyToolItTestStu.py</code></li>
+<li><code>MyToolItTestStuManually.py</code></li>
+</ul></li>
+<li><p>Supports configuration files for tests:</p>
+<ul>
+<li><code>SthLimits.py</code></li>
+<li><code>StuLimits.py</code></li>
+<li><code>testSignal.py</code></li>
+</ul></li>
+<li><p>Support graphical visualization in real time: <code>Plotter.py</code></p></li>
+</ul>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": null,
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["Documentation.pdf", "Documentation.epub"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>
