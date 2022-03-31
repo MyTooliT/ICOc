@@ -404,15 +404,15 @@ class UserInterface(CommandLineInterface):
         adc_reference = self.sAdcRef
 
         enabled_axes = (self.sensor.x, self.sensor.y, self.sensor.z)
-        try:
+
+        if self.channel_config_supported:
             sensor = self.Can.read_sensor_config()
             sensors = ", ".join([
                 f"{axis}: {number}"
                 for axis, number, enabled in zip(list("XYZ"), (
                     sensor.x, sensor.y, sensor.z), enabled_axes) if enabled
             ])
-        except UnsupportedFeatureException:
-            # No sensor configuration possible (old firmware/hardware)
+        else:
             sensors = ", ".join([
                 f"{axis}" for axis, enabled in zip(list("XYZ"), enabled_axes)
                 if enabled
@@ -521,6 +521,7 @@ class UserInterface(CommandLineInterface):
         return continue_main
 
     def connect_sth_window(self, number):
+
         curs_set(True)
 
         while True:
@@ -560,8 +561,20 @@ class UserInterface(CommandLineInterface):
                 self.vDeviceAddressSet(hex(device["Address"]))
                 self.sth_name = name
                 self.stdscr.refresh()
-                return self.Can.bBlueToothConnectPollingAddress(
+                success = self.Can.bBlueToothConnectPollingAddress(
                     MyToolItNetworkNr["STU1"], self.iAddress)
+                if not success:
+                    return False
+
+                # Check if the connected hardware supports channel
+                # configuration
+                try:
+                    self.Can.read_sensor_config()
+                    self.channel_config_supported = True
+                except UnsupportedFeatureException:
+                    self.channel_config_supported = False
+
+                return True
 
             elif key in {Key.CTRL_C, ord('q')}:
                 return False
