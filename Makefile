@@ -2,6 +2,7 @@
 
 OUTPUT_DIRECTORY := Bookdown
 INDEX_FILE := ReadMe.md
+OUTPUT_NAME := Documentation
 
 PDF_FILE := $(OUTPUT_DIRECTORY)/$(OUTPUT_NAME).pdf
 EPUB_FILE := $(OUTPUT_DIRECTORY)/$(OUTPUT_NAME).epub
@@ -36,6 +37,7 @@ $(EPUB_FILE):
 # Generate (GitBook) HTML document
 $(HTML_FILE):
 	Rscript -e "bookdown::render_book('$(INDEX_FILE)', 'bookdown::gitbook')"
+	Rscript -e "file.rename('$(HTML_FILE)', '$(OUTPUT_DIRECTORY)/index.html')"
 
 # Generate PDF
 $(PDF_FILE):
