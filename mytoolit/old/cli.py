@@ -640,7 +640,7 @@ class CommandLineInterface():
         """Update sensor configuration in the connected sensor device"""
 
         # Use specified sensor configuration
-        self.Can.change_sensor_config(
+        self.Can.write_sensor_config(
             *[1 if sensor <= 0 else sensor for sensor in self.sensor[0:3]])
 
     def vDataAquisition(self):

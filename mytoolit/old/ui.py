@@ -311,7 +311,7 @@ class UserInterface(CommandLineInterface):
         # Enable/disable axes for transmission
         self.set_sensors(*sensors)
         # We use sensor number 1 for disabled sensors
-        self.Can.change_sensor_config(
+        self.Can.write_sensor_config(
             *[1 if sensor <= 0 else sensor for sensor in sensors])
 
     def change_runtime_window(self):

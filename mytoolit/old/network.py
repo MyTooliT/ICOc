@@ -1798,7 +1798,7 @@ class Network(object):
     # = Configuration =
     # =================
 
-    def change_sensor_config(self, x: int = 1, y: int = 2, z: int = 3) -> None:
+    def write_sensor_config(self, x: int = 1, y: int = 2, z: int = 3) -> None:
         """Change the sensor numbers for the different “axes”
 
         Parameters
