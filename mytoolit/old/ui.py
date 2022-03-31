@@ -17,6 +17,7 @@ from mytoolit.old.MyToolItCommands import (
 )
 from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
 from mytoolit.old.MyToolItSth import fVoltageBattery
+from mytoolit.old.network import UnsupportedFeatureException
 
 
 class Key:
@@ -402,13 +403,20 @@ class UserInterface(CommandLineInterface):
         sampling_rate = self.samplingRate
         adc_reference = self.sAdcRef
 
-        sensor = self.Can.read_sensor_config()
-        sensors = ", ".join([
-            f"{axis}: {number}"
-            for axis, number, enabled in zip(list("XYZ"), (
-                sensor.x, sensor.y, sensor.z), (self.sensor.x, self.sensor.y,
-                                                self.sensor.z)) if enabled
-        ])
+        enabled_axes = (self.sensor.x, self.sensor.y, self.sensor.z)
+        try:
+            sensor = self.Can.read_sensor_config()
+            sensors = ", ".join([
+                f"{axis}: {number}"
+                for axis, number, enabled in zip(list("XYZ"), (
+                    sensor.x, sensor.y, sensor.z), enabled_axes) if enabled
+            ])
+        except UnsupportedFeatureException:
+            # No sensor configuration possible (old firmware/hardware)
+            sensors = ", ".join([
+                f"{axis}" for axis, enabled in zip(list("XYZ"), enabled_axes)
+                if enabled
+            ])
 
         infos.extend([("Run Time", f"{runtime} s\n"), ("Prescaler", prescaler),
                       ("Acquisition Time", acquistion_time),
