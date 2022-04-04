@@ -82,7 +82,7 @@ LOGGER:
     # ICOc will write CAN messages, if you specify the value `DEBUG`. If you use
     # a different allowed value, such as `INFO` or `WARNING` no messages will be
     # logged.
-    LEVEL: DEBUG
+    LEVEL: INFO
 
 GUI:
   HOST: localhost # Socket address of Matplotlib GUI
