@@ -301,18 +301,36 @@ class UserInterface(CommandLineInterface):
 
             return int(value)
 
+        def enable_disable_sensors(axis, default):
+            self.add_string(f"Enable “{axis}” axis sensor "
+                            "(1 to enable, 0 to disable): ")
+
+            value = self.read_input(
+                default=str(default),
+                allowed_key=lambda key: ord('0') <= key <= ord('1'),
+                allowed_value=lambda value: len(value) == 1)[1]
+
+            return int(value)
+
         curs_set(True)
         self.stdscr.clear()
 
-        sensors = [
-            read_channel_value(axis, default_value)
-            for default_value, axis in enumerate(list("XYZ"), start=1)
-        ]
+        if self.channel_config_supported:
+            sensors = [
+                read_channel_value(axis, default_value)
+                for default_value, axis in enumerate(list("XYZ"), start=1)
+            ]
+            # We use sensor number 1 for disabled sensors
+            self.Can.write_sensor_config(
+                *[1 if sensor <= 0 else sensor for sensor in sensors])
+        else:
+            sensors = [
+                enable_disable_sensors(axis, default_value)
+                for default_value, axis in zip((1, 1, 1), list("XYZ"))
+            ]
+
         # Enable/disable axes for transmission
         self.set_sensors(*sensors)
-        # We use sensor number 1 for disabled sensors
-        self.Can.write_sensor_config(
-            *[1 if sensor <= 0 else sensor for sensor in sensors])
 
     def change_runtime_window(self):
         curs_set(True)
