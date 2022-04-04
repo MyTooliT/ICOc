@@ -106,7 +106,56 @@ ICOc requires at least Python `3.7`. The software also supports Python `3.8`, `3
 
 To communicate with the STU you need to install the driver for the PCAN adapter. You can find the download link for Windows [here](https://www.peak-system.com/quick/DrvSetup). Please make sure that you include the “PCAN-Basic API” when you install the driver.
 
-> Note: The parts of the package that work on Linux do not use the PCAN interface. Instead you need to make sure that your CAN adapter is available using the [SocketCAN](https://en.wikipedia.org/wiki/SocketCAN) interface.
+---
+
+**Note:** The parts of the package that work on Linux do not use the PCAN interface. Instead you need to make sure that your CAN adapter is available via the [SocketCAN](https://en.wikipedia.org/wiki/SocketCAN) interface.
+
+The following steps describe one possible option to configure the CAN interface on [Fedora Linux](https://getfedora.org) **manually**.
+
+1. Connect the CAN adapter to the computer that runs Linux (or alternatively the Linux VM)
+2. Check the list of available interfaces:
+
+   ```sh
+   networkctl list
+   ```
+
+   The command output should list the CAN interface with the name `can0`
+
+3. Configure the CAN interface with the following command:
+
+   ```
+   sudo ip link set can0 type can bitrate 1000000
+   ```
+
+4. Bring up the CAN interface
+
+   ```
+   sudo ip link set can0 up
+   ```
+
+You can also bring up the CAN interface **automatically**. For that please store the following text:
+
+```ini
+[Match]
+Name=can*
+
+[CAN]
+BitRate=1000000
+```
+
+in a file called `/etc/systemd/network/can.network`. After that you can either restart your computer/VM or reload the configuration with the command:
+
+```sh
+networkctl reload
+```
+
+**Sources**:
+
+- [SocketCAN device on Ubuntu Core](https://askubuntu.com/questions/1082277/socketcan-device-on-ubuntu-core)
+- [Question: How can I automatically bring up CAN interface using netplan?](https://github.com/linux-can/can-utils/issues/68#issuecomment-584505426)
+- [networkd › systemd › Wiki › ubuntuusers](https://wiki.ubuntuusers.de/systemd/networkd/)
+
+---
 
 #### Simplicity Commander (Optional)
 
