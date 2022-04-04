@@ -324,9 +324,12 @@ class UserInterface(CommandLineInterface):
             self.Can.write_sensor_config(
                 *[1 if sensor <= 0 else sensor for sensor in sensors])
         else:
+            enabled_sensors = map(
+                lambda channel_number: int(bool(channel_number)),
+                (self.sensor.x, self.sensor.y, self.sensor.z))
             sensors = [
                 enable_disable_sensors(axis, default_value)
-                for default_value, axis in zip((1, 1, 1), list("XYZ"))
+                for default_value, axis in zip(enabled_sensors, list("XYZ"))
             ]
 
         # Enable/disable axes for transmission
