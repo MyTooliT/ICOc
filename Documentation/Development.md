@@ -203,11 +203,20 @@ The text below specifies extended manual test that should be executed before we 
 8. Enable the x-axis and y-axis
 
    1. Press <kbd>p</kbd>
-   2. Remove the default axis config (press <kbd>⌫</kbd> at least three times)
+   2. Remove the default axis config for the x axis (press <kbd>⌫</kbd> at least one time)
    3. Enter the characters “23456789ab”
    4. The last step should not have changed the empty input value
-   5. Enter the right config values: “110”
-   6. Press <kbd>⏎</kbd>
+   5. Enable the x-axis measurement:
+      1. Press <kbd>1</kbd>
+      2. Press <kbd>⏎</kbd>
+   6. Enable the y-axis measurement:
+      1. Press <kbd>⌫</kbd>
+      2. Press <kbd>1</kbd>
+      3. Press <kbd>⏎</kbd>
+   7. Disable the z-axis measurement:
+      1. Press <kbd>⌫</kbd>
+      1. Press <kbd>0</kbd>
+      1. Press <kbd>⏎</kbd>
 
 9. Start the data acquisition
 
