@@ -4,7 +4,7 @@ from time import time
 from mytoolit.can import Message, Network
 
 
-async def test(identifier="Test-STH"):
+async def test(identifier="Aladdin"):
     async with Network() as network:
         node = 'STH 1'
         start_time = time()
@@ -21,7 +21,7 @@ async def test(identifier="Test-STH"):
         signal_type = 253
         # Byte 3 (Time till the RF is turned on in seconds)
         wait_time_seconds = 0
-        # Byte 4–5 (Duration the RF is turned on in seconds; Little Endian)
+        # Byte 4–5 (Duration the RF is turned on in seconds; Big Endian)
         duration_rf_seconds = 0
         # Byte 6 (RF Power; Max = 32))
         power = 0
@@ -34,7 +34,7 @@ async def test(identifier="Test-STH"):
             channel_number,
             signal_type,
             wait_time_seconds,
-            *list((duration_rf_seconds).to_bytes(2, byteorder='little')),
+            *list((duration_rf_seconds).to_bytes(2, byteorder='big')),
             power,
             antenna,
             packet_length,
