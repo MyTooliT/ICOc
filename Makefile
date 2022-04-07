@@ -19,8 +19,6 @@ all: init $(EPUB_FILE) $(HTML_FILE) $(PDF_FILE) cleanup
 init:
 	Rscript -e "dir.create('Pictures')"
 	Rscript -e "file.copy('Documentation/Pictures', '.', recursive=T)"
-	msc-gen -T pdf Pictures/Software-Update-Modelshop.signalling
-	msc-gen -T svg Pictures/Software-Update-Modelshop.signalling
 
 # Remove pictures from repository root
 cleanup:
