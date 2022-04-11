@@ -719,7 +719,7 @@ class CommandLineInterface():
         status = self.Can.pcan.SetValue(self.Can.m_PcanHandle,
                                         PCAN_RECEIVE_EVENT, int(receive_event))
         if status != PCAN_ERROR_OK:
-            error_message = self.get_can_error(
+            error_message = self.get_can_error_message(
                 status, "Unable to set CAN receive event")
             raise Exception(error_message)
 
@@ -749,7 +749,7 @@ class CommandLineInterface():
         while status != PCAN_ERROR_QRCVEMPTY:
             status = self.read_streaming_message()
             if status not in {PCAN_ERROR_OK, PCAN_ERROR_QRCVEMPTY}:
-                error_message = self.get_can_error(
+                error_message = self.get_can_error_message(
                     status, "Unable to read streaming message")
                 raise Exception(error_message)
 
