@@ -24,7 +24,12 @@ The framework currently requires
 **Notes**:
 
 - In theory you can also use ICOc in Windows 11. However, we did not test the software on this operating system.
-- Parts of the test suite also works on Linux. The ICOc measurement software does [**not**](https://github.com/MyTooliT/ICOc/issues/4).
+- Parts of the test suite also works on Linux
+  - The ICOc measurement software does [**not**](https://github.com/MyTooliT/ICOc/issues/4).
+  - by default NO kernel driver installation needed on linux, just
+  - sudo ip link set can0 up type can bitrate 1000000
+  - this enables to use RF_tests.py
+  - (todo doc - check lsusb and check driver availability, but only troubleshooting, no udev rules needed either :D )
 
 For more information about other required software components, please read the subsection [“Software”](#section:software) in this document.
 
