@@ -63,4 +63,5 @@ async def pfeifferl(identifier, channel_number=0, signal_type  = "cw", wait_time
 
 
 if __name__ == '__main__':
+    # call async fct via asyncio.run
     run(pfeifferl(identifier="Aladdin"))
