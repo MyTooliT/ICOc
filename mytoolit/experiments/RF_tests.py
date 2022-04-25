@@ -5,7 +5,7 @@ from mytoolit.can import Message, Network
 
 
 async def pfeifferl(identifier, channel_number=0, signal_type  = "cw", wait_time_seconds = 0, duration_rf_seconds = 0,
-                        power = 0, antenna = 1, packet_length = 37):
+                        power = 0, antenna = 1, packet_length = 37, myprint = print):
     """ 
         perform RF test signals (cw/pn9) and exit back to regular operability after completion
 
@@ -18,6 +18,9 @@ async def pfeifferl(identifier, channel_number=0, signal_type  = "cw", wait_time
         - 6,   RF power 0-32, default = 0 (uint8)
         - 7,   physical antenna, default = 1 (uint8)
         - 8,   length of RF packet, default = 37 (uint8)
+        - *,   myprint redirector, default = print (fct_ptr)
+
+        returns: execution_time
     """
 
     if signal_type == "pn9":
@@ -35,7 +38,7 @@ async def pfeifferl(identifier, channel_number=0, signal_type  = "cw", wait_time
         await network.connect_sensor_device(identifier)
         name = await network.get_name(node)
         mac_address = await network.get_mac_address(node)
-        print(f"Connected to sensor device “{name}” with MAC "
+        myprint(f"Connected to sensor device “{name}” with MAC "
                 f"address “{mac_address}”")
 
         data = [
@@ -53,13 +56,15 @@ async def pfeifferl(identifier, channel_number=0, signal_type  = "cw", wait_time
                             receiver='STH 1',
                             request=True,
                             data=data)
-        print(f"Send message: {message}")
+        myprint(f"Send message: {message}")
         answer = await network._request(message, "“Pfeifferl” test command")
 
-        print(Message(answer))
+        myprint(Message(answer))
 
-        print("\nExecution took {:.3} seconds".format(time() - start_time))
+        exec_time = time() - start_time
+        myprint("\nExecution took {:.3} seconds".format(exec_time))
 
+        return exec_time
 
 
 if __name__ == '__main__':
