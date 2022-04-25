@@ -38,8 +38,7 @@ async def pfeifferl(identifier, channel_number=0, signal_type  = "cw", wait_time
         await network.connect_sensor_device(identifier)
         name = await network.get_name(node)
         mac_address = await network.get_mac_address(node)
-        myprint(f"Connected to sensor device “{name}” with MAC "
-                f"address “{mac_address}”")
+        myprint("Connected to sensor device “{name}” with MAC address “{mac_address}”")
 
         data = [
             channel_number,
@@ -56,7 +55,7 @@ async def pfeifferl(identifier, channel_number=0, signal_type  = "cw", wait_time
                             receiver='STH 1',
                             request=True,
                             data=data)
-        myprint(f"Send message: {message}")
+        myprint("Send message: {message}")
         answer = await network._request(message, "“Pfeifferl” test command")
 
         myprint(Message(answer))
