@@ -88,7 +88,7 @@ class CommandLineInterface():
                            FreshLog=True,
                            sender=MyToolItNetworkNr["SPU1"],
                            receiver=MyToolItNetworkNr["STH1"])
-        self.Can.Logger.Info(f"Start Time: {datetime.now().isoformat()}")
+        self.logger.info("Initialized CAN class")
 
         self.set_sensors(*self.args.points)
 
@@ -127,16 +127,15 @@ class CommandLineInterface():
             self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
         if self.Can.bConnected:
             self.Can.readThreadStop()
-        self.Can.Logger.Info("End Time Stamp")
+        self.logger.info("Cleanup done")
 
         if self.bError:
-            self.Can.Logger.Info("!!!!Error!!!!")
-            print("!!!!Error!!!!")
-        else:
-            self.Can.Logger.Info("Fin")
+            self.logger.error("An error occurred")
+
         self.Can.__exit__()
+        self.logger.info("Closed CAN connection")
         if self.bError:
-            raise
+            raise RuntimeError("An error occurred")
 
     def parse_arguments(self):
         self.parser = argparse.ArgumentParser(
@@ -268,74 +267,74 @@ class CommandLineInterface():
         return filepath
 
     def _statusWords(self):
-        self.Can.Logger.Info("STH Status Word: {}".format(
+        self.logger.info("STH Status Word: {}".format(
             self.Can.node_status(MyToolItNetworkNr["STH1"])))
-        self.Can.Logger.Info("STU Status Word: {}".format(
+        self.logger.info("STU Status Word: {}".format(
             self.Can.node_status(MyToolItNetworkNr["STU1"])))
 
         status = self.Can.error_status(MyToolItNetworkNr["STH1"])
         if status.adc_overrun():
             self.bError = True
-        self.Can.Logger.Info(f"STH Error Word: {status}")
+        self.logger.info(f"STH Error Word: {status}")
 
-        self.Can.Logger.Info("STU Error Word: {}".format(
+        self.logger.info("STU Error Word: {}".format(
             self.Can.error_status(MyToolItNetworkNr["STU1"])))
 
     def _BlueToothStatistics(self):
-        SendCounter = self.Can.BlueToothCmd(
-            MyToolItNetworkNr["STH1"], SystemCommandBlueTooth["SendCounter"])
-        self.Can.Logger.Info("BlueTooth Send Counter(STH1): " +
-                             str(SendCounter))
-        Rssi = self.Can.BlueToothRssi(MyToolItNetworkNr["STH1"])
-        self.Can.Logger.Info("BlueTooth Rssi(STH1): " + str(Rssi) + "dBm")
-        SendCounter = self.Can.BlueToothCmd(
-            MyToolItNetworkNr["STU1"], SystemCommandBlueTooth["SendCounter"])
-        self.Can.Logger.Info("BlueTooth Send Counter(STU1): " +
-                             str(SendCounter))
-        ReceiveCounter = self.Can.BlueToothCmd(
-            MyToolItNetworkNr["STU1"],
-            SystemCommandBlueTooth["ReceiveCounter"])
-        self.Can.Logger.Info("BlueTooth Receive Counter(STU1): " +
-                             str(ReceiveCounter))
-        Rssi = self.Can.BlueToothRssi(MyToolItNetworkNr["STU1"])
-        self.Can.Logger.Info("BlueTooth Rssi(STU1): " + str(Rssi) + "dBm")
+
+        def log_statistics(node, node_description):
+            send_counter = self.Can.BlueToothCmd(
+                MyToolItNetworkNr[node], SystemCommandBlueTooth["SendCounter"])
+            self.logger.info(f"Bluetooth send counter of {node_description}: "
+                             f"{send_counter}")
+            receive_counter = self.Can.BlueToothCmd(
+                MyToolItNetworkNr[node],
+                SystemCommandBlueTooth["ReceiveCounter"])
+            self.logger.info(f"Bluetooth receive counter of "
+                             f"{node_description}: {receive_counter}")
+
+            rssi = self.Can.BlueToothRssi(MyToolItNetworkNr[node])
+            self.logger.info(f"RSSI of {node_description}: {rssi} dBm")
+
+        log_statistics('STH1', "sensor node")
+        log_statistics('STU1', "STU")
 
     def _RoutingInformationSthSend(self):
         self.iSthSendCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STH1"], SystemCommandRouting["SendCounter"],
             MyToolItNetworkNr["STU1"])
-        self.Can.Logger.Info("STH1 - Send Counter(Port STU1): " +
-                             str(self.iSthSendCounter))
+        self.logger.info(
+            f"Sensor node - Send counter (port STU): {self.iSthSendCounter}")
         SendCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STH1"], SystemCommandRouting["SendFailCounter"],
             MyToolItNetworkNr["STU1"])
-        self.Can.Logger.Info("STH1 - Send Fail Counter(Port STU1): " +
-                             str(SendCounter))
+        self.logger.info(
+            f"Sensor node - Send fail counter (port STU): {SendCounter}")
         SendCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STH1"],
             SystemCommandRouting["SendLowLevelByteCounter"],
             MyToolItNetworkNr["STU1"])
-        self.Can.Logger.Info("STH1 - Send Byte Counter(Port STU1): " +
-                             str(SendCounter))
+        self.logger.info(
+            f"Sensor node - Send byte counter (port STU): {SendCounter}")
 
     def _RoutingInformationSthReceive(self):
         ReceiveCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STH1"], SystemCommandRouting["ReceiveCounter"],
             MyToolItNetworkNr["STU1"])
-        self.Can.Logger.Info("STH1 - Receive Counter(Port STU1): " +
-                             str(ReceiveCounter))
+        self.logger.info(
+            f"Sensor node - Receive counter (port STU): {ReceiveCounter}")
         ReceiveFailCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STH1"],
             SystemCommandRouting["ReceiveFailCounter"],
             MyToolItNetworkNr["STU1"])
-        self.Can.Logger.Info("STH1 - Receive Fail Counter(Port STU1): " +
-                             str(ReceiveFailCounter))
+        self.logger.info("Sensor node - Receive fail counter (port STU): "
+                         f"{ReceiveFailCounter}")
         ReceiveCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STH1"],
             SystemCommandRouting["ReceiveLowLevelByteCounter"],
             MyToolItNetworkNr["STU1"])
-        self.Can.Logger.Info("STH1 - Receive Byte Counter(Port STU1): " +
-                             str(ReceiveCounter))
+        self.logger.info(
+            f"Sensor node - Receive byte counter (port STU): {ReceiveCounter}")
         return ReceiveFailCounter
 
     def _RoutingInformationSth(self):
@@ -347,38 +346,38 @@ class CommandLineInterface():
         self.iStuSendCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STU1"], SystemCommandRouting["SendCounter"],
             MyToolItNetworkNr["SPU1"])
-        self.Can.Logger.Info("STU1 - Send Counter(Port SPU1): " +
-                             str(self.iStuSendCounter))
+        self.logger.info("STU1 - Send Counter(Port SPU1): " +
+                         str(self.iStuSendCounter))
         SendCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STU1"], SystemCommandRouting["SendFailCounter"],
             MyToolItNetworkNr["SPU1"])
-        self.Can.Logger.Info("STU1 - Send Fail Counter(Port SPU1): " +
-                             str(SendCounter))
+        self.logger.info("STU1 - Send Fail Counter(Port SPU1): " +
+                         str(SendCounter))
         SendCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STU1"],
             SystemCommandRouting["SendLowLevelByteCounter"],
             MyToolItNetworkNr["SPU1"])
-        self.Can.Logger.Info("STU1 - Send Byte Counter(Port SPU1): " +
-                             str(SendCounter))
+        self.logger.info("STU1 - Send Byte Counter(Port SPU1): " +
+                         str(SendCounter))
 
     def _RoutingInformationStuPortSpuReceive(self):
         ReceiveCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STU1"], SystemCommandRouting["ReceiveCounter"],
             MyToolItNetworkNr["SPU1"])
-        self.Can.Logger.Info("STU1 - Receive Counter(Port SPU1): " +
-                             str(ReceiveCounter))
+        self.logger.info("STU1 - Receive Counter(Port SPU1): " +
+                         str(ReceiveCounter))
         ReceiveFailCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STU1"],
             SystemCommandRouting["ReceiveFailCounter"],
             MyToolItNetworkNr["SPU1"])
-        self.Can.Logger.Info("STU1 - Receive Fail Counter(Port SPU1): " +
-                             str(ReceiveFailCounter))
+        self.logger.info("STU1 - Receive Fail Counter(Port SPU1): " +
+                         str(ReceiveFailCounter))
         ReceiveCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STU1"],
             SystemCommandRouting["ReceiveLowLevelByteCounter"],
             MyToolItNetworkNr["SPU1"])
-        self.Can.Logger.Info("STU1 - Receive Byte Counter(Port SPU1): " +
-                             str(ReceiveCounter))
+        self.logger.info("STU1 - Receive Byte Counter(Port SPU1): " +
+                         str(ReceiveCounter))
         return ReceiveFailCounter
 
     def _RoutingInformationStuPortSpu(self):
@@ -390,38 +389,38 @@ class CommandLineInterface():
         iStuSendCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STU1"], SystemCommandRouting["SendCounter"],
             MyToolItNetworkNr["STH1"])
-        self.Can.Logger.Info("STU1 - Send Counter(Port STH1): " +
-                             str(iStuSendCounter))
+        self.logger.info("STU1 - Send Counter(Port STH1): " +
+                         str(iStuSendCounter))
         SendCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STU1"], SystemCommandRouting["SendFailCounter"],
             MyToolItNetworkNr["STH1"])
-        self.Can.Logger.Info("STU1 - Send Fail Counter(Port STH1): " +
-                             str(SendCounter))
+        self.logger.info("STU1 - Send Fail Counter(Port STH1): " +
+                         str(SendCounter))
         SendCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STU1"],
             SystemCommandRouting["SendLowLevelByteCounter"],
             MyToolItNetworkNr["STH1"])
-        self.Can.Logger.Info("STU1 - Send Byte Counter(Port STH1): " +
-                             str(SendCounter))
+        self.logger.info("STU1 - Send Byte Counter(Port STH1): " +
+                         str(SendCounter))
 
     def _RoutingInformationStuPortSthReceive(self):
         ReceiveCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STU1"], SystemCommandRouting["ReceiveCounter"],
             MyToolItNetworkNr["STH1"])
-        self.Can.Logger.Info("STU1 - Receive Counter(Port STH1): " +
-                             str(ReceiveCounter))
+        self.logger.info("STU1 - Receive Counter(Port STH1): " +
+                         str(ReceiveCounter))
         ReceiveFailCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STU1"],
             SystemCommandRouting["ReceiveFailCounter"],
             MyToolItNetworkNr["STH1"])
-        self.Can.Logger.Info("STU1 - Receive Fail Counter(Port STH1): " +
-                             str(ReceiveFailCounter))
+        self.logger.info("STU1 - Receive Fail Counter(Port STH1): " +
+                         str(ReceiveFailCounter))
         ReceiveCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STU1"],
             SystemCommandRouting["ReceiveLowLevelByteCounter"],
             MyToolItNetworkNr["STH1"])
-        self.Can.Logger.Info("STU1 - Receive Byte Counter(Port STH1): " +
-                             str(ReceiveCounter))
+        self.logger.info("STU1 - Receive Byte Counter(Port STH1): " +
+                         str(ReceiveCounter))
         return ReceiveFailCounter
 
     def _RoutingInformationStuPortSth(self):
@@ -438,8 +437,7 @@ class CommandLineInterface():
             iSendFail = 0
         iSendFail = iSendFail / self.iSthSendCounter
         iSendFail *= 100
-        self.Can.Logger.Info("Send fail approximately: " + str(iSendFail) +
-                             "%")
+        self.logger.info("Send fail approximately: " + str(iSendFail) + "%")
         if 0 < iSendFail:
             print("Send fail approximately: " + str(iSendFail) + "%")
         return ReceiveFailCounter
@@ -513,8 +511,7 @@ class CommandLineInterface():
             self.tSocket.sendall(data)
             sleep(0.1)
             ack = self.tSocket.recv(2**10)
-            self.Can.Logger.Info(
-                f"{datetime.now().time()}: Received acknowledgment: {ack}")
+            self.logger.debug(f"Received acknowledgment: {ack}")
             if ack is not None and ack == data:
                 bSend = False
 
@@ -693,10 +690,10 @@ class CommandLineInterface():
                 # class first.
                 self.Can.readThreadStop()
                 self.guiProcessRestart()
-                self.Can.Logger.Info("Start Acquiring Data")
+                self.logger.info("Start Acquiring Data")
                 self.vGetStreamingAccData()
             else:
-                self.Can.Logger.Error("Device not allocable")
+                self.logger.error("Device not allocable")
         except KeyboardInterrupt:
             self.KeyBoardInterrupt = True
         self.__exit__()
@@ -826,8 +823,8 @@ class CommandLineInterface():
         message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
                                         MyToolItNetworkNr["STH1"],
                                         [accFormat.asbyte])
-        self.Can.Logger.Info("MsgId/Subpayload(Acc): " + hex(message.ID) +
-                             "/" + hex(accFormat.asbyte))
+        self.logger.info("MsgId/Subpayload(Acc): " + hex(message.ID) + "/" +
+                         hex(accFormat.asbyte))
         endTime = self.Can.get_elapsed_time() + 4000
         while ack is None and self.Can.get_elapsed_time() < endTime:
             self.Can.WriteFrame(message)
@@ -840,7 +837,7 @@ class CommandLineInterface():
         ack = self.vGetStreamingAccDataAccStart()
         currentTime = self.Can.get_elapsed_time()
         if ack is None:
-            self.Can.Logger.Error(
+            self.logger.error(
                 f"No acknowledge received from STH “{self.iAddress}”")
             self.aquireEndTime = currentTime
         elif self.iRunTime == 0:
@@ -884,7 +881,7 @@ class CommandLineInterface():
                                               timestamp=timestamp)
             self.update_graph_data(**{axis: values[0]})
         else:
-            self.Can.Logger.Error("Wrong Ack format")
+            self.logger.error("Wrong Ack format")
 
     def ReadMessage(self):
         status, message, timestamp = self.Can.pcan.Read(self.Can.m_PcanHandle)
@@ -901,32 +898,32 @@ class CommandLineInterface():
         if status != PCAN_ERROR_QRCVEMPTY:
             error_message = self.get_can_error_message(
                 status, "Unexpected CAN status value")
-            self.Can.Logger.Error(error_message)
+            self.logger.error(error_message)
             print(error_message, file=stderr)
             raise Exception(error_message)
 
         return None
 
     def _vRunConsoleStartupLoggerPrint(self):
-        self.Can.Logger.Info(f"Log File: {self.Can.Logger.filepath.name}")
-        self.Can.Logger.Info(f"STH Name: {self.sth_name}")
-        self.Can.Logger.Info(f"Bluetooth Address: {self.iAddress}")
-        self.Can.Logger.Info(f"Connect to STH: {self.connect}")
-        self.Can.Logger.Info(f"Run Time: {self.iRunTime} s")
-        self.Can.Logger.Info(f"Prescaler: {self.iPrescaler}")
+        self.logger.info(f"Log File: {self.Can.Logger.filepath.name}")
+        self.logger.info(f"STH Name: {self.sth_name}")
+        self.logger.info(f"Bluetooth Address: {self.iAddress}")
+        self.logger.info(f"Connect to STH: {self.connect}")
+        self.logger.info(f"Run Time: {self.iRunTime} s")
+        self.logger.info(f"Prescaler: {self.iPrescaler}")
         aqcuisition_time = AdcAcquisitionTime.inverse[self.iAquistionTime]
         oversampling_rate = AdcOverSamplingRate.inverse[self.iOversampling]
-        self.Can.Logger.Info(f"Acquisition Time: {aqcuisition_time}")
-        self.Can.Logger.Info(f"Oversampling Rate: {oversampling_rate}")
-        self.Can.Logger.Info(f"Reference Voltage: {self.sAdcRef}")
+        self.logger.info(f"Acquisition Time: {aqcuisition_time}")
+        self.logger.info(f"Oversampling Rate: {oversampling_rate}")
+        self.logger.info(f"Reference Voltage: {self.sAdcRef}")
         data_sets = DataSets.inverse[self.tAccDataFormat]
-        self.Can.Logger.Info(f"Data Sets: {data_sets}")
+        self.logger.info(f"Data Sets: {data_sets}")
         sensors = "".join([
             f"{axis}: {sensor}" if sensor else ""
             for sensor, axis in ((self.sensor.x, "X"), (self.sensor.y, "Y"),
                                  (self.sensor.z, "Z"))
         ])
-        self.Can.Logger.Info(f"Sensors: {sensors}")
+        self.logger.info(f"Sensors: {sensors}")
 
     def _vRunConsoleStartup(self):
         self._vRunConsoleStartupLoggerPrint()
