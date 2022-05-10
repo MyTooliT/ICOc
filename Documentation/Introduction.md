@@ -25,7 +25,7 @@ The framework currently requires
 **Notes**:
 
 - In theory you can also use ICOc in Windows 11. However, we did not test the software on this operating system.
-- Parts of the test suite also works on Linux. The ICOc measurement software does [**not**](https://github.com/MyTooliT/ICOc/issues/4).
+- The test suite (which uses a CAN class based on [python-can](https://python-can.readthedocs.io)) also works on Linux. The ICOc measurement software does [**not**](https://github.com/MyTooliT/ICOc/issues/4). For more information on how to use (parts of) the ICOtronic on Linux, please take a look [here](#introduction:section:pcan-driver:linux).
 
 For more information about other required software components, please read the subsection [“Software”](#section:software) in this document.
 
@@ -78,6 +78,8 @@ ICOc requires at least Python `3.7`. The software also supports Python `3.8`, `3
 To communicate with the STU you need to install the driver for the PCAN adapter. You can find the download link for Windows [here](https://www.peak-system.com/quick/DrvSetup). Please make sure that you include the “PCAN-Basic API” when you install the driver.
 
 ---
+
+<a name="introduction:section:pcan-driver:linux"></a>
 
 **Note:** The parts of the package that work on Linux do not use the PCAN interface. Instead you need to make sure that your CAN adapter is available via the [SocketCAN](https://en.wikipedia.org/wiki/SocketCAN) interface.
 
