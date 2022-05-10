@@ -20,7 +20,7 @@ The software reads data from the Stationary Transceiver Unit (STU) via CAN using
 The framework currently requires
 
 - [Microsoft Windows 10](https://microsoft.com/windows), and
-- [Python 3](#readme:section:python).
+- [Python 3](#introduction:section:python).
 
 **Notes**:
 
@@ -65,13 +65,13 @@ In order to use ICOc you need at least:
 
 ### Software
 
-<a name="readme:section:python"></a>
+<a name="introduction:section:python"></a>
 
 #### Python
 
 ICOc requires at least Python `3.7`. The software also supports Python `3.8`, `3.9` and `3.10`. You can download Python [here](https://www.python.org/downloads). When you install the software, please do not forget to enable the checkbox **“Add Python to PATH”** in the setup window of the installer.
 
-<a name="readme:section:pytables"></a>
+<a name="introduction:section:pytables"></a>
 
 #### PCAN Driver
 
@@ -146,7 +146,7 @@ If you do not want to change the config file, then please just make sure that `c
 
 Please note, that you do not need to install Simplicity Commander if you just want to measure data with ICOc.
 
-<a name="readme:section:install"></a>
+<a name="introduction:section:install"></a>
 
 ## Install
 
@@ -274,7 +274,7 @@ To start the data acquisition press the key <kbd>s</kbd>. Afterwards a graphical
 
 will show the measured acceleration. To stop the data acquisition, click the close button on the top of the graph.
 
-<a name="readme:section:measurement-data"></a>
+<a name="introduction:section:measurement-data"></a>
 
 ## Measurement Data
 
