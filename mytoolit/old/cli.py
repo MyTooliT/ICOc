@@ -696,7 +696,7 @@ class CommandLineInterface():
                 self.logger.error("Device not allocable")
         except KeyboardInterrupt:
             self.KeyBoardInterrupt = True
-        self.__exit__()
+            self.__exit__()
 
     def close(self):
         if self.Can.RunReadThread:
