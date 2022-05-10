@@ -3,7 +3,7 @@ book_filename:
 delete_merged_file: true
 output_dir: Bookdown
 rmd_files:
-  - ReadMe.md
+  - Documentation/Introduction.md
   - Documentation/Tutorials.md
   - Documentation/Scripts.md
   - Documentation/Development.md

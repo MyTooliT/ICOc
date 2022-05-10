@@ -1,7 +1,7 @@
 # -- Variables -----------------------------------------------------------------
 
 OUTPUT_DIRECTORY := Bookdown
-INDEX_FILE := ReadMe.md
+INDEX_FILE := Documentation/Introduction.md
 OUTPUT_NAME := Documentation
 
 PDF_FILE := $(OUTPUT_DIRECTORY)/$(OUTPUT_NAME).pdf
