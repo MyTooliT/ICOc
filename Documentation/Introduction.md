@@ -272,7 +272,7 @@ To start the data acquisition press the key <kbd>s</kbd>. Afterwards a graphical
 
 ![Acceleration](Documentation/Pictures/Acceleration.png)
 
-will show the measured acceleration. To stop the data acquisition, click the close button on the top of the graph.
+will show the measured acceleration. To stop the data acquisition, click the close button on the top of the graph. For more information on how to use ICOc and the test suite, please take a look at the [section “Tutorials”](#tutorials:section:tutorials).
 
 <a name="introduction:section:measurement-data"></a>
 
