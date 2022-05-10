@@ -72,7 +72,7 @@ class CommandLineInterface():
         self.parse_arguments()
 
         logger = getLogger(__name__)
-        logger.setLevel(self.args.log)
+        logger.setLevel(self.args.log.upper())
         handler = StreamHandler()
         handler.setFormatter(
             Formatter('{asctime} {levelname} {name} {message}', style='{'))
@@ -217,8 +217,8 @@ class CommandLineInterface():
         logging_group = self.parser.add_argument_group(title="Logging")
         logging_group.add_argument(
             '--log',
-            choices=('DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'),
-            default='WARNING',
+            choices=('debug', 'info', 'warning', 'error', 'critical'),
+            default='warning',
             required=False,
             help="Minimum level of messages written to log")
 
