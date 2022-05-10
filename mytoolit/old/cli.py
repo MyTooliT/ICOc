@@ -6,6 +6,7 @@ from argparse import ArgumentDefaultsHelpFormatter
 from time import sleep, time
 from datetime import datetime
 from functools import partial
+from logging import getLogger, Formatter, StreamHandler
 from pathlib import Path
 from sys import stderr
 from typing import Optional, Tuple
@@ -69,6 +70,14 @@ class CommandLineInterface():
             raise error
 
         self.parse_arguments()
+
+        logger = getLogger(__name__)
+        logger.setLevel(self.args.log)
+        handler = StreamHandler()
+        handler.setFormatter(
+            Formatter('{asctime} {levelname} {name} {message}', style='{'))
+        logger.addHandler(handler)
+        logger.debug("Initialized logger")
 
         self.KeyBoardInterrupt = False
         self.bError = False
@@ -204,6 +213,14 @@ class CommandLineInterface():
                                default=64,
                                required=False,
                                help="Oversampling rate value")
+
+        logging_group = self.parser.add_argument_group(title="Logging")
+        logging_group.add_argument(
+            '--log',
+            choices=('DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'),
+            default='WARNING',
+            required=False,
+            help="Minimum level of messages written to log")
 
         self.args = self.parser.parse_args()
 
