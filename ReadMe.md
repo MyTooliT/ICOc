@@ -1,3 +1,5 @@
+[![Documentation online](https://img.shields.io/badge/Documentation-online-blueviolet)](https://mytoolit.github.io/ICOc/) [![GitHub Workflow Documentation](https://img.shields.io/github/workflow/status/mytoolit/ICOc/Documentation?label=Documentation)](https://mytoolit.github.io/ICOc/) [![GitHub Workflow Tests](https://img.shields.io/github/workflow/status/mytoolit/ICOc/Tests?label=Tests)](https://github.com/MyTooliT/ICOc/actions/workflows/tests.yaml)
+
 # ICOc
 
 This repository contains data collection and test software for the [ICOtronic system](https://www.mytoolit.com/ICOtronic/). For more information, please take a look [at the online documentation of ICOc](https://mytoolit.github.io/ICOc/).
