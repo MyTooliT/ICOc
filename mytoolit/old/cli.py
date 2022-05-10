@@ -71,13 +71,13 @@ class CommandLineInterface():
 
         self.parse_arguments()
 
-        logger = getLogger(__name__)
-        logger.setLevel(self.args.log.upper())
+        self.logger = getLogger(__name__)
+        self.logger.setLevel(self.args.log.upper())
         handler = StreamHandler()
         handler.setFormatter(
             Formatter('{asctime} {levelname} {name} {message}', style='{'))
-        logger.addHandler(handler)
-        logger.debug("Initialized logger")
+        self.logger.addHandler(handler)
+        self.logger.info("Initialized logger")
 
         self.KeyBoardInterrupt = False
         self.bError = False
