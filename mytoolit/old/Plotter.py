@@ -2,9 +2,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import socket
 import json
-from time import time
 
-from mytoolit.old.Logger import Logger
+from logging import DEBUG, Formatter, getLogger, StreamHandler
+from time import time
 
 cDict = {
     "Run": True,
@@ -108,11 +108,16 @@ def sPloterSocketInit(iSocketPort):
 
     global cDict
     cDict["Socket"] = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    logger = getLogger()
+    logger.debug("Created socket")
     cDict["Socket"].bind((
         '',  # Symbolic name meaning all available interfaces
         iSocketPort))
+    logger.debug(f"Bound socket to port {iSocketPort}")
     cDict["Socket"].listen(1)
+    logger.debug("Listening for connections")
     cDict["Connection"], _ = cDict["Socket"].accept()
+    logger.debug("Accepted connection")
 
 
 def vPlotterCommand(command, value):
@@ -145,10 +150,16 @@ def vPlotterCommand(command, value):
 def vPlotter(iSocketPort):
     global cDict
 
-    tLogger = Logger("Plotter.txt", FreshLog=True)
-    tLogger.Info("Application started")
+    logger = getLogger(__name__)
+    logger.setLevel(DEBUG)
+    handler = StreamHandler()
+    handler.setFormatter(
+        Formatter('{asctime} {levelname} {name} {message}', style='{'))
+    logger.addHandler(handler)
+
+    logger.info("Application started")
     sPloterSocketInit(iSocketPort)
-    tLogger.Info("Socket Initialized")
+    logger.info("Socket Initialized")
     while cDict["Run"] and not cDict["Plot"]:
         cmd = cDict["Connection"].recv(2**10)
         if cmd is None:
@@ -158,22 +169,27 @@ def vPlotter(iSocketPort):
             continue
 
         sCommand, tValue = cmd
-        tLogger.Info(f"Initialization command: {sCommand}; value: {tValue}")
+        message = f"Initialization command: {sCommand}; value: {tValue}"
+        logger.debug(message)
+        logger.info(message)
         vPlotterCommand(sCommand, tValue)
         cDict["Connection"].sendall(tArray2Binary([sCommand, tValue]))
-    tLogger.Info("Configuration set")
+    logger.info("Configuration set")
     [line1, line2, line3] = tPlotterInit()
-    tLogger.Info("Configured")
+    logger.debug("Initialization done")
+    logger.info("Configured")
     pauseTime = (1 / cDict["sampleInterval"]) / 4
     tLastTick = int(round(time()))
-    tLogger.Info("Drawing started")
+    logger.info("Drawing started")
+    logger.debug("Waiting for sensor data")
     while cDict["Run"]:
         cmd = cDict["Connection"].recv(2**16)
+        logger.debug("Received data")
 
         if cmd is None:
             timeout = cDict["TimeOutMs"] < int(round(time())) - tLastTick()
             if timeout:
-                tLogger.Error("Client time out")
+                logger.error("Client time out")
                 cDict["Run"] = False
                 break
 
@@ -196,14 +212,13 @@ def vPlotter(iSocketPort):
                                 cDict["zAccPoints"], line1, line2, line3,
                                 pauseTime)
         else:
-            tLogger.Info(f"Execute non-data command: {sCommand}; "
-                         f"value: {tValue}")
+            logger.info(f"Execute non-data command: {sCommand}; "
+                        f"value: {tValue}")
             vPlotterCommand(sCommand, tValue)
 
-    tLogger.Info("Closing connection ...")
+    logger.info("Closing connection ...")
     cDict["Connection"].close()
-    tLogger.Info("Connection closed")
-    tLogger.__exit__()
+    logger.info("Connection closed")
 
 
 def vlivePlot(yX_data, yY_data, yZ_data, line1, line2, line3, pause_time):
