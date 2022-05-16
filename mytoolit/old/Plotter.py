@@ -3,7 +3,8 @@ import numpy as np
 import socket
 import json
 
-from logging import DEBUG, Formatter, getLogger, StreamHandler
+from logging import FileHandler, Formatter, getLogger, StreamHandler
+from pathlib import Path
 from time import time
 
 cDict = {
@@ -147,12 +148,13 @@ def vPlotterCommand(command, value):
         cDict["zAccPoints"] = np.linspace(0, 0, int(dataPoints))
 
 
-def vPlotter(iSocketPort, log_level):
+def vPlotter(iSocketPort, log_level, log_location):
     global cDict
 
     logger = getLogger(__name__)
     logger.setLevel(log_level)
-    handler = StreamHandler()
+    handler = (StreamHandler() if log_location == 'stderr' else FileHandler(
+        Path(__file__).parent.parent.parent / "plotter.log"))
     handler.setFormatter(
         Formatter('{asctime} {levelname} {name} {message}', style='{'))
     logger.addHandler(handler)
