@@ -147,11 +147,11 @@ def vPlotterCommand(command, value):
         cDict["zAccPoints"] = np.linspace(0, 0, int(dataPoints))
 
 
-def vPlotter(iSocketPort):
+def vPlotter(iSocketPort, log_level):
     global cDict
 
     logger = getLogger(__name__)
-    logger.setLevel(DEBUG)
+    logger.setLevel(log_level)
     handler = StreamHandler()
     handler.setFormatter(
         Formatter('{asctime} {levelname} {name} {message}', style='{'))

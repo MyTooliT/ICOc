@@ -519,7 +519,8 @@ class CommandLineInterface():
         self.guiProcessStop()
 
         self.guiProcess = multiprocessing.Process(
-            target=vPlotter, args=(self.iPloterSocketPort, ))
+            target=vPlotter,
+            args=(self.iPloterSocketPort, self.logger.getEffectiveLevel()))
         self.guiProcess.start()
 
         # Wait until socket of GUI application is ready
