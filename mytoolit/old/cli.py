@@ -526,6 +526,7 @@ class CommandLineInterface():
         connection_established = False
         while not connection_established:
             try:
+                self.logger.debug("Try to initialize socket")
                 self.tSocket = socket.socket(socket.AF_INET,
                                              socket.SOCK_STREAM)
                 self.tSocket.connect(
@@ -533,6 +534,8 @@ class CommandLineInterface():
                 connection_established = True
             except ConnectionError:
                 sleep(0.1)
+
+        self.logger.debug("Initialized socket")
 
         self.vGraphSend(["dataBlockSize", self.iGraphBlockSize])
         self.vGraphSend(["sampleInterval", self.iGraphSampleInterval])
@@ -729,9 +732,11 @@ class CommandLineInterface():
 
     def read_streaming(self):
         """Read streaming messages"""
+        self.logger.debug("Add CAN read event")
         receive_event = CreateEvent(None, 0, 0, None)
         status = self.Can.pcan.SetValue(self.Can.m_PcanHandle,
                                         PCAN_RECEIVE_EVENT, int(receive_event))
+
         if status != PCAN_ERROR_OK:
             error_message = self.get_can_error_message(
                 status, "Unable to set CAN receive event")
@@ -740,6 +745,7 @@ class CommandLineInterface():
         TIMEOUT_SECONDS = 4
         time_last_read = time()
         time_since_read = 0
+        self.logger.debug("Wait for CAN data")
         while (self.Can.get_elapsed_time() < self.aquireEndTime
                and time_since_read <= TIMEOUT_SECONDS
                and self.guiProcess.is_alive()):
@@ -759,6 +765,8 @@ class CommandLineInterface():
     def read_streaming_messages(self):
         """Read multiple streaming messages"""
         status = PCAN_ERROR_OK
+
+        self.logger.debug("Read streaming messages")
 
         while status != PCAN_ERROR_QRCVEMPTY:
             status = self.read_streaming_message()
