@@ -381,7 +381,7 @@ class TestStu(unittest.TestCase):
 
     def test0052MultiSend(self):
         """Send Multiple Frames without waiting for an ACK (⏱ 60 seconds)
-        
+
         do ACK after 100 times send flooding to check functionality
         """
         self.Can.Logger.Info(
@@ -445,7 +445,7 @@ class TestStu(unittest.TestCase):
 
     def test0054MultiSendMultiAckRetries(self):
         """Send Multiple Frames with waiting for an ACK (⏱ 13 seconds)
-        
+
         Send->Ack->Send->Ack, this also do a retry, tests the test framework - Multiple Messages
         """
         self.Can.Logger.Info(
@@ -475,7 +475,7 @@ class TestStu(unittest.TestCase):
 
     def test0055MultiSendSingleAckRetries(self):
         """Send Multiple Frames with waiting for an ACK (⏱ 60 seconds)
-        
+
         Send->Ack->Send->Ack, this also do a retry, tests the test framework - Single Message
         """
         self.Can.Logger.Info(
@@ -558,7 +558,7 @@ class TestStu(unittest.TestCase):
     def test0101BlueToothConncectDeviceNr(self):
         """
         Connect and disconnect device (⏱ 7 minutes)
-        
+
         check device number after each connect/disconnect to check correctness
         """
         self.Can.Logger.Info(
@@ -590,7 +590,7 @@ class TestStu(unittest.TestCase):
         """
         Connect and disconnect to device 50 times (⏱ 3 minutes)
 
-        The old version of this test would try to connect and disconnect 
+        The old version of this test would try to connect and disconnect
         500 times. Since this meant the test would fail most of the time we
         decreased the number of connection attempts to 50.
         """
@@ -741,7 +741,7 @@ class TestStu(unittest.TestCase):
     def test0110BlueToothConnectDisconnectDevicePolling(self):
         """
         Connect and disconnect to device 100 times (⏱ 3 minutes)
-        
+
         Do it without time out, use connection check
         """
         self.Can.Logger.Info(
@@ -835,8 +835,8 @@ class TestStu(unittest.TestCase):
 
     def test0201MyToolItTestNotConnectedAck(self):
         """
-        Send Message to STH without connecting (⏱ 10 seconds) 
-        
+        Send Message to STH without connecting (⏱ 10 seconds)
+
         Assumed result = not receiving anything. This especially tests the routing functionality.
         """
         cmd = self.Can.CanCmd(MyToolItBlock["System"],
@@ -853,7 +853,7 @@ class TestStu(unittest.TestCase):
     def test0202MyToolItTestAck(self):
         """
         Send Message to STH with connecting (⏱ 16 seconds)
-        
+
         Assumed result = receive correct ack. This especially tests the routing functionality.
         """
         expectedData = ActiveState()
@@ -892,7 +892,7 @@ class TestStu(unittest.TestCase):
     def test0203MyToolItTestWrongReceiver(self):
         """
         Send Message to STH with connecting (⏱ 45 seconds)
-        
+
         Assumed result = receive correct ack. This especially tests the routing functionality.
         """
         self.Can.vBlueToothConnectConnect(MyToolItNetworkNr["STU1"])
@@ -925,7 +925,7 @@ class TestStu(unittest.TestCase):
 
     def test0204RoutingMultiSend(self):
         """Send Multiple Frames without waiting for an ACK (⏱ 45 seconds)
-        
+
         do ACK after 100 times send flooding to check functionality
         """
         self.Can.Logger.Info(
@@ -972,7 +972,7 @@ class TestStu(unittest.TestCase):
 
     def test0205RoutingMultiSendAck(self):
         """Send Multiple Frames with waiting for an ACK (⏱ 30 seconds)
-        
+
         with routing: Send->Ack->Send->Ack
         """
         self.Can.Logger.Info(
@@ -1011,7 +1011,7 @@ class TestStu(unittest.TestCase):
 
     def test0206RoutingMultiSendAckRetries(self):
         """ Send Multiple Frames with waiting for an ACK (⏱ 30 seconds)
-        
+
         Send->Ack->Send->Ack with routing, this also do a retry, tests the test framework - Multiple Messages
         """
         self.Can.Logger.Info(
@@ -1051,7 +1051,7 @@ class TestStu(unittest.TestCase):
 
     def test0207RoutingMultiSendSingleAckRetries(self):
         """Send Multiple Frames with waiting for an ACK (⏱ 30 seconds)
-        
+
         Send->Ack->Send->Ack with routing, this also do a retry, tests the test framework - Single Message
         """
 
@@ -1461,8 +1461,8 @@ class TestStu(unittest.TestCase):
 
     def test0754EepromWriteRequestCounterPageWriteSwitches(self):
         """
-        Check that page switched with previews writes (⏱ 12 seconds) 
-        
+        Check that page switched with previews writes (⏱ 12 seconds)
+
         yield into to Writing EEPROM with the correct number of wirtes
         """
         time.sleep(1)
