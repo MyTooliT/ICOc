@@ -1,7 +1,7 @@
 from array import array
 from datetime import datetime
 from ctypes import c_byte
-from logging import getLogger, WARNING, FileHandler, Formatter, StreamHandler
+from logging import getLogger, ERROR, FileHandler, Formatter, StreamHandler
 from math import log
 from pathlib import Path
 from struct import pack, unpack
@@ -91,7 +91,7 @@ class Network(object):
                  prescaler=2,
                  acquisition=8,
                  oversampling=64,
-                 log_level=WARNING):
+                 log_level=ERROR):
         # Start with disconnected Bluetooth connection
         self.bConnected = False
         # Set default sender (number) for CAN bus
