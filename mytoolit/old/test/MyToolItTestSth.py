@@ -15,7 +15,6 @@ repo_root = str(Path(__file__).parent.parent.parent)
 path.append(repo_root)
 
 from mytoolit.old.test.testSignal import testRampDim
-from mytoolit.config import settings
 from mytoolit.old.network import Network
 from mytoolit.old.MyToolItCommands import (
     AdcAcquisitionTime,
@@ -91,38 +90,36 @@ class TestSth(unittest.TestCase):
         self.sSilabsCommander = "commander"
         self.bError = False
         self.Can = Network(
-            f"{self._testMethodName}.txt",
             sender=MyToolItNetworkNr["SPU1"],
             receiver=MyToolItNetworkNr["STH1"],
             prescaler=self.tSthLimits.uSamplingRatePrescalerReset,
             acquisition=self.tSthLimits.uSamplingRateAcqTimeReset,
-            oversampling=self.tSthLimits.uSamplingRateOverSamplesReset,
-            FreshLog=True)
-        self.Can.Logger.Info("TestCase: " + str(self._testMethodName))
+            oversampling=self.tSthLimits.uSamplingRateOverSamplesReset)
+        self.Can.logger.info("TestCase: " + str(self._testMethodName))
         if "test0000FirmwareFlash" != self._testMethodName:
             self.Can.CanTimeStampStart(
                 self._resetStu()["CanTime"])  # This will also reset to STH
-            self.Can.Logger.Info("Connect to STH")
+            self.Can.logger.info("Connect to STH")
             self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
                                                   settings.sth.name)
             self.sStuAddr = int_to_mac_address(
                 self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"]))
             self.sSthAddr = int_to_mac_address(
                 self.Can.BlueToothAddress(MyToolItNetworkNr["STH1"]))
-            self.Can.Logger.Info("STU BlueTooth Address: " + self.sStuAddr)
-            self.Can.Logger.Info("STH BlueTooth Address: " + self.sSthAddr)
+            self.Can.logger.info("STU BlueTooth Address: " + self.sStuAddr)
+            self.Can.logger.info("STH BlueTooth Address: " + self.sSthAddr)
             self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STH1"])
             iOperatingSeconds = self.Can.statisticalData(
                 MyToolItNetworkNr["STU1"],
                 MyToolItStatData["OperatingTime"])[4:]
             iOperatingSeconds = byte_list_to_int(iOperatingSeconds)
-            self.Can.Logger.Info("STU Operating Seconds: " +
+            self.Can.logger.info("STU Operating Seconds: " +
                                  str(iOperatingSeconds))
             iOperatingSeconds = self.Can.statisticalData(
                 MyToolItNetworkNr["STH1"],
                 MyToolItStatData["OperatingTime"])[4:]
             iOperatingSeconds = byte_list_to_int(iOperatingSeconds)
-            self.Can.Logger.Info("STH Operating Seconds: " +
+            self.Can.logger.info("STH Operating Seconds: " +
                                  str(iOperatingSeconds))
             self._statusWords()
             temp = self._SthAdcTemp()
@@ -130,14 +127,14 @@ class TestSth(unittest.TestCase):
                                     temp)
             self.assertLessEqual(self.tSthLimits.iTemperatureInternalMin, temp)
             self._SthWDog()
-        self.Can.Logger.Info(
+        self.Can.logger.info(
             "_______________________________________________________________________________________________________________"
         )
-        self.Can.Logger.Info("Start")
+        self.Can.logger.info("Start")
 
     def tearDown(self):
-        self.Can.Logger.Info("Fin")
-        self.Can.Logger.Info(
+        self.Can.logger.info("Fin")
+        self.Can.logger.info(
             "_______________________________________________________________________________________________________________"
         )
         if False == self.Can.bError and "test0000FirmwareFlash" != self._testMethodName:
@@ -148,13 +145,13 @@ class TestSth(unittest.TestCase):
                 MyToolItNetworkNr["STU1"],
                 MyToolItStatData["OperatingTime"])[4:]
             iOperatingSeconds = byte_list_to_int(iOperatingSeconds)
-            self.Can.Logger.Info("STU Operating Seconds: " +
+            self.Can.logger.info("STU Operating Seconds: " +
                                  str(iOperatingSeconds))
             iOperatingSeconds = self.Can.statisticalData(
                 MyToolItNetworkNr["STH1"],
                 MyToolItStatData["OperatingTime"])[4:]
             iOperatingSeconds = byte_list_to_int(iOperatingSeconds)
-            self.Can.Logger.Info("STH Operating Seconds: " +
+            self.Can.logger.info("STH Operating Seconds: " +
                                  str(iOperatingSeconds))
             self._statusWords()
             temp = self._SthAdcTemp()
@@ -165,7 +162,7 @@ class TestSth(unittest.TestCase):
         else:
             ReceiveFailCounter = 0
         self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
-        self.Can.Logger.Info("Test Time End Time Stamp")
+        self.Can.logger.info("Test Time End Time Stamp")
         if (0 < ReceiveFailCounter):
             self.bError = True
         if False != self.Can.bError:
@@ -206,7 +203,7 @@ class TestSth(unittest.TestCase):
             log=False)
         iTemperature = float(byte_list_to_int(au8TempReturn[4:]))
         iTemperature /= 1000
-        self.Can.Logger.Info("Temperature(Chip): " + str(iTemperature) + "°C")
+        self.Can.logger.info("Temperature(Chip): " + str(iTemperature) + "°C")
         self.Can.calibMeasurement(MyToolItNetworkNr["STH1"],
                                   CalibMeassurementActionNr["None"],
                                   CalibMeassurementTypeNr["Temp"],
@@ -222,23 +219,23 @@ class TestSth(unittest.TestCase):
         WdogCounter = byte_list_to_int(
             self.Can.statisticalData(MyToolItNetworkNr["STH1"],
                                      MyToolItStatData["Wdog"])[:4])
-        self.Can.Logger.Info("WatchDog Counter: " + str(WdogCounter))
+        self.Can.logger.info("WatchDog Counter: " + str(WdogCounter))
         return WdogCounter
 
     def _statusWords(self):
         """Get all Status Words from STH and STU
         """
-        self.Can.Logger.Info("STH Status Word: {}".format(
+        self.Can.logger.info("STH Status Word: {}".format(
             self.Can.node_status(MyToolItNetworkNr["STH1"])))
-        self.Can.Logger.Info("STU Status Word: {}".format(
+        self.Can.logger.info("STU Status Word: {}".format(
             self.Can.node_status(MyToolItNetworkNr["STU1"])))
 
         status = self.Can.error_status(MyToolItNetworkNr["STH1"])
         if status.adc_overrun():
             self.bError = True
-        self.Can.Logger.Info(f"STH Error Word: {status}")
+        self.Can.logger.info(f"STH Error Word: {status}")
 
-        self.Can.Logger.Info("STU Error Word: {}".format(
+        self.Can.logger.info("STU Error Word: {}".format(
             self.Can.error_status(MyToolItNetworkNr["STU1"])))
 
     def _streamingStop(self):
@@ -254,26 +251,26 @@ class TestSth(unittest.TestCase):
         """
         SendCounter = self.Can.BlueToothCmd(
             MyToolItNetworkNr["STH1"], SystemCommandBlueTooth["SendCounter"])
-        self.Can.Logger.Info("BlueTooth Send Counter(STH1): " +
+        self.Can.logger.info("BlueTooth Send Counter(STH1): " +
                              str(SendCounter))
         ReceiveCounter = self.Can.BlueToothCmd(
             MyToolItNetworkNr["STH1"],
             SystemCommandBlueTooth["ReceiveCounter"])
-        self.Can.Logger.Info("BlueTooth Receive Counter(STU1): " +
+        self.Can.logger.info("BlueTooth Receive Counter(STU1): " +
                              str(ReceiveCounter))
         Rssi = self.Can.BlueToothRssi(MyToolItNetworkNr["STH1"])
-        self.Can.Logger.Info("BlueTooth Rssi(STH1): " + str(Rssi) + "dBm")
+        self.Can.logger.info("BlueTooth Rssi(STH1): " + str(Rssi) + "dBm")
         SendCounter = self.Can.BlueToothCmd(
             MyToolItNetworkNr["STU1"], SystemCommandBlueTooth["SendCounter"])
-        self.Can.Logger.Info("BlueTooth Send Counter(STU1): " +
+        self.Can.logger.info("BlueTooth Send Counter(STU1): " +
                              str(SendCounter))
         ReceiveCounter = self.Can.BlueToothCmd(
             MyToolItNetworkNr["STU1"],
             SystemCommandBlueTooth["ReceiveCounter"])
-        self.Can.Logger.Info("BlueTooth Receive Counter(STU1): " +
+        self.Can.logger.info("BlueTooth Receive Counter(STU1): " +
                              str(ReceiveCounter))
         Rssi = self.Can.BlueToothRssi(MyToolItNetworkNr["STU1"])
-        self.Can.Logger.Info("BlueTooth Rssi(STU1): " + str(Rssi) + "dBm")
+        self.Can.logger.info("BlueTooth Rssi(STU1): " + str(Rssi) + "dBm")
 
     def _RoutingInformationSthSend(self):
         """Routing information of STH send ports
@@ -281,18 +278,18 @@ class TestSth(unittest.TestCase):
         SendCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STH1"], SystemCommandRouting["SendCounter"],
             MyToolItNetworkNr["STU1"])
-        self.Can.Logger.Info("STH1 - Send Counter(Port STU1): " +
+        self.Can.logger.info("STH1 - Send Counter(Port STU1): " +
                              str(SendCounter))
         SendCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STH1"], SystemCommandRouting["SendFailCounter"],
             MyToolItNetworkNr["STU1"])
-        self.Can.Logger.Info("STH1 - Send Fail Counter(Port STU1): " +
+        self.Can.logger.info("STH1 - Send Fail Counter(Port STU1): " +
                              str(SendCounter))
         SendCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STH1"],
             SystemCommandRouting["SendLowLevelByteCounter"],
             MyToolItNetworkNr["STU1"])
-        self.Can.Logger.Info("STH1 - Send Byte Counter(Port STU1): " +
+        self.Can.logger.info("STH1 - Send Byte Counter(Port STU1): " +
                              str(SendCounter))
 
     def _RoutingInformationSthReceive(self):
@@ -301,19 +298,19 @@ class TestSth(unittest.TestCase):
         ReceiveCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STH1"], SystemCommandRouting["ReceiveCounter"],
             MyToolItNetworkNr["STU1"])
-        self.Can.Logger.Info("STH1 - Receive Counter(Port STU1): " +
+        self.Can.logger.info("STH1 - Receive Counter(Port STU1): " +
                              str(ReceiveCounter))
         ReceiveFailCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STH1"],
             SystemCommandRouting["ReceiveFailCounter"],
             MyToolItNetworkNr["STU1"])
-        self.Can.Logger.Info("STH1 - Receive Fail Counter(Port STU1): " +
+        self.Can.logger.info("STH1 - Receive Fail Counter(Port STU1): " +
                              str(ReceiveFailCounter))
         ReceiveCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STH1"],
             SystemCommandRouting["ReceiveLowLevelByteCounter"],
             MyToolItNetworkNr["STU1"])
-        self.Can.Logger.Info("STH1 - Receive Byte Counter(Port STU1): " +
+        self.Can.logger.info("STH1 - Receive Byte Counter(Port STU1): " +
                              str(ReceiveCounter))
         return ReceiveFailCounter
 
@@ -330,18 +327,18 @@ class TestSth(unittest.TestCase):
         SendCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STU1"], SystemCommandRouting["SendCounter"],
             MyToolItNetworkNr["SPU1"])
-        self.Can.Logger.Info("STU1 - Send Counter(Port SPU1): " +
+        self.Can.logger.info("STU1 - Send Counter(Port SPU1): " +
                              str(SendCounter))
         SendCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STU1"], SystemCommandRouting["SendFailCounter"],
             MyToolItNetworkNr["SPU1"])
-        self.Can.Logger.Info("STU1 - Send Fail Counter(Port SPU1): " +
+        self.Can.logger.info("STU1 - Send Fail Counter(Port SPU1): " +
                              str(SendCounter))
         SendCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STU1"],
             SystemCommandRouting["SendLowLevelByteCounter"],
             MyToolItNetworkNr["SPU1"])
-        self.Can.Logger.Info("STU1 - Send Byte Counter(Port SPU1): " +
+        self.Can.logger.info("STU1 - Send Byte Counter(Port SPU1): " +
                              str(SendCounter))
 
     def _RoutingInformationStuPortSpuReceive(self):
@@ -350,19 +347,19 @@ class TestSth(unittest.TestCase):
         ReceiveCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STU1"], SystemCommandRouting["ReceiveCounter"],
             MyToolItNetworkNr["SPU1"])
-        self.Can.Logger.Info("STU1 - Receive Counter(Port SPU1): " +
+        self.Can.logger.info("STU1 - Receive Counter(Port SPU1): " +
                              str(ReceiveCounter))
         ReceiveFailCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STU1"],
             SystemCommandRouting["ReceiveFailCounter"],
             MyToolItNetworkNr["SPU1"])
-        self.Can.Logger.Info("STU1 - Receive Fail Counter(Port SPU1): " +
+        self.Can.logger.info("STU1 - Receive Fail Counter(Port SPU1): " +
                              str(ReceiveFailCounter))
         ReceiveCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STU1"],
             SystemCommandRouting["ReceiveLowLevelByteCounter"],
             MyToolItNetworkNr["SPU1"])
-        self.Can.Logger.Info("STU1 - Receive Byte Counter(Port SPU1): " +
+        self.Can.logger.info("STU1 - Receive Byte Counter(Port SPU1): " +
                              str(ReceiveCounter))
         return ReceiveFailCounter
 
@@ -379,18 +376,18 @@ class TestSth(unittest.TestCase):
         SendCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STU1"], SystemCommandRouting["SendCounter"],
             MyToolItNetworkNr["STH1"])
-        self.Can.Logger.Info("STU1 - Send Counter(Port STH1): " +
+        self.Can.logger.info("STU1 - Send Counter(Port STH1): " +
                              str(SendCounter))
         SendCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STU1"], SystemCommandRouting["SendFailCounter"],
             MyToolItNetworkNr["STH1"])
-        self.Can.Logger.Info("STU1 - Send Fail Counter(Port STH1): " +
+        self.Can.logger.info("STU1 - Send Fail Counter(Port STH1): " +
                              str(SendCounter))
         SendCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STU1"],
             SystemCommandRouting["SendLowLevelByteCounter"],
             MyToolItNetworkNr["STH1"])
-        self.Can.Logger.Info("STU1 - Send Byte Counter(Port STH1): " +
+        self.Can.logger.info("STU1 - Send Byte Counter(Port STH1): " +
                              str(SendCounter))
 
     def _RoutingInformationStuPortSthReceive(self):
@@ -399,19 +396,19 @@ class TestSth(unittest.TestCase):
         ReceiveCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STU1"], SystemCommandRouting["ReceiveCounter"],
             MyToolItNetworkNr["STH1"])
-        self.Can.Logger.Info("STU1 - Receive Counter(Port STH1): " +
+        self.Can.logger.info("STU1 - Receive Counter(Port STH1): " +
                              str(ReceiveCounter))
         ReceiveFailCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STU1"],
             SystemCommandRouting["ReceiveFailCounter"],
             MyToolItNetworkNr["STH1"])
-        self.Can.Logger.Info("STU1 - Receive Fail Counter(Port STH1): " +
+        self.Can.logger.info("STU1 - Receive Fail Counter(Port STH1): " +
                              str(ReceiveFailCounter))
         ReceiveCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STU1"],
             SystemCommandRouting["ReceiveLowLevelByteCounter"],
             MyToolItNetworkNr["STH1"])
-        self.Can.Logger.Info("STU1 - Receive Byte Counter(Port STH1): " +
+        self.Can.logger.info("STU1 - Receive Byte Counter(Port STH1): " +
                              str(ReceiveCounter))
         return ReceiveFailCounter
 
@@ -481,7 +478,7 @@ class TestSth(unittest.TestCase):
         calcRate = calcSamplingRate(prescaler, acquisitionTime,
                                     overSamplingRate)
         if False != log:
-            self.Can.Logger.Info("Start sending package")
+            self.Can.logger.info("Start sending package")
         dataSets = self.Can.Can20DataSet(b1, b2, b3)
         [indexStart, indexEnd
          ] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
@@ -500,15 +497,15 @@ class TestSth(unittest.TestCase):
         samplingPoints = self.Can.samplingPoints(array1, array2, array3)
         if False != log:
             samplingPoints = self.Can.samplingPoints(array1, array2, array3)
-            self.Can.Logger.Info("Running Time: " + str(runTime) + "ms")
+            self.Can.logger.info("Running Time: " + str(runTime) + "ms")
             if False != startupTime:
-                self.Can.Logger.Info("Startup Time: " + str(startupTime) +
+                self.Can.logger.info("Startup Time: " + str(startupTime) +
                                      "ms")
-            self.Can.Logger.Info("Assumed Sampling Points/s: " + str(calcRate))
+            self.Can.logger.info("Assumed Sampling Points/s: " + str(calcRate))
             samplingRateDet = 1000 * samplingPoints / (runTime)
-            self.Can.Logger.Info("Determined Sampling Points/s: " +
+            self.Can.logger.info("Determined Sampling Points/s: " +
                                  str(samplingRateDet))
-            self.Can.Logger.Info("Difference to Assumed Sampling Points: " +
+            self.Can.logger.info("Difference to Assumed Sampling Points: " +
                                  str((100 * samplingRateDet - calcRate) /
                                      calcRate) + "%")
             self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Acc", "")
@@ -518,7 +515,7 @@ class TestSth(unittest.TestCase):
             ratT = self.tSthLimits.Vfs
         if False != compare:
             if (1 != ratM):
-                self.Can.Logger.Info(
+                self.Can.logger.info(
                     "Compare Ration to compensate not AVDD: " + str(ratM))
             adcXMiddle = ratM * self.tSthLimits.iAdcAccXRawMiddle
             adcYMiddle = ratM * self.tSthLimits.iAdcAccYRawMiddle
@@ -527,7 +524,7 @@ class TestSth(unittest.TestCase):
             adcYTol = self.tSthLimits.iAdcAccYRawTolerance * ratT
             adcZTol = self.tSthLimits.iAdcAccZRawTolerance * ratT
             if (16 > AdcOverSamplingRate.inverse[overSamplingRate]):
-                self.Can.Logger.Info("Maximum ADC Value: " + str(AdcMax / 2**(
+                self.Can.logger.info("Maximum ADC Value: " + str(AdcMax / 2**(
                     5 - AdcOverSamplingRate.inverse[overSamplingRate])))
                 adcXMiddle = adcXMiddle / 2**(
                     5 - AdcOverSamplingRate.inverse[overSamplingRate])
@@ -536,7 +533,7 @@ class TestSth(unittest.TestCase):
                 adcZMiddle = adcZMiddle / 2**(
                     5 - AdcOverSamplingRate.inverse[overSamplingRate])
             else:
-                self.Can.Logger.Info("Maximum ADC Value: " + str(AdcMax))
+                self.Can.logger.info("Maximum ADC Value: " + str(AdcMax))
             self.streamingValueCompare(array1, array2, array3, adcXMiddle,
                                        adcXTol, adcYMiddle, adcYTol,
                                        adcZMiddle, adcZTol, fAdcRawDat)
@@ -558,7 +555,7 @@ class TestSth(unittest.TestCase):
     def TurnOffLed(self):
         """Turn off STH LED
         """
-        self.Can.Logger.Info("Turn Off LED")
+        self.Can.logger.info("Turn Off LED")
         cmd = self.Can.CanCmd(MyToolItBlock["Configuration"],
                               MyToolItConfiguration["Hmi"], 1, 0)
         message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
@@ -569,7 +566,7 @@ class TestSth(unittest.TestCase):
     def TurnOnLed(self):
         """Turn on STH LED
         """
-        self.Can.Logger.Info("Turn On LED")
+        self.Can.logger.info("Turn On LED")
         cmd = self.Can.CanCmd(MyToolItBlock["Configuration"],
                               MyToolItConfiguration["Hmi"], 1, 0)
         message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
@@ -592,9 +589,9 @@ class TestSth(unittest.TestCase):
                                    log=True):
         """Get streaming Data and collect them
         """
-        self.Can.Logger.Info("Request Test Signal: " + str(testSignal))
-        self.Can.Logger.Info("Test Module: " + str(testModule))
-        self.Can.Logger.Info("Test Value: " + str(testModule))
+        self.Can.logger.info("Request Test Signal: " + str(testSignal))
+        self.Can.logger.info("Test Module: " + str(testModule))
+        self.Can.logger.info("Test Value: " + str(testModule))
         accFormat = AtvcFormat()
         accFormat.asbyte = 0
         accFormat.b.bStreaming = 1
@@ -606,7 +603,7 @@ class TestSth(unittest.TestCase):
         message = self.Can.CanMessage20(cmd, sender, receiver,
                                         [accFormat.asbyte])
         if False != log:
-            self.Can.Logger.Info("Start sending package")
+            self.Can.logger.info("Start sending package")
         self.Can.tWriteFrameWaitAckRetries(message, retries=1)
         cmd = self.Can.CanCmd(MyToolItBlock["Test"], MyToolItTest["Signal"], 1,
                               0)
@@ -615,13 +612,13 @@ class TestSth(unittest.TestCase):
             (value >> 8)
         ])
         if False != log:
-            self.Can.Logger.Info("Start sending test signal")
+            self.Can.logger.info("Start sending test signal")
         self.Can.WriteFrame(message)
         time.sleep(0.5)
         indexStart = self.Can.GetReadArrayIndex()
         timeEnd = self.Can.get_elapsed_time() + testTimeMs
         if False != log:
-            self.Can.Logger.Info("indexStart: " + str(indexStart))
+            self.Can.logger.info("indexStart: " + str(indexStart))
         while self.Can.get_elapsed_time() < timeEnd:
             pass
         self.Can.streamingStop(MyToolItNetworkNr["STH1"], subCmd)
@@ -629,7 +626,7 @@ class TestSth(unittest.TestCase):
         indexEnd = self.Can.GetReadArrayIndex(
         ) - 40  # do not catch stop command
         if False != log:
-            self.Can.Logger.Info("indexEnd: " + str(indexEnd))
+            self.Can.logger.info("indexEnd: " + str(indexEnd))
         return [indexStart, indexEnd]
 
     def streamingValueCompare(self, array1, array2, array3, middle1,
@@ -645,7 +642,7 @@ class TestSth(unittest.TestCase):
             samplingPoints = samplingPoints2
         if (samplingPoints3 > samplingPoints):
             samplingPoints = samplingPoints3
-        self.Can.Logger.Info("Received Sampling Points: " +
+        self.Can.logger.info("Received Sampling Points: " +
                              str(samplingPoints))
         self.assertGreater(samplingPoints, 0)
         for i in range(0, samplingPoints):
@@ -668,10 +665,10 @@ class TestSth(unittest.TestCase):
     def streamingValueCompareSignal(self, array, testSignal):
         """Compare collected streaming data with 1dimensional tube
         """
-        self.Can.Logger.Info(
+        self.Can.logger.info(
             "Comparing to Test Signal(Test Signal/Received Signal)")
         for i in range(0, len(testSignal)):
-            self.Can.Logger.Info("Point " + str(i) + ": " +
+            self.Can.logger.info("Point " + str(i) + ": " +
                                  str(testSignal[i]) + "/" + str(array[i]))
         self.assertEqual(len(array), len(testSignal))
         for i in range(0, len(testSignal)):
@@ -683,21 +680,21 @@ class TestSth(unittest.TestCase):
         """Compare calculated signal indicators of collected data e.g. Signal to
         noice ratio (SNR)
         """
-        self.Can.Logger.Info(
+        self.Can.logger.info(
             "____________________________________________________")
-        self.Can.Logger.Info("Singal Indicator Check: " + name)
-        self.Can.Logger.Info(
+        self.Can.logger.info("Singal Indicator Check: " + name)
+        self.Can.logger.info(
             "Quantil1%, quantil25%, Median Low, Median High, Quantil75%, Quantil99%, Variance, Skewness, SNR"
         )
-        self.Can.Logger.Info("Limit - Quantil 1%: " + str(quantil1))
-        self.Can.Logger.Info("Limit - Quantil 25%: " + str(quantil25))
-        self.Can.Logger.Info("Limit - Median Low: " + str(medianL))
-        self.Can.Logger.Info("Limit - Median High: " + str(medianH))
-        self.Can.Logger.Info("Limit - Quantil 75%: " + str(quantil75))
-        self.Can.Logger.Info("Limit - Quantil 99%: " + str(quantil99))
-        self.Can.Logger.Info("Limit - Variance: " + str(variance))
-        self.Can.Logger.Info("Limit - Skewness: " + str(skewness))
-        self.Can.Logger.Info("Limit - SNR: " + str(SNR))
+        self.Can.logger.info("Limit - Quantil 1%: " + str(quantil1))
+        self.Can.logger.info("Limit - Quantil 25%: " + str(quantil25))
+        self.Can.logger.info("Limit - Median Low: " + str(medianL))
+        self.Can.logger.info("Limit - Median High: " + str(medianH))
+        self.Can.logger.info("Limit - Quantil 75%: " + str(quantil75))
+        self.Can.logger.info("Limit - Quantil 99%: " + str(quantil99))
+        self.Can.logger.info("Limit - Variance: " + str(variance))
+        self.Can.logger.info("Limit - Skewness: " + str(skewness))
+        self.Can.logger.info("Limit - SNR: " + str(SNR))
         self.assertGreaterEqual(statistic["Quantil1"], quantil1)
         self.assertGreaterEqual(statistic["Quantil25"], quantil25)
         self.assertGreaterEqual(statistic["Median"], medianL)
@@ -709,7 +706,7 @@ class TestSth(unittest.TestCase):
         SignalSNR = 20 * math.log(
             (statistic["StandardDeviation"] / AdcMax), 10)
         self.assertGreaterEqual(abs(SignalSNR), abs(SNR))
-        self.Can.Logger.Info(
+        self.Can.logger.info(
             "____________________________________________________")
 
     def vEepromWritePage(self, iPage, value):
@@ -722,7 +719,7 @@ class TestSth(unittest.TestCase):
             self.Can.cmdSend(MyToolItNetworkNr["STH1"],
                              MyToolItBlock["EEPROM"], MyToolItEeprom["Write"],
                              au8Payload)
-        self.Can.Logger.Info("Page Write Time: " +
+        self.Can.logger.info("Page Write Time: " +
                              str(self.Can.get_elapsed_time() - timeStamp) +
                              "ms")
 
@@ -738,14 +735,14 @@ class TestSth(unittest.TestCase):
             dataReadBack = self.Can.getReadMessageData(index)
             for dataByte in dataReadBack[4:]:
                 self.assertEqual(dataByte, value)
-        self.Can.Logger.Info("Page Read Time: " +
+        self.Can.logger.info("Page Read Time: " +
                              str(self.Can.get_elapsed_time() - timeStamp) +
                              "ms")
 
     def vSilabsAdapterReset(self):
         """Reset the Silicon Laps Adapter
         """
-        self.Can.Logger.Info("Reset Adapter " + self.sAdapterSerialNo)
+        self.Can.logger.info("Reset Adapter " + self.sAdapterSerialNo)
         sSystemCall = self.sSilabsCommander + " adapter reset "
         sSystemCall += "--serialno " + self.sAdapterSerialNo
         sSystemCall += (">>" + sLogLocation + "AdapterReset.txt")
@@ -932,18 +929,18 @@ class TestSth(unittest.TestCase):
         msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
                                     MyToolItNetworkNr["STH1"],
                                     [expectedData.asbyte])
-        self.Can.Logger.Info("Write Message")
+        self.Can.logger.info("Write Message")
         self.Can.WriteFrame(msg)
-        self.Can.Logger.Info("Wait 200ms")
+        self.Can.logger.info("Wait 200ms")
         time.sleep(0.2)
         cmd = self.Can.CanCmd(MyToolItBlock["System"],
                               MyToolItSystem["Get/Set State"], 0, 0)
         msgAckExpected = self.Can.CanMessage20(cmd, MyToolItNetworkNr["STH1"],
                                                MyToolItNetworkNr["SPU1"], [0])
-        self.Can.Logger.Info("Send ID: " + hex(msg.ID) + "; Expected ID: " +
+        self.Can.logger.info("Send ID: " + hex(msg.ID) + "; Expected ID: " +
                              hex(msgAckExpected.ID) + "; Received ID: " +
                              hex(self.Can.getReadMessage(-1).ID))
-        self.Can.Logger.Info("Send Data: " + hex(0) + "; Expected Data: " +
+        self.Can.logger.info("Send Data: " + hex(0) + "; Expected Data: " +
                              hex(expectedData.asbyte) + "; Received Data: " +
                              hex(self.Can.getReadMessage(-1).DATA[0]))
         self.assertEqual(hex(msgAckExpected.ID),
@@ -955,13 +952,13 @@ class TestSth(unittest.TestCase):
         """Tests reset (⏱ 25 seconds)
         """
         self._resetSth()
-        self.Can.Logger.Info("Try to get Active State (0x80")
+        self.Can.logger.info("Try to get Active State (0x80")
         self.Can.cmdSend(
             MyToolItNetworkNr["STH1"],
             MyToolItBlock["System"],
             MyToolItSystem["Get/Set State"], [0x80],
             bErrorExit=False)  # Not receiving gets  tested in cmdSend
-        self.Can.Logger.Info("Connect to STH")
+        self.Can.logger.info("Connect to STH")
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
                                               settings.sth.name)
 
@@ -981,7 +978,7 @@ class TestSth(unittest.TestCase):
         au8Version = self.Can.getReadMessageData(iIndex)[-3:]
         sVersionReadBack = "v" + str(au8Version[0]) + "." + str(
             au8Version[1]) + "." + str(au8Version[2])
-        self.Can.Logger.Info("Version: " + sVersionReadBack)
+        self.Can.logger.info("Version: " + sVersionReadBack)
         self.assertEqual(sVersion, sVersionReadBack)
 
     def test0011EnergySaveMode1(self):
@@ -989,20 +986,20 @@ class TestSth(unittest.TestCase):
 
         If you like to evaluate power consumption: Please do it manually
         """
-        self.Can.Logger.Info("Read out parameters from EEPORM")
+        self.Can.logger.info("Read out parameters from EEPORM")
         [timeReset, timeAdvertisement] = self.Can.BlueToothEnergyMode([
             SystemCommandBlueTooth["EnergyModeReducedRead"], self.Can.DeviceNr,
             0, 0, 0, 0, 0, 0
         ])
-        self.Can.Logger.Info("First Read Time Sleep Time1: " + str(timeReset) +
+        self.Can.logger.info("First Read Time Sleep Time1: " + str(timeReset) +
                              " ms")
-        self.Can.Logger.Info("First Read Time Advertisement Time 1: " +
+        self.Can.logger.info("First Read Time Advertisement Time 1: " +
                              str(timeAdvertisement) + " ms")
         [timeReset, timeAdvertisement
          ] = self.Can.BlueToothEnergyModeNr(SleepTime["Min"], 1000, 1)
-        self.Can.Logger.Info("First Write Time Sleep Time1(ACK): " +
+        self.Can.logger.info("First Write Time Sleep Time1(ACK): " +
                              str(timeReset) + " ms")
-        self.Can.Logger.Info("First Write Time Advertisement Time 1(ACK): " +
+        self.Can.logger.info("First Write Time Advertisement Time 1(ACK): " +
                              str(timeAdvertisement) + " ms")
         self.assertEqual(timeReset, SleepTime["Min"])
         self.assertEqual(timeAdvertisement, 1000)
@@ -1010,9 +1007,9 @@ class TestSth(unittest.TestCase):
             SystemCommandBlueTooth["EnergyModeReducedRead"], self.Can.DeviceNr,
             0, 0, 0, 0, 0, 0
         ])
-        self.Can.Logger.Info("Read Time Sleep Time1: " + str(timeReset) +
+        self.Can.logger.info("Read Time Sleep Time1: " + str(timeReset) +
                              " ms")
-        self.Can.Logger.Info("Read Time Advertisement Time 1: " +
+        self.Can.logger.info("Read Time Advertisement Time 1: " +
                              str(timeAdvertisement) + " ms")
         self.assertEqual(timeReset, SleepTime["Min"])
         self.assertEqual(timeAdvertisement, 1000)
@@ -1023,24 +1020,24 @@ class TestSth(unittest.TestCase):
             SystemCommandBlueTooth["EnergyModeReducedRead"], self.Can.DeviceNr,
             0, 0, 0, 0, 0, 0
         ])
-        self.Can.Logger.Info("Read Time Sleep Time1: " + str(timeReset) +
+        self.Can.logger.info("Read Time Sleep Time1: " + str(timeReset) +
                              " ms")
-        self.Can.Logger.Info("Read Time Advertisement Time 1: " +
+        self.Can.logger.info("Read Time Advertisement Time 1: " +
                              str(timeAdvertisement) + " ms")
         self.assertEqual(timeReset, SleepTime["Min"])
         self.assertEqual(timeAdvertisement, 1000)
         # Reset to default values
-        self.Can.Logger.Info("Write Time Sleep Time1: " +
+        self.Can.logger.info("Write Time Sleep Time1: " +
                              str(SleepTime["Reset1"]) + " ms")
-        self.Can.Logger.Info("Write Time Advertisement Time 1: " +
+        self.Can.logger.info("Write Time Advertisement Time 1: " +
                              str(SleepTime["AdvertisementReset1"]) + " ms")
         [timeReset, timeAdvertisement
          ] = self.Can.BlueToothEnergyModeNr(SleepTime["Reset1"],
                                             SleepTime["AdvertisementReset1"],
                                             1)
-        self.Can.Logger.Info("Write Time Sleep Time1(ACK): " + str(timeReset) +
+        self.Can.logger.info("Write Time Sleep Time1(ACK): " + str(timeReset) +
                              " ms")
-        self.Can.Logger.Info("Write Time Advertisement Time 1(ACK): " +
+        self.Can.logger.info("Write Time Advertisement Time 1(ACK): " +
                              str(timeAdvertisement) + " ms")
         self.assertEqual(timeReset, SleepTime["Reset1"])
         self.assertEqual(timeAdvertisement, SleepTime["AdvertisementReset1"])
@@ -1048,9 +1045,9 @@ class TestSth(unittest.TestCase):
             SystemCommandBlueTooth["EnergyModeReducedRead"], self.Can.DeviceNr,
             0, 0, 0, 0, 0, 0
         ])
-        self.Can.Logger.Info("Read Time Sleep Time1: " + str(timeReset) +
+        self.Can.logger.info("Read Time Sleep Time1: " + str(timeReset) +
                              " ms")
-        self.Can.Logger.Info("Read Time Advertisement Time 1: " +
+        self.Can.logger.info("Read Time Advertisement Time 1: " +
                              str(timeAdvertisement) + " ms")
         self.assertEqual(timeReset, SleepTime["Reset1"])
         self.assertEqual(timeAdvertisement, SleepTime["AdvertisementReset1"])
@@ -1061,9 +1058,9 @@ class TestSth(unittest.TestCase):
             SystemCommandBlueTooth["EnergyModeReducedRead"], self.Can.DeviceNr,
             0, 0, 0, 0, 0, 0
         ])
-        self.Can.Logger.Info("Read Time Sleep Time1: " + str(timeReset) +
+        self.Can.logger.info("Read Time Sleep Time1: " + str(timeReset) +
                              " ms")
-        self.Can.Logger.Info("Read Time Advertisement Time 1: " +
+        self.Can.logger.info("Read Time Advertisement Time 1: " +
                              str(timeAdvertisement) + " ms")
         self.assertEqual(timeReset, SleepTime["Reset1"])
         self.assertEqual(timeAdvertisement, SleepTime["AdvertisementReset1"])
@@ -1073,29 +1070,29 @@ class TestSth(unittest.TestCase):
 
         If you like to evaluate power consumption: Please do it manually
         """
-        self.Can.Logger.Info("Set Energy Mode1 parameters")
-        self.Can.Logger.Info("Write EM1 parameters to EEPORM")
+        self.Can.logger.info("Set Energy Mode1 parameters")
+        self.Can.logger.info("Write EM1 parameters to EEPORM")
         [timeReset, timeAdvertisement
          ] = self.Can.BlueToothEnergyModeNr(SleepTime["Min"], 2000, 2)
-        self.Can.Logger.Info("First Write Time Sleep Time1(ACK): " +
+        self.Can.logger.info("First Write Time Sleep Time1(ACK): " +
                              str(timeReset) + " ms")
-        self.Can.Logger.Info("First Write Time Advertisement Time 1(ACK): " +
+        self.Can.logger.info("First Write Time Advertisement Time 1(ACK): " +
                              str(timeAdvertisement) + " ms")
-        self.Can.Logger.Info("Doing Energy Mode2 stuff")
-        self.Can.Logger.Info("Read out EM2 parameters from EEPORM")
+        self.Can.logger.info("Doing Energy Mode2 stuff")
+        self.Can.logger.info("Read out EM2 parameters from EEPORM")
         [timeReset, timeAdvertisement] = self.Can.BlueToothEnergyMode([
             SystemCommandBlueTooth["EnergyModeLowestRead"], self.Can.DeviceNr,
             0, 0, 0, 0, 0, 0
         ])
-        self.Can.Logger.Info("First Read Time Sleep Time1: " + str(timeReset) +
+        self.Can.logger.info("First Read Time Sleep Time1: " + str(timeReset) +
                              " ms")
-        self.Can.Logger.Info("First Read Time Advertisement Time 1: " +
+        self.Can.logger.info("First Read Time Advertisement Time 1: " +
                              str(timeAdvertisement) + " ms")
         [timeReset, timeAdvertisement
          ] = self.Can.BlueToothEnergyModeNr(SleepTime["Min"], 2000, 2)
-        self.Can.Logger.Info("Second Write Time Sleep Time1(ACK): " +
+        self.Can.logger.info("Second Write Time Sleep Time1(ACK): " +
                              str(timeReset) + " ms")
-        self.Can.Logger.Info("Second Write Time Advertisement Time 1(ACK): " +
+        self.Can.logger.info("Second Write Time Advertisement Time 1(ACK): " +
                              str(timeAdvertisement) + " ms")
         self.assertEqual(timeReset, SleepTime["Min"])
         self.assertEqual(timeAdvertisement, 2000)
@@ -1103,9 +1100,9 @@ class TestSth(unittest.TestCase):
             SystemCommandBlueTooth["EnergyModeLowestRead"], self.Can.DeviceNr,
             0, 0, 0, 0, 0, 0
         ])
-        self.Can.Logger.Info("Read Time Sleep Time1: " + str(timeReset) +
+        self.Can.logger.info("Read Time Sleep Time1: " + str(timeReset) +
                              " ms")
-        self.Can.Logger.Info("Read Time Advertisement Time 1: " +
+        self.Can.logger.info("Read Time Advertisement Time 1: " +
                              str(timeAdvertisement) + " ms")
         self.assertEqual(timeReset, SleepTime["Min"])
         self.assertEqual(timeAdvertisement, 2000)
@@ -1116,24 +1113,24 @@ class TestSth(unittest.TestCase):
             SystemCommandBlueTooth["EnergyModeLowestRead"], self.Can.DeviceNr,
             0, 0, 0, 0, 0, 0
         ])
-        self.Can.Logger.Info("Read Time Sleep Time1: " + str(timeReset) +
+        self.Can.logger.info("Read Time Sleep Time1: " + str(timeReset) +
                              " ms")
-        self.Can.Logger.Info("Read Time Advertisement Time 1: " +
+        self.Can.logger.info("Read Time Advertisement Time 1: " +
                              str(timeAdvertisement) + " ms")
         self.assertEqual(timeReset, SleepTime["Min"])
         self.assertEqual(timeAdvertisement, 2000)
         # Reset to default values
-        self.Can.Logger.Info("Write Time Sleep Time1: " +
+        self.Can.logger.info("Write Time Sleep Time1: " +
                              str(SleepTime["Reset2"]) + " ms")
-        self.Can.Logger.Info("Write Time Advertisement Time 1: " +
+        self.Can.logger.info("Write Time Advertisement Time 1: " +
                              str(SleepTime["AdvertisementReset2"]) + " ms")
         [timeReset, timeAdvertisement
          ] = self.Can.BlueToothEnergyModeNr(SleepTime["Reset2"],
                                             SleepTime["AdvertisementReset2"],
                                             2)
-        self.Can.Logger.Info("Write Time Sleep Time1(ACK): " + str(timeReset) +
+        self.Can.logger.info("Write Time Sleep Time1(ACK): " + str(timeReset) +
                              " ms")
-        self.Can.Logger.Info("Write Time Advertisement Time 1(ACK): " +
+        self.Can.logger.info("Write Time Advertisement Time 1(ACK): " +
                              str(timeAdvertisement) + " ms")
         self.assertEqual(timeReset, SleepTime["Reset2"])
         self.assertEqual(timeAdvertisement, SleepTime["AdvertisementReset2"])
@@ -1141,9 +1138,9 @@ class TestSth(unittest.TestCase):
             SystemCommandBlueTooth["EnergyModeLowestRead"], self.Can.DeviceNr,
             0, 0, 0, 0, 0, 0
         ])
-        self.Can.Logger.Info("Read Time Sleep Time1: " + str(timeReset) +
+        self.Can.logger.info("Read Time Sleep Time1: " + str(timeReset) +
                              " ms")
-        self.Can.Logger.Info("Read Time Advertisement Time 1: " +
+        self.Can.logger.info("Read Time Advertisement Time 1: " +
                              str(timeAdvertisement) + " ms")
         self.assertEqual(timeReset, SleepTime["Reset2"])
         self.assertEqual(timeAdvertisement, SleepTime["AdvertisementReset2"])
@@ -1154,13 +1151,13 @@ class TestSth(unittest.TestCase):
             SystemCommandBlueTooth["EnergyModeLowestRead"], self.Can.DeviceNr,
             0, 0, 0, 0, 0, 0
         ])
-        self.Can.Logger.Info("Read Time Sleep Time1: " + str(timeReset) +
+        self.Can.logger.info("Read Time Sleep Time1: " + str(timeReset) +
                              " ms")
-        self.Can.Logger.Info("Read Time Advertisement Time 1: " +
+        self.Can.logger.info("Read Time Advertisement Time 1: " +
                              str(timeAdvertisement) + " ms")
         self.assertEqual(timeReset, SleepTime["Reset2"])
         self.assertEqual(timeAdvertisement, SleepTime["AdvertisementReset2"])
-        self.Can.Logger.Info(
+        self.Can.logger.info(
             "Reset via test0011EnergySaveMode1 EM1 parameters")
         self.test0011EnergySaveMode1()
 
@@ -1169,7 +1166,7 @@ class TestSth(unittest.TestCase):
         """
         self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
         time.sleep(2)
-        self.Can.Logger.Info(
+        self.Can.logger.info(
             "Measure Power Consumption for advertisement time 1000ms")
         sSystemCall = self.sSilabsCommander + " aem measure --windowlength 60000 "
         sSystemCall += "--serialno " + self.sAdapterSerialNo + " "
@@ -1195,9 +1192,9 @@ class TestSth(unittest.TestCase):
         sVoltageUnit = asData[3][:-1]
         sVoltageUnit = sVoltageUnit.split("[")[1]
         sVoltageUnit = sVoltageUnit.split("]")[0]
-        self.Can.Logger.Info("Average Current: " + sCurrentAverage +
+        self.Can.logger.info("Average Current: " + sCurrentAverage +
                              sCurrentUnit)
-        self.Can.Logger.Info("Average Voltage: " + sVoltageAverage +
+        self.Can.logger.info("Average Voltage: " + sVoltageAverage +
                              sVoltageUnit)
         if "mA" == sCurrentUnit:
             fCurrentAverage = fCurrentAverage / 1000
@@ -1205,9 +1202,9 @@ class TestSth(unittest.TestCase):
             fCurrentAverage = fCurrentAverage / (1000 * 1000)
         fAccuHours = 0.18 / fCurrentAverage
         fAccuDays = fAccuHours / 24
-        self.Can.Logger.Info("Batter Runtime for 180mA: " + str(fAccuHours) +
+        self.Can.logger.info("Batter Runtime for 180mA: " + str(fAccuHours) +
                              " hours")
-        self.Can.Logger.Info("Batter Runtime for 180mA: " + str(fAccuDays) +
+        self.Can.logger.info("Batter Runtime for 180mA: " + str(fAccuDays) +
                              " days")
         self.assertLessEqual(float(sCurrentAverage),
                              TestConfig["DisconnectedCurrentMax"])
@@ -1228,7 +1225,7 @@ class TestSth(unittest.TestCase):
                                        SleepTime["AdvertisementReset1"], 2)
         self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
         time.sleep(2 + SleepTime["Min"] / 1000)
-        self.Can.Logger.Info(
+        self.Can.logger.info(
             "Measure Power Consumption for advertisement time " +
             str(SleepTime["AdvertisementReset1"]) + "ms")
         sSystemCall = self.sSilabsCommander + " aem measure --windowlength 60000 "
@@ -1255,9 +1252,9 @@ class TestSth(unittest.TestCase):
         sVoltageUnit = asData[3][:-1]
         sVoltageUnit = sVoltageUnit.split("[")[1]
         sVoltageUnit = sVoltageUnit.split("]")[0]
-        self.Can.Logger.Info("Average Current: " + sCurrentAverage +
+        self.Can.logger.info("Average Current: " + sCurrentAverage +
                              sCurrentUnit)
-        self.Can.Logger.Info("Average Voltage: " + sVoltageAverage +
+        self.Can.logger.info("Average Voltage: " + sVoltageAverage +
                              sVoltageUnit)
         if "mA" == sCurrentUnit:
             fCurrentAverage = fCurrentAverage / 1000
@@ -1265,9 +1262,9 @@ class TestSth(unittest.TestCase):
             fCurrentAverage = fCurrentAverage / (1000 * 1000)
         fAccuHours = 0.18 / fCurrentAverage
         fAccuDays = fAccuHours / 24
-        self.Can.Logger.Info("Batter Runtime for 180mA: " + str(fAccuHours) +
+        self.Can.logger.info("Batter Runtime for 180mA: " + str(fAccuHours) +
                              " hours")
-        self.Can.Logger.Info("Batter Runtime for 180mA: " + str(fAccuDays) +
+        self.Can.logger.info("Batter Runtime for 180mA: " + str(fAccuDays) +
                              " days")
         self.assertLessEqual(float(sCurrentAverage),
                              TestConfig["EnergyMode1CurrentMax"])
@@ -1292,7 +1289,7 @@ class TestSth(unittest.TestCase):
                                        SleepTime["AdvertisementReset2"], 2)
         self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
         time.sleep(2 + SleepTime["Min"] / 1000)
-        self.Can.Logger.Info(
+        self.Can.logger.info(
             "Measure Power Consumption for advertisement time " +
             str(SleepTime["AdvertisementReset2"]) + "ms")
         sSystemCall = self.sSilabsCommander + " aem measure --windowlength 60000 "
@@ -1319,9 +1316,9 @@ class TestSth(unittest.TestCase):
         sVoltageUnit = asData[3][:-1]
         sVoltageUnit = sVoltageUnit.split("[")[1]
         sVoltageUnit = sVoltageUnit.split("]")[0]
-        self.Can.Logger.Info("Average Current: " + sCurrentAverage +
+        self.Can.logger.info("Average Current: " + sCurrentAverage +
                              sCurrentUnit)
-        self.Can.Logger.Info("Average Voltage: " + sVoltageAverage +
+        self.Can.logger.info("Average Voltage: " + sVoltageAverage +
                              sVoltageUnit)
         if "mA" == sCurrentUnit:
             fCurrentAverage = fCurrentAverage / 1000
@@ -1329,9 +1326,9 @@ class TestSth(unittest.TestCase):
             fCurrentAverage = fCurrentAverage / (1000 * 1000)
         fAccuHours = 0.18 / fCurrentAverage
         fAccuDays = fAccuHours / 24
-        self.Can.Logger.Info("Batter Runtime for 180mA: " + str(fAccuHours) +
+        self.Can.logger.info("Batter Runtime for 180mA: " + str(fAccuHours) +
                              " hours")
-        self.Can.Logger.Info("Batter Runtime for 180mA: " + str(fAccuDays) +
+        self.Can.logger.info("Batter Runtime for 180mA: " + str(fAccuDays) +
                              " days")
         self.assertLessEqual(float(sCurrentAverage),
                              TestConfig["EnergyMode2CurrentMax"])
@@ -1358,7 +1355,7 @@ class TestSth(unittest.TestCase):
                                        SleepTime["AdvertisementReset2"], 2)
         self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
         time.sleep(2 + SleepTime["Min"] / 1000)
-        self.Can.Logger.Info(
+        self.Can.logger.info(
             "Measure Power Consumption for advertisement time " +
             str(SleepTime["AdvertisementMax"]) + "ms")
         sSystemCall = self.sSilabsCommander + " aem measure --windowlength 60000 "
@@ -1385,9 +1382,9 @@ class TestSth(unittest.TestCase):
         sVoltageUnit = asData[3][:-1]
         sVoltageUnit = sVoltageUnit.split("[")[1]
         sVoltageUnit = sVoltageUnit.split("]")[0]
-        self.Can.Logger.Info("Average Current: " + sCurrentAverage +
+        self.Can.logger.info("Average Current: " + sCurrentAverage +
                              sCurrentUnit)
-        self.Can.Logger.Info("Average Voltage: " + sVoltageAverage +
+        self.Can.logger.info("Average Voltage: " + sVoltageAverage +
                              sVoltageUnit)
         if "mA" == sCurrentUnit:
             fCurrentAverage = fCurrentAverage / 1000
@@ -1395,9 +1392,9 @@ class TestSth(unittest.TestCase):
             fCurrentAverage = fCurrentAverage / (1000 * 1000)
         fAccuHours = 0.18 / fCurrentAverage
         fAccuDays = fAccuHours / 24
-        self.Can.Logger.Info("Batter Runtime for 180mA: " + str(fAccuHours) +
+        self.Can.logger.info("Batter Runtime for 180mA: " + str(fAccuHours) +
                              " hours")
-        self.Can.Logger.Info("Batter Runtime for 180mA: " + str(fAccuDays) +
+        self.Can.logger.info("Batter Runtime for 180mA: " + str(fAccuDays) +
                              " days")
         self.assertLessEqual(float(sCurrentAverage),
                              TestConfig["EnergyModeMaxCurrentMax"])
@@ -1416,9 +1413,9 @@ class TestSth(unittest.TestCase):
             os.remove("Aem4.txt")
         except:
             pass
-        self.Can.Logger.Info("Measure Power Consumption for connected.")
+        self.Can.logger.info("Measure Power Consumption for connected.")
         time.sleep(2 + SleepTime["Min"] / 1000)
-        self.Can.Logger.Info(
+        self.Can.logger.info(
             "Measure Power Consumption for advertisement time " +
             str(SleepTime["AdvertisementMax"]) + "ms")
         sSystemCall = self.sSilabsCommander + " aem measure --windowlength 60000 "
@@ -1445,9 +1442,9 @@ class TestSth(unittest.TestCase):
         sVoltageUnit = asData[3][:-1]
         sVoltageUnit = sVoltageUnit.split("[")[1]
         sVoltageUnit = sVoltageUnit.split("]")[0]
-        self.Can.Logger.Info("Average Current: " + sCurrentAverage +
+        self.Can.logger.info("Average Current: " + sCurrentAverage +
                              sCurrentUnit)
-        self.Can.Logger.Info("Average Voltage: " + sVoltageAverage +
+        self.Can.logger.info("Average Voltage: " + sVoltageAverage +
                              sVoltageUnit)
         if "mA" == sCurrentUnit:
             fCurrentAverage = fCurrentAverage / 1000
@@ -1455,9 +1452,9 @@ class TestSth(unittest.TestCase):
             fCurrentAverage = fCurrentAverage / (1000 * 1000)
         fAccuHours = 0.18 / fCurrentAverage
         fAccuDays = fAccuHours / 24
-        self.Can.Logger.Info("Batter Runtime for 180mA: " + str(fAccuHours) +
+        self.Can.logger.info("Batter Runtime for 180mA: " + str(fAccuHours) +
                              " hours")
-        self.Can.Logger.Info("Batter Runtime for 180mA: " + str(fAccuDays) +
+        self.Can.logger.info("Batter Runtime for 180mA: " + str(fAccuDays) +
                              " days")
         self.assertLessEqual(float(sCurrentAverage),
                              TestConfig["EnergyConnectedCurrentMax"])
@@ -1473,9 +1470,9 @@ class TestSth(unittest.TestCase):
         self.Can.streamingStart(MyToolItNetworkNr["STH1"],
                                 MyToolItStreaming["Acceleration"], DataSets[3],
                                 1, 0, 0)
-        self.Can.Logger.Info("Measure Power Consumption for measuring.")
+        self.Can.logger.info("Measure Power Consumption for measuring.")
         time.sleep(2 + SleepTime["Min"] / 1000)
-        self.Can.Logger.Info(
+        self.Can.logger.info(
             "Measure Power Consumption for advertisement time " +
             str(SleepTime["AdvertisementMax"]) + "ms")
         sSystemCall = self.sSilabsCommander + " aem measure --windowlength 60000 "
@@ -1502,9 +1499,9 @@ class TestSth(unittest.TestCase):
         sVoltageUnit = asData[3][:-1]
         sVoltageUnit = sVoltageUnit.split("[")[1]
         sVoltageUnit = sVoltageUnit.split("]")[0]
-        self.Can.Logger.Info("Average Current: " + sCurrentAverage +
+        self.Can.logger.info("Average Current: " + sCurrentAverage +
                              sCurrentUnit)
-        self.Can.Logger.Info("Average Voltage: " + sVoltageAverage +
+        self.Can.logger.info("Average Voltage: " + sVoltageAverage +
                              sVoltageUnit)
         if "mA" == sCurrentUnit:
             fCurrentAverage = fCurrentAverage / 1000
@@ -1512,9 +1509,9 @@ class TestSth(unittest.TestCase):
             fCurrentAverage = fCurrentAverage / (1000 * 1000)
         fAccuHours = 0.18 / fCurrentAverage
         fAccuDays = fAccuHours / 24
-        self.Can.Logger.Info("Batter Runtime for 180mA: " + str(fAccuHours) +
+        self.Can.logger.info("Batter Runtime for 180mA: " + str(fAccuHours) +
                              " hours")
-        self.Can.Logger.Info("Batter Runtime for 180mA: " + str(fAccuDays) +
+        self.Can.logger.info("Batter Runtime for 180mA: " + str(fAccuDays) +
                              " days")
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
                                MyToolItStreaming["Acceleration"])
@@ -1533,10 +1530,10 @@ class TestSth(unittest.TestCase):
         self.Can.streamingStart(MyToolItNetworkNr["STH1"],
                                 MyToolItStreaming["Acceleration"], DataSets[3],
                                 1, 0, 0)
-        self.Can.Logger.Info(
+        self.Can.logger.info(
             "Measure Power Consumption for measuring with turned off LED.")
         time.sleep(2 + SleepTime["Min"] / 1000)
-        self.Can.Logger.Info(
+        self.Can.logger.info(
             "Measure Power Consumption for advertisement time " +
             str(SleepTime["AdvertisementMax"]) + "ms")
         sSystemCall = self.sSilabsCommander + " aem measure --windowlength 60000 "
@@ -1563,9 +1560,9 @@ class TestSth(unittest.TestCase):
         sVoltageUnit = asData[3][:-1]
         sVoltageUnit = sVoltageUnit.split("[")[1]
         sVoltageUnit = sVoltageUnit.split("]")[0]
-        self.Can.Logger.Info("Average Current: " + sCurrentAverage +
+        self.Can.logger.info("Average Current: " + sCurrentAverage +
                              sCurrentUnit)
-        self.Can.Logger.Info("Average Voltage: " + sVoltageAverage +
+        self.Can.logger.info("Average Voltage: " + sVoltageAverage +
                              sVoltageUnit)
         if "mA" == sCurrentUnit:
             fCurrentAverage = fCurrentAverage / 1000
@@ -1573,9 +1570,9 @@ class TestSth(unittest.TestCase):
             fCurrentAverage = fCurrentAverage / (1000 * 1000)
         fAccuHours = 0.18 / fCurrentAverage
         fAccuDays = fAccuHours / 24
-        self.Can.Logger.Info("Batter Runtime for 180mA: " + str(fAccuHours) +
+        self.Can.logger.info("Batter Runtime for 180mA: " + str(fAccuHours) +
                              " hours")
-        self.Can.Logger.Info("Batter Runtime for 180mA: " + str(fAccuDays) +
+        self.Can.logger.info("Batter Runtime for 180mA: " + str(fAccuDays) +
                              " days")
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
                                MyToolItStreaming["Acceleration"])
@@ -1586,7 +1583,7 @@ class TestSth(unittest.TestCase):
     def test0020HmiLedGeckoModule(self):
         """Test HMI (⏱ 20 seconds)
         """
-        self.Can.Logger.Info("Get LED state")
+        self.Can.logger.info("Get LED state")
         cmd = self.Can.CanCmd(MyToolItBlock["Configuration"],
                               MyToolItConfiguration["Hmi"], 1, 0)
         message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
@@ -1596,13 +1593,13 @@ class TestSth(unittest.TestCase):
         LedType = LedState[0]
         LedNumber = LedState[1]
         LedState = LedState[2]
-        self.Can.Logger.Info("HMI Type(1=LED): " + str(LedType))
-        self.Can.Logger.Info("LED number: " + str(LedNumber))
-        self.Can.Logger.Info("LED State(1=On,2=Off): " + str(LedState))
+        self.Can.logger.info("HMI Type(1=LED): " + str(LedType))
+        self.Can.logger.info("LED number: " + str(LedNumber))
+        self.Can.logger.info("LED State(1=On,2=Off): " + str(LedState))
         self.assertEqual(1, LedType)
         self.assertEqual(1, LedNumber)
         self.assertEqual(1, LedState)
-        self.Can.Logger.Info("Turn Off LED")
+        self.Can.logger.info("Turn Off LED")
         message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
                                         MyToolItNetworkNr["STH1"],
                                         [129, 1, 2, 0, 0, 0, 0, 0])
@@ -1610,15 +1607,15 @@ class TestSth(unittest.TestCase):
         LedType = LedState[0] & 0x7F
         LedNumber = LedState[1]
         LedState = LedState[2]
-        self.Can.Logger.Info("HMI Type(1=LED): " + str(LedType))
-        self.Can.Logger.Info("LED number: " + str(LedNumber))
-        self.Can.Logger.Info("LED State(1=On,2=Off): " + str(LedState))
+        self.Can.logger.info("HMI Type(1=LED): " + str(LedType))
+        self.Can.logger.info("LED number: " + str(LedNumber))
+        self.Can.logger.info("LED State(1=On,2=Off): " + str(LedState))
         self.assertEqual(1, LedType)
         self.assertEqual(1, LedNumber)
         self.assertEqual(2, LedState)
-        self.Can.Logger.Info("Sleep 5s")
+        self.Can.logger.info("Sleep 5s")
         time.sleep(5)
-        self.Can.Logger.Info("Get LED state")
+        self.Can.logger.info("Get LED state")
         message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
                                         MyToolItNetworkNr["STH1"],
                                         [1, 1, 0, 0, 0, 0, 0, 0])
@@ -1629,10 +1626,10 @@ class TestSth(unittest.TestCase):
         self.assertEqual(1, LedType)
         self.assertEqual(1, LedNumber)
         self.assertEqual(2, LedState)
-        self.Can.Logger.Info("HMI Type(1=LED): " + str(LedType))
-        self.Can.Logger.Info("LED number: " + str(LedNumber))
-        self.Can.Logger.Info("LED State(1=On,2=Off): " + str(LedState))
-        self.Can.Logger.Info("Turn On LED")
+        self.Can.logger.info("HMI Type(1=LED): " + str(LedType))
+        self.Can.logger.info("LED number: " + str(LedNumber))
+        self.Can.logger.info("LED State(1=On,2=Off): " + str(LedState))
+        self.Can.logger.info("Turn On LED")
         message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
                                         MyToolItNetworkNr["STH1"],
                                         [129, 1, 1, 0, 0, 0, 0, 0])
@@ -1640,15 +1637,15 @@ class TestSth(unittest.TestCase):
         LedType = LedState[0] & 0x7F
         LedNumber = LedState[1]
         LedState = LedState[2]
-        self.Can.Logger.Info("HMI Type(1=LED): " + str(LedType))
-        self.Can.Logger.Info("LED number: " + str(LedNumber))
-        self.Can.Logger.Info("LED State(1=On,2=Off): " + str(LedState))
-        self.Can.Logger.Info("Sleep 5s")
+        self.Can.logger.info("HMI Type(1=LED): " + str(LedType))
+        self.Can.logger.info("LED number: " + str(LedNumber))
+        self.Can.logger.info("LED State(1=On,2=Off): " + str(LedState))
+        self.Can.logger.info("Sleep 5s")
         self.assertEqual(1, LedType)
         self.assertEqual(1, LedNumber)
         self.assertEqual(1, LedState)
         time.sleep(5)
-        self.Can.Logger.Info("Get LED state")
+        self.Can.logger.info("Get LED state")
         message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
                                         MyToolItNetworkNr["STH1"],
                                         [1, 1, 0, 0, 0, 0, 0, 0])
@@ -1656,9 +1653,9 @@ class TestSth(unittest.TestCase):
         LedType = LedState[0]
         LedNumber = LedState[1]
         LedState = LedState[2]
-        self.Can.Logger.Info("HMI Type(1=LED): " + str(LedType))
-        self.Can.Logger.Info("LED number: " + str(LedNumber))
-        self.Can.Logger.Info("LED State(1=On,2=Off): " + str(LedState))
+        self.Can.logger.info("HMI Type(1=LED): " + str(LedType))
+        self.Can.logger.info("LED number: " + str(LedNumber))
+        self.Can.logger.info("LED State(1=On,2=Off): " + str(LedState))
         self.assertEqual(1, LedType)
         self.assertEqual(1, LedNumber)
         self.assertEqual(1, LedState)
@@ -1682,11 +1679,11 @@ class TestSth(unittest.TestCase):
                     MyToolItNetworkNr["STH1"], MyToolItBlock["Configuration"],
                     MyToolItConfiguration["CalibrationFactorK"], readPayload)
                 readK = self.Can.getReadMessageData(readKIndex)
-                self.Can.Logger.Info("Write Payload: " +
+                self.Can.logger.info("Write Payload: " +
                                      payload2Hex(writePayload))
-                self.Can.Logger.Info("Request Payload: " +
+                self.Can.logger.info("Request Payload: " +
                                      payload2Hex(readPayload))
-                self.Can.Logger.Info("Read Payload: " + payload2Hex(readK))
+                self.Can.logger.info("Read Payload: " + payload2Hex(readK))
                 self.assertEqual(readK[0], valueK)
                 self.assertEqual(readK[1], i)
                 self.assertEqual(readK[2], 0)
@@ -1705,11 +1702,11 @@ class TestSth(unittest.TestCase):
                     MyToolItNetworkNr["STH1"], MyToolItBlock["Configuration"],
                     MyToolItConfiguration["CalibrationFactorK"], readPayload)
                 readK = self.Can.getReadMessageData(readKIndex)
-                self.Can.Logger.Info("Write Payload: " +
+                self.Can.logger.info("Write Payload: " +
                                      payload2Hex(writePayload))
-                self.Can.Logger.Info("Request Payload: " +
+                self.Can.logger.info("Request Payload: " +
                                      payload2Hex(readPayload))
-                self.Can.Logger.Info("Read Payload: " + payload2Hex(readK))
+                self.Can.logger.info("Read Payload: " + payload2Hex(readK))
                 self.assertEqual(readK[0], valueK)
                 self.assertEqual(readK[1], i)
                 self.assertEqual(readK[2], 0)
@@ -1738,11 +1735,11 @@ class TestSth(unittest.TestCase):
                     MyToolItNetworkNr["STH1"], MyToolItBlock["Configuration"],
                     MyToolItConfiguration["CalibrationFactorD"], readPayload)
                 readD = self.Can.getReadMessageData(readDIndex)
-                self.Can.Logger.Info("Write Payload: " +
+                self.Can.logger.info("Write Payload: " +
                                      payload2Hex(writePayload))
-                self.Can.Logger.Info("Request Payload: " +
+                self.Can.logger.info("Request Payload: " +
                                      payload2Hex(readPayload))
-                self.Can.Logger.Info("Read Payload: " + payload2Hex(readD))
+                self.Can.logger.info("Read Payload: " + payload2Hex(readD))
                 self.assertEqual(readD[0], valueD)
                 self.assertEqual(readD[1], i)
                 self.assertEqual(readD[2], 0)
@@ -1761,11 +1758,11 @@ class TestSth(unittest.TestCase):
                     MyToolItNetworkNr["STH1"], MyToolItBlock["Configuration"],
                     MyToolItConfiguration["CalibrationFactorD"], readPayload)
                 readD = self.Can.getReadMessageData(readDIndex)
-                self.Can.Logger.Info("Write Payload: " +
+                self.Can.logger.info("Write Payload: " +
                                      payload2Hex(writePayload))
-                self.Can.Logger.Info("Request Payload: " +
+                self.Can.logger.info("Request Payload: " +
                                      payload2Hex(readPayload))
-                self.Can.Logger.Info("Read Payload: " + payload2Hex(readD))
+                self.Can.logger.info("Read Payload: " + payload2Hex(readD))
                 self.assertEqual(readD[0], valueD)
                 self.assertEqual(readD[1], i)
                 self.assertEqual(readD[2], 0)
@@ -1816,8 +1813,8 @@ class TestSth(unittest.TestCase):
                     MyToolItConfiguration["CalibrationFactorD"], readPayload)
                 readK = self.Can.getReadMessageData(readKIndex)
                 readD = self.Can.getReadMessageData(readDIndex)
-                self.Can.Logger.Info("Read Payload K: " + payload2Hex(readD))
-                self.Can.Logger.Info("Read Payload D: " + payload2Hex(readD))
+                self.Can.logger.info("Read Payload K: " + payload2Hex(readD))
+                self.Can.logger.info("Read Payload D: " + payload2Hex(readD))
                 self.assertEqual(readK[0], valueKD)
                 self.assertEqual(readD[0], valueKD)
                 self.assertEqual(readK[1], i)
@@ -1857,8 +1854,8 @@ class TestSth(unittest.TestCase):
                     MyToolItConfiguration["CalibrationFactorD"], readPayload)
                 readK = self.Can.getReadMessageData(readKIndex)
                 readD = self.Can.getReadMessageData(readDIndex)
-                self.Can.Logger.Info("Read Payload K: " + payload2Hex(readD))
-                self.Can.Logger.Info("Read Payload D: " + payload2Hex(readD))
+                self.Can.logger.info("Read Payload K: " + payload2Hex(readD))
+                self.Can.logger.info("Read Payload D: " + payload2Hex(readD))
                 self.assertEqual(readK[0], valueK)
                 self.assertEqual(readK[1], i)
                 for j in range(2, 8):
@@ -1868,28 +1865,28 @@ class TestSth(unittest.TestCase):
     def test0103BlueToothName(self):
         """Write name and get name (bluetooth command) (⏱ 10 seconds)
         """
-        self.Can.Logger.Info("Bluetooth name command")
-        self.Can.Logger.Info("Write Walther0")
+        self.Can.logger.info("Bluetooth name command")
+        self.Can.logger.info("Write Walther0")
         self.Can.vBlueToothNameWrite(MyToolItNetworkNr["STH1"], 0, "Walther0")
-        self.Can.Logger.Info("Check Walther0")
+        self.Can.logger.info("Check Walther0")
         Name = self.Can.BlueToothNameGet(MyToolItNetworkNr["STH1"], 0)[0:8]
-        self.Can.Logger.Info("Received: " + Name)
+        self.Can.logger.info("Received: " + Name)
         self.assertEqual("Walther0", Name)
-        self.Can.Logger.Info("Write " + settings.sth.name)
+        self.Can.logger.info("Write " + settings.sth.name)
         self.Can.vBlueToothNameWrite(MyToolItNetworkNr["STH1"], 0,
                                      settings.sth.name)
-        self.Can.Logger.Info("Check " + settings.sth.name)
+        self.Can.logger.info("Check " + settings.sth.name)
         Name = self.Can.BlueToothNameGet(MyToolItNetworkNr["STH1"], 0)[0:8]
-        self.Can.Logger.Info("Received: " + Name)
+        self.Can.logger.info("Received: " + Name)
         self.assertEqual(settings.sth.name, Name)
 
     def test0104BlueToothAddress(self):
         """Bluetooth Address (⏱ 10 seconds)
         """
-        self.Can.Logger.Info("Get Bluetooth Address")
+        self.Can.logger.info("Get Bluetooth Address")
         iAddress = int(self.Can.BlueToothAddress(MyToolItNetworkNr["STH1"]))
         self.assertGreater(iAddress, 0)
-        self.Can.Logger.Info("BlueTooth Address: " + hex(iAddress))
+        self.Can.logger.info("BlueTooth Address: " + hex(iAddress))
 
     def test0105BlueToothConnectStandard(self):
         """Check Bluetooth connectivity (⏱ 7 minutes)
@@ -1902,50 +1899,50 @@ class TestSth(unittest.TestCase):
         self.Can.BlueToothEnergyModeNr(SleepTime["Min"],
                                        SleepTime["AdvertisementReset2"], 2)
         timeAverageSleep2 = 0
-        self.Can.Logger.Info("Test Sleep Mode 2 with Advertisement Time: " +
+        self.Can.logger.info("Test Sleep Mode 2 with Advertisement Time: " +
                              str(SleepTime["AdvertisementReset2"]) + "ms")
         for _i in range(0, 10):
             self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
             time.sleep(2 * SleepTime["Min"] / 1000)
-            timeStampDisconnected = self.Can.Logger.getTimeStamp()
+            timeStampDisconnected = time.time() * 1000
             self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
                                                   settings.sth.name)
-            timeStampConnected = self.Can.Logger.getTimeStamp()
+            timeStampConnected = time.time() * 1000
             timeConnect = timeStampConnected - timeStampDisconnected
             timeAverageSleep2 += timeConnect
-            self.Can.Logger.Info("TimeStamp before connecting start : " +
+            self.Can.logger.info("TimeStamp before connecting start : " +
                                  str(timeStampDisconnected) + "ms")
-            self.Can.Logger.Info("TimeStamp after reconnected : " +
+            self.Can.logger.info("TimeStamp after reconnected : " +
                                  str(timeStampConnected) + "ms")
-            self.Can.Logger.Info("Connecting Time : " + str(timeConnect) +
+            self.Can.logger.info("Connecting Time : " + str(timeConnect) +
                                  "ms")
         timeAverageSleep2 /= 10
-        self.Can.Logger.Info("Average Connecting Time for Sleep Mode 2 : " +
+        self.Can.logger.info("Average Connecting Time for Sleep Mode 2 : " +
                              str(timeAverageSleep2) + "ms")
         self.Can.BlueToothEnergyModeNr(SleepTime["Min"],
                                        SleepTime["AdvertisementReset1"], 1)
         self.Can.BlueToothEnergyModeNr(SleepTime["Reset2"],
                                        SleepTime["AdvertisementReset2"], 2)
         timeAverageSleep1 = 0
-        self.Can.Logger.Info("Test Sleep Mode 1 with Advertisement Time: " +
+        self.Can.logger.info("Test Sleep Mode 1 with Advertisement Time: " +
                              str(SleepTime["AdvertisementReset1"]) + "ms")
         for _i in range(0, 10):
             self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
             time.sleep(SleepTime["Min"] / 1000)
-            timeStampDisconnected = self.Can.Logger.getTimeStamp()
+            timeStampDisconnected = time.time() * 1000
             self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
                                                   settings.sth.name)
-            timeStampConnected = self.Can.Logger.getTimeStamp()
+            timeStampConnected = time.time() * 1000
             timeConnect = timeStampConnected - timeStampDisconnected
             timeAverageSleep1 += timeConnect
-            self.Can.Logger.Info("TimeStamp before connecting start : " +
+            self.Can.logger.info("TimeStamp before connecting start : " +
                                  str(timeStampDisconnected) + "ms")
-            self.Can.Logger.Info("TimeStamp after reconnected : " +
+            self.Can.logger.info("TimeStamp after reconnected : " +
                                  str(timeStampConnected) + "ms")
-            self.Can.Logger.Info("Connecting Time : " + str(timeConnect) +
+            self.Can.logger.info("Connecting Time : " + str(timeConnect) +
                                  "ms")
         timeAverageSleep1 /= 10
-        self.Can.Logger.Info("Average Connecting Time for Sleep Mode 1 : " +
+        self.Can.logger.info("Average Connecting Time for Sleep Mode 1 : " +
                              str(timeAverageSleep1) + "ms")
         self.Can.BlueToothEnergyModeNr(SleepTime["Reset1"],
                                        SleepTime["AdvertisementReset1"], 1)
@@ -1962,25 +1959,25 @@ class TestSth(unittest.TestCase):
         self.Can.BlueToothEnergyModeNr(SleepTime["Min"],
                                        SleepTime["AdvertisementMax"], 2)
         timeAverageSleep2 = 0
-        self.Can.Logger.Info("Test Sleep Mode 2 with Advertisement Time: " +
+        self.Can.logger.info("Test Sleep Mode 2 with Advertisement Time: " +
                              str(SleepTime["AdvertisementReset2"]) + "ms")
         for _i in range(0, 10):
             self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
             time.sleep(2 * SleepTime["Min"] / 1000)
-            timeStampDisconnected = self.Can.Logger.getTimeStamp()
+            timeStampDisconnected = time.time() * 1000
             self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
                                                   settings.sth.name)
-            timeStampConnected = self.Can.Logger.getTimeStamp()
+            timeStampConnected = time.time() * 1000
             timeConnect = timeStampConnected - timeStampDisconnected
             timeAverageSleep2 += timeConnect
-            self.Can.Logger.Info("TimeStamp before connecting start : " +
+            self.Can.logger.info("TimeStamp before connecting start : " +
                                  str(timeStampDisconnected) + "ms")
-            self.Can.Logger.Info("TimeStamp after reconnected : " +
+            self.Can.logger.info("TimeStamp after reconnected : " +
                                  str(timeStampConnected) + "ms")
-            self.Can.Logger.Info("Connecting Time : " + str(timeConnect) +
+            self.Can.logger.info("Connecting Time : " + str(timeConnect) +
                                  "ms")
         timeAverageSleep2 /= 10
-        self.Can.Logger.Info("Average Connecting Time: " +
+        self.Can.logger.info("Average Connecting Time: " +
                              str(timeAverageSleep2) + "ms")
         self.Can.BlueToothEnergyModeNr(SleepTime["Reset1"],
                                        SleepTime["AdvertisementReset1"], 1)
@@ -1997,23 +1994,23 @@ class TestSth(unittest.TestCase):
         self.Can.BlueToothEnergyModeNr(SleepTime["Reset2"],
                                        SleepTime["AdvertisementReset2"], 2)
         timeAverage = 0
-        self.Can.Logger.Info("Test Normal Connection Time")
+        self.Can.logger.info("Test Normal Connection Time")
         for _i in range(0, 10):
             self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
-            timeStampDisconnected = self.Can.Logger.getTimeStamp()
+            timeStampDisconnected = time.time() * 1000
             self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
                                                   settings.sth.name)
-            timeStampConnected = self.Can.Logger.getTimeStamp()
+            timeStampConnected = time.time() * 1000
             timeConnect = timeStampConnected - timeStampDisconnected
             timeAverage += timeConnect
-            self.Can.Logger.Info("TimeStamp before connecting start : " +
+            self.Can.logger.info("TimeStamp before connecting start : " +
                                  str(timeStampDisconnected) + "ms")
-            self.Can.Logger.Info("TimeStamp after reconnected : " +
+            self.Can.logger.info("TimeStamp after reconnected : " +
                                  str(timeStampConnected) + "ms")
-            self.Can.Logger.Info("Connecting Time : " + str(timeConnect) +
+            self.Can.logger.info("Connecting Time : " + str(timeConnect) +
                                  "ms")
         timeAverage /= 10
-        self.Can.Logger.Info("Average Connecting Time: " + str(timeAverage) +
+        self.Can.logger.info("Average Connecting Time: " + str(timeAverage) +
                              "ms")
         self.assertLess(timeAverage, TestConfig["ConTimeNormalMaxMs"])
 
@@ -2027,22 +2024,22 @@ class TestSth(unittest.TestCase):
                                             SleepTime["AdvertisementReset1"],
                                             1)
         if 0 == timeReset and 0 == timeAdvertisement:
-            self.Can.Logger.Info("Sleep Time1 was not taken: " +
+            self.Can.logger.info("Sleep Time1 was not taken: " +
                                  str(SleepTime["Min"] - 1) + "ms")
         else:
-            self.Can.Logger.Error("Sleep Time1 was taken: " +
-                                  str(SleepTime["Min"] - 1) + "ms")
+            self.Can.logger.info.Error("Sleep Time1 was taken: " +
+                                       str(SleepTime["Min"] - 1) + "ms")
             self.Can.__exitError()
         [timeReset, timeAdvertisement
          ] = self.Can.BlueToothEnergyModeNr(SleepTime["Min"] - 1,
                                             SleepTime["AdvertisementReset2"],
                                             2)
         if 0 == timeReset and 0 == timeAdvertisement:
-            self.Can.Logger.Info("Sleep Time2 was not taken: " +
+            self.Can.logger.info("Sleep Time2 was not taken: " +
                                  str(SleepTime["Min"] - 1) + "ms")
         else:
-            self.Can.Logger.Error("Sleep Time2 was taken: " +
-                                  str(SleepTime["Min"] - 1) + "ms")
+            self.Can.logger.info.Error("Sleep Time2 was taken: " +
+                                       str(SleepTime["Min"] - 1) + "ms")
             self.Can.__exitError()
 
         # Do not take Advertisement Time - Min
@@ -2051,24 +2048,24 @@ class TestSth(unittest.TestCase):
                                             SleepTime["AdvertisementMin"] - 1,
                                             1)
         if 0 == timeReset and 0 == timeAdvertisement:
-            self.Can.Logger.Info("Advertisement Time1 was not taken: " +
+            self.Can.logger.info("Advertisement Time1 was not taken: " +
                                  str(SleepTime["AdvertisementMin"] - 1) + "ms")
         else:
-            self.Can.Logger.Error("Advertisement Time1 was taken: " +
-                                  str(SleepTime["AdvertisementMin"] - 1) +
-                                  "ms")
+            self.Can.logger.info.Error("Advertisement Time1 was taken: " +
+                                       str(SleepTime["AdvertisementMin"] - 1) +
+                                       "ms")
             self.Can.__exitError()
         [timeReset, timeAdvertisement
          ] = self.Can.BlueToothEnergyModeNr(SleepTime["Reset2"],
                                             SleepTime["AdvertisementMin"] - 1,
                                             2)
         if 0 == timeReset and 0 == timeAdvertisement:
-            self.Can.Logger.Info("Advertisement Time2 was not taken: " +
+            self.Can.logger.info("Advertisement Time2 was not taken: " +
                                  str(SleepTime["AdvertisementMin"] - 1) + "ms")
         else:
-            self.Can.Logger.Error("Advertisement Time2 was taken: " +
-                                  str(SleepTime["AdvertisementMin"] - 1) +
-                                  "ms")
+            self.Can.logger.info.Error("Advertisement Time2 was taken: " +
+                                       str(SleepTime["AdvertisementMin"] - 1) +
+                                       "ms")
             self.Can.__exitError()
         # Do not take Advertisement Time - Max
         [timeReset, timeAdvertisement
@@ -2076,24 +2073,24 @@ class TestSth(unittest.TestCase):
                                             SleepTime["AdvertisementMax"] + 1,
                                             1)
         if 0 == timeReset and 0 == timeAdvertisement:
-            self.Can.Logger.Info("Advertisement Time1 was not taken: " +
+            self.Can.logger.info("Advertisement Time1 was not taken: " +
                                  str(SleepTime["AdvertisementMax"] + 1) + "ms")
         else:
-            self.Can.Logger.Error("Advertisement Time1 was taken: " +
-                                  str(SleepTime["AdvertisementMax"] + 1) +
-                                  "ms")
+            self.Can.logger.info.Error("Advertisement Time1 was taken: " +
+                                       str(SleepTime["AdvertisementMax"] + 1) +
+                                       "ms")
             self.Can.__exitError()
         [timeReset, timeAdvertisement
          ] = self.Can.BlueToothEnergyModeNr(SleepTime["Reset2"],
                                             SleepTime["AdvertisementMax"] + 1,
                                             2)
         if 0 == timeReset and 0 == timeAdvertisement:
-            self.Can.Logger.Info("Advertisement Time2 was not taken: " +
+            self.Can.logger.info("Advertisement Time2 was not taken: " +
                                  str(SleepTime["AdvertisementMax"] + 1) + "ms")
         else:
-            self.Can.Logger.Error("Advertisement Time2 was taken: " +
-                                  str(SleepTime["AdvertisementMax"] + 1) +
-                                  "ms")
+            self.Can.logger.info.Error("Advertisement Time2 was taken: " +
+                                       str(SleepTime["AdvertisementMax"] + 1) +
+                                       "ms")
             self.Can.__exitError()
 
         self.Can.BlueToothEnergyModeNr(SleepTime["Reset1"],
@@ -2104,11 +2101,11 @@ class TestSth(unittest.TestCase):
     def test0109BlueToothRssi(self):
         """Bluetooth Address (⏱ 7 seconds)
         """
-        self.Can.Logger.Info("Get Bluetooth RSSI")
+        self.Can.logger.info("Get Bluetooth RSSI")
         iRssi = self.Can.BlueToothRssi(MyToolItNetworkNr["STH1"])
         self.assertGreater(iRssi, -80)
         self.assertLess(iRssi, -20)
-        self.Can.Logger.Info("BlueTooth RSSI: " + str(iRssi))
+        self.Can.logger.info("BlueTooth RSSI: " + str(iRssi))
 
     def test0300GetSingleVoltageBattery(self):
         """Get Battery Voltage via single command (⏱ 8 seconds)
@@ -2881,13 +2878,13 @@ class TestSth(unittest.TestCase):
     def test0337StreamingMultiConfig(self):
         """Test multiple config x-xyz-x  (⏱ 60 seconds)
         """
-        self.Can.Logger.Info("Streaming AccX starts")
+        self.Can.logger.info("Streaming AccX starts")
         self.test0321GetStreamingAccX()
         self.Can.ReadThreadReset()
-        self.Can.Logger.Info("Streaming AccXYZ starts")
+        self.Can.logger.info("Streaming AccXYZ starts")
         self.test0324GetStreamingAccXYZ()
         self.Can.ReadThreadReset()
-        self.Can.Logger.Info("Streaming AccX starts")
+        self.Can.logger.info("Streaming AccX starts")
         self.test0321GetStreamingAccX()
         self.Can.ReadThreadReset()
 
@@ -2924,15 +2921,16 @@ class TestSth(unittest.TestCase):
                 indexStart, indexEnd) - 0.5:
             countDel += 1
             indexEnd -= 1
-        self.Can.Logger.Info("Deleted Messages do achieve " +
+        self.Can.logger.info("Deleted Messages do achieve " +
                              str(self.tSthLimits.uStandardTestTimeMs) +
                              "ms: " + str(countDel + 180))
-        self.Can.Logger.Info("indexStart: " + str(indexStart))
-        self.Can.Logger.Info("indexEnd: " + str(indexEnd))
+        self.Can.logger.info("indexStart: " + str(indexStart))
+        self.Can.logger.info("indexEnd: " + str(indexEnd))
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Can.Logger.Warning("Deleted Messages do achieve " +
-                                    str(self.tSthLimits.uStandardTestTimeMs) +
-                                    "ms: " + str(countDel + 180))
+            self.Can.logger.info.Warning(
+                "Deleted Messages do achieve " +
+                str(self.tSthLimits.uStandardTestTimeMs) + "ms: " +
+                str(countDel + 180))
         [arrayBat, array2,
          array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
                                                 MyToolItStreaming["Voltage"],
@@ -2945,8 +2943,8 @@ class TestSth(unittest.TestCase):
             DataSets[3], 1, 0, 0, indexStart, indexEnd)
         self.assertEqual(0, len(array2))
         self.assertEqual(0, len(array3))
-        self.Can.Logger.Info("Voltage Sampling Points: " + str(len(arrayBat)))
-        self.Can.Logger.Info("Acceleration Sampling Points: " +
+        self.Can.logger.info("Voltage Sampling Points: " + str(len(arrayBat)))
+        self.Can.logger.info("Acceleration Sampling Points: " +
                              str(len(arrayAccX)))
         self.Can.ValueLog(arrayBat, array2, array3, fAdcRawDat, "Voltage", "")
         self.Can.ValueLog(arrayAccX, array2, array3, fAdcRawDat, "Acc", "")
@@ -2982,15 +2980,16 @@ class TestSth(unittest.TestCase):
                 indexStart, indexEnd) - 0.5:
             countDel += 1
             indexEnd -= 1
-        self.Can.Logger.Info("Deleted Messages do achieve " +
+        self.Can.logger.info("Deleted Messages do achieve " +
                              str(self.tSthLimits.uStandardTestTimeMs) +
                              "ms: " + str(countDel + 180))
-        self.Can.Logger.Info("indexStart: " + str(indexStart))
-        self.Can.Logger.Info("indexEnd: " + str(indexEnd))
+        self.Can.logger.info("indexStart: " + str(indexStart))
+        self.Can.logger.info("indexEnd: " + str(indexEnd))
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Can.Logger.Warning("Deleted Messages do achieve " +
-                                    str(self.tSthLimits.uStandardTestTimeMs) +
-                                    "ms: " + str(countDel + 180))
+            self.Can.logger.info.Warning(
+                "Deleted Messages do achieve " +
+                str(self.tSthLimits.uStandardTestTimeMs) + "ms: " +
+                str(countDel + 180))
         [arrayBat, array2,
          array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
                                                 MyToolItStreaming["Voltage"],
@@ -3003,8 +3002,8 @@ class TestSth(unittest.TestCase):
             DataSets[3], 1, 0, 0, indexStart, indexEnd)
         self.assertEqual(0, len(array2))
         self.assertEqual(0, len(array3))
-        self.Can.Logger.Info("Voltage Sampling Points: " + str(len(arrayBat)))
-        self.Can.Logger.Info("Acceleration Sampling Points: " +
+        self.Can.logger.info("Voltage Sampling Points: " + str(len(arrayBat)))
+        self.Can.logger.info("Acceleration Sampling Points: " +
                              str(len(arrayAccX)))
         self.Can.ValueLog(arrayBat, array2, array3, fAdcRawDat, "Voltage", "")
         self.Can.ValueLog(arrayAccX, array2, array3, fAdcRawDat, "Acc", "")
@@ -3038,15 +3037,16 @@ class TestSth(unittest.TestCase):
                 indexStart, indexEnd) - 0.5:
             countDel += 1
             indexEnd -= 1
-        self.Can.Logger.Info("Deleted Messages do achieve " +
+        self.Can.logger.info("Deleted Messages do achieve " +
                              str(self.tSthLimits.uStandardTestTimeMs) +
                              "ms: " + str(countDel + 180))
-        self.Can.Logger.Info("indexStart: " + str(indexStart))
-        self.Can.Logger.Info("indexEnd: " + str(indexEnd))
+        self.Can.logger.info("indexStart: " + str(indexStart))
+        self.Can.logger.info("indexEnd: " + str(indexEnd))
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Can.Logger.Warning("Deleted Messages do achieve " +
-                                    str(self.tSthLimits.uStandardTestTimeMs) +
-                                    "ms: " + str(countDel + 180))
+            self.Can.logger.info.Warning(
+                "Deleted Messages do achieve " +
+                str(self.tSthLimits.uStandardTestTimeMs) + "ms: " +
+                str(countDel + 180))
         [arrayBat, array2,
          array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
                                                 MyToolItStreaming["Voltage"],
@@ -3059,8 +3059,8 @@ class TestSth(unittest.TestCase):
             DataSets[3], 0, 1, 0, indexStart, indexEnd)
         self.assertEqual(0, len(array1))
         self.assertEqual(0, len(array3))
-        self.Can.Logger.Info("Voltage Sampling Points: " + str(len(arrayBat)))
-        self.Can.Logger.Info("Acceleration Sampling Points: " +
+        self.Can.logger.info("Voltage Sampling Points: " + str(len(arrayBat)))
+        self.Can.logger.info("Acceleration Sampling Points: " +
                              str(len(arrayAccY)))
         self.Can.ValueLog(arrayBat, array2, array3, fAdcRawDat, "Voltage", "")
         self.Can.ValueLog(array1, arrayAccY, array3, fAdcRawDat, "Acc", "")
@@ -3094,15 +3094,16 @@ class TestSth(unittest.TestCase):
                 indexStart, indexEnd) - 0.5:
             countDel += 1
             indexEnd -= 1
-        self.Can.Logger.Info("Deleted Messages do achieve " +
+        self.Can.logger.info("Deleted Messages do achieve " +
                              str(self.tSthLimits.uStandardTestTimeMs) +
                              "ms: " + str(countDel + 180))
-        self.Can.Logger.Info("indexStart: " + str(indexStart))
-        self.Can.Logger.Info("indexEnd: " + str(indexEnd))
+        self.Can.logger.info("indexStart: " + str(indexStart))
+        self.Can.logger.info("indexEnd: " + str(indexEnd))
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Can.Logger.Warning("Deleted Messages do achieve " +
-                                    str(self.tSthLimits.uStandardTestTimeMs) +
-                                    "ms: " + str(countDel + 180))
+            self.Can.logger.info.Warning(
+                "Deleted Messages do achieve " +
+                str(self.tSthLimits.uStandardTestTimeMs) + "ms: " +
+                str(countDel + 180))
         [arrayBat, array2,
          array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
                                                 MyToolItStreaming["Voltage"],
@@ -3115,8 +3116,8 @@ class TestSth(unittest.TestCase):
             DataSets[3], 0, 0, 1, indexStart, indexEnd)
         self.assertEqual(0, len(array1))
         self.assertEqual(0, len(array2))
-        self.Can.Logger.Info("Voltage Sampling Points: " + str(len(arrayBat)))
-        self.Can.Logger.Info("Acceleration Sampling Points: " +
+        self.Can.logger.info("Voltage Sampling Points: " + str(len(arrayBat)))
+        self.Can.logger.info("Acceleration Sampling Points: " +
                              str(len(arrayAccZ)))
         self.Can.ValueLog(arrayBat, array2, array3, fAdcRawDat, "Voltage", "")
         self.Can.ValueLog(array1, array2, arrayAccZ, fAdcRawDat, "Acc", "")
@@ -3155,15 +3156,16 @@ class TestSth(unittest.TestCase):
                 indexStart, indexEnd) - 0.5:
             countDel += 1
             indexEnd -= 1
-        self.Can.Logger.Info("Deleted Messages do achieve " +
+        self.Can.logger.info("Deleted Messages do achieve " +
                              str(self.tSthLimits.uStandardTestTimeMs) +
                              "ms: " + str(countDel + 180))
-        self.Can.Logger.Info("indexStart: " + str(indexStart))
-        self.Can.Logger.Info("indexEnd: " + str(indexEnd))
+        self.Can.logger.info("indexStart: " + str(indexStart))
+        self.Can.logger.info("indexEnd: " + str(indexEnd))
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Can.Logger.Warning("Deleted Messages do achieve " +
-                                    str(self.tSthLimits.uStandardTestTimeMs) +
-                                    "ms: " + str(countDel + 180))
+            self.Can.logger.info.Warning(
+                "Deleted Messages do achieve " +
+                str(self.tSthLimits.uStandardTestTimeMs) + "ms: " +
+                str(countDel + 180))
         [arrayBat, array2,
          array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
                                                 MyToolItStreaming["Voltage"],
@@ -3175,8 +3177,8 @@ class TestSth(unittest.TestCase):
             MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
             DataSets[1], 1, 0, 1, indexStart, indexEnd)
         self.assertEqual(0, len(array2))
-        self.Can.Logger.Info("Voltage Sampling Points: " + str(len(arrayBat)))
-        self.Can.Logger.Info("Acceleration Sampling Points: " +
+        self.Can.logger.info("Voltage Sampling Points: " + str(len(arrayBat)))
+        self.Can.logger.info("Acceleration Sampling Points: " +
                              str(len(arrayAccZ)))
         self.Can.ValueLog(arrayBat, array2, array3, fAdcRawDat, "Voltage", "")
         self.Can.ValueLog(arrayAccX, array2, arrayAccZ, fAdcRawDat, "Acc", "")
@@ -3218,15 +3220,16 @@ class TestSth(unittest.TestCase):
                 indexStart, indexEnd) - 0.5:
             countDel += 1
             indexEnd -= 1
-        self.Can.Logger.Info("Deleted Messages do achieve " +
+        self.Can.logger.info("Deleted Messages do achieve " +
                              str(self.tSthLimits.uStandardTestTimeMs) +
                              "ms: " + str(countDel + 180))
-        self.Can.Logger.Info("indexStart: " + str(indexStart))
-        self.Can.Logger.Info("indexEnd: " + str(indexEnd))
+        self.Can.logger.info("indexStart: " + str(indexStart))
+        self.Can.logger.info("indexEnd: " + str(indexEnd))
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Can.Logger.Warning("Deleted Messages do achieve " +
-                                    str(self.tSthLimits.uStandardTestTimeMs) +
-                                    "ms: " + str(countDel + 180))
+            self.Can.logger.info.Warning(
+                "Deleted Messages do achieve " +
+                str(self.tSthLimits.uStandardTestTimeMs) + "ms: " +
+                str(countDel + 180))
         [arrayBat, array2,
          array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
                                                 MyToolItStreaming["Voltage"],
@@ -3238,8 +3241,8 @@ class TestSth(unittest.TestCase):
             MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
             DataSets[1], 1, 1, 0, indexStart, indexEnd)
         self.assertEqual(0, len(array3))
-        self.Can.Logger.Info("Voltage Sampling Points: " + str(len(arrayBat)))
-        self.Can.Logger.Info("Acceleration Sampling Points: " +
+        self.Can.logger.info("Voltage Sampling Points: " + str(len(arrayBat)))
+        self.Can.logger.info("Acceleration Sampling Points: " +
                              str(len(arrayAccY)))
         self.Can.ValueLog(arrayBat, array2, array3, fAdcRawDat, "Voltage", "")
         self.Can.ValueLog(arrayAccX, arrayAccY, array3, fAdcRawDat, "Acc", "")
@@ -3287,15 +3290,16 @@ class TestSth(unittest.TestCase):
                 indexStart, indexEnd) - 0.5:
             countDel += 1
             indexEnd -= 1
-        self.Can.Logger.Info("Deleted Messages do achieve " +
+        self.Can.logger.info("Deleted Messages do achieve " +
                              str(self.tSthLimits.uStandardTestTimeMs) +
                              "ms: " + str(countDel + 180))
-        self.Can.Logger.Info("indexStart: " + str(indexStart))
-        self.Can.Logger.Info("indexEnd: " + str(indexEnd))
+        self.Can.logger.info("indexStart: " + str(indexStart))
+        self.Can.logger.info("indexEnd: " + str(indexEnd))
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Can.Logger.Warning("Deleted Messages do achieve " +
-                                    str(self.tSthLimits.uStandardTestTimeMs) +
-                                    "ms: " + str(countDel + 180))
+            self.Can.logger.info.Warning(
+                "Deleted Messages do achieve " +
+                str(self.tSthLimits.uStandardTestTimeMs) + "ms: " +
+                str(countDel + 180))
         [arrayBat, array2,
          array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
                                                 MyToolItStreaming["Voltage"],
@@ -3307,8 +3311,8 @@ class TestSth(unittest.TestCase):
             MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
             DataSets[1], 0, 1, 1, indexStart, indexEnd)
         self.assertEqual(0, len(array1))
-        self.Can.Logger.Info("Voltage Sampling Points: " + str(len(arrayBat)))
-        self.Can.Logger.Info("Acceleration Sampling Points: " +
+        self.Can.logger.info("Voltage Sampling Points: " + str(len(arrayBat)))
+        self.Can.logger.info("Acceleration Sampling Points: " +
                              str(len(arrayAccY)))
         self.Can.ValueLog(arrayBat, array2, array3, fAdcRawDat, "Voltage", "")
         self.Can.ValueLog(array1, arrayAccY, arrayAccZ, fAdcRawDat, "Acc", "")
@@ -3344,15 +3348,16 @@ class TestSth(unittest.TestCase):
                 indexStart, indexEnd) - 0.5:
             countDel += 1
             indexEnd -= 1
-        self.Can.Logger.Info("Deleted Messages do achieve " +
+        self.Can.logger.info("Deleted Messages do achieve " +
                              str(self.tSthLimits.uStandardTestTimeMs) +
                              "ms: " + str(countDel + 180))
-        self.Can.Logger.Info("indexStart: " + str(indexStart))
-        self.Can.Logger.Info("indexEnd: " + str(indexEnd))
+        self.Can.logger.info("indexStart: " + str(indexStart))
+        self.Can.logger.info("indexEnd: " + str(indexEnd))
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Can.Logger.Warning("Deleted Messages do achieve " +
-                                    str(self.tSthLimits.uStandardTestTimeMs) +
-                                    "ms: " + str(countDel + 180))
+            self.Can.logger.info.Warning(
+                "Deleted Messages do achieve " +
+                str(self.tSthLimits.uStandardTestTimeMs) + "ms: " +
+                str(countDel + 180))
         [arrayBat, array2,
          array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
                                                 MyToolItStreaming["Voltage"],
@@ -3363,8 +3368,8 @@ class TestSth(unittest.TestCase):
         [arrayAccX, arrayAccY, arrayAccZ] = self.Can.streamingValueArray(
             MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
             DataSets[1], 1, 1, 1, indexStart, indexEnd)
-        self.Can.Logger.Info("Voltage Sampling Points: " + str(len(arrayBat)))
-        self.Can.Logger.Info("Acceleration Sampling Points: " +
+        self.Can.logger.info("Voltage Sampling Points: " + str(len(arrayBat)))
+        self.Can.logger.info("Acceleration Sampling Points: " +
                              str(len(arrayAccZ)))
         self.Can.ValueLog(arrayBat, array2, array3, fAdcRawDat, "Voltage", "")
         self.Can.ValueLog(arrayAccX, arrayAccY, arrayAccZ, fAdcRawDat, "Acc",
@@ -3406,18 +3411,18 @@ class TestSth(unittest.TestCase):
         self.assertEqual(0, len(voltage2Array))
         self.assertEqual(0, len(voltage3Array))
         samplingPointsAccX = len(AccArray1) / 10
-        self.Can.Logger.Info("Battery Voltage Raw: " + str(voltage1Array[0]))
+        self.Can.logger.info("Battery Voltage Raw: " + str(voltage1Array[0]))
         self.singleValueCompare(voltage1Array, voltage2Array, voltage3Array,
                                 self.tSthLimits.uBatteryMiddle,
                                 self.tSthLimits.uBatteryTolerance, 0, 0, 0, 0,
                                 fVoltageBattery)
-        self.Can.Logger.Info("Acceleration X Sampling Points per seconds: " +
+        self.Can.logger.info("Acceleration X Sampling Points per seconds: " +
                              str(samplingPointsAccX))
         calcRate = calcSamplingRate(
             self.tSthLimits.uSamplingRatePrescalerReset,
             self.tSthLimits.uSamplingRateAcqTimeReset,
             self.tSthLimits.uSamplingRateOverSamplesReset)
-        self.Can.Logger.Info("Calculated Sampling Points per seconds: " +
+        self.Can.logger.info("Calculated Sampling Points per seconds: " +
                              str(calcRate))
         self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow,
                         samplingPointsAccX)
@@ -3451,18 +3456,18 @@ class TestSth(unittest.TestCase):
         self.assertEqual(0, len(voltage2Array))
         self.assertEqual(0, len(voltage3Array))
         samplingPointsAccY = len(AccArray2) / 10
-        self.Can.Logger.Info("Battery Voltage Raw: " + str(voltage1Array[0]))
+        self.Can.logger.info("Battery Voltage Raw: " + str(voltage1Array[0]))
         self.singleValueCompare(voltage1Array, voltage2Array, voltage3Array,
                                 self.tSthLimits.uBatteryMiddle,
                                 self.tSthLimits.uBatteryTolerance, 0, 0, 0, 0,
                                 fVoltageBattery)
-        self.Can.Logger.Info("Acceleration Y Sampling Points per seconds: " +
+        self.Can.logger.info("Acceleration Y Sampling Points per seconds: " +
                              str(samplingPointsAccY))
         calcRate = calcSamplingRate(
             self.tSthLimits.uSamplingRatePrescalerReset,
             self.tSthLimits.uSamplingRateAcqTimeReset,
             self.tSthLimits.uSamplingRateOverSamplesReset)
-        self.Can.Logger.Info("Calculated Sampling Points per seconds: " +
+        self.Can.logger.info("Calculated Sampling Points per seconds: " +
                              str(calcRate))
         self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow,
                         samplingPointsAccY)
@@ -3496,18 +3501,18 @@ class TestSth(unittest.TestCase):
         self.assertEqual(0, len(voltage2Array))
         self.assertEqual(0, len(voltage3Array))
         samplingPointsAccZ = len(AccArray3) / 10
-        self.Can.Logger.Info("Battery Voltage Raw: " + str(voltage1Array[0]))
+        self.Can.logger.info("Battery Voltage Raw: " + str(voltage1Array[0]))
         self.singleValueCompare(voltage1Array, voltage2Array, voltage3Array,
                                 self.tSthLimits.uBatteryMiddle,
                                 self.tSthLimits.uBatteryTolerance, 0, 0, 0, 0,
                                 fVoltageBattery)
-        self.Can.Logger.Info("Acceleration Z Sampling Points per seconds: " +
+        self.Can.logger.info("Acceleration Z Sampling Points per seconds: " +
                              str(samplingPointsAccZ))
         calcRate = calcSamplingRate(
             self.tSthLimits.uSamplingRatePrescalerReset,
             self.tSthLimits.uSamplingRateAcqTimeReset,
             self.tSthLimits.uSamplingRateOverSamplesReset)
-        self.Can.Logger.Info("Calculated Sampling Points per seconds: " +
+        self.Can.logger.info("Calculated Sampling Points per seconds: " +
                              str(calcRate))
         self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow,
                         samplingPointsAccZ)
@@ -3543,7 +3548,7 @@ class TestSth(unittest.TestCase):
             self.assertEqual(0, len(voltage2Array))
             self.assertEqual(0, len(voltage3Array))
             samplingPointsBattery = len(voltage1Array) / 10
-            self.Can.Logger.Info("AccX Raw: " + str(AccArray1[0]))
+            self.Can.logger.info("AccX Raw: " + str(AccArray1[0]))
             self.singleValueCompare(AccArray1, AccArray2, AccArray3,
                                     self.tSthLimits.iAdcAccXRawMiddle,
                                     self.tSthLimits.iAdcAccXRawTolerance,
@@ -3552,13 +3557,13 @@ class TestSth(unittest.TestCase):
                                     self.tSthLimits.iAdcAccZRawMiddle,
                                     self.tSthLimits.iAdcAccZRawTolerance,
                                     fAdcRawDat)
-            self.Can.Logger.Info("Battery Sampling Points per seconds: " +
+            self.Can.logger.info("Battery Sampling Points per seconds: " +
                                  str(samplingPointsBattery))
             calcRate = calcSamplingRate(
                 self.tSthLimits.uSamplingRatePrescalerReset,
                 self.tSthLimits.uSamplingRateAcqTimeReset,
                 self.tSthLimits.uSamplingRateOverSamplesReset)
-            self.Can.Logger.Info("Calculated Sampling Points per seconds: " +
+            self.Can.logger.info("Calculated Sampling Points per seconds: " +
                                  str(calcRate))
             self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow,
                             samplingPointsBattery)
@@ -3594,7 +3599,7 @@ class TestSth(unittest.TestCase):
         self.assertEqual(0, len(voltage2Array))
         self.assertEqual(0, len(voltage3Array))
         samplingPointsBattery = len(voltage1Array) / 10
-        self.Can.Logger.Info("AccY Raw: " + str(AccArray2[0]))
+        self.Can.logger.info("AccY Raw: " + str(AccArray2[0]))
         self.singleValueCompare(AccArray1, AccArray2, AccArray3,
                                 self.tSthLimits.iAdcAccXRawMiddle,
                                 self.tSthLimits.iAdcAccXTolerance,
@@ -3602,13 +3607,13 @@ class TestSth(unittest.TestCase):
                                 self.tSthLimits.iAdcAccYTolerance,
                                 self.tSthLimits.iAdcAccZRawMiddle,
                                 self.tSthLimits.iAdcAccZTolerance, fAdcRawDat)
-        self.Can.Logger.Info("Battery Sampling Points per seconds: " +
+        self.Can.logger.info("Battery Sampling Points per seconds: " +
                              str(samplingPointsBattery))
         calcRate = calcSamplingRate(
             self.tSthLimits.uSamplingRatePrescalerReset,
             self.tSthLimits.uSamplingRateAcqTimeReset,
             self.tSthLimits.uSamplingRateOverSamplesReset)
-        self.Can.Logger.Info("Calculated Sampling Points per seconds: " +
+        self.Can.logger.info("Calculated Sampling Points per seconds: " +
                              str(calcRate))
         self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow,
                         samplingPointsBattery)
@@ -3642,7 +3647,7 @@ class TestSth(unittest.TestCase):
         self.assertEqual(0, len(voltage2Array))
         self.assertEqual(0, len(voltage3Array))
         samplingPointsBattery = len(voltage1Array) / 10
-        self.Can.Logger.Info("AccZ Raw: " + str(AccArray3[0]))
+        self.Can.logger.info("AccZ Raw: " + str(AccArray3[0]))
         self.singleValueCompare(AccArray1, AccArray2, AccArray3,
                                 self.tSthLimits.iAdcAccXRawMiddle,
                                 self.tSthLimits.iAdcAccXRawTolerance,
@@ -3651,13 +3656,13 @@ class TestSth(unittest.TestCase):
                                 self.tSthLimits.iAdcAccZRawMiddle,
                                 self.tSthLimits.iAdcAccZRawTolerance,
                                 fAdcRawDat)
-        self.Can.Logger.Info("Battery Sampling Points per seconds: " +
+        self.Can.logger.info("Battery Sampling Points per seconds: " +
                              str(samplingPointsBattery))
         calcRate = calcSamplingRate(
             self.tSthLimits.uSamplingRatePrescalerReset,
             self.tSthLimits.uSamplingRateAcqTimeReset,
             self.tSthLimits.uSamplingRateOverSamplesReset)
-        self.Can.Logger.Info("Calculated Sampling Points per seconds: " +
+        self.Can.logger.info("Calculated Sampling Points per seconds: " +
                              str(calcRate))
         self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow,
                         samplingPointsBattery)
@@ -3691,8 +3696,8 @@ class TestSth(unittest.TestCase):
         self.assertEqual(0, len(voltage2Array))
         self.assertEqual(0, len(voltage3Array))
         samplingPointsBattery = len(voltage1Array) / 10
-        self.Can.Logger.Info("AccY Raw: " + str(AccArray2[0]))
-        self.Can.Logger.Info("AccZ Raw: " + str(AccArray3[0]))
+        self.Can.logger.info("AccY Raw: " + str(AccArray2[0]))
+        self.Can.logger.info("AccZ Raw: " + str(AccArray3[0]))
         self.singleValueCompare(AccArray1, AccArray2, AccArray3,
                                 self.tSthLimits.iAdcAccXRawMiddle,
                                 self.tSthLimits.iAdcAccXRawTolerance,
@@ -3701,13 +3706,13 @@ class TestSth(unittest.TestCase):
                                 self.tSthLimits.iAdcAccZRawMiddle,
                                 self.tSthLimits.iAdcAccZRawTolerance,
                                 fAdcRawDat)
-        self.Can.Logger.Info("Battery Sampling Points per seconds: " +
+        self.Can.logger.info("Battery Sampling Points per seconds: " +
                              str(samplingPointsBattery))
         calcRate = calcSamplingRate(
             self.tSthLimits.uSamplingRatePrescalerReset,
             self.tSthLimits.uSamplingRateAcqTimeReset,
             self.tSthLimits.uSamplingRateOverSamplesReset)
-        self.Can.Logger.Info("Calculated Sampling Points per seconds: " +
+        self.Can.logger.info("Calculated Sampling Points per seconds: " +
                              str(calcRate))
         self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow,
                         samplingPointsBattery)
@@ -3741,8 +3746,8 @@ class TestSth(unittest.TestCase):
         self.assertEqual(0, len(voltage2Array))
         self.assertEqual(0, len(voltage3Array))
         samplingPointsBattery = len(voltage1Array) / 10
-        self.Can.Logger.Info("AccX Raw: " + str(AccArray1[0]))
-        self.Can.Logger.Info("AccZ Raw: " + str(AccArray3[0]))
+        self.Can.logger.info("AccX Raw: " + str(AccArray1[0]))
+        self.Can.logger.info("AccZ Raw: " + str(AccArray3[0]))
         self.singleValueCompare(AccArray1, AccArray2, AccArray3,
                                 self.tSthLimits.iAdcAccXRawMiddle,
                                 self.tSthLimits.iAdcAccXRawTolerance,
@@ -3751,13 +3756,13 @@ class TestSth(unittest.TestCase):
                                 self.tSthLimits.iAdcAccZRawMiddle,
                                 self.tSthLimits.iAdcAccZRawTolerance,
                                 fAdcRawDat)
-        self.Can.Logger.Info("Battery Sampling Points per seconds: " +
+        self.Can.logger.info("Battery Sampling Points per seconds: " +
                              str(samplingPointsBattery))
         calcRate = calcSamplingRate(
             self.tSthLimits.uSamplingRatePrescalerReset,
             self.tSthLimits.uSamplingRateAcqTimeReset,
             self.tSthLimits.uSamplingRateOverSamplesReset)
-        self.Can.Logger.Info("Calculated Sampling Points per seconds: " +
+        self.Can.logger.info("Calculated Sampling Points per seconds: " +
                              str(calcRate))
         self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow,
                         samplingPointsBattery)
@@ -3792,8 +3797,8 @@ class TestSth(unittest.TestCase):
         self.assertEqual(0, len(voltage2Array))
         self.assertEqual(0, len(voltage3Array))
         samplingPointsBattery = len(voltage1Array) / 10
-        self.Can.Logger.Info("AccX Raw: " + str(AccArray1[0]))
-        self.Can.Logger.Info("AccY Raw: " + str(AccArray2[0]))
+        self.Can.logger.info("AccX Raw: " + str(AccArray1[0]))
+        self.Can.logger.info("AccY Raw: " + str(AccArray2[0]))
         self.singleValueCompare(AccArray1, AccArray2, AccArray3,
                                 self.tSthLimits.iAdcAccXRawMiddle,
                                 self.tSthLimits.iAdcAccXRawTolerance,
@@ -3802,13 +3807,13 @@ class TestSth(unittest.TestCase):
                                 self.tSthLimits.iAdcAccZRawMiddle,
                                 self.tSthLimits.iAdcAccZRawTolerance,
                                 fAdcRawDat)
-        self.Can.Logger.Info("Battery Sampling Points per seconds: " +
+        self.Can.logger.info("Battery Sampling Points per seconds: " +
                              str(samplingPointsBattery))
         calcRate = calcSamplingRate(
             self.tSthLimits.uSamplingRatePrescalerReset,
             self.tSthLimits.uSamplingRateAcqTimeReset,
             self.tSthLimits.uSamplingRateOverSamplesReset)
-        self.Can.Logger.Info("Calculated Sampling Points per seconds: " +
+        self.Can.logger.info("Calculated Sampling Points per seconds: " +
                              str(calcRate))
         self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow,
                         samplingPointsBattery)
@@ -3842,9 +3847,9 @@ class TestSth(unittest.TestCase):
         self.assertEqual(0, len(voltage2Array))
         self.assertEqual(0, len(voltage3Array))
         samplingPointsBattery = len(voltage1Array) / 10
-        self.Can.Logger.Info("AccX Raw: " + str(AccArray1[0]))
-        self.Can.Logger.Info("AccY Raw: " + str(AccArray2[0]))
-        self.Can.Logger.Info("AccZ Raw: " + str(AccArray2[0]))
+        self.Can.logger.info("AccX Raw: " + str(AccArray1[0]))
+        self.Can.logger.info("AccY Raw: " + str(AccArray2[0]))
+        self.Can.logger.info("AccZ Raw: " + str(AccArray2[0]))
         self.singleValueCompare(AccArray1, AccArray2, AccArray3,
                                 self.tSthLimits.iAdcAccXRawMiddle,
                                 self.tSthLimits.iAdcAccXRawTolerance,
@@ -3853,13 +3858,13 @@ class TestSth(unittest.TestCase):
                                 self.tSthLimits.iAdcAccZRawMiddle,
                                 self.tSthLimits.iAdcAccZRawTolerance,
                                 fAdcRawDat)
-        self.Can.Logger.Info("Battery Sampling Points per seconds: " +
+        self.Can.logger.info("Battery Sampling Points per seconds: " +
                              str(samplingPointsBattery))
         calcRate = calcSamplingRate(
             self.tSthLimits.uSamplingRatePrescalerReset,
             self.tSthLimits.uSamplingRateAcqTimeReset,
             self.tSthLimits.uSamplingRateOverSamplesReset)
-        self.Can.Logger.Info("Calculated Sampling Points per seconds: " +
+        self.Can.logger.info("Calculated Sampling Points per seconds: " +
                              str(calcRate))
         self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow,
                         samplingPointsBattery)
@@ -3899,16 +3904,16 @@ class TestSth(unittest.TestCase):
         self.assertEqual(0, len(voltage3Array))
         samplingPointsAccX = len(AccArray1) / 10
         samplingPointsAccY = len(AccArray2) / 10
-        self.Can.Logger.Info("Battery Voltage Raw: " + str(voltage1Array[0]))
+        self.Can.logger.info("Battery Voltage Raw: " + str(voltage1Array[0]))
         self.singleValueCompare(voltage1Array, voltage2Array, voltage3Array,
                                 self.tSthLimits.uBatteryMiddle,
                                 self.tSthLimits.uBatteryTolerance, 0, 0, 0, 0,
                                 fVoltageBattery)
-        self.Can.Logger.Info("Acceleration XY Sampling Points per seconds: " +
+        self.Can.logger.info("Acceleration XY Sampling Points per seconds: " +
                              str(samplingPointsAccX))
         calcRate = calcSamplingRate(prescaler, acqTime, overSamples)
         calcRate /= 2
-        self.Can.Logger.Info("Calculated Sampling Points per seconds: " +
+        self.Can.logger.info("Calculated Sampling Points per seconds: " +
                              str(calcRate))
         self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow,
                         samplingPointsAccX)
@@ -3949,16 +3954,16 @@ class TestSth(unittest.TestCase):
         self.assertEqual(0, len(voltage3Array))
         samplingPointsAccX = len(AccArray1) / 10
         samplingPointsAccZ = len(AccArray3) / 10
-        self.Can.Logger.Info("Battery Voltage Raw: " + str(voltage1Array[0]))
+        self.Can.logger.info("Battery Voltage Raw: " + str(voltage1Array[0]))
         self.singleValueCompare(voltage1Array, voltage2Array, voltage3Array,
                                 self.tSthLimits.uBatteryMiddle,
                                 self.tSthLimits.uBatteryTolerance, 0, 0, 0, 0,
                                 fVoltageBattery)
-        self.Can.Logger.Info("Acceleration XZ Sampling Points per seconds: " +
+        self.Can.logger.info("Acceleration XZ Sampling Points per seconds: " +
                              str(samplingPointsAccX))
         calcRate = calcSamplingRate(prescaler, acqTime, overSamples)
         calcRate /= 2
-        self.Can.Logger.Info("Calculated Sampling Points per seconds: " +
+        self.Can.logger.info("Calculated Sampling Points per seconds: " +
                              str(calcRate))
         self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow,
                         samplingPointsAccX)
@@ -3999,16 +4004,16 @@ class TestSth(unittest.TestCase):
         self.assertEqual(0, len(voltage3Array))
         samplingPointsAccY = len(AccArray2) / 10
         samplingPointsAccZ = len(AccArray3) / 10
-        self.Can.Logger.Info("Battery Voltage Raw: " + str(voltage1Array[0]))
+        self.Can.logger.info("Battery Voltage Raw: " + str(voltage1Array[0]))
         self.singleValueCompare(voltage1Array, voltage2Array, voltage3Array,
                                 self.tSthLimits.uBatteryMiddle,
                                 self.tSthLimits.uBatteryTolerance, 0, 0, 0, 0,
                                 fVoltageBattery)
-        self.Can.Logger.Info("Acceleration YZ Sampling Points per seconds: " +
+        self.Can.logger.info("Acceleration YZ Sampling Points per seconds: " +
                              str(samplingPointsAccY))
         calcRate = calcSamplingRate(prescaler, acqTime, overSamples)
         calcRate /= 2
-        self.Can.Logger.Info("Calculated Sampling Points per seconds: " +
+        self.Can.logger.info("Calculated Sampling Points per seconds: " +
                              str(calcRate))
         self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow,
                         samplingPointsAccY)
@@ -4043,19 +4048,19 @@ class TestSth(unittest.TestCase):
         samplingPointsAccX = len(AccArray1) / 10
         samplingPointsAccY = len(AccArray2) / 10
         samplingPointsAccZ = len(AccArray3) / 10
-        self.Can.Logger.Info("Battery Voltage Raw: " + str(voltage1Array[0]))
+        self.Can.logger.info("Battery Voltage Raw: " + str(voltage1Array[0]))
         self.singleValueCompare(voltage1Array, voltage2Array, voltage3Array,
                                 self.tSthLimits.uBatteryMiddle,
                                 self.tSthLimits.uBatteryTolerance, 0, 0, 0, 0,
                                 fVoltageBattery)
-        self.Can.Logger.Info("Acceleration XYZ Sampling Points per seconds: " +
+        self.Can.logger.info("Acceleration XYZ Sampling Points per seconds: " +
                              str(samplingPointsAccY))
         calcRate = calcSamplingRate(
             self.tSthLimits.uSamplingRatePrescalerReset,
             self.tSthLimits.uSamplingRateAcqTimeReset,
             self.tSthLimits.uSamplingRateOverSamplesReset)
         calcRate /= 3
-        self.Can.Logger.Info("Calculated Sampling Points per seconds: " +
+        self.Can.logger.info("Calculated Sampling Points per seconds: " +
                              str(calcRate))
         self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow,
                         samplingPointsAccY)
@@ -4247,13 +4252,13 @@ class TestSth(unittest.TestCase):
         array1 = array1[:-16]
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat,
                           "TestRamp(AccelerationX)", "")
-        self.Can.Logger.Info("Find 0 to determine start point for comparing")
+        self.Can.logger.info("Find 0 to determine start point for comparing")
         startPoint = None
         for i in range(0, self.tSthLimits.uAdcBufferSizeBytes()):
             if 0 == array1[i]:
                 startPoint = i
         self.assertNotEqual(None, startPoint)
-        self.Can.Logger.Info(
+        self.Can.logger.info(
             "Comparing first 180 Data Points, starting with " +
             str(startPoint))
         self.streamingValueCompareSignal(
@@ -4261,7 +4266,7 @@ class TestSth(unittest.TestCase):
                    self.tSthLimits.uAdcBufferSizeBytes()],
             testRampDim((2**16 - 1), self.tSthLimits.uAdcSizeX,
                         self.tSthLimits.uAdcSizeY, None))
-        self.Can.Logger.Info("Comparing second 180 Data Points")
+        self.Can.logger.info("Comparing second 180 Data Points")
         self.streamingValueCompareSignal(
             array1[startPoint +
                    self.tSthLimits.uAdcBufferSizeBytes():startPoint +
@@ -4282,13 +4287,13 @@ class TestSth(unittest.TestCase):
         array2 = array2[:-16]
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat,
                           "TestRamp(AccelerationY)", "")
-        self.Can.Logger.Info("Find 0 to determine start point for comparing")
+        self.Can.logger.info("Find 0 to determine start point for comparing")
         startPoint = None
         for i in range(0, self.tSthLimits.uAdcBufferSizeBytes()):
             if 0 == array2[i]:
                 startPoint = i
         self.assertNotEqual(None, startPoint)
-        self.Can.Logger.Info(
+        self.Can.logger.info(
             "Comparing first 180 Data Points, starting with " +
             str(startPoint))
         self.streamingValueCompareSignal(
@@ -4296,7 +4301,7 @@ class TestSth(unittest.TestCase):
                    self.tSthLimits.uAdcBufferSizeBytes()],
             testRampDim((2**16 - 1), self.tSthLimits.uAdcSizeX,
                         self.tSthLimits.uAdcSizeY, None))
-        self.Can.Logger.Info("Comparing second 180 Data Points")
+        self.Can.logger.info("Comparing second 180 Data Points")
         self.streamingValueCompareSignal(
             array2[startPoint +
                    self.tSthLimits.uAdcBufferSizeBytes():startPoint +
@@ -4317,13 +4322,13 @@ class TestSth(unittest.TestCase):
         array3 = array3[:-16]
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat,
                           "TestRamp(AccelerationZ)", "")
-        self.Can.Logger.Info("Find 0 to determine start point for comparing")
+        self.Can.logger.info("Find 0 to determine start point for comparing")
         startPoint = None
         for i in range(0, self.tSthLimits.uAdcBufferSizeBytes()):
             if 0 == array3[i]:
                 startPoint = i
         self.assertNotEqual(None, startPoint)
-        self.Can.Logger.Info(
+        self.Can.logger.info(
             "Comparing first 180 Data Points, starting with " +
             str(startPoint))
         self.streamingValueCompareSignal(
@@ -4331,7 +4336,7 @@ class TestSth(unittest.TestCase):
                    self.tSthLimits.uAdcBufferSizeBytes()],
             testRampDim((2**16 - 1), self.tSthLimits.uAdcSizeX,
                         self.tSthLimits.uAdcSizeY, None))
-        self.Can.Logger.Info("Comparing second 180 Data Points")
+        self.Can.logger.info("Comparing second 180 Data Points")
         self.streamingValueCompareSignal(
             array3[startPoint +
                    self.tSthLimits.uAdcBufferSizeBytes():startPoint +
@@ -4354,13 +4359,13 @@ class TestSth(unittest.TestCase):
         array1 = array1[:-16]
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat,
                           "TestRamp(Battery)", "")
-        self.Can.Logger.Info("Find 0 to determine start point for comparing")
+        self.Can.logger.info("Find 0 to determine start point for comparing")
         startPoint = None
         for i in range(0, self.tSthLimits.uAdcBufferSizeBytes()):
             if 0 == array1[i]:
                 startPoint = i
         self.assertNotEqual(None, startPoint)
-        self.Can.Logger.Info(
+        self.Can.logger.info(
             "Comparing first 180 Data Points, starting with " +
             str(startPoint))
         self.streamingValueCompareSignal(
@@ -4368,7 +4373,7 @@ class TestSth(unittest.TestCase):
                    self.tSthLimits.uAdcBufferSizeBytes()],
             testRampDim((2**16 - 1), self.tSthLimits.uAdcSizeX,
                         self.tSthLimits.uAdcSizeY, None))
-        self.Can.Logger.Info("Comparing second 180 Data Points")
+        self.Can.logger.info("Comparing second 180 Data Points")
         self.streamingValueCompareSignal(
             array1[startPoint +
                    self.tSthLimits.uAdcBufferSizeBytes():startPoint +
@@ -4390,16 +4395,16 @@ class TestSth(unittest.TestCase):
             self.tSthLimits.uSamplingRateAcqTimeReset,
             self.tSthLimits.uSamplingRateOverSamplesReset)
         samplingPoints = self.Can.samplingPoints(array1, array2, array3)
-        self.Can.Logger.Info("Running Time: " +
+        self.Can.logger.info("Running Time: " +
                              str(self.tSthLimits.uStandardTestTimeMs) + "ms")
-        self.Can.Logger.Info("Startup Time: " +
+        self.Can.logger.info("Startup Time: " +
                              str(self.tSthLimits.uStartupTimeMs) + "ms")
-        self.Can.Logger.Info("Assumed Sampling Points/s: " + str(calcRate))
+        self.Can.logger.info("Assumed Sampling Points/s: " + str(calcRate))
         samplingRateDet = 1000 * samplingPoints / (
             self.tSthLimits.uStandardTestTimeMs)
-        self.Can.Logger.Info("Determined Sampling Points/s: " +
+        self.Can.logger.info("Determined Sampling Points/s: " +
                              str(samplingRateDet))
-        self.Can.Logger.Info("Difference: " +
+        self.Can.logger.info("Difference: " +
                              str((100 * samplingRateDet - calcRate) /
                                  calcRate) + "%")
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Acc", "")
@@ -4473,7 +4478,7 @@ class TestSth(unittest.TestCase):
     def test0507VRef(self):
         """Testing ADC Reference voltages (⏱ 4 minutes)
         """
-        self.Can.Logger.Info("Warm Up")
+        self.Can.logger.info("Warm Up")
         self.SamplingRate(self.tSthLimits.uSamplingRateTripplePrescalerMax,
                           self.tSthLimits.uSamplingRateTrippleAcqTimeMax,
                           self.tSthLimits.uSamplingRateTrippleOverSamplesMax,
@@ -4483,7 +4488,7 @@ class TestSth(unittest.TestCase):
                           b3=1,
                           runTime=self.tSthLimits.uStandardTestTimeMs)
         for _vRefkey, vRefVal in AdcReference.items():
-            self.Can.Logger.Info("Using Voltage Reference: " +
+            self.Can.logger.info("Using Voltage Reference: " +
                                  VRefName[vRefVal])
             self.SamplingRate(
                 self.tSthLimits.uSamplingRateTripplePrescalerMax,
@@ -4515,12 +4520,12 @@ class TestSth(unittest.TestCase):
                                      overSamplingVal))
                 if self.tSthLimits.uSamplingRateSingleMax(
                 ) >= samplingRate and self.tSthLimits.uSamplingRateMin <= samplingRate:
-                    self.Can.Logger.Info("Sampling Rate: " + str(samplingRate))
-                    self.Can.Logger.Info("Prescaler: " + str(prescaler))
-                    self.Can.Logger.Info(
+                    self.Can.logger.info("Sampling Rate: " + str(samplingRate))
+                    self.Can.logger.info("Prescaler: " + str(prescaler))
+                    self.Can.logger.info(
                         "Acquisition Time: " +
                         AdcAcquisitionTimeName[acquisitionTimeValue])
-                    self.Can.Logger.Info(
+                    self.Can.logger.info(
                         "Oversampling Rate: " +
                         AdcOverSamplingRateName[overSamplingVal])
                     for _vRefkey, vRefVal in AdcReference.items():
@@ -4538,7 +4543,7 @@ class TestSth(unittest.TestCase):
                         samplingPointsDet = self.Can.samplingPoints(
                             result["Value1"], result["Value2"],
                             result["Value3"])
-                        self.Can.Logger.Info("Sampling Rate Determined: " +
+                        self.Can.logger.info("Sampling Rate Determined: " +
                                              str(samplingPointsDet))
                         if samplingRate > self.tSthLimits.uSamplingToleranceHigh * samplingPointsDet:
                             break
@@ -4549,19 +4554,19 @@ class TestSth(unittest.TestCase):
                         aquisitionTime = acquisitionTimeKey
                         overSamples = overSamplingKey
                         SamplingRateMaxDet = samplingRate
-                    self.Can.Logger.Info("Prescaler - Proved: " +
+                    self.Can.logger.info("Prescaler - Proved: " +
                                          str(prescaler))
-                    self.Can.Logger.Info(
+                    self.Can.logger.info(
                         "Acquisition Time - Proved: " +
                         AdcAcquisitionTimeName[acquisitionTimeValue])
-                    self.Can.Logger.Info(
+                    self.Can.logger.info(
                         "Oversampling Rate - Proved: " +
                         AdcOverSamplingRateName[overSamplingVal])
                     self._resetStu()
-                    self.Can.Logger.Info("Connect to STH")
+                    self.Can.logger.info("Connect to STH")
                     self.Can.bBlueToothConnectPollingName(
                         MyToolItNetworkNr["STU1"], settings.sth.name)
-        self.Can.Logger.Info("Maximum Single Sampling Rate: " +
+        self.Can.logger.info("Maximum Single Sampling Rate: " +
                              str(SamplingRateMaxDet) + "(" + str(prescaler) +
                              "/" + str(aquisitionTime) + "/" +
                              str(overSamples) + ")")
@@ -4586,12 +4591,12 @@ class TestSth(unittest.TestCase):
                                      overSamplingVal))
                 if self.tSthLimits.uSamplingRateDoubleMax(
                 ) >= samplingRate and self.tSthLimits.uSamplingRateMin <= samplingRate:
-                    self.Can.Logger.Info("Sampling Rate: " + str(samplingRate))
-                    self.Can.Logger.Info("Prescaler: " + str(prescaler))
-                    self.Can.Logger.Info(
+                    self.Can.logger.info("Sampling Rate: " + str(samplingRate))
+                    self.Can.logger.info("Prescaler: " + str(prescaler))
+                    self.Can.logger.info(
                         "Acquisition Time: " +
                         AdcAcquisitionTimeName[acquisitionTimeValue])
-                    self.Can.Logger.Info(
+                    self.Can.logger.info(
                         "Oversampling Rate: " +
                         AdcOverSamplingRateName[overSamplingVal])
                     for _vRefkey, vRefVal in AdcReference.items():
@@ -4609,7 +4614,7 @@ class TestSth(unittest.TestCase):
                         samplingPointsDet = self.Can.samplingPoints(
                             result["Value1"], result["Value2"],
                             result["Value3"])
-                        self.Can.Logger.Info("Sampling Rate Determined: " +
+                        self.Can.logger.info("Sampling Rate Determined: " +
                                              str(samplingPointsDet))
                         if samplingRate > self.tSthLimits.uSamplingToleranceHigh * samplingPointsDet:
                             break
@@ -4620,19 +4625,19 @@ class TestSth(unittest.TestCase):
                         aquisitionTime = acquisitionTimeKey
                         overSamples = overSamplingKey
                         SamplingRateMaxDet = samplingRate
-                    self.Can.Logger.Info("Prescaler - Proved: " +
+                    self.Can.logger.info("Prescaler - Proved: " +
                                          str(prescaler))
-                    self.Can.Logger.Info(
+                    self.Can.logger.info(
                         "Acquisition Time - Proved: " +
                         AdcAcquisitionTimeName[acquisitionTimeValue])
-                    self.Can.Logger.Info(
+                    self.Can.logger.info(
                         "Oversampling Rate - Proved: " +
                         AdcOverSamplingRateName[overSamplingVal])
                     self._resetStu()
-                    self.Can.Logger.Info("Connect to STH")
+                    self.Can.logger.info("Connect to STH")
                     self.Can.bBlueToothConnectPollingName(
                         MyToolItNetworkNr["STU1"], settings.sth.name)
-        self.Can.Logger.Info("Maximum Double Sampling Rate: " +
+        self.Can.logger.info("Maximum Double Sampling Rate: " +
                              str(SamplingRateMaxDet) + "(" + str(prescaler) +
                              "/" + str(aquisitionTime) + "/" +
                              str(overSamples) + ")")
@@ -4657,12 +4662,12 @@ class TestSth(unittest.TestCase):
                                      overSamplingVal))
                 if self.tSthLimits.uSamplingRateTrippleMax(
                 ) >= samplingRate and self.tSthLimits.uSamplingRateMin <= samplingRate:
-                    self.Can.Logger.Info("Sampling Rate: " + str(samplingRate))
-                    self.Can.Logger.Info("Prescaler: " + str(prescaler))
-                    self.Can.Logger.Info(
+                    self.Can.logger.info("Sampling Rate: " + str(samplingRate))
+                    self.Can.logger.info("Prescaler: " + str(prescaler))
+                    self.Can.logger.info(
                         "Acquisition Time: " +
                         AdcAcquisitionTimeName[acquisitionTimeValue])
-                    self.Can.Logger.Info(
+                    self.Can.logger.info(
                         "Oversampling Rate: " +
                         AdcOverSamplingRateName[overSamplingVal])
                     for _vRefkey, vRefVal in AdcReference.items():
@@ -4680,7 +4685,7 @@ class TestSth(unittest.TestCase):
                         samplingPointsDet = self.Can.samplingPoints(
                             result["Value1"], result["Value2"],
                             result["Value3"])
-                        self.Can.Logger.Info("Sampling Rate Determined: " +
+                        self.Can.logger.info("Sampling Rate Determined: " +
                                              str(samplingPointsDet))
                         if samplingRate > self.tSthLimits.uSamplingToleranceHigh * samplingPointsDet:
                             break
@@ -4691,21 +4696,21 @@ class TestSth(unittest.TestCase):
                         aquisitionTime = acquisitionTimeKey
                         overSamples = overSamplingKey
                         SamplingRateMaxDet = samplingRate
-                    self.Can.Logger.Info("Prescaler - Proved: " +
+                    self.Can.logger.info("Prescaler - Proved: " +
                                          str(prescaler))
-                    self.Can.Logger.Info(
+                    self.Can.logger.info(
                         "Acquisition Time - Proved: " +
                         AdcAcquisitionTimeName[acquisitionTimeValue])
-                    self.Can.Logger.Info(
+                    self.Can.logger.info(
                         "Oversampling Rate - Proved: " +
                         AdcOverSamplingRateName[overSamplingVal])
                     self._resetStu()
-                    self.Can.Logger.Info("Connect to STH")
+                    self.Can.logger.info("Connect to STH")
                     self.Can.bBlueToothConnectPollingName(
                         MyToolItNetworkNr["STU1"], settings.sth.name)
-        self.Can.Logger.Info("Maximum Tripple Sampling Rate: " +
+        self.Can.logger.info("Maximum Tripple Sampling Rate: " +
                              str(SamplingRateMaxDet))
-        self.Can.Logger.Info("Maximum Tripple Sampling Rate: " +
+        self.Can.logger.info("Maximum Tripple Sampling Rate: " +
                              str(SamplingRateMaxDet) + "(" + str(prescaler) +
                              "/" + str(aquisitionTime) + "/" +
                              str(overSamples) + ")")
@@ -4838,10 +4843,10 @@ class TestSth(unittest.TestCase):
         self.assertNotEqual("Error", ack)
 
         status = self.Can.error_status(MyToolItNetworkNr["STH1"])
-        self.Can.Logger.Info("Reset bError Status Word")
-        self.Can.Logger.Info(f"STH Error Word: {status}")
+        self.Can.logger.info("Reset bError Status Word")
+        self.Can.logger.info(f"STH Error Word: {status}")
 
-        self.Can.Logger.Info("Transferred Bytes: " + str(BytesTransfered))
+        self.Can.logger.info("Transferred Bytes: " + str(BytesTransfered))
         self.assertLessEqual(BytesTransfered, 1000)
         self.assertEqual(status.adc_overrun(), True)
         self._resetStu()
@@ -4882,15 +4887,16 @@ class TestSth(unittest.TestCase):
                 indexStart, indexEnd) - 0.5:
             countDel += 1
             indexEnd -= 1
-        self.Can.Logger.Info("Deleted Messages do achieve " +
+        self.Can.logger.info("Deleted Messages do achieve " +
                              str(self.tSthLimits.uStandardTestTimeMs) +
                              "ms: " + str(countDel + 180))
-        self.Can.Logger.Info("indexStart: " + str(indexStart))
-        self.Can.Logger.Info("indexEnd: " + str(indexEnd))
+        self.Can.logger.info("indexStart: " + str(indexStart))
+        self.Can.logger.info("indexEnd: " + str(indexEnd))
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Can.Logger.Warning("Deleted Messages do achieve " +
-                                    str(self.tSthLimits.uStandardTestTimeMs) +
-                                    "ms: " + str(countDel + 180))
+            self.Can.logger.info.Warning(
+                "Deleted Messages do achieve " +
+                str(self.tSthLimits.uStandardTestTimeMs) + "ms: " +
+                str(countDel + 180))
         [arrayBat, array2,
          array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
                                                 MyToolItStreaming["Voltage"],
@@ -4905,14 +4911,14 @@ class TestSth(unittest.TestCase):
         self.assertEqual(0, len(array3))
         samplePointsVoltage = len(arrayBat) / 10
         samplePointsAcceleration = len(arrayAccX) / 10
-        self.Can.Logger.Info("Voltage Sampling Points: " +
+        self.Can.logger.info("Voltage Sampling Points: " +
                              str(samplePointsVoltage))
-        self.Can.Logger.Info("Acceleration Sampling Points: " +
+        self.Can.logger.info("Acceleration Sampling Points: " +
                              str(samplePointsAcceleration))
-        self.Can.Logger.Info("Total Sampling Rate(Calculated): " +
+        self.Can.logger.info("Total Sampling Rate(Calculated): " +
                              str(calcRate))
         calcRate = calcRate / 2
-        self.Can.Logger.Info("Sampling Rate per Channel: " +
+        self.Can.logger.info("Sampling Rate per Channel: " +
                              str(int(calcRate)))
         self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow,
                         samplePointsVoltage)
@@ -4958,15 +4964,16 @@ class TestSth(unittest.TestCase):
                 indexStart, indexEnd) - 0.5:
             countDel += 1
             indexEnd -= 1
-        self.Can.Logger.Info("Deleted Messages do achieve " +
+        self.Can.logger.info("Deleted Messages do achieve " +
                              str(self.tSthLimits.uStandardTestTimeMs) +
                              "ms: " + str(countDel + 180))
-        self.Can.Logger.Info("indexStart: " + str(indexStart))
-        self.Can.Logger.Info("indexEnd: " + str(indexEnd))
+        self.Can.logger.info("indexStart: " + str(indexStart))
+        self.Can.logger.info("indexEnd: " + str(indexEnd))
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Can.Logger.Warning("Deleted Messages do achieve " +
-                                    str(self.tSthLimits.uStandardTestTimeMs) +
-                                    "ms: " + str(countDel + 180))
+            self.Can.logger.info.Warning(
+                "Deleted Messages do achieve " +
+                str(self.tSthLimits.uStandardTestTimeMs) + "ms: " +
+                str(countDel + 180))
         [arrayBat, array2,
          array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
                                                 MyToolItStreaming["Voltage"],
@@ -4981,16 +4988,16 @@ class TestSth(unittest.TestCase):
         samplePointsVoltage = len(arrayBat) / 10
         samplePointsXAcceleration = len(arrayAccX) / 10
         samplePointsYAcceleration = len(arrayAccY) / 10
-        self.Can.Logger.Info("Voltage Sampling Points: " +
+        self.Can.logger.info("Voltage Sampling Points: " +
                              str(samplePointsVoltage))
-        self.Can.Logger.Info("AccelerationX Sampling Points: " +
+        self.Can.logger.info("AccelerationX Sampling Points: " +
                              str(samplePointsXAcceleration))
-        self.Can.Logger.Info("AccelerationY Sampling Points: " +
+        self.Can.logger.info("AccelerationY Sampling Points: " +
                              str(samplePointsYAcceleration))
-        self.Can.Logger.Info("Total Sampling Rate(Calculated): " +
+        self.Can.logger.info("Total Sampling Rate(Calculated): " +
                              str(int(calcRate)))
         calcRate = calcRate / 3
-        self.Can.Logger.Info("Sampling Rate per Channel: " +
+        self.Can.logger.info("Sampling Rate per Channel: " +
                              str(int(calcRate)))
         self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow,
                         samplePointsVoltage)
@@ -5039,15 +5046,16 @@ class TestSth(unittest.TestCase):
                 indexStart, indexEnd) - 0.5:
             countDel += 1
             indexEnd -= 1
-        self.Can.Logger.Info("Deleted Messages do achieve " +
+        self.Can.logger.info("Deleted Messages do achieve " +
                              str(self.tSthLimits.uStandardTestTimeMs) +
                              "ms: " + str(countDel + 180))
-        self.Can.Logger.Info("indexStart: " + str(indexStart))
-        self.Can.Logger.Info("indexEnd: " + str(indexEnd))
+        self.Can.logger.info("indexStart: " + str(indexStart))
+        self.Can.logger.info("indexEnd: " + str(indexEnd))
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Can.Logger.Warning("Deleted Messages do achieve " +
-                                    str(self.tSthLimits.uStandardTestTimeMs) +
-                                    "ms: " + str(countDel + 180))
+            self.Can.logger.info.Warning(
+                "Deleted Messages do achieve " +
+                str(self.tSthLimits.uStandardTestTimeMs) + "ms: " +
+                str(countDel + 180))
         [arrayBat, array2,
          array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
                                                 MyToolItStreaming["Voltage"],
@@ -5062,18 +5070,18 @@ class TestSth(unittest.TestCase):
         samplePointsXAcceleration = len(arrayAccX) / 10
         samplePointsYAcceleration = len(arrayAccY) / 10
         samplePointsZAcceleration = len(arrayAccZ) / 10
-        self.Can.Logger.Info("Voltage Sampling Points: " +
+        self.Can.logger.info("Voltage Sampling Points: " +
                              str(samplePointsVoltage))
-        self.Can.Logger.Info("AccelerationX Sampling Points: " +
+        self.Can.logger.info("AccelerationX Sampling Points: " +
                              str(samplePointsXAcceleration))
-        self.Can.Logger.Info("AccelerationY Sampling Points: " +
+        self.Can.logger.info("AccelerationY Sampling Points: " +
                              str(samplePointsYAcceleration))
-        self.Can.Logger.Info("AccelerationY Sampling Points: " +
+        self.Can.logger.info("AccelerationY Sampling Points: " +
                              str(samplePointsZAcceleration))
-        self.Can.Logger.Info("Total Sampling Rate(Calculated): " +
+        self.Can.logger.info("Total Sampling Rate(Calculated): " +
                              str(int(calcRate)))
         calcRate = calcRate / 4
-        self.Can.Logger.Info("Sampling Rate per Channel: " +
+        self.Can.logger.info("Sampling Rate per Channel: " +
                              str(int(calcRate)))
         self.assertLess(calcRate * self.tSthLimits.uSamplingToleranceLow,
                         samplePointsVoltage)
@@ -5125,15 +5133,16 @@ class TestSth(unittest.TestCase):
                 indexStart, indexEnd) - 0.5:
             countDel += 1
             indexEnd -= 1
-        self.Can.Logger.Info("Deleted Messages do achieve " +
+        self.Can.logger.info("Deleted Messages do achieve " +
                              str(self.tSthLimits.uStandardTestTimeMs) +
                              "ms: " + str(countDel + 180))
-        self.Can.Logger.Info("indexStart: " + str(indexStart))
-        self.Can.Logger.Info("indexEnd: " + str(indexEnd))
+        self.Can.logger.info("indexStart: " + str(indexStart))
+        self.Can.logger.info("indexEnd: " + str(indexEnd))
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Can.Logger.Warning("Deleted Messages do achieve " +
-                                    str(self.tSthLimits.uStandardTestTimeMs) +
-                                    "ms: " + str(countDel + 180))
+            self.Can.logger.info.Warning(
+                "Deleted Messages do achieve " +
+                str(self.tSthLimits.uStandardTestTimeMs) + "ms: " +
+                str(countDel + 180))
         [arrayBat, array2,
          array3] = self.Can.streamingValueArrayMessageCounters(
              MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"],
@@ -5428,15 +5437,16 @@ class TestSth(unittest.TestCase):
                 indexStart, indexEnd) - 0.5:
             countDel += 1
             indexEnd -= 1
-        self.Can.Logger.Info("Deleted Messages do achieve " +
+        self.Can.logger.info("Deleted Messages do achieve " +
                              str(self.tSthLimits.uStandardTestTimeMs) +
                              "ms: " + str(countDel + 180))
-        self.Can.Logger.Info("indexStart: " + str(indexStart))
-        self.Can.Logger.Info("indexEnd: " + str(indexEnd))
+        self.Can.logger.info("indexStart: " + str(indexStart))
+        self.Can.logger.info("indexEnd: " + str(indexEnd))
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Can.Logger.Warning("Deleted Messages do achieve " +
-                                    str(self.tSthLimits.uStandardTestTimeMs) +
-                                    "ms: " + str(countDel + 180))
+            self.Can.logger.info.Warning(
+                "Deleted Messages do achieve " +
+                str(self.tSthLimits.uStandardTestTimeMs) + "ms: " +
+                str(countDel + 180))
         [arrayBat, array2,
          array3] = self.Can.streamingValueArrayMessageCounters(
              MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"],
@@ -5513,15 +5523,16 @@ class TestSth(unittest.TestCase):
                 indexStart, indexEnd) - 0.5:
             countDel += 1
             indexEnd -= 1
-        self.Can.Logger.Info("Deleted Messages do achieve " +
+        self.Can.logger.info("Deleted Messages do achieve " +
                              str(self.tSthLimits.uStandardTestTimeMs) +
                              "ms: " + str(countDel + 180))
-        self.Can.Logger.Info("indexStart: " + str(indexStart))
-        self.Can.Logger.Info("indexEnd: " + str(indexEnd))
+        self.Can.logger.info("indexStart: " + str(indexStart))
+        self.Can.logger.info("indexEnd: " + str(indexEnd))
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Can.Logger.Warning("Deleted Messages do achieve " +
-                                    str(self.tSthLimits.uStandardTestTimeMs) +
-                                    "ms: " + str(countDel + 180))
+            self.Can.logger.info.Warning(
+                "Deleted Messages do achieve " +
+                str(self.tSthLimits.uStandardTestTimeMs) + "ms: " +
+                str(countDel + 180))
         [arrayBat, array2,
          array3] = self.Can.streamingValueArrayMessageCounters(
              MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"],
@@ -5598,15 +5609,16 @@ class TestSth(unittest.TestCase):
                 indexStart, indexEnd) - 0.5:
             countDel += 1
             indexEnd -= 1
-        self.Can.Logger.Info("Deleted Messages do achieve " +
+        self.Can.logger.info("Deleted Messages do achieve " +
                              str(self.tSthLimits.uStandardTestTimeMs) +
                              "ms: " + str(countDel + 180))
-        self.Can.Logger.Info("indexStart: " + str(indexStart))
-        self.Can.Logger.Info("indexEnd: " + str(indexEnd))
+        self.Can.logger.info("indexStart: " + str(indexStart))
+        self.Can.logger.info("indexEnd: " + str(indexEnd))
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Can.Logger.Warning("Deleted Messages do achieve " +
-                                    str(self.tSthLimits.uStandardTestTimeMs) +
-                                    "ms: " + str(countDel + 180))
+            self.Can.logger.info.Warning(
+                "Deleted Messages do achieve " +
+                str(self.tSthLimits.uStandardTestTimeMs) + "ms: " +
+                str(countDel + 180))
         [arrayBat, array2,
          array3] = self.Can.streamingValueArrayMessageCounters(
              MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"],
@@ -5725,7 +5737,7 @@ class TestSth(unittest.TestCase):
                                         CalibMeassurementTypeNr["Acc"], 1,
                                         AdcReference["VDD"])
         result = byte_list_to_int(ret[4:])
-        self.Can.Logger.Info("Calibration Result AccX: " + str(result))
+        self.Can.logger.info("Calibration Result AccX: " + str(result))
         self.assertLessEqual(
             self.tSthLimits.iAdcAccXRawMiddle -
             self.tSthLimits.iAdcAccXRawTolerance, result)
@@ -5737,7 +5749,7 @@ class TestSth(unittest.TestCase):
                                         CalibMeassurementTypeNr["Acc"], 2,
                                         AdcReference["VDD"])
         result = byte_list_to_int(ret[4:])
-        self.Can.Logger.Info("Calibration Result AccY: " + str(result))
+        self.Can.logger.info("Calibration Result AccY: " + str(result))
         self.assertLessEqual(
             self.tSthLimits.iAdcAccYRawMiddle -
             self.tSthLimits.iAdcAccYTolerance, result)
@@ -5749,7 +5761,7 @@ class TestSth(unittest.TestCase):
                                         CalibMeassurementTypeNr["Acc"], 3,
                                         AdcReference["VDD"])
         result = byte_list_to_int(ret[4:])
-        self.Can.Logger.Info("Calibration Result AccZ: " + str(result))
+        self.Can.logger.info("Calibration Result AccZ: " + str(result))
         self.assertLessEqual(
             self.tSthLimits.iAdcAccZRawMiddle -
             self.tSthLimits.iAdcAccZTolerance, result)
@@ -5761,7 +5773,7 @@ class TestSth(unittest.TestCase):
                                         CalibMeassurementTypeNr["Temp"], 1,
                                         AdcReference["VDD"])
         result = byte_list_to_int(ret[4:])
-        self.Can.Logger.Info("Calibration Result Temperature: " + str(result))
+        self.Can.logger.info("Calibration Result Temperature: " + str(result))
         self.assertLessEqual(
             self.tSthLimits.uTemperatureInternal3V3Middle -
             self.tSthLimits.uTemperatureInternal3V3Tolerance, result)
@@ -5773,7 +5785,7 @@ class TestSth(unittest.TestCase):
                                         CalibMeassurementTypeNr["Voltage"], 1,
                                         AdcReference["VDD"])
         result = byte_list_to_int(ret[4:])
-        self.Can.Logger.Info("Calibration Result Voltage: " + str(result))
+        self.Can.logger.info("Calibration Result Voltage: " + str(result))
         self.assertLessEqual(
             self.tSthLimits.VoltRawMiddleBat -
             self.tSthLimits.uBatteryToleranceRaw, result)
@@ -5785,7 +5797,7 @@ class TestSth(unittest.TestCase):
                                         CalibMeassurementTypeNr["Vss"], 1,
                                         AdcReference["VDD"])
         result = byte_list_to_int(ret[4:])
-        self.Can.Logger.Info("Calibration Result VSS(Ground): " + str(result))
+        self.Can.logger.info("Calibration Result VSS(Ground): " + str(result))
         self.assertLessEqual(0, result)
         self.assertGreaterEqual(self.tSthLimits.uVoltRawVssTolerance, result)
         ret = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"],
@@ -5793,14 +5805,14 @@ class TestSth(unittest.TestCase):
                                         CalibMeassurementTypeNr["Avdd"], 1,
                                         AdcReference["VDD"])
         result = byte_list_to_int(ret[4:])
-        self.Can.Logger.Info("Calibration Result AVDD(3V3): " + str(result))
+        self.Can.logger.info("Calibration Result AVDD(3V3): " + str(result))
         self.assertLessEqual(2 ^ 16 - 100, result)
         ret = self.Can.calibMeasurement(MyToolItNetworkNr["STH1"],
                                         CalibMeassurementActionNr["Measure"],
                                         CalibMeassurementTypeNr["OpvOutput"],
                                         1, AdcReference["VDD"])
         result = byte_list_to_int(ret[4:])
-        self.Can.Logger.Info("Calibration Result OPA2: " + str(result))
+        self.Can.logger.info("Calibration Result OPA2: " + str(result))
         self.assertLessEqual(
             self.tSthLimits.uVoltRawOpa2Middle -
             self.tSthLimits.uVoltRawOpa2Tolerance, result)
@@ -5812,7 +5824,7 @@ class TestSth(unittest.TestCase):
                                         CalibMeassurementTypeNr["OpvOutput"],
                                         2, AdcReference["VDD"])
         result = byte_list_to_int(ret[4:])
-        self.Can.Logger.Info("Calibration Result OPA3: " + str(result))
+        self.Can.logger.info("Calibration Result OPA3: " + str(result))
         self.assertLessEqual(
             self.tSthLimits.uVoltRawOpa3Middle -
             self.tSthLimits.uVoltRawOpa3Tolerance, result)
@@ -5831,7 +5843,7 @@ class TestSth(unittest.TestCase):
                                         log=False)
         result = float(byte_list_to_int(ret[4:]))
         result /= 1000
-        self.Can.Logger.Info("Temperature(Chip): " + str(result) + "°C")
+        self.Can.logger.info("Temperature(Chip): " + str(result) + "°C")
         self.assertLessEqual(result, self.tSthLimits.iTemperatureInternalMax)
         self.assertGreaterEqual(result,
                                 self.tSthLimits.iTemperatureInternalMin)
@@ -5847,9 +5859,9 @@ class TestSth(unittest.TestCase):
                     CalibMeassurementActionNr["Measure"],
                     CalibMeassurementTypeNr["Acc"], 1, vRefValue)
                 result = byte_list_to_int(ret[4:])
-                self.Can.Logger.Info("ADC Value: " + str(result))
+                self.Can.logger.info("ADC Value: " + str(result))
                 result = result * ((vRefValue) / (AdcReference["VDD"]))
-                self.Can.Logger.Info("Recalculated value(result*" +
+                self.Can.logger.info("Recalculated value(result*" +
                                      str(vRefValue * 50) + "/" +
                                      str(AdcReference["VDD"] * 50) + "): " +
                                      str(result))
@@ -5975,67 +5987,67 @@ class TestSth(unittest.TestCase):
             MyToolItNetworkNr["STH1"], CalibMeassurementActionNr["Measure"],
             CalibMeassurementTypeNr["Acc"], 3, AdcReference["VDD"])
         kZ4 = byte_list_to_int(kZ4ack[4:])
-        self.Can.Logger.Info("ackInjectX: " + payload2Hex(ackInjectX))
-        self.Can.Logger.Info("stateInjectX: " + payload2Hex(stateInjectX))
-        self.Can.Logger.Info("ackInjectY: " + payload2Hex(ackInjectY))
-        self.Can.Logger.Info("stateInjectY: " + payload2Hex(stateInjectY))
-        self.Can.Logger.Info("ackInjectZ: " + payload2Hex(ackInjectZ))
-        self.Can.Logger.Info("stateInjectZ: " + payload2Hex(stateInjectZ))
-        self.Can.Logger.Info("ackEject: " + payload2Hex(ackEjectX))
-        self.Can.Logger.Info("stateEject: " + payload2Hex(stateEjectX))
-        self.Can.Logger.Info("ackEject: " + payload2Hex(ackEjectY))
-        self.Can.Logger.Info("stateEject: " + payload2Hex(stateEjectY))
-        self.Can.Logger.Info("ackEject: " + payload2Hex(ackEjectZ))
-        self.Can.Logger.Info("stateEject: " + payload2Hex(stateEjectZ))
-        self.Can.Logger.Info("X Ack before Injection: " + payload2Hex(kX1ack))
-        self.Can.Logger.Info("Y Ack before Injection: " + payload2Hex(kY1ack))
-        self.Can.Logger.Info("Z Ack before Injection: " + payload2Hex(kZ1ack))
-        self.Can.Logger.Info("X Ack after Injection: " + payload2Hex(kX2ack))
-        self.Can.Logger.Info("Y Ack after Injection: " + payload2Hex(kY2ack))
-        self.Can.Logger.Info("Z Ack after Injection: " + payload2Hex(kZ2ack))
-        self.Can.Logger.Info("X Ack after Injection: " + payload2Hex(kX3ack))
-        self.Can.Logger.Info("Y Ack after Injection: " + payload2Hex(kY3ack))
-        self.Can.Logger.Info("Z Ack after Injection: " + payload2Hex(kZ3ack))
-        self.Can.Logger.Info("X Ack after Injection: " + payload2Hex(kX4ack))
-        self.Can.Logger.Info("Y Ack after Injection: " + payload2Hex(kY4ack))
-        self.Can.Logger.Info("Z Ack after Injection: " + payload2Hex(kZ4ack))
-        self.Can.Logger.Info("X k1 (before Injection): " + str(kX1))
-        self.Can.Logger.Info("Y k1 (before Injection): " + str(kY1))
-        self.Can.Logger.Info("Z k1 (before Injection): " + str(kZ1))
-        self.Can.Logger.Info("X k2 (after Injection): " + str(kX2))
-        self.Can.Logger.Info("Y k2 (after Injection): " + str(kY2))
-        self.Can.Logger.Info("Z k2 (after Injection): " + str(kZ2))
-        self.Can.Logger.Info("X k3 (after Ejection): " + str(kX3))
-        self.Can.Logger.Info("Y k3 (after Ejection): " + str(kY3))
-        self.Can.Logger.Info("Z k3 (after Ejection): " + str(kZ3))
-        self.Can.Logger.Info("X k4 (after k3): " + str(kX4))
-        self.Can.Logger.Info("Y k4 (after k3): " + str(kY4))
-        self.Can.Logger.Info("Z k4 (after k3): " + str(kZ4))
+        self.Can.logger.info("ackInjectX: " + payload2Hex(ackInjectX))
+        self.Can.logger.info("stateInjectX: " + payload2Hex(stateInjectX))
+        self.Can.logger.info("ackInjectY: " + payload2Hex(ackInjectY))
+        self.Can.logger.info("stateInjectY: " + payload2Hex(stateInjectY))
+        self.Can.logger.info("ackInjectZ: " + payload2Hex(ackInjectZ))
+        self.Can.logger.info("stateInjectZ: " + payload2Hex(stateInjectZ))
+        self.Can.logger.info("ackEject: " + payload2Hex(ackEjectX))
+        self.Can.logger.info("stateEject: " + payload2Hex(stateEjectX))
+        self.Can.logger.info("ackEject: " + payload2Hex(ackEjectY))
+        self.Can.logger.info("stateEject: " + payload2Hex(stateEjectY))
+        self.Can.logger.info("ackEject: " + payload2Hex(ackEjectZ))
+        self.Can.logger.info("stateEject: " + payload2Hex(stateEjectZ))
+        self.Can.logger.info("X Ack before Injection: " + payload2Hex(kX1ack))
+        self.Can.logger.info("Y Ack before Injection: " + payload2Hex(kY1ack))
+        self.Can.logger.info("Z Ack before Injection: " + payload2Hex(kZ1ack))
+        self.Can.logger.info("X Ack after Injection: " + payload2Hex(kX2ack))
+        self.Can.logger.info("Y Ack after Injection: " + payload2Hex(kY2ack))
+        self.Can.logger.info("Z Ack after Injection: " + payload2Hex(kZ2ack))
+        self.Can.logger.info("X Ack after Injection: " + payload2Hex(kX3ack))
+        self.Can.logger.info("Y Ack after Injection: " + payload2Hex(kY3ack))
+        self.Can.logger.info("Z Ack after Injection: " + payload2Hex(kZ3ack))
+        self.Can.logger.info("X Ack after Injection: " + payload2Hex(kX4ack))
+        self.Can.logger.info("Y Ack after Injection: " + payload2Hex(kY4ack))
+        self.Can.logger.info("Z Ack after Injection: " + payload2Hex(kZ4ack))
+        self.Can.logger.info("X k1 (before Injection): " + str(kX1))
+        self.Can.logger.info("Y k1 (before Injection): " + str(kY1))
+        self.Can.logger.info("Z k1 (before Injection): " + str(kZ1))
+        self.Can.logger.info("X k2 (after Injection): " + str(kX2))
+        self.Can.logger.info("Y k2 (after Injection): " + str(kY2))
+        self.Can.logger.info("Z k2 (after Injection): " + str(kZ2))
+        self.Can.logger.info("X k3 (after Ejection): " + str(kX3))
+        self.Can.logger.info("Y k3 (after Ejection): " + str(kY3))
+        self.Can.logger.info("Z k3 (after Ejection): " + str(kZ3))
+        self.Can.logger.info("X k4 (after k3): " + str(kX4))
+        self.Can.logger.info("Y k4 (after k3): " + str(kY4))
+        self.Can.logger.info("Z k4 (after k3): " + str(kZ4))
         k1mVX = (50 * AdcReference["VDD"]) * kX1 / AdcMax
         k2mVX = (50 * AdcReference["VDD"]) * kX2 / AdcMax
         k1mVY = (50 * AdcReference["VDD"]) * kY1 / AdcMax
         k2mVY = (50 * AdcReference["VDD"]) * kY2 / AdcMax
         k1mVZ = (50 * AdcReference["VDD"]) * kZ1 / AdcMax
         k2mVZ = (50 * AdcReference["VDD"]) * kZ2 / AdcMax
-        self.Can.Logger.Info("Xk1: " + str(k1mVX) + "mV")
-        self.Can.Logger.Info("Yk1: " + str(k1mVY) + "mV")
-        self.Can.Logger.Info("Zk1: " + str(k1mVZ) + "mV")
-        self.Can.Logger.Info("Xk2: " + str(k2mVX) + "mV")
-        self.Can.Logger.Info("Yk2: " + str(k2mVY) + "mV")
-        self.Can.Logger.Info("Zk2: " + str(k2mVZ) + "mV")
-        self.Can.Logger.Info("ADC Max: " + str(AdcMax))
-        self.Can.Logger.Info("Voltage Max: " + str(50 * AdcReference["VDD"]) +
+        self.Can.logger.info("Xk1: " + str(k1mVX) + "mV")
+        self.Can.logger.info("Yk1: " + str(k1mVY) + "mV")
+        self.Can.logger.info("Zk1: " + str(k1mVZ) + "mV")
+        self.Can.logger.info("Xk2: " + str(k2mVX) + "mV")
+        self.Can.logger.info("Yk2: " + str(k2mVY) + "mV")
+        self.Can.logger.info("Zk2: " + str(k2mVZ) + "mV")
+        self.Can.logger.info("ADC Max: " + str(AdcMax))
+        self.Can.logger.info("Voltage Max: " + str(50 * AdcReference["VDD"]) +
                              "mV")
         difKX = k2mVX - k1mVX
         difKY = k2mVY - k1mVY
         difKZ = k2mVZ - k1mVZ
-        self.Can.Logger.Info("Xk2-Xk1(measured): " + str(difKX) + "mV")
-        self.Can.Logger.Info("Yk2-YXk1(measured): " + str(difKY) + "mV")
-        self.Can.Logger.Info("Zk2-Zk1(measured): " + str(difKZ) + "mV")
-        self.Can.Logger.Info("k2-k1(assumed) Minimum: " +
+        self.Can.logger.info("Xk2-Xk1(measured): " + str(difKX) + "mV")
+        self.Can.logger.info("Yk2-YXk1(measured): " + str(difKY) + "mV")
+        self.Can.logger.info("Zk2-Zk1(measured): " + str(difKZ) + "mV")
+        self.Can.logger.info("k2-k1(assumed) Minimum: " +
                              str(self.tSthLimits.iSelfTestOutputChangemVMin) +
                              "mV")
-        self.Can.Logger.Info("k2-k1(assumed) Typical: " +
+        self.Can.logger.info("k2-k1(assumed) Typical: " +
                              str(self.tSthLimits.iSelfTestOutputChangemVTyp) +
                              "mV")
         self.assertGreaterEqual(difKX,
@@ -6196,21 +6208,21 @@ class TestSth(unittest.TestCase):
             bSet=False,
             bErrorAck=True)
         ErrorPayloadAssumed = [0x0, 0x2, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0]
-        self.Can.Logger.Info("Assumed bError Payload: " +
+        self.Can.logger.info("Assumed bError Payload: " +
                              payload2Hex(ErrorPayloadAssumed))
-        self.Can.Logger.Info("State Start AccX: " + payload2Hex(stateStartX))
-        self.Can.Logger.Info("State Start AccY: " + payload2Hex(stateStartY))
-        self.Can.Logger.Info("State Start AccZ: " + payload2Hex(stateStartZ))
-        self.Can.Logger.Info("State Start Temp: " +
+        self.Can.logger.info("State Start AccX: " + payload2Hex(stateStartX))
+        self.Can.logger.info("State Start AccY: " + payload2Hex(stateStartY))
+        self.Can.logger.info("State Start AccZ: " + payload2Hex(stateStartZ))
+        self.Can.logger.info("State Start Temp: " +
                              payload2Hex(stateStartTemp))
-        self.Can.Logger.Info("State Start Voltage: " +
+        self.Can.logger.info("State Start Voltage: " +
                              payload2Hex(stateStartVoltage))
-        self.Can.Logger.Info("State Start Vss: " + payload2Hex(stateStartVss))
-        self.Can.Logger.Info("State Start Avdd: " +
+        self.Can.logger.info("State Start Vss: " + payload2Hex(stateStartVss))
+        self.Can.logger.info("State Start Avdd: " +
                              payload2Hex(stateStartAvdd))
-        self.Can.Logger.Info("State Start Opa1: " +
+        self.Can.logger.info("State Start Opa1: " +
                              payload2Hex(stateStartOpa1))
-        self.Can.Logger.Info("State Start Opa2: " +
+        self.Can.logger.info("State Start Opa2: " +
                              payload2Hex(stateStartOpa2))
         for i in range(0, 8):
             self.assertEqual(stateStartX[i], ErrorPayloadAssumed[i])
@@ -6259,15 +6271,15 @@ class TestSth(unittest.TestCase):
             AdcReference["VDD"],
             bSet=False,
             bErrorAck=True)
-        self.Can.Logger.Info("Ack from Inject AccX Command: " +
+        self.Can.logger.info("Ack from Inject AccX Command: " +
                              payload2Hex(ackInjectX))
-        self.Can.Logger.Info("State after Inject AccX Command: " +
+        self.Can.logger.info("State after Inject AccX Command: " +
                              payload2Hex(stateInjectX))
-        self.Can.Logger.Info("Ack from Reset Command: " +
+        self.Can.logger.info("Ack from Reset Command: " +
                              payload2Hex(ackReset))
-        self.Can.Logger.Info("State AccX after Reset Command: " +
+        self.Can.logger.info("State AccX after Reset Command: " +
                              payload2Hex(stateStartX))
-        self.Can.Logger.Info("State AVDD after Reset Command: " +
+        self.Can.logger.info("State AVDD after Reset Command: " +
                              payload2Hex(stateStartAvdd))
         # Inject State Check
         self.assertEqual(ackInjectX[0], 0xa0)
@@ -6282,7 +6294,7 @@ class TestSth(unittest.TestCase):
         self.assertEqual(stateInjectX[3], 0x42)
         for i in range(4, 8):
             self.assertEqual(stateInjectX[i], 0x00)
-        self.Can.Logger.Info("test0303GetSingleAccX")
+        self.Can.logger.info("test0303GetSingleAccX")
         self.test0302GetSingleAccX()
 
     def test0700StatisticsPowerOnCounterPowerOffCounter(self):
@@ -6313,29 +6325,29 @@ class TestSth(unittest.TestCase):
                                                MyToolItStatData["PocPof"])
         PowerOn4 = byte_list_to_int(PowerOnOff4[:4])
         PowerOff4 = byte_list_to_int(PowerOnOff4[4:])
-        self.Can.Logger.Info("PowerOnOff Payload before STH Reset: " +
+        self.Can.logger.info("PowerOnOff Payload before STH Reset: " +
                              payload2Hex(PowerOnOff1))
-        self.Can.Logger.Info("Power On Counter before STH Reset: " +
+        self.Can.logger.info("Power On Counter before STH Reset: " +
                              str(PowerOn1))
-        self.Can.Logger.Info("Power Off Counter before STH Reset: " +
+        self.Can.logger.info("Power Off Counter before STH Reset: " +
                              str(PowerOff1))
-        self.Can.Logger.Info("PowerOnOff Payload after STH Reset: " +
+        self.Can.logger.info("PowerOnOff Payload after STH Reset: " +
                              payload2Hex(PowerOnOff2))
-        self.Can.Logger.Info("Power On Counter after STH Reset: " +
+        self.Can.logger.info("Power On Counter after STH Reset: " +
                              str(PowerOn2))
-        self.Can.Logger.Info("Power Off Counter after STH Reset: " +
+        self.Can.logger.info("Power Off Counter after STH Reset: " +
                              str(PowerOff2))
-        self.Can.Logger.Info("PowerOnOff Payload after Disconnect/Connect: " +
+        self.Can.logger.info("PowerOnOff Payload after Disconnect/Connect: " +
                              payload2Hex(PowerOnOff3))
-        self.Can.Logger.Info("Power On Counter after Disconnect/Connect: " +
+        self.Can.logger.info("Power On Counter after Disconnect/Connect: " +
                              str(PowerOn3))
-        self.Can.Logger.Info("Power Off Counter after Disconnect/Connect: " +
+        self.Can.logger.info("Power Off Counter after Disconnect/Connect: " +
                              str(PowerOff3))
-        self.Can.Logger.Info("PowerOnOff Payload after STU Reset: " +
+        self.Can.logger.info("PowerOnOff Payload after STU Reset: " +
                              payload2Hex(PowerOnOff4))
-        self.Can.Logger.Info("Power On Counter after STU Reset: " +
+        self.Can.logger.info("Power On Counter after STU Reset: " +
                              str(PowerOn4))
-        self.Can.Logger.Info("Power Off Counter after STU Reset: " +
+        self.Can.logger.info("Power Off Counter after STU Reset: " +
                              str(PowerOff4))
         self.assertEqual(PowerOn1 + 1, PowerOn2)
         self.assertEqual(PowerOff1 + 1, PowerOff2)
@@ -6348,7 +6360,7 @@ class TestSth(unittest.TestCase):
         """Check Operating Seconds (⏱ 32 minutes)
         """
         self._resetSth()
-        self.Can.Logger.Info("Connect to STH")
+        self.Can.logger.info("Connect to STH")
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
                                               settings.sth.name)
         time.sleep(2)
@@ -6375,30 +6387,30 @@ class TestSth(unittest.TestCase):
             MyToolItNetworkNr["STH1"], MyToolItStatData["OperatingTime"])
         SecondsReset4 = byte_list_to_int(OperatingSeconds[:4])
         SecondsOveral4 = byte_list_to_int(OperatingSeconds[4:])
-        self.Can.Logger.Info("Operating Seconds since Reset: " +
+        self.Can.logger.info("Operating Seconds since Reset: " +
                              str(SecondsReset1))
-        self.Can.Logger.Info("Operating Seconds since frist PowerOn: " +
+        self.Can.logger.info("Operating Seconds since frist PowerOn: " +
                              str(SecondsOveral1))
-        self.Can.Logger.Info("Operating Seconds since Reset(+1 minute): " +
+        self.Can.logger.info("Operating Seconds since Reset(+1 minute): " +
                              str(SecondsReset2))
-        self.Can.Logger.Info(
+        self.Can.logger.info(
             "Operating Seconds since frist PowerOn(+1minute): " +
             str(SecondsOveral2))
-        self.Can.Logger.Info(
+        self.Can.logger.info(
             "Operating Seconds since Reset(After Disconnect/Connect): " +
             str(SecondsReset3))
-        self.Can.Logger.Info(
+        self.Can.logger.info(
             "Operating Seconds since frist PowerOn(After Disconnect/Connect): "
             + str(SecondsOveral3))
-        self.Can.Logger.Info("Operating Seconds since Reset(+30 minutes): " +
+        self.Can.logger.info("Operating Seconds since Reset(+30 minutes): " +
                              str(SecondsReset4))
-        self.Can.Logger.Info(
+        self.Can.logger.info(
             "Operating Seconds since frist PowerOn(+30minutes): " +
             str(SecondsOveral4))
         u32EepromWriteRequestCounterTestEnd = self.Can.u32EepromWriteRequestCounter(
             MyToolItNetworkNr["STH1"])
         u32EepromWriteRequsts = u32EepromWriteRequestCounterTestEnd - u32EepromWriteRequestCounterTestStart
-        self.Can.Logger.Info("EEPROM Write Requests during tests: " +
+        self.Can.logger.info("EEPROM Write Requests during tests: " +
                              str(u32EepromWriteRequsts))
         self.assertEqual(3,
                          u32EepromWriteRequsts)  # +1 due to operating seconds
@@ -6431,10 +6443,10 @@ class TestSth(unittest.TestCase):
         self._resetSth()
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
                                               settings.sth.name)
-        self.Can.Logger.Info("Watchdog Counter at start: " + str(WDogCounter1))
-        self.Can.Logger.Info("Watchdog Counter after first reset: " +
+        self.Can.logger.info("Watchdog Counter at start: " + str(WDogCounter1))
+        self.Can.logger.info("Watchdog Counter after first reset: " +
                              str(WDogCounter2))
-        self.Can.Logger.Info("Watchdog Counter after second reset: " +
+        self.Can.logger.info("Watchdog Counter after second reset: " +
                              str(WDogCounter3))
         self.assertEqual(WDogCounter1, WDogCounter2)
         self.assertEqual(WDogCounter1, WDogCounter3)
@@ -6464,7 +6476,7 @@ class TestSth(unittest.TestCase):
         sProductionDate = self.Can.statisticalData(
             MyToolItNetworkNr["STH1"], MyToolItStatData["ProductionDate"])
         sProductionDate = sArray2String(sProductionDate)
-        self.Can.Logger.Info("Production Date: " + sProductionDate)
+        self.Can.logger.info("Production Date: " + sProductionDate)
         self.assertEqual(sArray2String(au8ProductionDate), sProductionDate)
 
     def test0750StatisticPageWriteReadDeteministic(self):
@@ -6474,7 +6486,7 @@ class TestSth(unittest.TestCase):
         time.sleep(2)
         u32EepromWriteRequestCounterTestStart = self.Can.u32EepromWriteRequestCounter(
             MyToolItNetworkNr["STH1"])
-        self.Can.Logger.Info("Save up EEPROM content")
+        self.Can.logger.info("Save up EEPROM content")
         startData = []
         for offset in range(0, 256, 4):
             index = self.Can.cmdSend(
@@ -6486,7 +6498,7 @@ class TestSth(unittest.TestCase):
 
         # Test it self
         for _i in range(0, uLoopRuns):
-            self.Can.Logger.Info("Next Run 12 Writes and Reads")
+            self.Can.logger.info("Next Run 12 Writes and Reads")
             self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STH1"])
             self.vEepromWritePage(EepromPage["Statistics"], 0xAA)
             self.vEepromReadPage(EepromPage["Statistics"], 0xAA)
@@ -6513,9 +6525,9 @@ class TestSth(unittest.TestCase):
             self.vEepromWritePage(EepromPage["Statistics"], 0x55)
             self.vEepromReadPage(EepromPage["Statistics"], 0x55)
             self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STH1"])
-            self.Can.Logger.Info("Fin Run 12 Writes and Reads")
+            self.Can.logger.info("Fin Run 12 Writes and Reads")
 
-        self.Can.Logger.Info("Write back EEPROM content")
+        self.Can.logger.info("Write back EEPROM content")
         timeStamp = self.Can.get_elapsed_time()
         for offset in range(0, 256, 4):
             payload = [EepromPage["Statistics"], 0xFF & offset, 4, 0]
@@ -6523,13 +6535,13 @@ class TestSth(unittest.TestCase):
             self.Can.cmdSend(MyToolItNetworkNr["STH1"],
                              MyToolItBlock["EEPROM"], MyToolItEeprom["Write"],
                              payload)
-        self.Can.Logger.Info("Page Write Time: " +
+        self.Can.logger.info("Page Write Time: " +
                              str(self.Can.get_elapsed_time() - timeStamp) +
                              "ms")
         u32EepromWriteRequestCounterTestEnd = self.Can.u32EepromWriteRequestCounter(
             MyToolItNetworkNr["STH1"])
         u32EepromWriteRequsts = u32EepromWriteRequestCounterTestEnd - u32EepromWriteRequestCounterTestStart
-        self.Can.Logger.Info("EEPROM Write Requests during tests: " +
+        self.Can.logger.info("EEPROM Write Requests during tests: " +
                              str(u32EepromWriteRequsts))
         self.assertEqual(u32EepromWriteRequestCounterTestStart + 1,
                          u32EepromWriteRequestCounterTestEnd
@@ -6541,7 +6553,7 @@ class TestSth(unittest.TestCase):
         uLoopRuns = 100
         u32EepromWriteRequestCounterTestStart = self.Can.u32EepromWriteRequestCounter(
             MyToolItNetworkNr["STH1"])
-        self.Can.Logger.Info("Save up EEPROM content")
+        self.Can.logger.info("Save up EEPROM content")
         startData = []
         for offset in range(0, 256, 4):
             index = self.Can.cmdSend(
@@ -6553,7 +6565,7 @@ class TestSth(unittest.TestCase):
 
         # Test it self
         for _i in range(0, uLoopRuns):
-            self.Can.Logger.Info("Next random Writes and Reads")
+            self.Can.logger.info("Next random Writes and Reads")
             self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STH1"])
             au8ReadCheck = []
             for offset in range(0, 256, 4):
@@ -6577,7 +6589,7 @@ class TestSth(unittest.TestCase):
                 dataReadBack = self.Can.getReadMessageData(index)
                 self.assertEqual(dataReadBack[4:],
                                  au8ReadCheck[offset:offset + 4])
-            self.Can.Logger.Info("Fin random Writes and Reads")
+            self.Can.logger.info("Fin random Writes and Reads")
             self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STH1"])
 
         # Write Back Page
@@ -6588,14 +6600,14 @@ class TestSth(unittest.TestCase):
             self.Can.cmdSend(MyToolItNetworkNr["STH1"],
                              MyToolItBlock["EEPROM"], MyToolItEeprom["Write"],
                              payload)
-        self.Can.Logger.Info("Page Write Time: " +
+        self.Can.logger.info("Page Write Time: " +
                              str(self.Can.get_elapsed_time() - timeStamp) +
                              "ms")
         self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STH1"])
         u32EepromWriteRequestCounterTestEnd = self.Can.u32EepromWriteRequestCounter(
             MyToolItNetworkNr["STH1"])
         u32EepromWriteRequsts = u32EepromWriteRequestCounterTestEnd - u32EepromWriteRequestCounterTestStart
-        self.Can.Logger.Info("EEPROM Write Requests during tests: " +
+        self.Can.logger.info("EEPROM Write Requests during tests: " +
                              str(u32EepromWriteRequsts))
         self.assertEqual(u32EepromWriteRequestCounterTestStart + 1,
                          u32EepromWriteRequestCounterTestEnd
@@ -6627,7 +6639,7 @@ class TestSth(unittest.TestCase):
             MyToolItNetworkNr["STH1"])
         for _i in range(0, uLoopRuns):
             for sPage in EepromPage:
-                self.Can.Logger.Info("Next Page")
+                self.Can.logger.info("Next Page")
                 for offset in range(0, 256, 4):
                     au8Payload = [
                         EepromPage[sPage], 0xFF & offset, 4, 0, 0, 0, 0, 0
@@ -6638,7 +6650,7 @@ class TestSth(unittest.TestCase):
         u32EepromWriteRequestCounterTestEnd = self.Can.u32EepromWriteRequestCounter(
             MyToolItNetworkNr["STH1"])
         u32EepromWriteRequsts = u32EepromWriteRequestCounterTestEnd - u32EepromWriteRequestCounterTestStart
-        self.Can.Logger.Info("EEPROM Write Requests during tests: " +
+        self.Can.logger.info("EEPROM Write Requests during tests: " +
                              str(u32EepromWriteRequsts))
         self.assertEqual(u32EepromWriteRequestCounterTestStart,
                          u32EepromWriteRequestCounterTestEnd
@@ -6655,7 +6667,7 @@ class TestSth(unittest.TestCase):
             MyToolItNetworkNr["STH1"])
         for _i in range(0, uLoopRuns):
             for uPageOffset in range(0, uPageRuns):
-                self.Can.Logger.Info("Next Page")
+                self.Can.logger.info("Next Page")
                 self.Can.u32EepromWriteRequestCounter(
                     MyToolItNetworkNr["STH1"])
                 uPage = uPageOffset + uPageStart
@@ -6677,7 +6689,7 @@ class TestSth(unittest.TestCase):
         u32EepromWriteRequestCounterTestEnd = self.Can.u32EepromWriteRequestCounter(
             MyToolItNetworkNr["STH1"])
         u32EepromWriteRequsts = u32EepromWriteRequestCounterTestEnd - u32EepromWriteRequestCounterTestStart
-        self.Can.Logger.Info("EEPROM Write Requests during tests: " +
+        self.Can.logger.info("EEPROM Write Requests during tests: " +
                              str(u32EepromWriteRequsts))
         self.assertEqual(uPageRuns * uLoopRuns, u32EepromWriteRequsts)
 
@@ -6685,7 +6697,7 @@ class TestSth(unittest.TestCase):
         """Status Word after Reset (⏱ 7 seconds)
         """
         status0 = self.Can.node_status(MyToolItNetworkNr["STH1"])
-        self.Can.Logger.Info(f"STH Status Word: {status0}")
+        self.Can.logger.info(f"STH Status Word: {status0}")
 
         self.assertEqual(status0.error(), False)
         self.assertEqual(status0.state_name(), 'Operating')
@@ -6715,10 +6727,10 @@ class TestSth(unittest.TestCase):
         StateWord = SthStateWord()
         StateWord.asword = self.Can.node_status(
             MyToolItNetworkNr["STH1"]).value
-        self.Can.Logger.Info("STH State Word: " + hex(StateWord.asword))
-        self.Can.Logger.Info("STH State Word - bError: " +
+        self.Can.logger.info("STH State Word: " + hex(StateWord.asword))
+        self.Can.logger.info("STH State Word - bError: " +
                              str(StateWord.b.bError))
-        self.Can.Logger.Info("STH State Word - " +
+        self.Can.logger.info("STH State Word - " +
                              NetworkState.inverse[StateWord.b.u3NetworkState])
         self.assertEqual(StateWord.b.bError, 1)
         self.assertEqual(StateWord.b.u3NetworkState, NetworkState["Error"])
@@ -6730,7 +6742,7 @@ class TestSth(unittest.TestCase):
         """Status Word after Reset (⏱ 8 seconds)
         """
         status = self.Can.error_status(MyToolItNetworkNr["STH1"])
-        self.Can.Logger.Info(f"STH Error Word: {status}")
+        self.Can.logger.info(f"STH Error Word: {status}")
         self.assertEqual(status.value, 0)
 
     def test0821StatusWords1AdcOverRun(self):
@@ -6752,7 +6764,7 @@ class TestSth(unittest.TestCase):
         time.sleep(1)
 
         status = self.Can.error_status(MyToolItNetworkNr["STH1"])
-        self.Can.Logger.Info(f"STH Error Word: {status}")
+        self.Can.logger.info(f"STH Error Word: {status}")
         self.assertEqual(status.adc_overrun(), True)
 
         self._resetStu()
@@ -6778,7 +6790,7 @@ class TestSth(unittest.TestCase):
         time.sleep(10)
 
         status = self.Can.error_status(MyToolItNetworkNr["STH1"])
-        self.Can.Logger.Info(f"STH Error Word: {status}")
+        self.Can.logger.info(f"STH Error Word: {status}")
         self.assertEqual(status.adc_overrun(), False)
         self.assertEqual(status.transmission_error(), True)
 
@@ -6796,16 +6808,16 @@ class TestSth(unittest.TestCase):
                                         MyToolItSystem["Get/Set State"],
                                         [activeState.asbyte])
         activeState.asbyte = self.Can.getReadMessageData(indexAssumed)[0]
-        self.Can.Logger.Info("STH Active State: " + hex(activeState.asbyte))
-        self.Can.Logger.Info("STH Active State(Read Ack): - bSetState: " +
+        self.Can.logger.info("STH Active State: " + hex(activeState.asbyte))
+        self.Can.logger.info("STH Active State(Read Ack): - bSetState: " +
                              str(activeState.b.bSetState))
-        self.Can.Logger.Info("STH Active State(Read Ack): - bReserved: " +
+        self.Can.logger.info("STH Active State(Read Ack): - bReserved: " +
                              str(activeState.b.bReserved))
-        self.Can.Logger.Info("STH Active State(Read Ack): - u2NodeState: " +
+        self.Can.logger.info("STH Active State(Read Ack): - u2NodeState: " +
                              str(activeState.b.u2NodeState))
-        self.Can.Logger.Info("STH Active State(Read Ack): - bReserved1: " +
+        self.Can.logger.info("STH Active State(Read Ack): - bReserved1: " +
                              str(activeState.b.bReserved1))
-        self.Can.Logger.Info("STH Active State(Read Ack): - u3NetworkState: " +
+        self.Can.logger.info("STH Active State(Read Ack): - u3NetworkState: " +
                              str(activeState.b.u3NetworkState))
         self.assertEqual(activeState.b.bSetState, 0)
         self.assertEqual(activeState.b.bReserved, 0)
@@ -6827,17 +6839,17 @@ class TestSth(unittest.TestCase):
                                         MyToolItSystem["Get/Set State"],
                                         [activeState.asbyte])
         activeState.asbyte = self.Can.getReadMessageData(indexAssumed)[0]
-        self.Can.Logger.Info("STH Active State(Write Ack): " +
+        self.Can.logger.info("STH Active State(Write Ack): " +
                              hex(activeState.asbyte))
-        self.Can.Logger.Info("STH Active State(Write Ack): - bSetState: " +
+        self.Can.logger.info("STH Active State(Write Ack): - bSetState: " +
                              str(activeState.b.bSetState))
-        self.Can.Logger.Info("STH Active State(Write Ack): - bReserved: " +
+        self.Can.logger.info("STH Active State(Write Ack): - bReserved: " +
                              str(activeState.b.bReserved))
-        self.Can.Logger.Info("STH Active State(Write Ack): - u2NodeState: " +
+        self.Can.logger.info("STH Active State(Write Ack): - u2NodeState: " +
                              str(activeState.b.u2NodeState))
-        self.Can.Logger.Info("STH Active State(Write Ack): - bReserved1: " +
+        self.Can.logger.info("STH Active State(Write Ack): - bReserved1: " +
                              str(activeState.b.bReserved1))
-        self.Can.Logger.Info(
+        self.Can.logger.info(
             "STH Active State(Write Ack): - u3NetworkState: " +
             str(activeState.b.u3NetworkState))
         self.assertEqual(activeState.b.bSetState, 1)
@@ -6849,24 +6861,24 @@ class TestSth(unittest.TestCase):
                                         MyToolItBlock["System"],
                                         MyToolItSystem["Get/Set State"], [0])
         activeState.asbyte = self.Can.getReadMessageData(indexAssumed)[0]
-        self.Can.Logger.Info("STH Active State(Read Ack): " +
+        self.Can.logger.info("STH Active State(Read Ack): " +
                              hex(activeState.asbyte))
-        self.Can.Logger.Info("STH Active State(Read Ack): - bSetState: " +
+        self.Can.logger.info("STH Active State(Read Ack): - bSetState: " +
                              str(activeState.b.bSetState))
-        self.Can.Logger.Info("STH Active State(Read Ack): - bReserved: " +
+        self.Can.logger.info("STH Active State(Read Ack): - bReserved: " +
                              str(activeState.b.bReserved))
-        self.Can.Logger.Info("STH Active State(Read Ack): - u2NodeState: " +
+        self.Can.logger.info("STH Active State(Read Ack): - u2NodeState: " +
                              str(activeState.b.u2NodeState))
-        self.Can.Logger.Info("STH Active State(Read Ack): - bReserved1: " +
+        self.Can.logger.info("STH Active State(Read Ack): - bReserved1: " +
                              str(activeState.b.bReserved1))
-        self.Can.Logger.Info("STH Active State(Read Ack): - u3NetworkState: " +
+        self.Can.logger.info("STH Active State(Read Ack): - u3NetworkState: " +
                              str(activeState.b.u3NetworkState))
         self.assertEqual(activeState.b.bSetState, 0)
         self.assertEqual(activeState.b.bReserved, 0)
         self.assertEqual(activeState.b.u2NodeState, NodeState["Application"])
         self.assertEqual(activeState.b.bReserved1, 0)
         self.assertEqual(activeState.b.u3NetworkState, NetworkState["Error"])
-        self.Can.Logger.Info("Trying to receive Stream (Must not work)")
+        self.Can.logger.info("Trying to receive Stream (Must not work)")
         accFormat = AtvcFormat()
         accFormat.asbyte = 0
         accFormat.b.bStreaming = 1
@@ -6882,7 +6894,7 @@ class TestSth(unittest.TestCase):
         ack = self.Can.tWriteFrameWaitAckRetries(message, bErrorExit=False)
         self.assertEqual("Error", ack)
         self.Can.CanTimeStampStart(self._resetStu()["CanTime"])
-        self.Can.Logger.Info("Connect to STH")
+        self.Can.logger.info("Connect to STH")
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
                                               settings.sth.name)
 

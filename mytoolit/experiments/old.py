@@ -13,8 +13,7 @@ class Network:
     def __init__(self, sth_name):
         self.sth_name = sth_name
 
-        self.network = OldNetwork("experiments.txt",
-                                  sender=MyToolItNetworkNr['SPU1'],
+        self.network = OldNetwork(sender=MyToolItNetworkNr['SPU1'],
                                   receiver=Node('STU 1').value)
 
         self.network.bConnected = False

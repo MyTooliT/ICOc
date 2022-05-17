@@ -86,9 +86,7 @@ class CommandLineInterface():
         self.iMsgLoss = 0
         self.iMsgsTotal = 0
         self.iMsgCounterLast = -1
-        self.Can = Network('ICOc.log',
-                           FreshLog=True,
-                           sender=MyToolItNetworkNr["SPU1"],
+        self.Can = Network(sender=MyToolItNetworkNr["SPU1"],
                            receiver=MyToolItNetworkNr["STH1"])
         self.logger.info("Initialized CAN class")
 
@@ -929,7 +927,6 @@ class CommandLineInterface():
         return None
 
     def _vRunConsoleStartupLoggerPrint(self):
-        self.logger.info(f"Log File: {self.Can.Logger.filepath.name}")
         self.logger.info(f"STH Name: {self.sth_name}")
         self.logger.info(f"Bluetooth Address: {self.iAddress}")
         self.logger.info(f"Connect to STH: {self.connect}")

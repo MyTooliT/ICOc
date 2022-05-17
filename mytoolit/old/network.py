@@ -1,7 +1,7 @@
 from array import array
 from datetime import datetime
 from ctypes import c_byte
-from logging import getLogger, FileHandler, Formatter
+from logging import getLogger, WARNING, FileHandler, Formatter, StreamHandler
 from math import log
 from pathlib import Path
 from struct import pack, unpack
@@ -20,7 +20,6 @@ from mytoolit.can import (Command, ErrorStatusSTH, ErrorStatusSTU, Identifier,
                           Message, Node, NodeStatusSTH, NodeStatusSTU)
 from mytoolit.eeprom import EEPROMStatus
 from mytoolit.config import settings
-from mytoolit.old.Logger import Logger
 from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkName
 from mytoolit.old.MyToolItCommands import (
     AdcAcquisitionTimeName,
@@ -87,21 +86,37 @@ class Network(object):
     """
 
     def __init__(self,
-                 testMethodName='unknown_test_method.txt',
                  sender=Node('SPU 1').value,
                  receiver=Node('STH 1').value,
                  prescaler=2,
                  acquisition=8,
                  oversampling=64,
-                 FreshLog=False):
+                 log_level=WARNING):
         # Start with disconnected Bluetooth connection
         self.bConnected = False
         # Set default sender (number) for CAN bus
         self.sender = sender
         # Set default receiver (number) for CAN bus
         self.receiver = receiver
-        self.Logger = Logger(testMethodName, FreshLog=FreshLog)
-        self.Logger.Info(datetime.now().isoformat())
+
+        # General purpose logger
+        self.logger = getLogger(__name__)
+        self.logger.setLevel(log_level)
+        handler = StreamHandler()
+        handler.setFormatter(
+            Formatter('{asctime} {levelname} {name} {message}', style='{'))
+
+        # Logger for CAN messages
+        logger = getLogger('can')
+        # We use `Logger` in the code below, since the `.logger` attribute
+        # stores internal DynaConf data
+        logger.setLevel(settings.Logger.can.level)
+        repo_root = Path(__file__).parent.parent.parent
+        handler = FileHandler(repo_root / "can.log", 'w', 'utf-8', delay=True)
+        handler.setFormatter(Formatter('{asctime} {message}', style='{'))
+        logger.addHandler(handler)
+
+        self.logger.info(datetime.now().isoformat())
         self.start_time = int(round(time() * 1000))
         self.pcan = PCANBasic()
         self.m_PcanHandle = PCAN_USBBUS1
@@ -143,22 +158,13 @@ class Network(object):
         self.reset()
         self.ReadThreadReset()
 
-        logger = getLogger('can')
-        # We use `Logger` in the code below, since the `.logger` attribute
-        # stores internal DynaConf data
-        logger.setLevel(settings.Logger.can.level)
-        repo_root = Path(__file__).parent.parent.parent
-        handler = FileHandler(repo_root / "can.log", 'w', 'utf-8', delay=True)
-        handler.setFormatter(Formatter('{asctime} {message}', style='{'))
-        logger.addHandler(handler)
-
     def __exit__(self):
         try:
             if not self.bError:
                 if self.RunReadThread:
                     self.readThreadStop()
                 else:
-                    self.Logger.Error("Peak CAN Message Over Run")
+                    self.logger.error("Peak CAN Message Over Run")
                     self.bError = True
             self.reset()
             self.tCanReadWriteMutex.acquire()  # Insane
@@ -168,14 +174,14 @@ class Network(object):
             [_iDs, cmds] = self.ReadMessageStatistics()
             for cmd, value in cmds.items():
                 block_command = Identifier(command=cmd).block_command_name()
-                self.Logger.Info(f"{block_command} received {value} times")
-            self.Logger.__exit__()
+                self.logger.info(f"{block_command} received {value} times")
+            self.logger.__exit__()
         except:
             pass
 
     def __exitError(self, sErrorMessage):
         try:
-            self.Logger.ErrorFlag = True
+            self.logger.errorFlag = True
             self.__exit__()
             self.bError = True
         except Exception:
@@ -253,7 +259,7 @@ class Network(object):
         if status != PCAN_ERROR_OK:
             error_message = self.__get_error_message(
                 "Unable to write CAN message", status)
-            self.Logger.Error(error_message)
+            self.logger.error(error_message)
             self.__exitError(error_message)
 
         # Only log message, if writing was successful
@@ -278,7 +284,7 @@ class Network(object):
                 if bError else
                 f"Acknowledgement received (error assumed): {identifier}; ")
         info += f"Payload: {payload}"
-        self.Logger.Error(info)
+        self.logger.error(info)
         if printLog:
             print(info)
         return self.WriteFrameWaitAckOk(message)
@@ -288,7 +294,7 @@ class Network(object):
         payload = payload2Hex(CanMsg.DATA)
         message = (f"No (error) acknowledgement received: {identifier}; " +
                    f"Payload: {payload}")
-        self.Logger.Warning(message)
+        self.logger.warning(message)
         if printLog:
             print(message)
         return "Error"
@@ -328,7 +334,7 @@ class Network(object):
             if self.get_elapsed_time() > waitTimeMax:
                 warning = ("No acknowledgement message received in "
                            f"{waitMs} milliseconds: Message(CanMsg)")
-                self.Logger.Warning(warning)
+                self.logger.warning(warning)
                 return self.WriteFrameWaitAckTimeOut(CanMsg,
                                                      printLog), currentIndex
 
@@ -355,7 +361,7 @@ class Network(object):
             if CanMsgAckError.ID == pcan_message.ID:
                 warning = ("Received error response message: "
                            f"{Message(pcan_message)}")
-                self.Logger.Warning(warning)
+                self.logger.warning(warning)
                 return self.WriteFrameWaitAckError(message, bError,
                                                    printLog), currentIndex
 
@@ -385,13 +391,13 @@ class Network(object):
                     return returnMessage
 
                 warning = f"Retry request: {Message(CanMsg)}"
-                self.Logger.Warning(warning)
+                self.logger.warning(warning)
 
             identifier = Identifier(CanMsg.ID)
             payload = payload2Hex(CanMsg.DATA)
             text = (f"Message request failed: {identifier}; " +
                     f"Payload: {payload}")
-            self.Logger.Error(text)
+            self.logger.error(text)
             if printLog:
                 print(text)
             if bErrorExit:
@@ -435,8 +441,8 @@ class Network(object):
             ) if msgAck is not None and msgAck != "Error" else 'Unknown'
             prefix = "Unable to send message: " if msgAck == "Error" else ""
             log_message = f"{prefix}{message} (CAN time: {can_time_stamp})"
-            self.Logger.Info(log_message)
-            self.Logger.Info(f"Assumed receive message number: {index}")
+            self.logger.info(log_message)
+            self.logger.info(f"Assumed receive message number: {index}")
         # sleep(0.2)  # synch to read thread TODO: Really kick it out?
         return index
 
@@ -471,19 +477,19 @@ class Network(object):
         if False != log:
             canCmd = self.CanCmd(blockCmd, subCmd, 1, 0)
             if "Error" != msgAck:
-                self.Logger.Info(
+                self.logger.info(
                     MyToolItNetworkName[self.sender] + "->" +
                     MyToolItNetworkName[receiver] + "(CanTimeStamp: " +
                     str(msgAck["CanTime"] - self.PeakCanTimeStampStart) +
                     "ms): " + Identifier(command=canCmd).block_command_name() +
                     " - " + payload2Hex(payload))
             else:
-                self.Logger.Info(MyToolItNetworkName[self.sender] + "->" +
+                self.logger.info(MyToolItNetworkName[self.sender] + "->" +
                                  MyToolItNetworkName[receiver] + ": " +
                                  Identifier(
                                      command=canCmd).block_command_name() +
                                  " - " + "Error")
-            self.Logger.Info("Assumed receive message number: " + str(index))
+            self.logger.info("Assumed receive message number: " + str(index))
         # sleep(0.2)  # synch to read thread TODO: Really kick it out?
         return msgAck
 
@@ -494,7 +500,7 @@ class Network(object):
                                 receiver=receiver,
                                 request=True)
         if log:
-            self.Logger.Info(f"Reset {identifier.receiver_name()}")
+            self.logger.info(f"Reset {identifier.receiver_name()}")
 
         return_message = self.tWriteFrameWaitAckRetries(
             Message(identifier=identifier).to_pcan(), retries=retries)
@@ -511,7 +517,7 @@ class Network(object):
                              [0] * 8)
         dataReadBack = self.getReadMessageData(index)[4:]
         u32WriteRequestCounter = byte_list_to_int(dataReadBack)
-        self.Logger.Info("EEPROM Write Request Counter: " +
+        self.logger.info("EEPROM Write Request Counter: " +
                          str(u32WriteRequestCounter))
         return u32WriteRequestCounter
 
@@ -600,12 +606,12 @@ class Network(object):
             receivedCmdSub = identifier_received.command_number()
             filterCmdBlk = identifier_filtered.block()
             filterCmdSub = identifier_filtered.command_number()
-            self.Logger.Error("Assumed message ID: " + str(messageIdFilter) +
+            self.logger.error("Assumed message ID: " + str(messageIdFilter) +
                               "(" + str(cmdRec) + "); Received message ID: " +
                               str(messageId) + "(" + str(cmdFiltered) + ")")
-            self.Logger.Error("Assumed command block: " + str(filterCmdBlk) +
+            self.logger.error("Assumed command block: " + str(filterCmdBlk) +
                               f"; Received command block: {receivedCmdBlk}")
-            self.Logger.Error("Assumed sub command: " + str(filterCmdSub) +
+            self.logger.error("Assumed sub command: " + str(filterCmdSub) +
                               "; Received sub command: " + str(receivedCmdSub))
             self.__exitError("Wrong Filter ID")
         if 0 < len(array1):
@@ -632,9 +638,9 @@ class Network(object):
         else:
             self.__exitError(f"Streaming unknown at streaming start: {subCmd}")
         if False != log:
-            self.Logger.Info("CAN Bandwidth(Lowest, may be more): "
+            self.logger.info("CAN Bandwidth(Lowest, may be more): "
                              f"{self.canBandwith()} bit/s")
-            self.Logger.Info("Bluetooth Bandwidth(Lowest, may be more): "
+            self.logger.info("Bluetooth Bandwidth(Lowest, may be more): "
                              f"{self.bluetoothBandwidth()} bit/s")
 
         message = Message(block="Streaming",
@@ -646,7 +652,7 @@ class Network(object):
 
         if log:
             block_command = Identifier(message.id()).block_command_name()
-            self.Logger.Info(f"Start sending {block_command}; "
+            self.logger.info(f"Start sending {block_command}; "
                              f"Subpayload: {hex(streamingFormat.asbyte)}")
 
         indexStart = self.GetReadArrayIndex()
@@ -677,9 +683,9 @@ class Network(object):
                           receiver=receiver,
                           data=[streamingFormat.asbyte])
 
-        self.Logger.Info(
+        self.logger.info(
             "_____________________________________________________________")
-        self.Logger.Info(
+        self.logger.info(
             f"Stop Streaming - {Identifier(message.id()).block_command_name()}"
         )
         ack = self.tWriteFrameWaitAckRetries(
@@ -689,7 +695,7 @@ class Network(object):
             assumedPayload=[streamingFormat.asbyte, 0, 0, 0, 0, 0, 0, 0],
             bErrorExit=bErrorExit,
             notAckIdleWaitTimeMs=notAckIdleWaitTimeMs)
-        self.Logger.Info(
+        self.logger.info(
             "_____________________________________________________________")
         return ack
 
@@ -704,7 +710,7 @@ class Network(object):
                               log=True,
                               StartupTimeMs=0):
         if log:
-            self.Logger.Info(f"Test Time: {testTimeMs} ms")
+            self.logger.info(f"Test Time: {testTimeMs} ms")
         indexStart = self.streamingStart(receiver,
                                          subCmd,
                                          dataSets,
@@ -713,7 +719,7 @@ class Network(object):
                                          b3,
                                          log=log)
         if log:
-            self.Logger.Info(f"indexStart: {indexStart}")
+            self.logger.info(f"indexStart: {indexStart}")
         testTimeMs += StartupTimeMs
         sleep(testTimeMs / 1000)
         self.streamingStop(receiver, subCmd)
@@ -725,12 +731,12 @@ class Network(object):
             countDel += 1
             indexEnd -= 1
         if log:
-            self.Logger.Info(
+            self.logger.info(
                 f"Deleted {countDel + 180} messages to achieve {testTimeMs} ms"
             )
-            self.Logger.Info(f"indexEnd: {indexEnd}")
+            self.logger.info(f"indexEnd: {indexEnd}")
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Logger.Warning(
+            self.logger.warning(
                 f"Deleted {countDel + 180} messages to achieve {testTimeMs} ms"
             )
 
@@ -836,17 +842,17 @@ class Network(object):
             samplingPointMax = len(array3)
 
         samplingPoints = self.samplingPoints(array1, array2, array3)
-        self.Logger.Info("Received Sampling Points: " + str(samplingPoints))
+        self.logger.info("Received Sampling Points: " + str(samplingPoints))
 
         for i in range(0, samplingPointMax):
             if 0 < len(array1):
-                self.Logger.Info(preFix + "X: " + str(fCbfRecalc(array1[i])) +
+                self.logger.info(preFix + "X: " + str(fCbfRecalc(array1[i])) +
                                  postFix)
             if 0 < len(array2):
-                self.Logger.Info(preFix + "Y: " + str(fCbfRecalc(array2[i])) +
+                self.logger.info(preFix + "Y: " + str(fCbfRecalc(array2[i])) +
                                  postFix)
             if 0 < len(array3):
-                self.Logger.Info(preFix + "Z: " + str(fCbfRecalc(array3[i])) +
+                self.logger.info(preFix + "Z: " + str(fCbfRecalc(array3[i])) +
                                  postFix)
         return samplingPoints
 
@@ -966,33 +972,33 @@ class Network(object):
         statistics = self.streamingValueStatistics(array1, array2, array3)
         for key, stat in statistics.items():
             if None != stat:
-                self.Logger.Info(
+                self.logger.info(
                     "____________________________________________________")
-                self.Logger.Info(key)
-                self.Logger.Info("Minimum: " + str(stat["Minimum"]))
-                self.Logger.Info("Quantil 1%: " + str(stat["Quantil1"]))
-                self.Logger.Info("Quantil 5%: " + str(stat["Quantil5"]))
-                self.Logger.Info("Quantil 25%: " + str(stat["Quantil25"]))
-                self.Logger.Info("Median: " + str(stat["Median"]))
-                self.Logger.Info("Quantil 75%: " + str(stat["Quantil75"]))
-                self.Logger.Info("Quantil 95%: " + str(stat["Quantil95"]))
-                self.Logger.Info("Quantil 99%: " + str(stat["Quantil99"]))
-                self.Logger.Info("Maximum: " + str(stat["Maximum"]))
-                self.Logger.Info("Arithmetic Average: " +
+                self.logger.info(key)
+                self.logger.info("Minimum: " + str(stat["Minimum"]))
+                self.logger.info("Quantil 1%: " + str(stat["Quantil1"]))
+                self.logger.info("Quantil 5%: " + str(stat["Quantil5"]))
+                self.logger.info("Quantil 25%: " + str(stat["Quantil25"]))
+                self.logger.info("Median: " + str(stat["Median"]))
+                self.logger.info("Quantil 75%: " + str(stat["Quantil75"]))
+                self.logger.info("Quantil 95%: " + str(stat["Quantil95"]))
+                self.logger.info("Quantil 99%: " + str(stat["Quantil99"]))
+                self.logger.info("Maximum: " + str(stat["Maximum"]))
+                self.logger.info("Arithmetic Average: " +
                                  str(stat["ArithmeticAverage"]))
-                self.Logger.Info("Standard Deviation: " +
+                self.logger.info("Standard Deviation: " +
                                  str(stat["StandardDeviation"]))
-                self.Logger.Info("Variance: " + str(stat["Variance"]))
-                self.Logger.Info("Skewness: " + str(stat["Skewness"]))
-                self.Logger.Info("Kurtosis: " + str(stat["Kurtosis"]))
-                self.Logger.Info("Inter Quartial Range: " +
+                self.logger.info("Variance: " + str(stat["Variance"]))
+                self.logger.info("Skewness: " + str(stat["Skewness"]))
+                self.logger.info("Kurtosis: " + str(stat["Kurtosis"]))
+                self.logger.info("Inter Quartial Range: " +
                                  str(stat["InterQuartialRange"]))
-                self.Logger.Info("90%-Range: " + str(stat["90PRange"]))
-                self.Logger.Info("98%-Range: " + str(stat["98PRange"]))
-                self.Logger.Info("Total Range: " + str(stat["TotalRange"]))
+                self.logger.info("90%-Range: " + str(stat["90PRange"]))
+                self.logger.info("98%-Range: " + str(stat["98PRange"]))
+                self.logger.info("Total Range: " + str(stat["TotalRange"]))
                 SNR = 20 * log((stat["StandardDeviation"] / AdcMax), 10)
-                self.Logger.Info("SNR: " + str(SNR))
-                self.Logger.Info(
+                self.logger.info("SNR: " + str(SNR))
+                self.logger.info(
                     "____________________________________________________")
         return statistics
 
@@ -1066,11 +1072,11 @@ class Network(object):
             "OverSamplingRate": oversampling
         }
         if False != log:
-            self.Logger.Info("Config ADC - Prescaler: " + str(preq) + "/" +
+            self.logger.info("Config ADC - Prescaler: " + str(preq) + "/" +
                              str(AdcAcquisitionTimeName[aquistionTime]) + "/" +
                              str(AdcOverSamplingRateName[oversampling]) + "/" +
                              str(VRefName[adcRef]))
-            self.Logger.Info(
+            self.logger.info(
                 "Calculated Sampling Rate: " +
                 str(calcSamplingRate(preq, aquistionTime, oversampling)))
         byte1 = 1 << 7  # Set Sampling Rate
@@ -1106,10 +1112,10 @@ class Network(object):
         byte1.b.u2Action = u2Action
         byte1.b.bSet = bSet
         if False != log:
-            self.Logger.Info(CalibMeassurementActionName[u2Action])
-            self.Logger.Info(CalibMeassurementTypeName[signal] +
+            self.logger.info(CalibMeassurementActionName[u2Action])
+            self.logger.info(CalibMeassurementTypeName[signal] +
                              str(dimension))
-            self.Logger.Info(VRefName[vRef])
+            self.logger.info(VRefName[vRef])
         calibPayload = [byte1.asbyte, signal, dimension, vRef, 0, 0, 0, 0]
         indexAssumed = self.cmdSend(
             receiver,
@@ -1129,11 +1135,11 @@ class Network(object):
                 break
             indexRun += indexRun
         if indexRun != indexAssumed:
-            self.Logger.Warning(
+            self.logger.warning(
                 "Calibration Measurement Index Miss (Assumed/Truly): " +
                 str(indexAssumed) + "/" + str(indexRun))
         if indexRun == indexEnd:
-            self.Logger.Error("Calibration Measurement Fail Request")
+            self.logger.error("Calibration Measurement Fail Request")
         return returnAck
 
     def statisticalData(self,
@@ -1301,7 +1307,7 @@ class Network(object):
                         self.m_PcanHandle)
                     self.tCanReadWriteMutex.release()
                 if status != PCAN_ERROR_QRCVEMPTY:
-                    self.Logger.Error(f"Unexpected Status: {status}")
+                    self.logger.error(f"Unexpected Status: {status}")
                     self.RunReadThread = False
                 # Wait a little bit before trying to read new values –
                 # This reduces the CPU consumption of the read thread
@@ -1345,7 +1351,7 @@ class Network(object):
 
     def vBlueToothConnectConnect(self, receiver, log=True):
         if False != log:
-            self.Logger.Info("Bluetooth connect")
+            self.logger.info("Bluetooth connect")
         cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"],
                           1, 0)
         message = self.CanMessage20(
@@ -1355,7 +1361,7 @@ class Network(object):
 
     def iBlueToothConnectTotalScannedDeviceNr(self, receiver, log=True):
         if log:
-            self.Logger.Info("Get number of available devices")
+            self.logger.info("Get number of available devices")
         cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"],
                           1, 0)
         message = self.CanMessage20(cmd, self.sender, receiver, [
@@ -1388,7 +1394,7 @@ class Network(object):
 
     def bBlueToothDisconnect(self, stuNr, bLog=True):
         if False != bLog:
-            self.Logger.Info("Bluetooth disconnect")
+            self.logger.info("Bluetooth disconnect")
         cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"],
                           1, 0)
         message = self.CanMessage20(
@@ -1501,7 +1507,7 @@ class Network(object):
         """
         self.sDevName = None
         endTime = time() + BluetoothTime["Connect"]
-        self.Logger.Info("Try to connect to Device Name: " + sName)
+        self.logger.info("Try to connect to Device Name: " + sName)
         dev = None
         devList = None
         while time() < endTime and False == self.bConnected:
@@ -1517,13 +1523,13 @@ class Network(object):
                     while time() < endTime and False == self.bConnected:
                         self.bBlueToothCheckConnect(stuNr)
                     if self.bConnected and log:
-                        self.Logger.Info("Connected to: " +
+                        self.logger.info("Connected to: " +
                                          int_to_mac_address(self.iAddress) +
                                          "(" + self.sDevName + ")")
                     break
         if None == self.sDevName:
             if False != log:
-                self.Logger.Info("Available Devices: " + str(devList))
+                self.logger.info("Available Devices: " + str(devList))
             self.__exitError(f"Unable to connect to device “{sName}”")
         return self.bConnected
 
@@ -1558,7 +1564,7 @@ class Network(object):
         Connect to device via Bluetooth Address
         """
         endTime = time() + BluetoothTime["Connect"]
-        self.Logger.Info("Try to connect to Test Device Address: " +
+        self.logger.info("Try to connect to Test Device Address: " +
                          str(iAddress))
         self.sDevName = None
         devList = []
@@ -1575,9 +1581,9 @@ class Network(object):
                     while time() < endTime and not self.bConnected:
                         self.bBlueToothCheckConnect(stuNr)
                     if False != self.bConnected and False != bLog:
-                        self.Logger.Info("Connected to: " + self.iAddress)
+                        self.logger.info("Connected to: " + self.iAddress)
         if self.sDevName is None:
-            self.Logger.Info("Available Devices: " + str(devList))
+            self.logger.info("Available Devices: " + str(devList))
             self.__exitError(
                 f"Unable to connect to device with address “{iAddress}”")
         return self.bConnected
@@ -1591,15 +1597,15 @@ class Network(object):
         A1B0 = Sleep1AdvertisementTimeReset & 0xFF
         A1B1 = (Sleep1AdvertisementTimeReset >> 8) & 0xFF
         if 2 == modeNr:
-            self.Logger.Info("Setting Bluetooth Energy Mode 2")
+            self.logger.info("Setting Bluetooth Energy Mode 2")
             modeNr = SystemCommandBlueTooth["EnergyModeLowestWrite"]
         else:
-            self.Logger.Info("Setting Bluetooth Energy Mode 1")
+            self.logger.info("Setting Bluetooth Energy Mode 1")
             modeNr = SystemCommandBlueTooth["EnergyModeReducedWrite"]
         Payload = [modeNr, self.DeviceNr, S1B0, S1B1, S1B2, S1B3, A1B0, A1B1]
         sleep(0.1)
         [timeReset, timeAdvertisement] = self.BlueToothEnergyMode(Payload)
-        self.Logger.Info("Energy Mode ResetTime/AdvertisementTime: " +
+        self.logger.info("Energy Mode ResetTime/AdvertisementTime: " +
                          str(timeReset) + "/" + str(timeAdvertisement))
         return [timeReset, timeAdvertisement]
 
@@ -1621,11 +1627,11 @@ class Network(object):
         sendData.b.bSetState = 1
         sendData.b.u2NodeState = NodeState["Application"]
         sendData.b.u3NetworkState = NetworkState["Standby"]
-        self.Logger.Info("Send Standby Command")
+        self.logger.info("Send Standby Command")
         index = self.cmdSend(receiver, MyToolItBlock["System"],
                              MyToolItSystem["Get/Set State"],
                              [sendData.asbyte])
-        self.Logger.Info("Received Payload " +
+        self.logger.info("Received Payload " +
                          payload2Hex(self.getReadMessageData(index)))
 
     def sProductData(self, name, bLog=True):
@@ -1637,7 +1643,7 @@ class Network(object):
                                  log=bLog)
             iGtin = byte_list_to_int(self.getReadMessageData(index))
             if False != bLog:
-                self.Logger.Info("GTIN: " + str(iGtin))
+                self.logger.info("GTIN: " + str(iGtin))
             sReturn = str(iGtin)
         elif "Hardware Version" == name:
             index = self.cmdSend(Node("STH1").value,
@@ -1646,7 +1652,7 @@ class Network(object):
                                  log=bLog)
             tHwRev = self.getReadMessageData(index)
             if False != bLog:
-                self.Logger.Info("Hardware Version: " + str(tHwRev))
+                self.logger.info("Hardware Version: " + str(tHwRev))
             sReturn = str(tHwRev[5]) + "." + str(tHwRev[6]) + "." + str(
                 tHwRev[7])
         elif "Firmware Version" == name:
@@ -1656,7 +1662,7 @@ class Network(object):
                                  log=bLog)
             tFirmwareVersion = self.getReadMessageData(index)
             if False != bLog:
-                self.Logger.Info("Firmware Version: " + str(tFirmwareVersion))
+                self.logger.info("Firmware Version: " + str(tFirmwareVersion))
             sReturn = str(tFirmwareVersion[5]) + "." + str(
                 tFirmwareVersion[6]) + "." + str(tFirmwareVersion[7])
         elif "Release Name" == name:
@@ -1667,7 +1673,7 @@ class Network(object):
             aiName = self.getReadMessageData(index)
             sReturn = sArray2String(aiName)
             if False != bLog:
-                self.Logger.Info("Release Name: " + str(sReturn))
+                self.logger.info("Release Name: " + str(sReturn))
         elif "Serial Number" == name:
             aiSerialNumber = []
             for i in range(1, 5):
@@ -1684,7 +1690,7 @@ class Network(object):
             except:
                 sReturn = ""
             if False != bLog:
-                self.Logger.Info("Serial Number: " + str(sReturn))
+                self.logger.info("Serial Number: " + str(sReturn))
         elif "Product Name" == name:
             aiName = []
             for i in range(1, 17):
@@ -1701,7 +1707,7 @@ class Network(object):
             except:
                 sReturn = ""
             if False != bLog:
-                self.Logger.Info("Name: " + str(sReturn))
+                self.logger.info("Name: " + str(sReturn))
         elif "OEM Free Use" == name:
             aiOemFreeUse = []
             for i in range(1, 9):
@@ -1711,7 +1717,7 @@ class Network(object):
                 aiOemFreeUse.extend(self.getReadMessageData(index))
             sReturn = payload2Hex(aiOemFreeUse)
             if False != bLog:
-                self.Logger.Info("OEM Free Use: " + str(sReturn))
+                self.logger.info("OEM Free Use: " + str(sReturn))
         else:
             sReturn = "-1"
         return sReturn

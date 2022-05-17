@@ -53,27 +53,25 @@ class TestSthManually(unittest.TestCase):
         self.fileName = sLogLocation + self._testMethodName + ".txt"
         self.fileNameError = sLogLocation + "Error_" + self._testMethodName + ".txt"
         self.Can = Network(
-            self.fileName,
             sender=MyToolItNetworkNr["SPU1"],
             receiver=MyToolItNetworkNr["STH1"],
             prescaler=self.tSthLimits.uSamplingRatePrescalerReset,
             acquisition=self.tSthLimits.uSamplingRateAcqTimeReset,
-            oversampling=self.tSthLimits.uSamplingRateOverSamplesReset,
-            FreshLog=True)
-        self.Can.Logger.Info("TestCase: " + str(self._testMethodName))
+            oversampling=self.tSthLimits.uSamplingRateOverSamplesReset)
+        self.Can.logger.info("TestCase: " + str(self._testMethodName))
         self._resetStu()
-        self.Can.Logger.Info("Connect to STH")
+        self.Can.logger.info("Connect to STH")
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
                                               TestConfig["DevName"])
         self._resetSth()
-        self.Can.Logger.Info("Connect to STH")
+        self.Can.logger.info("Connect to STH")
         self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
                                               TestConfig["DevName"])
         self.bError = False
-        self.Can.Logger.Info(
+        self.Can.logger.info(
             "STU BlueTooth Address: " +
             hex(self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"])))
-        self.Can.Logger.Info(
+        self.Can.logger.info(
             "STH BlueTooth Address: " +
             hex(self.Can.BlueToothAddress(MyToolItNetworkNr["STH1"])))
         self._statusWords()
@@ -81,7 +79,7 @@ class TestSthManually(unittest.TestCase):
         self.assertGreaterEqual(self.tSthLimits.iTemperatureInternalMax, temp)
         self.assertLessEqual(self.tSthLimits.iTemperatureInternalMin, temp)
         print("Start")
-        self.Can.Logger.Info("Start")
+        self.Can.logger.info("Start")
 
     def tearDown(self):
         if False != self.Can.bError:
@@ -135,7 +133,7 @@ class TestSthManually(unittest.TestCase):
                                         log=False)
         result = float(byte_list_to_int(ret[4:]))
         result /= 1000
-        self.Can.Logger.Info("Temperature(Chip): " + str(result) + "°C")
+        self.Can.logger.info("Temperature(Chip): " + str(result) + "°C")
         self.Can.calibMeasurement(MyToolItNetworkNr["STH1"],
                                   CalibMeassurementActionNr["None"],
                                   CalibMeassurementTypeNr["Temp"],
@@ -151,16 +149,16 @@ class TestSthManually(unittest.TestCase):
 
     def _statusWords(self):
         psw0 = self.Can.node_status(MyToolItNetworkNr["STH1"])
-        self.Can.Logger.Info("STH Status Word: " + hex(psw0))
+        self.Can.logger.info("STH Status Word: " + hex(psw0))
         psw0 = self.Can.node_status(MyToolItNetworkNr["STU1"])
-        self.Can.Logger.Info("STU Status Word: " + hex(psw0))
+        self.Can.logger.info("STU Status Word: " + hex(psw0))
 
         status = self.Can.error_status(MyToolItNetworkNr["STH1"])
         if status.adc_overrun():
             self.bError = True
-        self.Can.Logger.Info(f"STH Error Word: {status}")
+        self.Can.logger.info(f"STH Error Word: {status}")
 
-        self.Can.Logger.Info("STU Error Word: {}".format(
+        self.Can.logger.info("STU Error Word: {}".format(
             self.Can.error_status(MyToolItNetworkNr["STU1"])))
 
     """
@@ -168,7 +166,7 @@ class TestSthManually(unittest.TestCase):
     """
 
     def TurnOffLed(self):
-        self.Can.Logger.Info("Turn Off LED")
+        self.Can.logger.info("Turn Off LED")
         cmd = self.Can.CanCmd(MyToolItBlock["Configuration"],
                               MyToolItConfiguration["Hmi"], 1, 0)
         message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
@@ -181,7 +179,7 @@ class TestSthManually(unittest.TestCase):
     """
 
     def TurnOnLed(self):
-        self.Can.Logger.Info("Turn On LED")
+        self.Can.logger.info("Turn On LED")
         cmd = self.Can.CanCmd(MyToolItBlock["Configuration"],
                               MyToolItConfiguration["Hmi"], 1, 0)
         message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
@@ -199,19 +197,19 @@ class TestSthManually(unittest.TestCase):
                               MyToolItSystem["Get/Set State"], 1, 0)
         msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
                                     MyToolItNetworkNr["STH1"], [0])
-        self.Can.Logger.Info("Write Message")
+        self.Can.logger.info("Write Message")
         self.Can.WriteFrame(msg)
-        self.Can.Logger.Info("Wait 200ms")
+        self.Can.logger.info("Wait 200ms")
         time.sleep(0.2)
         cmd = self.Can.CanCmd(MyToolItBlock["System"],
                               MyToolItSystem["Get/Set State"], 0, 0)
         msgAckExpected = self.Can.CanMessage20(cmd, MyToolItNetworkNr["STH1"],
                                                MyToolItNetworkNr["SPU1"], [0])
         activeState.asbyte = self.Can.getReadMessage(-1).DATA[0]
-        self.Can.Logger.Info("Send ID: " + hex(msg.ID) + "; Expected ID: " +
+        self.Can.logger.info("Send ID: " + hex(msg.ID) + "; Expected ID: " +
                              hex(msgAckExpected.ID) + "; Received ID: " +
                              hex(self.Can.getReadMessage(-1).ID))
-        self.Can.Logger.Info("Send Data: " + hex(0) + "; Received Data: " +
+        self.Can.logger.info("Send Data: " + hex(0) + "; Received Data: " +
                              hex(activeState.asbyte))
         self.assertEqual(hex(msgAckExpected.ID),
                          hex(self.Can.getReadMessage(-1).ID))
@@ -244,27 +242,27 @@ class TestSthManually(unittest.TestCase):
         message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
                                         MyToolItNetworkNr["STH1"],
                                         [sendData.asbyte])
-        self.Can.Logger.Info("Send Shut Down Command")
+        self.Can.logger.info("Send Shut Down Command")
         receivedData.asbyte = self.Can.tWriteFrameWaitAckRetries(
             message)["Payload"][0]
-        self.Can.Logger.Info("Send try should fail")
+        self.Can.logger.info("Send try should fail")
         message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
                                         MyToolItNetworkNr["STH1"],
                                         [failTry.asbyte])
         self.Can.WriteFrame(message)
-        self.Can.Logger.Info("Wait 200ms")
+        self.Can.logger.info("Wait 200ms")
         time.sleep(0.2)
         receivedDataFailTry.asbyte = self.Can.getReadMessage(-1).DATA[0]
-        self.Can.Logger.Info(
+        self.Can.logger.info(
             "Fail Try Payload Byte for Active State Command(send): " +
             str(sendData.asbyte))
-        self.Can.Logger.Info(
+        self.Can.logger.info(
             "Fail Try Payload Byte for Active State Command(Received): " +
             str(receivedData.asbyte))
-        self.Can.Logger.Info(
+        self.Can.logger.info(
             "Fail Try Payload Byte for Active State Command(send with fail): "
             + str(failTry.asbyte))
-        self.Can.Logger.Info(
+        self.Can.logger.info(
             "Fail Try Payload Byte for Active State Command(last received): " +
             str(receivedDataFailTry.asbyte))
         self.assertEqual(receivedData.asbyte, sendData.asbyte)
@@ -291,7 +289,7 @@ class TestSthManually(unittest.TestCase):
     def vComapre(self, iCounterCompare, aiAccCounter, iIndex):
         if iCounterCompare != aiAccCounter[iIndex]:
             iErrorIndex = iIndex
-            self.Can.Logger.Error("Error starts at index: " + str(iIndex))
+            self.Can.logger.info.Error("Error starts at index: " + str(iIndex))
             if 255 <= iIndex:
                 iIndex -= 255
             else:
@@ -300,7 +298,7 @@ class TestSthManually(unittest.TestCase):
             while iIndex + iIndexEnd > len(aiAccCounter):
                 iIndexEnd -= 1
             for i in range(iIndex, iIndex + iIndexEnd):
-                self.Can.Logger.Error(str(aiAccCounter[i]))
+                self.Can.logger.info.Error(str(aiAccCounter[i]))
             self.assertEqual(iCounterCompare, aiAccCounter[iErrorIndex])
 
     """
@@ -371,9 +369,9 @@ class TestSthManually(unittest.TestCase):
                                                  MyToolItStatData["Uvc"],
                                                  printLog=True)
         UnderVoltagePowerOnFirst1 = byte_list_to_int(UnderVoltage1[:4])
-        self.Can.Logger.Info("Under Voltage Counter since first Power On: " +
+        self.Can.logger.info("Under Voltage Counter since first Power On: " +
                              payload2Hex(UnderVoltage1))
-        self.Can.Logger.Info("Under Voltage Counter since first Power On: " +
+        self.Can.logger.info("Under Voltage Counter since first Power On: " +
                              str(UnderVoltagePowerOnFirst1))
         input(
             'Power Off Device and wait 1s, power on again and then press Any Key to Continue'
@@ -384,9 +382,9 @@ class TestSthManually(unittest.TestCase):
                                                  MyToolItStatData["Uvc"],
                                                  printLog=True)
         UnderVoltagePowerOnFirst2 = byte_list_to_int(UnderVoltage2[:4])
-        self.Can.Logger.Info("Under Voltage Counter since first Power On: " +
+        self.Can.logger.info("Under Voltage Counter since first Power On: " +
                              payload2Hex(UnderVoltage2))
-        self.Can.Logger.Info("Under Voltage Counter since first Power On: " +
+        self.Can.logger.info("Under Voltage Counter since first Power On: " +
                              str(UnderVoltagePowerOnFirst2))
         self.assertEqual(0xFFFFFFFF & (UnderVoltagePowerOnFirst1 + 1),
                          UnderVoltagePowerOnFirst2)

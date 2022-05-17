@@ -30,18 +30,17 @@ class TestSthManually(unittest.TestCase):
         input('Press Any Key to Continue')
         self.fileName = sLogLocation + self._testMethodName + ".txt"
         self.fileNameError = sLogLocation + "Error_" + self._testMethodName + ".txt"
-        self.Can = Network(self.fileName,
-                           sender=MyToolItNetworkNr["SPU1"],
+        self.Can = Network(sender=MyToolItNetworkNr["SPU1"],
                            receiver=MyToolItNetworkNr["STH1"])
-        self.Can.Logger.Info("TestCase: " + str(self._testMethodName))
+        self.Can.logger.info("TestCase: " + str(self._testMethodName))
         self._resetStu()
         self.bError = False
-        self.Can.Logger.Info(
+        self.Can.logger.info(
             "STU BlueTooth Address: " +
             hex(self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"])))
         self._statusWords()
         print("Start")
-        self.Can.Logger.Info("Start")
+        self.Can.logger.info("Start")
 
     def tearDown(self):
         if False != self.Can.bError:
@@ -79,8 +78,8 @@ class TestSthManually(unittest.TestCase):
 
     def _statusWords(self):
         psw0 = self.Can.node_status(MyToolItNetworkNr["STU1"])
-        self.Can.Logger.Info("STU Status Word: " + hex(psw0))
-        self.Can.Logger.Info("STU Error Word: {}".format(
+        self.Can.logger.info("STU Status Word: " + hex(psw0))
+        self.Can.logger.info("STU Error Word: {}".format(
             self.Can.error_status(MyToolItNetworkNr["STU1"])))
 
     """
@@ -92,22 +91,22 @@ class TestSthManually(unittest.TestCase):
                               MyToolItSystem["Get/Set State"], 1, 0)
         msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
                                     MyToolItNetworkNr["STU1"], [0])
-        self.Can.Logger.Info("Write Message")
+        self.Can.logger.info("Write Message")
         self.Can.WriteFrame(msg)
-        self.Can.Logger.Info("Wait 200ms")
+        self.Can.logger.info("Wait 200ms")
         time.sleep(0.25)
         cmd = self.Can.CanCmd(MyToolItBlock["System"],
                               MyToolItSystem["Get/Set State"], 0, 0)
         msgAckExpected = self.Can.CanMessage20(cmd, MyToolItNetworkNr["STU1"],
                                                MyToolItNetworkNr["SPU1"], [0])
-        self.Can.Logger.Info("Send ID: " + hex(msg.ID) + "; Expected ID: " +
+        self.Can.logger.info("Send ID: " + hex(msg.ID) + "; Expected ID: " +
                              hex(msgAckExpected.ID) + "; Received ID: " +
                              hex(self.Can.getReadMessage(-1).ID))
         expectedData = ActiveState()
         expectedData.asbyte = 0
         expectedData.b.u2NodeState = NodeState["Application"]
         expectedData.b.u3NetworkState = NetworkState["Operating"]
-        self.Can.Logger.Info("Send Data: " + hex(0) + "; Expected Data: " +
+        self.Can.logger.info("Send Data: " + hex(0) + "; Expected Data: " +
                              hex(expectedData.asbyte) + "; Received Data: " +
                              hex(self.Can.getReadMessage(-1).DATA[0]))
         self.assertEqual(hex(msgAckExpected.ID),
@@ -124,9 +123,9 @@ class TestSthManually(unittest.TestCase):
                                                MyToolItStatData["PocPof"])
         PowerOn1 = byte_list_to_int(PowerOnOff1[:4])
         PowerOff1 = byte_list_to_int(PowerOnOff1[4:])
-        self.Can.Logger.Info("Power On Counter since first Power On: " +
+        self.Can.logger.info("Power On Counter since first Power On: " +
                              str(PowerOn1))
-        self.Can.Logger.Info("Power Off Counter since first Power On: " +
+        self.Can.logger.info("Power Off Counter since first Power On: " +
                              str(PowerOff1))
         input(
             'Power Off Device, wait 1s, power on again and then press Any Key to Continue'
@@ -135,9 +134,9 @@ class TestSthManually(unittest.TestCase):
                                                MyToolItStatData["PocPof"])
         PowerOn2 = byte_list_to_int(PowerOnOff2[:4])
         PowerOff2 = byte_list_to_int(PowerOnOff2[4:])
-        self.Can.Logger.Info("Power On Counter since first Power On: " +
+        self.Can.logger.info("Power On Counter since first Power On: " +
                              str(PowerOn2))
-        self.Can.Logger.Info("Power Off Counter since first Power On: " +
+        self.Can.logger.info("Power Off Counter since first Power On: " +
                              str(PowerOff2))
         self.assertEqual(PowerOn1 + 1, PowerOn2)
         self.assertEqual(PowerOff1 + 1, PowerOff2)
