@@ -1454,7 +1454,7 @@ class Network:
         >>> 0 <= len(device.name) <= 8
         True
 
-        >>> -70 < device.rssi < 0
+        >>> -80 < device.rssi < 0
         True
 
         >>> isinstance(device.mac_address, EUI)
