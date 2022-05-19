@@ -105,6 +105,7 @@ class Network(object):
         handler = StreamHandler()
         handler.setFormatter(
             Formatter('{asctime} {levelname} {name} {message}', style='{'))
+        self.logger.addHandler(handler)
 
         # Logger for CAN messages
         logger = getLogger('can')
