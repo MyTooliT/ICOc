@@ -226,11 +226,9 @@ class CommandLineInterface():
             choices=('file', 'stderr'),
             default='stderr',
             required=False,
-            help=("Location where log data is stored\n"
+            help=("Location where log data is stored "
                   "If you specify the option `file`, then log data will be "
-                  "stored in the following files:\n"
-                  "- cli.log\n"
-                  "- plotter.log\n"
+                  "stored in the files `cli.log` and `plotter.log` "
                   "in the root of the repository"))
 
         self.args = self.parser.parse_args()
