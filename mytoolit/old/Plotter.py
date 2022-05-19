@@ -148,12 +148,12 @@ def vPlotterCommand(command, value):
         cDict["zAccPoints"] = np.linspace(0, 0, int(dataPoints))
 
 
-def vPlotter(iSocketPort, log_level, log_location):
+def vPlotter(iSocketPort, log_level, log_destination):
     global cDict
 
     logger = getLogger(__name__)
     logger.setLevel(log_level)
-    handler = (StreamHandler() if log_location == 'stderr' else FileHandler(
+    handler = (StreamHandler() if log_destination == 'stderr' else FileHandler(
         Path(__file__).parent.parent.parent / "plotter.log"))
     handler.setFormatter(
         Formatter('{asctime} {levelname} {name} {message}', style='{'))

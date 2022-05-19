@@ -74,7 +74,7 @@ class CommandLineInterface():
         self.logger = getLogger(__name__)
         self.logger.setLevel(self.args.log.upper())
         handler = (StreamHandler()
-                   if self.args.log_location == stderr else FileHandler(
+                   if self.args.log_destination == stderr else FileHandler(
                        Path(__file__).parent.parent.parent / "cli.log"))
         handler.setFormatter(
             Formatter('{asctime} {levelname} {name} {message}', style='{'))
@@ -222,7 +222,7 @@ class CommandLineInterface():
             help="Minimum level of messages written to log")
 
         logging_group.add_argument(
-            '--log-location',
+            '--log-destination',
             choices=('file', 'stderr'),
             default='stderr',
             required=False,
@@ -533,7 +533,7 @@ class CommandLineInterface():
         self.guiProcess = multiprocessing.Process(
             target=vPlotter,
             args=(self.iPloterSocketPort, self.logger.getEffectiveLevel(),
-                  self.args.log_location))
+                  self.args.log_destination))
         self.guiProcess.start()
 
         # Wait until socket of GUI application is ready
