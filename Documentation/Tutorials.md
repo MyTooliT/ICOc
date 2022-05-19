@@ -188,6 +188,20 @@ To read acceleration values for **`5` seconds** from the device with the **Bluet
 icoc -b 08:6b:d7:01:de:81 -r 5
 ```
 
+### Changing the Logging Level
+
+By default ICOc only writes log messages of level `ERROR` or higher. In some situations, for example when ICOc behaves incorrectly, you might want to set a lower level. You can do that using the option `--log`. For example, to activate logging of level `WARNING` and higher when you start ICOc you can use the following command:
+
+```sh
+icoc --log warning
+```
+
+The different logs for ICOc are stored in the root directory of the repository in the following files:
+
+- `cli.log`: Log messages of ICOc
+- `network.log`: Log messages of CAN network class
+- `plotter.log`: Log messages of plotter (window process)
+
 ## Production Tests
 
 This tutorial lists the usual steps to test a sensory holder assembly or a sensory tool holder.
