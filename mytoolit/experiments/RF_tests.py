@@ -4,10 +4,12 @@ from time import time
 from mytoolit.can import Message, Network
 
 
-async def pfeifferl(identifier, channel_number=0, signal_type  = "cw", wait_time_seconds = 0, duration_rf_seconds = 0,
-                        power = 0, antenna = 1, packet_length = 37, myprint = print):
-    """ 
-        perform RF test signals (cw/pn9) and exit back to regular operability after completion
+async def pfeifferl(identifier, channel_number=0, signal_type="cw",
+                    wait_time_seconds=0, duration_rf_seconds=0,
+                    power=0, antenna=1, packet_length=37, myprint=print):
+    """ exclusively broadcast RF test signals (cw/pn9),
+        inherently prevents BLE/MYT operations during execution,
+        STH is disconnected and advertising afterwards
 
         Byte_nr, arg : descr (type)
         - *,   identifier: STH-name (str)
@@ -22,15 +24,15 @@ async def pfeifferl(identifier, channel_number=0, signal_type  = "cw", wait_time
 
         returns: execution_time
     """
-
+    # # map signal_type to byte id # #
     if signal_type == "pn9":
         signal_type = 253
     elif signal_type == "cw":
         signal_type = 254
     else:
-        raise Exception ("signal type {} not implemented, or not a lowercase string".format(signal_type))
+        raise Exception("signal type {} unknown - typo?".format(signal_type))
 
-
+    # # open MYT network, send, return  # #
     async with Network() as network:
         node = 'STH 1'
         start_time = time()
@@ -50,12 +52,8 @@ async def pfeifferl(identifier, channel_number=0, signal_type  = "cw", wait_time
             antenna,
             packet_length,
         ]
-        message = Message(block='Test',
-                            block_command=0x69,
-                            sender='SPU 1',
-                            receiver='STH 1',
-                            request=True,
-                            data=data)
+        message = Message(block='Test', block_command=0x69, sender='SPU 1',
+                          receiver='STH 1', request=True, data=data)
         myprint(f"Send message: {message}")
         answer = await network._request(message, "“Pfeifferl” test command")
 
