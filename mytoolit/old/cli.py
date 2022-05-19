@@ -6,7 +6,7 @@ from argparse import ArgumentDefaultsHelpFormatter
 from time import sleep, time
 from datetime import datetime
 from functools import partial
-from logging import getLogger, FileHandler, Formatter, StreamHandler
+from logging import getLogger, FileHandler, Formatter
 from pathlib import Path
 from sys import stderr
 from typing import Optional, Tuple
@@ -73,9 +73,8 @@ class CommandLineInterface():
 
         self.logger = getLogger(__name__)
         self.logger.setLevel(self.args.log.upper())
-        handler = (StreamHandler()
-                   if self.args.log_destination == stderr else FileHandler(
-                       Path(__file__).parent.parent.parent / "cli.log"))
+        handler = FileHandler(Path(__file__).parent.parent.parent / "cli.log",
+                              delay=True)
         handler.setFormatter(
             Formatter('{asctime} {levelname} {name} {message}', style='{'))
         self.logger.addHandler(handler)
@@ -220,16 +219,6 @@ class CommandLineInterface():
             default='warning',
             required=False,
             help="Minimum level of messages written to log")
-
-        logging_group.add_argument(
-            '--log-destination',
-            choices=('file', 'stderr'),
-            default='stderr',
-            required=False,
-            help=("Location where log data is stored "
-                  "If you specify the option `file`, then log data will be "
-                  "stored in the files `cli.log` and `plotter.log` "
-                  "in the root of the repository"))
 
         self.args = self.parser.parse_args()
 
@@ -530,8 +519,7 @@ class CommandLineInterface():
 
         self.guiProcess = multiprocessing.Process(
             target=vPlotter,
-            args=(self.iPloterSocketPort, self.logger.getEffectiveLevel(),
-                  self.args.log_destination))
+            args=(self.iPloterSocketPort, self.logger.getEffectiveLevel()))
         self.guiProcess.start()
 
         # Wait until socket of GUI application is ready
