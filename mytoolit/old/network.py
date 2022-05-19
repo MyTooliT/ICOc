@@ -1,7 +1,7 @@
 from array import array
 from datetime import datetime
 from ctypes import c_byte
-from logging import getLogger, ERROR, FileHandler, Formatter, StreamHandler
+from logging import getLogger, ERROR, FileHandler, Formatter
 from math import log
 from pathlib import Path
 from struct import pack, unpack
@@ -102,7 +102,11 @@ class Network(object):
         # General purpose logger
         self.logger = getLogger(__name__)
         self.logger.setLevel(log_level)
-        handler = StreamHandler()
+        repo_root = Path(__file__).parent.parent.parent
+        handler = FileHandler(repo_root / "network.log",
+                              'w',
+                              'utf-8',
+                              delay=True)
         handler.setFormatter(
             Formatter('{asctime} {levelname} {name} {message}', style='{'))
         self.logger.addHandler(handler)
@@ -112,7 +116,6 @@ class Network(object):
         # We use `Logger` in the code below, since the `.logger` attribute
         # stores internal DynaConf data
         logger.setLevel(settings.Logger.can.level)
-        repo_root = Path(__file__).parent.parent.parent
         handler = FileHandler(repo_root / "can.log", 'w', 'utf-8', delay=True)
         handler.setFormatter(Formatter('{asctime} {message}', style='{'))
         logger.addHandler(handler)

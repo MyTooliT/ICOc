@@ -23,6 +23,7 @@ def main():
     files.extend(glob(f"{repo_path}/*.pdf"))
     files.extend(glob(f"{repo_path}/can.log"))
     files.extend(glob(f"{repo_path}/cli.log"))
+    files.extend(glob(f"{repo_path}/network.log"))
     files.extend(glob(f"{repo_path}/plotter.log"))
     if verbose:
         print(f"Cleaning directory {repo_path}")
