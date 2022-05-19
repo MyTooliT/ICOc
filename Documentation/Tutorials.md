@@ -109,9 +109,9 @@ icoc -h
 which should show you the following output:
 
 ```
-usage: icoc [-h] [-b BLUETOOTH_ADDRESS | -n NAME] [-f FILENAME] [-p XYZ] [-r SECONDS]
-            [-s 2–127] [-a {1,2,3,4,8,16,32,64,128,256}]
-            [-o {1,2,4,8,16,32,64,128,256,512,1024,2048,4096}]
+usage: icoc [-h] [-b BLUETOOTH_ADDRESS | -n NAME] [-f FILENAME] [-p XYZ] [-r SECONDS] [-s 2–127]
+            [-a {1,2,3,4,8,16,32,64,128,256}] [-o {1,2,4,8,16,32,64,128,256,512,1024,2048,4096}]
+            [--log {debug,info,warning,error,critical}] [--log-destination {file,stderr}]
 
 Configure and measure data with the ICOtronic system
 
@@ -120,19 +120,18 @@ options:
 
 Connection:
   -b BLUETOOTH_ADDRESS, --bluetooth-address BLUETOOTH_ADDRESS
-                        connect to device with specified Bluetooth address (e.g.
-                        “08:6b:d7:01:de:81”)
+                        connect to device with specified Bluetooth address (e.g. “08:6b:d7:01:de:81”)
   -n NAME, --name NAME  connect to device with specified name
 
 Measurement:
   -f FILENAME, --filename FILENAME
                         base name of the output file (default: Measurement)
-  -p XYZ, --points XYZ  specify the axes for which acceleration data should be acquired
-                        (e.g. “101” to measure data for the x- and z-axis but not for the
-                        y-axis) (default: 100)
+  -p XYZ, --points XYZ  specify the sensor number (1 – 8) for each axis; use 0 to disable the
+                        measurement for an axis (e.g. “104” to use sensor 1 for the x-axis and sensor
+                        4 for the z-axis) (default: 100)
   -r SECONDS, --run-time SECONDS
-                        run time in seconds (values equal or below “0” specify infinite
-                        runtime) (default: 0)
+                        run time in seconds (values equal or below “0” specify infinite runtime)
+                        (default: 0)
 
 ADC:
   -s 2–127, --prescaler 2–127
@@ -141,6 +140,10 @@ ADC:
                         Acquisition time value (default: 8)
   -o {1,2,4,8,16,32,64,128,256,512,1024,2048,4096}, --oversampling {1,2,4,8,16,32,64,128,256,512,1024,2048,4096}
                         Oversampling rate value (default: 64)
+
+Logging:
+  --log {debug,info,warning,error,critical}
+                        Minimum level of messages written to log (default: warning)
 ```
 
 ### Provide Default Values
