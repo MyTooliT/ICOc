@@ -61,13 +61,13 @@ convert-base64-mac CGvXAd6B
 
 <a name="section:remove-log-and-pdf-files"></a>
 
-## Remove Log and PDF Files
+## Remove Log, HDF and PDF Files
 
 The script `clean-repo` removes
 
 - HDF files (`*.hdf5`),
 - PDF files (`*.pdf`), and
-- log files (`*.txt`)
+- log files (`*.log`)
 
 from the repository root folder. To show the names of the removed files add the option `-v` (or `--verbose`):
 
