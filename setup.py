@@ -3,9 +3,11 @@ from re import MULTILINE, search
 from setuptools import find_packages, setup
 
 with open("mytoolit/__init__.py", "r") as init_file:
-    version = search(r"__version__\s*=\s*['\"](?P<version>[^'\"]*)['\"]",
-                     init_file.read(),
-                     flags=MULTILINE)['version']
+    match = search(r"__version__\s*=\s*['\"](?P<version>[^'\"]*)['\"]",
+                   init_file.read(),
+                   flags=MULTILINE)
+    assert match is not None
+    version = match['version']
 
 with open("ReadMe.md", encoding='utf-8') as readme:
     long_description = readme.read()
