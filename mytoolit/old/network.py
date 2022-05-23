@@ -92,6 +92,32 @@ class Network(object):
                  acquisition=8,
                  oversampling=64,
                  log_level=ERROR):
+        """
+        Initialize the CAN communication class using the given arguments
+
+        Parameters
+        ----------
+
+        sender:
+            The default sender for communicating in the CAN network
+
+        receiver:
+            The default receiver for communicating in the CAN network
+
+        prescaler:
+            The ADC prescaler value
+
+        acquisition:
+            The ADC acquisition time
+
+        oversampling:
+            The ADC oversampling rate
+
+        log_level:
+            The minimal level of messages written to the log
+
+        """
+
         # Start with disconnected Bluetooth connection
         self.bConnected = False
         # Set default sender (number) for CAN bus
