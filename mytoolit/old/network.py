@@ -8,7 +8,7 @@ from struct import pack, unpack
 from sys import stderr
 from threading import Lock, Thread
 from time import time, sleep
-from typing import NamedTuple, Optional
+from typing import NamedTuple, Optional, Union
 
 from can.interfaces.pcan.basic import (PCAN_BAUD_1M, PCAN_BUSOFF_AUTORESET,
                                        PCAN_ERROR_OK, PCAN_ERROR_QRCVEMPTY,
@@ -134,8 +134,9 @@ class Network(object):
         self.logger = getLogger(__name__)
         self.logger.setLevel(log_level)
         repo_root = Path(__file__).parent.parent.parent
-        handler = StreamHandler() if log_destination is None else FileHandler(
-            repo_root / log_destination, 'w', 'utf-8', delay=True)
+        handler: Union[FileHandler, StreamHandler] = (
+            StreamHandler() if log_destination is None else FileHandler(
+                repo_root / log_destination, 'w', 'utf-8', delay=True))
         handler.setFormatter(
             Formatter('{asctime} {levelname} {name} {message}', style='{'))
         self.logger.addHandler(handler)
