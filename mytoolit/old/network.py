@@ -1,14 +1,14 @@
 from array import array
 from datetime import datetime
 from ctypes import c_byte
-from logging import getLogger, ERROR, FileHandler, Formatter
+from logging import getLogger, ERROR, FileHandler, Formatter, StreamHandler
 from math import log
 from pathlib import Path
 from struct import pack, unpack
 from sys import stderr
 from threading import Lock, Thread
 from time import time, sleep
-from typing import NamedTuple
+from typing import NamedTuple, Optional
 
 from can.interfaces.pcan.basic import (PCAN_BAUD_1M, PCAN_BUSOFF_AUTORESET,
                                        PCAN_ERROR_OK, PCAN_ERROR_QRCVEMPTY,
@@ -91,6 +91,7 @@ class Network(object):
                  prescaler=2,
                  acquisition=8,
                  oversampling=64,
+                 log_destination: Optional[str] = None,
                  log_level=ERROR):
         """
         Initialize the CAN communication class using the given arguments
@@ -113,6 +114,10 @@ class Network(object):
         oversampling:
             The ADC oversampling rate
 
+        log_destination:
+            The name of the log file where this class stores log information.
+            If no name is specified then data will be logged to `stdout`.
+
         log_level:
             The minimal level of messages written to the log
 
@@ -129,10 +134,8 @@ class Network(object):
         self.logger = getLogger(__name__)
         self.logger.setLevel(log_level)
         repo_root = Path(__file__).parent.parent.parent
-        handler = FileHandler(repo_root / "network.log",
-                              'w',
-                              'utf-8',
-                              delay=True)
+        handler = StreamHandler() if log_destination is None else FileHandler(
+            repo_root / log_destination, 'w', 'utf-8', delay=True)
         handler.setFormatter(
             Formatter('{asctime} {levelname} {name} {message}', style='{'))
         self.logger.addHandler(handler)
