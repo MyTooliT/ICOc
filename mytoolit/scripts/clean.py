@@ -18,13 +18,19 @@ def main():
     verbose = parser.parse_args().verbose
 
     repo_path = Path(__file__).parent.parent.parent
-    files = glob(f"{repo_path}/*.txt")
-    files.extend(glob(f"{repo_path}/*.hdf5"))
-    files.extend(glob(f"{repo_path}/*.pdf"))
-    files.extend(glob(f"{repo_path}/can.log"))
-    files.extend(glob(f"{repo_path}/cli.log"))
-    files.extend(glob(f"{repo_path}/network.log"))
-    files.extend(glob(f"{repo_path}/plotter.log"))
+    patterns = [
+        "*.txt",
+        "*.hdf5",
+        "*.pdf",
+        "can.log",
+        "cli.log",
+        "network.log",
+        "plotter.log",
+    ]
+    files = []
+    for pattern in patterns:
+        files.extend(glob(f"{repo_path}/{pattern}"))
+
     if verbose:
         print(f"Cleaning directory {repo_path}")
     for filepath in files:
