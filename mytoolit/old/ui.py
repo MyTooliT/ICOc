@@ -2,7 +2,7 @@ from sys import stderr
 from time import sleep
 from typing import Callable, Iterable, Tuple
 
-from curses import curs_set, error, wrapper
+from curses import curs_set, error, wrapper  # type: ignore[attr-defined]
 
 from mytoolit.old.cli import CommandLineInterface
 from mytoolit.old.MyToolItCommands import (
