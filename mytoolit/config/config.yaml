@@ -23,8 +23,9 @@ CAN BITRATE: &bitrate 1000000
 USER: &username Dummy user
 
 # Used Sensor (ADXL1001 = 100g ; ADXL1002 = 50g)
-SENSOR: &sensor ADXL1001
+#SENSOR: &sensor ADXL1001
 #SENSOR: &sensor ADXL1002
+SENSOR: &sensor ADXL356
 
 # Holder Type
 HOLDER TYPE: &holder_type D 10x130 HSK-A63
@@ -209,8 +210,17 @@ STH:
         VOLTAGE:
           DIFFERENCE: 160
           TOLERANCE: 30
+    ADXL356:
+      ACCELERATION:
+        MAXIMUM: 80
+        RATIO NOISE TO MAX VALUE: -55
+        TOLERANCE: 20
+      SELF TEST:
+        VOLTAGE:
+          DIFFERENCE: 10
+          TOLERANCE: 9
     # The identifier of the accelerometer sensor (either `ADXL1001` or
-    # `ADXL1002`). The values below the key will be used for the STH test.
+    # `ADXL1002` or `ADXL356`). The values below the key will be used for the STH test.
     #
     # For example, if you specify the value `ADXL1001`, then the value
     #

@@ -24,6 +24,8 @@ class Settings(Dynaconf):
             return sensor_settings.adxl1001
         if sensor_settings.sensor == 'ADXL1002':
             return sensor_settings.adxl1002
+        if sensor_settings.sensor == 'ADXL356':
+            return sensor_settings.adxl356
 
         # TODO: Use [validation](https://www.dynaconf.com/validation)
         # to handle incorrect config values after
@@ -34,7 +36,7 @@ class Settings(Dynaconf):
         raise ValueError(
             f"Unsupported sensor: “{sensor_settings.sensor}”\n\n"
             "Please use one of the supported sensor configuration values "
-            "“ADXL1001” or “ADXL1002”")
+            "“ADXL1001” or “ADXL1002” or “ADXL356”")
 
     def sth_name(self) -> str:
         """Return the current name of the STH as string
