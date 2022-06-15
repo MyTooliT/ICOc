@@ -229,8 +229,14 @@ class StreamingFormatAcceleration(StreamingFormat):
     def __init__(self, *arguments, **keyword_arguments) -> None:
         """Initialize the acceleration streaming format
 
+        Positional Parameters
+        ---------------------
+
         value:
             The value of the streaming format byte
+
+        Keyword Parameters
+        ------------------
 
         single:
             Specifies if the request was for a single value or not
