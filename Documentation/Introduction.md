@@ -170,6 +170,21 @@ Afterwards you can use the various [scripts](#scripts:section:scripts) included 
 
 ### Troubleshooting
 
+#### Import Errors
+
+If one of the tests or ICOc fails with an error message that looks similar to the following text:
+
+```
+Traceback (most recent call last):
+…
+    from numexpr.interpreter import MAX_THREADS, use_vml, __BLOCK_SIZE1__
+ImportError: DLL load failed while importing interpreter: The specified module could not be found.
+
+DLL load failed while importing interpreter: The specified module could not be found.
+```
+
+then you probably need to install the [“Microsoft Visual C++ Redistributable package” ](https://docs.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist). You can download the latest version (for the `x64` architecture) [here](https://aka.ms/vs/17/release/vc_redist.x64.exe).
+
 #### Insufficient Rights
 
 **If you do not have sufficient rights** to install the package you can also try to install the package in the user folder:
