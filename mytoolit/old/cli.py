@@ -101,7 +101,7 @@ class CommandLineInterface():
 
         self.vAdcConfig(self.args.prescaler, self.args.acquisition,
                         self.args.oversampling)
-        self.vAdcRefVConfig("VDD")
+        self.vAdcRefVConfig(self.args.voltage_reference)
         self.vRunTime(0 if self.args.run_time <= 0 else self.args.run_time)
         self.vGraphInit(Watch["DisplaySampleRateMs"],
                         Watch["DisplayBlockSize"])
@@ -212,6 +212,12 @@ class CommandLineInterface():
                                default=64,
                                required=False,
                                help="Oversampling rate value")
+        adc_group.add_argument('-v',
+                               '--voltage-reference',
+                               choices=AdcReference.keys(),
+                               default='VDD',
+                               required=False,
+                               help="Reference voltage")
 
         logging_group = self.parser.add_argument_group(title="Logging")
         logging_group.add_argument(
