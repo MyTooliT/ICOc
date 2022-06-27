@@ -284,10 +284,6 @@ class Network(object):
         self.PeakCanTimeStampStart = CanTimeStampStart
 
     def WriteFrame(self, CanMsg):
-        returnMessage = CanMsg
-        if returnMessage == "Error":
-            return returnMessage
-
         with self.tCanReadWriteMutex:
             status = self.pcan.Write(self.m_PcanHandle, CanMsg)
         if status != PCAN_ERROR_OK:
@@ -298,8 +294,6 @@ class Network(object):
 
         # Only log message, if writing was successful
         getLogger('can').debug(f"{Message(CanMsg)}")
-
-        return status
 
     def WriteFrameWaitAckOk(self, message):
         payload = list(message["CanMsg"].DATA)
