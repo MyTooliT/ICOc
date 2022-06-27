@@ -22,9 +22,13 @@ CAN BITRATE: &bitrate 1000000
 # User Name
 USER: &username Dummy user
 
-# Used Sensor (ADXL1001 = 100g ; ADXL1002 = 50g)
-#SENSOR: &sensor ADXL1001
-#SENSOR: &sensor ADXL1002
+# Possible Sensors:
+#   - ADXL356: ± 40 g
+#   - ADXL1001: ± 100 g
+#   - ADXL1002: ± 50 g
+# SENSOR: &sensor ADXL356
+# SENSOR: &sensor ADXL1001
+# SENSOR: &sensor ADXL1002
 SENSOR: &sensor ADXL356
 
 # Holder Type
