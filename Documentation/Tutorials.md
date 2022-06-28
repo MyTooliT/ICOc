@@ -149,20 +149,40 @@ Logging:
                         Minimum level of messages written to log (default: warning)
 ```
 
-### Provide Default Values
+All options below the section “Measurement” and “ADC” in the [help output of ICOc](tutorials:section:available-options) allow you to change the value of a specific configuration values before you start ICOc.
 
-All options below the section “Measurement” and “ADC” in the [help output of ICOc](tutorials:section:available-options) allow you to change the value of a specific configuration values before you start ICOc. For example, to enable the measurement for the x-axis and y-axis of an STH you can use the following command:
+### Channel Selection
+
+To enable the measurement for the “x” channel and “y” channel of an “older” STH (Firmware `2.x`, `BGM113` chip) you can use the following command:
 
 ```sh
 icoc -p 110
 ```
 
+Here `0` indicates that you want to disable the channel while a positive number (such as `1`) specifies that the measurement for the channel should take place.
+
 > **Note:** Due to a problem in the current firmware the amount of **paket loss is much higher**, if you
 >
 > - use the standard ADC configuration values, and
-> - enable data transmission for **exactly 2 axes (channels)**.
+> - enable data transmission for **exactly 2 (channels)**.
 >
 > We strongly recommend you **use either one or three channels**.
+
+For newer STH versions (Firmware `3.x`, `BGM121` chip) or SMHs (Sensory Milling Heads) you can also change the hardware channel for the “x”, “y” or “z” measurement channel. For example, to select
+
+- hardware channel 8 for the “x” measurement channel
+- hardware channel 1 for the “y” measurement channel, and
+- hardware channel 3 for the “z” measurement channel
+
+you can use the following command:
+
+```sh
+icoc -p 813
+```
+
+**Note:** If you connect to an older STH using the command above, then the command would just enable the measurement for “x”, “y” and “z”, but not change the selected hardware channel.
+
+### Changing the Run Time
 
 To change the run time of the measurement you can use the option `-r`, which takes the runtime in seconds as argument. The command
 
