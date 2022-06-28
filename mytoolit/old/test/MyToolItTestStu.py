@@ -438,7 +438,7 @@ class TestStu(unittest.TestCase):
                         SystemCommandBlueTooth["DeviceCheckConnected"], 0, 0,
                         0, 0, 0, 0, 0
                     ])
-            self.assertNotEqual("bError", self.Can.tWriteFrameWaitAck(msg))
+            self.assertNotEqual("Error", self.Can.tWriteFrameWaitAck(msg))
         self.test0005Ack()  # Test that it still works
 
     def test0054MultiSendMultiAckRetries(self):
