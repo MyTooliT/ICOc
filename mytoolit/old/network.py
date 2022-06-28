@@ -509,15 +509,64 @@ class Network(object):
                 return self.WriteFrameWaitAckError(message, bError,
                                                    printLog), currentIndex
 
-    def tWriteFrameWaitAckRetries(self,
-                                  CanMsg,
-                                  retries=10,
-                                  waitMs=1000,
-                                  printLog=False,
-                                  bErrorAck=False,
-                                  assumedPayload=None,
-                                  bErrorExit=True,
-                                  notAckIdleWaitTimeMs=0.001):
+    def tWriteFrameWaitAckRetries(
+            self,
+            CanMsg: TPCANMsg,
+            retries: int = 10,
+            waitMs: int = 1000,
+            printLog: bool = False,
+            bErrorAck: bool = False,
+            assumedPayload: Optional[List[int]] = None,
+            bErrorExit: bool = True,
+            notAckIdleWaitTimeMs: float = 0.001) -> Union[str, Dict[str, Any]]:
+        """Send a certain CAN message and wait for acknowledgement
+
+        This method sends the given PCAN message until either:
+
+        - an (error) acknowledgement is received
+        - or no acknowledgment was received after `retries` message were sent
+          within `(retries + 1) * waitMs` milliseconds.
+
+        Arguments
+        ---------
+
+        CanMsg:
+            The message that should be sent over the bus
+
+        retries:
+            The amount of times a message should be sent again, in case no
+            acknowledgment was received within `waitMs` milliseconds
+
+        waitMs:
+            The amount of time this method waits for an acknowledgment
+            message in milliseconds, before another retry
+
+        printLog:
+            Specifies if log messages should be printed to the standard output
+
+        bErrorAck:
+            ?
+
+        assumedPayload:
+            Specifies the payload that the acknowledgment message should match
+
+        bErrorExit:
+            Specifies if the method should terminate the connection, if a
+            message could not be sent or was not acknowledged
+
+        notAckIdleWaitTimeMs:
+            The time until this method checks the read array for a new
+            acknowledgment message (in seconds!)
+
+        Returns
+        -------
+
+        Either information about the acknowledgment message (contained in a
+        dictionary) or the string `'Error'`, if no acknowledgment was received
+        within `(retries + 1) * waitMs` milliseconds.
+
+        """
+
         try:
             currentIndex = self.GetReadArrayIndex() - 1
             sendTime = self.get_elapsed_time()
