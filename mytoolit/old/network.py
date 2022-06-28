@@ -8,7 +8,7 @@ from struct import pack, unpack
 from sys import stderr
 from threading import Lock, Thread
 from time import time, sleep
-from typing import NamedTuple, Optional, Union
+from typing import Any, Dict, NamedTuple, Optional, Union
 
 from can.interfaces.pcan.basic import (PCAN_BAUD_1M, PCAN_BUSOFF_AUTORESET,
                                        PCAN_ERROR_OK, PCAN_ERROR_QRCVEMPTY,
@@ -310,7 +310,22 @@ class Network(object):
         # Only log message, if writing was successful
         getLogger('can').debug(f"{Message(CanMsg)}")
 
-    def WriteFrameWaitAckOk(self, message):
+    def WriteFrameWaitAckOk(self, message: TPCANMsg) -> Dict[str, Any]:
+        """Return data about an acknowledgement CAN message
+
+        Arguments
+        ---------
+
+        message:
+            The acknowledgement message sent by the receiver
+
+        Returns
+        -------
+
+        A dictionary containing various data about the acknowledgement message
+
+        """
+
         payload = list(message["CanMsg"].DATA)
         returnMessage = {
             "ID": hex(message["CanMsg"].ID),
