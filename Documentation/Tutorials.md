@@ -225,6 +225,14 @@ The different logs for ICOc are stored in the root directory of the repository i
 - `network.log`: Log messages of CAN network class
 - `plotter.log`: Log messages of plotter (window process)
 
+### Changing the Reference Voltage
+
+For certain sensor devices you have to change the reference voltage to retrieve a proper measurement value. For example, STHs that use a ± 40 g acceleration sensor ([ADXL356](https://www.analog.com/en/products/adxl356.html)) require a reference voltage of 1.8 V instead of the usual supply voltage (`VDD`) of 3.3 V. To select the correct reference voltage for these devices at startup use the option `-v Vfs1V8`:
+
+```sh
+icoc -v Vfs1V8
+```
+
 ## Production Tests
 
 This tutorial lists the usual steps to test a sensory holder assembly or a sensory tool holder.
