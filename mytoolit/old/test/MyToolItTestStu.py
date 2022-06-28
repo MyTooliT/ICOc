@@ -438,7 +438,7 @@ class TestStu(unittest.TestCase):
                         SystemCommandBlueTooth["DeviceCheckConnected"], 0, 0,
                         0, 0, 0, 0, 0
                     ])
-            self.assertNotEqual("Error", self.Can.tWriteFrameWaitAck(msg))
+            self.assertNotEqual("Error", self.Can.tWriteFrameWaitAck(msg)[0])
         self.test0005Ack()  # Test that it still works
 
     def test0054MultiSendMultiAckRetries(self):
@@ -1005,7 +1005,7 @@ class TestStu(unittest.TestCase):
                 msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
                                             MyToolItNetworkNr["STH1"],
                                             [0, 0, 0, 0, 0, 0, 0, 0])
-            self.assertNotEqual("bError", self.Can.tWriteFrameWaitAck(msg))
+            self.assertNotEqual("Error", self.Can.tWriteFrameWaitAck(msg)[0])
 
     def test0206RoutingMultiSendAckRetries(self):
         """ Send Multiple Frames with waiting for an ACK (⏱ 30 seconds)
