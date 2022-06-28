@@ -111,7 +111,8 @@ which should show you the following output:
 ```
 usage: icoc [-h] [-b BLUETOOTH_ADDRESS | -n NAME] [-f FILENAME] [-p XYZ] [-r SECONDS] [-s 2–127]
             [-a {1,2,3,4,8,16,32,64,128,256}] [-o {1,2,4,8,16,32,64,128,256,512,1024,2048,4096}]
-            [--log {debug,info,warning,error,critical}] [--log-destination {file,stderr}]
+            [-v {1V25,Vfs1V65,Vfs1V8,Vfs2V1,Vfs2V2,2V5,Vfs2V7,VDD,5V,6V6}]
+            [--log {debug,info,warning,error,critical}]
 
 Configure and measure data with the ICOtronic system
 
@@ -140,6 +141,8 @@ ADC:
                         Acquisition time value (default: 8)
   -o {1,2,4,8,16,32,64,128,256,512,1024,2048,4096}, --oversampling {1,2,4,8,16,32,64,128,256,512,1024,2048,4096}
                         Oversampling rate value (default: 64)
+  -v {1V25,Vfs1V65,Vfs1V8,Vfs2V1,Vfs2V2,2V5,Vfs2V7,VDD,5V,6V6}, --voltage-reference {1V25,Vfs1V65,Vfs1V8,Vfs2V1,Vfs2V2,2V5,Vfs2V7,VDD,5V,6V6}
+                        Reference voltage (default: VDD)
 
 Logging:
   --log {debug,info,warning,error,critical}
