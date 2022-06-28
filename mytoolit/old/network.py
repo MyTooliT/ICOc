@@ -13,7 +13,7 @@ from typing import NamedTuple, Optional, Union
 from can.interfaces.pcan.basic import (PCAN_BAUD_1M, PCAN_BUSOFF_AUTORESET,
                                        PCAN_ERROR_OK, PCAN_ERROR_QRCVEMPTY,
                                        PCAN_PARAMETER_ON, PCAN_USBBUS1,
-                                       PCANBasic)
+                                       PCANBasic, TPCANMsg)
 from semantic_version import Version
 
 from mytoolit.can import (Command, ErrorStatusSTH, ErrorStatusSTU, Identifier,
@@ -283,7 +283,22 @@ class Network(object):
     def CanTimeStampStart(self, CanTimeStampStart):
         self.PeakCanTimeStampStart = CanTimeStampStart
 
-    def WriteFrame(self, CanMsg):
+    def WriteFrame(self, CanMsg: TPCANMsg) -> None:
+        """Send a certain CAN message
+
+        Arguments
+        ---------
+
+        CanMsg:
+            The CAN message that should be sent over the bus
+
+        Raises
+        ------
+
+        An `Exception` in case the message could not be sent (written)
+
+        """
+
         with self.tCanReadWriteMutex:
             status = self.pcan.Write(self.m_PcanHandle, CanMsg)
         if status != PCAN_ERROR_OK:
