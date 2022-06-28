@@ -335,7 +335,29 @@ class Network(object):
         }
         return returnMessage
 
-    def WriteFrameWaitAckError(self, message, bError, printLog):
+    def WriteFrameWaitAckError(self, message: TPCANMsg, bError: bool,
+                               printLog: bool):
+        """Return data about an error acknowledgement CAN message
+
+        Arguments
+        ---------
+
+        message:
+            The acknowledgement message sent by the receiver
+
+        bError:
+            ?
+
+        printLog:
+            Specifies if log messages should be printed to the standard output
+
+        Returns
+        -------
+
+        A dictionary containing various data about the acknowledgement message
+
+        """
+
         identifier = Identifier(message["CanMsg"].ID)
         payload = payload2Hex(message["CanMsg"].DATA)
         info = (f"Error acknowledgement received: {identifier}; "
