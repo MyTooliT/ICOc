@@ -8,7 +8,7 @@ from struct import pack, unpack
 from sys import stderr
 from threading import Lock, Thread
 from time import time, sleep
-from typing import Any, Dict, NamedTuple, Optional, Union
+from typing import Any, Dict, List, NamedTuple, Optional, Tuple, Union
 
 from can.interfaces.pcan.basic import (PCAN_BAUD_1M, PCAN_BUSOFF_AUTORESET,
                                        PCAN_ERROR_OK, PCAN_ERROR_QRCVEMPTY,
@@ -398,15 +398,61 @@ class Network(object):
             print(message)
         return "Error"
 
-    def tWriteFrameWaitAck(self,
-                           CanMsg,
-                           waitMs=1000,
-                           currentIndex=None,
-                           printLog=False,
-                           assumedPayload=None,
-                           bError=False,
-                           sendTime=None,
-                           notAckIdleWaitTimeMs=0.001):
+    def tWriteFrameWaitAck(
+        self,
+        CanMsg: TPCANMsg,
+        waitMs: int = 1000,
+        currentIndex: Optional[int] = None,
+        printLog: bool = False,
+        assumedPayload: Optional[List[int]] = None,
+        bError: bool = False,
+        sendTime: Optional[int] = None,
+        notAckIdleWaitTimeMs: float = 0.001
+    ) -> Tuple[Union[str, Dict[str, Any]], int]:
+        """Send a certain CAN message and wait for acknowledgment
+
+        Arguments
+        ---------
+
+        CanMsg:
+            The message that should be sent over the bus
+
+        waitMs:
+            The amount of time this method waits for the acknowledgment
+            message in milliseconds
+
+        currentIndex:
+            An optional index into the array that stores read messages
+
+        printLog:
+            Specifies if log messages should be printed to the standard output
+
+        assumedPayload:
+            Specifies the payload that the acknowledgment message should match
+
+        bError:
+            ?
+
+        sendTime:
+            The time when the message was sent in milliseconds since the Epoch
+
+        notAckIdleWaitTimeMs:
+            The time until this method checks the read array for a new
+            acknowledgment message (in seconds!)
+
+        Returns
+        -------
+
+        A tuple containing:
+
+        - either information about the acknowledgment message (contained in a
+        dictionary) or the string `'Error'`, if no acknowledgment was received
+        within `waitMs` seconds
+
+        - index of the last message in the message read array
+
+        """
+
         if waitMs < 200:
             self.__exitError(
                 f"Meantime between send retry to low ({waitMs} ms)")
@@ -414,6 +460,8 @@ class Network(object):
             sendTime = self.get_elapsed_time()
         if currentIndex is None or currentIndex >= self.GetReadArrayIndex():
             currentIndex = self.GetReadArrayIndex() - 1
+
+        assert isinstance(currentIndex, int)
 
         if printLog:
             print(f"Message ID Send: {Identifier(CanMsg.ID)}")
