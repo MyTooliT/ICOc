@@ -2004,11 +2004,14 @@ class Network(object):
                           data=[0] * 8)
 
         reply = self.tWriteFrameWaitAck(message.to_pcan())[0]
-        unsupported = Identifier(int(reply['ID'], 16)).is_error()
+        unsupported = (True if isinstance(reply, str) else Identifier(
+            int(reply['ID'], 16)).is_error())
+
         if unsupported:
             raise UnsupportedFeatureException(
                 "Unable to read channel configuration")
 
+        assert isinstance(reply, dict)
         data = reply["Payload"]
         channels = data[1:4]
         config = {
