@@ -25,7 +25,7 @@ The framework currently requires
 **Notes**:
 
 - In theory you can also use ICOc in Windows 11. However, we did not test the software on this operating system.
-- The test suite (which uses a CAN class based on [python-can](https://python-can.readthedocs.io)) also works on Linux. The ICOc measurement software does [**not**](https://github.com/MyTooliT/ICOc/issues/4). For more information on how to use (parts of) the ICOtronic on Linux, please take a look [here](#introduction:section:pcan-driver:linux).
+- The test suite (which uses a CAN class based on [python-can](https://python-can.readthedocs.io)) also works on Linux. The ICOc measurement software does [**not**](https://github.com/MyTooliT/ICOc/issues/4). For more information on how to use (parts of) the ICOc software on Linux, please take a look [here](#introduction:section:pcan-driver:linux).
 
 For more information about other required software components, please read the subsection [“Software”](#section:software) in this document.
 
