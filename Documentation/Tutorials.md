@@ -45,7 +45,7 @@
    Firmware Release Name Tanja
    Serial Number         –
 
-   Battery Voltage       3.16 V
+   Supply Voltage        3.16 V
    Chip Temperature      26.2 °C
 
    Run Time              ∞ s
@@ -56,7 +56,7 @@
    ⇒ Sampling Rate       9524
    Reference Voltage     VDD
 
-   Enabled Axis          X
+   Sensors               X
 
    ┌───────────────────────────┐
    │ s: Start Data Acquisition │
@@ -64,7 +64,7 @@
    │ n: Change STH Name        │
    │ r: Change Run Time        │
    │ a: Configure ADC          │
-   │ p: Configure Enabled Axes │
+   │ p: Configure Sensors      │
    │ O: Set Standby Mode       │
    │                           │
    │ q: Disconnect from STH    │
