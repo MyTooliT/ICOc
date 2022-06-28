@@ -369,7 +369,26 @@ class Network(object):
             print(info)
         return self.WriteFrameWaitAckOk(message)
 
-    def WriteFrameWaitAckTimeOut(self, CanMsg, printLog):
+    def WriteFrameWaitAckTimeOut(self, CanMsg: TPCANMsg,
+                                 printLog: bool) -> str:
+        """Handle sent messages that were not acknowledged
+
+        Arguments
+        ---------
+
+        CanMsg:
+            The message that was not acknowledged (within a certain time)
+
+        printLog:
+            Specifies if log messages should be printed to the standard output
+
+        Returns
+        -------
+
+        The string "Error"
+
+        """
+
         identifier = Identifier(CanMsg.ID)
         payload = payload2Hex(CanMsg.DATA)
         message = (f"No (error) acknowledgement received: {identifier}; " +
