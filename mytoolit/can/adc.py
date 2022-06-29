@@ -13,7 +13,8 @@ class ADCConfiguration:
                  *data: Union[bytearray, List[int]],
                  set: Optional[bool] = None,
                  prescaler: int = 2,
-                 acquisition_time: int = 8):
+                 acquisition_time: int = 8,
+                 oversampling_rate: int = 64):
         """Initialize the ADC configuration using the given arguments
 
         Positional Parameters
@@ -34,6 +35,9 @@ class ADCConfiguration:
         acquisition_time:
             The acquisition time in number of cycles
             (1, 2, 3, 4, 8, 16, 32, … , 256)
+
+        oversampling_rate:
+            The ADC oversampling rate (1, 2, 4, 8, … , 4096)
 
         """
 
@@ -89,6 +93,19 @@ class ADCConfiguration:
 
         self.data[2] = acquisition_time_byte
 
+        # =====================
+        # = Oversampling Rate =
+        # =====================
+
+        possible_oversampling_rates = [2**value for value in range(13)]
+        if oversampling_rate not in possible_oversampling_rates:
+            raise ValueError(
+                f"Oversampling rate of “{oversampling_rate}” out of"
+                "range, please use one of the following values: " +
+                ", ".join(map(str, possible_oversampling_rates)))
+
+        self.data[3] = int(log2(oversampling_rate))
+
     def __repr__(self) -> str:
         """Retrieve the textual representation of the ADC configuration
 
@@ -101,10 +118,13 @@ class ADCConfiguration:
         --------
 
         >>> ADCConfiguration()
-        Get, Prescaler: 2, Acquisition Time: 8
+        Get, Prescaler: 2, Acquisition Time: 8, Oversampling Rate: 64
 
-        >>> ADCConfiguration(set=True, prescaler=64, acquisition_time=128)
-        Set, Prescaler: 64, Acquisition Time: 128
+        >>> ADCConfiguration(set=True,
+        ...                  prescaler=64,
+        ...                  acquisition_time=128,
+        ...                  oversampling_rate=1024)
+        Set, Prescaler: 64, Acquisition Time: 128, Oversampling Rate: 1024
 
         """
 
@@ -112,10 +132,13 @@ class ADCConfiguration:
         prescaler = self.data[1]
         acquisition_time = (self.data[2] +
                             1 if self.data[2] <= 3 else 2**(self.data[2] - 1))
+        oversampling_rate = 2**self.data[3]
 
         parts = [
-            "Set" if set else "Get", f"Prescaler: {prescaler}",
-            f"Acquisition Time: {acquisition_time}"
+            "Set" if set else "Get",
+            f"Prescaler: {prescaler}",
+            f"Acquisition Time: {acquisition_time}",
+            f"Oversampling Rate: {oversampling_rate}",
         ]
 
         return ", ".join(parts)
