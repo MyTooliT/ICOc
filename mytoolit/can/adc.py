@@ -12,10 +12,10 @@ class ADCConfiguration:
     def __init__(self,
                  *data: Union[bytearray, List[int]],
                  set: Optional[bool] = None,
-                 prescaler: int = 2,
-                 acquisition_time: int = 8,
-                 oversampling_rate: int = 64,
-                 reference_voltage: float = 3.3):
+                 prescaler: Optional[int] = None,
+                 acquisition_time: Optional[int] = None,
+                 oversampling_rate: Optional[int] = None,
+                 reference_voltage: Optional[float] = None):
         """Initialize the ADC configuration using the given arguments
 
         Positional Parameters
@@ -76,54 +76,60 @@ class ADCConfiguration:
         # = Prescaler =
         # =============
 
-        if not (1 <= prescaler <= 127):
-            raise ValueError(f"Prescaler value of “{prescaler}” out of range"
-                             ", please use a value between 1 and 127")
-        self.data[1] = prescaler
+        if prescaler is not None:
+            if not (1 <= prescaler <= 127):
+                raise ValueError(
+                    f"Prescaler value of “{prescaler}” out of range"
+                    ", please use a value between 1 and 127")
+            self.data[1] = prescaler
 
         # ====================
         # = Acquisition Time =
         # ====================
 
-        possible_acquisition_times = (list(range(1, 4)) +
-                                      [2**value for value in range(3, 9)])
-        if acquisition_time not in possible_acquisition_times:
-            raise ValueError(
-                f"Acquisition time of “{acquisition_time}” out of"
-                "range, please use one of the following values: " +
-                ", ".join(map(str, possible_acquisition_times)))
+        if acquisition_time is not None:
+            possible_acquisition_times = (list(range(1, 4)) +
+                                          [2**value for value in range(3, 9)])
+            if acquisition_time not in possible_acquisition_times:
+                raise ValueError(
+                    f"Acquisition time of “{acquisition_time}” out of"
+                    "range, please use one of the following values: " +
+                    ", ".join(map(str, possible_acquisition_times)))
 
-        acquisition_time_byte = (acquisition_time - 1 if acquisition_time <= 3
-                                 else int(log2(acquisition_time)) + 1)
+            acquisition_time_byte = (acquisition_time -
+                                     1 if acquisition_time <= 3 else
+                                     int(log2(acquisition_time)) + 1)
 
-        self.data[2] = acquisition_time_byte
+            self.data[2] = acquisition_time_byte
 
         # =====================
         # = Oversampling Rate =
         # =====================
 
-        possible_oversampling_rates = [2**value for value in range(13)]
-        if oversampling_rate not in possible_oversampling_rates:
-            raise ValueError(
-                f"Oversampling rate of “{oversampling_rate}” out of"
-                "range, please use one of the following values: " +
-                ", ".join(map(str, possible_oversampling_rates)))
+        if oversampling_rate is not None:
+            possible_oversampling_rates = [2**value for value in range(13)]
+            if oversampling_rate not in possible_oversampling_rates:
+                raise ValueError(
+                    f"Oversampling rate of “{oversampling_rate}” out of"
+                    "range, please use one of the following values: " +
+                    ", ".join(map(str, possible_oversampling_rates)))
 
-        self.data[3] = int(log2(oversampling_rate))
+            self.data[3] = int(log2(oversampling_rate))
 
         # =====================
         # = Reference Voltage =
         # =====================
 
-        possible_reference_voltages = (1.25, 1.65, 1.8, 2.1, 2.2, 2.5, 2.7,
-                                       3.3, 5, 6.6)
-        if reference_voltage not in possible_reference_voltages:
-            raise ValueError(
-                f"Reference voltage of “{oversampling_rate}” out of"
-                "range, please use one of the following values: " +
-                ", ".join(map(str, possible_reference_voltages)))
+        if reference_voltage is not None:
+            possible_reference_voltages = (1.25, 1.65, 1.8, 2.1, 2.2, 2.5, 2.7,
+                                           3.3, 5, 6.6)
+            if reference_voltage not in possible_reference_voltages:
+                raise ValueError(
+                    f"Reference voltage of “{oversampling_rate}” out of"
+                    "range, please use one of the following values: " +
+                    ", ".join(map(str, possible_reference_voltages)))
 
-        self.data[4] = int(reference_voltage * 20)
+            self.data[4] = int(reference_voltage * 20)
 
     def __repr__(self) -> str:
         """Retrieve the textual representation of the ADC configuration
@@ -136,8 +142,9 @@ class ADCConfiguration:
         Examples
         --------
 
-        >>> ADCConfiguration() # doctest:+NORMALIZE_WHITESPACE
-        Get, Prescaler: 2, Acquisition Time: 8, Oversampling Rate: 64,
+        >>> ADCConfiguration(prescaler=1, reference_voltage=3.3
+        ... ) # doctest:+NORMALIZE_WHITESPACE
+        Get, Prescaler: 1, Acquisition Time: 1, Oversampling Rate: 1,
         Reference Voltage: 3.3 V
 
         >>> ADCConfiguration(
@@ -148,6 +155,10 @@ class ADCConfiguration:
         ...     reference_voltage=1.8) # doctest:+NORMALIZE_WHITESPACE
         Set, Prescaler: 64, Acquisition Time: 128, Oversampling Rate: 1024,
         Reference Voltage: 1.8 V
+
+        >>> ADCConfiguration([0, 2, 4, 6, 25]) # doctest:+NORMALIZE_WHITESPACE
+        Get, Prescaler: 2, Acquisition Time: 8, Oversampling Rate: 64,
+        Reference Voltage: 1.25 V
 
         """
 
