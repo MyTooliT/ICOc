@@ -32,7 +32,8 @@ class ADCConfiguration:
             The ADC prescaler value (1 – 127)
 
         acquisition_time:
-            The acquisition time in number of cycles (1–3, `2**3` – `2**8`)
+            The acquisition time in number of cycles
+            (1, 2, 3, 4, 8, 16, 32, … , 256)
 
         """
 
