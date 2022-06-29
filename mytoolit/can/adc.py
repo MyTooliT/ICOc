@@ -12,7 +12,7 @@ class ADCConfiguration:
     def __init__(self,
                  *data: Union[bytearray, List[int]],
                  set: Optional[bool] = None,
-                 prescaler: int = 1,
+                 prescaler: int = 2,
                  acquisition_time: int = 8):
         """Initialize the ADC configuration using the given arguments
 
@@ -100,7 +100,7 @@ class ADCConfiguration:
         --------
 
         >>> ADCConfiguration()
-        Get, Prescaler: 1, Acquisition Time: 8
+        Get, Prescaler: 2, Acquisition Time: 8
 
         >>> ADCConfiguration(set=True, prescaler=64, acquisition_time=128)
         Set, Prescaler: 64, Acquisition Time: 128
