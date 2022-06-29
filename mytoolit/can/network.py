@@ -26,6 +26,7 @@ if __name__ == '__main__':
 from mytoolit.eeprom import EEPROMStatus
 from mytoolit.config import settings
 from mytoolit.measurement import ADC_MAX_VALUE, convert_acceleration_adc_to_g
+from mytoolit.can.adc import ADCConfiguration
 from mytoolit.can.calibration import CalibrationMeasurementFormat
 from mytoolit.can.message import Message
 from mytoolit.can.node import Node
@@ -1803,6 +1804,34 @@ class Network:
     # =================
     # = Configuration =
     # =================
+
+    # -----------------------------
+    # - Get/Set ADC Configuration -
+    # -----------------------------
+
+    async def read_adc_configuration(self) -> ADCConfiguration:
+        """Read the current ADC configuration of a connected sensor node
+
+        Returns
+        -------
+
+        The ADC configuration of the sensor node
+
+        """
+
+        node = 'STH 1'
+
+        message = Message(block='Configuration',
+                          block_command='Get/Set ADC Configuration',
+                          sender=self.sender,
+                          receiver=node,
+                          request=True,
+                          data=[0] * 8)
+
+        response = await self._request(
+            message, description=f"Read ADC configuration of “{node}”")
+
+        return ADCConfiguration(response.data[0:5])
 
     # ---------------------------
     # - Calibration Measurement -
