@@ -253,7 +253,7 @@ class Command:
 
                       block   command A E
         >>> Command(0b101000_00000000_0_0).block_command_name()
-        'Acceleration'
+        'Get/Set ADC Configuration'
 
                       block   command A E
         >>> Command(0b000000_00001011_0_0).block_command_name()

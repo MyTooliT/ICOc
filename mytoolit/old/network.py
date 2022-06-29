@@ -1274,7 +1274,8 @@ class Network(object):
                 str(calcSamplingRate(preq, aquistionTime, oversampling)))
         byte1 = 1 << 7  # Set Sampling Rate
         cmd = self.CanCmd(MyToolItBlock["Configuration"],
-                          MyToolItConfiguration["Acceleration"], 1, 0)
+                          MyToolItConfiguration["Get/Set ADC Configuration"],
+                          1, 0)
         message = self.CanMessage20(
             cmd, self.sender, receiver,
             [byte1, preq, aquistionTime, oversampling, adcRef, 0, 0, 0])
