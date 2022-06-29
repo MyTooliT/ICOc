@@ -49,7 +49,7 @@ class ADCConfiguration:
                                  f"“{required_length}” required")
             self.data = data_bytes[0:5] + [0] * 3
         else:
-            self.data = [0, 1] + [0] * 6
+            self.data = [0] * 8
 
         # ==================
         # = Get/Set Config =
