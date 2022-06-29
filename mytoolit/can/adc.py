@@ -14,7 +14,8 @@ class ADCConfiguration:
                  set: Optional[bool] = None,
                  prescaler: int = 2,
                  acquisition_time: int = 8,
-                 oversampling_rate: int = 64):
+                 oversampling_rate: int = 64,
+                 reference_voltage: float = 3.3):
         """Initialize the ADC configuration using the given arguments
 
         Positional Parameters
@@ -38,6 +39,10 @@ class ADCConfiguration:
 
         oversampling_rate:
             The ADC oversampling rate (1, 2, 4, 8, … , 4096)
+
+        reference_voltage:
+            The ADC reference voltage in Volt
+            (1.25, 1.65, 1.8, 2.1, 2.2, 2.5, 2.7, 3.3, 5, 6.6)
 
         """
 
@@ -106,6 +111,20 @@ class ADCConfiguration:
 
         self.data[3] = int(log2(oversampling_rate))
 
+        # =====================
+        # = Reference Voltage =
+        # =====================
+
+        possible_reference_voltages = (1.25, 1.65, 1.8, 2.1, 2.2, 2.5, 2.7,
+                                       3.3, 5, 6.6)
+        if reference_voltage not in possible_reference_voltages:
+            raise ValueError(
+                f"Reference voltage of “{oversampling_rate}” out of"
+                "range, please use one of the following values: " +
+                ", ".join(map(str, possible_reference_voltages)))
+
+        self.data[4] = int(reference_voltage * 20)
+
     def __repr__(self) -> str:
         """Retrieve the textual representation of the ADC configuration
 
@@ -117,14 +136,18 @@ class ADCConfiguration:
         Examples
         --------
 
-        >>> ADCConfiguration()
-        Get, Prescaler: 2, Acquisition Time: 8, Oversampling Rate: 64
+        >>> ADCConfiguration() # doctest:+NORMALIZE_WHITESPACE
+        Get, Prescaler: 2, Acquisition Time: 8, Oversampling Rate: 64,
+        Reference Voltage: 3.3 V
 
-        >>> ADCConfiguration(set=True,
-        ...                  prescaler=64,
-        ...                  acquisition_time=128,
-        ...                  oversampling_rate=1024)
-        Set, Prescaler: 64, Acquisition Time: 128, Oversampling Rate: 1024
+        >>> ADCConfiguration(
+        ...     set=True,
+        ...     prescaler=64,
+        ...     acquisition_time=128,
+        ...     oversampling_rate=1024,
+        ...     reference_voltage=1.8) # doctest:+NORMALIZE_WHITESPACE
+        Set, Prescaler: 64, Acquisition Time: 128, Oversampling Rate: 1024,
+        Reference Voltage: 1.8 V
 
         """
 
@@ -133,12 +156,14 @@ class ADCConfiguration:
         acquisition_time = (self.data[2] +
                             1 if self.data[2] <= 3 else 2**(self.data[2] - 1))
         oversampling_rate = 2**self.data[3]
+        reference_voltage = self.data[4] / 20
 
         parts = [
             "Set" if set else "Get",
             f"Prescaler: {prescaler}",
             f"Acquisition Time: {acquisition_time}",
             f"Oversampling Rate: {oversampling_rate}",
+            f"Reference Voltage: {reference_voltage} V",
         ]
 
         return ", ".join(parts)
