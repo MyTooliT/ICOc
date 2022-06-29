@@ -1,5 +1,6 @@
 # -- Imports ------------------------------------------------------------------
 
+from math import log2
 from typing import List, Optional, Union
 
 # -- Class --------------------------------------------------------------------
@@ -11,7 +12,8 @@ class ADCConfiguration:
     def __init__(self,
                  *data: Union[bytearray, List[int]],
                  set: Optional[bool] = None,
-                 prescaler: int = 1):
+                 prescaler: int = 1,
+                 acquisition_time: int = 8):
         """Initialize the ADC configuration using the given arguments
 
         Positional Parameters
@@ -28,6 +30,9 @@ class ADCConfiguration:
 
         prescaler:
             The ADC prescaler value (1 – 127)
+
+        acquisition_time:
+            The acquisition time in number of cycles (1–3, `2**3` – `2**8`)
 
         """
 
@@ -66,6 +71,23 @@ class ADCConfiguration:
                              ", please use a value between 1 and 127")
         self.data[1] = prescaler
 
+        # ====================
+        # = Acquisition Time =
+        # ====================
+
+        possible_acquisition_times = (list(range(1, 4)) +
+                                      [2**value for value in range(3, 9)])
+        if acquisition_time not in possible_acquisition_times:
+            raise ValueError(
+                f"Acquisition time of “{acquisition_time}” out of"
+                "range, please use one of the following values: " +
+                ", ".join(map(str, possible_acquisition_times)))
+
+        acquisition_time_byte = (acquisition_time - 1 if acquisition_time <= 3
+                                 else int(log2(acquisition_time)) + 1)
+
+        self.data[2] = acquisition_time_byte
+
     def __repr__(self) -> str:
         """Retrieve the textual representation of the ADC configuration
 
@@ -78,17 +100,22 @@ class ADCConfiguration:
         --------
 
         >>> ADCConfiguration()
-        Get, Prescaler: 1
+        Get, Prescaler: 1, Acquisition Time: 8
 
-        >>> ADCConfiguration(set=True, prescaler=64)
-        Set, Prescaler: 64
+        >>> ADCConfiguration(set=True, prescaler=64, acquisition_time=128)
+        Set, Prescaler: 64, Acquisition Time: 128
 
         """
 
         set = bool(self.data[0] >> 7)
         prescaler = self.data[1]
+        acquisition_time = (self.data[2] +
+                            1 if self.data[2] <= 3 else 2**(self.data[2] - 1))
 
-        parts = ["Set" if set else "Get", f"Prescaler: {prescaler}"]
+        parts = [
+            "Set" if set else "Get", f"Prescaler: {prescaler}",
+            f"Acquisition Time: {acquisition_time}"
+        ]
 
         return ", ".join(parts)
 
