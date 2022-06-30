@@ -291,13 +291,14 @@ class UserInterface(CommandLineInterface):
         """Update sensor configuration"""
 
         def read_channel_value(axis, default):
-            self.add_string(f"Sensor number (1 – 8) for “{axis}” axis "
+            self.add_string(f"Sensor number (1 – 255) for “{axis}” axis "
                             "(0 to disable): ")
 
             value = self.read_input(
                 default=str(default),
-                allowed_key=lambda key: ord('0') <= key <= ord('8'),
-                allowed_value=lambda value: len(value) == 1)[1]
+                allowed_key=lambda key: ord('0') <= key <= ord('9'),
+                allowed_value=lambda value: len(value) <= 3 and int(
+                    value) <= 255)[1]
 
             return int(value)
 
