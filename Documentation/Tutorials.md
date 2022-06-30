@@ -306,9 +306,9 @@ The text below gives you a more detailed step-by-step guide on how to run the te
 
    Please note, that the test will rename the tested STH
 
-   - to a [**Base64 encoded version of the Bluetooth MAC address**](#section:mac-address-conversion), if `STH` → `STATUS` is set to `Epoxied`, or
+   - to a [**Base64 encoded version of the Bluetooth MAC address**](#section:mac-address-conversion), if `STH` → `STATUS` is set to `Bare PCB`, or
 
-   - to the **serial number** (`STH` → `PROGRAMMING BOARD` → `SERIAL NUMBER`), if you set the status to `Bare PCB`.
+   - to the **serial number** (`STH` → `PROGRAMMING BOARD` → `SERIAL NUMBER`), if you set the status to `Epoxied`.
 
 [config]: ../../mytoolit/config/config.yaml
 
