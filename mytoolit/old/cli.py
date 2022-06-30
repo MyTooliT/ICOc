@@ -16,7 +16,7 @@ from win32event import CreateEvent, WaitForSingleObject, WAIT_OBJECT_0
 from can.interfaces.pcan.basic import (PCAN_ERROR_OK, PCAN_ERROR_QRCVEMPTY,
                                        PCAN_RECEIVE_EVENT)
 
-from mytoolit.cmdline import sensor_spec, mac_address, sth_name
+from mytoolit.cmdline import mac_address, sth_name
 from mytoolit.config import settings
 from mytoolit.measurement.acceleration import convert_acceleration_adc_to_g
 from mytoolit.measurement.storage import Storage
@@ -90,7 +90,7 @@ class CommandLineInterface():
                            log_destination="network.log")
         self.logger.info("Initialized CAN class")
 
-        self.set_sensors(*self.args.points)
+        self.set_sensors(1, 0, 0)
 
         self.connect = (True if 'name' in self.args
                         or 'bluetooth_address' in self.args else False)
@@ -167,17 +167,6 @@ class CommandLineInterface():
                                        required=False,
                                        help="base name of the output file")
 
-        measurement_group.add_argument(
-            '-p',
-            '--points',
-            metavar='XYZ',
-            type=sensor_spec,
-            default='100',
-            required=False,
-            help=("specify the sensor number (1 – 8) for each axis; "
-                  "use 0 to disable the measurement for an axis "
-                  "(e.g. “104” to use sensor 1 for the x-axis and sensor 4 "
-                  "for the z-axis)"))
         measurement_group.add_argument(
             '-r',
             '--run-time',
