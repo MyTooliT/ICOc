@@ -37,7 +37,7 @@ if __name__ == '__main__':
     with Network(sth_name) as network:
         print(f"Connected to “{sth_name}”\n")
 
-        sensor_configuration = {'x': 1, 'y': 2, 'z': 3}
+        sensor_configuration = {'x': 9, 'y': 10, 'z': 11}
         print("Change sensor configuration to: " +
               ", ".join(f"{axis}: {sensor}"
                         for axis, sensor in sensor_configuration.items()))
