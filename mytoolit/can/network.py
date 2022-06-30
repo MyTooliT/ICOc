@@ -1833,6 +1833,49 @@ class Network:
 
         return ADCConfiguration(response.data[0:5])
 
+    async def write_adc_configuration(self, prescaler: int,
+                                      acquisition_time: int,
+                                      oversampling_rate: int,
+                                      reference_voltage: float) -> None:
+        """Change the ADC configuration of a connected sensor device
+
+        Parameters
+        ----------
+
+        prescaler:
+            The ADC prescaler value (1 – 127)
+
+        acquisition_time:
+            The ADC acquisition time in number of cycles
+            (1, 2, 3, 4, 8, 16, 32, … , 256)
+
+        oversampling_rate:
+            The ADC oversampling rate (1, 2, 4, 8, … , 4096)
+
+        reference_voltage:
+            The ADC reference voltage in Volt
+            (1.25, 1.65, 1.8, 2.1, 2.2, 2.5, 2.7, 3.3, 5, 6.6)
+
+        """
+
+        node = 'STH 1'
+        adc_configuration = ADCConfiguration(
+            set=True,
+            prescaler=prescaler,
+            acquisition_time=acquisition_time,
+            oversampling_rate=oversampling_rate,
+            reference_voltage=reference_voltage)
+
+        message = Message(block='Configuration',
+                          block_command='Get/Set ADC Configuration',
+                          sender=self.sender,
+                          receiver=node,
+                          request=True,
+                          data=adc_configuration.data)
+
+        await self._request(message,
+                            description=f"Write ADC configuration of “{node}”")
+
     # ---------------------------
     # - Calibration Measurement -
     # ---------------------------
