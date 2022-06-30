@@ -109,8 +109,9 @@ icoc -h
 which should show you the following output:
 
 ```
-usage: icoc [-h] [-b BLUETOOTH_ADDRESS | -n NAME] [-f FILENAME] [-p XYZ] [-r SECONDS] [-s 2–127]
-            [-a {1,2,3,4,8,16,32,64,128,256}] [-o {1,2,4,8,16,32,64,128,256,512,1024,2048,4096}]
+usage: icoc [-h] [-b BLUETOOTH_ADDRESS | -n NAME] [-f FILENAME] [-r SECONDS] [-1 FIRST_CHANNEL]
+            [-2 SECOND_CHANNEL] [-3 THIRD_CHANNEL] [-s 2–127] [-a {1,2,3,4,8,16,32,64,128,256}]
+            [-o {1,2,4,8,16,32,64,128,256,512,1024,2048,4096}]
             [-v {1V25,Vfs1V65,Vfs1V8,Vfs2V1,Vfs2V2,2V5,Vfs2V7,VDD,5V,6V6}]
             [--log {debug,info,warning,error,critical}]
 
@@ -127,11 +128,17 @@ Connection:
 Measurement:
   -f FILENAME, --filename FILENAME
                         base name of the output file (default: Measurement)
-  -p XYZ, --points XYZ  specify the sensor number (1 – 8) for each axis; use 0 to disable the
-                        measurement for an axis (e.g. “104” to use sensor 1 for the x-axis and sensor
-                        4 for the z-axis) (default: 100)
   -r SECONDS, --run-time SECONDS
                         run time in seconds (values equal or below “0” specify infinite runtime)
+                        (default: 0)
+  -1 FIRST_CHANNEL, --first-channel FIRST_CHANNEL
+                        sensor channel number for first measurement channel (1 - 255; 0 to disable)
+                        (default: 1)
+  -2 SECOND_CHANNEL, --second-channel SECOND_CHANNEL
+                        sensor channel number for second measurement channel (1 - 255; 0 to disable)
+                        (default: 0)
+  -3 THIRD_CHANNEL, --third-channel THIRD_CHANNEL
+                        sensor channel number for third measurement channel (1 - 255; 0 to disable)
                         (default: 0)
 
 ADC:
@@ -153,13 +160,22 @@ All options below the section “Measurement” and “ADC” in the [help outpu
 
 ### Channel Selection
 
-To enable the measurement for the “x” channel and “y” channel of an “older” STH (Firmware `2.x`, `BGM113` chip) you can use the following command:
+To enable the measurement for the first (“x”) channel and second (“y”) channel of an “older” STH (Firmware `2.x`, `BGM113` chip) you can use the following command:
 
 ```sh
-icoc -p 110
+icoc -1 1 -2 1 -3 0
 ```
 
-Here `0` indicates that you want to disable the channel while a positive number (such as `1`) specifies that the measurement for the channel should take place.
+Here `0` indicates that you want to disable the channel while a positive number (such as `1`) specifies that the measurement for the channel should take place. Since the default value
+
+- for the option `-1` is already `1`, and
+- for the option `-3` is already `0`
+
+you can also leave out these options to arrive at the shorter command:
+
+```
+icoc -2 1
+```
 
 > **Note:** Due to a problem in the current firmware the amount of **paket loss is much higher**, if you
 >
@@ -168,19 +184,19 @@ Here `0` indicates that you want to disable the channel while a positive number 
 >
 > We strongly recommend you **use either one or three channels**.
 
-For newer STH versions (Firmware `3.x`, `BGM121` chip) or SMHs (Sensory Milling Heads) you can also change the hardware channel for the “x”, “y” or “z” measurement channel. For example, to select
+For newer STH versions (Firmware `3.x`, `BGM121` chip) or SMHs (Sensory Milling Heads) you can also change the hardware/sensor channel for the first, second and third measurement channel. For example, to select
 
-- hardware channel 8 for the “x” measurement channel
-- hardware channel 1 for the “y” measurement channel, and
-- hardware channel 3 for the “z” measurement channel
+- hardware channel 8 for the first measurement channel
+- hardware channel 1 for the second measurement channel, and
+- hardware channel 3 for the third measurement channel
 
 you can use the following command:
 
 ```sh
-icoc -p 813
+icoc -1 8 -2 1 -3 3
 ```
 
-**Note:** If you connect to an older STH using the command above, then the command would just enable the measurement for “x”, “y” and “z”, but not change the selected hardware channel.
+**Note:** If you connect to an older STH using the command above, then the command would just enable the measurement for all three measurement channels, but not change the selected hardware channel.
 
 ### Changing the Run Time
 
