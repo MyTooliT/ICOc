@@ -2016,7 +2016,7 @@ class Network(object):
         """
 
         for axis, sensor in zip(list("xyz"), (x, y, z)):
-            if not isinstance(sensor, int) or sensor < 1 or sensor > 8:
+            if not isinstance(sensor, int) or sensor < 1 or sensor > 255:
                 raise ValueError(
                     f"Incorrect value for argument {axis}: {sensor}")
 
