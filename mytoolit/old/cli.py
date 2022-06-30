@@ -90,7 +90,8 @@ class CommandLineInterface():
                            log_destination="network.log")
         self.logger.info("Initialized CAN class")
 
-        self.set_sensors(1, 0, 0)
+        self.set_sensors(self.args.first_channel, self.args.second_channel,
+                         self.args.third_channel)
 
         self.connect = (True if 'name' in self.args
                         or 'bluetooth_address' in self.args else False)
@@ -176,6 +177,31 @@ class CommandLineInterface():
             required=False,
             help=("run time in seconds "
                   "(values equal or below “0” specify infinite runtime)"))
+
+        measurement_group.add_argument(
+            '-1',
+            '--first-channel',
+            type=int,
+            default=1,
+            required=False,
+            help=("sensor channel number for first measurement channel "
+                  "(1 - 255; 0 to disable)"))
+        measurement_group.add_argument(
+            '-2',
+            '--second-channel',
+            type=int,
+            default=0,
+            required=False,
+            help=("sensor channel number for second measurement channel "
+                  "(1 - 255; 0 to disable)"))
+        measurement_group.add_argument(
+            '-3',
+            '--third-channel',
+            type=int,
+            default=0,
+            required=False,
+            help=("sensor channel number for third measurement channel "
+                  "(1 - 255; 0 to disable)"))
 
         adc_group = self.parser.add_argument_group(title="ADC")
 
