@@ -20,6 +20,10 @@ async def test(identifier="Test-STH"):
         print(f"Connected to sensor device “{name}” with MAC "
               f"address “{mac_address}”")
 
+        await network.write_adc_configuration(prescaler=2,
+                                              acquisition_time=8,
+                                              oversampling_rate=64,
+                                              reference_voltage=1.8)
         adc_config = await network.read_adc_configuration()
 
         print(f"ADC configuration: {adc_config}")
