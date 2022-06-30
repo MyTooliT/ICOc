@@ -33,7 +33,15 @@ class Network:
 # -- Main ---------------------------------------------------------------------
 
 if __name__ == '__main__':
-    sth_name = "Test-STH"
+    sth_name = "Test-SMH"
     with Network(sth_name) as network:
-        print(f"Connected to “{sth_name}”")
-        network.read_sensor_config()
+        print(f"Connected to “{sth_name}”\n")
+
+        sensor_configuration = {'x': 1, 'y': 2, 'z': 3}
+        print("Change sensor configuration to: " +
+              ", ".join(f"{axis}: {sensor}"
+                        for axis, sensor in sensor_configuration.items()))
+        network.write_sensor_config(**sensor_configuration)
+
+        sensor_configuration = network.read_sensor_config()
+        print(f"Updated sensor configuration: {sensor_configuration}")
