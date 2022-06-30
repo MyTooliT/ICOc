@@ -258,7 +258,7 @@ class TestSTH(TestSensorNode):
             # = Name =
             # ========
 
-            name = (settings.sth.serial_number if settings.sth.status
+            name = (str(settings.sth.serial_number) if settings.sth.status
                     == "Epoxied" else convert_mac_base64(cls.bluetooth_mac))
 
             await self.can.write_eeprom_name(name, receiver)
