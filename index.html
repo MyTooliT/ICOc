@@ -712,8 +712,9 @@ Sensors               X
 <p>To show the available command line options you can use the option <code>-h</code>:</p>
 <div class="sourceCode" id="cb18"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1"></a><span class="ex">icoc</span> -h</span></code></pre></div>
 <p>which should show you the following output:</p>
-<pre><code>usage: icoc [-h] [-b BLUETOOTH_ADDRESS | -n NAME] [-f FILENAME] [-p XYZ] [-r SECONDS] [-s 2–127]
-            [-a {1,2,3,4,8,16,32,64,128,256}] [-o {1,2,4,8,16,32,64,128,256,512,1024,2048,4096}]
+<pre><code>usage: icoc [-h] [-b BLUETOOTH_ADDRESS | -n NAME] [-f FILENAME] [-r SECONDS] [-1 FIRST_CHANNEL]
+            [-2 SECOND_CHANNEL] [-3 THIRD_CHANNEL] [-s 2–127] [-a {1,2,3,4,8,16,32,64,128,256}]
+            [-o {1,2,4,8,16,32,64,128,256,512,1024,2048,4096}]
             [-v {1V25,Vfs1V65,Vfs1V8,Vfs2V1,Vfs2V2,2V5,Vfs2V7,VDD,5V,6V6}]
             [--log {debug,info,warning,error,critical}]
 
@@ -730,11 +731,17 @@ Connection:
 Measurement:
   -f FILENAME, --filename FILENAME
                         base name of the output file (default: Measurement)
-  -p XYZ, --points XYZ  specify the sensor number (1 – 8) for each axis; use 0 to disable the
-                        measurement for an axis (e.g. “104” to use sensor 1 for the x-axis and sensor
-                        4 for the z-axis) (default: 100)
   -r SECONDS, --run-time SECONDS
                         run time in seconds (values equal or below “0” specify infinite runtime)
+                        (default: 0)
+  -1 FIRST_CHANNEL, --first-channel FIRST_CHANNEL
+                        sensor channel number for first measurement channel (1 - 255; 0 to disable)
+                        (default: 1)
+  -2 SECOND_CHANNEL, --second-channel SECOND_CHANNEL
+                        sensor channel number for second measurement channel (1 - 255; 0 to disable)
+                        (default: 0)
+  -3 THIRD_CHANNEL, --third-channel THIRD_CHANNEL
+                        sensor channel number for third measurement channel (1 - 255; 0 to disable)
                         (default: 0)
 
 ADC:
@@ -754,9 +761,15 @@ Logging:
 </div>
 <div id="channel-selection" class="section level3 hasAnchor">
 <h3><span class="header-section-number">2.2.2</span> Channel Selection<a href="#channel-selection" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>To enable the measurement for the “x” channel and “y” channel of an “older” STH (Firmware <code>2.x</code>, <code>BGM113</code> chip) you can use the following command:</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1"></a><span class="ex">icoc</span> -p 110</span></code></pre></div>
-<p>Here <code>0</code> indicates that you want to disable the channel while a positive number (such as <code>1</code>) specifies that the measurement for the channel should take place.</p>
+<p>To enable the measurement for the first (“x”) channel and second (“y”) channel of an “older” STH (Firmware <code>2.x</code>, <code>BGM113</code> chip) you can use the following command:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1"></a><span class="ex">icoc</span> -1 1 -2 1 -3 0</span></code></pre></div>
+<p>Here <code>0</code> indicates that you want to disable the channel while a positive number (such as <code>1</code>) specifies that the measurement for the channel should take place. Since the default value</p>
+<ul>
+<li>for the option <code>-1</code> is already <code>1</code>, and</li>
+<li>for the option <code>-3</code> is already <code>0</code></li>
+</ul>
+<p>you can also leave out these options to arrive at the shorter command:</p>
+<pre><code>icoc -2 1</code></pre>
 <blockquote>
 <p><strong>Note:</strong> Due to a problem in the current firmware the amount of <strong>paket loss is much higher</strong>, if you</p>
 <ul>
@@ -765,20 +778,20 @@ Logging:
 </ul>
 <p>We strongly recommend you <strong>use either one or three channels</strong>.</p>
 </blockquote>
-<p>For newer STH versions (Firmware <code>3.x</code>, <code>BGM121</code> chip) or SMHs (Sensory Milling Heads) you can also change the hardware channel for the “x”, “y” or “z” measurement channel. For example, to select</p>
+<p>For newer STH versions (Firmware <code>3.x</code>, <code>BGM121</code> chip) or SMHs (Sensory Milling Heads) you can also change the hardware/sensor channel for the first, second and third measurement channel. For example, to select</p>
 <ul>
-<li>hardware channel 8 for the “x” measurement channel</li>
-<li>hardware channel 1 for the “y” measurement channel, and</li>
-<li>hardware channel 3 for the “z” measurement channel</li>
+<li>hardware channel 8 for the first measurement channel</li>
+<li>hardware channel 1 for the second measurement channel, and</li>
+<li>hardware channel 3 for the third measurement channel</li>
 </ul>
 <p>you can use the following command:</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1"></a><span class="ex">icoc</span> -p 813</span></code></pre></div>
-<p><strong>Note:</strong> If you connect to an older STH using the command above, then the command would just enable the measurement for “x”, “y” and “z”, but not change the selected hardware channel.</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1"></a><span class="ex">icoc</span> -1 8 -2 1 -3 3</span></code></pre></div>
+<p><strong>Note:</strong> If you connect to an older STH using the command above, then the command would just enable the measurement for all three measurement channels, but not change the selected hardware channel.</p>
 </div>
 <div id="changing-the-run-time" class="section level3 hasAnchor">
 <h3><span class="header-section-number">2.2.3</span> Changing the Run Time<a href="#changing-the-run-time" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>To change the run time of the measurement you can use the option <code>-r</code>, which takes the runtime in seconds as argument. The command</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1"></a><span class="ex">icoc</span> -r 300</span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1"></a><span class="ex">icoc</span> -r 300</span></code></pre></div>
 <p>for example, would change the runtime to 5 minutes (5·60 seconds = 300 seconds).</p>
 </div>
 <div id="start-the-measurement" class="section level3 hasAnchor">
@@ -789,14 +802,14 @@ Logging:
 <li><code>-n</code>/<code>--name</code></li>
 </ul>
 <p>then ICOC will try to connect immediately to the specified device and start the measurement run. For example, to acquire acceleration data from the device with the (Bluetooth advertisement) <strong>name “Blubb”</strong> you can use the following command:</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1"></a><span class="ex">icoc</span> -n Blubb</span></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1"></a><span class="ex">icoc</span> -n Blubb</span></code></pre></div>
 <p>To read acceleration values for <strong><code>5</code> seconds</strong> from the device with the <strong>Bluetooth address <code>08:6b:d7:01:de:81</code></strong> you can use the following command:</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1"></a><span class="ex">icoc</span> -b 08:6b:d7:01:de:81 -r 5</span></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1"></a><span class="ex">icoc</span> -b 08:6b:d7:01:de:81 -r 5</span></code></pre></div>
 </div>
 <div id="changing-the-logging-level" class="section level3 hasAnchor">
 <h3><span class="header-section-number">2.2.5</span> Changing the Logging Level<a href="#changing-the-logging-level" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>By default ICOc only writes log messages of level <code>ERROR</code> or higher. In some situations, for example when ICOc behaves incorrectly, you might want to set a lower level. You can do that using the option <code>--log</code>. For example, to activate logging of level <code>WARNING</code> and higher when you start ICOc you can use the following command:</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1"></a><span class="ex">icoc</span> --log warning</span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1"></a><span class="ex">icoc</span> --log warning</span></code></pre></div>
 <p>The different logs for ICOc are stored in the root directory of the repository in the following files:</p>
 <ul>
 <li><code>cli.log</code>: Log messages of ICOc</li>
@@ -807,7 +820,7 @@ Logging:
 <div id="changing-the-reference-voltage" class="section level3 hasAnchor">
 <h3><span class="header-section-number">2.2.6</span> Changing the Reference Voltage<a href="#changing-the-reference-voltage" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>For certain sensor devices you have to change the reference voltage to retrieve a proper measurement value. For example, STHs that use a ± 40 g acceleration sensor (<a href="https://www.analog.com/en/products/adxl356.html">ADXL356</a>) require a reference voltage of 1.8 V instead of the usual supply voltage (<code>VDD</code>) of 3.3 V. To select the correct reference voltage for these devices at startup use the option <code>-v Vfs1V8</code>:</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1"></a><span class="ex">icoc</span> -v Vfs1V8</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb27-1"><a href="#cb27-1"></a><span class="ex">icoc</span> -v Vfs1V8</span></code></pre></div>
 </div>
 </div>
 <div id="production-tests" class="section level2 hasAnchor">
@@ -840,13 +853,13 @@ Logging:
 </tbody>
 </table>
 <p>For a list of available command line options, please use the option <code>-h</code> after one of the commands e.g.:</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb27-1"><a href="#cb27-1"></a><span class="ex">test-sth</span> -h</span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1"></a><span class="ex">test-sth</span> -h</span></code></pre></div>
 <div id="specific-tests" class="section level4 hasAnchor">
 <h4><span class="header-section-number">2.3.1.1</span> Specific Tests<a href="#specific-tests" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>To only run a single test you need the specify its name. For example, to run the test <code>test__firmware_flash</code> of the STU you can use the following command:</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1"></a><span class="ex">test-stu</span> TestSTU.test__firmware_flash</span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb29-1"><a href="#cb29-1"></a><span class="ex">test-stu</span> TestSTU.test__firmware_flash</span></code></pre></div>
 <p>You can also run specific tests using pattern matching. To do that use the command line option <code>-k</code>. For example to run the firmware flash and the connection test of the STH test you can use the command:</p>
-<div class="sourceCode" id="cb29"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb29-1"><a href="#cb29-1"></a><span class="ex">test-sth</span> -k flash -k connection</span></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb30-1"><a href="#cb30-1"></a><span class="ex">test-sth</span> -k flash -k connection</span></code></pre></div>
 <p>which executes all tests that contain the text <code>flash</code> or <code>connection</code>.</p>
 <p><a name="tutorials:section:sth"></a></p>
 </div>
@@ -890,7 +903,7 @@ Logging:
 <li><p>Please make sure that the config value that stores the SMH firmware filepath (<code>SMH</code> → <code>Firmware</code> → <code>Location</code> → <code>Flash</code>) points to the correct firmware. If you have not downloaded a firmware image for the SMH you can do so <a href="https://github.com/MyTooliT/STH/releases">here</a>.</p></li>
 <li><p>Check that the <a href="../../mytoolit/config/config.yaml">configuration values</a> like SMH name (<code>SMH</code> → <code>NAME</code>) and programming board serial number (<code>SMH</code> → <code>PROGRAMMING BOARD</code> → <code>SERIAL NUMBER</code>) are set correctly.</p></li>
 <li><p>Please execute the test using the following command:</p>
-<div class="sourceCode" id="cb31"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb31-1"><a href="#cb31-1"></a><span class="ex">test-smh</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb32"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb32-1"><a href="#cb32-1"></a><span class="ex">test-smh</span></span></code></pre></div></li>
 </ol>
 </div>
 <div id="stu" class="section level3 hasAnchor">
@@ -908,7 +921,7 @@ Logging:
           └── manufacturingImageStuv2.1.10.hex</code></pre>
 <p>You can find the current version of the STU firmware <a href="https://github.com/MyTooliT/STU/releases">here</a>.</p></li>
 <li><p>Please take a look at the section <a href="#tutorials:section:general">“General”</a> to find out how to execute the production tests for the STU. If you want to run the connection and EEPROM test (aka <strong>all tests except the flash test</strong>), then please execute the following command:</p>
-<div class="sourceCode" id="cb33"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb33-1"><a href="#cb33-1"></a><span class="ex">test-stu</span> -k eeprom -k connection</span></code></pre></div></li>
+<div class="sourceCode" id="cb34"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb34-1"><a href="#cb34-1"></a><span class="ex">test-stu</span> -k eeprom -k connection</span></code></pre></div></li>
 </ol>
 <p><strong>Note:</strong> For the STU (flash) test to work correctly please connect the <strong>programming board</strong> to the USB port of the computer and the programming port of the STU <strong>first</strong>. Only after that connect the power injector to the power adapter. If you reverse this order, then the programmer might not work. If you do not connect the power injector, then the STU test might fail because of a CAN bus error:</p>
 <blockquote>
@@ -928,11 +941,11 @@ Logging:
 <div id="execution" class="section level3 hasAnchor">
 <h3><span class="header-section-number">2.4.2</span> Execution<a href="#execution" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>To run the verification tests for the STH, please enter the following command:</p>
-<div class="sourceCode" id="cb34"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb34-1"><a href="#cb34-1"></a><span class="ex">test-sth-verification</span> -v</span></code></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb35-1"><a href="#cb35-1"></a><span class="ex">test-sth-verification</span> -v</span></code></pre></div>
 <p>To execute the STU verification tests, you can use the command:</p>
-<div class="sourceCode" id="cb35"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb35-1"><a href="#cb35-1"></a><span class="ex">test-stu-verification</span> -v</span></code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb36-1"><a href="#cb36-1"></a><span class="ex">test-stu-verification</span> -v</span></code></pre></div>
 <p>Please note that while most of the tests should run successfully, if you use working hardware and firmware, some of them might fail occasionally. In this case please rerun the specific test using the option <code>-k</code> and specifying a text that matches the name of the test. For example to return the STH test <code>test0107BlueToothConnectMin</code> you can use the following command:</p>
-<div class="sourceCode" id="cb36"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb36-1"><a href="#cb36-1"></a><span class="ex">test-sth-verification</span> -v -k test0107</span></code></pre></div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb37-1"><a href="#cb37-1"></a><span class="ex">test-sth-verification</span> -v -k test0107</span></code></pre></div>
 </div>
 <div id="problematic-tests" class="section level3 hasAnchor">
 <h3><span class="header-section-number">2.4.3</span> Problematic Tests<a href="#problematic-tests" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -1046,15 +1059,15 @@ Logging:
 <h2><span class="header-section-number">3.1</span> EEPROM Check<a href="#eeprom-check" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>The script <code>check-eeprom</code> connects to an STH using its MAC address. Afterwards it writes a given byte value (default: <code>10</code>) into all the cells of an EEPROM page. It then resets the STH, connects again and shows the amount of incorrect EEPROM bytes. It repeats the last steps 5 times before it prints all values in the EEPROM page.</p>
 <p>The command below shows how to execute the EEPROM check for the STH with MAC address <code>08:6b:d7:01:de:81</code>:</p>
-<div class="sourceCode" id="cb37"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb37-1"><a href="#cb37-1"></a><span class="ex">check-eeprom</span> 08:6b:d7:01:de:81</span></code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb38-1"><a href="#cb38-1"></a><span class="ex">check-eeprom</span> 08:6b:d7:01:de:81</span></code></pre></div>
 <p>You can specify the value that should be written into the EEPROM cells using the option <code>--value</code>:</p>
-<div class="sourceCode" id="cb38"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb38-1"><a href="#cb38-1"></a><span class="ex">check-eeprom</span> 08:6b:d7:01:de:81 --value 42</span></code></pre></div>
+<div class="sourceCode" id="cb39"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb39-1"><a href="#cb39-1"></a><span class="ex">check-eeprom</span> 08:6b:d7:01:de:81 --value 42</span></code></pre></div>
 <p><a name="section:icoc"></a></p>
 </div>
 <div id="icoc-1" class="section level2 hasAnchor">
 <h2><span class="header-section-number">3.2</span> ICOc<a href="#icoc-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>The command <code>icoc</code> calls <code>ui.py</code>. All command line arguments to the script will be directly forwarded to <code>ui.py</code>. For example, to read acceleration data for 10 seconds from the STH with the (Bluetooth advertisement) name <code>CGvXAd6B</code>, you can use the following command:</p>
-<div class="sourceCode" id="cb39"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb39-1"><a href="#cb39-1"></a><span class="ex">icoc</span> -n CGvXAd6B -r 10</span></code></pre></div>
+<div class="sourceCode" id="cb40"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb40-1"><a href="#cb40-1"></a><span class="ex">icoc</span> -n CGvXAd6B -r 10</span></code></pre></div>
 <p><a name="section:mac-address-conversion"></a></p>
 </div>
 <div id="mac-address-conversion" class="section level2 hasAnchor">
@@ -1062,13 +1075,13 @@ Logging:
 <p>The utility <code>convert-mac-base64</code> returns the Base64 encoded version of a MAC address. We use the encoded addresses as unique Bluetooth advertisement name for the STH (or SHA). Unfortunately we can not use the MAC address directly because the maximum length of the name is limited to 8 characters. To decode the Base64 name back into a Bluetooth address you can use the script <code>convert-base64-mac</code>.</p>
 <div id="examples" class="section level3 hasAnchor">
 <h3><span class="header-section-number">3.3.1</span> Examples<a href="#examples" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div class="sourceCode" id="cb40"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb40-1"><a href="#cb40-1"></a><span class="co"># Convert a MAC address into an 8 character name</span></span>
-<span id="cb40-2"><a href="#cb40-2"></a><span class="ex">convert-mac-base64</span> 08:6b:d7:01:de:81</span>
-<span id="cb40-3"><a href="#cb40-3"></a><span class="co">#&gt; CGvXAd6B</span></span>
-<span id="cb40-4"><a href="#cb40-4"></a></span>
-<span id="cb40-5"><a href="#cb40-5"></a><span class="co"># Convert the Base64 encoded name back into a MAC address</span></span>
-<span id="cb40-6"><a href="#cb40-6"></a><span class="ex">convert-base64-mac</span> CGvXAd6B</span>
-<span id="cb40-7"><a href="#cb40-7"></a><span class="co">#&gt; 08:6b:d7:01:de:81</span></span></code></pre></div>
+<div class="sourceCode" id="cb41"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb41-1"><a href="#cb41-1"></a><span class="co"># Convert a MAC address into an 8 character name</span></span>
+<span id="cb41-2"><a href="#cb41-2"></a><span class="ex">convert-mac-base64</span> 08:6b:d7:01:de:81</span>
+<span id="cb41-3"><a href="#cb41-3"></a><span class="co">#&gt; CGvXAd6B</span></span>
+<span id="cb41-4"><a href="#cb41-4"></a></span>
+<span id="cb41-5"><a href="#cb41-5"></a><span class="co"># Convert the Base64 encoded name back into a MAC address</span></span>
+<span id="cb41-6"><a href="#cb41-6"></a><span class="ex">convert-base64-mac</span> CGvXAd6B</span>
+<span id="cb41-7"><a href="#cb41-7"></a><span class="co">#&gt; 08:6b:d7:01:de:81</span></span></code></pre></div>
 <p><a name="section:remove-log-and-pdf-files"></a></p>
 </div>
 </div>
@@ -1081,11 +1094,11 @@ Logging:
 <li>log files (<code>*.log</code>)</li>
 </ul>
 <p>from the repository root folder. To show the names of the removed files add the option <code>-v</code> (or <code>--verbose</code>):</p>
-<div class="sourceCode" id="cb41"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb41-1"><a href="#cb41-1"></a><span class="ex">clean-repo</span> -v</span></code></pre></div>
+<div class="sourceCode" id="cb42"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb42-1"><a href="#cb42-1"></a><span class="ex">clean-repo</span> -v</span></code></pre></div>
 <p>If you also want to remove Python bytecode files from the repository we recommend you install <a href="https://pypi.org/project/pyclean/"><code>pyclean</code></a>:</p>
-<div class="sourceCode" id="cb42"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb42-1"><a href="#cb42-1"></a><span class="ex">pip</span> install pyclean</span></code></pre></div>
+<div class="sourceCode" id="cb43"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb43-1"><a href="#cb43-1"></a><span class="ex">pip</span> install pyclean</span></code></pre></div>
 <p>and run the following commands in the root of the repository:</p>
-<div class="sourceCode" id="cb43"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb43-1"><a href="#cb43-1"></a><span class="ex">clean-repo</span> -v<span class="kw">;</span> <span class="ex">pyclean</span> -v .</span></code></pre></div>
+<div class="sourceCode" id="cb44"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb44-1"><a href="#cb44-1"></a><span class="ex">clean-repo</span> -v<span class="kw">;</span> <span class="ex">pyclean</span> -v .</span></code></pre></div>
 <p><a name="section:test-sth"></a></p>
 </div>
 <div id="test-sth" class="section level2 hasAnchor">
@@ -1110,7 +1123,7 @@ Logging:
 <h2><span class="header-section-number">4.1</span> Style<a href="#style" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Please use the guidelines from <a href="https://www.python.org/dev/peps/pep-0008/">PEP 8</a>. For code formatting we currently use <a href="https://github.com/google/yapf">YAPF</a>, which should format code according to PEP 8 by default.</p>
 <p>To format the whole code base you can use the following command in the root of the repository:</p>
-<div class="sourceCode" id="cb44"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb44-1"><a href="#cb44-1"></a><span class="ex">yapf</span> --in-place --parallel --recursive .</span></code></pre></div>
+<div class="sourceCode" id="cb45"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb45-1"><a href="#cb45-1"></a><span class="ex">yapf</span> --in-place --parallel --recursive .</span></code></pre></div>
 <p>YAPF will not</p>
 <ul>
 <li>split long strings and</li>
@@ -1129,16 +1142,16 @@ Logging:
 <div id="flake8" class="section level4 hasAnchor">
 <h4><span class="header-section-number">4.2.1.1</span> Flake8<a href="#flake8" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>We check the code with <a href="https://flake8.pycqa.org">flake8</a>:</p>
-<div class="sourceCode" id="cb45"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb45-1"><a href="#cb45-1"></a><span class="ex">pip</span> install flake8</span></code></pre></div>
+<div class="sourceCode" id="cb46"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb46-1"><a href="#cb46-1"></a><span class="ex">pip</span> install flake8</span></code></pre></div>
 <p>Please use the following command in the root of the repository to make sure you did not add any code that introduces warnings:</p>
-<div class="sourceCode" id="cb46"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb46-1"><a href="#cb46-1"></a><span class="ex">flake8</span></span></code></pre></div>
+<div class="sourceCode" id="cb47"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb47-1"><a href="#cb47-1"></a><span class="ex">flake8</span></span></code></pre></div>
 </div>
 <div id="mypy" class="section level4 hasAnchor">
 <h4><span class="header-section-number">4.2.1.2</span> Mypy<a href="#mypy" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>To check the type hint in the code base we use the static code checker <a href="https://mypy.readthedocs.io">Mypy</a>:</p>
-<div class="sourceCode" id="cb47"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb47-1"><a href="#cb47-1"></a><span class="ex">pip</span> install mypy</span></code></pre></div>
+<div class="sourceCode" id="cb48"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb48-1"><a href="#cb48-1"></a><span class="ex">pip</span> install mypy</span></code></pre></div>
 <p>Please use the following command in the root of the repository to check the code base for type problems:</p>
-<div class="sourceCode" id="cb48"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb48-1"><a href="#cb48-1"></a><span class="ex">mypy</span> mytoolit</span></code></pre></div>
+<div class="sourceCode" id="cb49"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb49-1"><a href="#cb49-1"></a><span class="ex">mypy</span> mytoolit</span></code></pre></div>
 </div>
 </div>
 <div id="automatic-tests" class="section level3 hasAnchor">
@@ -1146,11 +1159,11 @@ Logging:
 <div id="requirements-1" class="section level4 hasAnchor">
 <h4><span class="header-section-number">4.2.2.1</span> Requirements<a href="#requirements-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Please install the <a href="https://docs.pytest.org">pytest testing module</a>:</p>
-<div class="sourceCode" id="cb49"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb49-1"><a href="#cb49-1"></a><span class="ex">pip</span> install pytest</span></code></pre></div>
+<div class="sourceCode" id="cb50"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb50-1"><a href="#cb50-1"></a><span class="ex">pip</span> install pytest</span></code></pre></div>
 <div id="usage" class="section level5 hasAnchor">
 <h5><span class="header-section-number">4.2.2.1.1</span> Usage<a href="#usage" class="anchor-section" aria-label="Anchor link to header"></a></h5>
 <p>Please run the following command in the root of the repository:</p>
-<div class="sourceCode" id="cb50"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb50-1"><a href="#cb50-1"></a><span class="ex">pytest</span> -v</span></code></pre></div>
+<div class="sourceCode" id="cb51"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb51-1"><a href="#cb51-1"></a><span class="ex">pytest</span> -v</span></code></pre></div>
 <p>and make sure that it reports no test failures.</p>
 </div>
 </div>
@@ -1198,14 +1211,14 @@ Logging:
 <ol style="list-style-type: decimal">
 <li><p>Open your favorite terminal application and change your working directory to the root of the repository</p></li>
 <li><p>Remove log and data files from the repository:</p>
-<div class="sourceCode" id="cb51"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb51-1"><a href="#cb51-1"></a><span class="ex">clean-repo</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb52"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb52-1"><a href="#cb52-1"></a><span class="ex">clean-repo</span></span></code></pre></div></li>
 <li><p>Check that no HDF5 files exist in the repository. The following command should not produce any output:</p>
-<div class="sourceCode" id="cb52"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb52-1"><a href="#cb52-1"></a><span class="fu">ls</span> *.hdf5</span></code></pre></div></li>
+<div class="sourceCode" id="cb53"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb53-1"><a href="#cb53-1"></a><span class="fu">ls</span> *.hdf5</span></code></pre></div></li>
 <li><p>Give your test STH the <a href="#tutorials:section:sth-renaming">name</a> “Test-STH”</p></li>
 <li><p>Measure data for 10 seconds using the following command:</p>
-<div class="sourceCode" id="cb53"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb53-1"><a href="#cb53-1"></a><span class="ex">icoc</span> -n <span class="st">&#39;Test-STH&#39;</span> -r 10</span></code></pre></div></li>
+<div class="sourceCode" id="cb54"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb54-1"><a href="#cb54-1"></a><span class="ex">icoc</span> -n <span class="st">&#39;Test-STH&#39;</span> -r 10</span></code></pre></div></li>
 <li><p>Check that the repo now contains a HDF5 (<code>*.hdf5</code>) file</p>
-<div class="sourceCode" id="cb54"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb54-1"><a href="#cb54-1"></a><span class="fu">ls</span> *.hdf5</span></code></pre></div></li>
+<div class="sourceCode" id="cb55"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb55-1"><a href="#cb55-1"></a><span class="fu">ls</span> *.hdf5</span></code></pre></div></li>
 <li><p>Open the file in <a href="#readme:section:measurement-data">HDFView</a></p></li>
 <li><p>Check that the table <code>acceleration</code> contains about 95 000 values</p></li>
 <li><p>Check that the table contains three columns</p></li>
@@ -1213,13 +1226,13 @@ Logging:
 <li><p>Check that <code>Sensor_Range</code> contains the correct maximum acceleration values for “Test-STH”</p></li>
 <li><p>Check that <code>Start_Time</code> contains (roughly) the date and time when you executed the command from step 5</p></li>
 <li><p>Check that ICOc handles the following incorrect program calls. The program should <strong>not crash</strong> and print a (helpful) <strong>error description</strong> (not a stak trace) before it exits.</p>
-<div class="sourceCode" id="cb55"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb55-1"><a href="#cb55-1"></a><span class="ex">icoc</span> -b <span class="st">&#39;12-12-12-12-12&#39;</span></span>
-<span id="cb55-2"><a href="#cb55-2"></a><span class="ex">icoc</span> -n <span class="st">&#39;TooooLong&#39;</span></span>
-<span id="cb55-3"><a href="#cb55-3"></a><span class="ex">icoc</span> -s 1</span>
-<span id="cb55-4"><a href="#cb55-4"></a><span class="ex">icoc</span> -a 257</span>
-<span id="cb55-5"><a href="#cb55-5"></a><span class="ex">icoc</span> -o -1</span>
-<span id="cb55-6"><a href="#cb55-6"></a><span class="ex">icoc</span> -p 0</span>
-<span id="cb55-7"><a href="#cb55-7"></a><span class="ex">icoc</span> -p 0001</span></code></pre></div></li>
+<div class="sourceCode" id="cb56"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb56-1"><a href="#cb56-1"></a><span class="ex">icoc</span> -b <span class="st">&#39;12-12-12-12-12&#39;</span></span>
+<span id="cb56-2"><a href="#cb56-2"></a><span class="ex">icoc</span> -n <span class="st">&#39;TooooLong&#39;</span></span>
+<span id="cb56-3"><a href="#cb56-3"></a><span class="ex">icoc</span> -s 1</span>
+<span id="cb56-4"><a href="#cb56-4"></a><span class="ex">icoc</span> -a 257</span>
+<span id="cb56-5"><a href="#cb56-5"></a><span class="ex">icoc</span> -o -1</span>
+<span id="cb56-6"><a href="#cb56-6"></a><span class="ex">icoc</span> -p 0</span>
+<span id="cb56-7"><a href="#cb56-7"></a><span class="ex">icoc</span> -p 0001</span></code></pre></div></li>
 </ol>
 </div>
 <div id="check-user-interface" class="section level6 hasAnchor">
@@ -1227,7 +1240,7 @@ Logging:
 <ol style="list-style-type: decimal">
 <li><p>Repeat steps 1. – 4. from the <a href="#development:section:check-command-line-interface">test above</a></p></li>
 <li><p>Open ICOc using the following command:</p>
-<div class="sourceCode" id="cb56"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb56-1"><a href="#cb56-1"></a><span class="ex">icoc</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb57"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb57-1"><a href="#cb57-1"></a><span class="ex">icoc</span></span></code></pre></div></li>
 <li><p>The main menu of ICOc should show up</p></li>
 <li><p>Try to connect to a non-existent STH</p>
 <ol style="list-style-type: decimal">
@@ -1304,13 +1317,13 @@ Logging:
 <div id="combined-checks-tests" class="section level3 hasAnchor">
 <h3><span class="header-section-number">4.2.4</span> Combined Checks &amp; Tests<a href="#combined-checks-tests" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>While you need to run the test for ICOc manually, the other tests and checks can be automated at least partially. To run all checks, the STH test and the STU test use the following command in a shell with support for the <code>&amp;&amp;</code> operator (e.g. <a href="https://github.com/PowerShell/PowerShell">PowerShell <strong>Core</strong></a>):</p>
-<div class="sourceCode" id="cb57"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb57-1"><a href="#cb57-1"></a><span class="ex">flake8</span> <span class="kw">&amp;&amp;</span></span>
-<span id="cb57-2"><a href="#cb57-2"></a><span class="ex">mypy</span> mytoolit <span class="kw">&amp;&amp;</span></span>
-<span id="cb57-3"><a href="#cb57-3"></a><span class="ex">pytest</span> -v <span class="kw">&amp;&amp;</span></span>
-<span id="cb57-4"><a href="#cb57-4"></a><span class="ex">test-sth</span> -v <span class="kw">&amp;&amp;</span></span>
-<span id="cb57-5"><a href="#cb57-5"></a><span class="ex">test-stu</span> -v <span class="kw">&amp;&amp;</span> <span class="co"># or `test-stu -k eeprom -k connection` to skip the flash test</span></span>
-<span id="cb57-6"><a href="#cb57-6"></a><span class="ex">Invoke-Item</span> <span class="st">&#39;STH Test.pdf&#39;</span> <span class="kw">&amp;&amp;</span></span>
-<span id="cb57-7"><a href="#cb57-7"></a><span class="ex">Invoke-Item</span> <span class="st">&#39;STU Test.pdf&#39;</span></span></code></pre></div>
+<div class="sourceCode" id="cb58"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb58-1"><a href="#cb58-1"></a><span class="ex">flake8</span> <span class="kw">&amp;&amp;</span></span>
+<span id="cb58-2"><a href="#cb58-2"></a><span class="ex">mypy</span> mytoolit <span class="kw">&amp;&amp;</span></span>
+<span id="cb58-3"><a href="#cb58-3"></a><span class="ex">pytest</span> -v <span class="kw">&amp;&amp;</span></span>
+<span id="cb58-4"><a href="#cb58-4"></a><span class="ex">test-sth</span> -v <span class="kw">&amp;&amp;</span></span>
+<span id="cb58-5"><a href="#cb58-5"></a><span class="ex">test-stu</span> -v <span class="kw">&amp;&amp;</span> <span class="co"># or `test-stu -k eeprom -k connection` to skip the flash test</span></span>
+<span id="cb58-6"><a href="#cb58-6"></a><span class="ex">Invoke-Item</span> <span class="st">&#39;STH Test.pdf&#39;</span> <span class="kw">&amp;&amp;</span></span>
+<span id="cb58-7"><a href="#cb58-7"></a><span class="ex">Invoke-Item</span> <span class="st">&#39;STU Test.pdf&#39;</span></span></code></pre></div>
 <p>Afterwards make sure there were no (unexpected) errors in the output of the STH and STU test.</p>
 <p><a name="development:section:release"></a></p>
 </div>
@@ -1362,8 +1375,15 @@ Logging:
 <h2><span class="header-section-number">5.1</span> Version 1.4.0<a href="#version-1.4.0" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <div id="icoc-3" class="section level3 hasAnchor">
 <h3><span class="header-section-number">5.1.1</span> ICOc<a href="#icoc-3" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="channel-selection-1" class="section level4 hasAnchor">
+<h4><span class="header-section-number">5.1.1.1</span> Channel Selection<a href="#channel-selection-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<ul>
+<li>ICOc now supports more sensor channels. You can now select one of up to 255 (instead of 8) hardware channels for each of the three measurement channels.</li>
+<li>The CLI interface now uses three options (<code>-1</code>, <code>-2</code>, <code>-3</code>), instead of one option (<code>-p</code>), to specify the channel number of each of the three measurement channels.</li>
+</ul>
+</div>
 <div id="logging" class="section level4 hasAnchor">
-<h4><span class="header-section-number">5.1.1.1</span> Logging<a href="#logging" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<h4><span class="header-section-number">5.1.1.2</span> Logging<a href="#logging" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>We replaced our custom logging class in the ICOc command line interface with logging code from the Python standard library. This logging code stores data in the following files:</p>
 <ul>
 <li><code>cli.log</code>: Log messages of ICOc</li>
@@ -1371,7 +1391,7 @@ Logging:
 <li><code>plotter.log</code>: Log messages of plotter (window process)</li>
 </ul>
 <p>By default ICOc only write log messages of level <code>ERROR</code> or higher into theses files. To print more detailed output you can use the option <code>--log</code> to change the log level. For example, to change the log level to <code>DEBUG</code> (or higher) you can use the the following command:</p>
-<div class="sourceCode" id="cb58"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb58-1"><a href="#cb58-1"></a><span class="ex">icoc</span> --log debug</span></code></pre></div>
+<div class="sourceCode" id="cb59"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb59-1"><a href="#cb59-1"></a><span class="ex">icoc</span> --log debug</span></code></pre></div>
 <p>The other parts of the code, which use the old <code>Network</code> class (e.g. the verification test) do not store the log output in files, but instead use the standard error output (<code>stdout</code>). This change should hopefully improve the visibility of important log messages.</p>
 
 </div>
@@ -1399,7 +1419,7 @@ Logging:
 <h3><span class="header-section-number">5.2.3</span> SMH Test<a href="#smh-test" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <ul>
 <li><p>We added a flash upload test for the sensory milling head PCB. To only execute this part of the SMH test you can use the following command:</p>
-<div class="sourceCode" id="cb59"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb59-1"><a href="#cb59-1"></a><span class="ex">test-smh</span> -k flash</span></code></pre></div></li>
+<div class="sourceCode" id="cb60"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb60-1"><a href="#cb60-1"></a><span class="ex">test-smh</span> -k flash</span></code></pre></div></li>
 </ul>
 </div>
 <div id="internal" class="section level3 hasAnchor">
@@ -1462,7 +1482,7 @@ Logging:
 <h3><span class="header-section-number">5.3.3</span> SMH Test<a href="#smh-test-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <ul>
 <li><p>We added a basic test for the new sensory milling hardware (SMH). To execute the test, please use the command</p>
-<div class="sourceCode" id="cb60"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb60-1"><a href="#cb60-1"></a><span class="ex">test-smh</span></span></code></pre></div>
+<div class="sourceCode" id="cb61"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb61-1"><a href="#cb61-1"></a><span class="ex">test-smh</span></span></code></pre></div>
 <p>Currently the test:</p>
 <ul>
 <li>checks if the STU is able to <strong>connect</strong> to the device,</li>
@@ -1512,7 +1532,7 @@ Logging:
 <li><p><strong>Removed unused options</strong> from the command line interface</p></li>
 <li><p>All command line arguments should now be <strong>checked for validity</strong> before starting ICOc</p></li>
 <li><p>You do not need to connect the PCAN interface to list the help message of the command line interface:</p>
-<div class="sourceCode" id="cb61"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb61-1"><a href="#cb61-1"></a><span class="ex">icoc</span> -h</span></code></pre></div>
+<div class="sourceCode" id="cb62"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb62-1"><a href="#cb62-1"></a><span class="ex">icoc</span> -h</span></code></pre></div>
 <p>anymore</p></li>
 </ul>
 </div>
@@ -1592,7 +1612,7 @@ Logging:
 <div id="verification-tests-1" class="section level3 hasAnchor">
 <h3><span class="header-section-number">5.5.2</span> Verification Tests<a href="#verification-tests-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>We added the old code of the STH verification tests. You can now execute these tests using the command</p>
-<div class="sourceCode" id="cb63"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb63-1"><a href="#cb63-1"></a><span class="ex">test-sth-verification</span></span></code></pre></div>
+<div class="sourceCode" id="cb64"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb64-1"><a href="#cb64-1"></a><span class="ex">test-sth-verification</span></span></code></pre></div>
 <p>For more information about these tests, please take a look at the section “Verification Tests” <a href="https://github.com/MyTooliT/ICOc/blob/e818e5fa/Documentation/Tutorials.md">here</a>.</p>
 </div>
 <div id="internal-2" class="section level3 hasAnchor">
@@ -2292,7 +2312,7 @@ Python 3.6.</li>
 <h3><span class="header-section-number">5.16.3</span> Requirements<a href="#requirements-3" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <ul>
 <li><p>You can now install the required Python packages using the command</p>
-<div class="sourceCode" id="cb64"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb64-1"><a href="#cb64-1"></a><span class="ex">pip</span> install -r requirements.txt</span></code></pre></div>
+<div class="sourceCode" id="cb65"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb65-1"><a href="#cb65-1"></a><span class="ex">pip</span> install -r requirements.txt</span></code></pre></div>
 <p>in the root of the repository.</p></li>
 </ul>
 </div>
@@ -2316,10 +2336,10 @@ file (<code>Configuration/config.yaml</code>).</p></li>
 <li><p>The test program is now location independent. This means you do not need to
 change the working directory to call the script any more. For example,
 executing the command:</p>
-<div class="sourceCode" id="cb65"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb65-1"><a href="#cb65-1"></a><span class="ex">py</span> mytoolit/test/production/sth.py -k battery -k connect</span></code></pre></div>
+<div class="sourceCode" id="cb66"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb66-1"><a href="#cb66-1"></a><span class="ex">py</span> mytoolit/test/production/sth.py -k battery -k connect</span></code></pre></div>
 <p>or the commands:</p>
-<div class="sourceCode" id="cb66"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb66-1"><a href="#cb66-1"></a><span class="bu">cd</span> mytoolit/test/production</span>
-<span id="cb66-2"><a href="#cb66-2"></a><span class="ex">py</span> sth.py -k battery -k connect</span></code></pre></div>
+<div class="sourceCode" id="cb67"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb67-1"><a href="#cb67-1"></a><span class="bu">cd</span> mytoolit/test/production</span>
+<span id="cb67-2"><a href="#cb67-2"></a><span class="ex">py</span> sth.py -k battery -k connect</span></code></pre></div>
 <p>in the root of repository should have the same effect.</p></li>
 </ul>
 
