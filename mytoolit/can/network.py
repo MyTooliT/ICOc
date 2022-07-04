@@ -1833,14 +1833,19 @@ class Network:
 
         return ADCConfiguration(response.data[0:5])
 
-    async def write_adc_configuration(self, prescaler: int,
-                                      acquisition_time: int,
-                                      oversampling_rate: int,
-                                      reference_voltage: float) -> None:
+    async def write_adc_configuration(self,
+                                      reference_voltage: float,
+                                      prescaler: int = 2,
+                                      acquisition_time: int = 8,
+                                      oversampling_rate: int = 64) -> None:
         """Change the ADC configuration of a connected sensor device
 
         Parameters
         ----------
+
+        reference_voltage:
+            The ADC reference voltage in Volt
+            (1.25, 1.65, 1.8, 2.1, 2.2, 2.5, 2.7, 3.3, 5, 6.6)
 
         prescaler:
             The ADC prescaler value (1 – 127)
@@ -1851,10 +1856,6 @@ class Network:
 
         oversampling_rate:
             The ADC oversampling rate (1, 2, 4, 8, … , 4096)
-
-        reference_voltage:
-            The ADC reference voltage in Volt
-            (1.25, 1.65, 1.8, 2.1, 2.2, 2.5, 2.7, 3.3, 5, 6.6)
 
         """
 
