@@ -16,7 +16,7 @@ from win32event import CreateEvent, WaitForSingleObject, WAIT_OBJECT_0
 from can.interfaces.pcan.basic import (PCAN_ERROR_OK, PCAN_ERROR_QRCVEMPTY,
                                        PCAN_RECEIVE_EVENT)
 
-from mytoolit.cmdline import mac_address, sth_name
+from mytoolit.cmdline import channel_number, mac_address, sth_name
 from mytoolit.config import settings
 from mytoolit.measurement.acceleration import convert_acceleration_adc_to_g
 from mytoolit.measurement.storage import Storage
@@ -181,7 +181,7 @@ class CommandLineInterface():
         measurement_group.add_argument(
             '-1',
             '--first-channel',
-            type=int,
+            type=channel_number,
             default=1,
             required=False,
             help=("sensor channel number for first measurement channel "
@@ -189,7 +189,7 @@ class CommandLineInterface():
         measurement_group.add_argument(
             '-2',
             '--second-channel',
-            type=int,
+            type=channel_number,
             default=0,
             required=False,
             help=("sensor channel number for second measurement channel "
@@ -197,7 +197,7 @@ class CommandLineInterface():
         measurement_group.add_argument(
             '-3',
             '--third-channel',
-            type=int,
+            type=channel_number,
             default=0,
             required=False,
             help=("sensor channel number for third measurement channel "

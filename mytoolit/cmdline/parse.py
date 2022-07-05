@@ -81,6 +81,56 @@ def byte_value(value):
         raise ArgumentTypeError(f"“{value}” is not a valid byte value")
 
 
+def channel_number(value: str):
+    """Check if the given string represents a valid channel number (0 –255)
+
+    Throws
+    ------
+
+    An argument type error in case the given value does not represent a
+    channel number
+
+    Returns
+    -------
+
+    An integer representing the given channel number on success
+
+    Examples
+    --------
+
+    >>> channel_number("1")
+    1
+
+    >>> channel_number("123")
+    123
+
+    >>> channel_number("0")
+    0
+
+    >>> channel_number("255")
+    255
+
+    >>> channel_number("-1")
+    Traceback (most recent call last):
+       ...
+    argparse.ArgumentTypeError: “-1” is not a valid channel number
+
+    >>> channel_number("256")
+    Traceback (most recent call last):
+       ...
+    argparse.ArgumentTypeError: “256” is not a valid channel number
+
+    """
+
+    try:
+        number = int(value)
+        if number < 0 or number > 255:
+            raise ValueError()
+        return number
+    except ValueError:
+        raise ArgumentTypeError(f"“{value}” is not a valid channel number")
+
+
 def mac_address(address: str) -> EUI:
     """Check if the given text represents a MAC address
 
