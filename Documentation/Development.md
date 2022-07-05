@@ -157,8 +157,9 @@ The text below specifies extended manual test that should be executed before we 
     icoc -s 1
     icoc -a 257
     icoc -o -1
-    icoc -p 0
-    icoc -p 0001
+    icoc -1 ' -1'
+    icoc -2 256
+    icoc -3 nine
     ```
 
 ###### Check User Interface
