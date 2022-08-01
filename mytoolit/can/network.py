@@ -1920,7 +1920,9 @@ class Network:
                 dimension=dimension_number).data)
 
         await self._request(
-            message, description=f"{method.lower()} self test of “{node}”")
+            message,
+            description=
+            f"{method.lower()} self test of {dimension}-axis of “{node}”")
 
     async def activate_acceleration_self_test(self,
                                               dimension: str = 'x') -> None:
