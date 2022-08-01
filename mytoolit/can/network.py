@@ -1875,7 +1875,7 @@ class Network:
                           data=adc_configuration.data)
 
         await self._request(message,
-                            description=f"Write ADC configuration of “{node}”")
+                            description=f"write ADC configuration of “{node}”")
 
     # ---------------------------
     # - Calibration Measurement -
