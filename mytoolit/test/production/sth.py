@@ -196,24 +196,30 @@ class TestSTH(TestSensorNode):
     def test_acceleration_self_test(self):
         """Execute self test of accelerometer"""
 
-        async def read_voltages() -> List[int]:
-            """Read acceleration voltages in Millivolts"""
-            before = await self.can.read_acceleration_voltage()
+        async def read_voltages(dimension, reference_voltage) -> List[int]:
+            """Read acceleration voltages in millivolts"""
 
-            await self.can.activate_acceleration_self_test()
-            between = await self.can.read_acceleration_voltage()
+            before = await self.can.read_acceleration_voltage(
+                dimension, reference_voltage)
 
-            await self.can.deactivate_acceleration_self_test()
-            after = await self.can.read_acceleration_voltage()
+            await self.can.activate_acceleration_self_test(dimension)
+            between = await self.can.read_acceleration_voltage(
+                dimension, reference_voltage)
+
+            await self.can.deactivate_acceleration_self_test(dimension)
+            after = await self.can.read_acceleration_voltage(
+                dimension, reference_voltage)
 
             return [round(value * 1000) for value in (before, between, after)]
 
+        sensor = settings.acceleration_sensor()
+
         voltage_before_test, voltage_at_test, voltage_after_test = (
-            self.loop.run_until_complete(read_voltages()))
+            self.loop.run_until_complete(
+                read_voltages(sensor.self_test.dimension,
+                              sensor.reference_voltage)))
 
         voltage_diff = voltage_at_test - voltage_before_test
-
-        sensor = settings.acceleration_sensor()
 
         voltage_diff_expected = sensor.self_test.voltage.difference
         voltage_diff_tolerance = sensor.self_test.voltage.tolerance
