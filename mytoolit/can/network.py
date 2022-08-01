@@ -1954,8 +1954,21 @@ class Network:
 
         await self._acceleration_self_test(activate=False, dimension=dimension)
 
-    async def read_acceleration_voltage(self) -> float:
+    async def read_acceleration_voltage(
+            self,
+            dimension: str = 'x',
+            reference_voltage: float = 3.3) -> float:
         """Retrieve the current voltage in Volt
+
+        Parameters
+        ----------
+
+        dimension:
+            The dimension (x=1, y=2, z=3) for which the acceleration voltage
+            should be measured
+
+        reference_voltage:
+            The reference voltage for the ADC in Volt
 
         Returns
         -------
@@ -1986,9 +1999,12 @@ class Network:
 
         """
 
-        node = 'STH 1'
-        reference_voltage = 3.3  # VDD = 3.3V
+        try:
+            dimension_number = "xyz".index(dimension) + 1
+        except ValueError:
+            raise ValueError(f"Invalid dimension value: “{dimension}”")
 
+        node = 'STH 1'
         message = Message(block='Configuration',
                           block_command='Calibration Measurement',
                           sender=self.sender,
@@ -1999,7 +2015,7 @@ class Network:
                               element='Acceleration',
                               method='Measure',
                               reference_voltage=reference_voltage,
-                              dimension=1).data)
+                              dimension=dimension_number).data)
 
         response = await self._request(
             message, description=f"retrieve acceleration voltage of “{node}”")
