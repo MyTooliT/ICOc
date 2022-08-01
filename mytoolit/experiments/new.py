@@ -11,6 +11,18 @@ from mytoolit.can import Network
 # -- Functions ----------------------------------------------------------------
 async def test(identifier="Test-STH"):
     async with Network() as network:
+
+        async def read_acceleration_voltage(dimension: str = 'x',
+                                            self_test=False):
+            voltage = await network.read_acceleration_voltage(dimension, 1.8)
+            print(f"\nAcceleration Voltage: {voltage} V "
+                  "(1.8 V Reference Voltage)")
+            if self_test:
+                await network.activate_acceleration_self_test(dimension)
+            voltage = await network.read_acceleration_voltage(dimension)
+            print(f"Acceleration Voltage: {voltage} V "
+                  "(Default Reference Voltage)")
+
         node = 'STH 1'
         start_time = time()
 
@@ -20,13 +32,20 @@ async def test(identifier="Test-STH"):
         print(f"Connected to sensor device “{name}” with MAC "
               f"address “{mac_address}”")
 
-        await network.write_adc_configuration(prescaler=2,
-                                              acquisition_time=8,
-                                              oversampling_rate=64,
-                                              reference_voltage=1.8)
-        adc_config = await network.read_adc_configuration()
+        for dimension in "xyz":
 
-        print(f"ADC configuration: {adc_config}")
+            print(f"\n=====\n= {dimension} =\n=====")
+
+            print("\nBefore Self Test:")
+            await read_acceleration_voltage(dimension)
+
+            print("\nSelf Test:")
+            await network.activate_acceleration_self_test(dimension)
+            await read_acceleration_voltage(dimension, self_test=True)
+            await network.deactivate_acceleration_self_test(dimension)
+
+            print("\nAfter Self Test:")
+            await read_acceleration_voltage(dimension)
 
         print("\nExecution took {:.3} seconds".format(time() - start_time))
 
