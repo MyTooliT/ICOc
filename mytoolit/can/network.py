@@ -1881,7 +1881,9 @@ class Network:
     # - Calibration Measurement -
     # ---------------------------
 
-    async def _acceleration_self_test(self, activate: bool = True) -> None:
+    async def _acceleration_self_test(self,
+                                      activate: bool = True,
+                                      dimension: str = 'x') -> None:
         """Activate/Deactivate the accelerometer self test
 
         Parameters
@@ -1891,9 +1893,18 @@ class Network:
             Either `True` to activate the self test or `False` to
             deactivate the self test
 
+        dimension:
+            The dimension (x=1, y=2, z=3) for which the self test should be
+            activated/deactivated.
+
         """
         node = 'STH 1'
         method = 'Activate' if activate else 'Deactivate'
+
+        try:
+            dimension_number = "xyz".index(dimension) + 1
+        except ValueError:
+            raise ValueError(f"Invalid dimension value: “{dimension}”")
 
         message = Message(
             block='Configuration',
@@ -1906,20 +1917,40 @@ class Network:
                 element='Acceleration',
                 method=method,
                 reference_voltage=3.3,  # VDD = 3.3V
-                dimension=1).data)
+                dimension=dimension_number).data)
 
         await self._request(
             message, description=f"{method.lower()} self test of “{node}”")
 
-    async def activate_acceleration_self_test(self) -> None:
-        """Activate self test of STH accelerometer"""
+    async def activate_acceleration_self_test(self,
+                                              dimension: str = 'x') -> None:
+        """Activate self test of STH accelerometer
 
-        await self._acceleration_self_test(activate=True)
+        Parameters
+        ----------
 
-    async def deactivate_acceleration_self_test(self) -> None:
-        """Deactivate self test of STH accelerometer"""
+        dimension:
+            The dimension (`x`, `y` or `z`) for which the self test should
+            be activated.
 
-        await self._acceleration_self_test(activate=False)
+        """
+
+        await self._acceleration_self_test(activate=True, dimension=dimension)
+
+    async def deactivate_acceleration_self_test(self,
+                                                dimension: str = 'x') -> None:
+        """Deactivate self test of STH accelerometer
+
+        Parameters
+        ----------
+
+        dimension:
+            The dimension (`x`, `y` or `z`) for which the self test should
+            be deactivated.
+
+        """
+
+        await self._acceleration_self_test(activate=False, dimension=dimension)
 
     async def read_acceleration_voltage(self) -> float:
         """Retrieve the current voltage in Volt
