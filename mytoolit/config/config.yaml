@@ -71,6 +71,11 @@ COMMANDS:
     # already accessible via the path environment variable (`$Env:Path` in
     # Windows or `$PATH` in Unix).
     LINUX: []
+    MAC:
+      # The path below stores the default installation path of the `commander`
+      # CLI tool, if you put the app into the directory `/Applications`.
+      - "/Applications/Simplicity Studio.app/Contents/Eclipse/developer/\
+         adapter_packs/commander/Commander.app/Contents/MacOS"
     WINDOWS:
       # The paths below are the default install locations of `commander` in
       # Windows

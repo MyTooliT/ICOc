@@ -1,7 +1,7 @@
 # -- Imports ------------------------------------------------------------------
 
 from os import environ, pathsep
-from sys import platform
+from platform import system
 
 from mytoolit.config import settings
 
@@ -24,7 +24,9 @@ def add_commander_path_to_environment() -> None:
     """
 
     path = settings.commands.path
-    paths = path.linux if platform == 'Linux' else path.windows
+    operating_system = system()
+    paths = (path.linux if operating_system == 'Linux' else
+             path.mac if operating_system == 'Darwin' else path.windows)
     environ['PATH'] += (pathsep + pathsep.join(paths))
 
 
