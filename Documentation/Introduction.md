@@ -25,7 +25,7 @@ The framework currently requires
 **Notes**:
 
 - In theory you can also use ICOc in Windows 11. However, we did not test the software on this operating system.
-- The test suite (which uses a CAN class based on [python-can](https://python-can.readthedocs.io)) also works on Linux. The ICOc measurement software does [**not**](https://github.com/MyTooliT/ICOc/issues/4). For more information on how to use (parts of) the ICOc software on Linux, please take a look [here](#introduction:section:pcan-driver:linux).
+- The test suite (which uses a CAN class based on [python-can](https://python-can.readthedocs.io)) also works on Linux and macOS. The ICOc measurement software does [**not**](https://github.com/MyTooliT/ICOc/issues/4). For more information on how to use (parts of) the ICOc software on Linux, please take a look [here](#introduction:section:pcan-driver:linux).
 
 For more information about other required software components, please read the subsection [“Software”](#section:software) in this document.
 
@@ -73,13 +73,17 @@ ICOc requires at least Python `3.7`. The software also supports Python `3.8`, `3
 
 #### PCAN Driver
 
-To communicate with the STU you need to install the driver for the PCAN adapter. You can find the download link for Windows [here](https://www.peak-system.com/quick/DrvSetup). Please make sure that you include the “PCAN-Basic API” when you install the driver.
+To communicate with the STU you need a driver that works with the PCAN adapter. The text below describes how to install/enable this driver on
 
----
+- [Linux](#introduction:section:pcan-driver:linux),
+- [macOS](#introduction:section:pcan-driver:macos), and
+- [Windows](#introduction:section:pcan-driver:windows).
 
 <a name="introduction:section:pcan-driver:linux"></a>
 
-**Note:** The parts of the package that work on Linux do not use the PCAN interface. Instead you need to make sure that your CAN adapter is available via the [SocketCAN](https://en.wikipedia.org/wiki/SocketCAN) interface.
+##### Linux
+
+You need to make sure that your CAN adapter is available via the [SocketCAN](https://en.wikipedia.org/wiki/SocketCAN) interface.
 
 The following steps describe one possible option to configure the CAN interface on [Fedora Linux](https://getfedora.org) **manually**.
 
@@ -126,7 +130,17 @@ networkctl reload
 - [Question: How can I automatically bring up CAN interface using netplan?](https://github.com/linux-can/can-utils/issues/68#issuecomment-584505426)
 - [networkd › systemd › Wiki › ubuntuusers](https://wiki.ubuntuusers.de/systemd/networkd/)
 
----
+<a name="introduction:section:pcan-driver:macos"></a>
+
+##### macOS
+
+On macOS you can use the [PCBUSB](https://github.com/mac-can/PCBUSB-Library) library to add support for the PCAN adapter. For more information on how to install this library please take a look [here](https://github.com/mac-can/PCBUSB-Library/issues/10#issuecomment-1188682027).
+
+<a name="introduction:section:pcan-driver:windows"></a>
+
+##### Windows
+
+You can find the download link for the PCAN Windows driver [here](https://www.peak-system.com/quick/DrvSetup). Please make sure that you include the “PCAN-Basic API” when you install the software.
 
 #### Simplicity Commander (Optional)
 
@@ -135,10 +149,18 @@ For the tests that require a firmware flash you need to **either** install
 - [Simplicity Studio](https://www.silabs.com/products/development-tools/software/simplicity-studio) or
 - [Simplicity Commander](https://www.silabs.com/developers/mcu-programming-options).
 
-If you choose the first option, then please make sure to install the Simplicity Commander tool inside Simplicity Studio. If you download Simplicity Commander directly, then the tests assume that you unzipped the files into the directory `C:\SiliconLabs\Simplicity Commander` on Windows.
+If you choose the first option, then please make sure to install the Simplicity Commander tool inside Simplicity Studio.
+
+If you download Simplicity Commander directly, then the tests assume that you unzipped the files into the directory `C:\SiliconLabs\Simplicity Commander` on Windows.
 
 - If you do not use the standard install path on **Windows**, then please add the path to `commander.exe` to the list `COMMANDS` → `PATH` → `WINDOWS` in the configuration file `config.yaml`.
 - If you use **Linux**, then please add the path to `commander` to the list `COMMANDS` → `PATH` → `LINUX`.
+- If you install Simplicity Studio in the standard install path on **macOS** (`/Applications`) you do not need to change the config. If you
+
+  - put the application in a different directory or
+  - installed Simplicity Commander directly
+
+  then please add the path to `commander` to the list `COMMANDS` → `PATH` → `MAC`.
 
 If you do not want to change the config file, then please just make sure that `commander` is accessible via the `PATH` environment variable.
 
