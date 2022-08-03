@@ -9,8 +9,7 @@ from mytoolit.config import settings
 from mytoolit.report import Report
 from mytoolit.test.production import TestSensorNode
 from mytoolit.test.unit import ExtendedTestRunner
-from mytoolit.utility import (add_commander_path_to_environment,
-                              convert_mac_base64)
+from mytoolit.utility import convert_mac_base64
 
 # -- Classes ------------------------------------------------------------------
 
@@ -357,7 +356,6 @@ class TestSTH(TestSensorNode):
 
 
 def main():
-    add_commander_path_to_environment()
     unittest_main(testRunner=ExtendedTestRunner,
                   module="mytoolit.test.production.sth")
 

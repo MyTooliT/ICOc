@@ -9,7 +9,6 @@ from mytoolit.measurement import ADC_MAX_VALUE
 from mytoolit.report import Report
 from mytoolit.test.production import TestSensorNode
 from mytoolit.test.unit import ExtendedTestRunner
-from mytoolit.utility import add_commander_path_to_environment
 
 # -- Class --------------------------------------------------------------------
 
@@ -170,7 +169,6 @@ class TestSMH(TestSensorNode):
 
 
 def main():
-    add_commander_path_to_environment()
     unittest_main(testRunner=ExtendedTestRunner,
                   module="mytoolit.test.production.smh")
 

@@ -7,7 +7,6 @@ from mytoolit.config import settings
 from mytoolit.test.production import TestNode
 from mytoolit.report import Report
 from mytoolit.test.unit import ExtendedTestRunner
-from mytoolit.utility import add_commander_path_to_environment
 
 from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
 from mytoolit.old.MyToolItCommands import (int_to_mac_address, MyToolItBlock,
@@ -129,7 +128,6 @@ class TestSTU(TestNode):
 
 
 def main():
-    add_commander_path_to_environment()
     unittest_main(testRunner=ExtendedTestRunner,
                   module="mytoolit.test.production.stu")
 
