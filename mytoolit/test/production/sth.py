@@ -79,6 +79,25 @@ class TestSTH(TestSensorNode):
             ],
             text_fields=2)
 
+    def setUp(self):
+        """Set up hardware before a single test case"""
+
+        async def write_adc_configuration():
+            """Change reference voltage depending on acceleration sensor"""
+
+            reference_voltage = (
+                settings.acceleration_sensor().reference_voltage)
+
+            await self.can.write_adc_configuration(
+                prescaler=2,
+                acquisition_time=8,
+                oversampling_rate=64,
+                reference_voltage=reference_voltage)
+
+        super().setUp()
+        # Sensor node is connected after set up function
+        self.loop.run_until_complete(write_adc_configuration())
+
     def _connect(self):
         """Create a connection to the STH"""
 
