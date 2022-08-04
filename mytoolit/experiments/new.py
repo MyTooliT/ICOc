@@ -6,22 +6,21 @@ from asyncio import run
 from time import time
 
 from mytoolit.can import Network
+from mytoolit.measurement import ratio_noise_max
 
 
 # -- Functions ----------------------------------------------------------------
 async def test(identifier="Test-STH"):
     async with Network() as network:
 
-        async def read_acceleration_voltage(dimension: str = 'x',
-                                            self_test=False):
-            voltage = await network.read_acceleration_voltage(dimension, 1.8)
-            print(f"\nAcceleration Voltage: {voltage} V "
-                  "(1.8 V Reference Voltage)")
-            if self_test:
-                await network.activate_acceleration_self_test(dimension)
-            voltage = await network.read_acceleration_voltage(dimension)
-            print(f"Acceleration Voltage: {voltage} V "
-                  "(Default Reference Voltage)")
+        async def read_snr(voltage):
+            await network.write_adc_configuration(prescaler=2,
+                                                  acquisition_time=8,
+                                                  oversampling_rate=64,
+                                                  reference_voltage=voltage)
+
+            data = await network.read_x_acceleration_raw(1)
+            return ratio_noise_max(data)
 
         node = 'STH 1'
         start_time = time()
@@ -30,22 +29,11 @@ async def test(identifier="Test-STH"):
         name = await network.get_name(node)
         mac_address = await network.get_mac_address(node)
         print(f"Connected to sensor device “{name}” with MAC "
-              f"address “{mac_address}”")
+              f"address “{mac_address}”\n")
 
-        for dimension in "xyz":
-
-            print(f"\n=====\n= {dimension} =\n=====")
-
-            print("\nBefore Self Test:")
-            await read_acceleration_voltage(dimension)
-
-            print("\nSelf Test:")
-            await network.activate_acceleration_self_test(dimension)
-            await read_acceleration_voltage(dimension, self_test=True)
-            await network.deactivate_acceleration_self_test(dimension)
-
-            print("\nAfter Self Test:")
-            await read_acceleration_voltage(dimension)
+        for voltage in (1.8, 3.3):
+            snr = await read_snr(voltage)
+            print(f"SNR ({voltage} V): {snr}")
 
         print("\nExecution took {:.3} seconds".format(time() - start_time))
 
