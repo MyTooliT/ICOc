@@ -51,8 +51,8 @@ def ratio_noise_max(values: Iterable[int]) -> float:
     ----------
 
     values:
-        An iterable object that stores a series of measured (acceleration)
-        values
+        An iterable object that stores a series of measured 16 bit raw ADC
+        (acceleration) values
 
     Returns
     -------
