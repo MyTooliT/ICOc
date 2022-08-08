@@ -1760,7 +1760,8 @@ class Network:
         Returns
         -------
 
-        A list containing the raw acceleration data read in the specified time
+        A list containing the raw acceleration data (16 bit raw ADC values)
+        read in the specified time
 
         Example
         -------
