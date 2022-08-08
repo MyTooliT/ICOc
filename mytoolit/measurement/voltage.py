@@ -5,7 +5,8 @@ from mytoolit.measurement.constants import ADC_MAX_VALUE
 # -- Functions ----------------------------------------------------------------
 
 
-def convert_to_supply_voltage(voltage_raw: int) -> float:
+def convert_to_supply_voltage(voltage_raw: int,
+                              reference_voltage: float = 3.3) -> float:
     """Convert a raw 2 byte supply voltage value to a voltage value
 
     Parameters
@@ -13,6 +14,9 @@ def convert_to_supply_voltage(voltage_raw: int) -> float:
 
     voltage_raw:
         A 2 byte supply voltage value (returned by the `Streaming` command)
+
+    reference_voltage:
+        The ADC reference voltage
 
     Returns
     -------
@@ -24,12 +28,15 @@ def convert_to_supply_voltage(voltage_raw: int) -> float:
     >>> 3.15 < convert_to_supply_voltage(11000) < 3.16
     True
 
+    >>> 5.12 < convert_to_supply_voltage(2**15,
+    ...                                  reference_voltage=1.8) < 5.14
+    True
+
     """
 
     if voltage_raw <= 0:
         return 0
 
-    reference_voltage = 3.3
     # The value below is the result of the voltage divider circuit, which
     # uses a 4.7 kΩ and 1 kΩ resistor: (470 kΩ + 100 kΩ) / 100 kΩ = 5.7
     # If you want to know why we used these resistor values, then please
