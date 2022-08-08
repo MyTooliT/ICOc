@@ -167,7 +167,7 @@ class ADCConfiguration:
         acquisition_time = (self.data[2] +
                             1 if self.data[2] <= 3 else 2**(self.data[2] - 1))
         oversampling_rate = 2**self.data[3]
-        reference_voltage = self.data[4] / 20
+        reference_voltage = self.reference_voltage()
 
         parts = [
             "Set" if set else "Get",
@@ -178,6 +178,30 @@ class ADCConfiguration:
         ]
 
         return ", ".join(parts)
+
+    def reference_voltage(self) -> float:
+        """Get the reference voltage
+
+        Returns
+        -------
+
+        The reference voltage in Volt
+
+        Examples
+        --------
+
+        >>> ADCConfiguration(reference_voltage=3.3).reference_voltage()
+        3.3
+
+        >>> ADCConfiguration(reference_voltage=6.6).reference_voltage()
+        6.6
+
+        >>> ADCConfiguration(reference_voltage=1.8).reference_voltage()
+        1.8
+
+        """
+
+        return self.data[4] / 20
 
 
 # -- Main ---------------------------------------------------------------------
