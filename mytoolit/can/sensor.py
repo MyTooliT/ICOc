@@ -6,7 +6,7 @@ from typing import NamedTuple
 
 
 class SensorConfig(NamedTuple):
-    """Used to store the configuration of the three sensor axes"""
+    """Used to store the configuration of the three sensor channels"""
 
     x: int
     y: int
