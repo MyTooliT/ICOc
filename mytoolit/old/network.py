@@ -18,7 +18,7 @@ from semantic_version import Version
 
 from mytoolit.can import (Command, ErrorStatusSTH, ErrorStatusSTU, Identifier,
                           Message, Node, NodeStatusSTH, NodeStatusSTU,
-                          SensorConfig)
+                          SensorConfig, UnsupportedFeatureException)
 from mytoolit.eeprom import EEPROMStatus
 from mytoolit.config import settings
 from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkName
@@ -51,10 +51,6 @@ from mytoolit.old.MyToolItCommands import (
     SystemCommandBlueTooth,
     VRefName,
 )
-
-
-class UnsupportedFeatureException(Exception):
-    """Indicate that a certain feature is not supported by a device"""
 
 
 class Network(object):
