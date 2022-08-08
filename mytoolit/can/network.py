@@ -1599,7 +1599,6 @@ class Network:
 
         node = 'STH 1'
 
-        # While the block command
         message = Message(block='Streaming',
                           block_command='Acceleration',
                           sender=self.sender,
