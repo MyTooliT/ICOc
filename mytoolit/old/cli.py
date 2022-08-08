@@ -16,11 +16,12 @@ from win32event import CreateEvent, WaitForSingleObject, WAIT_OBJECT_0
 from can.interfaces.pcan.basic import (PCAN_ERROR_OK, PCAN_ERROR_QRCVEMPTY,
                                        PCAN_RECEIVE_EVENT)
 
+from mytoolit.can import SensorConfig
 from mytoolit.cmdline import channel_number, mac_address, sth_name
 from mytoolit.config import settings
 from mytoolit.measurement.acceleration import convert_acceleration_adc_to_g
 from mytoolit.measurement.storage import Storage
-from mytoolit.old.network import Network, SensorConfig
+from mytoolit.old.network import Network
 from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
 from mytoolit.old.MyToolItCommands import (
     AdcAcquisitionTime,

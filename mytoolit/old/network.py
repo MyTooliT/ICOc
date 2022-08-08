@@ -8,7 +8,7 @@ from struct import pack, unpack
 from sys import stderr
 from threading import Lock, Thread
 from time import time, sleep
-from typing import Any, Dict, List, NamedTuple, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from can.interfaces.pcan.basic import (PCAN_BAUD_1M, PCAN_BUSOFF_AUTORESET,
                                        PCAN_ERROR_OK, PCAN_ERROR_QRCVEMPTY,
@@ -17,7 +17,8 @@ from can.interfaces.pcan.basic import (PCAN_BAUD_1M, PCAN_BUSOFF_AUTORESET,
 from semantic_version import Version
 
 from mytoolit.can import (Command, ErrorStatusSTH, ErrorStatusSTU, Identifier,
-                          Message, Node, NodeStatusSTH, NodeStatusSTU)
+                          Message, Node, NodeStatusSTH, NodeStatusSTU,
+                          SensorConfig)
 from mytoolit.eeprom import EEPROMStatus
 from mytoolit.config import settings
 from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkName
@@ -50,26 +51,6 @@ from mytoolit.old.MyToolItCommands import (
     SystemCommandBlueTooth,
     VRefName,
 )
-
-
-class SensorConfig(NamedTuple):
-    """Used to store the configuration of the three sensor axes"""
-
-    x: int
-    y: int
-    z: int
-
-    def __repr__(self) -> str:
-        """The string representation of the sensor configuration
-
-        Returns
-        -------
-
-        A textual representation of the sensor configuration
-
-        """
-
-        return f"X: {self.x}, Y: {self.y}, Z: {self.z}"
 
 
 class UnsupportedFeatureException(Exception):
