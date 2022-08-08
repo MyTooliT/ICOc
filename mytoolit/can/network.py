@@ -1710,7 +1710,11 @@ class Network:
         voltage_bytes = response.data[2:4]
         voltage_raw = int.from_bytes(voltage_bytes, 'little')
 
-        return convert_to_supply_voltage(voltage_raw)
+        adc_configuration = await self.read_adc_configuration()
+
+        return convert_to_supply_voltage(
+            voltage_raw,
+            reference_voltage=adc_configuration.reference_voltage())
 
     async def start_streaming_x_acceleration(self) -> None:
         """Start streaming acceleration data for the x-axis"""
