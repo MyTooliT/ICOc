@@ -1590,6 +1590,21 @@ class Network:
 
         The latest three ADC values measured by the sensor device
 
+        Examples
+        --------
+
+        >>> from asyncio import run
+
+        >>> async def read_sensor_values():
+        ...     async with Network() as network:
+        ...         await network.connect_sensor_device(0)
+        ...         return await network.read_sensor_values()
+        >>> sensor_values = run(read_sensor_values())
+        >>> len(sensor_values)
+        3
+        >>> all([0 <= value < 2**15 for value in sensor_values])
+        True
+
         """
 
         streaming_format = StreamingFormat(first=True,
