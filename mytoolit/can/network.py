@@ -34,7 +34,7 @@ from mytoolit.can.streaming import (StreamingFormat,
                                     StreamingFormatAcceleration,
                                     StreamingFormatVoltage)
 from mytoolit.can.status import State
-from mytoolit.measurement import convert_voltage_adc_to_volts
+from mytoolit.measurement import convert_to_supply_voltage
 from mytoolit.utility import convert_bytes_to_text
 
 # -- Classes ------------------------------------------------------------------
@@ -1710,7 +1710,7 @@ class Network:
         voltage_bytes = response.data[2:4]
         voltage_raw = int.from_bytes(voltage_bytes, 'little')
 
-        return convert_voltage_adc_to_volts(voltage_raw)
+        return convert_to_supply_voltage(voltage_raw)
 
     async def start_streaming_x_acceleration(self) -> None:
         """Start streaming acceleration data for the x-axis"""
