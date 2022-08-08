@@ -1422,12 +1422,22 @@ Logging:
 </div>
 <div id="tests-1" class="section level3 hasAnchor">
 <h3><span class="header-section-number">5.1.2</span> Tests<a href="#tests-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>The production tests for the hardware (STH, SMH and STU) should now also work on macOS, after you installed the <a href="https://github.com/mac-can/PCBUSB-Library">PCBUSB</a> library.</p>
+<ul>
+<li>The production tests for the hardware (STH, SMH and STU) should now also work on macOS, after you installed the <a href="https://github.com/mac-can/PCBUSB-Library">PCBUSB</a> library.</li>
+<li>The STH tests now use the correct ADC reference voltage for the ± 40 g acceleration sensor <a href="https://www.analog.com/en/products/adxl356.html?doc=ADXL356-357.pdf">ADXL356</a>.</li>
+</ul>
 </div>
 <div id="internal" class="section level3 hasAnchor">
 <h3><span class="header-section-number">5.1.3</span> Internal<a href="#internal" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="measurement" class="section level4 hasAnchor">
+<h4><span class="header-section-number">5.1.3.1</span> Measurement<a href="#measurement" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<ul>
+<li>Renamed the method <code>convert_voltage_adc_to_volts</code> to <code>convert_to_supply_voltage</code></li>
+<li>The method <code>convert_to_supply_voltage</code> now supports different reference voltages</li>
+</ul>
+</div>
 <div id="network" class="section level4 hasAnchor">
-<h4><span class="header-section-number">5.1.3.1</span> Network<a href="#network" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<h4><span class="header-section-number">5.1.3.2</span> Network<a href="#network" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <ul>
 <li><p>The methods to</p>
 <ul>
@@ -1440,6 +1450,7 @@ Logging:
 <li>specify the dimension (<code>x</code>, <code>y</code> or <code>z</code>) and</li>
 <li>the ADC reference voltage.</li>
 </ul></li>
+<li><p>The method to read the supply voltage (<code>read_supply_voltage</code>) now takes the current reference voltage into consideration</p></li>
 </ul>
 
 </div>
@@ -1719,8 +1730,8 @@ Logging:
 <li>Add class <code>CalibrationMeasurementFormat</code> to specify the data bytes of a <a href="https://mytoolit.github.io/Documentation/#command:Calibration-Measurement">calibration measurement command</a>.</li>
 </ul>
 </div>
-<div id="measurement" class="section level4 hasAnchor">
-<h4><span class="header-section-number">5.6.4.2</span> Measurement<a href="#measurement" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div id="measurement-1" class="section level4 hasAnchor">
+<h4><span class="header-section-number">5.6.4.2</span> Measurement<a href="#measurement-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <ul>
 <li>Add function <code>convert_voltage_adc_to_volts</code> to convert (2 byte) <a href="https://mytoolit.github.io/Documentation/#block-streaming">streaming voltage</a> values to a supply voltage in volts</li>
 </ul>
