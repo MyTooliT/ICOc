@@ -28,8 +28,10 @@ from mytoolit.config import settings
 from mytoolit.measurement import ADC_MAX_VALUE, convert_acceleration_adc_to_g
 from mytoolit.can.adc import ADCConfiguration
 from mytoolit.can.calibration import CalibrationMeasurementFormat
+from mytoolit.can.error import UnsupportedFeatureException
 from mytoolit.can.message import Message
 from mytoolit.can.node import Node
+from mytoolit.can.sensor import SensorConfig
 from mytoolit.can.streaming import (StreamingFormat,
                                     StreamingFormatAcceleration,
                                     StreamingFormatVoltage)
@@ -1895,6 +1897,68 @@ class Network:
 
         await self._request(message,
                             description=f"write ADC configuration of “{node}”")
+
+    # --------------------------------
+    # - Get/Set Sensor Configuration -
+    # --------------------------------
+
+    async def read_sensor_configuration(self) -> SensorConfig:
+        """Read the current sensor configuration
+
+        Raises
+        ------
+
+        A `UnsupportedFeatureException` in case the sensor node replies with
+        an error message
+
+        Returns
+        -------
+
+        The sensor number for the different axes
+
+        Examples
+        --------
+
+        >>> from asyncio import run
+
+        Reading sensor config from device without sensor config support fails
+
+        >>> async def read_sensor_config():
+        ...     async with Network() as network:
+        ...         await network.connect_sensor_device(0)
+        ...         return await network.read_sensor_configuration()
+        >>> config = run(
+        ...     read_sensor_config()) #doctest: +IGNORE_EXCEPTION_DETAIL
+        Traceback (most recent call last):
+           ...
+        UnsupportedFeatureException: Reading sensor configuration is not
+        supported
+
+        """
+
+        message = Message(block='Configuration',
+                          block_command=0x01,
+                          sender='SPU 1',
+                          receiver='STH 1',
+                          request=True,
+                          data=[0] * 8)
+
+        node = 'STH 1'
+
+        try:
+            response = await self._request(
+                message, description=f"read sensor configuration of “{node}”")
+        except ErrorResponseError as error:
+            raise UnsupportedFeatureException(
+                "Reading sensor configuration not supported") from error
+
+        channels = response.data[1:4]
+        config = {
+            axis: channel
+            for axis, channel in zip(tuple("xyz"), channels)
+        }
+
+        return SensorConfig(**config)
 
     # ---------------------------
     # - Calibration Measurement -
