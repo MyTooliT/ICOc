@@ -1556,7 +1556,7 @@ class Network:
                 raise TimeoutError(
                     "Unable to find sensor device with "
                     f"{identifier_description} “{identifier}” in "
-                    f" {timeout_in_s} seconds\n\n{device_info}")
+                    f"{timeout_in_s} seconds\n\n{device_info}")
 
             sensor_devices = await self.get_sensor_devices()
             sensor_device = get_sensor_device(sensor_devices, identifier)
