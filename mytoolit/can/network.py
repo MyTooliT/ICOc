@@ -1970,12 +1970,8 @@ class Network:
                 "Reading sensor configuration not supported") from error
 
         channels = response.data[1:4]
-        config = {
-            axis: channel
-            for axis, channel in zip(tuple("xyz"), channels)
-        }
 
-        return SensorConfig(**config)
+        return SensorConfig(*channels)
 
     # ---------------------------
     # - Calibration Measurement -

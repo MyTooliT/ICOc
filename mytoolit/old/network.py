@@ -2041,11 +2041,7 @@ class Network(object):
         assert isinstance(reply, dict)
         data = reply["Payload"]
         channels = data[1:4]
-        config = {
-            axis: channel
-            for axis, channel in zip(tuple("xyz"), channels)
-        }
-        return SensorConfig(**config)
+        return SensorConfig(*channels)
 
     # ==========
     # = EEPROM =

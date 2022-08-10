@@ -573,11 +573,11 @@ class CommandLineInterface():
         self.vGraphSend(["sampleInterval", self.iGraphSampleInterval])
         self.vGraphSend(["xDim", Watch["DisplayTimeMax"]])
         self.update_packet_loss()
-        if self.sensor.x:
+        if self.sensor.first:
             self.vGraphSend(["lineNameX", "Acceleration X-Axis"])
-        if self.sensor.y:
+        if self.sensor.second:
             self.vGraphSend(["lineNameY", "Acceleration Y-Axis"])
-        if self.sensor.z:
+        if self.sensor.third:
             self.vGraphSend(["lineNameZ", "Acceleration Z-Axis"])
         self.vGraphSend(["Plot", True])
 
@@ -689,8 +689,11 @@ class CommandLineInterface():
         """Update sensor configuration in the connected sensor device"""
 
         # Use specified sensor configuration
-        self.Can.write_sensor_config(
-            *[1 if sensor <= 0 else sensor for sensor in self.sensor[0:3]])
+        self.Can.write_sensor_config(*[
+            1 if sensor is None or sensor <= 0 else sensor
+            for sensor in (self.sensor.first, self.sensor.second,
+                           self.sensor.third)
+        ])
 
     def vDataAquisition(self):
         if self.KeyBoardInterrupt:
@@ -841,16 +844,16 @@ class CommandLineInterface():
             self.__exit__()
 
     def vGetStreamingAccDataAccStart(self):
-        if not (self.sensor.x or self.sensor.y or self.sensor.z):
+        if not any((self.sensor.first, self.sensor.second, self.sensor.third)):
             return True
 
         ack = None
         accFormat = AtvcFormat()
         accFormat.asbyte = 0
         accFormat.b.bStreaming = 1
-        accFormat.b.bNumber1 = int(bool(self.sensor.x))
-        accFormat.b.bNumber2 = int(bool(self.sensor.y))
-        accFormat.b.bNumber3 = int(bool(self.sensor.z))
+        accFormat.b.bNumber1 = int(bool(self.sensor.first))
+        accFormat.b.bNumber2 = int(bool(self.sensor.second))
+        accFormat.b.bNumber3 = int(bool(self.sensor.third))
         accFormat.b.u3DataSets = self.tAccDataFormat
         cmd = self.Can.CanCmd(MyToolItBlock["Streaming"],
                               MyToolItStreaming["Acceleration"], 0, 0)
@@ -891,9 +894,9 @@ class CommandLineInterface():
         counter = data[1]
 
         axes = [
-            axis
-            for axis, activated in (('x', self.sensor.x), ('y', self.sensor.y),
-                                    ('z', self.sensor.z)) if activated
+            axis for axis, activated in (('x', self.sensor.first),
+                                         ('y', self.sensor.second),
+                                         ('z', self.sensor.third)) if activated
         ]
 
         if len(axes) <= 0:
@@ -957,12 +960,7 @@ class CommandLineInterface():
         self.logger.info(f"Reference Voltage: {self.sAdcRef}")
         data_sets = DataSets.inverse[self.tAccDataFormat]
         self.logger.info(f"Data Sets: {data_sets}")
-        sensors = "".join([
-            f"{axis}: {sensor}" if sensor else ""
-            for sensor, axis in ((self.sensor.x, "X"), (self.sensor.y, "Y"),
-                                 (self.sensor.z, "Z"))
-        ])
-        self.logger.info(f"Sensors: {sensors}")
+        self.logger.info(f"Sensors: {self.sensor}")
 
     def _vRunConsoleStartup(self):
         self._vRunConsoleStartupLoggerPrint()

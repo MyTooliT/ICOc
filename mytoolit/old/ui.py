@@ -327,7 +327,7 @@ class UserInterface(CommandLineInterface):
         else:
             enabled_sensors = map(
                 lambda channel_number: int(bool(channel_number)),
-                (self.sensor.x, self.sensor.y, self.sensor.z))
+                (self.sensor.first, self.sensor.second, self.sensor.third))
             sensors = [
                 enable_disable_sensors(axis, default_value)
                 for default_value, axis in zip(enabled_sensors, list("XYZ"))
@@ -425,14 +425,16 @@ class UserInterface(CommandLineInterface):
         sampling_rate = self.samplingRate
         adc_reference = self.sAdcRef
 
-        enabled_axes = (self.sensor.x, self.sensor.y, self.sensor.z)
+        enabled_axes = (self.sensor.first, self.sensor.second,
+                        self.sensor.third)
 
         if self.channel_config_supported:
             sensor = self.Can.read_sensor_config()
             sensors = ", ".join([
                 f"{axis}: {number}"
                 for axis, number, enabled in zip(list("XYZ"), (
-                    sensor.x, sensor.y, sensor.z), enabled_axes) if enabled
+                    sensor.first, sensor.second, sensor.third), enabled_axes)
+                if enabled
             ])
         else:
             sensors = ", ".join([
