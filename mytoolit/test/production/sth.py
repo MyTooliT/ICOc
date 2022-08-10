@@ -95,8 +95,12 @@ class TestSTH(TestSensorNode):
                 reference_voltage=reference_voltage)
 
         super().setUp()
-        # Sensor node is connected after set up function
-        self.loop.run_until_complete(write_adc_configuration())
+
+        # Sensor node is connected after set up function unless the test
+        # does not initiate a Bluetooth connection, which is the case if
+        # the test name (method name) contains the text “disconnected”.
+        if self._testMethodName.find("disconnected") < 0:
+            self.loop.run_until_complete(write_adc_configuration())
 
     def _connect(self):
         """Create a connection to the STH"""
