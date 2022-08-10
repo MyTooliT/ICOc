@@ -1,17 +1,10 @@
-# -- Imports ------------------------------------------------------------------
-
-from typing import Optional
-
 # -- Classes ------------------------------------------------------------------
 
 
 class SensorConfig:
     """Used to store the configuration of the three sensor channels"""
 
-    def __init__(self,
-                 first: Optional[int] = None,
-                 second: Optional[int] = None,
-                 third: Optional[int] = None):
+    def __init__(self, first: int = 0, second: int = 0, third: int = 0):
         """Initialize the sensor configuration using the given arguments
 
         Parameters
@@ -57,7 +50,7 @@ class SensorConfig:
         return ", ".join((f"M{sensor}: S{value}"
                           for sensor, value in enumerate(
                               (self.first, self.second, self.third), start=1)
-                          if value is not None))
+                          if value != 0))
 
     def __repr__(self) -> str:
         """The textual representation of the sensor configuration
@@ -78,7 +71,7 @@ class SensorConfig:
 
         """
 
-        return ", ".join((f"M{sensor}: {'S' if value else ''}{value}"
+        return ", ".join((f"M{sensor}: {f'S{value}' if value != 0 else 'None'}"
                           for sensor, value in enumerate(
                               (self.first, self.second, self.third), start=1)))
 
