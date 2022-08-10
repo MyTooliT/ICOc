@@ -32,8 +32,35 @@ class SensorConfig:
         self.second = second
         self.third = third
 
-    def __repr__(self) -> str:
+    def __str__(self) -> str:
         """The string representation of the sensor configuration
+
+        Returns
+        -------
+
+        A textual representation of the sensor configuration
+
+        Examples
+        --------
+
+        >>> str(SensorConfig(first=1, second=3, third=2))
+        'M1: S1, M2: S3, M3: S2'
+
+        >>> str(SensorConfig())
+        ''
+
+        >>> str(SensorConfig(second=1))
+        'M2: S1'
+
+        """
+
+        return ", ".join((f"M{sensor}: S{value}"
+                          for sensor, value in enumerate(
+                              (self.first, self.second, self.third), start=1)
+                          if value is not None))
+
+    def __repr__(self) -> str:
+        """The textual representation of the sensor configuration
 
         Returns
         -------
