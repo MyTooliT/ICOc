@@ -88,7 +88,8 @@ class CommandLineInterface():
         self.iMsgCounterLast = -1
         self.Can = Network(sender=MyToolItNetworkNr["SPU1"],
                            receiver=MyToolItNetworkNr["STH1"],
-                           log_destination="network.log")
+                           log_destination="network.log",
+                           log_level=self.args.log.upper())
         self.logger.info("Initialized CAN class")
 
         self.set_sensors(self.args.first_channel, self.args.second_channel,
