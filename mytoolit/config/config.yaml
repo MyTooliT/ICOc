@@ -225,6 +225,9 @@ STH:
         VOLTAGE:
           DIFFERENCE: 160
           TOLERANCE: 30
+    # Values for the Analog devices ± 40g digital accelerometer sensor ADXL356.
+    # Please check the comments for sensor `ADXL1001` for a more detailed
+    # description of the config values.
     ADXL356:
       ACCELERATION:
         MAXIMUM: 80
