@@ -51,8 +51,8 @@ STATE: &state Epoxied
 
 # The values below specify the configuration options for the
 # [python-can](https://python-can.readthedocs.io) Bus class. Please note that
-# these configuration values are currently not used by the main command line
-# tool or any of the tests!
+# these configuration values are currently only used for the (production) tests
+# and **not by the main command line tool!
 CAN:
   LINUX:
     BITRATE: *bitrate
