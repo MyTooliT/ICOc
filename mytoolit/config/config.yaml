@@ -58,10 +58,11 @@ CAN:
     BITRATE: *bitrate
     CHANNEL: can0
     INTERFACE: socketcan
-  WINDOWS:
+  MAC: &can_mac
     BITRATE: *bitrate
     CHANNEL: PCAN_USBBUS1
     INTERFACE: pcan
+  WINDOWS: *can_mac
 
 COMMANDS:
   PATH:

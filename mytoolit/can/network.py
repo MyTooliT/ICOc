@@ -261,8 +261,9 @@ class Network:
 
         """
 
-        configuration = (settings.can.linux
-                         if platform == 'linux' else settings.can.windows)
+        configuration = (
+            settings.can.linux if platform == 'linux' else
+            settings.can.mac if platform == 'darwin' else settings.can.windows)
         bus_config = {
             key.lower(): value
             for key, value in configuration.items()
