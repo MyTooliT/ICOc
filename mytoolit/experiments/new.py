@@ -3,32 +3,33 @@
 # -- Imports ------------------------------------------------------------------
 
 from asyncio import run
-from time import time
 
 from mytoolit.can import Network
-from mytoolit.can.error import UnsupportedFeatureException
+from mytoolit.measurement import convert_acceleration_adc_to_g
 
 
 # -- Functions ----------------------------------------------------------------
 async def test(identifier="Test-STH"):
-    async with Network() as network:
+    network = Network()
+    node = 'STH 1'
 
-        node = 'STH 1'
-        start_time = time()
+    await network.connect_sensor_device(identifier)
+    name = await network.get_name(node)
+    mac_address = await network.get_mac_address(node)
+    print(f"Connected to sensor device “{name}” with MAC "
+          f"address “{mac_address}”\n")
 
-        await network.connect_sensor_device(identifier)
-        name = await network.get_name(node)
-        mac_address = await network.get_mac_address(node)
-        print(f"Connected to sensor device “{name}” with MAC "
-              f"address “{mac_address}”\n")
+    values_raw = await network.read_x_acceleration_raw(seconds=1)
+    max_value = int(
+        abs(await network.read_eeprom_x_axis_acceleration_offset()) * 2)
+    values_in_g = [
+        convert_acceleration_adc_to_g(value, max_value=max_value)
+        for value in values_raw
+    ]
 
-        try:
-            sensor_config = await network.read_sensor_configuration()
-            print(f"Sensor Configuration: {sensor_config}")
-        except UnsupportedFeatureException as error:
-            print(error)
+    print(f"Values: {values_in_g}")
 
-        print("\nExecution took {:.3} seconds".format(time() - start_time))
+    await network.shutdown()  # Also call this in case of error
 
 
 # -- Main ---------------------------------------------------------------------
