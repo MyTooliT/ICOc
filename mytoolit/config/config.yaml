@@ -238,9 +238,10 @@ STH:
       SELF TEST:
         DIMENSION: z
         VOLTAGE:
-          # 1.25 g difference, ± 40 g, 1.8 V_ref ⇒ 1.25/(2*40)*1.8*1000 ≅ 28
-          DIFFERENCE: 28
-          TOLERANCE: 4
+          # 1.25 g difference at ± 10 g ⇒ 1.25/4 at ± 40 g
+          # 1.8 V reference voltage ⇒ 1.25/(2*40*4)*1.8*1000 ≅ 7 mV
+          DIFFERENCE: 7
+          TOLERANCE: 2
     # The identifier of the accelerometer sensor (either `ADXL1001` or
     # `ADXL1002` or `ADXL356`). The values below the key will be used for the
     # STH test.
