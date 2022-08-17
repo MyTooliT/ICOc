@@ -240,7 +240,7 @@ class CommandLineInterface():
         logging_group.add_argument(
             '--log',
             choices=('debug', 'info', 'warning', 'error', 'critical'),
-            default='warning',
+            default='info',
             required=False,
             help="Minimum level of messages written to log")
 
