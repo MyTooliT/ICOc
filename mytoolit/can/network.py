@@ -1754,9 +1754,7 @@ class Network:
     async def stop_streaming_acceleration(self) -> None:
         """Stop streaming acceleration data"""
 
-        streaming_format = StreamingFormatAcceleration(x=True,
-                                                       streaming=True,
-                                                       sets=0)
+        streaming_format = StreamingFormatAcceleration(streaming=True, sets=0)
         node = 'STH 1'
         message = Message(block='Streaming',
                           block_command='Acceleration',
