@@ -1752,7 +1752,7 @@ class Network:
             description=f"enable x-acceleration data streaming of “{node}”")
 
     async def stop_streaming_acceleration(self) -> None:
-        """Start streaming acceleration data"""
+        """Stop streaming acceleration data"""
 
         streaming_format = StreamingFormatAcceleration(x=True,
                                                        streaming=True,
