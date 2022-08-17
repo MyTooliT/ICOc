@@ -3,6 +3,8 @@
 from typing import List
 from unittest import main as unittest_main, skipIf
 
+from semantic_version import Version
+
 from mytoolit.can import Node
 from mytoolit.measurement import ratio_noise_max
 from mytoolit.config import settings
@@ -128,12 +130,25 @@ class TestSTH(TestSensorNode):
 
         """
 
+        try:
+            hardware_version = Version(settings.sth.hardware_version)
+        except (TypeError, ValueError) as error:
+            raise ValueError("Incorrect STH hardware version: "
+                             f"“{settings.sth.hardware_version}”") from error
+
+        if not (1 <= hardware_version.major <= 2):
+            raise ValueError(f"STH hardware version “{hardware_version}” "
+                             "is currently not supported")
+
+        chip = ('BGM113A256V2'
+                if hardware_version.major <= 1 else 'BGM123A256V2')
+
         self._test_firmware_flash(
             node='STH',
             flash_location=settings.sth.firmware.location.flash,
             programmmer_serial_number=settings.sth.programming_board.
             serial_number,
-            chip='BGM113A256V2')
+            chip=chip)
 
     def test_connection(self):
         """Check connection to STH"""
