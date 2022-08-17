@@ -125,7 +125,7 @@ class TestSTH(TestSensorNode):
         Please note the additional underscore in the method name that makes
         sure this test case is executed before all other test cases.
 
-        The text `disconnected` in the method name make sure that the test
+        The text `disconnected` in the method name makes sure that the test
         framework does not initialize a connection.
 
         """
