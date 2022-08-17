@@ -1988,18 +1988,16 @@ class Network:
         except ValueError:
             raise ValueError(f"Invalid dimension value: “{dimension}”")
 
-        message = Message(
-            block='Configuration',
-            block_command='Calibration Measurement',
-            sender=self.sender,
-            receiver=node,
-            request=True,
-            data=CalibrationMeasurementFormat(
-                set=True,
-                element='Acceleration',
-                method=method,
-                reference_voltage=3.3,  # VDD = 3.3V
-                dimension=dimension_number).data)
+        message = Message(block='Configuration',
+                          block_command='Calibration Measurement',
+                          sender=self.sender,
+                          receiver=node,
+                          request=True,
+                          data=CalibrationMeasurementFormat(
+                              set=True,
+                              element='Acceleration',
+                              method=method,
+                              dimension=dimension_number).data)
 
         await self._request(message,
                             description=f"{method.lower()} self test of "
