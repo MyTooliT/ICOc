@@ -162,6 +162,8 @@ class CommandLineInterface():
             '-n',
             '--name',
             type=sth_name,
+            nargs='?',
+            const='',
             required=False,
             help="connect to device with specified name")
 
