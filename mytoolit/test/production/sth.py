@@ -257,6 +257,12 @@ class TestSTH(TestSensorNode):
                               sensor.reference_voltage)))
 
         voltage_diff = voltage_at_test - voltage_before_test
+        voltage_diff_abs = abs(voltage_diff)
+        voltage_diff_before_after = abs(voltage_before_test -
+                                        voltage_after_test)
+
+        # - Voltage difference can be both positive or negative
+        # - Voltage before and after the self test should be roughly the same
 
         voltage_diff_expected = sensor.self_test.voltage.difference
         voltage_diff_tolerance = sensor.self_test.voltage.tolerance
@@ -264,27 +270,24 @@ class TestSTH(TestSensorNode):
         voltage_diff_minimum = voltage_diff_expected - voltage_diff_tolerance
         voltage_diff_maximum = voltage_diff_expected + voltage_diff_tolerance
 
-        self.assertLess(
-            voltage_before_test, voltage_at_test,
-            f"Self test voltage of {voltage_at_test:.0f} mV was lower "
-            f"than voltage before test {voltage_before_test:.0f} mV")
-        self.assertLess(
-            voltage_after_test, voltage_at_test,
-            f"Self test voltage of {voltage_at_test:.0f} mV was lower "
-            f"than voltage after test {voltage_before_test:.0f} mV")
+        self.assertLessEqual(
+            voltage_diff_before_after, voltage_diff_tolerance,
+            "Measured voltage difference between voltage before and after "
+            f"test {voltage_diff_before_after:.0f} mV is larger than "
+            f"tolerance of {voltage_diff_tolerance:.0f} mV")
 
         possible_failure_reason = (
             "\n\nPossible Reason:\n\n• Acceleration sensor config value "
             f"“{settings.sth.acceleration_sensor.sensor}” is incorrect")
 
         self.assertGreaterEqual(
-            voltage_diff, voltage_diff_minimum,
-            f"Measured voltage difference of {voltage_diff:.0f} mV is lower "
-            "than expected minimum voltage difference of "
+            voltage_diff_abs, voltage_diff_minimum,
+            f"Measured voltage difference of {voltage_diff_abs:.0f} mV is "
+            "lower than expected minimum voltage difference of "
             f"{voltage_diff_minimum:.0f} mV{possible_failure_reason}")
         self.assertLessEqual(
-            voltage_diff, voltage_diff_maximum,
-            f"Measured voltage difference of {voltage_diff:.0f} mV is "
+            voltage_diff_abs, voltage_diff_maximum,
+            f"Measured voltage difference of {voltage_diff_abs:.0f} mV is "
             "greater than expected minimum voltage difference of "
             f"{voltage_diff_maximum:.0f} mV{possible_failure_reason}")
 

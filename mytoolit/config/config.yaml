@@ -210,7 +210,11 @@ STH:
           # in mV. For more information, please check the data sheet of the
           # accelerometer.
           DIFFERENCE: 90
-          # Tolerance to the expected voltage difference in mV
+          # Tolerance to
+          # - the expected voltage difference and
+          # - tolerance for the measured difference between voltage before and
+          #   after the self test
+          # in mV.
           TOLERANCE: 20
     # Values for the Analog devices ± 50g digital accelerometer sensor ADXL1002.
     # Please check the comments for sensor `ADXL1001` for a more detailed
