@@ -4217,6 +4217,45 @@ class Network:
 
         return await self.read_eeprom_float(address=8, offset=8, node='STH 1')
 
+    async def write_eeprom_y_axis_acceleration_slope(self,
+                                                     slope: float) -> None:
+        """Write the acceleration slope of the y-axis to the EEPROM
+
+        Parameters
+        ----------
+
+        slope:
+            The addition to the acceleration value for one step of the ADC in
+            multiples of g₀
+
+        Example
+        -------
+
+        >>> from asyncio import run
+        >>> from math import isclose
+
+        Write and read the acceleration slope of STH 1
+
+        >>> async def write_read_y_axis_acceleration_slope(slope):
+        ...     async with Network() as network:
+        ...         await network.connect_sensor_device(0)
+        ...         await network.write_eeprom_y_axis_acceleration_slope(slope)
+        ...         return (await
+        ...                 network.read_eeprom_y_axis_acceleration_slope())
+        >>> adc_max = 0xffff
+        >>> acceleration_difference_max = 200
+        >>> slope = acceleration_difference_max / adc_max
+        >>> slope_read = run(write_read_y_axis_acceleration_slope(slope))
+        >>> isclose(slope, slope_read)
+        True
+
+        """
+
+        await self.write_eeprom_float(address=8,
+                                      offset=8,
+                                      value=slope,
+                                      node='STH 1')
+
     async def read_acceleration_sensor_range_in_g(self) -> int:
         """Retrieve the maximum acceleration sensor range in multiples of g₀
 
@@ -4552,6 +4591,6 @@ if __name__ == '__main__':
     if run_all_doctests:
         testmod()
     else:
-        run_docstring_examples(Network.read_acceleration_voltage,
+        run_docstring_examples(Network.read_eeprom_y_axis_acceleration_slope,
                                globals(),
                                verbose=True)
