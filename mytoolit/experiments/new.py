@@ -18,11 +18,17 @@ async def test(identifier):
         print(f"Connected to sensor device “{name}” with MAC "
               f"address “{mac_address}”")
 
-        offset = 10.4
-        print(f"Store offset value y-axis: {offset}")
-        await network.write_eeprom_y_axis_acceleration_offset(offset)
-        offset = await network.read_eeprom_y_axis_acceleration_offset()
-        print(f"Slope y-axis: {offset}")
+        slope = 5.321
+        print(f"Store slope value z-axis: {slope}")
+        await network.write_eeprom_z_axis_acceleration_slope(slope)
+        offset = 32.456
+        print(f"Store offset value z-axis: {offset}")
+        await network.write_eeprom_z_axis_acceleration_offset(offset)
+
+        slope = await network.read_eeprom_z_axis_acceleration_slope()
+        print(f"Slope z-axis: {slope}")
+        offset = await network.read_eeprom_z_axis_acceleration_offset()
+        print(f"Offset z-axis: {offset}")
 
 
 # -- Main ---------------------------------------------------------------------
