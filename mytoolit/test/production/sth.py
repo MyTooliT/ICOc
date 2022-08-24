@@ -29,11 +29,11 @@ class TestSTH(TestSensorNode):
         cls.add_attribute("Acceleration Sensor",
                           "{cls.acceleration_sensor}",
                           pdf=True)
-        cls.add_attribute("Acceleration Slope",
-                          "{cls.acceleration_slope:.5f}",
+        cls.add_attribute("Acceleration Slope X",
+                          "{cls.acceleration_slope_x:.5f}",
                           pdf=False)
-        cls.add_attribute("Acceleration Offset",
-                          "{cls.acceleration_offset:.3f}",
+        cls.add_attribute("Acceleration Offset X",
+                          "{cls.acceleration_offset_x:.3f}",
                           pdf=False)
 
         cls.report = Report(node='STH')
@@ -345,28 +345,29 @@ class TestSTH(TestSensorNode):
             acceleration_max = sensor.acceleration.maximum
             adc_max = 0xffff
             acceleration_slope = acceleration_max / adc_max
+            acceleration_offset = -(acceleration_max / 2)
+
             await self.can.write_eeprom_x_axis_acceleration_slope(
                 acceleration_slope)
-            cls.acceleration_slope = (
+            cls.acceleration_slope_x = (
                 await self.can.read_eeprom_x_axis_acceleration_slope())
             self.assertAlmostEqual(
                 acceleration_slope,
-                cls.acceleration_slope,
+                cls.acceleration_slope_x,
                 msg=f"Written acceleration slope “{acceleration_slope:.5f}” "
                 "does not match read acceleration slope "
-                f"“{cls.acceleration_slope:.5f}”")
+                f"“{cls.acceleration_slope_x:.5f}”")
 
-            acceleration_offset = -(acceleration_max / 2)
             await self.can.write_eeprom_x_axis_acceleration_offset(
                 acceleration_offset)
-            cls.acceleration_offset = (
+            cls.acceleration_offset_x = (
                 await self.can.read_eeprom_x_axis_acceleration_offset())
             self.assertAlmostEqual(
                 acceleration_offset,
-                cls.acceleration_offset,
+                cls.acceleration_offset_x,
                 msg=f"Written acceleration offset “{acceleration_offset:.3f}” "
                 "does not match read acceleration offset "
-                f"“{cls.acceleration_offset:.3f}”")
+                f"“{cls.acceleration_offset_x:.3f}”")
 
             # =================
             # = EEPROM Status =
