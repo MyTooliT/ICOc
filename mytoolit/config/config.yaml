@@ -244,8 +244,21 @@ STH:
         VOLTAGE:
           # 1.25 g difference at ± 10 g ⇒ 1.25/4 at ± 40 g
           # 1.8 V reference voltage ⇒ 1.25/(2*40*4)*1.8*1000 ≅ 7 mV
+          #
+          # In reality the difference voltage seems to
+          #
+          # - be significantly smaller and
+          # - change with the position of the PCB.
+          #
+          # We therefore set the tolerance to a very high level.
+          #
+          # More information is available here:
+          #
+          # - https://mytoolit.bitrix24.de/company/personal/user/74/tasks
+          #   /task/view/6207/
+          #
           DIFFERENCE: 7
-          TOLERANCE: 2
+          TOLERANCE: 4
     # The identifier of the accelerometer sensor (either `ADXL1001` or
     # `ADXL1002` or `ADXL356`). The values below the key will be used for the
     # STH test.
