@@ -18,39 +18,14 @@ async def test(identifier):
         print(f"Connected to sensor device “{name}” with MAC "
               f"address “{mac_address}”")
 
-        for reference_voltage in (1.8, 3.3):
-            await network.write_adc_configuration(
-                reference_voltage=reference_voltage)
-            adc_config = await network.read_adc_configuration()
-            reference_voltage = adc_config.reference_voltage()
-            print(f"\nReference Voltage: {reference_voltage} V")
-
-            for dimension in list("xyz"):
-
-                acceleration_voltage_before = (
-                    await network.read_acceleration_voltage(
-                        dimension=dimension,
-                        reference_voltage=reference_voltage))
-
-                await network.activate_acceleration_self_test()
-
-                acceleration_voltage = await network.read_acceleration_voltage(
-                    dimension=dimension, reference_voltage=reference_voltage)
-
-                await network.deactivate_acceleration_self_test()
-
-                difference_voltage = (acceleration_voltage -
-                                      acceleration_voltage_before)
-                difference_voltage_mv = round(difference_voltage * 1000)
-
-                print(f"{dimension.upper()} Difference: "
-                      f"{difference_voltage_mv} mV")
+        slope = 1.2345
+        print(f"Store slope value y-axis: {slope}")
+        await network.write_eeprom_y_axis_acceleration_slope(1.2345)
+        slope = await network.read_eeprom_y_axis_acceleration_slope()
+        print(f"Slope y-axis: {slope}")
 
 
 # -- Main ---------------------------------------------------------------------
 
 if __name__ == '__main__':
-    new_sth = ""
-    old_sth = "Test-STH"
-
-    run(test(new_sth))
+    run(test("Test-STH"))
