@@ -1,5 +1,6 @@
 # -- Imports ------------------------------------------------------------------
 
+from itertools import chain, repeat
 from typing import List
 from unittest import main as unittest_main, skipIf
 
@@ -29,12 +30,14 @@ class TestSTH(TestSensorNode):
         cls.add_attribute("Acceleration Sensor",
                           "{cls.acceleration_sensor}",
                           pdf=True)
-        cls.add_attribute("Acceleration Slope X",
-                          "{cls.acceleration_slope_x:.5f}",
-                          pdf=False)
-        cls.add_attribute("Acceleration Offset X",
-                          "{cls.acceleration_offset_x:.3f}",
-                          pdf=False)
+
+        for axis in "xyz":
+            cls.add_attribute(f"Acceleration Slope {axis.upper()}",
+                              "{cls.acceleration_slope_" + axis + ":.5f}",
+                              pdf=False)
+            cls.add_attribute(f"Acceleration Offset {axis.upper()}",
+                              "{cls.acceleration_offset_" + axis + ":.3f}",
+                              pdf=False)
 
         cls.report = Report(node='STH')
 
@@ -347,27 +350,65 @@ class TestSTH(TestSensorNode):
             acceleration_slope = acceleration_max / adc_max
             acceleration_offset = -(acceleration_max / 2)
 
-            await self.can.write_eeprom_x_axis_acceleration_slope(
-                acceleration_slope)
-            cls.acceleration_slope_x = (
-                await self.can.read_eeprom_x_axis_acceleration_slope())
-            self.assertAlmostEqual(
-                acceleration_slope,
-                cls.acceleration_slope_x,
-                msg=f"Written acceleration slope “{acceleration_slope:.5f}” "
-                "does not match read acceleration slope "
-                f"“{cls.acceleration_slope_x:.5f}”")
+            async def write_read_check(class_variable, write_routine, value,
+                                       read_routine, axis, name):
+                await write_routine(value)
+                setattr(cls, class_variable, await read_routine())
+                read_value = getattr(cls, class_variable)
+                self.assertAlmostEqual(
+                    value,
+                    read_value,
+                    msg=f"Written {axis} acceleration {name} "
+                    f"“{acceleration_slope:.5f}” does not match read "
+                    f"{axis} acceleration {name} "
+                    f"“{read_value:.5f}”")
 
-            await self.can.write_eeprom_x_axis_acceleration_offset(
-                acceleration_offset)
-            cls.acceleration_offset_x = (
-                await self.can.read_eeprom_x_axis_acceleration_offset())
-            self.assertAlmostEqual(
-                acceleration_offset,
-                cls.acceleration_offset_x,
-                msg=f"Written acceleration offset “{acceleration_offset:.3f}” "
-                "does not match read acceleration offset "
-                f"“{cls.acceleration_offset_x:.3f}”")
+            class_variables = (
+                'acceleration_slope_x',
+                'acceleration_slope_y',
+                'acceleration_slope_z',
+                'acceleration_offset_x',
+                'acceleration_offset_y',
+                'acceleration_offset_z',
+            )
+            write_routines = (
+                self.can.write_eeprom_x_axis_acceleration_slope,
+                self.can.write_eeprom_y_axis_acceleration_slope,
+                self.can.write_eeprom_z_axis_acceleration_slope,
+                self.can.write_eeprom_x_axis_acceleration_offset,
+                self.can.write_eeprom_y_axis_acceleration_offset,
+                self.can.write_eeprom_z_axis_acceleration_offset,
+            )
+            read_routines = (
+                self.can.read_eeprom_x_axis_acceleration_slope,
+                self.can.read_eeprom_y_axis_acceleration_slope,
+                self.can.read_eeprom_z_axis_acceleration_slope,
+                self.can.read_eeprom_x_axis_acceleration_offset,
+                self.can.read_eeprom_y_axis_acceleration_offset,
+                self.can.read_eeprom_z_axis_acceleration_offset,
+            )
+            names = chain(*(repeat('slope', 3), repeat('offset', 3)))
+            values = chain(*(repeat(acceleration_slope, 3),
+                             repeat(acceleration_offset, 3)))
+            axes = list("xyz") * 2
+
+            for (
+                    class_variable,
+                    write_routine,
+                    value,
+                    read_routine,
+                    axis,
+                    name,
+            ) in zip(
+                    class_variables,
+                    write_routines,
+                    values,
+                    read_routines,
+                    axes,
+                    names,
+            ):
+                await write_read_check(class_variable, write_routine, value,
+                                       read_routine, axis, name)
 
             # =================
             # = EEPROM Status =
