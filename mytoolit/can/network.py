@@ -4284,6 +4284,44 @@ class Network:
 
         return await self.read_eeprom_float(address=8, offset=12, node='STH 1')
 
+    async def write_eeprom_y_axis_acceleration_offset(self,
+                                                      offset: int) -> None:
+        """Write the acceleration offset of the y-axis to the EEPROM
+
+        Parameters
+        ----------
+
+        offset:
+            The (negative) offset of the acceleration value in multiples of g₀
+
+        Example
+        -------
+
+        >>> from asyncio import run
+        >>> from math import isclose
+
+        Write and read the acceleration offset of STH 1
+
+        >>> async def write_read_y_axis_acceleration_offset(offset):
+        ...     async with Network() as network:
+        ...         await network.connect_sensor_device(0)
+        ...         await network.write_eeprom_y_axis_acceleration_offset(
+        ...                 offset)
+        ...         return (await
+        ...                 network.read_eeprom_y_axis_acceleration_offset())
+        >>> acceleration_difference_max = 200
+        >>> offset = -(acceleration_difference_max/2)
+        >>> offset_read = run(write_read_y_axis_acceleration_offset(offset))
+        >>> isclose(offset, offset_read)
+        True
+
+        """
+
+        await self.write_eeprom_float(address=8,
+                                      offset=12,
+                                      value=offset,
+                                      node='STH 1')
+
     async def read_acceleration_sensor_range_in_g(self) -> int:
         """Retrieve the maximum acceleration sensor range in multiples of g₀
 
