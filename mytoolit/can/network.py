@@ -4256,6 +4256,34 @@ class Network:
                                       value=slope,
                                       node='STH 1')
 
+    async def read_eeprom_y_axis_acceleration_offset(self) -> float:
+        """Retrieve the acceleration offset of the y-axis from the EEPROM
+
+        Returns
+        -------
+
+        The acceleration offset of the y-axis of STH 1
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Read the acceleration offset of STH 1
+
+        >>> async def read_y_axis_acceleration_offset():
+        ...     async with Network() as network:
+        ...         await network.connect_sensor_device(0)
+        ...         return (await
+        ...                 network.read_eeprom_y_axis_acceleration_offset())
+        >>> y_axis_acceleration_offset = run(read_y_axis_acceleration_offset())
+        >>> isinstance(y_axis_acceleration_offset, float)
+        True
+
+        """
+
+        return await self.read_eeprom_float(address=8, offset=12, node='STH 1')
+
     async def read_acceleration_sensor_range_in_g(self) -> int:
         """Retrieve the maximum acceleration sensor range in multiples of g₀
 
