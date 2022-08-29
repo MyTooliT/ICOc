@@ -170,6 +170,8 @@ Please note, that you do not need to install Simplicity Commander if you just wa
 
 ## Install
 
+### Clone the Repository
+
 Please clone [this repository](https://github.com/MyTooliT/ICOc) to a directory of your choice. You can either use the [command line tool `git`](https://git-scm.com/downloads):
 
 ```sh
@@ -178,15 +180,61 @@ git clone https://github.com/MyTooliT/ICOc.git
 
 or one of the many available [graphical user interfaces for Git](https://git-scm.com/downloads/guis) to do that.
 
-The repository contains everything necessary to communicate with an STU over CAN to retrieve data from an STH.
+#### Example: Clone the Repository With GitHub Desktop
 
-Before you use the software you need to install it (in developer mode). To do that please run the following command in the root of the repository:
+1. Download and install [Github Desktop][]
+2. Open [Github Desktop][] and log into your GitHub account (optional)
+3. Open the [repository website](https://github.com/MyTooliT/ICOc) in your browser
+4. Click on the green button “Code” in your browser window
+
+   <img src="Pictures/Code-Button.png" alt="Code Button" width="700">
+
+5. Select the item “Open with GitHub Desktop”
+
+   <img src="Pictures/Open-GitHub-Desktop.png" alt="Open With GitHub Desktop" width="400">
+
+6. Inside GitHub Desktop choose the path where you want to clone the repository (button “Choose…”) e.g. `Documents/ICOc` in your home directory
+
+   <img src="Pictures/Clone-Repository.png" alt="Clone Repository" width="500">
+
+7. Press the button “Clone”
+8. Wait until the cloning process is finished
+
+[github desktop]: https://desktop.github.com
+
+### Install the Python Package
+
+Before you use the software you need to install it (in developer mode). To do that please open a terminal window in the directory where you cloned the repository and run the following command:
 
 ```sh
 pip install -e .
 ```
 
 Afterwards you can use the various [scripts](#scripts:section:scripts) included in the package.
+
+#### Example: Install the Package Using Windows Terminal
+
+1. Install (Windows) [Terminal](https://aka.ms/terminal) if you have not done so already; On Windows 11 this application should be installed by default.
+2. Open Terminal
+3. Enter the text `cd ` (**including a trailing space character**) in the Terminal window
+4. Go to the directory where you cloned the ICOc repository (e.g. `Documents/ICOc`) in File Explorer and “copy” (<kbd>Ctrl</kbd> + <kbd>C</kbd>) the directory
+5. “Paste” the copied directory into the Terminal window (<kbd>Ctrl</kbd> + <kbd>V</kbd>)
+6. The resulting text in the Terminal now should look something like this (if you cloned the directory to `Documents/ICOc` in your home directory)
+
+   ```pwsh
+   cd C:\Users\USERNAME\Documents\ICOc
+   ```
+
+7. Press Return <kbd>⏎</kbd>
+8. Copy and paste the following text into the Terminal
+
+   ```sh
+   pip install -e .
+   ```
+
+9. Press Return <kbd>⏎</kbd>
+10. Wait until the installation finished successfully
+11. Close Terminal
 
 ### Troubleshooting
 
