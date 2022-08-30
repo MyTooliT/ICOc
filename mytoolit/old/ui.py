@@ -4,6 +4,7 @@ from typing import Callable, Iterable, Tuple
 
 from curses import curs_set, error, wrapper  # type: ignore[attr-defined]
 
+from mytoolit.can.sensor import SensorConfig
 from mytoolit.old.cli import CommandLineInterface
 from mytoolit.old.MyToolItCommands import (
     AdcAcquisitionTime,
@@ -430,13 +431,12 @@ class UserInterface(CommandLineInterface):
             sensor_config_device = self.Can.read_sensor_config()
             sensor_config_device.disable_channel(
                 *(not sensor_number for sensor_number in sensor_config_local))
-            sensors = str(sensor_config_device)
         else:
-            sensors = ", ".join([
-                f"S{channel}"
-                for channel, enabled in enumerate(sensor_config_local, start=1)
-                if enabled
+            sensor_config_device = SensorConfig(*[
+                number if enabled else 0
+                for number, enabled in enumerate(sensor_config_local, start=1)
             ])
+        sensors = str(sensor_config_device)
 
         infos.extend([("Run Time", f"{runtime} s\n"), ("Prescaler", prescaler),
                       ("Acquisition Time", acquistion_time),
