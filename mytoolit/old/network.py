@@ -1172,9 +1172,6 @@ class Network(object):
                     "____________________________________________________")
         return statistics
 
-    def dataPointsTotal(self, b1, b2, b3):
-        return [bool(b1), bool(b2), bool(b3)].count(True)
-
     def data_sets(self, first: Union[bool, int], second: Union[bool, int],
                   third: Union[bool, int]) -> int:
         """Get the number of data points for the same channel in a message
@@ -1223,12 +1220,12 @@ class Network(object):
         dataSetsVoltage = self.data_sets(self.VoltageConfig.b.bNumber1,
                                          self.VoltageConfig.b.bNumber2,
                                          self.VoltageConfig.b.bNumber3)
-        dataPointsAcc = self.dataPointsTotal(self.AccConfig.b.bNumber1,
-                                             self.AccConfig.b.bNumber2,
-                                             self.AccConfig.b.bNumber3)
-        dataPointsVoltage = self.dataPointsTotal(self.VoltageConfig.b.bNumber1,
-                                                 self.VoltageConfig.b.bNumber2,
-                                                 self.VoltageConfig.b.bNumber3)
+        dataPointsAcc = sum(self.AccConfig.b.bNumber1,
+                            self.AccConfig.b.bNumber2,
+                            self.AccConfig.b.bNumber3)
+        dataPointsVoltage = sum(self.VoltageConfig.b.bNumber1,
+                                self.VoltageConfig.b.bNumber2,
+                                self.VoltageConfig.b.bNumber3)
         totalDataPoints = dataPointsAcc + dataPointsVoltage
         msgAcc = samplingRate / totalDataPoints
         if 0 < dataSetsAcc:
