@@ -474,6 +474,22 @@ class CommandLineInterface():
         return ReceiveFailCounter
 
     def set_sensors(self, x: int, y: int, z: int) -> None:
+        """Set sensor numbers for measurement channels
+
+        Parameters
+        ----------
+
+        x:
+            Sensor number for first measurement channel
+
+        y:
+            Sensor number for second measurement channel
+
+        z:
+            Sensor number for third measurement channel
+
+        """
+
         self.sensor = SensorConfig(x, y, z)
 
         dataSets = self.Can.dataSetsCan20(*map(bool, (x, y, z)))
