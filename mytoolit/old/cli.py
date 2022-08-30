@@ -473,26 +473,26 @@ class CommandLineInterface():
             print("Send fail approximately: " + str(iSendFail) + "%")
         return ReceiveFailCounter
 
-    def set_sensors(self, x: int, y: int, z: int) -> None:
+    def set_sensors(self, first: int, second: int, third: int) -> None:
         """Set sensor numbers for measurement channels
 
         Parameters
         ----------
 
-        x:
+        first:
             Sensor number for first measurement channel
 
-        y:
+        second:
             Sensor number for second measurement channel
 
-        z:
+        third:
             Sensor number for third measurement channel
 
         """
 
-        self.sensor = SensorConfig(x, y, z)
+        self.sensor = SensorConfig(first, second, third)
 
-        dataSets = self.Can.dataSetsCan20(*map(bool, (x, y, z)))
+        dataSets = self.Can.dataSetsCan20(*map(bool, (first, second, third)))
         self.tAccDataFormat = DataSets[dataSets]
 
     def vDeviceAddressSet(self, iAddress):
