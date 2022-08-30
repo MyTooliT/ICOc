@@ -75,6 +75,36 @@ class SensorConfig:
                           for sensor, value in enumerate(
                               (self.first, self.second, self.third), start=1)))
 
+    def disable_channel(self,
+                        first: bool = False,
+                        second: bool = False,
+                        third: bool = False):
+        """Disable certain (measurement) channels
+
+        Parameters
+        ----------
+
+        first:
+            Specifies if the first measurement channel should be disabled or
+            not
+
+        second:
+            Specifies if the second measurement channel should be disabled or
+            not
+
+        third:
+            Specifies if the third measurement channel should be disabled or
+            not
+
+        """
+
+        if first:
+            self.first = 0
+        if second:
+            self.second = 0
+        if third:
+            self.third = 0
+
 
 # -- Main ---------------------------------------------------------------------
 
