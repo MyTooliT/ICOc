@@ -2003,6 +2003,9 @@ class Network(object):
     def write_sensor_config(self, x: int = 1, y: int = 2, z: int = 3) -> None:
         """Change the sensor numbers for the different “axes”
 
+        If you use the sensor number `0` for one of the different “axes”, then
+        the sensor number for that channel will stay the same.
+
         Parameters
         ----------
 
@@ -2018,7 +2021,7 @@ class Network(object):
         """
 
         for axis, sensor in zip(list("xyz"), (x, y, z)):
-            if not isinstance(sensor, int) or sensor < 1 or sensor > 255:
+            if not isinstance(sensor, int) or sensor < 0 or sensor > 255:
                 raise ValueError(
                     f"Incorrect value for argument {axis}: {sensor}")
 
