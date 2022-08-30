@@ -394,8 +394,8 @@ The (non-exhaustive) table below shows the compatible firmware for a certain dev
 
 | Device | Hardware Version | Microcontroller | Firmware                                                                                                                                                                 |
 | ------ | ---------------- | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| STH    | `1.3`            | BGM113          | • [Aladdin](https://github.com/MyTooliT/STH/releases/tag/Aladdin)                                                                                                        |
-| STH    | `2.2`            | BGM123          | • [Version 2.1.10](https://github.com/MyTooliT/STH/releases/tag/2.1.10)                                                                                                  |
+| STH    | `1.3`            | BGM113          | • [Version 2.1.10](https://github.com/MyTooliT/STH/releases/tag/2.1.10)                                                                                                  |
+| STH    | `2.2`            | BGM123          | • [Aladdin](https://github.com/MyTooliT/STH/releases/tag/Aladdin)                                                                                                        |
 | SMH    | `2.1`            | BGM121          | • [Version 3.0.0](https://github.com/MyTooliT/STH/releases/tag/3.0.0) <br/>• [Version E3016 Beta](<https://github.com/MyTooliT/STH/releases/tag/E3016_BETA(11_Sensors)>) |
 
 ## Verification Tests
