@@ -320,8 +320,7 @@ class UserInterface(CommandLineInterface):
         if self.channel_config_supported:
             sensors = [read_channel_value(channel) for channel in range(1, 4)]
             # We use sensor number 1 for disabled sensors
-            self.Can.write_sensor_config(
-                *[1 if sensor <= 0 else sensor for sensor in sensors])
+            self.Can.write_sensor_config(*sensors)
         else:
             enabled_sensors = map(
                 lambda channel_number: int(bool(channel_number)),
