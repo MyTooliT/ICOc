@@ -1187,14 +1187,13 @@ class Network(object):
 
         """
 
-        dataSets = [bool(b1), bool(b2), bool(b3)].count(True)
-        if 0 == dataSets:
-            pass
-        elif 1 == dataSets:
-            dataSets = 3
-        else:
-            dataSets = 1
-        return dataSets
+        enabled_channels = sum((b1, b2, b3))
+        if enabled_channels <= 0:
+            return 0
+        if enabled_channels == 1:
+            return 3
+
+        return 1
 
     def bandwith(self):
         samplingRate = calcSamplingRate(self.AdcConfig["Prescaler"],
