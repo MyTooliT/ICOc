@@ -1175,7 +1175,8 @@ class Network(object):
     def dataPointsTotal(self, b1, b2, b3):
         return [bool(b1), bool(b2), bool(b3)].count(True)
 
-    def dataSetsCan20(self, first, second, third) -> int:
+    def dataSetsCan20(self, first: Union[bool, int], second: Union[bool, int],
+                      third: Union[bool, int]) -> int:
         """Get the number of data points for the same channel in a message
 
         For one activated measurement channel this will be 3, since we can
