@@ -290,20 +290,20 @@ class UserInterface(CommandLineInterface):
     def change_sensors_window(self):
         """Update sensor configuration"""
 
-        def read_channel_value(axis, default):
-            self.add_string(f"Sensor number (1 – 255) for “{axis}” axis "
-                            "(0 to disable): ")
+        def read_channel_value(channel):
+            self.add_string("Sensor number (1 – 255) for measurement "
+                            f"channel {channel} (0 to disable): ")
 
             value = self.read_input(
-                default=str(default),
+                default=str(channel),
                 allowed_key=lambda key: ord('0') <= key <= ord('9'),
                 allowed_value=lambda value: len(value) <= 3 and int(
                     value) <= 255)[1]
 
             return int(value)
 
-        def enable_disable_sensors(axis, default):
-            self.add_string(f"Enable “{axis}” axis sensor "
+        def enable_disable_sensors(channel, default):
+            self.add_string(f"Enable measurement channel {channel} "
                             "(1 to enable, 0 to disable): ")
 
             value = self.read_input(
@@ -317,10 +317,7 @@ class UserInterface(CommandLineInterface):
         self.stdscr.clear()
 
         if self.channel_config_supported:
-            sensors = [
-                read_channel_value(axis, default_value)
-                for default_value, axis in enumerate(list("XYZ"), start=1)
-            ]
+            sensors = [read_channel_value(channel) for channel in range(1, 4)]
             # We use sensor number 1 for disabled sensors
             self.Can.write_sensor_config(
                 *[1 if sensor <= 0 else sensor for sensor in sensors])
@@ -329,8 +326,9 @@ class UserInterface(CommandLineInterface):
                 lambda channel_number: int(bool(channel_number)),
                 (self.sensor.first, self.sensor.second, self.sensor.third))
             sensors = [
-                enable_disable_sensors(axis, default_value)
-                for default_value, axis in zip(enabled_sensors, list("XYZ"))
+                enable_disable_sensors(channel, default_value)
+                for channel, default_value in enumerate(enabled_sensors,
+                                                        start=1)
             ]
 
         # Enable/disable axes for transmission
