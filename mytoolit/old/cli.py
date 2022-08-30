@@ -492,7 +492,7 @@ class CommandLineInterface():
 
         self.sensor = SensorConfig(first, second, third)
 
-        dataSets = self.Can.dataSetsCan20(*map(bool, (first, second, third)))
+        dataSets = self.Can.data_sets(*map(bool, (first, second, third)))
         self.tAccDataFormat = DataSets[dataSets]
 
     def vDeviceAddressSet(self, iAddress):

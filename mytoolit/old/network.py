@@ -1175,8 +1175,8 @@ class Network(object):
     def dataPointsTotal(self, b1, b2, b3):
         return [bool(b1), bool(b2), bool(b3)].count(True)
 
-    def dataSetsCan20(self, first: Union[bool, int], second: Union[bool, int],
-                      third: Union[bool, int]) -> int:
+    def data_sets(self, first: Union[bool, int], second: Union[bool, int],
+                  third: Union[bool, int]) -> int:
         """Get the number of data points for the same channel in a message
 
         For one activated measurement channel this will be 3, since we can
@@ -1217,12 +1217,12 @@ class Network(object):
         samplingRate = calcSamplingRate(self.AdcConfig["Prescaler"],
                                         self.AdcConfig["AquisitionTime"],
                                         self.AdcConfig["OverSamplingRate"])
-        dataSetsAcc = self.dataSetsCan20(self.AccConfig.b.bNumber1,
-                                         self.AccConfig.b.bNumber2,
-                                         self.AccConfig.b.bNumber3)
-        dataSetsVoltage = self.dataSetsCan20(self.VoltageConfig.b.bNumber1,
-                                             self.VoltageConfig.b.bNumber2,
-                                             self.VoltageConfig.b.bNumber3)
+        dataSetsAcc = self.data_sets(self.AccConfig.b.bNumber1,
+                                     self.AccConfig.b.bNumber2,
+                                     self.AccConfig.b.bNumber3)
+        dataSetsVoltage = self.data_sets(self.VoltageConfig.b.bNumber1,
+                                         self.VoltageConfig.b.bNumber2,
+                                         self.VoltageConfig.b.bNumber3)
         dataPointsAcc = self.dataPointsTotal(self.AccConfig.b.bNumber1,
                                              self.AccConfig.b.bNumber2,
                                              self.AccConfig.b.bNumber3)
