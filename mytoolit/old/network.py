@@ -1176,6 +1176,17 @@ class Network(object):
         return [bool(b1), bool(b2), bool(b3)].count(True)
 
     def dataSetsCan20(self, b1, b2, b3):
+        """Get the number of data points for the same channel in a message
+
+        For one activated measurement channel this will be 3, since we can
+        send 3 measured values for the same enabled channel in one message.
+
+        For two or three activated measurement channels this will be 1, since
+        we send one value for each activated channel in a message. This also
+        means that for two activated channels we waste one (unused) byte.
+
+        """
+
         dataSets = [bool(b1), bool(b2), bool(b3)].count(True)
         if 0 == dataSets:
             pass
