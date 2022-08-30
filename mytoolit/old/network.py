@@ -1185,6 +1185,23 @@ class Network(object):
         we send one value for each activated channel in a message. This also
         means that for two activated channels we waste one (unused) byte.
 
+        Parameters
+        ----------
+
+        b1:
+            Specifies if the first measurement channel is enabled or not
+
+        b2:
+            Specifies if the second measurement channel is enabled or not
+
+        b3:
+            Specifies if the third measurement channel is enabled or not
+
+        Returns
+        -------
+
+        The number of data points for one measurement channel in a CAN message
+
         """
 
         enabled_channels = sum((b1, b2, b3))
