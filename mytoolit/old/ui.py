@@ -425,20 +425,17 @@ class UserInterface(CommandLineInterface):
         sampling_rate = self.samplingRate
         adc_reference = self.sAdcRef
 
-        enabled_axes = (self.sensor.first, self.sensor.second,
-                        self.sensor.third)
+        channel_states = (self.sensor.first, self.sensor.second,
+                          self.sensor.third)
 
         if self.channel_config_supported:
-            sensor = self.Can.read_sensor_config()
-            sensors = ", ".join([
-                f"{axis}: {number}"
-                for axis, number, enabled in zip(list("XYZ"), (
-                    sensor.first, sensor.second, sensor.third), enabled_axes)
-                if enabled
-            ])
+            sensor_config = self.Can.read_sensor_config()
+            sensor_config.disable_channel(
+                *(not channel_state for channel_state in channel_states))
+            sensors = str(sensor_config)
         else:
             sensors = ", ".join([
-                f"{axis}" for axis, enabled in zip(list("XYZ"), enabled_axes)
+                f"{axis}" for axis, enabled in zip(list("XYZ"), channel_states)
                 if enabled
             ])
 
