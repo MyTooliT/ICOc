@@ -433,7 +433,8 @@ class UserInterface(CommandLineInterface):
             sensors = str(sensor_config)
         else:
             sensors = ", ".join([
-                f"{axis}" for axis, enabled in zip(list("XYZ"), channel_states)
+                f"S{channel}"
+                for channel, enabled in enumerate(channel_states, start=1)
                 if enabled
             ])
 
