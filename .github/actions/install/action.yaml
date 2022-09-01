@@ -1,0 +1,15 @@
+name: Install ICOc
+description: Install ICOc and test/check packages
+runs:
+  using: composite
+  steps:
+
+    - name: Install ICOc
+      run: |
+        pip install -e .
+      shell: bash
+
+    - name: Install test and checker packages
+      run: |
+        pip install flake8 mypy pytest
+      shell: bash

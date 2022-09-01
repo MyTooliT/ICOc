@@ -1,14 +1,8 @@
-name: Test ICOc
-description: Check and test ICOc
+name: Check ICOc
+description: Check ICOc code base
 runs:
   using: composite
   steps:
-
-    - name: Install dependencies
-      run: |
-        pip install flake8 mypy pytest
-        pip install -e .
-      shell: bash
 
     - name: Check with flake8
       run: flake8
