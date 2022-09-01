@@ -1,0 +1,10 @@
+name: Test ICOc
+description: Test ICOc on Windows
+runs:
+  using: composite
+  steps:
+
+    - name: Test with pytest
+      run: | # Run all tests that do not require actual hardware
+        pytest --ignore-glob='*network.py' --ignore-glob='*commander.py'
+      shell: bash

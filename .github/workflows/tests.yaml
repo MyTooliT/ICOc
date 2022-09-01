@@ -88,6 +88,5 @@ jobs:
     - name: Check ICOc code base
       uses: ./.github/actions/check
 
-    - name: Test with pytest
-      run: | # Run all tests that do not require actual hardware
-        pytest --ignore-glob='*network.py' --ignore-glob='*commander.py'
+    - name: Test ICOc
+      uses: ./.github/actions/test-windows
