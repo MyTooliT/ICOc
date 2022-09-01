@@ -34,6 +34,17 @@ test-python-can-no-hardware:
 	  --ignore-glob='*cli.py' \
 	  --ignore-glob='*ui.py'
 
+run-hardware-tests:
+	test-sth -v
+	test-stu -k eeprom -k connection
+
+run-hardware-tests-windows: run-hardware-tests
+	Invoke-Item 'STH Test.pdf'
+	Invoke-Item 'STU Test.pdf'
+
+run-hardware-tests-mac: run-hardware-tests
+	open 'STH Test.pdf' 'STU Test.pdf'
+
 # =================
 # = Documentation =
 # =================
