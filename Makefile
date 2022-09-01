@@ -10,10 +10,35 @@ HTML_FILE := $(OUTPUT_DIRECTORY)/$(OUTPUT_NAME).html
 
 # -- Rules ---------------------------------------------------------------------
 
-# Always regenerate output files
-.PHONY: clean $(EPUB_FILE) $(HTML_FILE) $(PDF_FILE)
+# =========
+# = Tests =
+# =========
 
-all: init $(EPUB_FILE) $(HTML_FILE) $(PDF_FILE) cleanup
+check:
+	flake8
+	mypy mytoolit
+
+test:
+	pytest -v
+
+test-python-can:
+	pytest --ignore-glob='*cli.py' --ignore-glob='*ui.py'
+
+test-win-no-hardware:
+	pytest --ignore-glob='*network.py' --ignore-glob='*commander.py'
+
+test-python-can-no-hardware:
+	pytest \
+	  --ignore-glob='*network.py' \
+	  --ignore-glob='*commander.py' \
+	  --ignore-glob='*cli.py' \
+	  --ignore-glob='*ui.py'
+
+# =================
+# = Documentation =
+# =================
+
+doc: init $(EPUB_FILE) $(HTML_FILE) $(PDF_FILE) cleanup
 
 # Copy pictures to repository root and create diagrams
 init:
