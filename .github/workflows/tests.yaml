@@ -17,10 +17,6 @@ jobs:
           - '3.9'
           - '3.10'
 
-# Unfortunately GitHub Actions does not support YAML anchors. We therefore copy
-# and paste most of the code for each runner 😢. For more information, please
-# take a look here: https://github.community/t/16851
-
     steps:
 
     - uses: actions/checkout@v2
@@ -30,19 +26,8 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    - name: Install dependencies
-      # The latest versions of mypy (> 0.931) report spurious errors about
-      # attributes such as `curs_set` not existing in the Windows `curses`
-      # package
-      run: |
-        pip install flake8 mypy pytest
-        pip install -e .
-
-    - name: Check with flake8
-      run: flake8
-
-    - name: Check with Mypy
-      run: mypy mytoolit
+    - name: Check ICOc
+      uses: ./.github/actions/check
 
     - name: Test with pytest
       run: | # Run all tests that do not require actual hardware
@@ -66,16 +51,8 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    - name: Install dependencies
-      run: |
-        pip install flake8 mypy pytest
-        pip install -e .
-
-    - name: Check with flake8
-      run: flake8
-
-    - name: Check with Mypy
-      run: mypy mytoolit
+    - name: Check and test ICOc
+      uses: ./.github/actions/check
 
     - name: Test with pytest
       # - Run all tests that do not require actual hardware
