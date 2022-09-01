@@ -10,6 +10,9 @@ HTML_FILE := $(OUTPUT_DIRECTORY)/$(OUTPUT_NAME).html
 
 # -- Rules ---------------------------------------------------------------------
 
+run-windows: check test run-hardware-tests-windows
+run-mac: check test-python-can run-hardware-tests-mac
+
 # =========
 # = Tests =
 # =========
