@@ -4,6 +4,34 @@ on:
   - push
 
 jobs:
+
+  linux:
+
+    name: 🐧 Ubuntu
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version:
+          - '3.9'
+
+    steps:
+
+    - uses: actions/checkout@v2
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install ICOc
+      uses: ./.github/actions/install
+
+    - name: Check ICOc code base
+      uses: ./.github/actions/check
+
+    - name: Test ICOc
+      uses: ./.github/actions/test-unix
+
   mac:
     name: 🍎 macOS
     runs-on: macos-latest
@@ -29,3 +57,34 @@ jobs:
 
     - name: Test ICOc
       uses: ./.github/actions/test-unix
+
+  windows:
+
+    name: 🪟 Windows
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        python-version:
+          - '3.7'
+          - '3.8'
+          - '3.9'
+          - '3.10'
+
+    steps:
+
+    - uses: actions/checkout@v2
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install ICOc
+      uses: ./.github/actions/install
+
+    - name: Check ICOc code base
+      uses: ./.github/actions/check
+
+    - name: Test with pytest
+      run: | # Run all tests that do not require actual hardware
+        pytest --ignore-glob='*network.py' --ignore-glob='*commander.py'
