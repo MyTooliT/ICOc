@@ -42,8 +42,8 @@ run-hardware-tests:
 	test-stu -k eeprom -k connection
 
 run-hardware-tests-windows: run-hardware-tests
-	Invoke-Item 'STH Test.pdf'
-	Invoke-Item 'STU Test.pdf'
+	powershell -c "Invoke-Item (Join-Path $$PWD 'STH Test.pdf')"
+	powershell -c "Invoke-Item (Join-Path $$PWD 'STU Test.pdf')"
 
 run-hardware-tests-mac: run-hardware-tests
 	open 'STH Test.pdf' 'STU Test.pdf'
