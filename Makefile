@@ -11,7 +11,8 @@ HTML_FILE := $(OUTPUT_DIRECTORY)/$(OUTPUT_NAME).html
 # -- Rules ---------------------------------------------------------------------
 
 run-windows: check test run-hardware-tests-windows
-run-mac: check test-python-can run-hardware-tests-mac
+run-linux: check test-python-can run-hardware-tests-linux
+run-unix: check test-python-can run-hardware-tests-mac
 
 # =========
 # = Tests =
@@ -45,8 +46,12 @@ run-hardware-tests-windows: run-hardware-tests
 	powershell -c "Invoke-Item (Join-Path $$PWD 'STH Test.pdf')"
 	powershell -c "Invoke-Item (Join-Path $$PWD 'STU Test.pdf')"
 
-run-hardware-tests-mac: run-hardware-tests
+run-hardware-tests-unix: run-hardware-tests
 	open 'STH Test.pdf' 'STU Test.pdf'
+
+run-hardware-tests-linux: run-hardware-tests
+	xdg-open 'STH Test.pdf'
+	xdg-open 'STU Test.pdf'
 
 # =================
 # = Documentation =
