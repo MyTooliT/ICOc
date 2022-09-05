@@ -1144,9 +1144,15 @@ class Network:
         -------
 
         >>> from asyncio import run, sleep
+        >>> from platform import system
 
         Read and write the reduced energy time values of a sensor device
 
+        >>> if system() == 'Linux':
+        ...    async def reset():
+        ...        async with Network() as network:
+        ...            await network.reset_node('STU 1')
+        ...    run(reset())
         >>> async def read_write_energy_mode_reduced(sleep, advertisement):
         ...     async with Network() as network:
         ...         # We assume that at least one sensor device is available
@@ -1597,7 +1603,13 @@ class Network:
         --------
 
         >>> from asyncio import run
+        >>> from platform import system
 
+        >>> if system() == 'Linux':
+        ...    async def reset():
+        ...        async with Network() as network:
+        ...            await network.reset_node('STU 1')
+        ...    run(reset())
         >>> async def read_sensor_values():
         ...     async with Network() as network:
         ...         await network.connect_sensor_device(0)
@@ -1699,9 +1711,15 @@ class Network:
         -------
 
         >>> from asyncio import run
+        >>> from platform import system
 
         Read the supply voltage of STH 1
 
+        >>> if system() == 'Linux':
+        ...    async def reset():
+        ...        async with Network() as network:
+        ...            await network.reset_node('STU 1')
+        ...    run(reset())
         >>> async def read_supply_voltage():
         ...     async with Network() as network:
         ...         await network.connect_sensor_device(0)
@@ -2202,9 +2220,15 @@ class Network:
         -------
 
         >>> from asyncio import run
+        >>> from platform import system
 
         Read slope of acceleration for x-axis of STH 1
 
+        >>> if system() == 'Linux':
+        ...    async def reset():
+        ...        async with Network() as network:
+        ...            await network.reset_node('STU 1')
+        ...    run(reset())
         >>> async def read_slope():
         ...     async with Network() as network:
         ...         await network.connect_sensor_device(0)
@@ -4068,9 +4092,15 @@ class Network:
         -------
 
         >>> from asyncio import run
+        >>> from platform import system
 
         Read the acceleration slope of STH 1
 
+        >>> if system() == 'Linux':
+        ...    async def reset():
+        ...        async with Network() as network:
+        ...            await network.reset_node('STU 1')
+        ...    run(reset())
         >>> async def read_x_axis_acceleration_slope():
         ...     async with Network() as network:
         ...         await network.connect_sensor_device(0)
@@ -4135,9 +4165,15 @@ class Network:
         -------
 
         >>> from asyncio import run
+        >>> from platform import system
 
         Read the acceleration offset of STH 1
 
+        >>> if system() == 'Linux':
+        ...    async def reset():
+        ...        async with Network() as network:
+        ...            await network.reset_node('STU 1')
+        ...    run(reset())
         >>> async def read_x_axis_acceleration_offset():
         ...     async with Network() as network:
         ...         await network.connect_sensor_device(0)
@@ -4201,9 +4237,15 @@ class Network:
         -------
 
         >>> from asyncio import run
+        >>> from platform import system
 
         Read the acceleration slope in the y direction of STH 1
 
+        >>> if system() == 'Linux':
+        ...    async def reset():
+        ...        async with Network() as network:
+        ...            await network.reset_node('STU 1')
+        ...    run(reset())
         >>> async def read_y_axis_acceleration_slope():
         ...     async with Network() as network:
         ...         await network.connect_sensor_device(0)
