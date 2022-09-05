@@ -11,7 +11,7 @@ HTML_FILE := $(OUTPUT_DIRECTORY)/$(OUTPUT_NAME).html
 # -- Rules ---------------------------------------------------------------------
 
 run-windows: check test run-hardware-tests-windows
-run-linux: check test-python-can-linux run-hardware-tests-linux
+run-linux: check test-python-can run-hardware-tests-linux
 run-mac: check test-python-can run-hardware-tests-mac
 
 # =========
@@ -27,11 +27,6 @@ test:
 
 test-python-can:
 	pytest --ignore-glob='*cli.py' --ignore-glob='*ui.py'
-
-test-python-can-linux:
-	pytest --ignore-glob='*network.py' \
-	       --ignore-glob='*cli.py' \
-		   --ignore-glob='*ui.py'
 		   
 test-win-no-hardware:
 	pytest --ignore-glob='*network.py' --ignore-glob='*commander.py'
