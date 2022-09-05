@@ -118,9 +118,10 @@ Name=can*
 BitRate=1000000
 ```
 
-in a file called `/etc/systemd/network/can.network`. After that you can either restart your computer/VM or reload the configuration with the command:
+in a file called `/etc/systemd/network/can.network`. After that you can either restart your computer/VM or reload the configuration with the commands:
 
 ```sh
+sudo systemctl restart systemd-networkd
 networkctl reload
 ```
 
