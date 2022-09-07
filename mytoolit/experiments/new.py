@@ -3,8 +3,10 @@
 # -- Imports ------------------------------------------------------------------
 
 from asyncio import run
+from sys import stderr
 
 from mytoolit.can import Network
+from mytoolit.can.error import UnsupportedFeatureException
 
 
 # -- Functions ----------------------------------------------------------------
@@ -18,20 +20,15 @@ async def test(identifier):
         print(f"Connected to sensor device “{name}” with MAC "
               f"address “{mac_address}”")
 
-        slope = 5.321
-        print(f"Store slope value z-axis: {slope}")
-        await network.write_eeprom_z_axis_acceleration_slope(slope)
-        offset = 32.456
-        print(f"Store offset value z-axis: {offset}")
-        await network.write_eeprom_z_axis_acceleration_offset(offset)
-
-        slope = await network.read_eeprom_z_axis_acceleration_slope()
-        print(f"Slope z-axis: {slope}")
-        offset = await network.read_eeprom_z_axis_acceleration_offset()
-        print(f"Offset z-axis: {offset}")
+        try:
+            await network.write_sensor_configuration(3, 2, 1)
+            sensor_config = await network.read_sensor_configuration()
+            print(f"Sensor Configuration: {sensor_config}")
+        except UnsupportedFeatureException as error:
+            print(error, file=stderr)
 
 
 # -- Main ---------------------------------------------------------------------
 
 if __name__ == '__main__':
-    run(test("Test-STH"))
+    run(test(identifier=0))
