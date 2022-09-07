@@ -172,6 +172,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="2.4.2" data-path=""><a href="#execution"><i class="fa fa-check"></i><b>2.4.2</b> Execution</a></li>
 <li class="chapter" data-level="2.4.3" data-path=""><a href="#problematic-tests"><i class="fa fa-check"></i><b>2.4.3</b> Problematic Tests</a></li>
 </ul></li>
+<li class="chapter" data-level="2.5" data-path=""><a href="#virtualization"><i class="fa fa-check"></i><b>2.5</b> Virtualization</a><ul>
+<li class="chapter" data-level="2.5.1" data-path=""><a href="#windows-subsystem-for-linux-2"><i class="fa fa-check"></i><b>2.5.1</b> Windows Subsystem for Linux 2</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path=""><a href="#scripts"><i class="fa fa-check"></i><b>3</b> Scripts</a><ul>
 <li class="chapter" data-level="3.1" data-path=""><a href="#eeprom-check"><i class="fa fa-check"></i><b>3.1</b> EEPROM Check</a></li>
@@ -1151,9 +1154,191 @@ Logging:
 </tr>
 </tbody>
 </table>
+</div>
+</div>
+</div>
+<div id="virtualization" class="section level2 hasAnchor">
+<h2><span class="header-section-number">2.5</span> Virtualization<a href="#virtualization" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>You can also use (parts of) ICOc with various virtualization software. For that to work you have to make sure that (at least) the PEAK CAN adapter is attached to the virtual guest operating system. For some virtualization software you might have to install additional software for that to work. For example, <a href="https://www.virtualbox.org">VirtualBox</a> requires that you install the <a href="https://www.virtualbox.org/wiki/Downloads">VirtualBox Extension Pack</a> before you can use USB 2 and USB 3 devices.</p>
+<p>The table below shows some of the virtualization software we tried and that worked (when we tested it).</p>
+<table>
+<colgroup>
+<col width="32%" />
+<col width="8%" />
+<col width="21%" />
+<col width="15%" />
+<col width="22%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Virtualization Software</th>
+<th>Host OS</th>
+<th>Host Architecture</th>
+<th>Guest OS</th>
+<th>Guest Architecture</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="https://www.parallels.com">Parallels Desktop</a></td>
+<td>macOS</td>
+<td><code>x64</code></td>
+<td>Ubuntu 20.04</td>
+<td><code>x64</code></td>
+</tr>
+<tr class="even">
+<td><a href="https://www.parallels.com">Parallels Desktop</a></td>
+<td>macOS</td>
+<td><code>x64</code></td>
+<td>Windows 10</td>
+<td><code>x64</code></td>
+</tr>
+<tr class="odd">
+<td><a href="https://www.parallels.com">Parallels Desktop</a></td>
+<td>macOS</td>
+<td><code>ARM64</code></td>
+<td>Fedora 36</td>
+<td><code>ARM64</code></td>
+</tr>
+<tr class="even">
+<td><a href="https://www.virtualbox.org">VirtualBox</a></td>
+<td>macOS</td>
+<td><code>x64</code></td>
+<td>Windows 10</td>
+<td><code>x64</code></td>
+</tr>
+<tr class="odd">
+<td><a href="https://www.virtualbox.org">VirtualBox</a></td>
+<td>Windows</td>
+<td><code>x64</code></td>
+<td>Fedora 36</td>
+<td><code>x64</code></td>
+</tr>
+<tr class="even">
+<td><a href="http://aka.ms/wsl">WSL 2</a></td>
+<td>Windows</td>
+<td><code>x64</code></td>
+<td>Ubuntu 20.04</td>
+<td><code>x64</code></td>
+</tr>
+</tbody>
+</table>
+<div id="windows-subsystem-for-linux-2" class="section level3 hasAnchor">
+<h3><span class="header-section-number">2.5.1</span> Windows Subsystem for Linux 2<a href="#windows-subsystem-for-linux-2" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Using ICOc in the WSL 2 currently <a href="https://github.com/microsoft/WSL/issues/5533">requires using a custom Linux kernel</a>. We <strong>would not recommend</strong> using ICOc with this type of virtualization software, since the setup requires quite some amount of work and time. Nevertheless the steps below should show you how you can use the PEAK CAN adapter and hence ICOc with WSL 2.</p>
+<ol style="list-style-type: decimal">
+<li><p>Install WSL 2 (Windows Shell):</p>
+<pre><code>wsl --install</code></pre></li>
+<li><p>Install Ubuntu 20.4 VM (Windows Shell):</p>
+<pre class="pwsh"><code>wsl --install --distribution ubuntu
+wsl --set-version Ubuntu 2
+wsl --setdefault Ubuntu</code></pre></li>
+<li><p><a href="https://github.com/dorssel/usbipd-win/wiki/WSL-support#building-your-own-usbip-enabled-wsl-2-kernel">Create Custom Kernel</a></p>
+<p>Windows Shell:</p>
+<p><strong>Note:</strong> Please replace <code>&lt;user&gt;</code> with your (Linux) username (e.g. <code>rene</code>)</p>
+<pre class="pwsh"><code>cd ~/Documents
+mkdir WSL
+cd WSL
+wsl --export Ubuntu wsl2-usbip.tar
+wsl --import wsl2-usbip wsl2-usbip wsl2-usbip.tar
+wsl --set-version wsl2-usbip 2
+wsl --distribution wsl2-usbip --user &lt;user&gt;</code></pre>
+<p>Linux Shell:</p>
+<div class="sourceCode" id="cb45"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb45-1"><a href="#cb45-1"></a><span class="fu">sudo</span> apt update</span>
+<span id="cb45-2"><a href="#cb45-2"></a><span class="fu">sudo</span> apt upgrade</span>
+<span id="cb45-3"><a href="#cb45-3"></a><span class="fu">sudo</span> apt install build-essential flex bison libssl-dev libelf-dev \</span>
+<span id="cb45-4"><a href="#cb45-4"></a>                 libncurses-dev autoconf libudev-dev libtool dwarves</span>
+<span id="cb45-5"><a href="#cb45-5"></a><span class="bu">cd</span> ~</span>
+<span id="cb45-6"><a href="#cb45-6"></a><span class="fu">git</span> clone https://github.com/microsoft/WSL2-Linux-Kernel.git</span>
+<span id="cb45-7"><a href="#cb45-7"></a><span class="bu">cd</span> WSL2-Linux-Kernel</span>
+<span id="cb45-8"><a href="#cb45-8"></a><span class="fu">uname</span> -r <span class="co"># 5.10.102.1-microsoft-standard-WSL2 → branch …5.10.y</span></span>
+<span id="cb45-9"><a href="#cb45-9"></a><span class="fu">git</span> checkout linux-msft-wsl-5.10.y</span>
+<span id="cb45-10"><a href="#cb45-10"></a><span class="fu">cat</span> /proc/config.gz <span class="kw">|</span> <span class="fu">gunzip</span> <span class="op">&gt;</span> .config</span>
+<span id="cb45-11"><a href="#cb45-11"></a><span class="fu">sudo</span> make menuconfig</span></code></pre></div>
+<p>Enable these additional features:</p>
+<ul>
+<li><p><code>Device Drivers</code> → <code>USB Support</code></p></li>
+<li><p><code>Device Drivers</code> → <code>USB Support</code> → <code>USB announce new devices</code></p></li>
+<li><p><code>Device Drivers</code> → <code>USB Support</code> → <code>USB Modem (CDC ACM) support</code></p></li>
+<li><p><code>Device Drivers</code> → <code>USB Support</code> → <code>USB/IP</code></p></li>
+<li><p><code>Device Drivers</code> → <code>USB Support</code> → <code>USB/IP</code> → <code>VHCI HCD</code></p></li>
+<li><p><code>Device Drivers</code> → <code>USB Serial Converter Support</code></p></li>
+<li><p><code>Device Drivers</code> → <code>USB Serial Converter Support</code> → <code>USB FTDI Single port Serial Driver</code></p></li>
+<li><p><code>Networking support</code> → <code>CAN subsystem support</code></p></li>
+<li><p><code>Networking support</code> → <code>CAN subsystem support</code> → <code>Raw CAN Protocol</code></p></li>
+<li><p><code>Networking support</code> → <code>CAN subsystem support</code> → <code>CAN device drivers</code> → <code>Virtual Local CAN Interface</code></p></li>
+<li><p><code>Networking support</code> → <code>CAN subsystem support</code> → <code>CAN device drivers</code> → <code>Serial / USB serial CAN Adaptors (slcan)</code></p></li>
+<li><p><code>Networking support</code> → <code>CAN subsystem support</code> → <code>CAN device drivers</code> → → <code>CAN USB Interfaces</code> → <code>PEAK PCAN-USB/USB Pro interfaces for CAN 2.0b/CAN-FD</code></p></li>
+</ul>
+<p>Save the modified kernel configuration.</p>
+<p>Linux Shell:</p>
+<div class="sourceCode" id="cb46"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb46-1"><a href="#cb46-1"></a><span class="fu">touch</span> .scmversion</span>
+<span id="cb46-2"><a href="#cb46-2"></a><span class="fu">sudo</span> make</span>
+<span id="cb46-3"><a href="#cb46-3"></a><span class="fu">sudo</span> make modules_install</span>
+<span id="cb46-4"><a href="#cb46-4"></a><span class="fu">sudo</span> make install</span></code></pre></div></li>
+<li><p>Install <code>usbipd-win</code> (Linux Shell):</p>
+<div class="sourceCode" id="cb47"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb47-1"><a href="#cb47-1"></a><span class="bu">cd</span> tools/usb/usbip</span>
+<span id="cb47-2"><a href="#cb47-2"></a><span class="fu">sudo</span> ./autogen.sh</span>
+<span id="cb47-3"><a href="#cb47-3"></a><span class="fu">sudo</span> ./configure</span>
+<span id="cb47-4"><a href="#cb47-4"></a><span class="fu">sudo</span> make install</span>
+<span id="cb47-5"><a href="#cb47-5"></a><span class="fu">sudo</span> cp libsrc/.libs/libusbip.so.0 /lib/libusbip.so.0</span>
+<span id="cb47-6"><a href="#cb47-6"></a><span class="fu">sudo</span> apt-get install hwdata</span></code></pre></div></li>
+<li><p>Copy image (Linux Shell):</p>
+<p><strong>Note:</strong> Please replace <code>&lt;user&gt;</code> with your (Windows) username (e.g. <code>rene</code>)</p>
+<div class="sourceCode" id="cb48"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb48-1"><a href="#cb48-1"></a><span class="bu">cd</span> ~/WSL2-Linux-Kernel</span>
+<span id="cb48-2"><a href="#cb48-2"></a><span class="fu">cp</span> arch/x86/boot/bzImage /mnt/c/Users/<span class="op">&lt;</span>user<span class="op">&gt;</span>/usbip-bzImage</span></code></pre></div></li>
+<li><p>Create <code>.wslconfig</code> in (root of) Windows user directory and store the following text:</p>
+<div class="sourceCode" id="cb49"><pre class="sourceCode ini"><code class="sourceCode ini"><span id="cb49-1"><a href="#cb49-1"></a><span class="kw">[wsl2]</span></span>
+<span id="cb49-2"><a href="#cb49-2"></a><span class="dt">kernel</span><span class="ot">=</span><span class="st">c:\\users\\&lt;user&gt;\\usbip-bzImage</span></span></code></pre></div>
+<p><strong>Note:</strong> Please replace <code>&lt;user&gt;</code> with your (Windows) username (e.g. <code>rene</code>)</p></li>
+<li><p>Set default distribution</p>
+<div class="sourceCode" id="cb50"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb50-1"><a href="#cb50-1"></a><span class="ex">wsl</span> --setdefault wsl2-usbip</span></code></pre></div></li>
+<li><p>Shutdown and restart WSL (Windows Shell):</p>
+<pre class="pwsh"><code>wsl --shutdown
+wsl</code></pre></li>
+<li><p>Install <code>usbipd</code> (Windows Shell):</p>
+<pre class="pwsh"><code>winget install usbipd</code></pre></li>
+<li><p>Attach CAN-Adapter to Linux VM (Windows Shell)</p>
+<pre class="pwsh"><code>usbipd wsl list
+# …
+# 2-2    0c72:0012  PCAN-USB FD                      Not attached
+# …
+usbipd wsl attach --busid 2-2
+usbipd wsl list
+# …
+# 2-2    0c72:0012  PCAN-USB FD                      Attached - wsl2-usbip
+# …</code></pre></li>
+<li><p>Check for PEAK CAN adapter in Linux (Linux Shell):</p>
+<div class="sourceCode" id="cb54"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb54-1"><a href="#cb54-1"></a><span class="fu">dmesg</span> <span class="kw">|</span> <span class="fu">grep</span> peak_usb</span>
+<span id="cb54-2"><a href="#cb54-2"></a><span class="co"># …</span></span>
+<span id="cb54-3"><a href="#cb54-3"></a><span class="co"># peak_usb 1-1:1.0: PEAK-System PCAN-USB FD v1 fw v3.2.0 (1 channels)</span></span>
+<span id="cb54-4"><a href="#cb54-4"></a><span class="co"># …</span></span>
+<span id="cb54-5"><a href="#cb54-5"></a></span>
+<span id="cb54-6"><a href="#cb54-6"></a><span class="ex">lsusb</span></span>
+<span id="cb54-7"><a href="#cb54-7"></a><span class="co"># …</span></span>
+<span id="cb54-8"><a href="#cb54-8"></a><span class="co"># Bus 001 Device 002: ID 0c72:0012 PEAK System PCAN-USB FD</span></span>
+<span id="cb54-9"><a href="#cb54-9"></a><span class="co"># …</span></span></code></pre></div></li>
+<li><p>Add virtual link for CAN device (Linux Shell)</p>
+<div class="sourceCode" id="cb55"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb55-1"><a href="#cb55-1"></a><span class="fu">sudo</span> ip link set can0 type can bitrate 1000000</span>
+<span id="cb55-2"><a href="#cb55-2"></a><span class="fu">sudo</span> ip link set can0 up</span></code></pre></div></li>
+<li><p>Install <code>pip</code> (Linux Shell):</p>
+<div class="sourceCode" id="cb56"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb56-1"><a href="#cb56-1"></a><span class="ex">apt</span> install python3-pip</span></code></pre></div></li>
+<li><p>Install ICOc (Linux Shell)</p>
+<div class="sourceCode" id="cb57"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb57-1"><a href="#cb57-1"></a><span class="bu">cd</span> ~</span>
+<span id="cb57-2"><a href="#cb57-2"></a><span class="fu">git</span> clone https://github.com/MyTooliT/ICOc.git</span>
+<span id="cb57-3"><a href="#cb57-3"></a><span class="bu">cd</span> ICOc</span>
+<span id="cb57-4"><a href="#cb57-4"></a><span class="ex">python3</span> -m pip install --prefix=<span class="va">$(</span><span class="ex">python3</span> -m site --user-base<span class="va">)</span> -e .</span></code></pre></div></li>
+<li><p>Run a script to test that everything works as expected (Linux Shell)</p>
+<div class="sourceCode" id="cb58"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb58-1"><a href="#cb58-1"></a><span class="ex">test-sth</span> -k connect</span></code></pre></div></li>
+</ol>
+<p><strong>Note:</strong> You only need to repeat steps</p>
+<ul>
+<li><code>10</code>: attach the CAN adapter to the VM in Windows and</li>
+<li><code>12</code>: create the link for the CAN device in Linux</li>
+</ul>
+<p>after you set up everything properly once.</p>
 
 <p><a name="scripts:section:scripts"></a></p>
-</div>
 </div>
 </div>
 </div>
@@ -1175,15 +1360,15 @@ Logging:
 <h2><span class="header-section-number">3.1</span> EEPROM Check<a href="#eeprom-check" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>The script <code>check-eeprom</code> connects to an STH using its MAC address. Afterwards it writes a given byte value (default: <code>10</code>) into all the cells of an EEPROM page. It then resets the STH, connects again and shows the amount of incorrect EEPROM bytes. It repeats the last steps 5 times before it prints all values in the EEPROM page.</p>
 <p>The command below shows how to execute the EEPROM check for the STH with MAC address <code>08:6b:d7:01:de:81</code>:</p>
-<div class="sourceCode" id="cb42"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb42-1"><a href="#cb42-1"></a><span class="ex">check-eeprom</span> 08:6b:d7:01:de:81</span></code></pre></div>
+<div class="sourceCode" id="cb59"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb59-1"><a href="#cb59-1"></a><span class="ex">check-eeprom</span> 08:6b:d7:01:de:81</span></code></pre></div>
 <p>You can specify the value that should be written into the EEPROM cells using the option <code>--value</code>:</p>
-<div class="sourceCode" id="cb43"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb43-1"><a href="#cb43-1"></a><span class="ex">check-eeprom</span> 08:6b:d7:01:de:81 --value 42</span></code></pre></div>
+<div class="sourceCode" id="cb60"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb60-1"><a href="#cb60-1"></a><span class="ex">check-eeprom</span> 08:6b:d7:01:de:81 --value 42</span></code></pre></div>
 <p><a name="section:icoc"></a></p>
 </div>
 <div id="icoc-1" class="section level2 hasAnchor">
 <h2><span class="header-section-number">3.2</span> ICOc<a href="#icoc-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>The command <code>icoc</code> calls <code>ui.py</code>. All command line arguments to the script will be directly forwarded to <code>ui.py</code>. For example, to read acceleration data for 10 seconds from the STH with the (Bluetooth advertisement) name <code>CGvXAd6B</code>, you can use the following command:</p>
-<div class="sourceCode" id="cb44"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb44-1"><a href="#cb44-1"></a><span class="ex">icoc</span> -n CGvXAd6B -r 10</span></code></pre></div>
+<div class="sourceCode" id="cb61"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb61-1"><a href="#cb61-1"></a><span class="ex">icoc</span> -n CGvXAd6B -r 10</span></code></pre></div>
 <p><a name="section:mac-address-conversion"></a></p>
 </div>
 <div id="mac-address-conversion" class="section level2 hasAnchor">
@@ -1191,13 +1376,13 @@ Logging:
 <p>The utility <code>convert-mac-base64</code> returns the Base64 encoded version of a MAC address. We use the encoded addresses as unique Bluetooth advertisement name for the STH (or SHA). Unfortunately we can not use the MAC address directly because the maximum length of the name is limited to 8 characters. To decode the Base64 name back into a Bluetooth address you can use the script <code>convert-base64-mac</code>.</p>
 <div id="examples" class="section level3 hasAnchor">
 <h3><span class="header-section-number">3.3.1</span> Examples<a href="#examples" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div class="sourceCode" id="cb45"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb45-1"><a href="#cb45-1"></a><span class="co"># Convert a MAC address into an 8 character name</span></span>
-<span id="cb45-2"><a href="#cb45-2"></a><span class="ex">convert-mac-base64</span> 08:6b:d7:01:de:81</span>
-<span id="cb45-3"><a href="#cb45-3"></a><span class="co">#&gt; CGvXAd6B</span></span>
-<span id="cb45-4"><a href="#cb45-4"></a></span>
-<span id="cb45-5"><a href="#cb45-5"></a><span class="co"># Convert the Base64 encoded name back into a MAC address</span></span>
-<span id="cb45-6"><a href="#cb45-6"></a><span class="ex">convert-base64-mac</span> CGvXAd6B</span>
-<span id="cb45-7"><a href="#cb45-7"></a><span class="co">#&gt; 08:6b:d7:01:de:81</span></span></code></pre></div>
+<div class="sourceCode" id="cb62"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb62-1"><a href="#cb62-1"></a><span class="co"># Convert a MAC address into an 8 character name</span></span>
+<span id="cb62-2"><a href="#cb62-2"></a><span class="ex">convert-mac-base64</span> 08:6b:d7:01:de:81</span>
+<span id="cb62-3"><a href="#cb62-3"></a><span class="co">#&gt; CGvXAd6B</span></span>
+<span id="cb62-4"><a href="#cb62-4"></a></span>
+<span id="cb62-5"><a href="#cb62-5"></a><span class="co"># Convert the Base64 encoded name back into a MAC address</span></span>
+<span id="cb62-6"><a href="#cb62-6"></a><span class="ex">convert-base64-mac</span> CGvXAd6B</span>
+<span id="cb62-7"><a href="#cb62-7"></a><span class="co">#&gt; 08:6b:d7:01:de:81</span></span></code></pre></div>
 <p><a name="section:remove-log-and-pdf-files"></a></p>
 </div>
 </div>
@@ -1210,11 +1395,11 @@ Logging:
 <li>log files (<code>*.log</code>)</li>
 </ul>
 <p>from the repository root folder. To show the names of the removed files add the option <code>-v</code> (or <code>--verbose</code>):</p>
-<div class="sourceCode" id="cb46"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb46-1"><a href="#cb46-1"></a><span class="ex">clean-repo</span> -v</span></code></pre></div>
+<div class="sourceCode" id="cb63"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb63-1"><a href="#cb63-1"></a><span class="ex">clean-repo</span> -v</span></code></pre></div>
 <p>If you also want to remove Python bytecode files from the repository we recommend you install <a href="https://pypi.org/project/pyclean/"><code>pyclean</code></a>:</p>
-<div class="sourceCode" id="cb47"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb47-1"><a href="#cb47-1"></a><span class="ex">pip</span> install pyclean</span></code></pre></div>
+<div class="sourceCode" id="cb64"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb64-1"><a href="#cb64-1"></a><span class="ex">pip</span> install pyclean</span></code></pre></div>
 <p>and run the following commands in the root of the repository:</p>
-<div class="sourceCode" id="cb48"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb48-1"><a href="#cb48-1"></a><span class="ex">clean-repo</span> -v<span class="kw">;</span> <span class="ex">pyclean</span> -v .</span></code></pre></div>
+<div class="sourceCode" id="cb65"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb65-1"><a href="#cb65-1"></a><span class="ex">clean-repo</span> -v<span class="kw">;</span> <span class="ex">pyclean</span> -v .</span></code></pre></div>
 <p><a name="section:test-sth"></a></p>
 </div>
 <div id="test-sth" class="section level2 hasAnchor">
@@ -1239,7 +1424,7 @@ Logging:
 <h2><span class="header-section-number">4.1</span> Style<a href="#style" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Please use the guidelines from <a href="https://www.python.org/dev/peps/pep-0008/">PEP 8</a>. For code formatting we currently use <a href="https://github.com/google/yapf">YAPF</a>, which should format code according to PEP 8 by default.</p>
 <p>To format the whole code base you can use the following command in the root of the repository:</p>
-<div class="sourceCode" id="cb49"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb49-1"><a href="#cb49-1"></a><span class="ex">yapf</span> --in-place --parallel --recursive .</span></code></pre></div>
+<div class="sourceCode" id="cb66"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb66-1"><a href="#cb66-1"></a><span class="ex">yapf</span> --in-place --parallel --recursive .</span></code></pre></div>
 <p>YAPF will not</p>
 <ul>
 <li>split long strings and</li>
@@ -1258,16 +1443,16 @@ Logging:
 <div id="flake8" class="section level4 hasAnchor">
 <h4><span class="header-section-number">4.2.1.1</span> Flake8<a href="#flake8" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>We check the code with <a href="https://flake8.pycqa.org">flake8</a>:</p>
-<div class="sourceCode" id="cb50"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb50-1"><a href="#cb50-1"></a><span class="ex">pip</span> install flake8</span></code></pre></div>
+<div class="sourceCode" id="cb67"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb67-1"><a href="#cb67-1"></a><span class="ex">pip</span> install flake8</span></code></pre></div>
 <p>Please use the following command in the root of the repository to make sure you did not add any code that introduces warnings:</p>
-<div class="sourceCode" id="cb51"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb51-1"><a href="#cb51-1"></a><span class="ex">flake8</span></span></code></pre></div>
+<div class="sourceCode" id="cb68"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb68-1"><a href="#cb68-1"></a><span class="ex">flake8</span></span></code></pre></div>
 </div>
 <div id="mypy" class="section level4 hasAnchor">
 <h4><span class="header-section-number">4.2.1.2</span> Mypy<a href="#mypy" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>To check the type hint in the code base we use the static code checker <a href="https://mypy.readthedocs.io">Mypy</a>:</p>
-<div class="sourceCode" id="cb52"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb52-1"><a href="#cb52-1"></a><span class="ex">pip</span> install mypy</span></code></pre></div>
+<div class="sourceCode" id="cb69"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb69-1"><a href="#cb69-1"></a><span class="ex">pip</span> install mypy</span></code></pre></div>
 <p>Please use the following command in the root of the repository to check the code base for type problems:</p>
-<div class="sourceCode" id="cb53"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb53-1"><a href="#cb53-1"></a><span class="ex">mypy</span> mytoolit</span></code></pre></div>
+<div class="sourceCode" id="cb70"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb70-1"><a href="#cb70-1"></a><span class="ex">mypy</span> mytoolit</span></code></pre></div>
 </div>
 </div>
 <div id="automatic-tests" class="section level3 hasAnchor">
@@ -1275,11 +1460,11 @@ Logging:
 <div id="requirements-1" class="section level4 hasAnchor">
 <h4><span class="header-section-number">4.2.2.1</span> Requirements<a href="#requirements-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Please install the <a href="https://docs.pytest.org">pytest testing module</a>:</p>
-<div class="sourceCode" id="cb54"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb54-1"><a href="#cb54-1"></a><span class="ex">pip</span> install pytest</span></code></pre></div>
+<div class="sourceCode" id="cb71"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb71-1"><a href="#cb71-1"></a><span class="ex">pip</span> install pytest</span></code></pre></div>
 <div id="usage" class="section level5 hasAnchor">
 <h5><span class="header-section-number">4.2.2.1.1</span> Usage<a href="#usage" class="anchor-section" aria-label="Anchor link to header"></a></h5>
 <p>Please run the following command in the root of the repository:</p>
-<div class="sourceCode" id="cb55"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb55-1"><a href="#cb55-1"></a><span class="ex">pytest</span> -v</span></code></pre></div>
+<div class="sourceCode" id="cb72"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb72-1"><a href="#cb72-1"></a><span class="ex">pytest</span> -v</span></code></pre></div>
 <p>and make sure that it reports no test failures.</p>
 </div>
 </div>
@@ -1327,14 +1512,14 @@ Logging:
 <ol style="list-style-type: decimal">
 <li><p>Open your favorite terminal application and change your working directory to the root of the repository</p></li>
 <li><p>Remove log and data files from the repository:</p>
-<div class="sourceCode" id="cb56"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb56-1"><a href="#cb56-1"></a><span class="ex">clean-repo</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb73"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb73-1"><a href="#cb73-1"></a><span class="ex">clean-repo</span></span></code></pre></div></li>
 <li><p>Check that no HDF5 files exist in the repository. The following command should not produce any output:</p>
-<div class="sourceCode" id="cb57"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb57-1"><a href="#cb57-1"></a><span class="fu">ls</span> *.hdf5</span></code></pre></div></li>
+<div class="sourceCode" id="cb74"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb74-1"><a href="#cb74-1"></a><span class="fu">ls</span> *.hdf5</span></code></pre></div></li>
 <li><p>Give your test STH the <a href="#tutorials:section:sth-renaming">name</a> “Test-STH”</p></li>
 <li><p>Measure data for 10 seconds using the following command:</p>
-<div class="sourceCode" id="cb58"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb58-1"><a href="#cb58-1"></a><span class="ex">icoc</span> -n <span class="st">&#39;Test-STH&#39;</span> -r 10</span></code></pre></div></li>
+<div class="sourceCode" id="cb75"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb75-1"><a href="#cb75-1"></a><span class="ex">icoc</span> -n <span class="st">&#39;Test-STH&#39;</span> -r 10</span></code></pre></div></li>
 <li><p>Check that the repo now contains a HDF5 (<code>*.hdf5</code>) file</p>
-<div class="sourceCode" id="cb59"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb59-1"><a href="#cb59-1"></a><span class="fu">ls</span> *.hdf5</span></code></pre></div></li>
+<div class="sourceCode" id="cb76"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb76-1"><a href="#cb76-1"></a><span class="fu">ls</span> *.hdf5</span></code></pre></div></li>
 <li><p>Open the file in <a href="#readme:section:measurement-data">HDFView</a></p></li>
 <li><p>Check that the table <code>acceleration</code> contains about 95 000 values</p></li>
 <li><p>Check that the table contains three columns</p></li>
@@ -1342,14 +1527,14 @@ Logging:
 <li><p>Check that <code>Sensor_Range</code> contains the correct maximum acceleration values for “Test-STH”</p></li>
 <li><p>Check that <code>Start_Time</code> contains (roughly) the date and time when you executed the command from step 5</p></li>
 <li><p>Check that ICOc handles the following incorrect program calls. The program should <strong>not crash</strong> and print a (helpful) <strong>error description</strong> (not a stak trace) before it exits.</p>
-<div class="sourceCode" id="cb60"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb60-1"><a href="#cb60-1"></a><span class="ex">icoc</span> -b <span class="st">&#39;12-12-12-12-12&#39;</span></span>
-<span id="cb60-2"><a href="#cb60-2"></a><span class="ex">icoc</span> -n <span class="st">&#39;TooooLong&#39;</span></span>
-<span id="cb60-3"><a href="#cb60-3"></a><span class="ex">icoc</span> -s 1</span>
-<span id="cb60-4"><a href="#cb60-4"></a><span class="ex">icoc</span> -a 257</span>
-<span id="cb60-5"><a href="#cb60-5"></a><span class="ex">icoc</span> -o -1</span>
-<span id="cb60-6"><a href="#cb60-6"></a><span class="ex">icoc</span> -1 <span class="st">&#39; -1&#39;</span></span>
-<span id="cb60-7"><a href="#cb60-7"></a><span class="ex">icoc</span> -2 256</span>
-<span id="cb60-8"><a href="#cb60-8"></a><span class="ex">icoc</span> -3 nine</span></code></pre></div></li>
+<div class="sourceCode" id="cb77"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb77-1"><a href="#cb77-1"></a><span class="ex">icoc</span> -b <span class="st">&#39;12-12-12-12-12&#39;</span></span>
+<span id="cb77-2"><a href="#cb77-2"></a><span class="ex">icoc</span> -n <span class="st">&#39;TooooLong&#39;</span></span>
+<span id="cb77-3"><a href="#cb77-3"></a><span class="ex">icoc</span> -s 1</span>
+<span id="cb77-4"><a href="#cb77-4"></a><span class="ex">icoc</span> -a 257</span>
+<span id="cb77-5"><a href="#cb77-5"></a><span class="ex">icoc</span> -o -1</span>
+<span id="cb77-6"><a href="#cb77-6"></a><span class="ex">icoc</span> -1 <span class="st">&#39; -1&#39;</span></span>
+<span id="cb77-7"><a href="#cb77-7"></a><span class="ex">icoc</span> -2 256</span>
+<span id="cb77-8"><a href="#cb77-8"></a><span class="ex">icoc</span> -3 nine</span></code></pre></div></li>
 </ol>
 </div>
 <div id="check-user-interface" class="section level6 hasAnchor">
@@ -1357,7 +1542,7 @@ Logging:
 <ol style="list-style-type: decimal">
 <li><p>Repeat steps 1. – 4. from the <a href="#development:section:check-command-line-interface">test above</a></p></li>
 <li><p>Open ICOc using the following command:</p>
-<div class="sourceCode" id="cb61"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb61-1"><a href="#cb61-1"></a><span class="ex">icoc</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb78"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb78-1"><a href="#cb78-1"></a><span class="ex">icoc</span></span></code></pre></div></li>
 <li><p>The main menu of ICOc should show up</p></li>
 <li><p>Try to connect to a non-existent STH</p>
 <ol style="list-style-type: decimal">
@@ -1434,13 +1619,13 @@ Logging:
 <div id="combined-checks-tests" class="section level3 hasAnchor">
 <h3><span class="header-section-number">4.2.4</span> Combined Checks &amp; Tests<a href="#combined-checks-tests" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>While you need to run the test for ICOc manually, the other tests and checks can be automated at least partially. To run all checks, the STH test and the STU test use the following command in a shell with support for the <code>&amp;&amp;</code> operator (e.g. <a href="https://github.com/PowerShell/PowerShell">PowerShell <strong>Core</strong></a>):</p>
-<div class="sourceCode" id="cb62"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb62-1"><a href="#cb62-1"></a><span class="ex">flake8</span> <span class="kw">&amp;&amp;</span></span>
-<span id="cb62-2"><a href="#cb62-2"></a><span class="ex">mypy</span> mytoolit <span class="kw">&amp;&amp;</span></span>
-<span id="cb62-3"><a href="#cb62-3"></a><span class="ex">pytest</span> -v <span class="kw">&amp;&amp;</span></span>
-<span id="cb62-4"><a href="#cb62-4"></a><span class="ex">test-sth</span> -v <span class="kw">&amp;&amp;</span></span>
-<span id="cb62-5"><a href="#cb62-5"></a><span class="ex">test-stu</span> -v <span class="kw">&amp;&amp;</span> <span class="co"># or `test-stu -k eeprom -k connection` to skip the flash test</span></span>
-<span id="cb62-6"><a href="#cb62-6"></a><span class="ex">Invoke-Item</span> <span class="st">&#39;STH Test.pdf&#39;</span> <span class="kw">&amp;&amp;</span></span>
-<span id="cb62-7"><a href="#cb62-7"></a><span class="ex">Invoke-Item</span> <span class="st">&#39;STU Test.pdf&#39;</span></span></code></pre></div>
+<div class="sourceCode" id="cb79"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb79-1"><a href="#cb79-1"></a><span class="ex">flake8</span> <span class="kw">&amp;&amp;</span></span>
+<span id="cb79-2"><a href="#cb79-2"></a><span class="ex">mypy</span> mytoolit <span class="kw">&amp;&amp;</span></span>
+<span id="cb79-3"><a href="#cb79-3"></a><span class="ex">pytest</span> -v <span class="kw">&amp;&amp;</span></span>
+<span id="cb79-4"><a href="#cb79-4"></a><span class="ex">test-sth</span> -v <span class="kw">&amp;&amp;</span></span>
+<span id="cb79-5"><a href="#cb79-5"></a><span class="ex">test-stu</span> -v <span class="kw">&amp;&amp;</span> <span class="co"># or `test-stu -k eeprom -k connection` to skip the flash test</span></span>
+<span id="cb79-6"><a href="#cb79-6"></a><span class="ex">Invoke-Item</span> <span class="st">&#39;STH Test.pdf&#39;</span> <span class="kw">&amp;&amp;</span></span>
+<span id="cb79-7"><a href="#cb79-7"></a><span class="ex">Invoke-Item</span> <span class="st">&#39;STU Test.pdf&#39;</span></span></code></pre></div>
 <p>Afterwards make sure there were no (unexpected) errors in the output of the STH and STU test.</p>
 <p><a name="development:section:release"></a></p>
 </div>
@@ -1509,7 +1694,7 @@ Logging:
 <li>disable measurement channel 3.</li>
 </ul></li>
 <li><p>ICOc can now connect to an STH, which has “no name” using the command line option <code>-n</code> (<code>--name</code>):</p>
-<div class="sourceCode" id="cb64"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb64-1"><a href="#cb64-1"></a><span class="ex">icoc</span> -n <span class="st">&#39;&#39;</span> <span class="co"># alternatively you can also just use `icoc -n`</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb81"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb81-1"><a href="#cb81-1"></a><span class="ex">icoc</span> -n <span class="st">&#39;&#39;</span> <span class="co"># alternatively you can also just use `icoc -n`</span></span></code></pre></div></li>
 </ul>
 </div>
 <div id="logging" class="section level4 hasAnchor">
@@ -1629,7 +1814,7 @@ values of the y-axis and z-axis into the EEPROM</li>
 <li><code>plotter.log</code>: Log messages of plotter (window process)</li>
 </ul>
 <p>By default ICOc only write log messages of level <code>ERROR</code> or higher into theses files. To print more detailed output you can use the option <code>--log</code> to change the log level. For example, to change the log level to <code>DEBUG</code> (or higher) you can use the the following command:</p>
-<div class="sourceCode" id="cb65"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb65-1"><a href="#cb65-1"></a><span class="ex">icoc</span> --log debug</span></code></pre></div>
+<div class="sourceCode" id="cb82"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb82-1"><a href="#cb82-1"></a><span class="ex">icoc</span> --log debug</span></code></pre></div>
 <p>The other parts of the code, which use the old <code>Network</code> class (e.g. the verification test) do not store the log output in files, but instead use the standard error output (<code>stdout</code>). This change should hopefully improve the visibility of important log messages.</p>
 </div>
 </div>
@@ -1692,7 +1877,7 @@ values of the y-axis and z-axis into the EEPROM</li>
 <h3><span class="header-section-number">5.3.3</span> SMH Test<a href="#smh-test" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <ul>
 <li><p>We added a flash upload test for the sensory milling head PCB. To only execute this part of the SMH test you can use the following command:</p>
-<div class="sourceCode" id="cb66"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb66-1"><a href="#cb66-1"></a><span class="ex">test-smh</span> -k flash</span></code></pre></div></li>
+<div class="sourceCode" id="cb83"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb83-1"><a href="#cb83-1"></a><span class="ex">test-smh</span> -k flash</span></code></pre></div></li>
 </ul>
 </div>
 <div id="internal-2" class="section level3 hasAnchor">
@@ -1755,7 +1940,7 @@ values of the y-axis and z-axis into the EEPROM</li>
 <h3><span class="header-section-number">5.4.3</span> SMH Test<a href="#smh-test-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <ul>
 <li><p>We added a basic test for the new sensory milling hardware (SMH). To execute the test, please use the command</p>
-<div class="sourceCode" id="cb67"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb67-1"><a href="#cb67-1"></a><span class="ex">test-smh</span></span></code></pre></div>
+<div class="sourceCode" id="cb84"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb84-1"><a href="#cb84-1"></a><span class="ex">test-smh</span></span></code></pre></div>
 <p>Currently the test:</p>
 <ul>
 <li>checks if the STU is able to <strong>connect</strong> to the device,</li>
@@ -1805,7 +1990,7 @@ values of the y-axis and z-axis into the EEPROM</li>
 <li><p><strong>Removed unused options</strong> from the command line interface</p></li>
 <li><p>All command line arguments should now be <strong>checked for validity</strong> before starting ICOc</p></li>
 <li><p>You do not need to connect the PCAN interface to list the help message of the command line interface:</p>
-<div class="sourceCode" id="cb68"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb68-1"><a href="#cb68-1"></a><span class="ex">icoc</span> -h</span></code></pre></div>
+<div class="sourceCode" id="cb85"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb85-1"><a href="#cb85-1"></a><span class="ex">icoc</span> -h</span></code></pre></div>
 <p>anymore</p></li>
 </ul>
 </div>
@@ -1885,7 +2070,7 @@ values of the y-axis and z-axis into the EEPROM</li>
 <div id="verification-tests-1" class="section level3 hasAnchor">
 <h3><span class="header-section-number">5.6.2</span> Verification Tests<a href="#verification-tests-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>We added the old code of the STH verification tests. You can now execute these tests using the command</p>
-<div class="sourceCode" id="cb70"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb70-1"><a href="#cb70-1"></a><span class="ex">test-sth-verification</span></span></code></pre></div>
+<div class="sourceCode" id="cb87"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb87-1"><a href="#cb87-1"></a><span class="ex">test-sth-verification</span></span></code></pre></div>
 <p>For more information about these tests, please take a look at the section “Verification Tests” <a href="https://github.com/MyTooliT/ICOc/blob/e818e5fa/Documentation/Tutorials.md">here</a>.</p>
 </div>
 <div id="internal-4" class="section level3 hasAnchor">
@@ -2585,7 +2770,7 @@ Python 3.6.</li>
 <h3><span class="header-section-number">5.17.3</span> Requirements<a href="#requirements-3" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <ul>
 <li><p>You can now install the required Python packages using the command</p>
-<div class="sourceCode" id="cb71"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb71-1"><a href="#cb71-1"></a><span class="ex">pip</span> install -r requirements.txt</span></code></pre></div>
+<div class="sourceCode" id="cb88"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb88-1"><a href="#cb88-1"></a><span class="ex">pip</span> install -r requirements.txt</span></code></pre></div>
 <p>in the root of the repository.</p></li>
 </ul>
 </div>
@@ -2609,10 +2794,10 @@ file (<code>Configuration/config.yaml</code>).</p></li>
 <li><p>The test program is now location independent. This means you do not need to
 change the working directory to call the script any more. For example,
 executing the command:</p>
-<div class="sourceCode" id="cb72"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb72-1"><a href="#cb72-1"></a><span class="ex">py</span> mytoolit/test/production/sth.py -k battery -k connect</span></code></pre></div>
+<div class="sourceCode" id="cb89"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb89-1"><a href="#cb89-1"></a><span class="ex">py</span> mytoolit/test/production/sth.py -k battery -k connect</span></code></pre></div>
 <p>or the commands:</p>
-<div class="sourceCode" id="cb73"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb73-1"><a href="#cb73-1"></a><span class="bu">cd</span> mytoolit/test/production</span>
-<span id="cb73-2"><a href="#cb73-2"></a><span class="ex">py</span> sth.py -k battery -k connect</span></code></pre></div>
+<div class="sourceCode" id="cb90"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb90-1"><a href="#cb90-1"></a><span class="bu">cd</span> mytoolit/test/production</span>
+<span id="cb90-2"><a href="#cb90-2"></a><span class="ex">py</span> sth.py -k battery -k connect</span></code></pre></div>
 <p>in the root of repository should have the same effect.</p></li>
 </ul>
 
