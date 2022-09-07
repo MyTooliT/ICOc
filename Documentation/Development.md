@@ -236,17 +236,17 @@ The text below specifies extended manual test that should be executed before we 
 
 ### Combined Checks & Tests
 
-While you need to run the test for ICOc manually, the other tests and checks can be automated at least partially. To run all checks, the STH test and the STU test use the following command in a shell with support for the `&&` operator (e.g. [PowerShell **Core**](https://github.com/PowerShell/PowerShell)):
+While you need to execute some test for ICOc manually, other tests and checks can be automated.
 
-```sh
-flake8 &&
-mypy mytoolit &&
-pytest -v &&
-test-sth -v &&
-test-stu -v && # or `test-stu -k eeprom -k connection` to skip the flash test
-Invoke-Item 'STH Test.pdf' &&
-Invoke-Item 'STU Test.pdf'
-```
+**Note:** For the text below we assume that you installed [`make`](<https://en.wikipedia.org/wiki/Make_(software)#Makefile>) on your machine.
+
+To run all checks, the STH test and the STU test use one of the following `make` rules (depending on your OS):
+
+| OS      | Command            |
+| ------- | ------------------ |
+| Linux   | `make run-windows` |
+| macOS   | `make run-linux`   |
+| Windows | `make run-mac`     |
 
 Afterwards make sure there were no (unexpected) errors in the output of the STH and STU test.
 
