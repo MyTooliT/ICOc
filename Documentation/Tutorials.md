@@ -452,3 +452,209 @@ The tables below contains a list of tests that failed using a working SHA/STH an
 | Date       | Failed Tests                               |
 | ---------- | ------------------------------------------ |
 | 2021-12-14 | • test0102BlueToothConnectDisconnectDevice |
+
+## Virtualization
+
+You can also use (parts of) ICOc with various virtualization software. For that to work you have to make sure that (at least) the PEAK CAN adapter is attached to the virtual guest operating system. For some virtualization software you might have to install additional software for that to work. For example, [VirtualBox][] requires that you install the [VirtualBox Extension Pack](https://www.virtualbox.org/wiki/Downloads) before you can use USB 2 and USB 3 devices.
+
+The table below shows some of the virtualization software we tried and that worked (when we tested it).
+
+| Virtualization Software    | Host OS | Host Architecture | Guest OS     | Guest Architecture |
+| -------------------------- | ------- | ----------------- | ------------ | ------------------ |
+| [Parallels Desktop][]      | macOS   | `x64`             | Ubuntu 20.04 | `x64`              |
+| [Parallels Desktop][]      | macOS   | `x64`             | Windows 10   | `x64`              |
+| [Parallels Desktop][]      | macOS   | `ARM64`           | Fedora 36    | `ARM64`            |
+| [VirtualBox][]             | macOS   | `x64`             | Windows 10   | `x64`              |
+| [VirtualBox][]             | Windows | `x64`             | Fedora 36    | `x64`              |
+| [WSL 2](http://aka.ms/wsl) | Windows | `x64`             | Ubuntu 20.04 | `x64`              |
+
+[virtualbox]: https://www.virtualbox.org
+[parallels desktop]: https://www.parallels.com
+
+### Windows Subsystem for Linux 2
+
+Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https://github.com/microsoft/WSL/issues/5533). We **would not recommend** using ICOc with this type of virtualization software, since the setup requires quite some amount of work and time. Nevertheless the steps below should show you how you can use the PEAK CAN adapter and hence ICOc with WSL 2.
+
+1. Install WSL 2 (Windows Shell):
+
+   ```
+   wsl --install
+   ```
+
+2. Install Ubuntu 20.4 VM (Windows Shell):
+
+   ```pwsh
+   wsl --install --distribution ubuntu
+   wsl --set-version Ubuntu 2
+   wsl --setdefault Ubuntu
+   ```
+
+3. [Create Custom Kernel](https://github.com/dorssel/usbipd-win/wiki/WSL-support#building-your-own-usbip-enabled-wsl-2-kernel)
+
+   Windows Shell:
+
+   **Note:** Please replace `<user>` with your (Linux) username (e.g. `rene`)
+
+   ```pwsh
+   cd ~/Documents
+   mkdir WSL
+   cd WSL
+   wsl --export Ubuntu wsl2-usbip.tar
+   wsl --import wsl2-usbip wsl2-usbip wsl2-usbip.tar
+   wsl --set-version wsl2-usbip 2
+   wsl --distribution wsl2-usbip --user <user>
+   ```
+
+   Linux Shell:
+
+   ```sh
+   sudo apt update
+   sudo apt upgrade
+   sudo apt install build-essential flex bison libssl-dev libelf-dev \
+                    libncurses-dev autoconf libudev-dev libtool dwarves
+   cd ~
+   git clone https://github.com/microsoft/WSL2-Linux-Kernel.git
+   cd WSL2-Linux-Kernel
+   uname -r # 5.10.102.1-microsoft-standard-WSL2 → branch …5.10.y
+   git checkout linux-msft-wsl-5.10.y
+   cat /proc/config.gz | gunzip > .config
+   sudo make menuconfig
+   ```
+
+   Enable these additional features:
+
+   - `Device Drivers` → `USB Support`
+   - `Device Drivers` → `USB Support` → `USB announce new devices`
+   - `Device Drivers` → `USB Support` → `USB Modem (CDC ACM) support`
+   - `Device Drivers` → `USB Support` → `USB/IP`
+   - `Device Drivers` → `USB Support` → `USB/IP` → `VHCI HCD`
+   - `Device Drivers` → `USB Serial Converter Support`
+   - `Device Drivers` → `USB Serial Converter Support` → `USB FTDI Single port Serial Driver`
+
+   - `Networking support` → `CAN subsystem support`
+   - `Networking support` → `CAN subsystem support` → `Raw CAN Protocol`
+   - `Networking support` → `CAN subsystem support` → `CAN device drivers` → `Virtual Local CAN Interface`
+   - `Networking support` → `CAN subsystem support` → `CAN device drivers` → `Serial / USB serial CAN Adaptors (slcan)`
+   - `Networking support` → `CAN subsystem support` → `CAN device drivers` → → `CAN USB Interfaces` → `PEAK PCAN-USB/USB Pro interfaces for CAN 2.0b/CAN-FD`
+
+   Save the modified kernel configuration.
+
+   Linux Shell:
+
+   ```sh
+   touch .scmversion
+   sudo make
+   sudo make modules_install
+   sudo make install
+   ```
+
+4. Install `usbipd-win` (Linux Shell):
+
+   ```sh
+   cd tools/usb/usbip
+   sudo ./autogen.sh
+   sudo ./configure
+   sudo make install
+   sudo cp libsrc/.libs/libusbip.so.0 /lib/libusbip.so.0
+   sudo apt-get install hwdata
+   ```
+
+5. Copy image (Linux Shell):
+
+   **Note:** Please replace `<user>` with your (Windows) username (e.g. `rene`)
+
+   ```sh
+   cd ~/WSL2-Linux-Kernel
+   cp arch/x86/boot/bzImage /mnt/c/Users/<user>/usbip-bzImage
+   ```
+
+6. Create `.wslconfig` in (root of) Windows user directory and store the following text:
+
+   ```ini
+   [wsl2]
+   kernel=c:\\users\\<user>\\usbip-bzImage
+   ```
+
+   **Note:** Please replace `<user>` with your (Windows) username (e.g. `rene`)
+
+7. Set default distribution
+
+   ```sh
+   wsl --setdefault wsl2-usbip
+   ```
+
+8. Shutdown and restart WSL (Windows Shell):
+
+   ```pwsh
+   wsl --shutdown
+   wsl
+   ```
+
+9. Install `usbipd` (Windows Shell):
+
+   ```pwsh
+   winget install usbipd
+   ```
+
+10. Attach CAN-Adapter to Linux VM (Windows Shell)
+
+    ```pwsh
+    usbipd wsl list
+    # …
+    # 2-2    0c72:0012  PCAN-USB FD                      Not attached
+    # …
+    usbipd wsl attach --busid 2-2
+    usbipd wsl list
+    # …
+    # 2-2    0c72:0012  PCAN-USB FD                      Attached - wsl2-usbip
+    # …
+    ```
+
+11. Check for PEAK CAN adapter in Linux (Linux Shell):
+
+    ```sh
+    dmesg | grep peak_usb
+    # …
+    # peak_usb 1-1:1.0: PEAK-System PCAN-USB FD v1 fw v3.2.0 (1 channels)
+    # …
+
+    lsusb
+    # …
+    # Bus 001 Device 002: ID 0c72:0012 PEAK System PCAN-USB FD
+    # …
+    ```
+
+12. Add virtual link for CAN device (Linux Shell)
+
+    ```sh
+    sudo ip link set can0 type can bitrate 1000000
+    sudo ip link set can0 up
+    ```
+
+13. Install `pip` (Linux Shell):
+
+    ```sh
+    apt install python3-pip
+    ```
+
+14. Install ICOc (Linux Shell)
+
+    ```sh
+    cd ~
+    git clone https://github.com/MyTooliT/ICOc.git
+    cd ICOc
+    python3 -m pip install --prefix=$(python3 -m site --user-base) -e .
+    ```
+
+15. Run a script to test that everything works as expected (Linux Shell)
+
+    ```sh
+    test-sth -k connect
+    ```
+
+**Note:** You only need to repeat steps
+
+- `10`: attach the CAN adapter to the VM in Windows and
+- `12`: create the link for the CAN device in Linux
+
+after you set up everything properly once.
