@@ -77,6 +77,10 @@ COMMANDS:
       # CLI tool, if you put the app into the directory `/Applications`.
       - "/Applications/Simplicity Studio.app/Contents/Eclipse/developer/\
          adapter_packs/commander/Commander.app/Contents/MacOS"
+      # Default path to Commander if you download the standalone installer:
+      # https://community.silabs.com/s/article/simplicity-commander
+      # and put put the app into the directory `/Applications`.
+      - /Applications/Commander.app/Contents/MacOS
     WINDOWS:
       # The paths below are the default install locations of `commander` in
       # Windows
