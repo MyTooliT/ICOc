@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>ICOc Documentation</title>
   <meta name="description" content="Tools and scripts for the ICOtronic system" />
-  <meta name="generator" content="bookdown 0.28 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.29 and GitBook 2.6.7" />
 
   <meta property="og:title" content="ICOc Documentation" />
   <meta property="og:type" content="book" />
@@ -1239,10 +1239,10 @@ wsl --setdefault Ubuntu</code></pre></li>
 <pre class="pwsh"><code>cd ~/Documents
 mkdir WSL
 cd WSL
-wsl --export Ubuntu wsl2-usbip.tar
-wsl --import wsl2-usbip wsl2-usbip wsl2-usbip.tar
-wsl --set-version wsl2-usbip 2
-wsl --distribution wsl2-usbip --user &lt;user&gt;</code></pre>
+wsl --export Ubuntu CANbuntu.tar
+wsl --import CANbuntu CANbuntu CANbuntu.tar
+wsl --set-version CANbuntu 2
+wsl --distribution CANbuntu --user &lt;user&gt;</code></pre>
 <p>Linux Shell:</p>
 <div class="sourceCode" id="cb45"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb45-1"><a href="#cb45-1"></a><span class="fu">sudo</span> apt update</span>
 <span id="cb45-2"><a href="#cb45-2"></a><span class="fu">sudo</span> apt upgrade</span>
@@ -1286,13 +1286,13 @@ wsl --distribution wsl2-usbip --user &lt;user&gt;</code></pre>
 <li><p>Copy image (Linux Shell):</p>
 <p><strong>Note:</strong> Please replace <code>&lt;user&gt;</code> with your (Windows) username (e.g. <code>rene</code>)</p>
 <div class="sourceCode" id="cb48"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb48-1"><a href="#cb48-1"></a><span class="bu">cd</span> ~/WSL2-Linux-Kernel</span>
-<span id="cb48-2"><a href="#cb48-2"></a><span class="fu">cp</span> arch/x86/boot/bzImage /mnt/c/Users/<span class="op">&lt;</span>user<span class="op">&gt;</span>/usbip-bzImage</span></code></pre></div></li>
+<span id="cb48-2"><a href="#cb48-2"></a><span class="fu">cp</span> arch/x86/boot/bzImage /mnt/c/Users/<span class="op">&lt;</span>user<span class="op">&gt;</span>/Documents/WSL/canbuntu-bzImage</span></code></pre></div></li>
 <li><p>Create <code>.wslconfig</code> in (root of) Windows user directory and store the following text:</p>
 <div class="sourceCode" id="cb49"><pre class="sourceCode ini"><code class="sourceCode ini"><span id="cb49-1"><a href="#cb49-1"></a><span class="kw">[wsl2]</span></span>
-<span id="cb49-2"><a href="#cb49-2"></a><span class="dt">kernel</span><span class="ot">=</span><span class="st">c:\\users\\&lt;user&gt;\\usbip-bzImage</span></span></code></pre></div>
+<span id="cb49-2"><a href="#cb49-2"></a><span class="dt">kernel</span><span class="ot">=</span><span class="st">c:\\users\\&lt;user&gt;\\Documents\\WSL\\canbuntu-bzImage</span></span></code></pre></div>
 <p><strong>Note:</strong> Please replace <code>&lt;user&gt;</code> with your (Windows) username (e.g. <code>rene</code>)</p></li>
 <li><p>Set default distribution</p>
-<div class="sourceCode" id="cb50"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb50-1"><a href="#cb50-1"></a><span class="ex">wsl</span> --setdefault wsl2-usbip</span></code></pre></div></li>
+<div class="sourceCode" id="cb50"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb50-1"><a href="#cb50-1"></a><span class="ex">wsl</span> --setdefault CANbuntu</span></code></pre></div></li>
 <li><p>Shutdown and restart WSL (Windows Shell):</p>
 <pre class="pwsh"><code>wsl --shutdown
 wsl</code></pre></li>
@@ -1306,7 +1306,7 @@ wsl</code></pre></li>
 usbipd wsl attach --busid 2-2
 usbipd wsl list
 # …
-# 2-2    0c72:0012  PCAN-USB FD                      Attached - wsl2-usbip
+# 2-2    0c72:0012  PCAN-USB FD                      Attached - CANbuntu
 # …</code></pre></li>
 <li><p>Check for PEAK CAN adapter in Linux (Linux Shell):</p>
 <div class="sourceCode" id="cb54"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb54-1"><a href="#cb54-1"></a><span class="fu">dmesg</span> <span class="kw">|</span> <span class="fu">grep</span> peak_usb</span>
@@ -1329,7 +1329,7 @@ usbipd wsl list
 <span id="cb57-3"><a href="#cb57-3"></a><span class="bu">cd</span> ICOc</span>
 <span id="cb57-4"><a href="#cb57-4"></a><span class="ex">python3</span> -m pip install --prefix=<span class="va">$(</span><span class="ex">python3</span> -m site --user-base<span class="va">)</span> -e .</span></code></pre></div></li>
 <li><p>Run a script to test that everything works as expected (Linux Shell)</p>
-<div class="sourceCode" id="cb58"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb58-1"><a href="#cb58-1"></a><span class="ex">test-sth</span> -k connect</span></code></pre></div></li>
+<div class="sourceCode" id="cb58"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb58-1"><a href="#cb58-1"></a><span class="ex">test-sth</span> -k connection</span></code></pre></div></li>
 </ol>
 <p><strong>Note:</strong> You only need to repeat steps</p>
 <ul>
@@ -1618,14 +1618,31 @@ usbipd wsl list
 </div>
 <div id="combined-checks-tests" class="section level3 hasAnchor">
 <h3><span class="header-section-number">4.2.4</span> Combined Checks &amp; Tests<a href="#combined-checks-tests" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>While you need to run the test for ICOc manually, the other tests and checks can be automated at least partially. To run all checks, the STH test and the STU test use the following command in a shell with support for the <code>&amp;&amp;</code> operator (e.g. <a href="https://github.com/PowerShell/PowerShell">PowerShell <strong>Core</strong></a>):</p>
-<div class="sourceCode" id="cb79"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb79-1"><a href="#cb79-1"></a><span class="ex">flake8</span> <span class="kw">&amp;&amp;</span></span>
-<span id="cb79-2"><a href="#cb79-2"></a><span class="ex">mypy</span> mytoolit <span class="kw">&amp;&amp;</span></span>
-<span id="cb79-3"><a href="#cb79-3"></a><span class="ex">pytest</span> -v <span class="kw">&amp;&amp;</span></span>
-<span id="cb79-4"><a href="#cb79-4"></a><span class="ex">test-sth</span> -v <span class="kw">&amp;&amp;</span></span>
-<span id="cb79-5"><a href="#cb79-5"></a><span class="ex">test-stu</span> -v <span class="kw">&amp;&amp;</span> <span class="co"># or `test-stu -k eeprom -k connection` to skip the flash test</span></span>
-<span id="cb79-6"><a href="#cb79-6"></a><span class="ex">Invoke-Item</span> <span class="st">&#39;STH Test.pdf&#39;</span> <span class="kw">&amp;&amp;</span></span>
-<span id="cb79-7"><a href="#cb79-7"></a><span class="ex">Invoke-Item</span> <span class="st">&#39;STU Test.pdf&#39;</span></span></code></pre></div>
+<p>While you need to execute some test for ICOc manually, other tests and checks can be automated.</p>
+<p><strong>Note:</strong> For the text below we assume that you installed <a href="https://en.wikipedia.org/wiki/Make_(software)#Makefile"><code>make</code></a> on your machine.</p>
+<p>To run all checks, the STH test and the STU test use one of the following <code>make</code> rules (depending on your OS):</p>
+<table>
+<thead>
+<tr class="header">
+<th>OS</th>
+<th>Command</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Linux</td>
+<td><code>make run-windows</code></td>
+</tr>
+<tr class="even">
+<td>macOS</td>
+<td><code>make run-linux</code></td>
+</tr>
+<tr class="odd">
+<td>Windows</td>
+<td><code>make run-mac</code></td>
+</tr>
+</tbody>
+</table>
 <p>Afterwards make sure there were no (unexpected) errors in the output of the STH and STU test.</p>
 <p><a name="development:section:release"></a></p>
 </div>
@@ -1694,7 +1711,7 @@ usbipd wsl list
 <li>disable measurement channel 3.</li>
 </ul></li>
 <li><p>ICOc can now connect to an STH, which has “no name” using the command line option <code>-n</code> (<code>--name</code>):</p>
-<div class="sourceCode" id="cb81"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb81-1"><a href="#cb81-1"></a><span class="ex">icoc</span> -n <span class="st">&#39;&#39;</span> <span class="co"># alternatively you can also just use `icoc -n`</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb80"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb80-1"><a href="#cb80-1"></a><span class="ex">icoc</span> -n <span class="st">&#39;&#39;</span> <span class="co"># alternatively you can also just use `icoc -n`</span></span></code></pre></div></li>
 </ul>
 </div>
 <div id="logging" class="section level4 hasAnchor">
@@ -1755,34 +1772,38 @@ values of the y-axis and z-axis into the EEPROM</li>
 </thead>
 <tbody>
 <tr class="odd">
+<td><code>write_sensor_configuration</code></td>
+<td>Write <a href="https://mytoolit.github.io/Documentation/#command:get-set-sensors">measurement channel configuration</a></td>
+</tr>
+<tr class="even">
 <td><code>read_eeprom_y_axis_acceleration_slope</code></td>
 <td>Read <a href="https://mytoolit.github.io/Documentation/#value:acceleration-slope">y-axis acceleration slope</a></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>write_eeprom_y_axis_acceleration_slope</code></td>
 <td>Write <a href="https://mytoolit.github.io/Documentation/#value:acceleration-slope">y-axis acceleration slope</a></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>read_eeprom_y_axis_acceleration_offset</code></td>
 <td>Read <a href="https://mytoolit.github.io/Documentation/#value:acceleration-offset">y-axis offset slope</a></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>write_eeprom_y_axis_acceleration_offset</code></td>
 <td>Write <a href="https://mytoolit.github.io/Documentation/#value:acceleration-offset">y-axis offset slope</a></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>read_eeprom_z_axis_acceleration_slope</code></td>
 <td>Read <a href="https://mytoolit.github.io/Documentation/#value:acceleration-slope">z-axis acceleration slope</a></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>write_eeprom_z_axis_acceleration_slope</code></td>
 <td>Write <a href="https://mytoolit.github.io/Documentation/#value:acceleration-slope">z-axis acceleration slope</a></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>read_eeprom_z_axis_acceleration_offset</code></td>
 <td>Read <a href="https://mytoolit.github.io/Documentation/#value:acceleration-offset">z-axis offset slope</a></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>write_eeprom_z_axis_acceleration_offset</code></td>
 <td>Write <a href="https://mytoolit.github.io/Documentation/#value:acceleration-offset">z-axis offset slope</a></td>
 </tr>
@@ -1814,7 +1835,7 @@ values of the y-axis and z-axis into the EEPROM</li>
 <li><code>plotter.log</code>: Log messages of plotter (window process)</li>
 </ul>
 <p>By default ICOc only write log messages of level <code>ERROR</code> or higher into theses files. To print more detailed output you can use the option <code>--log</code> to change the log level. For example, to change the log level to <code>DEBUG</code> (or higher) you can use the the following command:</p>
-<div class="sourceCode" id="cb82"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb82-1"><a href="#cb82-1"></a><span class="ex">icoc</span> --log debug</span></code></pre></div>
+<div class="sourceCode" id="cb81"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb81-1"><a href="#cb81-1"></a><span class="ex">icoc</span> --log debug</span></code></pre></div>
 <p>The other parts of the code, which use the old <code>Network</code> class (e.g. the verification test) do not store the log output in files, but instead use the standard error output (<code>stdout</code>). This change should hopefully improve the visibility of important log messages.</p>
 </div>
 </div>
@@ -1877,7 +1898,7 @@ values of the y-axis and z-axis into the EEPROM</li>
 <h3><span class="header-section-number">5.3.3</span> SMH Test<a href="#smh-test" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <ul>
 <li><p>We added a flash upload test for the sensory milling head PCB. To only execute this part of the SMH test you can use the following command:</p>
-<div class="sourceCode" id="cb83"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb83-1"><a href="#cb83-1"></a><span class="ex">test-smh</span> -k flash</span></code></pre></div></li>
+<div class="sourceCode" id="cb82"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb82-1"><a href="#cb82-1"></a><span class="ex">test-smh</span> -k flash</span></code></pre></div></li>
 </ul>
 </div>
 <div id="internal-2" class="section level3 hasAnchor">
@@ -1940,7 +1961,7 @@ values of the y-axis and z-axis into the EEPROM</li>
 <h3><span class="header-section-number">5.4.3</span> SMH Test<a href="#smh-test-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <ul>
 <li><p>We added a basic test for the new sensory milling hardware (SMH). To execute the test, please use the command</p>
-<div class="sourceCode" id="cb84"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb84-1"><a href="#cb84-1"></a><span class="ex">test-smh</span></span></code></pre></div>
+<div class="sourceCode" id="cb83"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb83-1"><a href="#cb83-1"></a><span class="ex">test-smh</span></span></code></pre></div>
 <p>Currently the test:</p>
 <ul>
 <li>checks if the STU is able to <strong>connect</strong> to the device,</li>
@@ -1990,7 +2011,7 @@ values of the y-axis and z-axis into the EEPROM</li>
 <li><p><strong>Removed unused options</strong> from the command line interface</p></li>
 <li><p>All command line arguments should now be <strong>checked for validity</strong> before starting ICOc</p></li>
 <li><p>You do not need to connect the PCAN interface to list the help message of the command line interface:</p>
-<div class="sourceCode" id="cb85"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb85-1"><a href="#cb85-1"></a><span class="ex">icoc</span> -h</span></code></pre></div>
+<div class="sourceCode" id="cb84"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb84-1"><a href="#cb84-1"></a><span class="ex">icoc</span> -h</span></code></pre></div>
 <p>anymore</p></li>
 </ul>
 </div>
@@ -2070,7 +2091,7 @@ values of the y-axis and z-axis into the EEPROM</li>
 <div id="verification-tests-1" class="section level3 hasAnchor">
 <h3><span class="header-section-number">5.6.2</span> Verification Tests<a href="#verification-tests-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>We added the old code of the STH verification tests. You can now execute these tests using the command</p>
-<div class="sourceCode" id="cb87"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb87-1"><a href="#cb87-1"></a><span class="ex">test-sth-verification</span></span></code></pre></div>
+<div class="sourceCode" id="cb86"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb86-1"><a href="#cb86-1"></a><span class="ex">test-sth-verification</span></span></code></pre></div>
 <p>For more information about these tests, please take a look at the section “Verification Tests” <a href="https://github.com/MyTooliT/ICOc/blob/e818e5fa/Documentation/Tutorials.md">here</a>.</p>
 </div>
 <div id="internal-4" class="section level3 hasAnchor">
@@ -2770,7 +2791,7 @@ Python 3.6.</li>
 <h3><span class="header-section-number">5.17.3</span> Requirements<a href="#requirements-3" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <ul>
 <li><p>You can now install the required Python packages using the command</p>
-<div class="sourceCode" id="cb88"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb88-1"><a href="#cb88-1"></a><span class="ex">pip</span> install -r requirements.txt</span></code></pre></div>
+<div class="sourceCode" id="cb87"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb87-1"><a href="#cb87-1"></a><span class="ex">pip</span> install -r requirements.txt</span></code></pre></div>
 <p>in the root of the repository.</p></li>
 </ul>
 </div>
@@ -2794,10 +2815,10 @@ file (<code>Configuration/config.yaml</code>).</p></li>
 <li><p>The test program is now location independent. This means you do not need to
 change the working directory to call the script any more. For example,
 executing the command:</p>
-<div class="sourceCode" id="cb89"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb89-1"><a href="#cb89-1"></a><span class="ex">py</span> mytoolit/test/production/sth.py -k battery -k connect</span></code></pre></div>
+<div class="sourceCode" id="cb88"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb88-1"><a href="#cb88-1"></a><span class="ex">py</span> mytoolit/test/production/sth.py -k battery -k connect</span></code></pre></div>
 <p>or the commands:</p>
-<div class="sourceCode" id="cb90"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb90-1"><a href="#cb90-1"></a><span class="bu">cd</span> mytoolit/test/production</span>
-<span id="cb90-2"><a href="#cb90-2"></a><span class="ex">py</span> sth.py -k battery -k connect</span></code></pre></div>
+<div class="sourceCode" id="cb89"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb89-1"><a href="#cb89-1"></a><span class="bu">cd</span> mytoolit/test/production</span>
+<span id="cb89-2"><a href="#cb89-2"></a><span class="ex">py</span> sth.py -k battery -k connect</span></code></pre></div>
 <p>in the root of repository should have the same effect.</p></li>
 </ul>
 
