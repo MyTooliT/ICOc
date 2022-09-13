@@ -565,14 +565,14 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
 
    ```sh
    cd ~/WSL2-Linux-Kernel
-   cp arch/x86/boot/bzImage /mnt/c/Users/<user>/canbuntu-bzImage
+   cp arch/x86/boot/bzImage /mnt/c/Users/<user>/Documents/WSL/canbuntu-bzImage
    ```
 
 6. Create `.wslconfig` in (root of) Windows user directory and store the following text:
 
    ```ini
    [wsl2]
-   kernel=c:\\users\\<user>\\canbuntu-bzImage
+   kernel=c:\\users\\<user>\\Documents\\WSL\\canbuntu-bzImage
    ```
 
    **Note:** Please replace `<user>` with your (Windows) username (e.g. `rene`)
