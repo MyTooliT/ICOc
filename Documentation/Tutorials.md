@@ -499,10 +499,10 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
    cd ~/Documents
    mkdir WSL
    cd WSL
-   wsl --export Ubuntu wsl2-usbip.tar
-   wsl --import wsl2-usbip wsl2-usbip wsl2-usbip.tar
-   wsl --set-version wsl2-usbip 2
-   wsl --distribution wsl2-usbip --user <user>
+   wsl --export Ubuntu CANbuntu.tar
+   wsl --import CANbuntu CANbuntu CANbuntu.tar
+   wsl --set-version CANbuntu 2
+   wsl --distribution CANbuntu --user <user>
    ```
 
    Linux Shell:
@@ -565,14 +565,14 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
 
    ```sh
    cd ~/WSL2-Linux-Kernel
-   cp arch/x86/boot/bzImage /mnt/c/Users/<user>/usbip-bzImage
+   cp arch/x86/boot/bzImage /mnt/c/Users/<user>/canbuntu-bzImage
    ```
 
 6. Create `.wslconfig` in (root of) Windows user directory and store the following text:
 
    ```ini
    [wsl2]
-   kernel=c:\\users\\<user>\\usbip-bzImage
+   kernel=c:\\users\\<user>\\canbuntu-bzImage
    ```
 
    **Note:** Please replace `<user>` with your (Windows) username (e.g. `rene`)
@@ -580,7 +580,7 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
 7. Set default distribution
 
    ```sh
-   wsl --setdefault wsl2-usbip
+   wsl --setdefault CANbuntu
    ```
 
 8. Shutdown and restart WSL (Windows Shell):
@@ -606,7 +606,7 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
     usbipd wsl attach --busid 2-2
     usbipd wsl list
     # …
-    # 2-2    0c72:0012  PCAN-USB FD                      Attached - wsl2-usbip
+    # 2-2    0c72:0012  PCAN-USB FD                      Attached - CANbuntu
     # …
     ```
 
