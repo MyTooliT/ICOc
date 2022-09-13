@@ -649,7 +649,7 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
 15. Run a script to test that everything works as expected (Linux Shell)
 
     ```sh
-    test-sth -k connect
+    test-sth -k connection
     ```
 
 **Note:** You only need to repeat steps
