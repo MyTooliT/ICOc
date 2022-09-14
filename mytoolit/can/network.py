@@ -1805,9 +1805,15 @@ class Network:
 
         >>> from asyncio import run
         >>> from statistics import mean
+        >>> from platform import system
 
         Read the acceleration data of a STH for one second
 
+        >>> if system() == 'Linux':
+        ...    async def reset():
+        ...        async with Network() as network:
+        ...            await network.reset_node('STU 1')
+        ...    run(reset())
         >>> async def read_raw_acceleration():
         ...     async with Network() as network:
         ...         await network.connect_sensor_device(0)
@@ -4448,9 +4454,15 @@ class Network:
 
         >>> from asyncio import run
         >>> from math import isclose
+        >>> from platform import system
 
         Write and read the acceleration slope of STH 1
 
+        >>> if system() == 'Linux':
+        ...    async def reset():
+        ...        async with Network() as network:
+        ...            await network.reset_node('STU 1')
+        ...    run(reset())
         >>> async def write_read_z_axis_acceleration_slope(slope):
         ...     async with Network() as network:
         ...         await network.connect_sensor_device(0)
