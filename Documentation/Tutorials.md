@@ -518,7 +518,7 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
    uname -r # 5.10.102.1-microsoft-standard-WSL2 → branch …5.10.y
    git checkout linux-msft-wsl-5.10.y
    cat /proc/config.gz | gunzip > .config
-   sudo make menuconfig
+   make menuconfig
    ```
 
    Enable these additional features:
@@ -543,7 +543,7 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
 
    ```sh
    touch .scmversion
-   sudo make
+   make
    sudo make modules_install
    sudo make install
    ```
@@ -552,9 +552,9 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
 
    ```sh
    cd tools/usb/usbip
-   sudo ./autogen.sh
-   sudo ./configure
-   sudo make install
+   ./autogen.sh
+   ./configure
+   make install
    sudo cp libsrc/.libs/libusbip.so.0 /lib/libusbip.so.0
    sudo apt-get install hwdata
    ```
