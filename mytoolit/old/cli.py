@@ -645,7 +645,7 @@ class CommandLineInterface():
         if time_since_update >= 1000:
             self.iPacketLossTimeStamp = iPacketLossTimeStamp
             pakets_received = (1 - self.iMsgLoss / self.iMsgsTotal) * 100
-            sMsgLoss = f"Acceleration (▂▄▇ {pakets_received:3.2f} %)"
+            sMsgLoss = f"Signal Quality: {pakets_received:3.2f} %"
             if sMsgLoss != self.sMsgLoss:
                 self.sMsgLoss = sMsgLoss
                 try:

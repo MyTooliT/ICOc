@@ -13,7 +13,7 @@ cDict = {
     "lineNameX": "",
     "lineNameY": "",
     "lineNameZ": "",
-    "diagramName": "Acceleration",
+    "diagramName": "Signal Quality",
     "sampleInterval": 0,
     "figSizeX": 13,
     "figSizeY": 6,
