@@ -55,7 +55,6 @@ def vHandeClose(evt):
 
 def tPlotterInit():
     global cDict
-    plt.style.use('ggplot')
 
     # this is the call to matplotlib that allows dynamic plotting
     plt.ion()
