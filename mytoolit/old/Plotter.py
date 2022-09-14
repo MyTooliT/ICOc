@@ -17,7 +17,7 @@ cDict = {
     "sampleInterval": 0,
     "figSizeX": 13,
     "figSizeY": 6,
-    "X-Label": "s",
+    "X-Label": "time [s]",
     "Y-Label": "g",
     "timePoints": None,
     "dataBlockSize": 0,
