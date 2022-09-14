@@ -683,3 +683,86 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
 - `14`: create the link for the CAN device in Linux
 
 after you set up everything properly once.
+
+#### Installing/Using Simplicity Commander
+
+1. Download and unpack [Simplicity Commander](https://community.silabs.com/s/article/simplicity-commander?language=en_US) (Linux Shell)
+
+   ```sh
+   mkdir -p ~/Downloads
+   cd ~/Downloads
+   wget https://www.silabs.com/documents/public/software/SimplicityCommander-Linux.zip
+   unzip SimplicityCommander-Linux.zip
+   cd SimplicityCommander-Linux
+   tar xf Commander_linux_*.tar.bz
+   mkdir -p ~/Applications
+   mv commander ~/Applications
+   ```
+
+2. Add `commander` binary to path (Linux Shell)
+
+   1. Open `~/.profile` in `nano`:
+
+      ```sh
+      nano ~/.profile
+      ```
+
+   2. Add the following text at the bottom:
+
+      ```sh
+      if [ -d "$HOME/Applications/commander" ] ; then
+          PATH="$HOME/Applications/commander:$PATH"
+      fi
+      ```
+
+   3. Save your changes
+
+3. Install JLink (Linux Shell)
+
+   1. Download [JLink](https://www.segger.com/downloads/jlink/) (64-bit DEB Installer) into your Windows user `Downloads` folder
+
+   2. Copy the installer
+
+      ```sh
+      mv /mnt/c/Users/<user>/Downloads/*JLink_Linux*.deb ~/Downloads
+      ```
+
+      **Note:** Please replace `<user>` with your (Windows) username (e.g. `rene`)
+
+   3. Install JLink package
+
+      ```sh
+      cd ~/Downloads
+      sudo dpkg -i JLink_Linux_*.deb
+      sudo apt-get -f install # if there were unresolved dependencies
+      ```
+
+4. Detach USB connector of programming adapter
+5. Attach USB connector of programming adapter
+
+6. [Reload udev rules](https://github.com/dorssel/usbipd-win/issues/96#issuecomment-992804504) (Linux Shell)
+
+   ```sh
+   sudo service udev restart
+   sudo udevadm control --reload
+   ```
+
+7. Connect programming adapter to Linux (Windows Shell)
+
+   ```pwsh
+   usbipd wsl list
+   # …
+   # 2-1    1366:0105  JLink CDC UART Port (COM3), J-Link driver Not attached
+   # …
+   usbipd wsl attach --busid 2-1
+   ```
+
+8. Check if `commander` JLink connection works without using `sudo` (Linux Shell)
+
+   ```sh
+   commander adapter dbgmode OUT --serialno <serialnumber>
+   # Setting debug mode to OUT...
+   # DONE
+   ```
+
+   Note: Please replace `<serialnumber>` with the serial number of your programming board (e.g. `440069950`)
