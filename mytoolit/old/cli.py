@@ -653,7 +653,7 @@ class CommandLineInterface():
                         tArray2Binary(["diagramName", self.sMsgLoss]))
                 except (ConnectionAbortedError, ConnectionResetError):
                     # Closing the plotter window quits the plotter process and
-                    # there might be not socket to send data to after that
+                    # there might be no socket to send data to after that
                     pass
 
             self.iMsgLoss = 0
