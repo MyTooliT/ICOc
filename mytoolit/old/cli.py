@@ -590,11 +590,11 @@ class CommandLineInterface():
         self.vGraphSend(["xDim", Watch["DisplayTimeMax"]])
         self.update_packet_loss()
         if self.sensor.first:
-            self.vGraphSend(["lineNameX", "Acceleration X-Axis"])
+            self.vGraphSend(["lineNameX", "Signal 1"])
         if self.sensor.second:
-            self.vGraphSend(["lineNameY", "Acceleration Y-Axis"])
+            self.vGraphSend(["lineNameY", "Signal 2"])
         if self.sensor.third:
-            self.vGraphSend(["lineNameZ", "Acceleration Z-Axis"])
+            self.vGraphSend(["lineNameZ", "Signal 3"])
         self.vGraphSend(["Plot", True])
 
     def update_graph_data(self, x=0, y=0, z=0):
