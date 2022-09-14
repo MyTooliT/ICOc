@@ -577,7 +577,7 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
 
    **Note:** Please replace `<user>` with your (Windows) username (e.g. `rene`)
 
-7. Set default distribution
+7. Set default distribution (Windows Shell)
 
    ```sh
    wsl --setdefault CANbuntu
@@ -590,13 +590,36 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
    wsl
    ```
 
-9. Install `usbipd` (Windows Shell):
+9. Change default user of WSL distro (Linux Shell):
 
-   ```pwsh
-   winget install usbipd
+   ```
+   nano /etc/wsl.conf
    ```
 
-10. Attach CAN-Adapter to Linux VM (Windows Shell)
+   Insert the following text:
+
+   ```
+   [user]
+   default=<user>
+   ```
+
+   **Note:** Please replace `<user>` with your (Windows) username (e.g. `rene`)
+
+   Save the file and exit `nano`:
+
+   1. <kbd>Ctrl</kbd> + <kbd>O</kbd>
+   2. <kbd>⏎</kbd>
+   3. <kbd>Ctrl</kbd> + <kbd>X</kbd>)
+
+10. Restart WSL: See step `9`
+
+11. Install `usbipd` (Windows Shell):
+
+    ```pwsh
+    winget install usbipd
+    ```
+
+12. Attach CAN-Adapter to Linux VM (Windows Shell)
 
     ```pwsh
     usbipd wsl list
@@ -610,7 +633,7 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
     # …
     ```
 
-11. Check for PEAK CAN adapter in Linux (Linux Shell):
+13. Check for PEAK CAN adapter in Linux (Linux Shell):
 
     ```sh
     dmesg | grep peak_usb
@@ -624,29 +647,31 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
     # …
     ```
 
-12. Add virtual link for CAN device (Linux Shell)
+14. Add virtual link for CAN device (Linux Shell)
 
     ```sh
     sudo ip link set can0 type can bitrate 1000000
     sudo ip link set can0 up
     ```
 
-13. Install `pip` (Linux Shell):
+15. Install `pip` (Linux Shell):
 
     ```sh
     apt install python3-pip
     ```
 
-14. Install ICOc (Linux Shell)
+16. Install ICOc (Linux Shell)
 
     ```sh
     cd ~
+    mkdir Documents
+    cd Documents
     git clone https://github.com/MyTooliT/ICOc.git
     cd ICOc
-    python3 -m pip install --prefix=$(python3 -m site --user-base) -e .
+    pip install -e .
     ```
 
-15. Run a script to test that everything works as expected (Linux Shell)
+17. Run a script to test that everything works as expected (Linux Shell)
 
     ```sh
     test-sth -k connection
@@ -654,7 +679,7 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
 
 **Note:** You only need to repeat steps
 
-- `10`: attach the CAN adapter to the VM in Windows and
-- `12`: create the link for the CAN device in Linux
+- `12`: attach the CAN adapter to the VM in Windows and
+- `14`: create the link for the CAN device in Linux
 
 after you set up everything properly once.
