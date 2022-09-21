@@ -8,12 +8,6 @@ from can.interfaces.pcan.basic import PCAN_MESSAGE_EXTENDED, TPCANMsg
 from can import Message as CANMessage
 from netaddr import EUI
 
-# Fix imports for script usage
-if __name__ == '__main__':
-    from pathlib import Path
-    from sys import path
-    path.append(str(Path(__file__).parent.parent.parent))
-
 from mytoolit.can.calibration import CalibrationMeasurementFormat
 from mytoolit.can.command import Command
 from mytoolit.can.identifier import Identifier
