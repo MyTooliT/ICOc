@@ -10,11 +10,6 @@ from reportlab.platypus import (Flowable, ListFlowable, Paragraph,
                                 SimpleDocTemplate, Spacer, Table)
 from reportlab.rl_config import defaultPageSize
 
-# Fix imports for script usage
-if __name__ == '__main__':
-    from sys import path
-    path.append(str(Path(__file__).parent.parent.parent))
-
 from mytoolit.report.pdf import PDFImage
 from mytoolit.report.style import get_style_sheet
 from mytoolit.report.forms import CheckBoxList, KeepTogether, Signature

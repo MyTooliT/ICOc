@@ -9,12 +9,6 @@ from reportlab.lib.colors import white
 from reportlab.lib.units import cm
 from reportlab.platypus import Flowable, KeepTogether, Paragraph, Table
 
-# Fix imports for script usage
-if __name__ == '__main__':
-    from sys import path
-    from pathlib import Path
-    path.append(str(Path(__file__).parent.parent.parent))
-
 from mytoolit.report.style import get_style_sheet
 
 # -- Classes ------------------------------------------------------------------
