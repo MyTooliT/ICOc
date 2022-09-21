@@ -766,3 +766,37 @@ after you set up everything properly once.
    ```
 
    Note: Please replace `<serialnumber>` with the serial number of your programming board (e.g. `440069950`)
+
+#### Run Tests in WSL
+
+1. Reload `udev` rules (Linux Shell):
+
+   ```sh
+   sudo service udev restart
+   sudo udevadm control --reload
+   ```
+
+2. Connect programming/CAN adapter to Linux (Windows Shell):
+
+   ```pwsh
+   usbipd wsl list
+   # …
+   # 2-1    1366:0105  JLink CDC UART Port (COM3), J-Link driver Not attached
+   # 2-2    0c72:0012  PCAN-USB FD                               Not attached
+   # …
+   usbipd wsl attach --busid 2-1
+   usbipd wsl attach --busid 2-2
+   ```
+
+3. Add virtual link for CAN device (Linux Shell):
+
+   ```sh
+   sudo ip link set can0 type can bitrate 1000000
+   sudo ip link set can0 up
+   ```
+
+4. Run tests (Linux Shell):
+
+   ```sh
+   make run-linux
+   ```
