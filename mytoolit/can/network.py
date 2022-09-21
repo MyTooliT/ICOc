@@ -29,6 +29,7 @@ from mytoolit.measurement import ADC_MAX_VALUE, convert_acceleration_adc_to_g
 from mytoolit.can.adc import ADCConfiguration
 from mytoolit.can.calibration import CalibrationMeasurementFormat
 from mytoolit.can.error import UnsupportedFeatureException
+from mytoolit.can.identifier import Identifier
 from mytoolit.can.message import Message
 from mytoolit.can.node import Node
 from mytoolit.can.sensor import SensorConfig
@@ -1751,8 +1752,18 @@ class Network:
             voltage_raw,
             reference_voltage=adc_configuration.reference_voltage())
 
-    async def start_streaming_x_acceleration(self) -> None:
-        """Start streaming acceleration data for the x-axis"""
+    async def start_streaming_x_acceleration(self) -> Identifier:
+        """Start streaming acceleration data for the x-axis
+
+        The CAN identifier that this coroutine returns can be used
+        to filter CAN messages that contain the expected streaming data
+
+        Returns
+        -------
+
+        The expected identifier of streaming messages
+
+        """
 
         streaming_format = StreamingFormatAcceleration(x=True,
                                                        streaming=True,
@@ -1768,6 +1779,8 @@ class Network:
         await self._request(
             message,
             description=f"enable x-acceleration data streaming of “{node}”")
+
+        return message.acknowledge().identifier()
 
     async def stop_streaming_acceleration(self) -> None:
         """Stop streaming acceleration data"""
@@ -1827,11 +1840,13 @@ class Network:
         reader = AsyncBufferedReader()
         self.notifier.add_listener(reader)
 
-        await self.start_streaming_x_acceleration()
+        expected_id = (await self.start_streaming_x_acceleration()).value
 
         end_time = time() + seconds
         acceleration_data = []
         async for message in reader:
+            if message.arbitration_id != expected_id:
+                continue
             for raw_acceleration in (message.data[2:4], message.data[4:6],
                                      message.data[6:8]):
                 acceleration_data.append(
