@@ -46,7 +46,7 @@ run-hardware-tests-windows: run-hardware-tests
 	powershell -c "Invoke-Item (Join-Path $$PWD 'STH Test.pdf')"
 	powershell -c "Invoke-Item (Join-Path $$PWD 'STU Test.pdf')"
 
-run-hardware-tests-unix: run-hardware-tests
+run-hardware-tests-mac: run-hardware-tests
 	open 'STH Test.pdf' 'STU Test.pdf'
 
 run-hardware-tests-linux: run-hardware-tests
