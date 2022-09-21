@@ -4321,9 +4321,15 @@ class Network:
 
         >>> from asyncio import run
         >>> from math import isclose
+        >>> from platform import system
 
         Write and read the acceleration slope of STH 1
 
+        >>> if system() == 'Linux':
+        ...    async def reset():
+        ...        async with Network() as network:
+        ...            await network.reset_node('STU 1')
+        ...    run(reset())
         >>> async def write_read_y_axis_acceleration_slope(slope):
         ...     async with Network() as network:
         ...         await network.connect_sensor_device(0)
