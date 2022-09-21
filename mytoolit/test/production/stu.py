@@ -105,7 +105,7 @@ class TestSTU(TestNode):
             # = Product Data =
             # ================
 
-            await self._test_eeprom_product_data(Node('STU 1'), settings.stu)
+            await self._test_eeprom_product_data(Node(receiver), settings.stu)
 
             # ==============
             # = Statistics =
