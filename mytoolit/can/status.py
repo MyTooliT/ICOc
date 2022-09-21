@@ -2,12 +2,6 @@
 
 from typing import List, Optional, Union
 
-# Fix imports for script usage
-if __name__ == '__main__':
-    from pathlib import Path
-    from sys import path
-    path.append(str(Path(__file__).parent.parent.parent))
-
 from mytoolit.old.MyToolItCommands import NetworkState, NodeState
 
 # -- Classes ------------------------------------------------------------------
