@@ -3,10 +3,8 @@
 # -- Imports ------------------------------------------------------------------
 
 from asyncio import run
-from sys import stderr
 
 from mytoolit.can import Network
-from mytoolit.can.error import UnsupportedFeatureException
 
 
 # -- Functions ----------------------------------------------------------------
@@ -20,12 +18,8 @@ async def test(identifier):
         print(f"Connected to sensor device “{name}” with MAC "
               f"address “{mac_address}”")
 
-        try:
-            await network.write_sensor_configuration(3, 2, 1)
-            sensor_config = await network.read_sensor_configuration()
-            print(f"Sensor Configuration: {sensor_config}")
-        except UnsupportedFeatureException as error:
-            print(error, file=stderr)
+        data = await network.read_x_acceleration_raw(0.1)
+        print(f"Raw Acceleration Data: {data}")
 
 
 # -- Main ---------------------------------------------------------------------
