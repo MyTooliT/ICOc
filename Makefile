@@ -27,7 +27,7 @@ test:
 
 test-python-can:
 	pytest --ignore-glob='*cli.py' --ignore-glob='*ui.py'
-		   
+
 test-win-no-hardware:
 	pytest --ignore-glob='*network.py' --ignore-glob='*commander.py'
 
