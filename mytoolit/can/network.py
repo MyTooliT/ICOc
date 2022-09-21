@@ -18,11 +18,6 @@ from can.interfaces.pcan.pcan import PcanError
 from semantic_version import Version
 from netaddr import EUI
 
-# Fix imports for script usage
-if __name__ == '__main__':
-    from sys import path
-    path.append(str(Path(__file__).parent.parent.parent))
-
 from mytoolit.eeprom import EEPROMStatus
 from mytoolit.config import settings
 from mytoolit.measurement import ADC_MAX_VALUE, convert_acceleration_adc_to_g
