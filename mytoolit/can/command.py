@@ -4,12 +4,6 @@ from __future__ import annotations
 
 from typing import Optional, Union
 
-# Fix imports for script usage
-if __name__ == '__main__':
-    from pathlib import Path
-    from sys import path
-    path.append(str(Path(__file__).parent.parent.parent))
-
 from mytoolit.old.MyToolItCommands import (MyToolItBlock,
                                            blocknumber_to_commands)
 
