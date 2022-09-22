@@ -1421,7 +1421,7 @@ usbipd wsl attach --busid 2-2</code></pre></li>
 <div class="sourceCode" id="cb71"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb71-1"><a href="#cb71-1"></a><span class="fu">sudo</span> ip link set can0 type can bitrate 1000000</span>
 <span id="cb71-2"><a href="#cb71-2"></a><span class="fu">sudo</span> ip link set can0 up</span></code></pre></div></li>
 <li><p>Run tests (Linux Shell):</p>
-<div class="sourceCode" id="cb72"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb72-1"><a href="#cb72-1"></a><span class="fu">make</span> run-linux</span></code></pre></div></li>
+<div class="sourceCode" id="cb72"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb72-1"><a href="#cb72-1"></a><span class="fu">make</span> run</span></code></pre></div></li>
 </ol>
 
 <p><a name="scripts:section:scripts"></a></p>
@@ -1707,29 +1707,8 @@ usbipd wsl attach --busid 2-2</code></pre></li>
 <h3><span class="header-section-number">4.2.4</span> Combined Checks &amp; Tests<a href="#combined-checks-tests" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>While you need to execute some test for ICOc manually, other tests and checks can be automated.</p>
 <p><strong>Note:</strong> For the text below we assume that you installed <a href="https://en.wikipedia.org/wiki/Make_(software)#Makefile"><code>make</code></a> on your machine.</p>
-<p>To run all checks, the STH test and the STU test use one of the following <code>make</code> rules (depending on your OS):</p>
-<table>
-<thead>
-<tr class="header">
-<th>OS</th>
-<th>Command</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Linux</td>
-<td><code>make run-windows</code></td>
-</tr>
-<tr class="even">
-<td>macOS</td>
-<td><code>make run-linux</code></td>
-</tr>
-<tr class="odd">
-<td>Windows</td>
-<td><code>make run-mac</code></td>
-</tr>
-</tbody>
-</table>
+<p>To run all checks, the STH test and the STU test use the following <code>make</code> command:</p>
+<div class="sourceCode" id="cb93"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb93-1"><a href="#cb93-1"></a><span class="fu">make</span> run</span></code></pre></div>
 <p>Afterwards make sure there were no (unexpected) errors in the output of the STH and STU test.</p>
 <p><a name="development:section:release"></a></p>
 </div>
@@ -1798,7 +1777,7 @@ usbipd wsl attach --busid 2-2</code></pre></li>
 <li>disable measurement channel 3.</li>
 </ul></li>
 <li><p>ICOc can now connect to an STH, which has “no name” using the command line option <code>-n</code> (<code>--name</code>):</p>
-<div class="sourceCode" id="cb94"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb94-1"><a href="#cb94-1"></a><span class="ex">icoc</span> -n <span class="st">&#39;&#39;</span> <span class="co"># alternatively you can also just use `icoc -n`</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb95"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb95-1"><a href="#cb95-1"></a><span class="ex">icoc</span> -n <span class="st">&#39;&#39;</span> <span class="co"># alternatively you can also just use `icoc -n`</span></span></code></pre></div></li>
 </ul>
 </div>
 <div id="logging" class="section level4 hasAnchor">
@@ -1922,7 +1901,7 @@ values of the y-axis and z-axis into the EEPROM</li>
 <li><code>plotter.log</code>: Log messages of plotter (window process)</li>
 </ul>
 <p>By default ICOc only write log messages of level <code>ERROR</code> or higher into theses files. To print more detailed output you can use the option <code>--log</code> to change the log level. For example, to change the log level to <code>DEBUG</code> (or higher) you can use the the following command:</p>
-<div class="sourceCode" id="cb95"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb95-1"><a href="#cb95-1"></a><span class="ex">icoc</span> --log debug</span></code></pre></div>
+<div class="sourceCode" id="cb96"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb96-1"><a href="#cb96-1"></a><span class="ex">icoc</span> --log debug</span></code></pre></div>
 <p>The other parts of the code, which use the old <code>Network</code> class (e.g. the verification test) do not store the log output in files, but instead use the standard error output (<code>stdout</code>). This change should hopefully improve the visibility of important log messages.</p>
 </div>
 </div>
@@ -1985,7 +1964,7 @@ values of the y-axis and z-axis into the EEPROM</li>
 <h3><span class="header-section-number">5.3.3</span> SMH Test<a href="#smh-test" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <ul>
 <li><p>We added a flash upload test for the sensory milling head PCB. To only execute this part of the SMH test you can use the following command:</p>
-<div class="sourceCode" id="cb96"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb96-1"><a href="#cb96-1"></a><span class="ex">test-smh</span> -k flash</span></code></pre></div></li>
+<div class="sourceCode" id="cb97"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb97-1"><a href="#cb97-1"></a><span class="ex">test-smh</span> -k flash</span></code></pre></div></li>
 </ul>
 </div>
 <div id="internal-2" class="section level3 hasAnchor">
@@ -2048,7 +2027,7 @@ values of the y-axis and z-axis into the EEPROM</li>
 <h3><span class="header-section-number">5.4.3</span> SMH Test<a href="#smh-test-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <ul>
 <li><p>We added a basic test for the new sensory milling hardware (SMH). To execute the test, please use the command</p>
-<div class="sourceCode" id="cb97"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb97-1"><a href="#cb97-1"></a><span class="ex">test-smh</span></span></code></pre></div>
+<div class="sourceCode" id="cb98"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb98-1"><a href="#cb98-1"></a><span class="ex">test-smh</span></span></code></pre></div>
 <p>Currently the test:</p>
 <ul>
 <li>checks if the STU is able to <strong>connect</strong> to the device,</li>
@@ -2098,7 +2077,7 @@ values of the y-axis and z-axis into the EEPROM</li>
 <li><p><strong>Removed unused options</strong> from the command line interface</p></li>
 <li><p>All command line arguments should now be <strong>checked for validity</strong> before starting ICOc</p></li>
 <li><p>You do not need to connect the PCAN interface to list the help message of the command line interface:</p>
-<div class="sourceCode" id="cb98"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb98-1"><a href="#cb98-1"></a><span class="ex">icoc</span> -h</span></code></pre></div>
+<div class="sourceCode" id="cb99"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb99-1"><a href="#cb99-1"></a><span class="ex">icoc</span> -h</span></code></pre></div>
 <p>anymore</p></li>
 </ul>
 </div>
@@ -2178,7 +2157,7 @@ values of the y-axis and z-axis into the EEPROM</li>
 <div id="verification-tests-1" class="section level3 hasAnchor">
 <h3><span class="header-section-number">5.6.2</span> Verification Tests<a href="#verification-tests-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>We added the old code of the STH verification tests. You can now execute these tests using the command</p>
-<div class="sourceCode" id="cb100"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb100-1"><a href="#cb100-1"></a><span class="ex">test-sth-verification</span></span></code></pre></div>
+<div class="sourceCode" id="cb101"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb101-1"><a href="#cb101-1"></a><span class="ex">test-sth-verification</span></span></code></pre></div>
 <p>For more information about these tests, please take a look at the section “Verification Tests” <a href="https://github.com/MyTooliT/ICOc/blob/e818e5fa/Documentation/Tutorials.md">here</a>.</p>
 </div>
 <div id="internal-4" class="section level3 hasAnchor">
@@ -2878,7 +2857,7 @@ Python 3.6.</li>
 <h3><span class="header-section-number">5.17.3</span> Requirements<a href="#requirements-3" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <ul>
 <li><p>You can now install the required Python packages using the command</p>
-<div class="sourceCode" id="cb101"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb101-1"><a href="#cb101-1"></a><span class="ex">pip</span> install -r requirements.txt</span></code></pre></div>
+<div class="sourceCode" id="cb102"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb102-1"><a href="#cb102-1"></a><span class="ex">pip</span> install -r requirements.txt</span></code></pre></div>
 <p>in the root of the repository.</p></li>
 </ul>
 </div>
@@ -2902,10 +2881,10 @@ file (<code>Configuration/config.yaml</code>).</p></li>
 <li><p>The test program is now location independent. This means you do not need to
 change the working directory to call the script any more. For example,
 executing the command:</p>
-<div class="sourceCode" id="cb102"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb102-1"><a href="#cb102-1"></a><span class="ex">py</span> mytoolit/test/production/sth.py -k battery -k connect</span></code></pre></div>
+<div class="sourceCode" id="cb103"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb103-1"><a href="#cb103-1"></a><span class="ex">py</span> mytoolit/test/production/sth.py -k battery -k connect</span></code></pre></div>
 <p>or the commands:</p>
-<div class="sourceCode" id="cb103"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb103-1"><a href="#cb103-1"></a><span class="bu">cd</span> mytoolit/test/production</span>
-<span id="cb103-2"><a href="#cb103-2"></a><span class="ex">py</span> sth.py -k battery -k connect</span></code></pre></div>
+<div class="sourceCode" id="cb104"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb104-1"><a href="#cb104-1"></a><span class="bu">cd</span> mytoolit/test/production</span>
+<span id="cb104-2"><a href="#cb104-2"></a><span class="ex">py</span> sth.py -k battery -k connect</span></code></pre></div>
 <p>in the root of repository should have the same effect.</p></li>
 </ul>
 
