@@ -1751,8 +1751,26 @@ class Network:
             voltage_raw,
             reference_voltage=adc_configuration.reference_voltage())
 
-    async def start_streaming_x_acceleration(self) -> Identifier:
-        """Start streaming acceleration data for the x-axis
+    async def start_streaming_data(self,
+                                   first: bool = False,
+                                   second: bool = False,
+                                   third: bool = False) -> Identifier:
+        """Start streaming data
+
+        Parameters
+        ----------
+
+        first:
+            Specifies if the data of the first measurement channel should
+            be streamed or not
+
+        second:
+            Specifies if the data of the second measurement channel should
+            be streamed or not
+
+        third:
+            Specifies if the data of the third measurement channel should
+            be streamed or not
 
         The CAN identifier that this coroutine returns can be used
         to filter CAN messages that contain the expected streaming data
@@ -1764,7 +1782,11 @@ class Network:
 
         """
 
-        streaming_format = StreamingFormat(first=True, streaming=True, sets=3)
+        streaming_format = StreamingFormat(first=first,
+                                           second=second,
+                                           third=third,
+                                           streaming=True,
+                                           sets=3)
         node = 'STH 1'
         message = Message(block='Streaming',
                           block_command='Data',
@@ -1773,15 +1795,24 @@ class Network:
                           request=True,
                           data=[streaming_format.value])
 
+        channels = [
+            channel for channel in ("first" if first else "",
+                                    "second" if second else "",
+                                    "third" if third else "") if channel
+        ]
+        channels_text = ''.join(
+            (f"{channel}, "
+             for channel in channels[:-2])) + ' and '.join(channels[-2:])
+
         await self._request(
             message,
-            description=("enable streaming of first measurement "
+            description=(f"enable streaming of {channels_text} measurement "
                          f"channel of “{node}”"))
 
         return message.acknowledge().identifier()
 
-    async def stop_streaming_acceleration(self) -> None:
-        """Stop streaming acceleration data"""
+    async def stop_streaming_data(self) -> None:
+        """Stop streaming data"""
 
         streaming_format = StreamingFormat(streaming=True, sets=0)
         node = 'STH 1'
@@ -1837,7 +1868,7 @@ class Network:
         reader = AsyncBufferedReader()
         self.notifier.add_listener(reader)
 
-        expected_id = (await self.start_streaming_x_acceleration()).value
+        expected_id = (await self.start_streaming_data(first=True)).value
 
         end_time = time() + seconds
         acceleration_data = []
@@ -1853,7 +1884,7 @@ class Network:
 
         self.notifier.remove_listener(reader)
 
-        await self.stop_streaming_acceleration()
+        await self.stop_streaming_data()
 
         return acceleration_data
 
