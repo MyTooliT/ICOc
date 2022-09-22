@@ -28,9 +28,7 @@ from mytoolit.can.identifier import Identifier
 from mytoolit.can.message import Message
 from mytoolit.can.node import Node
 from mytoolit.can.sensor import SensorConfig
-from mytoolit.can.streaming import (StreamingFormat,
-                                    StreamingFormatAcceleration,
-                                    StreamingFormatVoltage)
+from mytoolit.can.streaming import StreamingFormat, StreamingFormatVoltage
 from mytoolit.can.status import State
 from mytoolit.measurement import convert_to_supply_voltage
 from mytoolit.utility import convert_bytes_to_text
@@ -1679,7 +1677,7 @@ class Network:
 
         """
 
-        streaming_format = StreamingFormatAcceleration(x=True, sets=1)
+        streaming_format = StreamingFormat(first=True, sets=1)
         node = 'STH 1'
         message = Message(block='Streaming',
                           block_command='Acceleration',
@@ -1760,9 +1758,7 @@ class Network:
 
         """
 
-        streaming_format = StreamingFormatAcceleration(x=True,
-                                                       streaming=True,
-                                                       sets=3)
+        streaming_format = StreamingFormat(first=True, streaming=True, sets=3)
         node = 'STH 1'
         message = Message(block='Streaming',
                           block_command='Acceleration',
@@ -1773,14 +1769,15 @@ class Network:
 
         await self._request(
             message,
-            description=f"enable x-acceleration data streaming of “{node}”")
+            description=("enable streaming of first measurement "
+                         f"channel of “{node}”"))
 
         return message.acknowledge().identifier()
 
     async def stop_streaming_acceleration(self) -> None:
         """Stop streaming acceleration data"""
 
-        streaming_format = StreamingFormatAcceleration(streaming=True, sets=0)
+        streaming_format = StreamingFormat(streaming=True, sets=0)
         node = 'STH 1'
         message = Message(block='Streaming',
                           block_command='Acceleration',
@@ -1789,9 +1786,8 @@ class Network:
                           request=True,
                           data=[streaming_format.value])
 
-        await self._request(
-            message,
-            description=f"disable acceleration data streaming of “{node}”")
+        await self._request(message,
+                            description=f"disable data streaming of “{node}”")
 
     async def read_x_acceleration_raw(self, seconds: float) -> List[int]:
         """Read raw x acceleration data for a certain amount of time
