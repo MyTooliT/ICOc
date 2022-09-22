@@ -8,7 +8,20 @@ PDF_FILE := $(OUTPUT_DIRECTORY)/$(OUTPUT_NAME).pdf
 EPUB_FILE := $(OUTPUT_DIRECTORY)/$(OUTPUT_NAME).epub
 HTML_FILE := $(OUTPUT_DIRECTORY)/$(OUTPUT_NAME).html
 
+ifeq ($(OS), Windows_NT)
+	OPERATING_SYSTEM := windows
+else
+	OS_NAME := $(shell uname -s)
+    ifeq ($(OS_NAME), Linux)
+        OPERATING_SYSTEM := linux
+	else
+		OPERATING_SYSTEM := mac
+    endif
+endif
+
 # -- Rules ---------------------------------------------------------------------
+
+run: run-$(OPERATING_SYSTEM)
 
 run-windows: check test run-hardware-tests-windows
 run-linux: check test-python-can run-hardware-tests-linux

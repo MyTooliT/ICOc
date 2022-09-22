@@ -798,5 +798,5 @@ after you set up everything properly once.
 4. Run tests (Linux Shell):
 
    ```sh
-   make run-linux
+   make run
    ```

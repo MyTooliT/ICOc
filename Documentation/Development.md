@@ -240,13 +240,11 @@ While you need to execute some test for ICOc manually, other tests and checks ca
 
 **Note:** For the text below we assume that you installed [`make`](<https://en.wikipedia.org/wiki/Make_(software)#Makefile>) on your machine.
 
-To run all checks, the STH test and the STU test use one of the following `make` rules (depending on your OS):
+To run all checks, the STH test and the STU test use the following `make` command:
 
-| OS      | Command            |
-| ------- | ------------------ |
-| Linux   | `make run-windows` |
-| macOS   | `make run-linux`   |
-| Windows | `make run-mac`     |
+```sh
+make run
+```
 
 Afterwards make sure there were no (unexpected) errors in the output of the STH and STU test.
 
