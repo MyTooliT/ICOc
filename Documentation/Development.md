@@ -201,7 +201,7 @@ The text below specifies extended manual test that should be executed before we 
    6. Enter the text “20”
    7. Press <kbd>⏎</kbd>
 
-8. Enable the x-axis and y-axis
+8. Enable the first and second measurement channel
 
    1. Press <kbd>p</kbd>
    2. Remove the default axis config for the first measurement channel (press <kbd>⌫</kbd> at least one time)
