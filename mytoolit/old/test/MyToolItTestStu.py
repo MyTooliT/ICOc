@@ -1548,7 +1548,7 @@ class TestStu(unittest.TestCase):
                                                     bErrorExit=False)
         self.assertEqual("Error", msgAck)
         cmd = self.Can.CanCmd(MyToolItBlock["Streaming"],
-                              MyToolItStreaming["Acceleration"], 1, 1)
+                              MyToolItStreaming["Data"], 1, 1)
         message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
                                         MyToolItNetworkNr["STU1"], [])
         msgAck = self.Can.tWriteFrameWaitAckRetries(message,

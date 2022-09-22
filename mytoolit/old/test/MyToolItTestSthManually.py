@@ -314,14 +314,15 @@ class TestSthManually(unittest.TestCase):
         print(
             "Please take a smartphone, start scanning Bluetooth devices and hold it over STU and STH alternately for 10s"
         )
-        [indexStart, indexEnd
-         ] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
-                                            MyToolItStreaming["Acceleration"],
-                                            DataSets[3], 1, 0, 0, 30000)
+        [indexStart,
+         indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
+                                                    MyToolItStreaming["Data"],
+                                                    DataSets[3], 1, 0, 0,
+                                                    30000)
         [arrayAccX, arrayAccY,
          arrayAccZ] = self.Can.streamingValueArrayMessageCounters(
-             MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-             DataSets[3], 1, 0, 0, indexStart, indexEnd)
+             MyToolItNetworkNr["STH1"], MyToolItStreaming["Data"], DataSets[3],
+             1, 0, 0, indexStart, indexEnd)
         self.Can.ValueLog(arrayAccX, arrayAccY, arrayAccZ, fAdcRawDat,
                           "AccMsgCounter", "")
         self.assertEqual(0, len(arrayAccY))

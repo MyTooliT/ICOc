@@ -239,7 +239,7 @@ class TestSth(unittest.TestCase):
 
     def _streamingStop(self):
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
-                               MyToolItStreaming["Acceleration"])
+                               MyToolItStreaming["Data"])
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
                                MyToolItStreaming["Voltage"])
 
@@ -504,19 +504,21 @@ class TestSth(unittest.TestCase):
         if False != log:
             self.Can.logger.info("Start sending package")
         dataSets = self.Can.Can20DataSet(b1, b2, b3)
-        [indexStart, indexEnd
-         ] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
-                                            MyToolItStreaming["Acceleration"],
-                                            dataSets,
-                                            b1,
-                                            b2,
-                                            b3,
-                                            runTime,
-                                            log=log,
-                                            StartupTimeMs=startupTime)
-        [array1, array2, array3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            dataSets, b1, b2, b3, indexStart, indexEnd)
+        [indexStart,
+         indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
+                                                    MyToolItStreaming["Data"],
+                                                    dataSets,
+                                                    b1,
+                                                    b2,
+                                                    b3,
+                                                    runTime,
+                                                    log=log,
+                                                    StartupTimeMs=startupTime)
+        [array1, array2,
+         array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                MyToolItStreaming["Data"],
+                                                dataSets, b1, b2, b3,
+                                                indexStart, indexEnd)
         self.Can.ReadThreadReset()
         samplingPoints = self.Can.samplingPoints(array1, array2, array3)
         if False != log:
@@ -802,13 +804,13 @@ class TestSth(unittest.TestCase):
     def test0100TrippleAxisSensorOnOff(self):
         uLoopRuns = 10
         for _i in range(0, uLoopRuns):
-            index = self.Can.singleValueCollect(
-                MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-                1, 1, 1)
-            [val1, val2, val3
-             ] = self.Can.singleValueArray(MyToolItNetworkNr["STH1"],
-                                           MyToolItStreaming["Acceleration"],
-                                           1, 1, 1, index)
+            index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
+                                                MyToolItStreaming["Data"], 1,
+                                                1, 1)
+            [val1, val2,
+             val3] = self.Can.singleValueArray(MyToolItNetworkNr["STH1"],
+                                               MyToolItStreaming["Data"], 1, 1,
+                                               1, index)
             self.Can.ValueLog(val1, val2, val3, self.tSthLimits.fAcceleration,
                               "Acc", "g")
 

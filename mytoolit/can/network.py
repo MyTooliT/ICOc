@@ -1630,7 +1630,7 @@ class Network:
         node = 'STH 1'
 
         message = Message(block='Streaming',
-                          block_command='Acceleration',
+                          block_command='Data',
                           sender=self.sender,
                           receiver=node,
                           request=True,
@@ -1686,7 +1686,7 @@ class Network:
         streaming_format = StreamingFormat(first=True, sets=1)
         node = 'STH 1'
         message = Message(block='Streaming',
-                          block_command='Acceleration',
+                          block_command='Data',
                           sender=self.sender,
                           receiver=node,
                           request=True,
@@ -1767,7 +1767,7 @@ class Network:
         streaming_format = StreamingFormat(first=True, streaming=True, sets=3)
         node = 'STH 1'
         message = Message(block='Streaming',
-                          block_command='Acceleration',
+                          block_command='Data',
                           sender=self.sender,
                           receiver=node,
                           request=True,
@@ -1786,7 +1786,7 @@ class Network:
         streaming_format = StreamingFormat(streaming=True, sets=0)
         node = 'STH 1'
         message = Message(block='Streaming',
-                          block_command='Acceleration',
+                          block_command='Data',
                           sender=self.sender,
                           receiver=node,
                           request=True,
@@ -2071,7 +2071,7 @@ class Network:
                           request=True,
                           data=CalibrationMeasurementFormat(
                               set=True,
-                              element='Acceleration',
+                              element='Data',
                               method=method,
                               dimension=dimension_number).data)
 
@@ -2167,7 +2167,7 @@ class Network:
                           request=True,
                           data=CalibrationMeasurementFormat(
                               set=True,
-                              element='Acceleration',
+                              element='Data',
                               method='Measure',
                               reference_voltage=reference_voltage,
                               dimension=dimension_number).data)

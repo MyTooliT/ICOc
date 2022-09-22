@@ -311,7 +311,7 @@ class Message:
         block_command = identifier.block_command_name()
 
         StreamingFormatClass = (StreamingFormat
-                                if block_command == 'Acceleration' else
+                                if block_command == 'Data' else
                                 StreamingFormatVoltage if block_command
                                 == 'Voltage' else StreamingFormat)
         streaming_format: StreamingFormat = StreamingFormatClass(self.data[0])
@@ -431,12 +431,12 @@ class Message:
         >>> from re import search
         >>> representation = repr(
         ...     Message(block='Streaming',
-        ...             block_command='Acceleration',
+        ...             block_command='Data',
         ...             sender='SPU 1',
         ...             receiver='STH 1',
         ...             request=True))
         >>> search('# (.*)', representation)[1]
-        '[SPU 1 → STH 1, Block: Streaming, Command: Acceleration, Request]'
+        '[SPU 1 → STH 1, Block: Streaming, Command: Data, Request]'
 
         >>> representation = repr(
         ...     Message(block='System',

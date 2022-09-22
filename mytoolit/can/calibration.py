@@ -17,7 +17,7 @@ class CalibrationMeasurementFormat:
 
     methods = ['Reserved', 'Activate', 'Deactivate', 'Measure']
     elements = bidict({
-        "Acceleration": 0,
+        "Data": 0,
         "Temperature": 1,
         "Voltage": 32,
         "VSS": 96,
@@ -59,7 +59,7 @@ class CalibrationMeasurementFormat:
 
             Possible values:
 
-                - Acceleration
+                - Data
                 - Temperature
                 - Voltage
                 - VSS
@@ -138,8 +138,8 @@ class CalibrationMeasurementFormat:
         Examples
         --------
 
-        >>> CalibrationMeasurementFormat(set=False, element='Acceleration')
-        Get, Acceleration, Dimension: 1, Reference Voltage: 0.0 V
+        >>> CalibrationMeasurementFormat(set=False, element='Data')
+        Get, Data, Dimension: 1, Reference Voltage: 0.0 V
 
         >>> CalibrationMeasurementFormat(set=True, method='Measure',
         ...     element='Temperature', dimension=2, reference_voltage=3.3)

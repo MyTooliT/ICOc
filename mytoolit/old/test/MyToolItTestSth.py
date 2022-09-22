@@ -242,7 +242,7 @@ class TestSth(unittest.TestCase):
         """Stop any streaming
         """
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
-                               MyToolItStreaming["Acceleration"])
+                               MyToolItStreaming["Data"])
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
                                MyToolItStreaming["Voltage"])
 
@@ -480,19 +480,21 @@ class TestSth(unittest.TestCase):
         if False != log:
             self.Can.logger.info("Start sending package")
         dataSets = self.Can.Can20DataSet(b1, b2, b3)
-        [indexStart, indexEnd
-         ] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
-                                            MyToolItStreaming["Acceleration"],
-                                            dataSets,
-                                            b1,
-                                            b2,
-                                            b3,
-                                            runTime,
-                                            log=log,
-                                            StartupTimeMs=startupTime)
-        [array1, array2, array3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            dataSets, b1, b2, b3, indexStart, indexEnd)
+        [indexStart,
+         indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
+                                                    MyToolItStreaming["Data"],
+                                                    dataSets,
+                                                    b1,
+                                                    b2,
+                                                    b3,
+                                                    runTime,
+                                                    log=log,
+                                                    StartupTimeMs=startupTime)
+        [array1, array2,
+         array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                MyToolItStreaming["Data"],
+                                                dataSets, b1, b2, b3,
+                                                indexStart, indexEnd)
         self.Can.ReadThreadReset()
         samplingPoints = self.Can.samplingPoints(array1, array2, array3)
         if False != log:
@@ -1468,8 +1470,8 @@ class TestSth(unittest.TestCase):
         except:
             pass
         self.Can.streamingStart(MyToolItNetworkNr["STH1"],
-                                MyToolItStreaming["Acceleration"], DataSets[3],
-                                1, 0, 0)
+                                MyToolItStreaming["Data"], DataSets[3], 1, 0,
+                                0)
         self.Can.logger.info("Measure Power Consumption for measuring.")
         time.sleep(2 + SleepTime["Min"] / 1000)
         self.Can.logger.info(
@@ -1514,7 +1516,7 @@ class TestSth(unittest.TestCase):
         self.Can.logger.info("Batter Runtime for 180mA: " + str(fAccuDays) +
                              " days")
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
-                               MyToolItStreaming["Acceleration"])
+                               MyToolItStreaming["Data"])
         self.assertLessEqual(float(sCurrentAverage),
                              TestConfig["EnergyMeasuringCurrentMax"])
         self.assertEqual(sCurrentUnit, "mA")
@@ -1528,8 +1530,8 @@ class TestSth(unittest.TestCase):
             pass
         self.TurnOffLed()
         self.Can.streamingStart(MyToolItNetworkNr["STH1"],
-                                MyToolItStreaming["Acceleration"], DataSets[3],
-                                1, 0, 0)
+                                MyToolItStreaming["Data"], DataSets[3], 1, 0,
+                                0)
         self.Can.logger.info(
             "Measure Power Consumption for measuring with turned off LED.")
         time.sleep(2 + SleepTime["Min"] / 1000)
@@ -1575,7 +1577,7 @@ class TestSth(unittest.TestCase):
         self.Can.logger.info("Batter Runtime for 180mA: " + str(fAccuDays) +
                              " days")
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
-                               MyToolItStreaming["Acceleration"])
+                               MyToolItStreaming["Data"])
         self.assertLessEqual(float(sCurrentAverage),
                              TestConfig["EnergyMeasuringLedOffCurrentMax"])
         self.assertEqual(sCurrentUnit, "mA")
@@ -2146,12 +2148,11 @@ class TestSth(unittest.TestCase):
         """Test single Acceleration X-Axis measurement (⏱ 10 seconds)
         """
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
-                                            MyToolItStreaming["Acceleration"],
-                                            1, 0, 0)
+                                            MyToolItStreaming["Data"], 1, 0, 0)
         [val1, val2,
          val3] = self.Can.singleValueArray(MyToolItNetworkNr["STH1"],
-                                           MyToolItStreaming["Acceleration"],
-                                           1, 0, 0, index)
+                                           MyToolItStreaming["Data"], 1, 0, 0,
+                                           index)
         self.Can.ValueLog(val1, val2, val3, self.tSthLimits.fAcceleration,
                           "Acc", "g")
         self.singleValueCompare(val1, val2, val3,
@@ -2163,12 +2164,11 @@ class TestSth(unittest.TestCase):
         """Test single Acceleration Y-Axis measurement (⏱ 12 seconds)
         """
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
-                                            MyToolItStreaming["Acceleration"],
-                                            0, 1, 0)
+                                            MyToolItStreaming["Data"], 0, 1, 0)
         [val1, val2,
          val3] = self.Can.singleValueArray(MyToolItNetworkNr["STH1"],
-                                           MyToolItStreaming["Acceleration"],
-                                           0, 1, 0, index)
+                                           MyToolItStreaming["Data"], 0, 1, 0,
+                                           index)
         self.Can.ValueLog(val1, val2, val3, self.tSthLimits.fAcceleration,
                           "Acc", "g")
         self.singleValueCompare(val1, val2, val3, 0, 0,
@@ -2180,12 +2180,11 @@ class TestSth(unittest.TestCase):
         """Test single Acceleration Z-Axis measurement (⏱ 9 seconds)
         """
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
-                                            MyToolItStreaming["Acceleration"],
-                                            0, 0, 1)
+                                            MyToolItStreaming["Data"], 0, 0, 1)
         [val1, val2,
          val3] = self.Can.singleValueArray(MyToolItNetworkNr["STH1"],
-                                           MyToolItStreaming["Acceleration"],
-                                           0, 0, 1, index)
+                                           MyToolItStreaming["Data"], 0, 0, 1,
+                                           index)
         self.Can.ValueLog(val1, val2, val3, self.tSthLimits.fAcceleration,
                           "Acc", "g")
         self.singleValueCompare(val1, val2, val3, 0, 0, 0, 0,
@@ -2197,13 +2196,13 @@ class TestSth(unittest.TestCase):
         """Test multi single X Acc measurement (⏱ 16 seconds)
         """
         for _i in range(0, 10):
-            index = self.Can.singleValueCollect(
-                MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-                1, 0, 0)
-            [val1, val2, val3
-             ] = self.Can.singleValueArray(MyToolItNetworkNr["STH1"],
-                                           MyToolItStreaming["Acceleration"],
-                                           1, 0, 0, index)
+            index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
+                                                MyToolItStreaming["Data"], 1,
+                                                0, 0)
+            [val1, val2,
+             val3] = self.Can.singleValueArray(MyToolItNetworkNr["STH1"],
+                                               MyToolItStreaming["Data"], 1, 0,
+                                               0, index)
             self.Can.ValueLog(val1, val2, val3, self.tSthLimits.fAcceleration,
                               "Acc", "g")
             self.singleValueCompare(val1, val2, val3,
@@ -2215,13 +2214,13 @@ class TestSth(unittest.TestCase):
         """Test multi single Y Acc measurement (⏱ 18 seconds)
         """
         for _i in range(0, 10):
-            index = self.Can.singleValueCollect(
-                MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-                0, 1, 0)
-            [val1, val2, val3
-             ] = self.Can.singleValueArray(MyToolItNetworkNr["STH1"],
-                                           MyToolItStreaming["Acceleration"],
-                                           0, 1, 0, index)
+            index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
+                                                MyToolItStreaming["Data"], 0,
+                                                1, 0)
+            [val1, val2,
+             val3] = self.Can.singleValueArray(MyToolItNetworkNr["STH1"],
+                                               MyToolItStreaming["Data"], 0, 1,
+                                               0, index)
             self.Can.ValueLog(val1, val2, val3, self.tSthLimits.fAcceleration,
                               "Acc", "g")
             self.singleValueCompare(val1, val2, val3, 0, 0,
@@ -2233,13 +2232,13 @@ class TestSth(unittest.TestCase):
         """Test multi single Z Acc measurement (⏱ 14 seconds)
         """
         for _i in range(0, 10):
-            index = self.Can.singleValueCollect(
-                MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-                0, 0, 1)
-            [val1, val2, val3
-             ] = self.Can.singleValueArray(MyToolItNetworkNr["STH1"],
-                                           MyToolItStreaming["Acceleration"],
-                                           0, 0, 1, index)
+            index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
+                                                MyToolItStreaming["Data"], 0,
+                                                0, 1)
+            [val1, val2,
+             val3] = self.Can.singleValueArray(MyToolItNetworkNr["STH1"],
+                                               MyToolItStreaming["Data"], 0, 0,
+                                               1, index)
             self.Can.ValueLog(val1, val2, val3, self.tSthLimits.fAcceleration,
                               "Acc", "g")
             self.singleValueCompare(val1, val2, val3, 0, 0, 0, 0,
@@ -2251,12 +2250,11 @@ class TestSth(unittest.TestCase):
         """Test single XY-Axis measurement (⏱ 12 seconds)
         """
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
-                                            MyToolItStreaming["Acceleration"],
-                                            1, 1, 0)
+                                            MyToolItStreaming["Data"], 1, 1, 0)
         [val1, val2,
          val3] = self.Can.singleValueArray(MyToolItNetworkNr["STH1"],
-                                           MyToolItStreaming["Acceleration"],
-                                           1, 1, 0, index)
+                                           MyToolItStreaming["Data"], 1, 1, 0,
+                                           index)
         self.Can.ValueLog(val1, val2, val3, self.tSthLimits.fAcceleration,
                           "Acc", "g")
         self.singleValueCompare(val1, val2, val3,
@@ -2270,12 +2268,11 @@ class TestSth(unittest.TestCase):
         """Test single XZ-Axis measurement (⏱ 8 seconds)
         """
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
-                                            MyToolItStreaming["Acceleration"],
-                                            1, 0, 1)
+                                            MyToolItStreaming["Data"], 1, 0, 1)
         [val1, val2,
          val3] = self.Can.singleValueArray(MyToolItNetworkNr["STH1"],
-                                           MyToolItStreaming["Acceleration"],
-                                           1, 0, 1, index)
+                                           MyToolItStreaming["Data"], 1, 0, 1,
+                                           index)
         self.Can.ValueLog(val1, val2, val3, self.tSthLimits.fAcceleration,
                           "Acc", "g")
         self.singleValueCompare(val1, val2, val3,
@@ -2289,12 +2286,11 @@ class TestSth(unittest.TestCase):
         """Test single XYZ-Axis measurement (⏱ 9 seconds)
         """
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
-                                            MyToolItStreaming["Acceleration"],
-                                            1, 1, 1)
+                                            MyToolItStreaming["Data"], 1, 1, 1)
         [val1, val2,
          val3] = self.Can.singleValueArray(MyToolItNetworkNr["STH1"],
-                                           MyToolItStreaming["Acceleration"],
-                                           1, 1, 1, index)
+                                           MyToolItStreaming["Data"], 1, 1, 1,
+                                           index)
         self.Can.ValueLog(val1, val2, val3, self.tSthLimits.fAcceleration,
                           "Acc", "g")
         self.singleValueCompare(
@@ -2307,12 +2303,11 @@ class TestSth(unittest.TestCase):
         """Test single YZ-Axis measurement (⏱ 11 seconds)
         """
         index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
-                                            MyToolItStreaming["Acceleration"],
-                                            0, 1, 1)
+                                            MyToolItStreaming["Data"], 0, 1, 1)
         [val1, val2,
          val3] = self.Can.singleValueArray(MyToolItNetworkNr["STH1"],
-                                           MyToolItStreaming["Acceleration"],
-                                           0, 1, 1, index)
+                                           MyToolItStreaming["Data"], 0, 1, 1,
+                                           index)
         self.Can.ValueLog(val1, val2, val3, self.tSthLimits.fAcceleration,
                           "Acc", "g")
         self.singleValueCompare(val1, val2, val3, 0, 0,
@@ -2350,11 +2345,13 @@ class TestSth(unittest.TestCase):
         """Test streaming x-Axis measurement (⏱ 25 seconds)
         """
         [indexStart, indexEnd] = self.Can.streamingValueCollect(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[3], 1, 0, 0, self.tSthLimits.uStandardTestTimeMs)
-        [array1, array2, array3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[3], 1, 0, 0, indexStart, indexEnd)
+            MyToolItNetworkNr["STH1"], MyToolItStreaming["Data"], DataSets[3],
+            1, 0, 0, self.tSthLimits.uStandardTestTimeMs)
+        [array1, array2,
+         array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                MyToolItStreaming["Data"],
+                                                DataSets[3], 1, 0, 0,
+                                                indexStart, indexEnd)
         self.Can.ValueLog(
             array1,
             array2,
@@ -2372,11 +2369,13 @@ class TestSth(unittest.TestCase):
         """Test streaming y-Axis measurement (⏱ 25 seconds)
         """
         [indexStart, indexEnd] = self.Can.streamingValueCollect(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[3], 0, 1, 0, self.tSthLimits.uStandardTestTimeMs)
-        [array1, array2, array3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[3], 0, 1, 0, indexStart, indexEnd)
+            MyToolItNetworkNr["STH1"], MyToolItStreaming["Data"], DataSets[3],
+            0, 1, 0, self.tSthLimits.uStandardTestTimeMs)
+        [array1, array2,
+         array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                MyToolItStreaming["Data"],
+                                                DataSets[3], 0, 1, 0,
+                                                indexStart, indexEnd)
         self.Can.ValueLog(
             array1,
             array2,
@@ -2394,11 +2393,13 @@ class TestSth(unittest.TestCase):
         """Test streaming z-Axis measurement (⏱ 25 seconds)
         """
         [indexStart, indexEnd] = self.Can.streamingValueCollect(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[3], 0, 0, 1, self.tSthLimits.uStandardTestTimeMs)
-        [array1, array2, array3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[3], 0, 0, 1, indexStart, indexEnd)
+            MyToolItNetworkNr["STH1"], MyToolItStreaming["Data"], DataSets[3],
+            0, 0, 1, self.tSthLimits.uStandardTestTimeMs)
+        [array1, array2,
+         array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                MyToolItStreaming["Data"],
+                                                DataSets[3], 0, 0, 1,
+                                                indexStart, indexEnd)
         self.Can.ValueLog(
             array1,
             array2,
@@ -2416,11 +2417,13 @@ class TestSth(unittest.TestCase):
         """Test streaming xyz-Axis measurement (⏱ 25 seconds)
         """
         [indexStart, indexEnd] = self.Can.streamingValueCollect(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[1], 1, 1, 1, self.tSthLimits.uStandardTestTimeMs)
-        [array1, array2, array3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[1], 1, 1, 1, indexStart, indexEnd)
+            MyToolItNetworkNr["STH1"], MyToolItStreaming["Data"], DataSets[1],
+            1, 1, 1, self.tSthLimits.uStandardTestTimeMs)
+        [array1, array2,
+         array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                MyToolItStreaming["Data"],
+                                                DataSets[1], 1, 1, 1,
+                                                indexStart, indexEnd)
         self.Can.ValueLog(
             array1,
             array2,
@@ -2443,13 +2446,15 @@ class TestSth(unittest.TestCase):
                            self.tSthLimits.uSamplingRateDoubleAcqTimeMax,
                            self.tSthLimits.uSamplingRateDoubleOverSamplesMax,
                            AdcReference["VDD"])
-        [indexStart, indexEnd
-         ] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
-                                            MyToolItStreaming["Acceleration"],
-                                            DataSets[1], 1, 1, 0, 1000)
-        [array1, array2, array3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[1], 1, 1, 0, indexStart, indexEnd)
+        [indexStart,
+         indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
+                                                    MyToolItStreaming["Data"],
+                                                    DataSets[1], 1, 1, 0, 1000)
+        [array1, array2,
+         array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                MyToolItStreaming["Data"],
+                                                DataSets[1], 1, 1, 0,
+                                                indexStart, indexEnd)
         self.Can.ValueLog(
             array1,
             array2,
@@ -2472,13 +2477,15 @@ class TestSth(unittest.TestCase):
                            self.tSthLimits.uSamplingRateDoubleAcqTimeMax,
                            self.tSthLimits.uSamplingRateDoubleOverSamplesMax,
                            AdcReference["VDD"])
-        [indexStart, indexEnd
-         ] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
-                                            MyToolItStreaming["Acceleration"],
-                                            DataSets[1], 1, 0, 1, 1000)
-        [array1, array2, array3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[1], 1, 0, 1, indexStart, indexEnd)
+        [indexStart,
+         indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
+                                                    MyToolItStreaming["Data"],
+                                                    DataSets[1], 1, 0, 1, 1000)
+        [array1, array2,
+         array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                MyToolItStreaming["Data"],
+                                                DataSets[1], 1, 0, 1,
+                                                indexStart, indexEnd)
         self.Can.ValueLog(
             array1,
             array2,
@@ -2501,13 +2508,15 @@ class TestSth(unittest.TestCase):
                            self.tSthLimits.uSamplingRateDoubleAcqTimeMax,
                            self.tSthLimits.uSamplingRateDoubleOverSamplesMax,
                            AdcReference["VDD"])
-        [indexStart, indexEnd
-         ] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
-                                            MyToolItStreaming["Acceleration"],
-                                            DataSets[1], 0, 1, 1, 1000)
-        [array1, array2, array3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[1], 0, 1, 1, indexStart, indexEnd)
+        [indexStart,
+         indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
+                                                    MyToolItStreaming["Data"],
+                                                    DataSets[1], 0, 1, 1, 1000)
+        [array1, array2,
+         array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                MyToolItStreaming["Data"],
+                                                DataSets[1], 0, 1, 1,
+                                                indexStart, indexEnd)
         self.Can.ValueLog(
             array1,
             array2,
@@ -2532,11 +2541,13 @@ class TestSth(unittest.TestCase):
                            self.tSthLimits.uSamplingRateSingleOverSamplesMax,
                            AdcReference["VDD"])
         [indexStart, indexEnd] = self.Can.streamingValueCollect(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[3], 1, 0, 0, self.tSthLimits.uStandardTestTimeMs)
-        [array1, array2, array3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[3], 1, 0, 0, indexStart, indexEnd)
+            MyToolItNetworkNr["STH1"], MyToolItStreaming["Data"], DataSets[3],
+            1, 0, 0, self.tSthLimits.uStandardTestTimeMs)
+        [array1, array2,
+         array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                MyToolItStreaming["Data"],
+                                                DataSets[3], 1, 0, 0,
+                                                indexStart, indexEnd)
         statistics = self.Can.signalIndicators(array1, array2, array3)
         [
             SigIndAccXQ1, SigIndAccXQ25, SigIndAccXMedL, SigIndAccXMedH,
@@ -2561,11 +2572,13 @@ class TestSth(unittest.TestCase):
                            self.tSthLimits.uSamplingRateSingleOverSamplesMax,
                            AdcReference["VDD"])
         [indexStart, indexEnd] = self.Can.streamingValueCollect(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[3], 0, 1, 0, self.tSthLimits.uStandardTestTimeMs)
-        [array1, array2, array3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[3], 0, 1, 0, indexStart, indexEnd)
+            MyToolItNetworkNr["STH1"], MyToolItStreaming["Data"], DataSets[3],
+            0, 1, 0, self.tSthLimits.uStandardTestTimeMs)
+        [array1, array2,
+         array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                MyToolItStreaming["Data"],
+                                                DataSets[3], 0, 1, 0,
+                                                indexStart, indexEnd)
         statistics = self.Can.signalIndicators(array1, array2, array3)
         [
             SigIndAccYQ1, SigIndAccYQ25, SigIndAccYMedL, SigIndAccYMedH,
@@ -2590,11 +2603,13 @@ class TestSth(unittest.TestCase):
                            self.tSthLimits.uSamplingRateSingleOverSamplesMax,
                            AdcReference["VDD"])
         [indexStart, indexEnd] = self.Can.streamingValueCollect(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[3], 0, 0, 1, self.tSthLimits.uStandardTestTimeMs)
-        [array1, array2, array3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[3], 0, 0, 1, indexStart, indexEnd)
+            MyToolItNetworkNr["STH1"], MyToolItStreaming["Data"], DataSets[3],
+            0, 0, 1, self.tSthLimits.uStandardTestTimeMs)
+        [array1, array2,
+         array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                MyToolItStreaming["Data"],
+                                                DataSets[3], 0, 0, 1,
+                                                indexStart, indexEnd)
         statistics = self.Can.signalIndicators(array1, array2, array3)
         [
             SigIndAccZQ1, SigIndAccZQ25, SigIndAccZMedL, SigIndAccZMedH,
@@ -2668,13 +2683,15 @@ class TestSth(unittest.TestCase):
                            self.tSthLimits.uSamplingRateDoubleAcqTimeMax,
                            self.tSthLimits.uSamplingRateDoubleOverSamplesMax,
                            AdcReference["VDD"])
-        [indexStart, indexEnd
-         ] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
-                                            MyToolItStreaming["Acceleration"],
-                                            DataSets[1], 1, 1, 0, 1000)
-        [array1, array2, array3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[1], 1, 1, 0, indexStart, indexEnd)
+        [indexStart,
+         indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
+                                                    MyToolItStreaming["Data"],
+                                                    DataSets[1], 1, 1, 0, 1000)
+        [array1, array2,
+         array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                MyToolItStreaming["Data"],
+                                                DataSets[1], 1, 1, 0,
+                                                indexStart, indexEnd)
         statistics = self.Can.signalIndicators(array1, array2, array3)
 
         self.siginalIndicatorCheck("ADC X", statistics["Value1"], SigIndAccXQ1,
@@ -2687,13 +2704,15 @@ class TestSth(unittest.TestCase):
                                    SigIndAccYMedH, SigIndAccYQ75,
                                    SigIndAccYQ99, SigIndAccYVar,
                                    SigIndAccYSkewness, SigIndAccYSNR)
-        [indexStart, indexEnd
-         ] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
-                                            MyToolItStreaming["Acceleration"],
-                                            DataSets[1], 1, 0, 1, 1000)
-        [array1, array2, array3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[1], 1, 0, 1, indexStart, indexEnd)
+        [indexStart,
+         indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
+                                                    MyToolItStreaming["Data"],
+                                                    DataSets[1], 1, 0, 1, 1000)
+        [array1, array2,
+         array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                MyToolItStreaming["Data"],
+                                                DataSets[1], 1, 0, 1,
+                                                indexStart, indexEnd)
         statistics = self.Can.signalIndicators(array1, array2, array3)
         self.siginalIndicatorCheck("ADC X", statistics["Value1"], SigIndAccXQ1,
                                    SigIndAccXQ25, SigIndAccXMedL,
@@ -2705,13 +2724,15 @@ class TestSth(unittest.TestCase):
                                    SigIndAccZMedH, SigIndAccZQ75,
                                    SigIndAccZQ99, SigIndAccZVar,
                                    SigIndAccZSkewness, SigIndAccZSNR)
-        [indexStart, indexEnd
-         ] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
-                                            MyToolItStreaming["Acceleration"],
-                                            DataSets[1], 0, 1, 1, 1000)
-        [array1, array2, array3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[1], 0, 1, 1, indexStart, indexEnd)
+        [indexStart,
+         indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
+                                                    MyToolItStreaming["Data"],
+                                                    DataSets[1], 0, 1, 1, 1000)
+        [array1, array2,
+         array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                MyToolItStreaming["Data"],
+                                                DataSets[1], 0, 1, 1,
+                                                indexStart, indexEnd)
         statistics = self.Can.signalIndicators(array1, array2, array3)
         self.siginalIndicatorCheck("ADC Y", statistics["Value2"], SigIndAccYQ1,
                                    SigIndAccYQ25, SigIndAccYMedL,
@@ -2728,13 +2749,15 @@ class TestSth(unittest.TestCase):
                            self.tSthLimits.uSamplingRateSingleAcqTimeMax,
                            self.tSthLimits.uSamplingRateSingleOverSamplesMax,
                            AdcReference["VDD"])
-        [indexStart, indexEnd
-         ] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
-                                            MyToolItStreaming["Acceleration"],
-                                            DataSets[1], 1, 1, 1, 1000)
-        [array1, array2, array3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[1], 1, 1, 1, indexStart, indexEnd)
+        [indexStart,
+         indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
+                                                    MyToolItStreaming["Data"],
+                                                    DataSets[1], 1, 1, 1, 1000)
+        [array1, array2,
+         array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                MyToolItStreaming["Data"],
+                                                DataSets[1], 1, 1, 1,
+                                                indexStart, indexEnd)
         statistics = self.Can.signalIndicators(array1, array2, array3)
         self.siginalIndicatorCheck("ADC X", statistics["Value1"], SigIndAccXQ1,
                                    SigIndAccXQ25, SigIndAccXMedL,
@@ -2770,12 +2793,15 @@ class TestSth(unittest.TestCase):
                                        self.tSthLimits.uBatteryTolerance, 0, 0,
                                        0, 0, fVoltageBattery)
         for _i in range(0, 3):
-            [indexStart, indexEnd] = self.Can.streamingValueCollect(
-                MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-                DataSets[3], 1, 0, 0, 1000)
-            [array1, array2, array3] = self.Can.streamingValueArray(
-                MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-                DataSets[3], 1, 0, 0, indexStart, indexEnd)
+            [indexStart, indexEnd
+             ] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
+                                                MyToolItStreaming["Data"],
+                                                DataSets[3], 1, 0, 0, 1000)
+            [array1, array2,
+             array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                    MyToolItStreaming["Data"],
+                                                    DataSets[3], 1, 0, 0,
+                                                    indexStart, indexEnd)
             self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Acc", "")
             self.streamingValueCompare(array1, array2, array3,
                                        self.tSthLimits.iAdcAccXMiddle,
@@ -2786,12 +2812,15 @@ class TestSth(unittest.TestCase):
                                        self.tSthLimits.iAdcAccZTolerance,
                                        self.tSthLimits.fAcceleration)
         for _i in range(0, 3):
-            [indexStart, indexEnd] = self.Can.streamingValueCollect(
-                MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-                DataSets[3], 0, 1, 0, 1000)
-            [array1, array2, array3] = self.Can.streamingValueArray(
-                MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-                DataSets[3], 0, 1, 0, indexStart, indexEnd)
+            [indexStart, indexEnd
+             ] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
+                                                MyToolItStreaming["Data"],
+                                                DataSets[3], 0, 1, 0, 1000)
+            [array1, array2,
+             array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                    MyToolItStreaming["Data"],
+                                                    DataSets[3], 0, 1, 0,
+                                                    indexStart, indexEnd)
             self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Acc", "")
             self.streamingValueCompare(array1, array2, array3,
                                        self.tSthLimits.iAdcAccXMiddle,
@@ -2802,12 +2831,15 @@ class TestSth(unittest.TestCase):
                                        self.tSthLimits.iAdcAccZTolerance,
                                        self.tSthLimits.fAcceleration)
         for _i in range(0, 3):
-            [indexStart, indexEnd] = self.Can.streamingValueCollect(
-                MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-                DataSets[3], 0, 0, 1, 1000)
-            [array1, array2, array3] = self.Can.streamingValueArray(
-                MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-                DataSets[3], 0, 0, 1, indexStart, indexEnd)
+            [indexStart, indexEnd
+             ] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
+                                                MyToolItStreaming["Data"],
+                                                DataSets[3], 0, 0, 1, 1000)
+            [array1, array2,
+             array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                    MyToolItStreaming["Data"],
+                                                    DataSets[3], 0, 0, 1,
+                                                    indexStart, indexEnd)
             self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Acc", "")
             self.streamingValueCompare(array1, array2, array3,
                                        self.tSthLimits.iAdcAccXMiddle,
@@ -2835,39 +2867,45 @@ class TestSth(unittest.TestCase):
                                    self.tSthLimits.uBatteryMiddle,
                                    self.tSthLimits.uBatteryTolerance, 0, 0, 0,
                                    0, fVoltageBattery)
-        [indexStart, indexEnd
-         ] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
-                                            MyToolItStreaming["Acceleration"],
-                                            DataSets[3], 1, 0, 0, 1000)
-        [array1, array2, array3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[3], 1, 0, 0, indexStart, indexEnd)
+        [indexStart,
+         indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
+                                                    MyToolItStreaming["Data"],
+                                                    DataSets[3], 1, 0, 0, 1000)
+        [array1, array2,
+         array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                MyToolItStreaming["Data"],
+                                                DataSets[3], 1, 0, 0,
+                                                indexStart, indexEnd)
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Acc", "")
         self.streamingValueCompare(
             array1, array2, array3, self.tSthLimits.iAdcAccXMiddle,
             self.tSthLimits.iAdcAccXTolerance, self.tSthLimits.iAdcAccYMiddle,
             self.tSthLimits.iAdcAccYTolerance, self.tSthLimits.iAdcAccZMiddle,
             self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
-        [indexStart, indexEnd
-         ] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
-                                            MyToolItStreaming["Acceleration"],
-                                            DataSets[3], 0, 1, 0, 1000)
-        [array1, array2, array3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[3], 0, 1, 0, indexStart, indexEnd)
+        [indexStart,
+         indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
+                                                    MyToolItStreaming["Data"],
+                                                    DataSets[3], 0, 1, 0, 1000)
+        [array1, array2,
+         array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                MyToolItStreaming["Data"],
+                                                DataSets[3], 0, 1, 0,
+                                                indexStart, indexEnd)
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Acc", "")
         self.streamingValueCompare(
             array1, array2, array3, self.tSthLimits.iAdcAccXMiddle,
             self.tSthLimits.iAdcAccXTolerance, self.tSthLimits.iAdcAccYMiddle,
             self.tSthLimits.iAdcAccYTolerance, self.tSthLimits.iAdcAccZMiddle,
             self.tSthLimits.iAdcAccZTolerance, self.tSthLimits.fAcceleration)
-        [indexStart, indexEnd
-         ] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
-                                            MyToolItStreaming["Acceleration"],
-                                            DataSets[3], 0, 0, 1, 1000)
-        [array1, array2, array3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[3], 0, 0, 1, indexStart, indexEnd)
+        [indexStart,
+         indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
+                                                    MyToolItStreaming["Data"],
+                                                    DataSets[3], 0, 0, 1, 1000)
+        [array1, array2,
+         array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                MyToolItStreaming["Data"],
+                                                DataSets[3], 0, 0, 1,
+                                                indexStart, indexEnd)
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat, "Acc", "")
         self.streamingValueCompare(
             array1, array2, array3, self.tSthLimits.iAdcAccXMiddle,
@@ -2907,12 +2945,12 @@ class TestSth(unittest.TestCase):
                                 MyToolItStreaming["Voltage"], DataSets[3], 1,
                                 0, 0)
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
-                                             MyToolItStreaming["Acceleration"],
+                                             MyToolItStreaming["Data"],
                                              DataSets[3], 1, 0, 0)
         time.sleep(self.tSthLimits.uStandardTestTimeMs / 1000)
         indexEnd = self.Can.GetReadArrayIndex() - 1
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
-                               MyToolItStreaming["Acceleration"])
+                               MyToolItStreaming["Data"])
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
                                MyToolItStreaming["Voltage"])
         time.sleep(1)
@@ -2938,9 +2976,11 @@ class TestSth(unittest.TestCase):
                                                 indexStart, indexEnd)
         self.assertEqual(0, len(array2))
         self.assertEqual(0, len(array3))
-        [arrayAccX, array2, array3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[3], 1, 0, 0, indexStart, indexEnd)
+        [arrayAccX, array2,
+         array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                MyToolItStreaming["Data"],
+                                                DataSets[3], 1, 0, 0,
+                                                indexStart, indexEnd)
         self.assertEqual(0, len(array2))
         self.assertEqual(0, len(array3))
         self.Can.logger.info("Voltage Sampling Points: " + str(len(arrayBat)))
@@ -2963,15 +3003,15 @@ class TestSth(unittest.TestCase):
         Requesting Reverse
         """
         self.Can.streamingStart(MyToolItNetworkNr["STH1"],
-                                MyToolItStreaming["Acceleration"], DataSets[3],
-                                1, 0, 0)
+                                MyToolItStreaming["Data"], DataSets[3], 1, 0,
+                                0)
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
                                              MyToolItStreaming["Voltage"],
                                              DataSets[3], 1, 0, 0)
         time.sleep(self.tSthLimits.uStandardTestTimeMs / 1000)
         indexEnd = self.Can.GetReadArrayIndex() - 1
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
-                               MyToolItStreaming["Acceleration"])
+                               MyToolItStreaming["Data"])
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
                                MyToolItStreaming["Voltage"])
         time.sleep(1)
@@ -2997,9 +3037,11 @@ class TestSth(unittest.TestCase):
                                                 indexStart, indexEnd)
         self.assertEqual(0, len(array2))
         self.assertEqual(0, len(array3))
-        [arrayAccX, array2, array3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[3], 1, 0, 0, indexStart, indexEnd)
+        [arrayAccX, array2,
+         array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                MyToolItStreaming["Data"],
+                                                DataSets[3], 1, 0, 0,
+                                                indexStart, indexEnd)
         self.assertEqual(0, len(array2))
         self.assertEqual(0, len(array3))
         self.Can.logger.info("Voltage Sampling Points: " + str(len(arrayBat)))
@@ -3023,12 +3065,12 @@ class TestSth(unittest.TestCase):
                                 MyToolItStreaming["Voltage"], DataSets[3], 1,
                                 0, 0)
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
-                                             MyToolItStreaming["Acceleration"],
+                                             MyToolItStreaming["Data"],
                                              DataSets[3], 0, 1, 0)
         time.sleep(self.tSthLimits.uStandardTestTimeMs / 1000)
         indexEnd = self.Can.GetReadArrayIndex() - 1
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
-                               MyToolItStreaming["Acceleration"])
+                               MyToolItStreaming["Data"])
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
                                MyToolItStreaming["Voltage"])
         time.sleep(1)
@@ -3054,9 +3096,11 @@ class TestSth(unittest.TestCase):
                                                 indexStart, indexEnd)
         self.assertEqual(0, len(array2))
         self.assertEqual(0, len(array3))
-        [array1, arrayAccY, array3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[3], 0, 1, 0, indexStart, indexEnd)
+        [array1, arrayAccY,
+         array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                MyToolItStreaming["Data"],
+                                                DataSets[3], 0, 1, 0,
+                                                indexStart, indexEnd)
         self.assertEqual(0, len(array1))
         self.assertEqual(0, len(array3))
         self.Can.logger.info("Voltage Sampling Points: " + str(len(arrayBat)))
@@ -3080,12 +3124,12 @@ class TestSth(unittest.TestCase):
                                 MyToolItStreaming["Voltage"], DataSets[3], 1,
                                 0, 0)
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
-                                             MyToolItStreaming["Acceleration"],
+                                             MyToolItStreaming["Data"],
                                              DataSets[3], 0, 0, 1)
         time.sleep(self.tSthLimits.uStandardTestTimeMs / 1000)
         indexEnd = self.Can.GetReadArrayIndex() - 1
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
-                               MyToolItStreaming["Acceleration"])
+                               MyToolItStreaming["Data"])
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
                                MyToolItStreaming["Voltage"])
         time.sleep(1)
@@ -3111,9 +3155,11 @@ class TestSth(unittest.TestCase):
                                                 indexStart, indexEnd)
         self.assertEqual(0, len(array2))
         self.assertEqual(0, len(array3))
-        [array1, array2, arrayAccZ] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[3], 0, 0, 1, indexStart, indexEnd)
+        [array1, array2,
+         arrayAccZ] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                   MyToolItStreaming["Data"],
+                                                   DataSets[3], 0, 0, 1,
+                                                   indexStart, indexEnd)
         self.assertEqual(0, len(array1))
         self.assertEqual(0, len(array2))
         self.Can.logger.info("Voltage Sampling Points: " + str(len(arrayBat)))
@@ -3142,12 +3188,12 @@ class TestSth(unittest.TestCase):
                                 MyToolItStreaming["Voltage"], DataSets[3], 1,
                                 0, 0)
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
-                                             MyToolItStreaming["Acceleration"],
+                                             MyToolItStreaming["Data"],
                                              DataSets[1], 1, 0, 1)
         time.sleep(self.tSthLimits.uStandardTestTimeMs / 1000)
         indexEnd = self.Can.GetReadArrayIndex() - 1
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
-                               MyToolItStreaming["Acceleration"])
+                               MyToolItStreaming["Data"])
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
                                MyToolItStreaming["Voltage"])
         time.sleep(1)
@@ -3173,9 +3219,11 @@ class TestSth(unittest.TestCase):
                                                 indexStart, indexEnd)
         self.assertEqual(0, len(array2))
         self.assertEqual(0, len(array3))
-        [arrayAccX, array2, arrayAccZ] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[1], 1, 0, 1, indexStart, indexEnd)
+        [arrayAccX, array2,
+         arrayAccZ] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                   MyToolItStreaming["Data"],
+                                                   DataSets[1], 1, 0, 1,
+                                                   indexStart, indexEnd)
         self.assertEqual(0, len(array2))
         self.Can.logger.info("Voltage Sampling Points: " + str(len(arrayBat)))
         self.Can.logger.info("Acceleration Sampling Points: " +
@@ -3203,15 +3251,15 @@ class TestSth(unittest.TestCase):
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], prescaler, acqTime,
                            overSamples, AdcReference["VDD"])
         self.Can.streamingStart(MyToolItNetworkNr["STH1"],
-                                MyToolItStreaming["Acceleration"], DataSets[1],
-                                1, 1, 0)
+                                MyToolItStreaming["Data"], DataSets[1], 1, 1,
+                                0)
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
                                              MyToolItStreaming["Voltage"],
                                              DataSets[3], 1, 0, 0)
         time.sleep(self.tSthLimits.uStandardTestTimeMs / 1000)
         indexEnd = self.Can.GetReadArrayIndex() - 1
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
-                               MyToolItStreaming["Acceleration"])
+                               MyToolItStreaming["Data"])
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
                                MyToolItStreaming["Voltage"])
         time.sleep(1)
@@ -3237,9 +3285,11 @@ class TestSth(unittest.TestCase):
                                                 indexStart, indexEnd)
         self.assertEqual(0, len(array2))
         self.assertEqual(0, len(array3))
-        [arrayAccX, arrayAccY, array3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[1], 1, 1, 0, indexStart, indexEnd)
+        [arrayAccX, arrayAccY,
+         array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                MyToolItStreaming["Data"],
+                                                DataSets[1], 1, 1, 0,
+                                                indexStart, indexEnd)
         self.assertEqual(0, len(array3))
         self.Can.logger.info("Voltage Sampling Points: " + str(len(arrayBat)))
         self.Can.logger.info("Acceleration Sampling Points: " +
@@ -3269,19 +3319,19 @@ class TestSth(unittest.TestCase):
                                 MyToolItStreaming["Voltage"], DataSets[3], 1,
                                 0, 0)
         self.Can.streamingStart(MyToolItNetworkNr["STH1"],
-                                MyToolItStreaming["Acceleration"], DataSets[1],
-                                1, 1, 0)
+                                MyToolItStreaming["Data"], DataSets[1], 1, 1,
+                                0)
         time.sleep(self.tSthLimits.uStandardTestTimeMs / 1000)
         self.Can.streamingStart(MyToolItNetworkNr["STH1"],
                                 MyToolItStreaming["Voltage"], DataSets[3], 1,
                                 0, 0)
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
-                                             MyToolItStreaming["Acceleration"],
+                                             MyToolItStreaming["Data"],
                                              DataSets[1], 0, 1, 1)
         time.sleep(self.tSthLimits.uStandardTestTimeMs / 1000)
         indexEnd = self.Can.GetReadArrayIndex() - 1
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
-                               MyToolItStreaming["Acceleration"])
+                               MyToolItStreaming["Data"])
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
                                MyToolItStreaming["Voltage"])
         time.sleep(1)
@@ -3307,9 +3357,11 @@ class TestSth(unittest.TestCase):
                                                 indexStart, indexEnd)
         self.assertEqual(0, len(array2))
         self.assertEqual(0, len(array3))
-        [array1, arrayAccY, arrayAccZ] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[1], 0, 1, 1, indexStart, indexEnd)
+        [array1, arrayAccY,
+         arrayAccZ] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                   MyToolItStreaming["Data"],
+                                                   DataSets[1], 0, 1, 1,
+                                                   indexStart, indexEnd)
         self.assertEqual(0, len(array1))
         self.Can.logger.info("Voltage Sampling Points: " + str(len(arrayBat)))
         self.Can.logger.info("Acceleration Sampling Points: " +
@@ -3334,12 +3386,12 @@ class TestSth(unittest.TestCase):
                                 MyToolItStreaming["Voltage"], DataSets[3], 1,
                                 0, 0)
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
-                                             MyToolItStreaming["Acceleration"],
+                                             MyToolItStreaming["Data"],
                                              DataSets[1], 1, 1, 1)
         time.sleep(self.tSthLimits.uStandardTestTimeMs / 1000)
         indexEnd = self.Can.GetReadArrayIndex() - 1
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
-                               MyToolItStreaming["Acceleration"])
+                               MyToolItStreaming["Data"])
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
                                MyToolItStreaming["Voltage"])
         time.sleep(1)
@@ -3365,9 +3417,11 @@ class TestSth(unittest.TestCase):
                                                 indexStart, indexEnd)
         self.assertEqual(0, len(array2))
         self.assertEqual(0, len(array3))
-        [arrayAccX, arrayAccY, arrayAccZ] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[1], 1, 1, 1, indexStart, indexEnd)
+        [arrayAccX, arrayAccY,
+         arrayAccZ] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                   MyToolItStreaming["Data"],
+                                                   DataSets[1], 1, 1, 1,
+                                                   indexStart, indexEnd)
         self.Can.logger.info("Voltage Sampling Points: " + str(len(arrayBat)))
         self.Can.logger.info("Acceleration Sampling Points: " +
                              str(len(arrayAccZ)))
@@ -3388,7 +3442,7 @@ class TestSth(unittest.TestCase):
         """Stream x-acceleration & read sampling point for battery (⏱ 20 seconds)
         """
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
-                                             MyToolItStreaming["Acceleration"],
+                                             MyToolItStreaming["Data"],
                                              DataSets[3], 1, 0, 0)
         time.sleep(1.1)
         self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
@@ -3396,10 +3450,12 @@ class TestSth(unittest.TestCase):
         time.sleep(9)
         indexEnd = self.Can.GetReadArrayIndex()
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
-                               MyToolItStreaming["Acceleration"])
-        [AccArray1, AccArray2, AccArray3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[3], 1, 0, 0, indexStart, indexEnd)
+                               MyToolItStreaming["Data"])
+        [AccArray1, AccArray2,
+         AccArray3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                   MyToolItStreaming["Data"],
+                                                   DataSets[3], 1, 0, 0,
+                                                   indexStart, indexEnd)
         [voltage1Array, voltage2Array, voltage3Array
          ] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
                                           MyToolItStreaming["Voltage"],
@@ -3433,7 +3489,7 @@ class TestSth(unittest.TestCase):
         """Stream y-acceleration & read sampling point for battery (⏱ 20 seconds)
         """
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
-                                             MyToolItStreaming["Acceleration"],
+                                             MyToolItStreaming["Data"],
                                              DataSets[3], 0, 1, 0)
         time.sleep(1.1)
         self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
@@ -3441,10 +3497,12 @@ class TestSth(unittest.TestCase):
         time.sleep(9)
         indexEnd = self.Can.GetReadArrayIndex()
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
-                               MyToolItStreaming["Acceleration"])
-        [AccArray1, AccArray2, AccArray3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[3], 0, 1, 0, indexStart, indexEnd)
+                               MyToolItStreaming["Data"])
+        [AccArray1, AccArray2,
+         AccArray3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                   MyToolItStreaming["Data"],
+                                                   DataSets[3], 0, 1, 0,
+                                                   indexStart, indexEnd)
         [voltage1Array, voltage2Array, voltage3Array
          ] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
                                           MyToolItStreaming["Voltage"],
@@ -3478,7 +3536,7 @@ class TestSth(unittest.TestCase):
         """Stream z-acceleration & read sampling point for battery (⏱ 20 seconds)
         """
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
-                                             MyToolItStreaming["Acceleration"],
+                                             MyToolItStreaming["Data"],
                                              DataSets[3], 0, 0, 1)
         time.sleep(1.1)
         self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
@@ -3486,10 +3544,12 @@ class TestSth(unittest.TestCase):
         time.sleep(9)
         indexEnd = self.Can.GetReadArrayIndex()
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
-                               MyToolItStreaming["Acceleration"])
-        [AccArray1, AccArray2, AccArray3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[3], 0, 0, 1, indexStart, indexEnd)
+                               MyToolItStreaming["Data"])
+        [AccArray1, AccArray2,
+         AccArray3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                   MyToolItStreaming["Data"],
+                                                   DataSets[3], 0, 0, 1,
+                                                   indexStart, indexEnd)
         [voltage1Array, voltage2Array, voltage3Array
          ] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
                                           MyToolItStreaming["Voltage"],
@@ -3528,8 +3588,7 @@ class TestSth(unittest.TestCase):
                                                  DataSets[3], 1, 0, 0)
             time.sleep(1.1)
             self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
-                                        MyToolItStreaming["Acceleration"], 1,
-                                        0, 0)
+                                        MyToolItStreaming["Data"], 1, 0, 0)
             time.sleep(9)
             indexEnd = self.Can.GetReadArrayIndex()
             self.Can.streamingStop(MyToolItNetworkNr["STH1"],
@@ -3540,7 +3599,7 @@ class TestSth(unittest.TestCase):
                                               DataSets[3], 1, 0, 0, indexStart,
                                               indexEnd)
             [AccArray1, AccArray2, AccArray3] = self.Can.streamingValueArray(
-                MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
+                MyToolItNetworkNr["STH1"], MyToolItStreaming["Data"],
                 DataSets[1], 1, 0, 0, indexStart, indexEnd)
             self.assertEqual(0, len(AccArray2))
             self.assertEqual(0, len(AccArray3))
@@ -3580,7 +3639,7 @@ class TestSth(unittest.TestCase):
                                              DataSets[3], 1, 0, 0)
         time.sleep(1.1)
         self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
-                                    MyToolItStreaming["Acceleration"], 0, 1, 0)
+                                    MyToolItStreaming["Data"], 0, 1, 0)
         time.sleep(9)
         indexEnd = self.Can.GetReadArrayIndex()
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
@@ -3590,9 +3649,11 @@ class TestSth(unittest.TestCase):
                                           MyToolItStreaming["Voltage"],
                                           DataSets[3], 1, 0, 0, indexStart,
                                           indexEnd)
-        [AccArray1, AccArray2, AccArray3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[1], 0, 1, 0, indexStart, indexEnd)
+        [AccArray1, AccArray2,
+         AccArray3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                   MyToolItStreaming["Data"],
+                                                   DataSets[1], 0, 1, 0,
+                                                   indexStart, indexEnd)
         self.assertEqual(0, len(AccArray1))
         self.assertEqual(0, len(AccArray3))
         self.assertEqual(1, len(AccArray2))
@@ -3628,7 +3689,7 @@ class TestSth(unittest.TestCase):
                                              DataSets[3], 1, 0, 0)
         time.sleep(1.1)
         self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
-                                    MyToolItStreaming["Acceleration"], 0, 0, 1)
+                                    MyToolItStreaming["Data"], 0, 0, 1)
         time.sleep(9)
         indexEnd = self.Can.GetReadArrayIndex()
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
@@ -3638,9 +3699,11 @@ class TestSth(unittest.TestCase):
                                           MyToolItStreaming["Voltage"],
                                           DataSets[3], 1, 0, 0, indexStart,
                                           indexEnd)
-        [AccArray1, AccArray2, AccArray3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[1], 0, 0, 1, indexStart, indexEnd)
+        [AccArray1, AccArray2,
+         AccArray3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                   MyToolItStreaming["Data"],
+                                                   DataSets[1], 0, 0, 1,
+                                                   indexStart, indexEnd)
         self.assertEqual(0, len(AccArray1))
         self.assertEqual(0, len(AccArray2))
         self.assertEqual(1, len(AccArray3))
@@ -3677,7 +3740,7 @@ class TestSth(unittest.TestCase):
                                              DataSets[3], 1, 0, 0)
         time.sleep(1.1)
         self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
-                                    MyToolItStreaming["Acceleration"], 0, 1, 1)
+                                    MyToolItStreaming["Data"], 0, 1, 1)
         time.sleep(9)
         indexEnd = self.Can.GetReadArrayIndex()
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
@@ -3687,9 +3750,11 @@ class TestSth(unittest.TestCase):
                                           MyToolItStreaming["Voltage"],
                                           DataSets[3], 1, 0, 0, indexStart,
                                           indexEnd)
-        [AccArray1, AccArray2, AccArray3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[1], 0, 1, 1, indexStart, indexEnd)
+        [AccArray1, AccArray2,
+         AccArray3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                   MyToolItStreaming["Data"],
+                                                   DataSets[1], 0, 1, 1,
+                                                   indexStart, indexEnd)
         self.assertEqual(0, len(AccArray1))
         self.assertEqual(1, len(AccArray2))
         self.assertEqual(1, len(AccArray3))
@@ -3727,7 +3792,7 @@ class TestSth(unittest.TestCase):
                                              DataSets[3], 1, 0, 0)
         time.sleep(1.1)
         self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
-                                    MyToolItStreaming["Acceleration"], 1, 0, 1)
+                                    MyToolItStreaming["Data"], 1, 0, 1)
         time.sleep(9)
         indexEnd = self.Can.GetReadArrayIndex()
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
@@ -3737,9 +3802,11 @@ class TestSth(unittest.TestCase):
                                           MyToolItStreaming["Voltage"],
                                           DataSets[3], 1, 0, 0, indexStart,
                                           indexEnd)
-        [AccArray1, AccArray2, AccArray3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[1], 1, 0, 1, indexStart, indexEnd)
+        [AccArray1, AccArray2,
+         AccArray3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                   MyToolItStreaming["Data"],
+                                                   DataSets[1], 1, 0, 1,
+                                                   indexStart, indexEnd)
         self.assertEqual(1, len(AccArray1))
         self.assertEqual(0, len(AccArray2))
         self.assertEqual(1, len(AccArray3))
@@ -3778,7 +3845,7 @@ class TestSth(unittest.TestCase):
                                              DataSets[3], 1, 0, 0)
         time.sleep(1.1)
         self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
-                                    MyToolItStreaming["Acceleration"], 1, 1, 0)
+                                    MyToolItStreaming["Data"], 1, 1, 0)
         time.sleep(9)
         indexEnd = self.Can.GetReadArrayIndex()
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
@@ -3788,9 +3855,11 @@ class TestSth(unittest.TestCase):
                                           MyToolItStreaming["Voltage"],
                                           DataSets[3], 1, 0, 0, indexStart,
                                           indexEnd)
-        [AccArray1, AccArray2, AccArray3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[1], 1, 1, 0, indexStart, indexEnd)
+        [AccArray1, AccArray2,
+         AccArray3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                   MyToolItStreaming["Data"],
+                                                   DataSets[1], 1, 1, 0,
+                                                   indexStart, indexEnd)
         self.assertEqual(1, len(AccArray1))
         self.assertEqual(1, len(AccArray2))
         self.assertEqual(0, len(AccArray3))
@@ -3828,7 +3897,7 @@ class TestSth(unittest.TestCase):
                                              DataSets[3], 1, 0, 0)
         time.sleep(1.1)
         self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
-                                    MyToolItStreaming["Acceleration"], 1, 1, 1)
+                                    MyToolItStreaming["Data"], 1, 1, 1)
         time.sleep(9)
         indexEnd = self.Can.GetReadArrayIndex()
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
@@ -3838,9 +3907,11 @@ class TestSth(unittest.TestCase):
                                           MyToolItStreaming["Voltage"],
                                           DataSets[3], 1, 0, 0, indexStart,
                                           indexEnd)
-        [AccArray1, AccArray2, AccArray3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[1], 1, 1, 1, indexStart, indexEnd)
+        [AccArray1, AccArray2,
+         AccArray3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                   MyToolItStreaming["Data"],
+                                                   DataSets[1], 1, 1, 1,
+                                                   indexStart, indexEnd)
         self.assertEqual(1, len(AccArray1))
         self.assertEqual(1, len(AccArray2))
         self.assertEqual(1, len(AccArray3))
@@ -3880,8 +3951,8 @@ class TestSth(unittest.TestCase):
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], prescaler, acqTime,
                            overSamples, AdcReference["VDD"])
         self.Can.streamingStart(MyToolItNetworkNr["STH1"],
-                                MyToolItStreaming["Acceleration"], DataSets[1],
-                                1, 1, 0)
+                                MyToolItStreaming["Data"], DataSets[1], 1, 1,
+                                0)
         time.sleep(1.2)
         indexStart = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
                                                  MyToolItStreaming["Voltage"],
@@ -3889,10 +3960,12 @@ class TestSth(unittest.TestCase):
         time.sleep(10)
         indexEnd = self.Can.GetReadArrayIndex()
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
-                               MyToolItStreaming["Acceleration"])
-        [AccArray1, AccArray2, AccArray3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[1], 1, 1, 0, indexStart, indexEnd)
+                               MyToolItStreaming["Data"])
+        [AccArray1, AccArray2,
+         AccArray3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                   MyToolItStreaming["Data"],
+                                                   DataSets[1], 1, 1, 0,
+                                                   indexStart, indexEnd)
         [voltage1Array, voltage2Array, voltage3Array
          ] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
                                           MyToolItStreaming["Voltage"],
@@ -3930,8 +4003,8 @@ class TestSth(unittest.TestCase):
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], prescaler, acqTime,
                            overSamples, AdcReference["VDD"])
         self.Can.streamingStart(MyToolItNetworkNr["STH1"],
-                                MyToolItStreaming["Acceleration"], DataSets[1],
-                                1, 0, 1)
+                                MyToolItStreaming["Data"], DataSets[1], 1, 0,
+                                1)
         time.sleep(1.25)
         indexStart = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
                                                  MyToolItStreaming["Voltage"],
@@ -3939,10 +4012,12 @@ class TestSth(unittest.TestCase):
         time.sleep(10)
         indexEnd = self.Can.GetReadArrayIndex()
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
-                               MyToolItStreaming["Acceleration"])
-        [AccArray1, AccArray2, AccArray3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[1], 1, 0, 1, indexStart, indexEnd)
+                               MyToolItStreaming["Data"])
+        [AccArray1, AccArray2,
+         AccArray3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                   MyToolItStreaming["Data"],
+                                                   DataSets[1], 1, 0, 1,
+                                                   indexStart, indexEnd)
         [voltage1Array, voltage2Array, voltage3Array
          ] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
                                           MyToolItStreaming["Voltage"],
@@ -3980,8 +4055,8 @@ class TestSth(unittest.TestCase):
         self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], prescaler, acqTime,
                            overSamples, AdcReference["VDD"])
         self.Can.streamingStart(MyToolItNetworkNr["STH1"],
-                                MyToolItStreaming["Acceleration"], DataSets[1],
-                                0, 1, 1)
+                                MyToolItStreaming["Data"], DataSets[1], 0, 1,
+                                1)
         time.sleep(1.25)
         indexStart = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
                                                  MyToolItStreaming["Voltage"],
@@ -3989,10 +4064,12 @@ class TestSth(unittest.TestCase):
         time.sleep(10)
         indexEnd = self.Can.GetReadArrayIndex()
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
-                               MyToolItStreaming["Acceleration"])
-        [AccArray1, AccArray2, AccArray3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[1], 0, 1, 1, indexStart, indexEnd)
+                               MyToolItStreaming["Data"])
+        [AccArray1, AccArray2,
+         AccArray3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                   MyToolItStreaming["Data"],
+                                                   DataSets[1], 0, 1, 1,
+                                                   indexStart, indexEnd)
         [voltage1Array, voltage2Array, voltage3Array
          ] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
                                           MyToolItStreaming["Voltage"],
@@ -4025,7 +4102,7 @@ class TestSth(unittest.TestCase):
         """Stream AccXXZ & receive sampling point for Battery (⏱ 20 seconds)
         """
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
-                                             MyToolItStreaming["Acceleration"],
+                                             MyToolItStreaming["Data"],
                                              DataSets[1], 1, 1, 1)
         time.sleep(1.2)
         self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
@@ -4033,10 +4110,12 @@ class TestSth(unittest.TestCase):
         time.sleep(9)
         indexEnd = self.Can.GetReadArrayIndex()
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
-                               MyToolItStreaming["Acceleration"])
-        [AccArray1, AccArray2, AccArray3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[1], 1, 1, 1, indexStart, indexEnd)
+                               MyToolItStreaming["Data"])
+        [AccArray1, AccArray2,
+         AccArray3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                   MyToolItStreaming["Data"],
+                                                   DataSets[1], 1, 1, 1,
+                                                   indexStart, indexEnd)
         [voltage1Array, voltage2Array, voltage3Array
          ] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
                                           MyToolItStreaming["Voltage"],
@@ -4076,10 +4155,10 @@ class TestSth(unittest.TestCase):
         # single stream, data set 3
         for _i in range(0, _runs):
             self.Can.streamingStart(MyToolItNetworkNr["STH1"],
-                                    MyToolItStreaming["Acceleration"],
-                                    DataSets[3], 1, 0, 0)
+                                    MyToolItStreaming["Data"], DataSets[3], 1,
+                                    0, 0)
             self.Can.streamingStop(MyToolItNetworkNr["STH1"],
-                                   MyToolItStreaming["Acceleration"])
+                                   MyToolItStreaming["Data"])
 
         # single stream, data set 1
         for _i in range(0, _runs):
@@ -4090,21 +4169,21 @@ class TestSth(unittest.TestCase):
                 self.tSthLimits.uSamplingRateDoubleOverSamplesMax + 2,
                 AdcReference["VDD"])
             self.Can.streamingStart(MyToolItNetworkNr["STH1"],
-                                    MyToolItStreaming["Acceleration"],
-                                    DataSets[1], 1, 0, 0)
+                                    MyToolItStreaming["Data"], DataSets[1], 1,
+                                    0, 0)
             self.Can.streamingStop(MyToolItNetworkNr["STH1"],
-                                   MyToolItStreaming["Acceleration"])
+                                   MyToolItStreaming["Data"])
 
         # multi stream, data set 3
         for _i in range(0, _runs):
             self.Can.streamingStart(MyToolItNetworkNr["STH1"],
-                                    MyToolItStreaming["Acceleration"],
-                                    DataSets[1], 1, 1, 1)
+                                    MyToolItStreaming["Data"], DataSets[1], 1,
+                                    1, 1)
             self.Can.streamingStart(MyToolItNetworkNr["STH1"],
                                     MyToolItStreaming["Voltage"], DataSets[3],
                                     1, 0, 0)
             self.Can.streamingStop(MyToolItNetworkNr["STH1"],
-                                   MyToolItStreaming["Acceleration"])
+                                   MyToolItStreaming["Data"])
             self.Can.streamingStop(MyToolItNetworkNr["STH1"],
                                    MyToolItStreaming["Voltage"])
 
@@ -4117,13 +4196,13 @@ class TestSth(unittest.TestCase):
                 self.tSthLimits.uSamplingRateDoubleOverSamplesMax + 2,
                 AdcReference["VDD"])
             self.Can.streamingStart(MyToolItNetworkNr["STH1"],
-                                    MyToolItStreaming["Acceleration"],
-                                    DataSets[1], 1, 1, 1)
+                                    MyToolItStreaming["Data"], DataSets[1], 1,
+                                    1, 1)
             self.Can.streamingStart(MyToolItNetworkNr["STH1"],
                                     MyToolItStreaming["Voltage"], DataSets[1],
                                     1, 0, 0)
             self.Can.streamingStop(MyToolItNetworkNr["STH1"],
-                                   MyToolItStreaming["Acceleration"])
+                                   MyToolItStreaming["Data"])
             self.Can.streamingStop(MyToolItNetworkNr["STH1"],
                                    MyToolItStreaming["Voltage"])
 
@@ -4132,11 +4211,13 @@ class TestSth(unittest.TestCase):
         """
         [indexStart, indexEnd] = self.streamingTestSignalCollect(
             MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"],
-            MyToolItStreaming["Acceleration"], TestCommandSignal["Line"],
+            MyToolItStreaming["Data"], TestCommandSignal["Line"],
             SthModule["Streaming"], 2**15, DataSets[3], 1, 0, 0, 1000)
-        [array1, array2, array3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[3], 1, 0, 0, indexStart, indexEnd)
+        [array1, array2,
+         array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                MyToolItStreaming["Data"],
+                                                DataSets[3], 1, 0, 0,
+                                                indexStart, indexEnd)
         array1 = array1[:-16]
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat,
                           "TestLine(AccelerationX - " + str(2**15) + ")", "")
@@ -4144,11 +4225,13 @@ class TestSth(unittest.TestCase):
                                    0, fAdcRawDat)
         [indexStart, indexEnd] = self.streamingTestSignalCollect(
             MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"],
-            MyToolItStreaming["Acceleration"], TestCommandSignal["Line"],
+            MyToolItStreaming["Data"], TestCommandSignal["Line"],
             SthModule["Streaming"], 2**14, DataSets[3], 1, 0, 0, 1000)
-        [array1, array2, array3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[3], 1, 0, 0, indexStart, indexEnd)
+        [array1, array2,
+         array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                MyToolItStreaming["Data"],
+                                                DataSets[3], 1, 0, 0,
+                                                indexStart, indexEnd)
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat,
                           "TestLine(AccelerationX - " + str(2**14) + ")", "")
         self.streamingValueCompare(array1, array2, array3, 2**14, 0, 0, 0, 0,
@@ -4159,11 +4242,13 @@ class TestSth(unittest.TestCase):
         """
         [indexStart, indexEnd] = self.streamingTestSignalCollect(
             MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"],
-            MyToolItStreaming["Acceleration"], TestCommandSignal["Line"],
+            MyToolItStreaming["Data"], TestCommandSignal["Line"],
             SthModule["Streaming"], 2**15, DataSets[3], 0, 1, 0, 1000)
-        [array1, array2, array3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[3], 0, 1, 0, indexStart, indexEnd)
+        [array1, array2,
+         array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                MyToolItStreaming["Data"],
+                                                DataSets[3], 0, 1, 0,
+                                                indexStart, indexEnd)
         array2 = array2[:-16]
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat,
                           "TestLine(AccelerationY - " + str(2**15) + ")", "")
@@ -4171,11 +4256,13 @@ class TestSth(unittest.TestCase):
                                    0, fAdcRawDat)
         [indexStart, indexEnd] = self.streamingTestSignalCollect(
             MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"],
-            MyToolItStreaming["Acceleration"], TestCommandSignal["Line"],
+            MyToolItStreaming["Data"], TestCommandSignal["Line"],
             SthModule["Streaming"], 2**14, DataSets[3], 0, 1, 0, 1000)
-        [array1, array2, array3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[3], 0, 1, 0, indexStart, indexEnd)
+        [array1, array2,
+         array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                MyToolItStreaming["Data"],
+                                                DataSets[3], 0, 1, 0,
+                                                indexStart, indexEnd)
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat,
                           "TestLine(AccelerationY - " + str(2**14) + ")", "")
         self.streamingValueCompare(array1, array2, array3, 0, 0, 2**14, 0, 0,
@@ -4186,11 +4273,13 @@ class TestSth(unittest.TestCase):
         """
         [indexStart, indexEnd] = self.streamingTestSignalCollect(
             MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"],
-            MyToolItStreaming["Acceleration"], TestCommandSignal["Line"],
+            MyToolItStreaming["Data"], TestCommandSignal["Line"],
             SthModule["Streaming"], 2**15, DataSets[3], 0, 0, 1, 1000)
-        [array1, array2, array3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[3], 0, 0, 1, indexStart, indexEnd)
+        [array1, array2,
+         array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                MyToolItStreaming["Data"],
+                                                DataSets[3], 0, 0, 1,
+                                                indexStart, indexEnd)
         array3 = array3[:-16]
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat,
                           "TestLine(AccelerationZ - " + str(2**15) + ")", "")
@@ -4198,11 +4287,13 @@ class TestSth(unittest.TestCase):
                                    0, fAdcRawDat)
         [indexStart, indexEnd] = self.streamingTestSignalCollect(
             MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"],
-            MyToolItStreaming["Acceleration"], TestCommandSignal["Line"],
+            MyToolItStreaming["Data"], TestCommandSignal["Line"],
             SthModule["Streaming"], 2**14, DataSets[3], 0, 0, 1, 1000)
-        [array1, array2, array3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[3], 0, 0, 1, indexStart, indexEnd)
+        [array1, array2,
+         array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                MyToolItStreaming["Data"],
+                                                DataSets[3], 0, 0, 1,
+                                                indexStart, indexEnd)
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat,
                           "TestLine(AccelerationZ - " + str(2**14) + ")", "")
         self.streamingValueCompare(array1, array2, array3, 0, 0, 0, 0, 2**14,
@@ -4244,11 +4335,13 @@ class TestSth(unittest.TestCase):
         """
         [indexStart, indexEnd] = self.streamingTestSignalCollect(
             MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"],
-            MyToolItStreaming["Acceleration"], TestCommandSignal["Ramp"],
+            MyToolItStreaming["Data"], TestCommandSignal["Ramp"],
             SthModule["Streaming"], 2**16 - 1, DataSets[3], 1, 0, 0, 1000)
-        [array1, array2, array3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[3], 1, 0, 0, indexStart, indexEnd)
+        [array1, array2,
+         array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                MyToolItStreaming["Data"],
+                                                DataSets[3], 1, 0, 0,
+                                                indexStart, indexEnd)
         array1 = array1[:-16]
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat,
                           "TestRamp(AccelerationX)", "")
@@ -4279,11 +4372,13 @@ class TestSth(unittest.TestCase):
         """
         [indexStart, indexEnd] = self.streamingTestSignalCollect(
             MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"],
-            MyToolItStreaming["Acceleration"], TestCommandSignal["Ramp"],
+            MyToolItStreaming["Data"], TestCommandSignal["Ramp"],
             SthModule["Streaming"], 2**16 - 1, DataSets[3], 0, 1, 0, 1000)
-        [array1, array2, array3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[3], 0, 1, 0, indexStart, indexEnd)
+        [array1, array2,
+         array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                MyToolItStreaming["Data"],
+                                                DataSets[3], 0, 1, 0,
+                                                indexStart, indexEnd)
         array2 = array2[:-16]
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat,
                           "TestRamp(AccelerationY)", "")
@@ -4314,11 +4409,13 @@ class TestSth(unittest.TestCase):
         """
         [indexStart, indexEnd] = self.streamingTestSignalCollect(
             MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"],
-            MyToolItStreaming["Acceleration"], TestCommandSignal["Ramp"],
+            MyToolItStreaming["Data"], TestCommandSignal["Ramp"],
             SthModule["Streaming"], 2**16 - 1, DataSets[3], 0, 0, 1, 1000)
-        [array1, array2, array3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[3], 0, 0, 1, indexStart, indexEnd)
+        [array1, array2,
+         array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                MyToolItStreaming["Data"],
+                                                DataSets[3], 0, 0, 1,
+                                                indexStart, indexEnd)
         array3 = array3[:-16]
         self.Can.ValueLog(array1, array2, array3, fAdcRawDat,
                           "TestRamp(AccelerationZ)", "")
@@ -4385,11 +4482,13 @@ class TestSth(unittest.TestCase):
         """Testing Sampling Rate - Reset (⏱ 25 seconds)
         """
         [indexStart, indexEnd] = self.Can.streamingValueCollect(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[3], 1, 0, 0, self.tSthLimits.uStandardTestTimeMs)
-        [array1, array2, array3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[3], 1, 0, 0, indexStart, indexEnd)
+            MyToolItNetworkNr["STH1"], MyToolItStreaming["Data"], DataSets[3],
+            1, 0, 0, self.tSthLimits.uStandardTestTimeMs)
+        [array1, array2,
+         array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                MyToolItStreaming["Data"],
+                                                DataSets[3], 1, 0, 0,
+                                                indexStart, indexEnd)
         calcRate = calcSamplingRate(
             self.tSthLimits.uSamplingRatePrescalerReset,
             self.tSthLimits.uSamplingRateAcqTimeReset,
@@ -4830,12 +4929,12 @@ class TestSth(unittest.TestCase):
         self.assertEqual(overSamplingRate, Settings[2])
         self.assertEqual(AdcReference["VDD"], Settings[3])
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
-                                             MyToolItStreaming["Acceleration"],
+                                             MyToolItStreaming["Data"],
                                              DataSets[3], 1, 0, 0)
         time.sleep(10)
         self.Can.GetReadArrayIndex() - 1
         ack = self.Can.streamingStop(MyToolItNetworkNr["STH1"],
-                                     MyToolItStreaming["Acceleration"],
+                                     MyToolItStreaming["Data"],
                                      bErrorExit=False)
         indexStop = self.Can.GetReadArrayIndex() - 1
         BytesTransfered = indexStop - indexStart
@@ -4873,12 +4972,12 @@ class TestSth(unittest.TestCase):
                                 MyToolItStreaming["Voltage"], DataSets[3], 1,
                                 0, 0)
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
-                                             MyToolItStreaming["Acceleration"],
+                                             MyToolItStreaming["Data"],
                                              DataSets[3], 1, 0, 0)
         time.sleep(self.tSthLimits.uStandardTestTimeMs / 1000)
         indexEnd = self.Can.GetReadArrayIndex() - 1
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
-                               MyToolItStreaming["Acceleration"])
+                               MyToolItStreaming["Data"])
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
                                MyToolItStreaming["Voltage"])
         time.sleep(1)
@@ -4904,9 +5003,11 @@ class TestSth(unittest.TestCase):
                                                 indexStart, indexEnd)
         self.assertEqual(0, len(array2))
         self.assertEqual(0, len(array3))
-        [arrayAccX, array2, array3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[3], 1, 0, 0, indexStart, indexEnd)
+        [arrayAccX, array2,
+         array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                MyToolItStreaming["Data"],
+                                                DataSets[3], 1, 0, 0,
+                                                indexStart, indexEnd)
         self.assertEqual(0, len(array2))
         self.assertEqual(0, len(array3))
         samplePointsVoltage = len(arrayBat) / 10
@@ -4949,12 +5050,12 @@ class TestSth(unittest.TestCase):
                                 MyToolItStreaming["Voltage"], DataSets[3], 1,
                                 0, 0)
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
-                                             MyToolItStreaming["Acceleration"],
+                                             MyToolItStreaming["Data"],
                                              DataSets[1], 1, 1, 0)
         time.sleep(self.tSthLimits.uStandardTestTimeMs / 1000 + 0.25)
         indexEnd = self.Can.GetReadArrayIndex() - 1
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
-                               MyToolItStreaming["Acceleration"])
+                               MyToolItStreaming["Data"])
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
                                MyToolItStreaming["Voltage"])
 
@@ -4981,9 +5082,11 @@ class TestSth(unittest.TestCase):
                                                 indexStart, indexEnd)
         self.assertEqual(0, len(array2))
         self.assertEqual(0, len(array3))
-        [arrayAccX, arrayAccY, array3] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[1], 1, 1, 0, indexStart, indexEnd)
+        [arrayAccX, arrayAccY,
+         array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                MyToolItStreaming["Data"],
+                                                DataSets[1], 1, 1, 0,
+                                                indexStart, indexEnd)
         self.assertEqual(0, len(array3))
         samplePointsVoltage = len(arrayBat) / 10
         samplePointsXAcceleration = len(arrayAccX) / 10
@@ -5032,12 +5135,12 @@ class TestSth(unittest.TestCase):
                                 MyToolItStreaming["Voltage"], DataSets[3], 1,
                                 0, 0)
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
-                                             MyToolItStreaming["Acceleration"],
+                                             MyToolItStreaming["Data"],
                                              DataSets[1], 1, 1, 1)
         time.sleep(self.tSthLimits.uStandardTestTimeMs / 1000 + 0.25)
         indexEnd = self.Can.GetReadArrayIndex() - 1
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
-                               MyToolItStreaming["Acceleration"])
+                               MyToolItStreaming["Data"])
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
                                MyToolItStreaming["Voltage"])
         time.sleep(1)
@@ -5063,9 +5166,11 @@ class TestSth(unittest.TestCase):
                                                 indexStart, indexEnd)
         self.assertEqual(0, len(array2))
         self.assertEqual(0, len(array3))
-        [arrayAccX, arrayAccY, arrayAccZ] = self.Can.streamingValueArray(
-            MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-            DataSets[1], 1, 1, 1, indexStart, indexEnd)
+        [arrayAccX, arrayAccY,
+         arrayAccZ] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
+                                                   MyToolItStreaming["Data"],
+                                                   DataSets[1], 1, 1, 1,
+                                                   indexStart, indexEnd)
         samplePointsVoltage = len(arrayBat) / 10
         samplePointsXAcceleration = len(arrayAccX) / 10
         samplePointsYAcceleration = len(arrayAccY) / 10
@@ -5119,12 +5224,12 @@ class TestSth(unittest.TestCase):
                                 MyToolItStreaming["Voltage"], DataSets[3], 1,
                                 0, 0)
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
-                                             MyToolItStreaming["Acceleration"],
+                                             MyToolItStreaming["Data"],
                                              DataSets[1], 1, 1, 1)
         time.sleep(self.tSthLimits.uStandardTestTimeMs / 1000 + 0.25)
         indexEnd = self.Can.GetReadArrayIndex() - 1
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
-                               MyToolItStreaming["Acceleration"])
+                               MyToolItStreaming["Data"])
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
                                MyToolItStreaming["Voltage"])
         time.sleep(1)
@@ -5151,8 +5256,8 @@ class TestSth(unittest.TestCase):
         self.assertEqual(0, len(array3))
         [arrayAccX, arrayAccY,
          arrayAccZ] = self.Can.streamingValueArrayMessageCounters(
-             MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-             DataSets[1], 1, 1, 1, indexStart, indexEnd)
+             MyToolItNetworkNr["STH1"], MyToolItStreaming["Data"], DataSets[1],
+             1, 1, 1, indexStart, indexEnd)
         self.Can.ValueLog(arrayAccX, arrayAccY, arrayAccZ, fAdcRawDat,
                           "AccMsgCounter", "")
         self.Can.ValueLog(arrayBat, array2, array3, fAdcRawDat,
@@ -5190,14 +5295,15 @@ class TestSth(unittest.TestCase):
                            self.tSthLimits.uSamplingRateSingleAcqTimeMax,
                            self.tSthLimits.uSamplingRateSingleOverSamplesMax,
                            AdcReference["VDD"])
-        [indexStart, indexEnd
-         ] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
-                                            MyToolItStreaming["Acceleration"],
-                                            DataSets[3], 1, 0, 0, 10000)
+        [indexStart,
+         indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
+                                                    MyToolItStreaming["Data"],
+                                                    DataSets[3], 1, 0, 0,
+                                                    10000)
         [arrayAccX, arrayAccY,
          arrayAccZ] = self.Can.streamingValueArrayMessageCounters(
-             MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-             DataSets[3], 1, 0, 0, indexStart, indexEnd)
+             MyToolItNetworkNr["STH1"], MyToolItStreaming["Data"], DataSets[3],
+             1, 0, 0, indexStart, indexEnd)
         self.assertEqual(0, len(arrayAccY))
         self.assertEqual(0, len(arrayAccZ))
         self.Can.ValueLog(arrayAccX, arrayAccY, arrayAccZ, fAdcRawDat,
@@ -5224,14 +5330,14 @@ class TestSth(unittest.TestCase):
                            self.tSthLimits.uSamplingRateSingleAcqTimeMax,
                            self.tSthLimits.uSamplingRateSingleOverSamplesMax,
                            AdcReference["VDD"])
-        [indexStart, indexEnd
-         ] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
-                                            MyToolItStreaming["Acceleration"],
-                                            DataSets[3], 0, 1, 0, 1000)
+        [indexStart,
+         indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
+                                                    MyToolItStreaming["Data"],
+                                                    DataSets[3], 0, 1, 0, 1000)
         [arrayAccX, arrayAccY,
          arrayAccZ] = self.Can.streamingValueArrayMessageCounters(
-             MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-             DataSets[3], 0, 1, 0, indexStart, indexEnd)
+             MyToolItNetworkNr["STH1"], MyToolItStreaming["Data"], DataSets[3],
+             0, 1, 0, indexStart, indexEnd)
         self.assertEqual(0, len(arrayAccX))
         self.assertEqual(0, len(arrayAccZ))
         self.Can.ValueLog(arrayAccX, arrayAccY, arrayAccZ, fAdcRawDat,
@@ -5258,14 +5364,14 @@ class TestSth(unittest.TestCase):
                            self.tSthLimits.uSamplingRateSingleAcqTimeMax,
                            self.tSthLimits.uSamplingRateSingleOverSamplesMax,
                            AdcReference["VDD"])
-        [indexStart, indexEnd
-         ] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
-                                            MyToolItStreaming["Acceleration"],
-                                            DataSets[3], 0, 0, 1, 1000)
+        [indexStart,
+         indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
+                                                    MyToolItStreaming["Data"],
+                                                    DataSets[3], 0, 0, 1, 1000)
         [arrayAccX, arrayAccY,
          arrayAccZ] = self.Can.streamingValueArrayMessageCounters(
-             MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-             DataSets[3], 0, 0, 1, indexStart, indexEnd)
+             MyToolItNetworkNr["STH1"], MyToolItStreaming["Data"], DataSets[3],
+             0, 0, 1, indexStart, indexEnd)
         self.assertEqual(0, len(arrayAccX))
         self.assertEqual(0, len(arrayAccY))
         self.Can.ValueLog(arrayAccX, arrayAccY, arrayAccZ, fAdcRawDat,
@@ -5292,14 +5398,14 @@ class TestSth(unittest.TestCase):
                            self.tSthLimits.uSamplingRateDoubleAcqTimeMax,
                            self.tSthLimits.uSamplingRateDoubleOverSamplesMax,
                            AdcReference["VDD"])
-        [indexStart, indexEnd
-         ] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
-                                            MyToolItStreaming["Acceleration"],
-                                            DataSets[1], 1, 1, 0, 1000)
+        [indexStart,
+         indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
+                                                    MyToolItStreaming["Data"],
+                                                    DataSets[1], 1, 1, 0, 1000)
         [arrayAccX, arrayAccY,
          arrayAccZ] = self.Can.streamingValueArrayMessageCounters(
-             MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-             DataSets[1], 1, 1, 0, indexStart, indexEnd)
+             MyToolItNetworkNr["STH1"], MyToolItStreaming["Data"], DataSets[1],
+             1, 1, 0, indexStart, indexEnd)
         self.assertEqual(0, len(arrayAccZ))
         self.Can.ValueLog(arrayAccX, arrayAccY, arrayAccZ, fAdcRawDat,
                           "AccMsgCounter", "")
@@ -5322,14 +5428,14 @@ class TestSth(unittest.TestCase):
                            self.tSthLimits.uSamplingRateDoubleAcqTimeMax,
                            self.tSthLimits.uSamplingRateDoubleOverSamplesMax,
                            AdcReference["VDD"])
-        [indexStart, indexEnd
-         ] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
-                                            MyToolItStreaming["Acceleration"],
-                                            DataSets[1], 1, 0, 1, 1000)
+        [indexStart,
+         indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
+                                                    MyToolItStreaming["Data"],
+                                                    DataSets[1], 1, 0, 1, 1000)
         [arrayAccX, arrayAccY,
          arrayAccZ] = self.Can.streamingValueArrayMessageCounters(
-             MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-             DataSets[1], 1, 0, 1, indexStart, indexEnd)
+             MyToolItNetworkNr["STH1"], MyToolItStreaming["Data"], DataSets[1],
+             1, 0, 1, indexStart, indexEnd)
         self.assertEqual(0, len(arrayAccY))
         self.Can.ValueLog(arrayAccX, arrayAccY, arrayAccZ, fAdcRawDat,
                           "AccMsgCounter", "")
@@ -5352,14 +5458,14 @@ class TestSth(unittest.TestCase):
                            self.tSthLimits.uSamplingRateDoubleAcqTimeMax,
                            self.tSthLimits.uSamplingRateDoubleOverSamplesMax,
                            AdcReference["VDD"])
-        [indexStart, indexEnd
-         ] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
-                                            MyToolItStreaming["Acceleration"],
-                                            DataSets[1], 0, 1, 1, 1000)
+        [indexStart,
+         indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
+                                                    MyToolItStreaming["Data"],
+                                                    DataSets[1], 0, 1, 1, 1000)
         [arrayAccX, arrayAccY,
          arrayAccZ] = self.Can.streamingValueArrayMessageCounters(
-             MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-             DataSets[1], 0, 1, 1, indexStart, indexEnd)
+             MyToolItNetworkNr["STH1"], MyToolItStreaming["Data"], DataSets[1],
+             0, 1, 1, indexStart, indexEnd)
         self.assertEqual(0, len(arrayAccX))
         self.Can.ValueLog(arrayAccX, arrayAccY, arrayAccZ, fAdcRawDat,
                           "AccMsgCounter", "")
@@ -5382,14 +5488,14 @@ class TestSth(unittest.TestCase):
                            self.tSthLimits.uSamplingRateTrippleAcqTimeMax,
                            self.tSthLimits.uSamplingRateTrippleOverSamplesMax,
                            AdcReference["VDD"])
-        [indexStart, indexEnd
-         ] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
-                                            MyToolItStreaming["Acceleration"],
-                                            DataSets[1], 1, 1, 1, 1000)
+        [indexStart,
+         indexEnd] = self.Can.streamingValueCollect(MyToolItNetworkNr["STH1"],
+                                                    MyToolItStreaming["Data"],
+                                                    DataSets[1], 1, 1, 1, 1000)
         [arrayAccX, arrayAccY,
          arrayAccZ] = self.Can.streamingValueArrayMessageCounters(
-             MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-             DataSets[1], 1, 1, 1, indexStart, indexEnd)
+             MyToolItNetworkNr["STH1"], MyToolItStreaming["Data"], DataSets[1],
+             1, 1, 1, indexStart, indexEnd)
         self.Can.ValueLog(arrayAccX, arrayAccY, arrayAccZ, fAdcRawDat,
                           "AccMsgCounter", "")
         count = arrayAccY[0]
@@ -5423,12 +5529,12 @@ class TestSth(unittest.TestCase):
                                 MyToolItStreaming["Voltage"], DataSets[3], 1,
                                 0, 0)
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
-                                             MyToolItStreaming["Acceleration"],
+                                             MyToolItStreaming["Data"],
                                              DataSets[3], 1, 0, 0)
         time.sleep(self.tSthLimits.uStandardTestTimeMs / 1000 + 0.25)
         indexEnd = self.Can.GetReadArrayIndex() - 1
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
-                               MyToolItStreaming["Acceleration"])
+                               MyToolItStreaming["Data"])
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
                                MyToolItStreaming["Voltage"])
         time.sleep(1)
@@ -5455,8 +5561,8 @@ class TestSth(unittest.TestCase):
         self.assertEqual(0, len(array3))
         [arrayAccX, arrayAccY,
          arrayAccZ] = self.Can.streamingValueArrayMessageCounters(
-             MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-             DataSets[3], 1, 0, 0, indexStart, indexEnd)
+             MyToolItNetworkNr["STH1"], MyToolItStreaming["Data"], DataSets[3],
+             1, 0, 0, indexStart, indexEnd)
         self.Can.ValueLog(arrayAccX, arrayAccY, arrayAccZ, fAdcRawDat,
                           "AccMsgCounter", "")
         self.Can.ValueLog(arrayBat, array2, array3, fAdcRawDat,
@@ -5509,12 +5615,12 @@ class TestSth(unittest.TestCase):
                                 MyToolItStreaming["Voltage"], DataSets[3], 1,
                                 0, 0)
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
-                                             MyToolItStreaming["Acceleration"],
+                                             MyToolItStreaming["Data"],
                                              DataSets[3], 0, 1, 0)
         time.sleep(self.tSthLimits.uStandardTestTimeMs / 1000 + 0.25)
         indexEnd = self.Can.GetReadArrayIndex() - 1
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
-                               MyToolItStreaming["Acceleration"])
+                               MyToolItStreaming["Data"])
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
                                MyToolItStreaming["Voltage"])
         time.sleep(1)
@@ -5541,8 +5647,8 @@ class TestSth(unittest.TestCase):
         self.assertEqual(0, len(array3))
         [arrayAccX, arrayAccY,
          arrayAccZ] = self.Can.streamingValueArrayMessageCounters(
-             MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-             DataSets[3], 0, 1, 0, indexStart, indexEnd)
+             MyToolItNetworkNr["STH1"], MyToolItStreaming["Data"], DataSets[3],
+             0, 1, 0, indexStart, indexEnd)
         self.Can.ValueLog(arrayAccX, arrayAccY, arrayAccZ, fAdcRawDat,
                           "AccMsgCounter", "")
         self.Can.ValueLog(arrayBat, array2, array3, fAdcRawDat,
@@ -5595,12 +5701,12 @@ class TestSth(unittest.TestCase):
                                 MyToolItStreaming["Voltage"], DataSets[3], 1,
                                 0, 0)
         indexStart = self.Can.streamingStart(MyToolItNetworkNr["STH1"],
-                                             MyToolItStreaming["Acceleration"],
+                                             MyToolItStreaming["Data"],
                                              DataSets[3], 0, 0, 1)
         time.sleep(self.tSthLimits.uStandardTestTimeMs / 1000 + 0.25)
         indexEnd = self.Can.GetReadArrayIndex() - 1
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
-                               MyToolItStreaming["Acceleration"])
+                               MyToolItStreaming["Data"])
         self.Can.streamingStop(MyToolItNetworkNr["STH1"],
                                MyToolItStreaming["Voltage"])
         time.sleep(1)
@@ -5627,8 +5733,8 @@ class TestSth(unittest.TestCase):
         self.assertEqual(0, len(array3))
         [arrayAccX, arrayAccY,
          arrayAccZ] = self.Can.streamingValueArrayMessageCounters(
-             MyToolItNetworkNr["STH1"], MyToolItStreaming["Acceleration"],
-             DataSets[3], 0, 0, 1, indexStart, indexEnd)
+             MyToolItNetworkNr["STH1"], MyToolItStreaming["Data"], DataSets[3],
+             0, 0, 1, indexStart, indexEnd)
         self.Can.ValueLog(arrayAccX, arrayAccY, arrayAccZ, fAdcRawDat,
                           "AccMsgCounter", "")
         self.Can.ValueLog(arrayBat, array2, array3, fAdcRawDat,
@@ -6716,12 +6822,12 @@ class TestSth(unittest.TestCase):
         self.assertEqual(overSamplingRate, Settings[2])
         self.assertEqual(AdcReference["VDD"], Settings[3])
         self.Can.streamingStart(MyToolItNetworkNr["STH1"],
-                                MyToolItStreaming["Acceleration"], DataSets[3],
-                                1, 0, 0)
+                                MyToolItStreaming["Data"], DataSets[3], 1, 0,
+                                0)
         time.sleep(1)
         self.Can.GetReadArrayIndex() - 1
         ack = self.Can.streamingStop(MyToolItNetworkNr["STH1"],
-                                     MyToolItStreaming["Acceleration"],
+                                     MyToolItStreaming["Data"],
                                      bErrorExit=False)
         self.assertNotEqual("Error", ack)
         StateWord = SthStateWord()
@@ -6759,8 +6865,8 @@ class TestSth(unittest.TestCase):
         self.assertEqual(overSamplingRate, Settings[2])
         self.assertEqual(AdcReference["VDD"], Settings[3])
         self.Can.streamingStart(MyToolItNetworkNr["STH1"],
-                                MyToolItStreaming["Acceleration"], DataSets[3],
-                                1, 0, 0)
+                                MyToolItStreaming["Data"], DataSets[3], 1, 0,
+                                0)
         time.sleep(1)
 
         status = self.Can.error_status(MyToolItNetworkNr["STH1"])
@@ -6785,8 +6891,8 @@ class TestSth(unittest.TestCase):
         self.assertEqual(overSamplingRate, Settings[2])
         self.assertEqual(AdcReference["VDD"], Settings[3])
         self.Can.streamingStart(MyToolItNetworkNr["STH1"],
-                                MyToolItStreaming["Acceleration"], DataSets[3],
-                                1, 0, 0)
+                                MyToolItStreaming["Data"], DataSets[3], 1, 0,
+                                0)
         time.sleep(10)
 
         status = self.Can.error_status(MyToolItNetworkNr["STH1"])
@@ -6887,7 +6993,7 @@ class TestSth(unittest.TestCase):
         accFormat.b.bNumber3 = 0
         accFormat.b.u3DataSets = DataSets[3]
         cmd = self.Can.CanCmd(MyToolItBlock["Streaming"],
-                              MyToolItStreaming["Acceleration"], 1, 0)
+                              MyToolItStreaming["Data"], 1, 0)
         message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
                                         MyToolItNetworkNr["STH1"],
                                         [accFormat.asbyte])
@@ -6947,7 +7053,7 @@ class TestSth(unittest.TestCase):
                                                     bErrorExit=False)
         self.assertEqual("Error", msgAck)
         cmd = self.Can.CanCmd(MyToolItBlock["Streaming"],
-                              MyToolItStreaming["Acceleration"], 1, 1)
+                              MyToolItStreaming["Data"], 1, 1)
         message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
                                         MyToolItNetworkNr["STH1"], [])
         msgAck = self.Can.tWriteFrameWaitAckRetries(message,

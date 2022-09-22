@@ -872,13 +872,13 @@ class CommandLineInterface():
         accFormat.b.bNumber3 = int(bool(self.sensor.third))
         accFormat.b.u3DataSets = self.tAccDataFormat
         cmd = self.Can.CanCmd(MyToolItBlock["Streaming"],
-                              MyToolItStreaming["Acceleration"], 0, 0)
+                              MyToolItStreaming["Data"], 0, 0)
         self.AccAckExpected = self.Can.CanMessage20(cmd,
                                                     MyToolItNetworkNr["STH1"],
                                                     MyToolItNetworkNr["SPU1"],
                                                     [accFormat.asbyte])
         cmd = self.Can.CanCmd(MyToolItBlock["Streaming"],
-                              MyToolItStreaming["Acceleration"], 1, 0)
+                              MyToolItStreaming["Data"], 1, 0)
         message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
                                         MyToolItNetworkNr["STH1"],
                                         [accFormat.asbyte])

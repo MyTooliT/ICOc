@@ -801,7 +801,7 @@ class Network(object):
         streamingFormat.b.bNumber3 = b3
         streamingFormat.b.u3DataSets = dataSets
 
-        if MyToolItStreaming["Acceleration"] == subCmd:
+        if MyToolItStreaming["Data"] == subCmd:
             self.AccConfig = streamingFormat
         elif MyToolItStreaming["Voltage"] == subCmd:
             self.VoltageConfig = streamingFormat
@@ -839,7 +839,7 @@ class Network(object):
         streamingFormat.b.bStreaming = 1
         streamingFormat.b.u3DataSets = DataSets[0]
 
-        if MyToolItStreaming["Acceleration"] == subCmd:
+        if MyToolItStreaming["Data"] == subCmd:
             self.AccConfig = streamingFormat
         elif MyToolItStreaming["Voltage"] == subCmd:
             self.VoltageConfig = streamingFormat

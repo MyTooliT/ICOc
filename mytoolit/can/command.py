@@ -71,9 +71,9 @@ class Command:
             ...
         ValueError: Unknown block: Does Not Exist
 
-        >>> command = Command(block='Streaming', block_command='Acceleration')
+        >>> command = Command(block='Streaming', block_command='Data')
         >>> command.block_command_name()
-        'Acceleration'
+        'Data'
 
         >>> Command(block='Streaming', block_command='Does Not Exist')
         Traceback (most recent call last):

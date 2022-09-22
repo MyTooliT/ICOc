@@ -180,7 +180,7 @@ SystemCommandRouting = {
 }
 
 MyToolItStreaming = bidict({
-    "Acceleration": 0x00,
+    "Data": 0x00,
     "Temperature": 0x01,
     "Voltage": 0x20,
     "Current": 0x40,
@@ -292,7 +292,7 @@ CommandBlockSystem = {
 }
 
 CommandBlockStreaming = {
-    MyToolItStreaming["Acceleration"]: "Streaming Command Acceleration",
+    MyToolItStreaming["Data"]: "Streaming Command Data",
     MyToolItStreaming["Temperature"]: "Streaming Command Temperature",
     MyToolItStreaming["Voltage"]: "Streaming Command Voltage",
     MyToolItStreaming["Current"]: "Streaming Command Current",
