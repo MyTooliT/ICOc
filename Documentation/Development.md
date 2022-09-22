@@ -204,17 +204,17 @@ The text below specifies extended manual test that should be executed before we 
 8. Enable the x-axis and y-axis
 
    1. Press <kbd>p</kbd>
-   2. Remove the default axis config for the x axis (press <kbd>⌫</kbd> at least one time)
+   2. Remove the default axis config for the first measurement channel (press <kbd>⌫</kbd> at least one time)
    3. Enter the characters “23456789ab”
    4. The last step should not have changed the empty input value
-   5. Enable the x-axis measurement:
+   5. Enable the first measurement channel:
       1. Press <kbd>1</kbd>
       2. Press <kbd>⏎</kbd>
-   6. Enable the y-axis measurement:
+   6. Enable the second measurement channel:
       1. Press <kbd>⌫</kbd>
       2. Press <kbd>1</kbd>
       3. Press <kbd>⏎</kbd>
-   7. Disable the z-axis measurement:
+   7. Disable the third measurement channel:
       1. Press <kbd>⌫</kbd>
       1. Press <kbd>0</kbd>
       1. Press <kbd>⏎</kbd>
@@ -223,7 +223,7 @@ The text below specifies extended manual test that should be executed before we 
 
    1. Press <kbd>s</kbd>
    2. Shake the STH
-   3. Make sure that shaking the STH changes (at least) the displayed value for the x-axis
+   3. Make sure that shaking the STH changes (at least) the displayed value for the first measurement channel
    4. Wait until the measurement took place
 
 10. Check the output file
