@@ -13,9 +13,7 @@ from mytoolit.can.command import Command
 from mytoolit.can.identifier import Identifier
 from mytoolit.can.node import Node
 from mytoolit.can.status import State
-from mytoolit.can.streaming import (StreamingFormat,
-                                    StreamingFormatAcceleration,
-                                    StreamingFormatVoltage)
+from mytoolit.can.streaming import StreamingFormat, StreamingFormatVoltage
 from mytoolit.utility import convert_bytes_to_text
 
 # -- Class --------------------------------------------------------------------
@@ -312,7 +310,7 @@ class Message:
 
         block_command = identifier.block_command_name()
 
-        StreamingFormatClass = (StreamingFormatAcceleration
+        StreamingFormatClass = (StreamingFormat
                                 if block_command == 'Acceleration' else
                                 StreamingFormatVoltage if block_command
                                 == 'Voltage' else StreamingFormat)
