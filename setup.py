@@ -12,18 +12,8 @@ with open("mytoolit/__init__.py", "r") as init_file:
 with open("ReadMe.md", encoding='utf-8') as readme:
     long_description = readme.read()
 
-required_packages = [
-    "bidict",
-    "dynaconf",
-    "matplotlib",
-    "netaddr",
-    "pdfrw",
-    "python-can>=4.0",
-    "reportlab",
-    "tables>=3.6",
-    "semantic_version",
-    "uptime",
-]
+with open('requirements.txt', encoding='utf-8') as requirements:
+    required_packages = requirements.read().splitlines()
 
 if system() == "Windows":
     required_packages.extend(["pywin32", "windows-curses"])
