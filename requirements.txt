@@ -1,5 +1,8 @@
 bidict
-dynaconf
+# TODO: Set new minimum version for `dynaconf` after the case-insensitive
+#       lookup for names that contain spaces works again:
+#       - https://github.com/dynaconf/dynaconf/issues/814
+dynaconf==3.1.9
 matplotlib
 netaddr
 pdfrw
