@@ -10,22 +10,20 @@ HTML_FILE := $(OUTPUT_DIRECTORY)/$(OUTPUT_NAME).html
 
 ifeq ($(OS), Windows_NT)
 	OPERATING_SYSTEM := windows
+	PYTEST_COMMAND := pytest
 else
 	OS_NAME := $(shell uname -s)
-    ifeq ($(OS_NAME), Linux)
-        OPERATING_SYSTEM := linux
+	PYTEST_COMMAND := pytest --ignore-glob='*cli.py' --ignore-glob='*ui.py'
+	ifeq ($(OS_NAME), Linux)
+		OPERATING_SYSTEM := linux
 	else
 		OPERATING_SYSTEM := mac
-    endif
+	endif
 endif
 
 # -- Rules ---------------------------------------------------------------------
 
-run: run-$(OPERATING_SYSTEM)
-
-run-windows: check test run-hardware-tests-windows
-run-linux: check test-python-can run-hardware-tests-linux
-run-mac: check test-python-can run-hardware-tests-mac
+run: check test run-hardware-tests-$(OPERATING_SYSTEM)
 
 # =========
 # = Tests =
@@ -36,10 +34,7 @@ check:
 	mypy mytoolit
 
 test:
-	pytest -v
-
-test-python-can:
-	pytest --ignore-glob='*cli.py' --ignore-glob='*ui.py'
+	$(PYTEST_COMMAND)
 
 test-win-no-hardware:
 	pytest --ignore-glob='*network.py' --ignore-glob='*commander.py'
