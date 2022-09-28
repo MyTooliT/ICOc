@@ -10,10 +10,8 @@ HTML_FILE := $(OUTPUT_DIRECTORY)/$(OUTPUT_NAME).html
 
 ifeq ($(OS), Windows_NT)
 	OPERATING_SYSTEM := windows
-	PYTEST_COMMAND := pytest
 else
 	OS_NAME := $(shell uname -s)
-	PYTEST_COMMAND := pytest --ignore-glob='*cli.py' --ignore-glob='*ui.py'
 	ifeq ($(OS_NAME), Linux)
 		OPERATING_SYSTEM := linux
 	else
@@ -34,7 +32,7 @@ check:
 	mypy mytoolit
 
 test:
-	$(PYTEST_COMMAND)
+	pytest
 
 test-win-no-hardware:
 	pytest --ignore-glob='*network.py' --ignore-glob='*commander.py'

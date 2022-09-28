@@ -8,10 +8,13 @@ from datetime import datetime
 from functools import partial
 from logging import getLogger, FileHandler, Formatter
 from pathlib import Path
+from platform import system
 from sys import stderr
 from typing import Optional, Tuple
 
-from win32event import CreateEvent, WaitForSingleObject, WAIT_OBJECT_0
+# Handle pytest `ModuleNotFoundError` on non-Windows OS
+if system() == 'Windows':
+    from win32event import CreateEvent, WaitForSingleObject, WAIT_OBJECT_0
 
 from can.interfaces.pcan.basic import (PCAN_ERROR_OK, PCAN_ERROR_QRCVEMPTY,
                                        PCAN_RECEIVE_EVENT)
