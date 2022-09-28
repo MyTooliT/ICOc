@@ -5,5 +5,5 @@ ignore_missing_imports = true
 # Use doctests
 # Fail after first errors
 # Ignore macOS metadata files
-addopts = "--doctest-modules -x --ignore-glob='*._*.py'"
+addopts = "--doctest-modules -x --ignore-glob='*._*.py' -v"
 minversion = "6.0"
