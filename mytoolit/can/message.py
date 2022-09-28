@@ -310,8 +310,7 @@ class Message:
 
         block_command = identifier.block_command_name()
 
-        StreamingFormatClass = (StreamingFormat
-                                if block_command == 'Data' else
+        StreamingFormatClass = (StreamingFormat if block_command == 'Data' else
                                 StreamingFormatVoltage if block_command
                                 == 'Voltage' else StreamingFormat)
         streaming_format: StreamingFormat = StreamingFormatClass(self.data[0])
