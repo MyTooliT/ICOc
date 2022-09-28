@@ -2029,8 +2029,8 @@ class TestSth(unittest.TestCase):
             self.Can.logger.info("Sleep Time1 was not taken: " +
                                  str(SleepTime["Min"] - 1) + "ms")
         else:
-            self.Can.logger.info.Error("Sleep Time1 was taken: " +
-                                       str(SleepTime["Min"] - 1) + "ms")
+            self.Can.logger.error("Sleep Time1 was taken: " +
+                                  str(SleepTime["Min"] - 1) + "ms")
             self.Can.__exitError()
         [timeReset, timeAdvertisement
          ] = self.Can.BlueToothEnergyModeNr(SleepTime["Min"] - 1,
@@ -2040,8 +2040,8 @@ class TestSth(unittest.TestCase):
             self.Can.logger.info("Sleep Time2 was not taken: " +
                                  str(SleepTime["Min"] - 1) + "ms")
         else:
-            self.Can.logger.info.Error("Sleep Time2 was taken: " +
-                                       str(SleepTime["Min"] - 1) + "ms")
+            self.Can.logger.error("Sleep Time2 was taken: " +
+                                  str(SleepTime["Min"] - 1) + "ms")
             self.Can.__exitError()
 
         # Do not take Advertisement Time - Min
@@ -2053,9 +2053,9 @@ class TestSth(unittest.TestCase):
             self.Can.logger.info("Advertisement Time1 was not taken: " +
                                  str(SleepTime["AdvertisementMin"] - 1) + "ms")
         else:
-            self.Can.logger.info.Error("Advertisement Time1 was taken: " +
-                                       str(SleepTime["AdvertisementMin"] - 1) +
-                                       "ms")
+            self.Can.logger.error("Advertisement Time1 was taken: " +
+                                  str(SleepTime["AdvertisementMin"] - 1) +
+                                  "ms")
             self.Can.__exitError()
         [timeReset, timeAdvertisement
          ] = self.Can.BlueToothEnergyModeNr(SleepTime["Reset2"],
@@ -2065,9 +2065,9 @@ class TestSth(unittest.TestCase):
             self.Can.logger.info("Advertisement Time2 was not taken: " +
                                  str(SleepTime["AdvertisementMin"] - 1) + "ms")
         else:
-            self.Can.logger.info.Error("Advertisement Time2 was taken: " +
-                                       str(SleepTime["AdvertisementMin"] - 1) +
-                                       "ms")
+            self.Can.logger.error("Advertisement Time2 was taken: " +
+                                  str(SleepTime["AdvertisementMin"] - 1) +
+                                  "ms")
             self.Can.__exitError()
         # Do not take Advertisement Time - Max
         [timeReset, timeAdvertisement
@@ -2078,9 +2078,9 @@ class TestSth(unittest.TestCase):
             self.Can.logger.info("Advertisement Time1 was not taken: " +
                                  str(SleepTime["AdvertisementMax"] + 1) + "ms")
         else:
-            self.Can.logger.info.Error("Advertisement Time1 was taken: " +
-                                       str(SleepTime["AdvertisementMax"] + 1) +
-                                       "ms")
+            self.Can.logger.error("Advertisement Time1 was taken: " +
+                                  str(SleepTime["AdvertisementMax"] + 1) +
+                                  "ms")
             self.Can.__exitError()
         [timeReset, timeAdvertisement
          ] = self.Can.BlueToothEnergyModeNr(SleepTime["Reset2"],
@@ -2090,9 +2090,9 @@ class TestSth(unittest.TestCase):
             self.Can.logger.info("Advertisement Time2 was not taken: " +
                                  str(SleepTime["AdvertisementMax"] + 1) + "ms")
         else:
-            self.Can.logger.info.Error("Advertisement Time2 was taken: " +
-                                       str(SleepTime["AdvertisementMax"] + 1) +
-                                       "ms")
+            self.Can.logger.error("Advertisement Time2 was taken: " +
+                                  str(SleepTime["AdvertisementMax"] + 1) +
+                                  "ms")
             self.Can.__exitError()
 
         self.Can.BlueToothEnergyModeNr(SleepTime["Reset1"],
@@ -2965,10 +2965,9 @@ class TestSth(unittest.TestCase):
         self.Can.logger.info("indexStart: " + str(indexStart))
         self.Can.logger.info("indexEnd: " + str(indexEnd))
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Can.logger.info.Warning(
-                "Deleted Messages do achieve " +
-                str(self.tSthLimits.uStandardTestTimeMs) + "ms: " +
-                str(countDel + 180))
+            self.Can.logger.warning("Deleted Messages do achieve " +
+                                    str(self.tSthLimits.uStandardTestTimeMs) +
+                                    "ms: " + str(countDel + 180))
         [arrayBat, array2,
          array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
                                                 MyToolItStreaming["Voltage"],
@@ -3026,10 +3025,9 @@ class TestSth(unittest.TestCase):
         self.Can.logger.info("indexStart: " + str(indexStart))
         self.Can.logger.info("indexEnd: " + str(indexEnd))
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Can.logger.info.Warning(
-                "Deleted Messages do achieve " +
-                str(self.tSthLimits.uStandardTestTimeMs) + "ms: " +
-                str(countDel + 180))
+            self.Can.logger.warning("Deleted Messages do achieve " +
+                                    str(self.tSthLimits.uStandardTestTimeMs) +
+                                    "ms: " + str(countDel + 180))
         [arrayBat, array2,
          array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
                                                 MyToolItStreaming["Voltage"],
@@ -3085,10 +3083,9 @@ class TestSth(unittest.TestCase):
         self.Can.logger.info("indexStart: " + str(indexStart))
         self.Can.logger.info("indexEnd: " + str(indexEnd))
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Can.logger.info.Warning(
-                "Deleted Messages do achieve " +
-                str(self.tSthLimits.uStandardTestTimeMs) + "ms: " +
-                str(countDel + 180))
+            self.Can.logger.warning("Deleted Messages do achieve " +
+                                    str(self.tSthLimits.uStandardTestTimeMs) +
+                                    "ms: " + str(countDel + 180))
         [arrayBat, array2,
          array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
                                                 MyToolItStreaming["Voltage"],
@@ -3144,10 +3141,9 @@ class TestSth(unittest.TestCase):
         self.Can.logger.info("indexStart: " + str(indexStart))
         self.Can.logger.info("indexEnd: " + str(indexEnd))
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Can.logger.info.Warning(
-                "Deleted Messages do achieve " +
-                str(self.tSthLimits.uStandardTestTimeMs) + "ms: " +
-                str(countDel + 180))
+            self.Can.logger.warning("Deleted Messages do achieve " +
+                                    str(self.tSthLimits.uStandardTestTimeMs) +
+                                    "ms: " + str(countDel + 180))
         [arrayBat, array2,
          array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
                                                 MyToolItStreaming["Voltage"],
@@ -3208,10 +3204,9 @@ class TestSth(unittest.TestCase):
         self.Can.logger.info("indexStart: " + str(indexStart))
         self.Can.logger.info("indexEnd: " + str(indexEnd))
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Can.logger.info.Warning(
-                "Deleted Messages do achieve " +
-                str(self.tSthLimits.uStandardTestTimeMs) + "ms: " +
-                str(countDel + 180))
+            self.Can.logger.warning("Deleted Messages do achieve " +
+                                    str(self.tSthLimits.uStandardTestTimeMs) +
+                                    "ms: " + str(countDel + 180))
         [arrayBat, array2,
          array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
                                                 MyToolItStreaming["Voltage"],
@@ -3274,10 +3269,9 @@ class TestSth(unittest.TestCase):
         self.Can.logger.info("indexStart: " + str(indexStart))
         self.Can.logger.info("indexEnd: " + str(indexEnd))
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Can.logger.info.Warning(
-                "Deleted Messages do achieve " +
-                str(self.tSthLimits.uStandardTestTimeMs) + "ms: " +
-                str(countDel + 180))
+            self.Can.logger.warning("Deleted Messages do achieve " +
+                                    str(self.tSthLimits.uStandardTestTimeMs) +
+                                    "ms: " + str(countDel + 180))
         [arrayBat, array2,
          array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
                                                 MyToolItStreaming["Voltage"],
@@ -3346,10 +3340,9 @@ class TestSth(unittest.TestCase):
         self.Can.logger.info("indexStart: " + str(indexStart))
         self.Can.logger.info("indexEnd: " + str(indexEnd))
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Can.logger.info.Warning(
-                "Deleted Messages do achieve " +
-                str(self.tSthLimits.uStandardTestTimeMs) + "ms: " +
-                str(countDel + 180))
+            self.Can.logger.warning("Deleted Messages do achieve " +
+                                    str(self.tSthLimits.uStandardTestTimeMs) +
+                                    "ms: " + str(countDel + 180))
         [arrayBat, array2,
          array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
                                                 MyToolItStreaming["Voltage"],
@@ -3406,10 +3399,9 @@ class TestSth(unittest.TestCase):
         self.Can.logger.info("indexStart: " + str(indexStart))
         self.Can.logger.info("indexEnd: " + str(indexEnd))
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Can.logger.info.Warning(
-                "Deleted Messages do achieve " +
-                str(self.tSthLimits.uStandardTestTimeMs) + "ms: " +
-                str(countDel + 180))
+            self.Can.logger.warning("Deleted Messages do achieve " +
+                                    str(self.tSthLimits.uStandardTestTimeMs) +
+                                    "ms: " + str(countDel + 180))
         [arrayBat, array2,
          array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
                                                 MyToolItStreaming["Voltage"],
@@ -4992,10 +4984,9 @@ class TestSth(unittest.TestCase):
         self.Can.logger.info("indexStart: " + str(indexStart))
         self.Can.logger.info("indexEnd: " + str(indexEnd))
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Can.logger.info.Warning(
-                "Deleted Messages do achieve " +
-                str(self.tSthLimits.uStandardTestTimeMs) + "ms: " +
-                str(countDel + 180))
+            self.Can.logger.warning("Deleted Messages do achieve " +
+                                    str(self.tSthLimits.uStandardTestTimeMs) +
+                                    "ms: " + str(countDel + 180))
         [arrayBat, array2,
          array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
                                                 MyToolItStreaming["Voltage"],
@@ -5071,10 +5062,9 @@ class TestSth(unittest.TestCase):
         self.Can.logger.info("indexStart: " + str(indexStart))
         self.Can.logger.info("indexEnd: " + str(indexEnd))
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Can.logger.info.Warning(
-                "Deleted Messages do achieve " +
-                str(self.tSthLimits.uStandardTestTimeMs) + "ms: " +
-                str(countDel + 180))
+            self.Can.logger.warning("Deleted Messages do achieve " +
+                                    str(self.tSthLimits.uStandardTestTimeMs) +
+                                    "ms: " + str(countDel + 180))
         [arrayBat, array2,
          array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
                                                 MyToolItStreaming["Voltage"],
@@ -5155,10 +5145,9 @@ class TestSth(unittest.TestCase):
         self.Can.logger.info("indexStart: " + str(indexStart))
         self.Can.logger.info("indexEnd: " + str(indexEnd))
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Can.logger.info.Warning(
-                "Deleted Messages do achieve " +
-                str(self.tSthLimits.uStandardTestTimeMs) + "ms: " +
-                str(countDel + 180))
+            self.Can.logger.warning("Deleted Messages do achieve " +
+                                    str(self.tSthLimits.uStandardTestTimeMs) +
+                                    "ms: " + str(countDel + 180))
         [arrayBat, array2,
          array3] = self.Can.streamingValueArray(MyToolItNetworkNr["STH1"],
                                                 MyToolItStreaming["Voltage"],
@@ -5244,10 +5233,9 @@ class TestSth(unittest.TestCase):
         self.Can.logger.info("indexStart: " + str(indexStart))
         self.Can.logger.info("indexEnd: " + str(indexEnd))
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Can.logger.info.Warning(
-                "Deleted Messages do achieve " +
-                str(self.tSthLimits.uStandardTestTimeMs) + "ms: " +
-                str(countDel + 180))
+            self.Can.logger.warning("Deleted Messages do achieve " +
+                                    str(self.tSthLimits.uStandardTestTimeMs) +
+                                    "ms: " + str(countDel + 180))
         [arrayBat, array2,
          array3] = self.Can.streamingValueArrayMessageCounters(
              MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"],
@@ -5549,10 +5537,9 @@ class TestSth(unittest.TestCase):
         self.Can.logger.info("indexStart: " + str(indexStart))
         self.Can.logger.info("indexEnd: " + str(indexEnd))
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Can.logger.info.Warning(
-                "Deleted Messages do achieve " +
-                str(self.tSthLimits.uStandardTestTimeMs) + "ms: " +
-                str(countDel + 180))
+            self.Can.logger.warning("Deleted Messages do achieve " +
+                                    str(self.tSthLimits.uStandardTestTimeMs) +
+                                    "ms: " + str(countDel + 180))
         [arrayBat, array2,
          array3] = self.Can.streamingValueArrayMessageCounters(
              MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"],
@@ -5635,10 +5622,9 @@ class TestSth(unittest.TestCase):
         self.Can.logger.info("indexStart: " + str(indexStart))
         self.Can.logger.info("indexEnd: " + str(indexEnd))
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Can.logger.info.Warning(
-                "Deleted Messages do achieve " +
-                str(self.tSthLimits.uStandardTestTimeMs) + "ms: " +
-                str(countDel + 180))
+            self.Can.logger.warning("Deleted Messages do achieve " +
+                                    str(self.tSthLimits.uStandardTestTimeMs) +
+                                    "ms: " + str(countDel + 180))
         [arrayBat, array2,
          array3] = self.Can.streamingValueArrayMessageCounters(
              MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"],
@@ -5721,10 +5707,9 @@ class TestSth(unittest.TestCase):
         self.Can.logger.info("indexStart: " + str(indexStart))
         self.Can.logger.info("indexEnd: " + str(indexEnd))
         if 0.2 * (indexEnd - indexStart) < countDel:
-            self.Can.logger.info.Warning(
-                "Deleted Messages do achieve " +
-                str(self.tSthLimits.uStandardTestTimeMs) + "ms: " +
-                str(countDel + 180))
+            self.Can.logger.warning("Deleted Messages do achieve " +
+                                    str(self.tSthLimits.uStandardTestTimeMs) +
+                                    "ms: " + str(countDel + 180))
         [arrayBat, array2,
          array3] = self.Can.streamingValueArrayMessageCounters(
              MyToolItNetworkNr["STH1"], MyToolItStreaming["Voltage"],

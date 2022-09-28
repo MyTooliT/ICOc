@@ -289,7 +289,7 @@ class TestSthManually(unittest.TestCase):
     def vComapre(self, iCounterCompare, aiAccCounter, iIndex):
         if iCounterCompare != aiAccCounter[iIndex]:
             iErrorIndex = iIndex
-            self.Can.logger.info.Error("Error starts at index: " + str(iIndex))
+            self.Can.logger.error("Error starts at index: " + str(iIndex))
             if 255 <= iIndex:
                 iIndex -= 255
             else:
@@ -298,7 +298,7 @@ class TestSthManually(unittest.TestCase):
             while iIndex + iIndexEnd > len(aiAccCounter):
                 iIndexEnd -= 1
             for i in range(iIndex, iIndex + iIndexEnd):
-                self.Can.logger.info.Error(str(aiAccCounter[i]))
+                self.Can.logger.error(str(aiAccCounter[i]))
             self.assertEqual(iCounterCompare, aiAccCounter[iErrorIndex])
 
     """

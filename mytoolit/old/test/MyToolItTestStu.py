@@ -576,7 +576,7 @@ class TestStu(unittest.TestCase):
             self.assertGreater(deviceNumbers, 0)
             if (False != self.Can.bBlueToothDisconnect(
                     MyToolItNetworkNr["STU1"])):
-                self.Can.logger.info.Error("Bluetooth STH connected")
+                self.Can.logger.error("Bluetooth STH connected")
                 self.assertEqual(False, True)
             deviceNumbers = self.Can.iBlueToothConnectTotalScannedDeviceNr(
                 MyToolItNetworkNr["STU1"])
@@ -604,12 +604,12 @@ class TestStu(unittest.TestCase):
             if (False != self.Can.bConnected):
                 self.Can.logger.info("Bluetooth STH connected")
             else:
-                self.Can.logger.info.Error("Bluetooth STH not Connected")
+                self.Can.logger.error("Bluetooth STH not Connected")
             self.assertNotEqual(False, self.Can.bConnected)
             self.Can.logger.info("Disconnect from Bluetooth Device")
             if (False != self.Can.bBlueToothDisconnect(
                     MyToolItNetworkNr["STU1"])):
-                self.Can.logger.info.Error("Bluetooth STH connected")
+                self.Can.logger.error("Bluetooth STH connected")
                 self.assertEqual(False, True)
             else:
                 self.Can.logger.info("Bluetooth STH not Connected")
