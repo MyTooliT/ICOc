@@ -10,7 +10,8 @@ from struct import pack, unpack
 from sys import platform
 from time import time
 from types import TracebackType
-from typing import List, NamedTuple, Optional, Sequence, Tuple, Type, Union
+from typing import (Callable, List, NamedTuple, Optional, Sequence, Tuple,
+                    Type, Union)
 
 from can import (AsyncBufferedReader, Bus, Listener, Message as CANMessage,
                  Notifier)
@@ -1826,6 +1827,58 @@ class Network:
         await self._request(message,
                             description=f"disable data streaming of “{node}”")
 
+    async def read_streaming_data(
+            self, first: bool, second: bool, third: bool,
+            callback: Callable[[List[int]], bool]) -> None:
+        """Read streaming data
+
+        Parameters
+        ----------
+
+        first:
+            Specifies if the data of the first measurement channel should
+            be collected or not
+
+        second:
+            Specifies if the data of the second measurement channel should
+            be collected or not
+
+        third:
+            Specifies if the data of the third measurement channel should
+            be collected or not
+
+        callback:
+            A callback function that specifies, if the data reading should
+            continue (return value `True`) or not (return value `False`).
+
+            The argument of this function receives the collected raw data as
+            list.
+
+        """
+
+        reader = AsyncBufferedReader()
+        self.notifier.add_listener(reader)
+
+        expected_id = (await self.start_streaming_data(first=first,
+                                                       second=second,
+                                                       third=third)).value
+
+        async for message in reader:
+            if message.arbitration_id != expected_id:
+                continue
+            data = message.data
+            raw_values = [
+                int.from_bytes(word, byteorder='little')
+                for word in (data[2:4], data[4:6], data[6:8])
+            ]
+            continue_data_collection = callback(raw_values)
+            if not continue_data_collection:
+                break
+
+        self.notifier.remove_listener(reader)
+
+        await self.stop_streaming_data()
+
     async def read_x_acceleration_raw(self, seconds: float) -> List[int]:
         """Read raw x acceleration data for a certain amount of time
 
@@ -1865,27 +1918,16 @@ class Network:
 
         """
 
-        reader = AsyncBufferedReader()
-        self.notifier.add_listener(reader)
+        def append_values(values: List[int]) -> bool:
+            acceleration_data.extend(values)
+            return time() <= end_time
 
-        expected_id = (await self.start_streaming_data(first=True)).value
-
+        acceleration_data: List[int] = []
         end_time = time() + seconds
-        acceleration_data = []
-        async for message in reader:
-            if message.arbitration_id != expected_id:
-                continue
-            for raw_acceleration in (message.data[2:4], message.data[4:6],
-                                     message.data[6:8]):
-                acceleration_data.append(
-                    int.from_bytes(raw_acceleration, byteorder='little'))
-            if time() > end_time:
-                break
-
-        self.notifier.remove_listener(reader)
-
-        await self.stop_streaming_data()
-
+        await self.read_streaming_data(first=True,
+                                       second=False,
+                                       third=False,
+                                       callback=append_values)
         return acceleration_data
 
     # =================
