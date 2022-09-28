@@ -17,6 +17,14 @@ jobs:
           #       is part of the current mypy release
           - '3.10.6'
 
+    # The steps below are the same for every OS. Ideally we would just write
+    # them down once and then reference them using YAML anchors. Unfortunately
+    # the YAML parser of GitHub Actions does not support this feature.
+    #
+    # See also:
+    #   - https://github.com/orgs/community/discussions/4501
+    #   - https://github.com/actions/runner/issues/1182
+
     steps:
 
     - name: Checkout code
