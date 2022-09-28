@@ -34,7 +34,7 @@ jobs:
       uses: ./.github/actions/check
 
     - name: Test ICOc
-      uses: ./.github/actions/test-unix
+      uses: ./.github/actions/test
 
   mac:
     name: 🍎 macOS
@@ -61,7 +61,7 @@ jobs:
       uses: ./.github/actions/check
 
     - name: Test ICOc
-      uses: ./.github/actions/test-unix
+      uses: ./.github/actions/test
 
   windows:
 
@@ -92,4 +92,4 @@ jobs:
       uses: ./.github/actions/check
 
     - name: Test ICOc
-      uses: ./.github/actions/test-windows
+      uses: ./.github/actions/test

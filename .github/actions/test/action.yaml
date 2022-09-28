@@ -1,5 +1,5 @@
 name: Test ICOc
-description: Test ICOc on Windows
+description: Test ICOc with pytest
 runs:
   using: composite
   steps:
