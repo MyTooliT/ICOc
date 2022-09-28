@@ -31,12 +31,13 @@ jobs:
       uses: ./.github/actions/install
 
     - name: Check ICOc code base
-      uses: ./.github/actions/check
+      run: make check
 
     - name: Test ICOc
-      uses: ./.github/actions/test
+      run: make test-no-hardware
 
   mac:
+
     name: 🍎 macOS
     runs-on: macos-latest
     strategy:
@@ -58,10 +59,10 @@ jobs:
       uses: ./.github/actions/install
 
     - name: Check ICOc code base
-      uses: ./.github/actions/check
+      run: make check
 
     - name: Test ICOc
-      uses: ./.github/actions/test
+      run: make test-no-hardware
 
   windows:
 
@@ -89,7 +90,7 @@ jobs:
       uses: ./.github/actions/install
 
     - name: Check ICOc code base
-      uses: ./.github/actions/check
+      run: make check
 
     - name: Test ICOc
-      uses: ./.github/actions/test
+      run: make test-no-hardware
