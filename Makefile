@@ -34,15 +34,8 @@ check:
 test:
 	pytest
 
-test-win-no-hardware:
+test-no-hardware:
 	pytest --ignore-glob='*network.py' --ignore-glob='*commander.py'
-
-test-python-can-no-hardware:
-	pytest \
-	  --ignore-glob='*network.py' \
-	  --ignore-glob='*commander.py' \
-	  --ignore-glob='*cli.py' \
-	  --ignore-glob='*ui.py'
 
 run-hardware-tests:
 	test-sth -v
