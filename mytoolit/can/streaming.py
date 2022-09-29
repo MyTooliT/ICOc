@@ -1,6 +1,8 @@
 # -- Imports ------------------------------------------------------------------
 
-from typing import Optional, Tuple
+from __future__ import annotations
+
+from typing import List, Optional, Tuple
 
 # -- Class --------------------------------------------------------------------
 
@@ -282,6 +284,113 @@ class StreamingFormatVoltage(StreamingFormat):
         """
 
         return super().__repr__()
+
+
+class StreamingData:
+    """Auxiliary class to store streaming data"""
+
+    def __init__(self,
+                 first: Optional[List[float]] = None,
+                 second: Optional[List[float]] = None,
+                 third: Optional[List[float]] = None) -> None:
+        """Initialize the streaming data using the given arguments
+
+        Parameters
+        ----------
+
+        first:
+            The data points for the first measurement channel
+
+        second:
+            The data points for the second measurement channel
+
+        third:
+            The data points for the third measurement channel
+
+        """
+
+        self.first = [] if first is None else first
+        self.second = [] if second is None else second
+        self.third = [] if third is None else third
+
+    def __repr__(self) -> str:
+        """Retrieve the textual representation of streaming data
+
+        Returns
+        -------
+
+        A string that describes the ADC streaming data
+
+        Examples
+        --------
+
+        >>> StreamingData([], [], [1, 2, 3])
+        1: []
+        2: []
+        3: [1, 2, 3]
+
+        """
+
+        representation = []
+        for channel, data in enumerate((self.first, self.second, self.third),
+                                       start=1):
+            representation.append(f"{channel}: {data}")
+
+        return "\n".join(representation)
+
+    def extend(self, data: StreamingData) -> None:
+        """Add additional streaming
+
+        Parameters
+        ----------
+
+        data:
+            The streaming data that should be added to this streaming data
+            object
+
+        Examples
+        --------
+
+        >>> data = StreamingData([11, 12], [], [31, 32])
+        >>> other = StreamingData([13, 14], [21, 22], [33, 34])
+        >>> data.extend(other)
+        >>> data
+        1: [11, 12, 13, 14]
+        2: [21, 22]
+        3: [31, 32, 33, 34]
+        >>> other
+        1: [13, 14]
+        2: [21, 22]
+        3: [33, 34]
+
+        """
+
+        self.first.extend(data.first)
+        self.second.extend(data.second)
+        self.third.extend(data.third)
+
+    def empty(self) -> bool:
+        """Check if the object contains any streaming data
+
+        Returns
+        -------
+
+        `True` if the current streaming data object stores any data, `False`
+        otherwise
+
+        Examples
+        --------
+
+        >>> StreamingData().empty()
+        True
+        >>> StreamingData([], [], []).empty()
+        True
+        >>> StreamingData([], [], [3]).empty()
+        False
+
+        """
+
+        return not (self.first or self.second or self.third)
 
 
 # -- Main ---------------------------------------------------------------------
