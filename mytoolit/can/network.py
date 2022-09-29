@@ -29,7 +29,8 @@ from mytoolit.can.identifier import Identifier
 from mytoolit.can.message import Message
 from mytoolit.can.node import Node
 from mytoolit.can.sensor import SensorConfig
-from mytoolit.can.streaming import StreamingFormat, StreamingFormatVoltage
+from mytoolit.can.streaming import (StreamingData, StreamingFormat,
+                                    StreamingFormatVoltage)
 from mytoolit.can.status import State
 from mytoolit.measurement import convert_to_supply_voltage
 from mytoolit.utility import convert_bytes_to_text
@@ -1829,7 +1830,7 @@ class Network:
 
     async def read_streaming_data(
             self, first: bool, second: bool, third: bool,
-            callback: Callable[[List[int]], bool]) -> None:
+            callback: Callable[[StreamingData], bool]) -> None:
         """Read streaming data
 
         Parameters
@@ -1851,8 +1852,8 @@ class Network:
             A callback function that specifies, if the data reading should
             continue (return value `True`) or not (return value `False`).
 
-            The argument of this function receives the collected raw data as
-            list.
+            The argument of this function receives the collected raw streaming
+            data.
 
         """
 
@@ -1871,7 +1872,29 @@ class Network:
                 int.from_bytes(word, byteorder='little')
                 for word in (data[2:4], data[4:6], data[6:8])
             ]
-            continue_data_collection = callback(raw_values)
+
+            streaming_data = StreamingData()
+            if first and second and third:
+                streaming_data.first.append(raw_values[0])
+                streaming_data.second.append(raw_values[1])
+                streaming_data.third.append(raw_values[2])
+            elif first and second:
+                streaming_data.first.append(raw_values[0])
+                streaming_data.second.append(raw_values[1])
+            elif first and third:
+                streaming_data.first.append(raw_values[0])
+                streaming_data.third.append(raw_values[1])
+            elif second and third:
+                streaming_data.second.append(raw_values[0])
+                streaming_data.third.append(raw_values[1])
+            elif first:
+                streaming_data.first.extend(raw_values)
+            elif second:
+                streaming_data.second.extend(raw_values)
+            else:
+                streaming_data.third.extend(raw_values)
+
+            continue_data_collection = callback(streaming_data)
             if not continue_data_collection:
                 break
 
@@ -1879,7 +1902,11 @@ class Network:
 
         await self.stop_streaming_data()
 
-    async def read_x_acceleration_raw(self, seconds: float) -> List[int]:
+    async def read_streaming_data_seconds(self,
+                                          seconds: float,
+                                          first=True,
+                                          second=False,
+                                          third=False) -> StreamingData:
         """Read raw x acceleration data for a certain amount of time
 
         Parameters
@@ -1888,11 +1915,23 @@ class Network:
         seconds:
             The amount of time acceleration data should be read in seconds
 
+        first:
+            Specifies if the data of the first measurement channel should
+            be collected or not
+
+        second:
+            Specifies if the data of the second measurement channel should
+            be collected or not
+
+        third:
+            Specifies if the data of the third measurement channel should
+            be collected or not
+
         Returns
         -------
 
-        A list containing the raw acceleration data (16 bit raw ADC values)
-        read in the specified time
+        A streaming data object that contains the collected data for each
+        channel
 
         Example
         -------
@@ -1911,22 +1950,30 @@ class Network:
         >>> async def read_raw_acceleration():
         ...     async with Network() as network:
         ...         await network.connect_sensor_device(0)
-        ...         return await network.read_x_acceleration_raw(1)
+        ...         return await network.read_streaming_data_seconds(1)
         >>> acceleration = run(read_raw_acceleration())
-        >>> 32000 < mean(acceleration) < 33000
+        >>> 32000 < mean(acceleration.first) < 33000
         True
 
         """
 
-        def append_values(values: List[int]) -> bool:
+        end_time = 0.0
+
+        def append_values(values: StreamingData) -> bool:
+            nonlocal end_time
+            # We set the end time in the first invocation of the callback
+            # function to try to keep required time as close as possible to
+            # the expected value
+            if acceleration_data.empty():
+                end_time = time() + seconds
+
             acceleration_data.extend(values)
             return time() <= end_time
 
-        acceleration_data: List[int] = []
-        end_time = time() + seconds
-        await self.read_streaming_data(first=True,
-                                       second=False,
-                                       third=False,
+        acceleration_data = StreamingData()
+        await self.read_streaming_data(first=first,
+                                       second=second,
+                                       third=third,
                                        callback=append_values)
         return acceleration_data
 

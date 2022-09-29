@@ -18,7 +18,7 @@ async def test(identifier):
         print(f"Connected to sensor device “{name}” with MAC "
               f"address “{mac_address}”")
 
-        data = await network.read_x_acceleration_raw(0.1)
+        data = await network.read_streaming_data_seconds(0.1)
         print(f"Raw Acceleration Data: {data}")
 
 
