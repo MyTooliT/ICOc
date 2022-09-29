@@ -21,7 +21,7 @@ endif
 
 # -- Rules ---------------------------------------------------------------------
 
-run: check test run-hardware-tests-$(OPERATING_SYSTEM)
+run: check test hardware-test
 
 # =========
 # = Tests =
@@ -37,18 +37,20 @@ test:
 test-no-hardware:
 	pytest --ignore-glob='*network.py' --ignore-glob='*commander.py'
 
-run-hardware-tests:
+hardware-test: run-hardware-test open-test-report-$(OPERATING_SYSTEM)
+
+run-hardware-test:
 	test-sth -v
 	test-stu -k eeprom -k connection
 
-run-hardware-tests-windows: run-hardware-tests
+open-test-report-windows:
 	powershell -c "Invoke-Item (Join-Path $$PWD 'STH Test.pdf')"
 	powershell -c "Invoke-Item (Join-Path $$PWD 'STU Test.pdf')"
 
-run-hardware-tests-mac: run-hardware-tests
+open-test-report-mac:
 	open 'STH Test.pdf' 'STU Test.pdf'
 
-run-hardware-tests-linux: run-hardware-tests
+open-test-report-linux:
 	xdg-open 'STH Test.pdf'
 	xdg-open 'STU Test.pdf'
 
