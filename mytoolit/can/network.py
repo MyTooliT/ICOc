@@ -1619,7 +1619,7 @@ class Network:
         >>> sensor_values = run(read_sensor_values())
         >>> len(sensor_values)
         3
-        >>> all([0 <= value < 2**15 for value in sensor_values])
+        >>> all([0 <= value <= 0xffff for value in sensor_values])
         True
 
         """
