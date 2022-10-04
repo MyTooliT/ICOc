@@ -136,7 +136,8 @@ class TestSMH(TestSensorNode):
             expected_value_piezo = 38300
             expected_value_thermistor = 10780
 
-            values = await self.can.read_sensor_values()
+            data = await self.can.read_streaming_data_single()
+            values = (channel.pop().value for channel in data)
             expected_values = (expected_value_piezo, expected_value_piezo,
                                expected_value_thermistor)
 

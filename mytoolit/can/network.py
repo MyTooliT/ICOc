@@ -10,8 +10,8 @@ from struct import pack, unpack
 from sys import platform
 from time import time
 from types import TracebackType
-from typing import (Callable, List, NamedTuple, Optional, Sequence, Tuple,
-                    Type, Union)
+from typing import (Callable, List, NamedTuple, Optional, Sequence, Type,
+                    Union)
 
 from can import (AsyncBufferedReader, Bus, Listener, Message as CANMessage,
                  Notifier)
@@ -1597,7 +1597,7 @@ class Network:
     # - Data -
     # --------
 
-    async def read_sensor_values(self) -> Tuple[int, int, int]:
+    async def read_streaming_data_single(self) -> StreamingData:
         """Read a single set of raw ADC values from a connected sensor device
 
         Returns
@@ -1619,11 +1619,10 @@ class Network:
         >>> async def read_sensor_values():
         ...     async with Network() as network:
         ...         await network.connect_sensor_device(0)
-        ...         return await network.read_sensor_values()
-        >>> sensor_values = run(read_sensor_values())
-        >>> len(sensor_values)
-        3
-        >>> all([0 <= value <= 0xffff for value in sensor_values])
+        ...         return await network.read_streaming_data_single()
+        >>> data = run(read_sensor_values())
+        >>> values = [channel.pop().value for channel in data]
+        >>> all([0 <= value <= 0xffff for value in values])
         True
 
         """
@@ -1643,13 +1642,18 @@ class Network:
                           data=[streaming_format.value])
 
         response = await self._request(
-            message, description=f"read single streaming value from “{node}”")
-        adc_values = tuple(
-            int.from_bytes(response.data[start:start + 2], 'little')
-            for start in range(2, 8, 2))
+            message,
+            description=f"read single set of streaming values from “{node}”")
+        raw_values = [
+            TimestampedValue(value=int.from_bytes(word, byteorder='little'),
+                             timestamp=response.timestamp)
+            for word in (response.data[2:4], response.data[4:6],
+                         response.data[6:8])
+        ]
 
-        # mypy is not able to infer that `adc_values` contains 3 values
-        return adc_values  # type: ignore
+        return StreamingData(first=[raw_values[0]],
+                             second=[raw_values[1]],
+                             third=[raw_values[2]])
 
     async def read_x_acceleration(self, max: int) -> float:
         """Read the current x acceleration value of a connected STH
