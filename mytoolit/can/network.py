@@ -1593,6 +1593,10 @@ class Network:
     # = Streaming =
     # =============
 
+    # --------
+    # - Data -
+    # --------
+
     async def read_sensor_values(self) -> Tuple[int, int, int]:
         """Read a single set of raw ADC values from a connected sensor device
 
@@ -1700,58 +1704,6 @@ class Network:
         acceleration_bytes = response.data[2:4]
         acceleration_raw = int.from_bytes(acceleration_bytes, 'little')
         return convert_acceleration_adc_to_g(acceleration_raw, max)
-
-    async def read_supply_voltage(self) -> float:
-        """Read the current supply voltage of a connected STH
-
-        Returns
-        -------
-
-        The supply voltage of the STH
-
-        Example
-        -------
-
-        >>> from asyncio import run
-        >>> from platform import system
-
-        Read the supply voltage of STH 1
-
-        >>> if system() == 'Linux':
-        ...    async def reset():
-        ...        async with Network() as network:
-        ...            await network.reset_node('STU 1')
-        ...    run(reset())
-        >>> async def read_supply_voltage():
-        ...     async with Network() as network:
-        ...         await network.connect_sensor_device(0)
-        ...         return await network.read_supply_voltage()
-        >>> supply_voltage = run(read_supply_voltage())
-        >>> 3 <= supply_voltage <= 4.2
-        True
-
-        """
-
-        streaming_format = StreamingFormatVoltage(first=True, sets=1)
-        node = 'STH 1'
-        message = Message(block='Streaming',
-                          block_command='Voltage',
-                          sender=self.sender,
-                          receiver=node,
-                          request=True,
-                          data=[streaming_format.value])
-
-        response = await self._request(
-            message, description=f"read supply voltage of “{node}”")
-
-        voltage_bytes = response.data[2:4]
-        voltage_raw = int.from_bytes(voltage_bytes, 'little')
-
-        adc_configuration = await self.read_adc_configuration()
-
-        return convert_to_supply_voltage(
-            voltage_raw,
-            reference_voltage=adc_configuration.reference_voltage())
 
     async def start_streaming_data(self,
                                    first: bool = False,
@@ -1980,6 +1932,62 @@ class Network:
                                        third=third,
                                        callback=append_values)
         return acceleration_data
+
+    # -----------
+    # - Voltage -
+    # -----------
+
+    async def read_supply_voltage(self) -> float:
+        """Read the current supply voltage of a connected STH
+
+        Returns
+        -------
+
+        The supply voltage of the STH
+
+        Example
+        -------
+
+        >>> from asyncio import run
+        >>> from platform import system
+
+        Read the supply voltage of STH 1
+
+        >>> if system() == 'Linux':
+        ...    async def reset():
+        ...        async with Network() as network:
+        ...            await network.reset_node('STU 1')
+        ...    run(reset())
+        >>> async def read_supply_voltage():
+        ...     async with Network() as network:
+        ...         await network.connect_sensor_device(0)
+        ...         return await network.read_supply_voltage()
+        >>> supply_voltage = run(read_supply_voltage())
+        >>> 3 <= supply_voltage <= 4.2
+        True
+
+        """
+
+        streaming_format = StreamingFormatVoltage(first=True, sets=1)
+        node = 'STH 1'
+        message = Message(block='Streaming',
+                          block_command='Voltage',
+                          sender=self.sender,
+                          receiver=node,
+                          request=True,
+                          data=[streaming_format.value])
+
+        response = await self._request(
+            message, description=f"read supply voltage of “{node}”")
+
+        voltage_bytes = response.data[2:4]
+        voltage_raw = int.from_bytes(voltage_bytes, 'little')
+
+        adc_configuration = await self.read_adc_configuration()
+
+        return convert_to_supply_voltage(
+            voltage_raw,
+            reference_voltage=adc_configuration.reference_voltage())
 
     # =================
     # = Configuration =
