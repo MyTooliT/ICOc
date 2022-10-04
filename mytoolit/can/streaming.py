@@ -340,6 +340,31 @@ class StreamingData:
         self.second = [] if second is None else second
         self.third = [] if third is None else third
 
+    def __iter__(self):
+        """Retrieve an iterator for the different measurement channels
+
+        Returns
+        -------
+
+        An iterator fir the measurement channels of the streaming data
+
+        Examples
+        --------
+
+        >>> value1 = TimestampedValue(timestamp=1, value=1)
+        >>> value2 = TimestampedValue(timestamp=2, value=2)
+        >>> value3 = TimestampedValue(timestamp=3, value=3)
+        >>> data = StreamingData([value1], [], [value2, value3])
+        >>> collected = []
+        >>> for channel in data:
+        ...     collected.extend(channel)
+        >>> collected
+        [1@1, 2@2, 3@3]
+
+        """
+
+        return iter([self.first, self.second, self.third])
+
     def __repr__(self) -> str:
         """Retrieve the textual representation of streaming data
 
