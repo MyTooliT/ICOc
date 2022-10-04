@@ -29,8 +29,8 @@ from mytoolit.can.identifier import Identifier
 from mytoolit.can.message import Message
 from mytoolit.can.node import Node
 from mytoolit.can.sensor import SensorConfig
-from mytoolit.can.streaming import (StreamingData, StreamingFormat,
-                                    StreamingFormatVoltage)
+from mytoolit.can.streaming import (StreamingData, TimestampedValue,
+                                    StreamingFormat, StreamingFormatVoltage)
 from mytoolit.can.status import State
 from mytoolit.measurement import convert_to_supply_voltage
 from mytoolit.utility import convert_bytes_to_text
@@ -1868,8 +1868,11 @@ class Network:
             if message.arbitration_id != expected_id:
                 continue
             data = message.data
+            timestamp = message.timestamp
             raw_values = [
-                int.from_bytes(word, byteorder='little')
+                TimestampedValue(value=int.from_bytes(word,
+                                                      byteorder='little'),
+                                 timestamp=timestamp)
                 for word in (data[2:4], data[4:6], data[6:8])
             ]
 
@@ -1951,8 +1954,9 @@ class Network:
         ...     async with Network() as network:
         ...         await network.connect_sensor_device(0)
         ...         return await network.read_streaming_data_seconds(1)
-        >>> acceleration = run(read_raw_acceleration())
-        >>> 32000 < mean(acceleration.first) < 33000
+        >>> acceleration = [timestamped_value.value for timestamped_value in
+        ...                 run(read_raw_acceleration()).first]
+        >>> 32000 < mean(acceleration) < 33000
         True
 
         """

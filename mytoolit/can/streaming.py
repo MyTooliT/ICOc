@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import List, Optional, Tuple
+from typing import List, NamedTuple, Optional, Tuple
 
 # -- Class --------------------------------------------------------------------
 
@@ -286,13 +286,40 @@ class StreamingFormatVoltage(StreamingFormat):
         return super().__repr__()
 
 
+class TimestampedValue(NamedTuple):
+    """Store a single (streaming) value and its timestamp"""
+
+    timestamp: float
+    value: float
+
+    def __repr__(self) -> str:
+        """Retrieve the textual representation of the value
+
+        Returns
+        -------
+
+        A string that describes the timestamped value
+
+        Examples
+        --------
+
+        >>> TimestampedValue(timestamp=123, value=444)
+        444@123
+        >>> TimestampedValue(timestamp=20, value=10)
+        10@20
+
+        """
+
+        return f"{self.value}@{self.timestamp}"
+
+
 class StreamingData:
     """Auxiliary class to store streaming data"""
 
     def __init__(self,
-                 first: Optional[List[float]] = None,
-                 second: Optional[List[float]] = None,
-                 third: Optional[List[float]] = None) -> None:
+                 first: Optional[List[TimestampedValue]] = None,
+                 second: Optional[List[TimestampedValue]] = None,
+                 third: Optional[List[TimestampedValue]] = None) -> None:
         """Initialize the streaming data using the given arguments
 
         Parameters
@@ -324,10 +351,13 @@ class StreamingData:
         Examples
         --------
 
-        >>> StreamingData([], [], [1, 2, 3])
+        >>> value1 = TimestampedValue(timestamp=1, value=1)
+        >>> value2 = TimestampedValue(timestamp=2, value=2)
+        >>> value3 = TimestampedValue(timestamp=3, value=3)
+        >>> StreamingData([], [], [value1, value2, value3])
         1: []
         2: []
-        3: [1, 2, 3]
+        3: [1@1, 2@2, 3@3]
 
         """
 
@@ -351,17 +381,29 @@ class StreamingData:
         Examples
         --------
 
-        >>> data = StreamingData([11, 12], [], [31, 32])
-        >>> other = StreamingData([13, 14], [21, 22], [33, 34])
+        >>> value11 = TimestampedValue(timestamp=11, value=11)
+        >>> value12 = TimestampedValue(timestamp=12, value=12)
+        >>> value13 = TimestampedValue(timestamp=13, value=13)
+        >>> value14 = TimestampedValue(timestamp=14, value=14)
+        >>> value21 = TimestampedValue(timestamp=21, value=21)
+        >>> value22 = TimestampedValue(timestamp=22, value=22)
+        >>> value31 = TimestampedValue(timestamp=31, value=31)
+        >>> value32 = TimestampedValue(timestamp=32, value=32)
+        >>> value33 = TimestampedValue(timestamp=33, value=33)
+        >>> value34 = TimestampedValue(timestamp=34, value=34)
+
+        >>> data = StreamingData([value11, value12], [], [value31, value32])
+        >>> other = StreamingData([value13, value14], [value21, value22],
+        ...                       [value33, value34])
         >>> data.extend(other)
         >>> data
-        1: [11, 12, 13, 14]
-        2: [21, 22]
-        3: [31, 32, 33, 34]
+        1: [11@11, 12@12, 13@13, 14@14]
+        2: [21@21, 22@22]
+        3: [31@31, 32@32, 33@33, 34@34]
         >>> other
-        1: [13, 14]
-        2: [21, 22]
-        3: [33, 34]
+        1: [13@13, 14@14]
+        2: [21@21, 22@22]
+        3: [33@33, 34@34]
 
         """
 
@@ -385,7 +427,8 @@ class StreamingData:
         True
         >>> StreamingData([], [], []).empty()
         True
-        >>> StreamingData([], [], [3]).empty()
+        >>> StreamingData([], [],
+        ...               [TimestampedValue(timestamp=1, value=1)]).empty()
         False
 
         """

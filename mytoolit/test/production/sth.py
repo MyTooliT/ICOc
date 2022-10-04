@@ -219,8 +219,11 @@ class TestSTH(TestSensorNode):
     def test_acceleration_noise(self):
         """Test ratio of noise to maximal possible measurement value"""
 
-        acceleration = self.loop.run_until_complete(
-            self.can.read_streaming_data_seconds(seconds=4)).first
+        acceleration = [
+            timestamped_value.value
+            for timestamped_value in self.loop.run_until_complete(
+                self.can.read_streaming_data_seconds(seconds=4)).first
+        ]
 
         cls = type(self)
         cls.ratio_noise_max = ratio_noise_max(acceleration)
