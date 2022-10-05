@@ -8,7 +8,7 @@ from semantic_version import Version
 
 from mytoolit.can import Node
 from mytoolit.config import settings
-from mytoolit.measurement import convert_acceleration_adc_to_g, ratio_noise_max
+from mytoolit.measurement import convert_raw_to_g, ratio_noise_max
 from mytoolit.report import Report
 from mytoolit.test.production import TestSensorNode
 from mytoolit.test.unit import ExtendedTestRunner
@@ -192,8 +192,8 @@ class TestSTH(TestSensorNode):
 
             sensor = settings.acceleration_sensor()
             stream_data = await self.can.read_streaming_data_single()
-            acceleration = convert_acceleration_adc_to_g(
-                stream_data.first.pop().value, sensor.acceleration.maximum)
+            acceleration = convert_raw_to_g(stream_data.first.pop().value,
+                                            sensor.acceleration.maximum)
 
             # We expect a stationary acceleration of the standard gravity
             # (1 g₀ = 9.807 m/s²)

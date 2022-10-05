@@ -22,7 +22,7 @@ from can.interfaces.pcan.basic import (PCAN_ERROR_OK, PCAN_ERROR_QRCVEMPTY,
 from mytoolit.can import SensorConfig
 from mytoolit.cmdline import channel_number, mac_address, sth_name
 from mytoolit.config import settings
-from mytoolit.measurement.acceleration import convert_acceleration_adc_to_g
+from mytoolit.measurement.acceleration import convert_raw_to_g
 from mytoolit.measurement.storage import Storage
 from mytoolit.old.network import Network
 from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
@@ -921,7 +921,7 @@ class CommandLineInterface():
         if len(axes) <= 0:
             return
 
-        convert_acceleration = partial(convert_acceleration_adc_to_g,
+        convert_acceleration = partial(convert_raw_to_g,
                                        max_value=self.acceleration_range_g)
         number_values = 3 if self.tAccDataFormat == DataSets[3] else len(axes)
         values = [

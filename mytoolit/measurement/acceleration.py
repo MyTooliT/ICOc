@@ -9,8 +9,7 @@ from mytoolit.measurement.constants import ADC_MAX_VALUE
 # -- Functions ----------------------------------------------------------------
 
 
-def convert_acceleration_adc_to_g(acceleration_raw: int,
-                                  max_value: int) -> float:
+def convert_raw_to_g(acceleration_raw: int, max_value: int) -> float:
     """Convert an acceleration value sent by the STH into a factor
 
     The factor measures the amount of the gravitational force
@@ -30,15 +29,14 @@ def convert_acceleration_adc_to_g(acceleration_raw: int,
     -------
 
     The acceleration in multiples of the standard gravity g₀
+
     """
 
     acceleration_to_gravity = max_value
 
     # The code subtracts 1/2 from the computed value, since the STH linearly
     # maps the maximum negative acceleration to 0 and the maximum positive
-    # acceleration to the maximum ADC value. Currently the stationary
-    # acceleration value seems to be slightly negative (-4·g₀ <
-    # acceleration_in_g 0 < 0 ), while in theory it should have a value of g₀.
+    # acceleration to the maximum ADC value.
     acceleration_in_g = (acceleration_raw / ADC_MAX_VALUE -
                          1 / 2) * acceleration_to_gravity
     return acceleration_in_g
