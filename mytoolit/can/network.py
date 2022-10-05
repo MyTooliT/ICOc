@@ -10,8 +10,7 @@ from struct import pack, unpack
 from sys import platform
 from time import time
 from types import TracebackType
-from typing import (Callable, List, NamedTuple, Optional, Sequence, Type,
-                    Union)
+from typing import List, NamedTuple, Optional, Sequence, Type, Union
 
 from can import (Bus, Listener, Message as CANMessage, Notifier)
 from can.interfaces.pcan.pcan import PcanError
@@ -1783,49 +1782,6 @@ class Network:
         await self._request(message,
                             description=f"disable data streaming of “{node}”")
 
-    async def read_streaming_data(
-            self, first: bool, second: bool, third: bool,
-            callback: Callable[[StreamingData], bool]) -> None:
-        """Read streaming data
-
-        Parameters
-        ----------
-
-        first:
-            Specifies if the data of the first measurement channel should
-            be collected or not
-
-        second:
-            Specifies if the data of the second measurement channel should
-            be collected or not
-
-        third:
-            Specifies if the data of the third measurement channel should
-            be collected or not
-
-        callback:
-            A callback function that specifies, if the data reading should
-            continue (return value `True`) or not (return value `False`).
-
-            The argument of this function receives the collected raw streaming
-            data.
-
-        """
-
-        reader = await self.start_streaming_data(first=first,
-                                                 second=second,
-                                                 third=third)
-        self.notifier.add_listener(reader)
-
-        async for streaming_data in reader:
-            continue_data_collection = callback(streaming_data)
-            if not continue_data_collection:
-                break
-
-        self.notifier.remove_listener(reader)
-
-        await self.stop_streaming_data()
-
     async def read_streaming_data_seconds(self,
                                           seconds: float,
                                           first=True,
@@ -1882,24 +1838,21 @@ class Network:
 
         """
 
-        end_time = 0.0
-
-        def append_values(values: StreamingData) -> bool:
-            nonlocal end_time
-            # We set the end time in the first invocation of the callback
-            # function to try to keep required time as close as possible to
-            # the expected value
-            if acceleration_data.empty():
-                end_time = time() + seconds
-
-            acceleration_data.extend(values)
-            return time() <= end_time
+        reader = await self.start_streaming_data(first=first,
+                                                 second=second,
+                                                 third=third)
+        self.notifier.add_listener(reader)
 
         acceleration_data = StreamingData()
-        await self.read_streaming_data(first=first,
-                                       second=second,
-                                       third=third,
-                                       callback=append_values)
+        end_time = time() + seconds
+        async for streaming_data in reader:
+            acceleration_data.extend(streaming_data)
+            if time() > end_time:
+                break
+
+        self.notifier.remove_listener(reader)
+        await self.stop_streaming_data()
+
         return acceleration_data
 
     # -----------
