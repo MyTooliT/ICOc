@@ -1789,17 +1789,17 @@ class Network:
                                                  third=third)
         self.notifier.add_listener(reader)
 
-        acceleration_data = StreamingData()
+        stream_data = StreamingData()
         end_time = time() + seconds
         async for streaming_data in reader:
-            acceleration_data.extend(streaming_data)
+            stream_data.extend(streaming_data)
             if time() > end_time:
                 break
 
         self.notifier.remove_listener(reader)
         await self.stop_streaming_data()
 
-        return acceleration_data
+        return stream_data
 
     # -----------
     # - Voltage -
