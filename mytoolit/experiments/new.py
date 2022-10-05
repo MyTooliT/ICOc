@@ -5,8 +5,7 @@
 from asyncio import run
 
 from mytoolit.can import Network
-from mytoolit.config import settings
-from mytoolit.measurement import convert_raw_to_g
+from mytoolit.can.streaming import StreamingData
 
 
 # -- Functions ----------------------------------------------------------------
@@ -20,12 +19,20 @@ async def test(identifier):
         print(f"Connected to sensor device “{name}” with MAC "
               f"address “{mac_address}”")
 
-        sensor = settings.acceleration_sensor()
-        stream_data = await network.read_streaming_data_single()
-        acceleration = convert_raw_to_g(stream_data.first.pop().value,
-                                        sensor.acceleration.maximum)
+        values_to_read = 5
+        reader = await network.start_streaming_data(first=True)
+        network.notifier.add_listener(reader)
 
-        print(f"Acceleration in x direction: {acceleration}")
+        stream_data = StreamingData()
+        async for streaming_data in reader:
+            stream_data.extend(streaming_data)
+            if len(stream_data.first) >= values_to_read:
+                break
+
+        network.notifier.remove_listener(reader)
+        await network.stop_streaming_data()
+
+        print(f"\nStream Data:\n{stream_data}")
 
 
 # -- Main ---------------------------------------------------------------------
