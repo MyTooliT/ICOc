@@ -5,6 +5,8 @@
 from asyncio import run
 
 from mytoolit.can import Network
+from mytoolit.config import settings
+from mytoolit.measurement import convert_raw_to_g
 
 
 # -- Functions ----------------------------------------------------------------
@@ -18,8 +20,12 @@ async def test(identifier):
         print(f"Connected to sensor device “{name}” with MAC "
               f"address “{mac_address}”")
 
-        data = await network.read_streaming_data_seconds(0.1)
-        print(f"Raw Acceleration Data: {data}")
+        sensor = settings.acceleration_sensor()
+        stream_data = await network.read_streaming_data_single()
+        acceleration = convert_raw_to_g(stream_data.first.pop().value,
+                                        sensor.acceleration.maximum)
+
+        print(f"Acceleration in x direction: {acceleration}")
 
 
 # -- Main ---------------------------------------------------------------------
