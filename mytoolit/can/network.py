@@ -19,7 +19,7 @@ from netaddr import EUI
 
 from mytoolit.eeprom import EEPROMStatus
 from mytoolit.config import settings
-from mytoolit.measurement import ADC_MAX_VALUE, convert_acceleration_adc_to_g
+from mytoolit.measurement import ADC_MAX_VALUE
 from mytoolit.can.adc import ADCConfiguration
 from mytoolit.can.calibration import CalibrationMeasurementFormat
 from mytoolit.can.error import UnsupportedFeatureException
@@ -1652,60 +1652,6 @@ class Network:
         return StreamingData(first=[raw_values[0]],
                              second=[raw_values[1]],
                              third=[raw_values[2]])
-
-    async def read_x_acceleration(self, max: int) -> float:
-        """Read the current x acceleration value of a connected STH
-
-        The value will be returned as multiples of g₀ (gravity of earth)
-
-        Parameters
-        ----------
-
-        max:
-            Sum of the multiple of g₀ that the current acceleration sensor is
-            able to detect as multiples of the gravity of earth.
-
-            For a ± 100 g sensor this value would be (100 + 100 = 200).
-
-        Returns
-        -------
-
-        The current acceleration as multiples of the gravity of earth
-
-        Example
-        -------
-
-        >>> from asyncio import run
-        >>> from mytoolit.config import settings
-
-        Read the x acceleration of STH 1
-
-        >>> max = settings.acceleration_sensor().acceleration.maximum
-        >>> async def read_x_acceleration():
-        ...     async with Network() as network:
-        ...         await network.connect_sensor_device(0)
-        ...         return await network.read_x_acceleration(max)
-        >>> x_acceleration = run(read_x_acceleration())
-        >>> -2 < x_acceleration < 2
-        True
-
-        """
-
-        streaming_format = StreamingFormat(first=True, sets=1)
-        node = 'STH 1'
-        message = Message(block='Streaming',
-                          block_command='Data',
-                          sender=self.sender,
-                          receiver=node,
-                          request=True,
-                          data=[streaming_format.value])
-
-        response = await self._request(
-            message, description=f"read x acceleration of “{node}”")
-
-        acceleration_bytes = response.data[2:4]
-        acceleration_raw = int.from_bytes(acceleration_bytes, 'little')
-        return convert_acceleration_adc_to_g(acceleration_raw, max)
 
     async def start_streaming_data(self,
                                    first: bool = False,
