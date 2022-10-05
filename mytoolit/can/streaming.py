@@ -2,9 +2,122 @@
 
 from __future__ import annotations
 
-from typing import List, NamedTuple, Optional, Tuple
+from asyncio import Queue
+from typing import AsyncIterator, Awaitable, List, NamedTuple, Optional, Tuple
 
-# -- Class --------------------------------------------------------------------
+from can import Listener, Message
+
+from mytoolit.can.identifier import Identifier
+
+# -- Classes ------------------------------------------------------------------
+
+
+class AsyncStreamBuffer(Listener):
+    """Buffer for streaming data"""
+
+    def __init__(self, first: bool, second: bool, third: bool) -> None:
+        """Initialize object using the given arguments
+
+        Parameters
+        ----------
+
+        first:
+            Specifies if the data of the first measurement will be collected
+            or not
+
+        second:
+            Specifies if the data of the second measurement will be collected
+            or not
+
+        third:
+            Specifies if the data of the third measurement will be collected
+            or not
+
+        """
+
+        # Expected identifier of received streaming messages
+        self.identifier = Identifier(block='Streaming',
+                                     block_command='Data',
+                                     sender='STH 1',
+                                     receiver='SPU 1',
+                                     request=False)
+        self.first = first
+        self.second = second
+        self.third = third
+        self.queue: Queue[StreamingData] = Queue()
+
+    def __aiter__(self) -> AsyncIterator[StreamingData]:
+        """Retrieve iterator for collected data
+
+        Returns
+        -------
+
+        An iterator over the received streaming data
+
+        """
+
+        return self
+
+    def __anext__(self) -> Awaitable[StreamingData]:
+        """Retrieve next stream data object in collected data
+
+        Returns
+        -------
+
+        Retrieved streaming data
+
+        """
+
+        return self.queue.get()
+
+    def on_message_received(self, message: Message) -> None:
+        """Handle received messages
+
+        Parameters
+        ----------
+
+        message:
+            The received CAN message
+
+        """
+
+        if message.arbitration_id != self.identifier.value:
+            return
+
+        data = message.data
+        timestamp = message.timestamp
+        raw_values = [
+            TimestampedValue(value=int.from_bytes(word, byteorder='little'),
+                             timestamp=timestamp)
+            for word in (data[2:4], data[4:6], data[6:8])
+        ]
+
+        streaming_data = StreamingData()
+        first = self.first
+        second = self.second
+        third = self.third
+
+        if first and second and third:
+            streaming_data.first.append(raw_values[0])
+            streaming_data.second.append(raw_values[1])
+            streaming_data.third.append(raw_values[2])
+        elif first and second:
+            streaming_data.first.append(raw_values[0])
+            streaming_data.second.append(raw_values[1])
+        elif first and third:
+            streaming_data.first.append(raw_values[0])
+            streaming_data.third.append(raw_values[1])
+        elif second and third:
+            streaming_data.second.append(raw_values[0])
+            streaming_data.third.append(raw_values[1])
+        elif first:
+            streaming_data.first.extend(raw_values)
+        elif second:
+            streaming_data.second.extend(raw_values)
+        else:
+            streaming_data.third.extend(raw_values)
+
+        self.queue.put_nowait(streaming_data)
 
 
 class StreamingFormat:

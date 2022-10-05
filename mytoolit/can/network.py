@@ -13,8 +13,7 @@ from types import TracebackType
 from typing import (Callable, List, NamedTuple, Optional, Sequence, Type,
                     Union)
 
-from can import (AsyncBufferedReader, Bus, Listener, Message as CANMessage,
-                 Notifier)
+from can import (Bus, Listener, Message as CANMessage, Notifier)
 from can.interfaces.pcan.pcan import PcanError
 from semantic_version import Version
 from netaddr import EUI
@@ -25,12 +24,12 @@ from mytoolit.measurement import ADC_MAX_VALUE, convert_acceleration_adc_to_g
 from mytoolit.can.adc import ADCConfiguration
 from mytoolit.can.calibration import CalibrationMeasurementFormat
 from mytoolit.can.error import UnsupportedFeatureException
-from mytoolit.can.identifier import Identifier
 from mytoolit.can.message import Message
 from mytoolit.can.node import Node
 from mytoolit.can.sensor import SensorConfig
-from mytoolit.can.streaming import (StreamingData, TimestampedValue,
-                                    StreamingFormat, StreamingFormatVoltage)
+from mytoolit.can.streaming import (AsyncStreamBuffer, StreamingData,
+                                    TimestampedValue, StreamingFormat,
+                                    StreamingFormatVoltage)
 from mytoolit.can.status import State
 from mytoolit.measurement import convert_to_supply_voltage
 from mytoolit.utility import convert_bytes_to_text
@@ -1712,7 +1711,7 @@ class Network:
     async def start_streaming_data(self,
                                    first: bool = False,
                                    second: bool = False,
-                                   third: bool = False) -> Identifier:
+                                   third: bool = False) -> AsyncStreamBuffer:
         """Start streaming data
 
         Parameters
@@ -1767,7 +1766,7 @@ class Network:
             description=(f"enable streaming of {channels_text} measurement "
                          f"channel of “{node}”"))
 
-        return message.acknowledge().identifier()
+        return AsyncStreamBuffer(first, second, third)
 
     async def stop_streaming_data(self) -> None:
         """Stop streaming data"""
@@ -1813,46 +1812,12 @@ class Network:
 
         """
 
-        reader = AsyncBufferedReader()
+        reader = await self.start_streaming_data(first=first,
+                                                 second=second,
+                                                 third=third)
         self.notifier.add_listener(reader)
 
-        expected_id = (await self.start_streaming_data(first=first,
-                                                       second=second,
-                                                       third=third)).value
-
-        async for message in reader:
-            if message.arbitration_id != expected_id:
-                continue
-            data = message.data
-            timestamp = message.timestamp
-            raw_values = [
-                TimestampedValue(value=int.from_bytes(word,
-                                                      byteorder='little'),
-                                 timestamp=timestamp)
-                for word in (data[2:4], data[4:6], data[6:8])
-            ]
-
-            streaming_data = StreamingData()
-            if first and second and third:
-                streaming_data.first.append(raw_values[0])
-                streaming_data.second.append(raw_values[1])
-                streaming_data.third.append(raw_values[2])
-            elif first and second:
-                streaming_data.first.append(raw_values[0])
-                streaming_data.second.append(raw_values[1])
-            elif first and third:
-                streaming_data.first.append(raw_values[0])
-                streaming_data.third.append(raw_values[1])
-            elif second and third:
-                streaming_data.second.append(raw_values[0])
-                streaming_data.third.append(raw_values[1])
-            elif first:
-                streaming_data.first.extend(raw_values)
-            elif second:
-                streaming_data.second.extend(raw_values)
-            else:
-                streaming_data.third.extend(raw_values)
-
+        async for streaming_data in reader:
             continue_data_collection = callback(streaming_data)
             if not continue_data_collection:
                 break
