@@ -20,17 +20,12 @@ async def test(identifier):
               f"address “{mac_address}”")
 
         values_to_read = 5
-        reader = await network.start_streaming_data(first=True)
-        network.notifier.add_listener(reader)
-
-        stream_data = StreamingData()
-        async for streaming_data in reader:
-            stream_data.extend(streaming_data)
-            if len(stream_data.first) >= values_to_read:
-                break
-
-        network.notifier.remove_listener(reader)
-        await network.stop_streaming_data()
+        async with network.open_data_stream(first=True) as stream:
+            stream_data = StreamingData()
+            async for data in stream:
+                stream_data.extend(data)
+                if len(stream_data.first) >= values_to_read:
+                    break
 
         print(f"\nStream Data:\n{stream_data}")
 
