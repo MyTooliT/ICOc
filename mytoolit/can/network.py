@@ -213,6 +213,93 @@ class ResponseListener(Listener):
         return await self.queue.get()
 
 
+class DataStreamContextManager:
+    """Open and close a data stream from a sensor device"""
+
+    def __init__(self, network: Network, first: bool, second: bool,
+                 third: bool) -> None:
+        """Create a new stream context manager for the given Network
+
+        Parameters
+        ----------
+
+        network:
+            The CAN network class for which this context manager handles
+            sensor device stream data
+
+        first:
+            Specifies if the data of the first measurement channel should
+            be streamed or not
+
+        second:
+            Specifies if the data of the second measurement channel should
+            be streamed or not
+
+        third:
+            Specifies if the data of the third measurement channel should
+            be streamed or not
+
+        """
+
+        self.network = network
+        self.reader = AsyncStreamBuffer(first, second, third)
+
+    async def __aenter__(self) -> AsyncStreamBuffer:
+        """Open the stream of measurement data
+
+        Returns
+        -------
+
+        The stream buffer for the measurement stream
+
+        """
+
+        return await self.open()
+
+    async def __aexit__(self, exception_type: Optional[Type[BaseException]],
+                        exception_value: Optional[BaseException],
+                        traceback: Optional[TracebackType]) -> None:
+        """Clean up the resources used by the stream
+
+        Parameters
+        ----------
+
+        exception_type:
+            The type of the exception in case of an exception
+
+        exception_value:
+            The value of the exception in case of an exception
+
+        traceback:
+            The traceback in case of an exception
+
+        """
+
+        await self.close()
+
+    async def open(self) -> AsyncStreamBuffer:
+        """Open the stream of measurement data
+
+        Returns
+        -------
+
+        The stream buffer for the measurement stream
+
+        """
+
+        reader = self.reader
+        await self.network.start_streaming_data(reader.first, reader.second,
+                                                reader.third)
+        self.network.notifier.add_listener(reader)
+        return reader
+
+    async def close(self) -> None:
+        """Clean up the resources used by the stream"""
+
+        self.network.notifier.remove_listener(self.reader)
+        await self.network.stop_streaming_data()
+
+
 class Network:
     """Basic class to communicate with STU and STH devices"""
 
@@ -1656,7 +1743,7 @@ class Network:
     async def start_streaming_data(self,
                                    first: bool = False,
                                    second: bool = False,
-                                   third: bool = False) -> AsyncStreamBuffer:
+                                   third: bool = False) -> None:
         """Start streaming data
 
         Parameters
@@ -1676,11 +1763,6 @@ class Network:
 
         The CAN identifier that this coroutine returns can be used
         to filter CAN messages that contain the expected streaming data
-
-        Returns
-        -------
-
-        The expected identifier of streaming messages
 
         """
 
@@ -1711,8 +1793,6 @@ class Network:
             description=(f"enable streaming of {channels_text} measurement "
                          f"channel of “{node}”"))
 
-        return AsyncStreamBuffer(first, second, third)
-
     async def stop_streaming_data(self) -> None:
         """Stop streaming data"""
 
@@ -1727,6 +1807,36 @@ class Network:
 
         await self._request(message,
                             description=f"disable data streaming of “{node}”")
+
+    def open_data_stream(self,
+                         first: bool = False,
+                         second: bool = False,
+                         third: bool = False) -> DataStreamContextManager:
+        """Open measurement data stream
+
+        Parameters
+        ----------
+
+        first:
+            Specifies if the data of the first measurement channel should
+            be streamed or not
+
+        second:
+            Specifies if the data of the second measurement channel should
+            be streamed or not
+
+        third:
+            Specifies if the data of the third measurement channel should
+            be streamed or not
+
+        Returns
+        -------
+
+        A context manager object for managing stream data
+
+        """
+
+        return DataStreamContextManager(self, first, second, third)
 
     async def read_streaming_data_seconds(self,
                                           seconds: float,
@@ -1784,20 +1894,13 @@ class Network:
 
         """
 
-        reader = await self.start_streaming_data(first=first,
-                                                 second=second,
-                                                 third=third)
-        self.notifier.add_listener(reader)
-
-        stream_data = StreamingData()
-        end_time = time() + seconds
-        async for streaming_data in reader:
-            stream_data.extend(streaming_data)
-            if time() > end_time:
-                break
-
-        self.notifier.remove_listener(reader)
-        await self.stop_streaming_data()
+        async with self.open_data_stream(first, second, third) as stream:
+            stream_data = StreamingData()
+            end_time = time() + seconds
+            async for data in stream:
+                stream_data.extend(data)
+                if time() > end_time:
+                    break
 
         return stream_data
 
