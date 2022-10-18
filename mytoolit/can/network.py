@@ -1908,6 +1908,80 @@ class Network:
 
         return stream_data
 
+    async def read_streaming_data_amount(self,
+                                         amount: int,
+                                         first: bool = True,
+                                         second: bool = False,
+                                         third: bool = False) -> StreamingData:
+        """Read a certain amount of streaming values
+
+        Parameters
+        ----------
+
+        amount:
+            The number of streaming values that should be collected
+
+        first:
+            Specifies if the data of the first measurement channel should
+            be collected or not
+
+        second:
+            Specifies if the data of the second measurement channel should
+            be collected or not
+
+        third:
+            Specifies if the data of the third measurement channel should
+            be collected or not
+
+        Returns
+        -------
+
+        A streaming data object that contains the collected data for each
+        channel
+
+        Example
+        -------
+
+        >>> from asyncio import run
+        >>> from statistics import mean
+        >>> from platform import system
+
+        Read 100 sensor values
+
+        >>> async def read_raw_sensor_values():
+        ...     async with Network() as network:
+        ...         await network.connect_sensor_device(0)
+        ...         return await network.read_streaming_data_amount(100)
+        >>> stream_data = run(read_raw_sensor_values())
+        >>> len(stream_data) == 100
+        True
+        >>> values = [timestamped_value.value for timestamped_value in
+        ...           stream_data.first]
+        >>> 32000 < mean(values) < 33000
+        True
+
+        """
+
+        async with self.open_data_stream(first, second, third) as stream:
+            stream_data = StreamingData()
+            async for data in stream:
+                stream_data.extend(data)
+                if len(stream_data) >= amount:
+                    break
+
+        # Due to the chosen streaming format the code above might have
+        # collected one or two additional values. We drop these values
+        # from the last enabled channels here.
+        while len(stream_data) > amount:
+            for channel in (stream_data.third, stream_data.second,
+                            stream_data.first):
+                if channel:
+                    channel.pop()
+                    if len(stream_data) <= amount:
+                        break
+
+        return stream_data
+
     # -----------
     # - Voltage -
     # -----------
