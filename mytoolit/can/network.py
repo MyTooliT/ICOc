@@ -1838,11 +1838,12 @@ class Network:
 
         return DataStreamContextManager(self, first, second, third)
 
-    async def read_streaming_data_seconds(self,
-                                          seconds: float,
-                                          first=True,
-                                          second=False,
-                                          third=False) -> StreamingData:
+    async def read_streaming_data_seconds(
+            self,
+            seconds: float,
+            first: bool = True,
+            second: bool = False,
+            third: bool = False) -> StreamingData:
         """Read raw streaming data for a certain amount of time
 
         Parameters
