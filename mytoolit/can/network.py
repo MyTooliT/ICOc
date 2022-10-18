@@ -1766,6 +1766,9 @@ class Network:
 
         """
 
+        if not (first or second or third):
+            raise ValueError("Please enable at least one measurement channel")
+
         streaming_format = StreamingFormat(first=first,
                                            second=second,
                                            third=third,
