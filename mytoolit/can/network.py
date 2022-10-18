@@ -1849,7 +1849,7 @@ class Network:
         ----------
 
         seconds:
-            The amount of time acceleration data should be read in seconds
+            For how long the method should read streaming data in seconds
 
         first:
             Specifies if the data of the first measurement channel should
