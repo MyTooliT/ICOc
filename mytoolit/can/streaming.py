@@ -478,6 +478,18 @@ class StreamingData:
 
         return iter([self.first, self.second, self.third])
 
+    def __len__(self) -> int:
+        """Retrieve the (combined) length of the streaming data
+
+        Returns
+        -------
+
+        The amount of stored streaming values
+
+        """
+
+        return len(self.first) + len(self.second) + len(self.third)
+
     def __repr__(self) -> str:
         """Retrieve the textual representation of streaming data
 
