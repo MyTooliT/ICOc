@@ -1843,7 +1843,7 @@ class Network:
                                           first=True,
                                           second=False,
                                           third=False) -> StreamingData:
-        """Read raw x acceleration data for a certain amount of time
+        """Read raw streaming data for a certain amount of time
 
         Parameters
         ----------
