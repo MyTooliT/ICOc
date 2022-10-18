@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 from asyncio import Queue
-from typing import AsyncIterator, Awaitable, List, NamedTuple, Optional, Tuple
+from typing import (AsyncIterator, Awaitable, Callable, List, NamedTuple,
+                    Optional, Tuple)
 
 from can import Listener, Message
 
@@ -584,6 +585,66 @@ class StreamingData:
         """
 
         return not (self.first or self.second or self.third)
+
+    def apply(self,
+              function: Callable[[float], float],
+              first: bool = True,
+              second: bool = True,
+              third: bool = True) -> None:
+        """Apply a certain function to the streaming data
+
+        Parameters
+        ----------
+
+        function:
+            The function that should be applied to the streaming data
+
+        first:
+            Specifies if the function should be applied to the first
+            measurement channel or not
+
+        second:
+            Specifies if the function should be applied to the second
+            measurement channel or not
+
+        third:
+            Specifies if the function should be applied to the third
+            measurement channel or not
+
+        Examples
+        --------
+
+        >>> value11 = TimestampedValue(timestamp=11, value=11)
+        >>> value12 = TimestampedValue(timestamp=12, value=12)
+        >>> value13 = TimestampedValue(timestamp=13, value=13)
+        >>> value14 = TimestampedValue(timestamp=14, value=14)
+
+        >>> data = StreamingData([value11, value12], [value13], [value14])
+        >>> data
+        1: [11@11, 12@12]
+        2: [13@13]
+        3: [14@14]
+        >>> data.apply(lambda value: value + 10)
+        >>> data
+        1: [21@11, 22@12]
+        2: [23@13]
+        3: [24@14]
+
+        """
+
+        def map_list(function, channel):
+            return [
+                TimestampedValue(timestamped.timestamp,
+                                 function(timestamped.value))
+                for timestamped in channel
+            ]
+
+        if first:
+            self.first = map_list(function, self.first)
+        if second:
+            self.second = map_list(function, self.second)
+        if third:
+            self.third = map_list(function, self.third)
 
 
 # -- Main ---------------------------------------------------------------------
