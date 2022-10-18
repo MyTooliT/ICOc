@@ -2095,8 +2095,10 @@ class Network:
 
         return SensorConfig(*channels)
 
-    async def write_sensor_configuration(self, first: int, second: int,
-                                         third: int) -> None:
+    async def write_sensor_configuration(self,
+                                         first: int = 0,
+                                         second: int = 0,
+                                         third: int = 0) -> None:
         """Change the sensor numbers for the different measurement channels
 
         If you use the sensor number `0` for one of the different measurement
