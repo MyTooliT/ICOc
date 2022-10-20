@@ -1771,7 +1771,30 @@ usbipd wsl attach --busid 2-2</code></pre></li>
 <div id="network" class="section level4 hasAnchor">
 <h4><span class="header-section-number">5.1.2.1</span> Network<a href="#network" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <ul>
-<li>Removed the coroutine <code>read_x_acceleration</code> (please use <code>read_streaming_data_single</code>) instead</li>
+<li><p>Removed the coroutine <code>read_x_acceleration</code> (please use <code>read_streaming_data_single</code>) instead</p></li>
+<li><p>Added the coroutines</p>
+<table>
+<colgroup>
+<col width="38%" />
+<col width="61%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>read_streaming_data_seconds</code></td>
+<td>Read streaming data for certain amount of time</td>
+</tr>
+<tr class="even">
+<td><code>read_streaming_data_amount</code></td>
+<td>Read certain amount of streaming values</td>
+</tr>
+</tbody>
+</table></li>
 </ul>
 
 </div>
