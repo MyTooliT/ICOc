@@ -613,7 +613,8 @@ class StreamingData:
         return not (self.first or self.second or self.third)
 
     def apply(self,
-              function: Callable[[float], float],
+              function: Callable[[Union[float, Quantity]], Union[float,
+                                                                 Quantity]],
               first: bool = True,
               second: bool = True,
               third: bool = True) -> None:
