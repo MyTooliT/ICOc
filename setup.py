@@ -41,7 +41,7 @@ setup(name="icoc",
           "License :: Other/Proprietary License",
           "Operating System :: Microsoft :: Windows :: Windows 10",
       ],
-      python_requires='>=3.7',
+      python_requires='>=3.8',
       entry_points={
           'console_scripts': [
               'icoc = mytoolit.old.ui:main',

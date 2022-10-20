@@ -6,6 +6,7 @@ dynaconf==3.1.9
 matplotlib
 netaddr
 pdfrw
+pint>=0.19.2
 python-can>=4.0
 reportlab
 tables>=3.6

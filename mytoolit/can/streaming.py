@@ -3,10 +3,11 @@
 from __future__ import annotations
 
 from asyncio import Queue
-from typing import (AsyncIterator, Awaitable, Callable, List, NamedTuple,
-                    Optional, Tuple)
+from typing import (AsyncIterator, Awaitable, Callable, List, Optional, Tuple,
+                    Union)
 
 from can import Listener, Message
+from pint import Quantity
 
 from mytoolit.can.identifier import Identifier
 
@@ -400,11 +401,29 @@ class StreamingFormatVoltage(StreamingFormat):
         return super().__repr__()
 
 
-class TimestampedValue(NamedTuple):
+class TimestampedValue:
     """Store a single (streaming) value and its timestamp"""
 
-    timestamp: float
-    value: float
+    def __init__(self, timestamp: float, value: Union[float,
+                                                      Quantity]) -> None:
+        """Initialize the timestamped value using the given arguments
+
+        Parameters
+        ----------
+
+        timestamp:
+            The time when the data value was acquired in seconds since the
+            epoch
+
+        value:
+            The data value either as
+            - raw value or
+            - value including a given unit and optional quantity
+
+        """
+
+        self.timestamp = timestamp
+        self.value = value
 
     def __repr__(self) -> str:
         """Retrieve the textual representation of the value
@@ -421,6 +440,13 @@ class TimestampedValue(NamedTuple):
         444@123
         >>> TimestampedValue(timestamp=20, value=10)
         10@20
+
+        >>> from mytoolit.measurement import units
+
+        >>> TimestampedValue(timestamp=5, value=Quantity(10, units.g0))
+        10 standard_gravity@5
+        >>> TimestampedValue(timestamp=5, value=Quantity(10, units.celsius))
+        10 degree_Celsius@5
 
         """
 
