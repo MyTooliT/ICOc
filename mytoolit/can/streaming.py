@@ -23,16 +23,16 @@ class AsyncStreamBuffer(Listener):
         ----------
 
         first:
-            Specifies if the data of the first measurement will be collected
-            or not
+            Specifies if the data of the first measurement channel will be
+            collected or not
 
         second:
-            Specifies if the data of the second measurement will be collected
-            or not
+            Specifies if the data of the second measurement channel will be
+            collected or not
 
         third:
-            Specifies if the data of the third measurement will be collected
-            or not
+            Specifies if the data of the third measurement channel will be
+            collected or not
 
         """
 
