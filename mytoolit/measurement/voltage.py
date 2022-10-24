@@ -5,8 +5,8 @@ from mytoolit.measurement.constants import ADC_MAX_VALUE
 # -- Functions ----------------------------------------------------------------
 
 
-def convert_to_supply_voltage(voltage_raw: int,
-                              reference_voltage: float = 3.3) -> float:
+def convert_raw_supply_voltage(voltage_raw: int,
+                               reference_voltage: float = 3.3) -> float:
     """Convert a raw 2 byte supply voltage value to a voltage value
 
     Parameters
@@ -25,10 +25,10 @@ def convert_to_supply_voltage(voltage_raw: int,
 
     Example:
 
-    >>> 3.15 < convert_to_supply_voltage(11000) < 3.16
+    >>> 3.15 < convert_raw_supply_voltage(11000) < 3.16
     True
 
-    >>> 5.12 < convert_to_supply_voltage(2**15,
+    >>> 5.12 < convert_raw_supply_voltage(2**15,
     ...                                  reference_voltage=1.8) < 5.14
     True
 

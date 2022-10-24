@@ -30,7 +30,7 @@ from mytoolit.can.streaming import (AsyncStreamBuffer, StreamingData,
                                     TimestampedValue, StreamingFormat,
                                     StreamingFormatVoltage)
 from mytoolit.can.status import State
-from mytoolit.measurement import convert_to_supply_voltage
+from mytoolit.measurement import convert_raw_supply_voltage
 from mytoolit.utility import convert_bytes_to_text
 
 # -- Classes ------------------------------------------------------------------
@@ -2034,7 +2034,7 @@ class Network:
 
         adc_configuration = await self.read_adc_configuration()
 
-        return convert_to_supply_voltage(
+        return convert_raw_supply_voltage(
             voltage_raw,
             reference_voltage=adc_configuration.reference_voltage())
 
