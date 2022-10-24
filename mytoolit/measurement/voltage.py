@@ -8,8 +8,8 @@ from mytoolit.measurement.units import volt
 # -- Functions ----------------------------------------------------------------
 
 
-def convert_raw_supply_voltage(voltage_raw: int,
-                               reference_voltage: float = 3.3) -> Quantity:
+def convert_raw_to_supply_voltage(voltage_raw: int,
+                                  reference_voltage: float = 3.3) -> Quantity:
     """Convert a raw 2 byte supply voltage value to a voltage value
 
     Parameters
@@ -28,11 +28,11 @@ def convert_raw_supply_voltage(voltage_raw: int,
 
     Example:
 
-    >>> voltage = convert_raw_supply_voltage(11000)
+    >>> voltage = convert_raw_to_supply_voltage(11000)
     >>> volt(3.15) < voltage < volt(3.16)
     True
 
-    >>> voltage = convert_raw_supply_voltage(2**15, reference_voltage=1.8)
+    >>> voltage = convert_raw_to_supply_voltage(2**15, reference_voltage=1.8)
     >>> volt(5.12) < voltage < volt(5.14)
     True
 
