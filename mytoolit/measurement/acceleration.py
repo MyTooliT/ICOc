@@ -66,8 +66,16 @@ def ratio_noise_max(values: Iterable[int]) -> float:
     -------
 
     The ratio of the average noise to the highest possible measured value
+
     """
 
     max_value = ADC_MAX_VALUE / 2
     standard_deviation = sqrt(pvariance(values))
     return 20 * log(standard_deviation / max_value, 10)
+
+
+# -- Main ---------------------------------------------------------------------
+
+if __name__ == '__main__':
+    from doctest import testmod
+    testmod()
