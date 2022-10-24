@@ -33,6 +33,13 @@ def convert_raw_to_g(acceleration_raw: int, max_value: int) -> Quantity:
 
     The acceleration in multiples of the standard gravity g₀
 
+    Examples
+    --------
+
+    >>> acceleration = convert_raw_to_g(2**15, max_value=200)
+    >>> g0(-0.01) < acceleration < g0(0.01)
+    True
+
     """
 
     acceleration_to_gravity = max_value
