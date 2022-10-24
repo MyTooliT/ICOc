@@ -1768,8 +1768,16 @@ usbipd wsl attach --busid 2-2</code></pre></li>
 </div>
 <div id="internal" class="section level3 hasAnchor">
 <h3><span class="header-section-number">5.1.2</span> Internal<a href="#internal" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="measurement" class="section level4 hasAnchor">
+<h4><span class="header-section-number">5.1.2.1</span> Measurement<a href="#measurement" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<ul>
+<li>Renamed <code>convert_to_supply_voltage</code> to <code>convert_raw_to_supply_voltage</code></li>
+<li>The conversion function <code>convert_raw_to_g</code> now returns the data value including the unit (<a href="https://pint.readthedocs.io/en/stable/_modules/pint/quantity.html"><code>Quantity</code></a>)</li>
+<li>The conversion function <code>convert_raw_to_supply_voltage</code> now returns the data value including the unit (<a href="https://pint.readthedocs.io/en/stable/_modules/pint/quantity.html"><code>Quantity</code></a>)</li>
+</ul>
+</div>
 <div id="network" class="section level4 hasAnchor">
-<h4><span class="header-section-number">5.1.2.1</span> Network<a href="#network" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<h4><span class="header-section-number">5.1.2.2</span> Network<a href="#network" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <ul>
 <li><p>Removed the coroutine <code>read_x_acceleration</code> (please use <code>read_streaming_data_single</code>) instead</p></li>
 <li><p>Added the coroutines</p>
@@ -1796,6 +1804,10 @@ usbipd wsl attach --busid 2-2</code></pre></li>
 </tbody>
 </table></li>
 </ul>
+</div>
+<div id="python-1" class="section level4 hasAnchor">
+<h4><span class="header-section-number">5.1.2.3</span> Python<a href="#python-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>This version of ICOc requires Python <code>3.8</code> or later.</p>
 
 </div>
 </div>
@@ -1958,8 +1970,8 @@ values of the y-axis and z-axis into the EEPROM</li>
 </div>
 <div id="internal-2" class="section level3 hasAnchor">
 <h3><span class="header-section-number">5.3.3</span> Internal<a href="#internal-2" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div id="measurement" class="section level4 hasAnchor">
-<h4><span class="header-section-number">5.3.3.1</span> Measurement<a href="#measurement" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div id="measurement-1" class="section level4 hasAnchor">
+<h4><span class="header-section-number">5.3.3.1</span> Measurement<a href="#measurement-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <ul>
 <li>Renamed the method <code>convert_voltage_adc_to_volts</code> to <code>convert_to_supply_voltage</code></li>
 <li>The method <code>convert_to_supply_voltage</code> now supports different reference voltages</li>
@@ -2260,8 +2272,8 @@ values of the y-axis and z-axis into the EEPROM</li>
 <li>Add class <code>CalibrationMeasurementFormat</code> to specify the data bytes of a <a href="https://mytoolit.github.io/Documentation/#command:Calibration-Measurement">calibration measurement command</a>.</li>
 </ul>
 </div>
-<div id="measurement-1" class="section level4 hasAnchor">
-<h4><span class="header-section-number">5.8.4.2</span> Measurement<a href="#measurement-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div id="measurement-2" class="section level4 hasAnchor">
+<h4><span class="header-section-number">5.8.4.2</span> Measurement<a href="#measurement-2" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <ul>
 <li>Add function <code>convert_voltage_adc_to_volts</code> to convert (2 byte) <a href="https://mytoolit.github.io/Documentation/#block-streaming">streaming voltage</a> values to a supply voltage in volts</li>
 </ul>
