@@ -444,13 +444,16 @@ class TimestampedValue:
         >>> from mytoolit.measurement import g0, units
 
         >>> TimestampedValue(timestamp=5, value=g0(10))
-        10 standard_gravity@5
+        10 g_0@5
         >>> TimestampedValue(timestamp=5, value=Quantity(10, units.celsius))
-        10 degree_Celsius@5
+        10 °C@5
 
         """
 
-        return f"{self.value}@{self.timestamp}"
+        value = (f"{self.value:~}"
+                 if isinstance(self.value, Quantity) else str(self.value))
+
+        return f"{value}@{self.timestamp}"
 
 
 class StreamingData:
