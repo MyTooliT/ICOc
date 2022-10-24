@@ -8,10 +8,6 @@ from mytoolit.test.production import TestNode
 from mytoolit.report import Report
 from mytoolit.test.unit import ExtendedTestRunner
 
-from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
-from mytoolit.old.MyToolItCommands import (int_to_mac_address, MyToolItBlock,
-                                           MyToolItProductData)
-
 # -- Class --------------------------------------------------------------------
 
 
@@ -29,21 +25,7 @@ class TestSTU(TestNode):
     def _read_data(self):
         """Read data from connected STU"""
 
-        def read_data_old():
-            """Read data using the old network class"""
-            cls.bluetooth_mac = int_to_mac_address(
-                self.can.BlueToothAddress(MyToolItNetworkNr['STU1']))
-
-            index = self.can.cmdSend(MyToolItNetworkNr['STU1'],
-                                     MyToolItBlock['Product Data'],
-                                     MyToolItProductData['Firmware Version'],
-                                     [])
-            version = self.can.getReadMessageData(index)[-3:]
-            cls.firmware_version = '.'.join(map(str, version))
-
-            cls.release_name = self.can.get_node_release_name('STU1')
-
-        async def read_data_new():
+        async def read_data():
             """Read data using the new network class"""
 
             node = 'STU 1'
@@ -52,9 +34,7 @@ class TestSTU(TestNode):
             cls.release_name = await self.can.get_firmware_release_name(node)
 
         cls = type(self)
-        new_network = hasattr(self.can, 'bus')
-        self.loop.run_until_complete(
-            read_data_new()) if new_network else read_data_old()
+        self.loop.run_until_complete(read_data())
 
     def test__firmware_flash_disconnected(self):
         """Upload bootloader and application into STU
