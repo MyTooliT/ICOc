@@ -4,12 +4,11 @@ from itertools import chain, repeat
 from typing import List
 from unittest import main as unittest_main, skipIf
 
-from pint import Quantity
 from semantic_version import Version
 
 from mytoolit.can import Node
 from mytoolit.config import settings
-from mytoolit.measurement import convert_raw_to_g, ratio_noise_max, units, volt
+from mytoolit.measurement import convert_raw_to_g, g0, ratio_noise_max, volt
 from mytoolit.report import Report
 from mytoolit.test.production import TestSensorNode
 from mytoolit.test.unit import ExtendedTestRunner
@@ -197,13 +196,12 @@ class TestSTH(TestSensorNode):
 
             # We expect a stationary acceleration between -g₀ and g₀
             # (g₀ = 9.807 m/s²)
-            expected_acceleration = Quantity(0, units.g0)
-            tolerance_acceleration = Quantity(sensor.acceleration.tolerance,
-                                              units.g0)
-            expected_minimum_acceleration = Quantity(
-                expected_acceleration - tolerance_acceleration, units.g0)
-            expected_maximum_acceleration = Quantity(
-                expected_acceleration + tolerance_acceleration, units.g0)
+            expected_acceleration = g0(0)
+            tolerance_acceleration = g0(sensor.acceleration.tolerance)
+            expected_minimum_acceleration = (expected_acceleration -
+                                             tolerance_acceleration)
+            expected_maximum_acceleration = (expected_acceleration +
+                                             tolerance_acceleration)
 
             self.assertGreaterEqual(
                 acceleration, expected_minimum_acceleration,

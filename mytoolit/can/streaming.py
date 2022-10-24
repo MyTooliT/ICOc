@@ -441,9 +441,9 @@ class TimestampedValue:
         >>> TimestampedValue(timestamp=20, value=10)
         10@20
 
-        >>> from mytoolit.measurement import units
+        >>> from mytoolit.measurement import g0, units
 
-        >>> TimestampedValue(timestamp=5, value=Quantity(10, units.g0))
+        >>> TimestampedValue(timestamp=5, value=g0(10))
         10 standard_gravity@5
         >>> TimestampedValue(timestamp=5, value=Quantity(10, units.celsius))
         10 degree_Celsius@5

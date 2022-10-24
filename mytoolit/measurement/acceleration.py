@@ -7,7 +7,7 @@ from typing import Iterable
 from pint import Quantity
 
 from mytoolit.measurement.constants import ADC_MAX_VALUE
-from mytoolit.measurement.units import units
+from mytoolit.measurement.units import g0
 
 # -- Functions ----------------------------------------------------------------
 
@@ -42,7 +42,7 @@ def convert_raw_to_g(acceleration_raw: int, max_value: int) -> Quantity:
     # acceleration to the maximum ADC value.
     acceleration_in_g = (acceleration_raw / ADC_MAX_VALUE -
                          1 / 2) * acceleration_to_gravity
-    return Quantity(acceleration_in_g, units.g0)
+    return g0(acceleration_in_g)
 
 
 def ratio_noise_max(values: Iterable[int]) -> float:
