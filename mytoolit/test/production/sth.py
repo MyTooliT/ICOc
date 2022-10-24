@@ -195,9 +195,9 @@ class TestSTH(TestSensorNode):
             acceleration = convert_raw_to_g(stream_data.first.pop().value,
                                             sensor.acceleration.maximum)
 
-            # We expect a stationary acceleration of the standard gravity
-            # (1 g₀ = 9.807 m/s²)
-            expected_acceleration = 1
+            # We expect a stationary acceleration between -g₀ and g₀
+            # (g₀ = 9.807 m/s²)
+            expected_acceleration = 0
             tolerance_acceleration = sensor.acceleration.tolerance
             expected_minimum_acceleration = (expected_acceleration -
                                              tolerance_acceleration)
