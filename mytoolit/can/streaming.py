@@ -441,11 +441,11 @@ class TimestampedValue:
         >>> TimestampedValue(timestamp=20, value=10)
         10@20
 
-        >>> from mytoolit.measurement import g0, units
+        >>> from mytoolit.measurement import celsius, g0
 
         >>> TimestampedValue(timestamp=5, value=g0(10))
         10 g_0@5
-        >>> TimestampedValue(timestamp=5, value=Quantity(10, units.celsius))
+        >>> TimestampedValue(timestamp=5, value=celsius(10))
         10 °C@5
 
         """

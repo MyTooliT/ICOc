@@ -10,6 +10,25 @@ del UnitRegistry
 # -- Functions ----------------------------------------------------------------
 
 
+def celsius(temperature: float) -> Quantity:
+    """Return given value as temperature quantity
+
+    Parameters
+    ----------
+
+    temperature:
+        Magnitude of the temperature in degree Celsius
+
+    Returns
+    -------
+
+    A temperature quantity with the given magnitude
+
+    """
+
+    return Quantity(temperature, units.celsius)
+
+
 def g0(acceleration: float) -> Quantity:
     """Return given value as acceleration quantity
 
