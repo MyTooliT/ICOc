@@ -1,5 +1,3 @@
-"""Experiment with some functionality of the „new“ Network class"""
-
 # -- Imports ------------------------------------------------------------------
 
 from argparse import ArgumentParser
@@ -24,9 +22,7 @@ async def set_name(identifier, name):
         print(f"New name of sensor device: {name}")
 
 
-# -- Main ---------------------------------------------------------------------
-
-if __name__ == '__main__':
+def main():
     parser = ArgumentParser(description='STH Renaming Tool')
     parser.add_argument('name',
                         type=str,
@@ -37,3 +33,9 @@ if __name__ == '__main__':
     arguments = parser.parse_args()
 
     run(set_name(identifier=0, name=arguments.name))
+
+
+# -- Main ---------------------------------------------------------------------
+
+if __name__ == '__main__':
+    main()

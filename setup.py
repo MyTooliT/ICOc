@@ -45,6 +45,7 @@ setup(name="icoc",
       entry_points={
           'console_scripts': [
               'icoc = mytoolit.old.ui:main',
+              'icon = mytoolit.cmdline.icon:main',
               'check-eeprom = mytoolit.scripts.eeprom:main',
               'clean-repo = mytoolit.scripts.clean:main',
               'test-smh = mytoolit.test.production.smh:main',
