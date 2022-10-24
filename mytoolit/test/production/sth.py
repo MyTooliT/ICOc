@@ -165,23 +165,25 @@ class TestSTH(TestSensorNode):
         async def test_supply_voltage():
             """Check the supply voltage of the STH"""
 
-            supply_voltage = await self.can.read_supply_voltage()
+            def volt(voltage):
+                return Quantity(voltage, units.volt)
 
-            expected_voltage = settings.sth.battery_voltage.average
-            tolerance_voltage = settings.sth.battery_voltage.tolerance
+            supply_voltage = await self.can.read_supply_voltage()
+            expected_voltage = volt(settings.sth.battery_voltage.average)
+            tolerance_voltage = volt(settings.sth.battery_voltage.tolerance)
             expected_minimum_voltage = expected_voltage - tolerance_voltage
             expected_maximum_voltage = expected_voltage + tolerance_voltage
 
             self.assertGreaterEqual(
                 supply_voltage, expected_minimum_voltage,
-                f"STH supply voltage of {supply_voltage:.3f} V is lower "
+                f"STH supply voltage of {supply_voltage:.3f~} is lower "
                 "than expected minimum voltage of "
-                f"{expected_minimum_voltage:.3f} V")
+                f"{expected_minimum_voltage:.3f~}")
             self.assertLessEqual(
                 supply_voltage, expected_maximum_voltage,
-                f"STH supply voltage of {supply_voltage:.3f} V is "
+                f"STH supply voltage of {supply_voltage:.3f~} is "
                 "greater than expected maximum voltage of "
-                f"{expected_minimum_voltage:.3f} V")
+                f"{expected_minimum_voltage:.3f~}")
 
         self.loop.run_until_complete(test_supply_voltage())
 
