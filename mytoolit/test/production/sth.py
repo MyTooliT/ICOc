@@ -9,7 +9,7 @@ from semantic_version import Version
 
 from mytoolit.can import Node
 from mytoolit.config import settings
-from mytoolit.measurement import convert_raw_to_g, ratio_noise_max, units
+from mytoolit.measurement import convert_raw_to_g, ratio_noise_max, units, volt
 from mytoolit.report import Report
 from mytoolit.test.production import TestSensorNode
 from mytoolit.test.unit import ExtendedTestRunner
@@ -164,9 +164,6 @@ class TestSTH(TestSensorNode):
 
         async def test_supply_voltage():
             """Check the supply voltage of the STH"""
-
-            def volt(voltage):
-                return Quantity(voltage, units.volt)
 
             supply_voltage = await self.can.read_supply_voltage()
             expected_voltage = volt(settings.sth.battery_voltage.average)

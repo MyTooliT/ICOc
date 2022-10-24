@@ -3,7 +3,7 @@
 from pint import Quantity
 
 from mytoolit.measurement.constants import ADC_MAX_VALUE
-from mytoolit.measurement.units import units
+from mytoolit.measurement.units import volt
 
 # -- Functions ----------------------------------------------------------------
 
@@ -28,7 +28,6 @@ def convert_raw_supply_voltage(voltage_raw: int,
 
     Example:
 
-    >>> volt = lambda voltage: Quantity(voltage, units.volt)
     >>> voltage = convert_raw_supply_voltage(11000)
     >>> volt(3.15) < voltage < volt(3.16)
     True
@@ -40,7 +39,7 @@ def convert_raw_supply_voltage(voltage_raw: int,
     """
 
     if voltage_raw <= 0:
-        return Quantity(0, units.volt)
+        return volt(0)
 
     # The value below is the result of the voltage divider circuit, which
     # uses a 4.7 kΩ and 1 kΩ resistor: (470 kΩ + 100 kΩ) / 100 kΩ = 5.7
@@ -48,9 +47,8 @@ def convert_raw_supply_voltage(voltage_raw: int,
     # take a look
     # [here](https://en.wikipedia.org/wiki/E_series_of_preferred_numbers).
     voltage_divider_factor = 5.7
-    return Quantity(
-        voltage_raw * voltage_divider_factor * reference_voltage /
-        ADC_MAX_VALUE, units.volt)
+    return volt(voltage_raw * voltage_divider_factor * reference_voltage /
+                ADC_MAX_VALUE)
 
 
 # -- Main ---------------------------------------------------------------------

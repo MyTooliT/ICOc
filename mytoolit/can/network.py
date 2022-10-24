@@ -2000,7 +2000,7 @@ class Network:
 
         >>> from asyncio import run
         >>> from platform import system
-        >>> from mytoolit.measurement.units import units
+        >>> from mytoolit.measurement.units import volt
 
         Read the supply voltage of STH 1
 
@@ -2014,7 +2014,6 @@ class Network:
         ...         await network.connect_sensor_device(0)
         ...         return await network.read_supply_voltage()
         >>> supply_voltage = run(read_supply_voltage())
-        >>> volt = lambda voltage: Quantity(voltage, units.volt)
         >>> volt(3) <= supply_voltage <= volt(4.2)
         True
 
