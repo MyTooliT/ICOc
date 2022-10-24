@@ -38,7 +38,7 @@ class TestNode(TestCase):
     connects to the STU. If you also want to connect to a sensor node, please
     overwrite the method `_connect`.
 
-    To add additional test attributes show in the standard output and
+    To add additional test attributes shown in the standard output and
     optionally the PDF, add them as **class** variables to the subclass. Then
     use the **class** method `add_attribute` in the method `setUpClass` and
     use a format string where you reference the class variable as value
