@@ -1,5 +1,6 @@
 # -- Imports ------------------------------------------------------------------
 
+from statistics import mean, stdev
 from unittest import main as unittest_main
 
 from mytoolit.can.node import Node
@@ -147,6 +148,29 @@ class TestSMH(TestSensorNode):
                 check_value(value, channel, expected)
 
         self.loop.run_until_complete(test_adc_values())
+
+    def test_sensors(self):
+        """Test available sensor channels"""
+
+        async def test_sensors():
+
+            for test_channel in range(1, settings.smh.channels + 1):
+                await self.can.write_sensor_configuration(first=test_channel)
+                config = await self.can.read_sensor_configuration()
+                self.assertEqual(
+                    config.first, test_channel,
+                    f"Read sensor channel number “{config.first}” does "
+                    f"not match expected channel number “{test_channel}”")
+                stream_data = await self.can.read_streaming_data_amount(
+                    1000, first=True, second=False, third=False)
+                values = [
+                    timestamped.value for timestamped in stream_data.first
+                ]
+                print(f"\nSensor Channel {test_channel}")
+                print(f"Mean: {mean(values):.3f}")
+                print(f"Standard deviation: {stdev(values):.3f}")
+
+        self.loop.run_until_complete(test_sensors())
 
     def test_power_uage_disconnected(self) -> None:
         """Check power usage in disconnected state"""
