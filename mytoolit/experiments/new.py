@@ -4,10 +4,9 @@
 
 from asyncio import run
 from functools import partial
-from pint import Quantity
 
 from mytoolit.can import Network
-from mytoolit.measurement import convert_raw_to_g, units
+from mytoolit.measurement import convert_raw_to_g
 
 
 # -- Functions ----------------------------------------------------------------
@@ -25,8 +24,7 @@ async def test(identifier):
 
         sensor_range = await network.read_acceleration_sensor_range_in_g()
         conversion_to_g = partial(convert_raw_to_g, max_value=sensor_range)
-        stream_data.apply(
-            lambda value: Quantity(conversion_to_g(value), units.g0))
+        stream_data.apply(conversion_to_g)
 
         print(f"\nStream Data:\n{stream_data}")
 

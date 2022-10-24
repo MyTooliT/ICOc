@@ -925,7 +925,8 @@ class CommandLineInterface():
                                        max_value=self.acceleration_range_g)
         number_values = 3 if self.tAccDataFormat == DataSets[3] else len(axes)
         values = [
-            convert_acceleration(byte_list_to_int(data[start:start + 2]))
+            convert_acceleration(byte_list_to_int(data[start:start +
+                                                       2])).magnitude
             for start in range(2, 2 + number_values * 2, 2)
         ]
 

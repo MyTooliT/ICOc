@@ -4,11 +4,12 @@ from itertools import chain, repeat
 from typing import List
 from unittest import main as unittest_main, skipIf
 
+from pint import Quantity
 from semantic_version import Version
 
 from mytoolit.can import Node
 from mytoolit.config import settings
-from mytoolit.measurement import convert_raw_to_g, ratio_noise_max
+from mytoolit.measurement import convert_raw_to_g, ratio_noise_max, units
 from mytoolit.report import Report
 from mytoolit.test.production import TestSensorNode
 from mytoolit.test.unit import ExtendedTestRunner
@@ -197,23 +198,24 @@ class TestSTH(TestSensorNode):
 
             # We expect a stationary acceleration between -g₀ and g₀
             # (g₀ = 9.807 m/s²)
-            expected_acceleration = 0
-            tolerance_acceleration = sensor.acceleration.tolerance
-            expected_minimum_acceleration = (expected_acceleration -
-                                             tolerance_acceleration)
-            expected_maximum_acceleration = (expected_acceleration +
-                                             tolerance_acceleration)
+            expected_acceleration = Quantity(0, units.g0)
+            tolerance_acceleration = Quantity(sensor.acceleration.tolerance,
+                                              units.g0)
+            expected_minimum_acceleration = Quantity(
+                expected_acceleration - tolerance_acceleration, units.g0)
+            expected_maximum_acceleration = Quantity(
+                expected_acceleration + tolerance_acceleration, units.g0)
 
             self.assertGreaterEqual(
                 acceleration, expected_minimum_acceleration,
-                f"Measured acceleration {acceleration:.3f} g is lower "
+                f"Measured acceleration {acceleration:.3f~} is lower "
                 "than expected minimum acceleration "
-                f"{expected_minimum_acceleration} g")
+                f"{expected_minimum_acceleration:.3f~}")
             self.assertLessEqual(
                 acceleration, expected_maximum_acceleration,
-                f"Measured acceleration {acceleration:.3f} g is greater "
+                f"Measured acceleration {acceleration:.3f~} is greater "
                 "than expected maximum acceleration "
-                f"{expected_maximum_acceleration} g")
+                f"{expected_maximum_acceleration:.3f~}")
 
         self.loop.run_until_complete(test_acceleration_single())
 
