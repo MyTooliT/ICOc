@@ -153,7 +153,7 @@ class TestNode(TestCase):
             try:
                 attribute.value = str(attribute.value).format(cls=cls)
                 attributes.append(attribute)
-            except AttributeError:
+            except (AttributeError, IndexError):
                 pass
 
         cls.__output_data(attributes)

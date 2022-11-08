@@ -25,9 +25,7 @@ class TestSMH(TestSensorNode):
         super().setUpClass()
         cls.report = Report(node='SMH')
         # Guessed sensor types
-        cls.sensors = [
-            "Unknown Sensor" for sensor in range(settings.smh.channels + 1)
-        ]
+        cls.sensors = []
         for sensor in range(settings.smh.channels):
             cls.add_attribute(f"Sensor {sensor}",
                               f"{{cls.sensors[{sensor}]}}",
@@ -178,7 +176,7 @@ class TestSMH(TestSensorNode):
                     timestamped.value for timestamped in stream_data.first
                 ]
                 sensor_type = guess_sensor_type(values)
-                cls.sensors[test_channel - 1] = sensor_type
+                cls.sensors.append(sensor_type)
 
                 self.assertNotRegex(
                     sensor_type, "[Bb]roken",
