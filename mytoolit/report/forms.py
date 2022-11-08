@@ -77,7 +77,9 @@ class CheckBoxList:
         self.styles = get_style_sheet()
         self.text_fields = text_fields
 
-    def add_checkbox_item(self, text: str, tooltip: str = None) -> None:
+    def add_checkbox_item(self,
+                          text: str,
+                          tooltip: Optional[str] = None) -> None:
         """Add a checkbox item to the checkbox list
 
         Parameters
