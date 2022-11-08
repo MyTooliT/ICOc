@@ -24,6 +24,14 @@ class TestSMH(TestSensorNode):
 
         super().setUpClass()
         cls.report = Report(node='SMH')
+        # Guessed sensor types
+        cls.sensors = [
+            "Unknown Sensor" for sensor in range(settings.smh.channels + 1)
+        ]
+        for sensor in range(settings.smh.channels):
+            cls.add_attribute(f"Sensor {sensor}",
+                              f"{{cls.sensors[{sensor}]}}",
+                              pdf=True)
 
     def _connect(self):
         """Create a connection to the SMH"""
@@ -155,6 +163,8 @@ class TestSMH(TestSensorNode):
 
         async def test_sensors():
 
+            cls = type(self)
+
             for test_channel in range(1, settings.smh.channels + 1):
                 await self.can.write_sensor_configuration(first=test_channel)
                 config = await self.can.read_sensor_configuration()
@@ -168,7 +178,7 @@ class TestSMH(TestSensorNode):
                     timestamped.value for timestamped in stream_data.first
                 ]
                 sensor_type = guess_sensor_type(values)
-                print(f"Sensor Channel {test_channel}: {sensor_type}")
+                cls.sensors[test_channel - 1] = sensor_type
 
                 self.assertNotRegex(
                     sensor_type, "[Bb]roken",
