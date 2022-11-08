@@ -1,12 +1,12 @@
 # -- Imports ------------------------------------------------------------------
 
-from statistics import mean, stdev
 from unittest import main as unittest_main
 
 from mytoolit.can.node import Node
 from mytoolit.cmdline.commander import Commander
 from mytoolit.config import settings
 from mytoolit.measurement import ADC_MAX_VALUE
+from mytoolit.measurement.sensor import guess_sensor_type
 from mytoolit.report import Report
 from mytoolit.test.production import TestSensorNode
 from mytoolit.test.unit import ExtendedTestRunner
@@ -166,9 +166,8 @@ class TestSMH(TestSensorNode):
                 values = [
                     timestamped.value for timestamped in stream_data.first
                 ]
-                print(f"\nSensor Channel {test_channel}")
-                print(f"Mean: {mean(values):.3f}")
-                print(f"Standard deviation: {stdev(values):.3f}")
+                sensor_type = guess_sensor_type(values)
+                print(f"Sensor Channel {test_channel}: {sensor_type}")
 
         self.loop.run_until_complete(test_sensors())
 
