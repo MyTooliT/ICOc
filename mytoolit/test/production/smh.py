@@ -172,8 +172,8 @@ class TestSMH(TestSensorNode):
 
                 self.assertNotRegex(
                     sensor_type, "[Bb]roken",
-                    f"The sensor on measurement channel {test_channel} seems  "
-                    "to not work correctly. Median of measured sensor values: "
+                    f"The sensor on measurement channel {test_channel} seems "
+                    "to not work correctly. Mean of measured sensor values: "
                     f"{mean(values)}")
 
         self.loop.run_until_complete(test_sensors())
