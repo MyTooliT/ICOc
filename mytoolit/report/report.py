@@ -1,6 +1,6 @@
 # -- Imports ------------------------------------------------------------------
 
-from importlib import resources
+from importlib.resources import files
 from functools import partial
 from pathlib import Path
 from typing import List
@@ -30,10 +30,10 @@ def _first_page(canvas, document, node):
     logo_offset = 50
     title_offset = logo_offset + logo_height + 20
 
-    with resources.path("mytoolit.report", "MyTooliT.pdf") as logo_filepath:
-        PDFImage(logo_filepath, logo_width,
-                 logo_height).drawOn(canvas, (page_width - logo_width) / 2,
-                                     page_height - logo_offset - logo_height)
+    logo_filepath = files("mytoolit.report") / ("MyTooliT.pdf")
+    PDFImage(logo_filepath, logo_width,
+             logo_height).drawOn(canvas, (page_width - logo_width) / 2,
+                                 page_height - logo_offset - logo_height)
 
     style = get_style_sheet()
 
