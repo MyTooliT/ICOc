@@ -143,6 +143,9 @@ SMH:
   # batch that this SMH was a part of.
   BATCH NUMBER: 0
 
+  # Number of available sensor channels
+  CHANNELS: 8
+
   FIRMWARE:
     RELEASE NAME: Milhouse
     LOCATION:
