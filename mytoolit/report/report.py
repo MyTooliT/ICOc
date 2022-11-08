@@ -72,8 +72,9 @@ class Report:
             str(Path(__file__).parent.parent.parent / f"{node} Test.pdf"),
             author='MyTooliT',
             title='Test Report',
-            subject='{} Test'.format('Sensory Tool Holder' if node ==
-                                     'STH' else 'Stationary Transceiver Unit'))
+            subject='{} Test'.format('Sensory Tool Holder' if node == 'STH'
+                                     else 'Sensory Milling Head' if node ==
+                                     'SMH' else 'Stationary Transceiver Unit'))
         self.story = [Spacer(1, 3 * cm)]
         self.styles = get_style_sheet()
 
