@@ -172,7 +172,7 @@ class TestSMH(TestSensorNode):
 
         self.loop.run_until_complete(test_sensors())
 
-    def test_power_uage_disconnected(self) -> None:
+    def test_power_usage_disconnected(self) -> None:
         """Check power usage in disconnected state"""
 
         commander = Commander(
