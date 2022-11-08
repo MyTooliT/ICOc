@@ -268,6 +268,26 @@ The command above might not work on Linux due to [a bug in `pip`](https://github
 python3 -m pip install --prefix=$(python3 -m site --user-base) -e .
 ```
 
+#### Unable to Locate HDF5
+
+The installation of ICOc might fail with an error message that looks like this:
+
+```
+… implicit declaration of function 'H5close'
+```
+
+If you uses [Homebrew](https://brew.sh) on an Apple Silicon based Mac you can use the [following commands to fix this problem](https://stackoverflow.com/questions/73029883/could-not-find-hdf5-installation-for-pytables-on-m1-mac):
+
+```sh
+brew install hdf5 c-blosc lzo bzip2
+export HDF5_DIR=/opt/homebrew/opt/hdf5
+export BLOSC_DIR=/opt/homebrew/opt/c-blosc
+pip install tables
+# If the above command does not work you can also try:
+# pip install git+https://github.com/PyTables/PyTables.git@v3.7.0
+pip install -e .
+```
+
 #### Unknown Command `icoc`
 
 If `pip install` prints **warnings about the path** that look like this:
