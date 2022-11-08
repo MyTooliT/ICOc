@@ -69,7 +69,7 @@ In order to use ICOc you need at least:
 
 #### Python
 
-ICOc requires at least Python `3.7`. The software also supports Python `3.8`, `3.9` and `3.10`. You can download Python [here](https://www.python.org/downloads). When you install the software, please do not forget to enable the checkbox **“Add Python to PATH”** in the setup window of the installer.
+ICOc requires at least Python `3.8`. The software also supports Python `3.9`, `3.10` and `3.11`. You can download Python [here](https://www.python.org/downloads). When you install the software, please do not forget to enable the checkbox **“Add Python to PATH”** in the setup window of the installer.
 
 #### PCAN Driver
 
