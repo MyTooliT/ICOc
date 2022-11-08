@@ -1,5 +1,6 @@
 # -- Imports ------------------------------------------------------------------
 
+from statistics import mean
 from unittest import main as unittest_main
 
 from mytoolit.can.node import Node
@@ -168,6 +169,12 @@ class TestSMH(TestSensorNode):
                 ]
                 sensor_type = guess_sensor_type(values)
                 print(f"Sensor Channel {test_channel}: {sensor_type}")
+
+                self.assertNotRegex(
+                    sensor_type, "[Bb]roken",
+                    f"The sensor on measurement channel {test_channel} seems  "
+                    "to not work correctly. Median of measured sensor values: "
+                    f"{mean(values)}")
 
         self.loop.run_until_complete(test_sensors())
 
