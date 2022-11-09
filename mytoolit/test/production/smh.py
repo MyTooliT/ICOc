@@ -25,7 +25,7 @@ class TestSMH(TestSensorNode):
         # Guessed sensor types
         cls.sensors = []
         for sensor in range(settings.smh.channels):
-            cls.add_attribute(f"Sensor {sensor}",
+            cls.add_attribute(f"Sensor {sensor+1}",
                               f"{{cls.sensors[{sensor}]}}",
                               pdf=True)
 
