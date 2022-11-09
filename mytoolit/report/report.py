@@ -143,8 +143,10 @@ class Report:
 
         description:
             A textual description of the test
+
         result:
             The unit test result of the test
+
         """
 
         test = result.last_test
