@@ -134,12 +134,24 @@ class TestSMH(TestSensorNode):
                 sensor = guess_sensor(values)
                 cls.sensors.append(sensor)
 
-            for channel, sensor in enumerate(cls.sensors, start=1):
-                self.assertTrue(
-                    sensor.works(),
-                    f"The sensor on measurement channel {channel} seems "
-                    "to not work correctly. Mean of measured sensor values: "
-                    f"{sensor.mean}")
+            non_working_sensors = [
+                str(sensor_number)
+                for sensor_number, sensor in enumerate(cls.sensors, start=1)
+                if not sensor.works()
+            ]
+
+            if len(non_working_sensors) >= 1:
+                if len(non_working_sensors) == 1:
+                    error_text = f"channel {non_working_sensors.pop()} seems"
+                elif len(non_working_sensors) >= 2:
+                    channels = (", ".join(non_working_sensors[:-1]) +
+                                f" & {non_working_sensors[-1]}")
+                    error_text = f"channels {channels} seem"
+                plural = '' if len(non_working_sensors) <= 1 else 's'
+                self.assertFalse(
+                    non_working_sensors,
+                    f"The sensor{plural} on measurement {error_text} "
+                    "to not work correctly.")
 
         self.loop.run_until_complete(test_sensors())
 
