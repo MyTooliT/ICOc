@@ -1,6 +1,7 @@
 # -- Imports ------------------------------------------------------------------
 
 from statistics import mean
+from typing import NamedTuple
 from unittest import main as unittest_main
 
 from mytoolit.can.node import Node
@@ -11,7 +12,14 @@ from mytoolit.report import Report
 from mytoolit.test.production import TestSensorNode
 from mytoolit.test.unit import ExtendedTestRunner
 
-# -- Class --------------------------------------------------------------------
+# -- Classes ------------------------------------------------------------------
+
+
+class Sensor(NamedTuple):
+    """Store information about a sensor"""
+
+    type: str
+    mean: int
 
 
 class TestSMH(TestSensorNode):
@@ -27,7 +35,7 @@ class TestSMH(TestSensorNode):
         cls.sensors = []
         for sensor in range(settings.smh.channels):
             cls.add_attribute(f"Sensor {sensor}",
-                              f"{{cls.sensors[{sensor}]}}",
+                              f"{{cls.sensors[{sensor}].type}}",
                               pdf=True)
 
     def _connect(self):
@@ -133,13 +141,14 @@ class TestSMH(TestSensorNode):
                     timestamped.value for timestamped in stream_data.first
                 ]
                 sensor_type = guess_sensor_type(values)
-                cls.sensors.append(sensor_type)
+                cls.sensors.append(Sensor(type=sensor_type, mean=mean(values)))
 
+            for channel, sensor in enumerate(cls.sensors, start=1):
                 self.assertNotRegex(
-                    sensor_type, "[Bb]roken",
-                    f"The sensor on measurement channel {test_channel} seems "
+                    sensor.type, "[Bb]roken",
+                    f"The sensor on measurement channel {channel} seems "
                     "to not work correctly. Mean of measured sensor values: "
-                    f"{mean(values)}")
+                    f"{sensor.mean}")
 
         self.loop.run_until_complete(test_sensors())
 
