@@ -20,7 +20,7 @@ class Sensor(NamedTuple):
     """Store information about a sensor"""
 
     type: SensorType
-    mean: int
+    mean: float
 
     def __repr__(self) -> str:
         """Return a string representation of the sensor
