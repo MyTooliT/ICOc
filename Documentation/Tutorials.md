@@ -802,3 +802,58 @@ after you set up everything properly once.
    ```sh
    make run
    ```
+
+### Docker on Linux
+
+The text below shows how you can use (code of) the new Network class in a Docker container on a **Linux host**. The description on how to move the interface of the Docker container is an adaption of an [article/video from the “Chemnitzer Linux-Tage”](https://chemnitzer.linux-tage.de/2021/de/programm/beitrag/210).
+
+#### Build/Pull the Docker Image
+
+You can either pull the image from Docker Hub:
+
+```
+docker image pull sanssecours/icoc:latest
+```
+
+or build the image yourself using the following command in the root of the repository:
+
+```sh
+docker build -t sanssecours/icoc .
+```
+
+#### Using ICOc in the Docker Container
+
+1. Run the container **(Terminal 1)**
+
+   1. Open a new terminal window
+   2. Execute the following command
+
+   ```sh
+   docker run --rm -it --name icoc sanssecours/icoc
+   ```
+
+2. Make sure the CAN interface is available on the Linux host **(Terminal 2)**
+
+   1. Open a new terminal window
+   2. Check that the following command:
+
+      ```sh
+      networkctl list
+      ```
+
+      lists `can0` under the column `LINK`
+
+3. Move the CAN interface into the network space of the Docker container **(Terminal 2)**
+
+   ```sh
+   export DOCKERPID="$(docker inspect -f '{{ .State.Pid }}' icoc)"
+   sudo ip link set can0 netns "$DOCKERPID"
+   sudo nsenter -t "$DOCKERPID" -n ip link set can0 type can bitrate 1000000
+   sudo nsenter -t "$DOCKERPID" -n ip link set can0 up
+   ```
+
+4. Run test script in Docker container **(Terminal 1)**
+
+   ```sh
+   python3 icoc/mytoolit/experiments/new.py
+   ```
