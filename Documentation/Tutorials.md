@@ -812,13 +812,13 @@ The text below shows how you can use (code of) the new Network class in a Docker
 You can either pull the image from Docker Hub:
 
 ```
-docker image pull sanssecours/icoc:latest
+docker image pull mytoolit/icoc:latest
 ```
 
 or build the image yourself using the following command in the root of the repository:
 
 ```sh
-docker build -t sanssecours/icoc .
+docker build -t mytoolit/icoc .
 ```
 
 #### Using ICOc in the Docker Container
@@ -829,7 +829,7 @@ docker build -t sanssecours/icoc .
    2. Execute the following command
 
    ```sh
-   docker run --rm -it --name icoc sanssecours/icoc
+   docker run --rm -it --name icoc mytoolit/icoc
    ```
 
 2. Make sure the CAN interface is available on the Linux host **(Terminal 2)**
