@@ -710,6 +710,9 @@ class UserInterface(CommandLineInterface):
         self.main_window_information()
         self.main_window_menu()
 
+        # Refresh display to remove disconnected sensor devices
+        self.stdscr.refresh()
+
         return self.main_window_key_evaluation()
 
     def user_interface(self, stdscr):
