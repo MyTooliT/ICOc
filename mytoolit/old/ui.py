@@ -642,6 +642,18 @@ class UserInterface(CommandLineInterface):
     def main_window_information(self):
         self.window_header()
 
+        # Removing a disconnected sensor device from the list of displayed
+        # sensor devices takes quite some time (about 40 seconds). The first
+        # reason for that is probably the function `tDeviceList` below, which
+        # takes about 20 seconds before it removes a disconnected sensor from
+        # the returned list. It takes about another 20 seconds before the list
+        # of displayed sensors is updated afterwords.
+        #
+        # The reason behind this bug is unclear, especially since updating the
+        # list with new values usually takes less than a second. Adding a new
+        # or recently disconnected sensor device to the list also seems to work
+        # without any perceptible delay.
+
         devices = self.Can.tDeviceList(MyToolItNetworkNr["STU1"], bLog=False)
         sleep(0.02)  # Sleep a little bit to reduce CPU usage
 
