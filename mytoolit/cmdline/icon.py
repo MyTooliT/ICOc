@@ -4,6 +4,7 @@ from argparse import ArgumentParser
 from asyncio import run
 
 from mytoolit.can import Network
+from mytoolit.can.network import NetworkError
 
 
 # -- Functions ----------------------------------------------------------------
@@ -32,7 +33,10 @@ def main():
 
     arguments = parser.parse_args()
 
-    run(set_name(identifier=0, name=arguments.name))
+    try:
+        run(set_name(identifier=0, name=arguments.name))
+    except NetworkError as error:
+        print(error)
 
 
 # -- Main ---------------------------------------------------------------------
