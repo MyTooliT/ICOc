@@ -1,29 +1,19 @@
 # -- Imports ------------------------------------------------------------------
 
-from argparse import ArgumentParser
+from argparse import ArgumentParser, Namespace
 from asyncio import run
+from typing import Union
+
+from netaddr import EUI
 
 from mytoolit.can import Network
 from mytoolit.can.network import NetworkError
 from mytoolit.cmdline.parse import mac_address
 
-
 # -- Functions ----------------------------------------------------------------
-async def set_name(identifier, name):
-    async with Network() as network:
-        node = 'STH 1'
-
-        await network.connect_sensor_device(identifier)
-        old_name = await network.get_name(node)
-        mac_address = await network.get_mac_address(node)
-
-        await network.set_name(name, node)
-        name = await network.get_name(node)
-        print(f"Renamed sensor device “{old_name}” with MAC "
-              f"address “{mac_address}” to “{name}”")
 
 
-def parse_arguments() -> Namespace :
+def parse_arguments() -> Namespace:
     """Parse command line arguments
 
     Returns
@@ -71,6 +61,33 @@ def parse_arguments() -> Namespace :
                                default='Test-STH')
 
     return parser.parse_args()
+
+
+async def set_name(identifier: Union[int, str, EUI], name) -> None:
+    """Rename a sensor device
+
+    Parameters
+    ----------
+
+    identifier:
+        The identifier of the sensor device (e.g. the current name)
+
+    name:
+        The new name of the sensor device
+
+    """
+
+    async with Network() as network:
+        node = 'STH 1'
+
+        await network.connect_sensor_device(identifier)
+        old_name = await network.get_name(node)
+        mac_address = await network.get_mac_address(node)
+
+        await network.set_name(name, node)
+        name = await network.get_name(node)
+        print(f"Renamed sensor device “{old_name}” with MAC "
+              f"address “{mac_address}” to “{name}”")
 
 
 def main():
