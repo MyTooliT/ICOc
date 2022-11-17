@@ -23,7 +23,7 @@ async def set_name(identifier, name):
               f"address “{mac_address}” to “{name}”")
 
 
-def main():
+def parse_arguments():
     parser = ArgumentParser(description='STH Renaming Tool')
 
     subparsers = parser.add_subparsers(required=True,
@@ -61,7 +61,13 @@ def main():
                                nargs='?',
                                default='Test-STH')
 
-    arguments = parser.parse_args()
+    return parser.parse_args()
+
+
+def main():
+    """ICOtronic command line tool"""
+
+    arguments = parse_arguments()
 
     try:
         run(set_name(identifier=arguments.identifier, name=arguments.name))
