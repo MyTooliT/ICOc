@@ -805,20 +805,39 @@ after you set up everything properly once.
 
 ### Docker on Linux
 
-The text below shows how you can use (code of) the new Network class in a Docker container on a **Linux host**. The description on how to move the interface of the Docker container is an adaption of an [article/video from the “Chemnitzer Linux-Tage”](https://chemnitzer.linux-tage.de/2021/de/programm/beitrag/210).
+The text below shows how you can use (code of) the new Network class in a Docker container on a **Linux host**. The description on how to move the interface of the Docker container is an adaption of an [article/video from the “Chemnitzer Linux-Tage”](https://chemnitzer.linux-tage.de/2021/de/programm/beitrag/210). Currently we provide two images based on:
+
+- [Alpine](Docker/Alpine) and
+- [Ubuntu](Docker/Ubuntu).
 
 #### Build/Pull the Docker Image
 
-You can either pull a recent version of the image from Docker Hub:
+You can download a recent version of the image from Docker Hub
+
+- for Alpine:
 
 ```
-docker image pull mytoolit/icoc:latest
+docker image pull mytoolit/icoc-alpine:latest
 ```
 
-or build the image yourself using the following command in the root of the repository:
+- or Ubuntu:
+
+```
+docker image pull mytoolit/icoc-ubuntu:latest
+```
+
+Another option is to build the image yourself.
+
+- Alpine Linux:
 
 ```sh
-docker build -t mytoolit/icoc -f Docker/Alpine/Dockerfile .
+docker build -t mytoolit/icoc-alpine -f Docker/Alpine/Dockerfile .
+```
+
+- Ubuntu:
+
+```sh
+docker build -t mytoolit/icoc-ubuntu -f Docker/Ubuntu/Dockerfile .
 ```
 
 #### Using ICOc in the Docker Container
@@ -826,11 +845,20 @@ docker build -t mytoolit/icoc -f Docker/Alpine/Dockerfile .
 1. Run the container **(Terminal 1)**
 
    1. Open a new terminal window
-   2. Execute the following command
 
-   ```sh
-   docker run --rm -it --name icoc mytoolit/icoc
-   ```
+   2. Depending on the Docker container you want to use please execute one of the following commands:
+
+      - Alpine:
+
+        ```sh
+        docker run --rm -it --name icoc mytoolit/icoc-alpine
+        ```
+
+      - Ubuntu:
+
+        ```sh
+        docker run --rm -it --name icoc mytoolit/icoc-ubuntu
+        ```
 
 2. Make sure the CAN interface is available on the Linux host **(Terminal 2)**
 
@@ -852,8 +880,8 @@ docker build -t mytoolit/icoc -f Docker/Alpine/Dockerfile .
    sudo nsenter -t "$DOCKERPID" -n ip link set can0 up
    ```
 
-4. Run test script in Docker container **(Terminal 1)**
+4. Run a test command in Docker container **(Terminal 1)** e.g.:
 
    ```sh
-   python3 icoc/mytoolit/experiments/new.py
+   icon list
    ```
