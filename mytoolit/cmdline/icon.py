@@ -14,14 +14,13 @@ async def set_name(identifier, name):
         node = 'STH 1'
 
         await network.connect_sensor_device(identifier)
-        current_name = await network.get_name(node)
+        old_name = await network.get_name(node)
         mac_address = await network.get_mac_address(node)
-        print(f"Connected to sensor device “{current_name}” with MAC "
-              f"address “{mac_address}”")
 
         await network.set_name(name, node)
         name = await network.get_name(node)
-        print(f"New name of sensor device: {name}")
+        print(f"Renamed sensor device “{old_name}” with MAC "
+              f"address “{mac_address}” to “{name}”")
 
 
 def main():
