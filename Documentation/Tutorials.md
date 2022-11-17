@@ -809,7 +809,7 @@ The text below shows how you can use (code of) the new Network class in a Docker
 
 #### Build/Pull the Docker Image
 
-You can either pull the image from Docker Hub:
+You can either pull a recent version of the image from Docker Hub:
 
 ```
 docker image pull mytoolit/icoc:latest
@@ -818,7 +818,7 @@ docker image pull mytoolit/icoc:latest
 or build the image yourself using the following command in the root of the repository:
 
 ```sh
-docker build -t mytoolit/icoc .
+docker build -t mytoolit/icoc -f Docker/Alpine/Dockerfile .
 ```
 
 #### Using ICOc in the Docker Container
