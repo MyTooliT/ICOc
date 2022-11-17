@@ -23,7 +23,7 @@ def parse_arguments() -> Namespace:
 
     """
 
-    parser = ArgumentParser(description='STH Renaming Tool')
+    parser = ArgumentParser(description="ICOtronic CLI tool")
 
     subparsers = parser.add_subparsers(required=True,
                                        title="Subcommands",
