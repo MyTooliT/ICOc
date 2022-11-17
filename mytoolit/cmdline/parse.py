@@ -82,7 +82,7 @@ def byte_value(value):
 
 
 def channel_number(value: str):
-    """Check if the given string represents a valid channel number (0 –255)
+    """Check if the given string represents a valid channel number (0 – 255)
 
     Throws
     ------
