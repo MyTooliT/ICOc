@@ -1,7 +1,7 @@
 # -- Imports ------------------------------------------------------------------
 
 from argparse import ArgumentParser, Namespace
-from asyncio import run
+from asyncio import run, sleep
 from typing import Union
 
 from netaddr import EUI
@@ -28,6 +28,8 @@ def parse_arguments() -> Namespace:
     subparsers = parser.add_subparsers(required=True,
                                        title="Subcommands",
                                        dest="subcommand")
+
+    subparsers.add_parser('list', help='List sensor devices')
 
     rename_parser = subparsers.add_parser('rename',
                                           help='Rename a sensor device')
@@ -63,6 +65,18 @@ def parse_arguments() -> Namespace:
     return parser.parse_args()
 
 
+async def list_sensor_devices() -> None:
+    """Print a list of available sensor devices"""
+
+    async with Network() as network:
+        # - First request for sensor devices will produce empty list
+        # - Subsequent retries should provide all available sensor devices
+        await network.get_sensor_devices()
+        await sleep(0.5)
+        for device in await network.get_sensor_devices():
+            print(device)
+
+
 async def set_name(identifier: Union[int, str, EUI], name) -> None:
     """Rename a sensor device
 
@@ -96,7 +110,10 @@ def main():
     arguments = parse_arguments()
 
     try:
-        run(set_name(identifier=arguments.identifier, name=arguments.name))
+        coroutine = set_name(
+            identifier=arguments.identifier, name=arguments.name
+        ) if arguments.subcommand == 'rename' else list_sensor_devices()
+        run(coroutine)
     except NetworkError as error:
         print(error)
 
