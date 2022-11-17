@@ -27,7 +27,15 @@ async def set_name(identifier, name):
 def main():
     parser = ArgumentParser(description='STH Renaming Tool')
 
-    identifier_group = parser.add_mutually_exclusive_group(required=True)
+    subparsers = parser.add_subparsers(required=True,
+                                       title="Subcommands",
+                                       dest="subcommand")
+
+    rename_parser = subparsers.add_parser('rename',
+                                          help='Rename a sensor device')
+
+    identifier_group = rename_parser.add_mutually_exclusive_group(
+        required=True)
     identifier_group.add_argument('-n',
                                   '--name',
                                   dest='identifier',
@@ -48,11 +56,11 @@ def main():
         metavar='DEVICE_NUMBER',
         help="Bluetooth device number of sensor device")
 
-    parser.add_argument('name',
-                        type=str,
-                        help='New name of STH',
-                        nargs='?',
-                        default='Test-STH')
+    rename_parser.add_argument('name',
+                               type=str,
+                               help='New name of STH',
+                               nargs='?',
+                               default='Test-STH')
 
     arguments = parser.parse_args()
 
