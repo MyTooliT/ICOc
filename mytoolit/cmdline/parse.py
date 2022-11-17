@@ -167,6 +167,45 @@ def mac_address(address: str) -> EUI:
     return mac_address
 
 
+def device_number(value: str) -> int:
+    """Check if the given number is valid Bluetooth device number
+
+    Returns
+    -------
+
+    An integer representing the given channel number on success
+
+    Examples
+    --------
+
+    >>> device_number("0")
+    0
+
+    >>> device_number("123")
+    123
+
+    >>> device_number("-1")
+    Traceback (most recent call last):
+       ...
+    argparse.ArgumentTypeError: “-1” is not a valid Bluetooth device number
+
+    >>> device_number("hello")
+    Traceback (most recent call last):
+       ...
+    argparse.ArgumentTypeError: “hello” is not a valid Bluetooth device number
+
+    """
+
+    try:
+        number = int(value)
+        if number < 0:
+            raise ValueError()
+        return number
+    except ValueError:
+        raise ArgumentTypeError(
+            f"“{value}” is not a valid Bluetooth device number")
+
+
 def sth_name(name: str) -> str:
     """Check if the given text is a valid STH name
 
