@@ -3,12 +3,12 @@
 from argparse import ArgumentParser, Namespace
 from asyncio import run, sleep
 from time import time
-from typing import Union
+from typing import List, Union
 
 from netaddr import EUI
 
 from mytoolit.can import Network
-from mytoolit.can.network import NetworkError
+from mytoolit.can.network import STHDeviceInfo, NetworkError
 from mytoolit.cmdline.parse import mac_address
 
 # -- Functions ----------------------------------------------------------------
@@ -73,7 +73,7 @@ async def list_sensor_devices() -> None:
         # - First request for sensor devices will produce empty list
         # - Subsequent retries should provide all available sensor devices
         timeout = time() + 5
-        sensor_devices = []
+        sensor_devices: List[STHDeviceInfo] = []
         while len(sensor_devices) <= 0 and time() < timeout:
             sensor_devices = await network.get_sensor_devices()
             await sleep(0.5)
