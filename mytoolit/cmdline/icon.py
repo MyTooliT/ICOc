@@ -2,6 +2,7 @@
 
 from argparse import ArgumentParser, Namespace
 from asyncio import run, sleep
+from time import time
 from typing import Union
 
 from netaddr import EUI
@@ -71,9 +72,13 @@ async def list_sensor_devices() -> None:
     async with Network() as network:
         # - First request for sensor devices will produce empty list
         # - Subsequent retries should provide all available sensor devices
-        await network.get_sensor_devices()
-        await sleep(0.5)
-        for device in await network.get_sensor_devices():
+        timeout = time() + 5
+        sensor_devices = []
+        while len(sensor_devices) <= 0 and time() < timeout:
+            sensor_devices = await network.get_sensor_devices()
+            await sleep(0.5)
+
+        for device in sensor_devices:
             print(device)
 
 
