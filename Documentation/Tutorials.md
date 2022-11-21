@@ -267,6 +267,46 @@ For certain sensor devices you have to change the reference voltage to retrieve 
 icoc -v Vfs1V8
 ```
 
+<a name="tutorials:section:icon-cli-tool"></a>
+
+## ICOn CLI Tool
+
+One issue of the ICOc (command line tool) is that it **only works on Windows**. Another problem is that it **requires a CAN adapter from [PEAK-System](https://www.peak-system.com)**.
+
+[python-can]: https://python-can.readthedocs.io
+
+To improve this situation we offer an API based on [python-can][], which works on
+
+- Linux,
+- macOS, and
+- Windows
+
+and should (at least in theory) support the [same CAN hardware as python-can](https://python-can.readthedocs.io/en/master/interfaces.html). You can access most of this API using the [“new” Network class](../mytoolit/can/network.py).
+
+We also offer a (currently very limited) CLI tool based on this API called ICOn. The text below describes how you can use this tool.
+
+### Listing Available Sensor Devices
+
+To print a list of all available sensor devices please use the subcommand `list`:
+
+```sh
+icon list
+```
+
+### Rename a Sensor Device
+
+To change the name of a sensor you can use the subcommand `rename`. For example to change the name of the sensor device with the Bluetooth MAC address `08-6B-D7-01-DE-81` to `Test-STH` use the following command:
+
+```sh
+icon rename -m 08-6B-D7-01-DE-81 Test-STH
+```
+
+For more information about the command you can use the option `-h/--help`:
+
+```sh
+icon rename -h
+```
+
 ## Production Tests
 
 This tutorial lists the usual steps to test a sensory holder assembly or a sensory tool holder.

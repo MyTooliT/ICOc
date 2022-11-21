@@ -9,6 +9,7 @@ After you installed the ICOc package various helper scripts are available:
 - [`convert-mac-base64`](#section:mac-address-conversion): Convert Bluetooth MAC address into a (Base64) encoded 8 character string
 - [`check-eeprom`](#section:eeprom-check): Write a byte value into the cells of an EEPROM page an check how many of the values are read incorrectly after an reset
 - [`icoc`](#section:icoc): Controller and measurement software for the ICOtronic system
+- [`icon`](#section:icon): Controller software for the ICOtronic system
 - [`test-smh`](#section:test-smh): Test code for the SMH
 - [`test-sth`](#section:test-sth): Test code for the STH/SHA
 - [`test-stu`](#section:test-stu): Test code for the STU
@@ -40,6 +41,12 @@ The command `icoc` calls `ui.py`. All command line arguments to the script will 
 ```sh
 icoc -n CGvXAd6B -r 10
 ```
+
+<a name="section:icon"></a>
+
+## ICOn
+
+The command ICOn uses the [new `Network` class](../mytoolit/can/network.py) (based on [`python-can`](https://python-can.readthedocs.io)) to communicate with the ICOtronic system. Compared to ICOc the script currently offers very limited functionality. However, in the future most of the functionality from ICOc should be integrated into this new command line tool. A big advantage of ICOn compared to ICOc is that the command **also works on Linux and macOS**. For more information, please take a look [here](#tutorials:section:icon-cli-tool).
 
 <a name="section:mac-address-conversion"></a>
 
