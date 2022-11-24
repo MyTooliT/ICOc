@@ -523,13 +523,23 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
    wsl --install
    ```
 
-2. Install Ubuntu 20.4 VM (Windows Shell):
+2. Install Ubuntu 22.04 VM (Windows Shell):
 
-   ```pwsh
-   wsl --install --distribution ubuntu
-   wsl --set-version Ubuntu 2
-   wsl --setdefault Ubuntu
-   ```
+   1. Install [Ubuntu 22.04 from the Microsoft Store](https://apps.microsoft.com/store/detail/ubuntu-2204-lts/9PN20MSR04DW)
+
+   2. Open the Ubuntu 22.04 application
+
+      1. Choose a user name
+      2. Choose a password
+
+   3. Execute the following commands in a Powershell session
+
+      ```pwsh
+      wsl --setdefault Ubuntu-22.04
+      wsl --set-version Ubuntu-22.04 2
+      ```
+
+      The second command might fail, if `Ubuntu-22.04` already uses WSL 2. In this case please just ignore the error message.
 
 3. [Create Custom Kernel](https://github.com/dorssel/usbipd-win/wiki/WSL-support#building-your-own-usbip-enabled-wsl-2-kernel)
 
@@ -541,9 +551,8 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
    cd ~/Documents
    mkdir WSL
    cd WSL
-   wsl --export Ubuntu CANbuntu.tar
+   wsl --export Ubuntu-22.04 CANbuntu.tar
    wsl --import CANbuntu CANbuntu CANbuntu.tar
-   wsl --set-version CANbuntu 2
    wsl --distribution CANbuntu --user <user>
    ```
 
@@ -551,33 +560,35 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
 
    ```sh
    sudo apt update
-   sudo apt upgrade
-   sudo apt install build-essential flex bison libssl-dev libelf-dev \
-                    libncurses-dev autoconf libudev-dev libtool dwarves
+   sudo apt upgrade -y
+   sudo apt install -y bc build-essential flex bison libssl-dev libelf-dev \
+                       libncurses-dev autoconf libudev-dev libtool dwarves
    cd ~
    git clone https://github.com/microsoft/WSL2-Linux-Kernel.git
    cd WSL2-Linux-Kernel
-   uname -r # 5.10.102.1-microsoft-standard-WSL2 → branch …5.10.y
-   git checkout linux-msft-wsl-5.10.y
+   uname -r # 5.15.74.2-microsoft-standard-WSL2 → branch …5.15.y
+   git checkout linux-msft-wsl-5.15.y
    cat /proc/config.gz | gunzip > .config
    make menuconfig
    ```
 
-   Enable these additional features:
+   Make sure the following features are enabled:
 
    - `Device Drivers` → `USB Support`
    - `Device Drivers` → `USB Support` → `USB announce new devices`
    - `Device Drivers` → `USB Support` → `USB Modem (CDC ACM) support`
    - `Device Drivers` → `USB Support` → `USB/IP`
    - `Device Drivers` → `USB Support` → `USB/IP` → `VHCI HCD`
-   - `Device Drivers` → `USB Serial Converter Support`
-   - `Device Drivers` → `USB Serial Converter Support` → `USB FTDI Single port Serial Driver`
+   - `Device Drivers` → `USB Support` → `USB Serial Converter Support`
+   - `Device Drivers` → `USB Support` → `USB Serial Converter Support` → `USB FTDI Single port Serial Driver`
 
-   - `Networking support` → `CAN subsystem support`
-   - `Networking support` → `CAN subsystem support` → `Raw CAN Protocol`
-   - `Networking support` → `CAN subsystem support` → `CAN device drivers` → `Virtual Local CAN Interface`
-   - `Networking support` → `CAN subsystem support` → `CAN device drivers` → `Serial / USB serial CAN Adaptors (slcan)`
-   - `Networking support` → `CAN subsystem support` → `CAN device drivers` → → `CAN USB Interfaces` → `PEAK PCAN-USB/USB Pro interfaces for CAN 2.0b/CAN-FD`
+   Enable the following features:
+
+   - `Networking support` → `CAN bus subsystem support`
+   - `Networking support` → `CAN bus subsystem support` → `Raw CAN Protocol`
+   - `Networking support` → `CAN bus subsystem support` → `CAN device drivers` → `Virtual Local CAN Interface`
+   - `Networking support` → `CAN bus subsystem support` → `CAN device drivers` → `Serial / USB serial CAN Adaptors (slcan)`
+   - `Networking support` → `CAN bus subsystem support` → `CAN device drivers` → → `CAN USB Interfaces` → `PEAK PCAN-USB/USB Pro interfaces for CAN 2.0b/CAN-FD`
 
    Save the modified kernel configuration.
 
@@ -596,9 +607,9 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
    cd tools/usb/usbip
    ./autogen.sh
    ./configure
-   make install
+   sudo make install
    sudo cp libsrc/.libs/libusbip.so.0 /lib/libusbip.so.0
-   sudo apt-get install hwdata
+   sudo apt-get install -y hwdata
    ```
 
 5. Copy image (Linux Shell):
@@ -629,7 +640,7 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
 
    ```pwsh
    wsl --shutdown
-   wsl
+   wsl -d CANbuntu --cd "~"
    ```
 
 9. Change default user of WSL distro (Linux Shell):
@@ -666,12 +677,12 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
     ```pwsh
     usbipd wsl list
     # …
-    # 2-2    0c72:0012  PCAN-USB FD                      Not attached
+    # 5-3    0c72:0012  PCAN-USB FD                      Not attached
     # …
-    usbipd wsl attach --busid 2-2
+    usbipd wsl attach -d CANbuntu --busid 5-3
     usbipd wsl list
     # …
-    # 2-2    0c72:0012  PCAN-USB FD                      Attached - CANbuntu
+    # 5-3    0c72:0012  PCAN-USB FD                      Attached - CANbuntu
     # …
     ```
 
@@ -699,7 +710,7 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
 15. Install `pip` (Linux Shell):
 
     ```sh
-    apt install python3-pip
+    sudo apt install -y python3-pip
     ```
 
 16. Install ICOc (Linux Shell)
@@ -710,14 +721,22 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
     cd Documents
     git clone https://github.com/MyTooliT/ICOc.git
     cd ICOc
-    pip install -e .
+    python3 -m pip install --prefix=$(python3 -m site --user-base) -e .
     ```
 
 17. Run a script to test that everything works as expected (Linux Shell)
 
     ```sh
-    test-sth -k connection
+    icon list
     ```
+
+    If the command above fails with the message
+
+    ```
+    Command 'icon' not found…
+    ```
+
+    then you might have to logout and login into the WSL session again before you execute `icon list` again.
 
 **Note:** You only need to repeat steps
 
@@ -731,6 +750,7 @@ after you set up everything properly once.
 1. Download and unpack [Simplicity Commander](https://community.silabs.com/s/article/simplicity-commander?language=en_US) (Linux Shell)
 
    ```sh
+   sudo apt install -y unzip
    mkdir -p ~/Downloads
    cd ~/Downloads
    wget https://www.silabs.com/documents/public/software/SimplicityCommander-Linux.zip
@@ -776,7 +796,7 @@ after you set up everything properly once.
       ```sh
       cd ~/Downloads
       sudo dpkg -i JLink_Linux_*.deb
-      sudo apt-get -f install # if there were unresolved dependencies
+      sudo apt-get -fy install # if there were unresolved dependencies
       ```
 
 4. Detach USB connector of programming adapter
@@ -794,9 +814,9 @@ after you set up everything properly once.
    ```pwsh
    usbipd wsl list
    # …
-   # 2-1    1366:0105  JLink CDC UART Port (COM3), J-Link driver Not attached
+   # 5-4    1366:0105  JLink CDC UART Port (COM3), J-Link driver Not attached
    # …
-   usbipd wsl attach --busid 2-1
+   usbipd wsl attach --busid 5-4
    ```
 
 8. Check if `commander` JLink connection works without using `sudo` (Linux Shell)
@@ -807,7 +827,25 @@ after you set up everything properly once.
    # DONE
    ```
 
-   Note: Please replace `<serialnumber>` with the serial number of your programming board (e.g. `440069950`)
+   Notes:
+
+   - Please replace `<serialnumber>` with the serial number of your programming board (e.g. `440069950`):
+
+     ```sh
+     commander adapter dbgmode OUT --serialno 440069950
+     ```
+
+   - If the command above [fails with the error message](https://stackoverflow.com/questions/55313610/importerror-libgl-so-1-cannot-open-shared-object-file-no-such-file-or-directo):
+
+     ```
+     error while loading shared libraries: libGL.so.1: cannot open shared object file…
+     ```
+
+     then you need to install `libgl1`:
+
+     ```
+     sudo apt install -y libgl1
+     ```
 
 #### Run Tests in WSL
 
@@ -823,11 +861,11 @@ after you set up everything properly once.
    ```pwsh
    usbipd wsl list
    # …
-   # 2-1    1366:0105  JLink CDC UART Port (COM3), J-Link driver Not attached
-   # 2-2    0c72:0012  PCAN-USB FD                               Not attached
+   # 5-3    0c72:0012  PCAN-USB FD                               Not attached
+   # 5-4    1366:0105  JLink CDC UART Port (COM3), J-Link driver Not attached
    # …
-   usbipd wsl attach --busid 2-1
-   usbipd wsl attach --busid 2-2
+   usbipd wsl attach --busid 5-3
+   usbipd wsl attach --busid 5-4
    ```
 
 3. Add virtual link for CAN device (Linux Shell):
