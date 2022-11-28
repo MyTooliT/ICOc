@@ -1,6 +1,5 @@
 # -- Imports ------------------------------------------------------------------
 
-from argparse import ArgumentParser, Namespace
 from asyncio import run, sleep
 from time import time
 from typing import List, Union
@@ -9,62 +8,9 @@ from netaddr import EUI
 
 from mytoolit.can import Network
 from mytoolit.can.network import STHDeviceInfo, NetworkError
-from mytoolit.cmdline.parse import mac_address
+from mytoolit.cmdline.parse import parse_arguments
 
 # -- Functions ----------------------------------------------------------------
-
-
-def parse_arguments() -> Namespace:
-    """Parse command line arguments
-
-    Returns
-    -------
-
-    A namespace object that represents the given command line arguments
-
-    """
-
-    parser = ArgumentParser(description="ICOtronic CLI tool")
-
-    subparsers = parser.add_subparsers(required=True,
-                                       title="Subcommands",
-                                       dest="subcommand")
-
-    subparsers.add_parser('list', help='List sensor devices')
-
-    rename_parser = subparsers.add_parser('rename',
-                                          help='Rename a sensor device')
-
-    identifier_group = rename_parser.add_mutually_exclusive_group(
-        required=True)
-    identifier_group.add_argument('-n',
-                                  '--name',
-                                  dest='identifier',
-                                  metavar='NAME',
-                                  help="Name of sensor device",
-                                  default='Test-STH')
-    identifier_group.add_argument(
-        '-m',
-        '--mac-address',
-        dest='identifier',
-        metavar='MAC_ADRESS',
-        help="Bluetooth MAC address of sensor device",
-        type=mac_address)
-    identifier_group.add_argument(
-        '-d',
-        '--device-number',
-        dest='identifier_blubb',
-        metavar='DEVICE_NUMBER',
-        help="Bluetooth device number of sensor device")
-
-    rename_parser.add_argument('name',
-                               type=str,
-                               help='New name of STH',
-                               nargs='?',
-                               default='Test-STH')
-
-    return parser.parse_args()
-
 
 async def list_sensor_devices() -> None:
     """Print a list of available sensor devices"""
