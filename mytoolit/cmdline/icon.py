@@ -10,8 +10,8 @@ from mytoolit.can import Network
 from mytoolit.can.network import STHDeviceInfo, NetworkError
 from mytoolit.cmdline.parse import parse_arguments
 
-# -- Functions ----------------------------------------------------------------
 
+# -- Functions ----------------------------------------------------------------
 async def list_sensor_devices() -> None:
     """Print a list of available sensor devices"""
 
@@ -34,7 +34,7 @@ async def list_sensor_devices() -> None:
             print(device)
 
 
-async def set_name(identifier: Union[int, str, EUI], name) -> None:
+async def rename(identifier: Union[int, str, EUI], name) -> None:
     """Rename a sensor device
 
     Parameters
@@ -67,9 +67,11 @@ def main():
     arguments = parse_arguments()
 
     try:
-        coroutine = set_name(
-            identifier=arguments.identifier, name=arguments.name
-        ) if arguments.subcommand == 'rename' else list_sensor_devices()
+        if arguments.subcommand == 'list':
+            coroutine = list_sensor_devices()
+        elif arguments.subcommand == 'rename':
+            coroutine = rename(identifier=arguments.identifier,
+                               name=arguments.name)
         run(coroutine)
     except NetworkError as error:
         print(error)
