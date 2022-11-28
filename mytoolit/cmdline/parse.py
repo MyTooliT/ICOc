@@ -291,7 +291,7 @@ def parse_arguments() -> Namespace:
     identifier_group.add_argument(
         '-d',
         '--device-number',
-        dest='identifier_blubb',
+        dest='identifier',
         metavar='DEVICE_NUMBER',
         help="Bluetooth device number of sensor device")
 
