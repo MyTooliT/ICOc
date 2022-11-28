@@ -99,18 +99,21 @@ class Message:
         """
 
         if message:
-            message = message[0]
-            if isinstance(message, TPCANMsg):
+            can_message = message[0]
+            if isinstance(can_message, TPCANMsg):
                 self.message = CANMessage(
                     is_extended_id=True,
-                    arbitration_id=message.ID,
-                    data=[message.DATA[byte] for byte in range(message.LEN)])
-            elif isinstance(message, CANMessage):
-                self.message = message
+                    arbitration_id=can_message.ID,
+                    data=[
+                        can_message.DATA[byte]
+                        for byte in range(can_message.LEN)
+                    ])
+            elif isinstance(can_message, CANMessage):
+                self.message = can_message
             else:
                 raise ValueError(
                     "Unsupported object type for argument message: "
-                    f"“{type(message)}”")
+                    f"“{type(can_message)}”")
         else:
             self.message = CANMessage(is_extended_id=True)
 

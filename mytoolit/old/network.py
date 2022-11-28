@@ -287,7 +287,7 @@ class Network(object):
         # Only log message, if writing was successful
         getLogger('can').debug(f"{Message(CanMsg)}")
 
-    def WriteFrameWaitAckOk(self, message: TPCANMsg) -> Dict[str, Any]:
+    def WriteFrameWaitAckOk(self, message: Dict[str, Any]) -> Dict[str, Any]:
         """Return data about an acknowledgement CAN message
 
         Arguments
@@ -312,7 +312,7 @@ class Network(object):
         }
         return returnMessage
 
-    def WriteFrameWaitAckError(self, message: TPCANMsg, bError: bool,
+    def WriteFrameWaitAckError(self, message: Dict[str, Any], bError: bool,
                                printLog: bool):
         """Return data about an error acknowledgement CAN message
 

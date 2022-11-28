@@ -12,7 +12,7 @@ from time import time
 from types import TracebackType
 from typing import List, NamedTuple, Optional, Sequence, Type, Union
 
-from can import (Bus, Listener, Message as CANMessage, Notifier)
+from can import Bus, Listener, Message as CANMessage, Notifier
 from can.interfaces.pcan.pcan import PcanError
 from semantic_version import Version
 from netaddr import EUI
@@ -346,12 +346,11 @@ class Network:
         configuration = (
             settings.can.linux if platform == 'linux' else
             settings.can.mac if platform == 'darwin' else settings.can.windows)
-        bus_config = {
-            key.lower(): value
-            for key, value in configuration.items()
-        }
         try:
-            self.bus = Bus(**bus_config)
+            self.bus = Bus(
+                channel=configuration.get('channel'),
+                interface=configuration.get('interface'),
+                bitrate=configuration.get('bitrate'))  # type: ignore[abstract]
         except (PcanError, OSError) as error:
             raise NetworkError(
                 f"Unable to initialize CAN connection: {error}\n\n"
@@ -360,7 +359,7 @@ class Network:
 
         # We create the notifier when we need it for the first time, since
         # there might not be an active loop when you create the network object
-        self._notifier = None
+        self._notifier: Optional[Notifier] = None
         self.sender = Node(sender)
 
     async def __aenter__(self) -> Network:
@@ -712,10 +711,10 @@ class Network:
                           request=True,
                           data=[(State(mode='Get')).value])
 
-        message = await self._request(
+        response = await self._request(
             message, description=f"get state of node “{node}”")
 
-        return State(message.data[0])
+        return State(response.data[0])
 
     # -------------
     # - Bluetooth -
@@ -2413,7 +2412,7 @@ class Network:
 
         """
 
-        read_data = []
+        read_data: List[int] = []
         reserved = [0] * 5
         data_start = 4  # Start index of data in response message
 
