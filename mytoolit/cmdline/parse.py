@@ -301,6 +301,12 @@ def parse_arguments() -> Namespace:
                                nargs='?',
                                default='Test-STH')
 
+    stu_parser = subparsers.add_parser(
+        'stu', help='Execute commands related to stationary receiver unit')
+    stu_parser.add_argument('stu_command',
+                            choices={'enable-ota', 'show-mac-address'},
+                            help="STU subcommand")
+
     return parser.parse_args()
 
 

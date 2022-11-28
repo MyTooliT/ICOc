@@ -61,6 +61,35 @@ async def rename(identifier: Union[int, str, EUI], name) -> None:
               f"address “{mac_address}” to “{name}”")
 
 
+async def stu(subcommand: str) -> None:
+    """Run specific commands regarding stationary transceiver unit
+
+    Parameters
+    ----------
+
+    subcommand:
+        A command that specifies the specific action regarding the STU
+
+    """
+
+    async with Network() as network:
+        if subcommand == 'enable-ota':
+            # The coroutine below activates the advertisement required for the
+            # Over The Air (OTA) firmware update.
+            #
+            # - The `deactivate_bluetooth` command called when the execution
+            #   leaves the `async with` block seems to not turn off the
+            #   advertisement for the STU.
+            # - Even a **hard STU reset does not turn off the advertisement**.
+            # - One way to turn off the advertisement seems to be to initiate a
+            #   connection with a sensor device.
+            await network.activate_bluetooth()
+        elif subcommand == 'show-mac-address':
+            print(await network.get_mac_address('STU 1'))
+        else:
+            raise ValueError(f"Unknown STU subcommand “{subcommand}”")
+
+
 def main():
     """ICOtronic command line tool"""
 
@@ -72,6 +101,8 @@ def main():
         elif arguments.subcommand == 'rename':
             coroutine = rename(identifier=arguments.identifier,
                                name=arguments.name)
+        elif arguments.subcommand == 'stu':
+            coroutine = stu(arguments.stu_command)
         run(coroutine)
     except NetworkError as error:
         print(error)
