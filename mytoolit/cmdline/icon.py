@@ -75,6 +75,8 @@ def main():
         run(coroutine)
     except NetworkError as error:
         print(error)
+    except KeyboardInterrupt:
+        pass
 
 
 # -- Main ---------------------------------------------------------------------
