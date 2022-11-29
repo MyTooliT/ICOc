@@ -315,9 +315,13 @@ def parse_arguments() -> Namespace:
 
     stu_parser = subparsers.add_parser(
         'stu', help='Execute commands related to stationary receiver unit')
-    stu_parser.add_argument('stu_command',
-                            choices={'enable-ota', 'show-mac-address'},
-                            help="STU subcommand")
+
+    stu_subparsers = stu_parser.add_subparsers(required=True,
+                                               title="Subcommands",
+                                               dest="stu_subcommand")
+    stu_subparsers.add_parser('ota',
+                              help='Enable “over the air” (OTA) update mode')
+    stu_subparsers.add_parser('mac', help='Show Bluetooth MAC address')
 
     return parser.parse_args()
 

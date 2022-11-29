@@ -73,7 +73,7 @@ async def stu(subcommand: str) -> None:
     """
 
     async with Network() as network:
-        if subcommand == 'enable-ota':
+        if subcommand == 'ota':
             # The coroutine below activates the advertisement required for the
             # Over The Air (OTA) firmware update.
             #
@@ -84,7 +84,7 @@ async def stu(subcommand: str) -> None:
             # - One way to turn off the advertisement seems to be to initiate a
             #   connection with a sensor device.
             await network.activate_bluetooth()
-        elif subcommand == 'show-mac-address':
+        elif subcommand == 'mac':
             print(await network.get_mac_address('STU 1'))
         else:
             raise ValueError(f"Unknown STU subcommand “{subcommand}”")
@@ -102,7 +102,7 @@ def main():
             coroutine = rename(identifier=arguments.identifier,
                                name=arguments.name)
         elif arguments.subcommand == 'stu':
-            coroutine = stu(arguments.stu_command)
+            coroutine = stu(arguments.stu_subcommand)
         run(coroutine)
     except NetworkError as error:
         print(error)
