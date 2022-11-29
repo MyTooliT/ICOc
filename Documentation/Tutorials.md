@@ -858,7 +858,13 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
 
 #### Run Tests in WSL
 
-1. Connect programming/CAN adapter to Linux (Windows Shell):
+1. Start WSL (Windows Shell)
+
+   ```sh
+   wsl -d CANbuntu --cd "~/Documents/ICOc"
+   ```
+
+2. Connect programming/CAN adapter to Linux (Windows Shell):
 
    ```pwsh
    usbipd wsl list
@@ -866,20 +872,24 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
    # 5-3    0c72:0012  PCAN-USB FD                               Not attached
    # 5-4    1366:0105  JLink CDC UART Port (COM3), J-Link driver Not attached
    # …
-   usbipd wsl attach --busid 5-3
-   usbipd wsl attach --busid 5-4
+   usbipd wsl attach -d CANbuntu --busid 5-3
+   usbipd wsl attach -d CANbuntu --busid 5-4
    ```
 
-2. Check that CAN connection works properly (Optional, Linux Shell):
+3. Check that CAN connection works properly (Optional, Linux Shell):
 
    ```sh
    networkctl list
    # …
-   # can0   can      carrier     configured
+   # … can0   can      carrier     configured
+   # …
+   dmesg | grep peak_usb
+   # …
+   # … can0: attached to PCAN-USB FD channel 0 (device 0)
    # …
    ```
 
-3. Run tests (Linux Shell):
+4. Run tests (Linux Shell):
 
    ```sh
    make run
