@@ -25,7 +25,12 @@ For development we recommend that you use a tool or plugin that reformats your c
 
 The following text describes some of the measures we should take to keep the software stable.
 
-Please only push your changes to the `master` branch, if you think there are no new bugs or regressions. The `master` branch **should always contain a working version of the software**. Please **always run the automatic and manual tests** described below before you push to the `master` branch.
+Please only push your changes to the `master` branch, if you think there are no new bugs or regressions. The `master` branch **should always contain a working version of the software**. Please **always run**
+
+- the **automatic test** (`make run`) for **every supported OS** (Linux, macOS, Windows) and
+- the **manual tests** on Windows
+
+before you push to the `master` branch.
 
 ### Code Checks
 
