@@ -643,7 +643,7 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
    wsl -d CANbuntu --cd "~"
    ```
 
-9. Change default user of WSL distro and [enable `systemd`](https://devblogs.microsoft.com/commandline/systemd-support-is-now-available-in-wsl/) support for configuring the CAN interface automatically (Linux Shell)
+9. Change default user of WSL distro (Linux Shell)
 
    ```
    sudo nano /etc/wsl.conf
@@ -654,9 +654,6 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
    ```ini
    [user]
    default=<user>
-
-   [boot]
-   systemd=true
    ```
 
    **Note:** Please replace `<user>` with your (Windows) username (e.g. `rene`)
@@ -667,41 +664,15 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
    2. <kbd>⏎</kbd>
    3. <kbd>Ctrl</kbd> + <kbd>X</kbd>)
 
-10. Add `systemd` config file for CAN interface (Linux Shell)
+10. Restart WSL: See step `8`
 
-    ```sh
-    sudo nano /etc/systemd/network/can.network
-    ```
-
-    Paste the following text:
-
-    ```ini
-    [Match]
-    Name=can*
-
-    [CAN]
-    BitRate=1000000
-    ```
-
-    and store the file.
-
-11. Enable `networkd` and reload config
-
-    ```sh
-    sudo systemctl enable systemd-networkd
-    sudo systemctl restart systemd-networkd
-    sudo networkctl reload
-    ```
-
-12. Restart WSL: See step `8`
-
-13. Install `usbipd` (Windows Shell):
+11. Install `usbipd` (Windows Shell):
 
     ```pwsh
     winget install usbipd
     ```
 
-14. Attach CAN-Adapter to Linux VM (Windows Shell)
+12. Attach CAN-Adapter to Linux VM (Windows Shell)
 
     ```pwsh
     usbipd wsl list
@@ -715,7 +686,7 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
     # …
     ```
 
-15. Check for PEAK CAN adapter in Linux (Linux Shell):
+13. Check for PEAK CAN adapter in Linux (Optional, Linux Shell):
 
     ```sh
     dmesg | grep peak_usb
@@ -729,13 +700,20 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
     # …
     ```
 
-16. Install `pip` (Linux Shell):
+14. Add virtual link for CAN device (Linux Shell)
+
+    ```sh
+    sudo ip link set can0 type can bitrate 1000000
+    sudo ip link set can0 up
+    ```
+
+15. Install `pip` (Linux Shell):
 
     ```sh
     sudo apt install -y python3-pip
     ```
 
-17. Install ICOc (Linux Shell)
+16. Install ICOc (Linux Shell)
 
     ```sh
     cd ~
@@ -746,7 +724,7 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
     python3 -m pip install --prefix=$(python3 -m site --user-base) -e .
     ```
 
-18. Run a script to test that everything works as expected (Linux Shell)
+17. Run a script to test that everything works as expected (Linux Shell)
 
     ```sh
     icon list
@@ -760,7 +738,16 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
 
     then you might have to logout and login into the WSL session again before you execute `icon list` again.
 
-**Note:** You only need to repeat step `14` (attach the CAN adapter to the VM in Windows) after you set up everything properly once.
+**Notes:**
+
+- You only need to repeat steps
+
+  - `12`: attach the CAN adapter to the VM in Windows and
+  - `14`: create the link for the CAN device in Linux
+
+  after you set up everything properly once.
+
+- Unfortunately [configuring the CAN interface automatically](#introduction:section:pcan-driver:linux) does not seem to work (reliably) on WSL yet
 
 #### Installing/Using Simplicity Commander
 
@@ -876,17 +863,11 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
    usbipd wsl attach -d CANbuntu --busid 5-4
    ```
 
-3. Check that CAN connection works properly (Optional, Linux Shell):
+3. Configure CAN interface (Linux Shell):
 
    ```sh
-   networkctl list
-   # …
-   # … can0   can      carrier     configured
-   # …
-   dmesg | grep peak_usb
-   # …
-   # … can0: attached to PCAN-USB FD channel 0 (device 0)
-   # …
+   sudo ip link set can0 type can bitrate 1000000
+   sudo ip link set can0 up
    ```
 
 4. Run tests (Linux Shell):
