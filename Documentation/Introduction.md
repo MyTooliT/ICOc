@@ -85,7 +85,7 @@ To communicate with the STU you need a driver that works with the PCAN adapter. 
 
 You need to make sure that your CAN adapter is available via the [SocketCAN](https://en.wikipedia.org/wiki/SocketCAN) interface.
 
-The following steps describe one possible option to configure the CAN interface on [Fedora Linux](https://getfedora.org) **manually**.
+The following steps describe one possible option to configure the CAN interface on ([Fedora](https://getfedora.org), [Ubuntu](https://ubuntu.com)) Linux **manually**.
 
 1. Connect the CAN adapter to the computer that runs Linux (or alternatively the Linux VM)
 2. Check the list of available interfaces:
@@ -108,7 +108,7 @@ The following steps describe one possible option to configure the CAN interface 
    sudo ip link set can0 up
    ```
 
-You can also bring up the CAN interface **automatically**. For that please store the following text:
+You can also configure the CAN interface **automatically**. For that please store the following text:
 
 ```ini
 [Match]
@@ -118,11 +118,26 @@ Name=can*
 BitRate=1000000
 ```
 
-in a file called `/etc/systemd/network/can.network`. After that you can either restart your computer/VM or reload the configuration with the commands:
+in a file called `/etc/systemd/network/can.network`. After that enable `networkd` and reload the configuration with the commands:
 
 ```sh
+sudo systemctl enable systemd-networkd
 sudo systemctl restart systemd-networkd
-networkctl reload
+sudo networkctl reload
+```
+
+You can check the status of the CAN configuration with the command:
+
+```sh
+networkctl list
+```
+
+If everything works as expected, then the output of the command should look similar to the text below:
+
+```
+IDX LINK   TYPE     OPERATIONAL SETUP
+  …
+  7 can0   can      carrier     configured
 ```
 
 **Sources**:
