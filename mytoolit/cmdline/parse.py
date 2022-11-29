@@ -268,7 +268,15 @@ def parse_arguments() -> Namespace:
                                        title="Subcommands",
                                        dest="subcommand")
 
+    # ========
+    # = List =
+    # ========
+
     subparsers.add_parser('list', help='List sensor devices')
+
+    # ==========
+    # = Rename =
+    # ==========
 
     rename_parser = subparsers.add_parser('rename',
                                           help='Rename a sensor device')
@@ -300,6 +308,10 @@ def parse_arguments() -> Namespace:
                                help='New name of STH',
                                nargs='?',
                                default='Test-STH')
+
+    # =======
+    # = STU =
+    # =======
 
     stu_parser = subparsers.add_parser(
         'stu', help='Execute commands related to stationary receiver unit')
