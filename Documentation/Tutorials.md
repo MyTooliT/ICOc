@@ -293,7 +293,7 @@ To print a list of all available sensor devices please use the subcommand `list`
 icon list
 ```
 
-### Rename a Sensor Device
+### Renaming a Sensor Device
 
 To change the name of a sensor you can use the subcommand `rename`. For example to change the name of the sensor device with the Bluetooth MAC address `08-6B-D7-01-DE-81` to `Test-STH` use the following command:
 
@@ -305,6 +305,30 @@ For more information about the command you can use the option `-h/--help`:
 
 ```sh
 icon rename -h
+```
+
+### STU Commands
+
+To list all available STU subcommands, please use the option `-h` (or `--help`):
+
+```sh
+icon stu -h
+```
+
+#### Enable STU OTA Mode
+
+To enable the Bluetooth advertising of the STU and hence the “over the air” firmware update, please run the following command:
+
+```sh
+icon stu ota
+```
+
+#### Retrieve the Bluetooth STU MAC Address
+
+To retrieve the STU Bluetooth address you can use the following command:
+
+```sh
+icon stu mac
 ```
 
 ## Production Tests
