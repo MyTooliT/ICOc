@@ -643,17 +643,20 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
    wsl -d CANbuntu --cd "~"
    ```
 
-9. Change default user of WSL distro (Linux Shell):
+9. Change default user of WSL distro and [enable `systemd`](https://devblogs.microsoft.com/commandline/systemd-support-is-now-available-in-wsl/) support for configuring the CAN interface automatically (Linux Shell)
 
    ```
-   nano /etc/wsl.conf
+   sudo nano /etc/wsl.conf
    ```
 
    Insert the following text:
 
-   ```
+   ```ini
    [user]
    default=<user>
+
+   [boot]
+   systemd=true
    ```
 
    **Note:** Please replace `<user>` with your (Windows) username (e.g. `rene`)
@@ -664,15 +667,41 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
    2. <kbd>⏎</kbd>
    3. <kbd>Ctrl</kbd> + <kbd>X</kbd>)
 
-10. Restart WSL: See step `9`
+10. Add `systemd` config file for CAN interface (Linux Shell)
 
-11. Install `usbipd` (Windows Shell):
+    ```sh
+    sudo nano /etc/systemd/network/can.network
+    ```
+
+    Paste the following text:
+
+    ```ini
+    [Match]
+    Name=can*
+
+    [CAN]
+    BitRate=1000000
+    ```
+
+    and store the file.
+
+11. Enable `networkd` and reload config
+
+    ```sh
+    sudo systemctl enable systemd-networkd
+    sudo systemctl restart systemd-networkd
+    sudo networkctl reload
+    ```
+
+12. Restart WSL: See step `8`
+
+13. Install `usbipd` (Windows Shell):
 
     ```pwsh
     winget install usbipd
     ```
 
-12. Attach CAN-Adapter to Linux VM (Windows Shell)
+14. Attach CAN-Adapter to Linux VM (Windows Shell)
 
     ```pwsh
     usbipd wsl list
@@ -686,7 +715,7 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
     # …
     ```
 
-13. Check for PEAK CAN adapter in Linux (Linux Shell):
+15. Check for PEAK CAN adapter in Linux (Linux Shell):
 
     ```sh
     dmesg | grep peak_usb
@@ -700,20 +729,13 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
     # …
     ```
 
-14. Add virtual link for CAN device (Linux Shell)
-
-    ```sh
-    sudo ip link set can0 type can bitrate 1000000
-    sudo ip link set can0 up
-    ```
-
-15. Install `pip` (Linux Shell):
+16. Install `pip` (Linux Shell):
 
     ```sh
     sudo apt install -y python3-pip
     ```
 
-16. Install ICOc (Linux Shell)
+17. Install ICOc (Linux Shell)
 
     ```sh
     cd ~
@@ -724,7 +746,7 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
     python3 -m pip install --prefix=$(python3 -m site --user-base) -e .
     ```
 
-17. Run a script to test that everything works as expected (Linux Shell)
+18. Run a script to test that everything works as expected (Linux Shell)
 
     ```sh
     icon list
@@ -738,12 +760,7 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
 
     then you might have to logout and login into the WSL session again before you execute `icon list` again.
 
-**Note:** You only need to repeat steps
-
-- `12`: attach the CAN adapter to the VM in Windows and
-- `14`: create the link for the CAN device in Linux
-
-after you set up everything properly once.
+**Note:** You only need to repeat step `14` (attach the CAN adapter to the VM in Windows) after you set up everything properly once.
 
 #### Installing/Using Simplicity Commander
 
@@ -801,15 +818,7 @@ after you set up everything properly once.
 
 4. Detach USB connector of programming adapter
 5. Attach USB connector of programming adapter
-
-6. [Reload udev rules](https://github.com/dorssel/usbipd-win/issues/96#issuecomment-992804504) (Linux Shell)
-
-   ```sh
-   sudo service udev restart
-   sudo udevadm control --reload
-   ```
-
-7. Connect programming adapter to Linux (Windows Shell)
+6. Connect programming adapter to Linux (Windows Shell)
 
    ```pwsh
    usbipd wsl list
@@ -819,7 +828,7 @@ after you set up everything properly once.
    usbipd wsl attach --busid 5-4
    ```
 
-8. Check if `commander` JLink connection works without using `sudo` (Linux Shell)
+7. Check if `commander` JLink connection works without using `sudo` (Linux Shell)
 
    ```sh
    commander adapter dbgmode OUT --serialno <serialnumber>
@@ -849,14 +858,7 @@ after you set up everything properly once.
 
 #### Run Tests in WSL
 
-1. Reload `udev` rules (Linux Shell):
-
-   ```sh
-   sudo service udev restart
-   sudo udevadm control --reload
-   ```
-
-2. Connect programming/CAN adapter to Linux (Windows Shell):
+1. Connect programming/CAN adapter to Linux (Windows Shell):
 
    ```pwsh
    usbipd wsl list
@@ -868,14 +870,16 @@ after you set up everything properly once.
    usbipd wsl attach --busid 5-4
    ```
 
-3. Add virtual link for CAN device (Linux Shell):
+2. Check that CAN connection works properly (Optional, Linux Shell):
 
    ```sh
-   sudo ip link set can0 type can bitrate 1000000
-   sudo ip link set can0 up
+   networkctl list
+   # …
+   # can0   can      carrier     configured
+   # …
    ```
 
-4. Run tests (Linux Shell):
+3. Run tests (Linux Shell):
 
    ```sh
    make run
