@@ -12,10 +12,7 @@ jobs:
     strategy:
       matrix:
         python-version:
-          # TODO: Use Python 3.10 again after the fix for:
-          #       https://github.com/python/mypy/issues/13627
-          #       is part of the current mypy release
-          - '3.10.6'
+          - '3.10'
 
     # The steps below are the same for every OS. Ideally we would just write
     # them down once and then reference them using YAML anchors. Unfortunately
@@ -51,7 +48,7 @@ jobs:
     strategy:
       matrix:
         python-version:
-          - '3.10.6'
+          - '3.10'
 
     steps:
 
@@ -81,7 +78,7 @@ jobs:
         python-version:
           - '3.8'
           - '3.9'
-          - '3.10.6'
+          - '3.10'
           # TODO: Enable test under Python 3.11 when PyTable wheel is available
           # See also: https://github.com/PyTables/PyTables/issues/976
           # - '3.11'
