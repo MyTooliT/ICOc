@@ -227,6 +227,8 @@ or one of the many available [graphical user interfaces for Git](https://git-scm
 
 [github desktop]: https://desktop.github.com
 
+<a name="introduction:section:install-the-python-package"></a>
+
 ### Install the Python Package
 
 Before you use the software you need to install it (in developer mode). To do that please open a terminal window in the directory where you cloned the repository and run the following command:
@@ -291,6 +293,38 @@ The command above might not work on Linux due to [a bug in `pip`](https://github
 ```sh
 python3 -m pip install --prefix=$(python3 -m site --user-base) -e .
 ```
+
+#### Unable to Install Tables
+
+If you install ICOc and the install fails with an error message that looks like this:
+
+```
+…
+Collecting tables…
+  Using cached tables-3.7.0.tar.gz (8.2 MB)
+  Installing build dependencies ... done
+  Getting requirements to build wheel ... error
+  error: subprocess-exited-with-error
+
+  × Getting requirements to build wheel did not run successfully.
+  │ exit code: 1
+  ╰─> [35 lines of output]
+      cpuinfo failed, assuming no CPU features: No module named 'cpuinfo'
+…
+
+```
+
+then there probably exist no official [binary package (wheel) for PyTables for your OS and Python version](https://github.com/PyTables/PyTables/issues/976) yet. In the case of **Python 3.11 and Windows** you can install an **unofficial** version of PyTables from [here](https://www.lfd.uci.edu/~gohlke/pythonlibs/#pytables):
+
+1. Download `tables‑3.7.0‑cp311‑cp311‑win_amd64.whl` to the `Downloads` directory of the current user
+2. Open a PowerShell terminal
+3. Execute the following command:
+
+   ```pwsh
+   pip install "$HOME/Downloads/tables-3.7.0-cp311-cp311-win_amd64.whl"
+   ```
+
+4. [Install ICOc](#introduction:section:install-the-python-package)
 
 #### Unable to Locate HDF5
 
