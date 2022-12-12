@@ -82,6 +82,9 @@ jobs:
           - '3.8'
           - '3.9'
           - '3.10.6'
+          # TODO: Enable test under Python 3.11 when PyTable wheel is available
+          # See also: https://github.com/PyTables/PyTables/issues/976
+          # - '3.11'
 
     steps:
 
