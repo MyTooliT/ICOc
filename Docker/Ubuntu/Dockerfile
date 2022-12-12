@@ -15,6 +15,6 @@ RUN apt-get update && \
       python3-pip
 
 # Install ICOc
-RUN pip install -e /icoc
+RUN pip install /icoc
 
 ENTRYPOINT "/bin/sh"

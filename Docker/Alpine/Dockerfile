@@ -23,7 +23,7 @@ RUN apk add blosc-dev bzip2-dev gcc g++ hdf5-dev lzo-dev musl-dev && \
 
 # Install ICOc
 RUN apk add freetype-dev gcc g++ make musl-dev && \
-    pip install -e /icoc && \
+    pip install /icoc && \
     apk del gcc g++ make musl-dev
 
 ENTRYPOINT "/bin/sh"
