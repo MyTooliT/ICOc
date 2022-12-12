@@ -294,7 +294,7 @@ The command above might not work on Linux due to [a bug in `pip`](https://github
 python3 -m pip install --prefix=$(python3 -m site --user-base) -e .
 ```
 
-#### Unable to Install Tables
+#### Unable to Install PyTables
 
 If you install ICOc and the install fails with an error message that looks like this:
 
