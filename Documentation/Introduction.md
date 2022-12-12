@@ -69,7 +69,16 @@ In order to use ICOc you need at least:
 
 #### Python
 
-ICOc requires at least Python `3.8`. The software also supports Python `3.9`, `3.10` and `3.11`. You can download Python [here](https://www.python.org/downloads). When you install the software, please do not forget to enable the checkbox **“Add Python to PATH”** in the setup window of the installer.
+ICOc requires at least Python `3.8`. The software also supports Python `3.9`, `3.10` and (to a limited extent) `3.11`.
+
+**Note:** Since there is currently [no official binary package (wheel) for PyTables](https://github.com/PyTables/PyTables/issues/976) available for **Python 3.11** we **recommend you use Python 3.10** unless you know how to
+
+- install C/C++ build tools and
+- the [HDF5 C library](https://www.hdfgroup.org/downloads/hdf5/)
+
+for your operating system.
+
+You can download Python [here](https://www.python.org/downloads). When you install the software, please do not forget to enable the checkbox **“Add Python to PATH”** in the setup window of the installer.
 
 #### PCAN Driver
 
