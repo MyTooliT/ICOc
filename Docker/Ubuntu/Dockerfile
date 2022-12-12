@@ -14,6 +14,9 @@ RUN apt-get update && \
       python3-numpy \
       python3-pip
 
+# Update Setuptools
+RUN pip install --upgrade setuptools
+
 # Install ICOc
 RUN pip install /icoc
 
