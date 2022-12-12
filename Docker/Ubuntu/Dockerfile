@@ -5,7 +5,6 @@ COPY mytoolit /icoc/mytoolit
 COPY MANIFEST.in \
      pyproject.toml \
      ReadMe.md \
-     requirements.txt \
      /icoc/
 
 # Install required tools

@@ -34,10 +34,6 @@ def main():
     if verbose:
         print(f"Cleaning directory {repo_path}")
     for filepath in files:
-        # Ignore `pip` requirements file
-        if filepath.endswith('requirements.txt'):
-            continue
-
         if verbose:
             print(f"Remove {Path(filepath).name}")
         remove(filepath)
