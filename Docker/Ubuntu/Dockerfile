@@ -6,7 +6,6 @@ COPY MANIFEST.in \
      pyproject.toml \
      ReadMe.md \
      requirements.txt \
-     setup.py \
      /icoc/
 
 # Install required tools

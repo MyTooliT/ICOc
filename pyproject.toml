@@ -1,3 +1,81 @@
+[build-system]
+requires = ["setuptools>=65"]
+build-backend = "setuptools.build_meta"
+
+[project]
+authors = [
+    {name = "Clemens Burgstaller", email = "burgstaller@ift.at"},
+    {name = "René Schwaiger", email = "rene.schwaiger@ift.at"},
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "License :: Other/Proprietary License",
+    "Natural Language :: English",
+    "Operating System :: MacOS",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: Microsoft :: Windows :: Windows 10",
+    "Programming Language :: Python",
+]
+
+# TODO: Set new minimum version for `dynaconf` after the case-insensitive
+#       lookup for names that contain spaces works again:
+#       - https://github.com/dynaconf/dynaconf/issues/814
+dependencies = [
+  "bidict",
+  "dynaconf==3.1.9",
+  "matplotlib",
+  "netaddr",
+  "pdfrw",
+  "pint>=0.19.2",
+  "python-can>=4.0",
+  "pywin32; os_name == 'nt'",
+  "reportlab",
+  "tables>=3.6",
+  "semantic_version",
+  "uptime",
+  "windows-curses; os_name == 'nt'",
+]
+description = """Control and test software for sensory tool holders (STH), \
+                 sensor milling heads (SMH) and stationary transceiver units \
+                 (STU)"""
+dynamic = ["version"]
+keywords = [
+    "smart-tool",
+    "smh",
+    "stu",
+    "sth",
+    "tool-holder",
+]
+name = "icoc"
+readme = "ReadMe.md"
+requires-python = ">=3.8"
+
+[project.optional-dependencies]
+dev = [
+    "flake8",
+    "mypy",
+]
+test = [
+    "pytest",
+]
+
+[project.scripts]
+icoc = "mytoolit.old.ui:main"
+icon = "mytoolit.cmdline.icon:main"
+check-eeprom = "mytoolit.scripts.eeprom:main"
+clean-repo = "mytoolit.scripts.clean:main"
+test-smh = "mytoolit.test.production.smh:main"
+test-sth = "mytoolit.test.production.sth:main"
+test-sth-verification = "mytoolit.old.test.MyToolItTestSth:main"
+test-stu-verification = "mytoolit.old.test.MyToolItTestStu:main"
+test-stu = "mytoolit.test.production.stu:main"
+convert-base64-mac = "mytoolit.scripts.name:main"
+convert-mac-base64 = "mytoolit.scripts.mac:main"
+
+[project.urls]
+Documentation = "https://mytoolit.github.io/ICOc/"
+Source = "https://github.com/mytoolit/ICOc/"
+
 [tool.mypy]
 ignore_missing_imports = true
 
@@ -7,3 +85,9 @@ ignore_missing_imports = true
 # Ignore macOS metadata files
 addopts = "--doctest-modules -x --ignore-glob='*._*.py' -v"
 minversion = "6.0"
+
+[tool.setuptools]
+packages = ["mytoolit"]
+
+[tool.setuptools.dynamic]
+version = {attr = "mytoolit.__version__"}
