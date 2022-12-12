@@ -32,7 +32,6 @@ dependencies = [
   "reportlab",
   "tables>=3.6",
   "semantic_version",
-  "uptime",
   "windows-curses; os_name == 'nt'",
 ]
 description = """Control and test software for sensory tool holders (STH), \
