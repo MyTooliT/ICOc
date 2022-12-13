@@ -294,6 +294,22 @@ The command above might not work on Linux due to [a bug in `pip`](https://github
 python3 -m pip install --prefix=$(python3 -m site --user-base) -e .
 ```
 
+#### Unable to Install in Editable Mode
+
+If the ICOc install fails with the following error:
+
+```
+ERROR: Project …/ICOc has a 'pyproject.toml' and its build backend is missing the 'build_editable' hook.
+Since it does not have a 'setup.py' nor a 'setup.cfg', it cannot be installed in editable mode.
+Consider using a build backend that supports PEP 660.
+```
+
+then your version of [Setuptools](http://setuptools.pypa.io) needs to be updated before you install ICOc. You can use the following command to do that:
+
+```sh
+pip install -U pip setuptools
+```
+
 #### Unable to Install PyTables
 
 If you install ICOc and the install fails with an error message that looks like this:
