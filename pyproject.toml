@@ -91,3 +91,6 @@ packages = ["mytoolit"]
 
 [tool.setuptools.dynamic]
 version = {attr = "mytoolit.__version__"}
+
+[tool.yapf]
+blank_line_before_nested_class_or_def = true
