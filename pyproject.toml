@@ -86,11 +86,11 @@ ignore_missing_imports = true
 addopts = "--doctest-modules -x --ignore-glob='*._*.py' -v"
 minversion = "6.0"
 
-[tool.setuptools]
-packages = ["mytoolit"]
-
 [tool.setuptools.dynamic]
 version = {attr = "mytoolit.__version__"}
+
+[tool.setuptools.packages.find]
+include = ["mytoolit*"]
 
 [tool.yapf]
 blank_line_before_nested_class_or_def = true
