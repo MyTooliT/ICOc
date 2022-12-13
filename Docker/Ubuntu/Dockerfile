@@ -17,4 +17,4 @@ RUN python3 -m pip install -U pip setuptools
 # Install ICOc
 RUN pip3 install /icoc
 
-ENTRYPOINT "/bin/sh"
+ENTRYPOINT "/bin/bash"

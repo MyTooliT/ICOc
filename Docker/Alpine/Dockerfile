@@ -8,7 +8,7 @@ COPY MANIFEST.in \
      /icoc/
 
 # Install required tools
-RUN apk add git py3-numpy
+RUN apk add bash git py3-numpy
 
 # ------------------------------------------------------------------------------
 # We add and remove the build requirements in the same step below to make the
@@ -26,4 +26,4 @@ RUN apk add freetype-dev gcc g++ make musl-dev && \
     pip install /icoc && \
     apk del gcc g++ make musl-dev
 
-ENTRYPOINT "/bin/sh"
+ENTRYPOINT "/bin/bash"
