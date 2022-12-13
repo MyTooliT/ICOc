@@ -9,15 +9,12 @@ COPY MANIFEST.in \
 
 # Install required tools
 RUN apt-get update && \
-    apt-get install -y \
-      git \
-      python3-numpy \
-      python3-pip
+    apt-get install -y git python3-pip
 
-# Update Setuptools
-RUN pip install --upgrade setuptools
+# Install current version of pip and Setuptools
+RUN python3 -m pip install -U pip setuptools
 
 # Install ICOc
-RUN pip install /icoc
+RUN pip3 install /icoc
 
 ENTRYPOINT "/bin/sh"
