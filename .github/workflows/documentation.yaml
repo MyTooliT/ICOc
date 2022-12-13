@@ -46,7 +46,7 @@ jobs:
     steps:
 
       - name: Download bookdown documentation
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: ICOc Manual
           path: Bookdown
