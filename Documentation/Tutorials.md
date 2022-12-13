@@ -907,6 +907,8 @@ The text below shows how you can use (code of) the new Network class in a Docker
 - [Alpine](Docker/Alpine) and
 - [Ubuntu](Docker/Ubuntu).
 
+<a name="tutorials:section:build-pull-the-docker-image"></a>
+
 #### Build/Pull the Docker Image
 
 You can download a recent version of the image from Docker Hub
@@ -981,4 +983,26 @@ docker build -t mytoolit/icoc-ubuntu -f Docker/Ubuntu/Dockerfile .
 
    ```sh
    icon list
+   ```
+
+<a name="tutorials:section:updating-images-on-docker-hub"></a>
+
+#### Updating Images on Docker Hub
+
+To update the official Docker images on Docker Hub, pleas use the steps below:
+
+1. [Build the Docker images](#tutorials:section:build-pull-the-docker-image)
+2. Login to Docker Hub
+
+   ```
+   docker login -u mytoolit -p "$ACCESS_TOKEN"
+   ```
+
+   **Note:** Please make sure that the variable `ACCESS_TOKEN` contains a valid [access token](https://hub.docker.com/settings/security)
+
+3. Push the images:
+
+   ```sh
+   docker image push mytoolit/icoc-alpine:latest
+   docker image push mytoolit/icoc-ubuntu:latest
    ```

@@ -298,7 +298,8 @@ Afterwards make sure there were no (unexpected) errors in the output of the STH 
    8. Check that all links work correctly
 
 4. Change the [`__version__`](../mytoolit/__init__.py) number inside the [`mytoolit`](../mytoolit) package
-5. Push the latest two commits
-6. Insert the version number (e.g. `1.0.5`) into the tag field
-7. For the release title use “Version VERSION”, where `VERSION` specifies the version number (e.g. “Version 1.0.5”)
-8. Click on “Publish Release”
+5. [Update the Docker images](#tutorials:section:updating-images-on-docker-hub)
+6. Push the latest two commits
+7. Insert the version number (e.g. `1.0.5`) into the tag field
+8. For the release title use “Version VERSION”, where `VERSION` specifies the version number (e.g. “Version 1.0.5”)
+9. Click on “Publish Release”
