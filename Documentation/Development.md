@@ -1,5 +1,13 @@
 # Development
 
+## Install
+
+You can install ICOc including the relevant development tools using the following command in the root of the repository:
+
+```sh
+pip install -e .[dev,test]
+```
+
 ## Style
 
 Please use the guidelines from [PEP 8](https://www.python.org/dev/peps/pep-0008/). For code formatting we currently use [YAPF](https://github.com/google/yapf), which should format code according to PEP 8 by default.
