@@ -27,7 +27,7 @@ dependencies = [
   "netaddr",
   "pdfrw",
   "pint>=0.19.2",
-  "python-can>=4.0",
+  "python-can[pcan]>=4.0",
   "pywin32; os_name == 'nt'",
   "reportlab",
   "tables>=3.6",
