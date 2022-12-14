@@ -1992,9 +1992,17 @@ usbipd wsl attach -d CANbuntu --busid 5-4</code></pre></li>
 <div id="release" class="section level2 hasAnchor" number="4.4">
 <h2><span class="header-section-number">4.4</span> Release<a href="#release" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <ol style="list-style-type: decimal">
-<li><p>Make sure that <strong>none</strong> of the <a href="#development:section:tests">tests</a> fail</p>
+<li><p>Check that the <a href="https://github.com/MyTooliT/ICOc/actions"><strong>CI jobs</strong> for the <code>master</code> branch finish successfully</a></p></li>
+<li><p>Check that the <strong>checks and tests</strong> run without any problems on <strong>Linux</strong>, <strong>macOS</strong> and <strong>Windows</strong></p>
+<ol style="list-style-type: decimal">
+<li><p>Set the value of <code>STH</code> → <code>Status</code> in <code>config.yaml</code> to <code>Epoxied</code></p></li>
+<li><p>Execute the command:</p>
+<div class="sourceCode" id="cb123"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb123-1"><a href="#cb123-1" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> run</span></code></pre></div>
+<p>in the root of the repository</p></li>
+</ol></li>
+<li><p>Check that the <strong>firmware flash</strong> works in Windows</p>
 <ul>
-<li><p><strong>Note</strong>: Please execute <code>test-sth</code></p>
+<li><p>Execute <code>test-sth</code></p>
 <ol style="list-style-type: decimal">
 <li>once with <code>STH</code> → <code>Status</code> set to <code>Epoxied</code>, and</li>
 <li>once set to <code>Bare PCB</code></li>
@@ -2002,7 +2010,7 @@ usbipd wsl attach -d CANbuntu --busid 5-4</code></pre></li>
 <p>in the <a href="../mytoolit/config/config.yaml">configuration</a>. To make sure, that the STU flash test also works, please use both STU test commands described in the section <a href="#development:section:stu-test">“STU Test”</a>.</p>
 <p>If you follow the steps above you make sure that the <strong>flash tests work</strong> for both STU and STH, and there are <strong>no unintentional consequences of (not) flashing the chip</strong> before you run the other parts of the test suite.</p></li>
 </ul></li>
-<li><p>Execute the <a href="#development:section:extended-tests">extended manual tests</a> and check that everything works as expected</p></li>
+<li><p>Execute the <strong><a href="#development:section:extended-tests">extended manual tests</a></strong> in Windows and check that everything works as expected</p></li>
 <li><p>Create a new release <a href="https://github.com/MyTooliT/ICOc/releases/new">here</a></p>
 <ol style="list-style-type: decimal">
 <li><p>Open the <a href="Releases">release notes</a> for the latest version</p></li>
@@ -2026,6 +2034,8 @@ usbipd wsl attach -d CANbuntu --busid 5-4</code></pre></li>
 <li><p>Insert the version number (e.g. <code>1.0.5</code>) into the tag field</p></li>
 <li><p>For the release title use “Version VERSION”, where <code>VERSION</code> specifies the version number (e.g. “Version 1.0.5”)</p></li>
 <li><p>Click on “Publish Release”</p></li>
+<li><p>Close the <a href="https://github.com/MyTooliT/ICOc/milestones">milestone</a> for the latest release number</p></li>
+<li><p>Create a new <a href="https://github.com/MyTooliT/ICOc/milestones">milestone</a> for the next release</p></li>
 </ol>
 
 </div>
@@ -2130,7 +2140,7 @@ usbipd wsl attach -d CANbuntu --busid 5-4</code></pre></li>
 <li>disable measurement channel 3.</li>
 </ul></li>
 <li><p>ICOc can now connect to an STH, which has “no name” using the command line option <code>-n</code> (<code>--name</code>):</p>
-<div class="sourceCode" id="cb124"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb124-1"><a href="#cb124-1" aria-hidden="true" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-n</span> <span class="st">&#39;&#39;</span> <span class="co"># alternatively you can also just use `icoc -n`</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb125"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb125-1"><a href="#cb125-1" aria-hidden="true" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-n</span> <span class="st">&#39;&#39;</span> <span class="co"># alternatively you can also just use `icoc -n`</span></span></code></pre></div></li>
 </ul>
 </div>
 <div id="logging" class="section level4 hasAnchor" number="5.2.1.2">
@@ -2258,7 +2268,7 @@ values of the y-axis and z-axis into the EEPROM</li>
 <li><code>plotter.log</code>: Log messages of plotter (window process)</li>
 </ul>
 <p>By default ICOc only write log messages of level <code>ERROR</code> or higher into theses files. To print more detailed output you can use the option <code>--log</code> to change the log level. For example, to change the log level to <code>DEBUG</code> (or higher) you can use the the following command:</p>
-<div class="sourceCode" id="cb125"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb125-1"><a href="#cb125-1" aria-hidden="true" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">--log</span> debug</span></code></pre></div>
+<div class="sourceCode" id="cb126"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb126-1"><a href="#cb126-1" aria-hidden="true" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">--log</span> debug</span></code></pre></div>
 <p>The other parts of the code, which use the old <code>Network</code> class (e.g. the verification test) do not store the log output in files, but instead use the standard error output (<code>stdout</code>). This change should hopefully improve the visibility of important log messages.</p>
 </div>
 </div>
@@ -2321,7 +2331,7 @@ values of the y-axis and z-axis into the EEPROM</li>
 <h3><span class="header-section-number">5.4.3</span> SMH Test<a href="#smh-test" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <ul>
 <li><p>We added a flash upload test for the sensory milling head PCB. To only execute this part of the SMH test you can use the following command:</p>
-<div class="sourceCode" id="cb126"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb126-1"><a href="#cb126-1" aria-hidden="true" tabindex="-1"></a><span class="ex">test-smh</span> <span class="at">-k</span> flash</span></code></pre></div></li>
+<div class="sourceCode" id="cb127"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb127-1"><a href="#cb127-1" aria-hidden="true" tabindex="-1"></a><span class="ex">test-smh</span> <span class="at">-k</span> flash</span></code></pre></div></li>
 </ul>
 </div>
 <div id="internal-3" class="section level3 hasAnchor" number="5.4.4">
@@ -2384,7 +2394,7 @@ values of the y-axis and z-axis into the EEPROM</li>
 <h3><span class="header-section-number">5.5.3</span> SMH Test<a href="#smh-test-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <ul>
 <li><p>We added a basic test for the new sensory milling hardware (SMH). To execute the test, please use the command</p>
-<div class="sourceCode" id="cb127"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb127-1"><a href="#cb127-1" aria-hidden="true" tabindex="-1"></a><span class="ex">test-smh</span></span></code></pre></div>
+<div class="sourceCode" id="cb128"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb128-1"><a href="#cb128-1" aria-hidden="true" tabindex="-1"></a><span class="ex">test-smh</span></span></code></pre></div>
 <p>Currently the test:</p>
 <ul>
 <li>checks if the STU is able to <strong>connect</strong> to the device,</li>
@@ -2434,7 +2444,7 @@ values of the y-axis and z-axis into the EEPROM</li>
 <li><p><strong>Removed unused options</strong> from the command line interface</p></li>
 <li><p>All command line arguments should now be <strong>checked for validity</strong> before starting ICOc</p></li>
 <li><p>You do not need to connect the PCAN interface to list the help message of the command line interface:</p>
-<div class="sourceCode" id="cb128"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb128-1"><a href="#cb128-1" aria-hidden="true" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-h</span></span></code></pre></div>
+<div class="sourceCode" id="cb129"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb129-1"><a href="#cb129-1" aria-hidden="true" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-h</span></span></code></pre></div>
 <p>anymore</p></li>
 </ul>
 </div>
@@ -2514,7 +2524,7 @@ values of the y-axis and z-axis into the EEPROM</li>
 <div id="verification-tests-1" class="section level3 hasAnchor" number="5.7.2">
 <h3><span class="header-section-number">5.7.2</span> Verification Tests<a href="#verification-tests-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>We added the old code of the STH verification tests. You can now execute these tests using the command</p>
-<div class="sourceCode" id="cb130"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb130-1"><a href="#cb130-1" aria-hidden="true" tabindex="-1"></a><span class="ex">test-sth-verification</span></span></code></pre></div>
+<div class="sourceCode" id="cb131"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb131-1"><a href="#cb131-1" aria-hidden="true" tabindex="-1"></a><span class="ex">test-sth-verification</span></span></code></pre></div>
 <p>For more information about these tests, please take a look at the section “Verification Tests” <a href="https://github.com/MyTooliT/ICOc/blob/e818e5fa/Documentation/Tutorials.md">here</a>.</p>
 </div>
 <div id="internal-5" class="section level3 hasAnchor" number="5.7.3">
@@ -3218,7 +3228,7 @@ Python 3.6.</li>
 <h3><span class="header-section-number">5.18.3</span> Requirements<a href="#requirements-3" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <ul>
 <li><p>You can now install the required Python packages using the command</p>
-<div class="sourceCode" id="cb131"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb131-1"><a href="#cb131-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">-r</span> requirements.txt</span></code></pre></div>
+<div class="sourceCode" id="cb132"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb132-1"><a href="#cb132-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">-r</span> requirements.txt</span></code></pre></div>
 <p>in the root of the repository.</p></li>
 </ul>
 </div>
@@ -3242,10 +3252,10 @@ file (<code>Configuration/config.yaml</code>).</p></li>
 <li><p>The test program is now location independent. This means you do not need to
 change the working directory to call the script any more. For example,
 executing the command:</p>
-<div class="sourceCode" id="cb132"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb132-1"><a href="#cb132-1" aria-hidden="true" tabindex="-1"></a><span class="ex">py</span> mytoolit/test/production/sth.py <span class="at">-k</span> battery <span class="at">-k</span> connect</span></code></pre></div>
+<div class="sourceCode" id="cb133"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb133-1"><a href="#cb133-1" aria-hidden="true" tabindex="-1"></a><span class="ex">py</span> mytoolit/test/production/sth.py <span class="at">-k</span> battery <span class="at">-k</span> connect</span></code></pre></div>
 <p>or the commands:</p>
-<div class="sourceCode" id="cb133"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb133-1"><a href="#cb133-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> mytoolit/test/production</span>
-<span id="cb133-2"><a href="#cb133-2" aria-hidden="true" tabindex="-1"></a><span class="ex">py</span> sth.py <span class="at">-k</span> battery <span class="at">-k</span> connect</span></code></pre></div>
+<div class="sourceCode" id="cb134"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb134-1"><a href="#cb134-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> mytoolit/test/production</span>
+<span id="cb134-2"><a href="#cb134-2" aria-hidden="true" tabindex="-1"></a><span class="ex">py</span> sth.py <span class="at">-k</span> battery <span class="at">-k</span> connect</span></code></pre></div>
 <p>in the root of repository should have the same effect.</p></li>
 </ul>
 
