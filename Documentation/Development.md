@@ -265,9 +265,21 @@ Afterwards make sure there were no (unexpected) errors in the output of the STH 
 
 ## Release
 
-1. Make sure that **none** of the [tests](#development:section:tests) fail
+1. Check that the [**CI jobs** for the `master` branch finish successfully](https://github.com/MyTooliT/ICOc/actions)
+2. Check that the **checks and tests** run without any problems on **Linux**, **macOS** and **Windows**
 
-   - **Note**: Please execute `test-sth`
+   1. Set the value of `STH` → `Status` in `config.yaml` to `Epoxied`
+   2. Execute the command:
+
+      ```sh
+      make run
+      ```
+
+      in the root of the repository
+
+3. Check that the **firmware flash** works in Windows
+
+   - Execute `test-sth`
 
      1. once with `STH` → `Status` set to `Epoxied`, and
      2. once set to `Bare PCB`
@@ -276,9 +288,9 @@ Afterwards make sure there were no (unexpected) errors in the output of the STH 
 
      If you follow the steps above you make sure that the **flash tests work** for both STU and STH, and there are **no unintentional consequences of (not) flashing the chip** before you run the other parts of the test suite.
 
-2. Execute the [extended manual tests](#development:section:extended-tests) and check that everything works as expected
+4. Execute the **[extended manual tests](#development:section:extended-tests)** in Windows and check that everything works as expected
 
-3. Create a new release [here](https://github.com/MyTooliT/ICOc/releases/new)
+5. Create a new release [here](https://github.com/MyTooliT/ICOc/releases/new)
 
    1. Open the [release notes](Releases) for the latest version
    2. Replace links with a permanent version:
@@ -297,9 +309,13 @@ Afterwards make sure there were no (unexpected) errors in the output of the STH 
    7. Remove the very first header
    8. Check that all links work correctly
 
-4. Change the [`__version__`](../mytoolit/__init__.py) number inside the [`mytoolit`](../mytoolit) package
-5. [Update the Docker images](#tutorials:section:updating-images-on-docker-hub)
-6. Push the latest two commits
-7. Insert the version number (e.g. `1.0.5`) into the tag field
-8. For the release title use “Version VERSION”, where `VERSION` specifies the version number (e.g. “Version 1.0.5”)
-9. Click on “Publish Release”
+6. Change the [`__version__`](../mytoolit/__init__.py) number inside the [`mytoolit`](../mytoolit) package
+7. [Update the Docker images](#tutorials:section:updating-images-on-docker-hub)
+8. Push the latest two commits
+9. Insert the version number (e.g. `1.0.5`) into the tag field
+10. For the release title use “Version VERSION”, where `VERSION` specifies the version number (e.g. “Version 1.0.5”)
+11. Click on “Publish Release”
+12. Close the [milestone][] for the latest release number
+13. Create a new [milestone][] for the next release
+
+[milestone]: https://github.com/MyTooliT/ICOc/milestones
