@@ -9,7 +9,7 @@ jobs:
 
   build:
     name: 📘 Build Documentation
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     steps:
 
@@ -24,11 +24,11 @@ jobs:
       - name: Install Pandoc
         uses: r-lib/actions/setup-pandoc@v2
 
+      - name: Install TinyTeX
+        uses: r-lib/actions/setup-tinytex@v2
+
       - name: Install bookdown
-        run: |
-          Rscript -e "install.packages(c('rmarkdown', 'bookdown'))"
-          Rscript -e "install.packages('tinytex')"
-          Rscript -e "tinytex::install_tinytex()"
+        run: Rscript -e "install.packages(c('rmarkdown', 'bookdown'))"
 
       - name: Build documentation
         run: make doc
