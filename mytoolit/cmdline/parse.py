@@ -252,6 +252,37 @@ def sth_name(name: str) -> str:
     return name
 
 
+def add_identifier_arguments(parser: ArgumentParser) -> None:
+    """Add device identifier arguments to given argument parser
+
+    parser:
+        The parser which should include the device identifier arguments
+
+    """
+
+    identifier_group = parser.add_mutually_exclusive_group(required=True)
+
+    identifier_group.add_argument('-n',
+                                  '--name',
+                                  dest='identifier',
+                                  metavar='NAME',
+                                  help="Name of sensor device",
+                                  default='Test-STH')
+    identifier_group.add_argument(
+        '-m',
+        '--mac-address',
+        dest='identifier',
+        metavar='MAC_ADRESS',
+        help="Bluetooth MAC address of sensor device",
+        type=mac_address)
+    identifier_group.add_argument(
+        '-d',
+        '--device-number',
+        dest='identifier',
+        metavar='DEVICE_NUMBER',
+        help="Bluetooth device number of sensor device")
+
+
 def parse_arguments() -> Namespace:
     """Parse command line arguments
 
@@ -280,29 +311,7 @@ def parse_arguments() -> Namespace:
 
     rename_parser = subparsers.add_parser('rename',
                                           help='Rename a sensor device')
-
-    identifier_group = rename_parser.add_mutually_exclusive_group(
-        required=True)
-    identifier_group.add_argument('-n',
-                                  '--name',
-                                  dest='identifier',
-                                  metavar='NAME',
-                                  help="Name of sensor device",
-                                  default='Test-STH')
-    identifier_group.add_argument(
-        '-m',
-        '--mac-address',
-        dest='identifier',
-        metavar='MAC_ADRESS',
-        help="Bluetooth MAC address of sensor device",
-        type=mac_address)
-    identifier_group.add_argument(
-        '-d',
-        '--device-number',
-        dest='identifier',
-        metavar='DEVICE_NUMBER',
-        help="Bluetooth device number of sensor device")
-
+    add_identifier_arguments(rename_parser)
     rename_parser.add_argument('name',
                                type=str,
                                help='New name of STH',
