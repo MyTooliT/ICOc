@@ -1,6 +1,7 @@
 # -- Imports ------------------------------------------------------------------
 
 from asyncio import run, sleep
+from functools import partial
 from time import time
 from typing import List, Union
 
@@ -9,6 +10,7 @@ from netaddr import EUI
 from mytoolit.can import Network
 from mytoolit.can.network import STHDeviceInfo, NetworkError
 from mytoolit.cmdline.parse import parse_arguments
+from mytoolit.measurement import convert_raw_to_g
 
 
 # -- Functions ----------------------------------------------------------------
@@ -32,6 +34,29 @@ async def list_sensor_devices() -> None:
 
         for device in sensor_devices:
             print(device)
+
+
+async def measure(identifier: Union[int, str, EUI]) -> None:
+    """Open measurement stream and store data
+
+    Parameters
+    ----------
+
+    identifier:
+        The identifier of the sensor device (e.g. the current name)
+
+    """
+
+    async with Network() as network:
+        await network.connect_sensor_device(identifier)
+
+        stream_data = await network.read_streaming_data_amount(1000)
+
+        sensor_range = await network.read_acceleration_sensor_range_in_g()
+        conversion_to_g = partial(convert_raw_to_g, max_value=sensor_range)
+        stream_data.apply(conversion_to_g)
+
+        print(f"\nStream Data:\n{stream_data}")
 
 
 async def rename(identifier: Union[int, str, EUI], name) -> None:
@@ -98,6 +123,8 @@ def main():
     try:
         if arguments.subcommand == 'list':
             coroutine = list_sensor_devices()
+        elif arguments.subcommand == 'measure':
+            coroutine = measure(identifier=arguments.identifier)
         elif arguments.subcommand == 'rename':
             coroutine = rename(identifier=arguments.identifier,
                                name=arguments.name)

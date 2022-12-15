@@ -305,6 +305,14 @@ def parse_arguments() -> Namespace:
 
     subparsers.add_parser('list', help='List sensor devices')
 
+    # ===========
+    # = Measure =
+    # ===========
+
+    measurement_parser = subparsers.add_parser('measure',
+                                               help='Store measurement data')
+    add_identifier_arguments(measurement_parser)
+
     # ==========
     # = Rename =
     # ==========
