@@ -1000,7 +1000,7 @@ Logging:
 <h3><span class="header-section-number">2.2.3</span> Changing the Run Time<a href="#changing-the-run-time" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>To change the run time of the measurement you can use the option <code>-r</code>, which takes the runtime in seconds as argument. The command</p>
 <div class="sourceCode" id="cb35"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-r</span> 300</span></code></pre></div>
-<p>for example, would change the runtime to 5 minutes (5·60 seconds = 300 seconds).</p>
+<p>for example, would change the runtime to 300 seconds (5 minutes).</p>
 </div>
 <div id="start-the-measurement" class="section level3 hasAnchor" number="2.2.4">
 <h3><span class="header-section-number">2.2.4</span> Start the Measurement<a href="#start-the-measurement" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -1016,13 +1016,13 @@ Logging:
 </div>
 <div id="changing-the-logging-level" class="section level3 hasAnchor" number="2.2.5">
 <h3><span class="header-section-number">2.2.5</span> Changing the Logging Level<a href="#changing-the-logging-level" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>By default ICOc only writes log messages of level <code>ERROR</code> or higher. In some situations, for example when ICOc behaves incorrectly, you might want to set a lower level. You can do that using the option <code>--log</code>. For example, to activate logging of level <code>WARNING</code> and higher when you start ICOc you can use the following command:</p>
+<p>By default ICOc only writes log messages of level <code>INFO</code> or higher. In some situations, for example when ICOc behaves incorrectly, you might want to set a lower level. You can do that using the option <code>--log</code>. For example, to activate logging of level <code>WARNING</code> and higher when you start ICOc you can use the following command:</p>
 <div class="sourceCode" id="cb38"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">--log</span> warning</span></code></pre></div>
 <p>The different logs for ICOc are stored in the root directory of the repository in the following files:</p>
 <ul>
 <li><code>cli.log</code>: Log messages of ICOc</li>
 <li><code>network.log</code>: Log messages of CAN network class</li>
-<li><code>plotter.log</code>: Log messages of plotter (window process)</li>
+<li><code>plotter.log</code>: Log messages of plotter (process for measurement graph)</li>
 </ul>
 </div>
 <div id="changing-the-reference-voltage" class="section level3 hasAnchor" number="2.2.6">
