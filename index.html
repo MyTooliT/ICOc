@@ -465,17 +465,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><p>Bring up the CAN interface</p>
 <pre><code>sudo ip link set can0 up</code></pre></li>
 </ol>
-<p>You can also configure the CAN interface <strong>automatically</strong>. For that please store the following text:</p>
+<p>You can also configure the CAN interface <strong>automatically</strong>. For that purpose please store the following text:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode ini"><code class="sourceCode ini"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">[Match]</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="dt">Name</span><span class="ot">=</span><span class="st">can*</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">[CAN]</span></span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="dt">BitRate</span><span class="ot">=</span><span class="dv">1000000</span></span></code></pre></div>
-<p>in a file called <code>/etc/systemd/network/can.network</code>. After that enable <code>networkd</code> and reload the configuration with the commands:</p>
+<p>in a file called <code>/etc/systemd/network/can.network</code>. Afterwards enable <code>networkd</code> and reload the configuration with the commands:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> systemctl enable systemd-networkd</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> systemctl restart systemd-networkd</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> networkctl reload</span></code></pre></div>
-<p>You can check the status of the CAN configuration with the command:</p>
+<p>You can check the status of the CAN connection with the command:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">networkctl</span> list</span></code></pre></div>
 <p>If everything works as expected, then the output of the command should look similar to the text below:</p>
 <pre><code>IDX LINK   TYPE     OPERATIONAL SETUP
@@ -507,20 +507,30 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><a href="https://www.silabs.com/developers/mcu-programming-options">Simplicity Commander</a>.</li>
 </ul>
 <p>If you choose the first option, then please make sure to install the Simplicity Commander tool inside Simplicity Studio.</p>
-<p>If you download Simplicity Commander directly, then the tests assume that you unzipped the files into the directory <code>C:\SiliconLabs\Simplicity Commander</code> on Windows.</p>
+<div id="linux-1" class="section level5 hasAnchor" number="1.1.2.3.1">
+<h5><span class="header-section-number">1.1.2.3.1</span> Linux<a href="#linux-1" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<p>Please add the path to <code>commander</code> to the list <code>COMMANDS</code> → <code>PATH</code> → <code>LINUX</code>.</p>
+</div>
+<div id="macos-1" class="section level5 hasAnchor" number="1.1.2.3.2">
+<h5><span class="header-section-number">1.1.2.3.2</span> macOS<a href="#macos-1" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<p>If you install Simplicity Studio or Simplicity Commander in the standard install path (<code>/Applications</code>) you do not need to change the config. If you put the application in a different directory, then please add the path to <code>commander</code> to the list <code>COMMANDS</code> → <code>PATH</code> → <code>MAC</code> in the configuration file <code>config.yaml</code>.</p>
+</div>
+<div id="windows-1" class="section level5 hasAnchor" number="1.1.2.3.3">
+<h5><span class="header-section-number">1.1.2.3.3</span> Windows<a href="#windows-1" class="anchor-section" aria-label="Anchor link to header"></a></h5>
 <ul>
-<li><p>If you do not use the standard install path on <strong>Windows</strong>, then please add the path to <code>commander.exe</code> to the list <code>COMMANDS</code> → <code>PATH</code> → <code>WINDOWS</code> in the configuration file <code>config.yaml</code>.</p></li>
-<li><p>If you use <strong>Linux</strong>, then please add the path to <code>commander</code> to the list <code>COMMANDS</code> → <code>PATH</code> → <code>LINUX</code>.</p></li>
-<li><p>If you install Simplicity Studio in the standard install path on <strong>macOS</strong> (<code>/Applications</code>) you do not need to change the config. If you</p>
+<li><p>If you installed Simplicity Studio (including Simplicity Studio) to the standard location, then you do not need to change the configuration.</p></li>
+<li><p>If you download Simplicity Commander directly, then the tests assume that you unzipped the files into the directory <code>C:\SiliconLabs\Simplicity Commander</code>.</p></li>
+<li><p>If you did not use any of the standard install path, then please add the path to <code>commander.exe</code> to the list <code>COMMANDS</code> → <code>PATH</code> → <code>WINDOWS</code> in the configuration file <code>config.yaml</code>.</p></li>
+</ul>
+</div>
+<div id="additional-notes" class="section level5 hasAnchor" number="1.1.2.3.4">
+<h5><span class="header-section-number">1.1.2.3.4</span> Additional Notes<a href="#additional-notes" class="anchor-section" aria-label="Anchor link to header"></a></h5>
 <ul>
-<li>put the application in a different directory or</li>
-<li>installed Simplicity Commander directly</li>
+<li>If you <strong>do not want to change the config file</strong>, and Simplicity Commander (<code>commander</code>) is not part of the standard locations for your operating system, then please make sure that <code>commander</code> is accessible via the <code>PATH</code> environment variable.</li>
+<li>Please note, that you <strong>do not need to install Simplicity Commander</strong> if you just want to <strong>measure data with ICOc</strong>.</li>
 </ul>
-<p>then please add the path to <code>commander</code> to the list <code>COMMANDS</code> → <code>PATH</code> → <code>MAC</code>.</p></li>
-</ul>
-<p>If you do not want to change the config file, then please just make sure that <code>commander</code> is accessible via the <code>PATH</code> environment variable.</p>
-<p>Please note, that you do not need to install Simplicity Commander if you just want to measure data with ICOc.</p>
 <p><a name="introduction:section:install"></a></p>
+</div>
 </div>
 </div>
 </div>
