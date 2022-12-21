@@ -218,7 +218,7 @@ To change the run time of the measurement you can use the option `-r`, which tak
 icoc -r 300
 ```
 
-for example, would change the runtime to 5 minutes (5·60 seconds = 300 seconds).
+for example, would change the runtime to 300 seconds (5 minutes).
 
 ### Start the Measurement
 
