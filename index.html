@@ -147,7 +147,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="1.3" data-path=""><a href="#basic-usage"><i class="fa fa-check"></i><b>1.3</b> Basic Usage</a>
 <ul>
 <li class="chapter" data-level="1.3.1" data-path=""><a href="#starting-the-program"><i class="fa fa-check"></i><b>1.3.1</b> Starting the Program</a></li>
-<li class="chapter" data-level="1.3.2" data-path=""><a href="#reading-acceleration-data"><i class="fa fa-check"></i><b>1.3.2</b> Reading Acceleration Data</a></li>
+<li class="chapter" data-level="1.3.2" data-path=""><a href="#reading-sensor-data"><i class="fa fa-check"></i><b>1.3.2</b> Reading Sensor Data</a></li>
 </ul></li>
 <li class="chapter" data-level="1.4" data-path=""><a href="#measurement-data"><i class="fa fa-check"></i><b>1.4</b> Measurement Data</a>
 <ul>
@@ -594,7 +594,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ImportError: DLL load failed while importing interpreter: The specified module could not be found.
 
 DLL load failed while importing interpreter: The specified module could not be found.</code></pre>
-<p>then you probably need to install the <a href="https://docs.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist">“Microsoft Visual C++ Redistributable package”</a>. You can download the latest version (for the <code>x64</code> architecture) <a href="https://aka.ms/vs/17/release/vc_redist.x64.exe">here</a>.</p>
+<p>then you probably need to install the <a href="https://docs.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist">“Microsoft Visual C++ Redistributable package”</a>. You can download the latest version</p>
+<ul>
+<li>for the <code>x64</code> architecture, i.e. for AMD and Intel CPUs, <a href="https://aka.ms/vs/17/release/vc_redist.x64.exe">here</a> and</li>
+<li>for the <code>ARM64</code> architecture <a href="https://aka.ms/vs/17/release/vc_redist.arm64.exe">here</a>.</li>
+</ul>
 </div>
 <div id="insufficient-rights" class="section level4 hasAnchor" number="1.2.3.2">
 <h4><span class="header-section-number">1.2.3.2</span> Insufficient Rights<a href="#insufficient-rights" class="anchor-section" aria-label="Anchor link to header"></a></h4>
@@ -688,8 +692,8 @@ Collecting tables…
 </ul>
 <p>The last value “-44” is the current <a href="https://en.wikipedia.org/wiki/Received_signal_strength_indication">received signal strength indication (RSSI)</a>. To exit the program use the key <kbd>q</kbd>.</p>
 </div>
-<div id="reading-acceleration-data" class="section level3 hasAnchor" number="1.3.2">
-<h3><span class="header-section-number">1.3.2</span> Reading Acceleration Data<a href="#reading-acceleration-data" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="reading-sensor-data" class="section level3 hasAnchor" number="1.3.2">
+<h3><span class="header-section-number">1.3.2</span> Reading Sensor Data<a href="#reading-sensor-data" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>To read data from an STH (or SHA), start the ICOc script, and connect to an STH. To do that, enter the number in front of an STH entry (e.g. <code>1</code> for the first detected STH) and use the return key <kbd>⮐</kbd> to confirm your selection. The text based interface will now show you something like this:</p>
 <pre><code>                ICOc
 STH “Blubb” (08:6b:d7:01:de:81)
@@ -711,7 +715,7 @@ Oversampling Rate     64
 ⇒ Sampling Rate       9524
 Reference Voltage     VDD
 
-Sensors               X
+Sensors               M1: S1
 
 ┌───────────────────────────┐
 │ s: Start Data Acquisition │
@@ -725,13 +729,16 @@ Sensors               X
 │ q: Disconnect from STH    │
 └───────────────────────────┘</code></pre>
 <p>To start the data acquisition press the key <kbd>s</kbd>. Afterwards a graphical window</p>
-<p><img src="Documentation/Pictures/Acceleration.png" alt="Acceleration" /></p>
-<p>will show the measured acceleration. To stop the data acquisition, click the close button on the top of the graph. For more information on how to use ICOc and the test suite, please take a look at the <a href="#tutorials:section:tutorials">section “Tutorials”</a>.</p>
+<p><img src="Documentation/Pictures/Measurement.png" alt="Measurement" /></p>
+<p>will show the sensor data. To stop the data acquisition, click the close button on the top of the graph. For more information on how to use ICOc and the test suite, please take a look at the <a href="#tutorials:section:tutorials">section “Tutorials”</a>.</p>
 <p><a name="introduction:section:measurement-data"></a></p>
 </div>
 </div>
 <div id="measurement-data" class="section level2 hasAnchor" number="1.4">
 <h2><span class="header-section-number">1.4</span> Measurement Data<a href="#measurement-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<hr />
+<p><strong>Note:</strong> ICOc <strong>assumes</strong> that the sensor device always measures <strong>acceleration data</strong> in multiples of the <a href="https://en.wikipedia.org/wiki/Gravity_of_Earth">gravity of earth</a>, commonly referred as <span class="math inline">\(g\)</span> or <span class="math inline">\(g_0\)</span>. While this is true for most of the sensor hardware (such as STHs), some sensor devices measure other values, e.g. force or temperature. Even in this case the measurement software will (incorrectly) <a href="https://github.com/MyTooliT/ICOc/blob/dc636ce2cda8f380aa0f031fc743062820eb3443/mytoolit/measurement/acceleration.py#L50-L51">convert the data into multiples of <span class="math inline">\(g\)</span></a>. We are <strong>working on adding support for configuring the sensor type</strong> in the firmware and ICOc to <strong>fix this issue</strong>.</p>
+<hr />
 <p>The ICOc script stores measured acceleration values in <a href="https://www.hdfgroup.org/solutions/hdf5/">HDF5</a> files. By default these files will be stored in the root of the repository with a</p>
 <ul>
 <li>name starting with the text <code>Measurement</code></li>
@@ -873,7 +880,7 @@ Oversampling Rate     64
 ⇒ Sampling Rate       9524
 Reference Voltage     VDD
 
-Sensors               X
+Sensors               M1: S1
 
 ┌───────────────────────────┐
 │ s: Start Data Acquisition │
@@ -909,11 +916,8 @@ Sensors               X
 <p>To show the available command line options you can use the option <code>-h</code>:</p>
 <div class="sourceCode" id="cb28"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-h</span></span></code></pre></div>
 <p>which should show you the following output:</p>
-<pre><code>usage: icoc [-h] [-b BLUETOOTH_ADDRESS | -n NAME] [-f FILENAME] [-r SECONDS] [-1 FIRST_CHANNEL]
-            [-2 SECOND_CHANNEL] [-3 THIRD_CHANNEL] [-s 2–127] [-a {1,2,3,4,8,16,32,64,128,256}]
-            [-o {1,2,4,8,16,32,64,128,256,512,1024,2048,4096}]
-            [-v {1V25,Vfs1V65,Vfs1V8,Vfs2V1,Vfs2V2,2V5,Vfs2V7,VDD,5V,6V6}]
-            [--log {debug,info,warning,error,critical}]
+<pre><code>usage: icoc [-h] [-b BLUETOOTH_ADDRESS | -n [NAME]] [-f FILENAME] [-r SECONDS] [-1 [FIRST_CHANNEL]] [-2 [SECOND_CHANNEL]] [-3 [THIRD_CHANNEL]] [-s 2–127] [-a {1,2,3,4,8,16,32,64,128,256}]
+            [-o {1,2,4,8,16,32,64,128,256,512,1024,2048,4096}] [-v {1V25,Vfs1V65,Vfs1V8,Vfs2V1,Vfs2V2,2V5,Vfs2V7,VDD,5V,6V6}] [--log {debug,info,warning,error,critical}]
 
 Configure and measure data with the ICOtronic system
 
@@ -923,23 +927,20 @@ options:
 Connection:
   -b BLUETOOTH_ADDRESS, --bluetooth-address BLUETOOTH_ADDRESS
                         connect to device with specified Bluetooth address (e.g. “08:6b:d7:01:de:81”)
-  -n NAME, --name NAME  connect to device with specified name
+  -n [NAME], --name [NAME]
+                        connect to device with specified name
 
 Measurement:
   -f FILENAME, --filename FILENAME
                         base name of the output file (default: Measurement)
   -r SECONDS, --run-time SECONDS
-                        run time in seconds (values equal or below “0” specify infinite runtime)
-                        (default: 0)
-  -1 FIRST_CHANNEL, --first-channel FIRST_CHANNEL
-                        sensor channel number for first measurement channel (1 - 255; 0 to disable)
-                        (default: 1)
-  -2 SECOND_CHANNEL, --second-channel SECOND_CHANNEL
-                        sensor channel number for second measurement channel (1 - 255; 0 to disable)
-                        (default: 0)
-  -3 THIRD_CHANNEL, --third-channel THIRD_CHANNEL
-                        sensor channel number for third measurement channel (1 - 255; 0 to disable)
-                        (default: 0)
+                        run time in seconds (values equal or below “0” specify infinite runtime) (default: 0)
+  -1 [FIRST_CHANNEL], --first-channel [FIRST_CHANNEL]
+                        sensor channel number for first measurement channel (1 - 255; 0 to disable) (default: 1)
+  -2 [SECOND_CHANNEL], --second-channel [SECOND_CHANNEL]
+                        sensor channel number for second measurement channel (1 - 255; 0 to disable) (default: 0)
+  -3 [THIRD_CHANNEL], --third-channel [THIRD_CHANNEL]
+                        sensor channel number for third measurement channel (1 - 255; 0 to disable) (default: 0)
 
 ADC:
   -s 2–127, --prescaler 2–127
@@ -953,7 +954,7 @@ ADC:
 
 Logging:
   --log {debug,info,warning,error,critical}
-                        Minimum level of messages written to log (default: warning)</code></pre>
+                        Minimum level of messages written to log (default: info)</code></pre>
 <p>All options below the section “Measurement” and “ADC” in the <a href="tutorials:section:available-options">help output of ICOc</a> allow you to change the value of a specific configuration values before you start ICOc.</p>
 </div>
 <div id="channel-selection" class="section level3 hasAnchor" number="2.2.2">
@@ -3357,6 +3358,20 @@ gitbook.start({
 });
 </script>
 
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
 </body>
 
 </html>
