@@ -1206,10 +1206,17 @@ Logging:
 <li><p>Please take a look at the section <a href="#tutorials:section:general">“General”</a> to find out how to execute the production tests for the STU. If you want to run the connection and EEPROM test (aka <strong>all tests except the flash test</strong>), then please execute the following command:</p>
 <div class="sourceCode" id="cb54"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="ex">test-stu</span> <span class="at">-k</span> eeprom <span class="at">-k</span> connection</span></code></pre></div></li>
 </ol>
-<p><strong>Note:</strong> For the STU (flash) test to work correctly please connect the <strong>programming board</strong> to the USB port of the computer and the programming port of the STU <strong>first</strong>. Only after that connect the power injector to the power adapter. If you reverse this order, then the programmer might not work. If you do not connect the power injector, then the STU test might fail because of a CAN bus error:</p>
+<hr />
+<p><strong>Note:</strong> For the STU (flash) test to work correctly:</p>
+<ol style="list-style-type: decimal">
+<li><p>Connect the <strong>programming board</strong> to the USB port of the computer and the programming port of the STU <strong>first</strong>.</p></li>
+<li><p>Only after that connect the <strong>power injector to the power adapter</strong>.</p></li>
+</ol>
+<p>If you reverse this order, then the programmer might not work. If you do not connect the power injector, then the STU test might fail because of a CAN bus error:</p>
 <blockquote>
 <p>Bus error: an error counter reached the ‘heavy’/‘warning’ limit</p>
 </blockquote>
+<hr />
 </div>
 <div id="firmware-versions" class="section level3 hasAnchor" number="2.4.5">
 <h3><span class="header-section-number">2.4.5</span> Firmware Versions<a href="#firmware-versions" class="anchor-section" aria-label="Anchor link to header"></a></h3>
