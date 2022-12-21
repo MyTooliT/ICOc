@@ -117,7 +117,7 @@ The following steps describe one possible option to configure the CAN interface 
    sudo ip link set can0 up
    ```
 
-You can also configure the CAN interface **automatically**. For that please store the following text:
+You can also configure the CAN interface **automatically**. For that purpose please store the following text:
 
 ```ini
 [Match]
@@ -127,7 +127,7 @@ Name=can*
 BitRate=1000000
 ```
 
-in a file called `/etc/systemd/network/can.network`. After that enable `networkd` and reload the configuration with the commands:
+in a file called `/etc/systemd/network/can.network`. Afterwards enable `networkd` and reload the configuration with the commands:
 
 ```sh
 sudo systemctl enable systemd-networkd
@@ -135,7 +135,7 @@ sudo systemctl restart systemd-networkd
 sudo networkctl reload
 ```
 
-You can check the status of the CAN configuration with the command:
+You can check the status of the CAN connection with the command:
 
 ```sh
 networkctl list
