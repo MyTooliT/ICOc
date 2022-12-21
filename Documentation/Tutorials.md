@@ -56,7 +56,7 @@
    ⇒ Sampling Rate       9524
    Reference Voltage     VDD
 
-   Sensors               X
+   Sensors               M1: S1
 
    ┌───────────────────────────┐
    │ s: Start Data Acquisition │
@@ -109,11 +109,8 @@ icoc -h
 which should show you the following output:
 
 ```
-usage: icoc [-h] [-b BLUETOOTH_ADDRESS | -n NAME] [-f FILENAME] [-r SECONDS] [-1 FIRST_CHANNEL]
-            [-2 SECOND_CHANNEL] [-3 THIRD_CHANNEL] [-s 2–127] [-a {1,2,3,4,8,16,32,64,128,256}]
-            [-o {1,2,4,8,16,32,64,128,256,512,1024,2048,4096}]
-            [-v {1V25,Vfs1V65,Vfs1V8,Vfs2V1,Vfs2V2,2V5,Vfs2V7,VDD,5V,6V6}]
-            [--log {debug,info,warning,error,critical}]
+usage: icoc [-h] [-b BLUETOOTH_ADDRESS | -n [NAME]] [-f FILENAME] [-r SECONDS] [-1 [FIRST_CHANNEL]] [-2 [SECOND_CHANNEL]] [-3 [THIRD_CHANNEL]] [-s 2–127] [-a {1,2,3,4,8,16,32,64,128,256}]
+            [-o {1,2,4,8,16,32,64,128,256,512,1024,2048,4096}] [-v {1V25,Vfs1V65,Vfs1V8,Vfs2V1,Vfs2V2,2V5,Vfs2V7,VDD,5V,6V6}] [--log {debug,info,warning,error,critical}]
 
 Configure and measure data with the ICOtronic system
 
@@ -123,23 +120,20 @@ options:
 Connection:
   -b BLUETOOTH_ADDRESS, --bluetooth-address BLUETOOTH_ADDRESS
                         connect to device with specified Bluetooth address (e.g. “08:6b:d7:01:de:81”)
-  -n NAME, --name NAME  connect to device with specified name
+  -n [NAME], --name [NAME]
+                        connect to device with specified name
 
 Measurement:
   -f FILENAME, --filename FILENAME
                         base name of the output file (default: Measurement)
   -r SECONDS, --run-time SECONDS
-                        run time in seconds (values equal or below “0” specify infinite runtime)
-                        (default: 0)
-  -1 FIRST_CHANNEL, --first-channel FIRST_CHANNEL
-                        sensor channel number for first measurement channel (1 - 255; 0 to disable)
-                        (default: 1)
-  -2 SECOND_CHANNEL, --second-channel SECOND_CHANNEL
-                        sensor channel number for second measurement channel (1 - 255; 0 to disable)
-                        (default: 0)
-  -3 THIRD_CHANNEL, --third-channel THIRD_CHANNEL
-                        sensor channel number for third measurement channel (1 - 255; 0 to disable)
-                        (default: 0)
+                        run time in seconds (values equal or below “0” specify infinite runtime) (default: 0)
+  -1 [FIRST_CHANNEL], --first-channel [FIRST_CHANNEL]
+                        sensor channel number for first measurement channel (1 - 255; 0 to disable) (default: 1)
+  -2 [SECOND_CHANNEL], --second-channel [SECOND_CHANNEL]
+                        sensor channel number for second measurement channel (1 - 255; 0 to disable) (default: 0)
+  -3 [THIRD_CHANNEL], --third-channel [THIRD_CHANNEL]
+                        sensor channel number for third measurement channel (1 - 255; 0 to disable) (default: 0)
 
 ADC:
   -s 2–127, --prescaler 2–127
@@ -153,7 +147,7 @@ ADC:
 
 Logging:
   --log {debug,info,warning,error,critical}
-                        Minimum level of messages written to log (default: warning)
+                        Minimum level of messages written to log (default: info)
 ```
 
 All options below the section “Measurement” and “ADC” in the [help output of ICOc](tutorials:section:available-options) allow you to change the value of a specific configuration values before you start ICOc.
