@@ -176,20 +176,26 @@ For the tests that require a firmware flash you need to **either** install
 
 If you choose the first option, then please make sure to install the Simplicity Commander tool inside Simplicity Studio.
 
-If you download Simplicity Commander directly, then the tests assume that you unzipped the files into the directory `C:\SiliconLabs\Simplicity Commander` on Windows.
+##### Linux
 
-- If you do not use the standard install path on **Windows**, then please add the path to `commander.exe` to the list `COMMANDS` → `PATH` → `WINDOWS` in the configuration file `config.yaml`.
-- If you use **Linux**, then please add the path to `commander` to the list `COMMANDS` → `PATH` → `LINUX`.
-- If you install Simplicity Studio in the standard install path on **macOS** (`/Applications`) you do not need to change the config. If you
+Please add the path to `commander` to the list `COMMANDS` → `PATH` → `LINUX`.
 
-  - put the application in a different directory or
-  - installed Simplicity Commander directly
+##### macOS
 
-  then please add the path to `commander` to the list `COMMANDS` → `PATH` → `MAC`.
+If you install Simplicity Studio or Simplicity Commander in the standard install path (`/Applications`) you do not need to change the config. If you put the application in a different directory, then please add the path to `commander` to the list `COMMANDS` → `PATH` → `MAC` in the configuration file `config.yaml`.
 
-If you do not want to change the config file, then please just make sure that `commander` is accessible via the `PATH` environment variable.
+##### Windows
 
-Please note, that you do not need to install Simplicity Commander if you just want to measure data with ICOc.
+- If you installed Simplicity Studio (including Simplicity Studio) to the standard location, then you do not need to change the configuration.
+
+- If you download Simplicity Commander directly, then the tests assume that you unzipped the files into the directory `C:\SiliconLabs\Simplicity Commander`.
+
+- If you did not use any of the standard install path, then please add the path to `commander.exe` to the list `COMMANDS` → `PATH` → `WINDOWS` in the configuration file `config.yaml`.
+
+##### Additional Notes
+
+- If you **do not want to change the config file**, and Simplicity Commander (`commander`) is not part of the standard locations for your operating system, then please make sure that `commander` is accessible via the `PATH` environment variable.
+- Please note, that you **do not need to install Simplicity Commander** if you just want to **measure data with ICOc**.
 
 <a name="introduction:section:install"></a>
 
