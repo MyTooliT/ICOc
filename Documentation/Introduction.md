@@ -415,7 +415,7 @@ shows that currently one sensor device was detected. The
 
 The last value “-44” is the current [received signal strength indication (RSSI)](https://en.wikipedia.org/wiki/Received_signal_strength_indication). To exit the program use the key <kbd>q</kbd>.
 
-### Reading Acceleration Data
+### Reading Sensor Data
 
 To read data from an STH (or SHA), start the ICOc script, and connect to an STH. To do that, enter the number in front of an STH entry (e.g. `1` for the first detected STH) and use the return key <kbd>⮐</kbd> to confirm your selection. The text based interface will now show you something like this:
 
@@ -440,7 +440,7 @@ Oversampling Rate     64
 ⇒ Sampling Rate       9524
 Reference Voltage     VDD
 
-Sensors               X
+Sensors               M1: S1
 
 ┌───────────────────────────┐
 │ s: Start Data Acquisition │
@@ -457,9 +457,9 @@ Sensors               X
 
 To start the data acquisition press the key <kbd>s</kbd>. Afterwards a graphical window
 
-![Acceleration](Documentation/Pictures/Acceleration.png)
+![Measurement](Documentation/Pictures/Measurement.png)
 
-will show the measured acceleration. To stop the data acquisition, click the close button on the top of the graph. For more information on how to use ICOc and the test suite, please take a look at the [section “Tutorials”](#tutorials:section:tutorials).
+will show the sensor data. To stop the data acquisition, click the close button on the top of the graph. For more information on how to use ICOc and the test suite, please take a look at the [section “Tutorials”](#tutorials:section:tutorials).
 
 <a name="introduction:section:measurement-data"></a>
 
