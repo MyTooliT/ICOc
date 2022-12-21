@@ -284,7 +284,10 @@ ImportError: DLL load failed while importing interpreter: The specified module c
 DLL load failed while importing interpreter: The specified module could not be found.
 ```
 
-then you probably need to install the [“Microsoft Visual C++ Redistributable package” ](https://docs.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist). You can download the latest version (for the `x64` architecture) [here](https://aka.ms/vs/17/release/vc_redist.x64.exe).
+then you probably need to install the [“Microsoft Visual C++ Redistributable package” ](https://docs.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist). You can download the latest version
+
+- for the `x64` architecture, i.e. for AMD and Intel CPUs, [here](https://aka.ms/vs/17/release/vc_redist.x64.exe) and
+- for the `ARM64` architecture [here](https://aka.ms/vs/17/release/vc_redist.arm64.exe).
 
 #### Insufficient Rights
 
