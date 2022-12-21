@@ -251,7 +251,7 @@ The different logs for ICOc are stored in the root directory of the repository i
 
 - `cli.log`: Log messages of ICOc
 - `network.log`: Log messages of CAN network class
-- `plotter.log`: Log messages of plotter (window process)
+- `plotter.log`: Log messages of plotter (process for measurement graph)
 
 ### Changing the Reference Voltage
 
