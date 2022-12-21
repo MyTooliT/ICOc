@@ -369,14 +369,14 @@ which executes all tests that contain the text `flash` or `connection`.
 
 The text below gives you a more detailed step-by-step guide on how to run the tests of the STH.
 
-1. > **Note:** You can **skip this step, if you do not want to run the flash test**. To skip the flash test, please set `STH` → `STATUS` in the [configuration file][config] to `Epoxied`.
+1. > **Note:** You can **skip this step, if you do not want to run the flash test**. To skip the flash test, please set `STH` → `STATUS` in the [configuration file](#introduction:section:changing-configuration-values) to `Epoxied`.
 
    Please either
 
    - create a directory called `STH`, or
    - clone the [STH repository](https://github.com/mytoolit/STH) to a location
 
-   beside this repository inside your file system. Then create a directory called `builds` and put the [current version of the STH firmware](https://github.com/MyTooliT/STH/releases/download/2.1.10/manufacturingImageSthv2.1.10.hex) into this directory. Afterwards the directory and file structure should look like this.
+   beside this repository inside your file system. Then create a directory called `builds` and put the [current version of the STH firmware](https://github.com/MyTooliT/STH/releases/download/2.1.10/manufacturingImageSthv2.1.10.hex) into this directory. Afterwards the directory and file structure should look like this:
 
    ```
    .
@@ -386,9 +386,9 @@ The text below gives you a more detailed step-by-step guide on how to run the te
              └── manufacturingImageSthv2.1.10.hex
    ```
 
-   As alternative to the steps above you can also change the variable `STH` → `Firmware` → `Location` → `Flash` in the [configuration file][config] to point to the firmware that should be used for the flash test.
+   As alternative to the steps above you can also change the variable `STH` → `Firmware` → `Location` → `Flash` in the [configuration file](#introduction:section:changing-configuration-values) to point to the firmware that should be used for the flash test.
 
-2. Make sure that the configuration value in the [config file][config] are set correctly. You probably need to change at least the following variables:
+2. Make sure that the configuration value in the [config file](#introduction:section:changing-configuration-values) are set correctly. You probably need to change at least the following variables:
 
    - **Name**: Please change the Bluetooth advertisement name (`STH` → `NAME` ) to the name of the STH you want to test.
 
@@ -401,8 +401,6 @@ The text below gives you a more detailed step-by-step guide on how to run the te
    - to a [**Base64 encoded version of the Bluetooth MAC address**](#section:mac-address-conversion), if `STH` → `STATUS` is set to `Bare PCB`, or
 
    - to the **serial number** (`STH` → `PROGRAMMING BOARD` → `SERIAL NUMBER`), if you set the status to `Epoxied`.
-
-[config]: ../../mytoolit/config/config.yaml
 
 ### SMH
 

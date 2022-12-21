@@ -178,11 +178,11 @@ If you choose the first option, then please make sure to install the Simplicity 
 
 ##### Linux
 
-Please add the path to `commander` to the list `COMMANDS` → `PATH` → `LINUX`.
+Please add the path to `commander` to the list `COMMANDS` → `PATH` → `LINUX` in the [configuration file](#introduction:section:changing-configuration-values).
 
 ##### macOS
 
-If you install Simplicity Studio or Simplicity Commander in the standard install path (`/Applications`) you do not need to change the config. If you put the application in a different directory, then please add the path to `commander` to the list `COMMANDS` → `PATH` → `MAC` in the configuration file `config.yaml`.
+If you install Simplicity Studio or Simplicity Commander in the standard install path (`/Applications`) you do not need to change the config. If you put the application in a different directory, then please add the path to `commander` to the list `COMMANDS` → `PATH` → `MAC` in the [configuration file](#introduction:section:changing-configuration-values).
 
 ##### Windows
 
@@ -190,7 +190,7 @@ If you install Simplicity Studio or Simplicity Commander in the standard install
 
 - If you download Simplicity Commander directly, then the tests assume that you unzipped the files into the directory `C:\SiliconLabs\Simplicity Commander`.
 
-- If you did not use any of the standard install path, then please add the path to `commander.exe` to the list `COMMANDS` → `PATH` → `WINDOWS` in the configuration file `config.yaml`.
+- If you did not use any of the standard install path, then please add the path to `commander.exe` to the list `COMMANDS` → `PATH` → `WINDOWS` in the [configuration file](#introduction:section:changing-configuration-values).
 
 ##### Additional Notes
 
@@ -550,3 +550,37 @@ Sometimes you also want to add some general purpose data. For that you can use t
 ![HDFView: Comment Attribute](Documentation/Pictures/HDFView-Comment.png)
 
 If you want you can also add multiline text. Since you can not add newlines using <kbd>⏎</kbd> in HDFView directly, we recommend you open your favorite text editor to write the text and then copy and paste the text into the value field. HDFView will only show the last line of the pasted text. However, after you copy and paste the text into another program you will see that HDFView stored the text including the newlines.
+
+<a name="introduction:section:changing-configuration-values"></a>
+
+## Changing Configuration Values
+
+All configuration options are currently stored in the file [YAML](https://yaml.org) file `config.yaml` in the directory `mytoolit/config`. To change one of the values please use your favorite text editor and edit the file. Please make sure to not make any mistakes when you edit this file. Otherwise (parts of) ICOc might not work correctly afterwards.
+
+### Adding the Path to Simplicity Commander on Linux
+
+1. Install a text editor (e.g. the [GNOME Text Editor](https://apps.gnome.org/app/org.gnome.TextEditor/))
+2. Open the file `mytoolit/config/config.yaml` in your text editor
+3. Scroll down to `COMMANDS` → `PATH` → `LINUX`:
+
+   ```yaml
+   # …
+   COMMANDS:
+     PATH:
+       # …
+       LINUX: []
+   # …
+   ```
+
+4. Add the path to Simplicity commander (e.g. `/opt/Simplicity Commander/commander/`) to the list below the key `LINUX`:
+
+   ```yaml
+   COMMANDS:
+     PATH:
+       # …
+       LINUX:
+         - /opt/Simplicity Commander/commander/
+   # …
+   ```
+
+5. Store the modified configuration file
