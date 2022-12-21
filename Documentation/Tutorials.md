@@ -241,7 +241,7 @@ icoc -b 08:6b:d7:01:de:81 -r 5
 
 ### Changing the Logging Level
 
-By default ICOc only writes log messages of level `ERROR` or higher. In some situations, for example when ICOc behaves incorrectly, you might want to set a lower level. You can do that using the option `--log`. For example, to activate logging of level `WARNING` and higher when you start ICOc you can use the following command:
+By default ICOc only writes log messages of level `INFO` or higher. In some situations, for example when ICOc behaves incorrectly, you might want to set a lower level. You can do that using the option `--log`. For example, to activate logging of level `WARNING` and higher when you start ICOc you can use the following command:
 
 ```sh
 icoc --log warning
