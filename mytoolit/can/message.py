@@ -122,7 +122,7 @@ class Message:
                 identifier, int) else identifier.value
 
         if keyword_arguments:
-            # Mypy assumes that all keyword arguments have the same type
+            # mypy assumes that all keyword arguments have the same type
             self.message.arbitration_id = Identifier(
                 self.id(), **keyword_arguments).value  # type: ignore
 

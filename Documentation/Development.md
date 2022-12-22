@@ -56,9 +56,9 @@ Please use the following command in the root of the repository to make sure you 
 flake8
 ```
 
-#### Mypy
+#### mypy
 
-To check the type hint in the code base we use the static code checker [Mypy](https://mypy.readthedocs.io):
+To check the type hint in the code base we use the static code checker [mypy](https://mypy.readthedocs.io):
 
 ```sh
 pip install mypy
