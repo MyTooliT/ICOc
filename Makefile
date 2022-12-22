@@ -31,11 +31,14 @@ check:
 	flake8
 	mypy mytoolit
 
+.PHONY: test
 test:
 	pytest
+	prysk Test/*.t
 
 test-no-hardware:
 	pytest --ignore-glob='*network.py' --ignore-glob='*commander.py'
+	prysk Test/*.t
 
 hardware-test: run-hardware-test open-test-report-$(OPERATING_SYSTEM)
 
