@@ -485,7 +485,7 @@ To execute the STU verification tests, you can use the command:
 test-stu-verification -v
 ```
 
-Please note that while most of the tests should run successfully, if you use working hardware and firmware, some of them might fail occasionally. In this case please rerun the specific test using the option `-k` and specifying a text that matches the name of the test. For example to return the STH test `test0107BlueToothConnectMin` you can use the following command:
+Please note that while most of the tests should run successfully, if you use working hardware and firmware, some of them might fail occasionally. In this case please rerun the specific test using the option `-k` and specifying a text that matches the name of the test. For example, to return the STH test `test0107BlueToothConnectMin` you can use the following command:
 
 ```sh
 test-sth-verification -v -k test0107
