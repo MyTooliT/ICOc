@@ -527,15 +527,15 @@ You can also use (parts of) ICOc with various virtualization software. For that 
 
 The table below shows some of the virtualization software we tried and that worked (when we tested it).
 
-| Virtualization Software    | Host OS | Host Architecture | Guest OS     | Guest Architecture | Notes                                                        |
-| -------------------------- | ------- | ----------------- | ------------ | ------------------ | ------------------------------------------------------------ |
-| [Parallels Desktop][]      | macOS   | `x64`             | Ubuntu 20.04 | `x64`              |                                                              |
-| [Parallels Desktop][]      | macOS   | `x64`             | Windows 10   | `x64`              |                                                              |
-| [Parallels Desktop][]      | macOS   | `ARM64`           | Fedora 36    | `ARM64`            |                                                              |
+| Virtualization Software    | Host OS | Host Architecture | Guest OS     | Guest Architecture | Notes                                                                                                                                            |
+| -------------------------- | ------- | ----------------- | ------------ | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [Parallels Desktop][]      | macOS   | `x64`             | Ubuntu 20.04 | `x64`              |                                                                                                                                                  |
+| [Parallels Desktop][]      | macOS   | `x64`             | Windows 10   | `x64`              |                                                                                                                                                  |
+| [Parallels Desktop][]      | macOS   | `ARM64`           | Fedora 36    | `ARM64`            |                                                                                                                                                  |
 | [Parallels Desktop][]      | macOS   | `ARM64`           | Windows 11   | `ARM64`, `x64`     | JLink (and hence Simplicity Commander) only works with [programming adapters that support WinUSB](https://wiki.segger.com/J-Link_on_Windows_ARM) |
-| [VirtualBox][]             | macOS   | `x64`             | Windows 10   | `x64`              |                                                              |
-| [VirtualBox][]             | Windows | `x64`             | Fedora 36    | `x64`              |                                                              |
-| [WSL 2](http://aka.ms/wsl) | Windows | `x64`             | Ubuntu 20.04 | `x64`              |                                                              |
+| [VirtualBox][]             | macOS   | `x64`             | Windows 10   | `x64`              |                                                                                                                                                  |
+| [VirtualBox][]             | Windows | `x64`             | Fedora 36    | `x64`              |                                                                                                                                                  |
+| [WSL 2](http://aka.ms/wsl) | Windows | `x64`             | Ubuntu 22.04 | `x64`              |                                                                                                                                                  |
 
 [virtualbox]: https://www.virtualbox.org
 [parallels desktop]: https://www.parallels.com
