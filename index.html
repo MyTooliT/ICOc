@@ -1171,7 +1171,7 @@ Logging:
 <li><p><strong>Name</strong>: Please change the Bluetooth advertisement name (<code>STH</code> → <code>NAME</code> ) to the name of the STH you want to test.</p></li>
 <li><p><strong>Serial Number of Programming Board</strong>: Please make sure, that the variable <code>STH</code> → <code>PROGRAMMING BOARD</code> → <code>SERIAL NUMBER</code> contains the serial number of the programming board connected to the STH. This serial number should be displayed on the bottom right of the LCD on the programming board.</p></li>
 </ul></li>
-<li><p>Now please open your favorite Terminal application and execute, the STH test using the command <code>test-sth</code>. For more information about this command, please take a look at the section <a href="#tutorials:section:general">“General”</a> above.</p>
+<li><p>Please open your favorite Terminal application and execute, the STH test using the command <code>test-sth</code>. For more information about this command, please take a look at the section <a href="#tutorials:section:general">“General”</a> above.</p>
 <p>Please note, that the test will rename the tested STH</p>
 <ul>
 <li><p>to a <a href="#section:mac-address-conversion"><strong>Base64 encoded version of the Bluetooth MAC address</strong></a>, if <code>STH</code> → <code>STATUS</code> is set to <code>Bare PCB</code>, or</p></li>
@@ -1274,7 +1274,7 @@ Logging:
 <div class="sourceCode" id="cb55"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="ex">test-sth-verification</span> <span class="at">-v</span></span></code></pre></div>
 <p>To execute the STU verification tests, you can use the command:</p>
 <div class="sourceCode" id="cb56"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="ex">test-stu-verification</span> <span class="at">-v</span></span></code></pre></div>
-<p>Please note that while most of the tests should run successfully, if you use working hardware and firmware, some of them might fail occasionally. In this case please rerun the specific test using the option <code>-k</code> and specifying a text that matches the name of the test. For example to return the STH test <code>test0107BlueToothConnectMin</code> you can use the following command:</p>
+<p>Please note that while most of the tests should run successfully, if you use working hardware and firmware, some of them might fail occasionally. In this case please rerun the specific test using the option <code>-k</code> and specifying a text that matches the name of the test. For example, to return the STH test <code>test0107BlueToothConnectMin</code> you can use the following command:</p>
 <div class="sourceCode" id="cb57"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="ex">test-sth-verification</span> <span class="at">-v</span> <span class="at">-k</span> test0107</span></code></pre></div>
 </div>
 <div id="problematic-tests" class="section level3 hasAnchor" number="2.5.3">
@@ -1375,11 +1375,12 @@ Logging:
 <p>The table below shows some of the virtualization software we tried and that worked (when we tested it).</p>
 <table>
 <colgroup>
-<col width="32%" />
+<col width="11%" />
+<col width="3%" />
+<col width="7%" />
+<col width="5%" />
 <col width="8%" />
-<col width="21%" />
-<col width="15%" />
-<col width="22%" />
+<col width="64%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -1388,6 +1389,7 @@ Logging:
 <th>Host Architecture</th>
 <th>Guest OS</th>
 <th>Guest Architecture</th>
+<th>Notes</th>
 </tr>
 </thead>
 <tbody>
@@ -1397,6 +1399,7 @@ Logging:
 <td><code>x64</code></td>
 <td>Ubuntu 20.04</td>
 <td><code>x64</code></td>
+<td></td>
 </tr>
 <tr class="even">
 <td><a href="https://www.parallels.com">Parallels Desktop</a></td>
@@ -1404,6 +1407,7 @@ Logging:
 <td><code>x64</code></td>
 <td>Windows 10</td>
 <td><code>x64</code></td>
+<td></td>
 </tr>
 <tr class="odd">
 <td><a href="https://www.parallels.com">Parallels Desktop</a></td>
@@ -1411,27 +1415,39 @@ Logging:
 <td><code>ARM64</code></td>
 <td>Fedora 36</td>
 <td><code>ARM64</code></td>
+<td></td>
 </tr>
 <tr class="even">
+<td><a href="https://www.parallels.com">Parallels Desktop</a></td>
+<td>macOS</td>
+<td><code>ARM64</code></td>
+<td>Windows 11</td>
+<td><code>ARM64</code>, <code>x64</code></td>
+<td>JLink (and hence Simplicity Commander) only works with <a href="https://wiki.segger.com/J-Link_on_Windows_ARM">programming adapters that support WinUSB</a></td>
+</tr>
+<tr class="odd">
 <td><a href="https://www.virtualbox.org">VirtualBox</a></td>
 <td>macOS</td>
 <td><code>x64</code></td>
 <td>Windows 10</td>
 <td><code>x64</code></td>
+<td></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><a href="https://www.virtualbox.org">VirtualBox</a></td>
 <td>Windows</td>
 <td><code>x64</code></td>
 <td>Fedora 36</td>
 <td><code>x64</code></td>
+<td></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><a href="http://aka.ms/wsl">WSL 2</a></td>
 <td>Windows</td>
 <td><code>x64</code></td>
-<td>Ubuntu 20.04</td>
+<td>Ubuntu 22.04</td>
 <td><code>x64</code></td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -1860,8 +1876,8 @@ usbipd wsl attach -d CANbuntu --busid 5-4</code></pre></li>
 <div class="sourceCode" id="cb113"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb113-1"><a href="#cb113-1" aria-hidden="true" tabindex="-1"></a><span class="ex">flake8</span></span></code></pre></div>
 </div>
 <div id="mypy" class="section level4 hasAnchor" number="4.3.1.2">
-<h4><span class="header-section-number">4.3.1.2</span> Mypy<a href="#mypy" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>To check the type hint in the code base we use the static code checker <a href="https://mypy.readthedocs.io">Mypy</a>:</p>
+<h4><span class="header-section-number">4.3.1.2</span> mypy<a href="#mypy" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>To check the type hint in the code base we use the static code checker <a href="https://mypy.readthedocs.io">mypy</a>:</p>
 <div class="sourceCode" id="cb114"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb114-1"><a href="#cb114-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install mypy</span></code></pre></div>
 <p>Please use the following command in the root of the repository to check the code base for type problems:</p>
 <div class="sourceCode" id="cb115"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb115-1"><a href="#cb115-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mypy</span> mytoolit</span></code></pre></div>
@@ -2959,7 +2975,7 @@ values of the y-axis and z-axis into the EEPROM</li>
 <div id="checks" class="section level3 hasAnchor" number="5.11.1">
 <h3><span class="header-section-number">5.11.1</span> Checks<a href="#checks" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <ul>
-<li>We also check the code base with the static type checker <a href="https://mypy.readthedocs.io">Mypy</a></li>
+<li>We also check the code base with the static type checker <a href="https://mypy.readthedocs.io">mypy</a></li>
 </ul>
 </div>
 <div id="github-actions" class="section level3 hasAnchor" number="5.11.2">
