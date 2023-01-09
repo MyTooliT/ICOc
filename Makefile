@@ -32,13 +32,34 @@ check:
 	mypy mytoolit
 
 .PHONY: test
-test:
-	pytest
-	prysk Test/*.t
+test: pytest-test prysk-test
+test-no-hardware: pytest-test-no-hardware prysk-test
 
-test-no-hardware:
+# ---------
+# - Pytest -
+# ---------
+
+pytest-test:
+	pytest
+
+pytest-test-no-hardware:
 	pytest --ignore-glob='*network.py' --ignore-glob='*commander.py'
+
+# ---------
+# - Prysk -
+# ---------
+
+prysk-test: prysk-test-$(OPERATING_SYSTEM)
+
+prysk-test-linux: prysk-test-mac
+prysk-test-mac:
 	prysk Test/*.t
+prysk-test-windows:
+	powershell -c '"Prysk tests are not supported on Windows"'
+
+# ------------------
+# - Hardware Tests -
+# ------------------
 
 hardware-test: run-hardware-test open-test-report-$(OPERATING_SYSTEM)
 
