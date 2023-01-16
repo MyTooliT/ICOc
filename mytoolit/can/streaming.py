@@ -90,7 +90,8 @@ class AsyncStreamBuffer(Listener):
         timestamp = message.timestamp
         raw_values = [
             TimestampedValue(value=int.from_bytes(word, byteorder='little'),
-                             timestamp=timestamp)
+                             timestamp=timestamp,
+                             counter=data[1])
             for word in (data[2:4], data[4:6], data[6:8])
         ]
 

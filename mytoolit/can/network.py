@@ -1731,7 +1731,8 @@ class Network:
             description=f"read single set of streaming values from “{node}”")
         raw_values = [
             TimestampedValue(value=int.from_bytes(word, byteorder='little'),
-                             timestamp=response.timestamp)
+                             timestamp=response.timestamp,
+                             counter=response.data[1])
             for word in (response.data[2:4], response.data[4:6],
                          response.data[6:8])
         ]
