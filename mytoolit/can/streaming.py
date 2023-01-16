@@ -404,8 +404,10 @@ class StreamingFormatVoltage(StreamingFormat):
 class TimestampedValue:
     """Store a single (streaming) value and its timestamp"""
 
-    def __init__(self, timestamp: float, value: Union[float,
-                                                      Quantity]) -> None:
+    def __init__(self,
+                 timestamp: float,
+                 value: Union[float, Quantity],
+                 counter: Optional[int] = None) -> None:
         """Initialize the timestamped value using the given arguments
 
         Parameters
@@ -420,10 +422,14 @@ class TimestampedValue:
             - raw value or
             - value including a given unit and optional quantity
 
+        counter:
+            The optional message counter of the data
+
         """
 
         self.timestamp = timestamp
         self.value = value
+        self.counter = counter
 
     def __repr__(self) -> str:
         """Retrieve the textual representation of the value
@@ -441,6 +447,11 @@ class TimestampedValue:
         >>> TimestampedValue(timestamp=20, value=10)
         10@20
 
+        >>> TimestampedValue(timestamp=1337, value=123, counter=1)
+        123@1337 (1)
+        >>> TimestampedValue(timestamp=1338, value=10, counter=3)
+        10@1338 (3)
+
         >>> from mytoolit.measurement import celsius, g0
 
         >>> TimestampedValue(timestamp=5, value=g0(10))
@@ -452,8 +463,9 @@ class TimestampedValue:
 
         value = (f"{self.value:~}"
                  if isinstance(self.value, Quantity) else str(self.value))
+        counter = "" if self.counter is None else f" ({self.counter})"
 
-        return f"{value}@{self.timestamp}"
+        return f"{value}@{self.timestamp}{counter}"
 
 
 class StreamingData:
@@ -538,6 +550,14 @@ class StreamingData:
         1: []
         2: []
         3: [1@1, 2@2, 3@3]
+
+        >>> value1 = TimestampedValue(timestamp=1, value=1, counter=10)
+        >>> value2 = TimestampedValue(timestamp=2, value=2, counter=11)
+        >>> value3 = TimestampedValue(timestamp=3, value=3, counter=12)
+        >>> StreamingData([], [], [value1, value2, value3])
+        1: []
+        2: []
+        3: [1@1 (10), 2@2 (11), 3@3 (12)]
 
         """
 
@@ -660,12 +680,26 @@ class StreamingData:
         2: [23@13]
         3: [24@14]
 
+        >>> value11 = TimestampedValue(timestamp=11, value=11, counter=11)
+        >>> value12 = TimestampedValue(timestamp=12, value=12, counter=12)
+        >>> data = StreamingData([value11, value12])
+        >>> data
+        1: [11@11 (11), 12@12 (12)]
+        2: []
+        3: []
+        >>> data.apply(lambda value: value*2)
+        >>> data
+        1: [22@11 (11), 24@12 (12)]
+        2: []
+        3: []
+
         """
 
         def map_list(function, channel):
             return [
                 TimestampedValue(timestamped.timestamp,
-                                 function(timestamped.value))
+                                 function(timestamped.value),
+                                 timestamped.counter)
                 for timestamped in channel
             ]
 
