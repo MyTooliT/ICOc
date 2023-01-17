@@ -524,7 +524,9 @@ class TimestampedValue:
 
         """
 
-        serialized = {"timestamp": self.timestamp}
+        serialized: Dict[str, Union[float, int, str, Quantity]] = {
+            "timestamp": self.timestamp
+        }
         value = self.value
         if isinstance(value, Quantity):
             serialized["value"] = value.magnitude
@@ -639,6 +641,40 @@ class StreamingData:
             representation.append(f"{channel}: {data}")
 
         return "\n".join(representation)
+
+    def default(
+        self,
+    ) -> Dict[str, List[Dict[str, Union[float, int, str, Quantity]]]]:
+        """Serialize the streaming data
+
+        Returns
+        -------
+
+        An object that can be serialized (into JSON)
+
+        Examples
+        --------
+
+        >>> value1 = TimestampedValue(timestamp=1, value=1, counter=10)
+        >>> value2 = TimestampedValue(timestamp=2, value=2, counter=11)
+        >>> value3 = TimestampedValue(timestamp=3, value=3, counter=12)
+        >>> StreamingData([], [], [value1, value2, value3]
+        ...              ).default() # doctest:+NORMALIZE_WHITESPACE
+        {'third': [{'timestamp': 1, 'value': 1, 'counter': 10},
+                   {'timestamp': 2, 'value': 2, 'counter': 11},
+                   {'timestamp': 3, 'value': 3, 'counter': 12}]}
+
+        """
+
+        serializable = {}
+        for attribute, key in zip(
+            (self.first, self.second, self.third), ("first", "second", "third")
+        ):
+            if attribute:
+                serializable[key] = [
+                    timestamped.default() for timestamped in attribute
+                ]
+        return serializable
 
     def extend(self, data: StreamingData) -> None:
         """Add additional streaming
