@@ -7,6 +7,7 @@ from typing import (
     AsyncIterator,
     Awaitable,
     Callable,
+    Dict,
     List,
     Optional,
     Tuple,
@@ -494,6 +495,46 @@ class TimestampedValue:
         counter = "" if self.counter is None else f" ({self.counter})"
 
         return f"{value}@{self.timestamp}{counter}"
+
+    def default(self) -> Dict[str, Union[float, int, str, Quantity]]:
+        """Serialize the timestamped value
+
+        Returns
+        -------
+
+        An object that can be serialized (into JSON)
+
+        Examples
+        --------
+
+        >>> from json import dumps
+        >>> from mytoolit.measurement import celsius, g0
+
+
+        >>> TimestampedValue(timestamp=123, value=11, counter=1).default()
+        {'timestamp': 123, 'value': 11, 'counter': 1}
+
+        >>> TimestampedValue(timestamp=123, value=g0(2), counter=1
+        ...                 ).default() # doctest:+NORMALIZE_WHITESPACE
+        {'timestamp': 123, 'value': 2, 'unit': 'standard_gravity',
+         'counter': 1}
+
+        >>> dumps(TimestampedValue(timestamp=5, value=celsius(10)).default())
+        '{"timestamp": 5, "value": 10, "unit": "degree_Celsius"}'
+
+        """
+
+        serialized = {"timestamp": self.timestamp}
+        value = self.value
+        if isinstance(value, Quantity):
+            serialized["value"] = value.magnitude
+            serialized["unit"] = f"{value.units}"
+        else:
+            serialized["value"] = value
+        if self.counter is not None:
+            serialized["counter"] = self.counter
+
+        return serialized
 
 
 class StreamingData:
