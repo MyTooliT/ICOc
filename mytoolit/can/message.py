@@ -127,8 +127,8 @@ class Message:
         if keyword_arguments:
             # mypy assumes that all keyword arguments have the same type
             self.message.arbitration_id = Identifier(
-                self.id(), **keyword_arguments
-            ).value  # type: ignore
+                self.id(), **keyword_arguments  # type: ignore
+            ).value
 
         if data:
             self.message.data = bytearray(data)
