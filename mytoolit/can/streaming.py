@@ -539,6 +539,10 @@ class TimestampedValue:
         return serialized
 
 
+class NotHomogeneousException(Exception):
+    """Indicates that a channel of streaming data contains heterogenous data"""
+
+
 class StreamingData:
     """Auxiliary class to store streaming data"""
 
@@ -642,10 +646,79 @@ class StreamingData:
 
         return "\n".join(representation)
 
+    def is_homogeneous(self) -> bool:
+        """Check if the streaming data for every channel is homogeneous
+
+        The data for a channel is considered homogeneous, if:
+
+        - either all values contain a message counter or none do and
+        - all values have the same data type
+
+        Returns
+        -------
+
+        True if the data is homogeneous, false otherwise
+
+        Examples
+        --------
+
+        >>> from mytoolit.measurement import celsius
+
+        >>> value1 = TimestampedValue(timestamp=1, value=1, counter=10)
+        >>> value2 = TimestampedValue(timestamp=2, value=2, counter=11)
+        >>> value3 = TimestampedValue(timestamp=3, value=3)
+        >>> value4 = TimestampedValue(timestamp=3, value=3)
+        >>> value5 = TimestampedValue(timestamp=3, value=celsius(3))
+
+        >>> StreamingData([value1], [],
+        ...               [value3, value4, value3]).is_homogeneous()
+        True
+        >>> StreamingData([value1, value3], [],
+        ...               [value3, value4, value3]).is_homogeneous()
+        False
+        >>> StreamingData([value5], [], [value3]).is_homogeneous()
+        True
+        >>> StreamingData([], [], [value3, value5]).is_homogeneous()
+        False
+
+        """
+
+        for channel in self:
+            if len(channel) <= 0:
+                continue
+
+            # Check value type & optional message counters
+            first = channel[0]
+            value_type_first = type(first.value)
+            counter_type_first = type(first.counter)
+            for timestamped in channel[1:]:
+                if (
+                    type(timestamped.value) != value_type_first
+                    or type(timestamped.counter) != counter_type_first
+                ):
+                    return False
+
+        return True
+
     def default(
-        self,
-    ) -> Dict[str, List[Dict[str, Union[float, int, str, Quantity]]]]:
+        self, compact: bool = False
+    ) -> Union[
+        Dict[str, List[Dict[str, Union[float, int, str, Quantity]]]],
+        Dict[str, Dict[str, Union[List[int], str]]],
+    ]:
         """Serialize the streaming data
+
+        Converting streaming data in “compact” form only works for homogenous
+        data. If the data of one channel is heterogenous and compact is set to
+        true, then this method will throw an `NotHomogeneousException`
+        exception.
+
+        Arguments
+        ---------
+
+        compact:
+            Use a “compact” representation of the streaming data (assumes
+            homogenous data)
 
         Returns
         -------
@@ -658,21 +731,76 @@ class StreamingData:
         >>> value1 = TimestampedValue(timestamp=1, value=1, counter=10)
         >>> value2 = TimestampedValue(timestamp=2, value=2, counter=11)
         >>> value3 = TimestampedValue(timestamp=3, value=3, counter=12)
-        >>> StreamingData([], [], [value1, value2, value3]
-        ...              ).default() # doctest:+NORMALIZE_WHITESPACE
+        >>> streaming_data = StreamingData([], [], [value1, value2, value3])
+        >>> streaming_data.default() # doctest:+NORMALIZE_WHITESPACE
         {'third': [{'timestamp': 1, 'value': 1, 'counter': 10},
                    {'timestamp': 2, 'value': 2, 'counter': 11},
                    {'timestamp': 3, 'value': 3, 'counter': 12}]}
+        >>> streaming_data.default(
+        ...     compact=True) # doctest:+NORMALIZE_WHITESPACE
+        {'third': {'timestamps': [1, 2, 3],
+                   'values': [1, 2, 3],
+                   'counters': [10, 11, 12]}}
+
+        >>> from mytoolit.measurement import celsius
+
+        >>> value1 = TimestampedValue(timestamp=45, value=celsius(10),
+        ...                           counter=10)
+        >>> value2 = TimestampedValue(timestamp=67, value=celsius(20),
+        ...                           counter=11)
+        >>> value3 = TimestampedValue(timestamp=89, value=celsius(30),
+        ...                           counter=12)
+        >>> streaming_data = StreamingData([value1], [value2, value3], [])
+        >>> streaming_data.default(
+        ...     compact=True) # doctest:+NORMALIZE_WHITESPACE
+        {'first': {'timestamps': [45],
+                   'values': [10],
+                   'unit': 'degree_Celsius',
+                   'counters': [10]},
+         'second': {'timestamps': [67, 89],
+                    'values': [20, 30],
+                    'unit': 'degree_Celsius',
+                    'counters': [11, 12]}}
 
         """
 
+        if compact and not self.is_homogeneous():
+            raise NotHomogeneousException(
+                "Unable to serialize data in compact form"
+            )
+
         serializable = {}
-        for attribute, key in zip(
+        for channel, key in zip(
             (self.first, self.second, self.third), ("first", "second", "third")
         ):
-            if attribute:
+            if len(channel) <= 0:
+                continue
+
+            if compact:
+                serializable[key] = {}
+                first = channel[0]
+                serializable[key]["timestamps"] = [
+                    timestamped.timestamp for timestamped in channel
+                ]
+
+                if isinstance(first.value, Quantity):
+                    serializable[key]["values"] = [
+                        timestamped.value.magnitude for timestamped in channel
+                    ]
+                    serializable[key]["unit"] = f"{first.value.units}"
+                else:
+                    serializable[key]["values"] = [
+                        timestamped.value for timestamped in channel
+                    ]
+
+                if first.counter is not None:
+                    serializable[key]["counters"] = [
+                        timestamped.counter for timestamped in channel
+                    ]
+
+            else:
                 serializable[key] = [
-                    timestamped.default() for timestamped in attribute
+                    timestamped.default() for timestamped in channel
                 ]
         return serializable
 
