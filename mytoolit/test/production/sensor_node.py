@@ -110,7 +110,9 @@ class TestSensorNode(TestNode):
             write_function=self.can.write_eeprom_advertisement_time_1,
             variable="advertisement_time_1",
             description="Advertisement Time 1",
-            milliseconds=settings.sensory_device.bluetooth.advertisement_time_1,
+            milliseconds=(
+                settings.sensory_device.bluetooth.advertisement_time_1
+            ),
         )
 
         await read_write_time(
@@ -126,5 +128,7 @@ class TestSensorNode(TestNode):
             write_function=self.can.write_eeprom_advertisement_time_2,
             variable="advertisement_time_2",
             description="Advertisement Time 2",
-            milliseconds=settings.sensory_device.bluetooth.advertisement_time_2,
+            milliseconds=(
+                settings.sensory_device.bluetooth.advertisement_time_2
+            ),
         )

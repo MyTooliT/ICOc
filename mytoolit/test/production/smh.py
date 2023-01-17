@@ -56,7 +56,9 @@ class TestSMH(TestSensorNode):
         self._test_firmware_flash(
             node="SMH",
             flash_location=settings.smh.firmware.location.flash,
-            programmmer_serial_number=settings.smh.programming_board.serial_number,
+            programmmer_serial_number=(
+                settings.smh.programming_board.serial_number
+            ),
             chip="BGM121A256V2",
         )
 

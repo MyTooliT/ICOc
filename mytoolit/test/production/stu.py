@@ -50,7 +50,9 @@ class TestSTU(TestNode):
         self._test_firmware_flash(
             node="STU",
             flash_location=settings.stu.firmware.location.flash,
-            programmmer_serial_number=settings.stu.programming_board.serial_number,
+            programmmer_serial_number=(
+                settings.stu.programming_board.serial_number
+            ),
             chip="BGM111A256V2",
         )
 

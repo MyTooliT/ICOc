@@ -1,6 +1,8 @@
 [flake8]
 
 ignore =
+  # Whitespace before colon
+  E203,
   # Module level import not at top of file
   E402,
   # Line break before binary operator
