@@ -10,14 +10,15 @@ from mytoolit.utility import convert_base64_mac
 
 def main():
     parser = ArgumentParser(
-        description="Convert the Base64 name of an STH to a MAC address")
-    parser.add_argument("name",
-                        help="name of the STH e.g. CGvXAd6B",
-                        type=base64_mac_address)
+        description="Convert the Base64 name of an STH to a MAC address"
+    )
+    parser.add_argument(
+        "name", help="name of the STH e.g. CGvXAd6B", type=base64_mac_address
+    )
     name = parser.parse_args().name
     mac = convert_base64_mac(name)
     print(mac)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main

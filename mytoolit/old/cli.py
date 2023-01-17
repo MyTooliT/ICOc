@@ -13,11 +13,14 @@ from sys import stderr
 from typing import Optional, Tuple
 
 # Handle pytest `ModuleNotFoundError` on non-Windows OS
-if system() == 'Windows':
+if system() == "Windows":
     from win32event import CreateEvent, WaitForSingleObject, WAIT_OBJECT_0
 
-from can.interfaces.pcan.basic import (PCAN_ERROR_OK, PCAN_ERROR_QRCVEMPTY,
-                                       PCAN_RECEIVE_EVENT)
+from can.interfaces.pcan.basic import (
+    PCAN_ERROR_OK,
+    PCAN_ERROR_QRCVEMPTY,
+    PCAN_RECEIVE_EVENT,
+)
 
 from mytoolit.can import SensorConfig
 from mytoolit.cmdline import channel_number, mac_address, sth_name
@@ -57,7 +60,7 @@ Watch = {
 }
 
 
-class CommandLineInterface():
+class CommandLineInterface:
     """ICOc command line interface
 
     Use this class to connect to the ICOtronic system and acquire measurement
@@ -77,10 +80,12 @@ class CommandLineInterface():
 
         self.logger = getLogger(__name__)
         self.logger.setLevel(self.args.log.upper())
-        handler = FileHandler(Path(__file__).parent.parent.parent / "cli.log",
-                              delay=True)
+        handler = FileHandler(
+            Path(__file__).parent.parent.parent / "cli.log", delay=True
+        )
         handler.setFormatter(
-            Formatter('{asctime} {levelname} {name} {message}', style='{'))
+            Formatter("{asctime} {levelname} {name} {message}", style="{")
+        )
         self.logger.addHandler(handler)
         self.logger.info("Initialized logger")
 
@@ -89,31 +94,43 @@ class CommandLineInterface():
         self.iMsgLoss = 0
         self.iMsgsTotal = 0
         self.iMsgCounterLast = -1
-        self.Can = Network(sender=MyToolItNetworkNr["SPU1"],
-                           receiver=MyToolItNetworkNr["STH1"],
-                           log_destination="network.log",
-                           log_level=self.args.log.upper())
+        self.Can = Network(
+            sender=MyToolItNetworkNr["SPU1"],
+            receiver=MyToolItNetworkNr["STH1"],
+            log_destination="network.log",
+            log_level=self.args.log.upper(),
+        )
         self.logger.info("Initialized CAN class")
 
-        channels = (self.args.first_channel, self.args.second_channel,
-                    self.args.third_channel)
+        channels = (
+            self.args.first_channel,
+            self.args.second_channel,
+            self.args.third_channel,
+        )
         self.set_sensors(*channels)
         for channel, value in enumerate(channels, start=1):
             self.logger.info(f"Measurement Channel {channel}: {value}")
 
-        self.connect = (True if 'name' in self.args
-                        or 'bluetooth_address' in self.args else False)
-        self.sth_name = self.args.name if 'name' in self.args else ""
+        self.connect = (
+            True
+            if "name" in self.args or "bluetooth_address" in self.args
+            else False
+        )
+        self.sth_name = self.args.name if "name" in self.args else ""
         self.vDeviceAddressSet(
-            str(int.from_bytes(self.args.bluetooth_address, 'big')
-                ) if 'bluetooth_address' in self.args else "0")
+            str(int.from_bytes(self.args.bluetooth_address, "big"))
+            if "bluetooth_address" in self.args
+            else "0"
+        )
 
-        self.vAdcConfig(self.args.prescaler, self.args.acquisition,
-                        self.args.oversampling)
+        self.vAdcConfig(
+            self.args.prescaler, self.args.acquisition, self.args.oversampling
+        )
         self.vAdcRefVConfig(self.args.voltage_reference)
         self.vRunTime(0 if self.args.run_time <= 0 else self.args.run_time)
-        self.vGraphInit(Watch["DisplaySampleRateMs"],
-                        Watch["DisplayBlockSize"])
+        self.vGraphInit(
+            Watch["DisplaySampleRateMs"], Watch["DisplayBlockSize"]
+        )
         self.Can.readThreadStop()
         # Set plotter host and port
         self.sPloterSocketHost = settings.gui.host
@@ -150,110 +167,138 @@ class CommandLineInterface():
         self.parser = argparse.ArgumentParser(
             description="Configure and measure data with the ICOtronic system",
             argument_default=argparse.SUPPRESS,
-            formatter_class=ArgumentDefaultsHelpFormatter)
+            formatter_class=ArgumentDefaultsHelpFormatter,
+        )
 
         connection_group = self.parser.add_argument_group(title="Connection")
         connection_group = connection_group.add_mutually_exclusive_group()
         connection_group.add_argument(
-            '-b',
-            '--bluetooth-address',
+            "-b",
+            "--bluetooth-address",
             type=mac_address,
             required=False,
-            help=("connect to device with specified Bluetooth address "
-                  "(e.g. “08:6b:d7:01:de:81”)"))
+            help=(
+                "connect to device with specified Bluetooth address "
+                "(e.g. “08:6b:d7:01:de:81”)"
+            ),
+        )
         connection_group.add_argument(
-            '-n',
-            '--name',
+            "-n",
+            "--name",
             type=sth_name,
-            nargs='?',
-            const='',
+            nargs="?",
+            const="",
             required=False,
-            help="connect to device with specified name")
+            help="connect to device with specified name",
+        )
 
         measurement_group = self.parser.add_argument_group(title="Measurement")
-        measurement_group.add_argument('-f',
-                                       '--filename',
-                                       type=str,
-                                       default='Measurement',
-                                       required=False,
-                                       help="base name of the output file")
+        measurement_group.add_argument(
+            "-f",
+            "--filename",
+            type=str,
+            default="Measurement",
+            required=False,
+            help="base name of the output file",
+        )
 
         measurement_group.add_argument(
-            '-r',
-            '--run-time',
-            metavar='SECONDS',
+            "-r",
+            "--run-time",
+            metavar="SECONDS",
             type=int,
             default=0,
             required=False,
-            help=("run time in seconds "
-                  "(values equal or below “0” specify infinite runtime)"))
+            help=(
+                "run time in seconds "
+                "(values equal or below “0” specify infinite runtime)"
+            ),
+        )
 
         measurement_group.add_argument(
-            '-1',
-            '--first-channel',
+            "-1",
+            "--first-channel",
             type=channel_number,
             default=1,
             const=1,
-            nargs='?',
-            help=("sensor channel number for first measurement channel "
-                  "(1 - 255; 0 to disable)"))
+            nargs="?",
+            help=(
+                "sensor channel number for first measurement channel "
+                "(1 - 255; 0 to disable)"
+            ),
+        )
         measurement_group.add_argument(
-            '-2',
-            '--second-channel',
+            "-2",
+            "--second-channel",
             type=channel_number,
             default=0,
             const=2,
-            nargs='?',
-            help=("sensor channel number for second measurement channel "
-                  "(1 - 255; 0 to disable)"))
+            nargs="?",
+            help=(
+                "sensor channel number for second measurement channel "
+                "(1 - 255; 0 to disable)"
+            ),
+        )
         measurement_group.add_argument(
-            '-3',
-            '--third-channel',
+            "-3",
+            "--third-channel",
             type=channel_number,
             default=0,
             const=3,
-            nargs='?',
-            help=("sensor channel number for third measurement channel "
-                  "(1 - 255; 0 to disable)"))
+            nargs="?",
+            help=(
+                "sensor channel number for third measurement channel "
+                "(1 - 255; 0 to disable)"
+            ),
+        )
 
         adc_group = self.parser.add_argument_group(title="ADC")
 
-        adc_group.add_argument('-s',
-                               '--prescaler',
-                               type=int,
-                               choices=range(2, 128),
-                               metavar='2–127',
-                               default=2,
-                               required=False,
-                               help="Prescaler value")
-        adc_group.add_argument('-a',
-                               '--acquisition',
-                               type=int,
-                               choices=AdcAcquisitionTime.keys(),
-                               default=8,
-                               required=False,
-                               help="Acquisition time value")
-        adc_group.add_argument('-o',
-                               '--oversampling',
-                               type=int,
-                               choices=AdcOverSamplingRate.keys(),
-                               default=64,
-                               required=False,
-                               help="Oversampling rate value")
-        adc_group.add_argument('-v',
-                               '--voltage-reference',
-                               choices=AdcReference.keys(),
-                               default='VDD',
-                               required=False,
-                               help="Reference voltage")
+        adc_group.add_argument(
+            "-s",
+            "--prescaler",
+            type=int,
+            choices=range(2, 128),
+            metavar="2–127",
+            default=2,
+            required=False,
+            help="Prescaler value",
+        )
+        adc_group.add_argument(
+            "-a",
+            "--acquisition",
+            type=int,
+            choices=AdcAcquisitionTime.keys(),
+            default=8,
+            required=False,
+            help="Acquisition time value",
+        )
+        adc_group.add_argument(
+            "-o",
+            "--oversampling",
+            type=int,
+            choices=AdcOverSamplingRate.keys(),
+            default=64,
+            required=False,
+            help="Oversampling rate value",
+        )
+        adc_group.add_argument(
+            "-v",
+            "--voltage-reference",
+            choices=AdcReference.keys(),
+            default="VDD",
+            required=False,
+            help="Reference voltage",
+        )
 
         logging_group = self.parser.add_argument_group(title="Logging")
         logging_group.add_argument(
-            '--log',
-            choices=('debug', 'info', 'warning', 'error', 'critical'),
-            default='info',
+            "--log",
+            choices=("debug", "info", "warning", "error", "critical"),
+            default="info",
             required=False,
-            help="Minimum level of messages written to log")
+            help="Minimum level of messages written to log",
+        )
 
         self.args = self.parser.parse_args()
 
@@ -271,8 +316,11 @@ class CommandLineInterface():
 
         """
 
-        filename = Path(settings.measurement.output.filename
-                        ) if name is None else Path(name)
+        filename = (
+            Path(settings.measurement.output.filename)
+            if name is None
+            else Path(name)
+        )
         if not filename.suffix:
             filename = filename.with_suffix(".hdf5")
 
@@ -294,81 +342,111 @@ class CommandLineInterface():
 
         directory = settings.output_directory()
         filename = self.output_filename
-        timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+        timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         filepath = directory.joinpath(
-            f"{filename.stem}_{timestamp}{filename.suffix}")
+            f"{filename.stem}_{timestamp}{filename.suffix}"
+        )
 
         return filepath
 
     def _statusWords(self):
-        self.logger.info("STH Status Word: {}".format(
-            self.Can.node_status(MyToolItNetworkNr["STH1"])))
-        self.logger.info("STU Status Word: {}".format(
-            self.Can.node_status(MyToolItNetworkNr["STU1"])))
+        self.logger.info(
+            "STH Status Word: {}".format(
+                self.Can.node_status(MyToolItNetworkNr["STH1"])
+            )
+        )
+        self.logger.info(
+            "STU Status Word: {}".format(
+                self.Can.node_status(MyToolItNetworkNr["STU1"])
+            )
+        )
 
         status = self.Can.error_status(MyToolItNetworkNr["STH1"])
         if status.adc_overrun():
             self.bError = True
         self.logger.info(f"STH Error Word: {status}")
 
-        self.logger.info("STU Error Word: {}".format(
-            self.Can.error_status(MyToolItNetworkNr["STU1"])))
+        self.logger.info(
+            "STU Error Word: {}".format(
+                self.Can.error_status(MyToolItNetworkNr["STU1"])
+            )
+        )
 
     def _BlueToothStatistics(self):
-
         def log_statistics(node, node_description):
             send_counter = self.Can.BlueToothCmd(
-                MyToolItNetworkNr[node], SystemCommandBlueTooth["SendCounter"])
-            self.logger.info(f"Bluetooth send counter of {node_description}: "
-                             f"{send_counter}")
+                MyToolItNetworkNr[node], SystemCommandBlueTooth["SendCounter"]
+            )
+            self.logger.info(
+                f"Bluetooth send counter of {node_description}: {send_counter}"
+            )
             receive_counter = self.Can.BlueToothCmd(
                 MyToolItNetworkNr[node],
-                SystemCommandBlueTooth["ReceiveCounter"])
-            self.logger.info(f"Bluetooth receive counter of "
-                             f"{node_description}: {receive_counter}")
+                SystemCommandBlueTooth["ReceiveCounter"],
+            )
+            self.logger.info(
+                "Bluetooth receive counter of "
+                f"{node_description}: {receive_counter}"
+            )
 
             rssi = self.Can.BlueToothRssi(MyToolItNetworkNr[node])
             self.logger.info(f"RSSI of {node_description}: {rssi} dBm")
 
-        log_statistics('STH1', "sensor node")
-        log_statistics('STU1', "STU")
+        log_statistics("STH1", "sensor node")
+        log_statistics("STU1", "STU")
 
     def _RoutingInformationSthSend(self):
         self.iSthSendCounter = self.Can.RoutingInformationCmd(
-            MyToolItNetworkNr["STH1"], SystemCommandRouting["SendCounter"],
-            MyToolItNetworkNr["STU1"])
+            MyToolItNetworkNr["STH1"],
+            SystemCommandRouting["SendCounter"],
+            MyToolItNetworkNr["STU1"],
+        )
         self.logger.info(
-            f"Sensor node - Send counter (port STU): {self.iSthSendCounter}")
+            f"Sensor node - Send counter (port STU): {self.iSthSendCounter}"
+        )
         SendCounter = self.Can.RoutingInformationCmd(
-            MyToolItNetworkNr["STH1"], SystemCommandRouting["SendFailCounter"],
-            MyToolItNetworkNr["STU1"])
+            MyToolItNetworkNr["STH1"],
+            SystemCommandRouting["SendFailCounter"],
+            MyToolItNetworkNr["STU1"],
+        )
         self.logger.info(
-            f"Sensor node - Send fail counter (port STU): {SendCounter}")
+            f"Sensor node - Send fail counter (port STU): {SendCounter}"
+        )
         SendCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STH1"],
             SystemCommandRouting["SendLowLevelByteCounter"],
-            MyToolItNetworkNr["STU1"])
+            MyToolItNetworkNr["STU1"],
+        )
         self.logger.info(
-            f"Sensor node - Send byte counter (port STU): {SendCounter}")
+            f"Sensor node - Send byte counter (port STU): {SendCounter}"
+        )
 
     def _RoutingInformationSthReceive(self):
         ReceiveCounter = self.Can.RoutingInformationCmd(
-            MyToolItNetworkNr["STH1"], SystemCommandRouting["ReceiveCounter"],
-            MyToolItNetworkNr["STU1"])
+            MyToolItNetworkNr["STH1"],
+            SystemCommandRouting["ReceiveCounter"],
+            MyToolItNetworkNr["STU1"],
+        )
         self.logger.info(
-            f"Sensor node - Receive counter (port STU): {ReceiveCounter}")
+            f"Sensor node - Receive counter (port STU): {ReceiveCounter}"
+        )
         ReceiveFailCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STH1"],
             SystemCommandRouting["ReceiveFailCounter"],
-            MyToolItNetworkNr["STU1"])
-        self.logger.info("Sensor node - Receive fail counter (port STU): "
-                         f"{ReceiveFailCounter}")
+            MyToolItNetworkNr["STU1"],
+        )
+        self.logger.info(
+            "Sensor node - Receive fail counter (port STU): "
+            f"{ReceiveFailCounter}"
+        )
         ReceiveCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STH1"],
             SystemCommandRouting["ReceiveLowLevelByteCounter"],
-            MyToolItNetworkNr["STU1"])
+            MyToolItNetworkNr["STU1"],
+        )
         self.logger.info(
-            f"Sensor node - Receive byte counter (port STU): {ReceiveCounter}")
+            f"Sensor node - Receive byte counter (port STU): {ReceiveCounter}"
+        )
         return ReceiveFailCounter
 
     def _RoutingInformationSth(self):
@@ -378,40 +456,56 @@ class CommandLineInterface():
 
     def _RoutingInformationStuPortSpuSend(self):
         self.iStuSendCounter = self.Can.RoutingInformationCmd(
-            MyToolItNetworkNr["STU1"], SystemCommandRouting["SendCounter"],
-            MyToolItNetworkNr["SPU1"])
-        self.logger.info("STU1 - Send Counter(Port SPU1): " +
-                         str(self.iStuSendCounter))
+            MyToolItNetworkNr["STU1"],
+            SystemCommandRouting["SendCounter"],
+            MyToolItNetworkNr["SPU1"],
+        )
+        self.logger.info(
+            "STU1 - Send Counter(Port SPU1): " + str(self.iStuSendCounter)
+        )
         SendCounter = self.Can.RoutingInformationCmd(
-            MyToolItNetworkNr["STU1"], SystemCommandRouting["SendFailCounter"],
-            MyToolItNetworkNr["SPU1"])
-        self.logger.info("STU1 - Send Fail Counter(Port SPU1): " +
-                         str(SendCounter))
+            MyToolItNetworkNr["STU1"],
+            SystemCommandRouting["SendFailCounter"],
+            MyToolItNetworkNr["SPU1"],
+        )
+        self.logger.info(
+            "STU1 - Send Fail Counter(Port SPU1): " + str(SendCounter)
+        )
         SendCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STU1"],
             SystemCommandRouting["SendLowLevelByteCounter"],
-            MyToolItNetworkNr["SPU1"])
-        self.logger.info("STU1 - Send Byte Counter(Port SPU1): " +
-                         str(SendCounter))
+            MyToolItNetworkNr["SPU1"],
+        )
+        self.logger.info(
+            "STU1 - Send Byte Counter(Port SPU1): " + str(SendCounter)
+        )
 
     def _RoutingInformationStuPortSpuReceive(self):
         ReceiveCounter = self.Can.RoutingInformationCmd(
-            MyToolItNetworkNr["STU1"], SystemCommandRouting["ReceiveCounter"],
-            MyToolItNetworkNr["SPU1"])
-        self.logger.info("STU1 - Receive Counter(Port SPU1): " +
-                         str(ReceiveCounter))
+            MyToolItNetworkNr["STU1"],
+            SystemCommandRouting["ReceiveCounter"],
+            MyToolItNetworkNr["SPU1"],
+        )
+        self.logger.info(
+            "STU1 - Receive Counter(Port SPU1): " + str(ReceiveCounter)
+        )
         ReceiveFailCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STU1"],
             SystemCommandRouting["ReceiveFailCounter"],
-            MyToolItNetworkNr["SPU1"])
-        self.logger.info("STU1 - Receive Fail Counter(Port SPU1): " +
-                         str(ReceiveFailCounter))
+            MyToolItNetworkNr["SPU1"],
+        )
+        self.logger.info(
+            "STU1 - Receive Fail Counter(Port SPU1): "
+            + str(ReceiveFailCounter)
+        )
         ReceiveCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STU1"],
             SystemCommandRouting["ReceiveLowLevelByteCounter"],
-            MyToolItNetworkNr["SPU1"])
-        self.logger.info("STU1 - Receive Byte Counter(Port SPU1): " +
-                         str(ReceiveCounter))
+            MyToolItNetworkNr["SPU1"],
+        )
+        self.logger.info(
+            "STU1 - Receive Byte Counter(Port SPU1): " + str(ReceiveCounter)
+        )
         return ReceiveFailCounter
 
     def _RoutingInformationStuPortSpu(self):
@@ -421,40 +515,56 @@ class CommandLineInterface():
 
     def _RoutingInformationStuPortSthSend(self):
         iStuSendCounter = self.Can.RoutingInformationCmd(
-            MyToolItNetworkNr["STU1"], SystemCommandRouting["SendCounter"],
-            MyToolItNetworkNr["STH1"])
-        self.logger.info("STU1 - Send Counter(Port STH1): " +
-                         str(iStuSendCounter))
+            MyToolItNetworkNr["STU1"],
+            SystemCommandRouting["SendCounter"],
+            MyToolItNetworkNr["STH1"],
+        )
+        self.logger.info(
+            "STU1 - Send Counter(Port STH1): " + str(iStuSendCounter)
+        )
         SendCounter = self.Can.RoutingInformationCmd(
-            MyToolItNetworkNr["STU1"], SystemCommandRouting["SendFailCounter"],
-            MyToolItNetworkNr["STH1"])
-        self.logger.info("STU1 - Send Fail Counter(Port STH1): " +
-                         str(SendCounter))
+            MyToolItNetworkNr["STU1"],
+            SystemCommandRouting["SendFailCounter"],
+            MyToolItNetworkNr["STH1"],
+        )
+        self.logger.info(
+            "STU1 - Send Fail Counter(Port STH1): " + str(SendCounter)
+        )
         SendCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STU1"],
             SystemCommandRouting["SendLowLevelByteCounter"],
-            MyToolItNetworkNr["STH1"])
-        self.logger.info("STU1 - Send Byte Counter(Port STH1): " +
-                         str(SendCounter))
+            MyToolItNetworkNr["STH1"],
+        )
+        self.logger.info(
+            "STU1 - Send Byte Counter(Port STH1): " + str(SendCounter)
+        )
 
     def _RoutingInformationStuPortSthReceive(self):
         ReceiveCounter = self.Can.RoutingInformationCmd(
-            MyToolItNetworkNr["STU1"], SystemCommandRouting["ReceiveCounter"],
-            MyToolItNetworkNr["STH1"])
-        self.logger.info("STU1 - Receive Counter(Port STH1): " +
-                         str(ReceiveCounter))
+            MyToolItNetworkNr["STU1"],
+            SystemCommandRouting["ReceiveCounter"],
+            MyToolItNetworkNr["STH1"],
+        )
+        self.logger.info(
+            "STU1 - Receive Counter(Port STH1): " + str(ReceiveCounter)
+        )
         ReceiveFailCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STU1"],
             SystemCommandRouting["ReceiveFailCounter"],
-            MyToolItNetworkNr["STH1"])
-        self.logger.info("STU1 - Receive Fail Counter(Port STH1): " +
-                         str(ReceiveFailCounter))
+            MyToolItNetworkNr["STH1"],
+        )
+        self.logger.info(
+            "STU1 - Receive Fail Counter(Port STH1): "
+            + str(ReceiveFailCounter)
+        )
         ReceiveCounter = self.Can.RoutingInformationCmd(
             MyToolItNetworkNr["STU1"],
             SystemCommandRouting["ReceiveLowLevelByteCounter"],
-            MyToolItNetworkNr["STH1"])
-        self.logger.info("STU1 - Receive Byte Counter(Port STH1): " +
-                         str(ReceiveCounter))
+            MyToolItNetworkNr["STH1"],
+        )
+        self.logger.info(
+            "STU1 - Receive Byte Counter(Port STH1): " + str(ReceiveCounter)
+        )
         return ReceiveFailCounter
 
     def _RoutingInformationStuPortSth(self):
@@ -516,8 +626,8 @@ class CommandLineInterface():
         iAcquisitionTime = AdcAcquisitionTime[iAquistionTime]
         iOversampling = AdcOverSamplingRate[iOversampling]
         self.samplingRate = int(
-            calcSamplingRate(iPrescaler, iAcquisitionTime, iOversampling) +
-            0.5)
+            calcSamplingRate(iPrescaler, iAcquisitionTime, iOversampling) + 0.5
+        )
         self.iPrescaler = iPrescaler
         self.iAquistionTime = iAcquisitionTime
         self.iOversampling = iOversampling
@@ -537,20 +647,20 @@ class CommandLineInterface():
         self.iPacketLossTimeStamp = 0
         self.iGraphBlockSize = blockSize
         self.iGraphSampleInterval = sampleInterval
-        self.sMsgLoss = "Acceleration(" + str(format(0, '3.3f')) + "%)"
+        self.sMsgLoss = "Acceleration(" + str(format(0, "3.3f")) + "%)"
         self.GuiPackage = {"X": [], "Y": [], "Z": []}
 
     def vStuAddr(self, sStuAddr):
         self.sStuAddr = sStuAddr
 
     def guiProcessStop(self):
-        if hasattr(self, 'tSocket'):
+        if hasattr(self, "tSocket"):
             try:
                 self.vGraphSend(["Run", False])
             except (ConnectionAbortedError, OSError):
                 pass
             self.tSocket.close()
-        if hasattr(self, 'guiProcess'):
+        if hasattr(self, "guiProcess"):
             self.guiProcess.terminate()
             self.guiProcess.join()
 
@@ -570,7 +680,8 @@ class CommandLineInterface():
 
         self.guiProcess = multiprocessing.Process(
             target=vPlotter,
-            args=(self.iPloterSocketPort, self.logger.getEffectiveLevel()))
+            args=(self.iPloterSocketPort, self.logger.getEffectiveLevel()),
+        )
         self.guiProcess.start()
 
         # Wait until socket of GUI application is ready
@@ -578,10 +689,12 @@ class CommandLineInterface():
         while not connection_established:
             try:
                 self.logger.debug("Try to initialize socket")
-                self.tSocket = socket.socket(socket.AF_INET,
-                                             socket.SOCK_STREAM)
+                self.tSocket = socket.socket(
+                    socket.AF_INET, socket.SOCK_STREAM
+                )
                 self.tSocket.connect(
-                    (self.sPloterSocketHost, self.iPloterSocketPort))
+                    (self.sPloterSocketHost, self.iPloterSocketPort)
+                )
                 connection_established = True
             except ConnectionError:
                 sleep(0.1)
@@ -601,12 +714,10 @@ class CommandLineInterface():
         self.vGraphSend(["Plot", True])
 
     def update_graph_data(self, x=0, y=0, z=0):
-
         timeStampNow = int(round(time() * 1000))
         elapsed_time_ms = timeStampNow - self.tDataPointTimeStamp
         # Only add a single data sample for each part of the current block
-        if (elapsed_time_ms <=
-                self.iGraphSampleInterval / self.iGraphBlockSize):
+        if elapsed_time_ms <= self.iGraphSampleInterval / self.iGraphBlockSize:
             return
 
         self.tDataPointTimeStamp = timeStampNow
@@ -632,9 +743,11 @@ class CommandLineInterface():
             self.iMsgCounterLast += 1
             self.iMsgCounterLast %= 256
         if self.iMsgCounterLast != msgCounter:
-            iLost = (msgCounter - self.iMsgCounterLast
-                     if msgCounter > self.iMsgCounterLast else 0xff -
-                     self.iMsgCounterLast + msgCounter)
+            iLost = (
+                msgCounter - self.iMsgCounterLast
+                if msgCounter > self.iMsgCounterLast
+                else 0xFF - self.iMsgCounterLast + msgCounter
+            )
             self.iMsgLoss += iLost
             self.iMsgsTotal += iLost
             if 0 > iLost:
@@ -653,7 +766,8 @@ class CommandLineInterface():
                 self.sMsgLoss = sMsgLoss
                 try:
                     self.tSocket.sendall(
-                        tArray2Binary(["diagramName", self.sMsgLoss]))
+                        tArray2Binary(["diagramName", self.sMsgLoss])
+                    )
                 except (ConnectionAbortedError, ConnectionResetError):
                     # Closing the plotter window quits the plotter process and
                     # there might be no socket to send data to after that
@@ -671,7 +785,9 @@ class CommandLineInterface():
             self.Can.reset_node("STU1")
             self.vStuAddr(
                 int_to_mac_address(
-                    self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"])))
+                    self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"])
+                )
+            )
             self.guiProcessStop()
         except KeyboardInterrupt:
             self.KeyBoardInterrupt = True
@@ -697,7 +813,8 @@ class CommandLineInterface():
 
         try:
             acceleration_range_g = int(
-                self.Can.read_acceleration_sensor_range_in_g())
+                self.Can.read_acceleration_sensor_range_in_g()
+            )
             success = True
         except ValueError:
             pass
@@ -708,11 +825,16 @@ class CommandLineInterface():
         """Update sensor configuration in the connected sensor device"""
 
         # Use specified sensor configuration
-        self.Can.write_sensor_config(*[
-            1 if sensor is None or sensor <= 0 else sensor
-            for sensor in (self.sensor.first, self.sensor.second,
-                           self.sensor.third)
-        ])
+        self.Can.write_sensor_config(
+            *[
+                1 if sensor is None or sensor <= 0 else sensor
+                for sensor in (
+                    self.sensor.first,
+                    self.sensor.second,
+                    self.sensor.third,
+                )
+            ]
+        )
 
     def vDataAquisition(self):
         if self.KeyBoardInterrupt:
@@ -720,25 +842,38 @@ class CommandLineInterface():
 
         try:
             if self.Can.bConnected:
-                self.Can.ConfigAdc(MyToolItNetworkNr["STH1"], self.iPrescaler,
-                                   self.iAquistionTime, self.iOversampling,
-                                   AdcReference[self.sAdcRef])
+                self.Can.ConfigAdc(
+                    MyToolItNetworkNr["STH1"],
+                    self.iPrescaler,
+                    self.iAquistionTime,
+                    self.iOversampling,
+                    AdcReference[self.sAdcRef],
+                )
                 # Initialize HDF output
                 self.storage = Storage(self.get_output_filepath())
                 # We need the acceleration range later to convert the ADC
                 # acceleration values into multiples of g₀
-                self.acceleration_range_g, success = (
-                    self.read_acceleration_range())
+                (
+                    self.acceleration_range_g,
+                    success,
+                ) = self.read_acceleration_range()
                 if not success:
                     print(
-                        "Warning: Unable to determine sensor range from "
-                        "EEPROM value — Assuming ± 100 g sensor",
-                        file=stderr)
+                        (
+                            "Warning: Unable to determine sensor range from "
+                            "EEPROM value — Assuming ± 100 g sensor"
+                        ),
+                        file=stderr,
+                    )
                 if self.acceleration_range_g < 1:
                     print(
-                        f"Warning: Sensor range “{self.acceleration_range_g}” "
-                        "below 1 g — Using range 200 instead (± 100 g sensor)",
-                        file=stderr)
+                        (
+                            "Warning: Sensor range"
+                            f" “{self.acceleration_range_g}” below 1 g — Using"
+                            " range 200 instead (± 100 g sensor)"
+                        ),
+                        file=stderr,
+                    )
                     self.acceleration_range_g = 200
 
                 # ICOc does not use the network class to read the streaming
@@ -759,9 +894,9 @@ class CommandLineInterface():
         if self.Can.RunReadThread:
             self.__exit__()
 
-    def get_can_error_message(self,
-                              status: int,
-                              prefix: Optional[str] = None) -> str:
+    def get_can_error_message(
+        self, status: int, prefix: Optional[str] = None
+    ) -> str:
         """Retrieve a human readable CAN error message
 
         Parameters
@@ -788,21 +923,25 @@ class CommandLineInterface():
         """Read streaming messages"""
         self.logger.debug("Add CAN read event")
         receive_event = CreateEvent(None, 0, 0, None)
-        status = self.Can.pcan.SetValue(self.Can.m_PcanHandle,
-                                        PCAN_RECEIVE_EVENT, int(receive_event))
+        status = self.Can.pcan.SetValue(
+            self.Can.m_PcanHandle, PCAN_RECEIVE_EVENT, int(receive_event)
+        )
 
         if status != PCAN_ERROR_OK:
             error_message = self.get_can_error_message(
-                status, "Unable to set CAN receive event")
+                status, "Unable to set CAN receive event"
+            )
             raise Exception(error_message)
 
         TIMEOUT_SECONDS = 4
         time_last_read = time()
         time_since_read = 0
         self.logger.debug("Wait for CAN data")
-        while (self.Can.get_elapsed_time() < self.aquireEndTime
-               and time_since_read <= TIMEOUT_SECONDS
-               and self.guiProcess.is_alive()):
+        while (
+            self.Can.get_elapsed_time() < self.aquireEndTime
+            and time_since_read <= TIMEOUT_SECONDS
+            and self.guiProcess.is_alive()
+        ):
             if WaitForSingleObject(receive_event, 50) == WAIT_OBJECT_0:
                 self.read_streaming_messages()
                 time_last_read = time()
@@ -810,9 +949,12 @@ class CommandLineInterface():
 
         if time_since_read >= TIMEOUT_SECONDS:
             print(
-                "Exiting program since no streaming data was received "
-                f"in the last {round(time_since_read, 2)} seconds",
-                file=stderr)
+                (
+                    "Exiting program since no streaming data was received "
+                    f"in the last {round(time_since_read, 2)} seconds"
+                ),
+                file=stderr,
+            )
 
         self.Can.pcan.SetValue(self.Can.m_PcanHandle, PCAN_RECEIVE_EVENT, 0)
 
@@ -826,7 +968,8 @@ class CommandLineInterface():
             status = self.read_streaming_message()
             if status not in {PCAN_ERROR_OK, PCAN_ERROR_QRCVEMPTY}:
                 error_message = self.get_can_error_message(
-                    status, "Unable to read streaming message")
+                    status, "Unable to read streaming message"
+                )
                 raise Exception(error_message)
 
     def read_streaming_message(self):
@@ -834,8 +977,11 @@ class CommandLineInterface():
 
         status, message, timestamp = self.Can.pcan.Read(self.Can.m_PcanHandle)
         if status == PCAN_ERROR_OK:
-            timestamp_ms = timestamp.millis_overflow * (
-                2**32) + timestamp.millis + timestamp.micros / 1000
+            timestamp_ms = (
+                timestamp.millis_overflow * (2**32)
+                + timestamp.millis
+                + timestamp.micros / 1000
+            )
             if message.ID == self.AccAckExpected.ID:
                 self.update_packet_loss(message.DATA[1])
                 self.update_acceleration_data(message.DATA, timestamp_ms)
@@ -853,8 +999,9 @@ class CommandLineInterface():
             # the acceleration table should exist. Otherwise we would not be
             # able to add the metadata to the table.
             sensor_range = self.acceleration_range_g / 2
-            self.storage.add_acceleration_meta("Sensor_Range",
-                                               f"± {sensor_range} g₀")
+            self.storage.add_acceleration_meta(
+                "Sensor_Range", f"± {sensor_range} g₀"
+            )
 
             self.__exit__()
         except KeyboardInterrupt:
@@ -874,19 +1021,30 @@ class CommandLineInterface():
         accFormat.b.bNumber2 = int(bool(self.sensor.second))
         accFormat.b.bNumber3 = int(bool(self.sensor.third))
         accFormat.b.u3DataSets = self.tAccDataFormat
-        cmd = self.Can.CanCmd(MyToolItBlock["Streaming"],
-                              MyToolItStreaming["Data"], 0, 0)
-        self.AccAckExpected = self.Can.CanMessage20(cmd,
-                                                    MyToolItNetworkNr["STH1"],
-                                                    MyToolItNetworkNr["SPU1"],
-                                                    [accFormat.asbyte])
-        cmd = self.Can.CanCmd(MyToolItBlock["Streaming"],
-                              MyToolItStreaming["Data"], 1, 0)
-        message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
-                                        MyToolItNetworkNr["STH1"],
-                                        [accFormat.asbyte])
-        self.logger.info("MsgId/Subpayload(Acc): " + hex(message.ID) + "/" +
-                         hex(accFormat.asbyte))
+        cmd = self.Can.CanCmd(
+            MyToolItBlock["Streaming"], MyToolItStreaming["Data"], 0, 0
+        )
+        self.AccAckExpected = self.Can.CanMessage20(
+            cmd,
+            MyToolItNetworkNr["STH1"],
+            MyToolItNetworkNr["SPU1"],
+            [accFormat.asbyte],
+        )
+        cmd = self.Can.CanCmd(
+            MyToolItBlock["Streaming"], MyToolItStreaming["Data"], 1, 0
+        )
+        message = self.Can.CanMessage20(
+            cmd,
+            MyToolItNetworkNr["SPU1"],
+            MyToolItNetworkNr["STH1"],
+            [accFormat.asbyte],
+        )
+        self.logger.info(
+            "MsgId/Subpayload(Acc): "
+            + hex(message.ID)
+            + "/"
+            + hex(accFormat.asbyte)
+        )
         endTime = self.Can.get_elapsed_time() + 4000
         while ack is None and self.Can.get_elapsed_time() < endTime:
             self.Can.WriteFrame(message)
@@ -900,7 +1058,8 @@ class CommandLineInterface():
         currentTime = self.Can.get_elapsed_time()
         if ack is None:
             self.logger.error(
-                f"No acknowledge received from STH “{self.iAddress}”")
+                f"No acknowledge received from STH “{self.iAddress}”"
+            )
             self.aquireEndTime = currentTime
         elif self.iRunTime == 0:
             self.aquireEndTime = currentTime + (1 << 32)
@@ -913,35 +1072,41 @@ class CommandLineInterface():
         counter = data[1]
 
         axes = [
-            axis for axis, activated in (('x', self.sensor.first),
-                                         ('y', self.sensor.second),
-                                         ('z', self.sensor.third)) if activated
+            axis
+            for axis, activated in (
+                ("x", self.sensor.first),
+                ("y", self.sensor.second),
+                ("z", self.sensor.third),
+            )
+            if activated
         ]
 
         if len(axes) <= 0:
             return
 
-        convert_acceleration = partial(convert_raw_to_g,
-                                       max_value=self.acceleration_range_g)
+        convert_acceleration = partial(
+            convert_raw_to_g, max_value=self.acceleration_range_g
+        )
         number_values = 3 if self.tAccDataFormat == DataSets[3] else len(axes)
         values = [
-            convert_acceleration(byte_list_to_int(data[start:start +
-                                                       2])).magnitude
+            convert_acceleration(
+                byte_list_to_int(data[start : start + 2])
+            ).magnitude
             for start in range(2, 2 + number_values * 2, 2)
         ]
 
         if self.tAccDataFormat == DataSets[1]:
             axis_values = {axis: value for axis, value in zip(axes, values)}
-            self.storage.add_acceleration(values=axis_values,
-                                          counter=counter,
-                                          timestamp=timestamp)
+            self.storage.add_acceleration(
+                values=axis_values, counter=counter, timestamp=timestamp
+            )
             self.update_graph_data(**axis_values)
         elif self.tAccDataFormat == DataSets[3]:
             axis = axes[0]
             for value in values:
-                self.storage.add_acceleration(values={axis: value},
-                                              counter=counter,
-                                              timestamp=timestamp)
+                self.storage.add_acceleration(
+                    values={axis: value}, counter=counter, timestamp=timestamp
+                )
             self.update_graph_data(**{axis: values[0]})
         else:
             self.logger.error("Wrong Ack format")
@@ -949,18 +1114,22 @@ class CommandLineInterface():
     def ReadMessage(self):
         status, message, timestamp = self.Can.pcan.Read(self.Can.m_PcanHandle)
         if status == PCAN_ERROR_OK:
-            peakCanTimeStamp = timestamp.millis_overflow * (
-                2**32) + timestamp.millis + timestamp.micros / 1000
+            peakCanTimeStamp = (
+                timestamp.millis_overflow * (2**32)
+                + timestamp.millis
+                + timestamp.micros / 1000
+            )
             result = {
                 "CanMsg": message,
                 "PcTime": self.Can.get_elapsed_time(),
-                "PeakCanTime": peakCanTimeStamp
+                "PeakCanTime": peakCanTimeStamp,
             }
             return result
 
         if status != PCAN_ERROR_QRCVEMPTY:
             error_message = self.get_can_error_message(
-                status, "Unexpected CAN status value")
+                status, "Unexpected CAN status value"
+            )
             self.logger.error(error_message)
             print(error_message, file=stderr)
             raise Exception(error_message)
@@ -987,12 +1156,13 @@ class CommandLineInterface():
 
     def vRunConsoleAutoConnect(self):
         if self.iAddress not in {0, "0", "0x0"}:
-            self.Can.bBlueToothConnectPollingAddress(MyToolItNetworkNr["STU1"],
-                                                     self.iAddress)
+            self.Can.bBlueToothConnectPollingAddress(
+                MyToolItNetworkNr["STU1"], self.iAddress
+            )
         else:
-            self.Can.bBlueToothConnectPollingName(MyToolItNetworkNr["STU1"],
-                                                  self.sth_name,
-                                                  log=False)
+            self.Can.bBlueToothConnectPollingName(
+                MyToolItNetworkNr["STU1"], self.sth_name, log=False
+            )
         if self.Can.bConnected:
             self.update_sensor_config()
             self.vDataAquisition()

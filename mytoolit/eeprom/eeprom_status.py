@@ -48,13 +48,12 @@ class EEPROMStatus:
         """
 
         if isinstance(status, str):
-
             if status == "Initialized":
-                self.value = 0xac
+                self.value = 0xAC
                 return
 
             if status == "Locked":
-                self.value = 0xca
+                self.value = 0xCA
                 return
 
             if status == "Uninitialized":
@@ -93,8 +92,11 @@ class EEPROMStatus:
 
         value = self.value
 
-        description = "Initialized" if self.is_initialized() else (
-            "Locked" if self.is_locked() else "Uninitialized")
+        description = (
+            "Initialized"
+            if self.is_initialized()
+            else ("Locked" if self.is_locked() else "Uninitialized")
+        )
 
         return f"{description} (0x{value:02x})"
 
@@ -121,7 +123,7 @@ class EEPROMStatus:
 
         """
 
-        return self.value == 0xca
+        return self.value == 0xCA
 
     def is_initialized(self) -> bool:
         """Check if the EEPROM is initialized
@@ -146,12 +148,12 @@ class EEPROMStatus:
 
         """
 
-        return self.value == 0xac
+        return self.value == 0xAC
 
 
 # -- Main ---------------------------------------------------------------------
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     from doctest import testmod
 
     testmod()

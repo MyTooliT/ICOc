@@ -22,17 +22,20 @@ class Signature:
 
         self.signature = Drawing(400, 30)
 
-        style = get_style_sheet()['Normal']
+        style = get_style_sheet()["Normal"]
 
         indent = 180
         line_start = indent + 50
         line_end = line_start + 150
         self.signature.add(
-            String(indent,
-                   0,
-                   'Signature:',
-                   fontName=style.fontName,
-                   fontSize=style.fontSize))
+            String(
+                indent,
+                0,
+                "Signature:",
+                fontName=style.fontName,
+                fontSize=style.fontSize,
+            )
+        )
         self.signature.add(Line(line_start, 0, line_end, 0))
 
     def to_flowable(self) -> Drawing:
@@ -77,9 +80,9 @@ class CheckBoxList:
         self.styles = get_style_sheet()
         self.text_fields = text_fields
 
-    def add_checkbox_item(self,
-                          text: str,
-                          tooltip: Optional[str] = None) -> None:
+    def add_checkbox_item(
+        self, text: str, tooltip: Optional[str] = None
+    ) -> None:
         """Add a checkbox item to the checkbox list
 
         Parameters
@@ -107,7 +110,7 @@ class CheckBoxList:
 
         """
 
-        title = Paragraph(self.title, style=self.styles['Heading3'])
+        title = Paragraph(self.title, style=self.styles["Heading3"])
 
         # Somehow the text columns of a table will contain a lot of
         # trailing whitespace, if some (other) cells contain non-textual
@@ -163,7 +166,8 @@ class CheckBox(Flowable):
         """
 
         return "☑️{}".format(
-            f" Tooltip: {self.tooltip}" if self.tooltip is not None else "")
+            f" Tooltip: {self.tooltip}" if self.tooltip is not None else ""
+        )
 
     def draw(self) -> None:
         """Draw the checkbox on the canvas"""
@@ -171,12 +175,14 @@ class CheckBox(Flowable):
         self.canv.saveState()
 
         form = self.canv.acroForm
-        form.checkbox(checked=False,
-                      buttonStyle='check',
-                      fillColor=white,
-                      tooltip=self.tooltip,
-                      relative=True,
-                      size=self.boxsize)
+        form.checkbox(
+            checked=False,
+            buttonStyle="check",
+            fillColor=white,
+            tooltip=self.tooltip,
+            relative=True,
+            size=self.boxsize,
+        )
 
         self.canv.restoreState()
 
@@ -221,7 +227,8 @@ class TextField(Flowable):
         """
 
         return "📝{}".format(
-            f" Tooltip: {self.tooltip}" if self.tooltip is not None else "")
+            f" Tooltip: {self.tooltip}" if self.tooltip is not None else ""
+        )
 
     def draw(self) -> None:
         """Draw the text box on the canvas"""
@@ -229,22 +236,25 @@ class TextField(Flowable):
         self.canv.saveState()
 
         form = self.canv.acroForm
-        style = self.styles['Normal']
-        form.textfield(x=self.indent,
-                       fontName=style.fontName,
-                       fontSize=style.fontSize,
-                       fillColor=white,
-                       tooltip=self.tooltip,
-                       relative=True,
-                       borderWidth=0.5,
-                       width=self.width,
-                       height=self.height)
+        style = self.styles["Normal"]
+        form.textfield(
+            x=self.indent,
+            fontName=style.fontName,
+            fontSize=style.fontSize,
+            fillColor=white,
+            tooltip=self.tooltip,
+            relative=True,
+            borderWidth=0.5,
+            width=self.width,
+            height=self.height,
+        )
 
         self.canv.restoreState()
 
 
 # -- Main ---------------------------------------------------------------------
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     from doctest import testmod
+
     testmod()

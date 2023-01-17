@@ -77,9 +77,9 @@ class TestNode(TestCase):
         cls.add_attribute("EEPROM Status", "{cls.eeprom_status}", pdf=False)
         cls.add_attribute("Name", "{cls.name}")
         cls.add_attribute("Status", "{cls.status}")
-        cls.add_attribute("Production Date",
-                          "{cls.production_date}",
-                          pdf=False)
+        cls.add_attribute(
+            "Production Date", "{cls.production_date}", pdf=False
+        )
         cls.add_attribute("GTIN", "{cls.gtin}", pdf=False)
         cls.add_attribute("Product Name", "{cls.product_name}", pdf=False)
         cls.add_attribute("Batch Number", "{cls.batch_number}", pdf=False)
@@ -89,21 +89,21 @@ class TestNode(TestCase):
         cls.add_attribute("Firmware Version", "{cls.firmware_version}")
         cls.add_attribute("Release Name", "{cls.release_name}", pdf=False)
         cls.add_attribute("OEM Data", "{cls.oem_data}", pdf=False)
-        cls.add_attribute("Power On Cycles",
-                          "{cls.power_on_cycles}",
-                          pdf=False)
-        cls.add_attribute("Power Off Cycles",
-                          "{cls.power_off_cycles}",
-                          pdf=False)
-        cls.add_attribute("Under Voltage Counter",
-                          "{cls.under_voltage_counter}",
-                          pdf=False)
-        cls.add_attribute("Watchdog Reset Counter",
-                          "{cls.watchdog_reset_counter}",
-                          pdf=False)
-        cls.add_attribute("Operating Time",
-                          "{cls.operating_time} s",
-                          pdf=False)
+        cls.add_attribute(
+            "Power On Cycles", "{cls.power_on_cycles}", pdf=False
+        )
+        cls.add_attribute(
+            "Power Off Cycles", "{cls.power_off_cycles}", pdf=False
+        )
+        cls.add_attribute(
+            "Under Voltage Counter", "{cls.under_voltage_counter}", pdf=False
+        )
+        cls.add_attribute(
+            "Watchdog Reset Counter", "{cls.watchdog_reset_counter}", pdf=False
+        )
+        cls.add_attribute(
+            "Operating Time", "{cls.operating_time} s", pdf=False
+        )
 
         # Add a basic PDF report
         # Subclasses should overwrite this attribute, if you want to change
@@ -128,15 +128,15 @@ class TestNode(TestCase):
         """Print general information and add it to PDF report"""
 
         now = datetime.now()
-        date = now.strftime('%Y-%m-%d')
+        date = now.strftime("%Y-%m-%d")
         time = now.strftime("%H:%M:%S")
 
         operator = settings.operator.name
 
         attributes = [
-            SimpleNamespace(description="ICOc Version",
-                            value=__version__,
-                            pdf=True),
+            SimpleNamespace(
+                description="ICOc Version", value=__version__, pdf=True
+            ),
             SimpleNamespace(description="Date", value=date, pdf=True),
             SimpleNamespace(description="Time", value=time, pdf=True),
             SimpleNamespace(description="Operator", value=operator, pdf=True),
@@ -178,9 +178,11 @@ class TestNode(TestCase):
             return
 
         max_length_description = max(
-            [len(attribute.description) for attribute in attributes])
+            [len(attribute.description) for attribute in attributes]
+        )
         max_length_value = max(
-            [len(attribute.value) for attribute in attributes])
+            [len(attribute.value) for attribute in attributes]
+        )
 
         # Print attributes to standard output
         print("\n")
@@ -189,16 +191,19 @@ class TestNode(TestCase):
         print("—" * len(header))
 
         for attribute in attributes:
-            print(f"{attribute.description:{max_length_description}} " +
-                  f"{attribute.value:>{max_length_value}}")
+            print(
+                f"{attribute.description:{max_length_description}} "
+                + f"{attribute.value:>{max_length_value}}"
+            )
 
         # Add attributes to PDF
         attributes_pdf = [
             attribute for attribute in attributes if attribute.pdf
         ]
         for attribute in attributes_pdf:
-            cls.report.add_attribute(attribute.description, attribute.value,
-                                     node_data)
+            cls.report.add_attribute(
+                attribute.description, attribute.value, node_data
+            )
 
     @classmethod
     def add_attribute(cls, name: str, value: object, pdf: bool = True) -> None:
@@ -219,7 +224,8 @@ class TestNode(TestCase):
         """
 
         cls.possible_attributes.append(
-            SimpleNamespace(description=name, value=str(value), pdf=pdf))
+            SimpleNamespace(description=name, value=str(value), pdf=pdf)
+        )
 
     def setUp(self):
         """Set up hardware before a single test case"""
@@ -298,17 +304,26 @@ class TestNode(TestCase):
         # (the notifier in) the network class already.
         state = await self.can.get_state(node)
 
-        expected_state = State(mode='Get',
-                               location='Application',
-                               state='Operating')
+        expected_state = State(
+            mode="Get", location="Application", state="Operating"
+        )
 
         self.assertEqual(
-            expected_state, state,
-            f"Expected state “{expected_state}” does not match "
-            f"received state “{state}”")
+            expected_state,
+            state,
+            (
+                f"Expected state “{expected_state}” does not match "
+                f"received state “{state}”"
+            ),
+        )
 
-    def _test_firmware_flash(self, node: str, flash_location: Union[str, Path],
-                             programmmer_serial_number: int, chip: str):
+    def _test_firmware_flash(
+        self,
+        node: str,
+        flash_location: Union[str, Path],
+        programmmer_serial_number: int,
+        chip: str,
+    ):
         """Upload bootloader and application into node
 
         Parameters
@@ -330,16 +345,20 @@ class TestNode(TestCase):
 
         repository_root = Path(__file__).parent.parent.parent.parent
         image_filepath = repository_root / flash_location
-        self.assertTrue(image_filepath.is_file(),
-                        f"Firmware file {image_filepath} does not exist")
+        self.assertTrue(
+            image_filepath.is_file(),
+            f"Firmware file {image_filepath} does not exist",
+        )
 
-        commander = Commander(serial_number=programmmer_serial_number,
-                              chip=chip)
+        commander = Commander(
+            serial_number=programmmer_serial_number, chip=chip
+        )
 
         commander.upload_flash(image_filepath)
 
-    async def _test_eeprom_product_data(self, node: Node,
-                                        config: DynaBox) -> None:
+    async def _test_eeprom_product_data(
+        self, node: Node, config: DynaBox
+    ) -> None:
         """Test if reading and writing the product data EEPROM page works
 
         Parameters
@@ -366,35 +385,45 @@ class TestNode(TestCase):
         await self.can.write_eeprom_gtin(gtin, receiver)
         cls.gtin = await self.can.read_eeprom_gtin(receiver)
         self.assertEqual(
-            gtin, cls.gtin,
-            f"Written GTIN “{gtin}” does not match read GTIN “{cls.gtin}”")
+            gtin,
+            cls.gtin,
+            f"Written GTIN “{gtin}” does not match read GTIN “{cls.gtin}”",
+        )
 
         # ====================
         # = Hardware Version =
         # ====================
 
         hardware_version = config.hardware_version
-        await self.can.write_eeprom_hardware_version(hardware_version,
-                                                     receiver)
+        await self.can.write_eeprom_hardware_version(
+            hardware_version, receiver
+        )
         cls.hardware_version = await self.can.read_eeprom_hardware_version(
-            receiver)
+            receiver
+        )
         self.assertEqual(
-            hardware_version, f"{cls.hardware_version}",
-            f"Written hardware version “{hardware_version}” does not " +
-            f"match read hardware version “{cls.hardware_version}”")
+            hardware_version,
+            f"{cls.hardware_version}",
+            f"Written hardware version “{hardware_version}” does not "
+            + f"match read hardware version “{cls.hardware_version}”",
+        )
 
         # ====================
         # = Firmware Version =
         # ====================
 
-        await self.can.write_eeprom_firmware_version(cls.firmware_version,
-                                                     receiver)
-        firmware_version = await self.can.read_eeprom_firmware_version(receiver
-                                                                       )
+        await self.can.write_eeprom_firmware_version(
+            cls.firmware_version, receiver
+        )
+        firmware_version = await self.can.read_eeprom_firmware_version(
+            receiver
+        )
         self.assertEqual(
-            f"{cls.firmware_version}", f"{firmware_version}",
-            f"Written firmware version “{cls.firmware_version}” does not " +
-            f"match read firmware version “{firmware_version}”")
+            f"{cls.firmware_version}",
+            f"{firmware_version}",
+            f"Written firmware version “{cls.firmware_version}” does not "
+            + f"match read firmware version “{firmware_version}”",
+        )
 
         # ================
         # = Release Name =
@@ -407,9 +436,11 @@ class TestNode(TestCase):
         await self.can.write_eeprom_release_name(release_name, receiver)
         cls.release_name = await self.can.read_eeprom_release_name(receiver)
         self.assertEqual(
-            release_name, cls.release_name,
-            f"Written firmware release name “{release_name}” does not " +
-            f"match read firmware release name “{cls.release_name}”")
+            release_name,
+            cls.release_name,
+            f"Written firmware release name “{release_name}” does not "
+            + f"match read firmware release name “{cls.release_name}”",
+        )
 
         # =================
         # = Serial Number =
@@ -419,9 +450,11 @@ class TestNode(TestCase):
         await self.can.write_eeprom_serial_number(serial_number, receiver)
         cls.serial_number = await self.can.read_eeprom_serial_number(receiver)
         self.assertEqual(
-            serial_number, cls.serial_number,
-            f"Written serial number “{serial_number}” does not " +
-            f"match read serial number “{cls.serial_number}”")
+            serial_number,
+            cls.serial_number,
+            f"Written serial number “{serial_number}” does not "
+            + f"match read serial number “{cls.serial_number}”",
+        )
 
         # ================
         # = Product Name =
@@ -431,9 +464,11 @@ class TestNode(TestCase):
         await self.can.write_eeprom_product_name(product_name, receiver)
         cls.product_name = await self.can.read_eeprom_product_name(receiver)
         self.assertEqual(
-            product_name, cls.product_name,
-            f"Written product name “{product_name}” does not " +
-            f"match read product name “{cls.product_name}”")
+            product_name,
+            cls.product_name,
+            f"Written product name “{product_name}” does not "
+            + f"match read product name “{cls.product_name}”",
+        )
 
         # ============
         # = OEM Data =
@@ -443,17 +478,20 @@ class TestNode(TestCase):
         await self.can.write_eeprom_oem_data(oem_data, receiver)
         oem_data_list = await self.can.read_eeprom_oem_data(receiver)
         self.assertListEqual(
-            oem_data, oem_data_list,
-            f"Written OEM data “{oem_data}” does not " +
-            f"match read OEM data “{oem_data_list}”")
+            oem_data,
+            oem_data_list,
+            f"Written OEM data “{oem_data}” does not "
+            + f"match read OEM data “{oem_data_list}”",
+        )
         # We currently store the data in text format, to improve the
         # readability of null bytes in the shell. Please notice, that this will
         # not always work (depending on the binary data stored in EEPROM
         # region).
-        cls.oem_data = ''.join(map(chr, oem_data_list)).replace('\x00', '')
+        cls.oem_data = "".join(map(chr, oem_data_list)).replace("\x00", "")
 
-    async def _test_eeprom_statistics(self, node: Node, production_date: date,
-                                      batch_number: int) -> None:
+    async def _test_eeprom_statistics(
+        self, node: Node, production_date: date, batch_number: int
+    ) -> None:
         """Test if reading and writing the statistics EEPROM page works
 
         For this purpose this method writes (default) values into the EEPROM,
@@ -483,23 +521,30 @@ class TestNode(TestCase):
         power_on_cycles = 0
         await self.can.write_eeprom_power_on_cycles(power_on_cycles, receiver)
         cls.power_on_cycles = await self.can.read_eeprom_power_on_cycles(
-            receiver)
+            receiver
+        )
         self.assertEqual(
-            power_on_cycles, cls.power_on_cycles,
-            f"Written power on cycle value “{power_on_cycles}” " +
-            "does not match read power on cycle value " +
-            f"“{cls.power_on_cycles}”")
+            power_on_cycles,
+            cls.power_on_cycles,
+            f"Written power on cycle value “{power_on_cycles}” "
+            + "does not match read power on cycle value "
+            + f"“{cls.power_on_cycles}”",
+        )
 
         power_off_cycles = 0
-        await self.can.write_eeprom_power_off_cycles(power_off_cycles,
-                                                     receiver)
+        await self.can.write_eeprom_power_off_cycles(
+            power_off_cycles, receiver
+        )
         cls.power_off_cycles = await self.can.read_eeprom_power_off_cycles(
-            receiver)
+            receiver
+        )
         self.assertEqual(
-            power_off_cycles, cls.power_off_cycles,
-            f"Written power off cycle value “{power_off_cycles}” " +
-            "does not match read power off cycle value " +
-            f"“{cls.power_off_cycles}”")
+            power_off_cycles,
+            cls.power_off_cycles,
+            f"Written power off cycle value “{power_off_cycles}” "
+            + "does not match read power off cycle value "
+            + f"“{cls.power_off_cycles}”",
+        )
 
         # ==================
         # = Operating Time =
@@ -507,12 +552,15 @@ class TestNode(TestCase):
 
         operating_time = 0
         await self.can.write_eeprom_operating_time(operating_time, receiver)
-        cls.operating_time = (await
-                              self.can.read_eeprom_operating_time(receiver))
+        cls.operating_time = await self.can.read_eeprom_operating_time(
+            receiver
+        )
         self.assertEqual(
-            operating_time, cls.operating_time,
-            f"Written operating time “{operating_time}” " +
-            "does not match read operating time “{cls.operating_time}”")
+            operating_time,
+            cls.operating_time,
+            f"Written operating time “{operating_time}” "
+            + "does not match read operating time “{cls.operating_time}”",
+        )
 
         # =========================
         # = Under Voltage Counter =
@@ -520,14 +568,18 @@ class TestNode(TestCase):
 
         under_voltage_counter = 0
         await self.can.write_eeprom_under_voltage_counter(
-            under_voltage_counter, receiver)
+            under_voltage_counter, receiver
+        )
         cls.under_voltage_counter = (
-            await self.can.read_eeprom_under_voltage_counter(receiver))
+            await self.can.read_eeprom_under_voltage_counter(receiver)
+        )
         self.assertEqual(
-            under_voltage_counter, cls.under_voltage_counter,
-            f"Written under voltage counter value “{under_voltage_counter}” " +
-            "does not match read under voltage counter value " +
-            f"“{cls.under_voltage_counter}”")
+            under_voltage_counter,
+            cls.under_voltage_counter,
+            f"Written under voltage counter value “{under_voltage_counter}” "
+            + "does not match read under voltage counter value "
+            + f"“{cls.under_voltage_counter}”",
+        )
 
         # ==========================
         # = Watchdog Reset Counter =
@@ -535,26 +587,35 @@ class TestNode(TestCase):
 
         watchdog_reset_counter = 0
         await self.can.write_eeprom_watchdog_reset_counter(
-            watchdog_reset_counter, receiver)
+            watchdog_reset_counter, receiver
+        )
         cls.watchdog_reset_counter = (
-            await self.can.read_eeprom_watchdog_reset_counter(receiver))
+            await self.can.read_eeprom_watchdog_reset_counter(receiver)
+        )
         self.assertEqual(
-            watchdog_reset_counter, cls.watchdog_reset_counter,
-            "Written watchdog reset counter value "
-            f"“{watchdog_reset_counter} does not match read watchdog reset "
-            f"counter value “{cls.watchdog_reset_counter}”")
+            watchdog_reset_counter,
+            cls.watchdog_reset_counter,
+            (
+                "Written watchdog reset counter value"
+                f" “{watchdog_reset_counter} does not match read watchdog"
+                f" reset counter value “{cls.watchdog_reset_counter}”"
+            ),
+        )
 
         # ===================
         # = Production Date =
         # ===================
 
         await self.can.write_eeprom_production_date(production_date, receiver)
-        cls.production_date = (await
-                               self.can.read_eeprom_production_date(receiver))
+        cls.production_date = await self.can.read_eeprom_production_date(
+            receiver
+        )
         self.assertEqual(
-            production_date, cls.production_date,
-            f"Written production date “{production_date}” does not match " +
-            f"read production date “{cls.production_date}”")
+            production_date,
+            cls.production_date,
+            f"Written production date “{production_date}” does not match "
+            + f"read production date “{cls.production_date}”",
+        )
 
         # ================
         # = Batch Number =
@@ -563,9 +624,11 @@ class TestNode(TestCase):
         await self.can.write_eeprom_batch_number(batch_number, receiver)
         cls.batch_number = await self.can.read_eeprom_batch_number(receiver)
         self.assertEqual(
-            batch_number, cls.batch_number,
-            f"Written batch “{batch_number}” does not match " +
-            f"read batch number “{cls.batch_number}”")
+            batch_number,
+            cls.batch_number,
+            f"Written batch “{batch_number}” does not match "
+            + f"read batch number “{cls.batch_number}”",
+        )
 
     async def _test_eeprom_status(self, node: Node) -> None:
         """Test if reading and writing the EEPROM status byte works
@@ -584,10 +647,13 @@ class TestNode(TestCase):
         # = EEPROM Status =
         # =================
 
-        await self.can.write_eeprom_status('Initialized', node)
+        await self.can.write_eeprom_status("Initialized", node)
         cls.eeprom_status = await self.can.read_eeprom_status(node)
         self.assertTrue(
             cls.eeprom_status.is_initialized(),
-            f"Setting EEPROM status to “Initialized” failed. "
-            "EEPROM status byte currently stores the value "
-            f"“{cls.eeprom_status}”")
+            (
+                "Setting EEPROM status to “Initialized” failed. "
+                "EEPROM status byte currently stores the value "
+                f"“{cls.eeprom_status}”"
+            ),
+        )

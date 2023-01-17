@@ -20,11 +20,11 @@ class Settings(Dynaconf):
         """
 
         sensor_settings = self.sth.acceleration_sensor
-        if sensor_settings.sensor == 'ADXL1001':
+        if sensor_settings.sensor == "ADXL1001":
             return sensor_settings.adxl1001
-        if sensor_settings.sensor == 'ADXL1002':
+        if sensor_settings.sensor == "ADXL1002":
             return sensor_settings.adxl1002
-        if sensor_settings.sensor == 'ADXL356':
+        if sensor_settings.sensor == "ADXL356":
             return sensor_settings.adxl356
 
         # TODO: Use [validation](https://www.dynaconf.com/validation)
@@ -36,7 +36,8 @@ class Settings(Dynaconf):
         raise ValueError(
             f"Unsupported sensor: “{sensor_settings.sensor}”\n\n"
             "Please use one of the supported sensor configuration values "
-            "“ADXL1001” or “ADXL1002” or “ADXL356”")
+            "“ADXL1001” or “ADXL1002” or “ADXL356”"
+        )
 
     def sth_name(self) -> str:
         """Return the current name of the STH as string
@@ -61,8 +62,7 @@ class Settings(Dynaconf):
         """
 
         directory = Path(settings.measurement.output.directory)
-        return (directory
-                if directory.is_absolute() else directory.expanduser())
+        return directory if directory.is_absolute() else directory.expanduser()
 
     def check_output_directory(self) -> None:
         """Check the output directory
@@ -77,17 +77,21 @@ class Settings(Dynaconf):
         if directory.exists() and not directory.is_dir():
             raise NotADirectoryError(
                 f"The output directory “{directory}” points to an "
-                "existing file not an directory")
+                "existing file not an directory"
+            )
 
         if not directory.is_dir():
             try:
                 makedirs(str(directory))
             except OSError as error:
-                raise OSError(f"Unable to create the output directory "
-                              f"“{directory}”: {error}")
+                raise OSError(
+                    "Unable to create the output directory "
+                    f"“{directory}”: {error}"
+                )
 
 
 # -- Attributes ---------------------------------------------------------------
 
 settings = Settings(
-    settings_file=[Path(__file__).parent.joinpath('config.yaml')])
+    settings_file=[Path(__file__).parent.joinpath("config.yaml")]
+)

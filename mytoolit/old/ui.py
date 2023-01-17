@@ -28,20 +28,20 @@ class Key:
     DELETE = 8
     RETURN = 10
 
-    ZERO = ord('0')
-    ONE = ord('1')
-    NINE = ord('9')
+    ZERO = ord("0")
+    ONE = ord("1")
+    NINE = ord("9")
 
-    A = ord('a')
-    C = ord('c')
-    F = ord('f')
-    N = ord('n')
-    P = ord('p')
-    Q = ord('q')
-    R = ord('r')
-    S = ord('s')
+    A = ord("a")
+    C = ord("c")
+    F = ord("f")
+    N = ord("n")
+    P = ord("p")
+    Q = ord("q")
+    R = ord("r")
+    S = ord("s")
 
-    UPPERCASE_O = ord('O')
+    UPPERCASE_O = ord("O")
 
     ENTER = 459
 
@@ -83,10 +83,12 @@ class UserInterface(CommandLineInterface):
             # Ignore errors about drawing strings outside terminal window
             pass
 
-    def read_input(self,
-                   allowed_key: Callable[[int], bool],
-                   allowed_value: Callable[[str], bool],
-                   default: str = "") -> Tuple[bool, str]:
+    def read_input(
+        self,
+        allowed_key: Callable[[int], bool],
+        allowed_value: Callable[[str], bool],
+        default: str = "",
+    ) -> Tuple[bool, str]:
         """Read textual input at the current position
 
         The function will read input until
@@ -137,7 +139,7 @@ class UserInterface(CommandLineInterface):
             elif allowed_key(key):
                 text += chr(key)
             elif key == Key.DELETE:
-                text = text[:-1] if len(text) > 1 else ''
+                text = text[:-1] if len(text) > 1 else ""
                 self.add_string(y_position, x_position + len(text), " ")
                 self.stdscr.refresh()
 
@@ -148,8 +150,8 @@ class UserInterface(CommandLineInterface):
     def read_number(
         self,
         default: int = 0,
-        allowed: Callable[[int],
-                          bool] = lambda value: True) -> Tuple[bool, int]:
+        allowed: Callable[[int], bool] = lambda value: True,
+    ) -> Tuple[bool, int]:
         """Read a number at the current position
 
         The function will read input until
@@ -180,17 +182,18 @@ class UserInterface(CommandLineInterface):
         """
 
         valid, number_text = self.read_input(
-            allowed_key=lambda key: ord('0') <= key <= ord('9'),
+            allowed_key=lambda key: ord("0") <= key <= ord("9"),
             allowed_value=lambda value: allowed(int(value)),
-            default=str(default))
+            default=str(default),
+        )
 
         return (valid, int(number_text))
 
     def read_text(
         self,
-        default: str = '',
-        allowed: Callable[[str],
-                          bool] = lambda value: True) -> Tuple[bool, str]:
+        default: str = "",
+        allowed: Callable[[str], bool] = lambda value: True,
+    ) -> Tuple[bool, str]:
         """Read a text at the current position
 
         The function will read input until
@@ -220,9 +223,10 @@ class UserInterface(CommandLineInterface):
         """
 
         return self.read_input(
-            allowed_key=lambda key: ord(' ') <= key <= ord('~'),
+            allowed_key=lambda key: ord(" ") <= key <= ord("~"),
             allowed_value=allowed,
-            default=default)
+            default=default,
+        )
 
     def draw_menu(self, choices: Iterable[str]) -> None:
         """Draw a menu displaying the given choices at the current location
@@ -235,7 +239,7 @@ class UserInterface(CommandLineInterface):
 
         """
 
-        ruler = '─' * (max(map(len, choices)) + 2)
+        ruler = "─" * (max(map(len, choices)) + 2)
         max_length_choices = max(map(len, choices))
 
         self.add_string(f"\n┌{ruler}┐\n")
@@ -249,22 +253,25 @@ class UserInterface(CommandLineInterface):
         self.stdscr.refresh()
 
     def change_adc_values_window(self):
-
         def list_keys(dictionary):
             keys = map(str, dictionary.keys())
-            return ', '.join(keys)
+            return ", ".join(keys)
 
         def read_value(description, default, allowed):
             self.add_string(description)
             self.stdscr.refresh()
 
-            valid_input, value = (self.read_number(default, allowed) if
-                                  isinstance(default, int) else self.read_text(
-                                      default, allowed))
+            valid_input, value = (
+                self.read_number(default, allowed)
+                if isinstance(default, int)
+                else self.read_text(default, allowed)
+            )
 
             if not valid_input:
-                self.add_string(f"“{value}” is not a valid value; "
-                                f"Using default value “{default}” instead\n")
+                self.add_string(
+                    f"“{value}” is not a valid value; "
+                    f"Using default value “{default}” instead\n"
+                )
                 value = default
 
             return value
@@ -272,18 +279,25 @@ class UserInterface(CommandLineInterface):
         curs_set(True)
         self.stdscr.clear()
 
-        prescalar = read_value("Prescaler (2–127): ", 2,
-                               lambda value: 2 <= value <= 127)
+        prescalar = read_value(
+            "Prescaler (2–127): ", 2, lambda value: 2 <= value <= 127
+        )
         acquistion_time = read_value(
-            f"Acquisition Time ({list_keys(AdcAcquisitionTime)}): ", 8,
-            lambda value: value in AdcAcquisitionTime)
+            f"Acquisition Time ({list_keys(AdcAcquisitionTime)}): ",
+            8,
+            lambda value: value in AdcAcquisitionTime,
+        )
         oversampling_rate = read_value(
-            f"Oversampling Rate ({list_keys(AdcOverSamplingRate)}): ", 64,
-            lambda value: value in AdcOverSamplingRate)
+            f"Oversampling Rate ({list_keys(AdcOverSamplingRate)}): ",
+            64,
+            lambda value: value in AdcOverSamplingRate,
+        )
 
         adc_reference = read_value(
             f"ADC Reference Voltage (VDD=3V3) ({list_keys(AdcReference)}): ",
-            'VDD', lambda value: value in AdcReference)
+            "VDD",
+            lambda value: value in AdcReference,
+        )
 
         self.vAdcConfig(prescalar, acquistion_time, oversampling_rate)
         self.vAdcRefVConfig(adc_reference)
@@ -292,25 +306,31 @@ class UserInterface(CommandLineInterface):
         """Update sensor configuration"""
 
         def read_channel_value(channel):
-            self.add_string("Sensor number (1 – 255) for measurement "
-                            f"channel {channel} (0 to disable): ")
+            self.add_string(
+                "Sensor number (1 – 255) for measurement "
+                f"channel {channel} (0 to disable): "
+            )
 
             value = self.read_input(
                 default=str(channel),
-                allowed_key=lambda key: ord('0') <= key <= ord('9'),
-                allowed_value=lambda value: len(value) <= 3 and int(
-                    value) <= 255)[1]
+                allowed_key=lambda key: ord("0") <= key <= ord("9"),
+                allowed_value=lambda value: len(value) <= 3
+                and int(value) <= 255,
+            )[1]
 
             return int(value)
 
         def enable_disable_sensors(channel, default):
-            self.add_string(f"Enable measurement channel {channel} "
-                            "(1 to enable, 0 to disable): ")
+            self.add_string(
+                f"Enable measurement channel {channel} "
+                "(1 to enable, 0 to disable): "
+            )
 
             value = self.read_input(
                 default=str(default),
-                allowed_key=lambda key: ord('0') <= key <= ord('1'),
-                allowed_value=lambda value: len(value) == 1)[1]
+                allowed_key=lambda key: ord("0") <= key <= ord("1"),
+                allowed_value=lambda value: len(value) == 1,
+            )[1]
 
             return int(value)
 
@@ -324,11 +344,13 @@ class UserInterface(CommandLineInterface):
         else:
             enabled_sensors = map(
                 lambda channel_number: int(bool(channel_number)),
-                (self.sensor.first, self.sensor.second, self.sensor.third))
+                (self.sensor.first, self.sensor.second, self.sensor.third),
+            )
             sensors = [
                 enable_disable_sensors(channel, default_value)
-                for channel, default_value in enumerate(enabled_sensors,
-                                                        start=1)
+                for channel, default_value in enumerate(
+                    enabled_sensors, start=1
+                )
             ]
 
         # Enable/disable axes for transmission
@@ -338,23 +360,27 @@ class UserInterface(CommandLineInterface):
         curs_set(True)
         self.stdscr.clear()
 
-        self.add_string("Run time of data acquisition "
-                        "(in seconds; 0 for infinite runtime): ")
+        self.add_string(
+            "Run time of data acquisition "
+            "(in seconds; 0 for infinite runtime): "
+        )
         self.stdscr.refresh()
         runtime = self.read_number()[1]
         self.vRunTime(runtime)
 
     def sth_window_information(self):
-
         def read_voltage() -> str:
-            index = self.Can.singleValueCollect(MyToolItNetworkNr["STH1"],
-                                                MyToolItStreaming["Voltage"],
-                                                1,
-                                                0,
-                                                0,
-                                                log=False)
+            index = self.Can.singleValueCollect(
+                MyToolItNetworkNr["STH1"],
+                MyToolItStreaming["Voltage"],
+                1,
+                0,
+                0,
+                log=False,
+            )
             iBatteryVoltage = byte_list_to_int(
-                self.Can.getReadMessageData(index)[2:4])
+                self.Can.getReadMessageData(index)[2:4]
+            )
             if iBatteryVoltage is not None:
                 return f"{fVoltageBattery(iBatteryVoltage):4.2f}"
 
@@ -367,14 +393,17 @@ class UserInterface(CommandLineInterface):
                 CalibMeassurementTypeNr["Temp"],
                 1,
                 AdcReference["1V25"],
-                log=False)
-            self.Can.calibMeasurement(MyToolItNetworkNr["STH1"],
-                                      CalibMeassurementActionNr["None"],
-                                      CalibMeassurementTypeNr["Temp"],
-                                      1,
-                                      AdcReference["VDD"],
-                                      log=False,
-                                      bReset=True)
+                log=False,
+            )
+            self.Can.calibMeasurement(
+                MyToolItNetworkNr["STH1"],
+                CalibMeassurementActionNr["None"],
+                CalibMeassurementTypeNr["Temp"],
+                1,
+                AdcReference["VDD"],
+                log=False,
+                bReset=True,
+            )
             iTemperature = float(byte_list_to_int(au8TempReturn[4:]))
             return iTemperature / 1000
 
@@ -383,14 +412,20 @@ class UserInterface(CommandLineInterface):
         address = int_to_mac_address(int(self.iAddress, 16))
         name = self.sth_name
         device_description = f"STH “{name}” ({address})"
-        for value in (device_description, "\n", '—' * len(device_description),
-                      "\n\n"):
+        for value in (
+            device_description,
+            "\n",
+            "—" * len(device_description),
+            "\n\n",
+        ):
             self.add_string(value)
 
-        hardware_version = self.Can.sProductData("Hardware Version",
-                                                 bLog=False)
-        software_version = self.Can.sProductData("Firmware Version",
-                                                 bLog=False)
+        hardware_version = self.Can.sProductData(
+            "Hardware Version", bLog=False
+        )
+        software_version = self.Can.sProductData(
+            "Firmware Version", bLog=False
+        )
         release_name = self.Can.sProductData("Release Name", bLog=False)
         serial_number = self.Can.sProductData("Serial Number", bLog=False)
         product_name = self.Can.sProductData("Product Name", bLog=False)
@@ -411,57 +446,75 @@ class UserInterface(CommandLineInterface):
         voltage = read_voltage()
         temperature = read_temperature()
 
-        infos.extend([
-            ("Supply Voltage", f"{voltage} V"),
-            ("Chip Temperature", f"{temperature:4.1f} °C\n"),
-        ])
+        infos.extend(
+            [
+                ("Supply Voltage", f"{voltage} V"),
+                ("Chip Temperature", f"{temperature:4.1f} °C\n"),
+            ]
+        )
 
-        runtime = '∞' if self.iRunTime == 0 else str(self.iRunTime)
+        runtime = "∞" if self.iRunTime == 0 else str(self.iRunTime)
         prescaler = self.iPrescaler
         acquistion_time = AdcAcquisitionTime.inverse[self.iAquistionTime]
         oversampling_rate = AdcOverSamplingRate.inverse[self.iOversampling]
         sampling_rate = self.samplingRate
         adc_reference = self.sAdcRef
 
-        sensor_config_local = (self.sensor.first, self.sensor.second,
-                               self.sensor.third)
+        sensor_config_local = (
+            self.sensor.first,
+            self.sensor.second,
+            self.sensor.third,
+        )
 
         if self.channel_config_supported:
             sensor_config_device = self.Can.read_sensor_config()
             sensor_config_device.disable_channel(
-                *(not sensor_number for sensor_number in sensor_config_local))
+                *(not sensor_number for sensor_number in sensor_config_local)
+            )
         else:
-            sensor_config_device = SensorConfig(*[
-                number if enabled else 0
-                for number, enabled in enumerate(sensor_config_local, start=1)
-            ])
+            sensor_config_device = SensorConfig(
+                *[
+                    number if enabled else 0
+                    for number, enabled in enumerate(
+                        sensor_config_local, start=1
+                    )
+                ]
+            )
         sensors = str(sensor_config_device)
 
-        infos.extend([("Run Time", f"{runtime} s\n"), ("Prescaler", prescaler),
-                      ("Acquisition Time", acquistion_time),
-                      ("Oversampling Rate", oversampling_rate),
-                      ("Sampling Rate", sampling_rate),
-                      ("Reference Voltage", f"{adc_reference}\n"),
-                      ("Sensors", sensors)])
+        infos.extend(
+            [
+                ("Run Time", f"{runtime} s\n"),
+                ("Prescaler", prescaler),
+                ("Acquisition Time", acquistion_time),
+                ("Oversampling Rate", oversampling_rate),
+                ("Sampling Rate", sampling_rate),
+                ("Reference Voltage", f"{adc_reference}\n"),
+                ("Sensors", sensors),
+            ]
+        )
 
         max_description_length = max(
-            len(description) for description, _ in infos)
+            len(description) for description, _ in infos
+        )
         for description, value in infos:
             fill = max_description_length - len(description) + 1
             self.add_string(f"{description}{' '*fill}{value}\n")
 
     def sth_window_menu(self):
-        self.draw_menu([
-            "s: Start Data Acquisition",
-            "",
-            "n: Change STH Name",
-            "r: Change Run Time",
-            "a: Configure ADC",
-            "p: Configure Sensors",
-            "O: Set Standby Mode",
-            "",
-            "q: Disconnect from STH",
-        ])
+        self.draw_menu(
+            [
+                "s: Start Data Acquisition",
+                "",
+                "n: Change STH Name",
+                "r: Change Run Time",
+                "a: Configure ADC",
+                "p: Configure Sensors",
+                "O: Set Standby Mode",
+                "",
+                "q: Disconnect from STH",
+            ]
+        )
 
     def sth_window_key_evaluation(self) -> Tuple[bool, bool]:
         """Evaluate key input in the STH window
@@ -540,7 +593,6 @@ class UserInterface(CommandLineInterface):
         return continue_main
 
     def connect_sth_window(self, number):
-
         curs_set(True)
 
         while True:
@@ -549,12 +601,13 @@ class UserInterface(CommandLineInterface):
             self.add_string("\n")
             y_position = self.stdscr.getyx()[0]
             self.add_string(
-                f"Choose STH number (Use “return” to connect): {number}")
+                f"Choose STH number (Use “return” to connect): {number}"
+            )
             self.stdscr.refresh()
             key = self.stdscr.getch()
 
-            if ord('0') <= key <= ord('9'):
-                digit = int(key) - ord('0')
+            if ord("0") <= key <= ord("9"):
+                digit = int(key) - ord("0")
                 number = number * 10 + digit
 
             elif key == Key.DELETE:
@@ -572,16 +625,18 @@ class UserInterface(CommandLineInterface):
                 if not device:
                     return False
 
-                name = device['Name']
-                self.add_string(y_position, 0,
-                                f"Connecting to device “{name}”…{' '*20}")
+                name = device["Name"]
+                self.add_string(
+                    y_position, 0, f"Connecting to device “{name}”…{' '*20}"
+                )
                 self.stdscr.refresh()
 
                 self.vDeviceAddressSet(hex(device["Address"]))
                 self.sth_name = name
                 self.stdscr.refresh()
                 success = self.Can.bBlueToothConnectPollingAddress(
-                    MyToolItNetworkNr["STU1"], self.iAddress)
+                    MyToolItNetworkNr["STU1"], self.iAddress
+                )
                 if not success:
                     return False
 
@@ -595,7 +650,7 @@ class UserInterface(CommandLineInterface):
 
                 return True
 
-            elif key in {Key.CTRL_C, ord('q')}:
+            elif key in {Key.CTRL_C, ord("q")}:
                 return False
 
         return False
@@ -607,17 +662,20 @@ class UserInterface(CommandLineInterface):
         self.add_string("Set base output file name: ")
         self.stdscr.refresh()
 
-        forbidden_characters = set("<>:\"/\\|?*")
+        forbidden_characters = set('<>:"/\\|?*')
         input_valid, filename = self.read_text(
             default=str(self.output_filename.stem),
-            allowed=lambda filename: 1 <= len(filename) <= 200 >= 1 and
-            not set(filename).intersection(forbidden_characters))
+            allowed=lambda filename: 1 <= len(filename) <= 200 >= 1
+            and not set(filename).intersection(forbidden_characters),
+        )
 
         curs_set(False)
         if input_valid:
             self.set_output_filename(filename)
-        self.add_string("New full name (including time stamp): "
-                        f"“{self.get_output_filepath()}”")
+        self.add_string(
+            "New full name (including time stamp): "
+            f"“{self.get_output_filepath()}”"
+        )
         self.stdscr.refresh()
         sleep(2)
 
@@ -626,8 +684,9 @@ class UserInterface(CommandLineInterface):
         self.stdscr.clear()
         self.add_string("New STH name (max. 8 characters): ")
         self.stdscr.refresh()
-        name_valid, name = self.read_text(default=self.sth_name,
-                                          allowed=lambda text: len(text) <= 8)
+        name_valid, name = self.read_text(
+            default=self.sth_name, allowed=lambda text: len(text) <= 8
+        )
 
         if not name_valid:
             return
@@ -672,14 +731,16 @@ class UserInterface(CommandLineInterface):
         return devices
 
     def main_window_menu(self):
-        self.draw_menu([
-            "1-9: Connect to STH",
-            "",
-            "  f: Change Output File Name",
-            "  n: Change STH Name",
-            "",
-            "  q: Quit ICOc",
-        ])
+        self.draw_menu(
+            [
+                "1-9: Connect to STH",
+                "",
+                "  f: Change Output File Name",
+                "  n: Change STH Name",
+                "",
+                "  q: Quit ICOc",
+            ]
+        )
 
     def main_window_key_evaluation(self) -> bool:
         """Evaluate key input in the main window
@@ -698,15 +759,17 @@ class UserInterface(CommandLineInterface):
             return False
 
         if Key.ONE <= key <= Key.NINE:
-            return self.sth_window() if self.connect_sth_window(
-                int(key - Key.ZERO)) else True
+            return (
+                self.sth_window()
+                if self.connect_sth_window(int(key - Key.ZERO))
+                else True
+            )
 
         if key == Key.F:
             self.change_filename_window()
             return True
 
         if key == Key.N:
-
             if self.connect_sth_window(0):
                 self.change_sth_name_window()
                 self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])

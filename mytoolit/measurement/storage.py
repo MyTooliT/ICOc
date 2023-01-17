@@ -7,16 +7,27 @@ from pathlib import Path
 from types import TracebackType
 from typing import Dict, Iterable, Optional, Type, Union
 
-from tables import (File, Filters, Float32Col, IsDescription, MetaAtom,
-                    MetaIsDescription, Node, NoSuchNodeError, open_file,
-                    UInt8Col, UInt64Col)
+from tables import (
+    File,
+    Filters,
+    Float32Col,
+    IsDescription,
+    MetaAtom,
+    MetaIsDescription,
+    Node,
+    NoSuchNodeError,
+    open_file,
+    UInt8Col,
+    UInt64Col,
+)
 from tables.exceptions import HDF5ExtError
 
 # -- Functions ----------------------------------------------------------------
 
 
 def create_acceleration_description(
-        attributes: Dict[str, MetaAtom]) -> MetaIsDescription:
+    attributes: Dict[str, MetaAtom]
+) -> MetaIsDescription:
     """Create a new `IsDescription` class to store acceleration data
 
     Parameters
@@ -37,8 +48,11 @@ def create_acceleration_description(
 
     """
 
-    description_class = type('ExtendedAccelerationDescription',
-                             (AccelerationDescription, ), attributes)
+    description_class = type(
+        "ExtendedAccelerationDescription",
+        (AccelerationDescription,),
+        attributes,
+    )
     return description_class
 
 
@@ -47,6 +61,7 @@ def create_acceleration_description(
 
 class AccelerationDescription(IsDescription):
     """Description of HDF acceleration table"""
+
     counter = UInt8Col()
     timestamp = UInt64Col()  # Microseconds since measurement start
 
@@ -80,8 +95,11 @@ class Storage:
 
         repository = Path(__file__).parent.parent.parent
         filepath = Path(filepath).expanduser()
-        self.filepath = (filepath if filepath.is_absolute() else
-                         repository.joinpath(filepath)).resolve()
+        self.filepath = (
+            filepath
+            if filepath.is_absolute()
+            else repository.joinpath(filepath)
+        ).resolve()
 
         self.hdf: Optional[File] = None
         self.acceleration: Optional[Node] = None
@@ -93,9 +111,12 @@ class Storage:
         self.open()
         return self
 
-    def __exit__(self, exception_type: Optional[Type[BaseException]],
-                 exception_value: Optional[BaseException],
-                 traceback: Optional[TracebackType]) -> None:
+    def __exit__(
+        self,
+        exception_type: Optional[Type[BaseException]],
+        exception_value: Optional[BaseException],
+        traceback: Optional[TracebackType],
+    ) -> None:
         """Clean up the resources used by the storage class
 
         Parameters
@@ -118,16 +139,20 @@ class Storage:
         """Open and initialize the HDF file for writing"""
 
         try:
-            self.hdf = open_file(self.filepath,
-                                 mode='a',
-                                 filters=Filters(4, 'zlib'),
-                                 title='STH Measurement Data')
+            self.hdf = open_file(
+                self.filepath,
+                mode="a",
+                filters=Filters(4, "zlib"),
+                title="STH Measurement Data",
+            )
         except (HDF5ExtError, OSError) as error:
             raise StorageException(
-                f"Unable to open file “{self.filepath}”: {error}")
+                f"Unable to open file “{self.filepath}”: {error}"
+            )
 
-    def init_acceleration(self, axes: Iterable[str],
-                          start_time: float) -> None:
+    def init_acceleration(
+        self, axes: Iterable[str], start_time: float
+    ) -> None:
         """Initialize the data storage for the collection of acceleration data
 
         Parameters
@@ -152,25 +177,27 @@ class Storage:
         if self.hdf is None:
             self.open()
 
-        assert (isinstance(self.hdf, File))
+        assert isinstance(self.hdf, File)
 
         name = "acceleration"
         try:
-            self.acceleration = self.hdf.get_node(f'/{name}')
+            self.acceleration = self.hdf.get_node(f"/{name}")
         except NoSuchNodeError:
             self.acceleration = self.hdf.create_table(
                 self.hdf.root,
                 name=name,
                 description=create_acceleration_description(
-                    attributes={axis: Float32Col()
-                                for axis in axes}),
-                title="STH Acceleration Data")
+                    attributes={axis: Float32Col() for axis in axes}
+                ),
+                title="STH Acceleration Data",
+            )
 
         self.start_time = start_time
-        self.acceleration.attrs['Start_Time'] = datetime.now().isoformat()
+        self.acceleration.attrs["Start_Time"] = datetime.now().isoformat()
 
-    def add_acceleration(self, values: Dict[str, float], counter: int,
-                         timestamp: float) -> None:
+    def add_acceleration(
+        self, values: Dict[str, float], counter: int, timestamp: float
+    ) -> None:
         """Append acceleration data
 
         Parameters
@@ -203,13 +230,13 @@ class Storage:
         if self.acceleration is None:
             self.init_acceleration(values.keys(), timestamp)
 
-        assert (isinstance(self.acceleration, Node))
-        assert (isinstance(self.start_time, float))
+        assert isinstance(self.acceleration, Node)
+        assert isinstance(self.start_time, float)
 
         row = self.acceleration.row
         timestamp = (timestamp - self.start_time) * 1000
-        row['timestamp'] = timestamp
-        row['counter'] = counter
+        row["timestamp"] = timestamp
+        row["counter"] = counter
         for accelertation_type, value in values.items():
             row[accelertation_type] = value
         row.append()
@@ -259,7 +286,8 @@ class Storage:
                 "Unable to add metadata to non existent "
                 "acceleration table.\n"
                 "Please call either `init_acceleration` or `add_acceleration` "
-                "before you use this function")
+                "before you use this function"
+            )
 
         self.acceleration.attrs[name] = value
 
@@ -272,6 +300,7 @@ class Storage:
 
 # -- Main ---------------------------------------------------------------------
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     from doctest import testmod
+
     testmod()

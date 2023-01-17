@@ -5,8 +5,9 @@ from typing import Iterable
 # -- Functions ----------------------------------------------------------------
 
 
-def convert_bytes_to_text(data: Iterable[int],
-                          until_null: bool = False) -> str:
+def convert_bytes_to_text(
+    data: Iterable[int], until_null: bool = False
+) -> str:
     """Convert byte array data to a string
 
     Please note, that this function ignores non ASCII data and control
@@ -47,14 +48,15 @@ def convert_bytes_to_text(data: Iterable[int],
     for byte in data:
         if byte == 0 and until_null:
             break
-        elif byte > ord(' ') and byte < 128:
+        elif byte > ord(" ") and byte < 128:
             ascii_bytes.append(byte)
 
-    return ascii_bytes.decode('ASCII')
+    return ascii_bytes.decode("ASCII")
 
 
 # -- Main ---------------------------------------------------------------------
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     from doctest import testmod
+
     testmod()

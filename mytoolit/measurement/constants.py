@@ -1,3 +1,3 @@
 # -- Constants ----------------------------------------------------------------
 
-ADC_MAX_VALUE = 0xffff
+ADC_MAX_VALUE = 0xFFFF

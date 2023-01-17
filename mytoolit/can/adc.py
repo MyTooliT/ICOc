@@ -9,13 +9,15 @@ from typing import List, Optional, Union
 class ADCConfiguration:
     """Support for reading and writing the ADC configuration"""
 
-    def __init__(self,
-                 *data: Union[bytearray, List[int]],
-                 set: Optional[bool] = None,
-                 prescaler: Optional[int] = None,
-                 acquisition_time: Optional[int] = None,
-                 oversampling_rate: Optional[int] = None,
-                 reference_voltage: Optional[float] = None):
+    def __init__(
+        self,
+        *data: Union[bytearray, List[int]],
+        set: Optional[bool] = None,
+        prescaler: Optional[int] = None,
+        acquisition_time: Optional[int] = None,
+        oversampling_rate: Optional[int] = None,
+        reference_voltage: Optional[float] = None,
+    ):
         """Initialize the ADC configuration using the given arguments
 
         Positional Parameters
@@ -49,13 +51,17 @@ class ADCConfiguration:
         if data:
             data_bytes = list(data[0])
             if not isinstance(data_bytes, list):
-                raise ValueError("Unsupported object type for argument data: "
-                                 f"“{type(data_bytes)}”")
+                raise ValueError(
+                    "Unsupported object type for argument data: "
+                    f"“{type(data_bytes)}”"
+                )
             required_length = 5
             if len(data_bytes) < required_length:
-                raise ValueError(f"Data length of {len(data_bytes)} is too "
-                                 "small, at least length of "
-                                 f"“{required_length}” required")
+                raise ValueError(
+                    f"Data length of {len(data_bytes)} is too "
+                    "small, at least length of "
+                    f"“{required_length}” required"
+                )
             self.data = data_bytes[0:5] + [0] * 3
         else:
             self.data = [0] * 8
@@ -80,7 +86,8 @@ class ADCConfiguration:
             if not (1 <= prescaler <= 127):
                 raise ValueError(
                     f"Prescaler value of “{prescaler}” out of range"
-                    ", please use a value between 1 and 127")
+                    ", please use a value between 1 and 127"
+                )
             self.data[1] = prescaler
 
         # ====================
@@ -88,17 +95,21 @@ class ADCConfiguration:
         # ====================
 
         if acquisition_time is not None:
-            possible_acquisition_times = (list(range(1, 4)) +
-                                          [2**value for value in range(3, 9)])
+            possible_acquisition_times = list(range(1, 4)) + [
+                2**value for value in range(3, 9)
+            ]
             if acquisition_time not in possible_acquisition_times:
                 raise ValueError(
                     f"Acquisition time of “{acquisition_time}” out of"
-                    "range, please use one of the following values: " +
-                    ", ".join(map(str, possible_acquisition_times)))
+                    "range, please use one of the following values: "
+                    + ", ".join(map(str, possible_acquisition_times))
+                )
 
-            acquisition_time_byte = (acquisition_time -
-                                     1 if acquisition_time <= 3 else
-                                     int(log2(acquisition_time)) + 1)
+            acquisition_time_byte = (
+                acquisition_time - 1
+                if acquisition_time <= 3
+                else int(log2(acquisition_time)) + 1
+            )
 
             self.data[2] = acquisition_time_byte
 
@@ -111,8 +122,9 @@ class ADCConfiguration:
             if oversampling_rate not in possible_oversampling_rates:
                 raise ValueError(
                     f"Oversampling rate of “{oversampling_rate}” out of"
-                    "range, please use one of the following values: " +
-                    ", ".join(map(str, possible_oversampling_rates)))
+                    "range, please use one of the following values: "
+                    + ", ".join(map(str, possible_oversampling_rates))
+                )
 
             self.data[3] = int(log2(oversampling_rate))
 
@@ -121,13 +133,24 @@ class ADCConfiguration:
         # =====================
 
         if reference_voltage is not None:
-            possible_reference_voltages = (1.25, 1.65, 1.8, 2.1, 2.2, 2.5, 2.7,
-                                           3.3, 5, 6.6)
+            possible_reference_voltages = (
+                1.25,
+                1.65,
+                1.8,
+                2.1,
+                2.2,
+                2.5,
+                2.7,
+                3.3,
+                5,
+                6.6,
+            )
             if reference_voltage not in possible_reference_voltages:
                 raise ValueError(
                     f"Reference voltage of “{oversampling_rate}” out of"
-                    "range, please use one of the following values: " +
-                    ", ".join(map(str, possible_reference_voltages)))
+                    "range, please use one of the following values: "
+                    + ", ".join(map(str, possible_reference_voltages))
+                )
 
             self.data[4] = int(reference_voltage * 20)
 
@@ -164,9 +187,10 @@ class ADCConfiguration:
 
         set = bool(self.data[0] >> 7)
         prescaler = self.data[1]
-        acquisition_time = (self.data[2] +
-                            1 if self.data[2] <= 3 else 2**(self.data[2] - 1))
-        oversampling_rate = 2**self.data[3]
+        acquisition_time = (
+            self.data[2] + 1 if self.data[2] <= 3 else 2 ** (self.data[2] - 1)
+        )
+        oversampling_rate = 2 ** self.data[3]
         reference_voltage = self.reference_voltage()
 
         parts = [
@@ -206,6 +230,7 @@ class ADCConfiguration:
 
 # -- Main ---------------------------------------------------------------------
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     from doctest import testmod
+
     testmod()

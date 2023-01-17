@@ -1,16 +1,21 @@
-from mytoolit.old.MyToolItCommands import (AdcAcquisitionTime,
-                                           AdcOverSamplingRate, AdcReference,
-                                           calcSamplingRate, AdcMax)
+from mytoolit.old.MyToolItCommands import (
+    AdcAcquisitionTime,
+    AdcOverSamplingRate,
+    AdcReference,
+    calcSamplingRate,
+    AdcMax,
+)
 
 
-class SthLimits():
-
-    def __init__(self,
-                 iAccSensorAxis,
-                 uAccelerationToAccGravitity,
-                 iTemperatureInternalMin,
-                 iTemperatureInternalMax,
-                 battery=True):
+class SthLimits:
+    def __init__(
+        self,
+        iAccSensorAxis,
+        uAccelerationToAccGravitity,
+        iTemperatureInternalMin,
+        iTemperatureInternalMax,
+        battery=True,
+    ):
         self.vBatteryParameters(battery)
         self.vAccParameters(iAccSensorAxis, uAccelerationToAccGravitity)
         self.vSamplingRate()
@@ -53,8 +58,12 @@ class SthLimits():
 
     def auBatteryStatisticsHist(self):
         return [
-            self.uBatteryQ1, self.uBatteryQ25, self.uBatteryMedL,
-            self.uBatteryMedH, self.uBatteryQ75, self.uBatteryQ99
+            self.uBatteryQ1,
+            self.uBatteryQ25,
+            self.uBatteryMedL,
+            self.uBatteryMedH,
+            self.uBatteryQ75,
+            self.uBatteryQ99,
         ]
 
     def auBatteryStatisticsMoment(self):
@@ -134,8 +143,12 @@ class SthLimits():
 
     def auAccXStatisticsHist(self):
         return [
-            self.uAccXQ1, self.uAccXQ25, self.uAccXMedL, self.uAccXMedH,
-            self.uAccXQ75, self.uAccXQ99
+            self.uAccXQ1,
+            self.uAccXQ25,
+            self.uAccXMedL,
+            self.uAccXMedH,
+            self.uAccXQ75,
+            self.uAccXQ99,
         ]
 
     def auAccXStatisticsMoment(self):
@@ -143,8 +156,12 @@ class SthLimits():
 
     def auAccYStatisticsHist(self):
         return [
-            self.uAccYQ1, self.uAccYQ25, self.uAccYMedL, self.uAccYMedH,
-            self.uAccYQ75, self.uAccYQ99
+            self.uAccYQ1,
+            self.uAccYQ25,
+            self.uAccYMedL,
+            self.uAccYMedH,
+            self.uAccYQ75,
+            self.uAccYQ99,
         ]
 
     def auAccYStatisticsMoment(self):
@@ -152,15 +169,19 @@ class SthLimits():
 
     def auAccZStatisticsHist(self):
         return [
-            self.uAccZQ1, self.uAccZQ25, self.uAccZMedL, self.uAccZMedH,
-            self.uAccZQ75, self.uAccZQ99
+            self.uAccZQ1,
+            self.uAccZQ25,
+            self.uAccZMedL,
+            self.uAccZMedH,
+            self.uAccZQ75,
+            self.uAccZQ99,
         ]
 
     def auAccZStatisticsMoment(self):
         return [self.uAccZVar, self.uAccZSkewness, self.uAccZSNR]
 
     def fAcceleration(self, x):
-        return ((x / AdcMax - 1 / 2) * self.uAccelerationToAccGravitity)
+        return (x / AdcMax - 1 / 2) * self.uAccelerationToAccGravitity
 
     def vSamplingRate(self):
         self.uSamplingRatePrescalerReset = 2
@@ -181,23 +202,29 @@ class SthLimits():
         self.uSamplingToleranceHigh = 1.03
 
     def uSamplingRateSingleMax(self):
-        return calcSamplingRate(self.uSamplingRateSinglePrescalerMax,
-                                self.uSamplingRateSingleAcqTimeMax,
-                                self.uSamplingRateSingleOverSamplesMax)
+        return calcSamplingRate(
+            self.uSamplingRateSinglePrescalerMax,
+            self.uSamplingRateSingleAcqTimeMax,
+            self.uSamplingRateSingleOverSamplesMax,
+        )
 
     def uSamplingRateDoubleMax(self):
-        return calcSamplingRate(self.uSamplingRateDoublePrescalerMax,
-                                self.uSamplingRateDoubleAcqTimeMax,
-                                self.uSamplingRateDoubleOverSamplesMax)
+        return calcSamplingRate(
+            self.uSamplingRateDoublePrescalerMax,
+            self.uSamplingRateDoubleAcqTimeMax,
+            self.uSamplingRateDoubleOverSamplesMax,
+        )
 
     def uSamplingRateTrippleMax(self):
-        return calcSamplingRate(self.uSamplingRateTripplePrescalerMax,
-                                self.uSamplingRateTrippleAcqTimeMax,
-                                self.uSamplingRateTrippleOverSamplesMax)
+        return calcSamplingRate(
+            self.uSamplingRateTripplePrescalerMax,
+            self.uSamplingRateTrippleAcqTimeMax,
+            self.uSamplingRateTrippleOverSamplesMax,
+        )
 
     def vStreaming(self):
         self.uStartupTimeMs = 250
-        self.uStandardTestTimeMs = (10000)
+        self.uStandardTestTimeMs = 10000
 
     def vVoltageRaw(self):
         self.uVoltRawOpa2Middle = 0
@@ -220,4 +247,4 @@ class SthLimits():
         self.uAdcSizeY = sizeY
 
     def uAdcBufferSizeBytes(self):
-        return (self.uAdcSizeX * self.uAdcSizeY)
+        return self.uAdcSizeX * self.uAdcSizeY

@@ -133,17 +133,22 @@ class Identifier:
 
         if command is not None:
             # A command can be a number or a `Command` object
-            command_as_number = command if isinstance(command,
-                                                      int) else command.value
+            command_as_number = (
+                command if isinstance(command, int) else command.value
+            )
             set_part(start=12, width=16, number=command_as_number)
 
-        set_part(start=12,
-                 width=16,
-                 number=Command((self.value >> 12) & 0xffff,
-                                block=block,
-                                block_command=block_command,
-                                request=request,
-                                error=error).value)
+        set_part(
+            start=12,
+            width=16,
+            number=Command(
+                (self.value >> 12) & 0xFFFF,
+                block=block,
+                block_command=block_command,
+                request=request,
+                error=error,
+            ).value,
+        )
 
         # Sender and receiver can be either an integer or a string like object
         if sender is not None:
@@ -212,8 +217,10 @@ class Identifier:
         [STH 2 → STH 3, Block: Unknown, Command: Unknown, Request, Error]
         """
 
-        return (f"[{self.sender_name()} → {self.receiver_name()}, "
-                f"{Command(self.command())}]")
+        return (
+            f"[{self.sender_name()} → {self.receiver_name()}, "
+            f"{Command(self.command())}]"
+        )
 
     def acknowledge(self, error: bool = False) -> Identifier:
         """Returns an acknowledgement identifier for this identifier
@@ -246,11 +253,13 @@ class Identifier:
 
         """
 
-        return Identifier(self.value,
-                          sender=self.receiver(),
-                          receiver=self.sender(),
-                          request=False,
-                          error=error)
+        return Identifier(
+            self.value,
+            sender=self.receiver(),
+            receiver=self.sender(),
+            request=False,
+            error=error,
+        )
 
     def command(self) -> int:
         """Get the command part of the identifier
@@ -275,7 +284,7 @@ class Identifier:
         '0b110000000001'
         """
 
-        return (self.value >> 12) & 0xffff
+        return (self.value >> 12) & 0xFFFF
 
     def command_number(self) -> int:
         """Get the block and block command part of the identifier
@@ -535,7 +544,7 @@ class Identifier:
         2
         """
 
-        return self.value & 0x1f
+        return self.value & 0x1F
 
     def receiver_name(self) -> str:
         """Get the name of the receiver of a message
@@ -559,7 +568,7 @@ class Identifier:
 
 # -- Main ---------------------------------------------------------------------
 
-if __name__ == '__main__':
-
+if __name__ == "__main__":
     from doctest import testmod
+
     testmod()

@@ -32,8 +32,8 @@ class PDFImage(Flowable):
         self.width = width
         self.height = height
 
-        with open(filepath, 'rb') as pdf_data:
-            page, = PdfReader(pdf_data).pages
+        with open(filepath, "rb") as pdf_data:
+            (page,) = PdfReader(pdf_data).pages
             self.data = pagexobj(page)
 
     def wrap(self, width, height):

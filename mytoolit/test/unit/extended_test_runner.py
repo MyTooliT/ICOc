@@ -13,5 +13,5 @@ class ExtendedTestRunner(TextTestRunner):
     def __init__(self, *arguments, **keyword_arguments):
         """Initialize the test runner"""
 
-        keyword_arguments['resultclass'] = ExtendedTestResult
+        keyword_arguments["resultclass"] = ExtendedTestResult
         super().__init__(*arguments, **keyword_arguments)

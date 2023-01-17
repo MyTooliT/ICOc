@@ -48,12 +48,16 @@ class Commander:
             chip,
         ]
         self.error_reasons = {
-            'incorrect serial':
-            f"Serial number of programming board “{serial_number}” incorrect",
-            'programmer not connected':
-            "Programming board is not connected to computer",
-            'device not connected':
-            "Programming board is not connected to device"
+            "incorrect serial": (
+                f"Serial number of programming board “{serial_number}”"
+                " incorrect"
+            ),
+            "programmer not connected": (
+                "Programming board is not connected to computer"
+            ),
+            "device not connected": (
+                "Programming board is not connected to device"
+            ),
         }
 
     def _add_path_to_environment(self) -> None:
@@ -79,16 +83,23 @@ class Commander:
 
         path = settings.commands.path
         operating_system = system()
-        paths = (path.linux if operating_system == 'Linux' else
-                 path.mac if operating_system == 'Darwin' else path.windows)
+        paths = (
+            path.linux
+            if operating_system == "Linux"
+            else path.mac
+            if operating_system == "Darwin"
+            else path.windows
+        )
 
-        environ['PATH'] += (pathsep + pathsep.join(paths))
+        environ["PATH"] += pathsep + pathsep.join(paths)
 
-    def _run_command(self,
-                     command: List[str],
-                     description: str,
-                     possible_error_reasons: Optional[List[str]] = None,
-                     regex_output: Optional[str] = None) -> str:
+    def _run_command(
+        self,
+        command: List[str],
+        description: str,
+        possible_error_reasons: Optional[List[str]] = None,
+        regex_output: Optional[str] = None,
+    ) -> str:
         """Run a Simplicity Commander command
 
         Parameters
@@ -130,43 +141,62 @@ class Commander:
             for reason in possible_error_reasons:
                 if reason not in self.error_reasons:
                     raise ValueError(
-                        f"“{reason}” is not a valid possible error reason")
+                        f"“{reason}” is not a valid possible error reason"
+                    )
 
         result = run(["commander"] + command, capture_output=True, text=True)
 
         if result.returncode != 0:
             # Since Windows seems to return the exit code as unsigned number we
             # need to convert it first to the “real” signed number.
-            returncode = int.from_bytes(
-                result.returncode.to_bytes(4, byteorder),
-                byteorder,
-                signed=True) if system() == 'Windows' else result.returncode
-            error_message = ("Execution of Simplicity Commander command to "
-                             f"{description} failed with return code "
-                             f"“{returncode}”")
-            combined_output = ("\n".join(
-                (result.stdout,
-                 result.stderr)) if result.stdout or result.stderr else "")
+            returncode = (
+                int.from_bytes(
+                    result.returncode.to_bytes(4, byteorder),
+                    byteorder,
+                    signed=True,
+                )
+                if system() == "Windows"
+                else result.returncode
+            )
+            error_message = (
+                "Execution of Simplicity Commander command to "
+                f"{description} failed with return code "
+                f"“{returncode}”"
+            )
+            combined_output = (
+                "\n".join((result.stdout, result.stderr))
+                if result.stdout or result.stderr
+                else ""
+            )
             if combined_output:
-                error_message += ("\n\nSimplicity Commander output:\n\n"
-                                  f"{combined_output.rstrip()}")
+                error_message += (
+                    "\n\nSimplicity Commander output:\n\n"
+                    f"{combined_output.rstrip()}"
+                )
 
             if possible_error_reasons:
-                error_reasons = "\n".join([
-                    f"• {self.error_reasons[reason]}"
-                    for reason in possible_error_reasons
-                ])
-                error_message += ("\n\nPossible error reasons:"
-                                  f"\n\n{error_reasons}")
+                error_reasons = "\n".join(
+                    [
+                        f"• {self.error_reasons[reason]}"
+                        for reason in possible_error_reasons
+                    ]
+                )
+                error_message += (
+                    f"\n\nPossible error reasons:\n\n{error_reasons}"
+                )
 
             raise CommanderReturnCodeException(error_message)
 
-        if regex_output is not None and compile(regex_output).search(
-                result.stdout) is None:
-            error_message = ("Output of Simplicity Commander command to "
-                             f"{description}:\n{result.stdout}\n"
-                             "did not match the expected regular expression "
-                             f"“{regex_output}”")
+        if (
+            regex_output is not None
+            and compile(regex_output).search(result.stdout) is None
+        ):
+            error_message = (
+                "Output of Simplicity Commander command to "
+                f"{description}:\n{result.stdout}\n"
+                "did not match the expected regular expression "
+                f"“{regex_output}”"
+            )
             raise CommanderOutputMatchException(error_message)
 
         return result.stdout
@@ -188,12 +218,14 @@ class Commander:
 
         """
 
-        error_reasons = ['programmer not connected', 'incorrect serial']
-        self._run_command(command="adapter dbgmode OUT".split() +
-                          self.identification_arguments,
-                          description="enable debug mode",
-                          possible_error_reasons=error_reasons,
-                          regex_output="Setting debug mode to OUT")
+        error_reasons = ["programmer not connected", "incorrect serial"]
+        self._run_command(
+            command="adapter dbgmode OUT".split()
+            + self.identification_arguments,
+            description="enable debug mode",
+            possible_error_reasons=error_reasons,
+            regex_output="Setting debug mode to OUT",
+        )
 
     def unlock_device(self) -> None:
         """Unlock device for debugging
@@ -206,10 +238,12 @@ class Commander:
             command="device unlock".split() + self.identification_arguments,
             description="unlock device",
             possible_error_reasons=[
-                'device not connected', 'programmer not connected',
-                'incorrect serial'
+                "device not connected",
+                "programmer not connected",
+                "incorrect serial",
             ],
-            regex_output="Chip successfully unlocked")
+            regex_output="Chip successfully unlocked",
+        )
 
     def upload_flash(self, filepath: Union[str, Path]) -> None:
         """Upload code into the flash memory of the device
@@ -231,8 +265,8 @@ class Commander:
         self.unlock_device()
 
         self._run_command(
-            command=["flash", f"{filepath}", "--address", "0x0"] +
-            self.identification_arguments,
+            command=["flash", f"{filepath}", "--address", "0x0"]
+            + self.identification_arguments,
             description="upload firmware",
         )
 
@@ -265,32 +299,40 @@ class Commander:
 
         """
 
-        command = ["aem", "measure", "--windowlength",
-                   str(milliseconds)] + self.identification_arguments
+        command = [
+            "aem",
+            "measure",
+            "--windowlength",
+            str(milliseconds),
+        ] + self.identification_arguments
 
         regex = r"Power\s*\[mW\]\s*:\s*(?P<milliwatts>\d+\.\d+)"
         try:
-            output = self._run_command(command=command,
-                                       description="read power usage",
-                                       possible_error_reasons=[
-                                           'programmer not connected',
-                                           'incorrect serial'
-                                       ],
-                                       regex_output=regex)
+            output = self._run_command(
+                command=command,
+                description="read power usage",
+                possible_error_reasons=[
+                    "programmer not connected",
+                    "incorrect serial",
+                ],
+                regex_output=regex,
+            )
         except CommanderOutputMatchException:
             raise CommanderOutputMatchException(
                 "Unable to extract power usage "
-                "from Simplicity Commander output")
+                "from Simplicity Commander output"
+            )
 
         pattern_match = compile(regex).search(output)
         assert pattern_match is not None
-        milliwatts = pattern_match['milliwatts']
+        milliwatts = pattern_match["milliwatts"]
 
         return float(milliwatts)
 
 
 # -- Main ---------------------------------------------------------------------
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     from doctest import testmod
+
     testmod()

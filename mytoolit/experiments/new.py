@@ -12,13 +12,15 @@ from mytoolit.measurement import convert_raw_to_g
 # -- Functions ----------------------------------------------------------------
 async def test(identifier):
     async with Network() as network:
-        node = 'STH 1'
+        node = "STH 1"
 
         await network.connect_sensor_device(identifier)
         name = await network.get_name(node)
         mac_address = await network.get_mac_address(node)
-        print(f"Connected to sensor device “{name}” with MAC "
-              f"address “{mac_address}”")
+        print(
+            f"Connected to sensor device “{name}” with MAC "
+            f"address “{mac_address}”"
+        )
 
         stream_data = await network.read_streaming_data_amount(1000)
 
@@ -31,5 +33,5 @@ async def test(identifier):
 
 # -- Main ---------------------------------------------------------------------
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     run(test(identifier=0))

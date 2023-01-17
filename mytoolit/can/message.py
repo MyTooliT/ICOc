@@ -27,8 +27,8 @@ class Message:
         *message: Union[TPCANMsg, CANMessage],
         identifier: Optional[Identifier] = None,
         data: Optional[List[int]] = None,
-        **keyword_arguments: Union[Command, Node, None, str, int,
-                                   bool]) -> None:
+        **keyword_arguments: Union[Command, Node, None, str, int, bool],
+    ) -> None:
         """Create a new message based on the given attributes
 
         Usually you will either specify the (PCAN or python-can) message
@@ -107,24 +107,28 @@ class Message:
                     data=[
                         can_message.DATA[byte]
                         for byte in range(can_message.LEN)
-                    ])
+                    ],
+                )
             elif isinstance(can_message, CANMessage):
                 self.message = can_message
             else:
                 raise ValueError(
                     "Unsupported object type for argument message: "
-                    f"“{type(can_message)}”")
+                    f"“{type(can_message)}”"
+                )
         else:
             self.message = CANMessage(is_extended_id=True)
 
         if identifier:
-            self.message.arbitration_id = identifier if isinstance(
-                identifier, int) else identifier.value
+            self.message.arbitration_id = (
+                identifier if isinstance(identifier, int) else identifier.value
+            )
 
         if keyword_arguments:
             # mypy assumes that all keyword arguments have the same type
             self.message.arbitration_id = Identifier(
-                self.id(), **keyword_arguments).value  # type: ignore
+                self.id(), **keyword_arguments
+            ).value  # type: ignore
 
         if data:
             self.message.data = bytearray(data)
@@ -205,14 +209,13 @@ class Message:
         identifier = self.identifier()
         data_explanation = ""
 
-        if identifier.block_command_name() == 'Get/Set State':
+        if identifier.block_command_name() == "Get/Set State":
             if len(self.data) < 1:
                 return ""
 
             data_explanation = repr(State(self.data[0]))
 
-        if identifier.block_command_name() == 'Bluetooth':
-
+        if identifier.block_command_name() == "Bluetooth":
             subcommand = self.data[0]
             device_number = self.data[1]
             is_acknowledgment = self.identifier().is_acknowledgment()
@@ -232,26 +235,34 @@ class Message:
                     except ValueError:
                         data_explanation += (
                             "Unable to convert text "
-                            f"“{number_devices_text}” to number")
+                            f"“{number_devices_text}” to number"
+                        )
 
             elif subcommand == 5 or subcommand == 6:
                 part = "first" if subcommand == 5 else "second"
-                data_explanation = (f"{verb} {part} part of name of device "
-                                    f"with device number “{device_number}”")
+                data_explanation = (
+                    f"{verb} {part} part of name of device "
+                    f"with device number “{device_number}”"
+                )
                 if is_acknowledgment and len(self.data) >= 2:
                     name = convert_bytes_to_text(self.data[2:])
                     data_explanation += f": “{name}”"
             elif subcommand == 7:
-                info = ("Acknowledge connection request"
-                        if is_acknowledgment else "Request connection")
-                data_explanation = (f"{info} to device "
-                                    f"with device number “{device_number}”")
+                info = (
+                    "Acknowledge connection request"
+                    if is_acknowledgment
+                    else "Request connection"
+                )
+                data_explanation = (
+                    f"{info} to device with device number “{device_number}”"
+                )
             elif subcommand == 8:
                 data_explanation = f"{verb} Bluetooth connection status"
                 if is_acknowledgment and len(self.data) >= 3:
                     connected = bool(self.data[2])
                     data_explanation += ": {}".format(
-                        "Connected" if connected else "Not connected")
+                        "Connected" if connected else "Not connected"
+                    )
             elif subcommand == 9:
                 verb = "Acknowledge" if is_acknowledgment else "Request"
                 data_explanation = f"{verb} Bluetooth deactivation"
@@ -259,39 +270,51 @@ class Message:
                 verb = "Return" if is_acknowledgment else "Get"
                 data_explanation = f"{verb} Bluetooth send counter"
                 if is_acknowledgment and len(self.data) >= 8:
-                    counter = int.from_bytes(self.data[2:], byteorder='big')
+                    counter = int.from_bytes(self.data[2:], byteorder="big")
                     data_explanation += f": {counter}"
             elif subcommand == 12:
-                data_explanation = (f"{verb} RSSI of device "
-                                    f"with device number “{device_number}”")
+                data_explanation = (
+                    f"{verb} RSSI of device "
+                    f"with device number “{device_number}”"
+                )
                 if is_acknowledgment and len(self.data) >= 3:
-                    rssi = int.from_bytes(self.data[2:3],
-                                          byteorder='little',
-                                          signed=True)
+                    rssi = int.from_bytes(
+                        self.data[2:3], byteorder="little", signed=True
+                    )
                     data_explanation += f": {rssi}"
             elif subcommand == 14:
                 data_explanation = "Write energy mode reduced"
                 if len(self.data) >= 8:
                     time_normal_to_reduced_ms = int.from_bytes(
-                        self.data[2:6], byteorder='little')
+                        self.data[2:6], byteorder="little"
+                    )
                     ADVERTISEMENT_TIME_EEPROM_TO_MS = 0.625
                     advertisement_time = (
-                        int.from_bytes(self.data[6:], byteorder='little') *
-                        ADVERTISEMENT_TIME_EEPROM_TO_MS)
-                    data_explanation += ": " + ", ".join([
-                        f"⟳ {time_normal_to_reduced_ms} ms",
-                        f"📢 {advertisement_time} ms"
-                    ])
+                        int.from_bytes(self.data[6:], byteorder="little")
+                        * ADVERTISEMENT_TIME_EEPROM_TO_MS
+                    )
+                    data_explanation += ": " + ", ".join(
+                        [
+                            f"⟳ {time_normal_to_reduced_ms} ms",
+                            f"📢 {advertisement_time} ms",
+                        ]
+                    )
             elif subcommand == 17:
-                data_explanation = (f"{verb} MAC address of device "
-                                    f"with device number “{device_number}”")
+                data_explanation = (
+                    f"{verb} MAC address of device "
+                    f"with device number “{device_number}”"
+                )
                 if is_acknowledgment and len(self.data) >= 8:
                     data_explanation += f": {mac_address()}"
             elif subcommand == 18:
-                verb = ("Acknowledge connection request"
-                        if is_acknowledgment else "Request connection")
-                data_explanation = (f"{verb} to device "
-                                    f"with MAC address “{mac_address()}”")
+                verb = (
+                    "Acknowledge connection request"
+                    if is_acknowledgment
+                    else "Request connection"
+                )
+                data_explanation = (
+                    f"{verb} to device with MAC address “{mac_address()}”"
+                )
 
         return data_explanation
 
@@ -313,9 +336,13 @@ class Message:
 
         block_command = identifier.block_command_name()
 
-        StreamingFormatClass = (StreamingFormat if block_command == 'Data' else
-                                StreamingFormatVoltage if block_command
-                                == 'Voltage' else StreamingFormat)
+        StreamingFormatClass = (
+            StreamingFormat
+            if block_command == "Data"
+            else StreamingFormatVoltage
+            if block_command == "Voltage"
+            else StreamingFormat
+        )
         streaming_format: StreamingFormat = StreamingFormatClass(self.data[0])
         data_explanation += repr(streaming_format)
 
@@ -324,14 +351,19 @@ class Message:
             explanations = [f"Sequence Counter: {sequence_counter}"]
             size_value = streaming_format.data_bytes()
             values = [
-                int.from_bytes(self.data[start:start + size_value],
-                               byteorder='little')
+                int.from_bytes(
+                    self.data[start : start + size_value], byteorder="little"
+                )
                 for start in range(2, len(self.data), size_value)
             ]
-            explanations.extend([
-                f"{explanation}: {value}" for explanation, value in zip(
-                    streaming_format.value_explanations, values)
-            ])
+            explanations.extend(
+                [
+                    f"{explanation}: {value}"
+                    for explanation, value in zip(
+                        streaming_format.value_explanations, values
+                    )
+                ]
+            )
             data_explanation += ", " + ", ".join(explanations)
 
         return data_explanation
@@ -340,8 +372,10 @@ class Message:
         identifier = self.identifier()
         data_explanation = ""
 
-        if (identifier.block_command_name() == "Calibration Measurement"
-                and len(self.data) >= 4):
+        if (
+            identifier.block_command_name() == "Calibration Measurement"
+            and len(self.data) >= 4
+        ):
             return repr(CalibrationMeasurementFormat(self.data))
 
         return data_explanation
@@ -360,22 +394,24 @@ class Message:
         data_explanation = ""
 
         if identifier.block_command_name() == "Read Write Request Counter":
-            counter = int.from_bytes(self.data[4:], 'little')
+            counter = int.from_bytes(self.data[4:], "little")
             data_explanation = f"EEPROM Write Requests: {counter}"
-        elif (identifier.block_command_name() in {"Read", "Write"}
-              and len(self.data) >= 8):
-
+        elif (
+            identifier.block_command_name() in {"Read", "Write"}
+            and len(self.data) >= 8
+        ):
             page = self.data[0]
             offset = self.data[1]
             length = self.data[2]
-            data = list(self.data[4:4 + min(length, 4)])
+            data = list(self.data[4 : 4 + min(length, 4)])
             is_acknowledgment = self.identifier().is_acknowledgment()
 
-            info = ("Acknowledge request" if is_acknowledgment else "Request")
+            info = "Acknowledge request" if is_acknowledgment else "Request"
             verb = identifier.block_command_name().lower()
             data_explanation = (
                 f"{info} to {verb} {length} bytes at page {page} "
-                f"with offset {offset}")
+                f"with offset {offset}"
+            )
             read_request = verb == "read" and not is_acknowledgment
             if not read_request:
                 data_explanation += f": {data}"
@@ -397,13 +433,13 @@ class Message:
 
         identifier = self.identifier()
 
-        if identifier.block_name() == 'System':
+        if identifier.block_name() == "System":
             return self._data_explanation_system()
-        elif identifier.block_name() == 'Streaming':
+        elif identifier.block_name() == "Streaming":
             return self._data_explanation_streaming()
-        elif identifier.block_name() == 'Configuration':
+        elif identifier.block_name() == "Configuration":
             return self._data_explanation_configuration()
-        elif identifier.block_name() == 'EEPROM':
+        elif identifier.block_name() == "EEPROM":
             return self._data_explanation_eeprom()
 
         return ""
@@ -467,14 +503,19 @@ class Message:
         identifier = self.identifier()
         data_explanation = self._data_explanation()
 
-        explanation = (f"{identifier} ({data_explanation})"
-                       if data_explanation else repr(identifier))
+        explanation = (
+            f"{identifier} ({data_explanation})"
+            if data_explanation
+            else repr(identifier)
+        )
 
         data_representation = " ".join(
-            [hex(self.data[byte]) for byte in range(len(self.data))])
+            [hex(self.data[byte]) for byte in range(len(self.data))]
+        )
         bit_values = [
             f"0b{identifier.value:029b}",
-            str(len(self.data)), data_representation
+            str(len(self.data)),
+            data_representation,
         ]
         # Filter empty string, since otherwise there might be an additional
         # space at the end of the representation for empty data
@@ -514,9 +555,11 @@ class Message:
 
         """
 
-        return Message(identifier=self.identifier().acknowledge(),
-                       error=error,
-                       data=list(self.data))
+        return Message(
+            identifier=self.identifier().acknowledge(),
+            error=error,
+            data=list(self.data),
+        )
 
     def id(self) -> int:
         """Retrieve the ID of the message
@@ -611,6 +654,7 @@ class Message:
 
 # -- Main ---------------------------------------------------------------------
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     from doctest import testmod
+
     testmod()

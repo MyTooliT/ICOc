@@ -15,24 +15,28 @@ class CalibrationMeasurementFormat:
 
     """
 
-    methods = ['Reserved', 'Activate', 'Deactivate', 'Measure']
-    elements = bidict({
-        "Data": 0,
-        "Temperature": 1,
-        "Voltage": 32,
-        "VSS": 96,
-        "VDD": 97,
-        "Internal": 98,
-        "OPV": 99,
-    })
+    methods = ["Reserved", "Activate", "Deactivate", "Measure"]
+    elements = bidict(
+        {
+            "Data": 0,
+            "Temperature": 1,
+            "Voltage": 32,
+            "VSS": 96,
+            "VDD": 97,
+            "Internal": 98,
+            "OPV": 99,
+        }
+    )
 
-    def __init__(self,
-                 *data: Union[bytearray, List[int]],
-                 set: Optional[bool] = None,
-                 element: Optional[str] = None,
-                 method: Optional[str] = None,
-                 dimension: Optional[int] = None,
-                 reference_voltage: Optional[float] = None) -> None:
+    def __init__(
+        self,
+        *data: Union[bytearray, List[int]],
+        set: Optional[bool] = None,
+        element: Optional[str] = None,
+        method: Optional[str] = None,
+        dimension: Optional[int] = None,
+        reference_voltage: Optional[float] = None,
+    ) -> None:
         """Initialize the calibration measurement format
 
         This class allows you to specify the message bytes directly as first
@@ -84,13 +88,17 @@ class CalibrationMeasurementFormat:
         if data:
             data_bytes = list(data[0])
             if not isinstance(data_bytes, list):
-                raise ValueError("Unsupported object type for argument data: "
-                                 f"“{type(data_bytes)}”")
+                raise ValueError(
+                    "Unsupported object type for argument data: "
+                    f"“{type(data_bytes)}”"
+                )
             required_length = 4
             if len(data_bytes) < required_length:
-                raise ValueError(f"Data length of {len(data_bytes)} is too "
-                                 "small, at least length of "
-                                 f"“{required_length}” required")
+                raise ValueError(
+                    f"Data length of {len(data_bytes)} is too "
+                    "small, at least length of "
+                    f"“{required_length}” required"
+                )
             self.data = data_bytes[0:4] + [0] * 4
         else:
             self.data = [0, 0, 1, 0] + [0] * 4
@@ -124,7 +132,7 @@ class CalibrationMeasurementFormat:
             self.data[2] = dimension
 
         if reference_voltage is not None:
-            self.data[3] = round(reference_voltage * 20) & 0xff
+            self.data[3] = round(reference_voltage * 20) & 0xFF
 
     def __repr__(self) -> str:
         """
@@ -155,13 +163,15 @@ class CalibrationMeasurementFormat:
         method_byte = self.data[0]
 
         set = method_byte >> 7
-        element = cls.elements.inverse.get(self.data[1], 'Unknown Element')
+        element = cls.elements.inverse.get(self.data[1], "Unknown Element")
         dimension = self.data[2]
         reference_voltage = round(self.data[3] / 20, 1)
 
         parts = [
-            "Set" if set else "Get", element, f"Dimension: {dimension}",
-            f"Reference Voltage: {reference_voltage} V"
+            "Set" if set else "Get",
+            element,
+            f"Dimension: {dimension}",
+            f"Reference Voltage: {reference_voltage} V",
         ]
         if set:
             method = cls.methods[(method_byte >> 5) & 0b11]
@@ -174,6 +184,7 @@ class CalibrationMeasurementFormat:
 
 # -- Main ---------------------------------------------------------------------
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     from doctest import testmod
+
     testmod()

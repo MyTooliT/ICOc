@@ -57,32 +57,33 @@ class Node:
         """
 
         if isinstance(node, str):
-
             # Check for broadcast pseudo nodes
             broadcast_match = fullmatch(
                 "Broadcast With(?P<no_acknowledgment>out)? Acknowledgment",
-                node)
+                node,
+            )
             if broadcast_match:
-                self.value = 0 if broadcast_match['no_acknowledgment'] else 31
+                self.value = 0 if broadcast_match["no_acknowledgment"] else 31
                 return
 
             # Check normal nodes
             node_match = fullmatch(
-                r"(?P<name>S(?:PU|TH|TU)) ?(?P<number>\d{1,2})", node)
+                r"(?P<name>S(?:PU|TH|TU)) ?(?P<number>\d{1,2})", node
+            )
 
             if node_match is not None:
-                node_name = node_match['name']
-                node_number = int(node_match['number'])
+                node_name = node_match["name"]
+                node_number = int(node_match["number"])
 
-                if node_name == 'STH' and 1 <= node_number <= 14:
+                if node_name == "STH" and 1 <= node_number <= 14:
                     self.value = node_number
                     return
 
-                if node_name == 'SPU' and 1 <= node_number <= 2:
+                if node_name == "SPU" and 1 <= node_number <= 2:
                     self.value = node_number + 14
                     return
 
-                if node_name == 'STU' and 1 <= node_number <= 14:
+                if node_name == "STU" and 1 <= node_number <= 14:
                     self.value = node_number + 16
                     return
 
@@ -123,8 +124,9 @@ class Node:
         """
 
         if self.value == 0 or self.value == 31:
-            return "Broadcast With{} Acknowledgment".format("" if self.value ==
-                                                            0 else "out")
+            return "Broadcast With{} Acknowledgment".format(
+                "" if self.value == 0 else "out"
+            )
         if self.is_sth():
             return f"STH {self.value}"
 
@@ -184,6 +186,7 @@ class Node:
 
 # -- Main ---------------------------------------------------------------------
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     from doctest import testmod
+
     testmod()

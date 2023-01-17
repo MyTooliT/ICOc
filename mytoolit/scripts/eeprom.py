@@ -24,15 +24,19 @@ def parse_arguments():
     """
 
     parser = ArgumentParser(
-        description="Check the integrity of STH EEPROM content")
-    parser.add_argument("mac",
-                        help="MAC address of STH e.g. 08:6b:d7:01:de:81",
-                        type=mac_address)
+        description="Check the integrity of STH EEPROM content"
+    )
+    parser.add_argument(
+        "mac",
+        help="MAC address of STH e.g. 08:6b:d7:01:de:81",
+        type=mac_address,
+    )
     parser.add_argument(
         "--value",
         help="byte value for EEPROM cells (default: %(default)s)",
         type=byte_value,
-        default=10)
+        default=10,
+    )
 
     return parser.parse_args()
 
@@ -65,7 +69,7 @@ class EEPROMCheck:
         """Initialize the connection to the STU"""
 
         self.network = Network()
-        await self.network.reset_node('STU 1')
+        await self.network.reset_node("STU 1")
         await sleep(1)  # Wait till reset takes place
         return self
 
@@ -83,7 +87,7 @@ class EEPROMCheck:
     async def reset_sth(self):
         """Reset the (connected) STH"""
 
-        await self.network.reset_node('STH 1')
+        await self.network.reset_node("STH 1")
         await sleep(1)  # Wait till reset takes place
 
     async def write_eeprom(self):
@@ -94,7 +98,8 @@ class EEPROMCheck:
             address=1,
             offset=0,
             data=[self.eeprom_value for _ in range(self.eeprom_length)],
-            node='STH 1')
+            node="STH 1",
+        )
 
     async def read_eeprom(self):
         """Read a page of the EEPROM
@@ -104,16 +109,16 @@ class EEPROMCheck:
         A list of the byte values stored in the EEPROM page
         """
 
-        return await self.network.read_eeprom(address=1,
-                                              offset=0,
-                                              length=256,
-                                              node='STH 1')
+        return await self.network.read_eeprom(
+            address=1, offset=0, length=256, node="STH 1"
+        )
 
     async def print_eeprom_incorrect(self):
         """Print a summary of the incorrect values in the EEPROM page"""
 
         changed = [
-            byte for byte in await self.read_eeprom()
+            byte
+            for byte in await self.read_eeprom()
             if byte != self.eeprom_value
         ]
         incorrect = len(changed) / self.eeprom_length
@@ -121,7 +126,9 @@ class EEPROMCheck:
         summary = ", ".join(
             f"{value} ({times} time{'' if times == 1 else 's'})"
             for value, times in sorted(
-                counter.items(), key=lambda item: item[1], reverse=True))
+                counter.items(), key=lambda item: item[1], reverse=True
+            )
+        )
         print(f"{incorrect:.2%} incorrect{': ' if summary else ''}{summary}")
 
     async def print_eeprom(self):
@@ -130,9 +137,10 @@ class EEPROMCheck:
         page = await self.read_eeprom()
         bytes_per_line = 8
         for byte in range(0, self.eeprom_length - 1, bytes_per_line):
-            print(f"{byte:3}: ", end='')
+            print(f"{byte:3}: ", end="")
             byte_representation = " ".join(["{:3}"] * bytes_per_line).format(
-                *page[byte:byte + bytes_per_line])
+                *page[byte : byte + bytes_per_line]
+            )
             print(byte_representation)
 
 
@@ -160,5 +168,5 @@ def main():
     run(check_eeprom(parse_arguments()))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

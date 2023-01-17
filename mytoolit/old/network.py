@@ -10,15 +10,30 @@ from threading import Lock, Thread
 from time import time, sleep
 from typing import Any, Dict, List, Optional, Tuple, Union
 
-from can.interfaces.pcan.basic import (PCAN_BAUD_1M, PCAN_BUSOFF_AUTORESET,
-                                       PCAN_ERROR_OK, PCAN_ERROR_QRCVEMPTY,
-                                       PCAN_PARAMETER_ON, PCAN_USBBUS1,
-                                       PCANBasic, TPCANMsg)
+from can.interfaces.pcan.basic import (
+    PCAN_BAUD_1M,
+    PCAN_BUSOFF_AUTORESET,
+    PCAN_ERROR_OK,
+    PCAN_ERROR_QRCVEMPTY,
+    PCAN_PARAMETER_ON,
+    PCAN_USBBUS1,
+    PCANBasic,
+    TPCANMsg,
+)
 from semantic_version import Version
 
-from mytoolit.can import (Command, ErrorStatusSTH, ErrorStatusSTU, Identifier,
-                          Message, Node, NodeStatusSTH, NodeStatusSTU,
-                          SensorConfig, UnsupportedFeatureException)
+from mytoolit.can import (
+    Command,
+    ErrorStatusSTH,
+    ErrorStatusSTU,
+    Identifier,
+    Message,
+    Node,
+    NodeStatusSTH,
+    NodeStatusSTU,
+    SensorConfig,
+    UnsupportedFeatureException,
+)
 from mytoolit.eeprom import EEPROMStatus
 from mytoolit.config import settings
 from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkName
@@ -62,14 +77,16 @@ class Network(object):
 
     """
 
-    def __init__(self,
-                 sender=Node('SPU 1').value,
-                 receiver=Node('STH 1').value,
-                 prescaler=2,
-                 acquisition=8,
-                 oversampling=64,
-                 log_destination: Optional[str] = None,
-                 log_level=ERROR):
+    def __init__(
+        self,
+        sender=Node("SPU 1").value,
+        receiver=Node("STH 1").value,
+        prescaler=2,
+        acquisition=8,
+        oversampling=64,
+        log_destination: Optional[str] = None,
+        log_level=ERROR,
+    ):
         """
         Initialize the CAN communication class using the given arguments
 
@@ -112,19 +129,24 @@ class Network(object):
         self.logger.setLevel(log_level)
         repo_root = Path(__file__).parent.parent.parent
         handler: Union[FileHandler, StreamHandler] = (
-            StreamHandler() if log_destination is None else FileHandler(
-                repo_root / log_destination, 'w', 'utf-8', delay=True))
+            StreamHandler()
+            if log_destination is None
+            else FileHandler(
+                repo_root / log_destination, "w", "utf-8", delay=True
+            )
+        )
         handler.setFormatter(
-            Formatter('{asctime} {levelname} {name} {message}', style='{'))
+            Formatter("{asctime} {levelname} {name} {message}", style="{")
+        )
         self.logger.addHandler(handler)
 
         # Logger for CAN messages
-        logger = getLogger('can')
+        logger = getLogger("can")
         # We use `Logger` in the code below, since the `.logger` attribute
         # stores internal DynaConf data
         logger.setLevel(settings.Logger.can.level)
-        handler = FileHandler(repo_root / "can.log", 'w', 'utf-8', delay=True)
-        handler.setFormatter(Formatter('{asctime} {message}', style='{'))
+        handler = FileHandler(repo_root / "can.log", "w", "utf-8", delay=True)
+        handler.setFormatter(Formatter("{asctime} {message}", style="{"))
         logger.addHandler(handler)
 
         self.logger.info(datetime.now().isoformat())
@@ -137,7 +159,7 @@ class Network(object):
         self.AdcConfig = {
             "Prescaler": prescaler,
             "AquisitionTime": acquisition,
-            "OverSamplingRate": oversampling
+            "OverSamplingRate": oversampling,
         }
         # Configuration for acceleration streaming
         # - Streaming
@@ -154,17 +176,24 @@ class Network(object):
         result = self.pcan.Initialize(self.m_PcanHandle, PCAN_BAUD_1M)
         if result != PCAN_ERROR_OK:
             raise Exception(
-                self.__get_error_message("Unable to initialize CAN hardware",
-                                         result) + "\n\nPossible reason:\n\n"
-                "• CAN adapter is not connected to the computer")
+                self.__get_error_message(
+                    "Unable to initialize CAN hardware", result
+                )
+                + "\n\nPossible reason:\n\n"
+                "• CAN adapter is not connected to the computer"
+            )
 
         # Reset the CAN controller if a bus-off state is detected
-        result = self.pcan.SetValue(self.m_PcanHandle, PCAN_BUSOFF_AUTORESET,
-                                    PCAN_PARAMETER_ON)
+        result = self.pcan.SetValue(
+            self.m_PcanHandle, PCAN_BUSOFF_AUTORESET, PCAN_PARAMETER_ON
+        )
         if result != PCAN_ERROR_OK:
-            print(self.__get_error_message(
-                "Unable to set auto reset on CAN bus-off state", result),
-                  file=stderr)
+            print(
+                self.__get_error_message(
+                    "Unable to set auto reset on CAN bus-off state", result
+                ),
+                file=stderr,
+            )
         self.tCanReadWriteMutex = Lock()
         self.reset()
         self.ReadThreadReset()
@@ -245,8 +274,9 @@ class Network(object):
             self.readArray = []
             sleep(0.2)
             self.RunReadThread = True
-            self.readThread = Thread(target=self.ReadMessage,
-                                     name="CanReadThread")
+            self.readThread = Thread(
+                target=self.ReadMessage, name="CanReadThread"
+            )
             self.readThread.start()
             self.reset()
             sleep(0.2)
@@ -280,12 +310,13 @@ class Network(object):
             status = self.pcan.Write(self.m_PcanHandle, CanMsg)
         if status != PCAN_ERROR_OK:
             error_message = self.__get_error_message(
-                "Unable to write CAN message", status)
+                "Unable to write CAN message", status
+            )
             self.logger.error(error_message)
             self.__exitError(error_message)
 
         # Only log message, if writing was successful
-        getLogger('can').debug(f"{Message(CanMsg)}")
+        getLogger("can").debug(f"{Message(CanMsg)}")
 
     def WriteFrameWaitAckOk(self, message: Dict[str, Any]) -> Dict[str, Any]:
         """Return data about an acknowledgement CAN message
@@ -308,12 +339,13 @@ class Network(object):
             "ID": hex(message["CanMsg"].ID),
             "Payload": payload,
             "PcTime": message["PcTime"],
-            "CanTime": message["PeakCanTime"]
+            "CanTime": message["PeakCanTime"],
         }
         return returnMessage
 
-    def WriteFrameWaitAckError(self, message: Dict[str, Any], bError: bool,
-                               printLog: bool):
+    def WriteFrameWaitAckError(
+        self, message: Dict[str, Any], bError: bool, printLog: bool
+    ):
         """Return data about an error acknowledgement CAN message
 
         Arguments
@@ -337,17 +369,20 @@ class Network(object):
 
         identifier = Identifier(message["CanMsg"].ID)
         payload = payload2Hex(message["CanMsg"].DATA)
-        info = (f"Error acknowledgement received: {identifier}; "
-                if bError else
-                f"Acknowledgement received (error assumed): {identifier}; ")
+        info = (
+            f"Error acknowledgement received: {identifier}; "
+            if bError
+            else f"Acknowledgement received (error assumed): {identifier}; "
+        )
         info += f"Payload: {payload}"
         self.logger.error(info)
         if printLog:
             print(info)
         return self.WriteFrameWaitAckOk(message)
 
-    def WriteFrameWaitAckTimeOut(self, CanMsg: TPCANMsg,
-                                 printLog: bool) -> str:
+    def WriteFrameWaitAckTimeOut(
+        self, CanMsg: TPCANMsg, printLog: bool
+    ) -> str:
         """Handle sent messages that were not acknowledged
 
         Arguments
@@ -368,8 +403,10 @@ class Network(object):
 
         identifier = Identifier(CanMsg.ID)
         payload = payload2Hex(CanMsg.DATA)
-        message = (f"No (error) acknowledgement received: {identifier}; " +
-                   f"Payload: {payload}")
+        message = (
+            f"No (error) acknowledgement received: {identifier}; "
+            + f"Payload: {payload}"
+        )
         self.logger.warning(message)
         if printLog:
             print(message)
@@ -384,7 +421,7 @@ class Network(object):
         assumedPayload: Optional[List[int]] = None,
         bError: bool = False,
         sendTime: Optional[int] = None,
-        notAckIdleWaitTimeMs: float = 0.001
+        notAckIdleWaitTimeMs: float = 0.001,
     ) -> Tuple[Union[str, Dict[str, Any]], int]:
         """Send a certain CAN message and wait for acknowledgment
 
@@ -432,7 +469,8 @@ class Network(object):
 
         if waitMs < 200:
             self.__exitError(
-                f"Meantime between send retry to low ({waitMs} ms)")
+                f"Meantime between send retry to low ({waitMs} ms)"
+            )
         if sendTime is None:
             sendTime = self.get_elapsed_time()
         if currentIndex is None or currentIndex >= self.GetReadArrayIndex():
@@ -447,17 +485,22 @@ class Network(object):
 
         waitTimeMax = self.get_elapsed_time() + waitMs
         CanMsgAck = Message(CanMsg).acknowledge(error=bError).to_pcan()
-        CanMsgAckError = Message(CanMsg).acknowledge(
-            error=not bError).to_pcan()
+        CanMsgAckError = (
+            Message(CanMsg).acknowledge(error=not bError).to_pcan()
+        )
 
         while True:
             # Check timeout
             if self.get_elapsed_time() > waitTimeMax:
-                warning = ("No acknowledgement message received in "
-                           f"{waitMs} milliseconds: Message(CanMsg)")
+                warning = (
+                    "No acknowledgement message received in "
+                    f"{waitMs} milliseconds: Message(CanMsg)"
+                )
                 self.logger.warning(warning)
-                return self.WriteFrameWaitAckTimeOut(CanMsg,
-                                                     printLog), currentIndex
+                return (
+                    self.WriteFrameWaitAckTimeOut(CanMsg, printLog),
+                    currentIndex,
+                )
 
             # Get read message
             if currentIndex < self.GetReadArrayIndex() - 1:
@@ -475,27 +518,32 @@ class Network(object):
             pcan_message = message["CanMsg"]
 
             if CanMsgAck.ID == pcan_message.ID and (
-                    assumedPayload is None
-                    or list(message["CanMsg"].DATA) == assumedPayload):
+                assumedPayload is None
+                or list(message["CanMsg"].DATA) == assumedPayload
+            ):
                 return self.WriteFrameWaitAckOk(message), currentIndex
 
             if CanMsgAckError.ID == pcan_message.ID:
-                warning = ("Received error response message: "
-                           f"{Message(pcan_message)}")
+                warning = (
+                    f"Received error response message: {Message(pcan_message)}"
+                )
                 self.logger.warning(warning)
-                return self.WriteFrameWaitAckError(message, bError,
-                                                   printLog), currentIndex
+                return (
+                    self.WriteFrameWaitAckError(message, bError, printLog),
+                    currentIndex,
+                )
 
     def tWriteFrameWaitAckRetries(
-            self,
-            CanMsg: TPCANMsg,
-            retries: int = 10,
-            waitMs: int = 1000,
-            printLog: bool = False,
-            bErrorAck: bool = False,
-            assumedPayload: Optional[List[int]] = None,
-            bErrorExit: bool = True,
-            notAckIdleWaitTimeMs: float = 0.001) -> Union[str, Dict[str, Any]]:
+        self,
+        CanMsg: TPCANMsg,
+        retries: int = 10,
+        waitMs: int = 1000,
+        printLog: bool = False,
+        bErrorAck: bool = False,
+        assumedPayload: Optional[List[int]] = None,
+        bErrorExit: bool = True,
+        notAckIdleWaitTimeMs: float = 0.001,
+    ) -> Union[str, Dict[str, Any]]:
         """Send a certain CAN message and wait for acknowledgement
 
         This method sends the given PCAN message until either:
@@ -556,7 +604,8 @@ class Network(object):
                     assumedPayload=assumedPayload,
                     bError=bErrorAck,
                     sendTime=sendTime,
-                    notAckIdleWaitTimeMs=notAckIdleWaitTimeMs)
+                    notAckIdleWaitTimeMs=notAckIdleWaitTimeMs,
+                )
                 if returnMessage != "Error":
                     return returnMessage
 
@@ -565,8 +614,10 @@ class Network(object):
 
             identifier = Identifier(CanMsg.ID)
             payload = payload2Hex(CanMsg.DATA)
-            text = (f"Message request failed: {identifier}; " +
-                    f"Payload: {payload}")
+            text = (
+                f"Message request failed: {identifier}; "
+                + f"Payload: {payload}"
+            )
             self.logger.error(text)
             if printLog:
                 print(text)
@@ -577,23 +628,27 @@ class Network(object):
 
         return returnMessage
 
-    def cmdSend(self,
-                receiver,
-                blockCmd,
-                subCmd,
-                payload,
-                log=True,
-                retries=10,
-                bErrorAck=False,
-                printLog=False,
-                bErrorExit=True,
-                notAckIdleWaitTimeMs=0.001):
-        message = Message(block=blockCmd,
-                          block_command=subCmd,
-                          request=True,
-                          sender=self.sender,
-                          receiver=receiver,
-                          data=payload)
+    def cmdSend(
+        self,
+        receiver,
+        blockCmd,
+        subCmd,
+        payload,
+        log=True,
+        retries=10,
+        bErrorAck=False,
+        printLog=False,
+        bErrorExit=True,
+        notAckIdleWaitTimeMs=0.001,
+    ):
+        message = Message(
+            block=blockCmd,
+            block_command=subCmd,
+            request=True,
+            sender=self.sender,
+            receiver=receiver,
+            data=payload,
+        )
         index = self.GetReadArrayIndex()
         msgAck = self.tWriteFrameWaitAckRetries(
             message.to_pcan(),
@@ -602,13 +657,16 @@ class Network(object):
             bErrorAck=bErrorAck,
             printLog=printLog,
             bErrorExit=bErrorExit,
-            notAckIdleWaitTimeMs=notAckIdleWaitTimeMs)
+            notAckIdleWaitTimeMs=notAckIdleWaitTimeMs,
+        )
         if msgAck == "Error" and bErrorExit:
             self.__exitError("Unable to send command")
         if log:
             can_time_stamp = (
-                msgAck["CanTime"] - self.PeakCanTimeStampStart
-            ) if msgAck is not None and msgAck != "Error" else 'Unknown'
+                (msgAck["CanTime"] - self.PeakCanTimeStampStart)
+                if msgAck is not None and msgAck != "Error"
+                else "Unknown"
+            )
             prefix = "Unable to send message: " if msgAck == "Error" else ""
             log_message = f"{prefix}{message} (CAN time: {can_time_stamp})"
             self.logger.info(log_message)
@@ -616,64 +674,82 @@ class Network(object):
         # sleep(0.2)  # synch to read thread TODO: Really kick it out?
         return index
 
-    def cmdSendData(self,
-                    receiver,
-                    blockCmd,
-                    subCmd,
-                    payload,
-                    log=True,
-                    retries=10,
-                    bErrorAck=False,
-                    printLog=False,
-                    bErrorExit=True):
+    def cmdSendData(
+        self,
+        receiver,
+        blockCmd,
+        subCmd,
+        payload,
+        log=True,
+        retries=10,
+        bErrorAck=False,
+        printLog=False,
+        bErrorExit=True,
+    ):
         """
         Send cmd and return Ack
         """
-        message = Message(block=blockCmd,
-                          block_command=subCmd,
-                          sender=self.sender,
-                          receiver=receiver,
-                          request=True,
-                          data=payload).to_pcan()
+        message = Message(
+            block=blockCmd,
+            block_command=subCmd,
+            sender=self.sender,
+            receiver=receiver,
+            request=True,
+            data=payload,
+        ).to_pcan()
         index = self.GetReadArrayIndex()
-        msgAck = self.tWriteFrameWaitAckRetries(message,
-                                                retries=retries,
-                                                waitMs=1000,
-                                                bErrorAck=bErrorAck,
-                                                printLog=printLog,
-                                                bErrorExit=bErrorExit)
+        msgAck = self.tWriteFrameWaitAckRetries(
+            message,
+            retries=retries,
+            waitMs=1000,
+            bErrorAck=bErrorAck,
+            printLog=printLog,
+            bErrorExit=bErrorExit,
+        )
         if msgAck != "Error" and False == bErrorExit:
             self.__exitError("Retries exceeded(" + str(retries) + " Retries)")
         if False != log:
             canCmd = self.CanCmd(blockCmd, subCmd, 1, 0)
             if "Error" != msgAck:
                 self.logger.info(
-                    MyToolItNetworkName[self.sender] + "->" +
-                    MyToolItNetworkName[receiver] + "(CanTimeStamp: " +
-                    str(msgAck["CanTime"] - self.PeakCanTimeStampStart) +
-                    "ms): " + Identifier(command=canCmd).block_command_name() +
-                    " - " + payload2Hex(payload))
+                    MyToolItNetworkName[self.sender]
+                    + "->"
+                    + MyToolItNetworkName[receiver]
+                    + "(CanTimeStamp: "
+                    + str(msgAck["CanTime"] - self.PeakCanTimeStampStart)
+                    + "ms): "
+                    + Identifier(command=canCmd).block_command_name()
+                    + " - "
+                    + payload2Hex(payload)
+                )
             else:
-                self.logger.info(MyToolItNetworkName[self.sender] + "->" +
-                                 MyToolItNetworkName[receiver] + ": " +
-                                 Identifier(
-                                     command=canCmd).block_command_name() +
-                                 " - " + "Error")
+                self.logger.info(
+                    MyToolItNetworkName[self.sender]
+                    + "->"
+                    + MyToolItNetworkName[receiver]
+                    + ": "
+                    + Identifier(command=canCmd).block_command_name()
+                    + " - "
+                    + "Error"
+                )
             self.logger.info("Assumed receive message number: " + str(index))
         # sleep(0.2)  # synch to read thread TODO: Really kick it out?
         return msgAck
 
     def reset_node(self, receiver, retries=5, log=True):
-        identifier = Identifier(block='System',
-                                block_command='Reset',
-                                sender=self.sender,
-                                receiver=receiver,
-                                request=True)
+        identifier = Identifier(
+            block="System",
+            block_command="Reset",
+            sender=self.sender,
+            receiver=receiver,
+            request=True,
+        )
         if log:
             self.logger.info(f"Reset {identifier.receiver_name()}")
 
         return_message = self.tWriteFrameWaitAckRetries(
-            Message(identifier=identifier).to_pcan(), retries=retries)
+            Message(identifier=identifier).to_pcan(), retries=retries
+        )
         sleep(2)
         return return_message
 
@@ -682,34 +758,36 @@ class Network(object):
         Get EEPROM Write Request Counter, please note that the count start is
         power on
         """
-        index = self.cmdSend(receiver, MyToolItBlock["EEPROM"],
-                             MyToolItEeprom["Read Write Request Counter"],
-                             [0] * 8)
+        index = self.cmdSend(
+            receiver,
+            MyToolItBlock["EEPROM"],
+            MyToolItEeprom["Read Write Request Counter"],
+            [0] * 8,
+        )
         dataReadBack = self.getReadMessageData(index)[4:]
         u32WriteRequestCounter = byte_list_to_int(dataReadBack)
-        self.logger.info("EEPROM Write Request Counter: " +
-                         str(u32WriteRequestCounter))
+        self.logger.info(
+            "EEPROM Write Request Counter: " + str(u32WriteRequestCounter)
+        )
         return u32WriteRequestCounter
 
-    def singleValueCollect(self,
-                           receiver,
-                           subCmd,
-                           b1,
-                           b2,
-                           b3,
-                           log=True,
-                           printLog=False):
+    def singleValueCollect(
+        self, receiver, subCmd, b1, b2, b3, log=True, printLog=False
+    ):
         accFormat = AtvcFormat()
         accFormat.asbyte = 0
         accFormat.b.bNumber1 = b1
         accFormat.b.bNumber2 = b2
         accFormat.b.bNumber3 = b3
         accFormat.b.u3DataSets = DataSets[1]
-        return self.cmdSend(receiver,
-                            MyToolItBlock["Streaming"],
-                            subCmd, [accFormat.asbyte],
-                            log=log,
-                            printLog=printLog)
+        return self.cmdSend(
+            receiver,
+            MyToolItBlock["Streaming"],
+            subCmd,
+            [accFormat.asbyte],
+            log=log,
+            printLog=printLog,
+        )
 
     def ValueDataSet1(self, data, b1, b2, b3, array1, array2, array3):
         count = 0
@@ -754,9 +832,9 @@ class Network(object):
 
     def singleValueArray(self, receiver, subCmd, b1, b2, b3, index):
         cmdFilter = self.CanCmd(MyToolItBlock["Streaming"], subCmd, 0, 0)
-        messageIdFilter = Identifier(command=cmdFilter,
-                                     sender=receiver,
-                                     receiver=self.sender).value
+        messageIdFilter = Identifier(
+            command=cmdFilter, sender=receiver, receiver=self.sender
+        ).value
         messageIdFilter = hex(messageIdFilter)
         data = self.getReadMessageData(index)
         messageId = self.getReadMessageId(index)
@@ -776,13 +854,28 @@ class Network(object):
             receivedCmdSub = identifier_received.command_number()
             filterCmdBlk = identifier_filtered.block()
             filterCmdSub = identifier_filtered.command_number()
-            self.logger.error("Assumed message ID: " + str(messageIdFilter) +
-                              "(" + str(cmdRec) + "); Received message ID: " +
-                              str(messageId) + "(" + str(cmdFiltered) + ")")
-            self.logger.error("Assumed command block: " + str(filterCmdBlk) +
-                              f"; Received command block: {receivedCmdBlk}")
-            self.logger.error("Assumed sub command: " + str(filterCmdSub) +
-                              "; Received sub command: " + str(receivedCmdSub))
+            self.logger.error(
+                "Assumed message ID: "
+                + str(messageIdFilter)
+                + "("
+                + str(cmdRec)
+                + "); Received message ID: "
+                + str(messageId)
+                + "("
+                + str(cmdFiltered)
+                + ")"
+            )
+            self.logger.error(
+                "Assumed command block: "
+                + str(filterCmdBlk)
+                + f"; Received command block: {receivedCmdBlk}"
+            )
+            self.logger.error(
+                "Assumed sub command: "
+                + str(filterCmdSub)
+                + "; Received sub command: "
+                + str(receivedCmdSub)
+            )
             self.__exitError("Wrong Filter ID")
         if 0 < len(array1):
             array1 = [array1[0]]
@@ -808,32 +901,38 @@ class Network(object):
         else:
             self.__exitError(f"Streaming unknown at streaming start: {subCmd}")
         if False != log:
-            self.logger.info("CAN Bandwidth(Lowest, may be more): "
-                             f"{self.canBandwith()} bit/s")
-            self.logger.info("Bluetooth Bandwidth(Lowest, may be more): "
-                             f"{self.bluetoothBandwidth()} bit/s")
+            self.logger.info(
+                "CAN Bandwidth(Lowest, may be more): "
+                f"{self.canBandwith()} bit/s"
+            )
+            self.logger.info(
+                "Bluetooth Bandwidth(Lowest, may be more): "
+                f"{self.bluetoothBandwidth()} bit/s"
+            )
 
-        message = Message(block="Streaming",
-                          block_command=subCmd,
-                          request=True,
-                          sender=self.sender,
-                          receiver=receiver,
-                          data=[streamingFormat.asbyte])
+        message = Message(
+            block="Streaming",
+            block_command=subCmd,
+            request=True,
+            sender=self.sender,
+            receiver=receiver,
+            data=[streamingFormat.asbyte],
+        )
 
         if log:
             block_command = Identifier(message.id()).block_command_name()
-            self.logger.info(f"Start sending {block_command}; "
-                             f"Subpayload: {hex(streamingFormat.asbyte)}")
+            self.logger.info(
+                f"Start sending {block_command}; "
+                f"Subpayload: {hex(streamingFormat.asbyte)}"
+            )
 
         indexStart = self.GetReadArrayIndex()
         self.tWriteFrameWaitAckRetries(message.to_pcan())
         return indexStart
 
-    def streamingStop(self,
-                      receiver,
-                      subCmd,
-                      bErrorExit=True,
-                      notAckIdleWaitTimeMs=0.00005):
+    def streamingStop(
+        self, receiver, subCmd, bErrorExit=True, notAckIdleWaitTimeMs=0.00005
+    ):
         streamingFormat = AtvcFormat()
         streamingFormat.asbyte = 0
         streamingFormat.b.bStreaming = 1
@@ -846,15 +945,18 @@ class Network(object):
         else:
             self.__exitError(f"Streaming unknown at streaming stop: {subCmd}")
 
-        message = Message(block="Streaming",
-                          block_command=subCmd,
-                          request=True,
-                          sender=self.sender,
-                          receiver=receiver,
-                          data=[streamingFormat.asbyte])
+        message = Message(
+            block="Streaming",
+            block_command=subCmd,
+            request=True,
+            sender=self.sender,
+            receiver=receiver,
+            data=[streamingFormat.asbyte],
+        )
 
         self.logger.info(
-            "_____________________________________________________________")
+            "_____________________________________________________________"
+        )
         self.logger.info(
             f"Stop Streaming - {Identifier(message.id()).block_command_name()}"
         )
@@ -864,30 +966,30 @@ class Network(object):
             printLog=False,
             assumedPayload=[streamingFormat.asbyte, 0, 0, 0, 0, 0, 0, 0],
             bErrorExit=bErrorExit,
-            notAckIdleWaitTimeMs=notAckIdleWaitTimeMs)
+            notAckIdleWaitTimeMs=notAckIdleWaitTimeMs,
+        )
         self.logger.info(
-            "_____________________________________________________________")
+            "_____________________________________________________________"
+        )
         return ack
 
-    def streamingValueCollect(self,
-                              receiver,
-                              subCmd,
-                              dataSets,
-                              b1,
-                              b2,
-                              b3,
-                              testTimeMs,
-                              log=True,
-                              StartupTimeMs=0):
+    def streamingValueCollect(
+        self,
+        receiver,
+        subCmd,
+        dataSets,
+        b1,
+        b2,
+        b3,
+        testTimeMs,
+        log=True,
+        StartupTimeMs=0,
+    ):
         if log:
             self.logger.info(f"Test Time: {testTimeMs} ms")
-        indexStart = self.streamingStart(receiver,
-                                         subCmd,
-                                         dataSets,
-                                         b1,
-                                         b2,
-                                         b3,
-                                         log=log)
+        indexStart = self.streamingStart(
+            receiver, subCmd, dataSets, b1, b2, b3, log=log
+        )
         if log:
             self.logger.info(f"indexStart: {indexStart}")
         testTimeMs += StartupTimeMs
@@ -896,8 +998,9 @@ class Network(object):
         sleep(2)  # synch to read thread
         indexEnd = self.GetReadArrayIndex() - 180  # do not catch stop command
         countDel = 0
-        while testTimeMs < self.getReadMessageTimeMs(indexStart,
-                                                     indexEnd) - 0.5:
+        while (
+            testTimeMs < self.getReadMessageTimeMs(indexStart, indexEnd) - 0.5
+        ):
             countDel += 1
             indexEnd -= 1
         if log:
@@ -912,13 +1015,23 @@ class Network(object):
 
         return [indexStart, indexEnd]
 
-    def streamingValueArray(self, receiver, streamingCmd, dataSets, b1, b2, b3,
-                            indexStart, indexEnd):
-        messageIdFilter = self.CanCmd(MyToolItBlock["Streaming"], streamingCmd,
-                                      0, 0)
-        messageIdFilter = Identifier(command=messageIdFilter,
-                                     sender=receiver,
-                                     receiver=self.sender).value
+    def streamingValueArray(
+        self,
+        receiver,
+        streamingCmd,
+        dataSets,
+        b1,
+        b2,
+        b3,
+        indexStart,
+        indexEnd,
+    ):
+        messageIdFilter = self.CanCmd(
+            MyToolItBlock["Streaming"], streamingCmd, 0, 0
+        )
+        messageIdFilter = Identifier(
+            command=messageIdFilter, sender=receiver, receiver=self.sender
+        ).value
         messageIdFilter = hex(messageIdFilter)
         runIndex = indexStart
         array1 = []
@@ -929,20 +1042,21 @@ class Network(object):
             messageId = self.getReadMessageId(runIndex)
             if messageId == messageIdFilter:
                 if DataSets[1] == dataSets:
-                    [array1, array2,
-                     array3] = self.ValueDataSet1(data, b1, b2, b3, array1,
-                                                  array2, array3)
+                    [array1, array2, array3] = self.ValueDataSet1(
+                        data, b1, b2, b3, array1, array2, array3
+                    )
                 elif DataSets[3] == dataSets:
-                    [array1, array2,
-                     array3] = self.ValueDataSet3(data, b1, b2, b3, array1,
-                                                  array2, array3)
+                    [array1, array2, array3] = self.ValueDataSet3(
+                        data, b1, b2, b3, array1, array2, array3
+                    )
                 else:
                     self.__exitError("Wrong Data Set(:" + str(dataSets) + ")")
             runIndex += 1
         return [array1, array2, array3]
 
-    def ValueDataSet1MsgCounter(self, data, b1, b2, b3, array1, array2,
-                                array3):
+    def ValueDataSet1MsgCounter(
+        self, data, b1, b2, b3, array1, array2, array3
+    ):
         if False != b1:
             array1.append(data[1])
         if False != b2:
@@ -951,8 +1065,9 @@ class Network(object):
             array3.append(data[1])
         return [array1, array2, array3]
 
-    def ValueDataSet3MsgCounter(self, data, b1, b2, b3, array1, array2,
-                                array3):
+    def ValueDataSet3MsgCounter(
+        self, data, b1, b2, b3, array1, array2, array3
+    ):
         if False != b1:
             array1.append(data[1])
             array1.append(data[1])
@@ -967,14 +1082,23 @@ class Network(object):
             array3.append(data[1])
         return [array1, array2, array3]
 
-    def streamingValueArrayMessageCounters(self, receiver, streamingCmd,
-                                           dataSets, b1, b2, b3, indexStart,
-                                           indexEnd):
-        messageIdFilter = self.CanCmd(MyToolItBlock["Streaming"], streamingCmd,
-                                      0, 0)
-        messageIdFilter = Identifier(command=messageIdFilter,
-                                     sender=receiver,
-                                     receiver=self.sender).value
+    def streamingValueArrayMessageCounters(
+        self,
+        receiver,
+        streamingCmd,
+        dataSets,
+        b1,
+        b2,
+        b3,
+        indexStart,
+        indexEnd,
+    ):
+        messageIdFilter = self.CanCmd(
+            MyToolItBlock["Streaming"], streamingCmd, 0, 0
+        )
+        messageIdFilter = Identifier(
+            command=messageIdFilter, sender=receiver, receiver=self.sender
+        ).value
         messageIdFilter = hex(messageIdFilter)
         runIndex = indexStart
         array1 = []
@@ -985,16 +1109,19 @@ class Network(object):
             messageId = self.getReadMessageId(runIndex)
             if messageId == messageIdFilter:
                 if DataSets[1] == dataSets:
-                    [array1, array2, array3
-                     ] = self.ValueDataSet1MsgCounter(data, b1, b2, b3, array1,
-                                                      array2, array3)
+                    [array1, array2, array3] = self.ValueDataSet1MsgCounter(
+                        data, b1, b2, b3, array1, array2, array3
+                    )
                 elif DataSets[3] == dataSets:
-                    [array1, array2, array3
-                     ] = self.ValueDataSet3MsgCounter(data, b1, b2, b3, array1,
-                                                      array2, array3)
+                    [array1, array2, array3] = self.ValueDataSet3MsgCounter(
+                        data, b1, b2, b3, array1, array2, array3
+                    )
                 else:
-                    self.__exitError("Data Sets not available(Data Sets: " +
-                                     str(dataSets) + ")")
+                    self.__exitError(
+                        "Data Sets not available(Data Sets: "
+                        + str(dataSets)
+                        + ")"
+                    )
             runIndex += 1
         return [array1, array2, array3]
 
@@ -1006,9 +1133,9 @@ class Network(object):
 
     def ValueLog(self, array1, array2, array3, fCbfRecalc, preFix, postFix):
         samplingPointMax = len(array1)
-        if (len(array2) > samplingPointMax):
+        if len(array2) > samplingPointMax:
             samplingPointMax = len(array2)
-        if (len(array3) > samplingPointMax):
+        if len(array3) > samplingPointMax:
             samplingPointMax = len(array3)
 
         samplingPoints = self.samplingPoints(array1, array2, array3)
@@ -1016,14 +1143,17 @@ class Network(object):
 
         for i in range(0, samplingPointMax):
             if 0 < len(array1):
-                self.logger.info(preFix + "X: " + str(fCbfRecalc(array1[i])) +
-                                 postFix)
+                self.logger.info(
+                    preFix + "X: " + str(fCbfRecalc(array1[i])) + postFix
+                )
             if 0 < len(array2):
-                self.logger.info(preFix + "Y: " + str(fCbfRecalc(array2[i])) +
-                                 postFix)
+                self.logger.info(
+                    preFix + "Y: " + str(fCbfRecalc(array2[i])) + postFix
+                )
             if 0 < len(array3):
-                self.logger.info(preFix + "Z: " + str(fCbfRecalc(array3[i])) +
-                                 postFix)
+                self.logger.info(
+                    preFix + "Z: " + str(fCbfRecalc(array3[i])) + postFix
+                )
         return samplingPoints
 
     def streamingValueStatisticsArithmeticAverage(self, sortArray):
@@ -1043,7 +1173,7 @@ class Network(object):
         if None != sortArray:
             sortArray.sort()
             samplingPoints = len(sortArray)
-            if (samplingPoints % 2 == 0):
+            if samplingPoints % 2 == 0:
                 quantilSet = sortArray[int(samplingPoints * quantil)]
                 quantilSet += sortArray[int(samplingPoints * quantil - 1)]
                 quantilSet /= 2
@@ -1056,10 +1186,11 @@ class Network(object):
     def streamingValueStatisticsVariance(self, sortArray):
         variance = 0
         arithmeticAverage = self.streamingValueStatisticsArithmeticAverage(
-            sortArray)
+            sortArray
+        )
         if None != sortArray:
             for Value in sortArray:
-                Value = (Value - arithmeticAverage)**2
+                Value = (Value - arithmeticAverage) ** 2
                 variance += Value
             variance /= len(sortArray)
         return variance
@@ -1067,9 +1198,11 @@ class Network(object):
     def streamingValueStatisticsMomentOrder(self, sortArray, order):
         momentOrder = 0
         arithmeticAverage = self.streamingValueStatisticsArithmeticAverage(
-            sortArray)
-        standardDeviation = self.streamingValueStatisticsVariance(
-            sortArray)**0.5
+            sortArray
+        )
+        standardDeviation = (
+            self.streamingValueStatisticsVariance(sortArray) ** 0.5
+        )
         if None != sortArray:
             for Value in sortArray:
                 Value = (Value - arithmeticAverage) / standardDeviation
@@ -1082,39 +1215,52 @@ class Network(object):
         statistics = {}
         statistics["Minimum"] = sortArray[0]
         statistics["Quantil1"] = self.streamingValueStatisticsQuantile(
-            sortArray, 0.01)
+            sortArray, 0.01
+        )
         statistics["Quantil5"] = self.streamingValueStatisticsQuantile(
-            sortArray, 0.05)
+            sortArray, 0.05
+        )
         statistics["Quantil25"] = self.streamingValueStatisticsQuantile(
-            sortArray, 0.25)
+            sortArray, 0.25
+        )
         statistics["Median"] = self.streamingValueStatisticsQuantile(
-            sortArray, 0.5)
+            sortArray, 0.5
+        )
         statistics["Quantil75"] = self.streamingValueStatisticsQuantile(
-            sortArray, 0.75)
+            sortArray, 0.75
+        )
         statistics["Quantil95"] = self.streamingValueStatisticsQuantile(
-            sortArray, 0.95)
+            sortArray, 0.95
+        )
         statistics["Quantil99"] = self.streamingValueStatisticsQuantile(
-            sortArray, 0.99)
+            sortArray, 0.99
+        )
         statistics["Maximum"] = sortArray[-1]
         statistics[
-            "ArithmeticAverage"] = self.streamingValueStatisticsArithmeticAverage(
-                sortArray)
-        statistics[
-            "StandardDeviation"] = self.streamingValueStatisticsVariance(
-                sortArray)**0.5
+            "ArithmeticAverage"
+        ] = self.streamingValueStatisticsArithmeticAverage(sortArray)
+        statistics["StandardDeviation"] = (
+            self.streamingValueStatisticsVariance(sortArray) ** 0.5
+        )
         statistics["Variance"] = self.streamingValueStatisticsVariance(
-            sortArray)
+            sortArray
+        )
         statistics["Skewness"] = self.streamingValueStatisticsMomentOrder(
-            sortArray, 3)
+            sortArray, 3
+        )
         statistics["Kurtosis"] = self.streamingValueStatisticsMomentOrder(
-            sortArray, 4)
+            sortArray, 4
+        )
         statistics["Data"] = sortArray
-        statistics["InterQuartialRange"] = statistics[
-            "Quantil75"] - statistics["Quantil25"]
-        statistics[
-            "90PRange"] = statistics["Quantil95"] - statistics["Quantil5"]
-        statistics[
-            "98PRange"] = statistics["Quantil99"] - statistics["Quantil1"]
+        statistics["InterQuartialRange"] = (
+            statistics["Quantil75"] - statistics["Quantil25"]
+        )
+        statistics["90PRange"] = (
+            statistics["Quantil95"] - statistics["Quantil5"]
+        )
+        statistics["98PRange"] = (
+            statistics["Quantil99"] - statistics["Quantil1"]
+        )
         statistics["TotalRange"] = sortArray[-1] - sortArray[0]
         return statistics
 
@@ -1129,13 +1275,16 @@ class Network(object):
         statistics = {"Value1": None, "Value2": None, "Value3": None}
         if 0 < len(sortArray1):
             statistics["Value1"] = self.streamingValueStatisticsValue(
-                sortArray1)
+                sortArray1
+            )
         if 0 < len(sortArray2):
             statistics["Value2"] = self.streamingValueStatisticsValue(
-                sortArray2)
+                sortArray2
+            )
         if 0 < len(sortArray3):
             statistics["Value3"] = self.streamingValueStatisticsValue(
-                sortArray3)
+                sortArray3
+            )
         return statistics
 
     def signalIndicators(self, array1, array2, array3):
@@ -1143,7 +1292,8 @@ class Network(object):
         for key, stat in statistics.items():
             if None != stat:
                 self.logger.info(
-                    "____________________________________________________")
+                    "____________________________________________________"
+                )
                 self.logger.info(key)
                 self.logger.info("Minimum: " + str(stat["Minimum"]))
                 self.logger.info("Quantil 1%: " + str(stat["Quantil1"]))
@@ -1154,26 +1304,34 @@ class Network(object):
                 self.logger.info("Quantil 95%: " + str(stat["Quantil95"]))
                 self.logger.info("Quantil 99%: " + str(stat["Quantil99"]))
                 self.logger.info("Maximum: " + str(stat["Maximum"]))
-                self.logger.info("Arithmetic Average: " +
-                                 str(stat["ArithmeticAverage"]))
-                self.logger.info("Standard Deviation: " +
-                                 str(stat["StandardDeviation"]))
+                self.logger.info(
+                    "Arithmetic Average: " + str(stat["ArithmeticAverage"])
+                )
+                self.logger.info(
+                    "Standard Deviation: " + str(stat["StandardDeviation"])
+                )
                 self.logger.info("Variance: " + str(stat["Variance"]))
                 self.logger.info("Skewness: " + str(stat["Skewness"]))
                 self.logger.info("Kurtosis: " + str(stat["Kurtosis"]))
-                self.logger.info("Inter Quartial Range: " +
-                                 str(stat["InterQuartialRange"]))
+                self.logger.info(
+                    "Inter Quartial Range: " + str(stat["InterQuartialRange"])
+                )
                 self.logger.info("90%-Range: " + str(stat["90PRange"]))
                 self.logger.info("98%-Range: " + str(stat["98PRange"]))
                 self.logger.info("Total Range: " + str(stat["TotalRange"]))
                 SNR = 20 * log((stat["StandardDeviation"] / AdcMax), 10)
                 self.logger.info("SNR: " + str(SNR))
                 self.logger.info(
-                    "____________________________________________________")
+                    "____________________________________________________"
+                )
         return statistics
 
-    def data_sets(self, first: Union[bool, int], second: Union[bool, int],
-                  third: Union[bool, int]) -> int:
+    def data_sets(
+        self,
+        first: Union[bool, int],
+        second: Union[bool, int],
+        third: Union[bool, int],
+    ) -> int:
         """Get the number of data points for the same channel in a message
 
         For one activated measurement channel this will be 3, since we can
@@ -1211,21 +1369,31 @@ class Network(object):
         return 1
 
     def bandwith(self):
-        samplingRate = calcSamplingRate(self.AdcConfig["Prescaler"],
-                                        self.AdcConfig["AquisitionTime"],
-                                        self.AdcConfig["OverSamplingRate"])
-        dataSetsAcc = self.data_sets(self.AccConfig.b.bNumber1,
-                                     self.AccConfig.b.bNumber2,
-                                     self.AccConfig.b.bNumber3)
-        dataSetsVoltage = self.data_sets(self.VoltageConfig.b.bNumber1,
-                                         self.VoltageConfig.b.bNumber2,
-                                         self.VoltageConfig.b.bNumber3)
-        dataPointsAcc = sum(self.AccConfig.b.bNumber1,
-                            self.AccConfig.b.bNumber2,
-                            self.AccConfig.b.bNumber3)
-        dataPointsVoltage = sum(self.VoltageConfig.b.bNumber1,
-                                self.VoltageConfig.b.bNumber2,
-                                self.VoltageConfig.b.bNumber3)
+        samplingRate = calcSamplingRate(
+            self.AdcConfig["Prescaler"],
+            self.AdcConfig["AquisitionTime"],
+            self.AdcConfig["OverSamplingRate"],
+        )
+        dataSetsAcc = self.data_sets(
+            self.AccConfig.b.bNumber1,
+            self.AccConfig.b.bNumber2,
+            self.AccConfig.b.bNumber3,
+        )
+        dataSetsVoltage = self.data_sets(
+            self.VoltageConfig.b.bNumber1,
+            self.VoltageConfig.b.bNumber2,
+            self.VoltageConfig.b.bNumber3,
+        )
+        dataPointsAcc = sum(
+            self.AccConfig.b.bNumber1,
+            self.AccConfig.b.bNumber2,
+            self.AccConfig.b.bNumber3,
+        )
+        dataPointsVoltage = sum(
+            self.VoltageConfig.b.bNumber1,
+            self.VoltageConfig.b.bNumber2,
+            self.VoltageConfig.b.bNumber3,
+        )
         totalDataPoints = dataPointsAcc + dataPointsVoltage
         msgAcc = samplingRate / totalDataPoints
         if 0 < dataSetsAcc:
@@ -1244,7 +1412,7 @@ class Network(object):
         # (Header + Subheader(Message Counter) + data)*msg/s
         bitsAcc = (67 + 16 + dataSetsAcc * 16) * msgAcc
         bitsVoltage = (67 + 16 + dataSetsVoltage * 16) * msgVoltage
-        return (bitsAcc + bitsVoltage)
+        return bitsAcc + bitsVoltage
 
     def bluetoothBandwidth(self):
         [msgAcc, msgVoltage, dataSetsAcc, dataSetsVoltage] = self.bandwith()
@@ -1252,56 +1420,71 @@ class Network(object):
         bitsAcc = (32 + 16 + dataSetsAcc * 16) * msgAcc
         bitsVoltage = (32 + 16 + dataSetsVoltage * 16) * msgVoltage
 
-        return (bitsAcc + bitsVoltage)
+        return bitsAcc + bitsVoltage
 
-    def ConfigAdc(self,
-                  receiver,
-                  preq,
-                  aquistionTime,
-                  oversampling,
-                  adcRef,
-                  log=True):
+    def ConfigAdc(
+        self, receiver, preq, aquistionTime, oversampling, adcRef, log=True
+    ):
         self.AdcConfig = {
             "Prescaler": preq,
             "AquisitionTime": aquistionTime,
-            "OverSamplingRate": oversampling
+            "OverSamplingRate": oversampling,
         }
         if False != log:
-            self.logger.info("Config ADC - Prescaler: " + str(preq) + "/" +
-                             str(AdcAcquisitionTimeName[aquistionTime]) + "/" +
-                             str(AdcOverSamplingRateName[oversampling]) + "/" +
-                             str(VRefName[adcRef]))
             self.logger.info(
-                "Calculated Sampling Rate: " +
-                str(calcSamplingRate(preq, aquistionTime, oversampling)))
+                "Config ADC - Prescaler: "
+                + str(preq)
+                + "/"
+                + str(AdcAcquisitionTimeName[aquistionTime])
+                + "/"
+                + str(AdcOverSamplingRateName[oversampling])
+                + "/"
+                + str(VRefName[adcRef])
+            )
+            self.logger.info(
+                "Calculated Sampling Rate: "
+                + str(calcSamplingRate(preq, aquistionTime, oversampling))
+            )
         byte1 = 1 << 7  # Set Sampling Rate
-        cmd = self.CanCmd(MyToolItBlock["Configuration"],
-                          MyToolItConfiguration["Get/Set ADC Configuration"],
-                          1, 0)
+        cmd = self.CanCmd(
+            MyToolItBlock["Configuration"],
+            MyToolItConfiguration["Get/Set ADC Configuration"],
+            1,
+            0,
+        )
         message = self.CanMessage20(
-            cmd, self.sender, receiver,
-            [byte1, preq, aquistionTime, oversampling, adcRef, 0, 0, 0])
+            cmd,
+            self.sender,
+            receiver,
+            [byte1, preq, aquistionTime, oversampling, adcRef, 0, 0, 0],
+        )
         return self.tWriteFrameWaitAckRetries(message, retries=5)["Payload"]
 
-    def calibMeasurement(self,
-                         receiver,
-                         u2Action,
-                         signal,
-                         dimension,
-                         vRef,
-                         log=True,
-                         retries=3,
-                         bSet=True,
-                         bErrorAck=False,
-                         bReset=False,
-                         printLog=False):
-
+    def calibMeasurement(
+        self,
+        receiver,
+        u2Action,
+        signal,
+        dimension,
+        vRef,
+        log=True,
+        retries=3,
+        bSet=True,
+        bErrorAck=False,
+        bReset=False,
+        printLog=False,
+    ):
         messageIdFilter = hex(
-            Identifier(command=Command(block="Configuration",
-                                       block_command="Calibration Measurement",
-                                       error=bErrorAck),
-                       sender=receiver,
-                       receiver=self.sender).value)
+            Identifier(
+                command=Command(
+                    block="Configuration",
+                    block_command="Calibration Measurement",
+                    error=bErrorAck,
+                ),
+                sender=receiver,
+                receiver=self.sender,
+            ).value
+        )
         byte1 = CalibrationMeassurement()
         byte1.asbyte = 0
         byte1.b.bReset = bReset
@@ -1309,8 +1492,9 @@ class Network(object):
         byte1.b.bSet = bSet
         if False != log:
             self.logger.info(CalibMeassurementActionName[u2Action])
-            self.logger.info(CalibMeassurementTypeName[signal] +
-                             str(dimension))
+            self.logger.info(
+                CalibMeassurementTypeName[signal] + str(dimension)
+            )
             self.logger.info(VRefName[vRef])
         calibPayload = [byte1.asbyte, signal, dimension, vRef, 0, 0, 0, 0]
         indexAssumed = self.cmdSend(
@@ -1321,7 +1505,8 @@ class Network(object):
             log=log,
             retries=retries,
             bErrorAck=bErrorAck,
-            printLog=printLog)
+            printLog=printLog,
+        )
         indexRun = indexAssumed
         indexEnd = self.GetReadArrayIndex()
         returnAck = []
@@ -1332,52 +1517,66 @@ class Network(object):
             indexRun += indexRun
         if indexRun != indexAssumed:
             self.logger.warning(
-                "Calibration Measurement Index Miss (Assumed/Truly): " +
-                str(indexAssumed) + "/" + str(indexRun))
+                "Calibration Measurement Index Miss (Assumed/Truly): "
+                + str(indexAssumed)
+                + "/"
+                + str(indexRun)
+            )
         if indexRun == indexEnd:
             self.logger.error("Calibration Measurement Fail Request")
         return returnAck
 
-    def statisticalData(self,
-                        receiver,
-                        subCmd,
-                        log=True,
-                        retries=3,
-                        bErrorAck=False,
-                        printLog=False):
-        msgAck = self.cmdSendData(receiver,
-                                  MyToolItBlock["StatisticalData"],
-                                  subCmd, [],
-                                  log=log,
-                                  retries=retries,
-                                  bErrorAck=bErrorAck,
-                                  printLog=printLog)
+    def statisticalData(
+        self,
+        receiver,
+        subCmd,
+        log=True,
+        retries=3,
+        bErrorAck=False,
+        printLog=False,
+    ):
+        msgAck = self.cmdSendData(
+            receiver,
+            MyToolItBlock["StatisticalData"],
+            subCmd,
+            [],
+            log=log,
+            retries=retries,
+            bErrorAck=bErrorAck,
+            printLog=printLog,
+        )
         return msgAck["Payload"]
 
     def node_status(self, receiver):
-        message = Message(block='System',
-                          block_command='Node Status',
-                          request=True,
-                          sender=self.sender,
-                          receiver=receiver,
-                          data=[0] * 8)
-        psw0 = self.tWriteFrameWaitAckRetries(message.to_pcan(),
-                                              retries=5)["Payload"]
+        message = Message(
+            block="System",
+            block_command="Node Status",
+            request=True,
+            sender=self.sender,
+            receiver=receiver,
+            data=[0] * 8,
+        )
+        psw0 = self.tWriteFrameWaitAckRetries(message.to_pcan(), retries=5)[
+            "Payload"
+        ]
 
         if Node(receiver).is_sth():
             return NodeStatusSTH(psw0[0:4])
         return NodeStatusSTU(psw0[0:4])
 
     def error_status(self, receiver):
-        message = Message(block='System',
-                          block_command='Error Status',
-                          request=True,
-                          sender=self.sender,
-                          receiver=receiver,
-                          data=[0] * 8)
+        message = Message(
+            block="System",
+            block_command="Error Status",
+            request=True,
+            sender=self.sender,
+            receiver=receiver,
+            data=[0] * 8,
+        )
 
-        payload = self.tWriteFrameWaitAckRetries(message.to_pcan(),
-                                                 retries=5)["Payload"]
+        payload = self.tWriteFrameWaitAckRetries(message.to_pcan(), retries=5)[
+            "Payload"
+        ]
         status_word_1_bytes = payload[0:4]
         if Node(receiver).is_sth():
             return ErrorStatusSTH(status_word_1_bytes)
@@ -1412,10 +1611,9 @@ class Network(object):
         if len(data) > 8:
             return "Error"
 
-        return Message(command=command,
-                       sender=sender,
-                       receiver=receiver,
-                       data=data).to_pcan()
+        return Message(
+            command=command, sender=sender, receiver=receiver, data=data
+        ).to_pcan()
 
     def CanCmd(self, block, cmd, request=1, error=0):
         """Return the binary representation of a MyTooliT CAN command
@@ -1446,10 +1644,9 @@ class Network(object):
         # TODO: This method does not use `self` at all. Maybe it makes sense to
         # remove this code from the class and use a standalone function
         # instead.
-        return Command(block=block,
-                       block_command=cmd,
-                       request=request,
-                       error=error).value
+        return Command(
+            block=block, block_command=cmd, request=request, error=error
+        ).value
 
     def cTypesArrayToArray(self, dataArray, Offset, end):
         counter = 0
@@ -1489,18 +1686,23 @@ class Network(object):
                 status, message, timestamp = self.pcan.Read(self.m_PcanHandle)
                 self.tCanReadWriteMutex.release()
                 while status == PCAN_ERROR_OK:
-                    peakCanTimeStamp = (timestamp.millis_overflow * 2**32 +
-                                        timestamp.millis +
-                                        timestamp.micros / 1000)
-                    self.readArray.append({
-                        "CanMsg": message,
-                        "PcTime": self.get_elapsed_time(),
-                        "PeakCanTime": peakCanTimeStamp
-                    })
-                    getLogger('can').debug(f"{Message(message)}")
+                    peakCanTimeStamp = (
+                        timestamp.millis_overflow * 2**32
+                        + timestamp.millis
+                        + timestamp.micros / 1000
+                    )
+                    self.readArray.append(
+                        {
+                            "CanMsg": message,
+                            "PcTime": self.get_elapsed_time(),
+                            "PeakCanTime": peakCanTimeStamp,
+                        }
+                    )
+                    getLogger("can").debug(f"{Message(message)}")
                     self.tCanReadWriteMutex.acquire()
                     status, message, timestamp = self.pcan.Read(
-                        self.m_PcanHandle)
+                        self.m_PcanHandle
+                    )
                     self.tCanReadWriteMutex.release()
                 if status != PCAN_ERROR_QRCVEMPTY:
                     self.logger.error(f"Unexpected Status: {status}")
@@ -1526,19 +1728,22 @@ class Network(object):
         return data
 
     def getReadMessageTimeStampMs(self, element):
-        return self.readArray[element][
-            "PeakCanTime"] - self.PeakCanTimeStampStart
+        return (
+            self.readArray[element]["PeakCanTime"] - self.PeakCanTimeStampStart
+        )
 
     def getReadMessageTimeMs(self, preElement, postElement):
         return self.getReadMessageTimeStampMs(
-            postElement) - self.getReadMessageTimeStampMs(preElement)
+            postElement
+        ) - self.getReadMessageTimeStampMs(preElement)
 
     def GetReadArrayIndex(self):
         return len(self.readArray)
 
     def BlueToothCmd(self, receiver, subCmd):
-        cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"],
-                          1, 0)
+        cmd = self.CanCmd(
+            MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0
+        )
         payload = [subCmd, 0, 0, 0, 0, 0, 0, 0]
         message = self.CanMessage20(cmd, self.sender, receiver, payload)
         ack = self.tWriteFrameWaitAckRetries(message, retries=2)["Payload"][2:]
@@ -1548,67 +1753,116 @@ class Network(object):
     def vBlueToothConnectConnect(self, receiver, log=True):
         if False != log:
             self.logger.info("Bluetooth connect")
-        cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"],
-                          1, 0)
+        cmd = self.CanCmd(
+            MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0
+        )
         message = self.CanMessage20(
-            cmd, self.sender, receiver,
-            [SystemCommandBlueTooth["Connect"], 0, 0, 0, 0, 0, 0, 0])
+            cmd,
+            self.sender,
+            receiver,
+            [SystemCommandBlueTooth["Connect"], 0, 0, 0, 0, 0, 0, 0],
+        )
         return self.tWriteFrameWaitAckRetries(message, retries=2)
 
     def iBlueToothConnectTotalScannedDeviceNr(self, receiver, log=True):
         if log:
             self.logger.info("Get number of available devices")
-        cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"],
-                          1, 0)
-        message = self.CanMessage20(cmd, self.sender, receiver, [
-            SystemCommandBlueTooth["GetNumberAvailableDevices"], 0, 0, 0, 0, 0,
-            0, 0
-        ])
+        cmd = self.CanCmd(
+            MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0
+        )
+        message = self.CanMessage20(
+            cmd,
+            self.sender,
+            receiver,
+            [
+                SystemCommandBlueTooth["GetNumberAvailableDevices"],
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+            ],
+        )
         msg = self.tWriteFrameWaitAckRetries(message, retries=2)
-        return (int(sArray2String(msg["Payload"][2:])))
+        return int(sArray2String(msg["Payload"][2:]))
 
     def bBlueToothConnectDeviceConnect(self, receiver, iDeviceNr):
-        cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"],
-                          1, 0)
-        message = self.CanMessage20(cmd, self.sender, receiver, [
-            SystemCommandBlueTooth["DeviceConnect"], iDeviceNr, 0, 0, 0, 0, 0,
+        cmd = self.CanCmd(
+            MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0
+        )
+        message = self.CanMessage20(
+            cmd,
+            self.sender,
+            receiver,
+            [
+                SystemCommandBlueTooth["DeviceConnect"],
+                iDeviceNr,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+            ],
+        )
+        return (
             0
-        ])
-        return (0 != self.tWriteFrameWaitAckRetries(message,
-                                                    retries=2)["Payload"][2])
+            != self.tWriteFrameWaitAckRetries(message, retries=2)["Payload"][2]
+        )
 
     def bBlueToothCheckConnect(self, receiver):
-        cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"],
-                          1, 0)
-        message = self.CanMessage20(cmd, self.sender, receiver, [
-            SystemCommandBlueTooth["DeviceCheckConnected"], 0, 0, 0, 0, 0, 0, 0
-        ])
-        connectToDevice = self.tWriteFrameWaitAckRetries(
-            message, retries=2)["Payload"][2]
+        cmd = self.CanCmd(
+            MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0
+        )
+        message = self.CanMessage20(
+            cmd,
+            self.sender,
+            receiver,
+            [
+                SystemCommandBlueTooth["DeviceCheckConnected"],
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+            ],
+        )
+        connectToDevice = self.tWriteFrameWaitAckRetries(message, retries=2)[
+            "Payload"
+        ][2]
         self.bConnected = bool(0 != connectToDevice)
         return self.bConnected
 
     def bBlueToothDisconnect(self, stuNr, bLog=True):
         if False != bLog:
             self.logger.info("Bluetooth disconnect")
-        cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"],
-                          1, 0)
+        cmd = self.CanCmd(
+            MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0
+        )
         message = self.CanMessage20(
-            cmd, self.sender, stuNr,
-            [SystemCommandBlueTooth["Disconnect"], 0, 0, 0, 0, 0, 0, 0])
+            cmd,
+            self.sender,
+            stuNr,
+            [SystemCommandBlueTooth["Disconnect"], 0, 0, 0, 0, 0, 0, 0],
+        )
         self.tWriteFrameWaitAckRetries(message, retries=2)
-        self.bConnected = (0 < self.bBlueToothCheckConnect(stuNr))
+        self.bConnected = 0 < self.bBlueToothCheckConnect(stuNr)
         return self.bConnected
 
     def vBlueToothNameWrite(self, receiver, DeviceNr, Name):
         """
         Write name and get name (bluetooth command)
         """
-        cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"],
-                          1, 0)
+        cmd = self.CanCmd(
+            MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0
+        )
         nameList = [0, 0, 0, 0, 0, 0]
         for i in range(0, 6):
-            if (len(Name) <= i):
+            if len(Name) <= i:
                 break
             nameList[i] = ord(Name[i])
         Payload = [SystemCommandBlueTooth["SetName1"], DeviceNr]
@@ -1627,17 +1881,32 @@ class Network(object):
         """
         Get name (bluetooth command)
         """
-        cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"],
-                          1, 0)
+        cmd = self.CanCmd(
+            MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0
+        )
         payload = [
-            SystemCommandBlueTooth["GetName1"], DeviceNr, 0, 0, 0, 0, 0, 0
+            SystemCommandBlueTooth["GetName1"],
+            DeviceNr,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
         ]
         message = self.CanMessage20(cmd, self.sender, receiver, payload)
         Name = self.tWriteFrameWaitAckRetries(message, retries=2)
         Name = Name["Payload"]
         Name = Name[2:]
         payload = [
-            SystemCommandBlueTooth["GetName2"], DeviceNr, 0, 0, 0, 0, 0, 0
+            SystemCommandBlueTooth["GetName2"],
+            DeviceNr,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
         ]
         message = self.CanMessage20(cmd, self.sender, receiver, payload)
         Name2 = self.tWriteFrameWaitAckRetries(message)
@@ -1650,10 +1919,18 @@ class Network(object):
         """
         Get address (bluetooth command)
         """
-        cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"],
-                          1, 0)
+        cmd = self.CanCmd(
+            MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0
+        )
         payload = [
-            SystemCommandBlueTooth["MacAddress"], DeviceNr, 0, 0, 0, 0, 0, 0
+            SystemCommandBlueTooth["MacAddress"],
+            DeviceNr,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
         ]
         message = self.CanMessage20(cmd, self.sender, receiver, payload)
         Address = self.tWriteFrameWaitAckRetries(message, retries=2)
@@ -1665,11 +1942,15 @@ class Network(object):
         """
         Get RSSI (Bluetooth command)
         """
-        cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"],
-                          1, 0)
+        cmd = self.CanCmd(
+            MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0
+        )
         message = self.CanMessage20(
-            cmd, self.sender, receiver,
-            [SystemCommandBlueTooth["Rssi"], DeviceNr, 0, 0, 0, 0, 0, 0])
+            cmd,
+            self.sender,
+            receiver,
+            [SystemCommandBlueTooth["Rssi"], DeviceNr, 0, 0, 0, 0, 0, 0],
+        )
         ack = self.tWriteFrameWaitAckRetries(message, retries=2)
         ack = ack["Payload"]
         ack = ack[2]
@@ -1680,8 +1961,9 @@ class Network(object):
         """
         Connect to STH by connect to MAC Address command
         """
-        cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"],
-                          1, 0)
+        cmd = self.CanCmd(
+            MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0
+        )
         au8Payload = [SystemCommandBlueTooth["DeviceConnectMacAddr"], 0]
         au8MacAddr = int_to_byte_list(int(iMacAddr), 6)
         au8Payload.extend(au8MacAddr)
@@ -1690,7 +1972,8 @@ class Network(object):
         ack = ack["Payload"]
         ack = ack[2:]
         iMacAddrReadBack = byte_list_to_int(
-            ack)  # if not successful this will be 0
+            ack
+        )  # if not successful this will be 0
         if iMacAddrReadBack != iMacAddr:
             self.bConnected = False
         else:
@@ -1719,9 +2002,13 @@ class Network(object):
                     while time() < endTime and False == self.bConnected:
                         self.bBlueToothCheckConnect(stuNr)
                     if self.bConnected and log:
-                        self.logger.info("Connected to: " +
-                                         int_to_mac_address(self.iAddress) +
-                                         "(" + self.sDevName + ")")
+                        self.logger.info(
+                            "Connected to: "
+                            + int_to_mac_address(self.iAddress)
+                            + "("
+                            + self.sDevName
+                            + ")"
+                        )
                     break
         if None == self.sDevName:
             if False != log:
@@ -1735,7 +2022,7 @@ class Network(object):
         devAll = self.iBlueToothConnectTotalScannedDeviceNr(stuNr, log=bLog)
         for dev in range(0, devAll):
             endTime = time() + BluetoothTime["Connect"]
-            name = ''
+            name = ""
             nameOld = None
             while nameOld != name and time() < endTime:
                 nameOld = name
@@ -1747,12 +2034,14 @@ class Network(object):
             rssi = 0
             while 0 == rssi and time() < endTime:
                 rssi = self.BlueToothRssiGet(stuNr, dev)
-            devList.append({
-                "DeviceNumber": dev,
-                "Name": name,
-                "Address": address,
-                "RSSI": rssi
-            })
+            devList.append(
+                {
+                    "DeviceNumber": dev,
+                    "Name": name,
+                    "Address": address,
+                    "RSSI": rssi,
+                }
+            )
         return devList
 
     def bBlueToothConnectPollingAddress(self, stuNr, iAddress, bLog=True):
@@ -1760,8 +2049,9 @@ class Network(object):
         Connect to device via Bluetooth Address
         """
         endTime = time() + BluetoothTime["Connect"]
-        self.logger.info("Try to connect to Test Device Address: " +
-                         str(iAddress))
+        self.logger.info(
+            "Try to connect to Test Device Address: " + str(iAddress)
+        )
         self.sDevName = None
         devList = []
         while time() < endTime and False == self.bConnected:
@@ -1781,11 +2071,13 @@ class Network(object):
         if self.sDevName is None:
             self.logger.info("Available Devices: " + str(devList))
             self.__exitError(
-                f"Unable to connect to device with address “{iAddress}”")
+                f"Unable to connect to device with address “{iAddress}”"
+            )
         return self.bConnected
 
-    def BlueToothEnergyModeNr(self, Sleep1TimeReset,
-                              Sleep1AdvertisementTimeReset, modeNr):
+    def BlueToothEnergyModeNr(
+        self, Sleep1TimeReset, Sleep1AdvertisementTimeReset, modeNr
+    ):
         S1B0 = Sleep1TimeReset & 0xFF
         S1B1 = (Sleep1TimeReset >> 8) & 0xFF
         S1B2 = (Sleep1TimeReset >> 16) & 0xFF
@@ -1801,16 +2093,22 @@ class Network(object):
         Payload = [modeNr, self.DeviceNr, S1B0, S1B1, S1B2, S1B3, A1B0, A1B1]
         sleep(0.1)
         [timeReset, timeAdvertisement] = self.BlueToothEnergyMode(Payload)
-        self.logger.info("Energy Mode ResetTime/AdvertisementTime: " +
-                         str(timeReset) + "/" + str(timeAdvertisement))
+        self.logger.info(
+            "Energy Mode ResetTime/AdvertisementTime: "
+            + str(timeReset)
+            + "/"
+            + str(timeAdvertisement)
+        )
         return [timeReset, timeAdvertisement]
 
     def BlueToothEnergyMode(self, Payload):
-        cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"],
-                          1, 0)
+        cmd = self.CanCmd(
+            MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0
+        )
         message = self.CanMessage20(cmd, self.sender, self.receiver, Payload)
-        EnergyModeReduced = self.tWriteFrameWaitAckRetries(
-            message, retries=2)["Payload"][2:]
+        EnergyModeReduced = self.tWriteFrameWaitAckRetries(message, retries=2)[
+            "Payload"
+        ][2:]
         timeReset = EnergyModeReduced[:4]
         timeAdvertisement = EnergyModeReduced[4:]
         timeReset = byte_list_to_int(timeReset)
@@ -1824,48 +2122,70 @@ class Network(object):
         sendData.b.u2NodeState = NodeState["Application"]
         sendData.b.u3NetworkState = NetworkState["Standby"]
         self.logger.info("Send Standby Command")
-        index = self.cmdSend(receiver, MyToolItBlock["System"],
-                             MyToolItSystem["Get/Set State"],
-                             [sendData.asbyte])
-        self.logger.info("Received Payload " +
-                         payload2Hex(self.getReadMessageData(index)))
+        index = self.cmdSend(
+            receiver,
+            MyToolItBlock["System"],
+            MyToolItSystem["Get/Set State"],
+            [sendData.asbyte],
+        )
+        self.logger.info(
+            "Received Payload " + payload2Hex(self.getReadMessageData(index))
+        )
 
     def sProductData(self, name, bLog=True):
         sReturn = ""
         if "GTIN" == name:
-            index = self.cmdSend(Node("STH1").value,
-                                 MyToolItBlock["Product Data"],
-                                 MyToolItProductData["GTIN"], [],
-                                 log=bLog)
+            index = self.cmdSend(
+                Node("STH1").value,
+                MyToolItBlock["Product Data"],
+                MyToolItProductData["GTIN"],
+                [],
+                log=bLog,
+            )
             iGtin = byte_list_to_int(self.getReadMessageData(index))
             if False != bLog:
                 self.logger.info("GTIN: " + str(iGtin))
             sReturn = str(iGtin)
         elif "Hardware Version" == name:
-            index = self.cmdSend(Node("STH1").value,
-                                 MyToolItBlock["Product Data"],
-                                 MyToolItProductData["Hardware Version"], [],
-                                 log=bLog)
+            index = self.cmdSend(
+                Node("STH1").value,
+                MyToolItBlock["Product Data"],
+                MyToolItProductData["Hardware Version"],
+                [],
+                log=bLog,
+            )
             tHwRev = self.getReadMessageData(index)
             if False != bLog:
                 self.logger.info("Hardware Version: " + str(tHwRev))
-            sReturn = str(tHwRev[5]) + "." + str(tHwRev[6]) + "." + str(
-                tHwRev[7])
+            sReturn = (
+                str(tHwRev[5]) + "." + str(tHwRev[6]) + "." + str(tHwRev[7])
+            )
         elif "Firmware Version" == name:
-            index = self.cmdSend(Node("STH1").value,
-                                 MyToolItBlock["Product Data"],
-                                 MyToolItProductData["Firmware Version"], [],
-                                 log=bLog)
+            index = self.cmdSend(
+                Node("STH1").value,
+                MyToolItBlock["Product Data"],
+                MyToolItProductData["Firmware Version"],
+                [],
+                log=bLog,
+            )
             tFirmwareVersion = self.getReadMessageData(index)
             if False != bLog:
                 self.logger.info("Firmware Version: " + str(tFirmwareVersion))
-            sReturn = str(tFirmwareVersion[5]) + "." + str(
-                tFirmwareVersion[6]) + "." + str(tFirmwareVersion[7])
+            sReturn = (
+                str(tFirmwareVersion[5])
+                + "."
+                + str(tFirmwareVersion[6])
+                + "."
+                + str(tFirmwareVersion[7])
+            )
         elif "Release Name" == name:
-            index = self.cmdSend(Node("STH1").value,
-                                 MyToolItBlock["Product Data"],
-                                 MyToolItProductData["Release Name"], [],
-                                 log=bLog)
+            index = self.cmdSend(
+                Node("STH1").value,
+                MyToolItBlock["Product Data"],
+                MyToolItProductData["Release Name"],
+                [],
+                log=bLog,
+            )
             aiName = self.getReadMessageData(index)
             sReturn = sArray2String(aiName)
             if False != bLog:
@@ -1873,16 +2193,21 @@ class Network(object):
         elif "Serial Number" == name:
             aiSerialNumber = []
             for i in range(1, 5):
-                index = self.cmdSend(Node("STH1").value,
-                                     MyToolItBlock["Product Data"],
-                                     MyToolItProductData["Serial Number " +
-                                                         str(i)], [],
-                                     log=bLog)
+                index = self.cmdSend(
+                    Node("STH1").value,
+                    MyToolItBlock["Product Data"],
+                    MyToolItProductData["Serial Number " + str(i)],
+                    [],
+                    log=bLog,
+                )
                 element = self.getReadMessageData(index)
                 aiSerialNumber.extend(element)
             try:
-                sReturn = array(
-                    'b', bytearray(aiSerialNumber)).tostring().encode('utf-8')
+                sReturn = (
+                    array("b", bytearray(aiSerialNumber))
+                    .tostring()
+                    .encode("utf-8")
+                )
             except:
                 sReturn = ""
             if False != bLog:
@@ -1890,16 +2215,19 @@ class Network(object):
         elif "Product Name" == name:
             aiName = []
             for i in range(1, 17):
-                index = self.cmdSend(Node("STH1").value,
-                                     MyToolItBlock["Product Data"],
-                                     MyToolItProductData["Product Name " +
-                                                         str(i)], [],
-                                     log=bLog)
+                index = self.cmdSend(
+                    Node("STH1").value,
+                    MyToolItBlock["Product Data"],
+                    MyToolItProductData["Product Name " + str(i)],
+                    [],
+                    log=bLog,
+                )
                 element = self.getReadMessageData(index)
                 aiName.extend(element)
             try:
-                sReturn = array('b',
-                                bytearray(aiName)).tostring().encode('utf-8')
+                sReturn = (
+                    array("b", bytearray(aiName)).tostring().encode("utf-8")
+                )
             except:
                 sReturn = ""
             if False != bLog:
@@ -1908,8 +2236,11 @@ class Network(object):
             aiOemFreeUse = []
             for i in range(1, 9):
                 index = self.cmdSend(
-                    Node("STH1").value, MyToolItBlock["Product Data"],
-                    MyToolItProductData["OEM Free Use " + str(i)], [])
+                    Node("STH1").value,
+                    MyToolItBlock["Product Data"],
+                    MyToolItProductData["OEM Free Use " + str(i)],
+                    [],
+                )
                 aiOemFreeUse.extend(self.getReadMessageData(index))
             sReturn = payload2Hex(aiOemFreeUse)
             if False != bLog:
@@ -1919,11 +2250,18 @@ class Network(object):
         return sReturn
 
     def BlueToothRssi(self, subscriber):
-        cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"],
-                          1, 0)
+        cmd = self.CanCmd(
+            MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0
+        )
         payload = [
             SystemCommandBlueTooth["Rssi"],
-            SystemCommandBlueTooth["SelfAddressing"], 0, 0, 0, 0, 0, 0
+            SystemCommandBlueTooth["SelfAddressing"],
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
         ]
         message = self.CanMessage20(cmd, self.sender, subscriber, payload)
         ack = self.tWriteFrameWaitAckRetries(message, retries=2)["Payload"][2]
@@ -1931,11 +2269,18 @@ class Network(object):
         return ack
 
     def BlueToothAddress(self, subscriber):
-        cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Bluetooth"],
-                          1, 0)
+        cmd = self.CanCmd(
+            MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0
+        )
         payload = [
             SystemCommandBlueTooth["MacAddress"],
-            SystemCommandBlueTooth["SelfAddressing"], 0, 0, 0, 0, 0, 0
+            SystemCommandBlueTooth["SelfAddressing"],
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
         ]
         message = self.CanMessage20(cmd, self.sender, subscriber, payload)
         ack = self.tWriteFrameWaitAckRetries(message, retries=2)["Payload"][2:]
@@ -1943,12 +2288,14 @@ class Network(object):
         return ack
 
     def RoutingInformationCmd(self, receiver, subCmd, port):
-        cmd = self.CanCmd(MyToolItBlock["System"], MyToolItSystem["Routing"],
-                          1, 0)
+        cmd = self.CanCmd(
+            MyToolItBlock["System"], MyToolItSystem["Routing"], 1, 0
+        )
         payload = [subCmd, port, 0, 0, 0, 0, 0, 0]
         message = self.CanMessage20(cmd, self.sender, receiver, payload)
-        ack = self.tWriteFrameWaitAckRetries(message,
-                                             retries=10)["Payload"][2:]
+        ack = self.tWriteFrameWaitAckRetries(message, retries=10)["Payload"][
+            2:
+        ]
         ack = AsciiStringWordLittleEndian(ack)
         return ack
 
@@ -1971,11 +2318,15 @@ class Network(object):
         elif 3 >= count:
             dataSets = DataSets[1]
         else:
-            self.__exitError("No valid CAN20 message (Data Set: " +
-                             str("Sampling Points: ") + str(count) + ")")
+            self.__exitError(
+                "No valid CAN20 message (Data Set: "
+                + str("Sampling Points: ")
+                + str(count)
+                + ")"
+            )
         return dataSets
 
-    def get_node_release_name(self, node='STH1'):
+    def get_node_release_name(self, node="STH1"):
         """Retrieve the software release name of a certain node
 
         Parameters
@@ -1991,8 +2342,11 @@ class Network(object):
         """
 
         index = self.cmdSend(
-            Node(node).value, MyToolItBlock["Product Data"],
-            MyToolItProductData["Release Name"], [])
+            Node(node).value,
+            MyToolItBlock["Product Data"],
+            MyToolItProductData["Release Name"],
+            [],
+        )
         aiName = self.getReadMessageData(index)
         return sArray2String(aiName)
 
@@ -2023,15 +2377,18 @@ class Network(object):
         for axis, sensor in zip(list("xyz"), (x, y, z)):
             if not isinstance(sensor, int) or sensor < 0 or sensor > 255:
                 raise ValueError(
-                    f"Incorrect value for argument {axis}: {sensor}")
+                    f"Incorrect value for argument {axis}: {sensor}"
+                )
 
         data = [0b1000_0000, x, y, z, *(4 * [0])]
-        message = Message(block='Configuration',
-                          block_command=0x01,
-                          sender='SPU 1',
-                          receiver='STH 1',
-                          request=True,
-                          data=data)
+        message = Message(
+            block="Configuration",
+            block_command=0x01,
+            sender="SPU 1",
+            receiver="STH 1",
+            request=True,
+            data=data,
+        )
 
         self.tWriteFrameWaitAckRetries(message.to_pcan(), retries=2)
 
@@ -2051,20 +2408,26 @@ class Network(object):
 
         """
 
-        message = Message(block='Configuration',
-                          block_command=0x01,
-                          sender='SPU 1',
-                          receiver='STH 1',
-                          request=True,
-                          data=[0] * 8)
+        message = Message(
+            block="Configuration",
+            block_command=0x01,
+            sender="SPU 1",
+            receiver="STH 1",
+            request=True,
+            data=[0] * 8,
+        )
 
         reply = self.tWriteFrameWaitAck(message.to_pcan())[0]
-        unsupported = (True if isinstance(reply, str) else Identifier(
-            int(reply['ID'], 16)).is_error())
+        unsupported = (
+            True
+            if isinstance(reply, str)
+            else Identifier(int(reply["ID"], 16)).is_error()
+        )
 
         if unsupported:
             raise UnsupportedFeatureException(
-                "Unable to read channel configuration")
+                "Unable to read channel configuration"
+            )
 
         assert isinstance(reply, dict)
         data = reply["Payload"]
@@ -2105,11 +2468,13 @@ class Network(object):
             # Read at most 4 bytes of data at once
             read_length = 4 if length > 4 else length
             payload = [address, offset, read_length, *reserved]
-            index = self.cmdSend(self.receiver,
-                                 MyToolItBlock['EEPROM'],
-                                 MyToolItEeprom['Read'],
-                                 payload,
-                                 log=False)
+            index = self.cmdSend(
+                self.receiver,
+                MyToolItBlock["EEPROM"],
+                MyToolItEeprom["Read"],
+                payload,
+                log=False,
+            )
             response = self.getReadMessageData(index)
             data_end = data_start + read_length
             read_data.extend(response[data_start:data_end])
@@ -2172,8 +2537,9 @@ class Network(object):
         The unsigned number at the specified location of the EEPROM
         """
 
-        return int.from_bytes(self.read_eeprom(address, offset, length),
-                              'little')
+        return int.from_bytes(
+            self.read_eeprom(address, offset, length), "little"
+        )
 
     def read_eeprom_float(self, address, offset):
         """Read EEPROM data in float format
@@ -2194,7 +2560,7 @@ class Network(object):
         """
 
         data = self.read_eeprom(address, offset, length=4)
-        return unpack('<f', bytearray(data))[0]
+        return unpack("<f", bytearray(data))[0]
 
     def write_eeprom(self, address, offset, data, length=None):
         """Write EEPROM data at the specified address
@@ -2237,11 +2603,13 @@ class Network(object):
 
             reserved = [0] * 1
             payload = [address, offset, write_length, *reserved, *write_data]
-            self.cmdSend(self.receiver,
-                         MyToolItBlock['EEPROM'],
-                         MyToolItEeprom['Write'],
-                         payload,
-                         log=False)
+            self.cmdSend(
+                self.receiver,
+                MyToolItBlock["EEPROM"],
+                MyToolItEeprom["Write"],
+                payload,
+                log=False,
+            )
             data = data[4:]
             offset += write_length
 
@@ -2289,7 +2657,7 @@ class Network(object):
             This value specifies how long the unsigned number is in bytes
         """
 
-        data = list(value.to_bytes(length, byteorder='little'))
+        data = list(value.to_bytes(length, byteorder="little"))
         self.write_eeprom(address, offset, data)
 
     def write_eeprom_float(self, address, offset, value):
@@ -2308,7 +2676,7 @@ class Network(object):
             The float value that should be stored at the specified location
         """
 
-        data = list(pack('f', value))
+        data = list(pack("f", value))
         self.write_eeprom(address, offset, data)
 
     def read_eeprom_status(self):
@@ -2322,7 +2690,8 @@ class Network(object):
         """
 
         return EEPROMStatus(
-            self.read_eeprom(address=0, offset=0, length=1).pop())
+            self.read_eeprom(address=0, offset=0, length=1).pop()
+        )
 
     def write_eeprom_status(self, value):
         """Change the value of the EEPROM status byte
@@ -2335,10 +2704,9 @@ class Network(object):
 
         """
 
-        self.write_eeprom_unsigned(address=0,
-                                   offset=0,
-                                   length=1,
-                                   value=EEPROMStatus(value).value)
+        self.write_eeprom_unsigned(
+            address=0, offset=0, length=1, value=EEPROMStatus(value).value
+        )
 
     def read_eeprom_name(self):
         """Retrieve the name of the node from the EEPROM
@@ -2387,10 +2755,9 @@ class Network(object):
 
         """
 
-        self.write_eeprom_unsigned(address=0,
-                                   offset=9,
-                                   value=milliseconds,
-                                   length=4)
+        self.write_eeprom_unsigned(
+            address=0, offset=9, value=milliseconds, length=4
+        )
 
     def read_eeprom_advertisement_time_1(self):
         """Retrieve advertisement time 1 from the EEPROM
@@ -2415,10 +2782,9 @@ class Network(object):
 
         """
 
-        self.write_eeprom_unsigned(address=0,
-                                   offset=13,
-                                   value=milliseconds,
-                                   length=2)
+        self.write_eeprom_unsigned(
+            address=0, offset=13, value=milliseconds, length=2
+        )
 
     def read_eeprom_sleep_time_2(self):
         """Retrieve sleep time 2 from the EEPROM
@@ -2443,10 +2809,9 @@ class Network(object):
 
         """
 
-        self.write_eeprom_unsigned(address=0,
-                                   offset=15,
-                                   value=milliseconds,
-                                   length=4)
+        self.write_eeprom_unsigned(
+            address=0, offset=15, value=milliseconds, length=4
+        )
 
     def read_eeprom_advertisement_time_2(self):
         """Retrieve advertisement time 2 from the EEPROM
@@ -2471,10 +2836,9 @@ class Network(object):
 
         """
 
-        self.write_eeprom_unsigned(address=0,
-                                   offset=19,
-                                   value=milliseconds,
-                                   length=2)
+        self.write_eeprom_unsigned(
+            address=0, offset=19, value=milliseconds, length=2
+        )
 
     def read_eeprom_gtin(self):
         """Read the global trade identifier number (GTIN) from the EEPROM
@@ -2499,10 +2863,9 @@ class Network(object):
 
         """
 
-        return self.write_eeprom_unsigned(address=4,
-                                          offset=0,
-                                          length=8,
-                                          value=value)
+        return self.write_eeprom_unsigned(
+            address=4, offset=0, length=8, value=value
+        )
 
     def read_eeprom_hardware_version(self):
         """Read the current hardware version from the EEPROM
@@ -2532,10 +2895,12 @@ class Network(object):
         if isinstance(version, str):
             version = Version(version)
 
-        self.write_eeprom(address=4,
-                          offset=13,
-                          length=3,
-                          data=[version.major, version.minor, version.patch])
+        self.write_eeprom(
+            address=4,
+            offset=13,
+            length=3,
+            data=[version.major, version.minor, version.patch],
+        )
 
     def read_eeprom_firmware_version(self):
         """Retrieve the current firmware version from the EEPROM
@@ -2564,10 +2929,12 @@ class Network(object):
         if isinstance(version, str):
             version = Version(version)
 
-        self.write_eeprom(address=4,
-                          offset=21,
-                          length=3,
-                          data=[version.major, version.minor, version.patch])
+        self.write_eeprom(
+            address=4,
+            offset=21,
+            length=3,
+            data=[version.major, version.minor, version.patch],
+        )
 
     def read_eeprom_release_name(self):
         """Retrieve the current release name from the EEPROM
@@ -2592,10 +2959,9 @@ class Network(object):
 
         """
 
-        return self.write_eeprom_text(address=4,
-                                      offset=24,
-                                      length=8,
-                                      text=text)
+        return self.write_eeprom_text(
+            address=4, offset=24, length=8, text=text
+        )
 
     def read_eeprom_serial_number(self):
         """Retrieve the serial number from the EEPROM
@@ -2745,10 +3111,9 @@ class Network(object):
 
         """
 
-        self.write_eeprom_unsigned(address=5,
-                                   offset=8,
-                                   length=4,
-                                   value=seconds)
+        self.write_eeprom_unsigned(
+            address=5, offset=8, length=4, value=seconds
+        )
 
     def read_eeprom_under_voltage_counter(self):
         """Retrieve the under voltage counter value from the EEPROM
@@ -2853,10 +3218,9 @@ class Network(object):
 
         """
 
-        self.write_eeprom_unsigned(address=5,
-                                   offset=28,
-                                   length=4,
-                                   value=number)
+        self.write_eeprom_unsigned(
+            address=5, offset=28, length=4, value=number
+        )
 
     def read_eeprom_x_axis_acceleration_slope(self):
         """Retrieve the acceleration slope of the x-axis from the EEPROM
@@ -2937,6 +3301,7 @@ class Network(object):
 
 # -- Main ---------------------------------------------------------------------
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     from doctest import testmod
+
     testmod()

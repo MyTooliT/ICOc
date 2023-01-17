@@ -36,7 +36,7 @@ from mytoolit.config import settings
 from mytoolit.utility import add_commander_path_to_environment
 
 sVersion = TestConfig["Version"]
-sLogFile = 'TestStu.txt'
+sLogFile = "TestStu.txt"
 repo_root = str(Path(__file__).parent.parent.parent.parent)
 sLogLocation = f"{repo_root}/"
 sHomeLocation = "../../SimplicityStudio/v4_workspace/STU/"
@@ -53,19 +53,24 @@ class TestStu(unittest.TestCase):
     def setUp(self):
         self.sHomeLocation = sHomeLocation
         self.sBuildLocation = sHomeLocation + "builds/" + sVersion
-        self.sBootloader = sHomeLocation + "builds/" + "BootloaderOtaBgm111.s37"
+        self.sBootloader = (
+            sHomeLocation + "builds/" + "BootloaderOtaBgm111.s37"
+        )
         self.sAdapterSerialNo = sAdapterSerialNo
         self.sBoardType = sBoardType
         self.sSilabsCommander = "commander"
         self.bError = False
-        self.Can = Network(sender=MyToolItNetworkNr["SPU1"],
-                           receiver=MyToolItNetworkNr["STU1"])
+        self.Can = Network(
+            sender=MyToolItNetworkNr["SPU1"],
+            receiver=MyToolItNetworkNr["STU1"],
+        )
         self.Can.logger.info("TestCase: " + str(self._testMethodName))
         self.vSilabsAdapterReset()
         if "test0000FirmwareFlash" != self._testMethodName:
             self.Can.CanTimeStampStart(self._resetStu()["CanTime"])
             self.sStuAddr = int_to_mac_address(
-                self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"]))
+                self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"])
+            )
             self.Can.logger.info("STU BlueTooth Address: " + self.sStuAddr)
             self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STU1"])
             self._statusWords()
@@ -84,7 +89,8 @@ class TestStu(unittest.TestCase):
             self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STU1"])
             if "test0000FirmwareFlash" == self._testMethodName:
                 self.sStuAddr = hex(
-                    self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"]))
+                    self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"])
+                )
                 self.Can.logger.info("STU BlueTooth Address: " + self.sStuAddr)
                 self._StuWDog()
             self._statusWords()
@@ -115,8 +121,10 @@ class TestStu(unittest.TestCase):
         Retrieve Watchdog Counter of ST
         """
         WdogCounter = byte_list_to_int(
-            self.Can.statisticalData(MyToolItNetworkNr["STU1"],
-                                     MyToolItStatData["Wdog"])[:4])
+            self.Can.statisticalData(
+                MyToolItNetworkNr["STU1"], MyToolItStatData["Wdog"]
+            )[:4]
+        )
         self.Can.logger.info("WatchDog Counter: " + str(WdogCounter))
         return WdogCounter
 
@@ -124,10 +132,16 @@ class TestStu(unittest.TestCase):
         """
         Retrieve all status words
         """
-        self.Can.logger.info("STU Status Word: {}".format(
-            self.Can.node_status(MyToolItNetworkNr["STU1"])))
-        self.Can.logger.info("STU Error Word: {}".format(
-            self.Can.error_status(MyToolItNetworkNr["STU1"])))
+        self.Can.logger.info(
+            "STU Status Word: {}".format(
+                self.Can.node_status(MyToolItNetworkNr["STU1"])
+            )
+        )
+        self.Can.logger.info(
+            "STU Error Word: {}".format(
+                self.Can.error_status(MyToolItNetworkNr["STU1"])
+            )
+        )
 
     def vEepromWritePage(self, iPage, value):
         """
@@ -137,12 +151,17 @@ class TestStu(unittest.TestCase):
         timeStamp = self.Can.get_elapsed_time()
         for offset in range(0, 256, 4):
             au8Payload = [iPage, 0xFF & offset, 4, 0] + au8Content
-            self.Can.cmdSend(MyToolItNetworkNr["STU1"],
-                             MyToolItBlock["EEPROM"], MyToolItEeprom["Write"],
-                             au8Payload)
-        self.Can.logger.info("Page Write Time: " +
-                             str(self.Can.get_elapsed_time() - timeStamp) +
-                             "ms")
+            self.Can.cmdSend(
+                MyToolItNetworkNr["STU1"],
+                MyToolItBlock["EEPROM"],
+                MyToolItEeprom["Write"],
+                au8Payload,
+            )
+        self.Can.logger.info(
+            "Page Write Time: "
+            + str(self.Can.get_elapsed_time() - timeStamp)
+            + "ms"
+        )
 
     def vEepromReadPage(self, iPage, value):
         """
@@ -151,15 +170,20 @@ class TestStu(unittest.TestCase):
         timeStamp = self.Can.get_elapsed_time()
         for offset in range(0, 256, 4):
             au8Payload = [iPage, 0xFF & offset, 4, 0, 0, 0, 0, 0]
-            index = self.Can.cmdSend(MyToolItNetworkNr["STU1"],
-                                     MyToolItBlock["EEPROM"],
-                                     MyToolItEeprom["Read"], au8Payload)
+            index = self.Can.cmdSend(
+                MyToolItNetworkNr["STU1"],
+                MyToolItBlock["EEPROM"],
+                MyToolItEeprom["Read"],
+                au8Payload,
+            )
             dataReadBack = self.Can.getReadMessageData(index)
             for dataByte in dataReadBack[4:]:
                 self.assertEqual(dataByte, value)
-        self.Can.logger.info("Page Read Time: " +
-                             str(self.Can.get_elapsed_time() - timeStamp) +
-                             "ms")
+        self.Can.logger.info(
+            "Page Read Time: "
+            + str(self.Can.get_elapsed_time() - timeStamp)
+            + "ms"
+        )
 
     def vConnectSth1Dev0(self):
         """
@@ -172,13 +196,15 @@ class TestStu(unittest.TestCase):
             time.sleep(1)
             self.Can.logger.info("Device Connect to number 0")
             if False != self.Can.bBlueToothConnectDeviceConnect(
-                    MyToolItNetworkNr["STU1"], 0):
+                MyToolItNetworkNr["STU1"], 0
+            ):
                 break
 
         for _i in range(0, BluetoothTime["Connect"]):
             self.Can.logger.info("Check to be connected")
-            if (False != self.Can.bBlueToothCheckConnect(
-                    MyToolItNetworkNr["STU1"])):
+            if False != self.Can.bBlueToothCheckConnect(
+                MyToolItNetworkNr["STU1"]
+            ):
                 break
             time.sleep(1)
 
@@ -189,8 +215,8 @@ class TestStu(unittest.TestCase):
         self.Can.logger.info("Reset Adapter " + self.sAdapterSerialNo)
         sSystemCall = self.sSilabsCommander + " adapter reset "
         sSystemCall += "--serialno " + self.sAdapterSerialNo
-        sSystemCall += (">>" + sLogLocation + "AdapterReset.txt")
-        if os.name == 'nt':
+        sSystemCall += ">>" + sLogLocation + "AdapterReset.txt"
+        if os.name == "nt":
             sSystemCall = sSystemCall.replace("/", "\\")
             os.system(sSystemCall)
         # for mac and linux(here, os.name is 'posix')
@@ -214,42 +240,55 @@ class TestStu(unittest.TestCase):
         sSystemCall += self.sBootloader + " "
         sSystemCall += self.sBuildLocation + "/firmware_client.s37 "
         sSystemCall += "--patch 0x0fe04000:0x00 --patch 0x0fe041F8:0xFD "
-        sSystemCall += "-o " + self.sBuildLocation + "/manufacturingImageStu" + sVersion + ".hex "
+        sSystemCall += (
+            "-o "
+            + self.sBuildLocation
+            + "/manufacturingImageStu"
+            + sVersion
+            + ".hex "
+        )
         sSystemCall += "-d " + self.sBoardType + " "
         sSystemCall += ">> " + sLogLocation
         sSystemCall += "ManufacturingCreateResport.txt"
-        if os.name == 'nt':
+        if os.name == "nt":
             sSystemCall = sSystemCall.replace("/", "\\")
             os.system(sSystemCall)
         # for mac and linux(here, os.name is 'posix')
         else:
             os.system(sSystemCall)
-        tFile = open(sLogLocation + "ManufacturingCreateResport.txt",
-                     "r",
-                     encoding='utf-8')
+        tFile = open(
+            sLogLocation + "ManufacturingCreateResport.txt",
+            "r",
+            encoding="utf-8",
+        )
         asData = tFile.readlines()
         tFile.close()
         self.assertEqual("DONE\n", asData[-1])
         sSystemCall = self.sSilabsCommander + " flash "
-        sSystemCall += self.sBuildLocation + "/manufacturingImageStu" + sVersion + ".hex "
+        sSystemCall += (
+            self.sBuildLocation + "/manufacturingImageStu" + sVersion + ".hex "
+        )
         sSystemCall += "--address 0x0 "
         sSystemCall += "--serialno " + self.sAdapterSerialNo + " "
         sSystemCall += "-d " + self.sBoardType + " "
         sSystemCall += ">> " + sLogLocation
         sSystemCall += "ManufacturingFlashResport.txt"
-        if os.name == 'nt':
+        if os.name == "nt":
             sSystemCall = sSystemCall.replace("/", "\\")
             os.system(sSystemCall)
         # for mac and linux(here, os.name is 'posix')
         else:
             os.system(sSystemCall)
-        tFile = open(sLogLocation + "ManufacturingFlashResport.txt",
-                     "r",
-                     encoding='utf-8')
+        tFile = open(
+            sLogLocation + "ManufacturingFlashResport.txt",
+            "r",
+            encoding="utf-8",
+        )
         asData = tFile.readlines()
         tFile.close()
-        self.assertEqual("range 0x0FE04000 - 0x0FE047FF (2 KB)\n",
-                         asData[-2][10:])
+        self.assertEqual(
+            "range 0x0FE04000 - 0x0FE047FF (2 KB)\n", asData[-2][10:]
+        )
         self.assertEqual("DONE\n", asData[-1])
         time.sleep(4)
 
@@ -259,10 +298,12 @@ class TestStu(unittest.TestCase):
         Test the over the air update
         """
         bCreate = os.path.isfile(self.sBuildLocation + "/OtaServer.gbl")
-        bCreate = bCreate and os.path.isfile(self.sBuildLocation +
-                                             "/OtaApploader.gbl")
-        bCreate = bCreate and os.path.isfile(self.sBuildLocation +
-                                             "/OtaApploaderServer.gbl")
+        bCreate = bCreate and os.path.isfile(
+            self.sBuildLocation + "/OtaApploader.gbl"
+        )
+        bCreate = bCreate and os.path.isfile(
+            self.sBuildLocation + "/OtaApploaderServer.gbl"
+        )
         bCreate = not bCreate
         if False != bCreate:
             iRuns = 4
@@ -292,40 +333,45 @@ class TestStu(unittest.TestCase):
 
             self._resetStu()
             time.sleep(1)
-            sSystemCall = self.sHomeLocation + "/firmware_client/create_bl_files.bat "
+            sSystemCall = (
+                self.sHomeLocation + "/firmware_client/create_bl_files.bat "
+            )
             sSystemCall += " -> " + sLogLocation
             sSystemCall += "CreateReportOta.txt"
-            if os.name == 'nt':
+            if os.name == "nt":
                 sSystemCall = sSystemCall.replace("/", "\\")
                 os.system(sSystemCall)
             # for mac and linux(here, os.name is 'posix')
             else:
                 os.system(sSystemCall)
             os.rename(
-                self.sHomeLocation +
-                "/firmware_client/output_gbl/application.gbl",
-                self.sBuildLocation + "/OtaClient.gbl")
+                self.sHomeLocation
+                + "/firmware_client/output_gbl/application.gbl",
+                self.sBuildLocation + "/OtaClient.gbl",
+            )
             os.rename(
-                self.sHomeLocation +
-                "/firmware_client/output_gbl/apploader.gbl",
-                self.sBuildLocation + "/OtaApploader.gbl")
+                self.sHomeLocation
+                + "/firmware_client/output_gbl/apploader.gbl",
+                self.sBuildLocation + "/OtaApploader.gbl",
+            )
             os.rename(
                 self.sHomeLocation + "/firmware_client/output_gbl/full.gbl",
-                self.sBuildLocation + "/OtaApploaderClient.gbl")
+                self.sBuildLocation + "/OtaApploaderClient.gbl",
+            )
         for i in range(1, iRuns):
             sSystemCall = self.sBuildLocation + "/ota-dfu.exe COM6 115200 "
             sSystemCall += self.sBuildLocation + "/OtaClient.gbl "
             sSystemCall += self.sStuAddr + " -> " + sLogLocation
             sSystemCall += "Ota" + str(i) + ".txt"
-            if os.name == 'nt':
+            if os.name == "nt":
                 sSystemCall = sSystemCall.replace("/", "\\")
                 os.system(sSystemCall)
             # for mac and linux(here, os.name is 'posix')
             else:
                 os.system(sSystemCall)
-            tFile = open(sLogLocation + "Ota" + str(i) + ".txt",
-                         "r",
-                         encoding='utf-8')
+            tFile = open(
+                sLogLocation + "Ota" + str(i) + ".txt", "r", encoding="utf-8"
+            )
             asData = tFile.readlines()
             tFile.close()
             self.assertEqual("Finishing DFU block...OK\n", asData[-2])
@@ -337,43 +383,68 @@ class TestStu(unittest.TestCase):
 
         Write message and check identifier to be ack (No bError)
         """
-        cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["Get/Set State"], 1, 0)
-        msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
-                                    MyToolItNetworkNr["STU1"], [0])
+        cmd = self.Can.CanCmd(
+            MyToolItBlock["System"], MyToolItSystem["Get/Set State"], 1, 0
+        )
+        msg = self.Can.CanMessage20(
+            cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [0]
+        )
         self.Can.logger.info("Write Message")
         self.Can.WriteFrame(msg)
         self.Can.logger.info("Wait 200ms")
         time.sleep(0.25)
-        cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["Get/Set State"], 0, 0)
-        msgAckExpected = self.Can.CanMessage20(cmd, MyToolItNetworkNr["STU1"],
-                                               MyToolItNetworkNr["SPU1"], [0])
-        self.Can.logger.info("Send ID: " + hex(msg.ID) + "; Expected ID: " +
-                             hex(msgAckExpected.ID) + "; Received ID: " +
-                             hex(self.Can.getReadMessage(-1).ID))
+        cmd = self.Can.CanCmd(
+            MyToolItBlock["System"], MyToolItSystem["Get/Set State"], 0, 0
+        )
+        msgAckExpected = self.Can.CanMessage20(
+            cmd, MyToolItNetworkNr["STU1"], MyToolItNetworkNr["SPU1"], [0]
+        )
+        self.Can.logger.info(
+            "Send ID: "
+            + hex(msg.ID)
+            + "; Expected ID: "
+            + hex(msgAckExpected.ID)
+            + "; Received ID: "
+            + hex(self.Can.getReadMessage(-1).ID)
+        )
         expectedData = ActiveState()
         expectedData.asbyte = 0
         expectedData.b.u2NodeState = NodeState["Application"]
         expectedData.b.u3NetworkState = NetworkState["Operating"]
-        self.Can.logger.info("Send Data: " + hex(0) + "; Expected Data: " +
-                             hex(expectedData.asbyte) + "; Received Data: " +
-                             hex(self.Can.getReadMessage(-1).DATA[0]))
-        self.assertEqual(hex(msgAckExpected.ID),
-                         hex(self.Can.getReadMessage(-1).ID))
-        self.assertEqual(expectedData.asbyte,
-                         self.Can.getReadMessage(-1).DATA[0])
+        self.Can.logger.info(
+            "Send Data: "
+            + hex(0)
+            + "; Expected Data: "
+            + hex(expectedData.asbyte)
+            + "; Received Data: "
+            + hex(self.Can.getReadMessage(-1).DATA[0])
+        )
+        self.assertEqual(
+            hex(msgAckExpected.ID), hex(self.Can.getReadMessage(-1).ID)
+        )
+        self.assertEqual(
+            expectedData.asbyte, self.Can.getReadMessage(-1).DATA[0]
+        )
 
     def test0006FirmwareVersion(self):
         """Check firmware version (⏱ 8 seconds)"""
 
-        iIndex = self.Can.cmdSend(MyToolItNetworkNr["STU1"],
-                                  MyToolItBlock["Product Data"],
-                                  MyToolItProductData["Firmware Version"], [])
+        iIndex = self.Can.cmdSend(
+            MyToolItNetworkNr["STU1"],
+            MyToolItBlock["Product Data"],
+            MyToolItProductData["Firmware Version"],
+            [],
+        )
         au8Version = self.Can.getReadMessageData(iIndex)
         au8Version = au8Version[-3:]
-        sVersionRead = "v" + str(au8Version[0]) + "." + str(
-            au8Version[1]) + "." + str(au8Version[2])
+        sVersionRead = (
+            "v"
+            + str(au8Version[0])
+            + "."
+            + str(au8Version[1])
+            + "."
+            + str(au8Version[2])
+        )
         self.Can.logger.info("Version: " + sVersionRead)
         self.assertEqual(sVersion, sVersionRead)
 
@@ -383,30 +454,50 @@ class TestStu(unittest.TestCase):
         do ACK after 100 times send flooding to check functionality
         """
         self.Can.logger.info(
-            "Send command 100 times, check number of write/reads and do ack test at the end; do that for 100 times"
+            "Send command 100 times, check number of write/reads and do ack"
+            " test at the end; do that for 100 times"
         )
         for i in range(1, 101):
-            self.Can.logger.info("Received Index: " +
-                                 str(self.Can.GetReadArrayIndex()))
+            self.Can.logger.info(
+                "Received Index: " + str(self.Can.GetReadArrayIndex())
+            )
             self.Can.logger.info("Run: " + str(i))
             for _j in range(1, 101):
-                if (1 == randint(0, 1)):
-                    cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                                          MyToolItSystem["Get/Set State"], 1,
-                                          0)
-                    message = self.Can.CanMessage20(cmd,
-                                                    MyToolItNetworkNr["SPU1"],
-                                                    MyToolItNetworkNr["STU1"],
-                                                    [0])
-                else:
-                    cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                                          MyToolItSystem["Bluetooth"], 1, 0)
+                if 1 == randint(0, 1):
+                    cmd = self.Can.CanCmd(
+                        MyToolItBlock["System"],
+                        MyToolItSystem["Get/Set State"],
+                        1,
+                        0,
+                    )
                     message = self.Can.CanMessage20(
-                        cmd, MyToolItNetworkNr["SPU1"],
-                        MyToolItNetworkNr["STU1"], [
-                            SystemCommandBlueTooth["DeviceCheckConnected"], 0,
-                            0, 0, 0, 0, 0, 0
-                        ])
+                        cmd,
+                        MyToolItNetworkNr["SPU1"],
+                        MyToolItNetworkNr["STU1"],
+                        [0],
+                    )
+                else:
+                    cmd = self.Can.CanCmd(
+                        MyToolItBlock["System"],
+                        MyToolItSystem["Bluetooth"],
+                        1,
+                        0,
+                    )
+                    message = self.Can.CanMessage20(
+                        cmd,
+                        MyToolItNetworkNr["SPU1"],
+                        MyToolItNetworkNr["STU1"],
+                        [
+                            SystemCommandBlueTooth["DeviceCheckConnected"],
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                        ],
+                    )
                 self.Can.WriteFrame(message)
             time.sleep(0.5)
             self.Can.tWriteFrameWaitAckRetries(message, retries=0)
@@ -418,26 +509,46 @@ class TestStu(unittest.TestCase):
         """
 
         self.Can.logger.info(
-            "Send and get ACK for 1000 times AND do it with two messages randomly "
+            "Send and get ACK for 1000 times AND do it with two messages"
+            " randomly "
         )
         for i in range(1, 1001):
-            self.Can.logger.info("Received Index: " +
-                                 str(self.Can.GetReadArrayIndex()))
+            self.Can.logger.info(
+                "Received Index: " + str(self.Can.GetReadArrayIndex())
+            )
             self.Can.logger.info("Run: " + str(i))
-            if (1 == randint(0, 1)):
-                cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                                      MyToolItSystem["Get/Set State"], 1, 0)
-                msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
-                                            MyToolItNetworkNr["STU1"], [0])
-            else:
-                cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                                      MyToolItSystem["Bluetooth"], 1, 0)
+            if 1 == randint(0, 1):
+                cmd = self.Can.CanCmd(
+                    MyToolItBlock["System"],
+                    MyToolItSystem["Get/Set State"],
+                    1,
+                    0,
+                )
                 msg = self.Can.CanMessage20(
-                    cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"],
+                    cmd,
+                    MyToolItNetworkNr["SPU1"],
+                    MyToolItNetworkNr["STU1"],
+                    [0],
+                )
+            else:
+                cmd = self.Can.CanCmd(
+                    MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0
+                )
+                msg = self.Can.CanMessage20(
+                    cmd,
+                    MyToolItNetworkNr["SPU1"],
+                    MyToolItNetworkNr["STU1"],
                     [
-                        SystemCommandBlueTooth["DeviceCheckConnected"], 0, 0,
-                        0, 0, 0, 0, 0
-                    ])
+                        SystemCommandBlueTooth["DeviceCheckConnected"],
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                    ],
+                )
             self.assertNotEqual("Error", self.Can.tWriteFrameWaitAck(msg)[0])
         self.test0005Ack()  # Test that it still works
 
@@ -447,28 +558,49 @@ class TestStu(unittest.TestCase):
         Send->Ack->Send->Ack, this also do a retry, tests the test framework - Multiple Messages
         """
         self.Can.logger.info(
-            "Send and get ACK for 1000 times AND do it with two messages randomly "
+            "Send and get ACK for 1000 times AND do it with two messages"
+            " randomly "
         )
         for i in range(1, 1001):
-            self.Can.logger.info("Received Index: " +
-                                 str(self.Can.GetReadArrayIndex()))
+            self.Can.logger.info(
+                "Received Index: " + str(self.Can.GetReadArrayIndex())
+            )
             self.Can.logger.info("Run: " + str(i))
-            if (1 == randint(0, 1)):
-                cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                                      MyToolItSystem["Get/Set State"], 1, 0)
-                msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
-                                            MyToolItNetworkNr["STU1"], [0])
-            else:
-                cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                                      MyToolItSystem["Bluetooth"], 1, 0)
+            if 1 == randint(0, 1):
+                cmd = self.Can.CanCmd(
+                    MyToolItBlock["System"],
+                    MyToolItSystem["Get/Set State"],
+                    1,
+                    0,
+                )
                 msg = self.Can.CanMessage20(
-                    cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"],
+                    cmd,
+                    MyToolItNetworkNr["SPU1"],
+                    MyToolItNetworkNr["STU1"],
+                    [0],
+                )
+            else:
+                cmd = self.Can.CanCmd(
+                    MyToolItBlock["System"], MyToolItSystem["Bluetooth"], 1, 0
+                )
+                msg = self.Can.CanMessage20(
+                    cmd,
+                    MyToolItNetworkNr["SPU1"],
+                    MyToolItNetworkNr["STU1"],
                     [
-                        SystemCommandBlueTooth["DeviceCheckConnected"], 0, 0,
-                        0, 0, 0, 0, 0
-                    ])
+                        SystemCommandBlueTooth["DeviceCheckConnected"],
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                    ],
+                )
             self.assertNotEqual(
-                "bError", self.Can.tWriteFrameWaitAckRetries(msg, retries=3))
+                "bError", self.Can.tWriteFrameWaitAckRetries(msg, retries=3)
+            )
         self.test0005Ack()  # Test that it still works
 
     def test0055MultiSendSingleAckRetries(self):
@@ -477,31 +609,43 @@ class TestStu(unittest.TestCase):
         Send->Ack->Send->Ack, this also do a retry, tests the test framework - Single Message
         """
         self.Can.logger.info(
-            "Send and get ACK for 1000 times AND do it with two messages randomly "
+            "Send and get ACK for 1000 times AND do it with two messages"
+            " randomly "
         )
         for _i in range(1, 10001):
             self.Can.cmdSend(
                 MyToolItNetworkNr["STU1"],
                 MyToolItBlock["System"],
-                MyToolItSystem["Bluetooth"], [
-                    SystemCommandBlueTooth["DeviceCheckConnected"], 0, 0, 0, 0,
-                    0, 0, 0
+                MyToolItSystem["Bluetooth"],
+                [
+                    SystemCommandBlueTooth["DeviceCheckConnected"],
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
                 ],
-                retries=0)
+                retries=0,
+            )
         self.test0005Ack()  # Test that it still works
 
     def test0056SenderReceiver(self):
         """
         Send addressing same sender and receiver (⏱ 9 seconds)
         """
-        cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["Get/Set State"], 1, 0)
-        msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["STU1"],
-                                    MyToolItNetworkNr["STU1"], [0])
+        cmd = self.Can.CanCmd(
+            MyToolItBlock["System"], MyToolItSystem["Get/Set State"], 1, 0
+        )
+        msg = self.Can.CanMessage20(
+            cmd, MyToolItNetworkNr["STU1"], MyToolItNetworkNr["STU1"], [0]
+        )
         self.assertEqual("Error", self.Can.tWriteFrameWaitAck(msg)[0])
         # Test that it still works
-        msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
-                                    MyToolItNetworkNr["STU1"], [0])
+        msg = self.Can.CanMessage20(
+            cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [0]
+        )
         self.Can.tWriteFrameWaitAckRetries(msg, retries=0)
 
     def test0057ChristmasTree(self):
@@ -509,48 +653,62 @@ class TestStu(unittest.TestCase):
         "Christmas Tree" packages (⏱ 14 seconds)
         """
         self.Can.logger.info("Error Request Frame from STU1 to STU1")
-        cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["Get/Set State"], 1, 1)
-        msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["STU1"],
-                                    MyToolItNetworkNr["STU1"], [0])
+        cmd = self.Can.CanCmd(
+            MyToolItBlock["System"], MyToolItSystem["Get/Set State"], 1, 1
+        )
+        msg = self.Can.CanMessage20(
+            cmd, MyToolItNetworkNr["STU1"], MyToolItNetworkNr["STU1"], [0]
+        )
         self.assertEqual("Error", self.Can.tWriteFrameWaitAck(msg)[0])
         self.Can.logger.info("Error Request Frame from SPU1 to STU1")
-        cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["Get/Set State"], 1, 1)
-        msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
-                                    MyToolItNetworkNr["STU1"], [0])
+        cmd = self.Can.CanCmd(
+            MyToolItBlock["System"], MyToolItSystem["Get/Set State"], 1, 1
+        )
+        msg = self.Can.CanMessage20(
+            cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [0]
+        )
         self.assertEqual("Error", self.Can.tWriteFrameWaitAck(msg)[0])
         self.Can.logger.info("Error Ack Frame from STU1 to STU1")
-        cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["Get/Set State"], 0, 1)
-        msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["STU1"],
-                                    MyToolItNetworkNr["STU1"], [0])
+        cmd = self.Can.CanCmd(
+            MyToolItBlock["System"], MyToolItSystem["Get/Set State"], 0, 1
+        )
+        msg = self.Can.CanMessage20(
+            cmd, MyToolItNetworkNr["STU1"], MyToolItNetworkNr["STU1"], [0]
+        )
         self.assertEqual("Error", self.Can.tWriteFrameWaitAck(msg)[0])
         self.Can.logger.info("Error Ack Frame from SPU1 to STU1")
-        cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["Get/Set State"], 0, 1)
-        msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
-                                    MyToolItNetworkNr["STU1"], [0])
+        cmd = self.Can.CanCmd(
+            MyToolItBlock["System"], MyToolItSystem["Get/Set State"], 0, 1
+        )
+        msg = self.Can.CanMessage20(
+            cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [0]
+        )
         self.assertEqual("Error", self.Can.tWriteFrameWaitAck(msg)[0])
         self.Can.logger.info("Ack Frame from STU1 to STU1")
-        cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["Get/Set State"], 0, 0)
-        msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["STU1"],
-                                    MyToolItNetworkNr["STU1"], [0])
+        cmd = self.Can.CanCmd(
+            MyToolItBlock["System"], MyToolItSystem["Get/Set State"], 0, 0
+        )
+        msg = self.Can.CanMessage20(
+            cmd, MyToolItNetworkNr["STU1"], MyToolItNetworkNr["STU1"], [0]
+        )
         self.assertEqual("Error", self.Can.tWriteFrameWaitAck(msg)[0])
         self.Can.logger.info("Ack Frame from SPU1 to STU1")
-        cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["Get/Set State"], 0, 0)
-        msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
-                                    MyToolItNetworkNr["STU1"], [0])
+        cmd = self.Can.CanCmd(
+            MyToolItBlock["System"], MyToolItSystem["Get/Set State"], 0, 0
+        )
+        msg = self.Can.CanMessage20(
+            cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [0]
+        )
         self.assertEqual("Error", self.Can.tWriteFrameWaitAck(msg)[0])
 
         # Test that it still works
         self.Can.logger.info("Normal Request to STU1")
-        cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["Get/Set State"], 1, 0)
-        msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
-                                    MyToolItNetworkNr["STU1"], [0])
+        cmd = self.Can.CanCmd(
+            MyToolItBlock["System"], MyToolItSystem["Get/Set State"], 1, 0
+        )
+        msg = self.Can.CanMessage20(
+            cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], [0]
+        )
         self.Can.tWriteFrameWaitAckRetries(msg, retries=0)
 
     def test0101BlueToothConncectDeviceNr(self):
@@ -560,28 +718,34 @@ class TestStu(unittest.TestCase):
         check device number after each connect/disconnect to check correctness
         """
         self.Can.logger.info(
-            "Connect and get Device Number, disconnect and get device number")
+            "Connect and get Device Number, disconnect and get device number"
+        )
         for i in range(0, 300):
             self.Can.logger.info("Loop Run: " + str(i))
             self.Can.logger.info("Connect")
             self.Can.vBlueToothConnectConnect(MyToolItNetworkNr["STU1"])
             for _j in range(0, BluetoothTime["DeviceConnect"]):
                 deviceNumbers = self.Can.iBlueToothConnectTotalScannedDeviceNr(
-                    MyToolItNetworkNr["STU1"])
-                if (0 < deviceNumbers):
+                    MyToolItNetworkNr["STU1"]
+                )
+                if 0 < deviceNumbers:
                     break
                 time.sleep(1)
-            self.Can.logger.info("Number of available devices: " +
-                                 str(deviceNumbers))
+            self.Can.logger.info(
+                "Number of available devices: " + str(deviceNumbers)
+            )
             self.assertGreater(deviceNumbers, 0)
-            if (False != self.Can.bBlueToothDisconnect(
-                    MyToolItNetworkNr["STU1"])):
+            if False != self.Can.bBlueToothDisconnect(
+                MyToolItNetworkNr["STU1"]
+            ):
                 self.Can.logger.error("Bluetooth STH connected")
                 self.assertEqual(False, True)
             deviceNumbers = self.Can.iBlueToothConnectTotalScannedDeviceNr(
-                MyToolItNetworkNr["STU1"])
-            self.Can.logger.info("Number of available devices: " +
-                                 str(deviceNumbers))
+                MyToolItNetworkNr["STU1"]
+            )
+            self.Can.logger.info(
+                "Number of available devices: " + str(deviceNumbers)
+            )
             self.assertEqual(deviceNumbers, 0)
 
     def test0102BlueToothConnectDisconnectDevice(self):
@@ -593,7 +757,8 @@ class TestStu(unittest.TestCase):
         decreased the number of connection attempts to 50.
         """
         self.Can.logger.info(
-            "Bluetooth connect command and check connected command and disconnect command"
+            "Bluetooth connect command and check connected command and"
+            " disconnect command"
         )
         totalConnectDisconnectTime = 0
         totalRuns = 50
@@ -601,26 +766,33 @@ class TestStu(unittest.TestCase):
             startTime = time.time() * 1000
             self.Can.logger.info("Loop Run: " + str(i))
             self.vConnectSth1Dev0()
-            if (False != self.Can.bConnected):
+            if False != self.Can.bConnected:
                 self.Can.logger.info("Bluetooth STH connected")
             else:
                 self.Can.logger.error("Bluetooth STH not Connected")
             self.assertNotEqual(False, self.Can.bConnected)
             self.Can.logger.info("Disconnect from Bluetooth Device")
-            if (False != self.Can.bBlueToothDisconnect(
-                    MyToolItNetworkNr["STU1"])):
+            if False != self.Can.bBlueToothDisconnect(
+                MyToolItNetworkNr["STU1"]
+            ):
                 self.Can.logger.error("Bluetooth STH connected")
                 self.assertEqual(False, True)
             else:
                 self.Can.logger.info("Bluetooth STH not Connected")
             ConnectDissconnectTime = time.time() * 1000 - startTime
-            self.Can.logger.info("Time to connect and disconnect: " +
-                                 str(ConnectDissconnectTime) + "ms")
+            self.Can.logger.info(
+                "Time to connect and disconnect: "
+                + str(ConnectDissconnectTime)
+                + "ms"
+            )
             totalConnectDisconnectTime += ConnectDissconnectTime
             time.sleep(1)
         totalConnectDisconnectTime /= totalRuns
-        self.Can.logger.info("Average Time to connect and disconnect: " +
-                             str(totalConnectDisconnectTime) + "ms")
+        self.Can.logger.info(
+            "Average Time to connect and disconnect: "
+            + str(totalConnectDisconnectTime)
+            + "ms"
+        )
 
     def test0103BlueToothName(self):
         """
@@ -632,8 +804,9 @@ class TestStu(unittest.TestCase):
             self.vConnectSth1Dev0()
             time.sleep(1)
             self.Can.logger.info("Write Walther0")
-            self.Can.vBlueToothNameWrite(MyToolItNetworkNr["STH1"], 0,
-                                         "Walther0")
+            self.Can.vBlueToothNameWrite(
+                MyToolItNetworkNr["STH1"], 0, "Walther0"
+            )
             self.Can.logger.info("Check Walther0")
             self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
             time.sleep(1)
@@ -645,8 +818,9 @@ class TestStu(unittest.TestCase):
             self.vConnectSth1Dev0()
             time.sleep(1)
             self.Can.logger.info("Write " + settings.sth.name)
-            self.Can.vBlueToothNameWrite(MyToolItNetworkNr["STH1"], 0,
-                                         settings.sth.name)
+            self.Can.vBlueToothNameWrite(
+                MyToolItNetworkNr["STH1"], 0, settings.sth.name
+            )
             self.Can.logger.info("Check " + settings.sth.name)
             self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
             self.Can.vBlueToothConnectConnect(MyToolItNetworkNr["STU1"])
@@ -666,16 +840,19 @@ class TestStu(unittest.TestCase):
             self.Can.vBlueToothConnectConnect(MyToolItNetworkNr["STU1"])
             endTime = time.time() + 5
             while 0 == self.Can.iBlueToothConnectTotalScannedDeviceNr(
-                    MyToolItNetworkNr["STU1"]):
+                MyToolItNetworkNr["STU1"]
+            ):
                 if time.time() > endTime:
                     break
             time.sleep(0.5)
             devNrs = self.Can.iBlueToothConnectTotalScannedDeviceNr(
-                MyToolItNetworkNr["STU1"])
+                MyToolItNetworkNr["STU1"]
+            )
             for devNr in range(0, devNrs):
                 self.Can.logger.info("Device Number " + str(devNr))
                 Address = self.Can.BlueToothAddressGet(
-                    MyToolItNetworkNr["STU1"], devNr)
+                    MyToolItNetworkNr["STU1"], devNr
+                )
             self.Can.logger.info("Address: " + hex(Address))
             self.assertGreater(Address, 0)
             self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
@@ -688,7 +865,8 @@ class TestStu(unittest.TestCase):
             self.Can.vBlueToothConnectConnect(MyToolItNetworkNr["STU1"])
             endTime = time.time() + 5
             while 0 == self.Can.iBlueToothConnectTotalScannedDeviceNr(
-                    MyToolItNetworkNr["STU1"]):
+                MyToolItNetworkNr["STU1"]
+            ):
                 if time.time() > endTime:
                     break
             time.sleep(0.5)
@@ -704,14 +882,16 @@ class TestStu(unittest.TestCase):
         self.Can.vBlueToothConnectConnect(MyToolItNetworkNr["STU1"])
         endTime = time.time() + 5
         while 0 == self.Can.iBlueToothConnectTotalScannedDeviceNr(
-                MyToolItNetworkNr["STU1"]):
+            MyToolItNetworkNr["STU1"]
+        ):
             if time.time() > endTime:
                 break
         time.sleep(0.5)
         Rssi = []
         for _i in range(0, 500):
-            Rssi.append(self.Can.BlueToothRssiGet(MyToolItNetworkNr["STU1"],
-                                                  0))
+            Rssi.append(
+                self.Can.BlueToothRssiGet(MyToolItNetworkNr["STU1"], 0)
+            )
             self.Can.logger.info("RSSI: " + str(int(Rssi[-1])))
             self.assertNotEqual(Rssi, 127)
         self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
@@ -725,7 +905,8 @@ class TestStu(unittest.TestCase):
         self.Can.vBlueToothConnectConnect(MyToolItNetworkNr["STU1"])
         endTime = time.time() + 5
         while 0 == self.Can.iBlueToothConnectTotalScannedDeviceNr(
-                MyToolItNetworkNr["STU1"]):
+            MyToolItNetworkNr["STU1"]
+        ):
             if time.time() > endTime:
                 break
         Name = self.Can.BlueToothNameGet(MyToolItNetworkNr["STU1"], 0)
@@ -743,20 +924,25 @@ class TestStu(unittest.TestCase):
         Do it without time out, use connection check
         """
         self.Can.logger.info(
-            "Bluetooth connect command and check connected command and disconnect command"
+            "Bluetooth connect command and check connected command and"
+            " disconnect command"
         )
         startTime = time.time() * 1000
         for _i in range(0, 100):
             self.Can.vBlueToothConnectConnect(MyToolItNetworkNr["STU1"], 0)
             while 0 == self.Can.iBlueToothConnectTotalScannedDeviceNr(
-                    MyToolItNetworkNr["STU1"]):
+                MyToolItNetworkNr["STU1"]
+            ):
                 pass
             self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
         endTime = time.time() * 1000
         ConnectDisconnectTime = endTime - startTime
         ConnectDisconnectTime /= 100
-        self.Can.logger.info("Average Time for connect and disconnect: " +
-                             str(ConnectDisconnectTime) + "ms")
+        self.Can.logger.info(
+            "Average Time for connect and disconnect: "
+            + str(ConnectDisconnectTime)
+            + "ms"
+        )
 
     def test0111BlueToothAddress(self):
         """
@@ -764,8 +950,9 @@ class TestStu(unittest.TestCase):
         """
         self.Can.logger.info("Get Bluetooth Address")
         self.Can.logger.info(
-            "BlueTooth Address: " +
-            hex(self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"])))
+            "BlueTooth Address: "
+            + hex(self.Can.BlueToothAddress(MyToolItNetworkNr["STU1"]))
+        )
 
     def test0112BlueToothConnectMac(self):
         """
@@ -779,25 +966,30 @@ class TestStu(unittest.TestCase):
         time.sleep(5)
         iRssi = -100
         iRetries = 100
-        self.Can.logger.info("Rssi of device must be better than: " +
-                             str(iRssiLimit))
+        self.Can.logger.info(
+            "Rssi of device must be better than: " + str(iRssiLimit)
+        )
         iDevPicked = -1
         iAddressReadback = -2
         while iRssiLimit > iRssi and 0 < iRetries:
             iRetries -= 1
             devNrs = self.Can.iBlueToothConnectTotalScannedDeviceNr(
-                MyToolItNetworkNr["STU1"])
+                MyToolItNetworkNr["STU1"]
+            )
             self.Can.logger.info("Devises Found: " + str(devNrs))
             iDevPicked = randint(0, devNrs - 1)
             self.Can.logger.info("Try to pick device: " + str(iDevPicked))
-            iRssi = self.Can.BlueToothRssiGet(MyToolItNetworkNr["STU1"],
-                                              iDevPicked)
+            iRssi = self.Can.BlueToothRssiGet(
+                MyToolItNetworkNr["STU1"], iDevPicked
+            )
             self.Can.logger.info("Rssi: " + str(iRssi))
         if 0 < iRetries:
-            iAddress = self.Can.BlueToothAddressGet(MyToolItNetworkNr["STU1"],
-                                                    iDevPicked)
+            iAddress = self.Can.BlueToothAddressGet(
+                MyToolItNetworkNr["STU1"], iDevPicked
+            )
             iAddressReadback = self.Can.iBlueToothConnect2MacAddr(
-                MyToolItNetworkNr["STU1"], iAddress)
+                MyToolItNetworkNr["STU1"], iAddress
+            )
         self.Can.logger.info("Try to get Address: " + hex(iAddress))
         self.Can.logger.info("Taken Address: " + hex(iAddressReadback))
         self.assertEqual(iAddressReadback, iAddress)
@@ -812,21 +1004,28 @@ class TestStu(unittest.TestCase):
         for _i in range(0, 10):
             self.Can.logger.info("Loop Run: " + str(_i))
             self.Can.logger.info("Write Walther0")
-            self.Can.vBlueToothNameWrite(MyToolItNetworkNr["STU1"],
-                                         BlueToothDeviceNr["Self"], "Walther0")
+            self.Can.vBlueToothNameWrite(
+                MyToolItNetworkNr["STU1"],
+                BlueToothDeviceNr["Self"],
+                "Walther0",
+            )
             self.Can.logger.info("Check Walther0")
-            Name = self.Can.BlueToothNameGet(MyToolItNetworkNr["STU1"],
-                                             BlueToothDeviceNr["Self"])
+            Name = self.Can.BlueToothNameGet(
+                MyToolItNetworkNr["STU1"], BlueToothDeviceNr["Self"]
+            )
             self.Can.logger.info("Received Name: " + Name)
             self.assertEqual("Walther0", Name)
             self.Can.logger.info("Write " + TestConfig["StuName"])
-            self.Can.vBlueToothNameWrite(MyToolItNetworkNr["STU1"],
-                                         BlueToothDeviceNr["Self"],
-                                         TestConfig["StuName"])
+            self.Can.vBlueToothNameWrite(
+                MyToolItNetworkNr["STU1"],
+                BlueToothDeviceNr["Self"],
+                TestConfig["StuName"],
+            )
             self.Can.logger.info("Check " + TestConfig["StuName"])
             self._resetStu()
-            Name = self.Can.BlueToothNameGet(MyToolItNetworkNr["STU1"],
-                                             BlueToothDeviceNr["Self"])
+            Name = self.Can.BlueToothNameGet(
+                MyToolItNetworkNr["STU1"], BlueToothDeviceNr["Self"]
+            )
             self.Can.logger.info("Received Name: " + Name)
             self.assertEqual(TestConfig["StuName"], Name)
             time.sleep(1)
@@ -837,10 +1036,12 @@ class TestStu(unittest.TestCase):
 
         Assumed result = not receiving anything. This especially tests the routing functionality.
         """
-        cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["Get/Set State"], 1, 0)
-        msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
-                                    MyToolItNetworkNr["STH1"], [0])
+        cmd = self.Can.CanCmd(
+            MyToolItBlock["System"], MyToolItSystem["Get/Set State"], 1, 0
+        )
+        msg = self.Can.CanMessage20(
+            cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [0]
+        )
         self.Can.logger.info("Write Message")
         lastIndex = self.Can.GetReadArrayIndex()
         self.Can.WriteFrame(msg)
@@ -860,30 +1061,49 @@ class TestStu(unittest.TestCase):
         expectedData.b.u3NetworkState = NetworkState["Operating"]
         self.vConnectSth1Dev0()
         time.sleep(3)
-        cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["Get/Set State"], 1, 0)
-        msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
-                                    MyToolItNetworkNr["STH1"], [0])
+        cmd = self.Can.CanCmd(
+            MyToolItBlock["System"], MyToolItSystem["Get/Set State"], 1, 0
+        )
+        msg = self.Can.CanMessage20(
+            cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [0]
+        )
         self.Can.logger.info("Write Message")
         self.Can.WriteFrame(msg)
         waitTime = 1
         self.Can.logger.info("Wait " + str(waitTime) + "s")
         time.sleep(waitTime)
-        cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["Get/Set State"], 0, 0)
-        msgAckExpected = self.Can.CanMessage20(cmd, MyToolItNetworkNr["STH1"],
-                                               MyToolItNetworkNr["SPU1"],
-                                               [expectedData.asbyte])
-        self.Can.logger.info("Send ID: " + hex(msg.ID) + "; Expected ID: " +
-                             hex(msgAckExpected.ID) + "; Received ID: " +
-                             hex(self.Can.getReadMessage(-1).ID))
-        self.Can.logger.info("Send Data: " + hex(0) + "; Expected Data: " +
-                             hex(expectedData.asbyte) + "; Received Data: " +
-                             hex(self.Can.getReadMessage(-1).DATA[0]))
-        self.assertEqual(hex(msgAckExpected.ID),
-                         hex(self.Can.getReadMessage(-1).ID))
-        self.assertEqual(hex(msgAckExpected.DATA[0]),
-                         hex(self.Can.getReadMessage(-1).DATA[0]))
+        cmd = self.Can.CanCmd(
+            MyToolItBlock["System"], MyToolItSystem["Get/Set State"], 0, 0
+        )
+        msgAckExpected = self.Can.CanMessage20(
+            cmd,
+            MyToolItNetworkNr["STH1"],
+            MyToolItNetworkNr["SPU1"],
+            [expectedData.asbyte],
+        )
+        self.Can.logger.info(
+            "Send ID: "
+            + hex(msg.ID)
+            + "; Expected ID: "
+            + hex(msgAckExpected.ID)
+            + "; Received ID: "
+            + hex(self.Can.getReadMessage(-1).ID)
+        )
+        self.Can.logger.info(
+            "Send Data: "
+            + hex(0)
+            + "; Expected Data: "
+            + hex(expectedData.asbyte)
+            + "; Received Data: "
+            + hex(self.Can.getReadMessage(-1).DATA[0])
+        )
+        self.assertEqual(
+            hex(msgAckExpected.ID), hex(self.Can.getReadMessage(-1).ID)
+        )
+        self.assertEqual(
+            hex(msgAckExpected.DATA[0]),
+            hex(self.Can.getReadMessage(-1).DATA[0]),
+        )
         self.Can.tWriteFrameWaitAckRetries(msg, retries=0)
         self.Can.bBlueToothDisconnect(MyToolItNetworkNr["STU1"])
 
@@ -897,28 +1117,33 @@ class TestStu(unittest.TestCase):
         for _i in range(0, BluetoothTime["Connect"]):
             self.Can.logger.info("Device Connect to number 0")
             if False != self.Can.bBlueToothConnectDeviceConnect(
-                    MyToolItNetworkNr["STU1"], 0):
+                MyToolItNetworkNr["STU1"], 0
+            ):
                 break
             time.sleep(1)
         for _i in range(0, BluetoothTime["Connect"]):
-            if (False != self.Can.bBlueToothCheckConnect(
-                    MyToolItNetworkNr["STU1"])):
+            if False != self.Can.bBlueToothCheckConnect(
+                MyToolItNetworkNr["STU1"]
+            ):
                 break
             else:
                 time.sleep(1)
         time.sleep(3)
-        cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["Get/Set State"], 1, 0)
+        cmd = self.Can.CanCmd(
+            MyToolItBlock["System"], MyToolItSystem["Get/Set State"], 1, 0
+        )
         for i in range(MyToolItNetworkNr["STH2"], 32):
-            if (MyToolItNetworkNr["STU1"] != i):
-                msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"], i,
-                                            [0])
+            if MyToolItNetworkNr["STU1"] != i:
+                msg = self.Can.CanMessage20(
+                    cmd, MyToolItNetworkNr["SPU1"], i, [0]
+                )
                 ack = self.Can.tWriteFrameWaitAck(msg)
                 self.assertEqual("Error", ack[0])
 
         # Test that it still works
-        msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
-                                    MyToolItNetworkNr["STH1"], [0])
+        msg = self.Can.CanMessage20(
+            cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [0]
+        )
         self.Can.tWriteFrameWaitAckRetries(msg, retries=0)
 
     def test0204RoutingMultiSend(self):
@@ -927,42 +1152,57 @@ class TestStu(unittest.TestCase):
         do ACK after 100 times send flooding to check functionality
         """
         self.Can.logger.info(
-            "Send command 100 times over STU to STH, check number of write/reads and do ack test at the end; do that for 1000 times"
+            "Send command 100 times over STU to STH, check number of"
+            " write/reads and do ack test at the end; do that for 1000 times"
         )
         self.Can.vBlueToothConnectConnect(MyToolItNetworkNr["STU1"])
         for _i in range(0, BluetoothTime["Connect"]):
             self.Can.logger.info("Device Connect to number 0")
             if False != self.Can.bBlueToothConnectDeviceConnect(
-                    MyToolItNetworkNr["STU1"], 0):
+                MyToolItNetworkNr["STU1"], 0
+            ):
                 break
             time.sleep(1)
         for _i in range(0, BluetoothTime["Connect"]):
-            if (False != self.Can.bBlueToothCheckConnect(
-                    MyToolItNetworkNr["STU1"])):
+            if False != self.Can.bBlueToothCheckConnect(
+                MyToolItNetworkNr["STU1"]
+            ):
                 break
             else:
                 time.sleep(1)
         time.sleep(3)
         for i in range(1, 101):
-            self.Can.logger.info("Received Index: " +
-                                 str(self.Can.GetReadArrayIndex()))
+            self.Can.logger.info(
+                "Received Index: " + str(self.Can.GetReadArrayIndex())
+            )
             self.Can.logger.info("Run: " + str(i))
             for _j in range(1, 101):
-                if (1 == randint(0, 1)):
-                    cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                                          MyToolItSystem["Get/Set State"], 1,
-                                          0)
-                    message = self.Can.CanMessage20(cmd,
-                                                    MyToolItNetworkNr["SPU1"],
-                                                    MyToolItNetworkNr["STH1"],
-                                                    [0])
+                if 1 == randint(0, 1):
+                    cmd = self.Can.CanCmd(
+                        MyToolItBlock["System"],
+                        MyToolItSystem["Get/Set State"],
+                        1,
+                        0,
+                    )
+                    message = self.Can.CanMessage20(
+                        cmd,
+                        MyToolItNetworkNr["SPU1"],
+                        MyToolItNetworkNr["STH1"],
+                        [0],
+                    )
                 else:
-                    cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                                          MyToolItSystem["Node Status"], 1, 0)
-                    message = self.Can.CanMessage20(cmd,
-                                                    MyToolItNetworkNr["SPU1"],
-                                                    MyToolItNetworkNr["STH1"],
-                                                    [0, 0, 0, 0, 0, 0, 0, 0])
+                    cmd = self.Can.CanCmd(
+                        MyToolItBlock["System"],
+                        MyToolItSystem["Node Status"],
+                        1,
+                        0,
+                    )
+                    message = self.Can.CanMessage20(
+                        cmd,
+                        MyToolItNetworkNr["SPU1"],
+                        MyToolItNetworkNr["STH1"],
+                        [0, 0, 0, 0, 0, 0, 0, 0],
+                    )
                 self.Can.WriteFrame(message)
             self.Can.reset()
             time.sleep(0.25)
@@ -974,78 +1214,117 @@ class TestStu(unittest.TestCase):
         with routing: Send->Ack->Send->Ack
         """
         self.Can.logger.info(
-            "Send and get ACK for 10000 times AND do it with two messages randomly "
+            "Send and get ACK for 10000 times AND do it with two messages"
+            " randomly "
         )
         self.Can.vBlueToothConnectConnect(MyToolItNetworkNr["STU1"])
         for _i in range(0, BluetoothTime["Connect"]):
             self.Can.logger.info("Device Connect to number 0")
             if False != self.Can.bBlueToothConnectDeviceConnect(
-                    MyToolItNetworkNr["STU1"], 0):
+                MyToolItNetworkNr["STU1"], 0
+            ):
                 break
             time.sleep(1)
         for _i in range(0, BluetoothTime["Connect"]):
-            if (False != self.Can.bBlueToothCheckConnect(
-                    MyToolItNetworkNr["STU1"])):
+            if False != self.Can.bBlueToothCheckConnect(
+                MyToolItNetworkNr["STU1"]
+            ):
                 break
             else:
                 time.sleep(1)
         time.sleep(3)
         for i in range(1, 1001):
-            self.Can.logger.info("Received Index: " +
-                                 str(self.Can.GetReadArrayIndex()))
+            self.Can.logger.info(
+                "Received Index: " + str(self.Can.GetReadArrayIndex())
+            )
             self.Can.logger.info("Run: " + str(i))
-            if (1 == randint(0, 1)):
-                cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                                      MyToolItSystem["Get/Set State"], 1, 0)
-                msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
-                                            MyToolItNetworkNr["STH1"], [0])
+            if 1 == randint(0, 1):
+                cmd = self.Can.CanCmd(
+                    MyToolItBlock["System"],
+                    MyToolItSystem["Get/Set State"],
+                    1,
+                    0,
+                )
+                msg = self.Can.CanMessage20(
+                    cmd,
+                    MyToolItNetworkNr["SPU1"],
+                    MyToolItNetworkNr["STH1"],
+                    [0],
+                )
             else:
-                cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                                      MyToolItSystem["Node Status"], 1, 0)
-                msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
-                                            MyToolItNetworkNr["STH1"],
-                                            [0, 0, 0, 0, 0, 0, 0, 0])
+                cmd = self.Can.CanCmd(
+                    MyToolItBlock["System"],
+                    MyToolItSystem["Node Status"],
+                    1,
+                    0,
+                )
+                msg = self.Can.CanMessage20(
+                    cmd,
+                    MyToolItNetworkNr["SPU1"],
+                    MyToolItNetworkNr["STH1"],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                )
             self.assertNotEqual("Error", self.Can.tWriteFrameWaitAck(msg)[0])
 
     def test0206RoutingMultiSendAckRetries(self):
-        """ Send Multiple Frames with waiting for an ACK (⏱ 30 seconds)
+        """Send Multiple Frames with waiting for an ACK (⏱ 30 seconds)
 
         Send->Ack->Send->Ack with routing, this also do a retry, tests the test framework - Multiple Messages
         """
         self.Can.logger.info(
-            "Send and get ACK for 10000 times AND do it with two messages randomly "
+            "Send and get ACK for 10000 times AND do it with two messages"
+            " randomly "
         )
         self.Can.vBlueToothConnectConnect(MyToolItNetworkNr["STU1"])
         for _i in range(0, BluetoothTime["Connect"]):
             self.Can.logger.info("Device Connect to number 0")
             if False != self.Can.bBlueToothConnectDeviceConnect(
-                    MyToolItNetworkNr["STU1"], 0):
+                MyToolItNetworkNr["STU1"], 0
+            ):
                 break
             time.sleep(1)
         for _i in range(0, BluetoothTime["Connect"]):
-            if (False != self.Can.bBlueToothCheckConnect(
-                    MyToolItNetworkNr["STU1"])):
+            if False != self.Can.bBlueToothCheckConnect(
+                MyToolItNetworkNr["STU1"]
+            ):
                 break
             else:
                 time.sleep(1)
         time.sleep(3)
         for i in range(1, 1001):
-            self.Can.logger.info("Received Index: " +
-                                 str(self.Can.GetReadArrayIndex()))
+            self.Can.logger.info(
+                "Received Index: " + str(self.Can.GetReadArrayIndex())
+            )
             self.Can.logger.info("Run: " + str(i))
-            if (1 == randint(0, 1)):
-                cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                                      MyToolItSystem["Get/Set State"], 1, 0)
-                msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
-                                            MyToolItNetworkNr["STH1"], [0])
+            if 1 == randint(0, 1):
+                cmd = self.Can.CanCmd(
+                    MyToolItBlock["System"],
+                    MyToolItSystem["Get/Set State"],
+                    1,
+                    0,
+                )
+                msg = self.Can.CanMessage20(
+                    cmd,
+                    MyToolItNetworkNr["SPU1"],
+                    MyToolItNetworkNr["STH1"],
+                    [0],
+                )
             else:
-                cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                                      MyToolItSystem["Node Status"], 1, 0)
-                msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
-                                            MyToolItNetworkNr["STH1"],
-                                            [0, 0, 0, 0, 0, 0, 0, 0])
+                cmd = self.Can.CanCmd(
+                    MyToolItBlock["System"],
+                    MyToolItSystem["Node Status"],
+                    1,
+                    0,
+                )
+                msg = self.Can.CanMessage20(
+                    cmd,
+                    MyToolItNetworkNr["SPU1"],
+                    MyToolItNetworkNr["STH1"],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                )
             self.assertNotEqual(
-                "bError", self.Can.tWriteFrameWaitAckRetries(msg, retries=0))
+                "bError", self.Can.tWriteFrameWaitAckRetries(msg, retries=0)
+            )
 
     def test0207RoutingMultiSendSingleAckRetries(self):
         """Send Multiple Frames with waiting for an ACK (⏱ 30 seconds)
@@ -1054,62 +1333,77 @@ class TestStu(unittest.TestCase):
         """
 
         self.Can.logger.info(
-            "Send and get ACK for 10000 times AND do it with two messages randomly "
+            "Send and get ACK for 10000 times AND do it with two messages"
+            " randomly "
         )
         self.Can.vBlueToothConnectConnect(MyToolItNetworkNr["STU1"])
         for _i in range(0, BluetoothTime["Connect"]):
             self.Can.logger.info("Device Connect to number 0")
             if False != self.Can.bBlueToothConnectDeviceConnect(
-                    MyToolItNetworkNr["STU1"], 0):
+                MyToolItNetworkNr["STU1"], 0
+            ):
                 break
             time.sleep(1)
         for _i in range(0, BluetoothTime["Connect"]):
-            if (False != self.Can.bBlueToothCheckConnect(
-                    MyToolItNetworkNr["STU1"])):
+            if False != self.Can.bBlueToothCheckConnect(
+                MyToolItNetworkNr["STU1"]
+            ):
                 break
             else:
                 time.sleep(1)
         time.sleep(3)
         for i in range(1, 1001):
-            self.Can.logger.info("Received Index: " +
-                                 str(self.Can.GetReadArrayIndex()))
+            self.Can.logger.info(
+                "Received Index: " + str(self.Can.GetReadArrayIndex())
+            )
             self.Can.logger.info("Run: " + str(i))
-            cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                                  MyToolItSystem["Node Status"], 1, 0)
-            msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
-                                        MyToolItNetworkNr["STH1"],
-                                        [0, 0, 0, 0, 0, 0, 0, 0])
+            cmd = self.Can.CanCmd(
+                MyToolItBlock["System"], MyToolItSystem["Node Status"], 1, 0
+            )
+            msg = self.Can.CanMessage20(
+                cmd,
+                MyToolItNetworkNr["SPU1"],
+                MyToolItNetworkNr["STH1"],
+                [0, 0, 0, 0, 0, 0, 0, 0],
+            )
             self.assertNotEqual(
-                "bError", self.Can.tWriteFrameWaitAckRetries(msg, retries=0))
+                "bError", self.Can.tWriteFrameWaitAckRetries(msg, retries=0)
+            )
 
     def test0208RoutingSenderReceiver(self):
         """
         Send addressing same sender and receiver via Routing (⏱ 14 seconds)
         """
         self.Can.logger.info(
-            "Connect to STH and send message with STH1=sender/receiver")
+            "Connect to STH and send message with STH1=sender/receiver"
+        )
         self.Can.vBlueToothConnectConnect(MyToolItNetworkNr["STU1"])
         for _i in range(0, BluetoothTime["Connect"]):
             self.Can.logger.info("Device Connect to number 0")
             if False != self.Can.bBlueToothConnectDeviceConnect(
-                    MyToolItNetworkNr["STU1"], 0):
+                MyToolItNetworkNr["STU1"], 0
+            ):
                 break
             time.sleep(1)
         for _i in range(0, BluetoothTime["Connect"]):
-            if (False != self.Can.bBlueToothCheckConnect(
-                    MyToolItNetworkNr["STU1"])):
+            if False != self.Can.bBlueToothCheckConnect(
+                MyToolItNetworkNr["STU1"]
+            ):
                 break
             else:
                 time.sleep(1)
         time.sleep(3)
-        cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["Get/Set State"], 1, 0)
-        msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["STH1"],
-                                    MyToolItNetworkNr["STH1"], [0])
+        cmd = self.Can.CanCmd(
+            MyToolItBlock["System"], MyToolItSystem["Get/Set State"], 1, 0
+        )
+        msg = self.Can.CanMessage20(
+            cmd, MyToolItNetworkNr["STH1"], MyToolItNetworkNr["STH1"], [0]
+        )
         self.assertEqual("Error", self.Can.tWriteFrameWaitAck(msg)[0])
         # Test that it still works
-        msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
-                                    MyToolItNetworkNr["STH1"], [0])
+        msg = self.Can.CanMessage20(
+            cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [0]
+        )
         self.Can.tWriteFrameWaitAckRetries(msg, retries=0, bErrorExit=False)
 
     def test0209RoutingChristmasTree(self):
@@ -1121,85 +1415,109 @@ class TestStu(unittest.TestCase):
         for _i in range(0, BluetoothTime["Connect"]):
             self.Can.logger.info("Device Connect to number 0")
             if False != self.Can.bBlueToothConnectDeviceConnect(
-                    MyToolItNetworkNr["STU1"], 0):
+                MyToolItNetworkNr["STU1"], 0
+            ):
                 break
             time.sleep(1)
         for _i in range(0, BluetoothTime["Connect"]):
-            if (False != self.Can.bBlueToothCheckConnect(
-                    MyToolItNetworkNr["STU1"])):
+            if False != self.Can.bBlueToothCheckConnect(
+                MyToolItNetworkNr["STU1"]
+            ):
                 break
             else:
                 time.sleep(1)
         time.sleep(3)
-        cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["Get/Set State"], 1, 1)
-        msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["STH1"],
-                                    MyToolItNetworkNr["STH1"], [0])
+        cmd = self.Can.CanCmd(
+            MyToolItBlock["System"], MyToolItSystem["Get/Set State"], 1, 1
+        )
+        msg = self.Can.CanMessage20(
+            cmd, MyToolItNetworkNr["STH1"], MyToolItNetworkNr["STH1"], [0]
+        )
         self.assertEqual("Error", self.Can.tWriteFrameWaitAck(msg)[0])
         self.Can.logger.info("Error Request Frame from SPU1 to STH1")
-        cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["Get/Set State"], 1, 1)
-        msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
-                                    MyToolItNetworkNr["STH1"], [0])
+        cmd = self.Can.CanCmd(
+            MyToolItBlock["System"], MyToolItSystem["Get/Set State"], 1, 1
+        )
+        msg = self.Can.CanMessage20(
+            cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [0]
+        )
         self.assertEqual("Error", self.Can.tWriteFrameWaitAck(msg)[0])
         self.Can.logger.info("Error Ack Frame from STH1 to STH1")
-        cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["Get/Set State"], 0, 1)
-        msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["STH1"],
-                                    MyToolItNetworkNr["STH1"], [0])
+        cmd = self.Can.CanCmd(
+            MyToolItBlock["System"], MyToolItSystem["Get/Set State"], 0, 1
+        )
+        msg = self.Can.CanMessage20(
+            cmd, MyToolItNetworkNr["STH1"], MyToolItNetworkNr["STH1"], [0]
+        )
         self.assertEqual("Error", self.Can.tWriteFrameWaitAck(msg)[0])
         self.Can.logger.info("Error Ack Frame from SPU1 to STH1")
-        cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["Get/Set State"], 0, 1)
-        msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
-                                    MyToolItNetworkNr["STH1"], [0])
+        cmd = self.Can.CanCmd(
+            MyToolItBlock["System"], MyToolItSystem["Get/Set State"], 0, 1
+        )
+        msg = self.Can.CanMessage20(
+            cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [0]
+        )
         self.assertEqual("Error", self.Can.tWriteFrameWaitAck(msg)[0])
         self.Can.logger.info("Ack Frame from STH1 to STH1")
-        cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["Get/Set State"], 0, 0)
-        msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["STH1"],
-                                    MyToolItNetworkNr["STH1"], [0])
+        cmd = self.Can.CanCmd(
+            MyToolItBlock["System"], MyToolItSystem["Get/Set State"], 0, 0
+        )
+        msg = self.Can.CanMessage20(
+            cmd, MyToolItNetworkNr["STH1"], MyToolItNetworkNr["STH1"], [0]
+        )
         self.assertEqual("Error", self.Can.tWriteFrameWaitAck(msg)[0])
         self.Can.logger.info("Ack Frame from SPU1 to STH1")
-        cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["Get/Set State"], 0, 0)
-        msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
-                                    MyToolItNetworkNr["STH1"], [0])
+        cmd = self.Can.CanCmd(
+            MyToolItBlock["System"], MyToolItSystem["Get/Set State"], 0, 0
+        )
+        msg = self.Can.CanMessage20(
+            cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [0]
+        )
         self.assertEqual("Error", self.Can.tWriteFrameWaitAck(msg)[0])
 
         # Test that it still works
         self.Can.logger.info("Normal Request to STH1")
-        cmd = self.Can.CanCmd(MyToolItBlock["System"],
-                              MyToolItSystem["Get/Set State"], 1, 0)
-        msg = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
-                                    MyToolItNetworkNr["STH1"], [0])
+        cmd = self.Can.CanCmd(
+            MyToolItBlock["System"], MyToolItSystem["Get/Set State"], 1, 0
+        )
+        msg = self.Can.CanMessage20(
+            cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], [0]
+        )
         self.Can.tWriteFrameWaitAckRetries(msg, retries=0)
 
     def test0700StatisticsPowerOnCounterPowerOffCounter(self):
         """
         Check Power On and Power Off Counters  (⏱ 10 seconds)
         """
-        PowerOnOff1 = self.Can.statisticalData(MyToolItNetworkNr["STU1"],
-                                               MyToolItStatData["PocPof"])
+        PowerOnOff1 = self.Can.statisticalData(
+            MyToolItNetworkNr["STU1"], MyToolItStatData["PocPof"]
+        )
         PowerOn1 = byte_list_to_int(PowerOnOff1[:4])
         PowerOff1 = byte_list_to_int(PowerOnOff1[4:])
         self._resetStu()
-        PowerOnOff2 = self.Can.statisticalData(MyToolItNetworkNr["STU1"],
-                                               MyToolItStatData["PocPof"])
+        PowerOnOff2 = self.Can.statisticalData(
+            MyToolItNetworkNr["STU1"], MyToolItStatData["PocPof"]
+        )
         PowerOn2 = byte_list_to_int(PowerOnOff2[:4])
         PowerOff2 = byte_list_to_int(PowerOnOff2[4:])
-        self.Can.logger.info("PowerOnOff Payload before STU Reset: " +
-                             payload2Hex(PowerOnOff1))
-        self.Can.logger.info("Power On Counter before STU Reset: " +
-                             str(PowerOn1))
-        self.Can.logger.info("Power Off Counter before STU Reset: " +
-                             str(PowerOff1))
-        self.Can.logger.info("PowerOnOff Payload after STU Reset: " +
-                             payload2Hex(PowerOnOff2))
-        self.Can.logger.info("Power On Counter after STU Reset: " +
-                             str(PowerOn2))
-        self.Can.logger.info("Power Off Counter after STU Reset: " +
-                             str(PowerOff2))
+        self.Can.logger.info(
+            "PowerOnOff Payload before STU Reset: " + payload2Hex(PowerOnOff1)
+        )
+        self.Can.logger.info(
+            "Power On Counter before STU Reset: " + str(PowerOn1)
+        )
+        self.Can.logger.info(
+            "Power Off Counter before STU Reset: " + str(PowerOff1)
+        )
+        self.Can.logger.info(
+            "PowerOnOff Payload after STU Reset: " + payload2Hex(PowerOnOff2)
+        )
+        self.Can.logger.info(
+            "Power On Counter after STU Reset: " + str(PowerOn2)
+        )
+        self.Can.logger.info(
+            "Power Off Counter after STU Reset: " + str(PowerOff2)
+        )
         self.assertEqual(PowerOn1 + 1, PowerOn2)
         self.assertEqual(PowerOff1, PowerOff2)
 
@@ -1207,54 +1525,73 @@ class TestStu(unittest.TestCase):
         """
         Check Operating Seconds (⏱ 33 minutes)
         """
-        u32EepromWriteRequestCounterTestStart = self.Can.u32EepromWriteRequestCounter(
-            MyToolItNetworkNr["STU1"])
+        u32EepromWriteRequestCounterTestStart = (
+            self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STU1"])
+        )
         OperatingSeconds = self.Can.statisticalData(
-            MyToolItNetworkNr["STU1"], MyToolItStatData["OperatingTime"])
+            MyToolItNetworkNr["STU1"], MyToolItStatData["OperatingTime"]
+        )
         SecondsReset1 = byte_list_to_int(OperatingSeconds[:4])
         SecondsOveral1 = byte_list_to_int(OperatingSeconds[4:])
         time.sleep(60)
         OperatingSeconds = self.Can.statisticalData(
-            MyToolItNetworkNr["STU1"], MyToolItStatData["OperatingTime"])
+            MyToolItNetworkNr["STU1"], MyToolItStatData["OperatingTime"]
+        )
         SecondsReset2 = byte_list_to_int(OperatingSeconds[:4])
         SecondsOveral2 = byte_list_to_int(OperatingSeconds[4:])
         self._resetStu()
         OperatingSeconds = self.Can.statisticalData(
-            MyToolItNetworkNr["STU1"], MyToolItStatData["OperatingTime"])
+            MyToolItNetworkNr["STU1"], MyToolItStatData["OperatingTime"]
+        )
         SecondsReset3 = byte_list_to_int(OperatingSeconds[:4])
         SecondsOveral3 = byte_list_to_int(OperatingSeconds[4:])
         time.sleep(60 * 31)
         OperatingSeconds = self.Can.statisticalData(
-            MyToolItNetworkNr["STU1"], MyToolItStatData["OperatingTime"])
+            MyToolItNetworkNr["STU1"], MyToolItStatData["OperatingTime"]
+        )
         SecondsReset4 = byte_list_to_int(OperatingSeconds[:4])
         SecondsOveral4 = byte_list_to_int(OperatingSeconds[4:])
-        self.Can.logger.info("Operating Seconds since Reset: " +
-                             str(SecondsReset1))
-        self.Can.logger.info("Operating Seconds since frist PowerOn: " +
-                             str(SecondsOveral1))
-        self.Can.logger.info("Operating Seconds since Reset(+1 minute): " +
-                             str(SecondsReset2))
         self.Can.logger.info(
-            "Operating Seconds since frist PowerOn(+1minute): " +
-            str(SecondsOveral2))
+            "Operating Seconds since Reset: " + str(SecondsReset1)
+        )
         self.Can.logger.info(
-            "Operating Seconds since Reset(After Disconnect/Connect): " +
-            str(SecondsReset3))
+            "Operating Seconds since frist PowerOn: " + str(SecondsOveral1)
+        )
+        self.Can.logger.info(
+            "Operating Seconds since Reset(+1 minute): " + str(SecondsReset2)
+        )
+        self.Can.logger.info(
+            "Operating Seconds since frist PowerOn(+1minute): "
+            + str(SecondsOveral2)
+        )
+        self.Can.logger.info(
+            "Operating Seconds since Reset(After Disconnect/Connect): "
+            + str(SecondsReset3)
+        )
         self.Can.logger.info(
             "Operating Seconds since frist PowerOn(After Disconnect/Connect): "
-            + str(SecondsOveral3))
-        self.Can.logger.info("Operating Seconds since Reset(+30 minutes): " +
-                             str(SecondsReset4))
+            + str(SecondsOveral3)
+        )
         self.Can.logger.info(
-            "Operating Seconds since frist PowerOn(+30minutes): " +
-            str(SecondsOveral4))
-        u32EepromWriteRequestCounterTestEnd = self.Can.u32EepromWriteRequestCounter(
-            MyToolItNetworkNr["STU1"])
-        u32EepromWriteRequsts = u32EepromWriteRequestCounterTestEnd - u32EepromWriteRequestCounterTestStart
-        self.Can.logger.info("EEPROM Write Requests during tests: " +
-                             str(u32EepromWriteRequsts))
-        self.assertEqual(1,
-                         u32EepromWriteRequsts)  # +1 due to operating seconds
+            "Operating Seconds since Reset(+30 minutes): " + str(SecondsReset4)
+        )
+        self.Can.logger.info(
+            "Operating Seconds since frist PowerOn(+30minutes): "
+            + str(SecondsOveral4)
+        )
+        u32EepromWriteRequestCounterTestEnd = (
+            self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STU1"])
+        )
+        u32EepromWriteRequsts = (
+            u32EepromWriteRequestCounterTestEnd
+            - u32EepromWriteRequestCounterTestStart
+        )
+        self.Can.logger.info(
+            "EEPROM Write Requests during tests: " + str(u32EepromWriteRequsts)
+        )
+        self.assertEqual(
+            1, u32EepromWriteRequsts
+        )  # +1 due to operating seconds
         self.assertLess(SecondsReset1, 10)
         self.assertGreater(SecondsReset2, 60)
         self.assertLess(SecondsReset2, 70)
@@ -1278,8 +1615,9 @@ class TestStu(unittest.TestCase):
         WDogCounter2 = self._StuWDog()
         self._resetStu()
         self.Can.logger.info("Watchdog Counter at start: " + str(WDogCounter1))
-        self.Can.logger.info("Watchdog Counter after reset: " +
-                             str(WDogCounter2))
+        self.Can.logger.info(
+            "Watchdog Counter after reset: " + str(WDogCounter2)
+        )
         self.assertEqual(WDogCounter1, WDogCounter2)
 
     def test0703ProductionDate(self):
@@ -1287,7 +1625,8 @@ class TestStu(unittest.TestCase):
         Check ProductionDate (⏱ 8 seconds)
         """
         sProductionDate = self.Can.statisticalData(
-            MyToolItNetworkNr["STU1"], MyToolItStatData["ProductionDate"])
+            MyToolItNetworkNr["STU1"], MyToolItStatData["ProductionDate"]
+        )
         sProductionDate = sArray2String(sProductionDate)
         year = int(sProductionDate[0:4])
         month = int(sProductionDate[4:6])
@@ -1302,15 +1641,18 @@ class TestStu(unittest.TestCase):
         """
         uLoopRuns = 25
         time.sleep(2)
-        u32EepromWriteRequestCounterTestStart = self.Can.u32EepromWriteRequestCounter(
-            MyToolItNetworkNr["STU1"])
+        u32EepromWriteRequestCounterTestStart = (
+            self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STU1"])
+        )
         self.Can.logger.info("Save up EEPROM content")
         startData = []
         for offset in range(0, 256, 4):
             index = self.Can.cmdSend(
-                MyToolItNetworkNr["STU1"], MyToolItBlock["EEPROM"],
+                MyToolItNetworkNr["STU1"],
+                MyToolItBlock["EEPROM"],
                 MyToolItEeprom["Read"],
-                [EepromPage["Statistics"], 0xFF & offset, 4, 0, 0, 0, 0, 0])
+                [EepromPage["Statistics"], 0xFF & offset, 4, 0, 0, 0, 0, 0],
+            )
             dataReadBack = self.Can.getReadMessageData(index)
             startData.extend(dataReadBack[4:])
 
@@ -1347,36 +1689,50 @@ class TestStu(unittest.TestCase):
         timeStamp = self.Can.get_elapsed_time()
         for offset in range(0, 256, 4):
             payload = [EepromPage["Statistics"], 0xFF & offset, 4, 0]
-            payload.extend(startData[offset:offset + 4])
-            self.Can.cmdSend(MyToolItNetworkNr["STU1"],
-                             MyToolItBlock["EEPROM"], MyToolItEeprom["Write"],
-                             payload)
-        self.Can.logger.info("Page Write Time: " +
-                             str(self.Can.get_elapsed_time() - timeStamp) +
-                             "ms")
-        u32EepromWriteRequestCounterTestEnd = self.Can.u32EepromWriteRequestCounter(
-            MyToolItNetworkNr["STU1"])
-        u32EepromWriteRequsts = u32EepromWriteRequestCounterTestEnd - u32EepromWriteRequestCounterTestStart
-        self.Can.logger.info("EEPROM Write Requests during tests: " +
-                             str(u32EepromWriteRequsts))
-        self.assertEqual(u32EepromWriteRequestCounterTestStart + 1,
-                         u32EepromWriteRequestCounterTestEnd
-                         )  # +1 due to incrementing at first write
+            payload.extend(startData[offset : offset + 4])
+            self.Can.cmdSend(
+                MyToolItNetworkNr["STU1"],
+                MyToolItBlock["EEPROM"],
+                MyToolItEeprom["Write"],
+                payload,
+            )
+        self.Can.logger.info(
+            "Page Write Time: "
+            + str(self.Can.get_elapsed_time() - timeStamp)
+            + "ms"
+        )
+        u32EepromWriteRequestCounterTestEnd = (
+            self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STU1"])
+        )
+        u32EepromWriteRequsts = (
+            u32EepromWriteRequestCounterTestEnd
+            - u32EepromWriteRequestCounterTestStart
+        )
+        self.Can.logger.info(
+            "EEPROM Write Requests during tests: " + str(u32EepromWriteRequsts)
+        )
+        self.assertEqual(
+            u32EepromWriteRequestCounterTestStart + 1,
+            u32EepromWriteRequestCounterTestEnd,
+        )  # +1 due to incrementing at first write
 
     def test0751StatisticPageWriteReadRandom(self):
         """
         Check EEPROM Read/Write - Deterministic data (⏱ 75 seconds)
         """
         uLoopRuns = 100
-        u32EepromWriteRequestCounterTestStart = self.Can.u32EepromWriteRequestCounter(
-            MyToolItNetworkNr["STU1"])
+        u32EepromWriteRequestCounterTestStart = (
+            self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STU1"])
+        )
         self.Can.logger.info("Save up EEPROM content")
         startData = []
         for offset in range(0, 256, 4):
             index = self.Can.cmdSend(
-                MyToolItNetworkNr["STU1"], MyToolItBlock["EEPROM"],
+                MyToolItNetworkNr["STU1"],
+                MyToolItBlock["EEPROM"],
                 MyToolItEeprom["Read"],
-                [EepromPage["Product Data"], 0xFF & offset, 4, 0, 0, 0, 0, 0])
+                [EepromPage["Product Data"], 0xFF & offset, 4, 0, 0, 0, 0, 0],
+            )
             dataReadBack = self.Can.getReadMessageData(index)
             startData.extend(dataReadBack[4:])
 
@@ -1391,21 +1747,39 @@ class TestStu(unittest.TestCase):
                     u8Byte = int(random.random() * 0xFF)
                     au8Content.append(u8Byte)
                 au8ReadCheck.extend(au8Content)
-                au8Payload = [EepromPage["Product Data"], 0xFF & offset, 4, 0
-                              ] + au8Content
-                self.Can.cmdSend(MyToolItNetworkNr["STU1"],
-                                 MyToolItBlock["EEPROM"],
-                                 MyToolItEeprom["Write"], au8Payload)
+                au8Payload = [
+                    EepromPage["Product Data"],
+                    0xFF & offset,
+                    4,
+                    0,
+                ] + au8Content
+                self.Can.cmdSend(
+                    MyToolItNetworkNr["STU1"],
+                    MyToolItBlock["EEPROM"],
+                    MyToolItEeprom["Write"],
+                    au8Payload,
+                )
             for offset in range(0, 256, 4):
                 au8Payload = [
-                    EepromPage["Product Data"], 0xFF & offset, 4, 0, 0, 0, 0, 0
+                    EepromPage["Product Data"],
+                    0xFF & offset,
+                    4,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
                 ]
-                index = self.Can.cmdSend(MyToolItNetworkNr["STU1"],
-                                         MyToolItBlock["EEPROM"],
-                                         MyToolItEeprom["Read"], au8Payload)
+                index = self.Can.cmdSend(
+                    MyToolItNetworkNr["STU1"],
+                    MyToolItBlock["EEPROM"],
+                    MyToolItEeprom["Read"],
+                    au8Payload,
+                )
                 dataReadBack = self.Can.getReadMessageData(index)
-                self.assertEqual(dataReadBack[4:],
-                                 au8ReadCheck[offset:offset + 4])
+                self.assertEqual(
+                    dataReadBack[4:], au8ReadCheck[offset : offset + 4]
+                )
             self.Can.logger.info("Fin random Writes and Reads")
             self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STU1"])
 
@@ -1413,22 +1787,33 @@ class TestStu(unittest.TestCase):
         timeStamp = self.Can.get_elapsed_time()
         for offset in range(0, 256, 4):
             payload = [EepromPage["Product Data"], 0xFF & offset, 4, 0]
-            payload.extend(startData[offset:offset + 4])
-            self.Can.cmdSend(MyToolItNetworkNr["STU1"],
-                             MyToolItBlock["EEPROM"], MyToolItEeprom["Write"],
-                             payload)
-        self.Can.logger.info("Page Write Time: " +
-                             str(self.Can.get_elapsed_time() - timeStamp) +
-                             "ms")
+            payload.extend(startData[offset : offset + 4])
+            self.Can.cmdSend(
+                MyToolItNetworkNr["STU1"],
+                MyToolItBlock["EEPROM"],
+                MyToolItEeprom["Write"],
+                payload,
+            )
+        self.Can.logger.info(
+            "Page Write Time: "
+            + str(self.Can.get_elapsed_time() - timeStamp)
+            + "ms"
+        )
         self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STU1"])
-        u32EepromWriteRequestCounterTestEnd = self.Can.u32EepromWriteRequestCounter(
-            MyToolItNetworkNr["STU1"])
-        u32EepromWriteRequsts = u32EepromWriteRequestCounterTestEnd - u32EepromWriteRequestCounterTestStart
-        self.Can.logger.info("EEPROM Write Requests during tests: " +
-                             str(u32EepromWriteRequsts))
-        self.assertEqual(u32EepromWriteRequestCounterTestStart + 1,
-                         u32EepromWriteRequestCounterTestEnd
-                         )  # +1 due to incrementing at first write
+        u32EepromWriteRequestCounterTestEnd = (
+            self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STU1"])
+        )
+        u32EepromWriteRequsts = (
+            u32EepromWriteRequestCounterTestEnd
+            - u32EepromWriteRequestCounterTestStart
+        )
+        self.Can.logger.info(
+            "EEPROM Write Requests during tests: " + str(u32EepromWriteRequsts)
+        )
+        self.assertEqual(
+            u32EepromWriteRequestCounterTestStart + 1,
+            u32EepromWriteRequestCounterTestEnd,
+        )  # +1 due to incrementing at first write
 
     def test0753EepromWriteRequestCounterPageSwitches(self):
         """
@@ -1436,26 +1821,43 @@ class TestStu(unittest.TestCase):
         """
         time.sleep(1)
         uLoopRuns = 5
-        u32EepromWriteRequestCounterTestStart = self.Can.u32EepromWriteRequestCounter(
-            MyToolItNetworkNr["STU1"])
+        u32EepromWriteRequestCounterTestStart = (
+            self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STU1"])
+        )
         for _i in range(0, uLoopRuns):
             for sPage in EepromPage:
                 self.Can.logger.info("Next Page")
                 for offset in range(0, 256, 4):
                     au8Payload = [
-                        EepromPage[sPage], 0xFF & offset, 4, 0, 0, 0, 0, 0
+                        EepromPage[sPage],
+                        0xFF & offset,
+                        4,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
                     ]
-                    self.Can.cmdSend(MyToolItNetworkNr["STU1"],
-                                     MyToolItBlock["EEPROM"],
-                                     MyToolItEeprom["Read"], au8Payload)
-        u32EepromWriteRequestCounterTestEnd = self.Can.u32EepromWriteRequestCounter(
-            MyToolItNetworkNr["STU1"])
-        u32EepromWriteRequsts = u32EepromWriteRequestCounterTestEnd - u32EepromWriteRequestCounterTestStart
-        self.Can.logger.info("EEPROM Write Requests during tests: " +
-                             str(u32EepromWriteRequsts))
-        self.assertEqual(u32EepromWriteRequestCounterTestStart,
-                         u32EepromWriteRequestCounterTestEnd
-                         )  # +1 due to incrementing at first write
+                    self.Can.cmdSend(
+                        MyToolItNetworkNr["STU1"],
+                        MyToolItBlock["EEPROM"],
+                        MyToolItEeprom["Read"],
+                        au8Payload,
+                    )
+        u32EepromWriteRequestCounterTestEnd = (
+            self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STU1"])
+        )
+        u32EepromWriteRequsts = (
+            u32EepromWriteRequestCounterTestEnd
+            - u32EepromWriteRequestCounterTestStart
+        )
+        self.Can.logger.info(
+            "EEPROM Write Requests during tests: " + str(u32EepromWriteRequsts)
+        )
+        self.assertEqual(
+            u32EepromWriteRequestCounterTestStart,
+            u32EepromWriteRequestCounterTestEnd,
+        )  # +1 due to incrementing at first write
 
     def test0754EepromWriteRequestCounterPageWriteSwitches(self):
         """
@@ -1467,34 +1869,45 @@ class TestStu(unittest.TestCase):
         uLoopRuns = 5
         uPageStart = 10
         uPageRuns = 6
-        u32EepromWriteRequestCounterTestStart = self.Can.u32EepromWriteRequestCounter(
-            MyToolItNetworkNr["STU1"])
+        u32EepromWriteRequestCounterTestStart = (
+            self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STU1"])
+        )
         for _i in range(0, uLoopRuns):
             for uPageOffset in range(0, uPageRuns):
                 self.Can.logger.info("Next Page")
                 self.Can.u32EepromWriteRequestCounter(
-                    MyToolItNetworkNr["STU1"])
+                    MyToolItNetworkNr["STU1"]
+                )
                 uPage = uPageOffset + uPageStart
                 au8Payload = [uPage, 12, 4, 0, 0, 0, 0, 0]
-                self.Can.cmdSend(MyToolItNetworkNr["STU1"],
-                                 MyToolItBlock["EEPROM"],
-                                 MyToolItEeprom["Write"],
-                                 au8Payload,
-                                 log=False)
+                self.Can.cmdSend(
+                    MyToolItNetworkNr["STU1"],
+                    MyToolItBlock["EEPROM"],
+                    MyToolItEeprom["Write"],
+                    au8Payload,
+                    log=False,
+                )
                 uPage = uPageOffset + 2
                 uPage %= uPageRuns
                 uPage += uPageStart
                 au8Payload = [uPage, 12, 4, 0, 0, 0, 0, 0]
-                self.Can.cmdSend(MyToolItNetworkNr["STU1"],
-                                 MyToolItBlock["EEPROM"],
-                                 MyToolItEeprom["Read"],
-                                 au8Payload,
-                                 log=False)
-        u32EepromWriteRequestCounterTestEnd = self.Can.u32EepromWriteRequestCounter(
-            MyToolItNetworkNr["STU1"])
-        u32EepromWriteRequsts = u32EepromWriteRequestCounterTestEnd - u32EepromWriteRequestCounterTestStart
-        self.Can.logger.info("EEPROM Write Requests during tests: " +
-                             str(u32EepromWriteRequsts))
+                self.Can.cmdSend(
+                    MyToolItNetworkNr["STU1"],
+                    MyToolItBlock["EEPROM"],
+                    MyToolItEeprom["Read"],
+                    au8Payload,
+                    log=False,
+                )
+        u32EepromWriteRequestCounterTestEnd = (
+            self.Can.u32EepromWriteRequestCounter(MyToolItNetworkNr["STU1"])
+        )
+        u32EepromWriteRequsts = (
+            u32EepromWriteRequestCounterTestEnd
+            - u32EepromWriteRequestCounterTestStart
+        )
+        self.Can.logger.info(
+            "EEPROM Write Requests during tests: " + str(u32EepromWriteRequsts)
+        )
         self.assertEqual(uPageRuns * uLoopRuns, u32EepromWriteRequsts)
 
     def test0900ErrorCmdVerbotenStu1(self):
@@ -1502,59 +1915,61 @@ class TestStu(unittest.TestCase):
         Test that nothing happens when sending 0x0000 to STU1 (⏱ 24 seconds)
         """
         cmd = self.Can.CanCmd(0, 0, 1, 0)
-        message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
-                                        MyToolItNetworkNr["STU1"], [])
-        msgAck = self.Can.tWriteFrameWaitAckRetries(message,
-                                                    waitMs=1000,
-                                                    retries=3,
-                                                    bErrorExit=False)
+        message = self.Can.CanMessage20(
+            cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], []
+        )
+        msgAck = self.Can.tWriteFrameWaitAckRetries(
+            message, waitMs=1000, retries=3, bErrorExit=False
+        )
         self.assertEqual("Error", msgAck)
         cmd = self.Can.CanCmd(0, 0, 1, 1)
-        message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
-                                        MyToolItNetworkNr["STU1"], [])
-        msgAck = self.Can.tWriteFrameWaitAckRetries(message,
-                                                    waitMs=1000,
-                                                    retries=3,
-                                                    bErrorExit=False)
+        message = self.Can.CanMessage20(
+            cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], []
+        )
+        msgAck = self.Can.tWriteFrameWaitAckRetries(
+            message, waitMs=1000, retries=3, bErrorExit=False
+        )
         self.assertEqual("Error", msgAck)
         cmd = self.Can.CanCmd(0, 0, 0, 0)
-        message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
-                                        MyToolItNetworkNr["STU1"], [])
-        msgAck = self.Can.tWriteFrameWaitAckRetries(message,
-                                                    waitMs=1000,
-                                                    retries=3,
-                                                    bErrorExit=False)
+        message = self.Can.CanMessage20(
+            cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], []
+        )
+        msgAck = self.Can.tWriteFrameWaitAckRetries(
+            message, waitMs=1000, retries=3, bErrorExit=False
+        )
         self.assertEqual("Error", msgAck)
         cmd = self.Can.CanCmd(0, 0, 0, 1)
-        message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
-                                        MyToolItNetworkNr["STU1"], [])
-        msgAck = self.Can.tWriteFrameWaitAckRetries(message,
-                                                    waitMs=1000,
-                                                    retries=3,
-                                                    bErrorExit=False)
+        message = self.Can.CanMessage20(
+            cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], []
+        )
+        msgAck = self.Can.tWriteFrameWaitAckRetries(
+            message, waitMs=1000, retries=3, bErrorExit=False
+        )
         self.assertEqual("Error", msgAck)
 
     def test0901ErrorRequestErrorStu1(self):
         """
         Test that nothing happens when sending Request(1)/Error(1) (⏱ 16 seconds)
         """
-        cmd = self.Can.CanCmd(MyToolItBlock["System"], MyToolItSystem["Reset"],
-                              1, 1)
-        message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
-                                        MyToolItNetworkNr["STU1"], [])
-        msgAck = self.Can.tWriteFrameWaitAckRetries(message,
-                                                    waitMs=1000,
-                                                    retries=3,
-                                                    bErrorExit=False)
+        cmd = self.Can.CanCmd(
+            MyToolItBlock["System"], MyToolItSystem["Reset"], 1, 1
+        )
+        message = self.Can.CanMessage20(
+            cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], []
+        )
+        msgAck = self.Can.tWriteFrameWaitAckRetries(
+            message, waitMs=1000, retries=3, bErrorExit=False
+        )
         self.assertEqual("Error", msgAck)
-        cmd = self.Can.CanCmd(MyToolItBlock["Streaming"],
-                              MyToolItStreaming["Data"], 1, 1)
-        message = self.Can.CanMessage20(cmd, MyToolItNetworkNr["SPU1"],
-                                        MyToolItNetworkNr["STU1"], [])
-        msgAck = self.Can.tWriteFrameWaitAckRetries(message,
-                                                    waitMs=1000,
-                                                    retries=3,
-                                                    bErrorExit=False)
+        cmd = self.Can.CanCmd(
+            MyToolItBlock["Streaming"], MyToolItStreaming["Data"], 1, 1
+        )
+        message = self.Can.CanMessage20(
+            cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STU1"], []
+        )
+        msgAck = self.Can.tWriteFrameWaitAckRetries(
+            message, waitMs=1000, retries=3, bErrorExit=False
+        )
         self.assertEqual("Error", msgAck)
 
 

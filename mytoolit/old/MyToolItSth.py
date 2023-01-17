@@ -10,13 +10,13 @@ TestConfig = {
     "ConTimeSleep1MaxMs": 6000,
     "ConTimeSleep2MaxMs": 7000,
     "ConTimeMaximumMs": 15000,
-    "DisconnectedCurrentMax": 0.8,  #in mA
-    "EnergyMode1CurrentMax": 0.5,  #in mA
-    "EnergyMode2CurrentMax": 0.47,  #in mA
-    "EnergyModeMaxCurrentMax": 0.47,  #in mA
-    "EnergyConnectedCurrentMax": 10,  #in mA
-    "EnergyMeasuringCurrentMax": 17,  #in mA
-    "EnergyMeasuringLedOffCurrentMax": 17,  #in mA
+    "DisconnectedCurrentMax": 0.8,  # in mA
+    "EnergyMode1CurrentMax": 0.5,  # in mA
+    "EnergyMode2CurrentMax": 0.47,  # in mA
+    "EnergyModeMaxCurrentMax": 0.47,  # in mA
+    "EnergyConnectedCurrentMax": 10,  # in mA
+    "EnergyMeasuringCurrentMax": 17,  # in mA
+    "EnergyMeasuringLedOffCurrentMax": 17,  # in mA
 }
 
 SleepTime = {
@@ -78,7 +78,7 @@ class SthStateWord(ctypes.Union):
 
 
 def fVoltageBattery(x):
-    if (0 < x):
+    if 0 < x:
         voltage = (x * 57 * 3.3) / (10 * 2**16)
     else:
         voltage = 0

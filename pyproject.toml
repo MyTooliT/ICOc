@@ -77,6 +77,10 @@ convert-mac-base64 = "mytoolit.scripts.mac:main"
 Documentation = "https://mytoolit.github.io/ICOc/"
 Source = "https://github.com/mytoolit/ICOc/"
 
+[tool.black]
+line-length = 79
+preview = true
+
 [tool.mypy]
 ignore_missing_imports = true
 
@@ -92,6 +96,3 @@ version = {attr = "mytoolit.__version__"}
 
 [tool.setuptools.packages.find]
 include = ["mytoolit*"]
-
-[tool.yapf]
-blank_line_before_nested_class_or_def = true

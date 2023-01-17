@@ -1,5 +1,4 @@
-class StuLimits():
-
+class StuLimits:
     def __init__(self, bPcbOnly):
         self.vPcbOnly(bPcbOnly)
 

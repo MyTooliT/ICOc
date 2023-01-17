@@ -17,6 +17,7 @@ class ExtendedTestResult(TextTestResult):
 
         class Status(Enum):
             """Store the status of a test"""
+
             success = 0
             failure = 1
             error = 2

@@ -4,8 +4,10 @@ from __future__ import annotations
 
 from typing import Optional, Union
 
-from mytoolit.old.MyToolItCommands import (MyToolItBlock,
-                                           blocknumber_to_commands)
+from mytoolit.old.MyToolItCommands import (
+    MyToolItBlock,
+    blocknumber_to_commands,
+)
 
 # -- Class --------------------------------------------------------------------
 
@@ -85,7 +87,7 @@ class Command:
         def set_part(start, width, number):
             """Store bit pattern number at bit start of the identifier"""
 
-            command_ones = 0xffff
+            command_ones = 0xFFFF
             mask = (1 << width) - 1
 
             # Set all bits for targeted part to 0
@@ -165,14 +167,17 @@ class Command:
         """
         error = self.value & 1
 
-        attributes = filter(None, [
-            f"Block: {self.block_name()}",
-            f"Command: {self.block_command_name()}",
-            "Acknowledge" if self.is_acknowledgment() else "Request",
-            "Error" if error else None
-        ])
+        attributes = filter(
+            None,
+            [
+                f"Block: {self.block_name()}",
+                f"Command: {self.block_command_name()}",
+                "Acknowledge" if self.is_acknowledgment() else "Request",
+                "Error" if error else None,
+            ],
+        )
 
-        return ', '.join(attributes)
+        return ", ".join(attributes)
 
     def block(self) -> int:
         """Get the block
@@ -232,7 +237,7 @@ class Command:
 
         """
 
-        return (self.value >> 2) & 0xff
+        return (self.value >> 2) & 0xFF
 
     def block_command_name(self) -> str:
         """Get the name of the block command
@@ -257,7 +262,8 @@ class Command:
 
         try:
             return blocknumber_to_commands[self.block()].inverse[
-                self.block_command()]
+                self.block_command()
+            ]
         except KeyError:
             return "Unknown"
 
@@ -340,7 +346,7 @@ class Command:
         if request:
             self.value |= request_bit
         else:
-            command_ones = 0xff
+            command_ones = 0xFF
             self.value &= request_bit ^ command_ones
 
         return self
@@ -383,6 +389,7 @@ class Command:
 
 # -- Main ---------------------------------------------------------------------
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     from doctest import testmod
+
     testmod()

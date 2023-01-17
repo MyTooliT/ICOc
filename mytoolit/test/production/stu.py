@@ -20,7 +20,7 @@ class TestSTU(TestNode):
 
         super().setUpClass()
         cls.add_attribute("Serial Number", "{cls.serial_number}", pdf=False)
-        cls.report = Report(node='STU')
+        cls.report = Report(node="STU")
 
     def _read_data(self):
         """Read data from connected STU"""
@@ -28,7 +28,7 @@ class TestSTU(TestNode):
         async def read_data():
             """Read data using the new network class"""
 
-            node = 'STU 1'
+            node = "STU 1"
             cls.bluetooth_mac = await self.can.get_mac_address(node)
             cls.firmware_version = await self.can.get_firmware_version(node)
             cls.release_name = await self.can.get_firmware_release_name(node)
@@ -48,16 +48,16 @@ class TestSTU(TestNode):
         """
 
         self._test_firmware_flash(
-            node='STU',
+            node="STU",
             flash_location=settings.stu.firmware.location.flash,
-            programmmer_serial_number=settings.stu.programming_board.
-            serial_number,
-            chip='BGM111A256V2')
+            programmmer_serial_number=settings.stu.programming_board.serial_number,
+            chip="BGM111A256V2",
+        )
 
     def test_connection(self):
         """Check connection to STU"""
 
-        self.loop.run_until_complete(self._test_connection('STU 1'))
+        self.loop.run_until_complete(self._test_connection("STU 1"))
 
     def test_eeprom(self):
         """Test if reading and writing the EEPROM works"""
@@ -66,7 +66,7 @@ class TestSTU(TestNode):
             """Test the EERPOM of the STU"""
 
             cls = type(self)
-            receiver = 'STU 1'
+            receiver = "STU 1"
 
             # ========
             # = Name =
@@ -75,9 +75,11 @@ class TestSTU(TestNode):
             read_name = await self.can.read_eeprom_name()
             expected_name = "Valerie"
             self.assertEqual(
-                read_name, expected_name,
-                f"Read name “{read_name}” does not match expected name " +
-                f"“{expected_name}”")
+                read_name,
+                expected_name,
+                f"Read name “{read_name}” does not match expected name "
+                + f"“{expected_name}”",
+            )
 
             cls.name = read_name
 
@@ -91,9 +93,11 @@ class TestSTU(TestNode):
             # = Statistics =
             # ==============
 
-            await self._test_eeprom_statistics(Node(receiver),
-                                               settings.stu.production_date,
-                                               settings.stu.batch_number)
+            await self._test_eeprom_statistics(
+                Node(receiver),
+                settings.stu.production_date,
+                settings.stu.batch_number,
+            )
 
             # =================
             # = EEPROM Status =
@@ -108,8 +112,9 @@ class TestSTU(TestNode):
 
 
 def main():
-    unittest_main(testRunner=ExtendedTestRunner,
-                  module="mytoolit.test.production.stu")
+    unittest_main(
+        testRunner=ExtendedTestRunner, module="mytoolit.test.production.stu"
+    )
 
 
 if __name__ == "__main__":

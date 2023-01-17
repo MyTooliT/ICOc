@@ -26,8 +26,11 @@ async def list_sensor_devices() -> None:
         # - Subsequent retries should provide all available sensor devices
         # - We wait until the number of sensor devices is larger than 1 and
         #   has not changed between one iteration or the timeout is reached
-        while (len(sensor_devices) <= 0 and time() < timeout
-               or len(sensor_devices) != len(sensor_devices_before)):
+        while (
+            len(sensor_devices) <= 0
+            and time() < timeout
+            or len(sensor_devices) != len(sensor_devices_before)
+        ):
             sensor_devices_before = list(sensor_devices)
             sensor_devices = await network.get_sensor_devices()
             await sleep(0.5)
@@ -74,7 +77,7 @@ async def rename(identifier: Union[int, str, EUI], name) -> None:
     """
 
     async with Network() as network:
-        node = 'STH 1'
+        node = "STH 1"
 
         await network.connect_sensor_device(identifier)
         old_name = await network.get_name(node)
@@ -82,8 +85,10 @@ async def rename(identifier: Union[int, str, EUI], name) -> None:
 
         await network.set_name(name, node)
         name = await network.get_name(node)
-        print(f"Renamed sensor device “{old_name}” with MAC "
-              f"address “{mac_address}” to “{name}”")
+        print(
+            f"Renamed sensor device “{old_name}” with MAC "
+            f"address “{mac_address}” to “{name}”"
+        )
 
 
 async def stu(subcommand: str) -> None:
@@ -98,7 +103,7 @@ async def stu(subcommand: str) -> None:
     """
 
     async with Network() as network:
-        if subcommand == 'ota':
+        if subcommand == "ota":
             # The coroutine below activates the advertisement required for the
             # Over The Air (OTA) firmware update.
             #
@@ -109,8 +114,8 @@ async def stu(subcommand: str) -> None:
             # - One way to turn off the advertisement seems to be to initiate a
             #   connection with a sensor device.
             await network.activate_bluetooth()
-        elif subcommand == 'mac':
-            print(await network.get_mac_address('STU 1'))
+        elif subcommand == "mac":
+            print(await network.get_mac_address("STU 1"))
         else:
             raise ValueError(f"Unknown STU subcommand “{subcommand}”")
 
@@ -121,14 +126,15 @@ def main():
     arguments = parse_arguments()
 
     try:
-        if arguments.subcommand == 'list':
+        if arguments.subcommand == "list":
             coroutine = list_sensor_devices()
-        elif arguments.subcommand == 'measure':
+        elif arguments.subcommand == "measure":
             coroutine = measure(identifier=arguments.identifier)
-        elif arguments.subcommand == 'rename':
-            coroutine = rename(identifier=arguments.identifier,
-                               name=arguments.name)
-        elif arguments.subcommand == 'stu':
+        elif arguments.subcommand == "rename":
+            coroutine = rename(
+                identifier=arguments.identifier, name=arguments.name
+            )
+        elif arguments.subcommand == "stu":
             coroutine = stu(arguments.stu_subcommand)
         run(coroutine)
     except NetworkError as error:
@@ -139,5 +145,5 @@ def main():
 
 # -- Main ---------------------------------------------------------------------
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

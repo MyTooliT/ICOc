@@ -25,14 +25,19 @@ def add_commander_path_to_environment() -> None:
 
     path = settings.commands.path
     operating_system = system()
-    paths = (path.linux if operating_system == 'Linux' else
-             path.mac if operating_system == 'Darwin' else path.windows)
-    environ['PATH'] += (pathsep + pathsep.join(paths))
+    paths = (
+        path.linux
+        if operating_system == "Linux"
+        else path.mac
+        if operating_system == "Darwin"
+        else path.windows
+    )
+    environ["PATH"] += pathsep + pathsep.join(paths)
 
 
 # -- Main ---------------------------------------------------------------------
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     from doctest import testmod
 
     testmod()

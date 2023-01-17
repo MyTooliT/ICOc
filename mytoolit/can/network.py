@@ -27,9 +27,13 @@ from mytoolit.can.error import UnsupportedFeatureException
 from mytoolit.can.message import Message
 from mytoolit.can.node import Node
 from mytoolit.can.sensor import SensorConfig
-from mytoolit.can.streaming import (AsyncStreamBuffer, StreamingData,
-                                    TimestampedValue, StreamingFormat,
-                                    StreamingFormatVoltage)
+from mytoolit.can.streaming import (
+    AsyncStreamBuffer,
+    StreamingData,
+    TimestampedValue,
+    StreamingFormat,
+    StreamingFormatVoltage,
+)
 from mytoolit.can.status import State
 from mytoolit.measurement import convert_raw_to_supply_voltage
 from mytoolit.utility import convert_bytes_to_text
@@ -73,10 +77,12 @@ class Times(NamedTuple):
 
         """
 
-        return ", ".join([
-            f"Advertisement Time: {self.advertisement} ms",
-            f"Sleep Time: {self.sleep} ms"
-        ])
+        return ", ".join(
+            [
+                f"Advertisement Time: {self.advertisement} ms",
+                f"Sleep Time: {self.sleep} ms",
+            ]
+        )
 
 
 class STHDeviceInfo(NamedTuple):
@@ -90,10 +96,16 @@ class STHDeviceInfo(NamedTuple):
     def __repr__(self) -> str:
         """Return the string representation of an STH"""
 
-        return "🤖 {}".format(", ".join([
-            f"Name: {self.name}", f"Device Number: {self.device_number}",
-            f"MAC address: {self.mac_address}", f"RSSI: {self.rssi}"
-        ]))
+        return "🤖 {}".format(
+            ", ".join(
+                [
+                    f"Name: {self.name}",
+                    f"Device Number: {self.device_number}",
+                    f"MAC address: {self.mac_address}",
+                    f"RSSI: {self.rssi}",
+                ]
+            )
+        )
 
 
 class Logger(Listener):
@@ -102,13 +114,13 @@ class Logger(Listener):
     def __init__(self):
         """Initialize the logger"""
 
-        logger = getLogger('network.can')
+        logger = getLogger("network.can")
         # We use `Logger` in the code below, since the `.logger` attribute
         # stores internal DynaConf data
         logger.setLevel(settings.Logger.can.level)
         repo_root = Path(__file__).parent.parent.parent
-        handler = FileHandler(repo_root / "can.log", 'w', 'utf-8', delay=True)
-        handler.setFormatter(Formatter('{asctime} {message}', style='{'))
+        handler = FileHandler(repo_root / "can.log", "w", "utf-8", delay=True)
+        handler.setFormatter(Formatter("{asctime} {message}", style="{"))
         logger.addHandler(handler)
 
     def on_message_received(self, message: CANMessage) -> None:
@@ -122,16 +134,17 @@ class Logger(Listener):
 
         """
 
-        getLogger('network.can').debug(f"{Message(message)}")
+        getLogger("network.can").debug(f"{Message(message)}")
 
 
 class ResponseListener(Listener):
     """A listener that reacts to messages containing a certain id"""
 
     def __init__(
-        self, message: Message, expected_data: Union[bytearray,
-                                                     Sequence[Optional[int]],
-                                                     None]) -> None:
+        self,
+        message: Message,
+        expected_data: Union[bytearray, Sequence[Optional[int]], None],
+    ) -> None:
         """Initialize the listener using the given identifier
 
         Parameters
@@ -183,18 +196,24 @@ class ResponseListener(Listener):
             error_response |= any(
                 expected != data
                 for expected, data in zip(expected_data, message.data)
-                if expected is not None)
-            error_reason = ("Unexpected response message data:\n"
-                            f"Expected: {list(expected_data)}\n"
-                            f"Received: {list(message.data)}")
+                if expected is not None
+            )
+            error_reason = (
+                "Unexpected response message data:\n"
+                f"Expected: {list(expected_data)}\n"
+                f"Received: {list(message.data)}"
+            )
         elif error_response:
             error_reason = "Received error response"
 
         if error_response or normal_response:
             self.queue.put_nowait(
-                Response(message=message,
-                         is_error=error_response,
-                         error_message=error_reason))
+                Response(
+                    message=message,
+                    is_error=error_response,
+                    error_message=error_reason,
+                )
+            )
 
     async def on_message(self) -> Optional[Response]:
         """Return answer messages for the specified message identifier
@@ -217,8 +236,9 @@ class ResponseListener(Listener):
 class DataStreamContextManager:
     """Open and close a data stream from a sensor device"""
 
-    def __init__(self, network: Network, first: bool, second: bool,
-                 third: bool) -> None:
+    def __init__(
+        self, network: Network, first: bool, second: bool, third: bool
+    ) -> None:
         """Create a new stream context manager for the given Network
 
         Parameters
@@ -257,9 +277,12 @@ class DataStreamContextManager:
 
         return await self.open()
 
-    async def __aexit__(self, exception_type: Optional[Type[BaseException]],
-                        exception_value: Optional[BaseException],
-                        traceback: Optional[TracebackType]) -> None:
+    async def __aexit__(
+        self,
+        exception_type: Optional[Type[BaseException]],
+        exception_value: Optional[BaseException],
+        traceback: Optional[TracebackType],
+    ) -> None:
         """Clean up the resources used by the stream
 
         Parameters
@@ -289,8 +312,9 @@ class DataStreamContextManager:
         """
 
         reader = self.reader
-        await self.network.start_streaming_data(reader.first, reader.second,
-                                                reader.third)
+        await self.network.start_streaming_data(
+            reader.first, reader.second, reader.third
+        )
         self.network.notifier.add_listener(reader)
         return reader
 
@@ -308,7 +332,7 @@ class Network:
     # - https://mytoolit.github.io/Documentation/#page-system-configuration
     ADVERTISEMENT_TIME_EEPROM_TO_MS = 0.625
 
-    def __init__(self, sender: Union[str, Node] = 'SPU 1') -> None:
+    def __init__(self, sender: Union[str, Node] = "SPU 1") -> None:
         """Create a new network from the given arguments
 
         Please note, that you have to clean up used resources after you use
@@ -344,18 +368,24 @@ class Network:
         """
 
         configuration = (
-            settings.can.linux if platform == 'linux' else
-            settings.can.mac if platform == 'darwin' else settings.can.windows)
+            settings.can.linux
+            if platform == "linux"
+            else settings.can.mac
+            if platform == "darwin"
+            else settings.can.windows
+        )
         try:
             self.bus = Bus(
-                channel=configuration.get('channel'),
-                interface=configuration.get('interface'),
-                bitrate=configuration.get('bitrate'))  # type: ignore[abstract]
+                channel=configuration.get("channel"),
+                interface=configuration.get("interface"),
+                bitrate=configuration.get("bitrate"),
+            )  # type: ignore[abstract]
         except (PcanError, OSError) as error:
             raise NetworkError(
                 f"Unable to initialize CAN connection: {error}\n\n"
                 "Possible reason:\n\n"
-                "• CAN adapter is not connected to the computer")
+                "• CAN adapter is not connected to the computer"
+            )
 
         # We create the notifier when we need it for the first time, since
         # there might not be an active loop when you create the network object
@@ -374,9 +404,12 @@ class Network:
 
         return self
 
-    async def __aexit__(self, exception_type: Optional[Type[BaseException]],
-                        exception_value: Optional[BaseException],
-                        traceback: Optional[TracebackType]) -> None:
+    async def __aexit__(
+        self,
+        exception_type: Optional[Type[BaseException]],
+        exception_value: Optional[BaseException],
+        traceback: Optional[TracebackType],
+    ) -> None:
         """Disconnect from the network
 
         Parameters
@@ -398,7 +431,7 @@ class Network:
     async def shutdown(self) -> None:
         """Deallocate all resources for this network connection"""
 
-        await self.deactivate_bluetooth('STU 1')
+        await self.deactivate_bluetooth("STU 1")
 
         if self._notifier is not None:
             self._notifier.stop()
@@ -421,9 +454,9 @@ class Network:
             # We explicitly specify the event loop, since not doing so slows
             # down the execution considerably (adding multiple seconds of
             # delay)
-            self._notifier = Notifier(self.bus,
-                                      listeners=[Logger()],
-                                      loop=get_running_loop())
+            self._notifier = Notifier(
+                self.bus, listeners=[Logger()], loop=get_running_loop()
+            )
         else:
             # The old event loop might be already closed
             self._notifier._loop = get_running_loop()
@@ -432,12 +465,13 @@ class Network:
 
         return self._notifier
 
-    async def _request(self,
-                       message: Message,
-                       description: str,
-                       response_data: Union[bytearray, List[Union[int, None]],
-                                            None] = None,
-                       minimum_timeout: float = 0) -> CANMessage:
+    async def _request(
+        self,
+        message: Message,
+        description: str,
+        response_data: Union[bytearray, List[Union[int, None]], None] = None,
+        minimum_timeout: float = 0,
+    ) -> CANMessage:
         """Send a request message and wait for the response
 
         Parameters
@@ -474,10 +508,9 @@ class Network:
         """
 
         for attempt in range(10):
-
             listener = ResponseListener(message, response_data)
             self.notifier.add_listener(listener)
-            getLogger('network.can').debug(f"{message}")
+            getLogger("network.can").debug(f"{message}")
             self.bus.send(message.to_python_can())
 
             try:
@@ -493,8 +526,9 @@ class Network:
                 # - sent a reset command to the STU, and then
                 # - wait for the response of the STU.
                 timeout = max(min(attempt * 0.1 + 0.5, 2), minimum_timeout)
-                response = await wait_for(listener.on_message(),
-                                          timeout=timeout)
+                response = await wait_for(
+                    listener.on_message(), timeout=timeout
+                )
                 assert response is not None
             except TimeoutError:
                 continue
@@ -505,20 +539,22 @@ class Network:
                 raise ErrorResponseError(
                     "Received unexpected response for request to "
                     f"{description}:\n\n{response.error_message}\n"
-                    f"Response Message: {Message(response.message)}")
+                    f"Response Message: {Message(response.message)}"
+                )
 
             return response.message
 
         raise NoResponseError(f"Unable to {description}")
 
     async def _request_bluetooth(
-            self,
-            node: Union[str, Node],
-            subcommand: int,
-            description: str,
-            device_number: Optional[int] = None,
-            data: Optional[List[int]] = None,
-            response_data: Optional[List[Optional[int]]] = None) -> CANMessage:
+        self,
+        node: Union[str, Node],
+        subcommand: int,
+        description: str,
+        device_number: Optional[int] = None,
+        data: Optional[List[int]] = None,
+        response_data: Optional[List[Optional[int]]] = None,
+    ) -> CANMessage:
         """Send a request for a certain Bluetooth command
 
         Parameters
@@ -551,12 +587,14 @@ class Network:
 
         device_number = 0 if device_number is None else device_number
         data = [0] * 6 if data is None else data
-        message = Message(block='System',
-                          block_command='Bluetooth',
-                          sender=self.sender,
-                          receiver=node,
-                          request=True,
-                          data=[subcommand, device_number] + data)
+        message = Message(
+            block="System",
+            block_command="Bluetooth",
+            sender=self.sender,
+            receiver=node,
+            request=True,
+            data=[subcommand, device_number] + data,
+        )
 
         # The Bluetooth subcommand and device number should be the same in the
         # response message.
@@ -583,7 +621,8 @@ class Network:
         if subcommand in {get_mac_address, set_second_part_name}:
             expected_data = [subcommand, None]
         elif subcommand in {
-                set_times_reduced_energy, set_times_reduced_lowest
+            set_times_reduced_energy,
+            set_times_reduced_lowest,
         }:
             expected_data = [None, None]
         else:
@@ -592,13 +631,16 @@ class Network:
         if response_data is not None:
             expected_data.extend(response_data)
 
-        return await self._request(message,
-                                   description=description,
-                                   response_data=expected_data)
+        return await self._request(
+            message, description=description, response_data=expected_data
+        )
 
-    async def _request_product_data(self, block_command: Union[str, int],
-                                    description: str,
-                                    node: Union[str, Node]) -> CANMessage:
+    async def _request_product_data(
+        self,
+        block_command: Union[str, int],
+        description: str,
+        node: Union[str, Node],
+    ) -> CANMessage:
         """Send a request for product data
 
         Parameters
@@ -620,12 +662,14 @@ class Network:
 
         """
 
-        message = Message(block='Product Data',
-                          block_command=block_command,
-                          sender=self.sender,
-                          receiver=node,
-                          request=True,
-                          data=[0] * 8)
+        message = Message(
+            block="Product Data",
+            block_command=block_command,
+            sender=self.sender,
+            receiver=node,
+            request=True,
+            data=[0] * 8,
+        )
 
         return await self._request(message, description=description)
 
@@ -666,21 +710,25 @@ class Network:
 
         """
 
-        message = Message(block='System',
-                          block_command='Reset',
-                          sender=self.sender,
-                          receiver=node,
-                          request=True)
-        await self._request(message,
-                            description=f"reset node “{node}”",
-                            response_data=message.data,
-                            minimum_timeout=1)
+        message = Message(
+            block="System",
+            block_command="Reset",
+            sender=self.sender,
+            receiver=node,
+            request=True,
+        )
+        await self._request(
+            message,
+            description=f"reset node “{node}”",
+            response_data=message.data,
+            minimum_timeout=1,
+        )
 
     # -----------------
     # - Get/Set State -
     # -----------------
 
-    async def get_state(self, node: Union[str, Node] = 'STU 1') -> State:
+    async def get_state(self, node: Union[str, Node] = "STU 1") -> State:
         """Get the current state of the specified node
 
         Parameters
@@ -704,15 +752,18 @@ class Network:
 
         """
 
-        message = Message(block='System',
-                          block_command='Get/Set State',
-                          sender=self.sender,
-                          receiver=node,
-                          request=True,
-                          data=[(State(mode='Get')).value])
+        message = Message(
+            block="System",
+            block_command="Get/Set State",
+            sender=self.sender,
+            receiver=node,
+            request=True,
+            data=[(State(mode="Get")).value],
+        )
 
         response = await self._request(
-            message, description=f"get state of node “{node}”")
+            message, description=f"get state of node “{node}”"
+        )
 
         return State(response.data[0])
 
@@ -720,7 +771,7 @@ class Network:
     # - Bluetooth -
     # -------------
 
-    async def activate_bluetooth(self, node: Union[str, Node] = 'STU 1'):
+    async def activate_bluetooth(self, node: Union[str, Node] = "STU 1"):
         """Activate Bluetooth on the specified node
 
         Parameters
@@ -747,11 +798,12 @@ class Network:
             node=node,
             subcommand=1,
             description=f"activate Bluetooth of node “{node}”",
-            response_data=6 * [0]  # type: ignore[arg-type]
+            response_data=6 * [0],  # type: ignore[arg-type]
         )
 
-    async def deactivate_bluetooth(self,
-                                   node: Union[str, Node] = 'STU 1') -> None:
+    async def deactivate_bluetooth(
+        self, node: Union[str, Node] = "STU 1"
+    ) -> None:
         """Deactivate Bluetooth on a node
 
         Parameters
@@ -779,11 +831,12 @@ class Network:
             node=node,
             subcommand=9,
             description=f"deactivate Bluetooth on “{node}”",
-            response_data=6 * [0]  # type: ignore[arg-type]
+            response_data=6 * [0],  # type: ignore[arg-type]
         )
 
-    async def get_available_devices(self,
-                                    node: Union[str, Node] = 'STU 1') -> int:
+    async def get_available_devices(
+        self, node: Union[str, Node] = "STU 1"
+    ) -> int:
         """Retrieve the number of available Bluetooth devices at a node
 
         Parameters
@@ -825,15 +878,16 @@ class Network:
         answer = await self._request_bluetooth(
             node=node,
             subcommand=2,
-            description=f"get available Bluetooth devices of node “{node}”")
+            description=f"get available Bluetooth devices of node “{node}”",
+        )
 
         available_devices = int(convert_bytes_to_text(answer.data[2:]))
 
         return available_devices
 
-    async def get_name(self,
-                       node: Union[str, Node] = 'STU 1',
-                       device_number: int = 0xff) -> str:
+    async def get_name(
+        self, node: Union[str, Node] = "STU 1", device_number: int = 0xFF
+    ) -> str:
         """Retrieve the name of a Bluetooth device
 
         You can use this method to name of both
@@ -895,7 +949,8 @@ class Network:
             node=node,
             subcommand=5,
             device_number=device_number,
-            description=f"get first part of {description}")
+            description=f"get first part of {description}",
+        )
 
         first_part = convert_bytes_to_text(answer.data[2:])
 
@@ -903,15 +958,16 @@ class Network:
             node=node,
             device_number=device_number,
             subcommand=6,
-            description=f"get second part of {description}")
+            description=f"get second part of {description}",
+        )
 
         second_part = convert_bytes_to_text(answer.data[2:])
 
         return first_part + second_part
 
-    async def set_name(self,
-                       name: str,
-                       node: Union[str, Node] = 'STU 1') -> None:
+    async def set_name(
+        self, name: str, node: Union[str, Node] = "STU 1"
+    ) -> None:
         """Set the name of a node
 
         Parameters
@@ -940,35 +996,38 @@ class Network:
         if not isinstance(name, str):
             raise TypeError("Name must be str, not type(identifier).__name__")
 
-        bytes_name = list(name.encode('utf-8'))
+        bytes_name = list(name.encode("utf-8"))
         length_name = len(bytes_name)
         if length_name > 8:
-            raise ValueError(f"Name is too long ({length_name} bytes). "
-                             "Please use a name between 0 and 8 bytes.")
+            raise ValueError(
+                f"Name is too long ({length_name} bytes). "
+                "Please use a name between 0 and 8 bytes."
+            )
 
         # Use 0 bytes at end of names that are shorter than 8 bytes
         bytes_name.extend([0] * (8 - length_name))
         description = f"name of “{node}”"
-        self_addressing = 0xff
+        self_addressing = 0xFF
 
         await self._request_bluetooth(
             node=node,
             subcommand=3,
             device_number=self_addressing,
             data=bytes_name[:6],
-            description=f"set first part of {description}")
+            description=f"set first part of {description}",
+        )
 
         await self._request_bluetooth(
             node=node,
             subcommand=4,
             device_number=self_addressing,
             data=bytes_name[6:] + [0] * 4,
-            description=f"set second part of {description}")
+            description=f"set second part of {description}",
+        )
 
     async def connect_with_device_number(
-            self,
-            device_number: int = 0,
-            node: Union[str, Node] = 'STU 1') -> bool:
+        self, device_number: int = 0, node: Union[str, Node] = "STU 1"
+    ) -> bool:
         """Connect to a Bluetooth device using a device number
 
         Parameters
@@ -1018,11 +1077,12 @@ class Network:
             node=node,
             subcommand=7,
             device_number=device_number,
-            description=f"connect to “{device_number}” from “{node}”")
+            description=f"connect to “{device_number}” from “{node}”",
+        )
 
         return bool(response.data[2])
 
-    async def is_connected(self, node: Union[str, Node] = 'STU 1') -> bool:
+    async def is_connected(self, node: Union[str, Node] = "STU 1") -> bool:
         """Check if the node is connected to a Bluetooth device
 
         Parameters
@@ -1076,14 +1136,16 @@ class Network:
             node=node,
             subcommand=8,
             response_data=[None, *(5 * [0])],
-            description=f"check if “{node}” is connected to a Bluetooth device"
+            description=(
+                f"check if “{node}” is connected to a Bluetooth device"
+            ),
         )
 
         return bool(response.data[2])
 
-    async def get_rssi(self,
-                       node: Union[str, Node] = 'STH 1',
-                       device_number: int = 0xff):
+    async def get_rssi(
+        self, node: Union[str, Node] = "STH 1", device_number: int = 0xFF
+    ):
         """Retrieve the RSSI (Received Signal Strength Indication) of a device
 
         You can use this method to retrieve the RSSI of both
@@ -1140,11 +1202,12 @@ class Network:
             node=node,
             device_number=device_number,
             subcommand=12,
-            description=f"get RSSI of “{device_number}” from “{node}”")
+            description=f"get RSSI of “{device_number}” from “{node}”",
+        )
 
-        return int.from_bytes(response.data[2:3],
-                              byteorder='little',
-                              signed=True)
+        return int.from_bytes(
+            response.data[2:3], byteorder="little", signed=True
+        )
 
     async def read_energy_mode_reduced(self) -> Times:
         """Read the reduced energy mode (mode 1) sensor device time values
@@ -1190,22 +1253,25 @@ class Network:
 
         """
 
-        self_addressing = 0xff
+        self_addressing = 0xFF
         response = await self._request_bluetooth(
-            node='STH 1',
+            node="STH 1",
             device_number=self_addressing,
             subcommand=13,
-            description="read reduced energy time values of sensor device")
+            description="read reduced energy time values of sensor device",
+        )
 
-        wait_time = int.from_bytes(response.data[2:6], byteorder='little')
+        wait_time = int.from_bytes(response.data[2:6], byteorder="little")
         advertisement_time = (
-            int.from_bytes(response.data[6:], byteorder='little') *
-            type(self).ADVERTISEMENT_TIME_EEPROM_TO_MS)
+            int.from_bytes(response.data[6:], byteorder="little")
+            * type(self).ADVERTISEMENT_TIME_EEPROM_TO_MS
+        )
 
         return Times(sleep=wait_time, advertisement=advertisement_time)
 
-    async def write_energy_mode_reduced(self,
-                                        times: Optional[Times] = None) -> None:
+    async def write_energy_mode_reduced(
+        self, times: Optional[Times] = None
+    ) -> None:
         """Writes the time values for the reduced energy mode (mode 1)
 
         To change the time values of the sensor device you need to connect to
@@ -1263,25 +1329,30 @@ class Network:
 
         if times is None:
             time_settings = settings.sensory_device.bluetooth
-            times = Times(sleep=time_settings.sleep_time_1,
-                          advertisement=time_settings.advertisement_time_1)
+            times = Times(
+                sleep=time_settings.sleep_time_1,
+                advertisement=time_settings.advertisement_time_1,
+            )
 
         sleep_time = times.sleep
-        advertisement_time = round(times.advertisement /
-                                   type(self).ADVERTISEMENT_TIME_EEPROM_TO_MS)
+        advertisement_time = round(
+            times.advertisement / type(self).ADVERTISEMENT_TIME_EEPROM_TO_MS
+        )
 
         data = list(
-            sleep_time.to_bytes(4, 'little') +
-            advertisement_time.to_bytes(2, 'little'))
+            sleep_time.to_bytes(4, "little")
+            + advertisement_time.to_bytes(2, "little")
+        )
 
-        self_addressing = 0xff
+        self_addressing = 0xFF
         await self._request_bluetooth(
-            node='STH 1',
+            node="STH 1",
             device_number=self_addressing,
             subcommand=14,
             data=data,
             response_data=list(data),
-            description="write reduced energy time values of sensor device")
+            description="write reduced energy time values of sensor device",
+        )
 
     async def read_energy_mode_lowest(self) -> Times:
         """Read the reduced lowest energy mode (mode 2) time values
@@ -1321,22 +1392,25 @@ class Network:
 
         """
 
-        self_addressing = 0xff
+        self_addressing = 0xFF
         response = await self._request_bluetooth(
-            node='STH 1',
+            node="STH 1",
             device_number=self_addressing,
             subcommand=15,
-            description="read lowest energy mode time values of sensor device")
+            description="read lowest energy mode time values of sensor device",
+        )
 
-        wait_time = int.from_bytes(response.data[2:6], byteorder='little')
+        wait_time = int.from_bytes(response.data[2:6], byteorder="little")
         advertisement_time = (
-            int.from_bytes(response.data[6:], byteorder='little') *
-            type(self).ADVERTISEMENT_TIME_EEPROM_TO_MS)
+            int.from_bytes(response.data[6:], byteorder="little")
+            * type(self).ADVERTISEMENT_TIME_EEPROM_TO_MS
+        )
 
         return Times(sleep=wait_time, advertisement=advertisement_time)
 
-    async def write_energy_mode_lowest(self,
-                                       times: Optional[Times] = None) -> None:
+    async def write_energy_mode_lowest(
+        self, times: Optional[Times] = None
+    ) -> None:
         """Writes the time values for the lowest energy mode (mode 2)
 
         To change the time values of the sensor device you need to connect to
@@ -1388,29 +1462,34 @@ class Network:
 
         if times is None:
             time_settings = settings.sensory_device.bluetooth
-            times = Times(sleep=time_settings.sleep_time_2,
-                          advertisement=time_settings.advertisement_time_2)
+            times = Times(
+                sleep=time_settings.sleep_time_2,
+                advertisement=time_settings.advertisement_time_2,
+            )
 
         sleep_time = times.sleep
-        advertisement_time = round(times.advertisement /
-                                   type(self).ADVERTISEMENT_TIME_EEPROM_TO_MS)
+        advertisement_time = round(
+            times.advertisement / type(self).ADVERTISEMENT_TIME_EEPROM_TO_MS
+        )
 
         data = list(
-            sleep_time.to_bytes(4, 'little') +
-            advertisement_time.to_bytes(2, 'little'))
+            sleep_time.to_bytes(4, "little")
+            + advertisement_time.to_bytes(2, "little")
+        )
 
-        self_addressing = 0xff
+        self_addressing = 0xFF
         await self._request_bluetooth(
-            node='STH 1',
+            node="STH 1",
             device_number=self_addressing,
             subcommand=16,
             data=data,
             response_data=list(data),
-            description="write reduced energy time values of sensor device")
+            description="write reduced energy time values of sensor device",
+        )
 
-    async def get_mac_address(self,
-                              node: Union[str, Node] = 'STH 1',
-                              device_number: int = 0xff) -> EUI:
+    async def get_mac_address(
+        self, node: Union[str, Node] = "STH 1", device_number: int = 0xFF
+    ) -> EUI:
         """Retrieve the Bluetooth MAC address of a device
 
         You can use this method to retrieve the address of both
@@ -1466,14 +1545,14 @@ class Network:
             node=node,
             device_number=device_number,
             subcommand=17,
-            description=f"get MAC address of “{device_number}” from “{node}”")
+            description=f"get MAC address of “{device_number}” from “{node}”",
+        )
 
         return EUI(":".join(f"{byte:02x}" for byte in response.data[:1:-1]))
 
-    async def connect_with_mac_address(self,
-                                       mac_address: EUI,
-                                       node: Union[str,
-                                                   Node] = 'STU 1') -> None:
+    async def connect_with_mac_address(
+        self, mac_address: EUI, node: Union[str, Node] = "STU 1"
+    ) -> None:
         """Connect to a Bluetooth device using its MAC address
 
         Parameters
@@ -1494,11 +1573,12 @@ class Network:
             subcommand=18,
             data=mac_address_bytes_reversed,
             response_data=mac_address_bytes_reversed,
-            description=f"connect to device “{mac_address}” from “{node}”")
+            description=f"connect to device “{mac_address}” from “{node}”",
+        )
 
-    async def get_sensor_devices(self,
-                                 node: Union[str, Node] = 'STU 1'
-                                 ) -> List[STHDeviceInfo]:
+    async def get_sensor_devices(
+        self, node: Union[str, Node] = "STU 1"
+    ) -> List[STHDeviceInfo]:
         """Retrieve a list of available sensor devices
 
         Parameters
@@ -1568,15 +1648,19 @@ class Network:
             name = await self.get_name(node, device)
 
             devices.append(
-                STHDeviceInfo(device_number=device,
-                              mac_address=mac_address,
-                              name=name,
-                              rssi=rssi))
+                STHDeviceInfo(
+                    device_number=device,
+                    mac_address=mac_address,
+                    name=name,
+                    rssi=rssi,
+                )
+            )
 
         return devices
 
-    async def connect_sensor_device(self, identifier: Union[int, str,
-                                                            EUI]) -> None:
+    async def connect_sensor_device(
+        self, identifier: Union[int, str, EUI]
+    ) -> None:
         """Connect to a sensor device (e.g. SHA, SMH or STH)
 
         Parameters
@@ -1608,25 +1692,33 @@ class Network:
         """
 
         def get_sensor_device(
-                devices: List[STHDeviceInfo],
-                identifier: Union[int, str, EUI]) -> Optional[STHDeviceInfo]:
+            devices: List[STHDeviceInfo], identifier: Union[int, str, EUI]
+        ) -> Optional[STHDeviceInfo]:
             """Get the MAC address of a sensor device"""
 
             for device in devices:
-                if (isinstance(identifier, str) and device.name == identifier
-                        or isinstance(identifier, int)
-                        and device.device_number == identifier
-                        or device.mac_address == identifier):
+                if (
+                    isinstance(identifier, str)
+                    and device.name == identifier
+                    or isinstance(identifier, int)
+                    and device.device_number == identifier
+                    or device.mac_address == identifier
+                ):
                     return device
 
             return None
 
-        if not (isinstance(identifier, str) or isinstance(identifier, int)
-                or isinstance(identifier, EUI)):
-            raise TypeError("Identifier must be int, str or EUI, not "
-                            f"{type(identifier).__name__}")
+        if not (
+            isinstance(identifier, str)
+            or isinstance(identifier, int)
+            or isinstance(identifier, EUI)
+        ):
+            raise TypeError(
+                "Identifier must be int, str or EUI, not "
+                f"{type(identifier).__name__}"
+            )
 
-        await self.activate_bluetooth('STU 1')
+        await self.activate_bluetooth("STU 1")
 
         # We wait for a certain amount of time for the connection to the
         # device to take place
@@ -1637,20 +1729,28 @@ class Network:
         sensor_devices: List[STHDeviceInfo] = []
         while sensor_device is None:
             if time() > end_time:
-                sensor_devices_representation = '\n'.join(
-                    [repr(device) for device in sensor_devices])
-                device_info = ("Found the following sensor devices:\n"
-                               f"{sensor_devices_representation}"
-                               if len(sensor_devices) > 0 else
-                               "No sensor devices found")
+                sensor_devices_representation = "\n".join(
+                    [repr(device) for device in sensor_devices]
+                )
+                device_info = (
+                    "Found the following sensor devices:\n"
+                    f"{sensor_devices_representation}"
+                    if len(sensor_devices) > 0
+                    else "No sensor devices found"
+                )
 
                 identifier_description = (
-                    "MAC address" if isinstance(identifier, EUI) else
-                    "device_number" if isinstance(identifier, int) else "name")
+                    "MAC address"
+                    if isinstance(identifier, EUI)
+                    else "device_number"
+                    if isinstance(identifier, int)
+                    else "name"
+                )
                 raise TimeoutError(
                     "Unable to find sensor device with "
                     f"{identifier_description} “{identifier}” in "
-                    f"{timeout_in_s} seconds\n\n{device_info}")
+                    f"{timeout_in_s} seconds\n\n{device_info}"
+                )
 
             sensor_devices = await self.get_sensor_devices()
             sensor_device = get_sensor_device(sensor_devices, identifier)
@@ -1666,10 +1766,12 @@ class Network:
                 if time() > end_time:
                     connection_time = time() - connection_attempt_time
                     raise TimeoutError(
-                        "Unable to connect to sensor device “{sensor_device}” "
-                        f"in {connection_time:.3f} seconds")
+                        "Unable to connect to sensor device"
+                        " “{sensor_device}” in"
+                        f" {connection_time:.3f} seconds"
+                    )
 
-                if await self.is_connected('STU 1'):
+                if await self.is_connected("STU 1"):
                     return
 
                 await sleep(0.1)
@@ -1712,39 +1814,47 @@ class Network:
 
         """
 
-        streaming_format = StreamingFormat(first=True,
-                                           second=True,
-                                           third=True,
-                                           sets=1)
+        streaming_format = StreamingFormat(
+            first=True, second=True, third=True, sets=1
+        )
 
-        node = 'STH 1'
+        node = "STH 1"
 
-        message = Message(block='Streaming',
-                          block_command='Data',
-                          sender=self.sender,
-                          receiver=node,
-                          request=True,
-                          data=[streaming_format.value])
+        message = Message(
+            block="Streaming",
+            block_command="Data",
+            sender=self.sender,
+            receiver=node,
+            request=True,
+            data=[streaming_format.value],
+        )
 
         response = await self._request(
             message,
-            description=f"read single set of streaming values from “{node}”")
+            description=f"read single set of streaming values from “{node}”",
+        )
         raw_values = [
-            TimestampedValue(value=int.from_bytes(word, byteorder='little'),
-                             timestamp=response.timestamp,
-                             counter=response.data[1])
-            for word in (response.data[2:4], response.data[4:6],
-                         response.data[6:8])
+            TimestampedValue(
+                value=int.from_bytes(word, byteorder="little"),
+                timestamp=response.timestamp,
+                counter=response.data[1],
+            )
+            for word in (
+                response.data[2:4],
+                response.data[4:6],
+                response.data[6:8],
+            )
         ]
 
-        return StreamingData(first=[raw_values[0]],
-                             second=[raw_values[1]],
-                             third=[raw_values[2]])
+        return StreamingData(
+            first=[raw_values[0]],
+            second=[raw_values[1]],
+            third=[raw_values[2]],
+        )
 
-    async def start_streaming_data(self,
-                                   first: bool = False,
-                                   second: bool = False,
-                                   third: bool = False) -> None:
+    async def start_streaming_data(
+        self, first: bool = False, second: bool = False, third: bool = False
+    ) -> None:
         """Start streaming data
 
         Parameters
@@ -1770,52 +1880,61 @@ class Network:
         if not (first or second or third):
             raise ValueError("Please enable at least one measurement channel")
 
-        streaming_format = StreamingFormat(first=first,
-                                           second=second,
-                                           third=third,
-                                           streaming=True,
-                                           sets=3)
-        node = 'STH 1'
-        message = Message(block='Streaming',
-                          block_command='Data',
-                          sender=self.sender,
-                          receiver=node,
-                          request=True,
-                          data=[streaming_format.value])
+        streaming_format = StreamingFormat(
+            first=first, second=second, third=third, streaming=True, sets=3
+        )
+        node = "STH 1"
+        message = Message(
+            block="Streaming",
+            block_command="Data",
+            sender=self.sender,
+            receiver=node,
+            request=True,
+            data=[streaming_format.value],
+        )
 
         channels = [
-            channel for channel in ("first" if first else "",
-                                    "second" if second else "",
-                                    "third" if third else "") if channel
+            channel
+            for channel in (
+                "first" if first else "",
+                "second" if second else "",
+                "third" if third else "",
+            )
+            if channel
         ]
-        channels_text = ''.join(
-            (f"{channel}, "
-             for channel in channels[:-2])) + ' and '.join(channels[-2:])
+        channels_text = "".join(
+            (f"{channel}, " for channel in channels[:-2])
+        ) + " and ".join(channels[-2:])
 
         await self._request(
             message,
-            description=(f"enable streaming of {channels_text} measurement "
-                         f"channel of “{node}”"))
+            description=(
+                f"enable streaming of {channels_text} measurement "
+                f"channel of “{node}”"
+            ),
+        )
 
     async def stop_streaming_data(self) -> None:
         """Stop streaming data"""
 
         streaming_format = StreamingFormat(streaming=True, sets=0)
-        node = 'STH 1'
-        message = Message(block='Streaming',
-                          block_command='Data',
-                          sender=self.sender,
-                          receiver=node,
-                          request=True,
-                          data=[streaming_format.value])
+        node = "STH 1"
+        message = Message(
+            block="Streaming",
+            block_command="Data",
+            sender=self.sender,
+            receiver=node,
+            request=True,
+            data=[streaming_format.value],
+        )
 
-        await self._request(message,
-                            description=f"disable data streaming of “{node}”")
+        await self._request(
+            message, description=f"disable data streaming of “{node}”"
+        )
 
-    def open_data_stream(self,
-                         first: bool = False,
-                         second: bool = False,
-                         third: bool = False) -> DataStreamContextManager:
+    def open_data_stream(
+        self, first: bool = False, second: bool = False, third: bool = False
+    ) -> DataStreamContextManager:
         """Open measurement data stream
 
         Parameters
@@ -1843,11 +1962,12 @@ class Network:
         return DataStreamContextManager(self, first, second, third)
 
     async def read_streaming_data_seconds(
-            self,
-            seconds: float,
-            first: bool = True,
-            second: bool = False,
-            third: bool = False) -> StreamingData:
+        self,
+        seconds: float,
+        first: bool = True,
+        second: bool = False,
+        third: bool = False,
+    ) -> StreamingData:
         """Read raw streaming data for a certain amount of time
 
         Parameters
@@ -1909,11 +2029,13 @@ class Network:
 
         return stream_data
 
-    async def read_streaming_data_amount(self,
-                                         amount: int,
-                                         first: bool = True,
-                                         second: bool = False,
-                                         third: bool = False) -> StreamingData:
+    async def read_streaming_data_amount(
+        self,
+        amount: int,
+        first: bool = True,
+        second: bool = False,
+        third: bool = False,
+    ) -> StreamingData:
         """Read a certain amount of streaming values
 
         Parameters
@@ -1974,8 +2096,11 @@ class Network:
         # collected one or two additional values. We drop these values
         # from the last enabled channels here.
         while len(stream_data) > amount:
-            for channel in (stream_data.third, stream_data.second,
-                            stream_data.first):
+            for channel in (
+                stream_data.third,
+                stream_data.second,
+                stream_data.first,
+            ):
                 if channel:
                     channel.pop()
                     if len(stream_data) <= amount:
@@ -2020,25 +2145,29 @@ class Network:
         """
 
         streaming_format = StreamingFormatVoltage(first=True, sets=1)
-        node = 'STH 1'
-        message = Message(block='Streaming',
-                          block_command='Voltage',
-                          sender=self.sender,
-                          receiver=node,
-                          request=True,
-                          data=[streaming_format.value])
+        node = "STH 1"
+        message = Message(
+            block="Streaming",
+            block_command="Voltage",
+            sender=self.sender,
+            receiver=node,
+            request=True,
+            data=[streaming_format.value],
+        )
 
         response = await self._request(
-            message, description=f"read supply voltage of “{node}”")
+            message, description=f"read supply voltage of “{node}”"
+        )
 
         voltage_bytes = response.data[2:4]
-        voltage_raw = int.from_bytes(voltage_bytes, 'little')
+        voltage_raw = int.from_bytes(voltage_bytes, "little")
 
         adc_configuration = await self.read_adc_configuration()
 
         return convert_raw_to_supply_voltage(
             voltage_raw,
-            reference_voltage=adc_configuration.reference_voltage())
+            reference_voltage=adc_configuration.reference_voltage(),
+        )
 
     # =================
     # = Configuration =
@@ -2058,25 +2187,30 @@ class Network:
 
         """
 
-        node = 'STH 1'
+        node = "STH 1"
 
-        message = Message(block='Configuration',
-                          block_command='Get/Set ADC Configuration',
-                          sender=self.sender,
-                          receiver=node,
-                          request=True,
-                          data=[0] * 8)
+        message = Message(
+            block="Configuration",
+            block_command="Get/Set ADC Configuration",
+            sender=self.sender,
+            receiver=node,
+            request=True,
+            data=[0] * 8,
+        )
 
         response = await self._request(
-            message, description=f"Read ADC configuration of “{node}”")
+            message, description=f"Read ADC configuration of “{node}”"
+        )
 
         return ADCConfiguration(response.data[0:5])
 
-    async def write_adc_configuration(self,
-                                      reference_voltage: float,
-                                      prescaler: int = 2,
-                                      acquisition_time: int = 8,
-                                      oversampling_rate: int = 64) -> None:
+    async def write_adc_configuration(
+        self,
+        reference_voltage: float,
+        prescaler: int = 2,
+        acquisition_time: int = 8,
+        oversampling_rate: int = 64,
+    ) -> None:
         """Change the ADC configuration of a connected sensor device
 
         Parameters
@@ -2098,23 +2232,27 @@ class Network:
 
         """
 
-        node = 'STH 1'
+        node = "STH 1"
         adc_configuration = ADCConfiguration(
             set=True,
             prescaler=prescaler,
             acquisition_time=acquisition_time,
             oversampling_rate=oversampling_rate,
-            reference_voltage=reference_voltage)
+            reference_voltage=reference_voltage,
+        )
 
-        message = Message(block='Configuration',
-                          block_command='Get/Set ADC Configuration',
-                          sender=self.sender,
-                          receiver=node,
-                          request=True,
-                          data=adc_configuration.data)
+        message = Message(
+            block="Configuration",
+            block_command="Get/Set ADC Configuration",
+            sender=self.sender,
+            receiver=node,
+            request=True,
+            data=adc_configuration.data,
+        )
 
-        await self._request(message,
-                            description=f"write ADC configuration of “{node}”")
+        await self._request(
+            message, description=f"write ADC configuration of “{node}”"
+        )
 
     # --------------------------------
     # - Get/Set Sensor Configuration -
@@ -2154,30 +2292,33 @@ class Network:
 
         """
 
-        message = Message(block='Configuration',
-                          block_command=0x01,
-                          sender='SPU 1',
-                          receiver='STH 1',
-                          request=True,
-                          data=[0] * 8)
+        message = Message(
+            block="Configuration",
+            block_command=0x01,
+            sender="SPU 1",
+            receiver="STH 1",
+            request=True,
+            data=[0] * 8,
+        )
 
-        node = 'STH 1'
+        node = "STH 1"
 
         try:
             response = await self._request(
-                message, description=f"read sensor configuration of “{node}”")
+                message, description=f"read sensor configuration of “{node}”"
+            )
         except ErrorResponseError as error:
             raise UnsupportedFeatureException(
-                "Reading sensor configuration not supported") from error
+                "Reading sensor configuration not supported"
+            ) from error
 
         channels = response.data[1:4]
 
         return SensorConfig(*channels)
 
-    async def write_sensor_configuration(self,
-                                         first: int = 0,
-                                         second: int = 0,
-                                         third: int = 0) -> None:
+    async def write_sensor_configuration(
+        self, first: int = 0, second: int = 0, third: int = 0
+    ) -> None:
         """Change the sensor numbers for the different measurement channels
 
         If you use the sensor number `0` for one of the different measurement
@@ -2197,36 +2338,42 @@ class Network:
 
         """
 
-        for channel, sensor in zip(("first", "second", "third"),
-                                   (first, second, third)):
+        for channel, sensor in zip(
+            ("first", "second", "third"), (first, second, third)
+        ):
             if not isinstance(sensor, int) or sensor < 0 or sensor > 255:
                 raise ValueError(
-                    f"Incorrect value for argument {channel}: {sensor}")
+                    f"Incorrect value for argument {channel}: {sensor}"
+                )
 
-        node = 'STH 1'
+        node = "STH 1"
 
         data = [0b1000_0000, first, second, third, *(4 * [0])]
-        message = Message(block='Configuration',
-                          block_command=0x01,
-                          sender='SPU 1',
-                          receiver=node,
-                          request=True,
-                          data=data)
+        message = Message(
+            block="Configuration",
+            block_command=0x01,
+            sender="SPU 1",
+            receiver=node,
+            request=True,
+            data=data,
+        )
 
         try:
             await self._request(
-                message, description=f"set sensor configuration of “{node}”")
+                message, description=f"set sensor configuration of “{node}”"
+            )
         except ErrorResponseError as error:
             raise UnsupportedFeatureException(
-                "Writing sensor configuration not supported") from error
+                "Writing sensor configuration not supported"
+            ) from error
 
     # ---------------------------
     # - Calibration Measurement -
     # ---------------------------
 
-    async def _acceleration_self_test(self,
-                                      activate: bool = True,
-                                      dimension: str = 'x') -> None:
+    async def _acceleration_self_test(
+        self, activate: bool = True, dimension: str = "x"
+    ) -> None:
         """Activate/Deactivate the accelerometer self test
 
         Parameters
@@ -2241,31 +2388,38 @@ class Network:
             activated/deactivated.
 
         """
-        node = 'STH 1'
-        method = 'Activate' if activate else 'Deactivate'
+        node = "STH 1"
+        method = "Activate" if activate else "Deactivate"
 
         try:
             dimension_number = "xyz".index(dimension) + 1
         except ValueError:
             raise ValueError(f"Invalid dimension value: “{dimension}”")
 
-        message = Message(block='Configuration',
-                          block_command='Calibration Measurement',
-                          sender=self.sender,
-                          receiver=node,
-                          request=True,
-                          data=CalibrationMeasurementFormat(
-                              set=True,
-                              element='Data',
-                              method=method,
-                              dimension=dimension_number).data)
+        message = Message(
+            block="Configuration",
+            block_command="Calibration Measurement",
+            sender=self.sender,
+            receiver=node,
+            request=True,
+            data=CalibrationMeasurementFormat(
+                set=True,
+                element="Data",
+                method=method,
+                dimension=dimension_number,
+            ).data,
+        )
 
-        await self._request(message,
-                            description=f"{method.lower()} self test of "
-                            f"{dimension}-axis of “{node}”")
+        await self._request(
+            message,
+            description=(
+                f"{method.lower()} self test of {dimension}-axis of “{node}”"
+            ),
+        )
 
-    async def activate_acceleration_self_test(self,
-                                              dimension: str = 'x') -> None:
+    async def activate_acceleration_self_test(
+        self, dimension: str = "x"
+    ) -> None:
         """Activate self test of STH accelerometer
 
         Parameters
@@ -2279,8 +2433,9 @@ class Network:
 
         await self._acceleration_self_test(activate=True, dimension=dimension)
 
-    async def deactivate_acceleration_self_test(self,
-                                                dimension: str = 'x') -> None:
+    async def deactivate_acceleration_self_test(
+        self, dimension: str = "x"
+    ) -> None:
         """Deactivate self test of STH accelerometer
 
         Parameters
@@ -2295,9 +2450,8 @@ class Network:
         await self._acceleration_self_test(activate=False, dimension=dimension)
 
     async def read_acceleration_voltage(
-            self,
-            dimension: str = 'x',
-            reference_voltage: float = 3.3) -> float:
+        self, dimension: str = "x", reference_voltage: float = 3.3
+    ) -> float:
         """Retrieve the current voltage in Volt
 
         Parameters
@@ -2344,34 +2498,40 @@ class Network:
         except ValueError:
             raise ValueError(f"Invalid dimension value: “{dimension}”")
 
-        node = 'STH 1'
-        message = Message(block='Configuration',
-                          block_command='Calibration Measurement',
-                          sender=self.sender,
-                          receiver=node,
-                          request=True,
-                          data=CalibrationMeasurementFormat(
-                              set=True,
-                              element='Data',
-                              method='Measure',
-                              reference_voltage=reference_voltage,
-                              dimension=dimension_number).data)
+        node = "STH 1"
+        message = Message(
+            block="Configuration",
+            block_command="Calibration Measurement",
+            sender=self.sender,
+            receiver=node,
+            request=True,
+            data=CalibrationMeasurementFormat(
+                set=True,
+                element="Data",
+                method="Measure",
+                reference_voltage=reference_voltage,
+                dimension=dimension_number,
+            ).data,
+        )
 
         response = await self._request(
-            message, description=f"retrieve acceleration voltage of “{node}”")
+            message, description=f"retrieve acceleration voltage of “{node}”"
+        )
 
-        adc_value = int.from_bytes(response.data[4:], 'little')
+        adc_value = int.from_bytes(response.data[4:], "little")
         return adc_value / ADC_MAX_VALUE * reference_voltage
 
     # ==========
     # = EEPROM =
     # ==========
 
-    async def read_eeprom(self,
-                          address: int,
-                          offset: int,
-                          length: int,
-                          node: Union[str, Node] = 'STU 1') -> List[int]:
+    async def read_eeprom(
+        self,
+        address: int,
+        offset: int,
+        length: int,
+        node: Union[str, Node] = "STU 1",
+    ) -> List[int]:
         """Read EEPROM data
 
         Parameters
@@ -2420,14 +2580,17 @@ class Network:
         while length > 0:
             # Read at most 4 bytes of data at once
             read_length = 4 if length > 4 else length
-            message = Message(block='EEPROM',
-                              block_command='Read',
-                              sender=self.sender,
-                              receiver=Node(node),
-                              request=True,
-                              data=[address, offset, read_length, *reserved])
+            message = Message(
+                block="EEPROM",
+                block_command="Read",
+                sender=self.sender,
+                receiver=Node(node),
+                request=True,
+                data=[address, offset, read_length, *reserved],
+            )
             response = await self._request(
-                message, description=f"read EEPROM data from “{node}”")
+                message, description=f"read EEPROM data from “{node}”"
+            )
 
             data_end = data_start + read_length
             read_data.extend(response.data[data_start:data_end])
@@ -2436,10 +2599,9 @@ class Network:
 
         return read_data
 
-    async def read_eeprom_float(self,
-                                address: int,
-                                offset: int,
-                                node: Union[str, Node] = 'STU 1') -> float:
+    async def read_eeprom_float(
+        self, address: int, offset: int, node: Union[str, Node] = "STU 1"
+    ) -> float:
         """Read EEPROM data in float format
 
         Parameters
@@ -2484,14 +2646,16 @@ class Network:
         """
 
         data = await self.read_eeprom(address, offset, length=4, node=node)
-        return unpack('<f', bytearray(data))[0]
+        return unpack("<f", bytearray(data))[0]
 
-    async def read_eeprom_int(self,
-                              address: int,
-                              offset: int,
-                              length: int,
-                              signed: bool = False,
-                              node: Union[str, Node] = 'STU 1') -> int:
+    async def read_eeprom_int(
+        self,
+        address: int,
+        offset: int,
+        length: int,
+        signed: bool = False,
+        node: Union[str, Node] = "STU 1",
+    ) -> int:
         """Read an integer value from the EEPROM
 
         Parameters
@@ -2535,16 +2699,19 @@ class Network:
 
         """
 
-        return int.from_bytes(await self.read_eeprom(address, offset, length,
-                                                     node),
-                              'little',
-                              signed=True)
+        return int.from_bytes(
+            await self.read_eeprom(address, offset, length, node),
+            "little",
+            signed=True,
+        )
 
-    async def read_eeprom_text(self,
-                               address: int,
-                               offset: int,
-                               length: int,
-                               node: Union[str, Node] = 'STU 1') -> str:
+    async def read_eeprom_text(
+        self,
+        address: int,
+        offset: int,
+        length: int,
+        node: Union[str, Node] = "STU 1",
+    ) -> str:
         """Read EEPROM data in ASCII format
 
         Please note, that this function will only return the characters up
@@ -2592,12 +2759,14 @@ class Network:
         data = await self.read_eeprom(address, offset, length, node)
         return convert_bytes_to_text(data, until_null=True)
 
-    async def write_eeprom(self,
-                           address: int,
-                           offset: int,
-                           data: List[int],
-                           length: Optional[int] = None,
-                           node: Union[str, Node] = 'STU 1') -> None:
+    async def write_eeprom(
+        self,
+        address: int,
+        offset: int,
+        data: List[int],
+        length: Optional[int] = None,
+        node: Union[str, Node] = "STU 1",
+    ) -> None:
         """Write EEPROM data at the specified address
 
         Parameters
@@ -2660,23 +2829,27 @@ class Network:
 
             reserved = [0] * 1
             message = Message(
-                block='EEPROM',
-                block_command='Write',
+                block="EEPROM",
+                block_command="Write",
                 sender=self.sender,
                 receiver=Node(node),
                 request=True,
-                data=[address, offset, write_length, *reserved, *write_data])
-            await self._request(message,
-                                description=f"write EEPROM data in “{node}”")
+                data=[address, offset, write_length, *reserved, *write_data],
+            )
+            await self._request(
+                message, description=f"write EEPROM data in “{node}”"
+            )
 
             data = data[4:]
             offset += write_length
 
-    async def write_eeprom_float(self,
-                                 address: int,
-                                 offset: int,
-                                 value: float,
-                                 node: Union[str, Node] = 'STU 1') -> None:
+    async def write_eeprom_float(
+        self,
+        address: int,
+        offset: int,
+        value: float,
+        node: Union[str, Node] = "STU 1",
+    ) -> None:
         """Write a float value at the specified EEPROM address
 
         Parameters
@@ -2714,16 +2887,18 @@ class Network:
 
         """
 
-        data = list(pack('f', value))
+        data = list(pack("f", value))
         await self.write_eeprom(address, offset, data, node=node)
 
-    async def write_eeprom_int(self,
-                               address: int,
-                               offset: int,
-                               value: int,
-                               length: int,
-                               signed: bool = False,
-                               node: Union[str, Node] = 'STU 1') -> None:
+    async def write_eeprom_int(
+        self,
+        address: int,
+        offset: int,
+        value: int,
+        length: int,
+        signed: bool = False,
+        node: Union[str, Node] = "STU 1",
+    ) -> None:
         """Write an integer number at the specified EEPROM address
 
         Parameters
@@ -2768,15 +2943,17 @@ class Network:
 
         """
 
-        data = list(value.to_bytes(length, byteorder='little', signed=signed))
+        data = list(value.to_bytes(length, byteorder="little", signed=signed))
         await self.write_eeprom(address, offset, data, node=node)
 
-    async def write_eeprom_text(self,
-                                address: int,
-                                offset: int,
-                                text: str,
-                                length: int,
-                                node: Union[str, Node] = 'STU 1') -> None:
+    async def write_eeprom_text(
+        self,
+        address: int,
+        offset: int,
+        text: str,
+        length: int,
+        node: Union[str, Node] = "STU 1",
+    ) -> None:
         """Write a string at the specified EEPROM address
 
         Parameters
@@ -2825,9 +3002,9 @@ class Network:
     # = System Configuration =
     # ========================
 
-    async def read_eeprom_status(self,
-                                 node: Union[str,
-                                             Node] = 'STU 1') -> EEPROMStatus:
+    async def read_eeprom_status(
+        self, node: Union[str, Node] = "STU 1"
+    ) -> EEPROMStatus:
         """Retrieve EEPROM status byte
 
         Returns
@@ -2856,14 +3033,17 @@ class Network:
 
         """
 
-        return EEPROMStatus((await self.read_eeprom(address=0,
-                                                    offset=0,
-                                                    length=1,
-                                                    node=node)).pop())
+        return EEPROMStatus(
+            (
+                await self.read_eeprom(
+                    address=0, offset=0, length=1, node=node
+                )
+            ).pop()
+        )
 
-    async def write_eeprom_status(self,
-                                  value: Union[int, EEPROMStatus],
-                                  node: Union[str, Node] = 'STU 1') -> None:
+    async def write_eeprom_status(
+        self, value: Union[int, EEPROMStatus], node: Union[str, Node] = "STU 1"
+    ) -> None:
         """Change the value of the EEPROM status byte
 
         Parameters
@@ -2893,13 +3073,15 @@ class Network:
 
         """
 
-        await self.write_eeprom_int(address=0,
-                                    offset=0,
-                                    length=1,
-                                    value=EEPROMStatus(value).value,
-                                    node=node)
+        await self.write_eeprom_int(
+            address=0,
+            offset=0,
+            length=1,
+            value=EEPROMStatus(value).value,
+            node=node,
+        )
 
-    async def read_eeprom_name(self, node: Union[str, Node] = 'STU 1') -> str:
+    async def read_eeprom_name(self, node: Union[str, Node] = "STU 1") -> str:
         """Retrieve the name of the node from the EEPROM
 
         Parameters
@@ -2928,14 +3110,13 @@ class Network:
 
         """
 
-        return await self.read_eeprom_text(address=0,
-                                           offset=1,
-                                           length=8,
-                                           node=node)
+        return await self.read_eeprom_text(
+            address=0, offset=1, length=8, node=node
+        )
 
-    async def write_eeprom_name(self,
-                                name: str,
-                                node: Union[str, Node] = 'STU 1') -> None:
+    async def write_eeprom_name(
+        self, name: str, node: Union[str, Node] = "STU 1"
+    ) -> None:
         """Write the name of the node into the EEPROM
 
         Parameters
@@ -2963,11 +3144,9 @@ class Network:
 
         """
 
-        await self.write_eeprom_text(address=0,
-                                     offset=1,
-                                     text=name,
-                                     length=8,
-                                     node=node)
+        await self.write_eeprom_text(
+            address=0, offset=1, text=name, length=8, node=node
+        )
 
     async def read_eeprom_sleep_time_1(self) -> int:
         """Retrieve sleep time 1 from the EEPROM
@@ -2994,10 +3173,9 @@ class Network:
 
         """
 
-        return await self.read_eeprom_int(address=0,
-                                          offset=9,
-                                          length=4,
-                                          node='STH 1')
+        return await self.read_eeprom_int(
+            address=0, offset=9, length=4, node="STH 1"
+        )
 
     async def write_eeprom_sleep_time_1(self, milliseconds: int) -> None:
         """Write the value of sleep time 1 to the EEPROM
@@ -3025,11 +3203,9 @@ class Network:
 
         """
 
-        await self.write_eeprom_int(address=0,
-                                    offset=9,
-                                    value=milliseconds,
-                                    length=4,
-                                    node='STH 1')
+        await self.write_eeprom_int(
+            address=0, offset=9, value=milliseconds, length=4, node="STH 1"
+        )
 
     async def read_eeprom_advertisement_time_1(self) -> float:
         """Retrieve advertisement time 1 from the EEPROM
@@ -3058,12 +3234,13 @@ class Network:
 
         """
 
-        advertisement_time_eeprom = await self.read_eeprom_int(address=0,
-                                                               offset=13,
-                                                               length=2,
-                                                               node='STH 1')
-        return (advertisement_time_eeprom *
-                type(self).ADVERTISEMENT_TIME_EEPROM_TO_MS)
+        advertisement_time_eeprom = await self.read_eeprom_int(
+            address=0, offset=13, length=2, node="STH 1"
+        )
+        return (
+            advertisement_time_eeprom
+            * type(self).ADVERTISEMENT_TIME_EEPROM_TO_MS
+        )
 
     async def write_eeprom_advertisement_time_1(self, milliseconds: int):
         """Write the value of advertisement time 1 to the EEPROM
@@ -3093,13 +3270,16 @@ class Network:
         """
 
         advertisement_time_eeprom = round(
-            milliseconds / type(self).ADVERTISEMENT_TIME_EEPROM_TO_MS)
+            milliseconds / type(self).ADVERTISEMENT_TIME_EEPROM_TO_MS
+        )
 
-        await self.write_eeprom_int(address=0,
-                                    offset=13,
-                                    value=advertisement_time_eeprom,
-                                    length=2,
-                                    node='STH 1')
+        await self.write_eeprom_int(
+            address=0,
+            offset=13,
+            value=advertisement_time_eeprom,
+            length=2,
+            node="STH 1",
+        )
 
     async def read_eeprom_sleep_time_2(self) -> int:
         """Retrieve sleep time 2 from the EEPROM
@@ -3126,10 +3306,9 @@ class Network:
 
         """
 
-        return await self.read_eeprom_int(address=0,
-                                          offset=15,
-                                          length=4,
-                                          node='STH 1')
+        return await self.read_eeprom_int(
+            address=0, offset=15, length=4, node="STH 1"
+        )
 
     async def write_eeprom_sleep_time_2(self, milliseconds: int) -> None:
         """Write the value of sleep time 2 to the EEPROM
@@ -3157,11 +3336,9 @@ class Network:
 
         """
 
-        await self.write_eeprom_int(address=0,
-                                    offset=15,
-                                    value=milliseconds,
-                                    length=4,
-                                    node='STH 1')
+        await self.write_eeprom_int(
+            address=0, offset=15, value=milliseconds, length=4, node="STH 1"
+        )
 
     async def read_eeprom_advertisement_time_2(self) -> float:
         """Retrieve advertisement time 2 from the EEPROM
@@ -3188,13 +3365,14 @@ class Network:
 
         """
 
-        advertisement_time_eeprom = await self.read_eeprom_int(address=0,
-                                                               offset=19,
-                                                               length=2,
-                                                               node='STH 1')
+        advertisement_time_eeprom = await self.read_eeprom_int(
+            address=0, offset=19, length=2, node="STH 1"
+        )
 
-        return (advertisement_time_eeprom *
-                type(self).ADVERTISEMENT_TIME_EEPROM_TO_MS)
+        return (
+            advertisement_time_eeprom
+            * type(self).ADVERTISEMENT_TIME_EEPROM_TO_MS
+        )
 
     async def write_eeprom_advertisement_time_2(self, milliseconds: int):
         """Write the value of advertisement time 2 to the EEPROM
@@ -3224,19 +3402,22 @@ class Network:
         """
 
         advertisement_time_eeprom = round(
-            milliseconds / type(self).ADVERTISEMENT_TIME_EEPROM_TO_MS)
+            milliseconds / type(self).ADVERTISEMENT_TIME_EEPROM_TO_MS
+        )
 
-        await self.write_eeprom_int(address=0,
-                                    offset=19,
-                                    value=advertisement_time_eeprom,
-                                    length=2,
-                                    node='STH 1')
+        await self.write_eeprom_int(
+            address=0,
+            offset=19,
+            value=advertisement_time_eeprom,
+            length=2,
+            node="STH 1",
+        )
 
     # ================
     # = Product Data =
     # ================
 
-    async def read_eeprom_gtin(self, node: Union[str, Node] = 'STU 1') -> int:
+    async def read_eeprom_gtin(self, node: Union[str, Node] = "STU 1") -> int:
         """Read the global trade identifier number (GTIN) from the EEPROM
 
         Parameters
@@ -3266,14 +3447,13 @@ class Network:
 
         """
 
-        return await self.read_eeprom_int(address=4,
-                                          offset=0,
-                                          length=8,
-                                          node=node)
+        return await self.read_eeprom_int(
+            address=4, offset=0, length=8, node=node
+        )
 
-    async def write_eeprom_gtin(self,
-                                gtin: int,
-                                node: Union[str, Node] = 'STU 1') -> None:
+    async def write_eeprom_gtin(
+        self, gtin: int, node: Union[str, Node] = "STU 1"
+    ) -> None:
         """Write the global trade identifier number (GTIN) to the EEPROM
 
         Parameters
@@ -3301,15 +3481,13 @@ class Network:
 
         """
 
-        await self.write_eeprom_int(address=4,
-                                    offset=0,
-                                    length=8,
-                                    value=gtin,
-                                    node=node)
+        await self.write_eeprom_int(
+            address=4, offset=0, length=8, value=gtin, node=node
+        )
 
-    async def read_eeprom_hardware_version(self,
-                                           node: Union[str, Node] = 'STU 1'
-                                           ) -> Version:
+    async def read_eeprom_hardware_version(
+        self, node: Union[str, Node] = "STU 1"
+    ) -> Version:
         """Read the current hardware version from the EEPROM
 
         Parameters
@@ -3340,15 +3518,14 @@ class Network:
 
         """
 
-        major, minor, patch = await self.read_eeprom(address=4,
-                                                     offset=13,
-                                                     length=3,
-                                                     node=node)
+        major, minor, patch = await self.read_eeprom(
+            address=4, offset=13, length=3, node=node
+        )
         return Version(major=major, minor=minor, patch=patch)
 
-    async def write_eeprom_hardware_version(self,
-                                            version: Union[str, Version],
-                                            node: Union[str, Node] = 'STU 1'):
+    async def write_eeprom_hardware_version(
+        self, version: Union[str, Version], node: Union[str, Node] = "STU 1"
+    ):
         """Write hardware version to the EEPROM
 
         Parameters
@@ -3387,11 +3564,12 @@ class Network:
             offset=13,
             length=3,
             data=[version.major, version.minor, version.patch],
-            node=node)
+            node=node,
+        )
 
-    async def read_eeprom_firmware_version(self,
-                                           node: Union[str, Node] = 'STU 1'
-                                           ) -> Version:
+    async def read_eeprom_firmware_version(
+        self, node: Union[str, Node] = "STU 1"
+    ) -> Version:
         """Retrieve the current firmware version from the EEPROM
 
         Parameters
@@ -3422,16 +3600,14 @@ class Network:
 
         """
 
-        major, minor, patch = await self.read_eeprom(address=4,
-                                                     offset=21,
-                                                     length=3,
-                                                     node=node)
+        major, minor, patch = await self.read_eeprom(
+            address=4, offset=21, length=3, node=node
+        )
         return Version(major=major, minor=minor, patch=patch)
 
     async def write_eeprom_firmware_version(
-            self,
-            version: Union[str, Version],
-            node: Union[str, Node] = 'STU 1') -> None:
+        self, version: Union[str, Version], node: Union[str, Node] = "STU 1"
+    ) -> None:
         """Write firmware version to the EEPROM
 
         Parameters
@@ -3471,11 +3647,12 @@ class Network:
             offset=21,
             length=3,
             data=[version.major, version.minor, version.patch],
-            node=node)
+            node=node,
+        )
 
-    async def read_eeprom_release_name(self,
-                                       node: Union[str,
-                                                   Node] = 'STU 1') -> str:
+    async def read_eeprom_release_name(
+        self, node: Union[str, Node] = "STU 1"
+    ) -> str:
         """Retrieve the current release name from the EEPROM
 
         Parameters
@@ -3504,14 +3681,13 @@ class Network:
 
         """
 
-        return await self.read_eeprom_text(address=4,
-                                           offset=24,
-                                           length=8,
-                                           node=node)
+        return await self.read_eeprom_text(
+            address=4, offset=24, length=8, node=node
+        )
 
-    async def write_eeprom_release_name(self,
-                                        name: str,
-                                        node: Union[str, Node] = 'STU 1'):
+    async def write_eeprom_release_name(
+        self, name: str, node: Union[str, Node] = "STU 1"
+    ):
         """Write the release name to the EEPROM
 
         Parameters
@@ -3541,15 +3717,13 @@ class Network:
 
         """
 
-        await self.write_eeprom_text(address=4,
-                                     offset=24,
-                                     length=8,
-                                     text=name,
-                                     node=node)
+        await self.write_eeprom_text(
+            address=4, offset=24, length=8, text=name, node=node
+        )
 
-    async def read_eeprom_serial_number(self,
-                                        node: Union[str,
-                                                    Node] = 'STU 1') -> str:
+    async def read_eeprom_serial_number(
+        self, node: Union[str, Node] = "STU 1"
+    ) -> str:
         """Retrieve the serial number from the EEPROM
 
         Parameters
@@ -3580,14 +3754,13 @@ class Network:
 
         """
 
-        return await self.read_eeprom_text(address=4,
-                                           offset=32,
-                                           length=32,
-                                           node=node)
+        return await self.read_eeprom_text(
+            address=4, offset=32, length=32, node=node
+        )
 
-    async def write_eeprom_serial_number(self,
-                                         serial_number: str,
-                                         node: Union[str, Node] = 'STU 1'):
+    async def write_eeprom_serial_number(
+        self, serial_number: str, node: Union[str, Node] = "STU 1"
+    ):
         """Write the serial number to the EEPROM
 
         Parameters
@@ -3617,15 +3790,13 @@ class Network:
 
         """
 
-        await self.write_eeprom_text(address=4,
-                                     offset=32,
-                                     length=32,
-                                     text=serial_number,
-                                     node=node)
+        await self.write_eeprom_text(
+            address=4, offset=32, length=32, text=serial_number, node=node
+        )
 
-    async def read_eeprom_product_name(self,
-                                       node: Union[str,
-                                                   Node] = 'STU 1') -> str:
+    async def read_eeprom_product_name(
+        self, node: Union[str, Node] = "STU 1"
+    ) -> str:
         """Retrieve the product name from the EEPROM
 
         Parameters
@@ -3655,14 +3826,13 @@ class Network:
 
         """
 
-        return await self.read_eeprom_text(address=4,
-                                           offset=64,
-                                           length=128,
-                                           node=node)
+        return await self.read_eeprom_text(
+            address=4, offset=64, length=128, node=node
+        )
 
-    async def write_eeprom_product_name(self,
-                                        name: str,
-                                        node: Union[str, Node] = 'STU 1'):
+    async def write_eeprom_product_name(
+        self, name: str, node: Union[str, Node] = "STU 1"
+    ):
         """Write the product name to the EEPROM
 
         Parameters
@@ -3690,15 +3860,13 @@ class Network:
 
         """
 
-        await self.write_eeprom_text(address=4,
-                                     offset=64,
-                                     length=128,
-                                     text=name,
-                                     node=node)
+        await self.write_eeprom_text(
+            address=4, offset=64, length=128, text=name, node=node
+        )
 
-    async def read_eeprom_oem_data(self,
-                                   node: Union[str,
-                                               Node] = 'STU 1') -> List[int]:
+    async def read_eeprom_oem_data(
+        self, node: Union[str, Node] = "STU 1"
+    ) -> List[int]:
         """Retrieve the OEM data from the EEPROM
 
         Parameters
@@ -3728,14 +3896,13 @@ class Network:
 
         """
 
-        return await self.read_eeprom(address=4,
-                                      offset=192,
-                                      length=64,
-                                      node=node)
+        return await self.read_eeprom(
+            address=4, offset=192, length=64, node=node
+        )
 
-    async def write_eeprom_oem_data(self,
-                                    data: List[int],
-                                    node: Union[str, Node] = 'STU 1'):
+    async def write_eeprom_oem_data(
+        self, data: List[int], node: Union[str, Node] = "STU 1"
+    ):
         """Write OEM data to the EEPROM
 
         Parameters
@@ -3764,19 +3931,17 @@ class Network:
 
         """
 
-        await self.write_eeprom(address=4,
-                                offset=192,
-                                length=64,
-                                data=data,
-                                node=node)
+        await self.write_eeprom(
+            address=4, offset=192, length=64, data=data, node=node
+        )
 
     # ==============
     # = Statistics =
     # ==============
 
-    async def read_eeprom_power_on_cycles(self,
-                                          node: Union[str,
-                                                      Node] = 'STU 1') -> int:
+    async def read_eeprom_power_on_cycles(
+        self, node: Union[str, Node] = "STU 1"
+    ) -> int:
         """Retrieve the number of power on cycles from the EEPROM
 
         Parameters
@@ -3806,14 +3971,13 @@ class Network:
 
         """
 
-        return await self.read_eeprom_int(address=5,
-                                          offset=0,
-                                          length=4,
-                                          node=node)
+        return await self.read_eeprom_int(
+            address=5, offset=0, length=4, node=node
+        )
 
-    async def write_eeprom_power_on_cycles(self,
-                                           times: int,
-                                           node: Union[str, Node] = 'STU 1'):
+    async def write_eeprom_power_on_cycles(
+        self, times: int, node: Union[str, Node] = "STU 1"
+    ):
         """Write the number of power on cycles to the EEPROM
 
         Parameters
@@ -3841,15 +4005,13 @@ class Network:
 
         """
 
-        await self.write_eeprom_int(address=5,
-                                    offset=0,
-                                    length=4,
-                                    value=times,
-                                    node=node)
+        await self.write_eeprom_int(
+            address=5, offset=0, length=4, value=times, node=node
+        )
 
-    async def read_eeprom_power_off_cycles(self,
-                                           node: Union[str,
-                                                       Node] = 'STU 1') -> int:
+    async def read_eeprom_power_off_cycles(
+        self, node: Union[str, Node] = "STU 1"
+    ) -> int:
         """Retrieve the number of power off cycles from the EEPROM
 
         Parameters
@@ -3879,14 +4041,13 @@ class Network:
 
         """
 
-        return await self.read_eeprom_int(address=5,
-                                          offset=4,
-                                          length=4,
-                                          node=node)
+        return await self.read_eeprom_int(
+            address=5, offset=4, length=4, node=node
+        )
 
-    async def write_eeprom_power_off_cycles(self,
-                                            times: int,
-                                            node: Union[str, Node] = 'STU 1'):
+    async def write_eeprom_power_off_cycles(
+        self, times: int, node: Union[str, Node] = "STU 1"
+    ):
         """Write the number of power off cycles to the EEPROM
 
         Parameters
@@ -3914,15 +4075,13 @@ class Network:
 
         """
 
-        await self.write_eeprom_int(address=5,
-                                    offset=4,
-                                    length=4,
-                                    value=times,
-                                    node=node)
+        await self.write_eeprom_int(
+            address=5, offset=4, length=4, value=times, node=node
+        )
 
-    async def read_eeprom_operating_time(self,
-                                         node: Union[str,
-                                                     Node] = 'STU 1') -> int:
+    async def read_eeprom_operating_time(
+        self, node: Union[str, Node] = "STU 1"
+    ) -> int:
         """Retrieve the operating time from the EEPROM
 
         Parameters
@@ -3952,14 +4111,13 @@ class Network:
 
         """
 
-        return await self.read_eeprom_int(address=5,
-                                          offset=8,
-                                          length=4,
-                                          node=node)
+        return await self.read_eeprom_int(
+            address=5, offset=8, length=4, node=node
+        )
 
-    async def write_eeprom_operating_time(self,
-                                          seconds: int,
-                                          node: Union[str, Node] = 'STU 1'):
+    async def write_eeprom_operating_time(
+        self, seconds: int, node: Union[str, Node] = "STU 1"
+    ):
         """Write operating time to the EEPROM
 
         Parameters
@@ -3988,16 +4146,13 @@ class Network:
 
         """
 
-        await self.write_eeprom_int(address=5,
-                                    offset=8,
-                                    length=4,
-                                    value=seconds,
-                                    node=node)
+        await self.write_eeprom_int(
+            address=5, offset=8, length=4, value=seconds, node=node
+        )
 
-    async def read_eeprom_under_voltage_counter(self,
-                                                node: Union[str,
-                                                            Node] = 'STU 1'
-                                                ) -> int:
+    async def read_eeprom_under_voltage_counter(
+        self, node: Union[str, Node] = "STU 1"
+    ) -> int:
         """Retrieve the under voltage counter value from the EEPROM
 
         Parameters
@@ -4028,15 +4183,13 @@ class Network:
 
         """
 
-        return await self.read_eeprom_int(address=5,
-                                          offset=12,
-                                          length=4,
-                                          node=node)
+        return await self.read_eeprom_int(
+            address=5, offset=12, length=4, node=node
+        )
 
-    async def write_eeprom_under_voltage_counter(self,
-                                                 times: int,
-                                                 node: Union[str,
-                                                             Node] = 'STU 1'):
+    async def write_eeprom_under_voltage_counter(
+        self, times: int, node: Union[str, Node] = "STU 1"
+    ):
         """Write the under voltage counter value to the EEPROM
 
         Parameters
@@ -4066,16 +4219,13 @@ class Network:
 
         """
 
-        await self.write_eeprom_int(address=5,
-                                    offset=12,
-                                    length=4,
-                                    value=times,
-                                    node=node)
+        await self.write_eeprom_int(
+            address=5, offset=12, length=4, value=times, node=node
+        )
 
-    async def read_eeprom_watchdog_reset_counter(self,
-                                                 node: Union[str,
-                                                             Node] = 'STU 1'
-                                                 ) -> int:
+    async def read_eeprom_watchdog_reset_counter(
+        self, node: Union[str, Node] = "STU 1"
+    ) -> int:
         """Retrieve the watchdog reset counter value from the EEPROM
 
         Parameters
@@ -4106,16 +4256,13 @@ class Network:
 
         """
 
-        return await self.read_eeprom_int(address=5,
-                                          offset=16,
-                                          length=4,
-                                          node=node)
+        return await self.read_eeprom_int(
+            address=5, offset=16, length=4, node=node
+        )
 
-    async def write_eeprom_watchdog_reset_counter(self,
-                                                  times: int,
-                                                  node: Union[str,
-                                                              Node] = 'STU 1'
-                                                  ) -> None:
+    async def write_eeprom_watchdog_reset_counter(
+        self, times: int, node: Union[str, Node] = "STU 1"
+    ) -> None:
         """Write the watchdog reset counter value to the EEPROM
 
         Parameters
@@ -4145,15 +4292,13 @@ class Network:
 
         """
 
-        await self.write_eeprom_int(address=5,
-                                    offset=16,
-                                    length=4,
-                                    value=times,
-                                    node=node)
+        await self.write_eeprom_int(
+            address=5, offset=16, length=4, value=times, node=node
+        )
 
-    async def read_eeprom_production_date(self,
-                                          node: Union[str,
-                                                      Node] = 'STU 1') -> date:
+    async def read_eeprom_production_date(
+        self, node: Union[str, Node] = "STU 1"
+    ) -> date:
         """Retrieve the production date from the EEPROM
 
         Parameters
@@ -4183,18 +4328,18 @@ class Network:
 
         """
 
-        date_values = await self.read_eeprom_text(address=5,
-                                                  offset=20,
-                                                  length=8,
-                                                  node=node)
-        return date(year=int(date_values[0:4]),
-                    month=int(date_values[4:6]),
-                    day=int(date_values[6:8]))
+        date_values = await self.read_eeprom_text(
+            address=5, offset=20, length=8, node=node
+        )
+        return date(
+            year=int(date_values[0:4]),
+            month=int(date_values[4:6]),
+            day=int(date_values[6:8]),
+        )
 
     async def write_eeprom_production_date(
-            self,
-            date: Union[date, str],
-            node: Union[str, Node] = 'STU 1') -> None:
+        self, date: Union[date, str], node: Union[str, Node] = "STU 1"
+    ) -> None:
         """Write the production date to the EEPROM
 
         Parameters
@@ -4234,20 +4379,23 @@ class Network:
             # The identifier `date` refers to the variable `date` in the
             # current scope
             import datetime
+
             try:
                 date = datetime.date.fromisoformat(date)
             except ValueError:
                 raise ValueError(f"Invalid value for date argument: “{date}”")
 
-        await self.write_eeprom_text(address=5,
-                                     offset=20,
-                                     length=8,
-                                     text=str(date).replace("-", ""),
-                                     node=node)
+        await self.write_eeprom_text(
+            address=5,
+            offset=20,
+            length=8,
+            text=str(date).replace("-", ""),
+            node=node,
+        )
 
-    async def read_eeprom_batch_number(self,
-                                       node: Union[str,
-                                                   Node] = 'STU 1') -> int:
+    async def read_eeprom_batch_number(
+        self, node: Union[str, Node] = "STU 1"
+    ) -> int:
         """Retrieve the batch number from the EEPROM
 
         Parameters
@@ -4277,15 +4425,13 @@ class Network:
 
         """
 
-        return await self.read_eeprom_int(address=5,
-                                          offset=28,
-                                          length=4,
-                                          node=node)
+        return await self.read_eeprom_int(
+            address=5, offset=28, length=4, node=node
+        )
 
-    async def write_eeprom_batch_number(self,
-                                        number: int,
-                                        node: Union[str,
-                                                    Node] = 'STU 1') -> None:
+    async def write_eeprom_batch_number(
+        self, number: int, node: Union[str, Node] = "STU 1"
+    ) -> None:
         """Write the batch number to the EEPROM
 
         Parameters
@@ -4313,11 +4459,9 @@ class Network:
 
         """
 
-        await self.write_eeprom_int(address=5,
-                                    offset=28,
-                                    length=4,
-                                    value=number,
-                                    node=node)
+        await self.write_eeprom_int(
+            address=5, offset=28, length=4, value=number, node=node
+        )
 
     # ===============
     # = Calibration =
@@ -4355,10 +4499,11 @@ class Network:
 
         """
 
-        return await self.read_eeprom_float(address=8, offset=0, node='STH 1')
+        return await self.read_eeprom_float(address=8, offset=0, node="STH 1")
 
-    async def write_eeprom_x_axis_acceleration_slope(self,
-                                                     slope: float) -> None:
+    async def write_eeprom_x_axis_acceleration_slope(
+        self, slope: float
+    ) -> None:
         """Write the acceleration slope of the x-axis to the EEPROM
 
         Parameters
@@ -4391,10 +4536,9 @@ class Network:
 
         """
 
-        await self.write_eeprom_float(address=8,
-                                      offset=0,
-                                      value=slope,
-                                      node='STH 1')
+        await self.write_eeprom_float(
+            address=8, offset=0, value=slope, node="STH 1"
+        )
 
     async def read_eeprom_x_axis_acceleration_offset(self) -> float:
         """Retrieve the acceleration offset of the x-axis from the EEPROM
@@ -4428,10 +4572,11 @@ class Network:
 
         """
 
-        return await self.read_eeprom_float(address=8, offset=4, node='STH 1')
+        return await self.read_eeprom_float(address=8, offset=4, node="STH 1")
 
-    async def write_eeprom_x_axis_acceleration_offset(self,
-                                                      offset: int) -> None:
+    async def write_eeprom_x_axis_acceleration_offset(
+        self, offset: int
+    ) -> None:
         """Write the acceleration offset of the x-axis to the EEPROM
 
         Parameters
@@ -4469,10 +4614,9 @@ class Network:
 
         """
 
-        await self.write_eeprom_float(address=8,
-                                      offset=4,
-                                      value=offset,
-                                      node='STH 1')
+        await self.write_eeprom_float(
+            address=8, offset=4, value=offset, node="STH 1"
+        )
 
     async def read_eeprom_y_axis_acceleration_slope(self) -> float:
         """Retrieve the acceleration slope of the y-axis from the EEPROM
@@ -4506,10 +4650,11 @@ class Network:
 
         """
 
-        return await self.read_eeprom_float(address=8, offset=8, node='STH 1')
+        return await self.read_eeprom_float(address=8, offset=8, node="STH 1")
 
-    async def write_eeprom_y_axis_acceleration_slope(self,
-                                                     slope: float) -> None:
+    async def write_eeprom_y_axis_acceleration_slope(
+        self, slope: float
+    ) -> None:
         """Write the acceleration slope of the y-axis to the EEPROM
 
         Parameters
@@ -4548,10 +4693,9 @@ class Network:
 
         """
 
-        await self.write_eeprom_float(address=8,
-                                      offset=8,
-                                      value=slope,
-                                      node='STH 1')
+        await self.write_eeprom_float(
+            address=8, offset=8, value=slope, node="STH 1"
+        )
 
     async def read_eeprom_y_axis_acceleration_offset(self) -> float:
         """Retrieve the acceleration offset of the y-axis from the EEPROM
@@ -4579,10 +4723,11 @@ class Network:
 
         """
 
-        return await self.read_eeprom_float(address=8, offset=12, node='STH 1')
+        return await self.read_eeprom_float(address=8, offset=12, node="STH 1")
 
-    async def write_eeprom_y_axis_acceleration_offset(self,
-                                                      offset: int) -> None:
+    async def write_eeprom_y_axis_acceleration_offset(
+        self, offset: int
+    ) -> None:
         """Write the acceleration offset of the y-axis to the EEPROM
 
         Parameters
@@ -4614,10 +4759,9 @@ class Network:
 
         """
 
-        await self.write_eeprom_float(address=8,
-                                      offset=12,
-                                      value=offset,
-                                      node='STH 1')
+        await self.write_eeprom_float(
+            address=8, offset=12, value=offset, node="STH 1"
+        )
 
     async def read_eeprom_z_axis_acceleration_slope(self) -> float:
         """Retrieve the acceleration slope of the z-axis from the EEPROM
@@ -4651,10 +4795,11 @@ class Network:
 
         """
 
-        return await self.read_eeprom_float(address=8, offset=16, node='STH 1')
+        return await self.read_eeprom_float(address=8, offset=16, node="STH 1")
 
-    async def write_eeprom_z_axis_acceleration_slope(self,
-                                                     slope: float) -> None:
+    async def write_eeprom_z_axis_acceleration_slope(
+        self, slope: float
+    ) -> None:
         """Write the acceleration slope of the z-axis to the EEPROM
 
         Parameters
@@ -4693,10 +4838,9 @@ class Network:
 
         """
 
-        await self.write_eeprom_float(address=8,
-                                      offset=16,
-                                      value=slope,
-                                      node='STH 1')
+        await self.write_eeprom_float(
+            address=8, offset=16, value=slope, node="STH 1"
+        )
 
     async def read_eeprom_z_axis_acceleration_offset(self) -> float:
         """Retrieve the acceleration offset of the z-axis from the EEPROM
@@ -4724,10 +4868,11 @@ class Network:
 
         """
 
-        return await self.read_eeprom_float(address=8, offset=20, node='STH 1')
+        return await self.read_eeprom_float(address=8, offset=20, node="STH 1")
 
-    async def write_eeprom_z_axis_acceleration_offset(self,
-                                                      offset: int) -> None:
+    async def write_eeprom_z_axis_acceleration_offset(
+        self, offset: int
+    ) -> None:
         """Write the acceleration offset of the z-axis to the EEPROM
 
         Parameters
@@ -4759,10 +4904,9 @@ class Network:
 
         """
 
-        await self.write_eeprom_float(address=8,
-                                      offset=20,
-                                      value=offset,
-                                      node='STH 1')
+        await self.write_eeprom_float(
+            address=8, offset=20, value=offset, node="STH 1"
+        )
 
     async def read_acceleration_sensor_range_in_g(self) -> int:
         """Retrieve the maximum acceleration sensor range in multiples of g₀
@@ -4788,7 +4932,8 @@ class Network:
         """
 
         return round(
-            abs(await self.read_eeprom_x_axis_acceleration_offset()) * 2)
+            abs(await self.read_eeprom_x_axis_acceleration_offset()) * 2
+        )
 
     # ================
     # = Product Data =
@@ -4827,9 +4972,10 @@ class Network:
         response = await self._request_product_data(
             node=node,
             description=f"read GTIN of node “{node}”",
-            block_command="GTIN")
+            block_command="GTIN",
+        )
 
-        return int.from_bytes(response.data, byteorder='little')
+        return int.from_bytes(response.data, byteorder="little")
 
     async def get_hardware_version(self, node: Union[str, Node]) -> Version:
         """Retrieve the hardware version of a node
@@ -4864,7 +5010,8 @@ class Network:
         response = await self._request_product_data(
             node=node,
             description=f"read hardware version of node “{node}”",
-            block_command="Hardware Version")
+            block_command="Hardware Version",
+        )
 
         major, minor, patch = response.data[-3:]
         return Version(major=major, minor=minor, patch=patch)
@@ -4902,7 +5049,8 @@ class Network:
         response = await self._request_product_data(
             node=node,
             description=f"read firmware version of node “{node}”",
-            block_command="Firmware Version")
+            block_command="Firmware Version",
+        )
 
         major, minor, patch = response.data[-3:]
         return Version(major=major, minor=minor, patch=patch)
@@ -4939,7 +5087,8 @@ class Network:
         response = await self._request_product_data(
             node=node,
             description=f"read firmware release name of node “{node}”",
-            block_command="Release Name")
+            block_command="Release Name",
+        )
 
         release_name = convert_bytes_to_text(response.data, until_null=True)
         return release_name
@@ -4980,9 +5129,11 @@ class Network:
             """Retrieve a part of the serial number"""
             response = await self._request_product_data(
                 node=node,
-                description=(f"read part {part} of the serial number of "
-                             f"node “{node}”"),
-                block_command=f"Serial Number {part}")
+                description=(
+                    f"read part {part} of the serial number of node “{node}”"
+                ),
+                block_command=f"Serial Number {part}",
+            )
             return response.data
 
         serial_number_bytes = bytearray()
@@ -5027,9 +5178,11 @@ class Network:
             """Retrieve a part of the product name"""
             response = await self._request_product_data(
                 node=node,
-                description=(f"read part {part} of the product name of "
-                             f"node “{node}”"),
-                block_command=f"Product Name {part}")
+                description=(
+                    f"read part {part} of the product name of node “{node}”"
+                ),
+                block_command=f"Product Name {part}",
+            )
             return response.data
 
         product_name_bytes = bytearray()
@@ -5074,9 +5227,11 @@ class Network:
             """Retrieve a part of the OEM data"""
             response = await self._request_product_data(
                 node=node,
-                description=(f"read part {part} of the OEM data of "
-                             f"node “{node}”"),
-                block_command=f"OEM Free Use {part}")
+                description=(
+                    f"read part {part} of the OEM data of node “{node}”"
+                ),
+                block_command=f"OEM Free Use {part}",
+            )
             return response.data
 
         oem_data = bytearray()
@@ -5088,7 +5243,7 @@ class Network:
 
 # -- Main ---------------------------------------------------------------------
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     from doctest import run_docstring_examples, testmod
 
     # To debug a single doctest, please
@@ -5099,6 +5254,8 @@ if __name__ == '__main__':
     if run_all_doctests:
         testmod()
     else:
-        run_docstring_examples(Network.read_eeprom_y_axis_acceleration_slope,
-                               globals(),
-                               verbose=True)
+        run_docstring_examples(
+            Network.read_eeprom_y_axis_acceleration_slope,
+            globals(),
+            verbose=True,
+        )

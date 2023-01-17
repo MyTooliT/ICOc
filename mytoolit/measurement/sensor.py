@@ -113,6 +113,7 @@ def guess_sensor(values: Iterable[int]) -> Sensor:
 
 # -- Main ---------------------------------------------------------------------
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     from doctest import testmod
+
     testmod()

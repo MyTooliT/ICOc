@@ -47,10 +47,15 @@ class SensorConfig:
 
         """
 
-        return ", ".join((f"M{sensor}: S{value}"
-                          for sensor, value in enumerate(
-                              (self.first, self.second, self.third), start=1)
-                          if value != 0))
+        return ", ".join(
+            (
+                f"M{sensor}: S{value}"
+                for sensor, value in enumerate(
+                    (self.first, self.second, self.third), start=1
+                )
+                if value != 0
+            )
+        )
 
     def __repr__(self) -> str:
         """The textual representation of the sensor configuration
@@ -71,14 +76,18 @@ class SensorConfig:
 
         """
 
-        return ", ".join((f"M{sensor}: {f'S{value}' if value != 0 else 'None'}"
-                          for sensor, value in enumerate(
-                              (self.first, self.second, self.third), start=1)))
+        return ", ".join(
+            (
+                f"M{sensor}: {f'S{value}' if value != 0 else 'None'}"
+                for sensor, value in enumerate(
+                    (self.first, self.second, self.third), start=1
+                )
+            )
+        )
 
-    def disable_channel(self,
-                        first: bool = False,
-                        second: bool = False,
-                        third: bool = False):
+    def disable_channel(
+        self, first: bool = False, second: bool = False, third: bool = False
+    ):
         """Disable certain (measurement) channels
 
         Parameters
@@ -108,6 +117,7 @@ class SensorConfig:
 
 # -- Main ---------------------------------------------------------------------
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     from doctest import testmod
+
     testmod()

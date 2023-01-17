@@ -5,8 +5,14 @@ from pathlib import Path
 from typing import List
 
 from reportlab.lib.units import cm
-from reportlab.platypus import (Flowable, ListFlowable, Paragraph,
-                                SimpleDocTemplate, Spacer, Table)
+from reportlab.platypus import (
+    Flowable,
+    ListFlowable,
+    Paragraph,
+    SimpleDocTemplate,
+    Spacer,
+    Table,
+)
 from reportlab.rl_config import defaultPageSize
 
 from mytoolit.report.pdf import PDFImage
@@ -30,18 +36,21 @@ def _first_page(canvas, document, node):
     title_offset = logo_offset + logo_height + 20
 
     logo_filepath = Path("mytoolit") / "report" / "MyTooliT.pdf"
-    PDFImage(logo_filepath, logo_width,
-             logo_height).drawOn(canvas, (page_width - logo_width) / 2,
-                                 page_height - logo_offset - logo_height)
+    PDFImage(logo_filepath, logo_width, logo_height).drawOn(
+        canvas,
+        (page_width - logo_width) / 2,
+        page_height - logo_offset - logo_height,
+    )
 
     style = get_style_sheet()
 
     center_width = page_width / 2
 
-    heading1 = style['Heading1']
+    heading1 = style["Heading1"]
     canvas.setFont(heading1.fontName, heading1.fontSize)
-    canvas.drawCentredString(center_width, page_height - title_offset,
-                             f"{node} Test Report")
+    canvas.drawCentredString(
+        center_width, page_height - title_offset, f"{node} Test Report"
+    )
 
     canvas.restoreState()
 
@@ -54,7 +63,7 @@ class Report:
 
     story: List[Flowable]  # Improve happiness of PyCharm type checker
 
-    def __init__(self, node='Device'):
+    def __init__(self, node="Device"):
         """Initialize the report
 
         Parameters
@@ -69,11 +78,16 @@ class Report:
         self.node = node
         self.document = SimpleDocTemplate(
             str(Path(__file__).parent.parent.parent / f"{node} Test.pdf"),
-            author='MyTooliT',
-            title='Test Report',
-            subject='{} Test'.format('Sensory Tool Holder' if node == 'STH'
-                                     else 'Sensory Milling Head' if node ==
-                                     'SMH' else 'Stationary Transceiver Unit'))
+            author="MyTooliT",
+            title="Test Report",
+            subject="{} Test".format(
+                "Sensory Tool Holder"
+                if node == "STH"
+                else "Sensory Milling Head"
+                if node == "SMH"
+                else "Stationary Transceiver Unit"
+            ),
+        )
         self.story = [Spacer(1, 3 * cm)]
         self.styles = get_style_sheet()
 
@@ -93,7 +107,7 @@ class Report:
 
         """
 
-        self.story.append(Paragraph(text, style=self.styles['Heading2']))
+        self.story.append(Paragraph(text, style=self.styles["Heading2"]))
 
     def __add_table(self, data, column_widths=None):
         """Add a table at the current position in the document
@@ -110,7 +124,7 @@ class Report:
         """
 
         table = Table(data, colWidths=column_widths)
-        table.hAlign = 'LEFT'
+        table.hAlign = "LEFT"
         self.story.append(table)
 
     def add_attribute(self, name, value, node_attribute=True):
@@ -151,21 +165,26 @@ class Report:
 
         test = result.last_test
 
-        result_text = ("<font color='red'>Error</font>" if test.error() else
-                       ("<font color='orange'>Failure</font>" if
-                        test.failure() else "<font color='green'>Ok</font>"))
+        result_text = (
+            "<font color='red'>Error</font>"
+            if test.error()
+            else (
+                "<font color='orange'>Failure</font>"
+                if test.failure()
+                else "<font color='green'>Ok</font>"
+            )
+        )
 
         result_text = f"{description}: <b>{result_text}</b>"
         if test.message:
             test.message = f"{test.message}".replace("\n", "<br/>")
             result_text += f"<br/><br/><b>{test.message}</b><br/><br/>"
-        paragraph_result = Paragraph(result_text, style=self.styles['Normal'])
+        paragraph_result = Paragraph(result_text, style=self.styles["Normal"])
         self.tests.append(paragraph_result)
 
-    def add_checkbox_list(self,
-                          title: str,
-                          boxes: List[str],
-                          text_fields: int = 0) -> None:
+    def add_checkbox_list(
+        self, title: str, boxes: List[str], text_fields: int = 0
+    ) -> None:
         """Add a checkbox list to the report
 
         Parameters
@@ -203,11 +222,11 @@ class Report:
 
         if len(self.tests) > 0:
             self.__add_header("Test Results")
-            tests = ListFlowable(self.tests, bulletType='bullet')
+            tests = ListFlowable(self.tests, bulletType="bullet")
             self.story.append(tests)
 
         if len(self.checks) > 0:
-            title = Paragraph("Manual Checks", style=self.styles['Heading2'])
+            title = Paragraph("Manual Checks", style=self.styles["Heading2"])
             check_lists = [
                 checkbox_list.to_flowable() for checkbox_list in self.checks
             ]
@@ -233,26 +252,28 @@ class Report:
 
 # -- Main ---------------------------------------------------------------------
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     from platform import system
     from subprocess import run
 
     # Create a example test report
-    node = 'STH'
+    node = "STH"
     pdf_path = str(Path(__file__).parent.parent.parent / f"{node} Test.pdf")
     report = Report(node)
 
-    report.add_checkbox_list(title="Checkbox Title",
-                             boxes=["First box", "Second box"])
+    report.add_checkbox_list(
+        title="Checkbox Title", boxes=["First box", "Second box"]
+    )
 
     report.build()
 
     # Open the file to check the resulting PDF manually
-    if system() == 'Windows':
+    if system() == "Windows":
         # The function `startfile` is only available on Windows
         from os import startfile  # type: ignore
+
         startfile(pdf_path)
     else:
-        run([
-            "{}open".format("" if system() == 'Darwin' else "xdg-"), pdf_path
-        ])
+        run(
+            ["{}open".format("" if system() == "Darwin" else "xdg-"), pdf_path]
+        )

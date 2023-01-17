@@ -10,11 +10,14 @@ from pathlib import Path
 
 def main():
     parser = ArgumentParser(
-        description="Remove log and PDF files from the repository root")
-    parser.add_argument("-v",
-                        "--verbose",
-                        action="store_true",
-                        help="Print name of removed files")
+        description="Remove log and PDF files from the repository root"
+    )
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        action="store_true",
+        help="Print name of removed files",
+    )
     verbose = parser.parse_args().verbose
 
     repo_path = Path(__file__).parent.parent.parent
@@ -39,5 +42,5 @@ def main():
         remove(filepath)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

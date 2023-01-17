@@ -203,7 +203,8 @@ def device_number(value: str) -> int:
         return number
     except ValueError:
         raise ArgumentTypeError(
-            f"“{value}” is not a valid Bluetooth device number")
+            f"“{value}” is not a valid Bluetooth device number"
+        )
 
 
 def sth_name(name: str) -> str:
@@ -242,7 +243,7 @@ def sth_name(name: str) -> str:
     """
 
     try:
-        name.encode('ascii')
+        name.encode("ascii")
     except UnicodeEncodeError:
         raise ArgumentTypeError(f"“{name}” is not a valid STH name")
 
@@ -262,25 +263,29 @@ def add_identifier_arguments(parser: ArgumentParser) -> None:
 
     identifier_group = parser.add_mutually_exclusive_group(required=True)
 
-    identifier_group.add_argument('-n',
-                                  '--name',
-                                  dest='identifier',
-                                  metavar='NAME',
-                                  help="Name of sensor device",
-                                  default='Test-STH')
     identifier_group.add_argument(
-        '-m',
-        '--mac-address',
-        dest='identifier',
-        metavar='MAC_ADRESS',
+        "-n",
+        "--name",
+        dest="identifier",
+        metavar="NAME",
+        help="Name of sensor device",
+        default="Test-STH",
+    )
+    identifier_group.add_argument(
+        "-m",
+        "--mac-address",
+        dest="identifier",
+        metavar="MAC_ADRESS",
         help="Bluetooth MAC address of sensor device",
-        type=mac_address)
+        type=mac_address,
+    )
     identifier_group.add_argument(
-        '-d',
-        '--device-number',
-        dest='identifier',
-        metavar='DEVICE_NUMBER',
-        help="Bluetooth device number of sensor device")
+        "-d",
+        "--device-number",
+        dest="identifier",
+        metavar="DEVICE_NUMBER",
+        help="Bluetooth device number of sensor device",
+    )
 
 
 def parse_arguments() -> Namespace:
@@ -295,56 +300,59 @@ def parse_arguments() -> Namespace:
 
     parser = ArgumentParser(description="ICOtronic CLI tool")
 
-    subparsers = parser.add_subparsers(required=True,
-                                       title="Subcommands",
-                                       dest="subcommand")
+    subparsers = parser.add_subparsers(
+        required=True, title="Subcommands", dest="subcommand"
+    )
 
     # ========
     # = List =
     # ========
 
-    subparsers.add_parser('list', help='List sensor devices')
+    subparsers.add_parser("list", help="List sensor devices")
 
     # ===========
     # = Measure =
     # ===========
 
-    measurement_parser = subparsers.add_parser('measure',
-                                               help='Store measurement data')
+    measurement_parser = subparsers.add_parser(
+        "measure", help="Store measurement data"
+    )
     add_identifier_arguments(measurement_parser)
 
     # ==========
     # = Rename =
     # ==========
 
-    rename_parser = subparsers.add_parser('rename',
-                                          help='Rename a sensor device')
+    rename_parser = subparsers.add_parser(
+        "rename", help="Rename a sensor device"
+    )
     add_identifier_arguments(rename_parser)
-    rename_parser.add_argument('name',
-                               type=str,
-                               help='New name of STH',
-                               nargs='?',
-                               default='Test-STH')
+    rename_parser.add_argument(
+        "name", type=str, help="New name of STH", nargs="?", default="Test-STH"
+    )
 
     # =======
     # = STU =
     # =======
 
     stu_parser = subparsers.add_parser(
-        'stu', help='Execute commands related to stationary receiver unit')
+        "stu", help="Execute commands related to stationary receiver unit"
+    )
 
-    stu_subparsers = stu_parser.add_subparsers(required=True,
-                                               title="Subcommands",
-                                               dest="stu_subcommand")
-    stu_subparsers.add_parser('ota',
-                              help='Enable “over the air” (OTA) update mode')
-    stu_subparsers.add_parser('mac', help='Show Bluetooth MAC address')
+    stu_subparsers = stu_parser.add_subparsers(
+        required=True, title="Subcommands", dest="stu_subcommand"
+    )
+    stu_subparsers.add_parser(
+        "ota", help="Enable “over the air” (OTA) update mode"
+    )
+    stu_subparsers.add_parser("mac", help="Show Bluetooth MAC address")
 
     return parser.parse_args()
 
 
 # -- Main ---------------------------------------------------------------------
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     from doctest import testmod
+
     testmod()

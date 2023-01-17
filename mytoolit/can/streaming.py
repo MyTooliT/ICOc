@@ -3,8 +3,15 @@
 from __future__ import annotations
 
 from asyncio import Queue
-from typing import (AsyncIterator, Awaitable, Callable, List, Optional, Tuple,
-                    Union)
+from typing import (
+    AsyncIterator,
+    Awaitable,
+    Callable,
+    List,
+    Optional,
+    Tuple,
+    Union,
+)
 
 from can import Listener, Message
 from pint import Quantity
@@ -38,11 +45,13 @@ class AsyncStreamBuffer(Listener):
         """
 
         # Expected identifier of received streaming messages
-        self.identifier = Identifier(block='Streaming',
-                                     block_command='Data',
-                                     sender='STH 1',
-                                     receiver='SPU 1',
-                                     request=False)
+        self.identifier = Identifier(
+            block="Streaming",
+            block_command="Data",
+            sender="STH 1",
+            receiver="SPU 1",
+            request=False,
+        )
         self.first = first
         self.second = second
         self.third = third
@@ -89,9 +98,11 @@ class AsyncStreamBuffer(Listener):
         data = message.data
         timestamp = message.timestamp
         raw_values = [
-            TimestampedValue(value=int.from_bytes(word, byteorder='little'),
-                             timestamp=timestamp,
-                             counter=data[1])
+            TimestampedValue(
+                value=int.from_bytes(word, byteorder="little"),
+                timestamp=timestamp,
+                counter=data[1],
+            )
             for word in (data[2:4], data[4:6], data[6:8])
         ]
 
@@ -141,8 +152,11 @@ class StreamingFormat:
         second: Optional[bool] = None,
         third: Optional[bool] = None,
         sets: Optional[int] = None,
-        value_explanations: Tuple[str, str,
-                                  str] = ("Value 1", "Value 2", "Value 3")
+        value_explanations: Tuple[str, str, str] = (
+            "Value 1",
+            "Value 2",
+            "Value 3",
+        ),
     ) -> None:
         """Initialize the streaming format using the given arguments
 
@@ -187,7 +201,7 @@ class StreamingFormat:
         def set_part(start, width, number):
             """Store bit pattern number at bit start of the identifier"""
 
-            streaming_ones = 0xff
+            streaming_ones = 0xFF
             mask = (1 << width) - 1
 
             # Set all bits for targeted part to 0
@@ -266,9 +280,13 @@ class StreamingFormat:
         streaming = self.value >> 7
 
         data_sets = self.data_sets()
-        data_set_explanation = ("Stop Stream"
-                                if data_sets == 0 else "{} Data Set{}".format(
-                                    data_sets, "" if data_sets == 1 else "s"))
+        data_set_explanation = (
+            "Stop Stream"
+            if data_sets == 0
+            else "{} Data Set{}".format(
+                data_sets, "" if data_sets == 1 else "s"
+            )
+        )
 
         parts = [
             "Streaming" if streaming else "Single Request",
@@ -284,12 +302,15 @@ class StreamingFormat:
 
         selected_values = [
             f"Read {value_explanation}"
-            for selected, value_explanation in zip((
-                first, second, third), self.value_explanations) if selected
+            for selected, value_explanation in zip(
+                (first, second, third), self.value_explanations
+            )
+            if selected
         ]
 
-        value_explanation = (", ".join(selected_values)
-                             if selected_values else "")
+        value_explanation = (
+            ", ".join(selected_values) if selected_values else ""
+        )
         if value_explanation:
             parts.append(value_explanation)
 
@@ -373,10 +394,11 @@ class StreamingFormatVoltage(StreamingFormat):
 
         """
 
-        super().__init__(*arguments,
-                         **keyword_arguments,
-                         value_explanations=("Voltage 1", "Voltage 2",
-                                             "Voltage 3"))
+        super().__init__(
+            *arguments,
+            **keyword_arguments,
+            value_explanations=("Voltage 1", "Voltage 2", "Voltage 3"),
+        )
 
     def __repr__(self) -> str:
         """Retrieve the textual representation of the voltage streaming format
@@ -405,10 +427,12 @@ class StreamingFormatVoltage(StreamingFormat):
 class TimestampedValue:
     """Store a single (streaming) value and its timestamp"""
 
-    def __init__(self,
-                 timestamp: float,
-                 value: Union[float, Quantity],
-                 counter: Optional[int] = None) -> None:
+    def __init__(
+        self,
+        timestamp: float,
+        value: Union[float, Quantity],
+        counter: Optional[int] = None,
+    ) -> None:
         """Initialize the timestamped value using the given arguments
 
         Parameters
@@ -462,8 +486,11 @@ class TimestampedValue:
 
         """
 
-        value = (f"{self.value:~}"
-                 if isinstance(self.value, Quantity) else str(self.value))
+        value = (
+            f"{self.value:~}"
+            if isinstance(self.value, Quantity)
+            else str(self.value)
+        )
         counter = "" if self.counter is None else f" ({self.counter})"
 
         return f"{value}@{self.timestamp}{counter}"
@@ -472,10 +499,12 @@ class TimestampedValue:
 class StreamingData:
     """Auxiliary class to store streaming data"""
 
-    def __init__(self,
-                 first: Optional[List[TimestampedValue]] = None,
-                 second: Optional[List[TimestampedValue]] = None,
-                 third: Optional[List[TimestampedValue]] = None) -> None:
+    def __init__(
+        self,
+        first: Optional[List[TimestampedValue]] = None,
+        second: Optional[List[TimestampedValue]] = None,
+        third: Optional[List[TimestampedValue]] = None,
+    ) -> None:
         """Initialize the streaming data using the given arguments
 
         Parameters
@@ -563,8 +592,9 @@ class StreamingData:
         """
 
         representation = []
-        for channel, data in enumerate((self.first, self.second, self.third),
-                                       start=1):
+        for channel, data in enumerate(
+            (self.first, self.second, self.third), start=1
+        ):
             representation.append(f"{channel}: {data}")
 
         return "\n".join(representation)
@@ -636,12 +666,13 @@ class StreamingData:
 
         return not (self.first or self.second or self.third)
 
-    def apply(self,
-              function: Callable[[Union[float, Quantity]], Union[float,
-                                                                 Quantity]],
-              first: bool = True,
-              second: bool = True,
-              third: bool = True) -> None:
+    def apply(
+        self,
+        function: Callable[[Union[float, Quantity]], Union[float, Quantity]],
+        first: bool = True,
+        second: bool = True,
+        third: bool = True,
+    ) -> None:
         """Apply a certain function to the streaming data
 
         Parameters
@@ -698,9 +729,11 @@ class StreamingData:
 
         def map_list(function, channel):
             return [
-                TimestampedValue(timestamped.timestamp,
-                                 function(timestamped.value),
-                                 timestamped.counter)
+                TimestampedValue(
+                    timestamped.timestamp,
+                    function(timestamped.value),
+                    timestamped.counter,
+                )
                 for timestamped in channel
             ]
 
@@ -714,6 +747,7 @@ class StreamingData:
 
 # -- Main ---------------------------------------------------------------------
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     from doctest import testmod
+
     testmod()

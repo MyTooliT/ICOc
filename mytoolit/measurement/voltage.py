@@ -8,8 +8,9 @@ from mytoolit.measurement.units import volt
 # -- Functions ----------------------------------------------------------------
 
 
-def convert_raw_to_supply_voltage(voltage_raw: int,
-                                  reference_voltage: float = 3.3) -> Quantity:
+def convert_raw_to_supply_voltage(
+    voltage_raw: int, reference_voltage: float = 3.3
+) -> Quantity:
     """Convert a raw 2 byte supply voltage value to a voltage value
 
     Parameters
@@ -47,12 +48,17 @@ def convert_raw_to_supply_voltage(voltage_raw: int,
     # take a look
     # [here](https://en.wikipedia.org/wiki/E_series_of_preferred_numbers).
     voltage_divider_factor = 5.7
-    return volt(voltage_raw * voltage_divider_factor * reference_voltage /
-                ADC_MAX_VALUE)
+    return volt(
+        voltage_raw
+        * voltage_divider_factor
+        * reference_voltage
+        / ADC_MAX_VALUE
+    )
 
 
 # -- Main ---------------------------------------------------------------------
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     from doctest import testmod
+
     testmod()

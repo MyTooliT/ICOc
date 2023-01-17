@@ -14,11 +14,13 @@ class State:
 
     """
 
-    def __init__(self,
-                 *value: int,
-                 mode: Optional[str] = None,
-                 location: Union[None, int, str] = None,
-                 state: Union[None, int, str] = None) -> None:
+    def __init__(
+        self,
+        *value: int,
+        mode: Optional[str] = None,
+        location: Union[None, int, str] = None,
+        state: Union[None, int, str] = None,
+    ) -> None:
         """Initialize the node status word using the given arguments
 
         Parameters
@@ -50,7 +52,7 @@ class State:
         def set_part(start, width, number):
             """Store bit pattern number at bit start of the identifier"""
 
-            state_ones = 0xff
+            state_ones = 0xFF
             mask = (1 << width) - 1
 
             # Set all bits for targeted part to 0
@@ -67,10 +69,10 @@ class State:
         # ========
 
         if mode is not None:
-            if mode not in {'Get', 'Set'}:
+            if mode not in {"Get", "Set"}:
                 raise ValueError(f"Unknown mode “{mode}”")
 
-            set_part(start=7, width=1, number=int(mode == 'Set'))
+            set_part(start=7, width=1, number=int(mode == "Set"))
 
         # ============
         # = Location =
@@ -226,7 +228,8 @@ class State:
 
         attributes = [
             "{} State".format("Set" if self.is_set() else "Get"),
-            f"Location: {self.location_name()}", f"State: {self.state_name()}"
+            f"Location: {self.location_name()}",
+            f"State: {self.state_name()}",
         ]
 
         return ", ".join(attributes)
@@ -280,7 +283,7 @@ class NodeStatus:
 
         attributes = [
             f"State: {self.state_name()}",
-            f"{'' if self.error() else 'No '}Error"
+            f"{'' if self.error() else 'No '}Error",
         ]
 
         return ", ".join(attributes)
@@ -330,7 +333,6 @@ class NodeStatus:
 
 
 class NodeStatusSTH(NodeStatus):
-
     def __init__(self, value: Union[List[int], int]) -> None:
         """Initialize the node status word using the given arguments
 
@@ -365,7 +367,6 @@ class NodeStatusSTH(NodeStatus):
 
 
 class NodeStatusSTU(NodeStatus):
-
     def __init__(self, value: Union[List[int], int]) -> None:
         """Initialize the node status word using the given arguments
 
@@ -404,11 +405,14 @@ class NodeStatusSTU(NodeStatus):
         attributes = [
             super().__repr__(),
             "Radio Port {}".format(
-                "Enabled" if radio_port_enabled else "Disabled"),
+                "Enabled" if radio_port_enabled else "Disabled"
+            ),
             "CAN Port {}".format(
-                "Enabled" if can_port_enabled else "Disabled"),
+                "Enabled" if can_port_enabled else "Disabled"
+            ),
             "Bluetooth {}".format(
-                "Connected" if bluetooth_connected else "Disconnected"),
+                "Connected" if bluetooth_connected else "Disconnected"
+            ),
         ]
 
         return ", ".join(attributes)
@@ -578,6 +582,7 @@ class ErrorStatusSTU(ErrorStatus):
 
 # -- Main ---------------------------------------------------------------------
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     from doctest import testmod
+
     testmod()
