@@ -432,7 +432,7 @@ class TimestampedValue:
         self,
         timestamp: float,
         value: Union[float, Quantity],
-        counter: Optional[int] = None,
+        counter: int,
     ) -> None:
         """Initialize the timestamped value using the given arguments
 
@@ -449,7 +449,7 @@ class TimestampedValue:
             - value including a given unit and optional quantity
 
         counter:
-            The optional message counter of the data
+            The message counter of the data
 
         """
 
@@ -468,22 +468,17 @@ class TimestampedValue:
         Examples
         --------
 
-        >>> TimestampedValue(timestamp=123, value=444)
-        444@123
-        >>> TimestampedValue(timestamp=20, value=10)
-        10@20
-
-        >>> TimestampedValue(timestamp=1337, value=123, counter=1)
-        123@1337 (1)
-        >>> TimestampedValue(timestamp=1338, value=10, counter=3)
-        10@1338 (3)
-
         >>> from mytoolit.measurement import celsius, g0
 
-        >>> TimestampedValue(timestamp=5, value=g0(10))
-        10 g_0@5
-        >>> TimestampedValue(timestamp=5, value=celsius(10))
-        10 °C@5
+        >>> TimestampedValue(timestamp=123, value=444, counter=1)
+        444@123 (1)
+        >>> TimestampedValue(timestamp=20, value=10, counter=10)
+        10@20 (10)
+
+        >>> TimestampedValue(timestamp=5, value=g0(10), counter=5)
+        10 g_0@5 (5)
+        >>> TimestampedValue(timestamp=5, value=celsius(10), counter=20)
+        10 °C@5 (20)
 
         """
 
@@ -492,9 +487,8 @@ class TimestampedValue:
             if isinstance(self.value, Quantity)
             else str(self.value)
         )
-        counter = "" if self.counter is None else f" ({self.counter})"
 
-        return f"{value}@{self.timestamp}{counter}"
+        return f"{value}@{self.timestamp} ({self.counter})"
 
     def default(self) -> Dict[str, Union[float, int, str]]:
         """Serialize the timestamped value
@@ -519,8 +513,11 @@ class TimestampedValue:
         {'timestamp': 123, 'value': 2, 'unit': 'standard_gravity',
          'counter': 1}
 
-        >>> dumps(TimestampedValue(timestamp=5, value=celsius(10)).default())
-        '{"timestamp": 5, "value": 10, "unit": "degree_Celsius"}'
+        >>> timestamped = TimestampedValue(timestamp=5, value=celsius(10),
+        ...                                counter=20)
+        >>> dumps(timestamped.default()) # doctest:+NORMALIZE_WHITESPACE
+        '{"timestamp": 5, "value": 10, "unit": "degree_Celsius",
+          "counter": 20}'
 
         """
 
@@ -533,8 +530,7 @@ class TimestampedValue:
             serialized["unit"] = f"{value.units}"
         else:
             serialized["value"] = value
-        if self.counter is not None:
-            serialized["counter"] = self.counter
+        serialized["counter"] = self.counter
 
         return serialized
 
@@ -583,15 +579,15 @@ class StreamingData:
         Examples
         --------
 
-        >>> value1 = TimestampedValue(timestamp=1, value=1)
-        >>> value2 = TimestampedValue(timestamp=2, value=2)
-        >>> value3 = TimestampedValue(timestamp=3, value=3)
+        >>> value1 = TimestampedValue(timestamp=1, value=1, counter=1)
+        >>> value2 = TimestampedValue(timestamp=2, value=2, counter=2)
+        >>> value3 = TimestampedValue(timestamp=3, value=3, counter=3)
         >>> data = StreamingData([value1], [], [value2, value3])
         >>> collected = []
         >>> for channel in data:
         ...     collected.extend(channel)
         >>> collected
-        [1@1, 2@2, 3@3]
+        [1@1 (1), 2@2 (2), 3@3 (3)]
 
         """
 
@@ -620,13 +616,13 @@ class StreamingData:
         Examples
         --------
 
-        >>> value1 = TimestampedValue(timestamp=1, value=1)
-        >>> value2 = TimestampedValue(timestamp=2, value=2)
-        >>> value3 = TimestampedValue(timestamp=3, value=3)
+        >>> value1 = TimestampedValue(timestamp=1, value=1, counter=1)
+        >>> value2 = TimestampedValue(timestamp=2, value=2, counter=2)
+        >>> value3 = TimestampedValue(timestamp=3, value=3, counter=3)
         >>> StreamingData([], [], [value1, value2, value3])
         1: []
         2: []
-        3: [1@1, 2@2, 3@3]
+        3: [1@1 (1), 2@2 (2), 3@3 (3)]
 
         >>> value1 = TimestampedValue(timestamp=1, value=1, counter=10)
         >>> value2 = TimestampedValue(timestamp=2, value=2, counter=11)
@@ -649,10 +645,8 @@ class StreamingData:
     def is_homogeneous(self) -> bool:
         """Check if the streaming data for every channel is homogeneous
 
-        The data for a channel is considered homogeneous, if:
-
-        - either all values contain a message counter or none do and
-        - all values have the same data type
+        The data for a channel is considered homogeneous, if all values have
+        the same data type (either `float` or `Quantity`)
 
         Returns
         -------
@@ -666,20 +660,27 @@ class StreamingData:
 
         >>> value1 = TimestampedValue(timestamp=1, value=1, counter=10)
         >>> value2 = TimestampedValue(timestamp=2, value=2, counter=11)
-        >>> value3 = TimestampedValue(timestamp=3, value=3)
-        >>> value4 = TimestampedValue(timestamp=3, value=3)
-        >>> value5 = TimestampedValue(timestamp=3, value=celsius(3))
+        >>> value3 = TimestampedValue(timestamp=3, value=celsius(3),
+        ...                           counter=12)
+        >>> value4 = TimestampedValue(timestamp=3, value=celsius(-2),
+        ...                           counter=13)
+
+        All values have same data type
 
         >>> StreamingData([value1], [],
-        ...               [value3, value4, value3]).is_homogeneous()
+        ...               [value2, value1]).is_homogeneous()
         True
-        >>> StreamingData([value1, value3], [],
-        ...               [value3, value4, value3]).is_homogeneous()
+
+        Values for one channel have different data type
+
+        >>> StreamingData([value1, value3], [], []).is_homogeneous()
         False
-        >>> StreamingData([value5], [], [value3]).is_homogeneous()
+
+        Values of each channel have same data type
+
+        >>> StreamingData([value1, value2], [],
+        ...               [value3, value4]).is_homogeneous()
         True
-        >>> StreamingData([], [], [value3, value5]).is_homogeneous()
-        False
 
         """
 
@@ -687,15 +688,9 @@ class StreamingData:
             if len(channel) <= 0:
                 continue
 
-            # Check value type & optional message counters
-            first = channel[0]
-            value_type_first = type(first.value)
-            counter_type_first = type(first.counter)
+            value_type_first = type(channel[0].value)
             for timestamped in channel[1:]:
-                if (
-                    type(timestamped.value) != value_type_first
-                    or type(timestamped.counter) != counter_type_first
-                ):
+                if type(timestamped.value) != value_type_first:
                     return False
 
         return True
@@ -799,14 +794,9 @@ class StreamingData:
                         timestamped.value for timestamped in channel
                     ]
 
-                if first.counter is not None:
-                    counters: List[int] = []
-
-                    # Counter value should exist, since data is homogenous
-                    for timestamped in channel:
-                        assert isinstance(timestamped.counter, int)
-                        counters.append(timestamped.counter)
-                    serialized_channel["counters"] = counters
+                serialized_channel["counters"] = [
+                    timestamped.counter for timestamped in channel
+                ]
             return serializable_compact
 
         # Non “compact” form
@@ -833,29 +823,29 @@ class StreamingData:
         Examples
         --------
 
-        >>> value11 = TimestampedValue(timestamp=11, value=11)
-        >>> value12 = TimestampedValue(timestamp=12, value=12)
-        >>> value13 = TimestampedValue(timestamp=13, value=13)
-        >>> value14 = TimestampedValue(timestamp=14, value=14)
-        >>> value21 = TimestampedValue(timestamp=21, value=21)
-        >>> value22 = TimestampedValue(timestamp=22, value=22)
-        >>> value31 = TimestampedValue(timestamp=31, value=31)
-        >>> value32 = TimestampedValue(timestamp=32, value=32)
-        >>> value33 = TimestampedValue(timestamp=33, value=33)
-        >>> value34 = TimestampedValue(timestamp=34, value=34)
+        >>> value11 = TimestampedValue(timestamp=11, value=11, counter=1)
+        >>> value12 = TimestampedValue(timestamp=12, value=12, counter=2)
+        >>> value13 = TimestampedValue(timestamp=13, value=13, counter=3)
+        >>> value14 = TimestampedValue(timestamp=14, value=14, counter=4)
+        >>> value21 = TimestampedValue(timestamp=21, value=21, counter=5)
+        >>> value22 = TimestampedValue(timestamp=22, value=22, counter=6)
+        >>> value31 = TimestampedValue(timestamp=31, value=31, counter=7)
+        >>> value32 = TimestampedValue(timestamp=32, value=32, counter=8)
+        >>> value33 = TimestampedValue(timestamp=33, value=33, counter=9)
+        >>> value34 = TimestampedValue(timestamp=34, value=34, counter=10)
 
         >>> data = StreamingData([value11, value12], [], [value31, value32])
         >>> other = StreamingData([value13, value14], [value21, value22],
         ...                       [value33, value34])
         >>> data.extend(other)
         >>> data
-        1: [11@11, 12@12, 13@13, 14@14]
-        2: [21@21, 22@22]
-        3: [31@31, 32@32, 33@33, 34@34]
+        1: [11@11 (1), 12@12 (2), 13@13 (3), 14@14 (4)]
+        2: [21@21 (5), 22@22 (6)]
+        3: [31@31 (7), 32@32 (8), 33@33 (9), 34@34 (10)]
         >>> other
-        1: [13@13, 14@14]
-        2: [21@21, 22@22]
-        3: [33@33, 34@34]
+        1: [13@13 (3), 14@14 (4)]
+        2: [21@21 (5), 22@22 (6)]
+        3: [33@33 (9), 34@34 (10)]
 
         """
 
@@ -880,7 +870,7 @@ class StreamingData:
         >>> StreamingData([], [], []).empty()
         True
         >>> StreamingData([], [],
-        ...               [TimestampedValue(timestamp=1, value=1)]).empty()
+        ...     [TimestampedValue(timestamp=1, value=1, counter=1)]).empty()
         False
 
         """
@@ -917,21 +907,21 @@ class StreamingData:
         Examples
         --------
 
-        >>> value11 = TimestampedValue(timestamp=11, value=11)
-        >>> value12 = TimestampedValue(timestamp=12, value=12)
-        >>> value13 = TimestampedValue(timestamp=13, value=13)
-        >>> value14 = TimestampedValue(timestamp=14, value=14)
+        >>> value11 = TimestampedValue(timestamp=11, value=11, counter=5)
+        >>> value12 = TimestampedValue(timestamp=12, value=12, counter=6)
+        >>> value13 = TimestampedValue(timestamp=13, value=13, counter=7)
+        >>> value14 = TimestampedValue(timestamp=14, value=14, counter=8)
 
         >>> data = StreamingData([value11, value12], [value13], [value14])
         >>> data
-        1: [11@11, 12@12]
-        2: [13@13]
-        3: [14@14]
+        1: [11@11 (5), 12@12 (6)]
+        2: [13@13 (7)]
+        3: [14@14 (8)]
         >>> data.apply(lambda value: value + 10)
         >>> data
-        1: [21@11, 22@12]
-        2: [23@13]
-        3: [24@14]
+        1: [21@11 (5), 22@12 (6)]
+        2: [23@13 (7)]
+        3: [24@14 (8)]
 
         >>> value11 = TimestampedValue(timestamp=11, value=11, counter=11)
         >>> value12 = TimestampedValue(timestamp=12, value=12, counter=12)
