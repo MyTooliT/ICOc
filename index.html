@@ -1578,7 +1578,12 @@ usbipd wsl list
 <span id="cb72-9"><a href="#cb72-9" aria-hidden="true" tabindex="-1"></a><span class="co"># …</span></span></code></pre></div></li>
 <li><p>Add virtual link for CAN device (Linux Shell)</p>
 <div class="sourceCode" id="cb73"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ip link set can0 type can bitrate 1000000</span>
-<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ip link set can0 up</span></code></pre></div></li>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ip link set can0 up</span></code></pre></div>
+<p><strong>Note</strong>: If the commands above fail with the error message:</p>
+<blockquote>
+<p>RTNETLINK answers: Connection timed out</p>
+</blockquote>
+<p>then please disconnect and connect the USB CAN adapter. After that attach it to the Linux VM again (see step <code>12</code>).</p></li>
 <li><p>Install <code>pip</code> (Linux Shell):</p>
 <div class="sourceCode" id="cb74"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install <span class="at">-y</span> python3-pip</span></code></pre></div></li>
 <li><p>Install ICOc (Linux Shell)</p>
