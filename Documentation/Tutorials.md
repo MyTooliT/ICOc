@@ -734,6 +734,12 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
     sudo ip link set can0 up
     ```
 
+    **Note**: If the commands above fail with the error message:
+
+    > RTNETLINK answers: Connection timed out
+
+    then please disconnect and connect the USB CAN adapter. After that attach it to the Linux VM again (see step `12`).
+
 15. Install `pip` (Linux Shell):
 
     ```sh
