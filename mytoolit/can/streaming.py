@@ -496,7 +496,7 @@ class TimestampedValue:
 
         return f"{value}@{self.timestamp}{counter}"
 
-    def default(self) -> Dict[str, Union[float, int, str, Quantity]]:
+    def default(self) -> Dict[str, Union[float, int, str]]:
         """Serialize the timestamped value
 
         Returns
@@ -524,7 +524,7 @@ class TimestampedValue:
 
         """
 
-        serialized: Dict[str, Union[float, int, str, Quantity]] = {
+        serialized: Dict[str, Union[float, str]] = {
             "timestamp": self.timestamp
         }
         value = self.value
@@ -703,8 +703,8 @@ class StreamingData:
     def default(
         self, compact: bool = False
     ) -> Union[
-        Dict[str, List[Dict[str, Union[float, int, str, Quantity]]]],
-        Dict[str, Dict[str, Union[List[int], str]]],
+        Dict[str, List[Dict[str, Union[float, int, str]]]],
+        Dict[str, Dict[str, Union[List[float], List[int], str]]],
     ]:
         """Serialize the streaming data
 
@@ -764,41 +764,57 @@ class StreamingData:
 
         """
 
-        if compact and not self.is_homogeneous():
-            raise NotHomogeneousException(
-                "Unable to serialize data in compact form"
-            )
+        if compact:
+            if not self.is_homogeneous():
+                raise NotHomogeneousException(
+                    "Unable to serialize data in compact form"
+                )
 
-        serializable = {}
-        for channel, key in zip(
-            (self.first, self.second, self.third), ("first", "second", "third")
-        ):
-            if len(channel) <= 0:
-                continue
+            serializable_compact: Dict[
+                str, Dict[str, Union[List[float], List[int], str]]
+            ] = {}
+            for channel, key in zip(
+                (self.first, self.second, self.third),
+                ("first", "second", "third"),
+            ):
+                if len(channel) <= 0:
+                    continue
 
-            if compact:
-                serializable[key] = {}
+                serializable_compact[key] = {}
+                serialized_channel = serializable_compact[key]
                 first = channel[0]
-                serializable[key]["timestamps"] = [
+                serialized_channel["timestamps"] = [
                     timestamped.timestamp for timestamped in channel
                 ]
 
                 if isinstance(first.value, Quantity):
-                    serializable[key]["values"] = [
-                        timestamped.value.magnitude for timestamped in channel
-                    ]
-                    serializable[key]["unit"] = f"{first.value.units}"
+                    values: List[float] = []
+                    for timestamped in channel:
+                        assert isinstance(timestamped.value, Quantity)
+                        values.append(timestamped.value.magnitude)
+                    serialized_channel["values"] = values
+                    serialized_channel["unit"] = f"{first.value.units}"
                 else:
-                    serializable[key]["values"] = [
+                    serialized_channel["values"] = [
                         timestamped.value for timestamped in channel
                     ]
 
                 if first.counter is not None:
-                    serializable[key]["counters"] = [
-                        timestamped.counter for timestamped in channel
-                    ]
+                    counters: List[int] = []
 
-            else:
+                    # Counter value should exist, since data is homogenous
+                    for timestamped in channel:
+                        assert isinstance(timestamped.counter, int)
+                        counters.append(timestamped.counter)
+                    serialized_channel["counters"] = counters
+            return serializable_compact
+
+        # Non “compact” form
+        serializable = {}
+        for channel, key in zip(
+            (self.first, self.second, self.third), ("first", "second", "third")
+        ):
+            if len(channel) > 0:
                 serializable[key] = [
                     timestamped.default() for timestamped in channel
                 ]
