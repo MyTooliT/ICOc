@@ -913,8 +913,8 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
 
 The text below shows how you can use (code of) the new Network class in a Docker container on a **Linux host**. The description on how to move the interface of the Docker container is an adaption of an [article/video from the “Chemnitzer Linux-Tage”](https://chemnitzer.linux-tage.de/2021/de/programm/beitrag/210). Currently we provide two images based on:
 
-- [Alpine](Docker/Alpine) and
-- [Ubuntu](Docker/Ubuntu).
+- [Alpine](https://hub.docker.com/r/mytoolit/icoc-alpine) and
+- [Ubuntu](https://hub.docker.com/r/mytoolit/icoc-ubuntu).
 
 #### Pull the Docker Image
 
