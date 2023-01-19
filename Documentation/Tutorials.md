@@ -916,8 +916,6 @@ The text below shows how you can use (code of) the new Network class in a Docker
 - [Alpine](Docker/Alpine) and
 - [Ubuntu](Docker/Ubuntu).
 
-<a name="tutorials:section:pull-the-docker-image"></a>
-
 #### Pull the Docker Image
 
 You can download a recent version of the image from Docker Hub
@@ -933,8 +931,6 @@ docker image pull mytoolit/icoc-alpine:latest
 ```
 docker image pull mytoolit/icoc-ubuntu:latest
 ```
-
-<a name="tutorials:section:build-the-docker-image"></a>
 
 #### Build the Docker Image
 
