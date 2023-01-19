@@ -1000,7 +1000,7 @@ docker build -t mytoolit/icoc-ubuntu -f Docker/Ubuntu/Dockerfile .
 
 ##### Preparation
 
-If you have not done so already:
+If you have not done so already, you might have to [enable support for building Docker images for multiple architectures](https://cloudolife.com/2022/03/05/Infrastructure-as-Code-IaC/Container/Docker/Docker-buildx-support-multiple-architectures-images/):
 
 1. Enable experimental features for the Docker daemon:
 
