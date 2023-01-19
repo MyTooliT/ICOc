@@ -916,9 +916,9 @@ The text below shows how you can use (code of) the new Network class in a Docker
 - [Alpine](Docker/Alpine) and
 - [Ubuntu](Docker/Ubuntu).
 
-<a name="tutorials:section:build-pull-the-docker-image"></a>
+<a name="tutorials:section:pull-the-docker-image"></a>
 
-#### Build/Pull the Docker Image
+#### Pull the Docker Image
 
 You can download a recent version of the image from Docker Hub
 
@@ -934,7 +934,11 @@ docker image pull mytoolit/icoc-alpine:latest
 docker image pull mytoolit/icoc-ubuntu:latest
 ```
 
-Another option is to build the image yourself.
+<a name="tutorials:section:build-the-docker-image"></a>
+
+#### Build the Docker Image
+
+If you **do not want to use the prebuilt image**, then you can use the commands below (in the root of the repository) to build them yourself:
 
 - Alpine Linux:
 
@@ -998,20 +1002,51 @@ docker build -t mytoolit/icoc-ubuntu -f Docker/Ubuntu/Dockerfile .
 
 #### Updating Images on Docker Hub
 
-To update the official Docker images on Docker Hub, pleas use the steps below:
+##### Preparation
 
-1. [Build the Docker images](#tutorials:section:build-pull-the-docker-image)
-2. Login to Docker Hub
+If you have not done so already:
+
+1. Enable experimental features for the Docker daemon:
+
+   1. Open `daemon.json`
+   2. Set `"experimental"` to `true`
+
+2. Create a builder (e.g. with name `builder`) and use it:
+
+   ```sh
+   docker buildx create --name builder --use
+   ```
+
+##### Update Steps
+
+To update the official Docker images on Docker Hub, please use the steps below. All commands assume that you use a **POSIX shell** on a Unix system (e.g. Linux or macOS).
+
+1. Login to Docker Hub
 
    ```
-   docker login -u mytoolit -p "$ACCESS_TOKEN"
+   printf '%s\n' "$ACCESS_TOKEN" | docker login -u mytoolit --password-stdin
    ```
 
    **Note:** Please make sure that the variable `ACCESS_TOKEN` contains a valid [access token](https://hub.docker.com/settings/security)
 
-3. Push the images:
+2. Build and push the Docker images for multiple platforms:
 
    ```sh
-   docker image push mytoolit/icoc-alpine:latest
-   docker image push mytoolit/icoc-ubuntu:latest
+   # Please replace `1.6.0` with the correct version number
+   export ICOC_VERSION="$(cat mytoolit/__init__.py |
+                          sed -E 's/__version__ = "([0-9]+\.[0-9]+\.[0-9]+)"/\1/')"
+   docker buildx build \
+     --platform linux/amd64,linux/arm64 \
+     -t mytoolit/icoc-alpine \
+     -t mytoolit/icoc-alpine:stable \
+     -t "mytoolit/icoc-alpine:$ICOC_VERSION" \
+     -f Docker/Alpine/Dockerfile \
+     --push .
+   docker buildx build \
+     --platform linux/amd64,linux/arm64 \
+     -t mytoolit/icoc-ubuntu \
+     -t mytoolit/icoc-ubuntu:stable \
+     -t "mytoolit/icoc-ubuntu:$ICOC_VERSION" \
+     -f Docker/Ubuntu/Dockerfile \
+     --push .
    ```
