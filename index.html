@@ -169,7 +169,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="2.2.4" data-path=""><a href="#start-the-measurement"><i class="fa fa-check"></i><b>2.2.4</b> Start the Measurement</a></li>
 <li class="chapter" data-level="2.2.5" data-path=""><a href="#changing-the-logging-level"><i class="fa fa-check"></i><b>2.2.5</b> Changing the Logging Level</a></li>
 <li class="chapter" data-level="2.2.6" data-path=""><a href="#changing-the-reference-voltage"><i class="fa fa-check"></i><b>2.2.6</b> Changing the Reference Voltage</a></li>
-<li class="chapter" data-level="2.2.7" data-path=""><a href="#changing-the-reference-voltage-1"><i class="fa fa-check"></i><b>2.2.7</b> Changing the Reference Voltage</a></li>
+<li class="chapter" data-level="2.2.7" data-path=""><a href="#changing-the-sampling-rate"><i class="fa fa-check"></i><b>2.2.7</b> Changing the Sampling Rate</a></li>
 </ul></li>
 <li class="chapter" data-level="2.3" data-path=""><a href="#icon-cli-tool"><i class="fa fa-check"></i><b>2.3</b> ICOn CLI Tool</a>
 <ul>
@@ -1068,8 +1068,8 @@ Logging:
 <p>For certain sensor devices you have to change the reference voltage to retrieve a proper measurement value. For example, STHs that use a ± 40 g acceleration sensor (<a href="https://www.analog.com/en/products/adxl356.html">ADXL356</a>) require a reference voltage of 1.8 V instead of the usual supply voltage (<code>VDD</code>) of 3.3 V. To select the correct reference voltage for these devices at startup use the option <code>-v Vfs1V8</code>:</p>
 <div class="sourceCode" id="cb41"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-v</span> Vfs1V8</span></code></pre></div>
 </div>
-<div id="changing-the-reference-voltage-1" class="section level3 hasAnchor" number="2.2.7">
-<h3><span class="header-section-number">2.2.7</span> Changing the Reference Voltage<a href="#changing-the-reference-voltage-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="changing-the-sampling-rate" class="section level3 hasAnchor" number="2.2.7">
+<h3><span class="header-section-number">2.2.7</span> Changing the Sampling Rate<a href="#changing-the-sampling-rate" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>If you want to change the Sampling rate you can do that by changing the parameters of the ADC. There are 3 parameters which influence the Sampling rate.</p>
 <ul>
 <li><strong>Prescaler</strong> (Prescaler used by the ADC to get the sample points)</li>
