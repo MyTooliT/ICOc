@@ -261,6 +261,16 @@ For certain sensor devices you have to change the reference voltage to retrieve 
 icoc -v Vfs1V8
 ```
 
+### Changing the Reference Voltage
+
+If you want to change the Sampling rate you can do that by changing the parameters of the ADC. There are 3 parameters which influence the Sampling rate.
+
+- **Prescaler** (Prescaler used by the ADC to get the sample points)
+- **Aquisition Time** (Time the ADC holds a value to get a sampling point)
+- **Oversampling Rate** (Oversampling rate of the ADC)
+
+The formular which can be used to calculate the Sampling rate can be found in the [Dokumentation of the used CAN-Protocol](https://mytoolit.github.io/Documentation/#sampling-rate).
+
 <a name="tutorials:section:icon-cli-tool"></a>
 
 ## ICOn CLI Tool
