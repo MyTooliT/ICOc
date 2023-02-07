@@ -261,7 +261,7 @@ For certain sensor devices you have to change the reference voltage to retrieve 
 icoc -v Vfs1V8
 ```
 
-### Changing the Reference Voltage
+### Changing the Sampling Rate
 
 If you want to change the Sampling rate you can do that by changing the parameters of the ADC. There are 3 parameters which influence the Sampling rate.
 
