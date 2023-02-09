@@ -282,6 +282,7 @@ def add_identifier_arguments(parser: ArgumentParser) -> None:
     identifier_group.add_argument(
         "-d",
         "--device-number",
+        type=device_number,
         dest="identifier",
         metavar="DEVICE_NUMBER",
         help="Bluetooth device number of sensor device",
