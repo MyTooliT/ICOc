@@ -35,9 +35,9 @@ check:
 test: pytest-test prysk-test
 test-no-hardware: pytest-test-no-hardware prysk-test
 
-# ---------
+# ----------
 # - Pytest -
-# ---------
+# ----------
 
 pytest-test:
 	pytest
