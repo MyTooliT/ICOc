@@ -1767,7 +1767,7 @@ class Network:
                     connection_time = time() - connection_attempt_time
                     raise TimeoutError(
                         "Unable to connect to sensor device"
-                        " “{sensor_device}” in"
+                        f" “{sensor_device}” in"
                         f" {connection_time:.3f} seconds"
                     )
 
