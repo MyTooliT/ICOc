@@ -85,10 +85,12 @@ preview = true
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
-# Use doctests
-# Fail after first errors
-# Ignore macOS metadata files
-addopts = "--doctest-modules -x --ignore-glob='*._*.py' -v"
+# - Use doctests
+# - Fail after first errors
+# - Ignore macOS metadata files
+# - Verbose output
+# - Disable Prysk test
+addopts = "--doctest-modules -x --ignore-glob='*._*.py' -v -p no:prysk"
 minversion = "6.0"
 
 [tool.setuptools.dynamic]
