@@ -227,6 +227,24 @@ class ADCConfiguration:
 
         return self.data[4] / 20
 
+    def prescaler(self) -> int:
+        """Get the prescaler value
+
+        Returns
+        -------
+
+        The prescaler value
+
+        Examples
+        --------
+
+        >>> ADCConfiguration(prescaler=127).prescaler()
+        127
+
+        """
+
+        return self.data[1]
+
 
 # -- Main ---------------------------------------------------------------------
 
