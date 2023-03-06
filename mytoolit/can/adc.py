@@ -269,6 +269,26 @@ class ADCConfiguration:
             else 2 ** (acquisition_time_byte - 1)
         )
 
+    def oversampling_rate(self) -> int:
+        """Get the oversampling rate
+
+        Returns
+        -------
+
+        The oversampling rate
+
+        Examples
+        --------
+
+        >>> ADCConfiguration(oversampling_rate=128).oversampling_rate()
+        128
+
+        """
+
+        oversampling_rate_byte = self.data[3]
+
+        return 2**oversampling_rate_byte
+
 
 # -- Main ---------------------------------------------------------------------
 
