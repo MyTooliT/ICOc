@@ -100,8 +100,8 @@ class ADCConfiguration:
             ]
             if acquisition_time not in possible_acquisition_times:
                 raise ValueError(
-                    f"Acquisition time of “{acquisition_time}” out of"
-                    "range, please use one of the following values: "
+                    f"Acquisition time of “{acquisition_time}” out of range"
+                    ", please use one of the following values: "
                     + ", ".join(map(str, possible_acquisition_times))
                 )
 
@@ -147,8 +147,8 @@ class ADCConfiguration:
             )
             if reference_voltage not in possible_reference_voltages:
                 raise ValueError(
-                    f"Reference voltage of “{oversampling_rate}” out of"
-                    "range, please use one of the following values: "
+                    f"Reference voltage of “{oversampling_rate}” out of range"
+                    ", please use one of the following values: "
                     + ", ".join(map(str, possible_reference_voltages))
                 )
 
