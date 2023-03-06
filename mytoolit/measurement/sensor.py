@@ -63,7 +63,9 @@ class Sensor(NamedTuple):
 # -- Functions ----------------------------------------------------------------
 
 
-def sample_rate(prescaler: int, acquisition_time: int, oversampling_rate: int):
+def calculate_sample_rate(
+    prescaler: int, acquisition_time: int, oversampling_rate: int
+):
     """Calculate the sampling rate for the given ADC config values
 
     Parameters
