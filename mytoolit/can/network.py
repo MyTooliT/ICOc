@@ -2189,6 +2189,21 @@ class Network:
 
         The ADC configuration of the sensor node
 
+        Examples
+        --------
+
+        >>> from asyncio import run
+
+        Read ADC sensor config from device
+
+        >>> async def read_adc_config():
+        ...     async with Network() as network:
+        ...         await network.connect_sensor_device(0)
+        ...         return await network.read_adc_configuration()
+        >>> run(read_adc_config()) # doctest:+NORMALIZE_WHITESPACE
+        Get, Prescaler: 2, Acquisition Time: 8, Oversampling Rate: 64,
+        Reference Voltage: 3.3 V
+
         """
 
         node = "STH 1"
