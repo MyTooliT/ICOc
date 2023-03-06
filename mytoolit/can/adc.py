@@ -245,6 +245,30 @@ class ADCConfiguration:
 
         return self.data[1]
 
+    def acquisition_time(self) -> int:
+        """Get the acquisition time
+
+        Returns
+        -------
+
+        The acquisition time
+
+        Examples
+        --------
+
+        >>> ADCConfiguration(acquisition_time=2).acquisition_time()
+        2
+
+        """
+
+        acquisition_time_byte = self.data[2]
+
+        return (
+            acquisition_time_byte + 1
+            if acquisition_time_byte <= 3
+            else 2 ** (acquisition_time_byte - 1)
+        )
+
 
 # -- Main ---------------------------------------------------------------------
 
