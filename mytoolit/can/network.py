@@ -370,9 +370,11 @@ class Network:
         configuration = (
             settings.can.linux
             if platform == "linux"
-            else settings.can.mac
-            if platform == "darwin"
-            else settings.can.windows
+            else (
+                settings.can.mac
+                if platform == "darwin"
+                else settings.can.windows
+            )
         )
         try:
             self.bus = Bus(
@@ -1742,9 +1744,11 @@ class Network:
                 identifier_description = (
                     "MAC address"
                     if isinstance(identifier, EUI)
-                    else "device_number"
-                    if isinstance(identifier, int)
-                    else "name"
+                    else (
+                        "device_number"
+                        if isinstance(identifier, int)
+                        else "name"
+                    )
                 )
                 raise TimeoutError(
                     "Unable to find sensor device with "
