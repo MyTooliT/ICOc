@@ -289,6 +289,38 @@ class ADCConfiguration:
 
         return 2**oversampling_rate_byte
 
+    def sample_rate(self) -> int:
+        """Calculate the sampling rate for the current ADC configuration
+
+        Returns
+        -------
+
+        The calculated sample rate
+
+        Examples
+        --------
+
+        >>> ADCConfiguration(prescaler=2, acquisition_time=8,
+        ...                  oversampling_rate=64).sample_rate()
+        9524
+
+        >>> ADCConfiguration(prescaler=8, acquisition_time=8,
+        ...                  oversampling_rate=64).sample_rate()
+        3175
+
+        """
+
+        clock_frequency = 38_400_000
+
+        return round(
+            clock_frequency
+            / (
+                (self.prescaler() + 1)
+                * (self.acquisition_time() + 13)
+                * self.oversampling_rate()
+            )
+        )
+
 
 # -- Main ---------------------------------------------------------------------
 

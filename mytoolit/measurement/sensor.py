@@ -63,47 +63,6 @@ class Sensor(NamedTuple):
 # -- Functions ----------------------------------------------------------------
 
 
-def calculate_sample_rate(
-    prescaler: int, acquisition_time: int, oversampling_rate: int
-):
-    """Calculate the sampling rate for the given ADC config values
-
-    Parameters
-    ----------
-
-    prescaler:
-        Prescaler value of ADC
-
-    acquisition_time:
-        Acquisition time
-
-    oversampling_rate:
-        Oversampling rate
-
-    Returns
-    -------
-
-    The calculated sample rate
-
-    Examples
-    --------
-
-    >>> sample_rate(2, 8, 64)
-    9524
-
-    >>> sample_rate(8, 8, 64)
-    3175
-
-    """
-
-    frequency_clock = 38_400_000
-
-    return round(
-        frequency_clock
-        / ((prescaler + 1) * (acquisition_time + 13) * oversampling_rate)
-    )
-
-
 def guess_sensor(values: Iterable[int]) -> Sensor:
     """Guess the sensor type from raw 16 bit ADC values
 
