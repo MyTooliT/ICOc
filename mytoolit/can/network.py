@@ -2249,6 +2249,25 @@ class Network:
         oversampling_rate:
             The ADC oversampling rate (1, 2, 4, 8, … , 4096)
 
+        Examples
+        --------
+
+        >>> from asyncio import run
+
+        Read and write ADC sensor config
+
+        >>> async def write_read_adc_config():
+        ...     async with Network() as network:
+        ...         await network.connect_sensor_device(0)
+        ...         await network.write_adc_configuration(3.3, 8, 8, 64)
+        ...         modified_config = await network.read_adc_configuration()
+        ...         # Write back default config values
+        ...         await network.write_adc_configuration(3.3, 2, 8, 64)
+        ...         return modified_config
+        >>> run(write_read_adc_config()) # doctest:+NORMALIZE_WHITESPACE
+        Get, Prescaler: 8, Acquisition Time: 8, Oversampling Rate: 64,
+        Reference Voltage: 3.3 V
+
         """
 
         node = "STH 1"
