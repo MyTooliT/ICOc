@@ -1,12 +1,13 @@
 # -- Imports ------------------------------------------------------------------
 
+from collections.abc import Iterator, Mapping
 from math import log2
 from typing import List, Optional, Union
 
 # -- Class --------------------------------------------------------------------
 
 
-class ADCConfiguration:
+class ADCConfiguration(Mapping):
     """Support for reading and writing the ADC configuration"""
 
     def __init__(
@@ -156,6 +157,109 @@ class ADCConfiguration:
                 )
 
             self.data[4] = int(reference_voltage * 20)
+
+        self.attributes = {
+            "reference_voltage": self.reference_voltage,
+            "prescaler": self.prescaler,
+            "acquisition_time": self.acquisition_time,
+            "oversampling_rate": self.oversampling_rate,
+        }
+
+    def __getitem__(self, item: str) -> float:
+        """Return values of the mapping provided by this class
+
+        Note: This method allow access to the object via the splat
+              operators (*, **)
+
+        Parameters
+        ----------
+
+        item:
+            The attribute for which we want to retrieve the value
+
+        Returns
+        -------
+
+        The value of the attribute
+
+        Examples
+        --------
+
+        >>> dict(**ADCConfiguration()) # doctest:+NORMALIZE_WHITESPACE
+        {'reference_voltage': 0.0,
+         'prescaler': 1,
+         'acquisition_time': 1,
+         'oversampling_rate': 1}
+
+        >>> dict(**ADCConfiguration(oversampling_rate=64)
+        ...     ) # doctest:+NORMALIZE_WHITESPACE
+        {'reference_voltage': 0.0,
+         'prescaler': 1,
+         'acquisition_time': 1,
+         'oversampling_rate': 64}
+
+        """
+
+        return self.attributes[item]()
+
+    def __iter__(self) -> Iterator:
+        """Return an iterator over the mapping provided by this class
+
+        Note: This method allow access to the object via the splat
+              operators (*, **)
+
+        Returns
+        -------
+
+        The names of the “important” properties of the ADC configuration:
+
+        - reference voltage
+        - prescaler
+        - acquisition time
+        - oversampling rate
+
+        Examples
+        --------
+
+        >>> for attribute in ADCConfiguration():
+        ...     print(attribute)
+        reference_voltage
+        prescaler
+        acquisition_time
+        oversampling_rate
+
+        """
+
+        return iter(self.attributes)
+
+    def __len__(self) -> int:
+        """Return the length of the mapping provided by this class
+
+        Note: This method allow access to the object via the splat
+              operators (*, **)
+
+        Returns
+        -------
+
+        The amount of the “important” properties of the ADC configuration:
+
+        - reference voltage
+        - prescaler
+        - acquisition time
+        - oversampling rate
+
+        Examples
+        --------
+
+        >>> len(ADCConfiguration())
+        4
+
+        >>> len(ADCConfiguration(reference_voltage=3.3))
+        4
+
+        """
+
+        return len(self.attributes)
 
     def __repr__(self) -> str:
         """Retrieve the textual representation of the ADC configuration
