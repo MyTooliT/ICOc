@@ -157,6 +157,10 @@ class ADCConfiguration(Mapping):
                 )
 
             self.data[4] = int(reference_voltage * 20)
+        elif self.data[4] == 0:
+            # Make sure default reference voltage value makes sense
+            supply_voltage = 3.3
+            self.data[4] = int(supply_voltage * 20)
 
         self.attributes = {
             "reference_voltage": self.reference_voltage,
@@ -186,14 +190,14 @@ class ADCConfiguration(Mapping):
         --------
 
         >>> dict(**ADCConfiguration()) # doctest:+NORMALIZE_WHITESPACE
-        {'reference_voltage': 0.0,
+        {'reference_voltage': 3.3,
          'prescaler': 1,
          'acquisition_time': 1,
          'oversampling_rate': 1}
 
         >>> dict(**ADCConfiguration(oversampling_rate=64)
         ...     ) # doctest:+NORMALIZE_WHITESPACE
-        {'reference_voltage': 0.0,
+        {'reference_voltage': 3.3,
          'prescaler': 1,
          'acquisition_time': 1,
          'oversampling_rate': 64}
