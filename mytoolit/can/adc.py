@@ -89,6 +89,9 @@ class ADCConfiguration:
                     ", please use a value between 1 and 127"
                 )
             self.data[1] = prescaler
+        elif self.data[1] == 0:
+            # Make sure default prescaler value makes sense
+            self.data[1] = 1
 
         # ====================
         # = Acquisition Time =
