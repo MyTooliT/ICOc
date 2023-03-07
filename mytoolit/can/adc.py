@@ -419,6 +419,12 @@ class ADCConfiguration(Mapping):
         ...                  oversampling_rate=64).sample_rate()
         3175
 
+        >>> ADCConfiguration(reference_voltage=5.0,
+        ...                  prescaler=16,
+        ...                  acquisition_time=8,
+        ...                  oversampling_rate=128).sample_rate()
+        840
+
         """
 
         clock_frequency = 38_400_000
