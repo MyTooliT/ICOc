@@ -2259,14 +2259,27 @@ class Network:
         >>> async def write_read_adc_config():
         ...     async with Network() as network:
         ...         await network.connect_sensor_device(0)
+        ...
         ...         await network.write_adc_configuration(3.3, 8, 8, 64)
-        ...         modified_config = await network.read_adc_configuration()
+        ...         modified_config1 = await network.read_adc_configuration()
+        ...
+        ...         adc_config = ADCConfiguration(reference_voltage=5.0,
+        ...                                       prescaler=16,
+        ...                                       acquisition_time=8,
+        ...                                       oversampling_rate=128)
+        ...         await network.write_adc_configuration(**adc_config)
+        ...         modified_config2 = await network.read_adc_configuration()
+        ...
         ...         # Write back default config values
         ...         await network.write_adc_configuration(3.3, 2, 8, 64)
-        ...         return modified_config
-        >>> run(write_read_adc_config()) # doctest:+NORMALIZE_WHITESPACE
+        ...         return modified_config1, modified_config2
+        >>> config1, config2 = run(write_read_adc_config())
+        >>> config1 # doctest:+NORMALIZE_WHITESPACE
         Get, Prescaler: 8, Acquisition Time: 8, Oversampling Rate: 64,
         Reference Voltage: 3.3 V
+        >>> config2 # doctest:+NORMALIZE_WHITESPACE
+        Get, Prescaler: 16, Acquisition Time: 8, Oversampling Rate: 128,
+        Reference Voltage: 5.0 V
 
         """
 
