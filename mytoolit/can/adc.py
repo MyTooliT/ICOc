@@ -92,7 +92,7 @@ class ADCConfiguration(Mapping):
             self.data[1] = prescaler
         elif self.data[1] == 0:
             # Make sure default prescaler value makes sense
-            self.data[1] = 1
+            self.data[1] = 8
 
         # ====================
         # = Acquisition Time =
@@ -191,14 +191,14 @@ class ADCConfiguration(Mapping):
 
         >>> dict(**ADCConfiguration()) # doctest:+NORMALIZE_WHITESPACE
         {'reference_voltage': 3.3,
-         'prescaler': 1,
+         'prescaler': 8,
          'acquisition_time': 1,
          'oversampling_rate': 1}
 
         >>> dict(**ADCConfiguration(oversampling_rate=64)
         ...     ) # doctest:+NORMALIZE_WHITESPACE
         {'reference_voltage': 3.3,
-         'prescaler': 1,
+         'prescaler': 8,
          'acquisition_time': 1,
          'oversampling_rate': 64}
 
