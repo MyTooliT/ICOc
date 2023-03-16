@@ -40,10 +40,11 @@ async def test(identifier):
                     data.apply(conversion_to_g)
                     x_acceleration_values = data.first
                     for timestamped in x_acceleration_values:
+                        timestamp_ms = timestamped.timestamp * 1000
                         storage.add_acceleration(
                             values={"x": timestamped.value.magnitude},
                             counter=timestamped.counter,
-                            timestamp=timestamped.timestamp,
+                            timestamp=timestamp_ms,
                         )
 
                     if time() - start_time >= measurement_time_s:
