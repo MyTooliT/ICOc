@@ -1884,8 +1884,16 @@ class Network:
         if not (first or second or third):
             raise ValueError("Please enable at least one measurement channel")
 
+        active_channels = len(
+            [channel for channel in (first, second, third) if channel]
+        )
+
         streaming_format = StreamingFormat(
-            first=first, second=second, third=third, streaming=True, sets=3
+            first=first,
+            second=second,
+            third=third,
+            streaming=True,
+            sets=3 if active_channels <= 1 else 1,
         )
         node = "STH 1"
         message = Message(
@@ -1960,6 +1968,33 @@ class Network:
         -------
 
         A context manager object for managing stream data
+
+
+        Examples
+        --------
+
+        >>> from asyncio import run
+
+        >>> async def read_streaming_data():
+        ...     async with Network() as network:
+        ...         await network.connect_sensor_device(0)
+        ...         async with network.open_data_stream(first=True,
+        ...                                             third=True) as stream:
+        ...             stream_data = StreamingData()
+        ...             messages = 0
+        ...             async for data in stream:
+        ...                 stream_data.extend(data)
+        ...                 messages += 1
+        ...                 if messages >= 3:
+        ...                     break
+        ...             return stream_data
+        >>> stream_data = run(read_streaming_data())
+        >>> len(stream_data.first)
+        3
+        >>> len(stream_data.second)
+        0
+        >>> len(stream_data.third)
+        3
 
         """
 
