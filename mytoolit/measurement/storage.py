@@ -164,12 +164,17 @@ class Storage:
         start_time:
             The start time of the data acquisition in milliseconds
 
-        Example
-        -------
+        Examples
+        --------
 
         >>> filepath = Path("test.hdf5")
         >>> with Storage(filepath) as storage:
         ...      storage.init_acceleration(axes = ['x'], start_time = 1337.42)
+        >>> filepath.unlink()
+
+        >>> with Storage(filepath) as storage:
+        ...      storage.init_acceleration(axes = ['x', 'z'],
+        ...                                start_time = 42.1337)
         >>> filepath.unlink()
 
         """
