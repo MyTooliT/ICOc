@@ -7,6 +7,7 @@ from pathlib import Path
 from types import TracebackType
 from typing import Dict, Iterable, Optional, Type, Union
 
+from pint import Quantity
 from tables import (
     File,
     Filters,
@@ -21,6 +22,8 @@ from tables import (
     UInt64Col,
 )
 from tables.exceptions import HDF5ExtError
+
+from mytoolit.can.streaming import StreamingData, TimestampedValue
 
 # -- Functions ----------------------------------------------------------------
 
@@ -236,7 +239,7 @@ class Storage:
             self.init_acceleration(values.keys(), timestamp)
 
         assert isinstance(self.acceleration, Node)
-        assert isinstance(self.start_time, float)
+        assert isinstance(self.start_time, (int, float))
 
         row = self.acceleration.row
         timestamp = (timestamp - self.start_time) * 1000
@@ -249,6 +252,86 @@ class Storage:
         # Flush data to disk every few values to keep memory usage in check
         if self.acceleration.nrows % 1000 == 0:
             self.acceleration.flush()
+
+    def add_streaming_data(self, streaming_data: StreamingData) -> None:
+        """Add streaming data to the storage object
+
+        Parameters
+        ----------
+
+        streaming_data:
+            The streaming data that should be added to the storage
+
+        Examples
+        --------
+
+        >>> from mytoolit.measurement import g0
+
+        >>> t1 = TimestampedValue(timestamp=1, value=g0(1), counter=21)
+        >>> t2 = TimestampedValue(timestamp=2, value=g0(2), counter=22)
+
+        >>> t3 = TimestampedValue(timestamp=1, value=g0(3), counter=21)
+        >>> t4 = TimestampedValue(timestamp=2, value=g0(4), counter=22)
+
+        >>> data = StreamingData(first=[t1, t2], third=[t3, t4])
+        >>> filepath = Path("test.hdf5")
+        >>> with Storage(filepath) as storage:
+        ...     storage.add_streaming_data(data)
+        >>> filepath.unlink()
+
+        """
+
+        # Data for each channel must have same length otherwise (some) data
+        # will not be stored.
+        assert (
+            len(
+                {
+                    len(channel)
+                    for channel in streaming_data
+                    if len(channel) != 0
+                }
+            )
+            == 1
+        ), "Heterogenous channel lengths"
+
+        name_plus_channel = [
+            (name, channel)
+            for name, channel in (
+                ("x", streaming_data.first),
+                ("y", streaming_data.second),
+                ("z", streaming_data.third),
+            )
+            if channel
+        ]
+        names = list(
+            map(lambda name_channel: name_channel[0], name_plus_channel)
+        )
+        channels = list(
+            map(lambda name_channel: name_channel[1], name_plus_channel)
+        )
+        to_value = lambda timestamped: (
+            timestamped.value.magnitude
+            if isinstance(timestamped.value, Quantity)
+            else timestamped.value
+        )
+
+        zipped_channels = list(zip(*channels))
+
+        for channel_value_tuple in zipped_channels:
+            values = {}
+            timestamp = -1
+            counter = -1
+            for name, timestamped_value in zip(names, channel_value_tuple):
+                values[name] = to_value(timestamped_value)
+                # Timestamp and counter should be the same for “real data”
+                # collected via sensor device
+                if timestamp < 0 or counter < 0:
+                    timestamp = timestamped_value.timestamp
+                    counter = timestamped_value.counter
+
+            self.add_acceleration(
+                values, counter=counter, timestamp=timestamp * 1000
+            )
 
     def add_acceleration_meta(self, name: str, value: str) -> None:
         """Add acceleration metadata
