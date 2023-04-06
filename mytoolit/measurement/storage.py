@@ -23,7 +23,7 @@ from tables import (
 )
 from tables.exceptions import HDF5ExtError
 
-from mytoolit.can.streaming import StreamingData, TimestampedValue
+from mytoolit.can.streaming import StreamingData
 
 # -- Functions ----------------------------------------------------------------
 
@@ -266,6 +266,7 @@ class Storage:
         --------
 
         >>> from mytoolit.measurement import g0
+        >>> from mytoolit.can.streaming import TimestampedValue
 
         >>> t1 = TimestampedValue(timestamp=1, value=g0(1), counter=21)
         >>> t2 = TimestampedValue(timestamp=2, value=g0(2), counter=22)
@@ -309,13 +310,15 @@ class Storage:
         channels = list(
             map(lambda name_channel: name_channel[1], name_plus_channel)
         )
-        to_value = lambda timestamped: (
-            timestamped.value.magnitude
-            if isinstance(timestamped.value, Quantity)
-            else timestamped.value
-        )
 
         zipped_channels = list(zip(*channels))
+
+        def to_value(timestamped):
+            return (
+                timestamped.value.magnitude
+                if isinstance(timestamped.value, Quantity)
+                else timestamped.value
+            )
 
         for channel_value_tuple in zipped_channels:
             values = {}
