@@ -824,10 +824,16 @@ class CommandLineInterface:
     def update_sensor_config(self) -> None:
         """Update sensor configuration in the connected sensor device"""
 
-        # Use specified sensor configuration
+        # We use special sensor channel number `0` (currently defined as “no
+        # change to channel number”) as default value.
+        #
+        # This should not be a problem in connection with the definition in the
+        # CLI interface of ICOc, where `0` is defined as disabling the
+        # measurement channel. Here we would need to enter the sensor channel
+        # number to enable the measurement anyway.
         self.Can.write_sensor_config(
             *[
-                1 if sensor is None or sensor <= 0 else sensor
+                0 if sensor is None or sensor <= 0 else sensor
                 for sensor in (
                     self.sensor.first,
                     self.sensor.second,
