@@ -295,46 +295,41 @@ class Storage:
             == 1
         ), "Heterogenous channel lengths"
 
-        name_plus_channel = [
-            (name, channel)
-            for name, channel in (
-                ("x", streaming_data.first),
-                ("y", streaming_data.second),
-                ("z", streaming_data.third),
-            )
-            if channel
-        ]
-        names = list(
-            map(lambda name_channel: name_channel[0], name_plus_channel)
-        )
-        channels = list(
-            map(lambda name_channel: name_channel[1], name_plus_channel)
-        )
+        axes = []
+        data = []
+        length_data = 0
+        for axis, channel in zip("xyz", streaming_data):
+            if len(channel) > 0:
+                axes.append(axis)
+                data.append(channel)
 
-        zipped_channels = list(zip(*channels))
+        if not data:
+            return
 
-        def to_value(timestamped):
-            return (
-                timestamped.value.magnitude
-                if isinstance(timestamped.value, Quantity)
-                else timestamped.value
-            )
+        if self.acceleration is None:
+            self.init_acceleration(axes, data[0][0].timestamp)
 
-        for channel_value_tuple in zipped_channels:
-            values = {}
-            timestamp = -1
-            counter = -1
-            for name, timestamped_value in zip(names, channel_value_tuple):
-                values[name] = to_value(timestamped_value)
-                # Timestamp and counter should be the same for “real data”
-                # collected via sensor device
-                if timestamp < 0 or counter < 0:
-                    timestamp = timestamped_value.timestamp
-                    counter = timestamped_value.counter
+        assert isinstance(self.acceleration, Node)
+        assert isinstance(self.start_time, (int, float))
 
-            self.add_acceleration(
-                values, counter=counter, timestamp=timestamp * 1000
-            )
+        row = self.acceleration.row
+        length_data = len(data[0])
+        for data_index in range(length_data):
+            first = data[0][data_index]
+
+            row["timestamp"] = (first.timestamp - self.start_time) * 1000
+            row["counter"] = first.counter
+            for index, axis in enumerate(axes):
+                value = data[index][data_index].value
+                row[axis] = (
+                    value.magnitude if isinstance(value, Quantity) else value
+                )
+
+            row.append()
+
+        # Flush data to disk every few values to keep memory usage in check
+        if self.acceleration.nrows % 1000 == 0:
+            self.acceleration.flush()
 
     def add_acceleration_meta(self, name: str, value: str) -> None:
         """Add acceleration metadata
