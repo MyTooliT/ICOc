@@ -515,6 +515,8 @@ The screenshot below shows an example of such a graph:
 
 ![Acceleration Graph in HDFView](Documentation/Pictures/HDFView-Graph.png)
 
+For a more advanced analysis of the data files you can use our collection of measurement utility software [ICOlyzer](https://github.com/MyTooliT/ICOlyzer).
+
 ### Adding Custom Metadata
 
 Sometimes you also want to add additional data about a measurement. To do that you can also use [HDFView][]. Since the tool opens files in read-only mode by default you need to change the default file access mode to “Read/Write” first:
