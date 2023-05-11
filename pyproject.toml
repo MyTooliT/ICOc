@@ -23,7 +23,10 @@ dependencies = [
   "matplotlib",
   "netaddr",
   "pdfrw",
-  "pint>=0.19.2",
+  # Use old version of `pint` until issue 1767:
+  # - https://github.com/hgrecco/pint/issues/1767
+  # is fixed.
+  "pint==0.20.1",
   "python-can[pcan]>=4.0",
   "pywin32; os_name == 'nt'",
   "reportlab",
