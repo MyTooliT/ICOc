@@ -1,11 +1,10 @@
 # -- Imports ------------------------------------------------------------------
 
+from argparse import Namespace
 from asyncio import run, sleep
 from functools import partial
 from time import time
-from typing import List, Union
-
-from netaddr import EUI
+from typing import List
 
 from mytoolit.can import Network
 from mytoolit.can.network import STHDeviceInfo, NetworkError
@@ -14,8 +13,18 @@ from mytoolit.measurement import convert_raw_to_g
 
 
 # -- Functions ----------------------------------------------------------------
-async def list_sensor_devices() -> None:
-    """Print a list of available sensor devices"""
+
+
+async def list_sensor_devices(arguments: Namespace) -> None:
+    """Print a list of available sensor devices
+
+    Parameters
+    ----------
+
+    arguments:
+        The given command line arguments
+
+    """
 
     async with Network() as network:
         timeout = time() + 5
@@ -39,16 +48,18 @@ async def list_sensor_devices() -> None:
             print(device)
 
 
-async def measure(identifier: Union[int, str, EUI]) -> None:
+async def measure(arguments: Namespace) -> None:
     """Open measurement stream and store data
 
     Parameters
     ----------
 
-    identifier:
-        The identifier of the sensor device (e.g. the current name)
+    arguments:
+        The given command line arguments
 
     """
+
+    identifier = arguments.identifier
 
     async with Network() as network:
         await network.connect_sensor_device(identifier)
@@ -62,19 +73,19 @@ async def measure(identifier: Union[int, str, EUI]) -> None:
         print(f"\nStream Data:\n{stream_data}")
 
 
-async def rename(identifier: Union[int, str, EUI], name) -> None:
+async def rename(arguments: Namespace) -> None:
     """Rename a sensor device
 
     Parameters
     ----------
 
-    identifier:
-        The identifier of the sensor device (e.g. the current name)
-
-    name:
-        The new name of the sensor device
+    arguments:
+        The given command line arguments
 
     """
+
+    identifier = arguments.identifier
+    name = arguments.name
 
     async with Network() as network:
         node = "STH 1"
@@ -91,16 +102,18 @@ async def rename(identifier: Union[int, str, EUI], name) -> None:
         )
 
 
-async def stu(subcommand: str) -> None:
+async def stu(arguments: Namespace) -> None:
     """Run specific commands regarding stationary transceiver unit
 
     Parameters
     ----------
 
-    subcommand:
-        A command that specifies the specific action regarding the STU
+    arguments:
+        The given command line arguments
 
     """
+
+    subcommand = arguments.stu_subcommand
 
     async with Network() as network:
         if subcommand == "ota":
@@ -124,19 +137,15 @@ def main():
     """ICOtronic command line tool"""
 
     arguments = parse_arguments()
+    command_to_coroutine = {
+        "list": list_sensor_devices,
+        "measure": measure,
+        "rename": rename,
+        "stu": stu,
+    }
 
     try:
-        if arguments.subcommand == "list":
-            coroutine = list_sensor_devices()
-        elif arguments.subcommand == "measure":
-            coroutine = measure(identifier=arguments.identifier)
-        elif arguments.subcommand == "rename":
-            coroutine = rename(
-                identifier=arguments.identifier, name=arguments.name
-            )
-        elif arguments.subcommand == "stu":
-            coroutine = stu(arguments.stu_subcommand)
-        run(coroutine)
+        run(command_to_coroutine[arguments.subcommand](arguments))
     except NetworkError as error:
         print(error)
     except KeyboardInterrupt:
