@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>ICOc Documentation</title>
   <meta name="description" content="Tools and scripts for the ICOtronic system" />
-  <meta name="generator" content="bookdown 0.33 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.34 and GitBook 2.6.7" />
 
   <meta property="og:title" content="ICOc Documentation" />
   <meta property="og:type" content="book" />
@@ -118,6 +118,10 @@ code span.vs { color: #4070a0; } /* VerbatimString */
 code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
 
 </head>
 
@@ -809,6 +813,7 @@ Sensors               M1: S1
 </ol>
 <p>The screenshot below shows an example of such a graph:</p>
 <p><img src="Documentation/Pictures/HDFView-Graph.png" alt="Acceleration Graph in HDFView" /></p>
+<p>For a more advanced analysis of the data files you can use our collection of measurement utility software <a href="https://github.com/MyTooliT/ICOlyzer">ICOlyzer</a>.</p>
 <div id="adding-custom-metadata" class="section level3 hasAnchor" number="1.4.1">
 <h3><span class="header-section-number">1.4.1</span> Adding Custom Metadata<a href="#adding-custom-metadata" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Sometimes you also want to add additional data about a measurement. To do that you can also use <a href="https://www.hdfgroup.org/downloads/hdfview/">HDFView</a>. Since the tool opens files in read-only mode by default you need to change the default file access mode to “Read/Write” first:</p>
@@ -1071,13 +1076,13 @@ Logging:
 </div>
 <div id="changing-the-sampling-rate" class="section level3 hasAnchor" number="2.2.7">
 <h3><span class="header-section-number">2.2.7</span> Changing the Sampling Rate<a href="#changing-the-sampling-rate" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>If you want to change the Sampling rate you can do that by changing the parameters of the ADC. There are 3 parameters which influence the Sampling rate.</p>
+<p>If you want to change the sampling rate you can do that by changing the parameters of the ADC. There are 3 parameters which influence the sampling rate.</p>
 <ul>
 <li><strong>Prescaler</strong> (Prescaler used by the ADC to get the sample points)</li>
-<li><strong>Aquisition Time</strong> (Time the ADC holds a value to get a sampling point)</li>
+<li><strong>Acquisition Time</strong> (Time the ADC holds a value to get a sampling point)</li>
 <li><strong>Oversampling Rate</strong> (Oversampling rate of the ADC)</li>
 </ul>
-<p>The formular which can be used to calculate the Sampling rate can be found in the <a href="https://mytoolit.github.io/Documentation/#sampling-rate">Dokumentation of the used CAN-Protocol</a>.</p>
+<p>The formula which can be used to calculate the Sampling rate can be found in the <a href="https://mytoolit.github.io/Documentation/#sampling-rate">documentation of the CAN commands</a>.</p>
 <p><a name="tutorials:section:icon-cli-tool"></a></p>
 </div>
 </div>
