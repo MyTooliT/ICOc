@@ -263,13 +263,13 @@ icoc -v Vfs1V8
 
 ### Changing the Sampling Rate
 
-If you want to change the Sampling rate you can do that by changing the parameters of the ADC. There are 3 parameters which influence the Sampling rate.
+If you want to change the sampling rate you can do that by changing the parameters of the ADC. There are 3 parameters which influence the sampling rate.
 
 - **Prescaler** (Prescaler used by the ADC to get the sample points)
-- **Aquisition Time** (Time the ADC holds a value to get a sampling point)
+- **Acquisition Time** (Time the ADC holds a value to get a sampling point)
 - **Oversampling Rate** (Oversampling rate of the ADC)
 
-The formular which can be used to calculate the Sampling rate can be found in the [Dokumentation of the used CAN-Protocol](https://mytoolit.github.io/Documentation/#sampling-rate).
+The formula which can be used to calculate the Sampling rate can be found in the [documentation of the CAN commands](https://mytoolit.github.io/Documentation/#sampling-rate).
 
 <a name="tutorials:section:icon-cli-tool"></a>
 
