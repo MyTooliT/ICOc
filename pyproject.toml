@@ -31,6 +31,7 @@ dependencies = [
   "pywin32; os_name == 'nt'",
   "reportlab",
   "tables>=3.6",
+  "tqdm>=4.65",
   "semantic_version",
   "windows-curses; os_name == 'nt'",
 ]

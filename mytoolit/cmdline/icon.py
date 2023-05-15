@@ -7,6 +7,8 @@ from pathlib import Path
 from time import time
 from typing import List
 
+from tqdm import tqdm
+
 from mytoolit.can import Network
 from mytoolit.can.network import STHDeviceInfo, NetworkError
 from mytoolit.cmdline.parse import parse_arguments
@@ -69,20 +71,34 @@ async def measure(arguments: Namespace) -> None:
         sensor_range = await network.read_acceleration_sensor_range_in_g()
         conversion_to_g = partial(convert_raw_to_g, max_value=sensor_range)
 
-        print(f"Measure acceleration values for {measurement_time_s} seconds…")
         filepath = Path("Measurement.hdf5")
         with Storage(filepath) as storage:
+            progress = tqdm(
+                total=measurement_time_s,
+                desc="Read sensor data",
+                unit=" seconds",
+                leave=False,
+                disable=None,
+            )
+
             start_time = time()
+            last_update = start_time
             async with network.open_data_stream(first=True) as stream:
                 async for data in stream:
                     data.apply(conversion_to_g)
                     storage.add_streaming_data(data)
 
-                    if time() - start_time >= measurement_time_s:
+                    current_time = time()
+                    progress.update(current_time - last_update)
+                    last_update = current_time
+
+                    if current_time - start_time >= measurement_time_s:
                         break
             storage.add_acceleration_meta(
                 "Sensor_Range", f"± {sensor_range} g₀"
             )
+
+            progress.close()
 
         conversion_to_g = partial(convert_raw_to_g, max_value=sensor_range)
 
