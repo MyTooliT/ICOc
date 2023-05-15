@@ -53,3 +53,16 @@ Check help output of rename command:
                           Bluetooth MAC address of sensor device
     -d DEVICE_NUMBER, --device-number DEVICE_NUMBER
                           Bluetooth device number of sensor device
+
+Check help output of STU command:
+
+  $ icon stu -h
+  usage: icon stu [-h] {ota,mac} ...
+  
+  options:
+    -h, --help  show this help message and exit
+  
+  Subcommands:
+    {ota,mac}
+      ota       Enable “over the air” (OTA) update mode
+      mac       Show Bluetooth MAC address
