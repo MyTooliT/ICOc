@@ -317,7 +317,7 @@ class Storage:
         for data_index in range(length_data):
             first = data[0][data_index]
 
-            row["timestamp"] = (first.timestamp - self.start_time) * 1000
+            row["timestamp"] = (first.timestamp - self.start_time) * 1_000_000
             row["counter"] = first.counter
             for index, axis in enumerate(axes):
                 value = data[index][data_index].value
