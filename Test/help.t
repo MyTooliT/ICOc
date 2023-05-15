@@ -37,3 +37,19 @@ Check help output of measure command:
                           Bluetooth MAC address of sensor device
     -d DEVICE_NUMBER, --device-number DEVICE_NUMBER
                           Bluetooth device number of sensor device
+
+Check help output of rename command:
+
+  $ icon rename -h
+  usage: icon rename [-h] (-n NAME | -m MAC_ADRESS | -d DEVICE_NUMBER) [name]
+  
+  positional arguments:
+    name                  New name of STH
+  
+  options:
+    -h, --help            show this help message and exit
+    -n NAME, --name NAME  Name of sensor device
+    -m MAC_ADRESS, --mac-address MAC_ADRESS
+                          Bluetooth MAC address of sensor device
+    -d DEVICE_NUMBER, --device-number DEVICE_NUMBER
+                          Bluetooth device number of sensor device
