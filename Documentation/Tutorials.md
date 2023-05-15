@@ -305,7 +305,7 @@ To collect and store measurement data from an STH you can uses the subcommand `m
 icon measure
 ```
 
-By default the command will collect streaming data for 10 seconds for the first measurement channel and print the result in JSON format. You can change the default measurement duration using the option `-t`/`--time`. For example to collect measurement data for 1.5 seconds from the STH with the name `Test-STH` use the command:
+By default the command will collect streaming data for 10 seconds for the first measurement channel and store the data as `Measurement.hdf5` in the current working directory. You can change the default measurement duration using the option `-t`/`--time`. For example to collect measurement data for 1.5 seconds from the STH with the name `Test-STH` use the command:
 
 ```sh
 icon measure -t 1.5 -n Test-STH

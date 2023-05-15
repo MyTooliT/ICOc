@@ -3,13 +3,14 @@
 from argparse import Namespace
 from asyncio import run, sleep
 from functools import partial
+from pathlib import Path
 from time import time
 from typing import List
 
 from mytoolit.can import Network
 from mytoolit.can.network import STHDeviceInfo, NetworkError
 from mytoolit.cmdline.parse import parse_arguments
-from mytoolit.measurement import convert_raw_to_g
+from mytoolit.measurement import convert_raw_to_g, Storage
 
 
 # -- Functions ----------------------------------------------------------------
@@ -60,17 +61,30 @@ async def measure(arguments: Namespace) -> None:
     """
 
     identifier = arguments.identifier
+    measurement_time_s = arguments.time
 
     async with Network() as network:
         await network.connect_sensor_device(identifier)
 
-        stream_data = await network.read_streaming_data_seconds(arguments.time)
-
         sensor_range = await network.read_acceleration_sensor_range_in_g()
         conversion_to_g = partial(convert_raw_to_g, max_value=sensor_range)
-        stream_data.apply(conversion_to_g)
 
-        print(f"\nStream Data:\n{stream_data}")
+        print(f"Measure acceleration values for {measurement_time_s} seconds…")
+        filepath = Path("Measurement.hdf5")
+        with Storage(filepath) as storage:
+            start_time = time()
+            async with network.open_data_stream(first=True) as stream:
+                async for data in stream:
+                    data.apply(conversion_to_g)
+                    storage.add_streaming_data(data)
+
+                    if time() - start_time >= measurement_time_s:
+                        break
+            storage.add_acceleration_meta(
+                "Sensor_Range", f"± {sensor_range} g₀"
+            )
+
+        conversion_to_g = partial(convert_raw_to_g, max_value=sensor_range)
 
 
 async def rename(arguments: Namespace) -> None:
