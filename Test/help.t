@@ -16,3 +16,12 @@ Check help output for main command:
       measure             Store measurement data
       rename              Rename a sensor device
       stu                 Execute commands related to stationary receiver unit
+
+Check help output of list command:
+
+  $ icon list -h
+  usage: icon list [-h]
+  
+  options:
+    -h, --help  show this help message and exit
+
