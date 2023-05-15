@@ -10,6 +10,7 @@ HTML_FILE := $(OUTPUT_DIRECTORY)/$(OUTPUT_NAME).html
 
 ifeq ($(OS), Windows_NT)
 	OPERATING_SYSTEM := windows
+	export PYTEST_ADDOPTS := "-p no:prysk"
 else
 	OS_NAME := $(shell uname -s)
 	ifeq ($(OS_NAME), Linux)
@@ -32,8 +33,8 @@ check:
 	mypy mytoolit
 
 .PHONY: test
-test: pytest-test prysk-test
-test-no-hardware: pytest-test-no-hardware prysk-test
+test: pytest-test
+test-no-hardware: pytest-test-no-hardware
 
 # ----------
 # - Pytest -
@@ -44,18 +45,6 @@ pytest-test:
 
 pytest-test-no-hardware:
 	pytest --ignore-glob='*network.py' --ignore-glob='*commander.py'
-
-# ---------
-# - Prysk -
-# ---------
-
-prysk-test: prysk-test-$(OPERATING_SYSTEM)
-
-prysk-test-linux: prysk-test-mac
-prysk-test-mac:
-	prysk Test/*.t
-prysk-test-windows:
-	powershell -c '"Prysk tests are not supported on Windows"'
 
 # ------------------
 # - Hardware Tests -
