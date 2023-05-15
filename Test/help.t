@@ -7,7 +7,7 @@ Check help output for main command:
   
   ICOtronic CLI tool
   
-  options:
+  option.* (re)
     -h, --help            show this help message and exit
   
   Subcommands:
@@ -22,7 +22,7 @@ Check help output of list command:
   $ icon list -h
   usage: icon list [-h]
   
-  options:
+  option.* (re)
     -h, --help  show this help message and exit
 
 Check help output of measure command:
@@ -30,7 +30,7 @@ Check help output of measure command:
   $ icon measure --help
   usage: icon measure [-h] (-n NAME | -m MAC_ADRESS | -d DEVICE_NUMBER)
   
-  options:
+  option.* (re)
     -h, --help            show this help message and exit
     -n NAME, --name NAME  Name of sensor device
     -m MAC_ADRESS, --mac-address MAC_ADRESS
@@ -46,7 +46,7 @@ Check help output of rename command:
   positional arguments:
     name                  New name of STH
   
-  options:
+  option.* (re)
     -h, --help            show this help message and exit
     -n NAME, --name NAME  Name of sensor device
     -m MAC_ADRESS, --mac-address MAC_ADRESS
@@ -59,7 +59,7 @@ Check help output of STU command:
   $ icon stu -h
   usage: icon stu [-h] {ota,mac} ...
   
-  options:
+  option.* (re)
     -h, --help  show this help message and exit
   
   Subcommands:
