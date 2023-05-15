@@ -297,6 +297,20 @@ To print a list of all available sensor devices please use the subcommand `list`
 icon list
 ```
 
+### Collecting Measurement Data
+
+To collect and store measurement data from an STH you can uses the subcommand `measure`:
+
+```sh
+icon measure
+```
+
+By default the command will collect streaming data for 10 seconds for the first measurement channel and print the result in JSON format. You can change the default measurement duration using the option `-t`/`--time`. For example to collect measurement data for 1.5 seconds from the STH with the name `Test-STH` use the command:
+
+```sh
+icon measure -t 1.5 -n Test-STH
+```
+
 ### Renaming a Sensor Device
 
 To change the name of a sensor you can use the subcommand `rename`. For example to change the name of the sensor device with the Bluetooth MAC address `08-6B-D7-01-DE-81` to `Test-STH` use the following command:

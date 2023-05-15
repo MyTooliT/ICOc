@@ -28,10 +28,12 @@ Check help output of list command:
 Check help output of measure command:
 
   $ icon measure --help
-  usage: icon measure [-h] (-n NAME | -m MAC_ADRESS | -d DEVICE_NUMBER)
+  usage: icon measure [-h] [-t TIME]
+                      (-n NAME | -m MAC_ADRESS | -d DEVICE_NUMBER)
   
   option.* (re)
     -h, --help            show this help message and exit
+    -t TIME, --time TIME  measurement time in seconds
     -n NAME, --name NAME  Name of sensor device
     -m MAC_ADRESS, --mac-address MAC_ADRESS
                           Bluetooth MAC address of sensor device

@@ -64,7 +64,7 @@ async def measure(arguments: Namespace) -> None:
     async with Network() as network:
         await network.connect_sensor_device(identifier)
 
-        stream_data = await network.read_streaming_data_amount(1000)
+        stream_data = await network.read_streaming_data_seconds(arguments.time)
 
         sensor_range = await network.read_acceleration_sensor_range_in_g()
         conversion_to_g = partial(convert_raw_to_g, max_value=sensor_range)
