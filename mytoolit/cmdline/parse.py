@@ -354,6 +354,7 @@ def parse_arguments() -> Namespace:
         "ota", help="Enable “over the air” (OTA) update mode"
     )
     stu_subparsers.add_parser("mac", help="Show Bluetooth MAC address")
+    stu_subparsers.add_parser("reset", help="Reset STU")
 
     return parser.parse_args()
 

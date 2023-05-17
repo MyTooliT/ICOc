@@ -59,12 +59,13 @@ Check help output of rename command:
 Check help output of STU command:
 
   $ icon stu -h
-  usage: icon stu [-h] {ota,mac} ...
+  usage: icon stu [-h] {ota,mac,reset} ...
   
   option.* (re)
-    -h, --help  show this help message and exit
+    -h, --help       show this help message and exit
   
   Subcommands:
-    {ota,mac}
-      ota       Enable “over the air” (OTA) update mode
-      mac       Show Bluetooth MAC address
+    {ota,mac,reset}
+      ota            Enable “over the air” (OTA) update mode
+      mac            Show Bluetooth MAC address
+      reset          Reset STU

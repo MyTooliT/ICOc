@@ -349,6 +349,14 @@ To retrieve the STU Bluetooth address you can use the following command:
 icon stu mac
 ```
 
+#### Reset STU
+
+To reset the STU please use the following command:
+
+```sh
+icon stu reset
+```
+
 ## Production Tests
 
 This tutorial lists the usual steps to test a sensory holder assembly or a sensory tool holder.

@@ -159,6 +159,8 @@ async def stu(arguments: Namespace) -> None:
             await network.activate_bluetooth()
         elif subcommand == "mac":
             print(await network.get_mac_address("STU 1"))
+        elif subcommand == "reset":
+            await network.reset_node("STU 1")
         else:
             raise ValueError(f"Unknown STU subcommand “{subcommand}”")
 
