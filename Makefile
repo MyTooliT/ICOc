@@ -10,7 +10,8 @@ HTML_FILE := $(OUTPUT_DIRECTORY)/$(OUTPUT_NAME).html
 
 ifeq ($(OS), Windows_NT)
 	OPERATING_SYSTEM := windows
-	export PYTEST_ADDOPTS := "-p no:prysk"
+	# Disable Prysk Pytest plugin
+	export PYTEST_DISABLE_PLUGIN_AUTOLOAD := ""
 else
 	OS_NAME := $(shell uname -s)
 	ifeq ($(OS_NAME), Linux)
