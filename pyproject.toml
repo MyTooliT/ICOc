@@ -57,6 +57,7 @@ dev = [
     "toml",
 ]
 test = [
+    "icolyzer>=1.5.0", # Require ICOlyzer for Prysk tests
     "prysk[pytest-plugin]>=0.13.1",
     "pytest",
 ]

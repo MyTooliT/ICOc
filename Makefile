@@ -44,7 +44,9 @@ pytest-test:
 	pytest
 
 pytest-test-no-hardware:
-	pytest --ignore-glob='*network.py' --ignore-glob='*commander.py'
+	pytest --ignore-glob='*network.py' \
+	       --ignore-glob='*commander.py' \
+	       --ignore-glob='*measure.t'
 
 # ------------------
 # - Hardware Tests -
