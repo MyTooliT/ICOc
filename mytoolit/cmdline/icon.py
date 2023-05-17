@@ -72,7 +72,7 @@ async def measure(arguments: Namespace) -> None:
         conversion_to_g = partial(convert_raw_to_g, max_value=sensor_range)
 
         filepath = Path("Measurement.hdf5")
-        with Storage(filepath) as storage:
+        with Storage(filepath.resolve()) as storage:
             progress = tqdm(
                 total=measurement_time_s,
                 desc="Read sensor data",
