@@ -12,7 +12,7 @@
 
 Check that runtime is approximately correct
 
-  $ python -c "exit(0 if 4.5 < $runtime < 5.1 else 1)"
+  $ python3 -c "exit(0 if 4.5 < $runtime < 5.1 else 1)"
 
 -- Cleanup ---------------------------------------------------------------------
 
