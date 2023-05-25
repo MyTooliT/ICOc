@@ -4,84 +4,20 @@ on:
   - push
 
 jobs:
-
-  linux:
-
-    name: 🐧 Ubuntu
-    runs-on: ubuntu-latest
+  os-python-matrix:
     strategy:
       matrix:
+        os:
+          - macos
+          - ubuntu
+          - windows
         python-version:
           - '3.9'
           - '3.10'
           - '3.11'
 
-    # The steps below are the same for every OS. Ideally we would just write
-    # them down once and then reference them using YAML anchors. Unfortunately
-    # the YAML parser of GitHub Actions does not support this feature.
-    #
-    # See also:
-    #   - https://github.com/orgs/community/discussions/4501
-    #   - https://github.com/actions/runner/issues/1182
-
-    steps:
-
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ matrix.python-version }}
-
-    - name: Install ICOc
-      uses: ./.github/actions/install
-
-    - name: Check ICOc code base
-      run: make check
-
-    - name: Test ICOc
-      run: make test-no-hardware
-
-  mac:
-
-    name: 🍎 macOS
-    runs-on: macos-latest
-    strategy:
-      matrix:
-        python-version:
-          - '3.10'
-          - '3.11'
-
-    steps:
-
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ matrix.python-version }}
-
-    - name: Install ICOc
-      uses: ./.github/actions/install
-
-    - name: Check ICOc code base
-      run: make check
-
-    - name: Test ICOc
-      run: make test-no-hardware
-
-  windows:
-
-    name: 🪟 Windows
-    runs-on: windows-latest
-    strategy:
-      matrix:
-        python-version:
-          - '3.9'
-          - '3.10'
-          - '3.11'
+    runs-on: ${{ matrix.os }}-latest
+    name: Python ${{ matrix.python-version }} (${{ matrix.os }})
 
     steps:
 
