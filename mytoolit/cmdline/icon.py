@@ -10,6 +10,7 @@ from typing import List
 from tqdm import tqdm
 
 from mytoolit.can import Network
+from mytoolit.can.adc import ADCConfiguration
 from mytoolit.can.network import STHDeviceInfo, NetworkError
 from mytoolit.cmdline.parse import parse_arguments
 from mytoolit.measurement import convert_raw_to_g, Storage
@@ -67,6 +68,16 @@ async def measure(arguments: Namespace) -> None:
 
     async with Network() as network:
         await network.connect_sensor_device(identifier)
+
+        # Reduce sample rate to decrease CPU usage
+        # See: https://github.com/MyTooliT/ICOc/issues/40
+        adc_config = ADCConfiguration(
+            reference_voltage=3.3,
+            prescaler=2,
+            acquisition_time=8,
+            oversampling_rate=512,
+        )
+        await network.write_adc_configuration(**adc_config)
 
         sensor_range = await network.read_acceleration_sensor_range_in_g()
         conversion_to_g = partial(convert_raw_to_g, max_value=sensor_range)
