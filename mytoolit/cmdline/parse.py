@@ -304,7 +304,7 @@ def parse_arguments() -> Namespace:
     parser.add_argument(
         "--log",
         choices=("debug", "info", "warning", "error", "critical"),
-        default="info",
+        default="warning",
         required=False,
         help="minimum log level",
     )
