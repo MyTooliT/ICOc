@@ -301,6 +301,14 @@ def parse_arguments() -> Namespace:
 
     parser = ArgumentParser(description="ICOtronic CLI tool")
 
+    parser.add_argument(
+        "--log",
+        choices=("debug", "info", "warning", "error", "critical"),
+        default="info",
+        required=False,
+        help="minimum log level",
+    )
+
     subparsers = parser.add_subparsers(
         required=True, title="Subcommands", dest="subcommand"
     )

@@ -3,6 +3,7 @@
 from argparse import Namespace
 from asyncio import run, sleep
 from functools import partial
+from logging import basicConfig, getLogger
 from pathlib import Path
 from time import time
 from typing import List
@@ -23,11 +24,12 @@ async def dataloss(arguments: Namespace) -> None:
     """Check data loss at different sample rates"""
 
     identifier = arguments.identifier
+    logger = getLogger(__name__)
 
     async with Network() as network:
-        print(f"Connecting to “{identifier}”")
+        logger.info(f"Connecting to “{identifier}”")
         await network.connect_sensor_device(identifier)
-        print(f"Connected to “{identifier}”")
+        logger.info(f"Connected to “{identifier}”")
 
 
 async def list_sensor_devices(arguments: Namespace) -> None:
@@ -191,6 +193,12 @@ def main():
     """ICOtronic command line tool"""
 
     arguments = parse_arguments()
+    basicConfig(
+        level=arguments.log.upper(),
+        style="{",
+        format="{asctime} {levelname:7} {message}",
+    )
+
     command_to_coroutine = {
         "dataloss": dataloss,
         "list": list_sensor_devices,

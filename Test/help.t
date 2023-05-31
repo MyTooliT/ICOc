@@ -3,12 +3,15 @@
 Check help output for main command:
 
   $ icon --help
-  usage: icon [-h] {dataloss,list,measure,rename,stu} ...
+  usage: icon [-h] [--log {debug,info,warning,error,critical}]
+              {dataloss,list,measure,rename,stu} ...
   
   ICOtronic CLI tool
   
   option.* (re)
     -h, --help            show this help message and exit
+    --log {debug,info,warning,error,critical}
+                          minimum log level
   
   Subcommands:
     {dataloss,list,measure,rename,stu}
