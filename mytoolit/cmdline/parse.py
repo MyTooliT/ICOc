@@ -305,6 +305,15 @@ def parse_arguments() -> Namespace:
         required=True, title="Subcommands", dest="subcommand"
     )
 
+    # =============
+    # = Data Loss =
+    # =============
+
+    dataloss_parser = subparsers.add_parser(
+        "dataloss", help="Check data loss at different sample rates"
+    )
+    add_identifier_arguments(dataloss_parser)
+
     # ========
     # = List =
     # ========

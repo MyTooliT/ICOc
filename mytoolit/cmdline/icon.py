@@ -19,6 +19,17 @@ from mytoolit.measurement import convert_raw_to_g, Storage
 # -- Functions ----------------------------------------------------------------
 
 
+async def dataloss(arguments: Namespace) -> None:
+    """Check data loss at different sample rates"""
+
+    identifier = arguments.identifier
+
+    async with Network() as network:
+        print(f"Connecting to “{identifier}”")
+        await network.connect_sensor_device(identifier)
+        print(f"Connected to “{identifier}”")
+
+
 async def list_sensor_devices(arguments: Namespace) -> None:
     """Print a list of available sensor devices
 
@@ -181,6 +192,7 @@ def main():
 
     arguments = parse_arguments()
     command_to_coroutine = {
+        "dataloss": dataloss,
         "list": list_sensor_devices,
         "measure": measure,
         "rename": rename,

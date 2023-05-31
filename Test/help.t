@@ -3,7 +3,7 @@
 Check help output for main command:
 
   $ icon --help
-  usage: icon [-h] {list,measure,rename,stu} ...
+  usage: icon [-h] {dataloss,list,measure,rename,stu} ...
   
   ICOtronic CLI tool
   
@@ -11,7 +11,8 @@ Check help output for main command:
     -h, --help            show this help message and exit
   
   Subcommands:
-    {list,measure,rename,stu}
+    {dataloss,list,measure,rename,stu}
+      dataloss            Check data loss at different sample rates
       list                List sensor devices
       measure             Store measurement data
       rename              Rename a sensor device
