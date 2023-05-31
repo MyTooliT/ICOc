@@ -32,8 +32,8 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    - name: Install ICOc
-      uses: ./.github/actions/install
+    - name: Install ICOc and dev/test packages
+      run: pip install -e .[test,dev]
 
     - name: Check ICOc code base
       run: make check
