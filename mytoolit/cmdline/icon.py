@@ -5,9 +5,11 @@ from asyncio import run, sleep
 from functools import partial
 from logging import basicConfig, getLogger
 from pathlib import Path
+from sys import stderr
 from time import time
 from typing import List
 
+from can.interfaces.pcan import PcanError
 from tqdm import tqdm
 
 from mytoolit.can import Network
@@ -34,39 +36,50 @@ async def dataloss(arguments: Namespace) -> None:
         sensor_range = await network.read_acceleration_sensor_range_in_g()
         conversion_to_g = partial(convert_raw_to_g, max_value=sensor_range)
 
-        sample_rate = (await network.read_adc_configuration()).sample_rate()
-        logger.info(f"Sample rate: {sample_rate} Hz")
-
         measurement_time_s = 10
-        filepath = Path(f"Measurement {sample_rate} Hz.hdf5")
-        with Storage(filepath.resolve()) as storage:
-            progress = tqdm(
-                total=measurement_time_s,
-                desc="Read sensor data",
-                unit=" seconds",
-                leave=False,
-                disable=None,
+
+        for oversampling_rate in (2**exponent for exponent in range(6, 10)):
+            logger.info(f"Oversampling rate: {oversampling_rate}")
+            config = ADCConfiguration(
+                prescaler=2,
+                acquisition_time=8,
+                oversampling_rate=oversampling_rate,
             )
+            await network.write_adc_configuration(**config)
+            sample_rate = config.sample_rate()
+            logger.info(f"Sample rate: {sample_rate} Hz")
 
-            start_time = time()
-            last_update = start_time
-            async with network.open_data_stream(first=True) as stream:
-                async for data in stream:
-                    data.apply(conversion_to_g)
-                    storage.add_streaming_data(data)
+            filepath = Path(f"Measurement {sample_rate} Hz.hdf5")
+            with Storage(filepath.resolve()) as storage:
+                progress = tqdm(
+                    total=int(sample_rate * measurement_time_s),
+                    desc="Read sensor data",
+                    unit=" values",
+                    leave=False,
+                    disable=None,
+                )
 
-                    current_time = time()
-                    progress.update(current_time - last_update)
-                    last_update = current_time
+                start_time = time()
+                try:
+                    async with network.open_data_stream(first=True) as stream:
+                        async for data in stream:
+                            data.apply(conversion_to_g)
+                            storage.add_streaming_data(data)
+                            progress.update(3)
+                            if time() - start_time >= measurement_time_s:
+                                break
+                except PcanError as error:
+                    print(
+                        f"Unable to collect streaming data: {error}",
+                        file=stderr,
+                    )
 
-                    if current_time - start_time >= measurement_time_s:
-                        break
-            storage.add_acceleration_meta(
-                "Sensor_Range", f"± {sensor_range/2} g₀"
-            )
+                storage.add_acceleration_meta(
+                    "Sensor_Range", f"± {sensor_range/2} g₀"
+                )
 
-            progress.close()
-        print(f"Stored measurement data in “{filepath}”")
+                progress.close()
+            print(f"Stored measurement data in “{filepath}”")
 
 
 async def list_sensor_devices(arguments: Namespace) -> None:
