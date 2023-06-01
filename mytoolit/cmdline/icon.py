@@ -124,8 +124,6 @@ async def measure(arguments: Namespace) -> None:
 
             progress.close()
 
-        conversion_to_g = partial(convert_raw_to_g, max_value=sensor_range)
-
 
 async def rename(arguments: Namespace) -> None:
     """Rename a sensor device
