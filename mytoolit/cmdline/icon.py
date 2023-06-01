@@ -31,6 +31,43 @@ async def dataloss(arguments: Namespace) -> None:
         await network.connect_sensor_device(identifier)
         logger.info(f"Connected to “{identifier}”")
 
+        sensor_range = await network.read_acceleration_sensor_range_in_g()
+        conversion_to_g = partial(convert_raw_to_g, max_value=sensor_range)
+
+        sample_rate = (await network.read_adc_configuration()).sample_rate()
+        logger.info(f"Sample rate: {sample_rate} Hz")
+
+        measurement_time_s = 10
+        filepath = Path(f"Measurement {sample_rate} Hz.hdf5")
+        with Storage(filepath.resolve()) as storage:
+            progress = tqdm(
+                total=measurement_time_s,
+                desc="Read sensor data",
+                unit=" seconds",
+                leave=False,
+                disable=None,
+            )
+
+            start_time = time()
+            last_update = start_time
+            async with network.open_data_stream(first=True) as stream:
+                async for data in stream:
+                    data.apply(conversion_to_g)
+                    storage.add_streaming_data(data)
+
+                    current_time = time()
+                    progress.update(current_time - last_update)
+                    last_update = current_time
+
+                    if current_time - start_time >= measurement_time_s:
+                        break
+            storage.add_acceleration_meta(
+                "Sensor_Range", f"± {sensor_range/2} g₀"
+            )
+
+            progress.close()
+        print(f"Stored measurement data in “{filepath}”")
+
 
 async def list_sensor_devices(arguments: Namespace) -> None:
     """Print a list of available sensor devices
