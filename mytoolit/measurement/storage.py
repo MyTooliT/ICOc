@@ -144,7 +144,7 @@ class Storage:
         try:
             self.hdf = open_file(
                 self.filepath,
-                mode="a",
+                mode="w",
                 filters=Filters(4, "zlib"),
                 title="STH Measurement Data",
             )
