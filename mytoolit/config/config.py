@@ -1,6 +1,7 @@
 # -- Import -------------------------------------------------------------------
 
 from dynaconf import Dynaconf
+from importlib.resources import as_file, files
 from os import makedirs
 from pathlib import Path
 
@@ -92,6 +93,7 @@ class Settings(Dynaconf):
 
 # -- Attributes ---------------------------------------------------------------
 
-settings = Settings(
-    settings_file=[Path(__file__).parent.joinpath("config.yaml")]
-)
+with as_file(
+    files("mytoolit.config").joinpath("config.yaml")
+) as repo_settings:
+    settings = Settings(settings_file=[repo_settings])
