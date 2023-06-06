@@ -4,6 +4,7 @@ from dynaconf import Dynaconf
 from importlib.resources import as_file, files
 from os import makedirs
 from pathlib import Path
+from platformdirs import site_config_dir, user_config_dir
 
 # -- Class --------------------------------------------------------------------
 
@@ -93,7 +94,19 @@ class Settings(Dynaconf):
 
 # -- Attributes ---------------------------------------------------------------
 
+app_name = "ICOc"
+config_filename = "config.yaml"
+site_config_filepath = Path(site_config_dir(app_name)) / config_filename
+user_config_filepath = Path(user_config_dir(app_name)) / config_filename
+
 with as_file(
-    files("mytoolit.config").joinpath("config.yaml")
-) as repo_settings:
-    settings = Settings(settings_file=[repo_settings])
+    files("mytoolit.config").joinpath(config_filename)
+) as repo_settings_filepath:
+    settings = Settings(
+        settings_file=[
+            repo_settings_filepath,
+            site_config_filepath,
+            user_config_filepath,
+        ],
+        merge_enabled=True,
+    )

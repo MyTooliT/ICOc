@@ -27,6 +27,7 @@ dependencies = [
   # - https://github.com/hgrecco/pint/issues/1767
   # is fixed.
   "pint==0.20.1",
+  "platformdirs>=3.5.0",
   "python-can[pcan]>=4.0",
   "pywin32; os_name == 'nt'",
   "reportlab",
