@@ -6,7 +6,21 @@ from os import makedirs
 from pathlib import Path
 from platformdirs import site_config_dir, user_config_dir
 
-# -- Class --------------------------------------------------------------------
+# -- Classes ------------------------------------------------------------------
+
+
+class ConfigurationUtility:
+    """Access configuration data"""
+
+    app_name = "ICOc"
+    app_author = "MyTooliT"
+    config_filename = "config.yaml"
+    site_config_filepath = (
+        Path(site_config_dir(app_name, appauthor=app_author)) / config_filename
+    )
+    user_config_filepath = (
+        Path(user_config_dir(app_name, appauthor=app_author)) / config_filename
+    )
 
 
 class Settings(Dynaconf):
@@ -94,24 +108,15 @@ class Settings(Dynaconf):
 
 # -- Attributes ---------------------------------------------------------------
 
-app_name = "ICOc"
-app_author = "MyTooliT"
-config_filename = "config.yaml"
-site_config_filepath = (
-    Path(site_config_dir(app_name, appauthor=app_author)) / config_filename
-)
-user_config_filepath = (
-    Path(user_config_dir(app_name, appauthor=app_author)) / config_filename
-)
 
 with as_file(
-    files("mytoolit.config").joinpath(config_filename)
+    files("mytoolit.config").joinpath(ConfigurationUtility.config_filename)
 ) as repo_settings_filepath:
     settings = Settings(
         settings_file=[
             repo_settings_filepath,
-            site_config_filepath,
-            user_config_filepath,
+            ConfigurationUtility.site_config_filepath,
+            ConfigurationUtility.user_config_filepath,
         ],
         merge_enabled=True,
     )
