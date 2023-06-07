@@ -24,11 +24,30 @@ class ConfigurationUtility:
         Path(user_config_dir(app_name, appauthor=app_author)) / config_filename
     )
 
+    @staticmethod
+    def open_config_file(filepath: Path):
+        """Open configuration file
+
+        Parameters
+        ----------
+
+        filepath:
+            Path to configuration file
+
+        """
+
+        # Create file, if it does not exist already
+        if not filepath.exists():
+            filepath.mkdir(parents=True)
+            filepath.open("a").close()
+
+        open_file(filepath)
+
     @classmethod
     def open_user_config(cls):
         """Open the current users configuration file"""
 
-        open_file(cls.user_config_filepath)
+        cls.open_config_file(cls.user_config_filepath)
 
 
 class Settings(Dynaconf):
