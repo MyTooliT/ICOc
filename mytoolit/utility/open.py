@@ -107,3 +107,10 @@ def open_file(filepath: Union[Path, str]) -> None:
     else:
         open_file_other(filepath)
 
+
+# -- Main ---------------------------------------------------------------------
+
+if __name__ == "__main__":
+    from doctest import testmod
+
+    testmod()
