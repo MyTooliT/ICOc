@@ -16,6 +16,7 @@ from mytoolit.can import Network
 from mytoolit.can.adc import ADCConfiguration
 from mytoolit.can.network import STHDeviceInfo, NetworkError
 from mytoolit.cmdline.parse import parse_arguments
+from mytoolit.config import ConfigurationUtility
 from mytoolit.measurement import convert_raw_to_g, Storage
 
 
@@ -24,6 +25,8 @@ from mytoolit.measurement import convert_raw_to_g, Storage
 
 def config(arguments: Namespace) -> None:
     """Open configuration file"""
+
+    print(ConfigurationUtility.user_config_filepath)
 
 
 async def dataloss(arguments: Namespace) -> None:

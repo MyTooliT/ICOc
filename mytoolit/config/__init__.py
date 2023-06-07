@@ -1,3 +1,3 @@
 # -- Exports ------------------------------------------------------------------
 
-from .config import settings
+from .config import ConfigurationUtility, settings
