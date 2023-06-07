@@ -95,9 +95,14 @@ class Settings(Dynaconf):
 # -- Attributes ---------------------------------------------------------------
 
 app_name = "ICOc"
+app_author = "MyTooliT"
 config_filename = "config.yaml"
-site_config_filepath = Path(site_config_dir(app_name)) / config_filename
-user_config_filepath = Path(user_config_dir(app_name)) / config_filename
+site_config_filepath = (
+    Path(site_config_dir(app_name, appauthor=app_author)) / config_filename
+)
+user_config_filepath = (
+    Path(user_config_dir(app_name, appauthor=app_author)) / config_filename
+)
 
 with as_file(
     files("mytoolit.config").joinpath(config_filename)
