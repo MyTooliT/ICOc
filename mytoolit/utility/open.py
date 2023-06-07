@@ -95,10 +95,20 @@ def open_file(filepath: Union[Path, str]) -> None:
     Open existing file
 
     >>> from importlib.resources import as_file, files
-    >>> with as_file(
-    ...     files("mytoolit.config").joinpath("config.yaml")
-    ... ) as repo_config_file:
-    ...      open_file(repo_config_file)
+    >>> from platform import system
+    >>> from os import environ
+    >>> def test():
+    ...     with as_file(
+    ...         files("mytoolit.config").joinpath("config.yaml")
+    ...     ) as repo_config_file:
+    ...         open_file(repo_config_file)
+
+    We only run the test in a graphical environments on Linux, since
+    otherwise `xdg-open` will block while opening a CLI util to open the
+    YAML config file.
+
+    >>> if system() != "Linux" or environ.get("DISPLAY"):
+    ...     test()
 
     """
 
