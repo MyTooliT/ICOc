@@ -112,6 +112,11 @@ def open_file(filepath: Union[Path, str]) -> None:
 
     """
 
+    # Some tool (e.g. `xdg-open` in WSL) do not fail, even when we try to open
+    # a non-existent file. We add this check to work around this behavior.
+    if not Path(filepath).exists():
+        raise UnableToOpenError(f"File “{filepath}” does not exist")
+
     if system() == "Windows":
         open_file_windows(filepath)
     else:
