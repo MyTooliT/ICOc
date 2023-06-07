@@ -26,7 +26,7 @@ from mytoolit.measurement import convert_raw_to_g, Storage
 def config(arguments: Namespace) -> None:
     """Open configuration file"""
 
-    print(ConfigurationUtility.user_config_filepath)
+    ConfigurationUtility.open_user_config()
 
 
 async def dataloss(arguments: Namespace) -> None:

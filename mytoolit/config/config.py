@@ -6,6 +6,8 @@ from os import makedirs
 from pathlib import Path
 from platformdirs import site_config_dir, user_config_dir
 
+from mytoolit.utility.open import open_file
+
 # -- Classes ------------------------------------------------------------------
 
 
@@ -21,6 +23,12 @@ class ConfigurationUtility:
     user_config_filepath = (
         Path(user_config_dir(app_name, appauthor=app_author)) / config_filename
     )
+
+    @classmethod
+    def open_user_config(cls):
+        """Open the current users configuration file"""
+
+        open_file(cls.user_config_filepath)
 
 
 class Settings(Dynaconf):
