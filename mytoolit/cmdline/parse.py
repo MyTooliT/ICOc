@@ -313,6 +313,14 @@ def parse_arguments() -> Namespace:
         required=True, title="Subcommands", dest="subcommand"
     )
 
+    # ==========
+    # = Config =
+    # ==========
+
+    subparsers.add_parser(
+        "config", help="Open config file in default application"
+    )
+
     # =============
     # = Data Loss =
     # =============

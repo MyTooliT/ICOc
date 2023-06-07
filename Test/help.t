@@ -4,7 +4,7 @@ Check help output for main command:
 
   $ icon --help
   usage: icon [-h] [--log {debug,info,warning,error,critical}]
-              {dataloss,list,measure,rename,stu} ...
+              {config,dataloss,list,measure,rename,stu} ...
   
   ICOtronic CLI tool
   
@@ -14,12 +14,21 @@ Check help output for main command:
                           minimum log level
   
   Subcommands:
-    {dataloss,list,measure,rename,stu}
+    {config,dataloss,list,measure,rename,stu}
+      config              Open config file in default application
       dataloss            Check data loss at different sample rates
       list                List sensor devices
       measure             Store measurement data
       rename              Rename a sensor device
       stu                 Execute commands related to stationary receiver unit
+
+Check help output of config command:
+
+  $ icon config -h
+  usage: icon config [-h]
+  
+  option.* (re)
+    -h, --help  show this help message and exit
 
 Check help output of list command:
 

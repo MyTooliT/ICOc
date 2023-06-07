@@ -22,6 +22,10 @@ from mytoolit.measurement import convert_raw_to_g, Storage
 # -- Functions ----------------------------------------------------------------
 
 
+def config(arguments: Namespace) -> None:
+    """Open configuration file"""
+
+
 async def dataloss(arguments: Namespace) -> None:
     """Check data loss at different sample rates"""
 
@@ -247,20 +251,24 @@ def main():
         format="{asctime} {levelname:7} {message}",
     )
 
-    command_to_coroutine = {
-        "dataloss": dataloss,
-        "list": list_sensor_devices,
-        "measure": measure,
-        "rename": rename,
-        "stu": stu,
-    }
+    if arguments.subcommand == "config":
+        config(arguments.subcommand)
+    else:
+        command_to_coroutine = {
+            "config": config,
+            "dataloss": dataloss,
+            "list": list_sensor_devices,
+            "measure": measure,
+            "rename": rename,
+            "stu": stu,
+        }
 
-    try:
-        run(command_to_coroutine[arguments.subcommand](arguments))
-    except NetworkError as error:
-        print(error)
-    except KeyboardInterrupt:
-        pass
+        try:
+            run(command_to_coroutine[arguments.subcommand](arguments))
+        except NetworkError as error:
+            print(error)
+        except KeyboardInterrupt:
+            pass
 
 
 # -- Main ---------------------------------------------------------------------
