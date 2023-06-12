@@ -155,8 +155,24 @@ class Settings(Dynaconf):
                 ),
             ),
         ]
+        logger_validators = [
+            Validator(
+                "logger.can.level",
+                is_type_of=str,
+                is_in=(
+                    "CRITICAL",
+                    "ERROR",
+                    "WARNING",
+                    "INFO",
+                    "DEBUG",
+                    "NOTSET",
+                ),
+            )
+        ]
 
-        self.validators.register(*can_validators, *commands_validators)
+        self.validators.register(
+            *can_validators, *commands_validators, *logger_validators
+        )
 
         try:
             self.validators.validate()
