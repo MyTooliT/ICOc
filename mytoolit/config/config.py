@@ -141,11 +141,13 @@ class Settings(Dynaconf):
                 condition=partial(
                     element_is_string, name="commands.path.linux"
                 ),
+                must_exist=True,
             ),
             Validator(
                 "commands.path.mac",
                 is_type_of=list,
                 condition=partial(element_is_string, name="commands.path.mac"),
+                must_exist=True,
             ),
             Validator(
                 "commands.path.windows",
@@ -153,6 +155,7 @@ class Settings(Dynaconf):
                 condition=partial(
                     element_is_string, name="commands.path.windows"
                 ),
+                must_exist=True,
             ),
         ]
         logger_validators = [
@@ -167,17 +170,19 @@ class Settings(Dynaconf):
                     "DEBUG",
                     "NOTSET",
                 ),
+                must_exist=True,
             )
         ]
         gui_validators = [
-            Validator("gui.host", is_type_of=str),
-            Validator("gui.port", is_type_of=int),
+            Validator("gui.host", is_type_of=str, must_exist=True),
+            Validator("gui.port", is_type_of=int, must_exist=True),
         ]
         measurement_validators = [
             Validator(
                 "measurement.output.directory",
                 "measurement.output.filename",
                 is_type_of=str,
+                must_exist=True,
             ),
         ]
         operator_validators = [
