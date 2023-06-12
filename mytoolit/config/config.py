@@ -1,6 +1,6 @@
 # -- Import -------------------------------------------------------------------
 
-from dynaconf import Dynaconf
+from dynaconf import Dynaconf, Validator
 from importlib.resources import as_file, files
 from os import makedirs
 from pathlib import Path
@@ -147,3 +147,21 @@ with as_file(
         ],
         merge_enabled=True,
     )
+    can_validators = []
+    for system in ("linux", "mac", "windows"):
+        can_validators.extend(
+            [
+                Validator(
+                    f"can.{system}.bitrate", must_exist=True, is_type_of=int
+                ),
+                Validator(
+                    f"can.{system}.channel", must_exist=True, is_type_of=str
+                ),
+                Validator(
+                    f"can.{system}.interface", must_exist=True, is_type_of=str
+                ),
+            ]
+        )
+
+    settings.validators.register(*can_validators)
+    settings.validators.validate()
