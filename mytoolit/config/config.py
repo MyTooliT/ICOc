@@ -7,6 +7,7 @@ from pathlib import Path
 from platform import system
 from platformdirs import site_config_dir, user_config_dir
 from sys import stderr
+from typing import List, Optional
 
 from mytoolit.utility.open import open_file
 
@@ -52,8 +53,92 @@ class ConfigurationUtility:
         cls.open_config_file(cls.user_config_filepath)
 
 
+class SettingsIncorrectError(Exception):
+    """Raised when the configuration is incorrect"""
+
+
 class Settings(Dynaconf):
     """Small extension of the settings object for our purposes"""
+
+    def __init__(
+        self,
+        default_settings_filepath,
+        settings_files: Optional[List[str]] = None,
+        *arguments,
+        **keyword_arguments,
+    ) -> None:
+        """Initialize the settings using the given arguments
+
+        Parameters
+        ----------
+
+        default_settings_filepath:
+            Filepath to default settings file
+
+        setting_files:
+            A list containing setting files in ascending order according to
+            importance (most important last).
+
+        arguments:
+            All positional arguments
+
+        keyword_arguments:
+            All keyword arguments
+
+        """
+
+        if settings_files is None:
+            settings_files = []
+
+        settings_files = [
+            default_settings_filepath,
+            ConfigurationUtility.site_config_filepath,
+            ConfigurationUtility.user_config_filepath,
+        ] + settings_files
+
+        super().__init__(
+            settings_files=settings_files,
+            merge_enabled=True,  # Combine settings
+            *arguments,
+            **keyword_arguments,
+        )
+        self.validate_settings()
+
+    def validate_settings(self) -> None:
+        """Check settings for errors"""
+
+        config_system = "mac" if system() == "Darwin" else system().lower()
+        can_validators = [
+            Validator(
+                f"can.{config_system}.bitrate", must_exist=True, is_type_of=int
+            ),
+            Validator(
+                f"can.{config_system}.channel", must_exist=True, is_type_of=str
+            ),
+            Validator(
+                f"can.{config_system}.interface",
+                must_exist=True,
+                is_type_of=str,
+            ),
+        ]
+
+        self.validators.register(*can_validators)
+
+        try:
+            self.validators.validate()
+        except ValidationError as error:
+            config_files_text = "\n".join(
+                (
+                    f"  • {ConfigurationUtility.site_config_filepath}",
+                    f"  • {ConfigurationUtility.user_config_filepath}",
+                )
+            )
+            raise SettingsIncorrectError(
+                f"Incorrect configuration: {error}\n\n"
+                "Please make sure that the configuration files:\n\n"
+                f"{config_files_text}\n\n"
+                "contain the correct configuration values"
+            ) from error
 
     def acceleration_sensor(self):
         """Get the settings for the current acceleration sensor
@@ -141,45 +226,8 @@ class Settings(Dynaconf):
 with as_file(
     files("mytoolit.config").joinpath(ConfigurationUtility.config_filename)
 ) as repo_settings_filepath:
-    settings = Settings(
-        settings_file=[
-            repo_settings_filepath,
-            ConfigurationUtility.site_config_filepath,
-            ConfigurationUtility.user_config_filepath,
-        ],
-        merge_enabled=True,
-    )
-    config_system = "mac" if system() == "Darwin" else system().lower()
-    can_validators = [
-        Validator(
-            f"can.{config_system}.bitrate", must_exist=True, is_type_of=int
-        ),
-        Validator(
-            f"can.{config_system}.channel", must_exist=True, is_type_of=str
-        ),
-        Validator(
-            f"can.{config_system}.interface",
-            must_exist=True,
-            is_type_of=str,
-        ),
-    ]
-
-    settings.validators.register(*can_validators)
     try:
-        settings.validators.validate()
-    except ValidationError as error:
-        config_files_text = "\n".join(
-            (
-                f"  • {ConfigurationUtility.site_config_filepath}",
-                f"  • {ConfigurationUtility.user_config_filepath}",
-            )
-        )
-        print(f"Incorrect configuration: {error}\n", file=stderr)
-        print(
-            (
-                "Please make sure that the configuration files:\n\n"
-                f"{config_files_text}\n\n"
-                "contain the correct configuration values"
-            ),
-        )
+        settings = Settings(default_settings_filepath=repo_settings_filepath)
+    except SettingsIncorrectError as error:
+        print(f"{error}", file=stderr)
         exit(1)
