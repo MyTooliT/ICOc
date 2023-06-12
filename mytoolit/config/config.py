@@ -173,12 +173,20 @@ class Settings(Dynaconf):
             Validator("gui.host", is_type_of=str),
             Validator("gui.port", is_type_of=int),
         ]
+        measurement_validators = [
+            Validator(
+                "measurement.output.directory",
+                "measurement.output.filename",
+                is_type_of=str,
+            ),
+        ]
 
         self.validators.register(
             *can_validators,
             *commands_validators,
             *logger_validators,
             *gui_validators,
+            *measurement_validators,
         )
 
         try:
