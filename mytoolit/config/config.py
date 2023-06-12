@@ -169,9 +169,16 @@ class Settings(Dynaconf):
                 ),
             )
         ]
+        gui_validators = [
+            Validator("gui.host", is_type_of=str),
+            Validator("gui.port", is_type_of=int),
+        ]
 
         self.validators.register(
-            *can_validators, *commands_validators, *logger_validators
+            *can_validators,
+            *commands_validators,
+            *logger_validators,
+            *gui_validators,
         )
 
         try:
