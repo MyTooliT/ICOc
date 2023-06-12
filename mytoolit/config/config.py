@@ -180,6 +180,9 @@ class Settings(Dynaconf):
                 is_type_of=str,
             ),
         ]
+        operator_validators = [
+            Validator("operator.name", is_type_of=str, must_exist=True)
+        ]
 
         self.validators.register(
             *can_validators,
@@ -187,6 +190,7 @@ class Settings(Dynaconf):
             *logger_validators,
             *gui_validators,
             *measurement_validators,
+            *operator_validators,
         )
 
         try:
