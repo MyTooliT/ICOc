@@ -4,6 +4,7 @@ from dynaconf import Dynaconf, ValidationError, Validator
 from importlib.resources import as_file, files
 from os import makedirs
 from pathlib import Path
+from platform import system
 from platformdirs import site_config_dir, user_config_dir
 from sys import stderr
 
@@ -148,21 +149,20 @@ with as_file(
         ],
         merge_enabled=True,
     )
-    can_validators = []
-    for system in ("linux", "mac", "windows"):
-        can_validators.extend(
-            [
-                Validator(
-                    f"can.{system}.bitrate", must_exist=True, is_type_of=int
-                ),
-                Validator(
-                    f"can.{system}.channel", must_exist=True, is_type_of=str
-                ),
-                Validator(
-                    f"can.{system}.interface", must_exist=True, is_type_of=str
-                ),
-            ]
-        )
+    config_system = "mac" if system() == "Darwin" else system().lower()
+    can_validators = [
+        Validator(
+            f"can.{config_system}.bitrate", must_exist=True, is_type_of=int
+        ),
+        Validator(
+            f"can.{config_system}.channel", must_exist=True, is_type_of=str
+        ),
+        Validator(
+            f"can.{config_system}.interface",
+            must_exist=True,
+            is_type_of=str,
+        ),
+    ]
 
     settings.validators.register(*can_validators)
     try:
