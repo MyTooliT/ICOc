@@ -1,6 +1,7 @@
 # -- Import -------------------------------------------------------------------
 
 from dynaconf import Dynaconf, ValidationError, Validator
+from functools import partial
 from importlib.resources import as_file, files
 from os import makedirs
 from pathlib import Path
@@ -107,6 +108,18 @@ class Settings(Dynaconf):
     def validate_settings(self) -> None:
         """Check settings for errors"""
 
+        def element_is_string(nodes, name: str):
+            if nodes is None:
+                return True  # Let parent validator handle wrong type
+
+            for node in nodes:
+                if not isinstance(node, str):
+                    raise ValidationError(
+                        f"Element “{node}” of {name} has wrong type "
+                        f"“{type(node)}” instead of string"
+                    )
+            return True
+
         config_system = "mac" if system() == "Darwin" else system().lower()
         can_validators = [
             Validator(
@@ -121,8 +134,29 @@ class Settings(Dynaconf):
                 is_type_of=str,
             ),
         ]
+        commands_validators = [
+            Validator(
+                "commands.path.linux",
+                is_type_of=list,
+                condition=partial(
+                    element_is_string, name="commands.path.linux"
+                ),
+            ),
+            Validator(
+                "commands.path.mac",
+                is_type_of=list,
+                condition=partial(element_is_string, name="commands.path.mac"),
+            ),
+            Validator(
+                "commands.path.windows",
+                is_type_of=list,
+                condition=partial(
+                    element_is_string, name="commands.path.windows"
+                ),
+            ),
+        ]
 
-        self.validators.register(*can_validators)
+        self.validators.register(*can_validators, *commands_validators)
 
         try:
             self.validators.validate()
