@@ -319,6 +319,8 @@ then your version of [Setuptools](http://setuptools.pypa.io) needs to be updated
 pip install -U pip setuptools
 ```
 
+<a name="introduction:section:unable-to-locate-hdf5"></a>
+
 #### Unable to Locate HDF5
 
 The installation of ICOc might fail with an error message that looks like this:
@@ -335,7 +337,7 @@ If you uses [Homebrew][] on an Apple Silicon based Mac you can use the [followin
 brew install hdf5 c-blosc lzo bzip2
 export HDF5_DIR=/opt/homebrew/opt/hdf5
 export BLOSC_DIR=/opt/homebrew/opt/c-blosc
-pip install tables
+pip install --no-cache-dir tables
 # If the above command does not work you can also try:
 # pip install git+https://github.com/PyTables/PyTables.git@v3.7.0
 pip install -e .
@@ -343,19 +345,11 @@ pip install -e .
 
 #### HDF5 Library Not Loaded
 
-Some of the ICOc commands might [fail with an error message that looks like this](https://github.com/PyTables/PyTables/issues/1020) on macOS:
+Some of the ICOc commands might fail with an error message that looks like this on macOS:
 
 > `Library not loaded: /opt/homebrew/opt/hdf5/lib/libhdf5.….dylib`
 
-You should be able to fix this issue installing the [PyTable](https://www.pytables.org) package from source (using [Homebrew][]):
-
-```sh
-pip uninstall tables -y
-brew install hdf5 c-blosc lzo bzip2
-export HDF5_DIR=/opt/homebrew/opt/hdf5
-export BLOSC_DIR=/opt/homebrew/opt/c-blosc
-pip install --no-binary :all: git+https://github.com/PyTables/PyTables.git@v3.8.0
-```
+In that case you might have installed an outdated cached version of [PyTables](https://www.pytables.org). You should be able to fix this issue using the same steps as described [above ](#introduction:section:unable-to-locate-hdf5).
 
 #### Unknown Command `icoc`
 
