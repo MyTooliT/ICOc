@@ -327,7 +327,9 @@ The installation of ICOc might fail with an error message that looks like this:
 … implicit declaration of function 'H5close'
 ```
 
-If you uses [Homebrew](https://brew.sh) on an Apple Silicon based Mac you can use the [following commands to fix this problem](https://stackoverflow.com/questions/73029883/could-not-find-hdf5-installation-for-pytables-on-m1-mac):
+If you uses [Homebrew][] on an Apple Silicon based Mac you can use the [following commands to fix this problem](https://stackoverflow.com/questions/73029883/could-not-find-hdf5-installation-for-pytables-on-m1-mac):
+
+[Homebrew]: https://brew.sh
 
 ```sh
 brew install hdf5 c-blosc lzo bzip2
@@ -337,6 +339,22 @@ pip install tables
 # If the above command does not work you can also try:
 # pip install git+https://github.com/PyTables/PyTables.git@v3.7.0
 pip install -e .
+```
+
+#### HDF5 Library Not Loaded
+
+Some of the ICOc commands might [fail with an error message that looks like this](https://github.com/PyTables/PyTables/issues/1020) on macOS:
+
+> `Library not loaded: /opt/homebrew/opt/hdf5/lib/libhdf5.….dylib`
+
+You should be able to fix this issue installing the [PyTable](https://www.pytables.org) package from source (using [Homebrew][]):
+
+```sh
+pip uninstall tables -y
+brew install hdf5 c-blosc lzo bzip2
+export HDF5_DIR=/opt/homebrew/opt/hdf5
+export BLOSC_DIR=/opt/homebrew/opt/c-blosc
+pip install --no-binary :all: git+https://github.com/PyTables/PyTables.git@v3.8.0
 ```
 
 #### Unknown Command `icoc`
