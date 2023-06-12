@@ -126,9 +126,7 @@ class Settings(Dynaconf):
                 f"can.{config_system}.bitrate", must_exist=True, is_type_of=int
             ),
             Validator(
-                f"can.{config_system}.channel", must_exist=True, is_type_of=str
-            ),
-            Validator(
+                f"can.{config_system}.channel",
                 f"can.{config_system}.interface",
                 must_exist=True,
                 is_type_of=str,
