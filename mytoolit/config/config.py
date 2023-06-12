@@ -1,10 +1,11 @@
 # -- Import -------------------------------------------------------------------
 
-from dynaconf import Dynaconf, Validator
+from dynaconf import Dynaconf, ValidationError, Validator
 from importlib.resources import as_file, files
 from os import makedirs
 from pathlib import Path
 from platformdirs import site_config_dir, user_config_dir
+from sys import stderr
 
 from mytoolit.utility.open import open_file
 
@@ -164,4 +165,21 @@ with as_file(
         )
 
     settings.validators.register(*can_validators)
-    settings.validators.validate()
+    try:
+        settings.validators.validate()
+    except ValidationError as error:
+        config_files_text = "\n".join(
+            (
+                f"  • {ConfigurationUtility.site_config_filepath}",
+                f"  • {ConfigurationUtility.user_config_filepath}",
+            )
+        )
+        print(f"Incorrect configuration: {error}\n", file=stderr)
+        print(
+            (
+                "Please make sure that the configuration files:\n\n"
+                f"{config_files_text}\n\n"
+                "contain the correct configuration values"
+            ),
+        )
+        exit(1)
