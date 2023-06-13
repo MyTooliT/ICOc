@@ -159,6 +159,50 @@ class Settings(Dynaconf):
         def element_is_int(nodes, name: str):
             return element_is_type(nodes, name, element_type=int)
 
+        def sensor_device_validators(name: str):
+            """Return shared validator for STH or SMH"""
+
+            return [
+                Validator(
+                    f"{name}.batch_number",
+                    f"{name}.gtin",
+                    f"{name}.programming_board.serial_number",
+                    is_type_of=int,
+                    must_exist=True,
+                ),
+                Validator(
+                    f"{name}.name",
+                    f"{name}.firmware.location.flash",
+                    f"{name}.firmware.release_name",
+                    f"{name}.hardware_version",
+                    is_type_of=str,
+                    must_exist=True,
+                ),
+                Validator(
+                    f"{name}.oem_data",
+                    is_type_of=list,
+                    must_exist=True,
+                    condition=partial(element_is_int, name="{name}.oem_data"),
+                ),
+                Validator(
+                    f"{name}.production_date",
+                    is_type_of=date,
+                    must_exist=True,
+                ),
+                Validator(
+                    f"{name}.product_name",
+                    is_type_of=str,
+                    len_max=128,
+                    must_exist=True,
+                ),
+                Validator(
+                    f"{name}.serial_number",
+                    is_type_of=str,
+                    len_max=8,
+                    must_exist=True,
+                ),
+            ]
+
         config_system = "mac" if system() == "Darwin" else system().lower()
         can_validators = [
             Validator(
@@ -235,46 +279,12 @@ class Settings(Dynaconf):
                 must_exist=True,
             )
         ]
-        smh_validators = [
+        smh_validators = sensor_device_validators("smh") + [
             Validator(
-                "smh.batch_number",
                 "smh.channels",
-                "smh.gtin",
-                "smh.programming_board.serial_number",
                 is_type_of=int,
                 must_exist=True,
-            ),
-            Validator(
-                "smh.name",
-                "smh.firmware.location.flash",
-                "smh.firmware.release_name",
-                "smh.hardware_version",
-                is_type_of=str,
-                must_exist=True,
-            ),
-            Validator(
-                "smh.oem_data",
-                is_type_of=list,
-                must_exist=True,
-                condition=partial(element_is_int, name="smh.oem_data"),
-            ),
-            Validator(
-                "smh.production_date",
-                is_type_of=date,
-                must_exist=True,
-            ),
-            Validator(
-                "smh.product_name",
-                is_type_of=str,
-                len_max=128,
-                must_exist=True,
-            ),
-            Validator(
-                "smh.serial_number",
-                is_type_of=str,
-                len_max=8,
-                must_exist=True,
-            ),
+            )
         ]
 
         self.validators.register(
