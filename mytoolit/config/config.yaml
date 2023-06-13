@@ -177,7 +177,7 @@ SMH:
   PRODUCTION DATE: 2021-11-26
 
   # Product name for the  manufacturer (maximum of 128 byte UTF-8 encoded text)
-  PRODUCT NAME: 0
+  PRODUCT NAME: "0"
 
   PROGRAMMING BOARD:
     # Please store the serial number of the programming board that is connected
@@ -325,7 +325,7 @@ STH:
   PRODUCTION DATE: 2019-07-03
 
   # Product name for the  manufacturer (maximum of 64 byte UTF-8 encoded text)
-  PRODUCT NAME: 0
+  PRODUCT NAME: "0"
 
   PROGRAMMING BOARD:
     # Please store the serial number of the programming board that is connected
@@ -382,7 +382,7 @@ STU:
   PRODUCTION DATE: 2020-08-20
 
   # Product name for the  manufacturer (maximum of 128 byte UTF-8 encoded text)
-  PRODUCT NAME: 0
+  PRODUCT NAME: "0"
 
   PROGRAMMING BOARD:
     # Please store the serial number of the programming board that is connected
