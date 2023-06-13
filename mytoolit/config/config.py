@@ -42,8 +42,34 @@ class ConfigurationUtility:
 
         # Create file, if it does not exist already
         if not filepath.exists():
-            filepath.mkdir(parents=True)
-            filepath.open("a").close()
+            filepath.parent.mkdir(
+                exist_ok=True,
+                parents=True,
+            )
+            with filepath.open("w", encoding="utf8") as config_file:
+                config_file.write("""\
+# This file contains configuration values for the ICOc package.
+# For a list of available settings you can change, please
+# take a look at the default configuration. The latest version
+# of the default configuration is available here:
+#
+# https://github.com/MyTooliT/ICOc/blob/master/mytoolit/config/config.yaml
+#
+# Settings in this file will either
+#
+# - overwrite values in the case of scalars (i.e “5”, “hello”)
+# - extend values in the case of maps or lists
+#
+# in the default configuration.
+
+# —— <Example> ————————————————————————————————————————————————————————————————
+# Change the (test) operator name to “User Config”
+# If you do not want to change the operator name,
+# please delete the two lines below.
+operator:
+  name: User Config
+# —— </Example> ———————————————————————————————————————————————————————————————
+""")
 
         open_file(filepath)
 
