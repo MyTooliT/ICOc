@@ -57,12 +57,14 @@ class ConfigurationUtility:
 #
 # https://github.com/MyTooliT/ICOc/blob/master/mytoolit/config/config.yaml
 #
-# Settings in this file will either
-#
-# - overwrite values in the case of scalars (i.e “5”, “hello”)
-# - extend values in the case of maps or lists
-#
-# in the default configuration.
+# Settings in this file will overwrite values from the default configuration.
+# In the case of maps and lists this might not be what you want. To change
+# this behavior you can set `dynaconf_merge` to true, either globally or for
+# specific maps or lists. For more information, please take a look at the
+# Dynaconf documentation about this topic: https://www.dynaconf.com/merging
+
+# Enable merging (of maps and lists) globally
+dynaconf_merge: true
 
 # —— <Example> ————————————————————————————————————————————————————————————————
 # Change the (test) operator name to “User Config”
@@ -127,7 +129,6 @@ class Settings(Dynaconf):
 
         super().__init__(
             settings_files=settings_files,
-            merge_enabled=True,  # Combine settings
             *arguments,
             **keyword_arguments,
         )
