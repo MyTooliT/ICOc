@@ -186,6 +186,16 @@ class Settings(Dynaconf):
         operator_validators = [
             Validator("operator.name", is_type_of=str, must_exist=True)
         ]
+        sensory_device_validators = [
+            Validator(
+                "sensory_device.bluetooth.advertisement_time_1",
+                "sensory_device.bluetooth.advertisement_time_2",
+                "sensory_device.bluetooth.sleep_time_1",
+                "sensory_device.bluetooth.sleep_time_2",
+                is_type_of=int,
+                must_exist=True,
+            )
+        ]
 
         self.validators.register(
             *can_validators,
@@ -194,6 +204,7 @@ class Settings(Dynaconf):
             *gui_validators,
             *measurement_validators,
             *operator_validators,
+            *sensory_device_validators,
         )
 
         try:
