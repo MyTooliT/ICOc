@@ -1,14 +1,16 @@
 # -- Import -------------------------------------------------------------------
 
-from dynaconf import Dynaconf, ValidationError, Validator
+from datetime import date
 from functools import partial
 from importlib.resources import as_file, files
 from os import makedirs
 from pathlib import Path
 from platform import system
-from platformdirs import site_config_dir, user_config_dir
 from sys import stderr
 from typing import List, Optional
+
+from dynaconf import Dynaconf, ValidationError, Validator
+from platformdirs import site_config_dir, user_config_dir
 
 from mytoolit.utility.open import open_file
 
@@ -134,17 +136,27 @@ class Settings(Dynaconf):
     def validate_settings(self) -> None:
         """Check settings for errors"""
 
-        def element_is_string(nodes, name: str):
+        def element_is_type(
+            nodes,
+            name: str,
+            element_type: type,
+        ):
             if nodes is None:
                 return True  # Let parent validator handle wrong type
 
             for node in nodes:
-                if not isinstance(node, str):
+                if not isinstance(node, element_type):
                     raise ValidationError(
                         f"Element “{node}” of {name} has wrong type "
-                        f"“{type(node)}” instead of string"
+                        f"“{type(node)}” instead of “{element_type}”"
                     )
             return True
+
+        def element_is_string(nodes, name: str):
+            return element_is_type(nodes, name, element_type=str)
+
+        def element_is_int(nodes, name: str):
+            return element_is_type(nodes, name, element_type=int)
 
         config_system = "mac" if system() == "Darwin" else system().lower()
         can_validators = [
@@ -222,6 +234,47 @@ class Settings(Dynaconf):
                 must_exist=True,
             )
         ]
+        smh_validators = [
+            Validator(
+                "smh.batch_number",
+                "smh.channels",
+                "smh.gtin",
+                "smh.programming_board.serial_number",
+                is_type_of=int,
+                must_exist=True,
+            ),
+            Validator(
+                "smh.name",
+                "smh.firmware.location.flash",
+                "smh.firmware.release_name",
+                "smh.hardware_version",
+                is_type_of=str,
+                must_exist=True,
+            ),
+            Validator(
+                "smh.oem_data",
+                is_type_of=list,
+                must_exist=True,
+                condition=partial(element_is_int, name="smh.oem_data"),
+            ),
+            Validator(
+                "smh.production_date",
+                is_type_of=date,
+                must_exist=True,
+            ),
+            Validator(
+                "smh.product_name",
+                is_type_of=str,
+                len_max=128,
+                must_exist=True,
+            ),
+            Validator(
+                "smh.serial_number",
+                is_type_of=str,
+                len_max=8,
+                must_exist=True,
+            ),
+        ]
 
         self.validators.register(
             *can_validators,
@@ -231,6 +284,7 @@ class Settings(Dynaconf):
             *measurement_validators,
             *operator_validators,
             *sensory_device_validators,
+            *smh_validators,
         )
 
         try:
