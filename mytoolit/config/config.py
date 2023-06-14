@@ -160,8 +160,8 @@ class Settings(Dynaconf):
         def element_is_int(nodes, name: str):
             return element_is_type(nodes, name, element_type=int)
 
-        def sensor_device_validators(name: str):
-            """Return shared validator for STH or SMH"""
+        def device_validators(name: str):
+            """Return shared validator for ICOtronic device (STH, STU, SMH)"""
 
             return [
                 Validator(
@@ -172,7 +172,6 @@ class Settings(Dynaconf):
                     must_exist=True,
                 ),
                 Validator(
-                    f"{name}.name",
                     f"{name}.firmware.location.flash",
                     f"{name}.firmware.release_name",
                     f"{name}.hardware_version",
@@ -200,6 +199,17 @@ class Settings(Dynaconf):
                     f"{name}.serial_number",
                     is_type_of=str,
                     len_max=8,
+                    must_exist=True,
+                ),
+            ]
+
+        def sensor_device_validators(name: str):
+            """Return shared validator for STH or SMH"""
+
+            return device_validators(name) + [
+                Validator(
+                    f"{name}.name",
+                    is_type_of=str,
                     must_exist=True,
                 ),
             ]
@@ -335,6 +345,7 @@ class Settings(Dynaconf):
                 ),
             ),
         ]
+        stu_validators = device_validators("stu")
 
         self.validators.register(
             *can_validators,
@@ -346,6 +357,7 @@ class Settings(Dynaconf):
             *sensory_device_validators,
             *smh_validators,
             *sth_validators,
+            *stu_validators,
         )
 
         try:
