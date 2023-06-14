@@ -3,6 +3,7 @@
 from datetime import date
 from functools import partial
 from importlib.resources import as_file, files
+from numbers import Real
 from os import makedirs
 from pathlib import Path
 from platform import system
@@ -203,6 +204,27 @@ class Settings(Dynaconf):
                 ),
             ]
 
+        def sensor_validators(name: str):
+            prefix = "sth.acceleration_sensor"
+            return [
+                Validator(
+                    f"{prefix}.{name}.acceleration.maximum",
+                    f"{prefix}.{name}.acceleration.ratio_noise_to_max_value",
+                    f"{prefix}.{name}.acceleration.tolerance",
+                    f"{prefix}.{name}.reference_voltage",
+                    f"{prefix}.{name}.self_test.voltage.difference",
+                    f"{prefix}.{name}.self_test.voltage.tolerance",
+                    is_type_of=Real,
+                    must_exist=True,
+                ),
+                Validator(
+                    f"{prefix}.{name}.self_test.dimension",
+                    is_type_of=str,
+                    must_exist=True,
+                    is_in=("x", "y", "z"),
+                ),
+            ]
+
         config_system = "mac" if system() == "Darwin" else system().lower()
         can_validators = [
             Validator(
@@ -286,6 +308,33 @@ class Settings(Dynaconf):
                 must_exist=True,
             )
         ]
+        sth_validators = (
+            sensor_device_validators("sth")
+            + sensor_validators("ADXL1001")
+            + sensor_validators("ADXL1002")
+            + sensor_validators("ADXL356")
+        ) + [
+            Validator(
+                "sth.acceleration_sensor.sensor",
+                is_in=(
+                    "ADXL1001",
+                    "ADXL1002",
+                    "ADXL356",
+                ),
+            ),
+            Validator(
+                "sth.battery_voltage.average",
+                "sth.battery_voltage.tolerance",
+                is_type_of=Real,
+            ),
+            Validator(
+                "sth.status",
+                is_in=(
+                    "Bare PCB",
+                    "Epoxied",
+                ),
+            ),
+        ]
 
         self.validators.register(
             *can_validators,
@@ -296,6 +345,7 @@ class Settings(Dynaconf):
             *operator_validators,
             *sensory_device_validators,
             *smh_validators,
+            *sth_validators,
         )
 
         try:
