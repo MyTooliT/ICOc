@@ -446,7 +446,7 @@ class TestNode(TestCase):
         # = Serial Number =
         # =================
 
-        serial_number = str(config.serial_number)
+        serial_number = config.serial_number
         await self.can.write_eeprom_serial_number(serial_number, receiver)
         cls.serial_number = await self.can.read_eeprom_serial_number(receiver)
         self.assertEqual(
@@ -460,7 +460,7 @@ class TestNode(TestCase):
         # = Product Name =
         # ================
 
-        product_name = str(config.product_name)
+        product_name = config.product_name
         await self.can.write_eeprom_product_name(product_name, receiver)
         cls.product_name = await self.can.read_eeprom_product_name(receiver)
         self.assertEqual(

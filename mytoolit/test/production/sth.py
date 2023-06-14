@@ -381,7 +381,7 @@ class TestSTH(TestSensorNode):
             # ========
 
             name = (
-                str(settings.sth.serial_number)
+                settings.sth.serial_number
                 if settings.sth.status == "Epoxied"
                 else convert_mac_base64(cls.bluetooth_mac)
             )

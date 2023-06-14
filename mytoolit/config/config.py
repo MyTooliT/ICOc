@@ -194,12 +194,14 @@ class Settings(Dynaconf):
                     is_type_of=str,
                     len_max=128,
                     must_exist=True,
+                    cast=str,
                 ),
                 Validator(
                     f"{name}.serial_number",
                     is_type_of=str,
                     len_max=8,
                     must_exist=True,
+                    cast=str,
                 ),
             ]
 
