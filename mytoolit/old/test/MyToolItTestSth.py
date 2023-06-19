@@ -64,7 +64,7 @@ from mytoolit.old.MyToolItSth import (
 )
 from mytoolit.old.SthLimits import SthLimits
 from mytoolit.config import settings
-from mytoolit.utility import add_commander_path_to_environment
+from mytoolit.utility.environment import add_commander_path_to_environment
 
 sVersion = TestConfig["Version"]
 sLogLocation = f"{repo_root}/"
@@ -77,8 +77,7 @@ iRssiMin = -75
 
 
 class TestSth(unittest.TestCase):
-    """This class is used for automated internal verification of the sensory tool holder
-    """
+    """This class is used for automated internal verification of the sensory tool holder"""
 
     def setUp(self):
         self.tSthLimits = SthLimits(
