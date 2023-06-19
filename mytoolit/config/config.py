@@ -143,6 +143,7 @@ class Settings(Dynaconf):
             name: str,
             element_type: type,
         ):
+            """Check that all elements of a list have a certain type"""
             if nodes is None:
                 return True  # Let parent validator handle wrong type
 
@@ -155,9 +156,11 @@ class Settings(Dynaconf):
             return True
 
         def element_is_string(nodes, name: str):
+            """Check that all elements of a list are strings"""
             return element_is_type(nodes, name, element_type=str)
 
         def element_is_int(nodes, name: str):
+            """Check that all elements of a list are ints"""
             return element_is_type(nodes, name, element_type=int)
 
         def device_validators(name: str):
