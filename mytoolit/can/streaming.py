@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from asyncio import Queue
+from numbers import Real
 from typing import (
     AsyncIterator,
     Awaitable,
@@ -782,17 +783,18 @@ class StreamingData:
                     timestamped.timestamp for timestamped in channel
                 ]
 
+                values: List[float] = []
                 if isinstance(first.value, Quantity):
-                    values: List[float] = []
                     for timestamped in channel:
                         assert isinstance(timestamped.value, Quantity)
                         values.append(timestamped.value.magnitude)
                     serialized_channel["values"] = values
                     serialized_channel["unit"] = f"{first.value.units}"
                 else:
-                    serialized_channel["values"] = [
-                        timestamped.value for timestamped in channel
-                    ]
+                    for timestamped in channel:
+                        assert isinstance(timestamped.value, Real)
+                        values.append(timestamped.value)
+                    serialized_channel["values"] = values
 
                 serialized_channel["counters"] = [
                     timestamped.counter for timestamped in channel

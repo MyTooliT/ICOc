@@ -1,6 +1,6 @@
 # -- Imports ------------------------------------------------------------------
 
-from pint import Quantity, UnitRegistry
+from pint import Quantity, Unit, UnitRegistry
 
 # -- Attributes ---------------------------------------------------------------
 
@@ -26,6 +26,8 @@ def celsius(temperature: float) -> Quantity:
 
     """
 
+    assert isinstance(units.celsisus, Unit)
+
     return Quantity(temperature, units.celsius)
 
 
@@ -45,6 +47,8 @@ def g0(acceleration: float) -> Quantity:
 
     """
 
+    assert isinstance(units.g0, Unit)
+
     return Quantity(acceleration, units.g0)
 
 
@@ -63,5 +67,7 @@ def volt(voltage: float) -> Quantity:
     A voltage quantity with the given magnitude
 
     """
+
+    assert isinstance(units.volt, Unit)
 
     return Quantity(voltage, units.volt)
