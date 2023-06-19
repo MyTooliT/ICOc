@@ -138,6 +138,11 @@ class Settings(Dynaconf):
     def validate_settings(self) -> None:
         """Check settings for errors"""
 
+        def MustExist(must_exist, *arguments, **keyword_arguments):
+            """Return Validator which requires setting to exist"""
+
+            return Validator(*arguments, must_exist=True, **keyword_arguments)
+
         def element_is_type(
             nodes,
             name: str,
@@ -167,43 +172,37 @@ class Settings(Dynaconf):
             """Return shared validator for ICOtronic device (STH, STU, SMH)"""
 
             return [
-                Validator(
+                MustExist(
                     f"{name}.batch_number",
                     f"{name}.gtin",
                     f"{name}.programming_board.serial_number",
                     is_type_of=int,
-                    must_exist=True,
                 ),
-                Validator(
+                MustExist(
                     f"{name}.firmware.location.flash",
                     f"{name}.firmware.release_name",
                     f"{name}.hardware_version",
                     is_type_of=str,
-                    must_exist=True,
                 ),
-                Validator(
+                MustExist(
                     f"{name}.oem_data",
                     is_type_of=list,
-                    must_exist=True,
                     condition=partial(element_is_int, name="{name}.oem_data"),
                 ),
-                Validator(
+                MustExist(
                     f"{name}.production_date",
                     is_type_of=date,
-                    must_exist=True,
                 ),
-                Validator(
+                MustExist(
                     f"{name}.product_name",
                     is_type_of=str,
                     len_max=128,
-                    must_exist=True,
                     cast=str,
                 ),
-                Validator(
+                MustExist(
                     f"{name}.serial_number",
                     is_type_of=str,
                     len_max=8,
-                    must_exist=True,
                     cast=str,
                 ),
             ]
@@ -212,17 +211,16 @@ class Settings(Dynaconf):
             """Return shared validator for STH or SMH"""
 
             return device_validators(name) + [
-                Validator(
+                MustExist(
                     f"{name}.name",
                     is_type_of=str,
-                    must_exist=True,
                 ),
             ]
 
         def sensor_validators(name: str):
             prefix = "sth.acceleration_sensor"
             return [
-                Validator(
+                MustExist(
                     f"{prefix}.{name}.acceleration.maximum",
                     f"{prefix}.{name}.acceleration.ratio_noise_to_max_value",
                     f"{prefix}.{name}.acceleration.tolerance",
@@ -230,54 +228,46 @@ class Settings(Dynaconf):
                     f"{prefix}.{name}.self_test.voltage.difference",
                     f"{prefix}.{name}.self_test.voltage.tolerance",
                     is_type_of=Real,
-                    must_exist=True,
                 ),
-                Validator(
+                MustExist(
                     f"{prefix}.{name}.self_test.dimension",
                     is_type_of=str,
-                    must_exist=True,
                     is_in=("x", "y", "z"),
                 ),
             ]
 
         config_system = "mac" if system() == "Darwin" else system().lower()
         can_validators = [
-            Validator(
-                f"can.{config_system}.bitrate", must_exist=True, is_type_of=int
-            ),
-            Validator(
+            MustExist(f"can.{config_system}.bitrate", is_type_of=int),
+            MustExist(
                 f"can.{config_system}.channel",
                 f"can.{config_system}.interface",
-                must_exist=True,
                 is_type_of=str,
             ),
         ]
         commands_validators = [
-            Validator(
+            MustExist(
                 "commands.path.linux",
                 is_type_of=list,
                 condition=partial(
                     element_is_string, name="commands.path.linux"
                 ),
-                must_exist=True,
             ),
-            Validator(
+            MustExist(
                 "commands.path.mac",
                 is_type_of=list,
                 condition=partial(element_is_string, name="commands.path.mac"),
-                must_exist=True,
             ),
-            Validator(
+            MustExist(
                 "commands.path.windows",
                 is_type_of=list,
                 condition=partial(
                     element_is_string, name="commands.path.windows"
                 ),
-                must_exist=True,
             ),
         ]
         logger_validators = [
-            Validator(
+            MustExist(
                 "logger.can.level",
                 is_type_of=str,
                 is_in=(
@@ -288,39 +278,33 @@ class Settings(Dynaconf):
                     "DEBUG",
                     "NOTSET",
                 ),
-                must_exist=True,
             )
         ]
         gui_validators = [
-            Validator("gui.host", is_type_of=str, must_exist=True),
-            Validator("gui.port", is_type_of=int, must_exist=True),
+            MustExist("gui.host", is_type_of=str),
+            MustExist("gui.port", is_type_of=int),
         ]
         measurement_validators = [
-            Validator(
+            MustExist(
                 "measurement.output.directory",
                 "measurement.output.filename",
                 is_type_of=str,
-                must_exist=True,
             ),
         ]
-        operator_validators = [
-            Validator("operator.name", is_type_of=str, must_exist=True)
-        ]
+        operator_validators = [MustExist("operator.name", is_type_of=str)]
         sensory_device_validators = [
-            Validator(
+            MustExist(
                 "sensory_device.bluetooth.advertisement_time_1",
                 "sensory_device.bluetooth.advertisement_time_2",
                 "sensory_device.bluetooth.sleep_time_1",
                 "sensory_device.bluetooth.sleep_time_2",
                 is_type_of=int,
-                must_exist=True,
             )
         ]
         smh_validators = sensor_device_validators("smh") + [
-            Validator(
+            MustExist(
                 "smh.channels",
                 is_type_of=int,
-                must_exist=True,
             )
         ]
         sth_validators = (
@@ -329,7 +313,7 @@ class Settings(Dynaconf):
             + sensor_validators("ADXL1002")
             + sensor_validators("ADXL356")
         ) + [
-            Validator(
+            MustExist(
                 "sth.acceleration_sensor.sensor",
                 is_in=(
                     "ADXL1001",
@@ -337,12 +321,12 @@ class Settings(Dynaconf):
                     "ADXL356",
                 ),
             ),
-            Validator(
+            MustExist(
                 "sth.battery_voltage.average",
                 "sth.battery_voltage.tolerance",
                 is_type_of=Real,
             ),
-            Validator(
+            MustExist(
                 "sth.status",
                 is_in=(
                     "Bare PCB",
