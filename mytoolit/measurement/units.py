@@ -26,9 +26,13 @@ def celsius(temperature: float) -> Quantity:
 
     """
 
-    assert isinstance(units.celsisus, Unit)
+    # As workaround for the `UndefinedUnitError` the code below throws, if
+    # we assert the type of `units.celsius` directly, we just use a
+    # variable to access and check the type.
+    _celsius = units.celsius
+    assert isinstance(_celsius, Unit)
 
-    return Quantity(temperature, units.celsius)
+    return Quantity(temperature, _celsius)
 
 
 def g0(acceleration: float) -> Quantity:
@@ -47,9 +51,10 @@ def g0(acceleration: float) -> Quantity:
 
     """
 
-    assert isinstance(units.g0, Unit)
+    _g0 = units.g0
+    assert isinstance(_g0, Unit)
 
-    return Quantity(acceleration, units.g0)
+    return Quantity(acceleration, _g0)
 
 
 def volt(voltage: float) -> Quantity:
@@ -68,6 +73,7 @@ def volt(voltage: float) -> Quantity:
 
     """
 
-    assert isinstance(units.volt, Unit)
+    _volt = units.volt
+    assert isinstance(_volt, Unit)
 
-    return Quantity(voltage, units.volt)
+    return Quantity(voltage, _volt)
