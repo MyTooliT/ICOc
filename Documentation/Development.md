@@ -258,57 +258,87 @@ Afterwards make sure there were no (unexpected) errors in the output of the STH 
 
 ## Release
 
-1. Check that the [**CI jobs** for the `master` branch finish successfully](https://github.com/MyTooliT/ICOc/actions)
-2. Check that the **checks and tests** run without any problems on **Linux**, **macOS** and **Windows**
+1.  Check that the [**CI jobs** for the `master` branch finish successfully](https://github.com/MyTooliT/ICOc/actions)
+2.  Check that the **checks and tests** run without any problems on **Linux**, **macOS** and **Windows**
 
-   1. Set the value of `STH` → `Status` in `config.yaml` to `Epoxied`
-   2. Execute the command:
+    1. Set the value of `STH` → `Status` in `config.yaml` to `Epoxied`
+    2. Execute the command:
 
-      ```sh
-      make run
-      ```
+       ```sh
+       make run
+       ```
 
-      in the root of the repository
+       in the root of the repository
 
-3. Check that the **firmware flash** works in Windows
+3.  Check that the **firmware flash** works in Windows
 
-   - Execute `test-sth`
+    - Execute `test-sth`
 
-     1. once with `STH` → `Status` set to `Epoxied`, and
-     2. once set to `Bare PCB`
+      1. once with `STH` → `Status` set to `Epoxied`, and
+      2. once set to `Bare PCB`
 
-     in the [configuration](../mytoolit/config/config.yaml). To make sure, that the STU flash test also works, please use both STU test commands described in the section [“STU Test”](#development:section:stu-test).
+      in the [configuration](../mytoolit/config/config.yaml). To make sure, that the STU flash test also works, please use both STU test commands described in the section [“STU Test”](#development:section:stu-test).
 
-     If you follow the steps above you make sure that the **flash tests work** for both STU and STH, and there are **no unintentional consequences of (not) flashing the chip** before you run the other parts of the test suite.
+      If you follow the steps above you make sure that the **flash tests work** for both STU and STH, and there are **no unintentional consequences of (not) flashing the chip** before you run the other parts of the test suite.
 
-4. Execute the **[extended manual tests](#development:section:extended-tests)** in Windows and check that everything works as expected
+4.  Execute the **[extended manual tests](#development:section:extended-tests)** in Windows and check that everything works as expected
 
-5. Create a new release [here](https://github.com/MyTooliT/ICOc/releases/new)
+5.  Create a new release [here](https://github.com/MyTooliT/ICOc/releases/new)
 
-   1. Open the [release notes](Releases) for the latest version
-   2. Replace links with a permanent version:
+    1. Open the [release notes](Releases) for the latest version
+    2. Replace links with a permanent version:
 
-      For example instead of
+       For example instead of
 
-      - `../../something.txt` use
-      - `https://github.com/MyTooliT/ICOc/blob/REVISION/something.txt`,
+       - `../../something.txt` use
+       - `https://github.com/MyTooliT/ICOc/blob/REVISION/something.txt`,
 
-      where `REVISION` is the latest version of the master branch (e.g. `8568893f` for version `1.0.5`)
+       where `REVISION` is the latest version of the master branch (e.g. `8568893f` for version `1.0.5`)
 
-   3. Commit your changes
-   4. Copy the release notes
-   5. Paste them into the main text of the release web page
-   6. Decrease the header level of each section by two
-   7. Remove the very first header
-   8. Check that all links work correctly
+    3. Commit your changes
+    4. Copy the release notes
+    5. Paste them into the main text of the release web page
+    6. Decrease the header level of each section by two
+    7. Remove the very first header
+    8. Check that all links work correctly
 
-6. Change the [`__version__`](../mytoolit/__init__.py) number inside the [`mytoolit`](../mytoolit) package
-7. [Update the Docker images](#tutorials:section:updating-images-on-docker-hub)
-8. Push the latest two commits
-9. Insert the version number (e.g. `1.0.5`) into the tag field
-10. For the release title use “Version VERSION”, where `VERSION` specifies the version number (e.g. “Version 1.0.5”)
-11. Click on “Publish Release”
-12. Close the [milestone][] for the latest release number
-13. Create a new [milestone][] for the next release
+6.  Change the [`__version__`](../mytoolit/__init__.py) number inside the [`mytoolit`](../mytoolit) package
+7.  [Update the Docker images](#tutorials:section:updating-images-on-docker-hub)
+8.  Push the latest two commits
+9.  Update the [official ICOc Python package on PyPI](https://pypi.org/project/icoc):
+
+    1.  Install `build` and `twine`:
+
+        ```sh
+        pip install --upgrade build twine
+        ```
+
+    2.  Build the package (in the root directory of the repository):
+
+        ```sh
+        python3 -m build
+        ```
+
+    3.  Check the package:
+
+        ```sh
+        twine check dist/*
+        ```
+
+        The output of the command above should print the text `PASSED` twice.
+
+    4.  Upload the package to PyPI:
+
+        ```sh
+        twine upload dist/*
+        ```
+
+        **Note:** For the command above to work you need an API token, which you can create after [logging into the PyPI `mytoolit` account](https://pypi.org/account/login/). If you need access to the account, please contact [René Schwaiger](https://github.com/sanssecours).
+
+10. Insert the version number (e.g. `1.0.5`) into the tag field
+11. For the release title use “Version VERSION”, where `VERSION` specifies the version number (e.g. “Version 1.0.5”)
+12. Click on “Publish Release”
+13. Close the [milestone][] for the latest release number
+14. Create a new [milestone][] for the next release
 
 [milestone]: https://github.com/MyTooliT/ICOc/milestones
