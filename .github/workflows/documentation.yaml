@@ -10,6 +10,8 @@ jobs:
 
   build:
     name: 📘 Build Documentation
+    # Building the documentation on macOS is currently faster than on Linux,
+    # since on Linux some of the R packages are installed from source.
     runs-on: macos-latest
 
     steps:
