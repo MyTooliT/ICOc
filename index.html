@@ -2143,6 +2143,19 @@ usbipd wsl attach -d CANbuntu --busid 5-4</code></pre></li>
 <li><p>Change the <a href="../mytoolit/__init__.py"><code>__version__</code></a> number inside the <a href="../mytoolit"><code>mytoolit</code></a> package</p></li>
 <li><p><a href="#tutorials:section:updating-images-on-docker-hub">Update the Docker images</a></p></li>
 <li><p>Push the latest two commits</p></li>
+<li><p>Update the <a href="https://pypi.org/project/icoc">official ICOc Python package on PyPI</a>:</p>
+<ol style="list-style-type: decimal">
+<li><p>Install <code>build</code> and <code>twine</code>:</p>
+<div class="sourceCode" id="cb128"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb128-1"><a href="#cb128-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">--upgrade</span> build twine</span></code></pre></div></li>
+<li><p>Build the package (in the root directory of the repository):</p>
+<div class="sourceCode" id="cb129"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb129-1"><a href="#cb129-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> <span class="at">-m</span> build</span></code></pre></div></li>
+<li><p>Check the package:</p>
+<div class="sourceCode" id="cb130"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb130-1"><a href="#cb130-1" aria-hidden="true" tabindex="-1"></a><span class="ex">twine</span> check dist/<span class="pp">*</span></span></code></pre></div>
+<p>The output of the command above should print the text <code>PASSED</code> twice.</p></li>
+<li><p>Upload the package to PyPI:</p>
+<div class="sourceCode" id="cb131"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb131-1"><a href="#cb131-1" aria-hidden="true" tabindex="-1"></a><span class="ex">twine</span> upload dist/<span class="pp">*</span></span></code></pre></div>
+<p><strong>Note:</strong> For the command above to work you need an API token, which you can create after <a href="https://pypi.org/account/login/">logging into the PyPI <code>mytoolit</code> account</a>. If you need access to the account, please contact <a href="https://github.com/sanssecours">René Schwaiger</a>.</p></li>
+</ol></li>
 <li><p>Insert the version number (e.g. <code>1.0.5</code>) into the tag field</p></li>
 <li><p>For the release title use “Version VERSION”, where <code>VERSION</code> specifies the version number (e.g. “Version 1.0.5”)</p></li>
 <li><p>Click on “Publish Release”</p></li>
@@ -2329,7 +2342,7 @@ usbipd wsl attach -d CANbuntu --busid 5-4</code></pre></li>
 <li>disable measurement channel 3.</li>
 </ul></li>
 <li><p>ICOc can now connect to an STH, which has “no name” using the command line option <code>-n</code> (<code>--name</code>):</p>
-<div class="sourceCode" id="cb129"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb129-1"><a href="#cb129-1" aria-hidden="true" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-n</span> <span class="st">&#39;&#39;</span> <span class="co"># alternatively you can also just use `icoc -n`</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb133"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb133-1"><a href="#cb133-1" aria-hidden="true" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-n</span> <span class="st">&#39;&#39;</span> <span class="co"># alternatively you can also just use `icoc -n`</span></span></code></pre></div></li>
 </ul>
 </div>
 <div id="logging" class="section level4 hasAnchor" number="5.3.1.2">
@@ -2457,7 +2470,7 @@ values of the y-axis and z-axis into the EEPROM</li>
 <li><code>plotter.log</code>: Log messages of plotter (window process)</li>
 </ul>
 <p>By default ICOc only write log messages of level <code>ERROR</code> or higher into theses files. To print more detailed output you can use the option <code>--log</code> to change the log level. For example, to change the log level to <code>DEBUG</code> (or higher) you can use the the following command:</p>
-<div class="sourceCode" id="cb130"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb130-1"><a href="#cb130-1" aria-hidden="true" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">--log</span> debug</span></code></pre></div>
+<div class="sourceCode" id="cb134"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb134-1"><a href="#cb134-1" aria-hidden="true" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">--log</span> debug</span></code></pre></div>
 <p>The other parts of the code, which use the old <code>Network</code> class (e.g. the verification test) do not store the log output in files, but instead use the standard error output (<code>stdout</code>). This change should hopefully improve the visibility of important log messages.</p>
 </div>
 </div>
@@ -2520,7 +2533,7 @@ values of the y-axis and z-axis into the EEPROM</li>
 <h3><span class="header-section-number">5.5.3</span> SMH Test<a href="#smh-test" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <ul>
 <li><p>We added a flash upload test for the sensory milling head PCB. To only execute this part of the SMH test you can use the following command:</p>
-<div class="sourceCode" id="cb131"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb131-1"><a href="#cb131-1" aria-hidden="true" tabindex="-1"></a><span class="ex">test-smh</span> <span class="at">-k</span> flash</span></code></pre></div></li>
+<div class="sourceCode" id="cb135"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb135-1"><a href="#cb135-1" aria-hidden="true" tabindex="-1"></a><span class="ex">test-smh</span> <span class="at">-k</span> flash</span></code></pre></div></li>
 </ul>
 </div>
 <div id="internal-4" class="section level3 hasAnchor" number="5.5.4">
@@ -2583,7 +2596,7 @@ values of the y-axis and z-axis into the EEPROM</li>
 <h3><span class="header-section-number">5.6.3</span> SMH Test<a href="#smh-test-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <ul>
 <li><p>We added a basic test for the new sensory milling hardware (SMH). To execute the test, please use the command</p>
-<div class="sourceCode" id="cb132"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb132-1"><a href="#cb132-1" aria-hidden="true" tabindex="-1"></a><span class="ex">test-smh</span></span></code></pre></div>
+<div class="sourceCode" id="cb136"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb136-1"><a href="#cb136-1" aria-hidden="true" tabindex="-1"></a><span class="ex">test-smh</span></span></code></pre></div>
 <p>Currently the test:</p>
 <ul>
 <li>checks if the STU is able to <strong>connect</strong> to the device,</li>
@@ -2633,7 +2646,7 @@ values of the y-axis and z-axis into the EEPROM</li>
 <li><p><strong>Removed unused options</strong> from the command line interface</p></li>
 <li><p>All command line arguments should now be <strong>checked for validity</strong> before starting ICOc</p></li>
 <li><p>You do not need to connect the PCAN interface to list the help message of the command line interface:</p>
-<div class="sourceCode" id="cb133"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb133-1"><a href="#cb133-1" aria-hidden="true" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-h</span></span></code></pre></div>
+<div class="sourceCode" id="cb137"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb137-1"><a href="#cb137-1" aria-hidden="true" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-h</span></span></code></pre></div>
 <p>anymore</p></li>
 </ul>
 </div>
@@ -2713,7 +2726,7 @@ values of the y-axis and z-axis into the EEPROM</li>
 <div id="verification-tests-1" class="section level3 hasAnchor" number="5.8.2">
 <h3><span class="header-section-number">5.8.2</span> Verification Tests<a href="#verification-tests-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>We added the old code of the STH verification tests. You can now execute these tests using the command</p>
-<div class="sourceCode" id="cb135"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb135-1"><a href="#cb135-1" aria-hidden="true" tabindex="-1"></a><span class="ex">test-sth-verification</span></span></code></pre></div>
+<div class="sourceCode" id="cb139"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb139-1"><a href="#cb139-1" aria-hidden="true" tabindex="-1"></a><span class="ex">test-sth-verification</span></span></code></pre></div>
 <p>For more information about these tests, please take a look at the section “Verification Tests” <a href="https://github.com/MyTooliT/ICOc/blob/e818e5fa/Documentation/Tutorials.md">here</a>.</p>
 </div>
 <div id="internal-6" class="section level3 hasAnchor" number="5.8.3">
@@ -3417,7 +3430,7 @@ Python 3.6.</li>
 <h3><span class="header-section-number">5.19.3</span> Requirements<a href="#requirements-3" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <ul>
 <li><p>You can now install the required Python packages using the command</p>
-<div class="sourceCode" id="cb136"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb136-1"><a href="#cb136-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">-r</span> requirements.txt</span></code></pre></div>
+<div class="sourceCode" id="cb140"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb140-1"><a href="#cb140-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">-r</span> requirements.txt</span></code></pre></div>
 <p>in the root of the repository.</p></li>
 </ul>
 </div>
@@ -3441,10 +3454,10 @@ file (<code>Configuration/config.yaml</code>).</p></li>
 <li><p>The test program is now location independent. This means you do not need to
 change the working directory to call the script any more. For example,
 executing the command:</p>
-<div class="sourceCode" id="cb137"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb137-1"><a href="#cb137-1" aria-hidden="true" tabindex="-1"></a><span class="ex">py</span> mytoolit/test/production/sth.py <span class="at">-k</span> battery <span class="at">-k</span> connect</span></code></pre></div>
+<div class="sourceCode" id="cb141"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb141-1"><a href="#cb141-1" aria-hidden="true" tabindex="-1"></a><span class="ex">py</span> mytoolit/test/production/sth.py <span class="at">-k</span> battery <span class="at">-k</span> connect</span></code></pre></div>
 <p>or the commands:</p>
-<div class="sourceCode" id="cb138"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb138-1"><a href="#cb138-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> mytoolit/test/production</span>
-<span id="cb138-2"><a href="#cb138-2" aria-hidden="true" tabindex="-1"></a><span class="ex">py</span> sth.py <span class="at">-k</span> battery <span class="at">-k</span> connect</span></code></pre></div>
+<div class="sourceCode" id="cb142"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb142-1"><a href="#cb142-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> mytoolit/test/production</span>
+<span id="cb142-2"><a href="#cb142-2" aria-hidden="true" tabindex="-1"></a><span class="ex">py</span> sth.py <span class="at">-k</span> battery <span class="at">-k</span> connect</span></code></pre></div>
 <p>in the root of repository should have the same effect.</p></li>
 </ul>
 
@@ -3530,8 +3543,10 @@ gitbook.start({
 "options": null
 },
 "toc": {
-"collapse": "subsection"
-}
+"collapse": "none",
+"scroll_highlight": true
+},
+"toc_depth": 3
 });
 });
 </script>
