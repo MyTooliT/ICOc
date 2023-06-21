@@ -3347,9 +3347,15 @@ class Network:
         -------
 
         >>> from asyncio import run
+        >>> from platform import system
 
         Write and read advertisement time 1 of STH 1
 
+        >>> if system() == 'Linux':
+        ...    async def reset():
+        ...        async with Network() as network:
+        ...            await network.reset_node('STU 1')
+        ...    run(reset())
         >>> async def write_read_advertisement_time_1(milliseconds):
         ...     async with Network() as network:
         ...         await network.connect_sensor_device(0)
@@ -3444,9 +3450,15 @@ class Network:
         -------
 
         >>> from asyncio import run
+        >>> from platform import system
 
         Read advertisement time 2 of STH 1
 
+        >>> if system() == 'Linux':
+        ...    async def reset():
+        ...        async with Network() as network:
+        ...            await network.reset_node('STU 1')
+        ...    run(reset())
         >>> async def read_advertisement_time_2():
         ...     async with Network() as network:
         ...         await network.connect_sensor_device(0)
