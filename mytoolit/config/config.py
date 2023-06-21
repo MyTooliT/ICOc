@@ -443,7 +443,7 @@ class Settings(Dynaconf):
         if directory.exists() and not directory.is_dir():
             raise NotADirectoryError(
                 f"The output directory “{directory}” points to an "
-                "existing file not an directory"
+                "existing file not a directory"
             )
 
         if not directory.is_dir():
