@@ -927,9 +927,15 @@ class Network:
         -------
 
         >>> from asyncio import run, sleep
+        >>> from platform import system
 
         Get Bluetooth advertisement name of device “0” from STU 1
 
+        >>> if system() == 'Linux':
+        ...    async def reset():
+        ...        async with Network() as network:
+        ...            await network.reset_node('STU 1')
+        ...    run(reset())
         >>> async def get_bluetooth_device_name():
         ...     async with Network() as network:
         ...         await network.activate_bluetooth('STU 1')
@@ -3311,9 +3317,15 @@ class Network:
         -------
 
         >>> from asyncio import run
+        >>> from platform import system
 
         Read advertisement time 1 of STH 1
 
+        >>> if system() == 'Linux':
+        ...    async def reset():
+        ...        async with Network() as network:
+        ...            await network.reset_node('STU 1')
+        ...    run(reset())
         >>> async def read_advertisement_time_1():
         ...     async with Network() as network:
         ...         await network.connect_sensor_device(0)
@@ -4845,9 +4857,15 @@ class Network:
 
         >>> from asyncio import run
         >>> from math import isclose
+        >>> from platform import system
 
         Write and read the acceleration offset of STH 1
 
+        >>> if system() == 'Linux':
+        ...    async def reset():
+        ...        async with Network() as network:
+        ...            await network.reset_node('STU 1')
+        ...    run(reset())
         >>> async def write_read_y_axis_acceleration_offset(offset):
         ...     async with Network() as network:
         ...         await network.connect_sensor_device(0)
