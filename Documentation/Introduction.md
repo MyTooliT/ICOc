@@ -505,32 +505,36 @@ If you want you can also add multiline text. Since you can not add newlines usin
 
 ## Changing Configuration Values
 
-All configuration options are currently stored in the file [YAML](https://yaml.org) file `config.yaml` in the directory `mytoolit/config`. To change one of the values please use your favorite text editor and edit the file. Please make sure to not make any mistakes when you edit this file. Otherwise (parts of) ICOc might not work correctly afterwards.
+> **Note:** If you only use the `icoc` command line tool, then you most probably do not need to change the configuration at all.
+
+All configuration options are currently stored in [YAML](https://yaml.org) files (handled by the configuration library [Dynaconf]). The [default values][] are stored inside the package itself. If you want to overwrite or extend these values you should create a user configuration file. To do that you can use the command:
+
+```sh
+icon config
+```
+
+which will open the the user configuration in your default text editor. You can then edit this file and save your changes to update the configuration. For a list of available options, please take a look at the [default configuration][default values]. Please make sure to not make any mistakes when you edit this file. Otherwise (parts of) the ICOc commands will not work, printing an error message about the (first) incorrect configuration value.
+
+[Dynaconf]: https://www.dynaconf.com
+[default values]: https://github.com/MyTooliT/ICOc/blob/master/mytoolit/config/config.yaml
 
 ### Adding the Path to Simplicity Commander on Linux
 
-1. Install a text editor (e.g. the [GNOME Text Editor](https://apps.gnome.org/app/org.gnome.TextEditor/))
-2. Open the file `mytoolit/config/config.yaml` in your text editor
-3. Scroll down to `COMMANDS` → `PATH` → `LINUX`:
+1. Open the user configuration file in your default text editor using the command line tool `icon`:
 
-   ```yaml
-   # …
-   COMMANDS:
-     PATH:
-       # …
-       LINUX: []
-   # …
+   ```sh
+   icon config
    ```
 
-4. Add the path to Simplicity commander (e.g. `/opt/Simplicity Commander/commander/`) to the list below the key `LINUX`:
+2. Add the path to Simplicity commander (e.g. `/opt/Simplicity Commander/commander/`) to the list `commands.path.linux`:
 
    ```yaml
-   COMMANDS:
-     PATH:
-       # …
-       LINUX:
+   commands:
+     path:
+       linux:
          - /opt/Simplicity Commander/commander/
-   # …
    ```
 
-5. Store the modified configuration file
+   **Note:** Keys (such as `commands`, `path` and `linux`) in the example above are case-insensitive in [Dynaconf][], e.g. it does not matter if you use `commands` or `COMMANDS` in the example above.
+
+3. Store the modified configuration file
