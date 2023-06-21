@@ -325,6 +325,16 @@ For more information about the command you can use the option `-h/--help`:
 icon rename -h
 ```
 
+### Opening the User Configuration
+
+To open the user configuration file, you can use the subcommand `config`:
+
+```sh
+icon config
+```
+
+For more information on how to change the configuration, please take a look [here](#introduction:section:changing-configuration-values).
+
 ### STU Commands
 
 To list all available STU subcommands, please use the option `-h` (or `--help`):
