@@ -13,7 +13,7 @@ from typing import List, Optional
 from dynaconf import Dynaconf, ValidationError, Validator
 from platformdirs import site_config_dir, user_config_dir
 
-from mytoolit.utility.open import open_file
+from mytoolit.utility.open import open_file, UnableToOpenError
 
 # -- Classes ------------------------------------------------------------------
 
@@ -82,7 +82,18 @@ operator:
     def open_user_config(cls):
         """Open the current users configuration file"""
 
-        cls.open_config_file(cls.user_config_filepath)
+        try:
+            cls.open_config_file(cls.user_config_filepath)
+        except UnableToOpenError as error:
+            print(
+                (
+                    f"Unable to open user configuration: {error}"
+                    "\nTo work around this problem please open "
+                    f"“{cls.user_config_filepath}” in your favorite text "
+                    "editor"
+                ),
+                file=stderr,
+            )
 
 
 class SettingsIncorrectError(Exception):
