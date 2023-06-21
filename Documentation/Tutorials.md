@@ -269,7 +269,7 @@ If you want to change the sampling rate you can do that by changing the paramete
 - **Acquisition Time** (Time the ADC holds a value to get a sampling point)
 - **Oversampling Rate** (Oversampling rate of the ADC)
 
-The formula which can be used to calculate the Sampling rate can be found in the [documentation of the CAN commands](https://mytoolit.github.io/Documentation/#sampling-rate).
+The formula which can be used to calculate the sampling rate can be found in the [documentation of the CAN commands](https://mytoolit.github.io/Documentation/#sampling-rate).
 
 <a name="tutorials:section:icon-cli-tool"></a>
 
