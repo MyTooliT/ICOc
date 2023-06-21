@@ -106,12 +106,12 @@ GUI:
 MEASUREMENT:
   OUTPUT:
     # The directory where ICOc stores measurement data in HDF5 format. Relative
-    # directories will be interpreted from the root of the repository.
+    # directories will be interpreted from the current working directory.
     #
-    # For example, if we assume that the ICOc repository is stored in
-    # `Documents/ICOc` in the user’s home directory, then the value `..` means
-    # that ICOc will store the log file in the directory `Documents` in the home
-    # directory.
+    # For example, if we assume that the current working directory is
+    # `Documents/Measurement` in the user’s home directory, then the value `..`
+    # means that ICOc will store the log file in the directory `Documents` in
+    # the home directory.
     #
     # You can also use `~` to refer to the user’s home directory. For example,
     # you can use the value `~/Desktop` if you want to store HDF files on the
