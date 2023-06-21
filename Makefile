@@ -67,8 +67,13 @@ open-test-report-mac:
 	open 'STH Test.pdf' 'STU Test.pdf'
 
 open-test-report-linux:
-	xdg-open 'STH Test.pdf'
-	xdg-open 'STU Test.pdf'
+	if [ -z "$(DISPLAY)" ]; \
+	then \
+	  printf "Please check the files “STH Test.pdf” and “STU Test.pdf”"; \
+	else \
+	  xdg-open 'STH Test.pdf'; \
+	  xdg-open 'STU Test.pdf'; \
+	fi
 
 # =================
 # = Documentation =
