@@ -171,11 +171,11 @@ If you choose the first option, then please make sure to install the Simplicity 
 
 ##### Linux
 
-Please add the path to `commander` to the list `COMMANDS` → `PATH` → `LINUX` in the [configuration file](#introduction:section:changing-configuration-values).
+Please add the path to `commander` to the list `COMMANDS` → `PATH` → `LINUX` to the [configuration](#introduction:section:changing-configuration-values).
 
 ##### macOS
 
-If you install Simplicity Studio or Simplicity Commander in the standard install path (`/Applications`) you do not need to change the config. If you put the application in a different directory, then please add the path to `commander` to the list `COMMANDS` → `PATH` → `MAC` in the [configuration file](#introduction:section:changing-configuration-values).
+If you install Simplicity Studio or Simplicity Commander in the standard install path (`/Applications`) you do not need to change the config. If you put the application in a different directory, then please add the path to `commander` to the list `COMMANDS` → `PATH` → `MAC` in the [configuration](#introduction:section:changing-configuration-values).
 
 ##### Windows
 
@@ -194,73 +194,49 @@ If you install Simplicity Studio or Simplicity Commander in the standard install
 
 ## Install
 
-### Clone the Repository
-
-Please clone [this repository](https://github.com/MyTooliT/ICOc) to a directory of your choice. You can either use the [command line tool `git`](https://git-scm.com/downloads):
+Please use the following command:
 
 ```sh
-git clone https://github.com/MyTooliT/ICOc.git
+pip install icoc
 ```
 
-or one of the many available [graphical user interfaces for Git](https://git-scm.com/downloads/guis) to do that.
+to install the [latest official version of ICOc from PyPi](https://pypi.org/project/icoc). Afterwards you can use the various [scripts](#scripts:section:scripts) included in the package.
 
-#### Example: Clone the Repository With GitHub Desktop
-
-1. Download and install [Github Desktop][]
-2. Open [Github Desktop][] and log into your GitHub account (optional)
-3. Open the [repository website](https://github.com/MyTooliT/ICOc) in your browser
-4. Click on the green button “Code” in your browser window
-
-   <img src="Pictures/Code-Button.png" alt="Code Button" width="700">
-
-5. Select the item “Open with GitHub Desktop”
-
-   <img src="Pictures/Open-GitHub-Desktop.png" alt="Open With GitHub Desktop" width="400">
-
-6. Inside GitHub Desktop choose the path where you want to clone the repository (button “Choose…”) e.g. `Documents/ICOc` in your home directory
-
-   <img src="Pictures/Clone-Repository.png" alt="Clone Repository" width="500">
-
-7. Press the button “Clone”
-8. Wait until the cloning process is finished
-
-[github desktop]: https://desktop.github.com
-
-<a name="introduction:section:install-the-python-package"></a>
-
-### Install the Python Package
-
-Before you use the software you need to install it (in developer mode). To do that please open a terminal window in the directory where you cloned the repository and run the following command:
-
-```sh
-pip install -e .
-```
-
-Afterwards you can use the various [scripts](#scripts:section:scripts) included in the package.
-
-#### Example: Install the Package Using Windows Terminal
+### Install the Package Using Windows Terminal
 
 1. Install (Windows) [Terminal](https://aka.ms/terminal) if you have not done so already; On Windows 11 this application should be installed by default.
 2. Open Terminal
-3. Enter the text `cd ` (**including a trailing space character**) in the Terminal window
-4. Go to the directory where you cloned the ICOc repository (e.g. `Documents/ICOc`) in File Explorer and “copy” (<kbd>Ctrl</kbd> + <kbd>C</kbd>) the directory
-5. “Paste” the copied directory into the Terminal window (<kbd>Ctrl</kbd> + <kbd>V</kbd>)
-6. The resulting text in the Terminal now should look something like this (if you cloned the directory to `Documents/ICOc` in your home directory)
-
-   ```pwsh
-   cd C:\Users\USERNAME\Documents\ICOc
-   ```
-
-7. Press Return <kbd>⏎</kbd>
-8. Copy and paste the following text into the Terminal
+3. Copy and paste the following text into the Terminal
 
    ```sh
-   pip install -e .
+   pip install .
    ```
 
-9. Press Return <kbd>⏎</kbd>
-10. Wait until the installation finished successfully
-11. Close Terminal
+4. Press Return <kbd>⏎</kbd>
+5. Wait until the install process finished successfully
+
+### Development Install
+
+You can use the instructions below, if you want to work on the code of ICOc, i.e. add additional features or fix bugs.
+
+1. Clone [the repository](https://github.com/MyTooliT/ICOc) to a directory of your choice. You can either use the [command line tool `git`](https://git-scm.com/downloads):
+
+   ```sh
+   git clone https://github.com/MyTooliT/ICOc.git
+   ```
+
+   or one of the many available [graphical user interfaces for Git](https://git-scm.com/downloads/guis) to do that.
+
+2. Install ICOc in “developer mode”
+
+   1. Change your working directory to the (root) directory of the cloned repository
+   2. Install ICOc:
+
+      ```sh
+      pip install -e .[dev,test]
+      ```
+
+      The command above will install the repository in “editable mode”, meaning that a command such as `icoc` will use the current code inside the repository.
 
 ### Troubleshooting
 
@@ -284,16 +260,10 @@ then you probably need to install the [“Microsoft Visual C++ Redistributable p
 
 #### Insufficient Rights
 
-**If you do not have sufficient rights** to install the package you can also try to install the package in the user folder:
+**If you do not have sufficient rights** to install the package you can also try to install the package in the user package folder:
 
 ```sh
-pip install --user -e .
-```
-
-The command above might not work on Linux due to [a bug in `pip`](https://github.com/pypa/pip/issues/7953). In that case you can try the following [workaround](https://github.com/pypa/pip/issues/7953#issuecomment-1027704899) to install ICOc:
-
-```sh
-python3 -m pip install --prefix=$(python3 -m site --user-base) -e .
+pip install --user icoc
 ```
 
 #### Unable to Install in Editable Mode
@@ -350,7 +320,12 @@ If `pip install` prints **warnings about the path** that look like this:
 
 > The script … is installed in `'…\Scripts'` which is not on PATH.
 
-then please add the text between the single quotes (without the quotes) to your [PATH environment variable](https://helpdeskgeek.com/windows-10/add-windows-path-environment-variable/). Here `…\Scripts` is just a placeholder. Please use the value that `pip install` prints on your machine. If you used the [installer from the Python website](https://www.python.org/downloads) (and checked “Add Python to PATH”) or you used [winget](https://docs.microsoft.com/en-us/windows/package-manager/winget/) to install Python, then the warning above should not appear. On the other hand, the **Python version from the [Microsoft Store](https://www.microsoft.com/en-us/store/apps/windows) might not add the `Scripts` directory** to your path.
+then please add the text between the single quotes (without the quotes) to your [PATH environment variable](https://helpdeskgeek.com/windows-10/add-windows-path-environment-variable/). Here `…\Scripts` is just a placeholder. Please use the value that `pip install` prints on your machine. If
+
+- you used the [installer from the Python website](https://www.python.org/downloads) (and checked “Add Python to PATH”) or
+- you used [winget](https://docs.microsoft.com/en-us/windows/package-manager/winget/)
+
+to install Python, then the warning above should not appear. On the other hand, the **Python version from the [Microsoft Store](https://www.microsoft.com/en-us/store/apps/windows) might not add the `Scripts` directory** to your path.
 
 ## Basic Usage
 
