@@ -150,7 +150,7 @@ Logging:
                         Minimum level of messages written to log (default: info)
 ```
 
-All options below the section “Measurement” and “ADC” in the [help output of ICOc](tutorials:section:available-options) allow you to change the value of a specific configuration values before you start ICOc.
+All options below the section “Measurement” and “ADC” in the [help output of ICOc](#tutorials:section:available-options) allow you to change a specific configuration value before you start ICOc.
 
 ### Channel Selection
 
