@@ -1,6 +1,3 @@
-# Currently only the production tests of the STH and STU use the following
-# config file.
-
 # =================
 # = Shared Values =
 # =================
@@ -14,37 +11,6 @@ PROGRAMMING BOARD NUMBER: &serial 440120910
 # We assume that you use the same CAN bitrate on Linux and Windows
 CAN BITRATE: &bitrate 1000000
 
-# =============================================
-# = Parameter to be changed at the production =
-# =============================================
-
-#----------------------------------------------
-# User Name
-USER: &username Dummy user
-
-# Possible Sensors:
-#   - ADXL356: ± 40 g
-#   - ADXL1001: ± 100 g
-#   - ADXL1002: ± 50 g
-# SENSOR: &sensor ADXL356
-# SENSOR: &sensor ADXL1001
-# SENSOR: &sensor ADXL1002
-SENSOR: &sensor ADXL356
-
-# Holder Type
-HOLDER TYPE: &holder_type D 10x130 HSK-A63
-
-# Holder name
-HOLDER NAME: &holder_name BBBB1111
-
-# Holder serial number (Format: 4xLetters followed by 4 Numbers)
-HOLDER SERIAL NUMBER: &serial_number BBBB1111
-
-# PCB state (Bare PCB ; Epoxied)
-STATE: &state Epoxied
-#STATE: &state Bare PCB
-#-----------------------------------------------
-
 # =================
 # = Configuration =
 # =================
@@ -52,7 +18,7 @@ STATE: &state Epoxied
 # The values below specify the configuration options for the
 # [python-can](https://python-can.readthedocs.io) Bus class. Please note that
 # these configuration values are currently only used for the (production) tests
-# and **not by the main command line tool!
+# and **not by the `icoc` command line tool!
 CAN:
   LINUX:
     BITRATE: *bitrate
@@ -121,7 +87,7 @@ MEASUREMENT:
 
 OPERATOR:
   # The name of the operator that executes the hardware tests
-  NAME: *username
+  NAME: Dummy User
 
 # Shared values for SMH/STH
 SENSORY_DEVICE:
@@ -276,7 +242,7 @@ STH:
     #  `STH` → `Acceleration Sensor` → `ADXL1001` → `Acceleration` → `Maximum`
     #
     # will be used as maximum acceleration value for the current STH.
-    SENSOR: *sensor
+    SENSOR: ADXL356
 
   # An ever increasing (32 bit unsigned) number that describes the current
   # batch that this STH was a part of.
@@ -305,10 +271,10 @@ STH:
   HARDWARE VERSION: 1.4.0
 
   # The type of holder that contains the SHA
-  HOLDER TYPE: *holder_type
+  HOLDER TYPE: D 10x130 HSK-A63
 
   # This value specifies the current name of the STH unit
-  NAME: *holder_name
+  NAME: BBBB1111
 
   # OEM specific data
   # prettier-ignore
@@ -340,13 +306,13 @@ STH:
   # The STH test will rename the STH (from `STH` → `NAME`) to this value, if
   # you set the status (`STH` → `STATUS`) to `Epoxied`. Otherwise the test
   # will use the (Base64 encoded) MAC address as new name.
-  SERIAL NUMBER: *serial_number
+  SERIAL NUMBER: BBBB1111
 
   STATUS:
     # Describe the status of the current STH hardware. This scalar should either
     # store the value `Bare PCB` or `Epoxied`. If you use the value `Epoxied`,
     # then the flash test for the STH will be skipped.
-    *state
+    Epoxied
 
 STU:
   # An ever increasing (32 bit unsigned) number that describes the current
