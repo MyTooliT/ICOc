@@ -535,6 +535,6 @@ which will open the the user configuration in your default text editor. You can 
          - /opt/Simplicity Commander/commander/
    ```
 
-   **Note:** Keys (such as `commands`, `path` and `linux`) in the example above are case-insensitive in [Dynaconf][], e.g. it does not matter if you use `commands` or `commands` in the example above.
+   **Note:** Keys (such as `commands`, `path` and `linux`) in the example above are case-insensitive in [Dynaconf][], e.g. it does not matter if you use `commands` or `COMMANDS` in the example above.
 
 3. Store the modified configuration file
