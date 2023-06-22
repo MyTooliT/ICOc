@@ -261,7 +261,7 @@ Afterwards make sure there were no (unexpected) errors in the output of the STH 
 1.  Check that the [**CI jobs** for the `master` branch finish successfully](https://github.com/MyTooliT/ICOc/actions)
 2.  Check that the **checks and tests** run without any problems on **Linux**, **macOS** and **Windows**
 
-    1. Set the value of `STH` → `Status` in `config.yaml` to `Epoxied`
+    1. Set the value of `sth` → `status` in `config.yaml` to `Epoxied`
     2. Execute the command:
 
        ```sh
@@ -274,7 +274,7 @@ Afterwards make sure there were no (unexpected) errors in the output of the STH 
 
     - Execute `test-sth`
 
-      1. once with `STH` → `Status` set to `Epoxied`, and
+      1. once with `sth` → `status` set to `Epoxied`, and
       2. once set to `Bare PCB`
 
       in the [configuration](../mytoolit/config/config.yaml). To make sure, that the STU flash test also works, please use both STU test commands described in the section [“STU Test”](#development:section:stu-test).

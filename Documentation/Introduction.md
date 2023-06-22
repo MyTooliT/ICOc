@@ -171,11 +171,11 @@ If you choose the first option, then please make sure to install the Simplicity 
 
 ##### Linux
 
-Please add the path to `commander` to the list `COMMANDS` → `PATH` → `LINUX` to the [configuration](#introduction:section:changing-configuration-values).
+Please add the path to `commander` to the list `commands` → `path` → `linux` to the [configuration](#introduction:section:changing-configuration-values).
 
 ##### macOS
 
-If you install Simplicity Studio or Simplicity Commander in the standard install path (`/Applications`) you do not need to change the config. If you put the application in a different directory, then please add the path to `commander` to the list `COMMANDS` → `PATH` → `MAC` in the [configuration](#introduction:section:changing-configuration-values).
+If you install Simplicity Studio or Simplicity Commander in the standard install path (`/Applications`) you do not need to change the config. If you put the application in a different directory, then please add the path to `commander` to the list `commands` → `path` → `mac` in the [configuration](#introduction:section:changing-configuration-values).
 
 ##### Windows
 
@@ -183,7 +183,7 @@ If you install Simplicity Studio or Simplicity Commander in the standard install
 
 - If you download Simplicity Commander directly, then the tests assume that you unzipped the files into the directory `C:\SiliconLabs\Simplicity Commander`.
 
-- If you did not use any of the standard install path, then please add the path to `commander.exe` to the list `COMMANDS` → `PATH` → `WINDOWS` in the [configuration file](#introduction:section:changing-configuration-values).
+- If you did not use any of the standard install path, then please add the path to `commander.exe` to the list `commands` → `path` → `windows` in the [configuration file](#introduction:section:changing-configuration-values).
 
 ##### Additional Notes
 
@@ -535,6 +535,6 @@ which will open the the user configuration in your default text editor. You can 
          - /opt/Simplicity Commander/commander/
    ```
 
-   **Note:** Keys (such as `commands`, `path` and `linux`) in the example above are case-insensitive in [Dynaconf][], e.g. it does not matter if you use `commands` or `COMMANDS` in the example above.
+   **Note:** Keys (such as `commands`, `path` and `linux`) in the example above are case-insensitive in [Dynaconf][], e.g. it does not matter if you use `commands` or `commands` in the example above.
 
 3. Store the modified configuration file
