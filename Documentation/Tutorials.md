@@ -319,7 +319,7 @@ To change the name of a sensor you can use the subcommand `rename`. For example 
 icon rename -m 08-6B-D7-01-DE-81 Test-STH
 ```
 
-For more information about the command you can use the option `-h/--help`:
+For more information about the command you can use the option `-h`/`--help`:
 
 ```sh
 icon rename -h
