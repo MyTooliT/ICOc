@@ -419,9 +419,9 @@ will show the sensor data. To stop the data acquisition, click the close button 
 
 ---
 
-The ICOc script stores measured acceleration values in [HDF5](https://www.hdfgroup.org/solutions/hdf5/) files. By default these files will be stored in the root of the repository with a
+The ICOc script stores measured acceleration values in [HDF5](https://www.hdfgroup.org/solutions/hdf5/) files. By default these files will be stored in the root of the repository with
 
-- name starting with the text `Measurement`
+- a name starting with the text `Measurement`
 - followed by a date/time-stamp,
 - and the extension `.hdf5`.
 
