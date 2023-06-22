@@ -190,7 +190,7 @@ you can use the following command:
 icoc -1 8 -2 1 -3 3
 ```
 
-**Note:** If you connect to an older STH using the command above, then the command would just enable the measurement for all three measurement channels, but not change the selected hardware channel.
+> **Note:** If you connect to an older STH using the command above, then the command would just enable the measurement for all three measurement channels, but not change the selected hardware channel.
 
 If you just want to enable/set a measurement channel and use the hardware channel with the same number you can also just leave the argument for the specific measurement channel empty. For example, to use
 
