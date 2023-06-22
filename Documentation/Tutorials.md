@@ -413,24 +413,25 @@ The text below gives you a more detailed step-by-step guide on how to run the te
 
 1. > **Note:** You can **skip this step, if you do not want to run the flash test**. To skip the flash test, please set `STH` → `STATUS` in the [configuration file](#introduction:section:changing-configuration-values) to `Epoxied`.
 
-   Please either
+   Please create a directory called `Firmware` in the current user’s `Documents` (`~`) directory.
 
-   - create a directory called `STH`, or
-   - clone the [STH repository](https://github.com/mytoolit/STH) to a location
+   > **Note:** To open the user’s home directory on Windows you can use the following command in (Windows) Terminal:
+   >
+   > ```sh
+   > ii ~/Documents
+   > ```
 
-   beside this repository inside your file system. Then create a directory called `builds` and put the [current version of the STH firmware](https://github.com/MyTooliT/STH/releases/download/2.1.10/manufacturingImageSthv2.1.10.hex) into this directory. Afterwards the directory and file structure should look like this:
+   Then put the [current version of the STH firmware](https://github.com/MyTooliT/STH/releases/download/2.1.10/manufacturingImageSthv2.1.10.hex) into this directory. Afterwards the directory and file structure should look like this:
 
    ```
-   .
-   ├── ICOc
-   └── STH
-       └── builds
-             └── manufacturingImageSthv2.1.10.hex
+   ~
+   └── Documents
+           └── manufacturingImageSthv2.1.10.hex
    ```
 
-   As alternative to the steps above you can also change the variable `STH` → `Firmware` → `Location` → `Flash` in the [configuration file](#introduction:section:changing-configuration-values) to point to the firmware that should be used for the flash test.
+   As alternative to the steps above you can also change the variable `STH` → `Firmware` → `Location` → `Flash` in the [configuration](#introduction:section:changing-configuration-values) to point to the firmware that should be used for the flash test.
 
-2. Make sure that the configuration value in the [config file](#introduction:section:changing-configuration-values) are set correctly. You probably need to change at least the following variables:
+2. Make sure that [the configuration values](#introduction:section:changing-configuration-values) are set correctly. You probably need to change at least the following variables:
 
    - **Name**: Please change the Bluetooth advertisement name (`STH` → `NAME` ) to the name of the STH you want to test.
 
@@ -464,14 +465,16 @@ The following description shows you how to run the STU tests.
 
 1. > **Note:** You can **skip this step, if you do not want to run the flash test**.
 
-   Please take a look at step 1 for the STH and replace every occurrence of STU with `STU`. In the end of this step the directory structure should look like something like this:
+   Please take a look at step 1 of the description for the [STH test](#tutorials:section:sth) and replace every occurrence of STH with `STU`.
+
+   > **Note:** The STU test always uploads the flash file to the board, i.e. the setting `stu` → `status` is **not** read/used by the STU tests.
+
+   In the end of this step the directory structure should look like this:
 
    ```
-   .
-   ├── ICOc
-   └── STU
-       └── builds
-             └── manufacturingImageStuv2.1.10.hex
+   ~
+   └── Documents
+          └── manufacturingImageStuv2.1.10.hex
    ```
 
    You can find the current version of the STU firmware [here](https://github.com/MyTooliT/STU/releases).
@@ -510,7 +513,7 @@ The (non-exhaustive) table below shows the compatible firmware for a certain dev
 
 ### Preparation
 
-- The tests assume that the name of the STH is stored in `STH` → `NAME` in the configuration file `config.yaml`.
+- The tests assume that the name of the STH is stored in `STH` → `NAME` in the [configuration](#introduction:section:changing-configuration-values).
 - Some of the STH tests assume that you connected the SHA/STH or STU via the programming cable. Please do that, since otherwise these tests will fail.
 
 ### Execution

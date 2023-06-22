@@ -343,8 +343,7 @@ class TestNode(TestCase):
 
         """
 
-        repository_root = Path(__file__).parent.parent.parent.parent
-        image_filepath = repository_root / flash_location
+        image_filepath = Path(flash_location).expanduser().resolve()
         self.assertTrue(
             image_filepath.is_file(),
             f"Firmware file {image_filepath} does not exist",

@@ -150,9 +150,10 @@ SMH:
     RELEASE NAME: Milhouse
     LOCATION:
       # This value should contain the path to a complete image (bootloader and
-      # application). This path will be interpreted in relation to the root of
-      # the repository.
-      FLASH: ../STH/builds/SMH.STH.BGM.121.-.3.0.0.hex
+      # application). Relative paths will be interpreted in relation to the
+      # current working directory. You can use `~` to refer to the user’s home
+      # directory.
+      FLASH: ~/Documents/Firmware/SMH.STH.BGM.121.-.3.0.0.hex
 
   # Global Trade Item Number
   GTIN: 0
@@ -288,9 +289,10 @@ STH:
   FIRMWARE:
     LOCATION:
       # This value should contain the path to a complete image (bootloader and
-      # application). This path will be interpreted in relation to the root of
-      # the repository.
-      FLASH: ../STH/builds/manufacturingImageSthv2.1.10.hex
+      # application). Relative paths will be interpreted in relation to the
+      # current working directory. You can use `~` to refer to the user’s home
+      # directory.
+      FLASH: ~/Documents/Firmware/manufacturingImageSthv2.1.10.hex
     # Code name of the current firmware release
     RELEASE NAME: Tanja
 
@@ -354,9 +356,10 @@ STU:
   FIRMWARE:
     LOCATION:
       # This value should contain the path to a complete image (bootloader and
-      # application). This path will be interpreted in relation to the root of
-      # the repository.
-      FLASH: ../STU/builds/manufacturingImageStuv2.1.10.hex
+      # application). Relative paths will be interpreted in relation to the
+      # current working directory. You can use `~` to refer to the user’s home
+      # directory.
+      FLASH: ~/Documents/Firmware/manufacturingImageStuv2.1.10.hex
     RELEASE NAME: Valerie
 
   # Global Trade Item Number
