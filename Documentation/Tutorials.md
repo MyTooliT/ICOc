@@ -160,7 +160,7 @@ To enable the measurement for the first (“x”) channel and second (“y”) c
 icoc -1 1 -2 1 -3 0
 ```
 
-Here `0` indicates that you want to disable the channel while a positive number (such as `1`) specifies that the measurement for the channel should take place. Since the default value
+Here `0` indicates that you want to disable the channel, while a positive number (such as `1`) specifies that the measurement for the channel should take place. Since the default value
 
 - for the option `-1` is already `1`, and
 - for the option `-3` is already `0`
