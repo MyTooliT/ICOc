@@ -28,7 +28,7 @@ After you installed the required software you can build the
 version of the documentation. The output will be stored in the folder `Bookdown` in the root of the repository. If you want to build all versions of the documentation, just use the command
 
 ```
-make
+make doc
 ```
 
 in the repo root.
