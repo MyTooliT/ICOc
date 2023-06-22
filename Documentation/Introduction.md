@@ -440,7 +440,7 @@ As you can see the table with the name `acceleration` stores the acceleration da
 
 After you double click on the acceleration table on the left, HDFView will show you the actual acceleration data:
 
-![Acceleration Table in HDFView](Documentation/Pictures/HDFView-Table.png)
+<img src="Documentation/Pictures/HDFView-Table.png" alt="Acceleration Table in HDFView" width="500"/>
 
 As you can infer from the `x` column above the table shows the acceleration measurement data (in multiples of g₀) for a single axis. The table below describes the meaning of the columns:
 
