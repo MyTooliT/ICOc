@@ -64,7 +64,6 @@ test = [
 icoc = "mytoolit.old.ui:main"
 icon = "mytoolit.cmdline.icon:main"
 check-eeprom = "mytoolit.scripts.eeprom:main"
-clean-repo = "mytoolit.scripts.clean:main"
 test-smh = "mytoolit.test.production.smh:main"
 test-sth = "mytoolit.test.production.sth:main"
 test-sth-verification = "mytoolit.old.test.MyToolItTestSth:main"
