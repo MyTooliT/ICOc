@@ -1,0 +1,65 @@
+# This file contains configuration values for the ICOc package.
+# For a list of available settings you can change, please
+# take a look at the default configuration. The latest version
+# of the default configuration is available here:
+#
+# https://github.com/MyTooliT/ICOc/blob/master/mytoolit/config/config.yaml
+#
+# Settings in this file will overwrite values from the default configuration.
+# In the case of maps and lists this might not be what you want. To change
+# this behavior you can set `dynaconf_merge` to true, either globally or for
+# specific maps or lists. For more information, please take a look at the
+# Dynaconf documentation about this topic: https://www.dynaconf.com/merging
+
+# Enable merging (of maps and lists) globally
+dynaconf_merge: true
+
+# -- <Production Parameters> ---------------------------------------------------
+
+programming board serial number: &programmer_serial 440120910
+
+user name: &username Dummy User
+
+# Possible Sensors:
+#   - ADXL356: ± 40 g
+#   - ADXL1001: ± 100 g
+#   - ADXL1002: ± 50 g
+# sensor: &sensor ADXL356
+# sensor: &sensor ADXL1001
+# sensor: &sensor ADXL1002
+sensor: &sensor ADXL356
+
+# Holder type
+holder type: &holder_type D 10x130 HSK-A63
+
+# Holder name
+holder name: &holder_name BBBB1111
+
+# Holder serial number (format: 4 letters followed by 4 numbers)
+holder serial number: &holder_serial BBBB1111
+
+# PCB state (`Bare PCB` or `Epoxied`)
+state: &state Epoxied
+#state: &state Bare PCB
+
+# ------------------------------------------------------------------------------
+
+user: *username
+
+smh:
+  name: *holder_name
+  programming board:
+    serial number: *programmer_serial
+
+sth:
+  acceleration sensor:
+    sensor: *sensor
+
+  holder type: *holder_type
+
+  name: Test-STH
+  serial number: *holder_serial
+  programming board:
+    serial number: *programmer_serial
+
+  status: *state

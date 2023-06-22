@@ -49,32 +49,13 @@ class ConfigurationUtility:
                 exist_ok=True,
                 parents=True,
             )
+
+            default_user_config = (
+                files("mytoolit.config").joinpath("user.yaml").read_text()
+            )
+
             with filepath.open("w", encoding="utf8") as config_file:
-                config_file.write("""\
-# This file contains configuration values for the ICOc package.
-# For a list of available settings you can change, please
-# take a look at the default configuration. The latest version
-# of the default configuration is available here:
-#
-# https://github.com/MyTooliT/ICOc/blob/master/mytoolit/config/config.yaml
-#
-# Settings in this file will overwrite values from the default configuration.
-# In the case of maps and lists this might not be what you want. To change
-# this behavior you can set `dynaconf_merge` to true, either globally or for
-# specific maps or lists. For more information, please take a look at the
-# Dynaconf documentation about this topic: https://www.dynaconf.com/merging
-
-# Enable merging (of maps and lists) globally
-dynaconf_merge: true
-
-# —— <Example> ————————————————————————————————————————————————————————————————
-# Change the (test) operator name to “User Config”
-# If you do not want to change the operator name,
-# please delete the two lines below.
-operator:
-  name: User Config
-# —— </Example> ———————————————————————————————————————————————————————————————
-""")
+                config_file.write(default_user_config)
 
         open_file(filepath)
 
