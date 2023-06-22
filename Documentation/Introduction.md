@@ -171,7 +171,7 @@ If you choose the first option, then please make sure to install the Simplicity 
 
 ##### Linux
 
-Please add the path to `commander` to the list `commands` → `path` → `linux` to the [configuration](#introduction:section:changing-configuration-values).
+Please add the path to `commander` to the list `commands` → `path` → `linux` in the [configuration](#introduction:section:changing-configuration-values).
 
 ##### macOS
 
