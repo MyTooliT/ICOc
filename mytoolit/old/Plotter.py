@@ -150,9 +150,7 @@ def vPlotter(iSocketPort, log_level):
 
     logger = getLogger(__name__)
     logger.setLevel(log_level)
-    handler = FileHandler(
-        Path(__file__).parent.parent.parent / "plotter.log", delay=True
-    )
+    handler = FileHandler("plotter.log", delay=True)
     handler.setFormatter(
         Formatter("{asctime} {levelname} {name} {message}", style="{")
     )

@@ -145,7 +145,7 @@ class Network(object):
         # We use `Logger` in the code below, since the `.logger` attribute
         # stores internal DynaConf data
         logger.setLevel(settings.Logger.can.level)
-        handler = FileHandler(repo_root / "can.log", "w", "utf-8", delay=True)
+        handler = FileHandler("can.log", "w", "utf-8", delay=True)
         handler.setFormatter(Formatter("{asctime} {message}", style="{"))
         logger.addHandler(handler)
 

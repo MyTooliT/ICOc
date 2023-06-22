@@ -247,7 +247,7 @@ By default ICOc only writes log messages of level `INFO` or higher. In some situ
 icoc --log warning
 ```
 
-The different logs for ICOc are stored in the root directory of the repository in the following files:
+The different logs for ICOc are stored in the current working directory in the following files:
 
 - `cli.log`: Log messages of ICOc
 - `network.log`: Log messages of CAN network class

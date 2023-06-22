@@ -80,9 +80,7 @@ class CommandLineInterface:
 
         self.logger = getLogger(__name__)
         self.logger.setLevel(self.args.log.upper())
-        handler = FileHandler(
-            Path(__file__).parent.parent.parent / "cli.log", delay=True
-        )
+        handler = FileHandler("cli.log", delay=True)
         handler.setFormatter(
             Formatter("{asctime} {levelname} {name} {message}", style="{")
         )

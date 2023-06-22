@@ -5,7 +5,6 @@ from __future__ import annotations
 from asyncio import get_running_loop, Queue, sleep, TimeoutError, wait_for
 from datetime import date
 from logging import getLogger, FileHandler, Formatter
-from pathlib import Path
 from struct import pack, unpack
 from sys import platform
 from time import time
@@ -118,8 +117,7 @@ class Logger(Listener):
         # We use `Logger` in the code below, since the `.logger` attribute
         # stores internal DynaConf data
         logger.setLevel(settings.Logger.can.level)
-        repo_root = Path(__file__).parent.parent.parent
-        handler = FileHandler(repo_root / "can.log", "w", "utf-8", delay=True)
+        handler = FileHandler("can.log", "w", "utf-8", delay=True)
         handler.setFormatter(Formatter("{asctime} {message}", style="{"))
         logger.addHandler(handler)
 
