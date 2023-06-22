@@ -325,6 +325,8 @@ For more information about the command you can use the option `-h/--help`:
 icon rename -h
 ```
 
+<a name=tutorials:section:opening-the-user-configuration></a>
+
 ### Opening the User Configuration
 
 To open the user configuration file, you can use the subcommand `config`:
@@ -333,7 +335,7 @@ To open the user configuration file, you can use the subcommand `config`:
 icon config
 ```
 
-For more information on how to change the configuration, please take a look [here](#introduction:section:changing-configuration-values).
+If the file does not exist yet, then it will be created and filled with the content of the [default user configuration](https://github.com/MyTooliT/ICOc/blob/master/mytoolit/config/user.yaml). For more information on how to change the configuration, please take a look [here](#introduction:section:changing-configuration-values).
 
 ### STU Commands
 
