@@ -1236,9 +1236,9 @@ class Network(object):
             sortArray, 0.99
         )
         statistics["Maximum"] = sortArray[-1]
-        statistics[
-            "ArithmeticAverage"
-        ] = self.streamingValueStatisticsArithmeticAverage(sortArray)
+        statistics["ArithmeticAverage"] = (
+            self.streamingValueStatisticsArithmeticAverage(sortArray)
+        )
         statistics["StandardDeviation"] = (
             self.streamingValueStatisticsVariance(sortArray) ** 0.5
         )

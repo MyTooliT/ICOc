@@ -1973,8 +1973,10 @@ class TestSth(unittest.TestCase):
         self.assertEqual(sCurrentUnit, "mA")
 
     def test0019PowerConsumptionMeasuringLedOff(self):
+        # fmt: off
         """Power Consumption - Reset conditions, LED turned off (⏱ 85 seconds)
         """
+        # fmt: on
         try:
             os.remove("Aem6.txt")
         except:
@@ -2284,8 +2286,10 @@ class TestSth(unittest.TestCase):
                 self.assertEqual(readD[7], 0)
 
     def test0032CalibrationFactorsKDWriteThenRead(self):
+        # fmt: off
         """Write all calibration factors and read them afterwards (⏱ 15 seconds)
         """
+        # fmt: on
         b0 = 2 - 1
         b1 = 8 - 1
         b2 = 32 - 1
@@ -4989,8 +4993,10 @@ class TestSth(unittest.TestCase):
         )
 
     def test0346MixedStreamingAccXYZVoltBat(self):
+        # fmt: off
         """Mixed Streaming - AccX + AccY + AccZ + VoltageBattery (⏱ 25 seconds)
         """
+        # fmt: on
         self.Can.streamingStart(
             MyToolItNetworkNr["STH1"],
             MyToolItStreaming["Voltage"],
@@ -5094,8 +5100,10 @@ class TestSth(unittest.TestCase):
         )
 
     def test0347StreamingAccXSingleBattery(self):
+        # fmt: off
         """Stream x-acceleration & read sampling point for battery (⏱ 20 seconds)
         """
+        # fmt: on
         indexStart = self.Can.streamingStart(
             MyToolItNetworkNr["STH1"],
             MyToolItStreaming["Data"],
@@ -5178,8 +5186,10 @@ class TestSth(unittest.TestCase):
         )
 
     def test0348StreamingAccYSingleBattery(self):
+        # fmt: off
         """Stream y-acceleration & read sampling point for battery (⏱ 20 seconds)
         """
+        # fmt: on
         indexStart = self.Can.streamingStart(
             MyToolItNetworkNr["STH1"],
             MyToolItStreaming["Data"],
@@ -5262,8 +5272,10 @@ class TestSth(unittest.TestCase):
         )
 
     def test0349StreamingAccZSingleBattery(self):
+        # fmt: off
         """Stream z-acceleration & read sampling point for battery (⏱ 20 seconds)
         """
+        # fmt: on
         indexStart = self.Can.streamingStart(
             MyToolItNetworkNr["STH1"],
             MyToolItStreaming["Data"],
@@ -5346,8 +5358,10 @@ class TestSth(unittest.TestCase):
         )
 
     def test0350StreamingBatterySingleAccX(self):
+        # fmt: off
         """Stream Battery & receive single sampling point for AccX (⏱ 20 seconds)
         """
+        # fmt: on
         for _i in range(0, 1):
             indexStart = self.Can.streamingStart(
                 MyToolItNetworkNr["STH1"],
@@ -5431,8 +5445,10 @@ class TestSth(unittest.TestCase):
             )
 
     def test0351StreamingBatterySingleAccY(self):
+        # fmt: off
         """Stream Battery & receive single sampling point for AccY (⏱ 20 seconds)
         """
+        # fmt: on
 
         indexStart = self.Can.streamingStart(
             MyToolItNetworkNr["STH1"],
@@ -5516,8 +5532,10 @@ class TestSth(unittest.TestCase):
         )
 
     def test0352StreamingBatterySingleAccZ(self):
+        # fmt: off
         """Stream Battery & receive single sampling point for AccZ (⏱ 20 seconds)
         """
+        # fmt: on
         indexStart = self.Can.streamingStart(
             MyToolItNetworkNr["STH1"],
             MyToolItStreaming["Voltage"],
@@ -5600,8 +5618,10 @@ class TestSth(unittest.TestCase):
         )
 
     def test0353StreamingBatterySingleAccYZ(self):
+        # fmt: off
         """Stream Battery & receive single sampling point for AccYZ (⏱ 20 seconds)
         """
+        # fmt: on
         indexStart = self.Can.streamingStart(
             MyToolItNetworkNr["STH1"],
             MyToolItStreaming["Voltage"],
@@ -5685,8 +5705,10 @@ class TestSth(unittest.TestCase):
         )
 
     def test0354StreamingBatterySingleAccXZ(self):
+        # fmt: off
         """Stream Battery & receive single sampling point for AccXZ (⏱ 20 seconds)
         """
+        # fmt: on
         indexStart = self.Can.streamingStart(
             MyToolItNetworkNr["STH1"],
             MyToolItStreaming["Voltage"],
@@ -5770,8 +5792,10 @@ class TestSth(unittest.TestCase):
         )
 
     def test0355StreamingBatterySingleAccXY(self):
+        # fmt: off
         """Stream Battery & receive single sampling point for AccXY (⏱ 20 seconds)
         """
+        # fmt: on
 
         indexStart = self.Can.streamingStart(
             MyToolItNetworkNr["STH1"],
@@ -6305,8 +6329,7 @@ class TestSth(unittest.TestCase):
         self.assertEqual(samplingPointsAccX, samplingPointsAccZ)
 
     def test0370StreamingOnfOff(self):
-        """Stream Start and Stop -> Test communication protocol (⏱ 3 minutes)
-        """
+        """Stream Start and Stop -> Test communication protocol (⏱ 3 minutes)"""
         _runs = 100
         # single stream, data set 3
         for _i in range(0, _runs):
@@ -9615,8 +9638,10 @@ class TestSth(unittest.TestCase):
             self.assertEqual(stateStartOpa2[i], ErrorPayloadAssumed[i])
 
     def test0605StateCalibrationMeasurementReset(self):
+        # fmt: off
         """Check Reset Subcommand of Calibration Measurement Command (⏱ 6 seconds)
         """
+        # fmt: on
         ackInjectX = self.Can.calibMeasurement(
             MyToolItNetworkNr["STH1"],
             CalibMeassurementActionNr["Activate"],
@@ -9887,8 +9912,10 @@ class TestSth(unittest.TestCase):
         self.assertEqual(WDogCounter1, WDogCounter3)
 
     def test0703ProductionDate(self):
+        # fmt: off
         """Write actual production date and Check ProductionDate (⏱ 7 seconds)
         """
+        # fmt: on
         sDate = date.today()
         sDate = str(sDate).replace("-", "")
         au8ProductionDate = []
@@ -10120,8 +10147,10 @@ class TestSth(unittest.TestCase):
         )
 
     def test0753EepromWriteRequestCounterPageSwitches(self):
+        # fmt: off
         """Check that page switched do not yield to Writing EEPROM (⏱ 30 seconds)
         """
+        # fmt: on
         time.sleep(1)
         uLoopRuns = 5
         u32EepromWriteRequestCounterTestStart = (
@@ -10163,8 +10192,10 @@ class TestSth(unittest.TestCase):
         )  # +1 due to incrementing at first write
 
     def test0754EepromWriteRequestCounterPageWriteSwitches(self):
+        # fmt: off
         """Check that page switched with previews writes yield into to Writing EEPROM with the correct number of writes (⏱ 15 seconds)
         """
+        # fmt: on
         time.sleep(2)
         uLoopRuns = 5
         uPageStart = 10
@@ -10489,8 +10520,10 @@ class TestSth(unittest.TestCase):
         )
 
     def test0900ErrorCmdVerbotenSth1(self):
+        # fmt: off
         """Test that nothing happens when sending Command 0x0000 to STH1 (⏱ 22 seconds)
         """
+        # fmt: on
         cmd = self.Can.CanCmd(0, 0, 1, 0)
         message = self.Can.CanMessage20(
             cmd, MyToolItNetworkNr["SPU1"], MyToolItNetworkNr["STH1"], []
@@ -10525,8 +10558,10 @@ class TestSth(unittest.TestCase):
         self.assertEqual("Error", msgAck)
 
     def test0901ErrorRequestErrorSth1(self):
+        # fmt: off
         """Test that nothing happens when sending Request(1) and bError(1) to STH1 (⏱ 15 seconds)
         """
+        # fmt: on
         cmd = self.Can.CanCmd(
             MyToolItBlock["System"], MyToolItSystem["Reset"], 1, 1
         )

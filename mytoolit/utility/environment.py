@@ -28,9 +28,7 @@ def add_commander_path_to_environment() -> None:
     paths = (
         path.linux
         if operating_system == "Linux"
-        else path.mac
-        if operating_system == "Darwin"
-        else path.windows
+        else path.mac if operating_system == "Darwin" else path.windows
     )
     environ["PATH"] += pathsep + pathsep.join(paths)
 

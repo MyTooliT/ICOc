@@ -259,15 +259,21 @@ def vlivePlot(yX_data, yY_data, yZ_data, line1, line2, line3, pause_time):
             [
                 value
                 for value in (
-                    np.min(yX_data) - np.std(yX_data)
-                    if yX_data is not None
-                    else None,
-                    np.min(yY_data) - np.std(yY_data)
-                    if yY_data is not None
-                    else None,
-                    np.min(yZ_data) - np.std(yZ_data)
-                    if yZ_data is not None
-                    else None,
+                    (
+                        np.min(yX_data) - np.std(yX_data)
+                        if yX_data is not None
+                        else None
+                    ),
+                    (
+                        np.min(yY_data) - np.std(yY_data)
+                        if yY_data is not None
+                        else None
+                    ),
+                    (
+                        np.min(yZ_data) - np.std(yZ_data)
+                        if yZ_data is not None
+                        else None
+                    ),
                 )
                 if value is not None
             ]
@@ -276,15 +282,21 @@ def vlivePlot(yX_data, yY_data, yZ_data, line1, line2, line3, pause_time):
             [
                 value
                 for value in (
-                    np.max(yX_data) + np.std(yX_data)
-                    if yX_data is not None
-                    else None,
-                    np.max(yY_data) + np.std(yY_data)
-                    if yY_data is not None
-                    else None,
-                    np.max(yZ_data) + np.std(yZ_data)
-                    if yZ_data is not None
-                    else None,
+                    (
+                        np.max(yX_data) + np.std(yX_data)
+                        if yX_data is not None
+                        else None
+                    ),
+                    (
+                        np.max(yY_data) + np.std(yY_data)
+                        if yY_data is not None
+                        else None
+                    ),
+                    (
+                        np.max(yZ_data) + np.std(yZ_data)
+                        if yZ_data is not None
+                        else None
+                    ),
                 )
                 if value is not None
             ]

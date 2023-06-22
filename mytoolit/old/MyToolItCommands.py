@@ -167,7 +167,7 @@ SystemCommandBlueTooth = {
 
 BluetoothTime = {
     "Connect": 20,
-    "Out": (4 * 5),
+    "Out": 4 * 5,
     "Disconnect": 2,
     "GetDeviceNumber": 2,
     "DeviceConnect": 6,

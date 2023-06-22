@@ -339,9 +339,11 @@ class Message:
         StreamingFormatClass = (
             StreamingFormat
             if block_command == "Data"
-            else StreamingFormatVoltage
-            if block_command == "Voltage"
-            else StreamingFormat
+            else (
+                StreamingFormatVoltage
+                if block_command == "Voltage"
+                else StreamingFormat
+            )
         )
         streaming_format: StreamingFormat = StreamingFormatClass(self.data[0])
         data_explanation += repr(streaming_format)

@@ -83,9 +83,11 @@ class Report:
             subject="{} Test".format(
                 "Sensory Tool Holder"
                 if node == "STH"
-                else "Sensory Milling Head"
-                if node == "SMH"
-                else "Stationary Transceiver Unit"
+                else (
+                    "Sensory Milling Head"
+                    if node == "SMH"
+                    else "Stationary Transceiver Unit"
+                )
             ),
         )
         self.story = [Spacer(1, 3 * cm)]
