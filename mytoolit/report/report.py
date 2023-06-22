@@ -1,7 +1,7 @@
 # -- Imports ------------------------------------------------------------------
 
 from functools import partial
-from pathlib import Path
+from importlib.resources import as_file, files
 from typing import List
 
 from reportlab.lib.units import cm
@@ -35,12 +35,12 @@ def _first_page(canvas, document, node):
     logo_offset = 50
     title_offset = logo_offset + logo_height + 20
 
-    logo_filepath = Path("mytoolit") / "report" / "MyTooliT.pdf"
-    PDFImage(logo_filepath, logo_width, logo_height).drawOn(
-        canvas,
-        (page_width - logo_width) / 2,
-        page_height - logo_offset - logo_height,
-    )
+    with as_file(files("mytoolit.report") / "MyTooliT.pdf") as logo_filepath:
+        PDFImage(logo_filepath, logo_width, logo_height).drawOn(
+            canvas,
+            (page_width - logo_width) / 2,
+            page_height - logo_offset - logo_height,
+        )
 
     style = get_style_sheet()
 
@@ -77,7 +77,7 @@ class Report:
 
         self.node = node
         self.document = SimpleDocTemplate(
-            str(Path(__file__).parent.parent.parent / f"{node} Test.pdf"),
+            f"{node} Test.pdf",
             author="MyTooliT",
             title="Test Report",
             subject="{} Test".format(
@@ -260,7 +260,7 @@ if __name__ == "__main__":
 
     # Create a example test report
     node = "STH"
-    pdf_path = str(Path(__file__).parent.parent.parent / f"{node} Test.pdf")
+    pdf_path = f"{node} Test.pdf"
     report = Report(node)
 
     report.add_checkbox_list(
