@@ -1077,7 +1077,6 @@ To update the official Docker images on Docker Hub, please use the steps below. 
 2. Build and push the Docker images for multiple platforms:
 
    ```sh
-   # Please replace `1.6.0` with the correct version number
    export ICOC_VERSION="$(cat mytoolit/__init__.py |
                           sed -E 's/__version__ = "([0-9]+\.[0-9]+\.[0-9]+)"/\1/')"
    docker buildx build \
