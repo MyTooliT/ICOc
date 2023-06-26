@@ -209,7 +209,7 @@ to install the [latest official version of ICOc from PyPi](https://pypi.org/proj
 3. Copy and paste the following text into the Terminal
 
    ```sh
-   pip install .
+   pip install icoc
    ```
 
 4. Press Return <kbd>⏎</kbd>
