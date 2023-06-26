@@ -428,7 +428,8 @@ The text below gives you a more detailed step-by-step guide on how to run the te
    ```
    ~
    └── Documents
-           └── manufacturingImageSthv2.1.10.hex
+           └── Firmware
+                   └── manufacturingImageSthv2.1.10.hex
    ```
 
    As alternative to the steps above you can also change the variable `sth` → `Firmware` → `Location` → `Flash` in the [configuration](#introduction:section:changing-configuration-values) to point to the firmware that should be used for the flash test.
@@ -476,7 +477,8 @@ The following description shows you how to run the STU tests.
    ```
    ~
    └── Documents
-          └── manufacturingImageStuv2.1.10.hex
+          └── Firmware
+                 └── manufacturingImageStuv2.1.10.hex
    ```
 
    You can find the current version of the STU firmware [here](https://github.com/MyTooliT/STU/releases).
