@@ -572,7 +572,7 @@ The tables below contains a list of tests that failed using a working SHA/STH an
 
 You can also use (parts of) ICOc with various virtualization software. For that to work you have to make sure that (at least) the PEAK CAN adapter is attached to the virtual guest operating system. For some virtualization software you might have to install additional software for that to work. For example, [VirtualBox][] requires that you install the VirtualBox Extension Pack before you can use USB 2 and USB 3 devices.
 
-**Note:** Please be advised that the [**VirtualBox Extension Pack is paid software**](https://www.virtualbox.org/wiki/Licensing_FAQ) even though you can download and use it without any license key. **[Oracle might come after you, if you do not pay for the license](https://www.reddit.com/r/sysadmin/comments/d1ttzp/oracle_is_going_after_companies_using_virtualbox/)**, even if you use the Extension Pack in an educational setting.
+> **Note:** Please be advised that the [**VirtualBox Extension Pack is paid software**](https://www.virtualbox.org/wiki/Licensing_FAQ) even though you can download and use it without any license key. **[Oracle might come after you, if you do not pay for the license](https://www.reddit.com/r/sysadmin/comments/d1ttzp/oracle_is_going_after_companies_using_virtualbox/)**, even if you use the Extension Pack in an educational setting.
 
 The table below shows some of the virtualization software we tried and that worked (when we tested it).
 
@@ -621,7 +621,7 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
 
    Windows Shell:
 
-   **Note:** Please replace `<user>` with your (Linux) username (e.g. `rene`)
+   > **Note:** Please replace `<user>` with your (Linux) username (e.g. `rene`)
 
    ```pwsh
    cd ~/Documents
@@ -690,7 +690,7 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
 
 5. Copy image (Linux Shell):
 
-   **Note:** Please replace `<user>` with your (Windows) username (e.g. `rene`)
+   > **Note:** Please replace `<user>` with your (Windows) username (e.g. `rene`)
 
    ```sh
    cd ~/WSL2-Linux-Kernel
@@ -704,7 +704,7 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
    kernel=c:\\users\\<user>\\Documents\\WSL\\canbuntu-bzImage
    ```
 
-   **Note:** Please replace `<user>` with your (Windows) username (e.g. `rene`)
+   > **Note:** Please replace `<user>` with your (Windows) username (e.g. `rene`)
 
 7. Set default distribution (Windows Shell)
 
@@ -732,7 +732,7 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
    default=<user>
    ```
 
-   **Note:** Please replace `<user>` with your (Windows) username (e.g. `rene`)
+   > **Note:** Please replace `<user>` with your (Windows) username (e.g. `rene`)
 
    Save the file and exit `nano`:
 
@@ -783,11 +783,11 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
     sudo ip link set can0 up
     ```
 
-    **Note**: If the commands above fail with the error message:
-
-    > RTNETLINK answers: Connection timed out
-
-    then please disconnect and connect the USB CAN adapter. After that attach it to the Linux VM again (see step `12`).
+    > **Note**: If the commands above fail with the error message:
+    >
+    > > RTNETLINK answers: Connection timed out
+    >
+    > then please disconnect and connect the USB CAN adapter. After that attach it to the Linux VM again (see step `12`).
 
 15. Install `pip` (Linux Shell):
 
@@ -820,16 +820,16 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
 
     then you might have to logout and login into the WSL session again before you execute `icon list` again.
 
-**Notes:**
-
-- You only need to repeat steps
-
-  - `12`: attach the CAN adapter to the VM in Windows and
-  - `14`: create the link for the CAN device in Linux
-
-  after you set up everything properly once.
-
-- Unfortunately [configuring the CAN interface automatically](#introduction:section:pcan-driver:linux) does not seem to work (reliably) on WSL yet
+> **Notes:**
+>
+> - You only need to repeat steps
+>
+> - `12`: attach the CAN adapter to the VM in Windows and
+> - `14`: create the link for the CAN device in Linux
+>
+> after you set up everything properly once.
+>
+> - Unfortunately [configuring the CAN interface automatically](#introduction:section:pcan-driver:linux) does not seem to work (reliably) on WSL yet
 
 #### Installing/Using Simplicity Commander
 
@@ -875,7 +875,7 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
       mv /mnt/c/Users/<user>/Downloads/*JLink_Linux*.deb ~/Downloads
       ```
 
-      **Note:** Please replace `<user>` with your (Windows) username (e.g. `rene`)
+      > **Note:** Please replace `<user>` with your (Windows) username (e.g. `rene`)
 
    3. Install JLink package
 
@@ -1072,7 +1072,7 @@ To update the official Docker images on Docker Hub, please use the steps below. 
    printf '%s\n' "$ACCESS_TOKEN" | docker login -u mytoolit --password-stdin
    ```
 
-   **Note:** Please make sure that the variable `ACCESS_TOKEN` contains a valid [access token](https://hub.docker.com/settings/security)
+   > **Note:** Please make sure that the variable `ACCESS_TOKEN` contains a valid [access token](https://hub.docker.com/settings/security)
 
 2. Build and push the Docker images for multiple platforms:
 

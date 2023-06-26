@@ -244,7 +244,7 @@ The text below specifies extended manual test that should be executed before we 
 
 While you need to execute some test for ICOc manually, other tests and checks can be automated.
 
-**Note:** For the text below we assume that you installed [`make`](<https://en.wikipedia.org/wiki/Make_(software)#Makefile>) on your machine.
+> **Note:** For the text below we assume that you installed [`make`](<https://en.wikipedia.org/wiki/Make_(software)#Makefile>) on your machine.
 
 To run all checks, the STH test and the STU test use the following `make` command:
 
@@ -333,7 +333,7 @@ Afterwards make sure there were no (unexpected) errors in the output of the STH 
         twine upload dist/*
         ```
 
-        **Note:** For the command above to work you need an API token, which you can create after [logging into the PyPI `mytoolit` account](https://pypi.org/account/login/). If you need access to the account, please contact [René Schwaiger](https://github.com/sanssecours).
+        > **Note:** For the command above to work you need an API token, which you can create after [logging into the PyPI `mytoolit` account](https://pypi.org/account/login/). If you need access to the account, please contact [René Schwaiger](https://github.com/sanssecours).
 
 10. Insert the version number (e.g. `1.0.5`) into the tag field
 11. For the release title use “Version VERSION”, where `VERSION` specifies the version number (e.g. “Version 1.0.5”)
