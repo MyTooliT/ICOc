@@ -131,9 +131,7 @@ class Network(object):
         handler: Union[FileHandler, StreamHandler] = (
             StreamHandler()
             if log_destination is None
-            else FileHandler(
-                repo_root / log_destination, "w", "utf-8", delay=True
-            )
+            else FileHandler(log_destination, "w", "utf-8", delay=True)
         )
         handler.setFormatter(
             Formatter("{asctime} {levelname} {name} {message}", style="{")
