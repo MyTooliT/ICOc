@@ -432,13 +432,13 @@ The text below gives you a more detailed step-by-step guide on how to run the te
                    └── manufacturingImageSthv2.1.10.hex
    ```
 
-   As alternative to the steps above you can also change the variable `sth` → `Firmware` → `Location` → `Flash` in the [configuration](#introduction:section:changing-configuration-values) to point to the firmware that should be used for the flash test.
+   As alternative to the steps above you can also change the variable `sth` → `firmware` → `location` → `flash` in the [configuration](#introduction:section:changing-configuration-values) to point to the firmware that should be used for the flash test.
 
 2. Make sure that [the configuration values](#introduction:section:changing-configuration-values) are set correctly. You probably need to change at least the following variables:
 
    - **Name**: Please change the Bluetooth advertisement name (`sth` → `name` ) to the name of the STH you want to test.
 
-   - **Serial Number of Programming Board**: Please make sure, that the variable `sth` → `PROGRAMMING BOARD` → `SERIAL NUMBER` contains the serial number of the programming board connected to the STH. This serial number should be displayed on the bottom right of the LCD on the programming board.
+   - **Serial Number of Programming Board**: Please make sure, that the variable `sth` → `programming board` → `serial number` contains the serial number of the programming board connected to the STH. This serial number should be displayed on the bottom right of the LCD on the programming board.
 
 3. Please open your favorite Terminal application and execute, the STH test using the command `test-sth`. For more information about this command, please take a look at the section [“General”](#tutorials:section:general) above.
 
@@ -446,15 +446,15 @@ The text below gives you a more detailed step-by-step guide on how to run the te
 
    - to a [**Base64 encoded version of the Bluetooth MAC address**](#section:mac-address-conversion), if `sth` → `status` is set to `Bare PCB`, or
 
-   - to the **serial number** (`sth` → `PROGRAMMING BOARD` → `SERIAL NUMBER`), if you set the status to `Epoxied`.
+   - to the **serial number** (`sth` → `programming board` → `serial number`), if you set the status to `Epoxied`.
 
 ### SMH
 
 The preparation steps for the SMH test are very similar to the ones of the [STH test](#tutorials:section:sth).
 
-1. Please make sure that the config value that stores the SMH firmware filepath (`smh` → `Firmware` → `Location` → `Flash`) points to the correct firmware. If you have not downloaded a firmware image for the SMH you can do so [here](https://github.com/MyTooliT/STH/releases).
+1. Please make sure that the config value that stores the SMH firmware filepath (`smh` → `firmware` → `location` → `flash`) points to the correct firmware. If you have not downloaded a firmware image for the SMH you can do so [here](https://github.com/MyTooliT/STH/releases).
 
-2. Check that the [configuration values][config] like SMH name (`smh` → `name`) and programming board serial number (`smh` → `PROGRAMMING BOARD` → `SERIAL NUMBER`) are set correctly.
+2. Check that the [configuration values][config] like SMH name (`smh` → `name`) and programming board serial number (`smh` → `programming board` → `serial number`) are set correctly.
 
 3. Please execute the test using the following command:
 
