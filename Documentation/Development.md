@@ -147,8 +147,10 @@ The text below specifies extended manual test that should be executed before we 
 2. Remove HDF5 files from the repository:
 
    ```sh
-   rm -f *.hdf5
+   rm *.hdf5
    ```
+
+   > **Note:** You can ignore errors about “no matches for wildcard” on Linux and macOS. This message just tells you that there is no file with the extension `hdf5` in the current directory.
 
 3. Check that no HDF5 files exist in the repository. The following command should not produce any output:
 
