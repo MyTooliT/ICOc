@@ -2114,7 +2114,7 @@ usbipd wsl attach -d CANbuntu --busid 5-4</code></pre></li>
 <li><p>Check that the <a href="https://github.com/MyTooliT/ICOc/actions"><strong>CI jobs</strong> for the <code>master</code> branch finish successfully</a></p></li>
 <li><p>Check that the <strong>checks and tests</strong> run without any problems on <strong>Linux</strong>, <strong>macOS</strong> and <strong>Windows</strong></p>
 <ol style="list-style-type: decimal">
-<li><p>Set the value of <code>sth</code> → <code>status</code> in <code>config.yaml</code> to <code>Epoxied</code></p></li>
+<li><p>Set the value of <code>sth</code> → <code>status</code> in the <a href="#introduction:section:changing-configuration-values">configuration</a> to <code>Epoxied</code></p></li>
 <li><p>Execute the command:</p>
 <div class="sourceCode" id="cb126"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb126-1"><a href="#cb126-1" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> run</span></code></pre></div>
 <p>in the root of the repository</p></li>
@@ -2126,7 +2126,7 @@ usbipd wsl attach -d CANbuntu --busid 5-4</code></pre></li>
 <li>once with <code>sth</code> → <code>status</code> set to <code>Epoxied</code>, and</li>
 <li>once set to <code>Bare PCB</code></li>
 </ol>
-<p>in the <a href="../mytoolit/config/config.yaml">configuration</a>. To make sure, that the STU flash test also works, please use both STU test commands described in the section <a href="#development:section:stu-test">“STU Test”</a>.</p>
+<p>in the <a href="#introduction:section:changing-configuration-values">configuration</a>. To make sure, that the STU flash test also works, please use both STU test commands described in the section <a href="#development:section:stu-test">“STU Test”</a>.</p>
 <p>If you follow the steps above you make sure that the <strong>flash tests work</strong> for both STU and STH, and there are <strong>no unintentional consequences of (not) flashing the chip</strong> before you run the other parts of the test suite.</p></li>
 </ul></li>
 <li><p>Execute the <strong><a href="#development:section:extended-tests">extended manual tests</a></strong> in Windows and check that everything works as expected</p></li>
