@@ -2,11 +2,31 @@
 
 ## Install
 
-You can install ICOc including the relevant development tools using the following command in the root of the repository:
+You can use the instructions below, if you want to work on the code of ICOc, i.e. add additional features or fix bugs.
 
-```sh
-pip install -e .[dev,test]
-```
+1. Clone [the repository](https://github.com/MyTooliT/ICOc) to a directory of your choice. You can either use the [command line tool `git`](https://git-scm.com/downloads):
+
+   ```sh
+   git clone https://github.com/MyTooliT/ICOc.git
+   ```
+
+   or one of the many available [graphical user interfaces for Git](https://git-scm.com/downloads/guis) to do that.
+
+2. Install ICOc in “developer mode”
+
+   1. Change your working directory to the (root) directory of the cloned repository
+   2. Install ICOc:
+
+      ```sh
+      pip install -e .[dev,test]
+      ```
+
+      > **Notes:**
+      >
+      > - The command above will install the repository in “editable mode” (`-e`), meaning that a command such as `icoc` will use the current code inside the repository.
+      > - The command also installs
+      >   - development (`dev`) and
+      >   - test (`test`) dependencies
 
 ## Style
 

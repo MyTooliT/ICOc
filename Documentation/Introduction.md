@@ -215,29 +215,6 @@ to install the [latest official version of ICOc from PyPi](https://pypi.org/proj
 4. Press Return <kbd>⏎</kbd>
 5. Wait until the install process finished successfully
 
-### Development Install
-
-You can use the instructions below, if you want to work on the code of ICOc, i.e. add additional features or fix bugs.
-
-1. Clone [the repository](https://github.com/MyTooliT/ICOc) to a directory of your choice. You can either use the [command line tool `git`](https://git-scm.com/downloads):
-
-   ```sh
-   git clone https://github.com/MyTooliT/ICOc.git
-   ```
-
-   or one of the many available [graphical user interfaces for Git](https://git-scm.com/downloads/guis) to do that.
-
-2. Install ICOc in “developer mode”
-
-   1. Change your working directory to the (root) directory of the cloned repository
-   2. Install ICOc:
-
-      ```sh
-      pip install -e .[dev,test]
-      ```
-
-      The command above will install the repository in “editable mode”, meaning that a command such as `icoc` will use the current code inside the repository.
-
 ### Troubleshooting
 
 #### Import Errors
