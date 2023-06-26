@@ -540,6 +540,14 @@ Please note that while most of the tests should run successfully, if you use wor
 test-sth-verification -v -k test0107
 ```
 
+> **Note**: If you want to stop the test while it is running, but <kbd>Ctrl</kbd> + <kbd>C</kbd> does not terminate the test as you expected, then you can use the command:
+>
+> ```sh
+> Stop-Process -Name python
+> ```
+>
+> to stop **all running Python interpreters** and hence also the `test-sth-verification` script.
+
 ### Problematic Tests
 
 The tables below contains a list of tests that failed using a working SHA/STH and STU before. It should provide you with a good overview of which of the verification tests might fail, even if the hardware and firmware works correctly.
