@@ -63,3 +63,7 @@ sth:
     serial number: *programmer_serial
 
   status: *state
+
+stu:
+  programming board:
+    serial number: *programmer_serial
