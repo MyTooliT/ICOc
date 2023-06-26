@@ -413,7 +413,7 @@ which executes all tests that contain the text `flash` or `connection`.
 
 The text below gives you a more detailed step-by-step guide on how to run the tests of the STH.
 
-1. > **Note:** You can **skip this step, if you do not want to run the flash test**. To skip the flash test, please set `sth` → `status` in the [configuration file](#introduction:section:changing-configuration-values) to `Epoxied`.
+1. > **Note:** You can **skip this step, if you do not want to run the flash test**. To skip the flash test, please set `sth` → `status` in the [configuration](#introduction:section:changing-configuration-values) to `Epoxied`.
 
    Please create a directory called `Firmware` in the current user’s `Documents` (`~`) directory.
 

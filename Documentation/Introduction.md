@@ -183,11 +183,11 @@ If you install Simplicity Studio or Simplicity Commander in the standard install
 
 - If you download Simplicity Commander directly, then the tests assume that you unzipped the files into the directory `C:\SiliconLabs\Simplicity Commander`.
 
-- If you did not use any of the standard install path, then please add the path to `commander.exe` to the list `commands` → `path` → `windows` in the [configuration file](#introduction:section:changing-configuration-values).
+- If you did not use any of the standard install path, then please add the path to `commander.exe` to the list `commands` → `path` → `windows` in the [configuration](#introduction:section:changing-configuration-values).
 
 ##### Additional Notes
 
-- If you **do not want to change the config file**, and Simplicity Commander (`commander`) is not part of the standard locations for your operating system, then please make sure that `commander` is accessible via the `PATH` environment variable.
+- If you **do not want to change the config**, and Simplicity Commander (`commander`) is not part of the standard locations for your operating system, then please make sure that `commander` is accessible via the `PATH` environment variable.
 - Please note, that you **do not need to install Simplicity Commander** if you just want to **measure data with ICOc**.
 
 <a name="introduction:section:install"></a>
@@ -526,7 +526,7 @@ which will open the the user configuration in your default text editor. You can 
    icon config
    ```
 
-2. Add the path to Simplicity commander (e.g. `/opt/Simplicity Commander/commander/`) to the list `commands.path.linux`:
+2. Add the path to Simplicity commander (e.g. `/opt/Simplicity Commander/commander/`) to the list `commands` → `path` → `linux`:
 
    ```yaml
    commands:
