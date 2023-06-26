@@ -468,7 +468,7 @@ The following description shows you how to run the STU tests.
 
 1. > **Note:** You can **skip this step, if you do not want to run the flash test**.
 
-   Please take a look at step 1 of the description for the [STH test](#tutorials:section:sth) and replace every occurrence of STH with `STU`.
+   Please take a look at step 1 of the description for the [STH test](#tutorials:section:sth) and replace every occurrence of STH (or `sth`) with STU (or `stu`).
 
    > **Note:** The STU test always uploads the flash file to the board, i.e. the setting `stu` → `status` is **not** read/used by the STU tests.
 
