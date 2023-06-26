@@ -144,10 +144,10 @@ The text below specifies extended manual test that should be executed before we 
 
 1. Open your favorite terminal application and change your working directory to the root of the repository
 
-2. Remove log and data files from the repository:
+2. Remove HDF5 files from the repository:
 
    ```sh
-   clean-repo
+   rm -f *.hdf5
    ```
 
 3. Check that no HDF5 files exist in the repository. The following command should not produce any output:
