@@ -365,14 +365,11 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
 
 2. Connect programming/CAN adapter to Linux (Windows Shell):
 
-   ```pwsh
-   usbipd wsl list
-   # …
-   # 5-3    0c72:0012  PCAN-USB FD                               Not attached
-   # 5-4    1366:0105  JLink CDC UART Port (COM3), J-Link driver Not attached
-   # …
-   usbipd wsl attach -d CANbuntu --busid 5-3
-   usbipd wsl attach -d CANbuntu --busid 5-4
+   ```sh
+   $jlink_id = usbipd wsl list | Select-String JLink | %{$_ -replace '(\d-\d).*','$1'}
+   $can_id = usbipd wsl list | Select-String PCAN-USB | %{$_ -replace '(\d-\d).*','$1'}
+   usbipd wsl attach -d CANbuntu --busid $jlink_id
+   usbipd wsl attach -d CANbuntu --busid $can_id
    ```
 
 3. Configure CAN interface (Linux Shell):
