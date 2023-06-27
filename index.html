@@ -195,11 +195,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="2.5.1" data-path=""><a href="#preparation"><i class="fa fa-check"></i><b>2.5.1</b> Preparation</a></li>
 <li class="chapter" data-level="2.5.2" data-path=""><a href="#execution"><i class="fa fa-check"></i><b>2.5.2</b> Execution</a></li>
 <li class="chapter" data-level="2.5.3" data-path=""><a href="#problematic-tests"><i class="fa fa-check"></i><b>2.5.3</b> Problematic Tests</a></li>
+<li class="chapter" data-level="2.5.4" data-path=""><a href="#installingusing-simplicity-commander"><i class="fa fa-check"></i><b>2.5.4</b> Installing/Using Simplicity Commander</a></li>
+<li class="chapter" data-level="2.5.5" data-path=""><a href="#run-tests-in-wsl"><i class="fa fa-check"></i><b>2.5.5</b> Run Tests in WSL</a></li>
 </ul></li>
-<li class="chapter" data-level="2.6" data-path=""><a href="#virtualization"><i class="fa fa-check"></i><b>2.6</b> Virtualization</a>
+<li class="chapter" data-level="2.6" data-path=""><a href="#docker-on-linux"><i class="fa fa-check"></i><b>2.6</b> Docker on Linux</a>
 <ul>
-<li class="chapter" data-level="2.6.1" data-path=""><a href="#windows-subsystem-for-linux-2"><i class="fa fa-check"></i><b>2.6.1</b> Windows Subsystem for Linux 2</a></li>
-<li class="chapter" data-level="2.6.2" data-path=""><a href="#docker-on-linux"><i class="fa fa-check"></i><b>2.6.2</b> Docker on Linux</a></li>
+<li class="chapter" data-level="2.6.1" data-path=""><a href="#pull-the-docker-image"><i class="fa fa-check"></i><b>2.6.1</b> Pull the Docker Image</a></li>
+<li class="chapter" data-level="2.6.2" data-path=""><a href="#build-the-docker-image"><i class="fa fa-check"></i><b>2.6.2</b> Build the Docker Image</a></li>
+<li class="chapter" data-level="2.6.3" data-path=""><a href="#using-icoc-in-the-docker-container"><i class="fa fa-check"></i><b>2.6.3</b> Using ICOc in the Docker Container</a></li>
+<li class="chapter" data-level="2.6.4" data-path=""><a href="#updating-images-on-docker-hub"><i class="fa fa-check"></i><b>2.6.4</b> Updating Images on Docker Hub</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path=""><a href="#scripts"><i class="fa fa-check"></i><b>3</b> Scripts</a>
@@ -1365,100 +1369,39 @@ Logging:
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-</div>
-<div id="virtualization" class="section level2 hasAnchor" number="2.6">
-<h2><span class="header-section-number">2.6</span> Virtualization<a href="#virtualization" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>You can also use (parts of) ICOc with various virtualization software. For that to work you have to make sure that (at least) the PEAK CAN adapter is attached to the virtual guest operating system. For some virtualization software you might have to install additional software for that to work. For example, <a href="https://www.virtualbox.org">VirtualBox</a> requires that you install the VirtualBox Extension Pack before you can use USB 2 and USB 3 devices.</p>
-<blockquote>
-<p><strong>Note:</strong> Please be advised that the <a href="https://www.virtualbox.org/wiki/Licensing_FAQ"><strong>VirtualBox Extension Pack is paid software</strong></a> even though you can download and use it without any license key. <strong><a href="https://www.reddit.com/r/sysadmin/comments/d1ttzp/oracle_is_going_after_companies_using_virtualbox/">Oracle might come after you, if you do not pay for the license</a></strong>, even if you use the Extension Pack in an educational setting.</p>
-</blockquote>
-<p>The table below shows some of the virtualization software we tried and that worked (when we tested it).</p>
-<table>
-<colgroup>
-<col width="11%" />
-<col width="3%" />
-<col width="7%" />
-<col width="5%" />
-<col width="8%" />
-<col width="64%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>Virtualization Software</th>
-<th>Host OS</th>
-<th>Host Architecture</th>
-<th>Guest OS</th>
-<th>Guest Architecture</th>
-<th>Notes</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><a href="https://www.parallels.com">Parallels Desktop</a></td>
-<td>macOS</td>
-<td><code>x64</code></td>
-<td>Ubuntu 20.04</td>
-<td><code>x64</code></td>
-<td></td>
-</tr>
-<tr class="even">
-<td><a href="https://www.parallels.com">Parallels Desktop</a></td>
-<td>macOS</td>
-<td><code>x64</code></td>
-<td>Windows 10</td>
-<td><code>x64</code></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><a href="https://www.parallels.com">Parallels Desktop</a></td>
-<td>macOS</td>
-<td><code>ARM64</code></td>
-<td>Fedora 36</td>
-<td><code>ARM64</code></td>
-<td></td>
-</tr>
-<tr class="even">
-<td><a href="https://www.parallels.com">Parallels Desktop</a></td>
-<td>macOS</td>
-<td><code>ARM64</code></td>
-<td>Windows 11</td>
-<td><code>ARM64</code>, <code>x64</code></td>
-<td>JLink (and hence Simplicity Commander) only works with <a href="https://wiki.segger.com/J-Link_on_Windows_ARM">programming adapters that support WinUSB</a></td>
-</tr>
-<tr class="odd">
-<td><a href="https://www.virtualbox.org">VirtualBox</a></td>
-<td>macOS</td>
-<td><code>x64</code></td>
-<td>Windows 10</td>
-<td><code>x64</code></td>
-<td></td>
-</tr>
-<tr class="even">
-<td><a href="https://www.virtualbox.org">VirtualBox</a></td>
-<td>Windows</td>
-<td><code>x64</code></td>
-<td>Fedora 36</td>
-<td><code>x64</code></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><a href="http://aka.ms/wsl">WSL 2</a></td>
-<td>Windows</td>
-<td><code>x64</code></td>
-<td>Ubuntu 22.04</td>
-<td><code>x64</code></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<div id="windows-subsystem-for-linux-2" class="section level3 hasAnchor" number="2.6.1">
-<h3><span class="header-section-number">2.6.1</span> Windows Subsystem for Linux 2<a href="#windows-subsystem-for-linux-2" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Using ICOc in the WSL 2 currently <a href="https://github.com/microsoft/WSL/issues/5533">requires using a custom Linux kernel</a>. We <strong>would not recommend</strong> using ICOc with this type of virtualization software, since the setup requires quite some amount of work and time. Nevertheless the steps below should show you how you can use the PEAK CAN adapter and hence ICOc with WSL 2.</p>
-<ol style="list-style-type: decimal">
-<li><p>Install WSL 2 (Windows Shell):</p>
-<pre><code>wsl --install</code></pre></li>
+<pre><code>
+&lt;!--chapter:end:Documentation/Tutorials.md--&gt;
+
+# Virtualization
+
+You can also use (parts of) ICOc with various virtualization software. For that to work you have to make sure that (at least) the PEAK CAN adapter is attached to the virtual guest operating system. For some virtualization software you might have to install additional software for that to work. For example, [VirtualBox][] requires that you install the VirtualBox Extension Pack before you can use USB 2 and USB 3 devices.
+
+&gt; **Note:** Please be advised that the [**VirtualBox Extension Pack is paid software**](https://www.virtualbox.org/wiki/Licensing_FAQ) even though you can download and use it without any license key. **[Oracle might come after you, if you do not pay for the license](https://www.reddit.com/r/sysadmin/comments/d1ttzp/oracle_is_going_after_companies_using_virtualbox/)**, even if you use the Extension Pack in an educational setting.
+
+The table below shows some of the virtualization software we tried and that worked (when we tested it).
+
+| Virtualization Software    | Host OS | Host Architecture | Guest OS     | Guest Architecture | Notes                                                                                                                                            |
+| -------------------------- | ------- | ----------------- | ------------ | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [Parallels Desktop][]      | macOS   | `x64`             | Ubuntu 20.04 | `x64`              |                                                                                                                                                  |
+| [Parallels Desktop][]      | macOS   | `x64`             | Windows 10   | `x64`              |                                                                                                                                                  |
+| [Parallels Desktop][]      | macOS   | `ARM64`           | Fedora 36    | `ARM64`            |                                                                                                                                                  |
+| [Parallels Desktop][]      | macOS   | `ARM64`           | Windows 11   | `ARM64`, `x64`     | JLink (and hence Simplicity Commander) only works with [programming adapters that support WinUSB](https://wiki.segger.com/J-Link_on_Windows_ARM) |
+| [VirtualBox][]             | macOS   | `x64`             | Windows 10   | `x64`              |                                                                                                                                                  |
+| [VirtualBox][]             | Windows | `x64`             | Fedora 36    | `x64`              |                                                                                                                                                  |
+| [WSL 2](http://aka.ms/wsl) | Windows | `x64`             | Ubuntu 22.04 | `x64`              |                                                                                                                                                  |
+
+[virtualbox]: https://www.virtualbox.org
+[parallels desktop]: https://www.parallels.com
+
+## Windows Subsystem for Linux 2
+
+Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https://github.com/microsoft/WSL/issues/5533). We **would not recommend** using ICOc with this type of virtualization software, since the setup requires quite some amount of work and time. Nevertheless the steps below should show you how you can use the PEAK CAN adapter and hence ICOc with WSL 2.
+
+1. Install WSL 2 (Windows Shell):
+</code></pre>
+<p>wsl –install
+```</p>
+<ol start="2" style="list-style-type: decimal">
 <li><p>Install Ubuntu 22.04 VM (Windows Shell):</p>
 <ol style="list-style-type: decimal">
 <li><p>Install <a href="https://apps.microsoft.com/store/detail/ubuntu-2204-lts/9PN20MSR04DW">Ubuntu 22.04 from the Microsoft Store</a></p></li>
@@ -1617,8 +1560,10 @@ usbipd wsl list
 <li>Unfortunately <a href="#introduction:section:pcan-driver:linux">configuring the CAN interface automatically</a> does not seem to work (reliably) on WSL yet</li>
 </ul>
 </blockquote>
-<div id="installingusing-simplicity-commander" class="section level4 hasAnchor" number="2.6.1.1">
-<h4><span class="header-section-number">2.6.1.1</span> Installing/Using Simplicity Commander<a href="#installingusing-simplicity-commander" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+</div>
+</div>
+<div id="installingusing-simplicity-commander" class="section level3 hasAnchor" number="2.5.4">
+<h3><span class="header-section-number">2.5.4</span> Installing/Using Simplicity Commander<a href="#installingusing-simplicity-commander" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <ol style="list-style-type: decimal">
 <li><p>Download and unpack <a href="https://community.silabs.com/s/article/simplicity-commander?language=en_US">Simplicity Commander</a> (Linux Shell)</p>
 <div class="sourceCode" id="cb80"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install <span class="at">-y</span> unzip</span>
@@ -1676,19 +1621,16 @@ usbipd wsl attach --busid 5-4</code></pre></li>
 </ul></li>
 </ol>
 </div>
-<div id="run-tests-in-wsl" class="section level4 hasAnchor" number="2.6.1.2">
-<h4><span class="header-section-number">2.6.1.2</span> Run Tests in WSL<a href="#run-tests-in-wsl" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div id="run-tests-in-wsl" class="section level3 hasAnchor" number="2.5.5">
+<h3><span class="header-section-number">2.5.5</span> Run Tests in WSL<a href="#run-tests-in-wsl" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <ol style="list-style-type: decimal">
 <li><p>Start WSL (Windows Shell)</p>
 <div class="sourceCode" id="cb90"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a><span class="ex">wsl</span> <span class="at">-d</span> CANbuntu <span class="at">--cd</span> <span class="st">&quot;~/Documents/ICOc&quot;</span></span></code></pre></div></li>
 <li><p>Connect programming/CAN adapter to Linux (Windows Shell):</p>
-<pre class="pwsh"><code>usbipd wsl list
-# …
-# 5-3    0c72:0012  PCAN-USB FD                               Not attached
-# 5-4    1366:0105  JLink CDC UART Port (COM3), J-Link driver Not attached
-# …
-usbipd wsl attach -d CANbuntu --busid 5-3
-usbipd wsl attach -d CANbuntu --busid 5-4</code></pre></li>
+<div class="sourceCode" id="cb91"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a><span class="va">$jlink_id</span> = usbipd wsl list <span class="kw">|</span> <span class="ex">Select-String</span> JLink <span class="kw">|</span> <span class="ex">%{</span><span class="va">$_</span> <span class="at">-replace</span> <span class="st">&#39;(\d-\d).*&#39;</span>,<span class="st">&#39;$1&#39;</span>}</span>
+<span id="cb91-2"><a href="#cb91-2" aria-hidden="true" tabindex="-1"></a><span class="va">$can_id</span> = usbipd wsl list <span class="kw">|</span> <span class="ex">Select-String</span> PCAN-USB <span class="kw">|</span> <span class="ex">%{</span><span class="va">$_</span> <span class="at">-replace</span> <span class="st">&#39;(\d-\d).*&#39;</span>,<span class="st">&#39;$1&#39;</span>}</span>
+<span id="cb91-3"><a href="#cb91-3" aria-hidden="true" tabindex="-1"></a><span class="ex">usbipd</span> wsl attach <span class="at">-d</span> CANbuntu <span class="at">--busid</span> <span class="va">$jlink_id</span></span>
+<span id="cb91-4"><a href="#cb91-4" aria-hidden="true" tabindex="-1"></a><span class="ex">usbipd</span> wsl attach <span class="at">-d</span> CANbuntu <span class="at">--busid</span> <span class="va">$can_id</span></span></code></pre></div></li>
 <li><p>Configure CAN interface (Linux Shell):</p>
 <div class="sourceCode" id="cb92"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ip link set can0 type can bitrate 1000000</span>
 <span id="cb92-2"><a href="#cb92-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ip link set can0 up</span></code></pre></div></li>
@@ -1697,15 +1639,15 @@ usbipd wsl attach -d CANbuntu --busid 5-4</code></pre></li>
 </ol>
 </div>
 </div>
-<div id="docker-on-linux" class="section level3 hasAnchor" number="2.6.2">
-<h3><span class="header-section-number">2.6.2</span> Docker on Linux<a href="#docker-on-linux" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="docker-on-linux" class="section level2 hasAnchor" number="2.6">
+<h2><span class="header-section-number">2.6</span> Docker on Linux<a href="#docker-on-linux" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>The text below shows how you can use (code of) the new Network class in a Docker container on a <strong>Linux host</strong>. The description on how to move the interface of the Docker container is an adaption of an <a href="https://chemnitzer.linux-tage.de/2021/de/programm/beitrag/210">article/video from the “Chemnitzer Linux-Tage”</a>. Currently we provide two images based on:</p>
 <ul>
 <li><a href="https://hub.docker.com/r/mytoolit/icoc-alpine">Alpine</a> and</li>
 <li><a href="https://hub.docker.com/r/mytoolit/icoc-ubuntu">Ubuntu</a>.</li>
 </ul>
-<div id="pull-the-docker-image" class="section level4 hasAnchor" number="2.6.2.1">
-<h4><span class="header-section-number">2.6.2.1</span> Pull the Docker Image<a href="#pull-the-docker-image" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div id="pull-the-docker-image" class="section level3 hasAnchor" number="2.6.1">
+<h3><span class="header-section-number">2.6.1</span> Pull the Docker Image<a href="#pull-the-docker-image" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>You can download a recent version of the image from Docker Hub</p>
 <ul>
 <li>for Alpine:</li>
@@ -1716,8 +1658,8 @@ usbipd wsl attach -d CANbuntu --busid 5-4</code></pre></li>
 </ul>
 <pre><code>docker image pull mytoolit/icoc-ubuntu:latest</code></pre>
 </div>
-<div id="build-the-docker-image" class="section level4 hasAnchor" number="2.6.2.2">
-<h4><span class="header-section-number">2.6.2.2</span> Build the Docker Image<a href="#build-the-docker-image" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div id="build-the-docker-image" class="section level3 hasAnchor" number="2.6.2">
+<h3><span class="header-section-number">2.6.2</span> Build the Docker Image<a href="#build-the-docker-image" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>If you <strong>do not want to use the prebuilt image</strong>, then you can use the commands below (in the root of the repository) to build them yourself:</p>
 <ul>
 <li>Alpine Linux:</li>
@@ -1728,8 +1670,8 @@ usbipd wsl attach -d CANbuntu --busid 5-4</code></pre></li>
 </ul>
 <div class="sourceCode" id="cb97"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb97-1"><a href="#cb97-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> build <span class="at">-t</span> mytoolit/icoc-ubuntu <span class="at">-f</span> Docker/Ubuntu/Dockerfile .</span></code></pre></div>
 </div>
-<div id="using-icoc-in-the-docker-container" class="section level4 hasAnchor" number="2.6.2.3">
-<h4><span class="header-section-number">2.6.2.3</span> Using ICOc in the Docker Container<a href="#using-icoc-in-the-docker-container" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div id="using-icoc-in-the-docker-container" class="section level3 hasAnchor" number="2.6.3">
+<h3><span class="header-section-number">2.6.3</span> Using ICOc in the Docker Container<a href="#using-icoc-in-the-docker-container" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <ol style="list-style-type: decimal">
 <li><p>Run the container <strong>(Terminal 1)</strong></p>
 <ol style="list-style-type: decimal">
@@ -1759,10 +1701,10 @@ usbipd wsl attach -d CANbuntu --busid 5-4</code></pre></li>
 </ol>
 <p><a name="tutorials:section:updating-images-on-docker-hub"></a></p>
 </div>
-<div id="updating-images-on-docker-hub" class="section level4 hasAnchor" number="2.6.2.4">
-<h4><span class="header-section-number">2.6.2.4</span> Updating Images on Docker Hub<a href="#updating-images-on-docker-hub" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<div id="preparation-1" class="section level5 hasAnchor" number="2.6.2.4.1">
-<h5><span class="header-section-number">2.6.2.4.1</span> Preparation<a href="#preparation-1" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<div id="updating-images-on-docker-hub" class="section level3 hasAnchor" number="2.6.4">
+<h3><span class="header-section-number">2.6.4</span> Updating Images on Docker Hub<a href="#updating-images-on-docker-hub" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="preparation-1" class="section level4 hasAnchor" number="2.6.4.1">
+<h4><span class="header-section-number">2.6.4.1</span> Preparation<a href="#preparation-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>If you have not done so already, you might have to <a href="https://cloudolife.com/2022/03/05/Infrastructure-as-Code-IaC/Container/Docker/Docker-buildx-support-multiple-architectures-images/">enable support for building Docker images for multiple architectures</a>:</p>
 <ol style="list-style-type: decimal">
 <li><p>Enable experimental features for the Docker daemon:</p>
@@ -1774,8 +1716,8 @@ usbipd wsl attach -d CANbuntu --busid 5-4</code></pre></li>
 <div class="sourceCode" id="cb103"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb103-1"><a href="#cb103-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> buildx create <span class="at">--name</span> builder <span class="at">--use</span></span></code></pre></div></li>
 </ol>
 </div>
-<div id="update-steps" class="section level5 hasAnchor" number="2.6.2.4.2">
-<h5><span class="header-section-number">2.6.2.4.2</span> Update Steps<a href="#update-steps" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<div id="update-steps" class="section level4 hasAnchor" number="2.6.4.2">
+<h4><span class="header-section-number">2.6.4.2</span> Update Steps<a href="#update-steps" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>To update the official Docker images on Docker Hub, please use the steps below. All commands assume that you use a <strong>POSIX shell</strong> on a Unix system (e.g. Linux or macOS).</p>
 <ol style="list-style-type: decimal">
 <li><p>Login to Docker Hub</p>
@@ -1803,7 +1745,6 @@ usbipd wsl attach -d CANbuntu --busid 5-4</code></pre></li>
 </ol>
 
 <p><a name="scripts:section:scripts"></a></p>
-</div>
 </div>
 </div>
 </div>
@@ -1992,7 +1933,10 @@ usbipd wsl attach -d CANbuntu --busid 5-4</code></pre></li>
 <ol style="list-style-type: decimal">
 <li><p>Open your favorite terminal application and change your working directory to the root of the repository</p></li>
 <li><p>Remove HDF5 files from the repository:</p>
-<div class="sourceCode" id="cb119"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb119-1"><a href="#cb119-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span> <span class="at">-f</span> <span class="pp">*</span>.hdf5</span></code></pre></div></li>
+<div class="sourceCode" id="cb119"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb119-1"><a href="#cb119-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span> <span class="pp">*</span>.hdf5</span></code></pre></div>
+<blockquote>
+<p><strong>Note:</strong> You can ignore errors about “no matches for wildcard” on Linux and macOS. This message just tells you that there is no file with the extension <code>hdf5</code> in the current directory.</p>
+</blockquote></li>
 <li><p>Check that no HDF5 files exist in the repository. The following command should not produce any output:</p>
 <div class="sourceCode" id="cb120"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb120-1"><a href="#cb120-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="pp">*</span>.hdf5</span></code></pre></div></li>
 <li><p>Give your test STH the <a href="#tutorials:section:sth-renaming">name</a> “Test-STH”</p></li>
