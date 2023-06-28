@@ -375,7 +375,7 @@ class Network:
             )
         )
         try:
-            self.bus = Bus(
+            self.bus = Bus(  # pylint: disable=abstract-class-instantiated
                 channel=configuration.get("channel"),
                 interface=configuration.get("interface"),
                 bitrate=configuration.get("bitrate"),

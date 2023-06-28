@@ -240,7 +240,7 @@ class TestNode(TestCase):
         if not type(self).read_attributes:
             # Read data of specific node (STH or STU). Subclasses must
             # implement this method.
-            self._read_data()
+            self._read_data()  # pylint: disable=no-member
             type(self).read_attributes = True
 
     def tearDown(self):

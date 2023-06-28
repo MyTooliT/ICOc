@@ -31,7 +31,11 @@ def open_file_windows(filepath: Union[Path, str]) -> None:
 
     """
 
+    # fmt: off
+    # pylint: disable=no-name-in-module
     from os import startfile  # type: ignore[attr-defined]
+    # pylint: enable=no-name-in-module
+    # fmt: on
 
     try:
         startfile(filepath)

@@ -13,7 +13,10 @@ from reportlab.platypus import (
     Spacer,
     Table,
 )
-from reportlab.rl_config import defaultPageSize
+
+from reportlab.rl_config import (  # pylint: disable=no-name-in-module
+    defaultPageSize,
+)
 
 from mytoolit.report.pdf import PDFImage
 from mytoolit.report.style import get_style_sheet
@@ -271,8 +274,12 @@ if __name__ == "__main__":
 
     # Open the file to check the resulting PDF manually
     if system() == "Windows":
+        # fmt: off
         # The function `startfile` is only available on Windows
+        # pylint: disable=no-name-in-module
         from os import startfile  # type: ignore
+        # pylint: enable=no-name-in-module
+        # fmt: on
 
         startfile(pdf_path)
     else:

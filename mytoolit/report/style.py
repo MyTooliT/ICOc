@@ -1,6 +1,8 @@
 # -- Imports ------------------------------------------------------------------
 
-from reportlab.rl_config import canvas_basefontname
+from reportlab.rl_config import (  # pylint: disable=no-name-in-module
+    canvas_basefontname,
+)
 from reportlab.lib.fonts import tt2ps
 from reportlab.lib.styles import ListStyle, ParagraphStyle, StyleSheet1
 from reportlab.lib.colors import black

@@ -207,6 +207,7 @@ class State:
 
         location = (self.value >> 4) & 0b11
         cls = type(self)
+        # pylint: disable=unsubscriptable-object
         return cls.node_states.inverse[location]
 
     def state_name(self) -> str:
@@ -231,6 +232,7 @@ class State:
 
         network_state = self.value & 0b111
         cls = type(self)
+        # pylint: disable=unsubscriptable-object
         return cls.network_states.inverse[network_state]
 
     def __repr__(self) -> str:
@@ -354,6 +356,7 @@ class NodeStatus:
         """
 
         state = (self.value >> 1) & 0b111
+        # pylint: disable=unsubscriptable-object
         return State.network_states.inverse[state]
 
 

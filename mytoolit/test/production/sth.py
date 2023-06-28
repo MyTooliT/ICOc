@@ -277,12 +277,13 @@ class TestSTH(TestSensorNode):
         sensor = settings.acceleration_sensor()
         maximum_ratio_allowed = sensor.acceleration.ratio_noise_to_max_value
         self.assertLessEqual(
-            cls.ratio_noise_max,
+            cls.ratio_noise_max,  # pylint: disable=no-member
             maximum_ratio_allowed,
             (
                 "The ratio noise to possible maximum measured value of "
-                f"{cls.ratio_noise_max} dB is higher than the maximum allowed "
-                f"level of {maximum_ratio_allowed} dB"
+                f"{cls.ratio_noise_max} dB "  # pylint: disable=no-member
+                "is higher than the maximum allowed level of "
+                f" {maximum_ratio_allowed} dB"
             ),
         )
 
@@ -383,7 +384,9 @@ class TestSTH(TestSensorNode):
             name = (
                 settings.sth.serial_number
                 if settings.sth.status == "Epoxied"
-                else convert_mac_base64(cls.bluetooth_mac)
+                else convert_mac_base64(
+                    cls.bluetooth_mac  # pylint: disable=no-member
+                )
             )
 
             await self.can.write_eeprom_name(name, receiver)
@@ -526,12 +529,12 @@ class TestSTH(TestSensorNode):
 
             try:
                 await self.can.connect_sensor_device(
-                    cls.name
+                    cls.name  # pylint: disable=no-member
                 )  # Reconnect to STH
             except TimeoutError:
                 self.fail(
                     "Unable to reconnect to STH using updated name "
-                    f"“{cls.name}”"
+                    f"“{cls.name}”"  # pylint: disable=no-member
                 )
 
         self.loop.run_until_complete(test_eeprom())
