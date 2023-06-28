@@ -83,6 +83,9 @@ preview = true
 [tool.mypy]
 ignore_missing_imports = true
 
+[tool.pylint.main]
+ignore-paths = [".*mytoolit\\\\old.*|.*mytoolit/old.*"]
+
 [tool.pytest.ini_options]
 # - Use doctests
 # - Fail after first errors
