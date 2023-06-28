@@ -32,6 +32,7 @@ run: check test hardware-test
 check:
 	flake8
 	mypy mytoolit
+	pylint -E mytoolit
 
 .PHONY: test
 test: pytest-test

@@ -52,6 +52,7 @@ requires-python = ">=3.9"
 dev = [
     "flake8",
     "mypy",
+    "pylint",
     "toml",
 ]
 test = [

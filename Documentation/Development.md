@@ -83,6 +83,14 @@ Please use the following command in the root of the repository to check the code
 mypy mytoolit
 ```
 
+#### Pylint
+
+We currently use [Pylint](https://github.com/PyCQA/pylint) to check the code (for errors only):
+
+```sh
+pylint -E mytoolit
+```
+
 ### Automatic Tests
 
 #### Requirements
