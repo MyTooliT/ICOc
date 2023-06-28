@@ -2,7 +2,7 @@
 
 from typing import List, Optional, Union
 
-from mytoolit.old.MyToolItCommands import NetworkState, NodeState
+from bidict import bidict
 
 # -- Classes ------------------------------------------------------------------
 
@@ -13,6 +13,28 @@ class State:
     See also: https://mytoolit.github.io/Documentation/#command:get-set-state
 
     """
+
+    node_states = bidict(
+        {
+            "No Change": 0,
+            "Bootloader": 1,
+            "Application": 2,
+            "Reserved": 3,
+        }
+    )
+
+    network_states = bidict(
+        {
+            "Failure": 0,
+            "Error": 1,
+            "Standby": 2,
+            "Graceful Degradation 2": 3,
+            "Graceful Degradation 1": 4,
+            "Operating": 5,
+            "Startup": 6,
+            "No Change": 7,
+        }
+    )
 
     def __init__(
         self,
@@ -63,6 +85,7 @@ class State:
             self.value |= number << start
 
         self.value = value[0] if value else 0
+        cls = type(self)
 
         # ========
         # = Mode =
@@ -80,7 +103,7 @@ class State:
 
         if isinstance(location, str):
             try:
-                location = NodeState[location]
+                location = cls.node_states[location]
             except KeyError:
                 raise ValueError(f"Unknown location “{location}”")
 
@@ -93,7 +116,7 @@ class State:
 
         if isinstance(state, str):
             try:
-                state = NetworkState[state]
+                state = cls.network_states[state]
             except KeyError:
                 raise ValueError(f"Unknown state “{state}”")
 
@@ -183,7 +206,8 @@ class State:
         """
 
         location = (self.value >> 4) & 0b11
-        return NodeState.inverse[location]
+        cls = type(self)
+        return cls.node_states.inverse[location]
 
     def state_name(self) -> str:
         """Retrieve the name of the network state
@@ -206,7 +230,8 @@ class State:
         """
 
         network_state = self.value & 0b111
-        return NetworkState.inverse[network_state]
+        cls = type(self)
+        return cls.network_states.inverse[network_state]
 
     def __repr__(self) -> str:
         """Retrieve the textual representation of the state
@@ -329,7 +354,7 @@ class NodeStatus:
         """
 
         state = (self.value >> 1) & 0b111
-        return NetworkState.inverse[state]
+        return State.network_states.inverse[state]
 
 
 class NodeStatusSTH(NodeStatus):
