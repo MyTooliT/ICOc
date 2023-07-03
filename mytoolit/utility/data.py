@@ -1,3 +1,5 @@
+"""Data conversion functions"""
+
 # -- Imports ------------------------------------------------------------------
 
 from typing import Iterable

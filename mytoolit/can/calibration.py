@@ -1,3 +1,5 @@
+"""Support for MytooliT protocol calibration commands"""
+
 # -- Imports ------------------------------------------------------------------
 
 from typing import List, Optional, Union

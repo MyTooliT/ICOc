@@ -1,3 +1,5 @@
+"""Test code for stationary transceiver unit (STU)"""
+
 # -- Imports ------------------------------------------------------------------
 
 from unittest import main as unittest_main

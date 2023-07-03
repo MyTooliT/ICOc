@@ -1,3 +1,8 @@
+"""Support for creating PDF reports
+
+We use these reports as one of the outputs of our hardware tests
+"""
+
 # -- Imports ------------------------------------------------------------------
 
 from functools import partial

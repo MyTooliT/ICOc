@@ -1,4 +1,7 @@
-# Original Source: https://stackoverflow.com/questions/31712386
+"""Support code to add PDF images to PDF (test reports)
+
+Original Source: https://stackoverflow.com/questions/31712386
+"""
 
 # -- Imports ------------------------------------------------------------------
 

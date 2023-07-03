@@ -1,3 +1,5 @@
+"""Support for reading EEPROM status"""
+
 # -- Imports ------------------------------------------------------------------
 
 from __future__ import annotations

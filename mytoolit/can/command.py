@@ -1,3 +1,11 @@
+"""Support for MyTooliT CAN commands
+
+A command is a 16 bit subpart of a CAN identifier used by the MyTooliT
+protocol. For more information, please take a look here:
+
+https://mytoolit.github.io/Documentation/#command
+"""
+
 # -- Imports ------------------------------------------------------------------
 
 from __future__ import annotations

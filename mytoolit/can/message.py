@@ -1,3 +1,9 @@
+"""Support for MyTooliT protocol CAN messages
+
+For more information, please take a look here:
+- https://mytoolit.github.io/Documentation/#mytoolit-communication-protocol
+"""
+
 # -- Imports ------------------------------------------------------------------
 
 from __future__ import annotations

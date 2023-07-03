@@ -1,3 +1,6 @@
+"""Support for storing additional information about test results"""
+
+
 # -- Imports ------------------------------------------------------------------
 
 from enum import Enum

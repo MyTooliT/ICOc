@@ -1,3 +1,10 @@
+"""Support for the (29 bit) CAN identifiers of the MyTooliT protocol
+
+See: https://mytoolit.github.io/Documentation/#identifier
+
+for more information
+"""
+
 # -- Imports ------------------------------------------------------------------
 
 from __future__ import annotations

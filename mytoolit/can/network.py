@@ -1,3 +1,12 @@
+"""Support for working with the ICOtronic system
+
+To communicate with the ICOtronic system, create a new `Network` object and
+use its various coroutines. Unfortunately we do not offer an official API
+documentation yet. For now we recommend you take a look at the
+doctests of the `Network` class or the code for the `icon` command line tool
+(mytoolit.cmdline.icon).
+"""
+
 # -- Imports ------------------------------------------------------------------
 
 from __future__ import annotations

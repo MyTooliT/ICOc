@@ -1,3 +1,5 @@
+"""Command Line Parsing support"""
+
 # -- Imports ------------------------------------------------------------------
 
 from argparse import ArgumentParser, ArgumentTypeError, Namespace

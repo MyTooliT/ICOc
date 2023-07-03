@@ -1,3 +1,5 @@
+"""Shared test code for sensory nodes in the ICOtronic system"""
+
 # -- Imports ------------------------------------------------------------------
 
 from time import sleep

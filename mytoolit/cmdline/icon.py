@@ -1,3 +1,10 @@
+"""ICOn command line tool
+
+See: https://mytoolit.github.io/ICOc/#icon-cli-tool
+
+for more information
+"""
+
 # -- Imports ------------------------------------------------------------------
 
 from argparse import Namespace

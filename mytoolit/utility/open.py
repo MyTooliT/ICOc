@@ -1,3 +1,5 @@
+"""Support for opening (text) files in default application"""
+
 # -- Imports ------------------------------------------------------------------
 
 from pathlib import Path

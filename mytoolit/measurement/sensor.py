@@ -1,3 +1,5 @@
+"""Support code for sensors and sensor configuration"""
+
 # -- Imports ------------------------------------------------------------------
 
 from enum import auto, Enum

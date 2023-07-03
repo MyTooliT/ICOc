@@ -1,3 +1,5 @@
+"""Support code for changing the style of PDF (test reports)"""
+
 # -- Imports ------------------------------------------------------------------
 
 from reportlab.rl_config import (  # pylint: disable=no-name-in-module

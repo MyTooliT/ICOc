@@ -1,3 +1,5 @@
+"""Support code for different states of nodes/network"""
+
 # -- Imports ------------------------------------------------------------------
 
 from typing import List, Optional, Union

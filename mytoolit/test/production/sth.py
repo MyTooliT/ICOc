@@ -1,3 +1,9 @@
+"""Test code for sensory tool holder (STH)/ assembly (SHA)
+
+The difference between the SHA and the STH is that the SHA denotes only the
+PCB while an STH also includes the tool holder that contains the SHA.
+"""
+
 # -- Imports ------------------------------------------------------------------
 
 from itertools import chain, repeat

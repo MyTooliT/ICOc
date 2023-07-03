@@ -1,3 +1,11 @@
+"""Support for ADC CAN commands and configuration
+
+See:
+https://mytoolit.github.io/Documentation/#command:Get-Set-ADC-Configuration
+
+for more information
+"""
+
 # -- Imports ------------------------------------------------------------------
 
 from collections.abc import Iterator, Mapping

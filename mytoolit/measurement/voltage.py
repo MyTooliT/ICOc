@@ -1,3 +1,5 @@
+"""Support for reading voltage data"""
+
 # -- Imports ------------------------------------------------------------------
 
 from pint import Quantity

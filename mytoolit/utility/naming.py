@@ -1,3 +1,5 @@
+"""Support to get/set the name of a node its Base64 encoded MAC address"""
+
 # -- Imports ------------------------------------------------------------------
 
 from base64 import b64encode, b64decode

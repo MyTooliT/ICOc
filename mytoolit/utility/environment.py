@@ -1,3 +1,10 @@
+"""Support for adding Simplicity Commander to path
+
+Currently this code is only used by the verification tests.
+
+TODO: Remove this code after we get rid of “old” code (`mytoolit.old`)
+"""
+
 # -- Imports ------------------------------------------------------------------
 
 from os import environ, pathsep

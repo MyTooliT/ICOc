@@ -1,3 +1,5 @@
+"""Support code for acceleration measurements"""
+
 # -- Imports ------------------------------------------------------------------
 
 from math import log, sqrt

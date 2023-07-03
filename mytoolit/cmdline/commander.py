@@ -1,3 +1,10 @@
+"""Support code for Simplicity Commander command line tool
+
+See: https://community.silabs.com/s/article/simplicity-commander
+
+for more information
+"""
+
 # -- Imports ------------------------------------------------------------------
 
 from os import environ, pathsep

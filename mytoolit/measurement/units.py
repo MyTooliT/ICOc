@@ -1,3 +1,5 @@
+"""Support for different measurement units"""
+
 # -- Imports ------------------------------------------------------------------
 
 from pint import Quantity, Unit, UnitRegistry

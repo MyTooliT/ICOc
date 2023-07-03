@@ -1,3 +1,5 @@
+"""Extension of test runner class used in hardware tests"""
+
 # -- Imports ------------------------------------------------------------------
 
 from unittest import TextTestRunner

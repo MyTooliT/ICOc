@@ -1,3 +1,8 @@
+"""Support for a node (single CAN communication unit) in the ICOtronic system
+
+See: https://mytoolit.github.io/Documentation/#mytoolit-communication-protocol
+"""
+
 # -- Imports ------------------------------------------------------------------
 
 from __future__ import annotations

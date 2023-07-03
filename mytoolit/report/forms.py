@@ -1,3 +1,5 @@
+"""Support for adding forms (such as a checkbox) to PDF documents"""
+
 # -- Imports ------------------------------------------------------------------
 
 from __future__ import annotations

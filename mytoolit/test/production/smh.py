@@ -1,3 +1,5 @@
+"""Test code for sensory milling head (SMH)"""
+
 # -- Imports ------------------------------------------------------------------
 
 from unittest import main as unittest_main

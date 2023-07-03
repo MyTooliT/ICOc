@@ -1,3 +1,5 @@
+"""Support for streaming (measurement) data in the ICOtronic system"""
+
 # -- Imports ------------------------------------------------------------------
 
 from __future__ import annotations

@@ -1,3 +1,5 @@
+"""Support for storing measurement data (in HDF5)"""
+
 # -- Imports ------------------------------------------------------------------
 
 from __future__ import annotations

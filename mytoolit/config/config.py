@@ -1,3 +1,8 @@
+"""Support for changing configuration values
+
+Currently the configuration is mainly used in the hardware (production tests).
+"""
+
 # -- Import -------------------------------------------------------------------
 
 from datetime import date

@@ -1,3 +1,12 @@
+"""Test code for a single node in the ICOtronic system
+
+The code below contains shared code for:
+
+- SHA/STH
+- SMH
+- STU
+"""
+
 # -- Imports ------------------------------------------------------------------
 
 from asyncio import new_event_loop, set_event_loop, sleep as async_sleep

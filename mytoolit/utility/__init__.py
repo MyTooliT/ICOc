@@ -1,3 +1,5 @@
+"""Mic utility code"""
+
 # -- Exports ------------------------------------------------------------------
 
 from .data import convert_bytes_to_text
