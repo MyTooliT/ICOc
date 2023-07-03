@@ -22,11 +22,11 @@ from can.interfaces.pcan.basic import (
     PCAN_RECEIVE_EVENT,
 )
 
-from mytoolit.can import SensorConfig
 from mytoolit.cmdline import channel_number, mac_address, sth_name
 from mytoolit.config import settings
 from mytoolit.measurement.acceleration import convert_raw_to_g
 from mytoolit.measurement.storage import Storage
+from mytoolit.measurement.sensor import SensorConfig
 from mytoolit.old.network import Network
 from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
 from mytoolit.old.MyToolItCommands import (

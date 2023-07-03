@@ -25,7 +25,6 @@ from mytoolit.can.calibration import CalibrationMeasurementFormat
 from mytoolit.can.error import UnsupportedFeatureException
 from mytoolit.can.message import Message
 from mytoolit.can.node import Node
-from mytoolit.can.sensor import SensorConfig
 from mytoolit.can.streaming import (
     AsyncStreamBuffer,
     StreamingData,
@@ -35,6 +34,7 @@ from mytoolit.can.streaming import (
 )
 from mytoolit.can.status import State
 from mytoolit.measurement import convert_raw_to_supply_voltage
+from mytoolit.measurement.sensor import SensorConfig
 from mytoolit.utility import convert_bytes_to_text
 
 # -- Classes ------------------------------------------------------------------

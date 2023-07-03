@@ -4,7 +4,7 @@ from typing import Callable, Iterable, Tuple
 
 from curses import curs_set, error, wrapper  # type: ignore[attr-defined]
 
-from mytoolit.can.sensor import SensorConfig
+from mytoolit.measurement.sensor import SensorConfig
 from mytoolit.old.cli import CommandLineInterface
 from mytoolit.old.MyToolItCommands import (
     AdcAcquisitionTime,

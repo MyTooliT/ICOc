@@ -31,7 +31,6 @@ from mytoolit.can import (
     Node,
     NodeStatusSTH,
     NodeStatusSTU,
-    SensorConfig,
     UnsupportedFeatureException,
 )
 from mytoolit.eeprom import EEPROMStatus
@@ -66,6 +65,7 @@ from mytoolit.old.MyToolItCommands import (
     SystemCommandBlueTooth,
     VRefName,
 )
+from mytoolit.measurement.sensor import SensorConfig
 
 
 class Network(object):

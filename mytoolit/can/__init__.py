@@ -6,7 +6,6 @@ from .identifier import Identifier
 from .message import Message
 from .node import Node
 from .network import Network, ErrorResponseError, NetworkError, NoResponseError
-from .sensor import SensorConfig
 from .status import (
     NodeStatusSTH,
     NodeStatusSTU,
