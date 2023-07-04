@@ -2,4 +2,4 @@
 
 # -- Exports ------------------------------------------------------------------
 
-from .eeprom_status import EEPROMStatus
+from .status import EEPROMStatus
