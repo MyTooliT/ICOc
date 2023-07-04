@@ -136,13 +136,13 @@ class Command:
                 raise ValueError(
                     f"Unknown block number: {block}"
                 ) from exception
-            else:
-                try:
-                    block_command = block_command_names[block_command]
-                except KeyError as exception:
-                    raise ValueError(
-                        f"Unknown block command: {block_command}"
-                    ) from exception
+
+            try:
+                block_command = block_command_names[block_command]
+            except KeyError as exception:
+                raise ValueError(
+                    f"Unknown block command: {block_command}"
+                ) from exception
 
         if block_command is not None:
             set_part(start=2, width=8, number=block_command)
