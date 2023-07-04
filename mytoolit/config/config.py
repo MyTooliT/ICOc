@@ -439,7 +439,7 @@ class Settings(Dynaconf):
                 raise OSError(
                     "Unable to create the output directory "
                     f"“{directory}”: {error}"
-                )
+                ) from error
 
 
 # -- Attributes ---------------------------------------------------------------

@@ -322,11 +322,11 @@ class Commander:
                 ],
                 regex_output=regex,
             )
-        except CommanderOutputMatchException:
+        except CommanderOutputMatchException as error:
             raise CommanderOutputMatchException(
                 "Unable to extract power usage "
                 "from Simplicity Commander output"
-            )
+            ) from error
 
         pattern_match = compile(regex).search(output)
         assert pattern_match is not None

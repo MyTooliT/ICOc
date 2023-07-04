@@ -119,8 +119,8 @@ class Command:
             try:
                 block = MyToolItBlock[block]
                 assert isinstance(block, int)
-            except KeyError:
-                raise ValueError(f"Unknown block: {block}")
+            except KeyError as exception:
+                raise ValueError(f"Unknown block: {block}") from exception
 
         if block is not None:
             set_part(start=10, width=6, number=block)
@@ -132,13 +132,17 @@ class Command:
         if isinstance(block_command, str):
             try:
                 block_command_names = blocknumber_to_commands[self.block()]
-            except KeyError:
-                raise ValueError(f"Unknown block number: {block}")
+            except KeyError as exception:
+                raise ValueError(
+                    f"Unknown block number: {block}"
+                ) from exception
             else:
                 try:
                     block_command = block_command_names[block_command]
-                except KeyError:
-                    raise ValueError(f"Unknown block command: {block_command}")
+                except KeyError as exception:
+                    raise ValueError(
+                        f"Unknown block command: {block_command}"
+                    ) from exception
 
         if block_command is not None:
             set_part(start=2, width=8, number=block_command)

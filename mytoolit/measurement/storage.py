@@ -147,7 +147,7 @@ class Storage:
         except (HDF5ExtError, OSError) as error:
             raise StorageException(
                 f"Unable to open file “{self.filepath}”: {error}"
-            )
+            ) from error
 
     def init_acceleration(
         self, axes: Iterable[str], start_time: float

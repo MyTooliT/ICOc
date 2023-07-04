@@ -394,7 +394,7 @@ class Network:
                 f"Unable to initialize CAN connection: {error}\n\n"
                 "Possible reason:\n\n"
                 "• CAN adapter is not connected to the computer"
-            )
+            ) from error
 
         # We create the notifier when we need it for the first time, since
         # there might not be an active loop when you create the network object
@@ -2492,8 +2492,10 @@ class Network:
 
         try:
             dimension_number = "xyz".index(dimension) + 1
-        except ValueError:
-            raise ValueError(f"Invalid dimension value: “{dimension}”")
+        except ValueError as error:
+            raise ValueError(
+                f"Invalid dimension value: “{dimension}”"
+            ) from error
 
         message = Message(
             block="Configuration",
@@ -2600,8 +2602,10 @@ class Network:
 
         try:
             dimension_number = "xyz".index(dimension) + 1
-        except ValueError:
-            raise ValueError(f"Invalid dimension value: “{dimension}”")
+        except ValueError as error:
+            raise ValueError(
+                f"Invalid dimension value: “{dimension}”"
+            ) from error
 
         node = "STH 1"
         message = Message(
@@ -4505,8 +4509,10 @@ class Network:
 
             try:
                 date = datetime.date.fromisoformat(date)
-            except ValueError:
-                raise ValueError(f"Invalid value for date argument: “{date}”")
+            except ValueError as error:
+                raise ValueError(
+                    f"Invalid value for date argument: “{date}”"
+                ) from error
 
         await self.write_eeprom_text(
             address=5,

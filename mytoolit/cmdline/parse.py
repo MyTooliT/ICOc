@@ -79,8 +79,10 @@ def byte_value(value):
         if number < 0 or number > 255:
             raise ValueError()
         return number
-    except ValueError:
-        raise ArgumentTypeError(f"“{value}” is not a valid byte value")
+    except ValueError as error:
+        raise ArgumentTypeError(
+            f"“{value}” is not a valid byte value"
+        ) from error
 
 
 def channel_number(value: str):
@@ -129,8 +131,10 @@ def channel_number(value: str):
         if number < 0 or number > 255:
             raise ValueError()
         return number
-    except ValueError:
-        raise ArgumentTypeError(f"“{value}” is not a valid channel number")
+    except ValueError as error:
+        raise ArgumentTypeError(
+            f"“{value}” is not a valid channel number"
+        ) from error
 
 
 def mac_address(address: str) -> EUI:
@@ -163,8 +167,10 @@ def mac_address(address: str) -> EUI:
 
     try:
         mac_address = EUI(address)
-    except AddrFormatError:
-        raise ArgumentTypeError(f"“{address}” is not a valid MAC address")
+    except AddrFormatError as error:
+        raise ArgumentTypeError(
+            f"“{address}” is not a valid MAC address"
+        ) from error
 
     return mac_address
 
@@ -203,10 +209,10 @@ def device_number(value: str) -> int:
         if number < 0:
             raise ValueError()
         return number
-    except ValueError:
+    except ValueError as error:
         raise ArgumentTypeError(
             f"“{value}” is not a valid Bluetooth device number"
-        )
+        ) from error
 
 
 def sth_name(name: str) -> str:
@@ -246,8 +252,8 @@ def sth_name(name: str) -> str:
 
     try:
         name.encode("ascii")
-    except UnicodeEncodeError:
-        raise ArgumentTypeError(f"“{name}” is not a valid STH name")
+    except UnicodeEncodeError as error:
+        raise ArgumentTypeError(f"“{name}” is not a valid STH name") from error
 
     if len(name) > 8:
         raise ArgumentTypeError(f"“{name}” is too long to be a valid STH name")

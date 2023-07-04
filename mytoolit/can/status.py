@@ -106,8 +106,8 @@ class State:
         if isinstance(location, str):
             try:
                 location = cls.node_states[location]
-            except KeyError:
-                raise ValueError(f"Unknown location “{location}”")
+            except KeyError as error:
+                raise ValueError(f"Unknown location “{location}”") from error
 
         if location is not None:
             set_part(start=4, width=2, number=location)
@@ -119,8 +119,8 @@ class State:
         if isinstance(state, str):
             try:
                 state = cls.network_states[state]
-            except KeyError:
-                raise ValueError(f"Unknown state “{state}”")
+            except KeyError as error:
+                raise ValueError(f"Unknown state “{state}”") from error
 
         if state is not None:
             set_part(start=0, width=3, number=state)
