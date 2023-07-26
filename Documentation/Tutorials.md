@@ -575,4 +575,3 @@ The tables below contains a list of tests that failed using a working SHA/STH an
 | Date       | Failed Tests                               |
 | ---------- | ------------------------------------------ |
 | 2021-12-14 | • test0102BlueToothConnectDisconnectDevice |
-```
