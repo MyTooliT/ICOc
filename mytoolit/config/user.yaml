@@ -57,7 +57,7 @@ sth:
 
   holder type: *holder_type
 
-  name: Test-STH
+  name: *holder_name
   serial number: *holder_serial
   programming board:
     serial number: *programmer_serial
