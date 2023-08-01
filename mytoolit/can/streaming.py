@@ -693,7 +693,7 @@ class StreamingData:
 
             value_type_first = type(channel[0].value)
             for timestamped in channel[1:]:
-                if type(timestamped.value) != value_type_first:
+                if not isinstance(timestamped.value, value_type_first):
                     return False
 
         return True
