@@ -244,7 +244,7 @@ class Message:
                             f"“{number_devices_text}” to number"
                         )
 
-            elif subcommand == 5 or subcommand == 6:
+            elif subcommand in (5, 6):
                 part = "first" if subcommand == 5 else "second"
                 data_explanation = (
                     f"{verb} {part} part of name of device "
@@ -266,8 +266,8 @@ class Message:
                 data_explanation = f"{verb} Bluetooth connection status"
                 if is_acknowledgment and len(self.data) >= 3:
                     connected = bool(self.data[2])
-                    data_explanation += ": {}".format(
-                        "Connected" if connected else "Not connected"
+                    data_explanation += (
+                        f": {'Connected' if connected else 'Not connected'}"
                     )
             elif subcommand == 9:
                 verb = "Acknowledge" if is_acknowledgment else "Request"
