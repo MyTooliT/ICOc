@@ -5,7 +5,7 @@
 from time import sleep
 
 from mytoolit.config import settings
-from mytoolit.test.production import TestNode
+from mytoolit.test.production.node import TestNode
 
 # -- Classes ------------------------------------------------------------------
 
