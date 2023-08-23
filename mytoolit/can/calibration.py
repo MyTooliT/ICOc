@@ -8,6 +8,8 @@ from bidict import bidict
 
 from mytoolit.utility.types import check_list
 
+# pylint: disable=too-few-public-methods
+
 # -- Class --------------------------------------------------------------------
 
 
@@ -35,7 +37,9 @@ class CalibrationMeasurementFormat:
     def __init__(
         self,
         *data: Union[bytearray, List[int]],
+        # pylint: disable=redefined-builtin
         set: Optional[bool] = None,
+        # pylint: enable=redefined-builtin
         element: Optional[str] = None,
         method: Optional[str] = None,
         dimension: Optional[int] = None,
@@ -155,18 +159,18 @@ class CalibrationMeasurementFormat:
 
         method_byte = self.data[0]
 
-        set = method_byte >> 7
+        set_values = method_byte >> 7
         element = cls.elements.inverse.get(self.data[1], "Unknown Element")
         dimension = self.data[2]
         reference_voltage = round(self.data[3] / 20, 1)
 
         parts = [
-            "Set" if set else "Get",
+            "Set" if set_values else "Get",
             element,
             f"Dimension: {dimension}",
             f"Reference Voltage: {reference_voltage} V",
         ]
-        if set:
+        if set_values:
             method = cls.methods[(method_byte >> 5) & 0b11]
             parts.insert(1, method)
 
