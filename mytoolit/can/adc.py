@@ -12,6 +12,8 @@ from collections.abc import Iterator, Mapping
 from math import log2
 from typing import List, Optional, Union
 
+from mytoolit.utility.types import check_list
+
 # -- Class --------------------------------------------------------------------
 
 
@@ -63,18 +65,7 @@ class ADCConfiguration(Mapping):
 
         if data:
             data_bytes = list(data[0])
-            if not isinstance(data_bytes, list):
-                raise ValueError(
-                    "Unsupported object type for argument data: "
-                    f"“{type(data_bytes)}”"
-                )
-            required_length = 5
-            if len(data_bytes) < required_length:
-                raise ValueError(
-                    f"Data length of {len(data_bytes)} is too "
-                    "small, at least length of "
-                    f"“{required_length}” required"
-                )
+            check_list(data_bytes, 5)
             self.data = data_bytes[0:5] + [0] * 3
         else:
             self.data = [0] * 8

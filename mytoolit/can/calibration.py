@@ -6,6 +6,8 @@ from typing import List, Optional, Union
 
 from bidict import bidict
 
+from mytoolit.utility.types import check_list
+
 # -- Class --------------------------------------------------------------------
 
 
@@ -89,18 +91,7 @@ class CalibrationMeasurementFormat:
 
         if data:
             data_bytes = list(data[0])
-            if not isinstance(data_bytes, list):
-                raise ValueError(
-                    "Unsupported object type for argument data: "
-                    f"“{type(data_bytes)}”"
-                )
-            required_length = 4
-            if len(data_bytes) < required_length:
-                raise ValueError(
-                    f"Data length of {len(data_bytes)} is too "
-                    "small, at least length of "
-                    f"“{required_length}” required"
-                )
+            check_list(data_bytes, 4)
             self.data = data_bytes[0:4] + [0] * 4
         else:
             self.data = [0, 0, 1, 0] + [0] * 4
