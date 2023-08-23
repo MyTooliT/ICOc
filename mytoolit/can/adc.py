@@ -92,7 +92,7 @@ class ADCConfiguration(Mapping):
         # =============
 
         if prescaler is not None:
-            if not (1 <= prescaler <= 127):
+            if not 1 <= prescaler <= 127:
                 raise ValueError(
                     f"Prescaler value of “{prescaler}” out of range"
                     ", please use a value between 1 and 127"
