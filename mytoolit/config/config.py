@@ -72,12 +72,10 @@ class ConfigurationUtility:
             cls.open_config_file(cls.user_config_filepath)
         except UnableToOpenError as error:
             print(
-                (
-                    f"Unable to open user configuration: {error}"
-                    "\nTo work around this problem please open "
-                    f"“{cls.user_config_filepath}” in your favorite text "
-                    "editor"
-                ),
+                f"Unable to open user configuration: {error}"
+                "\nTo work around this problem please open "
+                f"“{cls.user_config_filepath}” in your favorite text "
+                "editor",
                 file=stderr,
             )
 

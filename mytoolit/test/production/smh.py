@@ -90,10 +90,8 @@ class TestSMH(TestSensorNode):
             self.assertEqual(
                 name,
                 read_name,
-                (
-                    f"Written name “{name}” does not match read name"
-                    f" “{read_name}”"
-                ),
+                f"Written name “{name}” does not match read name"
+                f" “{read_name}”",
             )
 
             cls.name = read_name
@@ -134,10 +132,8 @@ class TestSMH(TestSensorNode):
                 self.assertEqual(
                     config.first,
                     test_channel,
-                    (
-                        f"Read sensor channel number “{config.first}” does "
-                        f"not match expected channel number “{test_channel}”"
-                    ),
+                    f"Read sensor channel number “{config.first}” does "
+                    f"not match expected channel number “{test_channel}”",
                 )
                 stream_data = await self.can.read_streaming_data_amount(
                     1000, first=True, second=False, third=False
@@ -166,10 +162,8 @@ class TestSMH(TestSensorNode):
                 plural = "" if len(non_working_sensors) <= 1 else "s"
                 self.assertFalse(
                     non_working_sensors,
-                    (
-                        f"The sensor{plural} on measurement {error_text} "
-                        "to not work correctly."
-                    ),
+                    f"The sensor{plural} on measurement {error_text} "
+                    "to not work correctly.",
                 )
 
         self.loop.run_until_complete(test_sensors())
@@ -189,11 +183,9 @@ class TestSMH(TestSensorNode):
         self.assertLess(
             power_usage_mw,
             expected_maxmimum_usage_mw,
-            (
-                f"Measured power usage of {power_usage_mw} mW is "
-                "higher than expected maximum value "
-                f"{expected_maxmimum_usage_mw} mW"
-            ),
+            f"Measured power usage of {power_usage_mw} mW is "
+            "higher than expected maximum value "
+            f"{expected_maxmimum_usage_mw} mW",
         )
 
 

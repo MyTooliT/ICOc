@@ -863,19 +863,15 @@ class CommandLineInterface:
                 ) = self.read_acceleration_range()
                 if not success:
                     print(
-                        (
-                            "Warning: Unable to determine sensor range from "
-                            "EEPROM value — Assuming ± 100 g sensor"
-                        ),
+                        "Warning: Unable to determine sensor range from "
+                        "EEPROM value — Assuming ± 100 g sensor",
                         file=stderr,
                     )
                 if self.acceleration_range_g < 1:
                     print(
-                        (
-                            "Warning: Sensor range"
-                            f" “{self.acceleration_range_g}” below 1 g — Using"
-                            " range 200 instead (± 100 g sensor)"
-                        ),
+                        "Warning: Sensor range"
+                        f" “{self.acceleration_range_g}” below 1 g — Using"
+                        " range 200 instead (± 100 g sensor)",
                         file=stderr,
                     )
                     self.acceleration_range_g = 200
@@ -953,10 +949,8 @@ class CommandLineInterface:
 
         if time_since_read >= TIMEOUT_SECONDS:
             print(
-                (
-                    "Exiting program since no streaming data was received "
-                    f"in the last {round(time_since_read, 2)} seconds"
-                ),
+                "Exiting program since no streaming data was received "
+                f"in the last {round(time_since_read, 2)} seconds",
                 file=stderr,
             )
 

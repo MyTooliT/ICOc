@@ -93,10 +93,8 @@ class TestSensorNode(TestNode):
             self.assertEqual(
                 milliseconds_read,
                 milliseconds,
-                (
-                    f"{description} {milliseconds_read} ms does not match "
-                    f" written value of {milliseconds} ms"
-                ),
+                f"{description} {milliseconds_read} ms does not match "
+                f" written value of {milliseconds} ms",
             )
 
         await read_write_time(

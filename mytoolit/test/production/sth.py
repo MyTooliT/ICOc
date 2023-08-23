@@ -205,20 +205,16 @@ class TestSTH(TestSensorNode):
             self.assertGreaterEqual(
                 supply_voltage,
                 expected_minimum_voltage,
-                (
-                    f"STH supply voltage of {supply_voltage:.3f~} is lower "
-                    "than expected minimum voltage of "
-                    f"{expected_minimum_voltage:.3f~}"
-                ),
+                f"STH supply voltage of {supply_voltage:.3f~} is lower "
+                "than expected minimum voltage of "
+                f"{expected_minimum_voltage:.3f~}",
             )
             self.assertLessEqual(
                 supply_voltage,
                 expected_maximum_voltage,
-                (
-                    f"STH supply voltage of {supply_voltage:.3f~} is "
-                    "greater than expected maximum voltage of "
-                    f"{expected_minimum_voltage:.3f~}"
-                ),
+                f"STH supply voltage of {supply_voltage:.3f~} is "
+                "greater than expected maximum voltage of "
+                f"{expected_minimum_voltage:.3f~}",
             )
 
         self.loop.run_until_complete(test_supply_voltage())
@@ -249,20 +245,16 @@ class TestSTH(TestSensorNode):
             self.assertGreaterEqual(
                 acceleration,
                 expected_minimum_acceleration,
-                (
-                    f"Measured acceleration {acceleration:.3f~} is lower "
-                    "than expected minimum acceleration "
-                    f"{expected_minimum_acceleration:.3f~}"
-                ),
+                f"Measured acceleration {acceleration:.3f~} is lower "
+                "than expected minimum acceleration "
+                f"{expected_minimum_acceleration:.3f~}",
             )
             self.assertLessEqual(
                 acceleration,
                 expected_maximum_acceleration,
-                (
-                    f"Measured acceleration {acceleration:.3f~} is greater "
-                    "than expected maximum acceleration "
-                    f"{expected_maximum_acceleration:.3f~}"
-                ),
+                f"Measured acceleration {acceleration:.3f~} is greater "
+                "than expected maximum acceleration "
+                f"{expected_maximum_acceleration:.3f~}",
             )
 
         self.loop.run_until_complete(test_acceleration_single())
@@ -343,11 +335,9 @@ class TestSTH(TestSensorNode):
         self.assertLessEqual(
             voltage_diff_before_after,
             voltage_diff_tolerance,
-            (
-                "Measured voltage difference between voltage before and after "
-                f"test {voltage_diff_before_after:.0f} mV is larger than "
-                f"tolerance of {voltage_diff_tolerance:.0f} mV"
-            ),
+            "Measured voltage difference between voltage before and after "
+            f"test {voltage_diff_before_after:.0f} mV is larger than "
+            f"tolerance of {voltage_diff_tolerance:.0f} mV",
         )
 
         possible_failure_reason = (
@@ -358,20 +348,16 @@ class TestSTH(TestSensorNode):
         self.assertGreaterEqual(
             voltage_diff_abs,
             voltage_diff_minimum,
-            (
-                f"Measured voltage difference of {voltage_diff_abs:.0f} mV is "
-                "lower than expected minimum voltage difference of "
-                f"{voltage_diff_minimum:.0f} mV{possible_failure_reason}"
-            ),
+            f"Measured voltage difference of {voltage_diff_abs:.0f} mV is "
+            "lower than expected minimum voltage difference of "
+            f"{voltage_diff_minimum:.0f} mV{possible_failure_reason}",
         )
         self.assertLessEqual(
             voltage_diff_abs,
             voltage_diff_maximum,
-            (
-                f"Measured voltage difference of {voltage_diff_abs:.0f} mV is "
-                "greater than expected minimum voltage difference of "
-                f"{voltage_diff_maximum:.0f} mV{possible_failure_reason}"
-            ),
+            f"Measured voltage difference of {voltage_diff_abs:.0f} mV is "
+            "greater than expected minimum voltage difference of "
+            f"{voltage_diff_maximum:.0f} mV{possible_failure_reason}",
         )
 
     def test_eeprom(self):
@@ -401,10 +387,8 @@ class TestSTH(TestSensorNode):
             self.assertEqual(
                 name,
                 read_name,
-                (
-                    f"Written name “{name}” does not match read name"
-                    f" “{read_name}”"
-                ),
+                f"Written name “{name}” does not match read name"
+                f" “{read_name}”",
             )
 
             cls.name = read_name

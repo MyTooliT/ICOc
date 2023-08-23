@@ -320,10 +320,8 @@ class TestNode(TestCase):
         self.assertEqual(
             expected_state,
             state,
-            (
-                f"Expected state “{expected_state}” does not match "
-                f"received state “{state}”"
-            ),
+            f"Expected state “{expected_state}” does not match "
+            f"received state “{state}”",
         )
 
     def _test_firmware_flash(
@@ -603,11 +601,9 @@ class TestNode(TestCase):
         self.assertEqual(
             watchdog_reset_counter,
             cls.watchdog_reset_counter,
-            (
-                "Written watchdog reset counter value"
-                f" “{watchdog_reset_counter} does not match read watchdog"
-                f" reset counter value “{cls.watchdog_reset_counter}”"
-            ),
+            "Written watchdog reset counter value"
+            f" “{watchdog_reset_counter} does not match read watchdog"
+            f" reset counter value “{cls.watchdog_reset_counter}”",
         )
 
         # ===================
@@ -659,9 +655,7 @@ class TestNode(TestCase):
         cls.eeprom_status = await self.can.read_eeprom_status(node)
         self.assertTrue(
             cls.eeprom_status.is_initialized(),
-            (
-                "Setting EEPROM status to “Initialized” failed. "
-                "EEPROM status byte currently stores the value "
-                f"“{cls.eeprom_status}”"
-            ),
+            "Setting EEPROM status to “Initialized” failed. "
+            "EEPROM status byte currently stores the value "
+            f"“{cls.eeprom_status}”",
         )
