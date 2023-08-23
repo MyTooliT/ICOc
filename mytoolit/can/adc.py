@@ -18,10 +18,14 @@ from typing import List, Optional, Union
 class ADCConfiguration(Mapping):
     """Support for reading and writing the ADC configuration"""
 
+    # pylint: disable=too-many-branches
+
     def __init__(
         self,
         *data: Union[bytearray, List[int]],
+        # pylint: disable=redefined-builtin
         set: Optional[bool] = None,
+        # pylint: enable=redefined-builtin
         prescaler: Optional[int] = None,
         acquisition_time: Optional[int] = None,
         oversampling_rate: Optional[int] = None,
@@ -177,6 +181,8 @@ class ADCConfiguration(Mapping):
             "oversampling_rate": self.oversampling_rate,
         }
 
+    # pylint: enable=too-many-branches
+
     def __getitem__(self, item: str) -> float:
         """Return values of the mapping provided by this class
 
@@ -304,7 +310,7 @@ class ADCConfiguration(Mapping):
 
         """
 
-        set = bool(self.data[0] >> 7)
+        set_values = bool(self.data[0] >> 7)
         prescaler = self.data[1]
         acquisition_time = (
             self.data[2] + 1 if self.data[2] <= 3 else 2 ** (self.data[2] - 1)
@@ -313,7 +319,7 @@ class ADCConfiguration(Mapping):
         reference_voltage = self.reference_voltage()
 
         parts = [
-            "Set" if set else "Get",
+            "Set" if set_values else "Get",
             f"Prescaler: {prescaler}",
             f"Acquisition Time: {acquisition_time}",
             f"Oversampling Rate: {oversampling_rate}",
