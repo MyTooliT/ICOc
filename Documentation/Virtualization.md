@@ -253,7 +253,6 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
 > **Notes:**
 >
 > - You only need to repeat steps
->
 > - `12`: attach the CAN adapter to the VM in Windows and
 > - `14`: create the link for the CAN device in Linux
 >
@@ -275,6 +274,9 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
    tar xf Commander_linux_*.tar.bz
    mkdir -p ~/Applications
    mv commander ~/Applications
+   # Fix J-Link connection
+   # https://wiki.segger.com/J-Link_cannot_connect_to_the_CPU
+   sudo cp ~/Applications/commander/99-jlink.rules /etc/udev/rules.d/
    ```
 
 2. Add `commander` binary to path (Linux Shell)
@@ -295,29 +297,8 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
 
    3. Save your changes
 
-3. Install JLink (Linux Shell)
-
-   1. Download [JLink](https://www.segger.com/downloads/jlink/) (64-bit DEB Installer) into your Windows user `Downloads` folder
-
-   2. Copy the installer
-
-      ```sh
-      mv /mnt/c/Users/<user>/Downloads/*JLink_Linux*.deb ~/Downloads
-      ```
-
-      > **Note:** Please replace `<user>` with your (Windows) username (e.g. `rene`)
-
-   3. Install JLink package
-
-      ```sh
-      cd ~/Downloads
-      sudo dpkg -i JLink_Linux_*.deb
-      sudo apt-get -fy install # if there were unresolved dependencies
-      ```
-
-4. Detach USB connector of programming adapter
-5. Attach USB connector of programming adapter
-6. Connect programming adapter to Linux (Windows Shell)
+3. Restart WSL
+4. Connect programming adapter to Linux (Windows Shell)
 
    ```pwsh
    usbipd wsl list
@@ -327,7 +308,7 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
    usbipd wsl attach --busid 5-4
    ```
 
-7. Check if `commander` JLink connection works without using `sudo` (Linux Shell)
+5. Check if `commander` JLink connection works without using `sudo` (Linux Shell)
 
    ```sh
    commander adapter dbgmode OUT --serialno <serialnumber>
