@@ -274,13 +274,15 @@ If you uses [Homebrew][] on an Apple Silicon based Mac you can use the [followin
 [Homebrew]: https://brew.sh
 
 ```sh
+pip uninstall tables
 brew install hdf5 c-blosc lzo bzip2
-export HDF5_DIR=/opt/homebrew/opt/hdf5
 export BLOSC_DIR=/opt/homebrew/opt/c-blosc
-pip install --no-cache-dir tables
+export BZIP2_DIR=/opt/homebrew/opt/bzip2
+export LZO_DIR=/opt/homebrew/opt/lzo
+export HDF5_DIR=/opt/homebrew/opt/hdf5
+pip install --no-cache-dir git+https://github.com/PyTables/PyTables
 # If the above command does not work you can also try:
 # pip install git+https://github.com/PyTables/PyTables.git@v3.7.0
-pip install -e .
 ```
 
 #### HDF5 Library Not Loaded
