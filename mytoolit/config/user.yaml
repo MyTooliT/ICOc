@@ -18,6 +18,9 @@ dynaconf_merge: true
 
 programming board serial number: &programmer_serial 440120910
 
+# Production date of node (SMH, STH, STU)
+production date: &production_date 2023-09-11
+
 user name: &username Dummy User
 
 # Possible Sensors:
@@ -50,6 +53,7 @@ smh:
   name: *holder_name
   programming board:
     serial number: *programmer_serial
+  production date: *production_date
 
 sth:
   acceleration sensor:
@@ -58,6 +62,7 @@ sth:
   holder type: *holder_type
 
   name: *holder_name
+  production date: *production_date
   serial number: *holder_serial
   programming board:
     serial number: *programmer_serial
@@ -65,5 +70,6 @@ sth:
   status: *state
 
 stu:
+  production date: *production_date
   programming board:
     serial number: *programmer_serial
