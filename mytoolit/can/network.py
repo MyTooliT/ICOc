@@ -3414,9 +3414,15 @@ class Network:
         -------
 
         >>> from asyncio import run
+        >>> from platform import system
 
         Read sleep time 2 of STH 1
 
+        >>> if system() == 'Linux':
+        ...    async def reset():
+        ...        async with Network() as network:
+        ...            await network.reset_node('STU 1')
+        ...    run(reset())
         >>> async def read_sleep_time_2():
         ...     async with Network() as network:
         ...         await network.connect_sensor_device(0)
