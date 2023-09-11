@@ -2123,6 +2123,11 @@ class Network:
 
         Read 100 sensor values
 
+        >>> if system() == 'Linux':
+        ...    async def reset():
+        ...        async with Network() as network:
+        ...            await network.reset_node('STU 1')
+        ...    run(reset())
         >>> async def read_raw_sensor_values():
         ...     async with Network() as network:
         ...         await network.connect_sensor_device(0)
