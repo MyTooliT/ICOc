@@ -92,7 +92,6 @@ ignore-paths = [".*mytoolit\\\\old.*|.*mytoolit/old.*"]
 # - Fail after first errors
 # - Ignore macOS metadata files
 # - Verbose output
-# - Disable Prysk test
 addopts = "--doctest-modules -x --ignore-glob='*._*.py' -v"
 minversion = "6.0"
 
