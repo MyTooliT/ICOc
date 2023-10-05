@@ -94,7 +94,7 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
    - `Networking support` → `CAN bus subsystem support` → `Raw CAN Protocol`
    - `Networking support` → `CAN bus subsystem support` → `CAN device drivers` → `Virtual Local CAN Interface`
    - `Networking support` → `CAN bus subsystem support` → `CAN device drivers` → `Serial / USB serial CAN Adaptors (slcan)`
-   - `Networking support` → `CAN bus subsystem support` → `CAN device drivers` → → `CAN USB Interfaces` → `PEAK PCAN-USB/USB Pro interfaces for CAN 2.0b/CAN-FD`
+   - `Networking support` → `CAN bus subsystem support` → `CAN device drivers` → `CAN USB Interfaces` → `PEAK PCAN-USB/USB Pro interfaces for CAN 2.0b/CAN-FD`
 
    Save the modified kernel configuration.
 
