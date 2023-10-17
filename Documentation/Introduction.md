@@ -293,6 +293,18 @@ Some of the ICOc commands might fail with an error message that looks like this 
 
 In that case you might have installed an outdated cached version of [PyTables](https://www.pytables.org). You should be able to fix this issue using the same steps as described [above ](#introduction:section:unable-to-locate-hdf5).
 
+#### Unable to open OpenBLAS library
+
+If one of the ICOc command fails with the error message:
+
+> ImportError: libopenblas.so.0: cannot open shared object file: No such file or directory
+
+on [Raspbian](http://www.raspbian.org) (or some other GNU/Linux version based on Debian) then you probably need to install the [OpenBLAS](http://www.openblas.net) library:
+
+```sh
+sudo apt-get install libopenblas-dev
+```
+
 #### Unknown Command `icoc`
 
 If `pip install` prints **warnings about the path** that look like this:
