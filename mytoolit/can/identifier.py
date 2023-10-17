@@ -20,7 +20,7 @@ from mytoolit.can.node import Node
 class Identifier:
     """This class represents a CAN identifier of the MyTooliT protocol"""
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-arguments
         self,
         *identifier: int,
         command: Union[Command, None, int] = None,

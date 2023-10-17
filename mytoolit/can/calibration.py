@@ -34,7 +34,7 @@ class CalibrationMeasurementFormat:
         }
     )
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-arguments
         self,
         *data: Union[bytearray, List[int]],
         # pylint: disable=redefined-builtin
