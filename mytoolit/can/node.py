@@ -136,9 +136,9 @@ class Node:
             return f"STH {self.value}"
 
         if 15 <= self.value <= 16:
-            return f"SPU {self.value-14}"
+            return f"SPU {self.value - 14}"
 
-        return f"STU {self.value-16}"
+        return f"STU {self.value - 16}"
 
     def is_sth(self) -> bool:
         """Check if this node is an STH or not

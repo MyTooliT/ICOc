@@ -28,7 +28,7 @@ class TestSMH(TestSensorNode):
         cls.sensors = []
         for sensor in range(settings.smh.channels):
             cls.add_attribute(
-                f"Sensor {sensor+1}", f"{{cls.sensors[{sensor}]}}", pdf=True
+                f"Sensor {sensor + 1}", f"{{cls.sensors[{sensor}]}}", pdf=True
             )
 
     def _connect(self):

@@ -89,7 +89,7 @@ async def dataloss(arguments: Namespace) -> None:
                     )
 
                 storage.add_acceleration_meta(
-                    "Sensor_Range", f"± {sensor_range/2} g₀"
+                    "Sensor_Range", f"± {sensor_range / 2} g₀"
                 )
 
                 progress.close()
@@ -183,7 +183,7 @@ async def measure(arguments: Namespace) -> None:
                     if time() - start_time >= measurement_time_s:
                         break
             storage.add_acceleration_meta(
-                "Sensor_Range", f"± {sensor_range/2} g₀"
+                "Sensor_Range", f"± {sensor_range / 2} g₀"
             )
 
             progress.close()

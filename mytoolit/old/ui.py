@@ -246,7 +246,7 @@ class UserInterface(CommandLineInterface):
 
         for choice in choices:
             fill = max_length_choices - len(choice)
-            self.add_string(f"│ {choice}{' '*fill} │\n")
+            self.add_string(f"│ {choice}{' ' * fill} │\n")
 
         self.add_string(f"└{ruler}┘")
 
@@ -431,7 +431,7 @@ class UserInterface(CommandLineInterface):
         product_name = self.Can.sProductData("Product Name", bLog=False)
         serial = f"{serial_number}–{product_name}"
         sensor_range, success = self.read_acceleration_range()
-        sensor_range_output = f"± {sensor_range/2} g"
+        sensor_range_output = f"± {sensor_range / 2} g"
         if not success:
             sensor_range_output += " (EEPROM Read Error)"
 
@@ -499,7 +499,7 @@ class UserInterface(CommandLineInterface):
         )
         for description, value in infos:
             fill = max_description_length - len(description) + 1
-            self.add_string(f"{description}{' '*fill}{value}\n")
+            self.add_string(f"{description}{' ' * fill}{value}\n")
 
     def sth_window_menu(self):
         self.draw_menu(
@@ -627,7 +627,7 @@ class UserInterface(CommandLineInterface):
 
                 name = device["Name"]
                 self.add_string(
-                    y_position, 0, f"Connecting to device “{name}”…{' '*20}"
+                    y_position, 0, f"Connecting to device “{name}”…{' ' * 20}"
                 )
                 self.stdscr.refresh()
 
@@ -696,7 +696,7 @@ class UserInterface(CommandLineInterface):
 
     def window_header(self):
         self.stdscr.clear()
-        self.add_string(f"{' '*16}ICOc\n\n")
+        self.add_string(f"{' ' * 16}ICOc\n\n")
 
     def main_window_information(self):
         self.window_header()
@@ -716,7 +716,7 @@ class UserInterface(CommandLineInterface):
         devices = self.Can.tDeviceList(MyToolItNetworkNr["STU1"], bLog=False)
         sleep(0.02)  # Sleep a little bit to reduce CPU usage
 
-        header = f"{' '*7}Name      Address            RSSI{' '*7}"
+        header = f"{' ' * 7}Name      Address            RSSI{' ' * 7}"
         ruler = "—" * len(header)
         for line in (header, ruler):
             self.add_string(f"{line}\n")

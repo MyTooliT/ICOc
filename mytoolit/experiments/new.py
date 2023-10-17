@@ -30,7 +30,7 @@ async def test(identifier):
                 offset = abs(message_timestamp - utc_timestamp)
                 print(f"UTC timestamp:     {utc_timestamp}")
                 print(f"Message timestamp: {message_timestamp}")
-                print(f"Offset: {offset} ({offset/60:.3f} minutes)")
+                print(f"Offset: {offset} ({offset / 60:.3f} minutes)")
                 break
 
 

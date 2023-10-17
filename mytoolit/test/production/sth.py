@@ -60,7 +60,7 @@ class TestSTH(TestSensorNode):
             settings.acceleration_sensor().acceleration.maximum
         )
         cls.acceleration_sensor = (
-            f"±{maximum_acceleration//2} g Sensor ({sensor_name})"
+            f"±{maximum_acceleration // 2} g Sensor ({sensor_name})"
         )
 
         # Manual checks
