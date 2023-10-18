@@ -3,8 +3,7 @@
 # -- Imports ------------------------------------------------------------------
 
 from logging import FileHandler, Formatter
-from pathlib import Path
-from platformdirs import user_log_dir
+from platformdirs import user_log_path
 
 from mytoolit.config import ConfigurationUtility
 
@@ -33,9 +32,9 @@ def get_log_file_handler(filename: str) -> FileHandler:
 
     The log file should not exist until we add something to it
 
-    >>> log_filepath = Path(user_log_dir(
+    >>> log_filepath = user_log_path(
     ...     appname=ConfigurationUtility.app_name,
-    ...     appauthor=ConfigurationUtility.app_author)) / "test.log"
+    ...     appauthor=ConfigurationUtility.app_author) / "test.log"
     >>> log_filepath.exists()
     False
 
@@ -59,11 +58,14 @@ def get_log_file_handler(filename: str) -> FileHandler:
 
     """
 
-    log_dir = user_log_dir(
-        appname=ConfigurationUtility.app_name,
-        appauthor=ConfigurationUtility.app_author,
+    log_filepath = (
+        user_log_path(
+            appname=ConfigurationUtility.app_name,
+            appauthor=ConfigurationUtility.app_author,
+        )
+        / filename
     )
-    log_filepath = Path(log_dir) / filename
+
     # Create log directory, if it does not exist already
     if not log_filepath.parent.exists():
         log_filepath.parent.mkdir(
