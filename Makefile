@@ -62,14 +62,14 @@ run-hardware-test:
 	test-stu -k eeprom -k connection
 
 open-test-report-windows:
-	powershell -c "Invoke-Item (Join-Path $$PWD 'STH Test.pdf')"
-	powershell -c "Invoke-Item (Join-Path $$PWD 'STU Test.pdf')"
+	@powershell -c "Invoke-Item (Join-Path $$PWD 'STH Test.pdf')"
+	@powershell -c "Invoke-Item (Join-Path $$PWD 'STU Test.pdf')"
 
 open-test-report-mac:
-	open 'STH Test.pdf' 'STU Test.pdf'
+	@open 'STH Test.pdf' 'STU Test.pdf'
 
 open-test-report-linux:
-	if [ -z "$(DISPLAY)" ]; \
+	@if [ -z "$(DISPLAY)" ]; \
 	then \
 	  printf "Please check the files “STH Test.pdf” and “STU Test.pdf”"; \
 	else \
