@@ -247,11 +247,18 @@ By default ICOc only writes log messages of level `INFO` or higher. In some situ
 icoc --log warning
 ```
 
-The different logs for ICOc are stored in the current working directory in the following files:
+The different logs for ICOc are stored in the user log directory in the following files:
 
 - `cli.log`: Log messages of ICOc
 - `network.log`: Log messages of CAN network class
 - `plotter.log`: Log messages of plotter (process for measurement graph)
+
+To determine the user log directory on your machine you can use the following Python code:
+
+```py
+from platformdirs import user_log_path
+print(user_log_path(appname="ICOc", appauthor="MyTooliT"))
+```
 
 ### Changing the Reference Voltage
 
