@@ -416,7 +416,7 @@ The ICOc script stores measured acceleration values in [HDF5](https://www.hdfgro
 - followed by a date/time-stamp,
 - and the extension `.hdf5`.
 
-To take a look at the measurement data you can use the tool [HDFView][]. Unfortunately you need to create a free account to download the program. If you do not want to register, then you can try if [one of the accounts listed at BugMeNot](http://bugmenot.com/view/hdfgroup.org) works.
+To take a look at the measurement data you can use the tool [HDFView][]. Unfortunately you need to create a free account to download the program. If you do not want to register, then you can try if [one of the accounts listed at BugMeNot](http://bugmenot.com/view/hdfgroup.org) works. Another option is to download the application from [here](https://support.hdfgroup.org/ftp/HDF5/releases/HDF-JAVA/). Just click on the folder for the latest version of the application (`hdfview-…`) and afterwards on the folder `bin` to see a list of compressed binaries (`.zip` & `.tar.gz`) for the different supported operating systems.
 
 [hdfview]: https://www.hdfgroup.org/downloads/hdfview/
 
