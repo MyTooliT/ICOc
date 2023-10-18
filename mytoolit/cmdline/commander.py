@@ -10,8 +10,8 @@ for more information
 from os import environ, pathsep
 from pathlib import Path
 from platform import system
-from re import compile
-from subprocess import run
+from re import compile as re_compile
+from subprocess import CalledProcessError, run
 from sys import byteorder
 from typing import List, Optional, Union
 
@@ -149,19 +149,24 @@ class Commander:
                         f"“{reason}” is not a valid possible error reason"
                     )
 
-        result = run(["commander"] + command, capture_output=True, text=True)
-
-        if result.returncode != 0:
+        try:
+            result = run(
+                ["commander"] + command,
+                capture_output=True,
+                check=True,
+                text=True,
+            )
+        except CalledProcessError as error:
             # Since Windows seems to return the exit code as unsigned number we
             # need to convert it first to the “real” signed number.
             returncode = (
                 int.from_bytes(
-                    result.returncode.to_bytes(4, byteorder),
+                    error.returncode.to_bytes(4, byteorder),
                     byteorder,
                     signed=True,
                 )
                 if system() == "Windows"
-                else result.returncode
+                else error.returncode
             )
             error_message = (
                 "Execution of Simplicity Commander command to "
@@ -169,8 +174,8 @@ class Commander:
                 f"“{returncode}”"
             )
             combined_output = (
-                "\n".join((result.stdout, result.stderr))
-                if result.stdout or result.stderr
+                "\n".join((error.stdout, error.stderr))
+                if error.stdout or error.stderr
                 else ""
             )
             if combined_output:
@@ -190,11 +195,11 @@ class Commander:
                     f"\n\nPossible error reasons:\n\n{error_reasons}"
                 )
 
-            raise CommanderReturnCodeException(error_message)
+            raise CommanderReturnCodeException(error_message) from error
 
         if (
             regex_output is not None
-            and compile(regex_output).search(result.stdout) is None
+            and re_compile(regex_output).search(result.stdout) is None
         ):
             error_message = (
                 "Output of Simplicity Commander command to "
@@ -328,7 +333,7 @@ class Commander:
                 "from Simplicity Commander output"
             ) from error
 
-        pattern_match = compile(regex).search(output)
+        pattern_match = re_compile(regex).search(output)
         assert pattern_match is not None
         milliwatts = pattern_match["milliwatts"]
 
