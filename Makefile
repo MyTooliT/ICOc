@@ -71,7 +71,7 @@ open-test-report-mac:
 open-test-report-linux:
 	@if [ -z "$(DISPLAY)" ]; \
 	then \
-	  printf "Please check the files “STH Test.pdf” and “STU Test.pdf”"; \
+	  printf "Please check the files “STH Test.pdf” and “STU Test.pdf”\n"; \
 	else \
 	  xdg-open 'STH Test.pdf'; \
 	  xdg-open 'STU Test.pdf'; \
