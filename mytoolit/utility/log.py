@@ -23,12 +23,29 @@ def get_log_file_handler(filename: str) -> FileHandler:
     Example
     -------
 
-    Init the logger
+    Initialize test data
 
     >>> from logging import getLogger
+    >>> from platform import system
     >>> from re import match
-    >>> logger = getLogger("test")
-    >>> logger.addHandler(get_log_file_handler("test.log"))
+    >>> from sys import platform
+
+    >>> filename = "test.log"
+    >>> log_filepath = user_log_path(
+    ...     appname=ConfigurationUtility.app_name,
+    ...     appauthor=ConfigurationUtility.app_author) / filename
+
+    Workaround for missing support to remove files while “in use” on Windows
+    (aka “The process cannot access the file because it is being used by
+     another process”)
+
+    >>> if system() == "Windows":
+    ...     log_filepath.unlink(missing_ok=True)
+
+    Initialize logger
+
+    >>> logger = getLogger()
+    >>> logger.addHandler(get_log_file_handler(filename))
 
     The log file should not exist until we add something to it
 
@@ -54,7 +71,8 @@ def get_log_file_handler(filename: str) -> FileHandler:
 
     Remove test log file
 
-    >>> log_filepath.unlink()
+    >>> if system() != "Windows":
+    ...     log_filepath.unlink()
 
     """
 
