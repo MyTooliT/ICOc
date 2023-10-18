@@ -13,7 +13,7 @@ from __future__ import annotations
 
 from asyncio import get_running_loop, Queue, sleep, TimeoutError, wait_for
 from datetime import date
-from logging import getLogger, FileHandler, Formatter
+from logging import getLogger
 from struct import pack, unpack
 from sys import platform
 from time import time
@@ -45,6 +45,7 @@ from mytoolit.can.status import State
 from mytoolit.measurement import convert_raw_to_supply_voltage
 from mytoolit.measurement.sensor import SensorConfig
 from mytoolit.utility import convert_bytes_to_text
+from mytoolit.utility.log import get_log_file_handler
 
 # -- Classes ------------------------------------------------------------------
 
@@ -126,9 +127,7 @@ class Logger(Listener):
         # We use `Logger` in the code below, since the `.logger` attribute
         # stores internal DynaConf data
         logger.setLevel(settings.Logger.can.level)
-        handler = FileHandler("can.log", "w", "utf-8", delay=True)
-        handler.setFormatter(Formatter("{asctime} {message}", style="{"))
-        logger.addHandler(handler)
+        logger.addHandler(get_log_file_handler("can.log"))
 
     def on_message_received(self, message: CANMessage) -> None:
         """React to a received message on the bus

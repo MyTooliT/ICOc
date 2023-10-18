@@ -6,7 +6,7 @@ from argparse import ArgumentDefaultsHelpFormatter
 from time import sleep, time
 from datetime import datetime
 from functools import partial
-from logging import getLogger, FileHandler, Formatter
+from logging import getLogger
 from pathlib import Path
 from platform import system
 from sys import stderr
@@ -45,6 +45,7 @@ from mytoolit.old.MyToolItCommands import (
     SystemCommandRouting,
 )
 from mytoolit.old.Plotter import vPlotter, tArray2Binary
+from mytoolit.utility.log import get_log_file_handler
 
 Watch = {
     # Time period displayed in the graph in seconds,
@@ -80,11 +81,7 @@ class CommandLineInterface:
 
         self.logger = getLogger(__name__)
         self.logger.setLevel(self.args.log.upper())
-        handler = FileHandler("cli.log", delay=True)
-        handler.setFormatter(
-            Formatter("{asctime} {levelname} {name} {message}", style="{")
-        )
-        self.logger.addHandler(handler)
+        self.logger.addHandler(get_log_file_handler("cli.log"))
         self.logger.info("Initialized logger")
 
         self.KeyBoardInterrupt = False

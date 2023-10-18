@@ -66,6 +66,7 @@ from mytoolit.old.MyToolItCommands import (
     VRefName,
 )
 from mytoolit.measurement.sensor import SensorConfig
+from mytoolit.utility.log import get_log_file_handler
 
 
 class Network(object):
@@ -131,10 +132,7 @@ class Network(object):
         handler: Union[FileHandler, StreamHandler] = (
             StreamHandler()
             if log_destination is None
-            else FileHandler(log_destination, "w", "utf-8", delay=True)
-        )
-        handler.setFormatter(
-            Formatter("{asctime} {levelname} {name} {message}", style="{")
+            else get_log_file_handler(log_destination)
         )
         self.logger.addHandler(handler)
 
@@ -143,9 +141,7 @@ class Network(object):
         # We use `Logger` in the code below, since the `.logger` attribute
         # stores internal DynaConf data
         logger.setLevel(settings.Logger.can.level.upper())
-        handler = FileHandler("can.log", "w", "utf-8", delay=True)
-        handler.setFormatter(Formatter("{asctime} {message}", style="{"))
-        logger.addHandler(handler)
+        logger.addHandler(get_log_file_handler("can.log"))
 
         self.logger.info(datetime.now().isoformat())
         self.start_time = int(round(time() * 1000))

@@ -7,6 +7,8 @@ from logging import FileHandler, Formatter, getLogger
 from pathlib import Path
 from time import time
 
+from mytoolit.utility.log import get_log_file_handler
+
 cDict = {
     "Run": True,
     "Plot": False,
@@ -150,11 +152,7 @@ def vPlotter(iSocketPort, log_level):
 
     logger = getLogger(__name__)
     logger.setLevel(log_level)
-    handler = FileHandler("plotter.log", delay=True)
-    handler.setFormatter(
-        Formatter("{asctime} {levelname} {name} {message}", style="{")
-    )
-    logger.addHandler(handler)
+    logger.addHandler(get_log_file_handler("plotter.log"))
 
     logger.info("Application started")
     sPloterSocketInit(iSocketPort)
