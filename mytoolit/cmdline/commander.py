@@ -185,12 +185,10 @@ class Commander:
                 )
 
             if possible_error_reasons:
-                error_reasons = "\n".join(
-                    [
-                        f"• {self.error_reasons[reason]}"
-                        for reason in possible_error_reasons
-                    ]
-                )
+                error_reasons = "\n".join([
+                    f"• {self.error_reasons[reason]}"
+                    for reason in possible_error_reasons
+                ])
                 error_message += (
                     f"\n\nPossible error reasons:\n\n{error_reasons}"
                 )

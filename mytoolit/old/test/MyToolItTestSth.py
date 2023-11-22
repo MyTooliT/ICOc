@@ -1232,18 +1232,16 @@ class TestSth(unittest.TestCase):
         If you like to evaluate power consumption: Please do it manually
         """
         self.Can.logger.info("Read out parameters from EEPORM")
-        [timeReset, timeAdvertisement] = self.Can.BlueToothEnergyMode(
-            [
-                SystemCommandBlueTooth["EnergyModeReducedRead"],
-                self.Can.DeviceNr,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-            ]
-        )
+        [timeReset, timeAdvertisement] = self.Can.BlueToothEnergyMode([
+            SystemCommandBlueTooth["EnergyModeReducedRead"],
+            self.Can.DeviceNr,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+        ])
         self.Can.logger.info(
             "First Read Time Sleep Time1: " + str(timeReset) + " ms"
         )
@@ -1265,18 +1263,16 @@ class TestSth(unittest.TestCase):
         )
         self.assertEqual(timeReset, SleepTime["Min"])
         self.assertEqual(timeAdvertisement, 1000)
-        [timeReset, timeAdvertisement] = self.Can.BlueToothEnergyMode(
-            [
-                SystemCommandBlueTooth["EnergyModeReducedRead"],
-                self.Can.DeviceNr,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-            ]
-        )
+        [timeReset, timeAdvertisement] = self.Can.BlueToothEnergyMode([
+            SystemCommandBlueTooth["EnergyModeReducedRead"],
+            self.Can.DeviceNr,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+        ])
         self.Can.logger.info(
             "Read Time Sleep Time1: " + str(timeReset) + " ms"
         )
@@ -1289,18 +1285,16 @@ class TestSth(unittest.TestCase):
         self.Can.bBlueToothConnectPollingName(
             MyToolItNetworkNr["STU1"], settings.sth.name
         )
-        [timeReset, timeAdvertisement] = self.Can.BlueToothEnergyMode(
-            [
-                SystemCommandBlueTooth["EnergyModeReducedRead"],
-                self.Can.DeviceNr,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-            ]
-        )
+        [timeReset, timeAdvertisement] = self.Can.BlueToothEnergyMode([
+            SystemCommandBlueTooth["EnergyModeReducedRead"],
+            self.Can.DeviceNr,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+        ])
         self.Can.logger.info(
             "Read Time Sleep Time1: " + str(timeReset) + " ms"
         )
@@ -1331,18 +1325,16 @@ class TestSth(unittest.TestCase):
         )
         self.assertEqual(timeReset, SleepTime["Reset1"])
         self.assertEqual(timeAdvertisement, SleepTime["AdvertisementReset1"])
-        [timeReset, timeAdvertisement] = self.Can.BlueToothEnergyMode(
-            [
-                SystemCommandBlueTooth["EnergyModeReducedRead"],
-                self.Can.DeviceNr,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-            ]
-        )
+        [timeReset, timeAdvertisement] = self.Can.BlueToothEnergyMode([
+            SystemCommandBlueTooth["EnergyModeReducedRead"],
+            self.Can.DeviceNr,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+        ])
         self.Can.logger.info(
             "Read Time Sleep Time1: " + str(timeReset) + " ms"
         )
@@ -1355,18 +1347,16 @@ class TestSth(unittest.TestCase):
         self.Can.bBlueToothConnectPollingName(
             MyToolItNetworkNr["STU1"], settings.sth.name
         )
-        [timeReset, timeAdvertisement] = self.Can.BlueToothEnergyMode(
-            [
-                SystemCommandBlueTooth["EnergyModeReducedRead"],
-                self.Can.DeviceNr,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-            ]
-        )
+        [timeReset, timeAdvertisement] = self.Can.BlueToothEnergyMode([
+            SystemCommandBlueTooth["EnergyModeReducedRead"],
+            self.Can.DeviceNr,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+        ])
         self.Can.logger.info(
             "Read Time Sleep Time1: " + str(timeReset) + " ms"
         )
@@ -1396,18 +1386,16 @@ class TestSth(unittest.TestCase):
         )
         self.Can.logger.info("Doing Energy Mode2 stuff")
         self.Can.logger.info("Read out EM2 parameters from EEPORM")
-        [timeReset, timeAdvertisement] = self.Can.BlueToothEnergyMode(
-            [
-                SystemCommandBlueTooth["EnergyModeLowestRead"],
-                self.Can.DeviceNr,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-            ]
-        )
+        [timeReset, timeAdvertisement] = self.Can.BlueToothEnergyMode([
+            SystemCommandBlueTooth["EnergyModeLowestRead"],
+            self.Can.DeviceNr,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+        ])
         self.Can.logger.info(
             "First Read Time Sleep Time1: " + str(timeReset) + " ms"
         )
@@ -1429,18 +1417,16 @@ class TestSth(unittest.TestCase):
         )
         self.assertEqual(timeReset, SleepTime["Min"])
         self.assertEqual(timeAdvertisement, 2000)
-        [timeReset, timeAdvertisement] = self.Can.BlueToothEnergyMode(
-            [
-                SystemCommandBlueTooth["EnergyModeLowestRead"],
-                self.Can.DeviceNr,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-            ]
-        )
+        [timeReset, timeAdvertisement] = self.Can.BlueToothEnergyMode([
+            SystemCommandBlueTooth["EnergyModeLowestRead"],
+            self.Can.DeviceNr,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+        ])
         self.Can.logger.info(
             "Read Time Sleep Time1: " + str(timeReset) + " ms"
         )
@@ -1453,18 +1439,16 @@ class TestSth(unittest.TestCase):
         self.Can.bBlueToothConnectPollingName(
             MyToolItNetworkNr["STU1"], settings.sth.name
         )
-        [timeReset, timeAdvertisement] = self.Can.BlueToothEnergyMode(
-            [
-                SystemCommandBlueTooth["EnergyModeLowestRead"],
-                self.Can.DeviceNr,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-            ]
-        )
+        [timeReset, timeAdvertisement] = self.Can.BlueToothEnergyMode([
+            SystemCommandBlueTooth["EnergyModeLowestRead"],
+            self.Can.DeviceNr,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+        ])
         self.Can.logger.info(
             "Read Time Sleep Time1: " + str(timeReset) + " ms"
         )
@@ -1495,18 +1479,16 @@ class TestSth(unittest.TestCase):
         )
         self.assertEqual(timeReset, SleepTime["Reset2"])
         self.assertEqual(timeAdvertisement, SleepTime["AdvertisementReset2"])
-        [timeReset, timeAdvertisement] = self.Can.BlueToothEnergyMode(
-            [
-                SystemCommandBlueTooth["EnergyModeLowestRead"],
-                self.Can.DeviceNr,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-            ]
-        )
+        [timeReset, timeAdvertisement] = self.Can.BlueToothEnergyMode([
+            SystemCommandBlueTooth["EnergyModeLowestRead"],
+            self.Can.DeviceNr,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+        ])
         self.Can.logger.info(
             "Read Time Sleep Time1: " + str(timeReset) + " ms"
         )
@@ -1519,18 +1501,16 @@ class TestSth(unittest.TestCase):
         self.Can.bBlueToothConnectPollingName(
             MyToolItNetworkNr["STU1"], settings.sth.name
         )
-        [timeReset, timeAdvertisement] = self.Can.BlueToothEnergyMode(
-            [
-                SystemCommandBlueTooth["EnergyModeLowestRead"],
-                self.Can.DeviceNr,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-            ]
-        )
+        [timeReset, timeAdvertisement] = self.Can.BlueToothEnergyMode([
+            SystemCommandBlueTooth["EnergyModeLowestRead"],
+            self.Can.DeviceNr,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+        ])
         self.Can.logger.info(
             "Read Time Sleep Time1: " + str(timeReset) + " ms"
         )

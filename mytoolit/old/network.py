@@ -1689,13 +1689,11 @@ class Network(object):
                         + timestamp.millis
                         + timestamp.micros / 1000
                     )
-                    self.readArray.append(
-                        {
-                            "CanMsg": message,
-                            "PcTime": self.get_elapsed_time(),
-                            "PeakCanTime": peakCanTimeStamp,
-                        }
-                    )
+                    self.readArray.append({
+                        "CanMsg": message,
+                        "PcTime": self.get_elapsed_time(),
+                        "PeakCanTime": peakCanTimeStamp,
+                    })
                     getLogger("can").debug(f"{Message(message)}")
                     self.tCanReadWriteMutex.acquire()
                     status, message, timestamp = self.pcan.Read(
@@ -2032,14 +2030,12 @@ class Network(object):
             rssi = 0
             while 0 == rssi and time() < endTime:
                 rssi = self.BlueToothRssiGet(stuNr, dev)
-            devList.append(
-                {
-                    "DeviceNumber": dev,
-                    "Name": name,
-                    "Address": address,
-                    "RSSI": rssi,
-                }
-            )
+            devList.append({
+                "DeviceNumber": dev,
+                "Name": name,
+                "Address": address,
+                "RSSI": rssi,
+            })
         return devList
 
     def bBlueToothConnectPollingAddress(self, stuNr, iAddress, bLog=True):

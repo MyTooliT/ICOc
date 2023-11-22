@@ -253,52 +253,48 @@ def vlivePlot(yX_data, yY_data, yZ_data, line1, line2, line3, pause_time):
 
     # Adjust limits if new data goes beyond bounds
     if update_bounds:
-        min_bound = min(
-            [
-                value
-                for value in (
-                    (
-                        np.min(yX_data) - np.std(yX_data)
-                        if yX_data is not None
-                        else None
-                    ),
-                    (
-                        np.min(yY_data) - np.std(yY_data)
-                        if yY_data is not None
-                        else None
-                    ),
-                    (
-                        np.min(yZ_data) - np.std(yZ_data)
-                        if yZ_data is not None
-                        else None
-                    ),
-                )
-                if value is not None
-            ]
-        )
-        max_bound = max(
-            [
-                value
-                for value in (
-                    (
-                        np.max(yX_data) + np.std(yX_data)
-                        if yX_data is not None
-                        else None
-                    ),
-                    (
-                        np.max(yY_data) + np.std(yY_data)
-                        if yY_data is not None
-                        else None
-                    ),
-                    (
-                        np.max(yZ_data) + np.std(yZ_data)
-                        if yZ_data is not None
-                        else None
-                    ),
-                )
-                if value is not None
-            ]
-        )
+        min_bound = min([
+            value
+            for value in (
+                (
+                    np.min(yX_data) - np.std(yX_data)
+                    if yX_data is not None
+                    else None
+                ),
+                (
+                    np.min(yY_data) - np.std(yY_data)
+                    if yY_data is not None
+                    else None
+                ),
+                (
+                    np.min(yZ_data) - np.std(yZ_data)
+                    if yZ_data is not None
+                    else None
+                ),
+            )
+            if value is not None
+        ])
+        max_bound = max([
+            value
+            for value in (
+                (
+                    np.max(yX_data) + np.std(yX_data)
+                    if yX_data is not None
+                    else None
+                ),
+                (
+                    np.max(yY_data) + np.std(yY_data)
+                    if yY_data is not None
+                    else None
+                ),
+                (
+                    np.max(yZ_data) + np.std(yZ_data)
+                    if yZ_data is not None
+                    else None
+                ),
+            )
+            if value is not None
+        ])
         plt.ylim(min_bound, max_bound)
 
     # this pauses the data so the figure/axis can catch up - the amount of

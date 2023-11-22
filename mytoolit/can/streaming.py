@@ -698,9 +698,7 @@ class StreamingData:
 
         return True
 
-    def default(
-        self, compact: bool = False
-    ) -> Union[
+    def default(self, compact: bool = False) -> Union[
         Dict[str, List[Dict[str, Union[float, int, str]]]],
         Dict[str, Dict[str, Union[List[float], List[int], str]]],
     ]:

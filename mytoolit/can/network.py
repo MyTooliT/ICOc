@@ -86,12 +86,10 @@ class Times(NamedTuple):
 
         """
 
-        return ", ".join(
-            [
-                f"Advertisement Time: {self.advertisement} ms",
-                f"Sleep Time: {self.sleep} ms",
-            ]
-        )
+        return ", ".join([
+            f"Advertisement Time: {self.advertisement} ms",
+            f"Sleep Time: {self.sleep} ms",
+        ])
 
 
 class STHDeviceInfo(NamedTuple):
@@ -106,14 +104,12 @@ class STHDeviceInfo(NamedTuple):
         """Return the string representation of an STH"""
 
         return "🤖 {}".format(
-            ", ".join(
-                [
-                    f"Name: {self.name}",
-                    f"Device Number: {self.device_number}",
-                    f"MAC address: {self.mac_address}",
-                    f"RSSI: {self.rssi}",
-                ]
-            )
+            ", ".join([
+                f"Name: {self.name}",
+                f"Device Number: {self.device_number}",
+                f"MAC address: {self.mac_address}",
+                f"RSSI: {self.rssi}",
+            ])
         )
 
 
@@ -327,6 +323,7 @@ class DataStreamContextManager:
     async def close(self) -> None:
         """Clean up the resources used by the stream"""
 
+        self.reader.stop()
         self.network.notifier.remove_listener(self.reader)
         await self.network.stop_streaming_data()
 
@@ -1744,9 +1741,9 @@ class Network:
         sensor_devices: List[STHDeviceInfo] = []
         while sensor_device is None:
             if time() > end_time:
-                sensor_devices_representation = "\n".join(
-                    [repr(device) for device in sensor_devices]
-                )
+                sensor_devices_representation = "\n".join([
+                    repr(device) for device in sensor_devices
+                ])
                 device_info = (
                     "Found the following sensor devices:\n"
                     f"{sensor_devices_representation}"
@@ -1897,9 +1894,9 @@ class Network:
         if not (first or second or third):
             raise ValueError("Please enable at least one measurement channel")
 
-        active_channels = len(
-            [channel for channel in (first, second, third) if channel]
-        )
+        active_channels = len([
+            channel for channel in (first, second, third) if channel
+        ])
 
         streaming_format = StreamingFormat(
             first=first,

@@ -288,6 +288,6 @@ if __name__ == "__main__":
 
         startfile(pdf_path)
     else:
-        run(
-            ["{}open".format("" if system() == "Darwin" else "xdg-"), pdf_path]
-        )
+        run([
+            "{}open".format("" if system() == "Darwin" else "xdg-"), pdf_path
+        ])

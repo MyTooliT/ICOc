@@ -186,12 +186,12 @@ class TestNode(TestCase):
         if not attributes:
             return
 
-        max_length_description = max(
-            [len(attribute.description) for attribute in attributes]
-        )
-        max_length_value = max(
-            [len(attribute.value) for attribute in attributes]
-        )
+        max_length_description = max([
+            len(attribute.description) for attribute in attributes
+        ])
+        max_length_value = max([
+            len(attribute.value) for attribute in attributes
+        ])
 
         # Print attributes to standard output
         print("\n")

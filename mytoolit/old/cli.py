@@ -826,16 +826,14 @@ class CommandLineInterface:
         # CLI interface of ICOc, where `0` is defined as disabling the
         # measurement channel. Here we would need to enter the sensor channel
         # number to enable the measurement anyway.
-        self.Can.write_sensor_config(
-            *[
-                0 if sensor is None or sensor <= 0 else sensor
-                for sensor in (
-                    self.sensor.first,
-                    self.sensor.second,
-                    self.sensor.third,
-                )
-            ]
-        )
+        self.Can.write_sensor_config(*[
+            0 if sensor is None or sensor <= 0 else sensor
+            for sensor in (
+                self.sensor.first,
+                self.sensor.second,
+                self.sensor.third,
+            )
+        ])
 
     def vDataAquisition(self):
         if self.KeyBoardInterrupt:

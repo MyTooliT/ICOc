@@ -446,12 +446,10 @@ class UserInterface(CommandLineInterface):
         voltage = read_voltage()
         temperature = read_temperature()
 
-        infos.extend(
-            [
-                ("Supply Voltage", f"{voltage} V"),
-                ("Chip Temperature", f"{temperature:4.1f} °C\n"),
-            ]
-        )
+        infos.extend([
+            ("Supply Voltage", f"{voltage} V"),
+            ("Chip Temperature", f"{temperature:4.1f} °C\n"),
+        ])
 
         runtime = "∞" if self.iRunTime == 0 else str(self.iRunTime)
         prescaler = self.iPrescaler
@@ -472,27 +470,21 @@ class UserInterface(CommandLineInterface):
                 *(not sensor_number for sensor_number in sensor_config_local)
             )
         else:
-            sensor_config_device = SensorConfig(
-                *[
-                    number if enabled else 0
-                    for number, enabled in enumerate(
-                        sensor_config_local, start=1
-                    )
-                ]
-            )
+            sensor_config_device = SensorConfig(*[
+                number if enabled else 0
+                for number, enabled in enumerate(sensor_config_local, start=1)
+            ])
         sensors = str(sensor_config_device)
 
-        infos.extend(
-            [
-                ("Run Time", f"{runtime} s\n"),
-                ("Prescaler", prescaler),
-                ("Acquisition Time", acquistion_time),
-                ("Oversampling Rate", oversampling_rate),
-                ("Sampling Rate", sampling_rate),
-                ("Reference Voltage", f"{adc_reference}\n"),
-                ("Sensors", sensors),
-            ]
-        )
+        infos.extend([
+            ("Run Time", f"{runtime} s\n"),
+            ("Prescaler", prescaler),
+            ("Acquisition Time", acquistion_time),
+            ("Oversampling Rate", oversampling_rate),
+            ("Sampling Rate", sampling_rate),
+            ("Reference Voltage", f"{adc_reference}\n"),
+            ("Sensors", sensors),
+        ])
 
         max_description_length = max(
             len(description) for description, _ in infos
@@ -502,19 +494,17 @@ class UserInterface(CommandLineInterface):
             self.add_string(f"{description}{' ' * fill}{value}\n")
 
     def sth_window_menu(self):
-        self.draw_menu(
-            [
-                "s: Start Data Acquisition",
-                "",
-                "n: Change STH Name",
-                "r: Change Run Time",
-                "a: Configure ADC",
-                "p: Configure Sensors",
-                "O: Set Standby Mode",
-                "",
-                "q: Disconnect from STH",
-            ]
-        )
+        self.draw_menu([
+            "s: Start Data Acquisition",
+            "",
+            "n: Change STH Name",
+            "r: Change Run Time",
+            "a: Configure ADC",
+            "p: Configure Sensors",
+            "O: Set Standby Mode",
+            "",
+            "q: Disconnect from STH",
+        ])
 
     def sth_window_key_evaluation(self) -> Tuple[bool, bool]:
         """Evaluate key input in the STH window
@@ -731,16 +721,14 @@ class UserInterface(CommandLineInterface):
         return devices
 
     def main_window_menu(self):
-        self.draw_menu(
-            [
-                "1-9: Connect to STH",
-                "",
-                "  f: Change Output File Name",
-                "  n: Change STH Name",
-                "",
-                "  q: Quit ICOc",
-            ]
-        )
+        self.draw_menu([
+            "1-9: Connect to STH",
+            "",
+            "  f: Change Output File Name",
+            "  n: Change STH Name",
+            "",
+            "  q: Quit ICOc",
+        ])
 
     def main_window_key_evaluation(self) -> bool:
         """Evaluate key input in the main window

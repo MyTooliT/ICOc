@@ -22,17 +22,15 @@ class CalibrationMeasurementFormat:
     """
 
     methods = ["Reserved", "Activate", "Deactivate", "Measure"]
-    elements = bidict(
-        {
-            "Data": 0,
-            "Temperature": 1,
-            "Voltage": 32,
-            "VSS": 96,
-            "VDD": 97,
-            "Internal": 98,
-            "OPV": 99,
-        }
-    )
+    elements = bidict({
+        "Data": 0,
+        "Temperature": 1,
+        "Voltage": 32,
+        "VSS": 96,
+        "VDD": 97,
+        "Internal": 98,
+        "OPV": 99,
+    })
 
     def __init__(  # pylint: disable=too-many-arguments
         self,

@@ -16,27 +16,23 @@ class State:
 
     """
 
-    node_states = bidict(
-        {
-            "No Change": 0,
-            "Bootloader": 1,
-            "Application": 2,
-            "Reserved": 3,
-        }
-    )
+    node_states = bidict({
+        "No Change": 0,
+        "Bootloader": 1,
+        "Application": 2,
+        "Reserved": 3,
+    })
 
-    network_states = bidict(
-        {
-            "Failure": 0,
-            "Error": 1,
-            "Standby": 2,
-            "Graceful Degradation 2": 3,
-            "Graceful Degradation 1": 4,
-            "Operating": 5,
-            "Startup": 6,
-            "No Change": 7,
-        }
-    )
+    network_states = bidict({
+        "Failure": 0,
+        "Error": 1,
+        "Standby": 2,
+        "Graceful Degradation 2": 3,
+        "Graceful Degradation 1": 4,
+        "Operating": 5,
+        "Startup": 6,
+        "No Change": 7,
+    })
 
     def __init__(
         self,

@@ -281,13 +281,9 @@ class Storage:
         # Data for each channel must have same length otherwise (some) data
         # will not be stored.
         assert (
-            len(
-                {
-                    len(channel)
-                    for channel in streaming_data
-                    if len(channel) != 0
-                }
-            )
+            len({
+                len(channel) for channel in streaming_data if len(channel) != 0
+            })
             == 1
         ), "Heterogenous channel lengths"
 

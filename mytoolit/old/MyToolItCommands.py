@@ -112,35 +112,31 @@ class CalibrationMeassurement(Union):
     _fields_ = [("b", CalibrationMeassurementFormatFlags), ("asbyte", c_uint8)]
 
 
-MyToolItBlock = bidict(
-    {
-        "System": 0x00,
-        "Streaming": 0x04,
-        "StatisticalData": 0x08,
-        "Configuration": 0x28,
-        "EEPROM": 0x3D,
-        "Product Data": 0x3E,
-        "Test": 0x3F,
-    }
-)
+MyToolItBlock = bidict({
+    "System": 0x00,
+    "Streaming": 0x04,
+    "StatisticalData": 0x08,
+    "Configuration": 0x28,
+    "EEPROM": 0x3D,
+    "Product Data": 0x3E,
+    "Test": 0x3F,
+})
 
-MyToolItSystem = bidict(
-    {
-        "Verboten": 0x00,
-        "Reset": 0x01,
-        "Get/Set State": 0x02,
-        "Mode": 0x03,
-        "Alarm": 0x04,
-        "Node Status": 0x05,
-        "Error Status": 0x06,
-        "StatusWord2": 0x07,
-        "StatusWord3": 0x08,
-        "Test": 0x09,
-        "Log": 0x0A,
-        "Bluetooth": 0x0B,
-        "Routing": 0x0C,
-    }
-)
+MyToolItSystem = bidict({
+    "Verboten": 0x00,
+    "Reset": 0x01,
+    "Get/Set State": 0x02,
+    "Mode": 0x03,
+    "Alarm": 0x04,
+    "Node Status": 0x05,
+    "Error Status": 0x06,
+    "StatusWord2": 0x07,
+    "StatusWord3": 0x08,
+    "Test": 0x09,
+    "Log": 0x0A,
+    "Bluetooth": 0x0B,
+    "Routing": 0x0C,
+})
 
 SystemCommandBlueTooth = {
     "Reserved": 0,
@@ -184,89 +180,79 @@ SystemCommandRouting = {
     "ReceiveLowLevelByteCounter": 6,
 }
 
-MyToolItStreaming = bidict(
-    {
-        "Data": 0x00,
-        "Temperature": 0x01,
-        "Voltage": 0x20,
-        "Current": 0x40,
-    }
-)
+MyToolItStreaming = bidict({
+    "Data": 0x00,
+    "Temperature": 0x01,
+    "Voltage": 0x20,
+    "Current": 0x40,
+})
 
-MyToolItStatData = bidict(
-    {
-        "PocPof": 0x00,
-        "OperatingTime": 0x01,
-        "Uvc": 0x02,
-        "Wdog": 0x03,
-        "ProductionDate": 0x04,
-        "MeasurementInterval": 0x40,
-        "QuantityInterval": 0x41,
-        "Energy": 0x80,
-    }
-)
+MyToolItStatData = bidict({
+    "PocPof": 0x00,
+    "OperatingTime": 0x01,
+    "Uvc": 0x02,
+    "Wdog": 0x03,
+    "ProductionDate": 0x04,
+    "MeasurementInterval": 0x40,
+    "QuantityInterval": 0x41,
+    "Energy": 0x80,
+})
 
-MyToolItConfiguration = bidict(
-    {
-        "Get/Set ADC Configuration": 0x00,
-        "Channel Configuration": 0x01,
-        "Voltage": 0x20,
-        "Current": 0x40,
-        "CalibrationFactorK": 0x60,
-        "CalibrationFactorD": 0x61,
-        "Calibration Measurement": 0x62,
-        "Alarm": 0x80,
-        "Hmi": 0xC0,
-    }
-)
+MyToolItConfiguration = bidict({
+    "Get/Set ADC Configuration": 0x00,
+    "Channel Configuration": 0x01,
+    "Voltage": 0x20,
+    "Current": 0x40,
+    "CalibrationFactorK": 0x60,
+    "CalibrationFactorD": 0x61,
+    "Calibration Measurement": 0x62,
+    "Alarm": 0x80,
+    "Hmi": 0xC0,
+})
 
-MyToolItEeprom = bidict(
-    {"Read": 0x00, "Write": 0x01, "Read Write Request Counter": 0x20}
-)
+MyToolItEeprom = bidict({
+    "Read": 0x00, "Write": 0x01, "Read Write Request Counter": 0x20
+})
 
-MyToolItProductData = bidict(
-    {
-        "GTIN": 0x00,
-        "Hardware Version": 0x01,
-        "Firmware Version": 0x02,
-        "Release Name": 0x03,
-        "Serial Number 1": 0x04,
-        "Serial Number 2": 0x05,
-        "Serial Number 3": 0x06,
-        "Serial Number 4": 0x07,
-        "Product Name 1": 0x08,
-        "Product Name 2": 0x09,
-        "Product Name 3": 0x0A,
-        "Product Name 4": 0x0B,
-        "Product Name 5": 0x0C,
-        "Product Name 6": 0x0D,
-        "Product Name 7": 0x0E,
-        "Product Name 8": 0x0F,
-        "Product Name 9": 0x10,
-        "Product Name 10": 0x11,
-        "Product Name 11": 0x12,
-        "Product Name 12": 0x13,
-        "Product Name 13": 0x14,
-        "Product Name 14": 0x15,
-        "Product Name 15": 0x16,
-        "Product Name 16": 0x17,
-        "OEM Free Use 1": 0x18,
-        "OEM Free Use 2": 0x19,
-        "OEM Free Use 3": 0x1A,
-        "OEM Free Use 4": 0x1B,
-        "OEM Free Use 5": 0x1C,
-        "OEM Free Use 6": 0x1D,
-        "OEM Free Use 7": 0x1E,
-        "OEM Free Use 8": 0x1F,
-    }
-)
+MyToolItProductData = bidict({
+    "GTIN": 0x00,
+    "Hardware Version": 0x01,
+    "Firmware Version": 0x02,
+    "Release Name": 0x03,
+    "Serial Number 1": 0x04,
+    "Serial Number 2": 0x05,
+    "Serial Number 3": 0x06,
+    "Serial Number 4": 0x07,
+    "Product Name 1": 0x08,
+    "Product Name 2": 0x09,
+    "Product Name 3": 0x0A,
+    "Product Name 4": 0x0B,
+    "Product Name 5": 0x0C,
+    "Product Name 6": 0x0D,
+    "Product Name 7": 0x0E,
+    "Product Name 8": 0x0F,
+    "Product Name 9": 0x10,
+    "Product Name 10": 0x11,
+    "Product Name 11": 0x12,
+    "Product Name 12": 0x13,
+    "Product Name 13": 0x14,
+    "Product Name 14": 0x15,
+    "Product Name 15": 0x16,
+    "Product Name 16": 0x17,
+    "OEM Free Use 1": 0x18,
+    "OEM Free Use 2": 0x19,
+    "OEM Free Use 3": 0x1A,
+    "OEM Free Use 4": 0x1B,
+    "OEM Free Use 5": 0x1C,
+    "OEM Free Use 6": 0x1D,
+    "OEM Free Use 7": 0x1E,
+    "OEM Free Use 8": 0x1F,
+})
 
-MyToolItTest = bidict(
-    {
-        "Signal": 0x01,
-        "Pfeifferl": 0x69,
-    }
-)
+MyToolItTest = bidict({
+    "Signal": 0x01,
+    "Pfeifferl": 0x69,
+})
 
 blocknumber_to_commands = {
     MyToolItBlock["System"]: MyToolItSystem,
@@ -467,20 +453,18 @@ CalibMeassurementTypeName = {
     ]: "Calibration Measurement Type - OPV Output",
 }
 
-AdcAcquisitionTime = bidict(
-    {
-        1: 0,
-        2: 1,
-        3: 2,
-        4: 3,
-        8: 4,
-        16: 5,
-        32: 6,
-        64: 7,
-        128: 8,
-        256: 9,
-    }
-)
+AdcAcquisitionTime = bidict({
+    1: 0,
+    2: 1,
+    3: 2,
+    4: 3,
+    8: 4,
+    16: 5,
+    32: 6,
+    64: 7,
+    128: 8,
+    256: 9,
+})
 
 AdcAcquisitionTimeName = {
     AdcAcquisitionTime[1]: "ADC Acquisition Time - 1 Cycle",
@@ -495,23 +479,21 @@ AdcAcquisitionTimeName = {
     AdcAcquisitionTime[256]: "ADC Acquisition Time - 256 Cycles",
 }
 
-AdcOverSamplingRate = bidict(
-    {
-        1: 0,
-        2: 1,
-        4: 2,
-        8: 3,
-        16: 4,
-        32: 5,
-        64: 6,
-        128: 7,
-        256: 8,
-        512: 9,
-        1024: 10,
-        2048: 11,
-        4096: 12,
-    }
-)
+AdcOverSamplingRate = bidict({
+    1: 0,
+    2: 1,
+    4: 2,
+    8: 3,
+    16: 4,
+    32: 5,
+    64: 6,
+    128: 7,
+    256: 8,
+    512: 9,
+    1024: 10,
+    2048: 11,
+    4096: 12,
+})
 
 AdcOverSamplingRateName = {
     AdcOverSamplingRate[1]: "ADC Single Sampling",
@@ -568,18 +550,16 @@ AdcVRefValuemV = {
     AdcReference["6V6"]: 6000,
 }
 
-DataSets = bidict(
-    {
-        0: 0,
-        1: 1,
-        3: 2,
-        6: 3,
-        10: 4,
-        15: 5,
-        20: 6,
-        30: 7,
-    }
-)
+DataSets = bidict({
+    0: 0,
+    1: 1,
+    3: 2,
+    6: 3,
+    10: 4,
+    15: 5,
+    20: 6,
+    30: 7,
+})
 
 TestCommandSignal = {
     "Line": 1,
@@ -591,27 +571,23 @@ Prescaler = {
     "Max": 127,
 }
 
-NodeState = bidict(
-    {
-        "No Change": 0,
-        "Bootloader": 1,
-        "Application": 2,
-        "Reserved": 3,
-    }
-)
+NodeState = bidict({
+    "No Change": 0,
+    "Bootloader": 1,
+    "Application": 2,
+    "Reserved": 3,
+})
 
-NetworkState = bidict(
-    {
-        "Failure": 0,
-        "Error": 1,
-        "Standby": 2,
-        "Graceful Degradation 2": 3,
-        "Graceful Degradation 1": 4,
-        "Operating": 5,
-        "Startup": 6,
-        "No Change": 7,
-    }
-)
+NetworkState = bidict({
+    "Failure": 0,
+    "Error": 1,
+    "Standby": 2,
+    "Graceful Degradation 2": 3,
+    "Graceful Degradation 1": 4,
+    "Operating": 5,
+    "Startup": 6,
+    "No Change": 7,
+})
 
 CalibrationFactor = {
     "Acceleration": 0,
