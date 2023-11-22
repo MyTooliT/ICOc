@@ -541,6 +541,7 @@ class Network:
             except TimeoutError:
                 continue
             finally:
+                listener.stop()
                 self.notifier.remove_listener(listener)
 
             if response.is_error:
