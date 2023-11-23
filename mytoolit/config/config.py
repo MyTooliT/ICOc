@@ -12,7 +12,7 @@ from numbers import Real
 from os import makedirs
 from pathlib import Path
 from platform import system
-from sys import stderr
+from sys import exit as sys_exit, stderr
 from typing import List, Optional
 
 from dynaconf import Dynaconf, ValidationError, Validator
@@ -90,8 +90,8 @@ class Settings(Dynaconf):
     def __init__(
         self,
         default_settings_filepath,
-        settings_files: Optional[List[str]] = None,
         *arguments,
+        settings_files: Optional[List[str]] = None,
         **keyword_arguments,
     ) -> None:
         """Initialize the settings using the given arguments
@@ -130,10 +130,12 @@ class Settings(Dynaconf):
         )
         self.validate_settings()
 
+    # pylint: disable=too-many-locals
+
     def validate_settings(self) -> None:
         """Check settings for errors"""
 
-        def MustExist(must_exist, *arguments, **keyword_arguments):
+        def must_exist(*arguments, **keyword_arguments):
             """Return Validator which requires setting to exist"""
 
             return Validator(*arguments, must_exist=True, **keyword_arguments)
@@ -167,34 +169,34 @@ class Settings(Dynaconf):
             """Return shared validator for ICOtronic device (STH, STU, SMH)"""
 
             return [
-                MustExist(
+                must_exist(
                     f"{name}.batch_number",
                     f"{name}.gtin",
                     f"{name}.programming_board.serial_number",
                     is_type_of=int,
                 ),
-                MustExist(
+                must_exist(
                     f"{name}.firmware.location.flash",
                     f"{name}.firmware.release_name",
                     f"{name}.hardware_version",
                     is_type_of=str,
                 ),
-                MustExist(
+                must_exist(
                     f"{name}.oem_data",
                     is_type_of=list,
                     condition=partial(element_is_int, name="{name}.oem_data"),
                 ),
-                MustExist(
+                must_exist(
                     f"{name}.production_date",
                     is_type_of=date,
                 ),
-                MustExist(
+                must_exist(
                     f"{name}.product_name",
                     is_type_of=str,
                     len_max=128,
                     cast=str,
                 ),
-                MustExist(
+                must_exist(
                     f"{name}.serial_number",
                     is_type_of=str,
                     len_max=8,
@@ -206,7 +208,7 @@ class Settings(Dynaconf):
             """Return shared validator for STH or SMH"""
 
             return device_validators(name) + [
-                MustExist(
+                must_exist(
                     f"{name}.name",
                     is_type_of=str,
                 ),
@@ -215,7 +217,7 @@ class Settings(Dynaconf):
         def sensor_validators(name: str):
             prefix = "sth.acceleration_sensor"
             return [
-                MustExist(
+                must_exist(
                     f"{prefix}.{name}.acceleration.maximum",
                     f"{prefix}.{name}.acceleration.ratio_noise_to_max_value",
                     f"{prefix}.{name}.acceleration.tolerance",
@@ -224,7 +226,7 @@ class Settings(Dynaconf):
                     f"{prefix}.{name}.self_test.voltage.tolerance",
                     is_type_of=Real,
                 ),
-                MustExist(
+                must_exist(
                     f"{prefix}.{name}.self_test.dimension",
                     is_type_of=str,
                     is_in=("x", "y", "z"),
@@ -233,27 +235,27 @@ class Settings(Dynaconf):
 
         config_system = "mac" if system() == "Darwin" else system().lower()
         can_validators = [
-            MustExist(f"can.{config_system}.bitrate", is_type_of=int),
-            MustExist(
+            must_exist(f"can.{config_system}.bitrate", is_type_of=int),
+            must_exist(
                 f"can.{config_system}.channel",
                 f"can.{config_system}.interface",
                 is_type_of=str,
             ),
         ]
         commands_validators = [
-            MustExist(
+            must_exist(
                 "commands.path.linux",
                 is_type_of=list,
                 condition=partial(
                     element_is_string, name="commands.path.linux"
                 ),
             ),
-            MustExist(
+            must_exist(
                 "commands.path.mac",
                 is_type_of=list,
                 condition=partial(element_is_string, name="commands.path.mac"),
             ),
-            MustExist(
+            must_exist(
                 "commands.path.windows",
                 is_type_of=list,
                 condition=partial(
@@ -262,7 +264,7 @@ class Settings(Dynaconf):
             ),
         ]
         logger_validators = [
-            MustExist(
+            must_exist(
                 "logger.can.level",
                 is_type_of=str,
                 is_in=(
@@ -276,19 +278,19 @@ class Settings(Dynaconf):
             )
         ]
         gui_validators = [
-            MustExist("gui.host", is_type_of=str),
-            MustExist("gui.port", is_type_of=int),
+            must_exist("gui.host", is_type_of=str),
+            must_exist("gui.port", is_type_of=int),
         ]
         measurement_validators = [
-            MustExist(
+            must_exist(
                 "measurement.output.directory",
                 "measurement.output.filename",
                 is_type_of=str,
             ),
         ]
-        operator_validators = [MustExist("operator.name", is_type_of=str)]
+        operator_validators = [must_exist("operator.name", is_type_of=str)]
         sensory_device_validators = [
-            MustExist(
+            must_exist(
                 "sensory_device.bluetooth.advertisement_time_1",
                 "sensory_device.bluetooth.advertisement_time_2",
                 "sensory_device.bluetooth.sleep_time_1",
@@ -297,7 +299,7 @@ class Settings(Dynaconf):
             )
         ]
         smh_validators = sensor_device_validators("smh") + [
-            MustExist(
+            must_exist(
                 "smh.channels",
                 is_type_of=int,
             )
@@ -308,7 +310,7 @@ class Settings(Dynaconf):
             + sensor_validators("ADXL1002")
             + sensor_validators("ADXL356")
         ) + [
-            MustExist(
+            must_exist(
                 "sth.acceleration_sensor.sensor",
                 is_in=(
                     "ADXL1001",
@@ -316,12 +318,12 @@ class Settings(Dynaconf):
                     "ADXL356",
                 ),
             ),
-            MustExist(
+            must_exist(
                 "sth.battery_voltage.average",
                 "sth.battery_voltage.tolerance",
                 is_type_of=Real,
             ),
-            MustExist(
+            must_exist(
                 "sth.status",
                 is_in=(
                     "Bare PCB",
@@ -359,6 +361,8 @@ class Settings(Dynaconf):
                 f"{config_files_text}\n\n"
                 "contain the correct configuration values"
             ) from error
+
+    # pylint: enable=too-many-locals
 
     def acceleration_sensor(self):
         """Get the settings for the current acceleration sensor
@@ -431,6 +435,6 @@ with as_file(
 ) as repo_settings_filepath:
     try:
         settings = Settings(default_settings_filepath=repo_settings_filepath)
-    except SettingsIncorrectError as error:
-        print(f"{error}", file=stderr)
-        exit(1)
+    except SettingsIncorrectError as settings_incorrect_error:
+        print(f"{settings_incorrect_error}", file=stderr)
+        sys_exit(1)
