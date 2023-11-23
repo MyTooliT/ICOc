@@ -370,12 +370,7 @@ class Settings(Dynaconf):
         """
 
         sensor_settings = self.sth.acceleration_sensor
-        if sensor_settings.sensor == "ADXL1001":
-            return sensor_settings.adxl1001
-        if sensor_settings.sensor == "ADXL1002":
-            return sensor_settings.adxl1002
-        if sensor_settings.sensor == "ADXL356":
-            return sensor_settings.adxl356
+        return sensor_settings[sensor_settings.sensor]
 
     def sth_name(self) -> str:
         """Return the current name of the STH as string
