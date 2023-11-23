@@ -50,7 +50,7 @@ def convert_bytes_to_text(
     for byte in data:
         if byte == 0 and until_null:
             break
-        elif byte > ord(" ") and byte < 128:
+        if ord(" ") < byte < 128:
             ascii_bytes.append(byte)
 
     return ascii_bytes.decode("ASCII")

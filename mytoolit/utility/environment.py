@@ -14,6 +14,8 @@ from mytoolit.config import settings
 
 # -- Functions ----------------------------------------------------------------
 
+# pylint: disable=duplicate-code
+
 
 def add_commander_path_to_environment() -> None:
     """Add path to Simplicity Commander (`commander`) to `PATH`
@@ -39,6 +41,8 @@ def add_commander_path_to_environment() -> None:
     )
     environ["PATH"] += pathsep + pathsep.join(paths)
 
+
+# pylint: enable=duplicate-code
 
 # -- Main ---------------------------------------------------------------------
 
