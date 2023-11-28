@@ -3,14 +3,46 @@
 # -- Imports ------------------------------------------------------------------
 
 from asyncio import run
+from argparse import ArgumentParser, Namespace
 from time import time
 
 from mytoolit.can import Network
+from mytoolit.cmdline.parse import add_identifier_arguments
 
 # -- Functions ----------------------------------------------------------------
 
 
-async def calculate_loss(identifier, duration=5):
+def parse_arguments() -> Namespace:
+    """Parse command line arguments
+
+    Returns
+    -------
+
+    A namespace object that represents the given command line arguments
+
+    """
+
+    parser = ArgumentParser(
+        description="Measure signal and determine data loss"
+    )
+
+    add_identifier_arguments(parser)
+
+    parser.add_argument(
+        "-t",
+        "--time",
+        type=float,
+        help="measurement time in seconds",
+        default=10,
+    )
+
+    return parser.parse_args()
+
+
+# -- Coroutines ---------------------------------------------------------------
+
+
+async def calculate_loss(identifier, duration):
     """Connect to sensor device and measure data loss
 
     Parameters
@@ -60,4 +92,6 @@ async def calculate_loss(identifier, duration=5):
 # -- Main ---------------------------------------------------------------------
 
 if __name__ == "__main__":
-    run(calculate_loss(identifier="Test-STH"))
+    args = parse_arguments()
+
+    run(calculate_loss(identifier=args.identifier, duration=args.time))
