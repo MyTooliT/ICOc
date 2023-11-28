@@ -56,7 +56,9 @@ class ConfigurationUtility:
             )
 
             default_user_config = (
-                files("mytoolit.config").joinpath("user.yaml").read_text()
+                files("mytoolit.config")
+                .joinpath("user.yaml")
+                .read_text(encoding="utf-8")
             )
 
             with filepath.open("w", encoding="utf8") as config_file:
