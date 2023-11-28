@@ -11,7 +11,7 @@ from unittest import TextTestResult
 class ExtendedTestResult(TextTestResult):
     """Store data about the result of a test"""
 
-    class TestInformation(object):
+    class TestInformation:
         """Store additional data of a test result
 
         We use this class to store test information in a PDF report.
@@ -20,14 +20,14 @@ class ExtendedTestResult(TextTestResult):
         class Status(Enum):
             """Store the status of a test"""
 
-            success = 0
-            failure = 1
-            error = 2
+            SUCCESS = 0
+            FAILURE = 1
+            ERROR = 2
 
         def __init__(self):
             """Initialize a new test info object"""
 
-            self.status = type(self).Status.success
+            self.status = type(self).Status.SUCCESS
             self.message = ""
 
         def set_error(self, message):
@@ -40,7 +40,7 @@ class ExtendedTestResult(TextTestResult):
                 Specifies the error message
             """
 
-            self.status = type(self).Status.error
+            self.status = type(self).Status.ERROR
             self.message = message
 
         def set_failure(self, message):
@@ -53,13 +53,13 @@ class ExtendedTestResult(TextTestResult):
                 Specifies the failure message
             """
 
-            self.status = type(self).Status.failure
+            self.status = type(self).Status.FAILURE
             self.message = message
 
         def set_success(self):
             """Set the status of the test to success"""
 
-            self.status = type(self).Status.success
+            self.status = type(self).Status.SUCCESS
             self.message = ""
 
         def error(self):
@@ -71,7 +71,7 @@ class ExtendedTestResult(TextTestResult):
             True if there was an error, False otherwise
             """
 
-            return self.status == type(self).Status.error
+            return self.status == type(self).Status.ERROR
 
         def failure(self):
             """Check if there test failed
@@ -82,7 +82,7 @@ class ExtendedTestResult(TextTestResult):
             True if the test failed, False otherwise
             """
 
-            return self.status == type(self).Status.failure
+            return self.status == type(self).Status.FAILURE
 
     def __init__(self, *arguments, **keyword_arguments):
         """Initialize the test result"""
@@ -91,7 +91,7 @@ class ExtendedTestResult(TextTestResult):
 
         self.last_test = ExtendedTestResult.TestInformation()
 
-    def addFailure(self, test, error):
+    def addFailure(self, test, err):
         """Add information about the latest failure
 
         Parameters
@@ -100,23 +100,23 @@ class ExtendedTestResult(TextTestResult):
         test:
             The test case that produced the failure
 
-        error:
+        err:
             A tuple of the form returned by `sys.exc_info()`:
             (type, value, traceback)
         """
 
-        super().addFailure(test, error)
+        super().addFailure(test, err)
 
         # Store message for latest failure
-        failure_message = str(error[1])
+        failure_message = str(err[1])
         # Only store custom message added to assertion, since it should be more
         # readable for a person. If there was no custom message, then the
         # object stores the auto-generated message.
-        custom_failure_message = failure_message.split(" : ")[-1]
+        custom_failure_message = failure_message.rsplit(" : ", maxsplit=1)[-1]
 
         self.last_test.set_failure(custom_failure_message)
 
-    def addError(self, test, error):
+    def addError(self, test, err):
         """Add information about the latest error
 
         This should usually not happen unless there are problems with the
@@ -128,14 +128,14 @@ class ExtendedTestResult(TextTestResult):
         test:
             The test case that produced the error
 
-        error:
+        err:
             A tuple of the form returned by `sys.exc_info()`:
             (type, value, traceback)
         """
 
-        super().addError(test, error)
+        super().addError(test, err)
 
-        self.last_test.set_error(error[1])
+        self.last_test.set_error(err[1])
 
     def addSuccess(self, test):
         """Add information about latest successful test
