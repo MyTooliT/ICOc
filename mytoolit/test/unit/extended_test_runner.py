@@ -9,6 +9,9 @@ from .extended_test_result import ExtendedTestResult
 # -- Class --------------------------------------------------------------------
 
 
+# pylint: disable=too-few-public-methods
+
+
 class ExtendedTestRunner(TextTestRunner):
     """Extend default test runner to change result class"""
 
@@ -17,3 +20,6 @@ class ExtendedTestRunner(TextTestRunner):
 
         keyword_arguments["resultclass"] = ExtendedTestResult
         super().__init__(*arguments, **keyword_arguments)
+
+
+# pylint: enable=too-few-public-methods
