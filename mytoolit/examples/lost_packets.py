@@ -4,7 +4,7 @@
 
 from asyncio import run
 from argparse import ArgumentParser, Namespace
-from time import time
+from time import sleep, time
 
 from mytoolit.can import Network
 from mytoolit.cmdline.parse import add_identifier_arguments
@@ -33,7 +33,7 @@ def parse_arguments() -> Namespace:
         "--time",
         type=float,
         help="measurement time in seconds",
-        default=10,
+        default=3,
     )
 
     return parser.parse_args()
@@ -57,6 +57,8 @@ async def calculate_loss(identifier, duration):
     """
 
     async with Network() as network:
+        await network.reset_node("STU 1")
+
         await network.connect_sensor_device(identifier)
 
         print(f"Measure data for {duration} seconds")
@@ -76,6 +78,8 @@ async def calculate_loss(identifier, duration):
             async for data in stream:
                 timestamped_value = data.first.pop()
 
+                sleep(1)  # Wait to fill CAN message buffer
+
                 counter = timestamped_value.counter
 
                 messages += 1
@@ -86,7 +90,22 @@ async def calculate_loss(identifier, duration):
                 if time() - start_time >= duration:
                     break
 
+            print("Stop streaming of data")
+            await network.stop_streaming_data()
+
+            print("Count messages in buffer")
+            lost_messages_buffer = 0
+
+            while not stream.queue.empty():
+                await stream.queue.get()
+                lost_messages_buffer += 1
+
+                if time() - start_time > 10:
+                    print("Stopping after 10 seconds")
+                    break
+
         print(f"Lost {lost_messages} of {messages} messages")
+        print(f"{lost_messages_buffer} messages in buffer")
 
 
 # -- Main ---------------------------------------------------------------------
