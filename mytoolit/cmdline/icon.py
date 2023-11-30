@@ -30,10 +30,16 @@ from mytoolit.measurement import convert_raw_to_g, Storage
 # -- Functions ----------------------------------------------------------------
 
 
+# pylint: disable=unused-argument
+
+
 def config(arguments: Namespace) -> None:
     """Open configuration file"""
 
     ConfigurationUtility.open_user_config()
+
+
+# pylint: enable=unused-argument
 
 
 async def dataloss(arguments: Namespace) -> None:
