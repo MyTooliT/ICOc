@@ -140,7 +140,7 @@ class Storage:
         try:
             self.hdf = open_file(
                 self.filepath,
-                mode="w",
+                mode="a",
                 filters=Filters(4, "zlib"),
                 title="STH Measurement Data",
             )
@@ -148,6 +148,38 @@ class Storage:
             raise StorageException(
                 f"Unable to open file “{self.filepath}”: {error}"
             ) from error
+
+        try:
+            # Try to get acceleration dataset, if it already exists
+            self.acceleration = self.hdf.get_node("/acceleration")
+            self.start_time = self.acceleration[-1][1] / 1000
+        except NoSuchNodeError:
+            pass
+
+    def _assert_acceleration(self, message: str) -> None:
+        """Check for existence of acceleration data
+
+        Parameters
+        ----------
+
+        message:
+            An Explanation about which operation is not possible, due
+            to the missing dataset
+
+        Raises
+        ------
+
+        UserWarning, if the acceleration dataset does not exist
+
+        """
+
+        if self.acceleration is None:
+            raise UserWarning(
+                f"Unable to {message} non existent "
+                "acceleration table.\n"
+                "Please call either `init_acceleration` or `add_acceleration` "
+                "before you use this function"
+            )
 
     def init_acceleration(
         self, axes: Iterable[str], start_time: float
@@ -359,15 +391,66 @@ class Storage:
 
         """
 
-        if self.acceleration is None:
-            raise UserWarning(
-                "Unable to add metadata to non existent "
-                "acceleration table.\n"
-                "Please call either `init_acceleration` or `add_acceleration` "
-                "before you use this function"
-            )
+        self._assert_acceleration("add metadata to")
+        assert self.acceleration
 
         self.acceleration.attrs[name] = value
+
+    def dataloss(self) -> float:
+        """Determine (minimum) data loss
+
+        Returns
+        -------
+
+        Amount of lost messages divided by all messages (lost and retrieved)
+
+        Example
+        -------
+
+        >>> from math import isclose
+        >>> def calculate_dataloss():
+        ...     filepath = Path("test.hdf5")
+        ...     with Storage(filepath) as storage:
+        ...         for counter in range(256):
+        ...             storage.add_acceleration(values={'x': 1},
+        ...                                      counter=counter,
+        ...                                      timestamp=counter/10)
+        ...         for counter in range(128, 256):
+        ...             storage.add_acceleration(values={'x': 2},
+        ...                                      counter=counter,
+        ...                                      timestamp=(255 + counter)/10)
+        ...
+        ...         dataloss = storage.dataloss()
+        ...     filepath.unlink()
+        ...     return dataloss
+        >>> isclose(0.25, calculate_dataloss(), rel_tol=0.005)
+        True
+
+        """
+
+        self._assert_acceleration("determine data loss of")
+        assert self.acceleration
+
+        # Write back acceleration data so we can iterate over it
+        self.acceleration.flush()
+
+        lost_messages = 0
+        retrieved_messages = 0
+        last_counter = self.acceleration[0][0]
+        for record in self.acceleration:
+            counter = int(record[0])
+
+            if counter == last_counter:
+                continue  # Skip data with same message counter
+
+            lost_messages += (counter - last_counter) % 256 - 1
+            retrieved_messages += 1
+
+            last_counter = counter
+
+        messages = lost_messages + retrieved_messages
+
+        return lost_messages / messages if messages > 0 else 0
 
     def close(self) -> None:
         """Close the HDF file"""
