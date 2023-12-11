@@ -30,6 +30,49 @@ from mytoolit.measurement import convert_raw_to_g, Storage
 # -- Functions ----------------------------------------------------------------
 
 
+async def read_acceleration_sensor_range_in_g(network: Network) -> float:
+    """Read sensor range of acceleration sensor
+
+    Precondition
+    ------------
+
+    The Network object given as parameter needs to be connected to a sensor
+    device before you call this coroutine
+
+    Parameters
+    ----------
+
+    network:
+        The network class used to read the sensor range
+
+    Returns
+    -------
+
+    The sensor range of the acceleration sensor, or the default range of 200
+    (± 100 g) sensor, if there was a problem reading the sensor range
+
+    """
+
+    sensor_range = 200
+
+    try:
+        sensor_range = await network.read_acceleration_sensor_range_in_g()
+        if sensor_range < 1:
+            print(
+                f"Warning: Sensor range “{sensor_range}” below 1 g — Using "
+                "range 200 instead (± 100 g sensor)",
+                file=stderr,
+            )
+    except ValueError:
+        print(
+            "Warning: Unable to determine sensor range from "
+            "EEPROM value — Assuming ± 100 g sensor",
+            file=stderr,
+        )
+
+    return sensor_range
+
+
 def config(arguments: Namespace) -> None:  # pylint: disable=unused-argument
     """Open configuration file"""
 
@@ -50,7 +93,7 @@ async def dataloss(arguments: Namespace) -> None:
         await network.connect_sensor_device(identifier)
         logger.info("Connected to “%s”", identifier)
 
-        sensor_range = await network.read_acceleration_sensor_range_in_g()
+        sensor_range = await read_acceleration_sensor_range_in_g(network)
         conversion_to_g = partial(convert_raw_to_g, max_value=sensor_range)
 
         measurement_time_s = 10
@@ -164,7 +207,7 @@ async def measure(arguments: Namespace) -> None:
         )
         await network.write_adc_configuration(**adc_config)
 
-        sensor_range = await network.read_acceleration_sensor_range_in_g()
+        sensor_range = await read_acceleration_sensor_range_in_g(network)
         conversion_to_g = partial(convert_raw_to_g, max_value=sensor_range)
 
         with Storage(settings.get_output_filepath()) as storage:
