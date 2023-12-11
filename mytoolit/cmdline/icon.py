@@ -30,16 +30,13 @@ from mytoolit.measurement import convert_raw_to_g, Storage
 # -- Functions ----------------------------------------------------------------
 
 
-# pylint: disable=unused-argument
-
-
-def config(arguments: Namespace) -> None:
+def config(arguments: Namespace) -> None:  # pylint: disable=unused-argument
     """Open configuration file"""
 
     ConfigurationUtility.open_user_config()
 
 
-# pylint: enable=unused-argument
+# pylint: disable=too-many-locals
 
 
 async def dataloss(arguments: Namespace) -> None:
@@ -49,9 +46,9 @@ async def dataloss(arguments: Namespace) -> None:
     logger = getLogger(__name__)
 
     async with Network() as network:
-        logger.info(f"Connecting to “{identifier}”")
+        logger.info("Connecting to “%s”", identifier)
         await network.connect_sensor_device(identifier)
-        logger.info(f"Connected to “{identifier}”")
+        logger.info("Connected to “%s”", identifier)
 
         sensor_range = await network.read_acceleration_sensor_range_in_g()
         conversion_to_g = partial(convert_raw_to_g, max_value=sensor_range)
@@ -59,15 +56,15 @@ async def dataloss(arguments: Namespace) -> None:
         measurement_time_s = 10
 
         for oversampling_rate in (2**exponent for exponent in range(6, 10)):
-            logger.info(f"Oversampling rate: {oversampling_rate}")
-            config = ADCConfiguration(
+            logger.info("Oversampling rate: %s", oversampling_rate)
+            adc_config = ADCConfiguration(
                 prescaler=2,
                 acquisition_time=8,
                 oversampling_rate=oversampling_rate,
             )
-            await network.write_adc_configuration(**config)
-            sample_rate = config.sample_rate()
-            logger.info(f"Sample rate: {sample_rate} Hz")
+            await network.write_adc_configuration(**adc_config)
+            sample_rate = adc_config.sample_rate()
+            logger.info("Sample rate: %s Hz", sample_rate)
 
             filepath = Path(f"Measurement {sample_rate} Hz.hdf5")
             with Storage(filepath.resolve()) as storage:
@@ -102,7 +99,12 @@ async def dataloss(arguments: Namespace) -> None:
             print(f"Stored measurement data in “{filepath}”")
 
 
-async def list_sensor_devices(arguments: Namespace) -> None:
+# pylint: enable=too-many-locals
+
+
+async def list_sensor_devices(
+    arguments: Namespace,  # pylint: disable=unused-argument
+) -> None:
     """Print a list of available sensor devices
 
     Parameters
