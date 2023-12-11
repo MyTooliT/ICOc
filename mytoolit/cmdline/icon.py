@@ -271,7 +271,6 @@ def main():
         config(arguments.subcommand)
     else:
         command_to_coroutine = {
-            "config": config,
             "dataloss": dataloss,
             "list": list_sensor_devices,
             "measure": measure,
