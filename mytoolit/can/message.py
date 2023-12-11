@@ -198,6 +198,8 @@ class Message:
         self.message.data = bytearray(data)
         self.message.dlc = len(self.data)
 
+    # pylint: disable=too-many-branches, too-many-locals, too-many-statements
+
     def _data_explanation_system(self) -> str:
         """Retrieve a textual representation of system messages
 
@@ -294,10 +296,10 @@ class Message:
                     time_normal_to_reduced_ms = int.from_bytes(
                         self.data[2:6], byteorder="little"
                     )
-                    ADVERTISEMENT_TIME_EEPROM_TO_MS = 0.625
+                    advertisement_time_eeprom_to_ms = 0.625
                     advertisement_time = (
                         int.from_bytes(self.data[6:], byteorder="little")
-                        * ADVERTISEMENT_TIME_EEPROM_TO_MS
+                        * advertisement_time_eeprom_to_ms
                     )
                     data_explanation += ": " + ", ".join([
                         f"⟳ {time_normal_to_reduced_ms} ms",
@@ -321,6 +323,8 @@ class Message:
                 )
 
         return data_explanation
+
+    # pylint: enable=too-many-branches, too-many-locals, too-many-statements
 
     def _data_explanation_streaming(self) -> str:
         """Retrieve a textual representation of streaming messages
@@ -439,11 +443,14 @@ class Message:
 
         if identifier.block_name() == "System":
             return self._data_explanation_system()
-        elif identifier.block_name() == "Streaming":
+
+        if identifier.block_name() == "Streaming":
             return self._data_explanation_streaming()
-        elif identifier.block_name() == "Configuration":
+
+        if identifier.block_name() == "Configuration":
             return self._data_explanation_configuration()
-        elif identifier.block_name() == "EEPROM":
+
+        if identifier.block_name() == "EEPROM":
             return self._data_explanation_eeprom()
 
         return ""
