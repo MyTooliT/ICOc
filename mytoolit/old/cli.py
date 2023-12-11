@@ -4,7 +4,6 @@ import socket
 
 from argparse import ArgumentDefaultsHelpFormatter
 from time import sleep, time
-from datetime import datetime
 from functools import partial
 from logging import getLogger
 from pathlib import Path
@@ -319,30 +318,7 @@ class CommandLineInterface:
         if not filename.suffix:
             filename = filename.with_suffix(".hdf5")
 
-        self.output_filename = filename
-
-    def get_output_filepath(self) -> Path:
-        """Get the filepath of the HDF output file
-
-        The filepath returned by this method will always include a current
-        timestamp to make sure that there are no conflicts with old output
-        files.
-
-        Returns
-        -------
-
-        The path to the current HDF file
-
-        """
-
-        directory = settings.output_directory()
-        filename = self.output_filename
-        timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        filepath = directory.joinpath(
-            f"{filename.stem}_{timestamp}{filename.suffix}"
-        )
-
-        return filepath
+        settings.measurement.output.filename = str(filename)
 
     def _statusWords(self):
         self.logger.info(
@@ -849,7 +825,7 @@ class CommandLineInterface:
                     AdcReference[self.sAdcRef],
                 )
                 # Initialize HDF output
-                self.storage = Storage(self.get_output_filepath())
+                self.storage = Storage(settings.get_output_filepath())
                 # We need the acceleration range later to convert the ADC
                 # acceleration values into multiples of g₀
                 (

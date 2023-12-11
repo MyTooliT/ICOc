@@ -5,7 +5,7 @@ Currently the configuration is mainly used in the hardware (production tests).
 
 # -- Import -------------------------------------------------------------------
 
-from datetime import date
+from datetime import date, datetime
 from functools import partial
 from importlib.resources import as_file, files
 from numbers import Real
@@ -402,6 +402,33 @@ class Settings(Dynaconf):
 
         directory = Path(settings.measurement.output.directory)
         return directory if directory.is_absolute() else directory.expanduser()
+
+    def get_output_filepath(self) -> Path:
+        """Get filepath of HDF measurement file
+
+        The filepath returned by this method will always include a current
+        timestamp to make sure that there are no conflicts with old output
+        files.
+
+        Returns
+        -------
+
+        The path to the current HDF file
+
+        """
+
+        directory = self.output_directory()
+        filename = Path(settings.measurement.output.filename)
+
+        if not filename.suffix:
+            filename = filename.with_suffix(".hdf5")
+
+        timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        filepath = directory.joinpath(
+            f"{filename.stem}_{timestamp}{filename.suffix}"
+        )
+
+        return filepath
 
     def check_output_directory(self) -> None:
         """Check the output directory

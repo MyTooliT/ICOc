@@ -1,9 +1,11 @@
+from pathlib import Path
 from sys import stderr
 from time import sleep
 from typing import Callable, Iterable, Tuple
 
 from curses import curs_set, error, wrapper  # type: ignore[attr-defined]
 
+from mytoolit.config import settings
 from mytoolit.measurement.sensor import SensorConfig
 from mytoolit.old.cli import CommandLineInterface
 from mytoolit.old.MyToolItCommands import (
@@ -654,7 +656,7 @@ class UserInterface(CommandLineInterface):
 
         forbidden_characters = set('<>:"/\\|?*')
         input_valid, filename = self.read_text(
-            default=str(self.output_filename.stem),
+            default=str(Path(settings.measurement.output.filename).stem),
             allowed=lambda filename: 1 <= len(filename) <= 200 >= 1
             and not set(filename).intersection(forbidden_characters),
         )
@@ -664,7 +666,7 @@ class UserInterface(CommandLineInterface):
             self.set_output_filename(filename)
         self.add_string(
             "New full name (including time stamp): "
-            f"“{self.get_output_filepath()}”"
+            f"“{settings.get_output_filepath()}”"
         )
         self.stdscr.refresh()
         sleep(2)
