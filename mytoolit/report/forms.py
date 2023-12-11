@@ -15,6 +15,8 @@ from mytoolit.report.style import get_style_sheet
 
 # -- Classes ------------------------------------------------------------------
 
+# pylint: disable=too-few-public-methods
+
 
 class Signature:
     """This class represents a form for adding a signature"""
@@ -51,6 +53,9 @@ class Signature:
         """
 
         return self.signature
+
+
+# pylint: enable=too-few-public-methods
 
 
 class CheckBoxList:
@@ -167,9 +172,8 @@ class CheckBox(Flowable):
 
         """
 
-        return "☑️{}".format(
-            f" Tooltip: {self.tooltip}" if self.tooltip is not None else ""
-        )
+        text = f" Tooltip: {self.tooltip}" if self.tooltip is not None else ""
+        return f"☑️{text}"
 
     def draw(self) -> None:
         """Draw the checkbox on the canvas"""
@@ -228,9 +232,8 @@ class TextField(Flowable):
 
         """
 
-        return "📝{}".format(
-            f" Tooltip: {self.tooltip}" if self.tooltip is not None else ""
-        )
+        text = f" Tooltip: {self.tooltip}" if self.tooltip is not None else ""
+        return f"📝{text}"
 
     def draw(self) -> None:
         """Draw the text box on the canvas"""
