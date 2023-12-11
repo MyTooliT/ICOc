@@ -6,7 +6,7 @@
 
   $ icon measure -t 5 -d 0
 
-  $ runtime=$(icoanalyzer Measurement.hdf5 | 
+  $ runtime=$(icoanalyzer Measurement*.hdf5 | 
   >           grep 'Runtime:' | 
   >           sed -E 's/[^0-9]+([0-9]*\.[0-9]+).*/\1/')
 
@@ -16,4 +16,4 @@ Check that runtime is approximately correct
 
 -- Cleanup ---------------------------------------------------------------------
 
-  $ rm Measurement.hdf5
+  $ rm Measurement*.hdf5

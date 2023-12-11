@@ -23,7 +23,7 @@ from mytoolit.can import Network
 from mytoolit.can.adc import ADCConfiguration
 from mytoolit.can.network import STHDeviceInfo, NetworkError
 from mytoolit.cmdline.parse import parse_arguments
-from mytoolit.config import ConfigurationUtility
+from mytoolit.config import ConfigurationUtility, settings
 from mytoolit.measurement import convert_raw_to_g, Storage
 
 
@@ -167,9 +167,7 @@ async def measure(arguments: Namespace) -> None:
         sensor_range = await network.read_acceleration_sensor_range_in_g()
         conversion_to_g = partial(convert_raw_to_g, max_value=sensor_range)
 
-        filepath = Path("Measurement.hdf5")
-
-        with Storage(filepath.resolve()) as storage:
+        with Storage(settings.get_output_filepath()) as storage:
             sample_rate = (
                 await network.read_adc_configuration()
             ).sample_rate()
