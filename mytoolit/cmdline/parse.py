@@ -7,6 +7,8 @@ from re import compile
 
 from netaddr import AddrFormatError, EUI
 
+from mytoolit.can.adc import REFERENCE_VOLTAGES
+
 # -- Functions ----------------------------------------------------------------
 
 
@@ -303,6 +305,53 @@ def add_identifier_arguments(parser: ArgumentParser) -> None:
     )
 
 
+def add_adc_arguments(parser: ArgumentParser) -> None:
+    """Add ADC arguments to given argument parser
+
+    parser:
+        The parser which should include the ADC arguments
+
+    """
+
+    adc_group = parser.add_argument_group(title="ADC")
+    adc_group.add_argument(
+        "-s",
+        "--prescaler",
+        type=int,
+        choices=range(2, 128),
+        metavar="2–127",
+        default=2,
+        required=False,
+        help="Prescaler value",
+    )
+    adc_group.add_argument(
+        "-a",
+        "--acquisition",
+        type=int,
+        choices=sorted([2**number for number in range(9)] + [3]),
+        default=8,
+        required=False,
+        help="Acquisition time value",
+    )
+    adc_group.add_argument(
+        "-o",
+        "--oversampling",
+        type=int,
+        choices=[2**number for number in range(13)],
+        default=64,
+        required=False,
+        help="Oversampling rate value",
+    )
+    adc_group.add_argument(
+        "-v",
+        "--voltage-reference",
+        choices=REFERENCE_VOLTAGES,
+        default=3.3,
+        required=False,
+        help="Reference voltage in V",
+    )
+
+
 def parse_arguments() -> Namespace:
     """Parse command line arguments
 
@@ -365,6 +414,7 @@ def parse_arguments() -> Namespace:
         default=10,
     )
     add_identifier_arguments(measurement_parser)
+    add_adc_arguments(measurement_parser)
 
     # ==========
     # = Rename =

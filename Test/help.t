@@ -42,7 +42,10 @@ Check help output of measure command:
 
   $ icon measure --help
   usage: icon measure [-h] [-t TIME]
-                      (-n NAME | -m MAC_ADRESS | -d DEVICE_NUMBER)
+                      (-n NAME | -m MAC_ADRESS | -d DEVICE_NUMBER) [-s 2–127]
+                      [-a {1,2,3,4,8,16,32,64,128,256}]
+                      [-o {1,2,4,8,16,32,64,128,256,512,1024,2048,4096}]
+                      [-v {1.25,1.65,1.8,2.1,2.2,2.5,2.7,3.3,5,6.6}]
   
   option.* (re)
     -h, --help            show this help message and exit
@@ -54,6 +57,16 @@ Check help output of measure command:
                           Bluetooth MAC address of sensor device
     -d DEVICE_NUMBER, --device-number DEVICE_NUMBER
                           Bluetooth device number of sensor device
+  
+  ADC:
+    -s 2–127, --prescaler 2–127
+                          Prescaler value
+    -a {1,2,3,4,8,16,32,64,128,256}, --acquisition {1,2,3,4,8,16,32,64,128,256}
+                          Acquisition time value
+    -o {1,2,4,8,16,32,64,128,256,512,1024,2048,4096}, --oversampling {1,2,4,8,16,32,64,128,256,512,1024,2048,4096}
+                          Oversampling rate value
+    -v {1.25,1.65,1.8,2.1,2.2,2.5,2.7,3.3,5,6.6}, --voltage-reference {1.25,1.65,1.8,2.1,2.2,2.5,2.7,3.3,5,6.6}
+                          Reference voltage in V
 
 Check help output of rename command:
 

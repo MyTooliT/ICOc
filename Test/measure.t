@@ -5,6 +5,7 @@
 -- Check Measure Subcommand ----------------------------------------------------
 
   $ icon measure -t 5 -d 0
+  Sample Rate: 9524 Hz
 
   $ runtime=$(icoanalyzer Measurement*.hdf5 | 
   >           grep 'Runtime:' | 
