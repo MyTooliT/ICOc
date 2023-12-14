@@ -7,11 +7,13 @@ doctests of the `Network` class or the code for the `icon` command line tool
 (mytoolit.cmdline.icon).
 """
 
+# pylint: disable=too-many-lines
+
 # -- Imports ------------------------------------------------------------------
 
 from __future__ import annotations
 
-from asyncio import get_running_loop, Queue, sleep, TimeoutError, wait_for
+from asyncio import get_running_loop, Queue, sleep, wait_for
 from datetime import date
 from logging import getLogger
 from struct import pack, unpack
@@ -103,14 +105,13 @@ class STHDeviceInfo(NamedTuple):
     def __repr__(self) -> str:
         """Return the string representation of an STH"""
 
-        return "🤖 {}".format(
-            ", ".join([
-                f"Name: {self.name}",
-                f"Device Number: {self.device_number}",
-                f"MAC address: {self.mac_address}",
-                f"RSSI: {self.rssi}",
-            ])
-        )
+        attributes = ", ".join([
+            f"Name: {self.name}",
+            f"Device Number: {self.device_number}",
+            f"MAC address: {self.mac_address}",
+            f"RSSI: {self.rssi}",
+        ])
+        return f"🤖 {attributes}"
 
 
 class Logger(Listener):
@@ -125,18 +126,18 @@ class Logger(Listener):
         logger.setLevel(settings.Logger.can.level)
         logger.addHandler(get_log_file_handler("can.log"))
 
-    def on_message_received(self, message: CANMessage) -> None:
+    def on_message_received(self, msg: CANMessage) -> None:
         """React to a received message on the bus
 
         Parameters
         ----------
 
-        message:
+        msg:
             The received CAN message the notifier should react to
 
         """
 
-        getLogger("network.can").debug(f"{Message(message)}")
+        getLogger("network.can").debug("%s", Message(msg))
 
     def on_error(self, exc: Exception) -> None:
         """Handle any exception in the receive thread.
@@ -150,7 +151,7 @@ class Logger(Listener):
         """
 
         getLogger("network.can").error(
-            f"Error while monitoring CAN bus data: {exc}"
+            "Error while monitoring CAN bus data: %s", exc
         )
 
 
@@ -187,18 +188,18 @@ class ResponseListener(Listener):
         self.error_identifier = identifier.acknowledge(error=True)
         self.expected_data = expected_data
 
-    def on_message_received(self, message: CANMessage) -> None:
-        """React to a received message on the bus
+    def on_message_received(self, msg: CANMessage) -> None:
+        """React to a received msg on the bus
 
         Parameters
         ----------
 
-        message:
+        msg:
             The received CAN message the notifier should react to
 
         """
 
-        identifier = message.arbitration_id
+        identifier = msg.arbitration_id
         error_response = identifier == self.error_identifier.value
         normal_response = identifier == self.acknowledgment_identifier.value
 
@@ -212,13 +213,13 @@ class ResponseListener(Listener):
         if normal_response and expected_data is not None:
             error_response |= any(
                 expected != data
-                for expected, data in zip(expected_data, message.data)
+                for expected, data in zip(expected_data, msg.data)
                 if expected is not None
             )
             error_reason = (
                 "Unexpected response message data:\n"
                 f"Expected: {list(expected_data)}\n"
-                f"Received: {list(message.data)}"
+                f"Received: {list(msg.data)}"
             )
         elif error_response:
             error_reason = "Received error response"
@@ -226,7 +227,7 @@ class ResponseListener(Listener):
         if error_response or normal_response:
             self.queue.put_nowait(
                 Response(
-                    message=message,
+                    message=msg,
                     is_error=error_response,
                     error_message=error_reason,
                 )
@@ -354,6 +355,9 @@ class DataStreamContextManager:
         self.reader.stop()
         self.network.notifier.remove_listener(self.reader)
         await self.network.stop_streaming_data()
+
+
+# pylint: disable=too-many-public-methods
 
 
 class Network:
@@ -540,7 +544,7 @@ class Network:
         for attempt in range(10):
             listener = ResponseListener(message, response_data)
             self.notifier.add_listener(listener)
-            getLogger("network.can").debug(f"{message}")
+            getLogger("network.can").debug("%s", message)
             self.bus.send(message.to_python_can())
 
             try:
@@ -576,6 +580,8 @@ class Network:
             return response.message
 
         raise NoResponseError(f"Unable to {description}")
+
+    # pylint: disable=too-many-arguments
 
     async def _request_bluetooth(
         self,
@@ -665,6 +671,8 @@ class Network:
         return await self._request(
             message, description=description, response_data=expected_data
         )
+
+    # pylint: enable=too-many-arguments
 
     async def _request_product_data(
         self,
@@ -1745,11 +1753,7 @@ class Network:
 
             return None
 
-        if not (
-            isinstance(identifier, str)
-            or isinstance(identifier, int)
-            or isinstance(identifier, EUI)
-        ):
+        if not isinstance(identifier, (EUI, int, str)):
             raise TypeError(
                 "Identifier must be int, str or EUI, not "
                 f"{type(identifier).__name__}"
@@ -2784,6 +2788,8 @@ class Network:
         data = await self.read_eeprom(address, offset, length=4, node=node)
         return unpack("<f", bytearray(data))[0]
 
+    # pylint: disable=too-many-arguments
+
     async def read_eeprom_int(
         self,
         address: int,
@@ -2841,6 +2847,8 @@ class Network:
             signed=signed,
         )
 
+    # pylint: enable=too-many-arguments
+
     async def read_eeprom_text(
         self,
         address: int,
@@ -2894,6 +2902,8 @@ class Network:
 
         data = await self.read_eeprom(address, offset, length, node)
         return convert_bytes_to_text(data, until_null=True)
+
+    # pylint: disable=too-many-arguments
 
     async def write_eeprom(
         self,
@@ -2979,6 +2989,8 @@ class Network:
             data = data[4:]
             offset += write_length
 
+    # pylint: enable=too-many-arguments
+
     async def write_eeprom_float(
         self,
         address: int,
@@ -3025,6 +3037,8 @@ class Network:
 
         data = list(pack("f", value))
         await self.write_eeprom(address, offset, data, node=node)
+
+    # pylint: disable=too-many-arguments
 
     async def write_eeprom_int(
         self,
@@ -3082,6 +3096,10 @@ class Network:
         data = list(value.to_bytes(length, byteorder="little", signed=signed))
         await self.write_eeprom(address, offset, data, node=node)
 
+    # pylint: enable=too-many-arguments
+
+    # pylint: disable=too-many-arguments
+
     async def write_eeprom_text(
         self,
         address: int,
@@ -3133,6 +3151,8 @@ class Network:
 
         data = list(map(ord, list(text)))
         await self.write_eeprom(address, offset, data, length, node)
+
+    # pylint: enable=too-many-arguments
 
     # ========================
     # = System Configuration =
@@ -4497,6 +4517,8 @@ class Network:
             day=int(date_values[6:8]),
         )
 
+    # pylint: disable=redefined-outer-name
+
     async def write_eeprom_production_date(
         self, date: Union[date, str], node: Union[str, Node] = "STU 1"
     ) -> None:
@@ -4538,7 +4560,7 @@ class Network:
         if isinstance(date, str):
             # The identifier `date` refers to the variable `date` in the
             # current scope
-            import datetime
+            import datetime  # pylint: disable=import-outside-toplevel
 
             try:
                 date = datetime.date.fromisoformat(date)
@@ -4554,6 +4576,8 @@ class Network:
             text=str(date).replace("-", ""),
             node=node,
         )
+
+    # pylint: enable=redefined-outer-name
 
     async def read_eeprom_batch_number(
         self, node: Union[str, Node] = "STU 1"
@@ -5409,6 +5433,8 @@ class Network:
         return oem_data
 
 
+# pylint: enable=too-many-public-methods
+
 # -- Main ---------------------------------------------------------------------
 
 if __name__ == "__main__":
@@ -5418,8 +5444,8 @@ if __name__ == "__main__":
     # - set `run_all_doctests` to `False`, and
     # - replace `read_eeprom_firmware_version` with the name of the method you
     #   would like to test.
-    run_all_doctests = False
-    if run_all_doctests:
+    RUN_ALL_DOCTESTS = False
+    if RUN_ALL_DOCTESTS:
         testmod()
     else:
         run_docstring_examples(

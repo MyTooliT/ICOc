@@ -33,7 +33,7 @@ check:
 	flake8
 	mypy mytoolit
 	pylint -E mytoolit
-	pylint mytoolit --ignore-patterns '(network|node|open|parse|pdf|report|smh|status|storage|sth|stu|streaming|units)\.py'
+	pylint mytoolit --ignore-patterns '(node|open|parse|pdf|report|smh|status|storage|sth|stu|streaming|units)\.py'
 
 .PHONY: test
 test: pytest-test
