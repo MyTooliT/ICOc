@@ -2838,7 +2838,7 @@ class Network:
         return int.from_bytes(
             await self.read_eeprom(address, offset, length, node),
             "little",
-            signed=True,
+            signed=signed,
         )
 
     async def read_eeprom_text(
