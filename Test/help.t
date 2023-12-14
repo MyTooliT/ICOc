@@ -47,6 +47,8 @@ Check help output of measure command:
   option.* (re)
     -h, --help            show this help message and exit
     -t TIME, --time TIME  measurement time in seconds
+  
+  Sensor Device Identifier:
     -n NAME, --name NAME  Name of sensor device
     -m MAC_ADRESS, --mac-address MAC_ADRESS
                           Bluetooth MAC address of sensor device
@@ -63,6 +65,8 @@ Check help output of rename command:
   
   option.* (re)
     -h, --help            show this help message and exit
+  
+  Sensor Device Identifier:
     -n NAME, --name NAME  Name of sensor device
     -m MAC_ADRESS, --mac-address MAC_ADRESS
                           Bluetooth MAC address of sensor device

@@ -269,7 +269,13 @@ def add_identifier_arguments(parser: ArgumentParser) -> None:
 
     """
 
-    identifier_group = parser.add_mutually_exclusive_group(required=True)
+    identifier_arg_group = parser.add_argument_group(
+        title="Sensor Device Identifier"
+    )
+
+    identifier_group = identifier_arg_group.add_mutually_exclusive_group(
+        required=True
+    )
 
     identifier_group.add_argument(
         "-n",
