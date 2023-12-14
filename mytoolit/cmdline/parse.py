@@ -8,7 +8,7 @@ from re import compile
 
 from netaddr import AddrFormatError, EUI
 
-from mytoolit.can.adc import REFERENCE_VOLTAGES
+from mytoolit.can.adc import ADCConfiguration
 
 # -- Functions ----------------------------------------------------------------
 
@@ -399,7 +399,7 @@ def add_adc_arguments(parser: ArgumentParser) -> None:
     adc_group.add_argument(
         "-v",
         "--voltage-reference",
-        choices=REFERENCE_VOLTAGES,
+        choices=ADCConfiguration.REFERENCE_VOLTAGES,
         default=3.3,
         required=False,
         help="Reference voltage in V",

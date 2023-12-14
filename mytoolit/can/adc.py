@@ -14,15 +14,13 @@ from typing import List, Optional, Union
 
 from mytoolit.utility.types import check_list
 
-# -- Constants ----------------------------------------------------------------
-
-REFERENCE_VOLTAGES = [1.25, 1.65, 1.8, 2.1, 2.2, 2.5, 2.7, 3.3, 5, 6.6]
-
 # -- Class --------------------------------------------------------------------
 
 
 class ADCConfiguration(Mapping):
     """Support for reading and writing the ADC configuration"""
+
+    REFERENCE_VOLTAGES = [1.25, 1.65, 1.8, 2.1, 2.2, 2.5, 2.7, 3.3, 5, 6.6]
 
     # pylint: disable=too-many-branches
 
@@ -143,12 +141,13 @@ class ADCConfiguration(Mapping):
         # = Reference Voltage =
         # =====================
 
+        cls = type(self)
         if reference_voltage is not None:
-            if reference_voltage not in REFERENCE_VOLTAGES:
+            if reference_voltage not in cls.REFERENCE_VOLTAGES:
                 raise ValueError(
                     f"Reference voltage of “{oversampling_rate}” out of range"
                     ", please use one of the following values: "
-                    + ", ".join(map(str, REFERENCE_VOLTAGES))
+                    + ", ".join(map(str, cls.REFERENCE_VOLTAGES))
                 )
 
             self.data[4] = int(reference_voltage * 20)
