@@ -138,6 +138,21 @@ class Logger(Listener):
 
         getLogger("network.can").debug(f"{Message(message)}")
 
+    def on_error(self, exc: Exception) -> None:
+        """Handle any exception in the receive thread.
+
+        Parameters
+        ----------
+
+        exc:
+            The exception causing the thread to stop
+
+        """
+
+        getLogger("network.can").error(
+            f"Error while monitoring CAN bus data: {exc}"
+        )
+
 
 class ResponseListener(Listener):
     """A listener that reacts to messages containing a certain id"""
