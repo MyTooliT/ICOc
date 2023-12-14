@@ -249,6 +249,19 @@ class ResponseListener(Listener):
 
         return await self.queue.get()
 
+    def on_error(self, exc: Exception) -> None:
+        """Handle any exception in the receive thread.
+
+        Parameters
+        ----------
+
+        exc:
+            The exception causing the thread to stop
+
+        """
+
+        getLogger().error("Error while monitoring CAN bus data: %s", exc)
+
 
 class DataStreamContextManager:
     """Open and close a data stream from a sensor device"""
