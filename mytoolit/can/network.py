@@ -490,9 +490,6 @@ class Network:
             self._notifier = Notifier(
                 self.bus, listeners=[Logger()], loop=get_running_loop()
             )
-        else:
-            # The old event loop might be already closed
-            self._notifier._loop = get_running_loop()
 
         assert self._notifier is not None
 
