@@ -49,7 +49,7 @@ Check help output of measure command:
   
   option.* (re)
     -h, --help            show this help message and exit
-    -t TIME, --time TIME  measurement time in seconds
+    -t TIME, --time TIME  measurement time in seconds (0 for infinite runtime)
   
   Sensor Device Identifier:
     -n NAME, --name NAME  Name of sensor device

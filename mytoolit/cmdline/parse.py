@@ -3,6 +3,7 @@
 # -- Imports ------------------------------------------------------------------
 
 from argparse import ArgumentParser, ArgumentTypeError, Namespace
+from math import inf
 from re import compile
 
 from netaddr import AddrFormatError, EUI
@@ -175,6 +176,59 @@ def mac_address(address: str) -> EUI:
         ) from error
 
     return mac_address
+
+
+def measurement_time(value: str) -> float:
+    """Check if the given number is valid measurement time
+
+    0 will be interpreted as infinite measurement runtime
+
+    Raises
+    ------
+
+    An argument type error in case the given text is not a valid measurement
+    time value
+
+    Returns
+    -------
+
+    A float value representing the measurement time on success
+
+    Examples
+    --------
+
+    >>> measurement_time("0")
+    inf
+
+    >>> measurement_time("0.1")
+    0.1
+
+    >>> measurement_time("12.34")
+    12.34
+
+    >>> measurement_time("-1")
+    Traceback (most recent call last):
+       ...
+    argparse.ArgumentTypeError: “-1” is not a valid measurement time
+
+    >>> measurement_time("something")
+    Traceback (most recent call last):
+       ...
+    argparse.ArgumentTypeError: “something” is not a valid measurement time
+
+    """
+
+    try:
+        number = float(value)
+        if number < 0:
+            raise ValueError()
+        if number == 0:
+            return inf
+        return number
+    except ValueError as error:
+        raise ArgumentTypeError(
+            f"“{value}” is not a valid measurement time"
+        ) from error
 
 
 def device_number(value: str) -> int:
@@ -409,8 +463,8 @@ def parse_arguments() -> Namespace:
     measurement_parser.add_argument(
         "-t",
         "--time",
-        type=float,
-        help="measurement time in seconds",
+        type=measurement_time,
+        help="measurement time in seconds (0 for infinite runtime)",
         default=10,
     )
     add_identifier_arguments(measurement_parser)

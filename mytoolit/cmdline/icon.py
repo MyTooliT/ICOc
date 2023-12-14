@@ -214,7 +214,7 @@ async def measure(arguments: Namespace) -> None:
                 await network.read_adc_configuration()
             ).sample_rate()
             progress = tqdm(
-                total=int(sample_rate * measurement_time_s),
+                total=round(sample_rate * measurement_time_s, 0),
                 desc="Read sensor data",
                 unit=" values",
                 leave=False,
