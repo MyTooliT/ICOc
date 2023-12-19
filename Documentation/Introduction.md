@@ -282,9 +282,10 @@ export BLOSC_DIR=/opt/homebrew/opt/c-blosc
 export BZIP2_DIR=/opt/homebrew/opt/bzip2
 export LZO_DIR=/opt/homebrew/opt/lzo
 export HDF5_DIR=/opt/homebrew/opt/hdf5
-pip install --no-cache-dir git+https://github.com/PyTables/PyTables
-# If the above command does not work you can also try:
-# pip install git+https://github.com/PyTables/PyTables.git@v3.7.0
+# Require version 3.9.1, since 3.9.2 might fail because of an
+# “Illegal instruction” error:
+# https://github.com/PyTables/PyTables/issues/1093
+pip install --no-cache-dir tables==3.9.1
 ```
 
 #### HDF5 Library Not Loaded
