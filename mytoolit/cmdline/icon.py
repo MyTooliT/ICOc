@@ -221,21 +221,25 @@ async def measure(arguments: Namespace) -> None:
                 disable=None,
             )
 
-            async with network.open_data_stream(first=True) as stream:
-                start_time = time()
-                async for data in stream:
-                    data.apply(conversion_to_g)
-                    storage.add_streaming_data(data)
-                    progress.update(3)  # 3 values per message
+            try:
+                async with network.open_data_stream(first=True) as stream:
+                    start_time = time()
+                    async for data in stream:
+                        data.apply(conversion_to_g)
+                        storage.add_streaming_data(data)
+                        progress.update(3)  # 3 values per message
 
-                    if time() - start_time >= measurement_time_s:
-                        break
-            storage.add_acceleration_meta(
-                "Sensor_Range", f"± {sensor_range / 2} g₀"
-            )
+                        if time() - start_time >= measurement_time_s:
+                            break
+            except KeyboardInterrupt:
+                pass
+            finally:
+                storage.add_acceleration_meta(
+                    "Sensor_Range", f"± {sensor_range / 2} g₀"
+                )
 
-            progress.close()
-            print(f"Data Loss: {storage.dataloss()}")
+                progress.close()
+                print(f"Data Loss: {storage.dataloss()}")
 
 
 async def rename(arguments: Namespace) -> None:
