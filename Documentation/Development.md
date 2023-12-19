@@ -333,9 +333,8 @@ Afterwards make sure there were no (unexpected) errors in the output of the STH 
     8. Check that all links work correctly
 
 6.  Change the [`__version__`](../mytoolit/__init__.py) number inside the [`mytoolit`](../mytoolit) package
-7.  [Update the Docker images](#tutorials:section:updating-images-on-docker-hub)
-8.  Push the latest two commits
-9.  Update the [official ICOc Python package on PyPI](https://pypi.org/project/icoc):
+7.  Push the latest two commits
+8.  Update the [official ICOc Python package on PyPI](https://pypi.org/project/icoc):
 
     1.  Install `build` and `twine`:
 
@@ -365,10 +364,10 @@ Afterwards make sure there were no (unexpected) errors in the output of the STH 
 
         > **Note:** For the command above to work you need an API token, which you can create after [logging into the PyPI `mytoolit` account](https://pypi.org/account/login/). If you need access to the account, please contact [René Schwaiger](https://github.com/sanssecours).
 
-10. Insert the version number (e.g. `1.0.5`) into the tag field
-11. For the release title use “Version VERSION”, where `VERSION` specifies the version number (e.g. “Version 1.0.5”)
-12. Click on “Publish Release”
-13. Close the [milestone][] for the latest release number
-14. Create a new [milestone][] for the next release
+9.  Insert the version number (e.g. `1.0.5`) into the tag field
+10. For the release title use “Version VERSION”, where `VERSION` specifies the version number (e.g. “Version 1.0.5”)
+11. Click on “Publish Release”
+12. Close the [milestone][] for the latest release number
+13. Create a new [milestone][] for the next release
 
 [milestone]: https://github.com/MyTooliT/ICOc/milestones

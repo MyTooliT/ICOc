@@ -374,41 +374,18 @@ pip3 install --user git+https://github.com/cpbotha/xdg-open-wsl.git
 
 ## Docker on Linux
 
-The text below shows how you can use (code of) the new Network class in a Docker container on a **Linux host**. The description on how to move the interface of the Docker container is an adaption of an [article/video from the “Chemnitzer Linux-Tage”](https://chemnitzer.linux-tage.de/2021/de/programm/beitrag/210). Currently we provide two images based on:
+The text below shows how you can use (code of) the new Network class in a Docker container on a **Linux host**. The description on how to move the interface of the Docker container is an adaption of an [article/video from the “Chemnitzer Linux-Tage”](https://chemnitzer.linux-tage.de/2021/de/programm/beitrag/210).
 
-- [Alpine](https://hub.docker.com/r/mytoolit/icoc-alpine) and
-- [Ubuntu](https://hub.docker.com/r/mytoolit/icoc-ubuntu).
+### Creating a Docker Image
 
-### Pull the Docker Image
+To create a Docker image that contains ICOc just install the package with `pip` inside your `Dockerfile`. We recommend that you use a virtual environment to install the package. For an example, please take a look at the [`Dockerfile` in the folder Docker](Docker/Dockerfile).
 
-You can download a recent version of the image from Docker Hub
+### Building the Docker Image
 
-- for Alpine:
-
-```
-docker image pull mytoolit/icoc-alpine:latest
-```
-
-- or Ubuntu:
-
-```
-docker image pull mytoolit/icoc-ubuntu:latest
-```
-
-### Build the Docker Image
-
-If you **do not want to use the prebuilt image**, then you can use the commands below (in the root of the repository) to build them yourself:
-
-- Alpine Linux:
+If you do not want to create a `Dockerfile` yourself, you can build an image based on our Docker example file:
 
 ```sh
-docker build -t mytoolit/icoc-alpine -f Docker/Alpine/Dockerfile .
-```
-
-- Ubuntu:
-
-```sh
-docker build -t mytoolit/icoc-ubuntu -f Docker/Ubuntu/Dockerfile .
+docker build -t mytoolit/icoc -f Docker/Dockerfile .
 ```
 
 ### Using ICOc in the Docker Container
@@ -417,19 +394,11 @@ docker build -t mytoolit/icoc-ubuntu -f Docker/Ubuntu/Dockerfile .
 
    1. Open a new terminal window
 
-   2. Depending on the Docker container you want to use please execute one of the following commands:
+   2. Open a shell in the Docker container
 
-      - Alpine:
-
-        ```sh
-        docker run --rm -it --name icoc mytoolit/icoc-alpine
-        ```
-
-      - Ubuntu:
-
-        ```sh
-        docker run --rm -it --name icoc mytoolit/icoc-ubuntu
-        ```
+      ```sh
+      docker run --rm -it --name icoc mytoolit/icoc
+      ```
 
 2. Make sure the CAN interface is available on the Linux host **(Terminal 2)**
 
@@ -455,56 +424,4 @@ docker build -t mytoolit/icoc-ubuntu -f Docker/Ubuntu/Dockerfile .
 
    ```sh
    icon list
-   ```
-
-<a name="tutorials:section:updating-images-on-docker-hub"></a>
-
-### Updating Images on Docker Hub
-
-#### Preparation
-
-If you have not done so already, you might have to [enable support for building Docker images for multiple architectures](https://cloudolife.com/2022/03/05/Infrastructure-as-Code-IaC/Container/Docker/Docker-buildx-support-multiple-architectures-images/):
-
-1. Enable experimental features for the Docker daemon:
-
-   1. Open `daemon.json`
-   2. Set `"experimental"` to `true`
-
-2. Create a builder (e.g. with name `builder`) and use it:
-
-   ```sh
-   docker buildx create --name builder --use
-   ```
-
-#### Update Steps
-
-To update the official Docker images on Docker Hub, please use the steps below. All commands assume that you use a **POSIX shell** on a Unix system (e.g. Linux or macOS).
-
-1. Login to Docker Hub
-
-   ```
-   printf '%s\n' "$ACCESS_TOKEN" | docker login -u mytoolit --password-stdin
-   ```
-
-   > **Note:** Please make sure that the variable `ACCESS_TOKEN` contains a valid [access token](https://hub.docker.com/settings/security)
-
-2. Build and push the Docker images for multiple platforms:
-
-   ```sh
-   export ICOC_VERSION="$(cat mytoolit/__init__.py |
-                          sed -E 's/__version__ = "([0-9]+\.[0-9]+\.[0-9]+)"/\1/')"
-   docker buildx build \
-     --platform linux/amd64,linux/arm64 \
-     -t mytoolit/icoc-alpine \
-     -t mytoolit/icoc-alpine:stable \
-     -t "mytoolit/icoc-alpine:$ICOC_VERSION" \
-     -f Docker/Alpine/Dockerfile \
-     --push .
-   docker buildx build \
-     --platform linux/amd64,linux/arm64 \
-     -t mytoolit/icoc-ubuntu \
-     -t mytoolit/icoc-ubuntu:stable \
-     -t "mytoolit/icoc-ubuntu:$ICOC_VERSION" \
-     -f Docker/Ubuntu/Dockerfile \
-     --push .
    ```
