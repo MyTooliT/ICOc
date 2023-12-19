@@ -619,9 +619,10 @@ Consider using a build backend that supports PEP 660.</code></pre>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">BZIP2_DIR</span><span class="op">=</span>/opt/homebrew/opt/bzip2</span>
 <span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">LZO_DIR</span><span class="op">=</span>/opt/homebrew/opt/lzo</span>
 <span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">HDF5_DIR</span><span class="op">=</span>/opt/homebrew/opt/hdf5</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">--no-cache-dir</span> git+https://github.com/PyTables/PyTables</span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="co"># If the above command does not work you can also try:</span></span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="co"># pip install git+https://github.com/PyTables/PyTables.git@v3.7.0</span></span></code></pre></div>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Require version 3.9.1, since 3.9.2 might fail because of an</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="co"># “Illegal instruction” error:</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="co"># https://github.com/PyTables/PyTables/issues/1093</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">--no-cache-dir</span> tables==3.9.1</span></code></pre></div>
 </div>
 <div id="hdf5-library-not-loaded" class="section level4 hasAnchor" number="1.2.2.5">
 <h4><span class="header-section-number">1.2.2.5</span> HDF5 Library Not Loaded<a href="#hdf5-library-not-loaded" class="anchor-section" aria-label="Anchor link to header"></a></h4>
