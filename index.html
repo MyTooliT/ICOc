@@ -207,10 +207,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="4.2" data-path=""><a href="#docker-on-linux"><i class="fa fa-check"></i><b>4.2</b> Docker on Linux</a>
 <ul>
-<li class="chapter" data-level="4.2.1" data-path=""><a href="#pull-the-docker-image"><i class="fa fa-check"></i><b>4.2.1</b> Pull the Docker Image</a></li>
-<li class="chapter" data-level="4.2.2" data-path=""><a href="#build-the-docker-image"><i class="fa fa-check"></i><b>4.2.2</b> Build the Docker Image</a></li>
+<li class="chapter" data-level="4.2.1" data-path=""><a href="#creating-a-docker-image"><i class="fa fa-check"></i><b>4.2.1</b> Creating a Docker Image</a></li>
+<li class="chapter" data-level="4.2.2" data-path=""><a href="#building-the-docker-image"><i class="fa fa-check"></i><b>4.2.2</b> Building the Docker Image</a></li>
 <li class="chapter" data-level="4.2.3" data-path=""><a href="#using-icoc-in-the-docker-container"><i class="fa fa-check"></i><b>4.2.3</b> Using ICOc in the Docker Container</a></li>
-<li class="chapter" data-level="4.2.4" data-path=""><a href="#updating-images-on-docker-hub"><i class="fa fa-check"></i><b>4.2.4</b> Updating Images on Docker Hub</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path=""><a href="#scripts"><i class="fa fa-check"></i><b>5</b> Scripts</a>
@@ -1726,34 +1725,15 @@ usbipd wsl attach --busid 5-4</code></pre></li>
 </div>
 <div id="docker-on-linux" class="section level2 hasAnchor" number="4.2">
 <h2><span class="header-section-number">4.2</span> Docker on Linux<a href="#docker-on-linux" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>The text below shows how you can use (code of) the new Network class in a Docker container on a <strong>Linux host</strong>. The description on how to move the interface of the Docker container is an adaption of an <a href="https://chemnitzer.linux-tage.de/2021/de/programm/beitrag/210">article/video from the “Chemnitzer Linux-Tage”</a>. Currently we provide two images based on:</p>
-<ul>
-<li><a href="https://hub.docker.com/r/mytoolit/icoc-alpine">Alpine</a> and</li>
-<li><a href="https://hub.docker.com/r/mytoolit/icoc-ubuntu">Ubuntu</a>.</li>
-</ul>
-<div id="pull-the-docker-image" class="section level3 hasAnchor" number="4.2.1">
-<h3><span class="header-section-number">4.2.1</span> Pull the Docker Image<a href="#pull-the-docker-image" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>You can download a recent version of the image from Docker Hub</p>
-<ul>
-<li>for Alpine:</li>
-</ul>
-<pre><code>docker image pull mytoolit/icoc-alpine:latest</code></pre>
-<ul>
-<li>or Ubuntu:</li>
-</ul>
-<pre><code>docker image pull mytoolit/icoc-ubuntu:latest</code></pre>
+<p>The text below shows how you can use (code of) the new Network class in a Docker container on a <strong>Linux host</strong>. The description on how to move the interface of the Docker container is an adaption of an <a href="https://chemnitzer.linux-tage.de/2021/de/programm/beitrag/210">article/video from the “Chemnitzer Linux-Tage”</a>.</p>
+<div id="creating-a-docker-image" class="section level3 hasAnchor" number="4.2.1">
+<h3><span class="header-section-number">4.2.1</span> Creating a Docker Image<a href="#creating-a-docker-image" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>To create a Docker image that contains ICOc just install the package with <code>pip</code> inside your <code>Dockerfile</code>. We recommend that you use a virtual environment to install the package. For an example, please take a look at the <a href="Docker/Dockerfile"><code>Dockerfile</code> in the folder Docker</a>.</p>
 </div>
-<div id="build-the-docker-image" class="section level3 hasAnchor" number="4.2.2">
-<h3><span class="header-section-number">4.2.2</span> Build the Docker Image<a href="#build-the-docker-image" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>If you <strong>do not want to use the prebuilt image</strong>, then you can use the commands below (in the root of the repository) to build them yourself:</p>
-<ul>
-<li>Alpine Linux:</li>
-</ul>
-<div class="sourceCode" id="cb97"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb97-1"><a href="#cb97-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> build <span class="at">-t</span> mytoolit/icoc-alpine <span class="at">-f</span> Docker/Alpine/Dockerfile .</span></code></pre></div>
-<ul>
-<li>Ubuntu:</li>
-</ul>
-<div class="sourceCode" id="cb98"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> build <span class="at">-t</span> mytoolit/icoc-ubuntu <span class="at">-f</span> Docker/Ubuntu/Dockerfile .</span></code></pre></div>
+<div id="building-the-docker-image" class="section level3 hasAnchor" number="4.2.2">
+<h3><span class="header-section-number">4.2.2</span> Building the Docker Image<a href="#building-the-docker-image" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>If you do not want to create a <code>Dockerfile</code> yourself, you can build an image based on our Docker example file:</p>
+<div class="sourceCode" id="cb95"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb95-1"><a href="#cb95-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> build <span class="at">-t</span> mytoolit/icoc <span class="at">-f</span> Docker/Dockerfile .</span></code></pre></div>
 </div>
 <div id="using-icoc-in-the-docker-container" class="section level3 hasAnchor" number="4.2.3">
 <h3><span class="header-section-number">4.2.3</span> Using ICOc in the Docker Container<a href="#using-icoc-in-the-docker-container" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -1761,76 +1741,26 @@ usbipd wsl attach --busid 5-4</code></pre></li>
 <li><p>Run the container <strong>(Terminal 1)</strong></p>
 <ol style="list-style-type: decimal">
 <li><p>Open a new terminal window</p></li>
-<li><p>Depending on the Docker container you want to use please execute one of the following commands:</p>
-<ul>
-<li><p>Alpine:</p>
-<div class="sourceCode" id="cb99"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb99-1"><a href="#cb99-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">--rm</span> <span class="at">-it</span> <span class="at">--name</span> icoc mytoolit/icoc-alpine</span></code></pre></div></li>
-<li><p>Ubuntu:</p>
-<div class="sourceCode" id="cb100"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb100-1"><a href="#cb100-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">--rm</span> <span class="at">-it</span> <span class="at">--name</span> icoc mytoolit/icoc-ubuntu</span></code></pre></div></li>
-</ul></li>
+<li><p>Open a shell in the Docker container</p>
+<div class="sourceCode" id="cb96"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb96-1"><a href="#cb96-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">--rm</span> <span class="at">-it</span> <span class="at">--name</span> icoc mytoolit/icoc</span></code></pre></div></li>
 </ol></li>
 <li><p>Make sure the CAN interface is available on the Linux host <strong>(Terminal 2)</strong></p>
 <ol style="list-style-type: decimal">
 <li><p>Open a new terminal window</p></li>
 <li><p>Check that the following command:</p>
-<div class="sourceCode" id="cb101"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb101-1"><a href="#cb101-1" aria-hidden="true" tabindex="-1"></a><span class="ex">networkctl</span> list</span></code></pre></div>
+<div class="sourceCode" id="cb97"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb97-1"><a href="#cb97-1" aria-hidden="true" tabindex="-1"></a><span class="ex">networkctl</span> list</span></code></pre></div>
 <p>lists <code>can0</code> under the column <code>LINK</code></p></li>
 </ol></li>
 <li><p>Move the CAN interface into the network space of the Docker container <strong>(Terminal 2)</strong></p>
-<div class="sourceCode" id="cb102"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb102-1"><a href="#cb102-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">DOCKERPID</span><span class="op">=</span><span class="st">&quot;</span><span class="va">$(</span><span class="ex">docker</span> inspect <span class="at">-f</span> <span class="st">&#39;{{ .State.Pid }}&#39;</span> icoc<span class="va">)</span><span class="st">&quot;</span></span>
-<span id="cb102-2"><a href="#cb102-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ip link set can0 netns <span class="st">&quot;</span><span class="va">$DOCKERPID</span><span class="st">&quot;</span></span>
-<span id="cb102-3"><a href="#cb102-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> nsenter <span class="at">-t</span> <span class="st">&quot;</span><span class="va">$DOCKERPID</span><span class="st">&quot;</span> <span class="at">-n</span> ip link set can0 type can bitrate 1000000</span>
-<span id="cb102-4"><a href="#cb102-4" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> nsenter <span class="at">-t</span> <span class="st">&quot;</span><span class="va">$DOCKERPID</span><span class="st">&quot;</span> <span class="at">-n</span> ip link set can0 up</span></code></pre></div></li>
+<div class="sourceCode" id="cb98"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">DOCKERPID</span><span class="op">=</span><span class="st">&quot;</span><span class="va">$(</span><span class="ex">docker</span> inspect <span class="at">-f</span> <span class="st">&#39;{{ .State.Pid }}&#39;</span> icoc<span class="va">)</span><span class="st">&quot;</span></span>
+<span id="cb98-2"><a href="#cb98-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ip link set can0 netns <span class="st">&quot;</span><span class="va">$DOCKERPID</span><span class="st">&quot;</span></span>
+<span id="cb98-3"><a href="#cb98-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> nsenter <span class="at">-t</span> <span class="st">&quot;</span><span class="va">$DOCKERPID</span><span class="st">&quot;</span> <span class="at">-n</span> ip link set can0 type can bitrate 1000000</span>
+<span id="cb98-4"><a href="#cb98-4" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> nsenter <span class="at">-t</span> <span class="st">&quot;</span><span class="va">$DOCKERPID</span><span class="st">&quot;</span> <span class="at">-n</span> ip link set can0 up</span></code></pre></div></li>
 <li><p>Run a test command in Docker container <strong>(Terminal 1)</strong> e.g.:</p>
-<div class="sourceCode" id="cb103"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb103-1"><a href="#cb103-1" aria-hidden="true" tabindex="-1"></a><span class="ex">icon</span> list</span></code></pre></div></li>
-</ol>
-<p><a name="tutorials:section:updating-images-on-docker-hub"></a></p>
-</div>
-<div id="updating-images-on-docker-hub" class="section level3 hasAnchor" number="4.2.4">
-<h3><span class="header-section-number">4.2.4</span> Updating Images on Docker Hub<a href="#updating-images-on-docker-hub" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div id="preparation-1" class="section level4 hasAnchor" number="4.2.4.1">
-<h4><span class="header-section-number">4.2.4.1</span> Preparation<a href="#preparation-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>If you have not done so already, you might have to <a href="https://cloudolife.com/2022/03/05/Infrastructure-as-Code-IaC/Container/Docker/Docker-buildx-support-multiple-architectures-images/">enable support for building Docker images for multiple architectures</a>:</p>
-<ol style="list-style-type: decimal">
-<li><p>Enable experimental features for the Docker daemon:</p>
-<ol style="list-style-type: decimal">
-<li>Open <code>daemon.json</code></li>
-<li>Set <code>"experimental"</code> to <code>true</code></li>
-</ol></li>
-<li><p>Create a builder (e.g. with name <code>builder</code>) and use it:</p>
-<div class="sourceCode" id="cb104"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb104-1"><a href="#cb104-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> buildx create <span class="at">--name</span> builder <span class="at">--use</span></span></code></pre></div></li>
-</ol>
-</div>
-<div id="update-steps" class="section level4 hasAnchor" number="4.2.4.2">
-<h4><span class="header-section-number">4.2.4.2</span> Update Steps<a href="#update-steps" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>To update the official Docker images on Docker Hub, please use the steps below. All commands assume that you use a <strong>POSIX shell</strong> on a Unix system (e.g. Linux or macOS).</p>
-<ol style="list-style-type: decimal">
-<li><p>Login to Docker Hub</p>
-<pre><code>printf &#39;%s\n&#39; &quot;$ACCESS_TOKEN&quot; | docker login -u mytoolit --password-stdin</code></pre>
-<blockquote>
-<p><strong>Note:</strong> Please make sure that the variable <code>ACCESS_TOKEN</code> contains a valid <a href="https://hub.docker.com/settings/security">access token</a></p>
-</blockquote></li>
-<li><p>Build and push the Docker images for multiple platforms:</p>
-<div class="sourceCode" id="cb106"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb106-1"><a href="#cb106-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">ICOC_VERSION</span><span class="op">=</span><span class="st">&quot;</span><span class="va">$(</span><span class="fu">cat</span> mytoolit/__init__.py <span class="kw">|</span></span>
-<span id="cb106-2"><a href="#cb106-2" aria-hidden="true" tabindex="-1"></a>                       <span class="fu">sed</span> <span class="at">-E</span> <span class="st">&#39;s/__version__ = &quot;([0-9]+\.[0-9]+\.[0-9]+)&quot;/\1/&#39;</span><span class="va">)</span><span class="st">&quot;</span></span>
-<span id="cb106-3"><a href="#cb106-3" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> buildx build <span class="dt">\</span></span>
-<span id="cb106-4"><a href="#cb106-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--platform</span> linux/amd64,linux/arm64 <span class="dt">\</span></span>
-<span id="cb106-5"><a href="#cb106-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">-t</span> mytoolit/icoc-alpine <span class="dt">\</span></span>
-<span id="cb106-6"><a href="#cb106-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">-t</span> mytoolit/icoc-alpine:stable <span class="dt">\</span></span>
-<span id="cb106-7"><a href="#cb106-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">-t</span> <span class="st">&quot;mytoolit/icoc-alpine:</span><span class="va">$ICOC_VERSION</span><span class="st">&quot;</span> <span class="dt">\</span></span>
-<span id="cb106-8"><a href="#cb106-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> Docker/Alpine/Dockerfile <span class="dt">\</span></span>
-<span id="cb106-9"><a href="#cb106-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">--push</span> .</span>
-<span id="cb106-10"><a href="#cb106-10" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> buildx build <span class="dt">\</span></span>
-<span id="cb106-11"><a href="#cb106-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">--platform</span> linux/amd64,linux/arm64 <span class="dt">\</span></span>
-<span id="cb106-12"><a href="#cb106-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">-t</span> mytoolit/icoc-ubuntu <span class="dt">\</span></span>
-<span id="cb106-13"><a href="#cb106-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">-t</span> mytoolit/icoc-ubuntu:stable <span class="dt">\</span></span>
-<span id="cb106-14"><a href="#cb106-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">-t</span> <span class="st">&quot;mytoolit/icoc-ubuntu:</span><span class="va">$ICOC_VERSION</span><span class="st">&quot;</span> <span class="dt">\</span></span>
-<span id="cb106-15"><a href="#cb106-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> Docker/Ubuntu/Dockerfile <span class="dt">\</span></span>
-<span id="cb106-16"><a href="#cb106-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">--push</span> .</span></code></pre></div></li>
+<div class="sourceCode" id="cb99"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb99-1"><a href="#cb99-1" aria-hidden="true" tabindex="-1"></a><span class="ex">icon</span> list</span></code></pre></div></li>
 </ol>
 
 <p><a name="scripts:section:scripts"></a></p>
-</div>
 </div>
 </div>
 </div>
@@ -1852,15 +1782,15 @@ usbipd wsl attach --busid 5-4</code></pre></li>
 <h2><span class="header-section-number">5.1</span> EEPROM Check<a href="#eeprom-check" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>The script <code>check-eeprom</code> connects to an STH using its MAC address. Afterwards it writes a given byte value (default: <code>10</code>) into all the cells of an EEPROM page. It then resets the STH, connects again and shows the amount of incorrect EEPROM bytes. It repeats the last steps 5 times before it prints all values in the EEPROM page.</p>
 <p>The command below shows how to execute the EEPROM check for the STH with MAC address <code>08:6b:d7:01:de:81</code>:</p>
-<div class="sourceCode" id="cb107"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb107-1"><a href="#cb107-1" aria-hidden="true" tabindex="-1"></a><span class="ex">check-eeprom</span> 08:6b:d7:01:de:81</span></code></pre></div>
+<div class="sourceCode" id="cb100"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb100-1"><a href="#cb100-1" aria-hidden="true" tabindex="-1"></a><span class="ex">check-eeprom</span> 08:6b:d7:01:de:81</span></code></pre></div>
 <p>You can specify the value that should be written into the EEPROM cells using the option <code>--value</code>:</p>
-<div class="sourceCode" id="cb108"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb108-1"><a href="#cb108-1" aria-hidden="true" tabindex="-1"></a><span class="ex">check-eeprom</span> 08:6b:d7:01:de:81 <span class="at">--value</span> 42</span></code></pre></div>
+<div class="sourceCode" id="cb101"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb101-1"><a href="#cb101-1" aria-hidden="true" tabindex="-1"></a><span class="ex">check-eeprom</span> 08:6b:d7:01:de:81 <span class="at">--value</span> 42</span></code></pre></div>
 <p><a name="section:icoc"></a></p>
 </div>
 <div id="icoc-1" class="section level2 hasAnchor" number="5.2">
 <h2><span class="header-section-number">5.2</span> ICOc<a href="#icoc-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>The command <code>icoc</code> calls <code>ui.py</code>. All command line arguments to the script will be directly forwarded to <code>ui.py</code>. For example, to read acceleration data for 10 seconds from the STH with the (Bluetooth advertisement) name <code>CGvXAd6B</code>, you can use the following command:</p>
-<div class="sourceCode" id="cb109"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb109-1"><a href="#cb109-1" aria-hidden="true" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-n</span> CGvXAd6B <span class="at">-r</span> 10</span></code></pre></div>
+<div class="sourceCode" id="cb102"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb102-1"><a href="#cb102-1" aria-hidden="true" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-n</span> CGvXAd6B <span class="at">-r</span> 10</span></code></pre></div>
 <p><a name="section:icon"></a></p>
 </div>
 <div id="icon" class="section level2 hasAnchor" number="5.3">
@@ -1873,13 +1803,13 @@ usbipd wsl attach --busid 5-4</code></pre></li>
 <p>The utility <code>convert-mac-base64</code> returns the Base64 encoded version of a MAC address. We use the encoded addresses as unique Bluetooth advertisement name for the STH (or SHA). Unfortunately we can not use the MAC address directly because the maximum length of the name is limited to 8 characters. To decode the Base64 name back into a Bluetooth address you can use the script <code>convert-base64-mac</code>.</p>
 <div id="examples" class="section level3 hasAnchor" number="5.4.1">
 <h3><span class="header-section-number">5.4.1</span> Examples<a href="#examples" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div class="sourceCode" id="cb110"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb110-1"><a href="#cb110-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert a MAC address into an 8 character name</span></span>
-<span id="cb110-2"><a href="#cb110-2" aria-hidden="true" tabindex="-1"></a><span class="ex">convert-mac-base64</span> 08:6b:d7:01:de:81</span>
-<span id="cb110-3"><a href="#cb110-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; CGvXAd6B</span></span>
-<span id="cb110-4"><a href="#cb110-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb110-5"><a href="#cb110-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert the Base64 encoded name back into a MAC address</span></span>
-<span id="cb110-6"><a href="#cb110-6" aria-hidden="true" tabindex="-1"></a><span class="ex">convert-base64-mac</span> CGvXAd6B</span>
-<span id="cb110-7"><a href="#cb110-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 08:6b:d7:01:de:81</span></span></code></pre></div>
+<div class="sourceCode" id="cb103"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb103-1"><a href="#cb103-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert a MAC address into an 8 character name</span></span>
+<span id="cb103-2"><a href="#cb103-2" aria-hidden="true" tabindex="-1"></a><span class="ex">convert-mac-base64</span> 08:6b:d7:01:de:81</span>
+<span id="cb103-3"><a href="#cb103-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; CGvXAd6B</span></span>
+<span id="cb103-4"><a href="#cb103-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb103-5"><a href="#cb103-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert the Base64 encoded name back into a MAC address</span></span>
+<span id="cb103-6"><a href="#cb103-6" aria-hidden="true" tabindex="-1"></a><span class="ex">convert-base64-mac</span> CGvXAd6B</span>
+<span id="cb103-7"><a href="#cb103-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 08:6b:d7:01:de:81</span></span></code></pre></div>
 <p><a name="section:remove-log-and-pdf-files"></a></p>
 </div>
 </div>
@@ -1906,13 +1836,13 @@ usbipd wsl attach --busid 5-4</code></pre></li>
 <p>You can use the instructions below, if you want to work on the code of ICOc, i.e. add additional features or fix bugs.</p>
 <ol style="list-style-type: decimal">
 <li><p>Clone <a href="https://github.com/MyTooliT/ICOc">the repository</a> to a directory of your choice. You can either use the <a href="https://git-scm.com/downloads">command line tool <code>git</code></a>:</p>
-<div class="sourceCode" id="cb111"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb111-1"><a href="#cb111-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/MyTooliT/ICOc.git</span></code></pre></div>
+<div class="sourceCode" id="cb104"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb104-1"><a href="#cb104-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/MyTooliT/ICOc.git</span></code></pre></div>
 <p>or one of the many available <a href="https://git-scm.com/downloads/guis">graphical user interfaces for Git</a> to do that.</p></li>
 <li><p>Install ICOc in “developer mode”</p>
 <ol style="list-style-type: decimal">
 <li><p>Change your working directory to the (root) directory of the cloned repository</p></li>
 <li><p>Install ICOc:</p>
-<div class="sourceCode" id="cb112"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb112-1"><a href="#cb112-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">-e</span> .[dev,test]</span></code></pre></div>
+<div class="sourceCode" id="cb105"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb105-1"><a href="#cb105-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">-e</span> .[dev,test]</span></code></pre></div>
 <blockquote>
 <p><strong>Notes:</strong></p>
 <ul>
@@ -1931,7 +1861,7 @@ usbipd wsl attach --busid 5-4</code></pre></li>
 <h2><span class="header-section-number">6.2</span> Style<a href="#style" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Please use the guidelines from <a href="https://www.python.org/dev/peps/pep-0008/">PEP 8</a>. For code formatting we currently use <a href="https://github.com/psf/black">Black</a>, which should format code according to PEP 8 by default.</p>
 <p>To format the whole code base you can use the following command in the root of the repository:</p>
-<div class="sourceCode" id="cb113"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb113-1"><a href="#cb113-1" aria-hidden="true" tabindex="-1"></a><span class="ex">black</span> .</span></code></pre></div>
+<div class="sourceCode" id="cb106"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb106-1"><a href="#cb106-1" aria-hidden="true" tabindex="-1"></a><span class="ex">black</span> .</span></code></pre></div>
 <p>For development we recommend that you use a tool or plugin that reformats your code with Black every time you save. This way we can ensure that we use a consistent style for the whole code base.</p>
 <p><a name="development:section:tests"></a></p>
 </div>
@@ -1949,21 +1879,21 @@ usbipd wsl attach --busid 5-4</code></pre></li>
 <div id="flake8" class="section level4 hasAnchor" number="6.3.1.1">
 <h4><span class="header-section-number">6.3.1.1</span> Flake8<a href="#flake8" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>We check the code with <a href="https://flake8.pycqa.org">flake8</a>:</p>
-<div class="sourceCode" id="cb114"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb114-1"><a href="#cb114-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install flake8</span></code></pre></div>
+<div class="sourceCode" id="cb107"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb107-1"><a href="#cb107-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install flake8</span></code></pre></div>
 <p>Please use the following command in the root of the repository to make sure you did not add any code that introduces warnings:</p>
-<div class="sourceCode" id="cb115"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb115-1"><a href="#cb115-1" aria-hidden="true" tabindex="-1"></a><span class="ex">flake8</span></span></code></pre></div>
+<div class="sourceCode" id="cb108"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb108-1"><a href="#cb108-1" aria-hidden="true" tabindex="-1"></a><span class="ex">flake8</span></span></code></pre></div>
 </div>
 <div id="mypy" class="section level4 hasAnchor" number="6.3.1.2">
 <h4><span class="header-section-number">6.3.1.2</span> mypy<a href="#mypy" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>To check the type hint in the code base we use the static code checker <a href="https://mypy.readthedocs.io">mypy</a>:</p>
-<div class="sourceCode" id="cb116"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb116-1"><a href="#cb116-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install mypy</span></code></pre></div>
+<div class="sourceCode" id="cb109"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb109-1"><a href="#cb109-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install mypy</span></code></pre></div>
 <p>Please use the following command in the root of the repository to check the code base for type problems:</p>
-<div class="sourceCode" id="cb117"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb117-1"><a href="#cb117-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mypy</span> mytoolit</span></code></pre></div>
+<div class="sourceCode" id="cb110"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb110-1"><a href="#cb110-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mypy</span> mytoolit</span></code></pre></div>
 </div>
 <div id="pylint" class="section level4 hasAnchor" number="6.3.1.3">
 <h4><span class="header-section-number">6.3.1.3</span> Pylint<a href="#pylint" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>We currently use <a href="https://github.com/PyCQA/pylint">Pylint</a> to check the code (for errors only):</p>
-<div class="sourceCode" id="cb118"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb118-1"><a href="#cb118-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pylint</span> <span class="at">-E</span> mytoolit</span></code></pre></div>
+<div class="sourceCode" id="cb111"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb111-1"><a href="#cb111-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pylint</span> <span class="at">-E</span> mytoolit</span></code></pre></div>
 </div>
 </div>
 <div id="automatic-tests" class="section level3 hasAnchor" number="6.3.2">
@@ -1971,11 +1901,11 @@ usbipd wsl attach --busid 5-4</code></pre></li>
 <div id="requirements-1" class="section level4 hasAnchor" number="6.3.2.1">
 <h4><span class="header-section-number">6.3.2.1</span> Requirements<a href="#requirements-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Please install the <a href="https://docs.pytest.org">pytest testing module</a>:</p>
-<div class="sourceCode" id="cb119"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb119-1"><a href="#cb119-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install pytest</span></code></pre></div>
+<div class="sourceCode" id="cb112"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb112-1"><a href="#cb112-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install pytest</span></code></pre></div>
 <div id="usage" class="section level5 hasAnchor" number="6.3.2.1.1">
 <h5><span class="header-section-number">6.3.2.1.1</span> Usage<a href="#usage" class="anchor-section" aria-label="Anchor link to header"></a></h5>
 <p>Please run the following command in the root of the repository:</p>
-<div class="sourceCode" id="cb120"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb120-1"><a href="#cb120-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pytest</span> <span class="at">-v</span></span></code></pre></div>
+<div class="sourceCode" id="cb113"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb113-1"><a href="#cb113-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pytest</span> <span class="at">-v</span></span></code></pre></div>
 <p>and make sure that it reports no test failures.</p>
 </div>
 </div>
@@ -2023,17 +1953,17 @@ usbipd wsl attach --busid 5-4</code></pre></li>
 <ol style="list-style-type: decimal">
 <li><p>Open your favorite terminal application and change your working directory to the root of the repository</p></li>
 <li><p>Remove HDF5 files from the repository:</p>
-<div class="sourceCode" id="cb121"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb121-1"><a href="#cb121-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span> <span class="pp">*</span>.hdf5</span></code></pre></div>
+<div class="sourceCode" id="cb114"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb114-1"><a href="#cb114-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span> <span class="pp">*</span>.hdf5</span></code></pre></div>
 <blockquote>
 <p><strong>Note:</strong> You can ignore errors about “no matches for wildcard” on Linux and macOS. This message just tells you that there is no file with the extension <code>hdf5</code> in the current directory.</p>
 </blockquote></li>
 <li><p>Check that no HDF5 files exist in the repository. The following command should not produce any output:</p>
-<div class="sourceCode" id="cb122"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb122-1"><a href="#cb122-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="pp">*</span>.hdf5</span></code></pre></div></li>
+<div class="sourceCode" id="cb115"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb115-1"><a href="#cb115-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="pp">*</span>.hdf5</span></code></pre></div></li>
 <li><p>Give your test STH the <a href="#tutorials:section:sth-renaming">name</a> “Test-STH”</p></li>
 <li><p>Measure data for 10 seconds using the following command:</p>
-<div class="sourceCode" id="cb123"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb123-1"><a href="#cb123-1" aria-hidden="true" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-n</span> <span class="st">&#39;Test-STH&#39;</span> <span class="at">-r</span> 10</span></code></pre></div></li>
+<div class="sourceCode" id="cb116"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb116-1"><a href="#cb116-1" aria-hidden="true" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-n</span> <span class="st">&#39;Test-STH&#39;</span> <span class="at">-r</span> 10</span></code></pre></div></li>
 <li><p>Check that the repo now contains a HDF5 (<code>*.hdf5</code>) file</p>
-<div class="sourceCode" id="cb124"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb124-1"><a href="#cb124-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="pp">*</span>.hdf5</span></code></pre></div></li>
+<div class="sourceCode" id="cb117"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb117-1"><a href="#cb117-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="pp">*</span>.hdf5</span></code></pre></div></li>
 <li><p>Open the file in <a href="#readme:section:measurement-data">HDFView</a></p></li>
 <li><p>Check that the table <code>acceleration</code> contains about 95 000 values</p></li>
 <li><p>Check that the table contains three columns</p></li>
@@ -2041,14 +1971,14 @@ usbipd wsl attach --busid 5-4</code></pre></li>
 <li><p>Check that <code>Sensor_Range</code> contains the correct maximum acceleration values for “Test-STH”</p></li>
 <li><p>Check that <code>Start_Time</code> contains (roughly) the date and time when you executed the command from step 5</p></li>
 <li><p>Check that ICOc handles the following incorrect program calls. The program should <strong>not crash</strong> and print a (helpful) <strong>error description</strong> (not a stak trace) before it exits.</p>
-<div class="sourceCode" id="cb125"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb125-1"><a href="#cb125-1" aria-hidden="true" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-b</span> <span class="st">&#39;12-12-12-12-12&#39;</span></span>
-<span id="cb125-2"><a href="#cb125-2" aria-hidden="true" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-n</span> <span class="st">&#39;TooooLong&#39;</span></span>
-<span id="cb125-3"><a href="#cb125-3" aria-hidden="true" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-s</span> 1</span>
-<span id="cb125-4"><a href="#cb125-4" aria-hidden="true" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-a</span> 257</span>
-<span id="cb125-5"><a href="#cb125-5" aria-hidden="true" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-o</span> <span class="at">-1</span></span>
-<span id="cb125-6"><a href="#cb125-6" aria-hidden="true" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-1</span> <span class="st">&#39; -1&#39;</span></span>
-<span id="cb125-7"><a href="#cb125-7" aria-hidden="true" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-2</span> 256</span>
-<span id="cb125-8"><a href="#cb125-8" aria-hidden="true" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-3</span> nine</span></code></pre></div></li>
+<div class="sourceCode" id="cb118"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb118-1"><a href="#cb118-1" aria-hidden="true" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-b</span> <span class="st">&#39;12-12-12-12-12&#39;</span></span>
+<span id="cb118-2"><a href="#cb118-2" aria-hidden="true" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-n</span> <span class="st">&#39;TooooLong&#39;</span></span>
+<span id="cb118-3"><a href="#cb118-3" aria-hidden="true" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-s</span> 1</span>
+<span id="cb118-4"><a href="#cb118-4" aria-hidden="true" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-a</span> 257</span>
+<span id="cb118-5"><a href="#cb118-5" aria-hidden="true" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-o</span> <span class="at">-1</span></span>
+<span id="cb118-6"><a href="#cb118-6" aria-hidden="true" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-1</span> <span class="st">&#39; -1&#39;</span></span>
+<span id="cb118-7"><a href="#cb118-7" aria-hidden="true" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-2</span> 256</span>
+<span id="cb118-8"><a href="#cb118-8" aria-hidden="true" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-3</span> nine</span></code></pre></div></li>
 </ol>
 </div>
 <div id="check-user-interface" class="section level6 hasAnchor" number="6.3.3.3.1.2">
@@ -2056,7 +1986,7 @@ usbipd wsl attach --busid 5-4</code></pre></li>
 <ol style="list-style-type: decimal">
 <li><p>Repeat steps 1. – 4. from the <a href="#development:section:check-command-line-interface">test above</a></p></li>
 <li><p>Open ICOc using the following command:</p>
-<div class="sourceCode" id="cb126"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb126-1"><a href="#cb126-1" aria-hidden="true" tabindex="-1"></a><span class="ex">icoc</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb119"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb119-1"><a href="#cb119-1" aria-hidden="true" tabindex="-1"></a><span class="ex">icoc</span></span></code></pre></div></li>
 <li><p>The main menu of ICOc should show up</p></li>
 <li><p>Try to connect to a non-existent STH</p>
 <ol style="list-style-type: decimal">
@@ -2137,7 +2067,7 @@ usbipd wsl attach --busid 5-4</code></pre></li>
 <p><strong>Note:</strong> For the text below we assume that you installed <a href="https://en.wikipedia.org/wiki/Make_(software)#Makefile"><code>make</code></a> on your machine.</p>
 </blockquote>
 <p>To run all checks, the STH test and the STU test use the following <code>make</code> command:</p>
-<div class="sourceCode" id="cb127"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb127-1"><a href="#cb127-1" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> run</span></code></pre></div>
+<div class="sourceCode" id="cb120"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb120-1"><a href="#cb120-1" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> run</span></code></pre></div>
 <p>Afterwards make sure there were no (unexpected) errors in the output of the STH and STU test.</p>
 <p><a name="development:section:release"></a></p>
 </div>
@@ -2150,7 +2080,7 @@ usbipd wsl attach --busid 5-4</code></pre></li>
 <ol style="list-style-type: decimal">
 <li><p>Set the value of <code>sth</code> → <code>status</code> in the <a href="#introduction:section:changing-configuration-values">configuration</a> to <code>Epoxied</code></p></li>
 <li><p>Execute the command:</p>
-<div class="sourceCode" id="cb128"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb128-1"><a href="#cb128-1" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> run</span></code></pre></div>
+<div class="sourceCode" id="cb121"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb121-1"><a href="#cb121-1" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> run</span></code></pre></div>
 <p>in the root of the repository</p></li>
 </ol></li>
 <li><p>Check that the <strong>firmware flash</strong> works in Windows</p>
@@ -2182,19 +2112,18 @@ usbipd wsl attach --busid 5-4</code></pre></li>
 <li><p>Check that all links work correctly</p></li>
 </ol></li>
 <li><p>Change the <a href="../mytoolit/__init__.py"><code>__version__</code></a> number inside the <a href="../mytoolit"><code>mytoolit</code></a> package</p></li>
-<li><p><a href="#tutorials:section:updating-images-on-docker-hub">Update the Docker images</a></p></li>
 <li><p>Push the latest two commits</p></li>
 <li><p>Update the <a href="https://pypi.org/project/icoc">official ICOc Python package on PyPI</a>:</p>
 <ol style="list-style-type: decimal">
 <li><p>Install <code>build</code> and <code>twine</code>:</p>
-<div class="sourceCode" id="cb129"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb129-1"><a href="#cb129-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">--upgrade</span> build twine</span></code></pre></div></li>
+<div class="sourceCode" id="cb122"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb122-1"><a href="#cb122-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">--upgrade</span> build twine</span></code></pre></div></li>
 <li><p>Build the package (in the root directory of the repository):</p>
-<div class="sourceCode" id="cb130"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb130-1"><a href="#cb130-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> <span class="at">-m</span> build</span></code></pre></div></li>
+<div class="sourceCode" id="cb123"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb123-1"><a href="#cb123-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> <span class="at">-m</span> build</span></code></pre></div></li>
 <li><p>Check the package:</p>
-<div class="sourceCode" id="cb131"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb131-1"><a href="#cb131-1" aria-hidden="true" tabindex="-1"></a><span class="ex">twine</span> check dist/<span class="pp">*</span></span></code></pre></div>
+<div class="sourceCode" id="cb124"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb124-1"><a href="#cb124-1" aria-hidden="true" tabindex="-1"></a><span class="ex">twine</span> check dist/<span class="pp">*</span></span></code></pre></div>
 <p>The output of the command above should print the text <code>PASSED</code> twice.</p></li>
 <li><p>Upload the package to PyPI:</p>
-<div class="sourceCode" id="cb132"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb132-1"><a href="#cb132-1" aria-hidden="true" tabindex="-1"></a><span class="ex">twine</span> upload dist/<span class="pp">*</span></span></code></pre></div>
+<div class="sourceCode" id="cb125"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb125-1"><a href="#cb125-1" aria-hidden="true" tabindex="-1"></a><span class="ex">twine</span> upload dist/<span class="pp">*</span></span></code></pre></div>
 <blockquote>
 <p><strong>Note:</strong> For the command above to work you need an API token, which you can create after <a href="https://pypi.org/account/login/">logging into the PyPI <code>mytoolit</code> account</a>. If you need access to the account, please contact <a href="https://github.com/sanssecours">René Schwaiger</a>.</p>
 </blockquote></li>
@@ -2224,7 +2153,7 @@ usbipd wsl attach --busid 5-4</code></pre></li>
 <ul>
 <li><p>Require Python <code>3.9</code> or later</p></li>
 <li><p>Uploaded package to <a href="https://pypi.org/project/icoc/">PyPi</a>, which means you can now install ICOc via:</p>
-<div class="sourceCode" id="cb133"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb133-1"><a href="#cb133-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install icoc</span></code></pre></div></li>
+<div class="sourceCode" id="cb126"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb126-1"><a href="#cb126-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install icoc</span></code></pre></div></li>
 </ul>
 </div>
 <div id="scripts-1" class="section level3 hasAnchor" number="7.1.3">
@@ -2417,7 +2346,7 @@ usbipd wsl attach --busid 5-4</code></pre></li>
 <li>disable measurement channel 3.</li>
 </ul></li>
 <li><p>ICOc can now connect to an STH, which has “no name” using the command line option <code>-n</code> (<code>--name</code>):</p>
-<div class="sourceCode" id="cb135"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb135-1"><a href="#cb135-1" aria-hidden="true" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-n</span> <span class="st">&#39;&#39;</span> <span class="co"># alternatively you can also just use `icoc -n`</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb128"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb128-1"><a href="#cb128-1" aria-hidden="true" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-n</span> <span class="st">&#39;&#39;</span> <span class="co"># alternatively you can also just use `icoc -n`</span></span></code></pre></div></li>
 </ul>
 </div>
 <div id="logging" class="section level4 hasAnchor" number="7.3.1.2">
@@ -2545,7 +2474,7 @@ values of the y-axis and z-axis into the EEPROM</li>
 <li><code>plotter.log</code>: Log messages of plotter (window process)</li>
 </ul>
 <p>By default ICOc only write log messages of level <code>ERROR</code> or higher into theses files. To print more detailed output you can use the option <code>--log</code> to change the log level. For example, to change the log level to <code>DEBUG</code> (or higher) you can use the the following command:</p>
-<div class="sourceCode" id="cb136"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb136-1"><a href="#cb136-1" aria-hidden="true" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">--log</span> debug</span></code></pre></div>
+<div class="sourceCode" id="cb129"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb129-1"><a href="#cb129-1" aria-hidden="true" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">--log</span> debug</span></code></pre></div>
 <p>The other parts of the code, which use the old <code>Network</code> class (e.g. the verification test) do not store the log output in files, but instead use the standard error output (<code>stdout</code>). This change should hopefully improve the visibility of important log messages.</p>
 </div>
 </div>
@@ -2608,7 +2537,7 @@ values of the y-axis and z-axis into the EEPROM</li>
 <h3><span class="header-section-number">7.5.3</span> SMH Test<a href="#smh-test" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <ul>
 <li><p>We added a flash upload test for the sensory milling head PCB. To only execute this part of the SMH test you can use the following command:</p>
-<div class="sourceCode" id="cb137"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb137-1"><a href="#cb137-1" aria-hidden="true" tabindex="-1"></a><span class="ex">test-smh</span> <span class="at">-k</span> flash</span></code></pre></div></li>
+<div class="sourceCode" id="cb130"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb130-1"><a href="#cb130-1" aria-hidden="true" tabindex="-1"></a><span class="ex">test-smh</span> <span class="at">-k</span> flash</span></code></pre></div></li>
 </ul>
 </div>
 <div id="internal-4" class="section level3 hasAnchor" number="7.5.4">
@@ -2671,7 +2600,7 @@ values of the y-axis and z-axis into the EEPROM</li>
 <h3><span class="header-section-number">7.6.3</span> SMH Test<a href="#smh-test-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <ul>
 <li><p>We added a basic test for the new sensory milling hardware (SMH). To execute the test, please use the command</p>
-<div class="sourceCode" id="cb138"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb138-1"><a href="#cb138-1" aria-hidden="true" tabindex="-1"></a><span class="ex">test-smh</span></span></code></pre></div>
+<div class="sourceCode" id="cb131"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb131-1"><a href="#cb131-1" aria-hidden="true" tabindex="-1"></a><span class="ex">test-smh</span></span></code></pre></div>
 <p>Currently the test:</p>
 <ul>
 <li>checks if the STU is able to <strong>connect</strong> to the device,</li>
@@ -2721,7 +2650,7 @@ values of the y-axis and z-axis into the EEPROM</li>
 <li><p><strong>Removed unused options</strong> from the command line interface</p></li>
 <li><p>All command line arguments should now be <strong>checked for validity</strong> before starting ICOc</p></li>
 <li><p>You do not need to connect the PCAN interface to list the help message of the command line interface:</p>
-<div class="sourceCode" id="cb139"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb139-1"><a href="#cb139-1" aria-hidden="true" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-h</span></span></code></pre></div>
+<div class="sourceCode" id="cb132"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb132-1"><a href="#cb132-1" aria-hidden="true" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-h</span></span></code></pre></div>
 <p>anymore</p></li>
 </ul>
 </div>
@@ -2801,7 +2730,7 @@ values of the y-axis and z-axis into the EEPROM</li>
 <div id="verification-tests-1" class="section level3 hasAnchor" number="7.8.2">
 <h3><span class="header-section-number">7.8.2</span> Verification Tests<a href="#verification-tests-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>We added the old code of the STH verification tests. You can now execute these tests using the command</p>
-<div class="sourceCode" id="cb141"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb141-1"><a href="#cb141-1" aria-hidden="true" tabindex="-1"></a><span class="ex">test-sth-verification</span></span></code></pre></div>
+<div class="sourceCode" id="cb134"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb134-1"><a href="#cb134-1" aria-hidden="true" tabindex="-1"></a><span class="ex">test-sth-verification</span></span></code></pre></div>
 <p>For more information about these tests, please take a look at the section “Verification Tests” <a href="https://github.com/MyTooliT/ICOc/blob/e818e5fa/Documentation/Tutorials.md">here</a>.</p>
 </div>
 <div id="internal-6" class="section level3 hasAnchor" number="7.8.3">
@@ -3505,7 +3434,7 @@ Python 3.6.</li>
 <h3><span class="header-section-number">7.19.3</span> Requirements<a href="#requirements-3" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <ul>
 <li><p>You can now install the required Python packages using the command</p>
-<div class="sourceCode" id="cb142"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb142-1"><a href="#cb142-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">-r</span> requirements.txt</span></code></pre></div>
+<div class="sourceCode" id="cb135"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb135-1"><a href="#cb135-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">-r</span> requirements.txt</span></code></pre></div>
 <p>in the root of the repository.</p></li>
 </ul>
 </div>
@@ -3529,10 +3458,10 @@ file (<code>Configuration/config.yaml</code>).</p></li>
 <li><p>The test program is now location independent. This means you do not need to
 change the working directory to call the script any more. For example,
 executing the command:</p>
-<div class="sourceCode" id="cb143"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb143-1"><a href="#cb143-1" aria-hidden="true" tabindex="-1"></a><span class="ex">py</span> mytoolit/test/production/sth.py <span class="at">-k</span> battery <span class="at">-k</span> connect</span></code></pre></div>
+<div class="sourceCode" id="cb136"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb136-1"><a href="#cb136-1" aria-hidden="true" tabindex="-1"></a><span class="ex">py</span> mytoolit/test/production/sth.py <span class="at">-k</span> battery <span class="at">-k</span> connect</span></code></pre></div>
 <p>or the commands:</p>
-<div class="sourceCode" id="cb144"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb144-1"><a href="#cb144-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> mytoolit/test/production</span>
-<span id="cb144-2"><a href="#cb144-2" aria-hidden="true" tabindex="-1"></a><span class="ex">py</span> sth.py <span class="at">-k</span> battery <span class="at">-k</span> connect</span></code></pre></div>
+<div class="sourceCode" id="cb137"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb137-1"><a href="#cb137-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> mytoolit/test/production</span>
+<span id="cb137-2"><a href="#cb137-2" aria-hidden="true" tabindex="-1"></a><span class="ex">py</span> sth.py <span class="at">-k</span> battery <span class="at">-k</span> connect</span></code></pre></div>
 <p>in the root of repository should have the same effect.</p></li>
 </ul>
 
