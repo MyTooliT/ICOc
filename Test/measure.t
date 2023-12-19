@@ -4,8 +4,14 @@
 
 -- Check Measure Subcommand ----------------------------------------------------
 
-  $ icon measure -t 5 -d 0
-  Sample Rate: 9524 Hz
+  $ dataloss=$(icon measure -t 5 -d 0 | grep 'Data Loss' | \
+  > sed -E 's/[^0-9]+([0.9]\.[0-9]+)[^0-9]*/\1/')
+  $ if (( $(printf "%s < 0.1\n" "${dataloss}" | bc) )); then
+  >   printf "Data loss below 10%%\n"
+  > else
+  >   printf "Data loss equal to or greater than 10%% (%s)\n" "$dataloss"
+  > fi
+  Data loss below 10%
 
   $ runtime=$(icoanalyzer Measurement*.hdf5 | 
   >           grep 'Runtime:' | 

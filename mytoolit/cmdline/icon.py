@@ -235,6 +235,7 @@ async def measure(arguments: Namespace) -> None:
             )
 
             progress.close()
+            print(f"Data Loss: {storage.dataloss()}")
 
 
 async def rename(arguments: Namespace) -> None:
