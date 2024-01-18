@@ -33,7 +33,7 @@ check:
 	flake8
 	mypy mytoolit
 	pylint -E mytoolit
-	pylint mytoolit --ignore-patterns '(stu|streaming|units)\.py'
+	pylint mytoolit --ignore-patterns '(streaming|units)\.py'
 
 .PHONY: test
 test: pytest-test

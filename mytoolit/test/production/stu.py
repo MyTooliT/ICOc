@@ -115,6 +115,8 @@ class TestSTU(TestNode):
 
 
 def main():
+    """Run production test for Stationary Transceiver Unit (STU)"""
+
     unittest_main(
         testRunner=ExtendedTestRunner, module="mytoolit.test.production.stu"
     )
