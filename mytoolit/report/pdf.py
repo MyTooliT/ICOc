@@ -39,15 +39,17 @@ class PDFImage(Flowable):
             (page,) = PdfReader(pdf_data).pages
             self.data = pagexobj(page)
 
-    def wrap(self, width, height):
+    # pylint: disable=unused-argument
+
+    def wrap(self, availWidth, availHeight):
         """Wrap the PDF object according to the given dimensions
 
         Parameters
         ----------
 
-        width:
+        availWidth:
             The width of the wrapped PDF object
-        height:
+        availHeight:
             The height of the wrapped PDF object
 
         Returns
@@ -56,6 +58,8 @@ class PDFImage(Flowable):
         The dimensions of the wrapped object
         """
         return self.width, self.height
+
+    # pylint: enable=unused-argument
 
     def drawOn(self, canvas, x, y, _=0):
         """Draw the PDF object on the given canvas
