@@ -252,7 +252,7 @@ class State:
         """
 
         attributes = [
-            "{} State".format("Set" if self.is_set() else "Get"),
+            f"{'Set' if self.is_set() else 'Get'} State",
             f"Location: {self.location_name()}",
             f"State: {self.state_name()}",
         ]
@@ -359,53 +359,11 @@ class NodeStatus:
 
 
 class NodeStatusSTH(NodeStatus):
-    def __init__(self, value: Union[List[int], int]) -> None:
-        """Initialize the node status word using the given arguments
-
-        Parameters
-        ----------
-
-        value:
-            A 32 bit integer or list of bytes that specifies the value of the
-            node status word
-
-        """
-
-        super().__init__(value)
-
-    def __repr__(self) -> str:
-        """Retrieve the textual representation of the node status word
-
-        Returns
-        -------
-
-        A string that describes the attributes of the node status word
-
-        Examples
-        --------
-
-        >>> NodeStatusSTH(0b0100)
-        State: Standby, No Error
-
-        """
-
-        return super().__repr__()
+    """Wrapper for the node status word of the STH"""
 
 
 class NodeStatusSTU(NodeStatus):
-    def __init__(self, value: Union[List[int], int]) -> None:
-        """Initialize the node status word using the given arguments
-
-        Parameters
-        ----------
-
-        value:
-            A 32 bit integer or list of bytes that specifies the value of the
-            node status word
-
-        """
-
-        super().__init__(value)
+    """Wrapper for the node status word of the STU"""
 
     def __repr__(self) -> str:
         """Retrieve the textual representation of the node status word
@@ -430,18 +388,18 @@ class NodeStatusSTU(NodeStatus):
 
         attributes = [
             super().__repr__(),
-            "Radio Port {}".format(
-                "Enabled" if radio_port_enabled else "Disabled"
-            ),
-            "CAN Port {}".format(
-                "Enabled" if can_port_enabled else "Disabled"
-            ),
-            "Bluetooth {}".format(
-                "Connected" if bluetooth_connected else "Disconnected"
+            f"Radio Port {'Enabled' if radio_port_enabled else 'Disabled'}",
+            f"CAN Port {'Enabled' if can_port_enabled else 'Disabled'}",
+            (
+                "Bluetooth "
+                f"{'Connected' if bluetooth_connected else 'Disconnected'}"
             ),
         ]
 
         return ", ".join(attributes)
+
+
+# pylint: disable=too-few-public-methods
 
 
 class ErrorStatus:
@@ -489,21 +447,11 @@ class ErrorStatus:
         return bool(self.value & 1)
 
 
+# pylint: enable=too-few-public-methods
+
+
 class ErrorStatusSTH(ErrorStatus):
     """Wrapper class for error status word 1 of the STH"""
-
-    def __init__(self, value: Union[List[int], int]) -> None:
-        """Initialize the error status word using the given arguments
-
-        Parameters
-        ----------
-
-        value:
-            A 32 bit integer or list of bytes that specifies the value of the
-            error status word
-
-        """
-        super().__init__(value)
 
     def __repr__(self) -> str:
         """Retrieve the textual representation of the error status word
@@ -567,19 +515,6 @@ class ErrorStatusSTH(ErrorStatus):
 
 class ErrorStatusSTU(ErrorStatus):
     """Wrapper class for error status word 1 of the STH"""
-
-    def __init__(self, value: Union[List[int], int]) -> None:
-        """Initialize the error status word using the given arguments
-
-        Parameters
-        ----------
-
-        value:
-            A 32 bit integer or list of bytes that specifies the value of the
-            error status word
-
-        """
-        super().__init__(value)
 
     def __repr__(self) -> str:
         """Retrieve the textual representation of the error status word
