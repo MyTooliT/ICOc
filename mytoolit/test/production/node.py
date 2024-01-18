@@ -330,7 +330,6 @@ class TestNode(TestCase):
 
     def _test_firmware_flash(
         self,
-        node: str,
         flash_location: Union[str, Path],
         programmmer_serial_number: int,
         chip: str,
@@ -339,9 +338,6 @@ class TestNode(TestCase):
 
         Parameters
         ----------
-
-        node:
-            A textual description of the device/node that will be flashed
 
         flash_location:
             The location of the flash image
