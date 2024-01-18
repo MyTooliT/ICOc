@@ -95,6 +95,7 @@ class Report:
             "SMH": "Sensory Milling Head",
             "STH": "Sensory Tool Holder",
             "STU": "Stationary Transceiver Unit",
+            "Device": "Device",
         }
         self.document = SimpleDocTemplate(
             f"{node} Test.pdf",
