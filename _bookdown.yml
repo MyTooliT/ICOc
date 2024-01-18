@@ -10,6 +10,7 @@ rmd_files:
   - Documentation/Scripts.md
   - Documentation/Development.md
   - Documentation/Releases/Releases.md
+  - Documentation/Releases/1.9.0.md
   - Documentation/Releases/1.8.0.md
   - Documentation/Releases/1.7.0.md
   - Documentation/Releases/1.6.0.md
