@@ -4,7 +4,7 @@
 
 from argparse import ArgumentParser, ArgumentTypeError, Namespace
 from math import inf
-from re import compile
+from re import compile as re_compile
 
 from netaddr import AddrFormatError, EUI
 
@@ -41,7 +41,7 @@ def base64_mac_address(name):
 
     """
 
-    base64_regex = compile("[A-Za-z0-9/+]{8}$")
+    base64_regex = re_compile("[A-Za-z0-9/+]{8}$")
     if base64_regex.match(name):
         return name
     raise ArgumentTypeError(f"“{name}” is not a Base64 encoded MAC address")
@@ -169,13 +169,13 @@ def mac_address(address: str) -> EUI:
     """
 
     try:
-        mac_address = EUI(address)
+        eui = EUI(address)
     except AddrFormatError as error:
         raise ArgumentTypeError(
             f"“{address}” is not a valid MAC address"
         ) from error
 
-    return mac_address
+    return eui
 
 
 def measurement_time(value: str) -> float:
