@@ -64,11 +64,17 @@ def create_acceleration_description(
 # -- Classes ------------------------------------------------------------------
 
 
+# pylint: disable=too-few-public-methods
+
+
 class AccelerationDescription(IsDescription):
     """Description of HDF acceleration table"""
 
     counter = UInt8Col()
     timestamp = UInt64Col()  # Microseconds since measurement start
+
+
+# pylint: enable=too-few-public-methods
 
 
 class StorageException(Exception):
