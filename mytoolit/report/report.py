@@ -30,7 +30,9 @@ from mytoolit.report.forms import CheckBoxList, KeepTogether, Signature
 # -- Functions ----------------------------------------------------------------
 
 
-# noinspection PyUnusedLocal
+# pylint: disable=unused-argument
+
+
 def _first_page(canvas, document, node):
     """Define the style of the first page of the report"""
 
@@ -63,7 +65,12 @@ def _first_page(canvas, document, node):
     canvas.restoreState()
 
 
+# pylint: enable=unused-argument
+
+
 # -- Class --------------------------------------------------------------------
+
+# pylint: disable=too-many-instance-attributes
 
 
 class Report:
@@ -84,19 +91,16 @@ class Report:
         """
 
         self.node = node
+        device_name = {
+            "SMH": "Sensory Milling Head",
+            "STH": "Sensory Tool Holder",
+            "STU": "Stationary Transceiver Unit",
+        }
         self.document = SimpleDocTemplate(
             f"{node} Test.pdf",
             author="MyTooliT",
             title="Test Report",
-            subject="{} Test".format(
-                "Sensory Tool Holder"
-                if node == "STH"
-                else (
-                    "Sensory Milling Head"
-                    if node == "SMH"
-                    else "Stationary Transceiver Unit"
-                )
-            ),
+            subject=f"{device_name[node]} Test",
         )
         self.story = [Spacer(1, 3 * cm)]
         self.styles = get_style_sheet()
@@ -260,9 +264,17 @@ class Report:
         self.document.build(self.story, onFirstPage=first_page)
 
 
+# pylint: enable=too-many-instance-attributes
+
+
 # -- Main ---------------------------------------------------------------------
 
-if __name__ == "__main__":
+# pylint: disable=import-outside-toplevel
+
+
+def main():
+    """Manual test code for Report"""
+
     from platform import system
     from subprocess import run
 
@@ -288,6 +300,14 @@ if __name__ == "__main__":
 
         startfile(pdf_path)
     else:
-        run([
-            "{}open".format("" if system() == "Darwin" else "xdg-"), pdf_path
-        ])
+        run(
+            [f"{'' if system() == 'Darwin' else 'xdg-'}open", pdf_path],
+            check=True,
+        )
+
+
+# pylint: enable=import-outside-toplevel
+
+
+if __name__ == "__main__":
+    main()
