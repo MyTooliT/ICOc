@@ -192,6 +192,8 @@ class TestSMH(TestSensorNode):
 
 
 def main():
+    """Run production test for Sensory Milling Head (SMH)"""
+
     unittest_main(
         testRunner=ExtendedTestRunner, module="mytoolit.test.production.smh"
     )
