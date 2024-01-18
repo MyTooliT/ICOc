@@ -32,8 +32,7 @@ run: check test hardware-test
 check:
 	flake8
 	mypy mytoolit
-	pylint -E mytoolit
-	pylint mytoolit --ignore-patterns '(streaming|units)\.py'
+	pylint mytoolit
 
 .PHONY: test
 test: pytest-test

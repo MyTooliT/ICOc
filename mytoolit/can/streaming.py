@@ -85,22 +85,22 @@ class AsyncStreamBuffer(Listener):
 
         return self.queue.get()
 
-    def on_message_received(self, message: Message) -> None:
+    def on_message_received(self, msg: Message) -> None:
         """Handle received messages
 
         Parameters
         ----------
 
-        message:
+        msg:
             The received CAN message
 
         """
 
-        if message.arbitration_id != self.identifier.value:
+        if msg.arbitration_id != self.identifier.value:
             return
 
-        data = message.data
-        timestamp = message.timestamp
+        data = msg.data
+        timestamp = msg.timestamp
         raw_values = [
             TimestampedValue(
                 value=int.from_bytes(word, byteorder="little"),
@@ -137,6 +137,19 @@ class AsyncStreamBuffer(Listener):
 
         self.queue.put_nowait(streaming_data)
 
+    def on_error(self, exc: Exception) -> None:
+        """This method is called to handle any exception in the receive thread.
+
+        Parameters
+        ----------
+
+        exc:
+            The exception causing the thread to stop
+
+        """
+
+        raise NotImplementedError()
+
 
 class StreamingFormat:
     """Support for specifying the data streaming format
@@ -146,6 +159,8 @@ class StreamingFormat:
 
     # Possible number of data sets
     data_set = [0, 1, 3, 6, 10, 15, 20, 30]
+
+    # pylint: disable=too-many-arguments
 
     def __init__(
         self,
@@ -259,6 +274,8 @@ class StreamingFormat:
 
             set_part(0, 3, cls.data_set.index(sets))
 
+    # pylint: enable=too-many-arguments
+
     def __repr__(self) -> str:
         """Retrieve the textual representation of the streaming format
 
@@ -287,9 +304,7 @@ class StreamingFormat:
         data_set_explanation = (
             "Stop Stream"
             if data_sets == 0
-            else "{} Data Set{}".format(
-                data_sets, "" if data_sets == 1 else "s"
-            )
+            else f"{data_sets} Data Set{'' if data_sets == 1 else 's'}"
         )
 
         parts = [
@@ -403,29 +418,6 @@ class StreamingFormatVoltage(StreamingFormat):
             **keyword_arguments,
             value_explanations=("Voltage 1", "Voltage 2", "Voltage 3"),
         )
-
-    def __repr__(self) -> str:
-        """Retrieve the textual representation of the voltage streaming format
-
-        Returns
-        -------
-
-        A string that describes the voltage streaming format
-
-        Examples
-        --------
-
-        >>> StreamingFormatVoltage(streaming=True, width=2, second=True,
-        ...                        sets=10)
-        Streaming, 2 Bytes, 10 Data Sets, Read Voltage 2
-
-        >>> StreamingFormatVoltage(streaming=False, width=3, first=False,
-        ...                        second=True, third=True, sets=3)
-        Single Request, 3 Bytes, 3 Data Sets, Read Voltage 2, Read Voltage 3
-
-        """
-
-        return super().__repr__()
 
 
 class TimestampedValue:
