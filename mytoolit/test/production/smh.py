@@ -74,26 +74,14 @@ class TestSMH(TestSensorNode):
         async def test_eeprom():
             """Test the EERPOM of the SMH"""
 
-            cls = type(self)
             receiver = Node("STH 1")
+            cls = type(self)
 
             # ========
             # = Name =
             # ========
 
-            name = settings.smh.name
-
-            await self.can.write_eeprom_name(name, receiver)
-            read_name = await self.can.read_eeprom_name(receiver)
-
-            self.assertEqual(
-                name,
-                read_name,
-                f"Written name “{name}” does not match read name"
-                f" “{read_name}”",
-            )
-
-            cls.name = read_name
+            cls.name = await self._test_name(receiver, settings.smh.name)
 
             # =========================
             # = Sleep & Advertisement =

@@ -5,6 +5,7 @@
 from time import sleep
 
 from mytoolit.config import settings
+from mytoolit.can.node import Node
 from mytoolit.test.production.node import TestNode
 
 # -- Classes ------------------------------------------------------------------
@@ -80,6 +81,36 @@ class TestSensorNode(TestNode):
         sleep(1)
 
         self.loop.run_until_complete(self._test_connection("STH 1"))
+
+    async def _test_name(self, receiver: Node, name: str) -> str:
+        """Check if writing and reading back the name of a sensor device works
+
+        Parameters
+        ----------
+
+        receiver:
+            The node where the name should be updated
+
+        name:
+            The text that should be used as name for the sensor device
+
+        Returns
+        -------
+
+        Read back name
+
+        """
+
+        await self.can.write_eeprom_name(name, receiver)
+        read_name = await self.can.read_eeprom_name(receiver)
+
+        self.assertEqual(
+            name,
+            read_name,
+            f"Written name “{name}” does not match read name “{read_name}”",
+        )
+
+        return read_name
 
     async def _test_eeprom_sleep_advertisement_times(self):
         """Test if reading and writing of sleep/advertisement times works"""

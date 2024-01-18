@@ -379,18 +379,7 @@ class TestSTH(TestSensorNode):
                     cls.bluetooth_mac  # pylint: disable=no-member
                 )
             )
-
-            await self.can.write_eeprom_name(name, receiver)
-            read_name = await self.can.read_eeprom_name(receiver)
-
-            self.assertEqual(
-                name,
-                read_name,
-                f"Written name “{name}” does not match read name"
-                f" “{read_name}”",
-            )
-
-            cls.name = read_name
+            cls.name = await self._test_name(Node(receiver), name)
 
             # =========================
             # = Sleep & Advertisement =
