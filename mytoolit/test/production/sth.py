@@ -166,7 +166,7 @@ class TestSTH(TestSensorNode):
                 f"“{settings.sth.hardware_version}”"
             ) from error
 
-        if not (1 <= hardware_version.major <= 2):
+        if not 1 <= hardware_version.major <= 2:
             raise ValueError(
                 f"STH hardware version “{hardware_version}” "
                 "is currently not supported"
@@ -359,6 +359,8 @@ class TestSTH(TestSensorNode):
             f"{voltage_diff_maximum:.0f} mV{possible_failure_reason}",
         )
 
+    # pylint: disable=too-many-locals
+
     def test_eeprom(self):
         """Test if reading and writing the EEPROM works"""
 
@@ -413,6 +415,8 @@ class TestSTH(TestSensorNode):
             acceleration_slope = acceleration_max / adc_max
             acceleration_offset = -(acceleration_max / 2)
 
+            # pylint: disable=too-many-arguments
+
             async def write_read_check(
                 class_variable, write_routine, value, read_routine, axis, name
             ):
@@ -429,6 +433,8 @@ class TestSTH(TestSensorNode):
                         f"“{read_value:.5f}”"
                     ),
                 )
+
+            # pylint: enable=too-many-arguments
 
             class_variables = (
                 "acceleration_slope_x",
@@ -515,8 +521,12 @@ class TestSTH(TestSensorNode):
 
         self.loop.run_until_complete(test_eeprom())
 
+    # pylint: enable=too-many-locals
+
 
 def main():
+    """Run production test for Sensory Tool Holder (STH)"""
+
     unittest_main(
         testRunner=ExtendedTestRunner, module="mytoolit.test.production.sth"
     )
