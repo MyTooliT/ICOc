@@ -128,9 +128,10 @@ class Node:
 
         """
 
-        if self.value == 0 or self.value == 31:
-            return "Broadcast With{} Acknowledgment".format(
-                "" if self.value == 0 else "out"
+        if self.value in (0, 31):
+            return (
+                "Broadcast "
+                f"With{'' if self.value == 0 else 'out'} Acknowledgment"
             )
         if self.is_sth():
             return f"STH {self.value}"
