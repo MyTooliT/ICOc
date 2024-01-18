@@ -137,18 +137,20 @@ class TestNode(TestCase):
         """Print general information and add it to PDF report"""
 
         now = datetime.now()
-        date = now.strftime("%Y-%m-%d")
-        time = now.strftime("%H:%M:%S")
-
-        operator = settings.operator.name
 
         attributes = [
             SimpleNamespace(
                 description="ICOc Version", value=__version__, pdf=True
             ),
-            SimpleNamespace(description="Date", value=date, pdf=True),
-            SimpleNamespace(description="Time", value=time, pdf=True),
-            SimpleNamespace(description="Operator", value=operator, pdf=True),
+            SimpleNamespace(
+                description="Date", value=now.strftime("%Y-%m-%d"), pdf=True
+            ),
+            SimpleNamespace(
+                description="Time", value=now.strftime("%H:%M:%S"), pdf=True
+            ),
+            SimpleNamespace(
+                description="Operator", value=settings.operator.name, pdf=True
+            ),
         ]
 
         cls.__output_data(attributes, node_data=False)
@@ -186,12 +188,12 @@ class TestNode(TestCase):
         if not attributes:
             return
 
-        max_length_description = max([
-            len(attribute.description) for attribute in attributes
-        ])
-        max_length_value = max([
-            len(attribute.value) for attribute in attributes
-        ])
+        max_length_description = max(
+            (len(attribute.description) for attribute in attributes)
+        )
+        max_length_value = max(
+            (len(attribute.value) for attribute in attributes)
+        )
 
         # Print attributes to standard output
         print("\n")
@@ -277,7 +279,9 @@ class TestNode(TestCase):
         async def connect():
             """Create connection with new network class"""
 
+            # pylint: disable=attribute-defined-outside-init
             self.can = Network()
+            # pylint: enable=attribute-defined-outside-init
             await self.can.reset_node("STU 1")
             # Wait for reset to take place
             await async_sleep(2)
