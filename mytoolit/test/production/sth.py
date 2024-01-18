@@ -455,12 +455,10 @@ class TestSTH(TestSensorNode):
                 self.can.read_eeprom_z_axis_acceleration_offset,
             )
             names = chain(*(repeat("slope", 3), repeat("offset", 3)))
-            values = chain(
-                *(
-                    repeat(acceleration_slope, 3),
-                    repeat(acceleration_offset, 3),
-                )
-            )
+            values = chain(*(
+                repeat(acceleration_slope, 3),
+                repeat(acceleration_offset, 3),
+            ))
             axes = list("xyz") * 2
 
             for (
