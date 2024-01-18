@@ -34,9 +34,9 @@ def open_file_windows(filepath: Union[Path, str]) -> None:
     """
 
     # fmt: off
-    # pylint: disable=no-name-in-module
+    # pylint: disable=no-name-in-module, import-outside-toplevel
     from os import startfile  # type: ignore[attr-defined]
-    # pylint: enable=no-name-in-module
+    # pylint: enable=no-name-in-module, import-outside-toplevel
     # fmt: on
 
     try:
