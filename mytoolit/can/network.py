@@ -38,10 +38,11 @@ from mytoolit.can.message import Message
 from mytoolit.can.node import Node
 from mytoolit.can.streaming import (
     AsyncStreamBuffer,
+    StreamingConfiguration,
     StreamingData,
-    TimestampedValue,
     StreamingFormat,
     StreamingFormatVoltage,
+    TimestampedValue,
 )
 from mytoolit.can.status import State
 from mytoolit.measurement import convert_raw_to_supply_voltage
@@ -270,9 +271,7 @@ class DataStreamContextManager:
     def __init__(
         self,
         network: Network,
-        first: bool,
-        second: bool,
-        third: bool,
+        configuration: StreamingConfiguration,
         timeout: float,
     ) -> None:
         """Create a new stream context manager for the given Network
@@ -284,17 +283,9 @@ class DataStreamContextManager:
             The CAN network class for which this context manager handles
             sensor device stream data
 
-        first:
-            Specifies if the data of the first measurement channel should
-            be streamed or not
-
-        second:
-            Specifies if the data of the second measurement channel should
-            be streamed or not
-
-        third:
-            Specifies if the data of the third measurement channel should
-            be streamed or not
+        configuration:
+            A streaming configuration that specifies which of the three
+            streaming channels should be enabled or not
 
         timeout
             The amount of seconds between two consecutive messages, before
@@ -303,7 +294,7 @@ class DataStreamContextManager:
         """
 
         self.network = network
-        self.reader = AsyncStreamBuffer(first, second, third, timeout)
+        self.reader = AsyncStreamBuffer(configuration, timeout)
 
     async def __aenter__(self) -> AsyncStreamBuffer:
         """Open the stream of measurement data
@@ -352,8 +343,9 @@ class DataStreamContextManager:
         """
 
         reader = self.reader
+        configuration = reader.configuration
         await self.network.start_streaming_data(
-            reader.first, reader.second, reader.third
+            configuration.first, configuration.second, configuration.third
         )
         self.network.notifier.add_listener(reader)
         return reader
@@ -2053,7 +2045,9 @@ class Network:
 
         """
 
-        return DataStreamContextManager(self, first, second, third, timeout)
+        return DataStreamContextManager(
+            self, StreamingConfiguration(first, second, third), timeout
+        )
 
     async def read_streaming_data_seconds(
         self,

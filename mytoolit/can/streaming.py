@@ -12,6 +12,7 @@ from typing import (
     Callable,
     Dict,
     List,
+    NamedTuple,
     Optional,
     Tuple,
     Union,
@@ -25,28 +26,52 @@ from mytoolit.can.identifier import Identifier
 # -- Classes ------------------------------------------------------------------
 
 
+class StreamingConfiguration(NamedTuple):
+    """Streaming configuration"""
+
+    first: bool = True  # Specifies if the first channel is enabled or not
+    second: bool = False  # Specifies if the second channel is enabled or not
+    third: bool = False  # Specifies if the third channel is enabled or not
+
+    def __repr__(self) -> str:
+        """Return the string representation of the streaming configuration
+
+        Examples
+        --------
+
+        >>> StreamingConfiguration()
+        Channel 1 enabled, Channel 2 disabled, Channel 3 disabled
+
+        >>> StreamingConfiguration(first=False, second=True, third=False)
+        Channel 1 disabled, Channel 2 enabled, Channel 3 disabled
+
+        >>> StreamingConfiguration(first=True, second=True, third=True)
+        Channel 1 enabled, Channel 2 enabled, Channel 3 enabled
+
+        """
+
+        return ", ".join([
+            f"Channel {name} {'en' if status else 'dis'}abled"
+            for name, status in enumerate(
+                (self.first, self.second, self.third), start=1
+            )
+        ])
+
+
 class AsyncStreamBuffer(Listener):
     """Buffer for streaming data"""
 
     def __init__(
-        self, first: bool, second: bool, third: bool, timeout: float
+        self, configuration: StreamingConfiguration, timeout: float
     ) -> None:
         """Initialize object using the given arguments
 
         Parameters
         ----------
 
-        first:
-            Specifies if the data of the first measurement channel will be
-            collected or not
-
-        second:
-            Specifies if the data of the second measurement channel will be
-            collected or not
-
-        third:
-            Specifies if the data of the third measurement channel will be
-            collected or not
+        configuration:
+            A streaming configuration that specifies which of the three
+            streaming channels should be enabled or not
 
         timeout:
             The amount of seconds between two consecutive messages, before
@@ -62,9 +87,7 @@ class AsyncStreamBuffer(Listener):
             receiver="SPU 1",
             request=False,
         )
-        self.first = first
-        self.second = second
-        self.third = third
+        self.configuration = configuration
         self.queue: Queue[StreamingData] = Queue()
         self.timeout = timeout
 
@@ -118,9 +141,9 @@ class AsyncStreamBuffer(Listener):
         ]
 
         streaming_data = StreamingData()
-        first = self.first
-        second = self.second
-        third = self.third
+        first = self.configuration.first
+        second = self.configuration.second
+        third = self.configuration.third
 
         if first and second and third:
             streaming_data.first.append(raw_values[0])
