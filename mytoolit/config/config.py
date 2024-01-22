@@ -351,12 +351,10 @@ class Settings(Dynaconf):
         try:
             self.validators.validate()
         except ValidationError as error:
-            config_files_text = "\n".join(
-                (
-                    f"  • {ConfigurationUtility.site_config_filepath}",
-                    f"  • {ConfigurationUtility.user_config_filepath}",
-                )
-            )
+            config_files_text = "\n".join((
+                f"  • {ConfigurationUtility.site_config_filepath}",
+                f"  • {ConfigurationUtility.user_config_filepath}",
+            ))
             raise SettingsIncorrectError(
                 f"Incorrect configuration: {error}\n\n"
                 "Please make sure that the configuration files:\n\n"

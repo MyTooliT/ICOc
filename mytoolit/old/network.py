@@ -1378,20 +1378,16 @@ class Network(object):
             self.VoltageConfig.b.bNumber2,
             self.VoltageConfig.b.bNumber3,
         )
-        dataPointsAcc = sum(
-            (
-                self.AccConfig.b.bNumber1,
-                self.AccConfig.b.bNumber2,
-                self.AccConfig.b.bNumber3,
-            )
-        )
-        dataPointsVoltage = sum(
-            (
-                self.VoltageConfig.b.bNumber1,
-                self.VoltageConfig.b.bNumber2,
-                self.VoltageConfig.b.bNumber3,
-            )
-        )
+        dataPointsAcc = sum((
+            self.AccConfig.b.bNumber1,
+            self.AccConfig.b.bNumber2,
+            self.AccConfig.b.bNumber3,
+        ))
+        dataPointsVoltage = sum((
+            self.VoltageConfig.b.bNumber1,
+            self.VoltageConfig.b.bNumber2,
+            self.VoltageConfig.b.bNumber3,
+        ))
         totalDataPoints = dataPointsAcc + dataPointsVoltage
         msgAcc = samplingRate / totalDataPoints
         if 0 < dataSetsAcc:

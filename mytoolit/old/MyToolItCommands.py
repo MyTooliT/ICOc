@@ -210,9 +210,9 @@ MyToolItConfiguration = bidict({
     "Hmi": 0xC0,
 })
 
-MyToolItEeprom = bidict({
-    "Read": 0x00, "Write": 0x01, "Read Write Request Counter": 0x20
-})
+MyToolItEeprom = bidict(
+    {"Read": 0x00, "Write": 0x01, "Read Write Request Counter": 0x20}
+)
 
 MyToolItProductData = bidict({
     "GTIN": 0x00,

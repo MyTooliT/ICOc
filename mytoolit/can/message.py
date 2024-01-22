@@ -520,9 +520,9 @@ class Message:
             else repr(identifier)
         )
 
-        data_representation = " ".join([
-            hex(self.data[byte]) for byte in range(len(self.data))
-        ])
+        data_representation = " ".join(
+            [hex(self.data[byte]) for byte in range(len(self.data))]
+        )
         bit_values = [
             f"0b{identifier.value:029b}",
             str(len(self.data)),

@@ -1770,9 +1770,9 @@ class Network:
         sensor_devices: List[STHDeviceInfo] = []
         while sensor_device is None:
             if time() > end_time:
-                sensor_devices_representation = "\n".join([
-                    repr(device) for device in sensor_devices
-                ])
+                sensor_devices_representation = "\n".join(
+                    [repr(device) for device in sensor_devices]
+                )
                 device_info = (
                     "Found the following sensor devices:\n"
                     f"{sensor_devices_representation}"
@@ -1923,9 +1923,9 @@ class Network:
         if not (first or second or third):
             raise ValueError("Please enable at least one measurement channel")
 
-        active_channels = len([
-            channel for channel in (first, second, third) if channel
-        ])
+        active_channels = len(
+            [channel for channel in (first, second, third) if channel]
+        )
 
         streaming_format = StreamingFormat(
             first=first,
