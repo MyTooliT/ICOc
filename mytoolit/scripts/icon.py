@@ -233,6 +233,12 @@ async def measure(arguments: Namespace) -> None:
                             break
             except KeyboardInterrupt:
                 pass
+            except TimeoutError:
+                raise TimeoutError(
+                    "Quitting measurement, since no streaming data was "
+                    "retrieved for at least 5 seconds"
+                )
+
             finally:
                 storage.add_acceleration_meta(
                     "Sensor_Range", f"± {sensor_range / 2} g₀"
@@ -327,7 +333,7 @@ def main():
 
         try:
             run(command_to_coroutine[arguments.subcommand](arguments))
-        except NetworkError as error:
+        except (NetworkError, TimeoutError) as error:
             print(error)
         except KeyboardInterrupt:
             pass

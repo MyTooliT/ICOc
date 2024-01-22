@@ -268,7 +268,12 @@ class DataStreamContextManager:
     """Open and close a data stream from a sensor device"""
 
     def __init__(
-        self, network: Network, first: bool, second: bool, third: bool
+        self,
+        network: Network,
+        first: bool,
+        second: bool,
+        third: bool,
+        timeout: float,
     ) -> None:
         """Create a new stream context manager for the given Network
 
@@ -291,10 +296,14 @@ class DataStreamContextManager:
             Specifies if the data of the third measurement channel should
             be streamed or not
 
+        timeout
+            The amount of seconds between two consecutive messages, before
+            a TimeoutError will be raised
+
         """
 
         self.network = network
-        self.reader = AsyncStreamBuffer(first, second, third)
+        self.reader = AsyncStreamBuffer(first, second, third, timeout)
 
     async def __aenter__(self) -> AsyncStreamBuffer:
         """Open the stream of measurement data
@@ -1984,7 +1993,11 @@ class Network:
         )
 
     def open_data_stream(
-        self, first: bool = False, second: bool = False, third: bool = False
+        self,
+        first: bool = False,
+        second: bool = False,
+        third: bool = False,
+        timeout: float = 5,
     ) -> DataStreamContextManager:
         """Open measurement data stream
 
@@ -2003,11 +2016,14 @@ class Network:
             Specifies if the data of the third measurement channel should
             be streamed or not
 
+        timeout:
+            The amount of seconds between two consecutive messages, before
+            a TimeoutError will be raised
+
         Returns
         -------
 
         A context manager object for managing stream data
-
 
         Examples
         --------
@@ -2037,7 +2053,7 @@ class Network:
 
         """
 
-        return DataStreamContextManager(self, first, second, third)
+        return DataStreamContextManager(self, first, second, third, timeout)
 
     async def read_streaming_data_seconds(
         self,

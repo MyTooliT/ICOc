@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from asyncio import Queue
+from asyncio import Queue, wait_for
 from numbers import Real
 from typing import (
     AsyncIterator,
@@ -28,7 +28,9 @@ from mytoolit.can.identifier import Identifier
 class AsyncStreamBuffer(Listener):
     """Buffer for streaming data"""
 
-    def __init__(self, first: bool, second: bool, third: bool) -> None:
+    def __init__(
+        self, first: bool, second: bool, third: bool, timeout: float
+    ) -> None:
         """Initialize object using the given arguments
 
         Parameters
@@ -46,6 +48,10 @@ class AsyncStreamBuffer(Listener):
             Specifies if the data of the third measurement channel will be
             collected or not
 
+        timeout:
+            The amount of seconds between two consecutive messages, before
+            a TimeoutError will be raised
+
         """
 
         # Expected identifier of received streaming messages
@@ -60,6 +66,7 @@ class AsyncStreamBuffer(Listener):
         self.second = second
         self.third = third
         self.queue: Queue[StreamingData] = Queue()
+        self.timeout = timeout
 
     def __aiter__(self) -> AsyncIterator[StreamingData]:
         """Retrieve iterator for collected data
@@ -83,7 +90,7 @@ class AsyncStreamBuffer(Listener):
 
         """
 
-        return self.queue.get()
+        return wait_for(self.queue.get(), self.timeout)
 
     def on_message_received(self, msg: Message) -> None:
         """Handle received messages
