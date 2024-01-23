@@ -7,6 +7,7 @@ rmd_files:
   - Documentation/Tutorials.md
   - Documentation/Code.md
   - Documentation/Virtualization.md
+  - Documentation/Containerization.md
   - Documentation/Scripts.md
   - Documentation/Development.md
   - Documentation/Releases/Releases.md
