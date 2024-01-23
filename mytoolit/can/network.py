@@ -306,7 +306,13 @@ class DataStreamContextManager:
 
         """
 
-        return await self.open()
+        reader = self.reader
+        configuration = reader.configuration
+        await self.network.start_streaming_data(
+            configuration.first, configuration.second, configuration.third
+        )
+        self.network.notifier.add_listener(reader)
+        return reader
 
     async def __aexit__(
         self,
@@ -329,29 +335,6 @@ class DataStreamContextManager:
             The traceback in case of an exception
 
         """
-
-        await self.close()
-
-    async def open(self) -> AsyncStreamBuffer:
-        """Open the stream of measurement data
-
-        Returns
-        -------
-
-        The stream buffer for the measurement stream
-
-        """
-
-        reader = self.reader
-        configuration = reader.configuration
-        await self.network.start_streaming_data(
-            configuration.first, configuration.second, configuration.third
-        )
-        self.network.notifier.add_listener(reader)
-        return reader
-
-    async def close(self) -> None:
-        """Clean up the resources used by the stream"""
 
         self.reader.stop()
         self.network.notifier.remove_listener(self.reader)
