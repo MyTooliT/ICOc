@@ -332,7 +332,7 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
 
      then you need to install `libgl1`:
 
-     ```
+     ```sh
      sudo apt install -y libgl1
      ```
 
