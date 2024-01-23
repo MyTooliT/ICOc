@@ -22,6 +22,7 @@ from tqdm import tqdm
 from mytoolit.can import Network
 from mytoolit.can.adc import ADCConfiguration
 from mytoolit.can.network import STHDeviceInfo, NetworkError
+from mytoolit.can.streaming import StreamingTimeoutError
 from mytoolit.cmdline.parse import parse_arguments
 from mytoolit.config import ConfigurationUtility, settings
 from mytoolit.measurement import convert_raw_to_g, Storage
@@ -233,11 +234,10 @@ async def measure(arguments: Namespace) -> None:
                             break
             except KeyboardInterrupt:
                 pass
-            except TimeoutError:
-                raise TimeoutError(
-                    "Quitting measurement, since no streaming data was "
-                    "retrieved for at least 5 seconds"
-                )
+            except TimeoutError as error:
+                raise StreamingTimeoutError(
+                    f"Quitting measurement: {error}"
+                ) from error
 
             finally:
                 storage.add_acceleration_meta(

@@ -26,6 +26,10 @@ from mytoolit.can.identifier import Identifier
 # -- Classes ------------------------------------------------------------------
 
 
+class StreamingTimeoutError(Exception):
+    """Raised if no streaming data was received for a certain amount of time"""
+
+
 class StreamingConfiguration(NamedTuple):
     """Streaming configuration"""
 
@@ -113,7 +117,14 @@ class AsyncStreamBuffer(Listener):
 
         """
 
-        return wait_for(self.queue.get(), self.timeout)
+        try:
+            data = wait_for(self.queue.get(), self.timeout)
+        except TimeoutError as error:
+            raise StreamingTimeoutError(
+                f"No data received for at least {self.timeout} seconds"
+            ) from error
+
+        return data
 
     def on_message_received(self, msg: Message) -> None:
         """Handle received messages
