@@ -489,6 +489,7 @@ class Network:
         description: str,
         response_data: Union[bytearray, List[Union[int, None]], None] = None,
         minimum_timeout: float = 0,
+        retries: int = 10,
     ) -> CANMessage:
         """Send a request message and wait for the response
 
@@ -508,24 +509,28 @@ class Network:
            Minimum time before attempting additional connection attempt
            in seconds
 
+        retries:
+           The number of times the message is sent again, if no response was
+           sent back in a certain amount of time
+
         Returns
         -------
 
         The response message for the given request
 
-        Throws
+        Raises
         ------
 
         NoResponseError:
-            If the receiver did not respond to the message after a certain
-            amount of time (1s)
+            If the receiver did not respond to the message after retries
+            amount of messages sent
 
         ErrorResponseError:
             If the receiver answered with an error message
 
         """
 
-        for attempt in range(10):
+        for attempt in range(retries):
             listener = ResponseListener(message, response_data)
             self.notifier.add_listener(listener)
             getLogger("network.can").debug("%s", message)
