@@ -42,6 +42,7 @@ from mytoolit.can.streaming import (
     StreamingData,
     StreamingFormat,
     StreamingFormatVoltage,
+    StreamingTimeoutError,
     TimestampedValue,
 )
 from mytoolit.can.status import State
@@ -336,9 +337,29 @@ class DataStreamContextManager:
 
         """
 
+        logger = getLogger(__name__)
+
         self.reader.stop()
         self.network.notifier.remove_listener(self.reader)
-        await self.network.stop_streaming_data()
+        if exception_type and issubclass(
+            exception_type, StreamingTimeoutError
+        ):
+            # If there was a timeout error while streaming data, then stoping
+            # the stream will usually also fail. Because of this we only try
+            # once and ignore any errors.
+            #
+            # If we did not do that, then the user of the API would be notified
+            # about the error to disable the stream, but not about the timeout
+            # error. It would also take considerably more time until the
+            # computer would report an error, since the code would usually try
+            # to stop the stream (and fail) multiple times beforehand.
+            logger.info("Stopping stream after streaming timeout error")
+            await self.network.stop_streaming_data(
+                retries=1, ignore_errors=True
+            )
+        else:
+            logger.debug("Stopping stream")
+            await self.network.stop_streaming_data()
 
 
 # pylint: disable=too-many-public-methods
@@ -1954,8 +1975,23 @@ class Network:
             ),
         )
 
-    async def stop_streaming_data(self) -> None:
-        """Stop streaming data"""
+    async def stop_streaming_data(
+        self, retries: int = 10, ignore_errors=False
+    ) -> None:
+        """Stop streaming data
+
+        Parameters
+        ----------
+
+        retries:
+            The number of times the message is sent again, if no response was
+            sent back in a certain amount of time
+
+        ignore_errors:
+            Specifies, if this coroutine should ignore, if there were any
+            problems while stopping the stream.
+
+        """
 
         streaming_format = StreamingFormat(streaming=True, sets=0)
         node = "STH 1"
@@ -1968,9 +2004,15 @@ class Network:
             data=[streaming_format.value],
         )
 
-        await self._request(
-            message, description=f"disable data streaming of “{node}”"
-        )
+        try:
+            await self._request(
+                message,
+                description=f"disable data streaming of “{node}”",
+                retries=retries,
+            )
+        except (NoResponseError, ErrorResponseError) as error:
+            if not ignore_errors:
+                raise error
 
     def open_data_stream(
         self,
