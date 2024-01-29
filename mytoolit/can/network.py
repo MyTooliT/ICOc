@@ -42,7 +42,6 @@ from mytoolit.can.streaming import (
     StreamingData,
     StreamingFormat,
     StreamingFormatVoltage,
-    StreamingTimeoutError,
     TimestampedValue,
 )
 from mytoolit.can.status import State
@@ -341,24 +340,22 @@ class DataStreamContextManager:
 
         self.reader.stop()
         self.network.notifier.remove_listener(self.reader)
-        if exception_type and issubclass(
-            exception_type, StreamingTimeoutError
-        ):
-            # If there was a timeout error while streaming data, then stoping
-            # the stream will usually also fail. Because of this we only try
-            # once and ignore any errors.
+        if exception_type:
+            # If there was an error while streaming data, then stoping the
+            # stream will usually also fail. Because of this we only try once
+            # and ignore any errors.
             #
             # If we did not do that, then the user of the API would be notified
-            # about the error to disable the stream, but not about the timeout
+            # about the error to disable the stream, but not about the original
             # error. It would also take considerably more time until the
             # computer would report an error, since the code would usually try
             # to stop the stream (and fail) multiple times beforehand.
-            logger.info("Stopping stream after streaming timeout error")
+            logger.info("Stopping stream after error (%s)", exception_type)
             await self.network.stop_streaming_data(
                 retries=1, ignore_errors=True
             )
         else:
-            logger.debug("Stopping stream")
+            logger.info("Stopping stream")
             await self.network.stop_streaming_data()
 
 
