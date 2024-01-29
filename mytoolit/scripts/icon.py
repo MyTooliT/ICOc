@@ -234,10 +234,6 @@ async def measure(arguments: Namespace) -> None:
                             break
             except KeyboardInterrupt:
                 pass
-            except TimeoutError as error:
-                raise StreamingTimeoutError(
-                    f"Quitting measurement: {error}"
-                ) from error
 
             finally:
                 storage.add_acceleration_meta(
@@ -333,8 +329,10 @@ def main():
 
         try:
             run(command_to_coroutine[arguments.subcommand](arguments))
-        except (NetworkError, TimeoutError) as error:
-            print(error)
+        except NetworkError as error:
+            print(error, file=stderr)
+        except StreamingTimeoutError as error:
+            print(f"Quitting Measurement: {error}")
         except KeyboardInterrupt:
             pass
 

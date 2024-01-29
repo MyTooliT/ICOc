@@ -8,7 +8,6 @@ from asyncio import Queue, wait_for
 from numbers import Real
 from typing import (
     AsyncIterator,
-    Awaitable,
     Callable,
     Dict,
     List,
@@ -107,7 +106,7 @@ class AsyncStreamBuffer(Listener):
 
         return self
 
-    def __anext__(self) -> Awaitable[StreamingData]:
+    async def __anext__(self) -> StreamingData:
         """Retrieve next stream data object in collected data
 
         Returns
@@ -118,13 +117,11 @@ class AsyncStreamBuffer(Listener):
         """
 
         try:
-            data = wait_for(self.queue.get(), self.timeout)
+            return await wait_for(self.queue.get(), self.timeout)
         except TimeoutError as error:
             raise StreamingTimeoutError(
                 f"No data received for at least {self.timeout} seconds"
             ) from error
-
-        return data
 
     def on_message_received(self, msg: Message) -> None:
         """Handle received messages
