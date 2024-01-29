@@ -504,6 +504,8 @@ class Network:
 
         return self._notifier
 
+    # pylint: disable=too-many-arguments
+
     async def _request(
         self,
         message: Message,
@@ -590,8 +592,6 @@ class Network:
             return response.message
 
         raise NoResponseError(f"Unable to {description}")
-
-    # pylint: disable=too-many-arguments
 
     async def _request_bluetooth(
         self,
