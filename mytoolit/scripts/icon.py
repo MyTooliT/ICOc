@@ -256,12 +256,8 @@ async def measure(arguments: Namespace) -> None:
                 ) as stream:
                     start_time = time()
                     async for data in stream:
-                        for value in data.values:
-                            storage.add_acceleration(
-                                {"x": conversion_to_g(value)},
-                                timestamp=data.timestamp * 1000,
-                                counter=data.counter,
-                            )
+                        data.apply(conversion_to_g)
+                        storage.add_streaming_data(data)
                         progress.update(values_per_message)
 
                         if time() - start_time >= measurement_time_s:
