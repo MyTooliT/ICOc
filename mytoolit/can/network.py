@@ -1903,14 +1903,14 @@ class Network:
             message,
             description=f"read single set of streaming values from “{node}”",
         )
-        values = tuple((
+        values = [
             int.from_bytes(word, byteorder="little")
             for word in (
                 response.data[2:4],
                 response.data[4:6],
                 response.data[6:8],
             )
-        ))
+        ]
         assert len(values) == 2 or len(values) == 3
 
         data = StreamingData(
