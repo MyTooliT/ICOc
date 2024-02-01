@@ -6,13 +6,7 @@ from __future__ import annotations
 
 from asyncio import Queue, wait_for
 from ctypes import c_uint8, LittleEndianStructure
-from typing import (
-    AsyncIterator,
-    Callable,
-    Optional,
-    Tuple,
-    Union,
-)
+from typing import AsyncIterator, Callable, Optional, Sequence, Tuple
 
 from can import Listener, Message
 
@@ -253,9 +247,9 @@ class AsyncStreamBuffer(Listener):
             else (data[2:4], data[4:6])
         )
 
-        values = tuple(
+        values = [
             int.from_bytes(word, byteorder="little") for word in data_bytes
-        )
+        ]
         assert len(values) == 2 or len(values) == 3
 
         streaming_data = StreamingData(
@@ -560,7 +554,7 @@ class StreamingData:
         self,
         counter: int,
         timestamp: float,
-        values: Union[Tuple[float, float], Tuple[float, float, float]],
+        values: Sequence[float],
         channels: StreamingConfigBits,
     ) -> None:
         """Initialize the streaming data with the given arguments
@@ -609,11 +603,11 @@ class StreamingData:
         ...     values=[1, 2, 3], counter=21, timestamp=1, channels=channel3)
         >>> data.apply(lambda value: value + 10)
         >>> data.values
-        (11, 12, 13)
+        [11, 12, 13]
 
         """
 
-        updated_values = tuple(map(function, self.values))
+        updated_values = [function(value) for value in self.values]
         assert len(updated_values) == 2 or len(updated_values) == 3
         self.values = updated_values
 
