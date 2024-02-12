@@ -24,7 +24,7 @@ dependencies = [
   "netaddr>=0.8.0,<2",
   "pdfrw>=0.4,<2",
   "pint>=0.22,<2",
-  "platformdirs>=3.5.0,<4",
+  "platformdirs>=3.5.0,<5",
   "python-can[pcan]>=4,<5",
   "pywin32>=306; os_name == 'nt'",
   "reportlab>=4.0.4,<5",
