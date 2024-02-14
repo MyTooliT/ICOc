@@ -57,6 +57,10 @@ class NetworkError(Exception):
     """Exception for errors in the MyTooliT network"""
 
 
+class CANInitError(NetworkError):
+    """Exception for CAN initialization problems"""
+
+
 class ErrorResponseError(NetworkError):
     """Exception for erroneous response messages"""
 
@@ -420,7 +424,7 @@ class Network:
                 bitrate=configuration.get("bitrate"),
             )  # type: ignore[abstract]
         except (PcanError, OSError) as error:
-            raise NetworkError(
+            raise CANInitError(
                 f"Unable to initialize CAN connection: {error}\n\n"
                 "Possible reason:\n\n"
                 "• CAN adapter is not connected to the computer"
