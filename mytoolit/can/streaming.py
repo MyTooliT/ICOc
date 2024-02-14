@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 from asyncio import Queue, wait_for
-from numbers import Real
 from typing import (
     AsyncIterator,
     Callable,
@@ -822,7 +821,7 @@ class StreamingData:
                     serialized_channel["unit"] = f"{first.value.units}"
                 else:
                     for timestamped in channel:
-                        assert isinstance(timestamped.value, Real)
+                        assert isinstance(timestamped.value, (int, float))
                         values.append(timestamped.value)
                     serialized_channel["values"] = values
 
