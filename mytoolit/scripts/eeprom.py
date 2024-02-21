@@ -64,11 +64,12 @@ class EEPROMCheck:
         self.eeprom_address = 1
         self.eeprom_length = 256
         self.eeprom_value = value
+        self.network = Network()
 
     async def __aenter__(self):
         """Initialize the connection to the STU"""
 
-        self.network = Network()
+        await self.network.__aenter__()
         await self.network.reset_node("STU 1")
         await sleep(1)  # Wait till reset takes place
         return self
@@ -76,7 +77,9 @@ class EEPROMCheck:
     async def __aexit__(self, exception_type, exception_value, traceback):
         """Disconnect from the STU"""
 
-        await self.network.shutdown()
+        await self.network.__aexit__(
+            exception_type, exception_value, traceback
+        )
 
     async def connect_bluetooth(self):
         """Connect to the STH"""

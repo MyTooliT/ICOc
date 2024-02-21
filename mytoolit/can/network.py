@@ -377,7 +377,7 @@ class Network:
         """Create a new network from the given arguments
 
         Please note, that you have to clean up used resources after you use
-        this class using the method `shutdown`. Since this class implements
+        this class using the method `__aexit__`. Since this class implements
         the context manager interface we recommend you use a with statement to
         handle the cleanup phase automatically.
 
@@ -396,7 +396,8 @@ class Network:
 
         >>> async def create_and_shutdown_network():
         ...     network = Network()
-        ...     await network.shutdown()
+        ...     await network.__aenter__()
+        ...     await network.__aexit__(None, None, None)
         >>> run(create_and_shutdown_network())
 
         Use a context manager to handle the cleanup process automatically
@@ -445,6 +446,8 @@ class Network:
 
         """
 
+        self.bus.__enter__()
+
         return self
 
     async def __aexit__(
@@ -468,11 +471,6 @@ class Network:
             The traceback in case of an exception
 
         """
-
-        await self.shutdown()
-
-    async def shutdown(self) -> None:
-        """Deallocate all resources for this network connection"""
 
         await self.deactivate_bluetooth("STU 1")
 
