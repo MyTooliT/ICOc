@@ -31,7 +31,7 @@ from mytoolit.can.streaming import StreamingData
 
 
 def create_acceleration_description(
-    attributes: Dict[str, MetaAtom]
+    attributes: Dict[str, MetaAtom],
 ) -> MetaIsDescription:
     """Create a new `IsDescription` class to store acceleration data
 
