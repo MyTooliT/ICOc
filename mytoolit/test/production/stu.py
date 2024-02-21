@@ -82,6 +82,7 @@ class TestSTU(TestNode):
             print()
 
             # Reenable error output
+            sys.stderr.close()
             sys.stderr = old_stderr
 
             if not status_ok:
