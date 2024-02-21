@@ -64,6 +64,7 @@ async def read_acceleration_sensor_range_in_g(network: Network) -> float:
                 "range 200 instead (± 100 g sensor)",
                 file=stderr,
             )
+            sensor_range = 200
     except ValueError:
         print(
             "Warning: Unable to determine sensor range from "
