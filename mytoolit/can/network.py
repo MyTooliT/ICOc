@@ -2345,7 +2345,7 @@ class Network:
 
     async def write_adc_configuration(
         self,
-        reference_voltage: float,
+        reference_voltage: float = 3.3,
         prescaler: int = 2,
         acquisition_time: int = 8,
         oversampling_rate: int = 64,
