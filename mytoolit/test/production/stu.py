@@ -2,9 +2,16 @@
 
 # -- Imports ------------------------------------------------------------------
 
+import sys
+import threading
+
+from asyncio import sleep, run
+from os import devnull
+from sys import stderr
 from unittest import main as unittest_main
 
 from mytoolit.can.node import Node
+from mytoolit.can.network import CANInitError, Network, NoResponseError
 from mytoolit.config import settings
 from mytoolit.test.production import TestNode
 from mytoolit.report import Report
@@ -49,6 +56,37 @@ class TestSTU(TestNode):
 
         """
 
+        async def fix_can_connection():
+            """Fix possible CAN bus error"""
+
+            # Do not print error output
+            old_stderr = sys.stderr
+            sys.stderr = open(devnull, "w")
+
+            # Ignore errors in notifier thread
+            threading.excepthook = lambda *args, **kwargs: print("", end="")
+            status_ok = False
+            attempt = 1
+            while not status_ok and attempt <= 10:
+                print(
+                    f"\nTrying to fix CAN connection (Attempt {attempt})",
+                    end="",
+                )
+                try:
+                    async with Network() as network:
+                        await network.reset_node("STU 1")
+                    status_ok = True
+                except (CANInitError, NoResponseError):
+                    await sleep(1)
+                attempt += 1
+            print()
+
+            # Reenable error output
+            sys.stderr = old_stderr
+
+            if not status_ok:
+                print("Unable to fix CAN connection", file=stderr)
+
         self._test_firmware_flash(
             flash_location=settings.stu.firmware.location.flash,
             programmmer_serial_number=(
@@ -56,6 +94,7 @@ class TestSTU(TestNode):
             ),
             chip="BGM111A256V2",
         )
+        run(fix_can_connection())
 
     def test_connection(self):
         """Check connection to STU"""
