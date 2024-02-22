@@ -73,9 +73,7 @@ class TestSTU(TestNode):
                     end="",
                 )
                 try:
-                    bus = None
                     async with Network() as network:
-                        bus = network.bus
                         await network.reset_node("STU 1")
                     status_ok = True
 
@@ -89,9 +87,6 @@ class TestSTU(TestNode):
                     await sleep(1)
                 except NoResponseError:
                     await sleep(1)
-                finally:
-                    if bus is not None:
-                        bus.shutdown()
 
                 attempt += 1
             print()

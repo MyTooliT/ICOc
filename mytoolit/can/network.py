@@ -472,7 +472,13 @@ class Network:
 
         """
 
-        await self.deactivate_bluetooth("STU 1")
+        # Deactivating Bluetooth might fail if there were connection problems
+        # before. We ignore this error to make sure, that the cleanup code
+        # below is executed in this error scenario.
+        try:
+            await self.deactivate_bluetooth("STU 1")
+        except NoResponseError:
+            pass
 
         if self._notifier is not None:
             self._notifier.stop()
