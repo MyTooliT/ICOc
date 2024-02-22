@@ -110,6 +110,23 @@ class TestSMH(TestSensorNode):
     def test_sensors(self):
         """Test available sensor channels"""
 
+        async def read_streaming_data_amount(length: int):
+            async with self.can.open_data_stream(
+                first=True, second=False, third=False
+            ) as stream:
+                stream_data = []
+                async for data in stream:
+                    stream_data.extend(data.values)
+                    if len(stream_data) >= length:
+                        break
+
+            # Due to the chosen streaming format the code above might have
+            # collected one or two additional values. We remove these values
+            # here.
+            assert len(stream_data) >= length
+            additional_values = len(stream_data) - length
+            return stream_data[:-additional_values]
+
         async def test_sensors():
             cls = type(self)
 
@@ -122,9 +139,7 @@ class TestSMH(TestSensorNode):
                     f"Read sensor channel number “{config.first}” does "
                     f"not match expected channel number “{test_channel}”",
                 )
-                stream_data = await self.can.read_streaming_data_amount(
-                    1000, first=True, second=False, third=False
-                )
+                stream_data = await read_streaming_data_amount(1000)
                 values = [
                     timestamped.value for timestamped in stream_data.first
                 ]
