@@ -5,19 +5,16 @@
 from __future__ import annotations
 
 from asyncio import Queue, wait_for
+from ctypes import c_uint8, LittleEndianStructure
 from typing import (
     AsyncIterator,
     Callable,
-    Dict,
-    List,
-    NamedTuple,
     Optional,
     Tuple,
     Union,
 )
 
 from can import Listener, Message
-from pint import Quantity
 
 from mytoolit.can.identifier import Identifier
 
@@ -28,12 +25,75 @@ class StreamingTimeoutError(Exception):
     """Raised if no streaming data was received for a certain amount of time"""
 
 
-class StreamingConfiguration(NamedTuple):
+# pylint: disable=too-few-public-methods
+
+
+class StreamingConfigBits(LittleEndianStructure):
+    """Store enable/disabled channels of streaming configuration"""
+
+    _fields_ = [
+        ("first", c_uint8, 1),
+        ("second", c_uint8, 1),
+        ("third", c_uint8, 1),
+    ]
+
+
+# pylint: enable=too-few-public-methods
+
+
+class StreamingConfiguration:
     """Streaming configuration"""
 
-    first: bool = True  # Specifies if the first channel is enabled or not
-    second: bool = False  # Specifies if the second channel is enabled or not
-    third: bool = False  # Specifies if the third channel is enabled or not
+    def __init__(
+        self, first: bool = True, second: bool = False, third: bool = False
+    ) -> None:
+        """Initialize the streaming configuration with the given values
+
+        Parameters
+        ----------
+
+        first:
+            Specifies if the first channel is enabled or not
+
+        second:
+            Specifies if the second channel is enabled or not
+
+        third:
+            Specifies if the third channel is enabled or not
+
+        Raises
+        ------
+
+        `ValueError`, if none of the channels is active
+
+        Examples
+        --------
+
+        >>> config = StreamingConfiguration()
+        >>> config = StreamingConfiguration(
+        ...          first=False, second=True, third=True)
+
+        Check invalid configuration
+
+        >>> config = StreamingConfiguration(first=False)
+        Traceback (most recent call last):
+           ...
+        ValueError: At least one channel needs to be active
+
+        >>> config = StreamingConfiguration(
+        ...     first=False, second=False, third=False)
+        Traceback (most recent call last):
+           ...
+        ValueError: At least one channel needs to be active
+
+        """
+
+        if sum([first, second, third]) <= 0:
+            raise ValueError("At least one channel needs to be active")
+
+        self.channels = StreamingConfigBits(
+            first=first, second=second, third=third
+        )
 
     def __repr__(self) -> str:
         """Return the string representation of the streaming configuration
@@ -52,12 +112,59 @@ class StreamingConfiguration(NamedTuple):
 
         """
 
+        channels = self.channels
+
         return ", ".join([
             f"Channel {name} {'en' if status else 'dis'}abled"
             for name, status in enumerate(
-                (self.first, self.second, self.third), start=1
+                (channels.first, channels.second, channels.third), start=1
             )
         ])
+
+    def data_length(self) -> int:
+        """Returns the streaming data length
+
+        This will be either:
+
+        - 2 (when 2 channels are active), or
+        - 3 (when 1 or 3 channels are active)
+
+        For more information, please take a look
+        [here](https://mytoolit.github.io/Documentation/#command-data)
+
+        Returns
+        -------
+
+        The length of the streaming data resulting from this channel
+        configuration
+
+        Examples
+        --------
+
+        >>> StreamingConfiguration().data_length()
+        3
+
+        >>> StreamingConfiguration(
+        ...     first=False, second=True, third=False).data_length()
+        3
+
+        >>> StreamingConfiguration(
+        ...     first=True, second=True, third=True).data_length()
+        3
+
+        >>> StreamingConfiguration(
+        ...     first=False, second=True, third=True).data_length()
+        2
+
+        """
+
+        channels = self.channels
+
+        active_channels = sum(
+            [channels.first, channels.second, channels.third]
+        )
+
+        return 2 if active_channels == 2 else 3
 
 
 class AsyncStreamBuffer(Listener):
@@ -89,9 +196,10 @@ class AsyncStreamBuffer(Listener):
             receiver="SPU 1",
             request=False,
         )
-        self.configuration = configuration
+        self.data_length = configuration.data_length()
         self.queue: Queue[StreamingData] = Queue()
         self.timeout = timeout
+        self.channels = configuration.channels
 
     def __aiter__(self) -> AsyncIterator[StreamingData]:
         """Retrieve iterator for collected data
@@ -139,39 +247,23 @@ class AsyncStreamBuffer(Listener):
 
         data = msg.data
         timestamp = msg.timestamp
-        raw_values = [
-            TimestampedValue(
-                value=int.from_bytes(word, byteorder="little"),
-                timestamp=timestamp,
-                counter=data[1],
-            )
-            for word in (data[2:4], data[4:6], data[6:8])
-        ]
+        data_bytes = (
+            (data[2:4], data[4:6], data[6:8])
+            if self.data_length == 3
+            else (data[2:4], data[4:6])
+        )
 
-        streaming_data = StreamingData()
-        first = self.configuration.first
-        second = self.configuration.second
-        third = self.configuration.third
+        values = tuple(
+            int.from_bytes(word, byteorder="little") for word in data_bytes
+        )
+        assert len(values) == 2 or len(values) == 3
 
-        if first and second and third:
-            streaming_data.first.append(raw_values[0])
-            streaming_data.second.append(raw_values[1])
-            streaming_data.third.append(raw_values[2])
-        elif first and second:
-            streaming_data.first.append(raw_values[0])
-            streaming_data.second.append(raw_values[1])
-        elif first and third:
-            streaming_data.first.append(raw_values[0])
-            streaming_data.third.append(raw_values[1])
-        elif second and third:
-            streaming_data.second.append(raw_values[0])
-            streaming_data.third.append(raw_values[1])
-        elif first:
-            streaming_data.first.extend(raw_values)
-        elif second:
-            streaming_data.second.extend(raw_values)
-        else:
-            streaming_data.third.extend(raw_values)
+        streaming_data = StreamingData(
+            timestamp=timestamp,
+            counter=data[1],
+            values=values,
+            channels=self.channels,
+        )
 
         self.queue.put_nowait(streaming_data)
 
@@ -461,463 +553,44 @@ class StreamingFormatVoltage(StreamingFormat):
         )
 
 
-class TimestampedValue:
-    """Store a single (streaming) value and its timestamp"""
+class StreamingData:
+    """Support for storing data of a streaming message"""
 
     def __init__(
         self,
-        timestamp: float,
-        value: Union[float, Quantity],
         counter: int,
+        timestamp: float,
+        values: Union[Tuple[float, float], Tuple[float, float, float]],
+        channels: StreamingConfigBits,
     ) -> None:
-        """Initialize the timestamped value using the given arguments
+        """Initialize the streaming data with the given arguments
 
         Parameters
         ----------
-
-        timestamp:
-            The time when the data value was acquired in seconds since the
-            epoch
-
-        value:
-            The data value either as
-            - raw value or
-            - value including a given unit and optional quantity
 
         counter:
-            The message counter of the data
+            The message counter value
+
+        timestamp:
+            The message timestamp
+
+        values:
+            The streaming values
+
+        channels:
+            A bitfield specifying which of the measurement channels was enabled
+            when the measurement took place
 
         """
 
-        self.timestamp = timestamp
-        self.value = value
         self.counter = counter
-
-    def __repr__(self) -> str:
-        """Retrieve the textual representation of the value
-
-        Returns
-        -------
-
-        A string that describes the timestamped value
-
-        Examples
-        --------
-
-        >>> from mytoolit.measurement import celsius, g0
-
-        >>> TimestampedValue(timestamp=123, value=444, counter=1)
-        444@123 (1)
-        >>> TimestampedValue(timestamp=20, value=10, counter=10)
-        10@20 (10)
-
-        >>> TimestampedValue(timestamp=5, value=g0(10), counter=5)
-        10 g_0@5 (5)
-        >>> TimestampedValue(timestamp=5, value=celsius(10), counter=20)
-        10 °C@5 (20)
-
-        """
-
-        value = (
-            f"{self.value:~}"
-            if isinstance(self.value, Quantity)
-            else str(self.value)
-        )
-
-        return f"{value}@{self.timestamp} ({self.counter})"
-
-    def default(self) -> Dict[str, Union[float, int, str]]:
-        """Serialize the timestamped value
-
-        Returns
-        -------
-
-        An object that can be serialized (into JSON)
-
-        Examples
-        --------
-
-        >>> from json import dumps
-        >>> from mytoolit.measurement import celsius, g0
-
-
-        >>> TimestampedValue(timestamp=123, value=11, counter=1).default()
-        {'timestamp': 123, 'value': 11, 'counter': 1}
-
-        >>> TimestampedValue(timestamp=123, value=g0(2), counter=1
-        ...                 ).default() # doctest:+NORMALIZE_WHITESPACE
-        {'timestamp': 123, 'value': 2, 'unit': 'standard_gravity',
-         'counter': 1}
-
-        >>> timestamped = TimestampedValue(timestamp=5, value=celsius(10),
-        ...                                counter=20)
-        >>> dumps(timestamped.default()) # doctest:+NORMALIZE_WHITESPACE
-        '{"timestamp": 5, "value": 10, "unit": "degree_Celsius",
-          "counter": 20}'
-
-        """
-
-        serialized: Dict[str, Union[float, str]] = {
-            "timestamp": self.timestamp
-        }
-        value = self.value
-        if isinstance(value, Quantity):
-            serialized["value"] = value.magnitude
-            serialized["unit"] = f"{value.units}"
-        else:
-            serialized["value"] = value
-        serialized["counter"] = self.counter
-
-        return serialized
-
-
-class NotHomogeneousException(Exception):
-    """Indicates that a channel of streaming data contains heterogenous data"""
-
-
-class StreamingData:
-    """Auxiliary class to store streaming data"""
-
-    def __init__(
-        self,
-        first: Optional[List[TimestampedValue]] = None,
-        second: Optional[List[TimestampedValue]] = None,
-        third: Optional[List[TimestampedValue]] = None,
-    ) -> None:
-        """Initialize the streaming data using the given arguments
-
-        Parameters
-        ----------
-
-        first:
-            The data points for the first measurement channel
-
-        second:
-            The data points for the second measurement channel
-
-        third:
-            The data points for the third measurement channel
-
-        """
-
-        self.first = [] if first is None else first
-        self.second = [] if second is None else second
-        self.third = [] if third is None else third
-
-    def __iter__(self):
-        """Retrieve an iterator for the different measurement channels
-
-        Returns
-        -------
-
-        An iterator fir the measurement channels of the streaming data
-
-        Examples
-        --------
-
-        >>> value1 = TimestampedValue(timestamp=1, value=1, counter=1)
-        >>> value2 = TimestampedValue(timestamp=2, value=2, counter=2)
-        >>> value3 = TimestampedValue(timestamp=3, value=3, counter=3)
-        >>> data = StreamingData([value1], [], [value2, value3])
-        >>> collected = []
-        >>> for channel in data:
-        ...     collected.extend(channel)
-        >>> collected
-        [1@1 (1), 2@2 (2), 3@3 (3)]
-
-        """
-
-        return iter([self.first, self.second, self.third])
-
-    def __len__(self) -> int:
-        """Retrieve the (combined) length of the streaming data
-
-        Returns
-        -------
-
-        The amount of stored streaming values
-
-        """
-
-        return len(self.first) + len(self.second) + len(self.third)
-
-    def __repr__(self) -> str:
-        """Retrieve the textual representation of streaming data
-
-        Returns
-        -------
-
-        A string that describes the ADC streaming data
-
-        Examples
-        --------
-
-        >>> value1 = TimestampedValue(timestamp=1, value=1, counter=1)
-        >>> value2 = TimestampedValue(timestamp=2, value=2, counter=2)
-        >>> value3 = TimestampedValue(timestamp=3, value=3, counter=3)
-        >>> StreamingData([], [], [value1, value2, value3])
-        1: []
-        2: []
-        3: [1@1 (1), 2@2 (2), 3@3 (3)]
-
-        >>> value1 = TimestampedValue(timestamp=1, value=1, counter=10)
-        >>> value2 = TimestampedValue(timestamp=2, value=2, counter=11)
-        >>> value3 = TimestampedValue(timestamp=3, value=3, counter=12)
-        >>> StreamingData([], [], [value1, value2, value3])
-        1: []
-        2: []
-        3: [1@1 (10), 2@2 (11), 3@3 (12)]
-
-        """
-
-        representation = []
-        for channel, data in enumerate(
-            (self.first, self.second, self.third), start=1
-        ):
-            representation.append(f"{channel}: {data}")
-
-        return "\n".join(representation)
-
-    def is_homogeneous(self) -> bool:
-        """Check if the streaming data for every channel is homogeneous
-
-        The data for a channel is considered homogeneous, if all values have
-        the same data type (either `float` or `Quantity`)
-
-        Returns
-        -------
-
-        True if the data is homogeneous, false otherwise
-
-        Examples
-        --------
-
-        >>> from mytoolit.measurement import celsius
-
-        >>> value1 = TimestampedValue(timestamp=1, value=1, counter=10)
-        >>> value2 = TimestampedValue(timestamp=2, value=2, counter=11)
-        >>> value3 = TimestampedValue(timestamp=3, value=celsius(3),
-        ...                           counter=12)
-        >>> value4 = TimestampedValue(timestamp=3, value=celsius(-2),
-        ...                           counter=13)
-
-        All values have same data type
-
-        >>> StreamingData([value1], [],
-        ...               [value2, value1]).is_homogeneous()
-        True
-
-        Values for one channel have different data type
-
-        >>> StreamingData([value1, value3], [], []).is_homogeneous()
-        False
-
-        Values of each channel have same data type
-
-        >>> StreamingData([value1, value2], [],
-        ...               [value3, value4]).is_homogeneous()
-        True
-
-        """
-
-        for channel in self:
-            if len(channel) <= 0:
-                continue
-
-            value_type_first = type(channel[0].value)
-            for timestamped in channel[1:]:
-                if not isinstance(timestamped.value, value_type_first):
-                    return False
-
-        return True
-
-    def default(self, compact: bool = False) -> Union[
-        Dict[str, List[Dict[str, Union[float, int, str]]]],
-        Dict[str, Dict[str, Union[List[float], List[int], str]]],
-    ]:
-        """Serialize the streaming data
-
-        Converting streaming data in “compact” form only works for homogenous
-        data. If the data of one channel is heterogenous and compact is set to
-        true, then this method will throw an `NotHomogeneousException`
-        exception.
-
-        Arguments
-        ---------
-
-        compact:
-            Use a “compact” representation of the streaming data (assumes
-            homogenous data)
-
-        Returns
-        -------
-
-        An object that can be serialized (into JSON)
-
-        Examples
-        --------
-
-        >>> value1 = TimestampedValue(timestamp=1, value=1, counter=10)
-        >>> value2 = TimestampedValue(timestamp=2, value=2, counter=11)
-        >>> value3 = TimestampedValue(timestamp=3, value=3, counter=12)
-        >>> streaming_data = StreamingData([], [], [value1, value2, value3])
-        >>> streaming_data.default() # doctest:+NORMALIZE_WHITESPACE
-        {'third': [{'timestamp': 1, 'value': 1, 'counter': 10},
-                   {'timestamp': 2, 'value': 2, 'counter': 11},
-                   {'timestamp': 3, 'value': 3, 'counter': 12}]}
-        >>> streaming_data.default(
-        ...     compact=True) # doctest:+NORMALIZE_WHITESPACE
-        {'third': {'timestamps': [1, 2, 3],
-                   'values': [1, 2, 3],
-                   'counters': [10, 11, 12]}}
-
-        >>> from mytoolit.measurement import celsius
-
-        >>> value1 = TimestampedValue(timestamp=45, value=celsius(10),
-        ...                           counter=10)
-        >>> value2 = TimestampedValue(timestamp=67, value=celsius(20),
-        ...                           counter=11)
-        >>> value3 = TimestampedValue(timestamp=89, value=celsius(30),
-        ...                           counter=12)
-        >>> streaming_data = StreamingData([value1], [value2, value3], [])
-        >>> streaming_data.default(
-        ...     compact=True) # doctest:+NORMALIZE_WHITESPACE
-        {'first': {'timestamps': [45],
-                   'values': [10],
-                   'unit': 'degree_Celsius',
-                   'counters': [10]},
-         'second': {'timestamps': [67, 89],
-                    'values': [20, 30],
-                    'unit': 'degree_Celsius',
-                    'counters': [11, 12]}}
-
-        """
-
-        if compact:
-            if not self.is_homogeneous():
-                raise NotHomogeneousException(
-                    "Unable to serialize data in compact form"
-                )
-
-            serializable_compact: Dict[
-                str, Dict[str, Union[List[float], List[int], str]]
-            ] = {}
-            for channel, key in zip(
-                (self.first, self.second, self.third),
-                ("first", "second", "third"),
-            ):
-                if len(channel) <= 0:
-                    continue
-
-                serializable_compact[key] = {}
-                serialized_channel = serializable_compact[key]
-                first = channel[0]
-                serialized_channel["timestamps"] = [
-                    timestamped.timestamp for timestamped in channel
-                ]
-
-                values: List[float] = []
-                if isinstance(first.value, Quantity):
-                    for timestamped in channel:
-                        assert isinstance(timestamped.value, Quantity)
-                        values.append(timestamped.value.magnitude)
-                    serialized_channel["values"] = values
-                    serialized_channel["unit"] = f"{first.value.units}"
-                else:
-                    for timestamped in channel:
-                        assert isinstance(timestamped.value, (int, float))
-                        values.append(timestamped.value)
-                    serialized_channel["values"] = values
-
-                serialized_channel["counters"] = [
-                    timestamped.counter for timestamped in channel
-                ]
-            return serializable_compact
-
-        # Non “compact” form
-        serializable = {}
-        for channel, key in zip(
-            (self.first, self.second, self.third), ("first", "second", "third")
-        ):
-            if len(channel) > 0:
-                serializable[key] = [
-                    timestamped.default() for timestamped in channel
-                ]
-        return serializable
-
-    def extend(self, data: StreamingData) -> None:
-        """Add additional streaming data
-
-        Parameters
-        ----------
-
-        data:
-            The streaming data that should be added to this streaming data
-            object
-
-        Examples
-        --------
-
-        >>> value11 = TimestampedValue(timestamp=11, value=11, counter=1)
-        >>> value12 = TimestampedValue(timestamp=12, value=12, counter=2)
-        >>> value13 = TimestampedValue(timestamp=13, value=13, counter=3)
-        >>> value14 = TimestampedValue(timestamp=14, value=14, counter=4)
-        >>> value21 = TimestampedValue(timestamp=21, value=21, counter=5)
-        >>> value22 = TimestampedValue(timestamp=22, value=22, counter=6)
-        >>> value31 = TimestampedValue(timestamp=31, value=31, counter=7)
-        >>> value32 = TimestampedValue(timestamp=32, value=32, counter=8)
-        >>> value33 = TimestampedValue(timestamp=33, value=33, counter=9)
-        >>> value34 = TimestampedValue(timestamp=34, value=34, counter=10)
-
-        >>> data = StreamingData([value11, value12], [], [value31, value32])
-        >>> other = StreamingData([value13, value14], [value21, value22],
-        ...                       [value33, value34])
-        >>> data.extend(other)
-        >>> data
-        1: [11@11 (1), 12@12 (2), 13@13 (3), 14@14 (4)]
-        2: [21@21 (5), 22@22 (6)]
-        3: [31@31 (7), 32@32 (8), 33@33 (9), 34@34 (10)]
-        >>> other
-        1: [13@13 (3), 14@14 (4)]
-        2: [21@21 (5), 22@22 (6)]
-        3: [33@33 (9), 34@34 (10)]
-
-        """
-
-        self.first.extend(data.first)
-        self.second.extend(data.second)
-        self.third.extend(data.third)
-
-    def empty(self) -> bool:
-        """Check if the object contains any streaming data
-
-        Returns
-        -------
-
-        `True` if the current streaming data object stores any data, `False`
-        otherwise
-
-        Examples
-        --------
-
-        >>> StreamingData().empty()
-        True
-        >>> StreamingData([], [], []).empty()
-        True
-        >>> StreamingData([], [],
-        ...     [TimestampedValue(timestamp=1, value=1, counter=1)]).empty()
-        False
-
-        """
-
-        return not (self.first or self.second or self.third)
+        self.timestamp = timestamp
+        self.values = values
+        self.channels = channels
 
     def apply(
         self,
-        function: Callable[[Union[float, Quantity]], Union[float, Quantity]],
-        first: bool = True,
-        second: bool = True,
-        third: bool = True,
+        function: Callable[[float], float],
     ) -> None:
         """Apply a certain function to the streaming data
 
@@ -927,68 +600,38 @@ class StreamingData:
         function:
             The function that should be applied to the streaming data
 
-        first:
-            Specifies if the function should be applied to the first
-            measurement channel or not
+        Examples
+        --------
 
-        second:
-            Specifies if the function should be applied to the second
-            measurement channel or not
+        >>> channel3 = StreamingConfigBits(
+        ...     first=False, second=False, third=True)
+        >>> data = StreamingData(
+        ...     values=[1, 2, 3], counter=21, timestamp=1, channels=channel3)
+        >>> data.apply(lambda value: value + 10)
+        >>> data.values
+        (11, 12, 13)
 
-        third:
-            Specifies if the function should be applied to the third
-            measurement channel or not
+        """
+
+        updated_values = tuple(map(function, self.values))
+        assert len(updated_values) == 2 or len(updated_values) == 3
+        self.values = updated_values
+
+    def __repr__(self):
+        """Get the string representation of the stream data
 
         Examples
         --------
 
-        >>> value11 = TimestampedValue(timestamp=11, value=11, counter=5)
-        >>> value12 = TimestampedValue(timestamp=12, value=12, counter=6)
-        >>> value13 = TimestampedValue(timestamp=13, value=13, counter=7)
-        >>> value14 = TimestampedValue(timestamp=14, value=14, counter=8)
-
-        >>> data = StreamingData([value11, value12], [value13], [value14])
-        >>> data
-        1: [11@11 (5), 12@12 (6)]
-        2: [13@13 (7)]
-        3: [14@14 (8)]
-        >>> data.apply(lambda value: value + 10)
-        >>> data
-        1: [21@11 (5), 22@12 (6)]
-        2: [23@13 (7)]
-        3: [24@14 (8)]
-
-        >>> value11 = TimestampedValue(timestamp=11, value=11, counter=11)
-        >>> value12 = TimestampedValue(timestamp=12, value=12, counter=12)
-        >>> data = StreamingData([value11, value12])
-        >>> data
-        1: [11@11 (11), 12@12 (12)]
-        2: []
-        3: []
-        >>> data.apply(lambda value: value*2)
-        >>> data
-        1: [22@11 (11), 24@12 (12)]
-        2: []
-        3: []
+        >>> all = StreamingConfigBits(
+        ...     first=True, second=True, third=True)
+        >>> StreamingData(
+        ...     values=[1, 2, 3], counter=21, timestamp=1, channels=all)
+        [1, 2, 3]@1 #21
 
         """
 
-        def map_list(function, channel):
-            return [
-                TimestampedValue(
-                    timestamped.timestamp,
-                    function(timestamped.value),
-                    timestamped.counter,
-                )
-                for timestamped in channel
-            ]
-
-        if first:
-            self.first = map_list(function, self.first)
-        if second:
-            self.second = map_list(function, self.second)
-        if third:
-            self.third = map_list(function, self.third)
+        return f"{self.values}@{self.timestamp} #{self.counter}"
 
 
 # -- Main ---------------------------------------------------------------------

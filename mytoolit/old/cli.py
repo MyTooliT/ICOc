@@ -1016,9 +1016,7 @@ class CommandLineInterface:
         )
         number_values = 3 if self.tAccDataFormat == DataSets[3] else len(axes)
         values = [
-            convert_acceleration(
-                byte_list_to_int(data[start : start + 2])
-            ).magnitude
+            convert_acceleration(byte_list_to_int(data[start : start + 2]))
             for start in range(2, 2 + number_values * 2, 2)
         ]
 
