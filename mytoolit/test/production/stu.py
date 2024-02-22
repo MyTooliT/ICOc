@@ -59,41 +59,46 @@ class TestSTU(TestNode):
         async def fix_can_connection():
             """Fix possible CAN bus error"""
 
-            # Do not print error output
-            old_stderr = sys.stderr
-            sys.stderr = open(devnull, "w")
-
             # Ignore errors in notifier thread
+            old_excepthook = threading.excepthook
             threading.excepthook = lambda *args, **kwargs: print("", end="")
-            status_ok = False
-            attempt = 1
-            while not status_ok and attempt <= 10:
-                print(
-                    f"\nTrying to fix CAN connection (Attempt {attempt})",
-                    end="",
-                )
-                try:
-                    async with Network() as network:
-                        await network.reset_node("STU 1")
-                    status_ok = True
 
-                except CANInitError:
-                    # Init error only seems to happen on the **first attempt**,
-                    # if the CAN adapter is not connected to the computer.
-                    if attempt == 1:
-                        print("\nCAN adapter is not connected → Exiting\n")
-                        return
+            old_stderr = sys.stderr
+            with open(devnull, "w", encoding="utf8") as stream_devnull:
+                # Do not print error output
+                sys.stderr = stream_devnull
 
-                    await sleep(1)
-                except NoResponseError:
-                    await sleep(1)
+                status_ok = False
+                attempt = 1
+                while not status_ok and attempt <= 10:
+                    print(
+                        f"\nTrying to fix CAN connection (Attempt {attempt})",
+                        end="",
+                    )
+                    try:
+                        async with Network() as network:
+                            await network.reset_node("STU 1")
+                        status_ok = True
 
-                attempt += 1
-            print()
+                    except CANInitError:
+                        # Init error only seems to happen on the **first
+                        # attempt**, if the CAN adapter is not connected to the
+                        # computer.
+                        if attempt == 1:
+                            print("\nCAN adapter is not connected → Exiting\n")
+                            return
+
+                        await sleep(1)
+                    except NoResponseError:
+                        await sleep(1)
+
+                    attempt += 1
+                print()
 
             # Reenable error output
-            sys.stderr.close()
             sys.stderr = old_stderr
+            # Show errors in notifier threads again
+            threading.excepthook = old_excepthook
 
             if not status_ok:
                 print("Unable to fix CAN connection", file=stderr)
