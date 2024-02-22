@@ -7,6 +7,7 @@ PCB while an STH also includes the tool holder that contains the SHA.
 # -- Imports ------------------------------------------------------------------
 
 from itertools import chain, repeat
+from time import time
 from typing import List
 from unittest import main as unittest_main, skipIf
 
@@ -226,8 +227,10 @@ class TestSTH(TestSensorNode):
 
             sensor = settings.acceleration_sensor()
             stream_data = await self.can.read_streaming_data_single()
-            acceleration = convert_raw_to_g(
-                stream_data.first.pop().value, sensor.acceleration.maximum
+            acceleration = g0(
+                convert_raw_to_g(
+                    stream_data.values[0], sensor.acceleration.maximum
+                )
             )
 
             # We expect a stationary acceleration between -g₀ and g₀
@@ -261,12 +264,20 @@ class TestSTH(TestSensorNode):
     def test_acceleration_noise(self):
         """Test ratio of noise to maximal possible measurement value"""
 
-        acceleration = [
-            timestamped_value.value
-            for timestamped_value in self.loop.run_until_complete(
-                self.can.read_streaming_data_seconds(seconds=4)
-            ).first
-        ]
+        async def read_streaming_data():
+            """Read streaming data of first channel"""
+            stream_data = []
+            seconds = 4
+            async with self.can.open_data_stream(first=True) as stream:
+                end_time = time() + seconds
+                async for data in stream:
+                    stream_data.extend(data.values)
+                    if time() > end_time:
+                        break
+
+            return stream_data
+
+        acceleration = self.loop.run_until_complete(read_streaming_data())
 
         cls = type(self)
         cls.ratio_noise_max = ratio_noise_max(acceleration)

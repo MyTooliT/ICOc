@@ -227,8 +227,13 @@ async def measure(arguments: Namespace) -> None:
                 async with network.open_data_stream(first=True) as stream:
                     start_time = time()
                     async for data in stream:
-                        data.apply(conversion_to_g)
-                        storage.add_streaming_data(data)
+
+                        for value in data.values:
+                            storage.add_acceleration(
+                                {"x": conversion_to_g(value)},
+                                timestamp=data.timestamp * 1000,
+                                counter=data.counter,
+                            )
                         progress.update(3)  # 3 values per message
 
                         if time() - start_time >= measurement_time_s:
