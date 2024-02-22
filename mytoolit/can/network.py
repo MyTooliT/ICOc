@@ -39,10 +39,10 @@ from mytoolit.can.node import Node
 from mytoolit.can.streaming import (
     AsyncStreamBuffer,
     StreamingConfiguration,
+    StreamingConfigBits,
     StreamingData,
     StreamingFormat,
     StreamingFormatVoltage,
-    TimestampedValue,
 )
 from mytoolit.can.status import State
 from mytoolit.measurement import convert_raw_to_supply_voltage
@@ -305,6 +305,7 @@ class DataStreamContextManager:
 
         self.network = network
         self.reader = AsyncStreamBuffer(configuration, timeout)
+        self.configuration = configuration
 
     async def __aenter__(self) -> AsyncStreamBuffer:
         """Open the stream of measurement data
@@ -317,7 +318,7 @@ class DataStreamContextManager:
         """
 
         reader = self.reader
-        configuration = reader.configuration
+        configuration = self.configuration.channels
         await self.network.start_streaming_data(
             configuration.first, configuration.second, configuration.third
         )
@@ -1878,8 +1879,7 @@ class Network:
         ...         await network.connect_sensor_device(0)
         ...         return await network.read_streaming_data_single()
         >>> data = run(read_sensor_values())
-        >>> values = [channel.pop().value for channel in data]
-        >>> all([0 <= value <= 0xffff for value in values])
+        >>> all([0 <= value <= 0xffff for value in data.values])
         True
 
         """
@@ -1903,24 +1903,24 @@ class Network:
             message,
             description=f"read single set of streaming values from “{node}”",
         )
-        raw_values = [
-            TimestampedValue(
-                value=int.from_bytes(word, byteorder="little"),
-                timestamp=response.timestamp,
-                counter=response.data[1],
-            )
+        values = tuple((
+            int.from_bytes(word, byteorder="little")
             for word in (
                 response.data[2:4],
                 response.data[4:6],
                 response.data[6:8],
             )
-        ]
+        ))
+        assert len(values) == 2 or len(values) == 3
 
-        return StreamingData(
-            first=[raw_values[0]],
-            second=[raw_values[1]],
-            third=[raw_values[2]],
+        data = StreamingData(
+            values=values,
+            timestamp=response.timestamp,
+            counter=response.data[1],
+            channels=StreamingConfigBits(first=True, second=True, third=True),
         )
+
+        return data
 
     async def start_streaming_data(
         self, first: bool = False, second: bool = False, third: bool = False
@@ -2074,20 +2074,20 @@ class Network:
         ...         await network.connect_sensor_device(0)
         ...         async with network.open_data_stream(first=True,
         ...                                             third=True) as stream:
-        ...             stream_data = StreamingData()
+        ...             first = []
+        ...             third = []
         ...             messages = 0
         ...             async for data in stream:
-        ...                 stream_data.extend(data)
+        ...                 first.append(data.values[0])
+        ...                 third.append(data.values[1])
         ...                 messages += 1
         ...                 if messages >= 3:
         ...                     break
-        ...             return stream_data
-        >>> stream_data = run(read_streaming_data())
-        >>> len(stream_data.first)
+        ...             return first, third
+        >>> first, third = run(read_streaming_data())
+        >>> len(first)
         3
-        >>> len(stream_data.second)
-        0
-        >>> len(stream_data.third)
+        >>> len(third)
         3
 
         """
@@ -2095,158 +2095,6 @@ class Network:
         return DataStreamContextManager(
             self, StreamingConfiguration(first, second, third), timeout
         )
-
-    async def read_streaming_data_seconds(
-        self,
-        seconds: float,
-        first: bool = True,
-        second: bool = False,
-        third: bool = False,
-    ) -> StreamingData:
-        """Read raw streaming data for a certain amount of time
-
-        Parameters
-        ----------
-
-        seconds:
-            For how long the method should read streaming data in seconds
-
-        first:
-            Specifies if the data of the first measurement channel should
-            be collected or not
-
-        second:
-            Specifies if the data of the second measurement channel should
-            be collected or not
-
-        third:
-            Specifies if the data of the third measurement channel should
-            be collected or not
-
-        Returns
-        -------
-
-        A streaming data object that contains the collected data for each
-        channel
-
-        Example
-        -------
-
-        >>> from asyncio import run
-        >>> from statistics import mean
-        >>> from platform import system
-
-        Read the acceleration data of a STH for one second
-
-        >>> if system() == 'Linux':
-        ...    async def reset():
-        ...        async with Network() as network:
-        ...            await network.reset_node('STU 1')
-        ...    run(reset())
-        >>> async def read_raw_acceleration():
-        ...     async with Network() as network:
-        ...         await network.connect_sensor_device(0)
-        ...         return await network.read_streaming_data_seconds(1)
-        >>> acceleration = [timestamped_value.value for timestamped_value in
-        ...                 run(read_raw_acceleration()).first]
-        >>> 32000 < mean(acceleration) < 33000
-        True
-
-        """
-
-        async with self.open_data_stream(first, second, third) as stream:
-            stream_data = StreamingData()
-            end_time = time() + seconds
-            async for data in stream:
-                stream_data.extend(data)
-                if time() > end_time:
-                    break
-
-        return stream_data
-
-    async def read_streaming_data_amount(
-        self,
-        amount: int,
-        first: bool = True,
-        second: bool = False,
-        third: bool = False,
-    ) -> StreamingData:
-        """Read a certain amount of streaming values
-
-        Parameters
-        ----------
-
-        amount:
-            The number of streaming values that should be collected
-
-        first:
-            Specifies if the data of the first measurement channel should
-            be collected or not
-
-        second:
-            Specifies if the data of the second measurement channel should
-            be collected or not
-
-        third:
-            Specifies if the data of the third measurement channel should
-            be collected or not
-
-        Returns
-        -------
-
-        A streaming data object that contains the collected data for each
-        channel
-
-        Example
-        -------
-
-        >>> from asyncio import run
-        >>> from statistics import mean
-        >>> from platform import system
-
-        Read 100 sensor values
-
-        >>> if system() == 'Linux':
-        ...    async def reset():
-        ...        async with Network() as network:
-        ...            await network.reset_node('STU 1')
-        ...    run(reset())
-        >>> async def read_raw_sensor_values():
-        ...     async with Network() as network:
-        ...         await network.connect_sensor_device(0)
-        ...         return await network.read_streaming_data_amount(100)
-        >>> stream_data = run(read_raw_sensor_values())
-        >>> len(stream_data) == 100
-        True
-        >>> values = [timestamped_value.value for timestamped_value in
-        ...           stream_data.first]
-        >>> 32000 < mean(values) < 33000
-        True
-
-        """
-
-        async with self.open_data_stream(first, second, third) as stream:
-            stream_data = StreamingData()
-            async for data in stream:
-                stream_data.extend(data)
-                if len(stream_data) >= amount:
-                    break
-
-        # Due to the chosen streaming format the code above might have
-        # collected one or two additional values. We drop these values
-        # from the last enabled channels here.
-        while len(stream_data) > amount:
-            for channel in (
-                stream_data.third,
-                stream_data.second,
-                stream_data.first,
-            ):
-                if channel:
-                    channel.pop()
-                    if len(stream_data) <= amount:
-                        break
-
-        return stream_data
 
     # -----------
     # - Voltage -
@@ -5506,7 +5354,7 @@ if __name__ == "__main__":
         testmod()
     else:
         run_docstring_examples(
-            Network.read_eeprom_y_axis_acceleration_slope,
+            Network.read_streaming_data_single,
             globals(),
             verbose=True,
         )

@@ -6,15 +6,12 @@ from math import log, sqrt
 from statistics import pvariance
 from typing import Iterable
 
-from pint import Quantity
-
 from mytoolit.measurement.constants import ADC_MAX_VALUE
-from mytoolit.measurement.units import g0
 
 # -- Functions ----------------------------------------------------------------
 
 
-def convert_raw_to_g(acceleration_raw: int, max_value: float) -> Quantity:
+def convert_raw_to_g(acceleration_raw: int, max_value: float) -> float:
     """Convert an acceleration value sent by the STH into a factor
 
     The factor measures the amount of the gravitational force
@@ -39,7 +36,7 @@ def convert_raw_to_g(acceleration_raw: int, max_value: float) -> Quantity:
     --------
 
     >>> acceleration = convert_raw_to_g(2**15, max_value=200)
-    >>> g0(-0.01) < acceleration < g0(0.01)
+    >>> -0.01 < acceleration < 0.01
     True
 
     """
@@ -52,7 +49,7 @@ def convert_raw_to_g(acceleration_raw: int, max_value: float) -> Quantity:
     acceleration_in_g = (
         acceleration_raw / ADC_MAX_VALUE - 1 / 2
     ) * acceleration_to_gravity
-    return g0(acceleration_in_g)
+    return acceleration_in_g
 
 
 def ratio_noise_max(values: Iterable[int]) -> float:

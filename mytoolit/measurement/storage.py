@@ -7,9 +7,8 @@ from __future__ import annotations
 from datetime import datetime
 from pathlib import Path
 from types import TracebackType
-from typing import Dict, Iterable, Optional, Type, Union
+from typing import Dict, Iterable, Mapping, Optional, Type, Union
 
-from pint import Quantity
 from tables import (
     File,
     Filters,
@@ -238,7 +237,7 @@ class Storage:
         self.acceleration.attrs["Start_Time"] = datetime.now().isoformat()
 
     def add_acceleration(
-        self, values: Dict[str, float], counter: int, timestamp: float
+        self, values: Mapping[str, float], counter: int, timestamp: float
     ) -> None:
         """Append acceleration data
 
@@ -287,7 +286,10 @@ class Storage:
         if self.acceleration.nrows % 1000 == 0:
             self.acceleration.flush()
 
-    def add_streaming_data(self, streaming_data: StreamingData) -> None:
+    def add_streaming_data(
+        self,
+        streaming_data: StreamingData,
+    ) -> None:
         """Add streaming data to the storage object
 
         Parameters
@@ -299,67 +301,68 @@ class Storage:
         Examples
         --------
 
-        >>> from mytoolit.measurement import g0
-        >>> from mytoolit.can.streaming import TimestampedValue
+        >>> from mytoolit.can.streaming import StreamingConfigBits
 
-        >>> t1 = TimestampedValue(timestamp=1, value=g0(1), counter=21)
-        >>> t2 = TimestampedValue(timestamp=2, value=g0(2), counter=22)
+        Store streaming data for single channel
 
-        >>> t3 = TimestampedValue(timestamp=1, value=g0(3), counter=21)
-        >>> t4 = TimestampedValue(timestamp=2, value=g0(4), counter=22)
-
-        >>> data = StreamingData(first=[t1, t2], third=[t3, t4])
+        >>> channel3 = StreamingConfigBits(
+        ...     first=False, second=False, third=True)
+        >>> data1 = StreamingData(
+        ...     values=[1, 2, 3], counter=21, timestamp=1, channels=channel3)
+        >>> data2 = StreamingData(
+        ...     values=[4, 5, 6], counter=22, timestamp=2, channels=channel3)
         >>> filepath = Path("test.hdf5")
         >>> with Storage(filepath) as storage:
-        ...     storage.add_streaming_data(data)
+        ...     storage.add_streaming_data(data1)
+        ...     storage.add_streaming_data(data2)
+        >>> filepath.unlink()
+
+        Store streaming data for three channels
+
+        >>> all = StreamingConfigBits(first=True, second=True, third=True)
+        >>> data1 = StreamingData(
+        ...     values=[1, 2, 3], counter=21, timestamp=1, channels=all)
+        >>> data2 = StreamingData(
+        ...     values=[4, 5, 6], counter=22, timestamp=2, channels=all)
+        >>> with Storage(filepath) as storage:
+        ...     storage.add_streaming_data(data1)
+        ...     storage.add_streaming_data(data2)
         >>> filepath.unlink()
 
         """
 
-        # Data for each channel must have same length otherwise (some) data
-        # will not be stored.
-        assert (
-            len({
-                len(channel) for channel in streaming_data if len(channel) != 0
-            })
-            == 1
-        ), "Heterogenous channel lengths"
+        channels = streaming_data.channels
+        axes = [
+            name
+            for enabled, name in zip(
+                (
+                    channels.first,
+                    channels.second,
+                    channels.third,
+                ),
+                "xyz",
+            )
+            if enabled
+        ]
+        timestamp = streaming_data.timestamp * 1000
 
-        axes = []
-        data = []
-        length_data = 0
-        for axis, channel in zip("xyz", streaming_data):
-            if len(channel) > 0:
-                axes.append(axis)
-                data.append(channel)
+        assert len(axes) >= 1
 
-        if not data:
-            return
-
-        if self.acceleration is None:
-            self.init_acceleration(axes, data[0][0].timestamp)
-
-        assert isinstance(self.acceleration, Node)
-        assert isinstance(self.start_time, (int, float))
-
-        row = self.acceleration.row
-        length_data = len(data[0])
-        for data_index in range(length_data):
-            first = data[0][data_index]
-
-            row["timestamp"] = (first.timestamp - self.start_time) * 1_000_000
-            row["counter"] = first.counter
-            for index, axis in enumerate(axes):
-                value = data[index][data_index].value
-                row[axis] = (
-                    value.magnitude if isinstance(value, Quantity) else value
+        if len(axes) == 1:  # Single Channel: 3 Values
+            axis = axes.pop()
+            for value in streaming_data.values:
+                self.add_acceleration(
+                    values={axis: value},
+                    timestamp=timestamp,
+                    counter=streaming_data.counter,
                 )
 
-            row.append()
-
-        # Flush data to disk every few values to keep memory usage in check
-        if self.acceleration.nrows % 1000 == 0:
-            self.acceleration.flush()
+        else:  # One value for each channel
+            self.add_acceleration(
+                values=dict(zip(axes, streaming_data.values)),
+                timestamp=timestamp,
+                counter=streaming_data.counter,
+            )
 
     def add_acceleration_meta(self, name: str, value: str) -> None:
         """Add acceleration metadata
