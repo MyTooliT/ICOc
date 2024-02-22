@@ -76,8 +76,17 @@ class TestSTU(TestNode):
                     async with Network() as network:
                         await network.reset_node("STU 1")
                     status_ok = True
-                except (CANInitError, NoResponseError):
+                except CANInitError:
+                    # Init error only seems to happen on the **first attempt**,
+                    # if the CAN adapter is not connected to the computer.
+                    if attempt == 1:
+                        print("\nCAN adapter is not connected → Exiting\n")
+                        return
+
                     await sleep(1)
+                except NoResponseError:
+                    await sleep(1)
+
                 attempt += 1
             print()
 
