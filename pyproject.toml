@@ -80,6 +80,8 @@ Source = "https://github.com/mytoolit/ICOc/"
 [tool.black]
 line-length = 79
 preview = true
+unstable = true
+enable-unstable-feature = ["string_processing"]
 
 [tool.mypy]
 ignore_missing_imports = true
