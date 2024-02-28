@@ -130,6 +130,14 @@ sudo systemctl restart systemd-networkd
 sudo networkctl reload
 ```
 
+For old versions of `systemd` you may use:
+
+```sh
+sudo systemctl enable systemd-networkd
+sudo systemctl restart systemd-networkd
+sudo systemctl reload systemd-networkd
+```
+
 You can check the status of the CAN connection with the command:
 
 ```sh
