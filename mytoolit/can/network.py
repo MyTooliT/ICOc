@@ -13,7 +13,7 @@ doctests of the `Network` class or the code for the `icon` command line tool
 
 from __future__ import annotations
 
-from asyncio import get_running_loop, Queue, sleep, wait_for
+from asyncio import get_running_loop, CancelledError, Queue, sleep, wait_for
 from datetime import date
 from logging import getLogger
 from struct import pack, unpack
@@ -339,12 +339,17 @@ class DataStreamContextManager:
             The traceback in case of an exception
 
         """
-
         logger = getLogger(__name__)
 
         self.reader.stop()
         self.network.notifier.remove_listener(self.reader)
-        if exception_type:
+
+        if exception_type is None or isinstance(
+            exception_type, type(CancelledError)
+        ):
+            logger.info("Stopping stream")
+            await self.network.stop_streaming_data()
+        else:
             # If there was an error while streaming data, then stoping the
             # stream will usually also fail. Because of this we only try once
             # and ignore any errors.
@@ -358,9 +363,6 @@ class DataStreamContextManager:
             await self.network.stop_streaming_data(
                 retries=1, ignore_errors=True
             )
-        else:
-            logger.info("Stopping stream")
-            await self.network.stop_streaming_data()
 
 
 # pylint: disable=too-many-public-methods
