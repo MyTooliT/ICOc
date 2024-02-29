@@ -127,15 +127,8 @@ in a file called `/etc/systemd/network/can.network`. Afterwards enable `networkd
 ```sh
 sudo systemctl enable systemd-networkd
 sudo systemctl restart systemd-networkd
-sudo networkctl reload
-```
-
-For old versions of `systemd` you may use:
-
-```sh
-sudo systemctl enable systemd-networkd
-sudo systemctl restart systemd-networkd
-sudo systemctl reload systemd-networkd
+# Note: The command `networkctl reload` only works in systemd 244 or newer
+sudo networkctl reload || sudo systemctl reload systemd-networkd
 ```
 
 You can check the status of the CAN connection with the command:
