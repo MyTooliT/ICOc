@@ -294,7 +294,7 @@ class TestNode(TestCase):
     def _disconnect(self):
         """Tear down connection to STU"""
 
-        self.loop.run_until_complete(self.can.__aexit__(None, None, None))
+        self.loop.run_until_complete(self.can.shutdown())
         self.loop.close()
 
     async def _test_connection(self, node: str):
