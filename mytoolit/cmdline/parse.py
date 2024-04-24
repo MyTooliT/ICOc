@@ -460,13 +460,19 @@ def parse_arguments() -> Namespace:
     measurement_parser = subparsers.add_parser(
         "measure", help="Store measurement data"
     )
-    measurement_parser.add_argument(
+
+    measurement_group = measurement_parser.add_argument_group(
+        title="Measurement"
+    )
+
+    measurement_group.add_argument(
         "-t",
         "--time",
         type=measurement_time,
         help="measurement time in seconds (0 for infinite runtime)",
         default=10,
     )
+
     add_identifier_arguments(measurement_parser)
     add_adc_arguments(measurement_parser)
 
