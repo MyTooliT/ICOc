@@ -54,7 +54,7 @@ class SensorConfig(Mapping):
         }
 
         for name, channel in self.attributes.items():
-            if not (0 <= channel <= 255):
+            if channel < 0 or channel > 255:
                 raise ValueError(
                     f"Incorrect value for {name} channel: “{channel}”"
                 )
