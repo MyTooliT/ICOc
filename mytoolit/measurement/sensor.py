@@ -27,7 +27,32 @@ class SensorConfig:
         third:
             The sensor number for the third measurement channel
 
+
+        Examples
+        --------
+
+        >>> SensorConfig(first=0, second=1, third=2)
+        M1: None, M2: S1, M3: S2
+
+        >>> SensorConfig(first=256, second=1, third=2)
+        Traceback (most recent call last):
+        ...
+        ValueError: Incorrect value for first channel: “256”
+
+        >>> SensorConfig(first=0, second=1, third=-1)
+        Traceback (most recent call last):
+        ...
+        ValueError: Incorrect value for third channel: “-1”
+
         """
+
+        for name, channel in zip(
+            ("first", "second", "third"), (first, second, third)
+        ):
+            if not (0 <= channel <= 255):
+                raise ValueError(
+                    f"Incorrect value for {name} channel: “{channel}”"
+                )
 
         self.first = first
         self.second = second
