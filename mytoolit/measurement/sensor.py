@@ -2,6 +2,7 @@
 
 # -- Imports ------------------------------------------------------------------
 
+from collections.abc import Iterator, Mapping
 from enum import auto, Enum
 from statistics import mean
 from typing import Iterable, NamedTuple
@@ -9,7 +10,7 @@ from typing import Iterable, NamedTuple
 # -- Classes ------------------------------------------------------------------
 
 
-class SensorConfig:
+class SensorConfig(Mapping):
     """Used to store the configuration of the three sensor channels"""
 
     def __init__(self, first: int = 0, second: int = 0, third: int = 0):
@@ -46,17 +47,108 @@ class SensorConfig:
 
         """
 
-        for name, channel in zip(
-            ("first", "second", "third"), (first, second, third)
-        ):
+        self.attributes = {
+            "first": first,
+            "second": second,
+            "third": third,
+        }
+
+        for name, channel in self.attributes.items():
             if not (0 <= channel <= 255):
                 raise ValueError(
                     f"Incorrect value for {name} channel: “{channel}”"
                 )
 
-        self.first = first
-        self.second = second
-        self.third = third
+    def __getitem__(self, item: str) -> int:
+        """Return values of the mapping provided by this class
+
+        Note: This method allow access to the object via the splat
+              operators (*, **)
+
+        Parameters
+        ----------
+
+        item:
+            The attribute for which we want to retrieve the value
+
+        Returns
+        -------
+
+        The value of the attribute
+
+        Examples
+        --------
+
+        >>> dict(**SensorConfig()) # doctest:+NORMALIZE_WHITESPACE
+        {'first': 0,
+         'second': 0,
+         'third': 0}
+
+        >>> dict(**SensorConfig(first=1, second=2, third=3)
+        ...     ) # doctest:+NORMALIZE_WHITESPACE
+        {'first': 1,
+         'second': 2,
+         'third': 3}
+
+        """
+
+        return self.attributes[item]
+
+    def __iter__(self) -> Iterator:
+        """Return an iterator over the mapping provided by this class
+
+        Note: This method allow access to the object via the splat
+              operators (*, **)
+
+        Returns
+        -------
+
+        The names of the “important” properties of the sensor configuration:
+
+        - first
+        - second
+        - third
+
+        Examples
+        --------
+
+        >>> for attribute in SensorConfig():
+        ...     print(attribute)
+        first
+        second
+        third
+
+        """
+
+        return iter(self.attributes)
+
+    def __len__(self) -> int:
+        """Return the length of the mapping provided by this class
+
+        Note: This method allow access to the object via the splat
+              operators (*, **)
+
+        Returns
+        -------
+
+        The amount of the “important” properties of the sensor configuration:
+
+        - first
+        - second
+        - third
+
+        Examples
+        --------
+
+        >>> len(SensorConfig())
+        3
+
+        >>> len(SensorConfig(second=10))
+        3
+
+        """
+
+        return len(self.attributes)
 
     def __str__(self) -> str:
         """The string representation of the sensor configuration
@@ -82,9 +174,7 @@ class SensorConfig:
 
         return ", ".join((
             f"M{sensor}: S{value}"
-            for sensor, value in enumerate(
-                (self.first, self.second, self.third), start=1
-            )
+            for sensor, value in enumerate(self.attributes.values(), start=1)
             if value != 0
         ))
 
@@ -109,10 +199,74 @@ class SensorConfig:
 
         return ", ".join((
             f"M{sensor}: {f'S{value}' if value != 0 else 'None'}"
-            for sensor, value in enumerate(
-                (self.first, self.second, self.third), start=1
-            )
+            for sensor, value in enumerate(self.attributes.values(), start=1)
         ))
+
+    @property
+    def first(self) -> int:
+        """Get the sensor for the first channel
+
+        Returns
+        -------
+
+        The sensor number of the first channel
+
+
+        Examples
+        --------
+
+        >>> SensorConfig(first=1, second=3, third=2).first
+        1
+
+        """
+
+        first = self.attributes["first"]
+
+        return 0 if first is None else first
+
+    @property
+    def second(self) -> int:
+        """Get the sensor for the second channel
+
+        Returns
+        -------
+
+        The sensor number of the second channel
+
+
+        Examples
+        --------
+
+        >>> SensorConfig(first=1, second=3, third=2).second
+        3
+
+        """
+
+        second = self.attributes["second"]
+
+        return 0 if second is None else second
+
+    @property
+    def third(self) -> int:
+        """Get the sensor for the third channel
+
+        Returns
+        -------
+
+        The sensor number of the third channel
+
+
+        Examples
+        --------
+
+        >>> SensorConfig(first=1, second=3, third=2).third
+        2
+
+        """
+
+        third = self.attributes["third"]
+
+        return 0 if third is None else third
 
     def disable_channel(
         self, first: bool = False, second: bool = False, third: bool = False
@@ -137,11 +291,11 @@ class SensorConfig:
         """
 
         if first:
-            self.first = 0
+            self.attributes["first"] = 0
         if second:
-            self.second = 0
+            self.attributes["second"] = 0
         if third:
-            self.third = 0
+            self.attributes["third"] = 0
 
     def requires_channel_configuration_support(self):
         """Check if the sensor configuration requires channel config support
@@ -169,11 +323,10 @@ class SensorConfig:
 
         """
 
-        return (
-            True
-            if self.first > 1 or self.second > 1 or self.third > 1
-            else False
-        )
+        for value in self.attributes.values():
+            if value > 1:
+                return True
+        return False
 
 
 class SensorType(Enum):
