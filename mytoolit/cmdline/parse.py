@@ -406,6 +406,47 @@ def add_adc_arguments(parser: ArgumentParser) -> None:
     )
 
 
+def add_channel_arguments(parser: ArgumentParser) -> None:
+    """Add channel arguments to given argument parser"""
+
+    parser.add_argument(
+        "-1",
+        "--first-channel",
+        type=channel_number,
+        default=1,
+        const=1,
+        nargs="?",
+        help=(
+            "sensor channel number for first measurement channel "
+            "(1 - 255; 0 to disable)"
+        ),
+    )
+    parser.add_argument(
+        "-2",
+        "--second-channel",
+        type=channel_number,
+        default=0,
+        const=2,
+        nargs="?",
+        help=(
+            "sensor channel number for second measurement channel "
+            "(1 - 255; 0 to disable)"
+        ),
+    )
+    parser.add_argument(
+        "-3",
+        "--third-channel",
+        type=channel_number,
+        default=0,
+        const=3,
+        nargs="?",
+        help=(
+            "sensor channel number for third measurement channel "
+            "(1 - 255; 0 to disable)"
+        ),
+    )
+
+
 def parse_arguments() -> Namespace:
     """Parse command line arguments
 

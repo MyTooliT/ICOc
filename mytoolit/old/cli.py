@@ -21,7 +21,11 @@ from can.interfaces.pcan.basic import (
     PCAN_RECEIVE_EVENT,
 )
 
-from mytoolit.cmdline import channel_number, mac_address, sth_name
+from mytoolit.cmdline.parse import (
+    add_channel_arguments,
+    mac_address,
+    sth_name,
+)
 from mytoolit.config import settings
 from mytoolit.measurement.acceleration import convert_raw_to_g
 from mytoolit.measurement.storage import Storage
@@ -208,43 +212,7 @@ class CommandLineInterface:
                 "(values equal or below “0” specify infinite runtime)"
             ),
         )
-
-        measurement_group.add_argument(
-            "-1",
-            "--first-channel",
-            type=channel_number,
-            default=1,
-            const=1,
-            nargs="?",
-            help=(
-                "sensor channel number for first measurement channel "
-                "(1 - 255; 0 to disable)"
-            ),
-        )
-        measurement_group.add_argument(
-            "-2",
-            "--second-channel",
-            type=channel_number,
-            default=0,
-            const=2,
-            nargs="?",
-            help=(
-                "sensor channel number for second measurement channel "
-                "(1 - 255; 0 to disable)"
-            ),
-        )
-        measurement_group.add_argument(
-            "-3",
-            "--third-channel",
-            type=channel_number,
-            default=0,
-            const=3,
-            nargs="?",
-            help=(
-                "sensor channel number for third measurement channel "
-                "(1 - 255; 0 to disable)"
-            ),
-        )
+        add_channel_arguments(measurement_group)
 
         adc_group = self.parser.add_argument_group(title="ADC")
 
