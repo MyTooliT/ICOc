@@ -514,6 +514,7 @@ def parse_arguments() -> Namespace:
         default=10,
     )
 
+    add_channel_arguments(measurement_group)
     add_identifier_arguments(measurement_parser)
     add_adc_arguments(measurement_parser)
 

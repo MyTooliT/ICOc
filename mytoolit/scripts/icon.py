@@ -21,11 +21,13 @@ from tqdm import tqdm
 
 from mytoolit.can import Network
 from mytoolit.can.adc import ADCConfiguration
+from mytoolit.can.error import UnsupportedFeatureException
 from mytoolit.can.network import STHDeviceInfo, NetworkError
 from mytoolit.can.streaming import StreamingTimeoutError
 from mytoolit.cmdline.parse import parse_arguments
 from mytoolit.config import ConfigurationUtility, settings
 from mytoolit.measurement import convert_raw_to_g, Storage
+from mytoolit.measurement.sensor import SensorConfig
 
 
 # -- Functions ----------------------------------------------------------------
@@ -193,6 +195,8 @@ async def measure(arguments: Namespace) -> None:
 
     """
 
+    logger = getLogger(__name__)
+
     identifier = arguments.identifier
     measurement_time_s = arguments.time
 
@@ -208,6 +212,24 @@ async def measure(arguments: Namespace) -> None:
         await network.write_adc_configuration(**adc_config)
         print(f"Sample Rate: {adc_config.sample_rate()} Hz")
 
+        user_sensor_config = SensorConfig(
+            first=arguments.first_channel,
+            second=arguments.second_channel,
+            third=arguments.third_channel,
+        )
+
+        if user_sensor_config.requires_channel_configuration_support():
+            # Check if the connected hardware supports channel
+            # configuration
+            try:
+                await network.read_sensor_configuration()
+            except UnsupportedFeatureException as exception:
+                raise UnsupportedFeatureException(
+                    f"Sensor channel configuration “{user_sensor_config}” is "
+                    f"not supported by the sensor node “{identifier}”"
+                ) from exception
+            await network.write_sensor_configuration(**user_sensor_config)
+
         sensor_range = await read_acceleration_sensor_range_in_g(network)
         conversion_to_g = partial(convert_raw_to_g, max_value=sensor_range)
 
@@ -215,8 +237,19 @@ async def measure(arguments: Namespace) -> None:
             sample_rate = (
                 await network.read_adc_configuration()
             ).sample_rate()
+            streaming_config = {
+                key: bool(value) for key, value in user_sensor_config.items()
+            }
+            logger.info("Streaming Configuration: %s", streaming_config)
+            values_per_message = (
+                2 if sum(streaming_config.values()) == 2 else 3
+            )
+
             progress = tqdm(
-                total=round(sample_rate * measurement_time_s, 0),
+                total=round(
+                    sample_rate * measurement_time_s * values_per_message / 3,
+                    0,
+                ),
                 desc="Read sensor data",
                 unit=" values",
                 leave=False,
@@ -224,12 +257,14 @@ async def measure(arguments: Namespace) -> None:
             )
 
             try:
-                async with network.open_data_stream(first=True) as stream:
+                async with network.open_data_stream(
+                    **streaming_config
+                ) as stream:
                     start_time = time()
                     async for data in stream:
                         data.apply(conversion_to_g)
                         storage.add_streaming_data(data)
-                        progress.update(3)  # 3 values per message
+                        progress.update(values_per_message)
 
                         if time() - start_time >= measurement_time_s:
                             break
@@ -317,6 +352,9 @@ def main():
         format="{asctime} {levelname:7} {message}",
     )
 
+    logger = getLogger(__name__)
+    logger.info("CLI Arguments: %s", arguments)
+
     if arguments.subcommand == "config":
         config(arguments.subcommand)
     else:
@@ -330,7 +368,7 @@ def main():
 
         try:
             run(command_to_coroutine[arguments.subcommand](arguments))
-        except NetworkError as error:
+        except (NetworkError, UnsupportedFeatureException) as error:
             print(error, file=stderr)
         except StreamingTimeoutError as error:
             print(f"Quitting Measurement: {error}")

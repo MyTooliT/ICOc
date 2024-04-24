@@ -41,7 +41,8 @@ Check help output of list command:
 Check help output of measure command:
 
   $ icon measure --help
-  usage: icon measure [-h] [-t TIME]
+  usage: icon measure [-h] [-t TIME] [-1 [FIRST_CHANNEL]] [-2 [SECOND_CHANNEL]]
+                      [-3 [THIRD_CHANNEL]]
                       (-n NAME | -m MAC_ADRESS | -d DEVICE_NUMBER) [-s 2–127]
                       [-a {1,2,3,4,8,16,32,64,128,256}]
                       [-o {1,2,4,8,16,32,64,128,256,512,1024,2048,4096}]
@@ -52,6 +53,15 @@ Check help output of measure command:
   
   Measurement:
     -t TIME, --time TIME  measurement time in seconds (0 for infinite runtime)
+    -1 [FIRST_CHANNEL], --first-channel [FIRST_CHANNEL]
+                          sensor channel number for first measurement channel (1
+                          - 255; 0 to disable)
+    -2 [SECOND_CHANNEL], --second-channel [SECOND_CHANNEL]
+                          sensor channel number for second measurement channel
+                          (1 - 255; 0 to disable)
+    -3 [THIRD_CHANNEL], --third-channel [THIRD_CHANNEL]
+                          sensor channel number for third measurement channel (1
+                          - 255; 0 to disable)
   
   Sensor Device Identifier:
     -n NAME, --name NAME  Name of sensor device
