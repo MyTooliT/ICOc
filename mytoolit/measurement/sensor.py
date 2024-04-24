@@ -143,6 +143,38 @@ class SensorConfig:
         if third:
             self.third = 0
 
+    def requires_channel_configuration_support(self):
+        """Check if the sensor configuration requires channel config support
+
+        Returns
+        -------
+
+        - True, if the configuration requires hardware that has support for
+          changing the channel configuration
+        - False, otherwise
+
+        Examples
+        --------
+
+        >>> SensorConfig(first=1, second=3, third=2
+        ...     ).requires_channel_configuration_support()
+        True
+
+        >>> SensorConfig(first=1, second=0, third=1
+        ...     ).requires_channel_configuration_support()
+        False
+
+        >>> SensorConfig().requires_channel_configuration_support()
+        False
+
+        """
+
+        return (
+            True
+            if self.first > 1 or self.second > 1 or self.third > 1
+            else False
+        )
+
 
 class SensorType(Enum):
     """Possible sensor types"""
