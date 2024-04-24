@@ -406,10 +406,18 @@ def add_adc_arguments(parser: ArgumentParser) -> None:
     )
 
 
-def add_channel_arguments(parser: ArgumentParser) -> None:
-    """Add channel arguments to given argument parser"""
+def add_channel_arguments(group) -> None:
+    """Add channel arguments to given argument parser group
 
-    parser.add_argument(
+    Parameters
+    ----------
+
+    group:
+        The parser group to which the channel arguments should be added to
+
+    """
+
+    group.add_argument(
         "-1",
         "--first-channel",
         type=channel_number,
@@ -421,7 +429,7 @@ def add_channel_arguments(parser: ArgumentParser) -> None:
             "(1 - 255; 0 to disable)"
         ),
     )
-    parser.add_argument(
+    group.add_argument(
         "-2",
         "--second-channel",
         type=channel_number,
@@ -433,7 +441,7 @@ def add_channel_arguments(parser: ArgumentParser) -> None:
             "(1 - 255; 0 to disable)"
         ),
     )
-    parser.add_argument(
+    group.add_argument(
         "-3",
         "--third-channel",
         type=channel_number,
