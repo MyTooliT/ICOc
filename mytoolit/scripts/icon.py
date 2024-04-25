@@ -219,16 +219,13 @@ async def measure(arguments: Namespace) -> None:
         )
 
         if user_sensor_config.requires_channel_configuration_support():
-            # Check if the connected hardware supports channel
-            # configuration
             try:
-                await network.read_sensor_configuration()
+                await network.write_sensor_configuration(**user_sensor_config)
             except UnsupportedFeatureException as exception:
                 raise UnsupportedFeatureException(
                     f"Sensor channel configuration “{user_sensor_config}” is "
                     f"not supported by the sensor node “{identifier}”"
                 ) from exception
-            await network.write_sensor_configuration(**user_sensor_config)
 
         sensor_range = await read_acceleration_sensor_range_in_g(network)
         conversion_to_g = partial(convert_raw_to_g, max_value=sensor_range)
