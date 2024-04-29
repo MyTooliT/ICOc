@@ -243,10 +243,7 @@ async def measure(arguments: Namespace) -> None:
             )
 
             progress = tqdm(
-                total=round(
-                    sample_rate * measurement_time_s * values_per_message / 3,
-                    0,
-                ),
+                total=round(sample_rate * measurement_time_s, 0),
                 desc="Read sensor data",
                 unit=" values",
                 leave=False,
