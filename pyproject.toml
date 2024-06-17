@@ -39,7 +39,7 @@ dependencies = [
   "tables==3.9.1",
   "tqdm>=4.65,<5",
   "semantic_version>=2.10,<3",
-  "windows-curses>=2.3.1,<3; os_name == 'nt'",
+  "windows-curses>=2.3.2,<3; os_name == 'nt'",
 ]
 description = """Control and test software for sensory tool holders (STH), \
                  sensor milling heads (SMH) and stationary transceiver units \

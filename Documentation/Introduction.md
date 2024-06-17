@@ -69,9 +69,7 @@ In order to use ICOc you need at least:
 
 #### Python
 
-ICOc requires at least Python `3.9`. The software also supports Python `3.10` and `3.11`. We recommend you use the 64-bit version of Python.
-
-> **Note: Python `3.12` is currently not supported on Windows**, since at least on our test machine (some parts of) the `windows-curses` library [does not seem to work properly](https://github.com/zephyrproject-rtos/windows-curses/issues/48).
+ICOc requires at least Python `3.9`. The software also supports Python `3.10`, `3.11` and `3.12`. We recommend you use the 64-bit version of Python.
 
 You can download Python [here](https://www.python.org/downloads). When you install the software, please do not forget to enable the checkbox **“Add Python to PATH”** in the setup window of the installer.
 
