@@ -187,6 +187,9 @@ class AsyncStreamBuffer(Listener):
 
         raise NotImplementedError()
 
+    def stop(self) -> None:
+        """Stop handling new messages"""
+
 
 class StreamingFormat:
     """Support for specifying the data streaming format

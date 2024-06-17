@@ -159,6 +159,9 @@ class Logger(Listener):
             "Error while monitoring CAN bus data: %s", exc
         )
 
+    def stop(self) -> None:
+        """Stop handling new messages"""
+
 
 class ResponseListener(Listener):
     """A listener that reacts to messages containing a certain id"""
@@ -267,6 +270,9 @@ class ResponseListener(Listener):
         """
 
         getLogger().error("Error while monitoring CAN bus data: %s", exc)
+
+    def stop(self) -> None:
+        """Stop handling new messages"""
 
 
 class DataStreamContextManager:
