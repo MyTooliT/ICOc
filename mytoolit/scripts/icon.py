@@ -24,7 +24,7 @@ from mytoolit.can.adc import ADCConfiguration
 from mytoolit.can.error import UnsupportedFeatureException
 from mytoolit.can.network import STHDeviceInfo, NetworkError
 from mytoolit.can.streaming import StreamingTimeoutError
-from mytoolit.cmdline.parse import parse_arguments
+from mytoolit.cmdline.parse import create_icon_parser
 from mytoolit.config import ConfigurationUtility, settings
 from mytoolit.measurement import convert_raw_to_g, Storage
 from mytoolit.measurement.sensor import SensorConfig
@@ -200,14 +200,6 @@ async def measure(arguments: Namespace) -> None:
     identifier = arguments.identifier
     measurement_time_s = arguments.time
 
-    user_sensor_config = SensorConfig(
-        first=arguments.first_channel,
-        second=arguments.second_channel,
-        third=arguments.third_channel,
-    )
-
-    user_sensor_config.check()
-
     async with Network() as network:
         await network.connect_sensor_device(identifier)
 
@@ -219,6 +211,12 @@ async def measure(arguments: Namespace) -> None:
         )
         await network.write_adc_configuration(**adc_config)
         print(f"Sample Rate: {adc_config.sample_rate()} Hz")
+
+        user_sensor_config = SensorConfig(
+            first=arguments.first_channel,
+            second=arguments.second_channel,
+            third=arguments.third_channel,
+        )
 
         if user_sensor_config.requires_channel_configuration_support():
             try:
@@ -341,7 +339,19 @@ async def stu(arguments: Namespace) -> None:
 def main():
     """ICOtronic command line tool"""
 
-    arguments = parse_arguments()
+    parser = create_icon_parser()
+    arguments = parser.parse_args()
+    try:
+        if arguments.subcommand == "measure":
+            SensorConfig(
+                first=arguments.first_channel,
+                second=arguments.second_channel,
+                third=arguments.third_channel,
+            ).check()
+    except ValueError as error:
+        parser.prog = f"{parser.prog} {arguments.subcommand}"
+        parser.error(str(error))
+
     basicConfig(
         level=arguments.log.upper(),
         style="{",
@@ -367,7 +377,6 @@ def main():
         except (
             NetworkError,
             UnsupportedFeatureException,
-            ValueError,
         ) as error:
             print(error, file=stderr)
         except StreamingTimeoutError as error:

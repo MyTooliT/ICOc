@@ -2,7 +2,7 @@
 
 # -- Imports ------------------------------------------------------------------
 
-from argparse import ArgumentParser, ArgumentTypeError, Namespace
+from argparse import ArgumentParser, ArgumentTypeError
 from math import inf
 from re import compile as re_compile
 
@@ -455,13 +455,13 @@ def add_channel_arguments(group) -> None:
     )
 
 
-def parse_arguments() -> Namespace:
-    """Parse command line arguments
+def create_icon_parser() -> ArgumentParser:
+    """Create command line parser for icon
 
     Returns
     -------
 
-    A namespace object that represents the given command line arguments
+    A parser for the CLI arguments of icon
 
     """
 
@@ -555,7 +555,7 @@ def parse_arguments() -> Namespace:
     stu_subparsers.add_parser("mac", help="Show Bluetooth MAC address")
     stu_subparsers.add_parser("reset", help="Reset STU")
 
-    return parser.parse_args()
+    return parser
 
 
 # -- Main ---------------------------------------------------------------------
