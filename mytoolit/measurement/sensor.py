@@ -270,7 +270,7 @@ class SensorConfig(Mapping):
 
     def disable_channel(
         self, first: bool = False, second: bool = False, third: bool = False
-    ):
+    ) -> None:
         """Disable certain (measurement) channels
 
         Parameters
@@ -297,7 +297,7 @@ class SensorConfig(Mapping):
         if third:
             self.attributes["third"] = 0
 
-    def requires_channel_configuration_support(self):
+    def requires_channel_configuration_support(self) -> bool:
         """Check if the sensor configuration requires channel config support
 
         Returns
