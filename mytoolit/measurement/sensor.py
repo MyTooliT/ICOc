@@ -328,6 +328,54 @@ class SensorConfig(Mapping):
                 return True
         return False
 
+    def empty(self) -> bool:
+        """Check if the sensor configuration is empty
+
+        In an empty sensor configuration all of the channels are disabled.
+
+        Returns
+        -------
+
+        True, if all channels are disabled, False otherwise
+
+        Examples
+        --------
+
+        >>> SensorConfig(first=3).empty()
+        False
+        >>> SensorConfig().empty()
+        True
+        >>> SensorConfig(third=0).empty()
+        True
+
+        """
+
+        return self.first == 0 and self.second == 0 and self.third == 0
+
+    def check(self):
+        """Check that at least one measurement channel is enabled
+
+        Raises
+        ------
+
+        ValueError, if none of the measurement channels is enabled
+
+        Examples
+        --------
+
+        >>> SensorConfig(second=1).check()
+        >>> SensorConfig().check()
+        Traceback (most recent call last):
+            ...
+        ValueError: At least one measurement channel has to be enabled
+
+        """
+
+        if self.empty():
+            raise ValueError(
+                "At least one measurement channel has to be enabled"
+            )
+
 
 class SensorType(Enum):
     """Possible sensor types"""

@@ -200,6 +200,14 @@ async def measure(arguments: Namespace) -> None:
     identifier = arguments.identifier
     measurement_time_s = arguments.time
 
+    user_sensor_config = SensorConfig(
+        first=arguments.first_channel,
+        second=arguments.second_channel,
+        third=arguments.third_channel,
+    )
+
+    user_sensor_config.check()
+
     async with Network() as network:
         await network.connect_sensor_device(identifier)
 
@@ -211,12 +219,6 @@ async def measure(arguments: Namespace) -> None:
         )
         await network.write_adc_configuration(**adc_config)
         print(f"Sample Rate: {adc_config.sample_rate()} Hz")
-
-        user_sensor_config = SensorConfig(
-            first=arguments.first_channel,
-            second=arguments.second_channel,
-            third=arguments.third_channel,
-        )
 
         if user_sensor_config.requires_channel_configuration_support():
             try:
@@ -362,7 +364,11 @@ def main():
 
         try:
             run(command_to_coroutine[arguments.subcommand](arguments))
-        except (NetworkError, UnsupportedFeatureException) as error:
+        except (
+            NetworkError,
+            UnsupportedFeatureException,
+            ValueError,
+        ) as error:
             print(error, file=stderr)
         except StreamingTimeoutError as error:
             print(f"Quitting Measurement: {error}")
