@@ -196,6 +196,7 @@ The text below specifies extended manual test that should be executed before we 
     icoc -1 ' -1'
     icoc -2 256
     icoc -3 nine
+    icoc -1 0 -2 0 -3 0 -n Test-STH
     ```
 
 ###### Check User Interface
