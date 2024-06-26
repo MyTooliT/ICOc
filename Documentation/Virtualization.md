@@ -271,9 +271,10 @@ Using ICOc in the WSL 2 currently [requires using a custom Linux kernel](https:/
    wget https://www.silabs.com/documents/public/software/SimplicityCommander-Linux.zip
    unzip SimplicityCommander-Linux.zip
    cd SimplicityCommander-Linux
-   tar xf Commander_linux_*.tar.bz
+   tar xf Commander-cli_linux_x86_64*.tar.bz
    mkdir -p ~/Applications
-   mv commander ~/Applications
+   mv commander-cli ~/Applications/commander
+   ln -s ~/Applications/commander/commander-cli ~/Applications/commander/commander
    # Fix J-Link connection
    # https://wiki.segger.com/J-Link_cannot_connect_to_the_CPU
    sudo cp ~/Applications/commander/99-jlink.rules /etc/udev/rules.d/
