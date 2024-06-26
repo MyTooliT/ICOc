@@ -2,7 +2,7 @@ import argparse
 import multiprocessing
 import socket
 
-from argparse import ArgumentDefaultsHelpFormatter
+from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 from time import sleep, time
 from functools import partial
 from logging import getLogger
@@ -80,8 +80,11 @@ class CommandLineInterface:
         except (NotADirectoryError, OSError) as error:
             raise error
 
-        self.parse_arguments()
+        # Check command line arguments
+        parser = self.create_parser()
+        self.args = parser.parse_args()
 
+        # Init logger
         self.logger = getLogger(__name__)
         self.logger.setLevel(self.args.log.upper())
         self.logger.addHandler(get_log_file_handler("cli.log"))
@@ -100,12 +103,17 @@ class CommandLineInterface:
         )
         self.logger.info("Initialized CAN class")
 
+        # Set measurement channel mapping
         channels = (
             self.args.first_channel,
             self.args.second_channel,
             self.args.third_channel,
         )
-        self.set_sensors(*channels)
+        try:
+            self.set_sensors(*channels)
+        except ValueError as error:
+            parser.error(str(error))
+
         for channel, value in enumerate(channels, start=1):
             self.logger.info(f"Measurement Channel {channel}: {value}")
 
@@ -161,14 +169,14 @@ class CommandLineInterface:
         if self.bError:
             raise RuntimeError("An error occurred")
 
-    def parse_arguments(self):
-        self.parser = argparse.ArgumentParser(
+    def create_parser(self) -> ArgumentParser:
+        parser = ArgumentParser(
             description="Configure and measure data with the ICOtronic system",
             argument_default=argparse.SUPPRESS,
             formatter_class=ArgumentDefaultsHelpFormatter,
         )
 
-        connection_group = self.parser.add_argument_group(title="Connection")
+        connection_group = parser.add_argument_group(title="Connection")
         connection_group = connection_group.add_mutually_exclusive_group()
         connection_group.add_argument(
             "-b",
@@ -190,7 +198,7 @@ class CommandLineInterface:
             help="connect to device with specified name",
         )
 
-        measurement_group = self.parser.add_argument_group(title="Measurement")
+        measurement_group = parser.add_argument_group(title="Measurement")
         measurement_group.add_argument(
             "-f",
             "--filename",
@@ -214,7 +222,7 @@ class CommandLineInterface:
         )
         add_channel_arguments(measurement_group)
 
-        adc_group = self.parser.add_argument_group(title="ADC")
+        adc_group = parser.add_argument_group(title="ADC")
 
         adc_group.add_argument(
             "-s",
@@ -253,7 +261,7 @@ class CommandLineInterface:
             help="Reference voltage",
         )
 
-        logging_group = self.parser.add_argument_group(title="Logging")
+        logging_group = parser.add_argument_group(title="Logging")
         logging_group.add_argument(
             "--log",
             choices=("debug", "info", "warning", "error", "critical"),
@@ -262,7 +270,7 @@ class CommandLineInterface:
             help="Minimum level of messages written to log",
         )
 
-        self.args = self.parser.parse_args()
+        return parser
 
     def set_output_filename(self, name: Optional[str] = None) -> None:
         """Set the (base) name of the HDF output file
@@ -540,9 +548,15 @@ class CommandLineInterface:
         third:
             Sensor number for third measurement channel
 
+        Raises
+        ------
+
+        ValueError, if none of the measurement channels is enabled
+
         """
 
         self.sensor = SensorConfig(first, second, third)
+        self.sensor.check()
 
         dataSets = self.Can.data_sets(*map(bool, (first, second, third)))
         self.tAccDataFormat = DataSets[dataSets]
