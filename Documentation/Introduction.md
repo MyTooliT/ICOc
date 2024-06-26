@@ -276,7 +276,7 @@ If you uses [Homebrew][] on an Apple Silicon based Mac you can use the [followin
 
 ```sh
 pip uninstall tables
-brew install hdf5 c-blosc lzo bzip2
+brew install hdf5 c-blosc2 lzo bzip2
 export BLOSC_DIR=/opt/homebrew/opt/c-blosc
 export BZIP2_DIR=/opt/homebrew/opt/bzip2
 export LZO_DIR=/opt/homebrew/opt/lzo
