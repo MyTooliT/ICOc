@@ -356,7 +356,12 @@ class UserInterface(CommandLineInterface):
             ]
 
         # Enable/disable axes for transmission
-        self.set_sensors(*sensors)
+        try:
+            self.set_sensors(*sensors)
+        except ValueError as error:
+            self.add_string(f"\nError: {error}")
+            self.stdscr.refresh()
+            sleep(2)
 
     def change_runtime_window(self):
         curs_set(True)
