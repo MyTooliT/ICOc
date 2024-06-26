@@ -327,10 +327,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p><a name="introduction:section:python"></a></p>
 <div id="python" class="section level4 hasAnchor" number="1.1.2.1">
 <h4><span class="header-section-number">1.1.2.1</span> Python<a href="#python" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>ICOc requires at least Python <code>3.9</code>. The software also supports Python <code>3.10</code> and <code>3.11</code>. We recommend you use the 64-bit version of Python.</p>
-<blockquote>
-<p><strong>Note: Python <code>3.12</code> is currently not supported on Windows</strong>, since at least on our test machine (some parts of) the <code>windows-curses</code> library <a href="https://github.com/zephyrproject-rtos/windows-curses/issues/48">does not seem to work properly</a>.</p>
-</blockquote>
+<p>ICOc requires at least Python <code>3.9</code>. The software also supports Python <code>3.10</code>, <code>3.11</code> and <code>3.12</code>. We recommend you use the 64-bit version of Python.</p>
 <p>You can download Python <a href="https://www.python.org/downloads">here</a>. When you install the software, please do not forget to enable the checkbox <strong>“Add Python to PATH”</strong> in the setup window of the installer.</p>
 </div>
 <div id="pcan-driver" class="section level4 hasAnchor" number="1.1.2.2">
@@ -480,7 +477,7 @@ Consider using a build backend that supports PEP 660.</code></pre>
 <pre><code>… implicit declaration of function &#39;H5close&#39;</code></pre>
 <p>If you uses <a href="https://brew.sh">Homebrew</a> on an Apple Silicon based Mac you can use the <a href="https://stackoverflow.com/questions/73029883/could-not-find-hdf5-installation-for-pytables-on-m1-mac">following commands to fix this problem</a>:</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="ex">pip</span> uninstall tables</span>
-<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a><span class="ex">brew</span> install hdf5 c-blosc lzo bzip2</span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a><span class="ex">brew</span> install hdf5 c-blosc2 lzo bzip2</span>
 <span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a><span class="bu">export</span> <span class="va">BLOSC_DIR</span><span class="op">=</span>/opt/homebrew/opt/c-blosc</span>
 <span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a><span class="bu">export</span> <span class="va">BZIP2_DIR</span><span class="op">=</span>/opt/homebrew/opt/bzip2</span>
 <span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a><span class="bu">export</span> <span class="va">LZO_DIR</span><span class="op">=</span>/opt/homebrew/opt/lzo</span>
@@ -1521,12 +1518,13 @@ usbipd wsl list
 <span id="cb82-4"><a href="#cb82-4" tabindex="-1"></a><span class="fu">wget</span> https://www.silabs.com/documents/public/software/SimplicityCommander-Linux.zip</span>
 <span id="cb82-5"><a href="#cb82-5" tabindex="-1"></a><span class="fu">unzip</span> SimplicityCommander-Linux.zip</span>
 <span id="cb82-6"><a href="#cb82-6" tabindex="-1"></a><span class="bu">cd</span> SimplicityCommander-Linux</span>
-<span id="cb82-7"><a href="#cb82-7" tabindex="-1"></a><span class="fu">tar</span> xf Commander_linux_<span class="pp">*</span>.tar.bz</span>
+<span id="cb82-7"><a href="#cb82-7" tabindex="-1"></a><span class="fu">tar</span> xf Commander-cli_linux_x86_64<span class="pp">*</span>.tar.bz</span>
 <span id="cb82-8"><a href="#cb82-8" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> ~/Applications</span>
-<span id="cb82-9"><a href="#cb82-9" tabindex="-1"></a><span class="fu">mv</span> commander ~/Applications</span>
-<span id="cb82-10"><a href="#cb82-10" tabindex="-1"></a><span class="co"># Fix J-Link connection</span></span>
-<span id="cb82-11"><a href="#cb82-11" tabindex="-1"></a><span class="co"># https://wiki.segger.com/J-Link_cannot_connect_to_the_CPU</span></span>
-<span id="cb82-12"><a href="#cb82-12" tabindex="-1"></a><span class="fu">sudo</span> cp ~/Applications/commander/99-jlink.rules /etc/udev/rules.d/</span></code></pre></div></li>
+<span id="cb82-9"><a href="#cb82-9" tabindex="-1"></a><span class="fu">mv</span> commander-cli ~/Applications/commander</span>
+<span id="cb82-10"><a href="#cb82-10" tabindex="-1"></a><span class="fu">ln</span> <span class="at">-s</span> ~/Applications/commander/commander-cli ~/Applications/commander/commander</span>
+<span id="cb82-11"><a href="#cb82-11" tabindex="-1"></a><span class="co"># Fix J-Link connection</span></span>
+<span id="cb82-12"><a href="#cb82-12" tabindex="-1"></a><span class="co"># https://wiki.segger.com/J-Link_cannot_connect_to_the_CPU</span></span>
+<span id="cb82-13"><a href="#cb82-13" tabindex="-1"></a><span class="fu">sudo</span> cp ~/Applications/commander/99-jlink.rules /etc/udev/rules.d/</span></code></pre></div></li>
 <li><p>Add <code>commander</code> binary to path (Linux Shell)</p>
 <ol style="list-style-type: decimal">
 <li><p>Open <code>~/.profile</code> in <code>nano</code>:</p>
@@ -1838,7 +1836,8 @@ usbipd wsl attach --busid 5-4</code></pre></li>
 <span id="cb118-5"><a href="#cb118-5" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-o</span> <span class="at">-1</span></span>
 <span id="cb118-6"><a href="#cb118-6" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-1</span> <span class="st">&#39; -1&#39;</span></span>
 <span id="cb118-7"><a href="#cb118-7" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-2</span> 256</span>
-<span id="cb118-8"><a href="#cb118-8" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-3</span> nine</span></code></pre></div></li>
+<span id="cb118-8"><a href="#cb118-8" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-3</span> nine</span>
+<span id="cb118-9"><a href="#cb118-9" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-1</span> 0 <span class="at">-2</span> 0 <span class="at">-3</span> 0 <span class="at">-n</span> Test-STH</span></code></pre></div></li>
 </ol>
 </div>
 <div id="check-user-interface" class="section level6 hasAnchor" number="7.3.3.3.1.2">
