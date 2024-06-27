@@ -112,6 +112,7 @@ class CommandLineInterface:
         try:
             self.set_sensors(*channels)
         except ValueError as error:
+            self.Can.__exit__()
             parser.error(str(error))
 
         for channel, value in enumerate(channels, start=1):
