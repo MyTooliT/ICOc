@@ -238,7 +238,18 @@ The text below specifies extended manual test that should be executed before we 
    6. Enter the text “20”
    7. Press <kbd>⏎</kbd>
 
-8. Enable the first and second measurement channel
+8. Check that entering an empty channel configuration is not possible
+
+   1. Press <kbd>p</kbd>
+   2. Remove the default axis config for the first measurement channel (press <kbd>⌫</kbd> at least one time)
+   3. Disable the first measurement channel
+      1. Press <kbd>0</kbd>
+      2. Press <kbd>⏎</kbd>
+   4. Disable the second measurement channel (<kbd>⏎</kbd>)
+   5. Disable the third measurement channel (<kbd>⏎</kbd>)
+   6. ICOc should show an error message for two seconds and switch back to the STH UI
+
+9. Enable the first and second measurement channel
 
    1. Press <kbd>p</kbd>
    2. Remove the default axis config for the first measurement channel (press <kbd>⌫</kbd> at least one time)
@@ -256,14 +267,14 @@ The text below specifies extended manual test that should be executed before we 
       1. Press <kbd>0</kbd>
       1. Press <kbd>⏎</kbd>
 
-9. Start the data acquisition
+10. Start the data acquisition
 
-   1. Press <kbd>s</kbd>
-   2. Shake the STH
-   3. Make sure that shaking the STH changes (at least) the displayed value for the first measurement channel
-   4. Wait until the measurement took place
+    1. Press <kbd>s</kbd>
+    2. Shake the STH
+    3. Make sure that shaking the STH changes (at least) the displayed value for the first measurement channel
+    4. Wait until the measurement took place
 
-10. Check the output file
+11. Check the output file
 
     1. Check that the HDF5 output file exists: The filename should start with the characters “Test” followed by a timestamp and the extension “.hdf5”
     2. Open the HDF measurement file in [HDFView](#readme:section:measurement-data)
