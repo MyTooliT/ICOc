@@ -1875,6 +1875,19 @@ usbipd wsl attach --busid 5-4</code></pre></li>
 <li>Enter the text “20”</li>
 <li>Press <kbd>⏎</kbd></li>
 </ol></li>
+<li><p>Check that entering an empty channel configuration is not possible</p>
+<ol style="list-style-type: decimal">
+<li>Press <kbd>p</kbd></li>
+<li>Remove the default axis config for the first measurement channel (press <kbd>⌫</kbd> at least one time)</li>
+<li>Disable the first measurement channel
+<ol style="list-style-type: decimal">
+<li>Press <kbd>0</kbd></li>
+<li>Press <kbd>⏎</kbd></li>
+</ol></li>
+<li>Disable the second measurement channel (<kbd>⏎</kbd>)</li>
+<li>Disable the third measurement channel (<kbd>⏎</kbd>)</li>
+<li>ICOc should show an error message for two seconds and switch back to the STH UI</li>
+</ol></li>
 <li><p>Enable the first and second measurement channel</p>
 <ol style="list-style-type: decimal">
 <li>Press <kbd>p</kbd></li>
