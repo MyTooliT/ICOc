@@ -5,7 +5,20 @@ import socket
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 from time import sleep, time
 from functools import partial
-from locale import getencoding
+
+try:
+    from locale import getencoding  # type: ignore[attr-defined]
+except ImportError:
+    from locale import getdefaultlocale
+
+    def getencoding() -> str:
+        language_encoding = getdefaultlocale()
+        # We add the `str()` call to make pypi happy
+        return (
+            "utf-8" if language_encoding is None else str(language_encoding[1])
+        )
+
+
 from logging import getLogger
 from pathlib import Path
 from platform import system
