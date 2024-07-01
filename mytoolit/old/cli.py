@@ -8,7 +8,7 @@ from functools import partial
 from logging import getLogger
 from pathlib import Path
 from platform import system
-from sys import stderr
+from sys import getdefaultencoding, stderr
 from typing import Optional, Tuple
 
 # Handle pytest `ModuleNotFoundError` on non-Windows OS
@@ -869,7 +869,9 @@ class CommandLineInterface:
 
         """
 
-        error_message = self.Can.pcan.GetErrorText(status)[1].decode()
+        error_message = self.Can.pcan.GetErrorText(status)[1].decode(
+            getdefaultencoding()
+        )
         description = "" if prefix is None else "{prefix}: "
         return f"{description}{error_message}"
 
