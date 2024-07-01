@@ -5,10 +5,11 @@ import socket
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 from time import sleep, time
 from functools import partial
+from locale import getencoding
 from logging import getLogger
 from pathlib import Path
 from platform import system
-from sys import getdefaultencoding, stderr
+from sys import stderr
 from typing import Optional, Tuple
 
 # Handle pytest `ModuleNotFoundError` on non-Windows OS
@@ -870,7 +871,7 @@ class CommandLineInterface:
         """
 
         error_message = self.Can.pcan.GetErrorText(status)[1].decode(
-            getdefaultencoding()
+            getencoding()
         )
         description = "" if prefix is None else f"{prefix}: "
         return f"{description}{error_message}"
