@@ -872,7 +872,7 @@ class CommandLineInterface:
         error_message = self.Can.pcan.GetErrorText(status)[1].decode(
             getdefaultencoding()
         )
-        description = "" if prefix is None else "{prefix}: "
+        description = "" if prefix is None else f"{prefix}: "
         return f"{description}{error_message}"
 
     def read_streaming(self):
