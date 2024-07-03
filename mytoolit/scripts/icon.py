@@ -376,6 +376,7 @@ def main():
             run(command_to_coroutine[arguments.subcommand](arguments))
         except (
             NetworkError,
+            TimeoutError,
             UnsupportedFeatureException,
         ) as error:
             print(error, file=stderr)
