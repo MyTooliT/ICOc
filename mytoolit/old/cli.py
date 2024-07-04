@@ -5,20 +5,6 @@ import socket
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 from time import sleep, time
 from functools import partial
-
-try:
-    from locale import getencoding  # type: ignore[attr-defined]
-except ImportError:
-    from locale import getdefaultlocale
-
-    def getencoding() -> str:
-        language_encoding = getdefaultlocale()
-        # We add the `str()` call to make pypi happy
-        return (
-            "utf-8" if language_encoding is None else str(language_encoding[1])
-        )
-
-
 from logging import getLogger
 from pathlib import Path
 from platform import system
@@ -862,33 +848,6 @@ class CommandLineInterface:
         if self.Can.RunReadThread:
             self.__exit__()
 
-    def get_can_error_message(
-        self, status: int, prefix: Optional[str] = None
-    ) -> str:
-        """Retrieve a human readable CAN error message
-
-        Parameters
-        ----------
-
-        status:
-            The status number returned by a call to the PCAN-Basic API
-
-        prefix:
-            An optional description of the error condition
-
-        Returns
-        -------
-
-        A textual description of the CAN error
-
-        """
-
-        error_message = self.Can.pcan.GetErrorText(status)[1].decode(
-            getencoding()
-        )
-        description = "" if prefix is None else f"{prefix}: "
-        return f"{description}{error_message}"
-
     def read_streaming(self):
         """Read streaming messages"""
         self.logger.debug("Add CAN read event")
@@ -898,7 +857,7 @@ class CommandLineInterface:
         )
 
         if status != PCAN_ERROR_OK:
-            error_message = self.get_can_error_message(
+            error_message = self.Can.get_can_error_message(
                 status, "Unable to set CAN receive event"
             )
             raise Exception(error_message)
@@ -935,7 +894,7 @@ class CommandLineInterface:
         while status != PCAN_ERROR_QRCVEMPTY:
             status = self.read_streaming_message()
             if status not in {PCAN_ERROR_OK, PCAN_ERROR_QRCVEMPTY}:
-                error_message = self.get_can_error_message(
+                error_message = self.Can.get_can_error_message(
                     status, "Unable to read streaming message"
                 )
                 raise Exception(error_message)
@@ -1095,7 +1054,7 @@ class CommandLineInterface:
             return result
 
         if status != PCAN_ERROR_QRCVEMPTY:
-            error_message = self.get_can_error_message(
+            error_message = self.Can.get_can_error_message(
                 status, "Unexpected CAN status value"
             )
             self.logger.error(error_message)

@@ -1,6 +1,20 @@
 from array import array
 from datetime import datetime
 from ctypes import c_byte
+
+try:
+    from locale import getencoding  # type: ignore[attr-defined]
+except ImportError:
+    from locale import getdefaultlocale
+
+    def getencoding() -> str:
+        language_encoding = getdefaultlocale()
+        # We add the `str()` call to make pypi happy
+        return (
+            "utf-8" if language_encoding is None else str(language_encoding[1])
+        )
+
+
 from logging import getLogger, ERROR, FileHandler, Formatter, StreamHandler
 from math import log
 from pathlib import Path
@@ -170,8 +184,8 @@ class Network(object):
         result = self.pcan.Initialize(self.m_PcanHandle, PCAN_BAUD_1M)
         if result != PCAN_ERROR_OK:
             raise Exception(
-                self.__get_error_message(
-                    "Unable to initialize CAN hardware", result
+                self.get_can_error_message(
+                    result, "Unable to initialize CAN hardware"
                 )
                 + "\n\nPossible reason:\n\n"
                 "• CAN adapter is not connected to the computer"
@@ -183,8 +197,8 @@ class Network(object):
         )
         if result != PCAN_ERROR_OK:
             print(
-                self.__get_error_message(
-                    "Unable to set auto reset on CAN bus-off state", result
+                self.get_can_error_message(
+                    result, "Unable to set auto reset on CAN bus-off state"
                 ),
                 file=stderr,
             )
@@ -229,26 +243,30 @@ class Network(object):
         except:
             pass
 
-    def __get_error_message(self, description, error_code):
-        """Return an error message for a given error code
+    def get_can_error_message(
+        self, status: int, prefix: Optional[str] = None
+    ) -> str:
+        """Retrieve a human readable CAN error message
 
         Parameters
         ----------
 
-        description:
-            A textual description of the current error condition
-        error_code:
-            A PCAN error code
+        status:
+            The status number returned by a call to the PCAN-Basic API
+
+        prefix:
+            An optional description of the error condition
 
         Returns
         -------
 
-        A error message consisting of description and the textual
-        representation of the given error code
+        A textual description of the CAN error
+
         """
 
-        translated_error_code = self.pcan.GetErrorText(error_code)[1].decode()
-        return f"{description}: {translated_error_code}"
+        error_message = self.pcan.GetErrorText(status)[1].decode(getencoding())
+        description = "" if prefix is None else f"{prefix}: "
+        return f"{description}{error_message}"
 
     def vSetReceiver(self, receiver):
         self.receiver = receiver
@@ -303,8 +321,8 @@ class Network(object):
         with self.tCanReadWriteMutex:
             status = self.pcan.Write(self.m_PcanHandle, CanMsg)
         if status != PCAN_ERROR_OK:
-            error_message = self.__get_error_message(
-                "Unable to write CAN message", status
+            error_message = self.get_can_error_message(
+                status, "Unable to write CAN message"
             )
             self.logger.error(error_message)
             self.__exitError(error_message)
