@@ -14,7 +14,7 @@ from mytoolit.measurement.units import g0
 # -- Functions ----------------------------------------------------------------
 
 
-def convert_raw_to_g(acceleration_raw: int, max_value: int) -> Quantity:
+def convert_raw_to_g(acceleration_raw: int, max_value: float) -> Quantity:
     """Convert an acceleration value sent by the STH into a factor
 
     The factor measures the amount of the gravitational force
