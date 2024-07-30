@@ -476,7 +476,7 @@ Consider using a build backend that supports PEP 660.</code></pre>
 <p>The installation of ICOc might fail with an error message that looks like this:</p>
 <pre><code>… implicit declaration of function &#39;H5close&#39;</code></pre>
 <p>If you uses <a href="https://brew.sh">Homebrew</a> on an Apple Silicon based Mac you can use the <a href="https://stackoverflow.com/questions/73029883/could-not-find-hdf5-installation-for-pytables-on-m1-mac">following commands to fix this problem</a>:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="ex">pip</span> uninstall tables</span>
+<div class="sourceCode" id="cb15"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="ex">pip</span> uninstall <span class="at">-y</span> tables</span>
 <span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a><span class="ex">brew</span> install hdf5 c-blosc2 lzo bzip2</span>
 <span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a><span class="bu">export</span> <span class="va">BLOSC_DIR</span><span class="op">=</span>/opt/homebrew/opt/c-blosc</span>
 <span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a><span class="bu">export</span> <span class="va">BZIP2_DIR</span><span class="op">=</span>/opt/homebrew/opt/bzip2</span>
