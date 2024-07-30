@@ -133,9 +133,8 @@ class AsyncStreamBuffer(Listener):
 
         """
 
-        # It looks like in rare circumstances the STH sends streaming messages
-        # without any data bytes.
-        if msg.arbitration_id != self.identifier.value or len(msg.data) < 1:
+        # Ignore messages with wrong id and “Stop Stream” messages
+        if msg.arbitration_id != self.identifier.value or len(msg.data) <= 1:
             return
 
         data = msg.data
