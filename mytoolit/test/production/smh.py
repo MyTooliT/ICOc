@@ -115,7 +115,7 @@ class TestSMH(TestSensorNode):
                 first=True, second=False, third=False
             ) as stream:
                 stream_data = []
-                async for data in stream:
+                async for data, _ in stream:
                     stream_data.extend(data.values)
                     if len(stream_data) >= length:
                         break

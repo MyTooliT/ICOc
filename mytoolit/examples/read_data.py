@@ -16,7 +16,7 @@ async def read_streaming_data(identifier):
         # Read data of first channel
         async with network.open_data_stream(first=True) as stream:
             messages = 5
-            async for data in stream:
+            async for data, _ in stream:
                 print(f"Read data values: {data}")
                 messages -= 1
                 if messages <= 0:
