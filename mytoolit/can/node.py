@@ -14,7 +14,7 @@ from typing import Union
 
 
 class Node:
-    """This class represents a CAN node of ICOtronic system"""
+    """This class represents a CAN node of the ICOtronic system"""
 
     def __init__(self, node: Union[int, str, Node] = 0) -> None:
         """Create a new node from the given argument
