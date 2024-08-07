@@ -2077,7 +2077,7 @@ class Network:
         ...             first = []
         ...             third = []
         ...             messages = 0
-        ...             async for data in stream:
+        ...             async for data, _ in stream:
         ...                 first.append(data.values[0])
         ...                 third.append(data.values[1])
         ...                 messages += 1

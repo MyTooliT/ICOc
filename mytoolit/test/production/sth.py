@@ -270,7 +270,7 @@ class TestSTH(TestSensorNode):
             seconds = 4
             async with self.can.open_data_stream(first=True) as stream:
                 end_time = time() + seconds
-                async for data in stream:
+                async for data, _ in stream:
                     stream_data.extend(data.values)
                     if time() > end_time:
                         break

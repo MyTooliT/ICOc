@@ -126,7 +126,7 @@ async def dataloss(arguments: Namespace) -> None:
                 start_time = time()
                 try:
                     async with network.open_data_stream(first=True) as stream:
-                        async for data in stream:
+                        async for data, _ in stream:
                             data.apply(conversion_to_g)
                             storage.add_streaming_data(data)
                             progress.update(3)
@@ -255,7 +255,7 @@ async def measure(arguments: Namespace) -> None:
                     **streaming_config
                 ) as stream:
                     start_time = time()
-                    async for data in stream:
+                    async for data, _ in stream:
                         data.apply(conversion_to_g)
                         storage.add_streaming_data(data)
                         progress.update(values_per_message)

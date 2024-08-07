@@ -191,29 +191,35 @@ class AsyncStreamBuffer(Listener):
             request=False,
         )
         self.data_length = configuration.data_length()
-        self.queue: Queue[StreamingData] = Queue()
+        self.queue: Queue[Tuple[StreamingData, int]] = Queue()
         self.timeout = timeout
         self.channels = configuration.channels
+        self.last_counter = -1
 
-    def __aiter__(self) -> AsyncIterator[StreamingData]:
+    def __aiter__(self) -> AsyncIterator[Tuple[StreamingData, int]]:
         """Retrieve iterator for collected data
 
         Returns
         -------
 
-        An iterator over the received streaming data
+        An iterator over the received streaming data including the number of
+        lost messages
 
         """
 
         return self
 
-    async def __anext__(self) -> StreamingData:
+    async def __anext__(self) -> Tuple[StreamingData, int]:
         """Retrieve next stream data object in collected data
 
         Returns
         -------
 
-        Retrieved streaming data
+        A tuple containing:
+
+        - the data of the streaming message and
+        - the number of lost streaming messages right before the returned
+          streaming message
 
         """
 
@@ -240,6 +246,7 @@ class AsyncStreamBuffer(Listener):
             return
 
         data = msg.data
+        counter = data[1]
         timestamp = msg.timestamp
         data_bytes = (
             (data[2:4], data[4:6], data[6:8])
@@ -254,12 +261,19 @@ class AsyncStreamBuffer(Listener):
 
         streaming_data = StreamingData(
             timestamp=timestamp,
-            counter=data[1],
+            counter=counter,
             values=values,
             channels=self.channels,
         )
 
-        self.queue.put_nowait(streaming_data)
+        # Calculate amount of lost messages
+        if self.last_counter < 0:
+            self.last_counter = (counter - 1) % 256
+        last_counter = self.last_counter
+        lost_messages = (counter - last_counter) % 256 - 1
+        self.last_counter = counter
+
+        self.queue.put_nowait((streaming_data, lost_messages))
 
     def on_error(self, exc: Exception) -> None:
         """This method is called to handle any exception in the receive thread.
