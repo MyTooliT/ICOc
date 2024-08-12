@@ -195,6 +195,7 @@ class AsyncStreamBuffer(Listener):
         self.timeout = timeout
         self.channels = configuration.channels
         self.last_counter = -1
+        self.lost_messages = 0
 
     def __aiter__(self) -> AsyncIterator[Tuple[StreamingData, int]]:
         """Retrieve iterator for collected data
@@ -272,6 +273,7 @@ class AsyncStreamBuffer(Listener):
         last_counter = self.last_counter
         lost_messages = (counter - last_counter) % 256 - 1
         self.last_counter = counter
+        self.lost_messages += lost_messages
 
         self.queue.put_nowait((streaming_data, lost_messages))
 
