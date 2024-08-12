@@ -38,11 +38,11 @@ async def read_streaming_data(identifier):
             network, measurement_time_s
         )
 
-    data_loss = messages_lost / messages
+    data_loss = (messages_lost / (messages + messages_lost)) * 100
     print(f"Measurement Time: {measurement_time_s} s")
     print(f"Messages:         {messages}")
     print(f"Messages Lost:    {messages_lost}")
-    print(f"Data Loss:        {data_loss:0.2f}")
+    print(f"Data Loss:        {data_loss:0.2f} %")
     print(f"Delay:            {delay:0.2f} s")
 
 
