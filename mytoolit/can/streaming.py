@@ -201,10 +201,9 @@ class AsyncStreamBuffer(Listener):
             receiver="SPU 1",
             request=False,
         )
-        self.data_length = configuration.data_length()
         self.queue: Queue[Tuple[StreamingData, int]] = Queue()
         self.timeout = timeout
-        self.channels = configuration.channels
+        self.configuration = configuration
         self.last_counter = -1
         self.lost_messages = 0
         self.max_buffer_size = max_buffer_size
@@ -269,7 +268,7 @@ class AsyncStreamBuffer(Listener):
         timestamp = msg.timestamp
         data_bytes = (
             (data[2:4], data[4:6], data[6:8])
-            if self.data_length == 3
+            if self.configuration.data_length() == 3
             else (data[2:4], data[4:6])
         )
 
@@ -282,7 +281,7 @@ class AsyncStreamBuffer(Listener):
             timestamp=timestamp,
             counter=counter,
             values=values,
-            channels=self.channels,
+            channels=self.configuration.channels,
         )
 
         # Calculate amount of lost messages
