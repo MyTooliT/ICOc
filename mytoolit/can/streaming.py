@@ -82,7 +82,7 @@ class StreamingConfiguration:
 
         """
 
-        if sum([first, second, third]) <= 0:
+        if first + second + third <= 0:
             raise ValueError("At least one channel needs to be active")
 
         self.channels = StreamingConfigBits(
@@ -154,9 +154,7 @@ class StreamingConfiguration:
 
         channels = self.channels
 
-        active_channels = sum(
-            [channels.first, channels.second, channels.third]
-        )
+        active_channels = channels.first + channels.second + channels.third
 
         return 2 if active_channels == 2 else 3
 
