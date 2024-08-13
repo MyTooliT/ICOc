@@ -165,7 +165,10 @@ class AsyncStreamBuffer(Listener):
     """Buffer for streaming data"""
 
     def __init__(
-        self, configuration: StreamingConfiguration, timeout: float
+        self,
+        configuration: StreamingConfiguration,
+        timeout: float,
+        max_buffer_size: int = 10_000,
     ) -> None:
         """Initialize object using the given arguments
 
@@ -178,7 +181,15 @@ class AsyncStreamBuffer(Listener):
 
         timeout:
             The amount of seconds between two consecutive messages, before
-            a TimeoutError will be raised
+            a `StreamingTimeoutError` will be raised
+
+        max_buffer_size:
+            Maximum amount of buffered messages kept by the stream buffer.
+            If this amount is exceeded, then the reader will raise a
+            `StreamingTimeoutError`. A large buffer indicates that the
+            application is not able to keep up with the current rate of
+            retrieved messages and therefore the probability of losing
+            messages is quite high.
 
         """
 
@@ -196,6 +207,7 @@ class AsyncStreamBuffer(Listener):
         self.channels = configuration.channels
         self.last_counter = -1
         self.lost_messages = 0
+        self.max_buffer_size = max_buffer_size
 
     def __aiter__(self) -> AsyncIterator[Tuple[StreamingData, int]]:
         """Retrieve iterator for collected data
@@ -223,6 +235,12 @@ class AsyncStreamBuffer(Listener):
           streaming message
 
         """
+
+        if self.queue.qsize() > self.max_buffer_size:
+            raise StreamingTimeoutError(
+                f"Maximum buffer size of {self.max_buffer_size} messages "
+                "exceeded"
+            )
 
         try:
             return await wait_for(self.queue.get(), self.timeout)
