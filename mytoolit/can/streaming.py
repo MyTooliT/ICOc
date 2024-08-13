@@ -183,7 +183,7 @@ class AsyncStreamBuffer(Listener):
 
         max_buffer_size:
             Maximum amount of buffered messages kept by the stream buffer.
-            If this amount is exceeded, then the reader will raise a
+            If this amount is exceeded, then this listener will raise a
             `StreamingTimeoutError`. A large buffer indicates that the
             application is not able to keep up with the current rate of
             retrieved messages and therefore the probability of losing

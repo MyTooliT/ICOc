@@ -319,6 +319,12 @@ class DataStreamContextManager:
 
         reader = self.reader
         configuration = self.configuration.channels
+        # Raise exception if there if there is more than one second worth
+        # of buffered data
+        max_buffer_size = (
+            await self.network.read_adc_configuration()
+        ).sample_rate()
+        self.reader.max_buffer_size = max_buffer_size
         await self.network.start_streaming_data(
             configuration.first, configuration.second, configuration.third
         )
