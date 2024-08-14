@@ -81,6 +81,10 @@ open-test-report-linux:
 # = Documentation =
 # =================
 
+# ------------
+# - Bookdown -
+# ------------
+
 doc: init $(EPUB_FILE) $(HTML_FILE) $(PDF_FILE) cleanup
 
 # Copy pictures to repository root and create diagrams
@@ -111,3 +115,11 @@ $(PDF_FILE):
 
 clean: cleanup
 	Rscript -e "unlink('$(OUTPUT_DIRECTORY)', recursive = TRUE)"
+
+# -------
+# - API -
+# -------
+
+.PHONY: doc-api
+doc-api:
+	sphinx-build -M html Documentation/API Sphinx
