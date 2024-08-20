@@ -2,6 +2,7 @@
 
 BOOKDOWN_DIRECTORY := Bookdown
 SPHINX_DIRECTORY := Sphinx
+SPHINX_INPUT_DIRECTORY := Documentation/API
 INDEX_FILE := Documentation/Introduction.md
 OUTPUT_NAME := Documentation
 
@@ -36,7 +37,7 @@ check:
 	pylint mytoolit
 
 .PHONY: test
-test: pytest-test
+test: pytest-test sphinx-doc-test
 test-no-hardware: pytest-test-no-hardware
 
 # ----------
@@ -45,6 +46,12 @@ test-no-hardware: pytest-test-no-hardware
 
 pytest-test:
 	pytest
+
+.PHONY: sphinx-doc-test
+# Note: The pytest plugin `pytest-sphinx` (version 0.6.3) does unfortunately not
+# find our API documentation doctests.
+sphinx-doc-test:
+	sphinx-build -M doctest $(SPHINX_INPUT_DIRECTORY) $(SPHINX_DIRECTORY)
 
 pytest-test-no-hardware:
 	pytest --ignore-glob='*network.py' \
@@ -125,4 +132,4 @@ clean: cleanup
 
 .PHONY: doc-api
 doc-api:
-	sphinx-build -M html Documentation/API $(SPHINX_DIRECTORY)
+	sphinx-build -M html $(SPHINX_INPUT_DIRECTORY) $(SPHINX_DIRECTORY)
