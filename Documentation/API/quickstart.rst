@@ -50,3 +50,4 @@ You can use an ``async with`` statement to iterate over the received streaming d
 - receives a single streaming message and
   prints its representation.
 
+For additional examples, please check out the `examples directory <https://github.com/MyTooliT/ICOc/tree/master/mytoolit/examples>`_.
