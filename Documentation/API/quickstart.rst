@@ -16,11 +16,37 @@ We recommend you use the context manager to open and close the connection (to th
 
    >>> from asyncio import run
    >>> from mytoolit.can import Network
+
    >>> async def create_and_shutdown_network():
    ...     async with Network() as network:
    ...         pass # ← Your code goes here
+
    >>> run(create_and_shutdown_network())
 
 To connect to an STH to read streaming data you can use the coroutine ``Network.open_data_stream``:
 
 .. automethod:: Network.open_data_stream
+
+You can use an ``async with`` statement to iterate over the received streaming data. For example, the code below:
+
+.. doctest::
+
+   >>> async def read_streaming_data():
+   ...     async with Network() as network:
+   ...         await network.connect_sensor_device("Test-STH")
+   ...
+   ...         async with network.open_data_stream(first=True) as stream:
+   ...             async for data in stream:
+   ...                 print(data)
+   ...                 break
+
+   >>> run(read_streaming_data()) # doctest:+ELLIPSIS
+   1: [...]
+   2: []
+   3: []
+
+- connects to a device called Test-STH,
+- opens a data stream for the first measurement channel,
+- receives a single streaming message and
+  prints its representation.
+
