@@ -375,7 +375,7 @@ class DataStreamContextManager:
 
 
 class Network:
-    """Basic class to communicate with STU and STH devices"""
+    """Basic class to communicate with STU and sensor devices"""
 
     # Stores the conversion rate for the EEPROM advertisement times:
     # - https://mytoolit.github.io/Documentation/#page-system-configuration
