@@ -1,4 +1,4 @@
-[![Documentation online](https://img.shields.io/badge/Documentation-online-blueviolet)](https://mytoolit.github.io/ICOc/) [![GitHub Workflow Documentation](https://img.shields.io/github/actions/workflow/status/mytoolit/ICOc/documentation.yaml?branch=master&label=Documentation)](https://github.com/MyTooliT/ICOc/actions/workflows/documentation.yaml) [![GitHub Workflow Tests](https://img.shields.io/github/actions/workflow/status/mytoolit/ICOc/tests.yaml?branch=master&label=Tests)](https://github.com/MyTooliT/ICOc/actions/workflows/tests.yaml)
+[![GitHub Workflow Documentation](https://img.shields.io/github/actions/workflow/status/mytoolit/ICOc/documentation.yaml?branch=master&label=Documentation)](https://mytoolit.github.io/ICOc/) [![API Documentation](https://img.shields.io/readthedocs/icoc?label=API%20Documentation)](https://icoc.readthedocs.io/en/latest/) [![GitHub Workflow Tests](https://img.shields.io/github/actions/workflow/status/mytoolit/ICOc/tests.yaml?branch=master&label=Tests)](https://github.com/MyTooliT/ICOc/actions/workflows/tests.yaml)
 
 # ICOc
 
