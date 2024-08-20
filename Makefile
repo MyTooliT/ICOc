@@ -1,12 +1,13 @@
 # -- Variables -----------------------------------------------------------------
 
-OUTPUT_DIRECTORY := Bookdown
+BOOKDOWN_DIRECTORY := Bookdown
+SPHINX_DIRECTORY := Sphinx
 INDEX_FILE := Documentation/Introduction.md
 OUTPUT_NAME := Documentation
 
-PDF_FILE := $(OUTPUT_DIRECTORY)/$(OUTPUT_NAME).pdf
-EPUB_FILE := $(OUTPUT_DIRECTORY)/$(OUTPUT_NAME).epub
-HTML_FILE := $(OUTPUT_DIRECTORY)/$(OUTPUT_NAME).html
+PDF_FILE := $(BOOKDOWN_DIRECTORY)/$(OUTPUT_NAME).pdf
+EPUB_FILE := $(BOOKDOWN_DIRECTORY)/$(OUTPUT_NAME).epub
+HTML_FILE := $(BOOKDOWN_DIRECTORY)/$(OUTPUT_NAME).html
 
 ifeq ($(OS), Windows_NT)
 	OPERATING_SYSTEM := windows
@@ -107,14 +108,15 @@ $(EPUB_FILE):
 # Generate (GitBook) HTML document
 $(HTML_FILE):
 	Rscript -e "bookdown::render_book('$(INDEX_FILE)', 'bookdown::gitbook')"
-	Rscript -e "file.rename('$(HTML_FILE)', '$(OUTPUT_DIRECTORY)/index.html')"
+	Rscript -e "file.rename('$(HTML_FILE)', '$(BOOKDOWN_DIRECTORY)/index.html')"
 
 # Generate PDF
 $(PDF_FILE):
 	Rscript -e "bookdown::render_book('$(INDEX_FILE)', 'bookdown::pdf_book')"
 
 clean: cleanup
-	Rscript -e "unlink('$(OUTPUT_DIRECTORY)', recursive = TRUE)"
+	Rscript -e "unlink('$(BOOKDOWN_DIRECTORY)', recursive = TRUE)"
+	Rscript -e "unlink('$(SPHINX_DIRECTORY)', recursive = TRUE)"
 
 # -------
 # - API -
@@ -122,4 +124,4 @@ clean: cleanup
 
 .PHONY: doc-api
 doc-api:
-	sphinx-build -M html Documentation/API Sphinx
+	sphinx-build -M html Documentation/API $(SPHINX_DIRECTORY)
