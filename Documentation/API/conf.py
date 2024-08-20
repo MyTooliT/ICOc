@@ -12,14 +12,15 @@ release = "1.11.0"
 
 # -- General configuration ----------------------------------------------------
 
-
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.doctest",
 ]
 
-exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
+# Run doctest from doctest directive, but not nested tests from autodoc code
+doctest_test_doctest_blocks = ""
 
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 # -- Options for HTML output --------------------------------------------------
 
