@@ -415,7 +415,7 @@ will show the sensor data. To stop the data acquisition, click the close button 
 
 <a name="introduction:section:measurement-data"></a>
 
-## Measurement Data
+### Measurement Data
 
 ---
 
@@ -469,7 +469,7 @@ The screenshot below shows an example of such a graph:
 
 For a more advanced analysis of the data files you can use our collection of measurement utility software [ICOlyzer](https://github.com/MyTooliT/ICOlyzer).
 
-### Adding Custom Metadata
+#### Adding Custom Metadata
 
 Sometimes you also want to add additional data about a measurement. To do that you can also use [HDFView][]. Since the tool opens files in read-only mode by default you need to change the default file access mode to “Read/Write” first:
 
@@ -507,7 +507,7 @@ If you want you can also add multiline text. Since you can not add newlines usin
 
 <a name="introduction:section:changing-configuration-values"></a>
 
-## Changing Configuration Values
+### Changing Configuration Values
 
 > **Note:** If you only use the `icoc` command line tool, then you most probably do not need to change the configuration at all.
 
@@ -522,7 +522,7 @@ which will open the the user configuration in your default text editor. You can 
 [Dynaconf]: https://www.dynaconf.com
 [default values]: https://github.com/MyTooliT/ICOc/blob/master/mytoolit/config/config.yaml
 
-### Adding the Path to Simplicity Commander on Linux
+#### Adding the Path to Simplicity Commander on Linux
 
 1. Open the user configuration file in your default text editor using the command line tool `icon`:
 
