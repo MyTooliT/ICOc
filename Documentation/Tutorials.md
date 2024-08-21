@@ -422,7 +422,7 @@ The text below gives you a more detailed step-by-step guide on how to run the te
 
 1. > **Note:** You can **skip this step, if you do not want to run the flash test**. To skip the flash test, please set `sth` → `status` in the [configuration](#introduction:section:changing-configuration-values) to `Epoxied`.
 
-   Please create a directory called `Firmware` in the current user’s `Documents` (`~`) directory.
+   Please create a directory called `Firmware` in the current user’s `Documents` directory (`~/Documents`).
 
    > **Note:** To open the user’s home directory on Windows you can use the following command in (Windows) Terminal:
    >
