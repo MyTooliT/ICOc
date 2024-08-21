@@ -13,4 +13,4 @@ ENV PATH="$VIRTUAL_ENV/bin":"$PATH"
 # Install ICOc
 RUN pip3 install icoc
 
-ENTRYPOINT "/bin/bash"
+ENTRYPOINT ["/bin/bash"]
