@@ -1,10 +1,6 @@
-<a name="tutorials:section:tutorials"></a>
-
 # Tutorials
 
-<a name="tutorials:section:sth-renaming"></a>
-
-## Sensor Device Renaming
+## Sensor Device Renaming {#tutorials:section:sth-renaming}
 
 1. Please start ICOc:
 
@@ -96,9 +92,7 @@ The ICOc program accepts optional command line arguments at startup. This way yo
 
 of a sensor device, then you can even use ICOc without any user interaction, since in this case the program will immediately connect to the specified device and start the measurement process.
 
-<a name="tutorials:section:available-options"></a>
-
-### Available Options
+### Available Options {#tutorials:section:available-options}
 
 To show the available command line options you can use the option `-h`:
 
@@ -278,8 +272,6 @@ If you want to change the sampling rate you can do that by changing the paramete
 
 The formula which can be used to calculate the sampling rate can be found in the [documentation of the CAN commands](https://mytoolit.github.io/Documentation/#sampling-rate).
 
-<a name="tutorials:section:icon-cli-tool"></a>
-
 ## ICOn CLI Tool
 
 One issue of the ICOc (command line tool) is that it **only works on Windows**. Another problem is that it **requires a CAN adapter from [PEAK-System](https://www.peak-system.com)**.
@@ -332,8 +324,6 @@ For more information about the command you can use the option `-h`/`--help`:
 icon rename -h
 ```
 
-<a name=tutorials:section:opening-the-user-configuration></a>
-
 ### Opening the User Configuration
 
 To open the user configuration file, you can use the subcommand `config`:
@@ -342,7 +332,7 @@ To open the user configuration file, you can use the subcommand `config`:
 icon config
 ```
 
-If the file does not exist yet, then it will be created and filled with the content of the [default user configuration](https://github.com/MyTooliT/ICOc/blob/master/mytoolit/config/user.yaml). For more information on how to change the configuration, please take a look [here](#introduction:section:changing-configuration-values).
+If the file does not exist yet, then it will be created and filled with the content of the [default user configuration](https://github.com/MyTooliT/ICOc/blob/master/mytoolit/config/user.yaml). For more information on how to change the configuration, please take a look [here](#changing-configuration-values).
 
 ### STU Commands
 
@@ -380,9 +370,7 @@ icon stu reset
 
 This tutorial lists the usual steps to test a sensory holder assembly or a sensory tool holder.
 
-<a name=tutorials:section:general></a>
-
-### General
+### General {#tutorials:section:general}
 
 To run the production tests for one of the ICOtronic devices, please execute one of the following commands:
 
@@ -414,13 +402,11 @@ test-sth -k flash -k connection
 
 which executes all tests that contain the text `flash` or `connection`.
 
-<a name="tutorials:section:sth"></a>
-
-### STH
+### STH {#tutorials:section:sth}
 
 The text below gives you a more detailed step-by-step guide on how to run the tests of the STH.
 
-1. > **Note:** You can **skip this step, if you do not want to run the flash test**. To skip the flash test, please set `sth` → `status` in the [configuration](#introduction:section:changing-configuration-values) to `Epoxied`.
+1. > **Note:** You can **skip this step, if you do not want to run the flash test**. To skip the flash test, please set `sth` → `status` in the [configuration](#changing-configuration-values) to `Epoxied`.
 
    Please create a directory called `Firmware` in the current user’s `Documents` directory (`~/Documents`).
 
@@ -439,9 +425,9 @@ The text below gives you a more detailed step-by-step guide on how to run the te
                    └── manufacturingImageSthv2.1.10.hex
    ```
 
-   As alternative to the steps above you can also change the variable `sth` → `firmware` → `location` → `flash` in the [configuration](#introduction:section:changing-configuration-values) to point to the firmware that should be used for the flash test.
+   As alternative to the steps above you can also change the variable `sth` → `firmware` → `location` → `flash` in the [configuration](#changing-configuration-values) to point to the firmware that should be used for the flash test.
 
-2. Make sure that [the configuration values](#introduction:section:changing-configuration-values) are set correctly. You probably need to change at least the following variables:
+2. Make sure that [the configuration values](#changing-configuration-values) are set correctly. You probably need to change at least the following variables:
 
    - **Name**: Please change the Bluetooth advertisement name (`sth` → `name` ) to the name of the STH you want to test.
 
@@ -451,19 +437,17 @@ The text below gives you a more detailed step-by-step guide on how to run the te
 
    Please note, that the test will rename the tested STH
 
-   - to a [**Base64 encoded version of the Bluetooth MAC address**](#section:mac-address-conversion), if `sth` → `status` is set to `Bare PCB`, or
+   - to a [**Base64 encoded version of the Bluetooth MAC address**](#mac-address-conversion), if `sth` → `status` is set to `Bare PCB`, or
 
    - to the **serial number** (`sth` → `programming board` → `serial number`), if you set the status to `Epoxied`.
 
-<a name="tutorials:section:smh"></a>
-
-### SMH
+### SMH {#tutorials:section:smh}
 
 The preparation steps for the SMH test are very similar to the ones of the [STH test](#tutorials:section:sth).
 
 1. Please make sure that the config value that stores the SMH firmware filepath (`smh` → `firmware` → `location` → `flash`) points to the correct firmware. If you have not downloaded a firmware image for the SMH you can do so [here](https://github.com/MyTooliT/STH/releases).
 
-2. Check that the [configuration values](#introduction:section:changing-configuration-values) like SMH name (`smh` → `name`) and programming board serial number (`smh` → `programming board` → `serial number`) are set correctly.
+2. Check that the [configuration values](#changing-configuration-values) like SMH name (`smh` → `name`) and programming board serial number (`smh` → `programming board` → `serial number`) are set correctly.
 
 3. Please execute the test using the following command:
 
@@ -471,9 +455,7 @@ The preparation steps for the SMH test are very similar to the ones of the [STH 
    test-smh
    ```
 
-<a name="tutorials:section:stu"></a>
-
-### STU
+### STU {#tutorials:section:stu}
 
 The following description shows you how to run the STU tests.
 
@@ -514,7 +496,7 @@ The (non-exhaustive) table below shows the compatible firmware for a certain dev
 
 ### Preparation
 
-- The tests assume that the name of the STH is stored in `sth` → `name` in the [configuration](#introduction:section:changing-configuration-values).
+- The tests assume that the name of the STH is stored in `sth` → `name` in the [configuration](#changing-configuration-values).
 - Some of the STH tests assume that you connected the SHA/STH or STU via the programming cable. Please do that, since otherwise these tests will fail.
 
 ### Execution

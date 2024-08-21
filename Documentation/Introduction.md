@@ -38,7 +38,7 @@ The software reads data from the Stationary Transceiver Unit (STU) via CAN using
 
   use [python-can](https://python-can.readthedocs.io) and therefore also works on Linux and macOS. The [ICOc measurement tool](#command-line-usage-of-icoc) does [**not**](https://github.com/MyTooliT/ICOc/issues/4). For more information on how to use (parts of) the ICOc software on Linux, please take a look [here](#introduction:section:pcan-driver:linux).
 
-For more information about other required software components, please read the subsection [“Software”](#section:software) in this document.
+For more information about other required software components, please read the subsection [“Software”](#software) in this document.
 
 ## Requirements
 
@@ -72,11 +72,7 @@ In order to use ICOc you need at least:
 2. Connect the USB connector of the PCAN adapter to your computer.
 3. Make sure that your sensor device (SHA/STH/SMH) is connected to a power source. For an STH this usually means that you should check that the battery is (fully) charged.
 
-<a name="section:software"></a>
-
 ### Software
-
-<a name="introduction:section:python"></a>
 
 #### Python
 
@@ -92,9 +88,7 @@ To communicate with the STU you need a driver that works with the PCAN adapter. 
 - [macOS](#introduction:section:pcan-driver:macos), and
 - [Windows](#introduction:section:pcan-driver:windows).
 
-<a name="introduction:section:pcan-driver:linux"></a>
-
-##### Linux
+##### Linux {#introduction:section:pcan-driver:linux}
 
 You need to make sure that your CAN adapter is available via the [SocketCAN](https://en.wikipedia.org/wiki/SocketCAN) interface.
 
@@ -160,15 +154,11 @@ IDX LINK   TYPE     OPERATIONAL SETUP
 - [Question: How can I automatically bring up CAN interface using netplan?](https://github.com/linux-can/can-utils/issues/68#issuecomment-584505426)
 - [networkd › systemd › Wiki › ubuntuusers](https://wiki.ubuntuusers.de/systemd/networkd/)
 
-<a name="introduction:section:pcan-driver:macos"></a>
-
-##### macOS
+##### macOS {#introduction:section:pcan-driver:macos}
 
 On macOS you can use the [PCBUSB](https://github.com/mac-can/PCBUSB-Library) library to add support for the PCAN adapter. For more information on how to install this library please take a look [here](https://github.com/mac-can/PCBUSB-Library/issues/10#issuecomment-1188682027).
 
-<a name="introduction:section:pcan-driver:windows"></a>
-
-##### Windows
+##### Windows {#introduction:section:pcan-driver:windows}
 
 You can find the download link for the PCAN Windows driver [here](https://www.peak-system.com/quick/DrvSetup). Please make sure that you include the “PCAN-Basic API” when you install the software.
 
@@ -183,11 +173,11 @@ If you choose the first option, then please make sure to install the Simplicity 
 
 ##### Linux
 
-Please add the path to `commander` to the list `commands` → `path` → `linux` in the [configuration](#introduction:section:changing-configuration-values).
+Please add the path to `commander` to the list `commands` → `path` → `linux` in the [configuration](#changing-configuration-values).
 
 ##### macOS
 
-If you install Simplicity Studio or Simplicity Commander in the standard install path (`/Applications`) you do not need to change the config. If you put the application in a different directory, then please add the path to `commander` to the list `commands` → `path` → `mac` in the [configuration](#introduction:section:changing-configuration-values).
+If you install Simplicity Studio or Simplicity Commander in the standard install path (`/Applications`) you do not need to change the config. If you put the application in a different directory, then please add the path to `commander` to the list `commands` → `path` → `mac` in the [configuration](#changing-configuration-values).
 
 ##### Windows
 
@@ -195,14 +185,12 @@ If you install Simplicity Studio or Simplicity Commander in the standard install
 
 - If you download Simplicity Commander directly, then the tests assume that you unzipped the files into the directory `C:\SiliconLabs\Simplicity Commander`.
 
-- If you did not use any of the standard install path, then please add the path to `commander.exe` to the list `commands` → `path` → `windows` in the [configuration](#introduction:section:changing-configuration-values).
+- If you did not use any of the standard install path, then please add the path to `commander.exe` to the list `commands` → `path` → `windows` in the [configuration](#changing-configuration-values).
 
 ##### Additional Notes
 
 - If you **do not want to change the config**, and Simplicity Commander (`commander`) is not part of the standard locations for your operating system, then please make sure that `commander` is accessible via the `PATH` environment variable.
 - Please note, that you **do not need to install Simplicity Commander** if you just want to **measure data with ICOc**.
-
-<a name="introduction:section:install"></a>
 
 ## Install
 
@@ -271,9 +259,7 @@ then your version of [Setuptools](http://setuptools.pypa.io) needs to be updated
 pip install -U pip setuptools
 ```
 
-<a name="introduction:section:unable-to-locate-hdf5"></a>
-
-#### Unable to Locate HDF5
+#### Unable to Locate HDF5 {#introduction:section:unable-to-locate-hdf5}
 
 The installation of ICOc might fail with an error message that looks like this:
 
@@ -411,9 +397,7 @@ To start the data acquisition press the key <kbd>s</kbd>. Afterwards a graphical
 
 ![Measurement](Documentation/Pictures/Measurement.png)
 
-will show the sensor data. To stop the data acquisition, click the close button on the top of the graph. For more information on how to use ICOc and the test suite, please take a look at the [section “Tutorials”](#tutorials:section:tutorials).
-
-<a name="introduction:section:measurement-data"></a>
+will show the sensor data. To stop the data acquisition, click the close button on the top of the graph. For more information on how to use ICOc and the test suite, please take a look at the [section “Tutorials”](#tutorials).
 
 ### Measurement Data
 
@@ -504,8 +488,6 @@ Sometimes you also want to add some general purpose data. For that you can use t
 ![HDFView: Comment Attribute](Documentation/Pictures/HDFView-Comment.png)
 
 If you want you can also add multiline text. Since you can not add newlines using <kbd>⏎</kbd> in HDFView directly, we recommend you open your favorite text editor to write the text and then copy and paste the text into the value field. HDFView will only show the last line of the pasted text. However, after you copy and paste the text into another program you will see that HDFView stored the text including the newlines.
-
-<a name="introduction:section:changing-configuration-values"></a>
 
 ### Changing Configuration Values
 

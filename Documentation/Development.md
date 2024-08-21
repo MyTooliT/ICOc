@@ -40,8 +40,6 @@ black .
 
 For development we recommend that you use a tool or plugin that reformats your code with Black every time you save. This way we can ensure that we use a consistent style for the whole code base.
 
-<a name="development:section:tests"></a>
-
 ## Tests
 
 The following text describes some of the measures we should take to keep the software stable.
@@ -131,22 +129,16 @@ and make sure that it reports no test failures.
 3. Check that the command shows no error messages
 4. Open the PDF report (`STH Test.pdf`) in the repository root and make sure that it includes the correct test data
 
-<a name="development:section:stu-test"></a>
-
-#### STU Test
+#### STU Test {#development:section:stu-test}
 
 1. Call the command `test-stu` (or `test-stu -k eeprom -k connection` when you want to skip the flash test) for a working STU
 2. Wait for the command execution
 3. Check that the command shows no error messages
 4. Open the PDF report (`STU Test.pdf`) in the repository root and make sure that it includes the correct test data
 
-<a name="development:section:extended-tests"></a>
-
-##### Extended Tests
+##### Extended Tests {#development:section:extended-tests}
 
 The text below specifies extended manual test that should be executed before we [release a new version of ICOc](#development:section:release). Please note that the tests assume that you use more or less the [default configuration values](https://github.com/MyTooliT/ICOc/blob/master/mytoolit/config/config.yaml).
-
-<a name="development:section:check-command-line-interface"></a>
 
 ###### Check Command Line Interface
 
@@ -179,7 +171,7 @@ The text below specifies extended manual test that should be executed before we 
    ls *.hdf5
    ```
 
-7. Open the file in [HDFView](#readme:section:measurement-data)
+7. Open the file in [HDFView](#measurement-data)
 8. Check that the table `acceleration` contains about 95 000 values
 9. Check that the table contains three columns
 10. Check that the meta attributes `Sensor_Range` and `Start_Time` exist
@@ -201,7 +193,7 @@ The text below specifies extended manual test that should be executed before we 
 
 ###### Check User Interface
 
-1. Repeat steps 1. – 4. from the [test above](#development:section:check-command-line-interface)
+1. Repeat steps 1. – 4. from the test above
 2. Open ICOc using the following command:
 
    ```sh
@@ -277,7 +269,7 @@ The text below specifies extended manual test that should be executed before we 
 11. Check the output file
 
     1. Check that the HDF5 output file exists: The filename should start with the characters “Test” followed by a timestamp and the extension “.hdf5”
-    2. Open the HDF measurement file in [HDFView](#readme:section:measurement-data)
+    2. Open the HDF measurement file in [HDFView](#measurement-data)
     3. Check that the table contains four columns
     4. One of the columns should have the name `x`
     5. Another column should have the name `y`
@@ -296,14 +288,12 @@ make run
 
 Afterwards make sure there were no (unexpected) errors in the output of the STH and STU test.
 
-<a name="development:section:release"></a>
-
-## Release
+## Release {#development:section:release}
 
 1.  Check that the [**CI jobs** for the `master` branch finish successfully](https://github.com/MyTooliT/ICOc/actions)
 2.  Check that the **checks and tests** run without any problems on **Linux**, **macOS** and **Windows**
 
-    1. Set the value of `sth` → `status` in the [configuration](#introduction:section:changing-configuration-values) to `Epoxied`
+    1. Set the value of `sth` → `status` in the [configuration](#changing-configuration-values) to `Epoxied`
     2. Execute the command:
 
        ```sh
@@ -319,7 +309,7 @@ Afterwards make sure there were no (unexpected) errors in the output of the STH 
       1. once with `sth` → `status` set to `Epoxied`, and
       2. once set to `Bare PCB`
 
-      in the [configuration](#introduction:section:changing-configuration-values). To make sure, that the STU flash test also works, please use both STU test commands described in the section [“STU Test”](#development:section:stu-test).
+      in the [configuration](#changing-configuration-values). To make sure, that the STU flash test also works, please use both STU test commands described in the section [“STU Test”](#development:section:stu-test).
 
       If you follow the steps above you make sure that the **flash tests work** for both STU and STH, and there are **no unintentional consequences of (not) flashing the chip** before you run the other parts of the test suite.
 
