@@ -83,10 +83,10 @@ mypy mytoolit
 
 #### Pylint
 
-We currently use [Pylint](https://github.com/PyCQA/pylint) to check the code (for errors only):
+We currently use [Pylint](https://github.com/PyCQA/pylint) to check the code:
 
 ```sh
-pylint -E mytoolit
+pylint mytoolit
 ```
 
 ### Automatic Tests
