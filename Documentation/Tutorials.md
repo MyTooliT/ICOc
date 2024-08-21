@@ -455,6 +455,8 @@ The text below gives you a more detailed step-by-step guide on how to run the te
 
    - to the **serial number** (`sth` → `programming board` → `serial number`), if you set the status to `Epoxied`.
 
+<a name="tutorials:section:smh"></a>
+
 ### SMH
 
 The preparation steps for the SMH test are very similar to the ones of the [STH test](#tutorials:section:sth).
@@ -468,6 +470,8 @@ The preparation steps for the SMH test are very similar to the ones of the [STH 
    ```sh
    test-smh
    ```
+
+<a name="tutorials:section:stu"></a>
 
 ### STU
 

@@ -6,26 +6,37 @@ description: Tools and scripts for the ICOtronic system
 
 # ICOc
 
-ICOc is a collection of tools and scripts for the [ICOtronic system](https://www.mytoolit.com/ICOtronic/). Currently the main purpose of the software is
+ICOc is a
 
-- **data collection** (via the script `icoc`) and
-- **testing** the functionality of
-  - Stationary Transceiver Unit (STU) and
+- [Python library](https://pypi.org/project/icoc) and
+- collection of tools and scripts
+
+for the [ICOtronic system](https://www.mytoolit.com/ICOtronic/). Currently the main purpose of the software is:
+
+- **Data Collection** via
+  - the script [`icoc`](#command-line-usage-of-icoc) (Windows only) or
+  - the script [`icon`](#icon-cli-tool) (Linux, macOS, Windows) or
+  - directly [via the API][API] (Linux, macOS, Windows)
+- **Testing** the functionality of
+  - [Stationary Transceiver Unit (STU)](#tutorials:section:stu) and
   - sensor devices/nodes, such as
-    - Sensory Holder Assembly (SHA)/Sensory Tool Holder (STH)
-    - Sensory Milling Head (SMH)
+    - [Sensory Holder Assembly (SHA)/Sensory Tool Holder (STH)](#tutorials:section:sth)
+    - [Sensory Milling Head (SMH)](#tutorials:section:stu)
 
-The software reads data from the Stationary Transceiver Unit (STU) via CAN using the MyTooliT protocol. The STU itself reads from and writes data to the sensor devices via Bluetooth.
+[API]: https://icoc.readthedocs.io
 
-The framework currently requires
-
-- [Microsoft Windows 10](https://microsoft.com/windows), and
-- [Python 3](#introduction:section:python).
+The software reads data from the Stationary Transceiver Unit (STU) via CAN using the [MyTooliT protocol](https://mytoolit.github.io/Documentation/#mytoolit-communication-protocol). The STU itself reads from and writes data to the sensor devices via Bluetooth.
 
 **Notes**:
 
-- In theory you can also use ICOc in Windows 11. However, we did not test the software on this operating system.
-- The test suite (which uses a CAN class based on [python-can](https://python-can.readthedocs.io)) also works on Linux and macOS. The ICOc measurement software does [**not**](https://github.com/MyTooliT/ICOc/issues/4). For more information on how to use (parts of) the ICOc software on Linux, please take a look [here](#introduction:section:pcan-driver:linux).
+- The command line tool [`icoc`](#command-line-usage-of-icoc) requires [Microsoft Windows 10](https://microsoft.com/windows) (tested) or Windows 11 (untested).
+- The
+
+  - test suite,
+  - [`icon`](#icon-cli-tool), and
+  - the (new) [API][]
+
+  use [python-can](https://python-can.readthedocs.io) and therefore also works on Linux and macOS. The [ICOc measurement tool](#command-line-usage-of-icoc) does [**not**](https://github.com/MyTooliT/ICOc/issues/4). For more information on how to use (parts of) the ICOc software on Linux, please take a look [here](#introduction:section:pcan-driver:linux).
 
 For more information about other required software components, please read the subsection [“Software”](#section:software) in this document.
 
