@@ -463,7 +463,7 @@ The preparation steps for the SMH test are very similar to the ones of the [STH 
 
 1. Please make sure that the config value that stores the SMH firmware filepath (`smh` → `firmware` → `location` → `flash`) points to the correct firmware. If you have not downloaded a firmware image for the SMH you can do so [here](https://github.com/MyTooliT/STH/releases).
 
-2. Check that the [configuration values][config] like SMH name (`smh` → `name`) and programming board serial number (`smh` → `programming board` → `serial number`) are set correctly.
+2. Check that the [configuration values](#introduction:section:changing-configuration-values) like SMH name (`smh` → `name`) and programming board serial number (`smh` → `programming board` → `serial number`) are set correctly.
 
 3. Please execute the test using the following command:
 
