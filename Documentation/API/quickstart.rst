@@ -36,14 +36,13 @@ After you opened the stream use an ``async with`` statement to iterate over the 
    ...         await network.connect_sensor_device("Test-STH")
    ...
    ...         async with network.open_data_stream(first=True) as stream:
-   ...             async for data in stream:
+   ...             async for data, lost_messages in stream:
    ...                 print(data)
    ...                 break
 
+   # Example Output: [32579, 32637, 32575]@1724251001.976368
    >>> run(read_streaming_data()) # doctest:+ELLIPSIS
-   1: [...]
-   2: []
-   3: []
+   [...]@... #...
 
 - connects to a device called ``Test-STH``,
 - opens a data stream for the first measurement channel,
