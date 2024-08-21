@@ -28,18 +28,7 @@ docker build -t mytoolit/icoc -f Docker/Dockerfile .
       docker run --rm -it --name icoc mytoolit/icoc
       ```
 
-2. Make sure the CAN interface is available on the Linux host **(Terminal 2)**
-
-   1. Open a new terminal window
-   2. Check that the following command:
-
-      ```sh
-      networkctl list
-      ```
-
-      lists `can0` under the column `LINK`
-
-3. Move the CAN interface into the network space of the Docker container **(Terminal 2)**
+2. Move the CAN interface into the network space of the Docker container **(Terminal 2)**
 
    ```sh
    export DOCKERPID="$(docker inspect -f '{{ .State.Pid }}' icoc)"
@@ -48,7 +37,9 @@ docker build -t mytoolit/icoc -f Docker/Dockerfile .
    sudo nsenter -t "$DOCKERPID" -n ip link set can0 up
    ```
 
-4. Run a test command in Docker container **(Terminal 1)** e.g.:
+   **Note:** Alternatively you can also add the option `--network host` to the Docker command from step 1. Please check out the [Docker documentation](https://docs.docker.com/engine/network/drivers/host/) to learn more about the consequences of using this option.
+
+3. Run a test command in Docker container **(Terminal 1)** e.g.:
 
    ```sh
    icon list
