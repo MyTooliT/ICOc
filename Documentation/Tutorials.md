@@ -286,15 +286,15 @@ One issue of the ICOc (command line tool) is that it **only works on Windows**. 
 
 [python-can]: https://python-can.readthedocs.io
 
-To improve this situation we offer an API based on [python-can][], which works on
+To improve this situation we offer an [API][] (Application Programming Interface) based on [python-can][], which works on
 
 - Linux,
 - macOS, and
 - Windows
 
-and should (at least in theory) support the [same CAN hardware as python-can](https://python-can.readthedocs.io/en/master/interfaces.html). You can access most of this API using the [“new” Network class](../mytoolit/can/network.py).
+and should (at least in theory) support the [same CAN hardware as python-can](https://python-can.readthedocs.io/en/master/interfaces.html). You can access most of this [API][] using the “new” Network class.
 
-We also offer a (currently very limited) CLI tool based on this API called ICOn. The text below describes how you can use this tool.
+We also offer a (currently very limited) CLI tool based on this [API][] called ICOn. The text below describes how you can use this tool.
 
 ### Listing Available Sensor Devices
 
