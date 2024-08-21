@@ -32,7 +32,7 @@ The software reads data from the Stationary Transceiver Unit (STU) via CAN using
 - The command line tool [`icoc`](#command-line-usage-of-icoc) requires [Microsoft Windows 10](https://microsoft.com/windows) (tested) or Windows 11 (untested).
 - The
 
-  - test suite,
+  - test suite (except for the [deprecated verification tests](#verification-tests)),
   - [`icon`](#icon-cli-tool), and
   - the (new) [API][]
 
