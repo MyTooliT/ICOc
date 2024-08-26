@@ -3,7 +3,7 @@
 API
 ===
 
-To communicate with the ICOtronic system use the :class:`mytoolit.can.Network`:
+To communicate with the ICOtronic system use the :class:`Network` class:
 
 .. autoclass:: Network
 
