@@ -71,6 +71,8 @@ Another useful method is :meth:`StreamingData.apply`, which can be used to chang
 .. |math g| replace:: :math:`g`
 .. _math g: https://en.wikipedia.org/wiki/Standard_gravity
 
+.. Source for link with formatted link text: https://jwodder.github.io/kbits/posts/rst-hyperlinks/
+
 .. automethod:: StreamingData.apply
 
 A :class:`TimestampedValue`:
