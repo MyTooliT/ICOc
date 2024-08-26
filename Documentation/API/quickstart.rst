@@ -23,7 +23,7 @@ We recommend you use the context manager to open and close the connection (to th
 
    >>> run(create_and_shutdown_network())
 
-To connect to an STH to read streaming data you can use the coroutine ``Network.open_data_stream``:
+To connect to an STH to read streaming data you can use the coroutine :meth:`Network.open_data_stream`:
 
 .. automethod:: Network.open_data_stream
 
