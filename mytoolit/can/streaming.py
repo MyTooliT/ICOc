@@ -846,7 +846,7 @@ class StreamingData:
         return serializable
 
     def extend(self, data: StreamingData) -> None:
-        """Add additional streaming
+        """Add additional streaming data
 
         Parameters
         ----------
