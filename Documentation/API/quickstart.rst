@@ -50,6 +50,41 @@ After you opened the stream use an ``async with`` statement to iterate over the 
 - receives a single streaming message and
   prints its representation.
 
+.. currentmodule:: mytoolit.can.streaming
+
+The data returned by the ``async for`` (``stream``) is an object of the class :class:`StreamingData`:
+
+.. autoclass:: StreamingData
+
+This object stores three lists containing :class:`TimestampedValue` objects, which you can access using the attributes:
+
+- :attr:`StreamingData.first`,
+- :attr:`StreamingData.second`, and
+- :attr:`StreamingData.third`.
+
+You can combine multiple :class:`TimestampedValue`’s using the method :meth:`StreamingData.extend`:
+
+.. automethod:: StreamingData.extend
+
+Another useful method is :meth:`StreamingData.apply`, which can be used to change the values stored in the streaming data (e.g. by converting the 16 bit ADC value into multiples of |math g|_):
+
+.. |math g| replace:: :math:`g`
+.. _math g: https://en.wikipedia.org/wiki/Standard_gravity
+
+.. automethod:: StreamingData.apply
+
+A :class:`TimestampedValue`:
+
+.. autoclass:: TimestampedValue
+
+contains:
+
+- a value (:attr:`TimestampedValue.value`),
+- a timestamp (:attr:`TimestampedValue.timestamp`), and
+- a message counter (:attr:`TimestampedValue.counter`).
+
+The attribute :attr:`TimestampedValue.value` will usually store a 16 bit ADC value (:type:`int`) unless you convert the data (for example, using :meth:`StreamingData.apply`).
+
 Examples
 ========
 
