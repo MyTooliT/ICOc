@@ -27,7 +27,7 @@ To connect to an STH to read streaming data you can use the coroutine ``Network.
 
 .. automethod:: Network.open_data_stream
 
-You can use an ``async with`` statement to iterate over the received streaming data. For example, the code below:
+After you opened the stream use an ``async with`` statement to iterate over the received streaming data. For example, the code below:
 
 .. doctest::
 
