@@ -45,7 +45,7 @@ After you opened the stream use an ``async with`` statement to iterate over the 
    2: []
    3: []
 
-- connects to a device called Test-STH,
+- connects to a device called ``Test-STH``,
 - opens a data stream for the first measurement channel,
 - receives a single streaming message and
   prints its representation.
