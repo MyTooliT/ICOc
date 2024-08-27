@@ -55,36 +55,24 @@ The data returned by the ``async for`` (``stream``) is an object of the class :c
 
 .. autoclass:: StreamingData
 
-This object stores three lists containing :class:`TimestampedValue` objects, which you can access using the attributes:
+This object has the following attributes:
 
-- :attr:`StreamingData.first`,
-- :attr:`StreamingData.second`, and
-- :attr:`StreamingData.third`.
+- :attr:`StreamingData.values`: a list containing either two or three values,
+- :attr:`StreamingData.timestamp`: the timestamp when the data was collected (actually `when it was received by the CAN controller <https://docs.peak-system.com/API/PCAN-Basic.Net/html/4f55937b-3d8f-de9e-62a9-be1b8a150f05.htm>`_)
+- :attr:`StreamingData.counter`: a cyclic message counter (0 – 255) that can be used to detect data loss
 
-You can combine multiple :class:`TimestampedValue`’s using the method :meth:`StreamingData.extend`:
+.. note::
+   The amount of data stored in :attr:`StreamingData.values` depends on the enabled streaming channels. For the `recommended amount of one or three enabled channels`_ the list contains three values. For
 
-.. automethod:: StreamingData.extend
+   - one enabled channel all three values belong to the same channel, while
+   - for the three enabled channels
 
-Another useful method is :meth:`StreamingData.apply`, which can be used to change the values stored in the streaming data (e.g. by converting the 16 bit ADC value into multiples of |math g|_):
+     - the first value belongs to the first channel,
+     - the second to the second channel,
+     - and the third to the third channel.
 
-.. |math g| replace:: :math:`g`
-.. _math g: https://en.wikipedia.org/wiki/Standard_gravity
-
-.. Source for link with formatted link text: https://jwodder.github.io/kbits/posts/rst-hyperlinks/
-
-.. automethod:: StreamingData.apply
-
-A :class:`TimestampedValue`:
-
-.. autoclass:: TimestampedValue
-
-contains:
-
-- a value (:attr:`TimestampedValue.value`),
-- a timestamp (:attr:`TimestampedValue.timestamp`), and
-- a message counter (:attr:`TimestampedValue.counter`).
-
-The attribute :attr:`TimestampedValue.value` will usually store a 16 bit ADC value (:type:`int`) unless you convert the data (for example, using :meth:`StreamingData.apply`).
+.. |recommended amount of one or three enabled channels| replace:: **recommended amount** of one or three enabled channels
+.. _recommended amount of one or three enabled channels: https://mytoolit.github.io/ICOc/#channel-selection
 
 Examples
 ========
