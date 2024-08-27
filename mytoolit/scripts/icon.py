@@ -114,7 +114,11 @@ async def dataloss(arguments: Namespace) -> None:
             logger.info("Sample rate: %s Hz", sample_rate)
 
             filepath = Path(f"Measurement {sample_rate} Hz.hdf5")
-            with Storage(filepath.resolve()) as storage:
+            with Storage(filepath.resolve(), ["x"]) as storage:
+                storage.add_acceleration_meta(
+                    "Sensor_Range", f"± {sensor_range / 2} g₀"
+                )
+
                 progress = tqdm(
                     total=int(sample_rate * measurement_time_s),
                     desc="Read sensor data",
@@ -137,10 +141,6 @@ async def dataloss(arguments: Namespace) -> None:
                         f"Unable to collect streaming data: {error}",
                         file=stderr,
                     )
-
-                storage.add_acceleration_meta(
-                    "Sensor_Range", f"± {sensor_range / 2} g₀"
-                )
 
                 progress.close()
             print(f"Stored measurement data in “{filepath}”")
@@ -230,7 +230,16 @@ async def measure(arguments: Namespace) -> None:
         sensor_range = await read_acceleration_sensor_range_in_g(network)
         conversion_to_g = partial(convert_raw_to_g, max_value=sensor_range)
 
-        with Storage(settings.get_output_filepath()) as storage:
+        axes = [
+            axis
+            for axis, channel in zip("xyz", user_sensor_config.values())
+            if channel
+        ]
+        with Storage(settings.get_output_filepath(), axes) as storage:
+            storage.add_acceleration_meta(
+                "Sensor_Range", f"± {sensor_range / 2} g₀"
+            )
+
             sample_rate = (
                 await network.read_adc_configuration()
             ).sample_rate()
@@ -264,12 +273,7 @@ async def measure(arguments: Namespace) -> None:
                             break
             except KeyboardInterrupt:
                 pass
-
             finally:
-                storage.add_acceleration_meta(
-                    "Sensor_Range", f"± {sensor_range / 2} g₀"
-                )
-
                 progress.close()
                 print(f"Data Loss: {storage.dataloss()}")
 

@@ -7,7 +7,7 @@ from __future__ import annotations
 from datetime import datetime
 from pathlib import Path
 from types import TracebackType
-from typing import Dict, Iterable, Mapping, Optional, Type, Union
+from typing import Dict, Iterable, Optional, Sequence, Type, Union
 
 from tables import (
     File,
@@ -16,7 +16,6 @@ from tables import (
     IsDescription,
     MetaAtom,
     MetaIsDescription,
-    Node,
     NoSuchNodeError,
     open_file,
     UInt8Col,
@@ -83,7 +82,9 @@ class StorageException(Exception):
 class Storage:
     """Code to store measurement data in HDF5 format"""
 
-    def __init__(self, filepath: Union[Path, str]) -> None:
+    def __init__(
+        self, filepath: Union[Path, str], axes: Optional[Iterable[str]] = None
+    ) -> None:
         """Initialize the storage object using the given arguments
 
         Parameters
@@ -93,11 +94,16 @@ class Storage:
             The filepath of the HDF5 file in which this object should store
             measurement data
 
+        axes:
+            All acceleration axes for which data should be collected or an
+            empty sequence, if the axes data should be taken from an existing
+            valid file at `filepath`.
+
         Example
         -------
 
         >>> filepath = Path("test.hdf5")
-        >>> with Storage(filepath) as storage:
+        >>> with Storage(filepath, axes=["x"]) as storage:
         ...     pass
         >>> filepath.unlink()
 
@@ -106,14 +112,12 @@ class Storage:
         self.filepath = Path(filepath).expanduser().resolve()
 
         self.hdf: Optional[File] = None
-        self.acceleration: Optional[Node] = None
-        self.start_time: Optional[float] = None
+        self.axes = axes
 
-    def __enter__(self) -> Storage:
+    def __enter__(self) -> StorageData:
         """Open the HDF file for writing"""
 
-        self.open()
-        return self
+        return self.open()
 
     def __exit__(
         self,
@@ -139,7 +143,7 @@ class Storage:
 
         self.close()
 
-    def open(self) -> None:
+    def open(self) -> StorageData:
         """Open and initialize the HDF file for writing"""
 
         try:
@@ -154,76 +158,59 @@ class Storage:
                 f"Unable to open file “{self.filepath}”: {error}"
             ) from error
 
-        try:
-            # Try to get acceleration dataset, if it already exists
-            self.acceleration = self.hdf.get_node("/acceleration")
-            self.start_time = self.acceleration[-1][1] / 1000
-        except NoSuchNodeError:
-            pass
+        return StorageData(self.hdf, self.axes)
 
-    def _assert_acceleration(self, message: str) -> None:
-        """Check for existence of acceleration data
+    def close(self) -> None:
+        """Close the HDF file"""
 
-        Parameters
-        ----------
+        if isinstance(self.hdf, File) and self.hdf.isopen:
+            self.hdf.close()
 
-        message:
-            An Explanation about which operation is not possible, due
-            to the missing dataset
 
-        Raises
-        ------
+class StorageData:
+    """Store HDF acceleration data"""
 
-        UserWarning, if the acceleration dataset does not exist
-
-        """
-
-        if self.acceleration is None:
-            raise UserWarning(
-                f"Unable to {message} non existent "
-                "acceleration table.\n"
-                "Please call either `init_acceleration` or `add_acceleration` "
-                "before you use this function"
-            )
-
-    def init_acceleration(
-        self, axes: Iterable[str], start_time: float
+    def __init__(
+        self, file_handle: File, axes: Optional[Iterable[str]] = None
     ) -> None:
-        """Initialize the data storage for the collection of acceleration data
+        """Create new storage data object using the given file handle
 
         Parameters
         ----------
+
+        file_handle:
+            The HDF file that should store the data
 
         axes:
-            All acceleration axes for which data should be collected
-
-        start_time:
-            The start time of the data acquisition in milliseconds
+            All acceleration axes for which data should be collected or an
+            empty string, if the axes data should be taken from an existing
+            valid file at `filepath`.
 
         Examples
         --------
 
-        >>> filepath = Path("test.hdf5")
-        >>> with Storage(filepath) as storage:
-        ...      storage.init_acceleration(axes = ['x'], start_time = 1337.42)
-        >>> filepath.unlink()
+        Create new data (`axis` defined)
 
-        >>> with Storage(filepath) as storage:
-        ...      storage.init_acceleration(axes = ['x', 'z'],
-        ...                                start_time = 42.1337)
+        >>> filepath = Path("test.hdf5")
+        >>> with Storage(filepath, axes=["x"]) as data:
+        ...     data.add_acceleration(values=[12], counter=1,
+        ...                           timestamp=4306978.449)
+
+        Use existing file (`axis` is `None`)
+
+        >>> with Storage(filepath) as data:
+        ...     print(data.axes)
+        ['x']
+
         >>> filepath.unlink()
 
         """
 
-        if self.hdf is None:
-            self.open()
-
-        assert isinstance(self.hdf, File)
+        self.hdf = file_handle
+        self.start_time: Optional[float] = None
 
         name = "acceleration"
-        try:
-            self.acceleration = self.hdf.get_node(f"/{name}")
-        except NoSuchNodeError:
+        if axes:
             self.acceleration = self.hdf.create_table(
                 self.hdf.root,
                 name=name,
@@ -232,12 +219,28 @@ class Storage:
                 ),
                 title="STH Acceleration Data",
             )
+            self.axes = axes
+        else:
+            try:
+                self.acceleration = self.hdf.get_node(f"/{name}")
+                self.axes = []
+                for axis in "xyz":
+                    try:
+                        getattr(self.acceleration.description, axis)
+                        self.axes.append(axis)
+                    except AttributeError:
+                        pass
 
-        self.start_time = start_time
-        self.acceleration.attrs["Start_Time"] = datetime.now().isoformat()
+                self.start_time = self.acceleration[-1][1] / 1000
+
+            except NoSuchNodeError as error:
+                raise StorageException(
+                    f"Unable to open file “{self.hdf.filename}” due to "
+                    f"incorrect format: {error}"
+                ) from error
 
     def add_acceleration(
-        self, values: Mapping[str, float], counter: int, timestamp: float
+        self, values: Sequence[float], counter: int, timestamp: float
     ) -> None:
         """Append acceleration data
 
@@ -246,9 +249,6 @@ class Storage:
 
         values:
             The acceleration values that should be added
-
-            - The key specifies the acceleration axis e.g. `x`, `y` or `z`
-            - The value specifies the acceleration in the given direction
 
         counter:
             The message counter sent in the package that contained the
@@ -261,24 +261,24 @@ class Storage:
         -------
 
         >>> filepath = Path("test.hdf5")
-        >>> with Storage(filepath) as storage:
-        ...     storage.add_acceleration(values={'x': 12}, counter=1,
-        ...                                    timestamp=4306978.449)
+        >>> with Storage(filepath, axes=["x"]) as data:
+        ...     data.add_acceleration(values=[12], counter=1,
+        ...                           timestamp=4306978.449)
         >>> filepath.unlink()
 
         """
 
-        if self.acceleration is None:
-            self.init_acceleration(values.keys(), timestamp)
+        if self.start_time is None:
+            self.start_time = timestamp
+            self.acceleration.attrs["Start_Time"] = datetime.now().isoformat()
 
-        assert isinstance(self.acceleration, Node)
         assert isinstance(self.start_time, (int, float))
 
         row = self.acceleration.row
         timestamp = (timestamp - self.start_time) * 1000
         row["timestamp"] = timestamp
         row["counter"] = counter
-        for accelertation_type, value in values.items():
+        for accelertation_type, value in zip(self.axes, values):
             row[accelertation_type] = value
         row.append()
 
@@ -312,7 +312,7 @@ class Storage:
         >>> data2 = StreamingData(
         ...     values=[4, 5, 6], counter=22, timestamp=2, channels=channel3)
         >>> filepath = Path("test.hdf5")
-        >>> with Storage(filepath) as storage:
+        >>> with Storage(filepath, ["z"]) as storage:
         ...     storage.add_streaming_data(data1)
         ...     storage.add_streaming_data(data2)
         >>> filepath.unlink()
@@ -324,60 +324,21 @@ class Storage:
         ...     values=[1, 2, 3], counter=21, timestamp=1, channels=all)
         >>> data2 = StreamingData(
         ...     values=[4, 5, 6], counter=22, timestamp=2, channels=all)
-        >>> with Storage(filepath) as storage:
+        >>> with Storage(filepath, ["x", "y", "z"]) as storage:
         ...     storage.add_streaming_data(data1)
         ...     storage.add_streaming_data(data2)
         >>> filepath.unlink()
 
         """
 
-        channels = streaming_data.channels
-        axes = [
-            name
-            for enabled, name in zip(
-                (
-                    channels.first,
-                    channels.second,
-                    channels.third,
-                ),
-                "xyz",
-            )
-            if enabled
-        ]
-        timestamp = streaming_data.timestamp * 1000
-
-        assert len(axes) >= 1
-
-        if len(axes) == 1:  # Single Channel: 3 Values
-            axis = axes.pop()
-            for value in streaming_data.values:
-                self.add_acceleration(
-                    values={axis: value},
-                    timestamp=timestamp,
-                    counter=streaming_data.counter,
-                )
-
-        else:  # One value for each channel
-            self.add_acceleration(
-                values=dict(zip(axes, streaming_data.values)),
-                timestamp=timestamp,
-                counter=streaming_data.counter,
-            )
+        self.add_acceleration(
+            values=streaming_data.values,
+            timestamp=streaming_data.timestamp * 1000,
+            counter=streaming_data.counter,
+        )
 
     def add_acceleration_meta(self, name: str, value: str) -> None:
         """Add acceleration metadata
-
-        Precondition
-        ------------
-
-        Either the method
-
-        - init_acceleration or
-        - add_acceleration
-
-        have to be called once before you use this method. This is required
-        since otherwise the table that stores the acceleration (meta) data
-        does not exist.
 
         Parameters
         ----------
@@ -392,16 +353,11 @@ class Storage:
         -------
 
         >>> filepath = Path("test.hdf5")
-        >>> with Storage(filepath) as storage:
-        ...     storage.add_acceleration(values={'x': 12}, counter=1,
-        ...                                    timestamp=4306978.449)
+        >>> with Storage(filepath, ["z"]) as storage:
         ...     storage.add_acceleration_meta('Sensor_Range', "± 100 g₀")
         >>> filepath.unlink()
 
         """
-
-        self._assert_acceleration("add metadata to")
-        assert self.acceleration
 
         self.acceleration.attrs[name] = value
 
@@ -419,13 +375,13 @@ class Storage:
         >>> from math import isclose
         >>> def calculate_dataloss():
         ...     filepath = Path("test.hdf5")
-        ...     with Storage(filepath) as storage:
+        ...     with Storage(filepath, ["x"]) as storage:
         ...         for counter in range(256):
-        ...             storage.add_acceleration(values={'x': 1},
+        ...             storage.add_acceleration(values=[1, 2, 3],
         ...                                      counter=counter,
         ...                                      timestamp=counter/10)
         ...         for counter in range(128, 256):
-        ...             storage.add_acceleration(values={'x': 2},
+        ...             storage.add_acceleration(values=[4, 5, 6],
         ...                                      counter=counter,
         ...                                      timestamp=(255 + counter)/10)
         ...
@@ -436,9 +392,6 @@ class Storage:
         True
 
         """
-
-        self._assert_acceleration("determine data loss of")
-        assert self.acceleration
 
         # Write back acceleration data so we can iterate over it
         self.acceleration.flush()
@@ -460,12 +413,6 @@ class Storage:
         messages = lost_messages + retrieved_messages
 
         return lost_messages / messages if messages > 0 else 0
-
-    def close(self) -> None:
-        """Close the HDF file"""
-
-        if isinstance(self.hdf, File) and self.hdf.isopen:
-            self.hdf.close()
 
 
 # -- Main ---------------------------------------------------------------------

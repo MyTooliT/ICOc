@@ -144,6 +144,7 @@ class CommandLineInterface:
         self.iPloterSocketPort = settings.gui.port
 
         self.storage = None
+        self.data = None
         self.set_output_filename(self.args.filename)
 
     def __exit__(self):
@@ -807,8 +808,7 @@ class CommandLineInterface:
                     self.iOversampling,
                     AdcReference[self.sAdcRef],
                 )
-                # Initialize HDF output
-                self.storage = Storage(settings.get_output_filepath())
+
                 # We need the acceleration range later to convert the ADC
                 # acceleration values into multiples of g₀
                 (
@@ -829,6 +829,23 @@ class CommandLineInterface:
                         file=stderr,
                     )
                     self.acceleration_range_g = 200
+
+                # Initialize HDF output
+                axes = [
+                    axis
+                    for axis, activated in (
+                        ("x", self.sensor.first),
+                        ("y", self.sensor.second),
+                        ("z", self.sensor.third),
+                    )
+                    if activated
+                ]
+                self.storage = Storage(settings.get_output_filepath(), axes)
+                self.data = self.storage.open()
+                sensor_range = self.acceleration_range_g / 2
+                self.data.add_acceleration_meta(
+                    "Sensor_Range", f"± {sensor_range} g₀"
+                )
 
                 # ICOc does not use the network class to read the streaming
                 # data but uses the `Read` method of the PCAN API directly.
@@ -922,14 +939,6 @@ class CommandLineInterface:
             # - runtime is up.
             self.read_streaming()
 
-            # We store the acceleration metadata at the end since, at this time
-            # the acceleration table should exist. Otherwise we would not be
-            # able to add the metadata to the table.
-            sensor_range = self.acceleration_range_g / 2
-            self.storage.add_acceleration_meta(
-                "Sensor_Range", f"± {sensor_range} g₀"
-            )
-
             self.__exit__()
         except KeyboardInterrupt:
             self.KeyBoardInterrupt = True
@@ -1020,18 +1029,14 @@ class CommandLineInterface:
             for start in range(2, 2 + number_values * 2, 2)
         ]
 
+        self.data.add_acceleration(
+            values=values, counter=counter, timestamp=timestamp
+        )
         if self.tAccDataFormat == DataSets[1]:
             axis_values = {axis: value for axis, value in zip(axes, values)}
-            self.storage.add_acceleration(
-                values=axis_values, counter=counter, timestamp=timestamp
-            )
             self.update_graph_data(**axis_values)
         elif self.tAccDataFormat == DataSets[3]:
             axis = axes[0]
-            for value in values:
-                self.storage.add_acceleration(
-                    values={axis: value}, counter=counter, timestamp=timestamp
-                )
             self.update_graph_data(**{axis: values[0]})
         else:
             self.logger.error("Wrong Ack format")
