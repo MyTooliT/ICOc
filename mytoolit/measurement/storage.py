@@ -442,7 +442,7 @@ class Storage:
 
         lost_messages = 0
         retrieved_messages = 0
-        last_counter = self.acceleration[0][0]
+        last_counter = int(self.acceleration[0][0])
         for record in self.acceleration:
             counter = int(record[0])
 
