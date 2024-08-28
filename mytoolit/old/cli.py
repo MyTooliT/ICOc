@@ -831,16 +831,10 @@ class CommandLineInterface:
                     self.acceleration_range_g = 200
 
                 # Initialize HDF output
-                axes = [
-                    axis
-                    for axis, activated in (
-                        ("x", self.sensor.first),
-                        ("y", self.sensor.second),
-                        ("z", self.sensor.third),
-                    )
-                    if activated
-                ]
-                self.storage = Storage(settings.get_output_filepath(), axes)
+                self.storage = Storage(
+                    settings.get_output_filepath(),
+                    self.sensor.streaming_configuration(),
+                )
                 self.data = self.storage.open()
                 sensor_range = self.acceleration_range_g / 2
                 self.data.add_acceleration_meta(

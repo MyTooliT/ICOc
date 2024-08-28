@@ -7,7 +7,7 @@ from __future__ import annotations
 from datetime import datetime
 from pathlib import Path
 from types import TracebackType
-from typing import Dict, Iterable, Optional, Sequence, Type, Union
+from typing import Dict, Optional, Sequence, Type, Union
 
 from tables import (
     File,
@@ -23,7 +23,7 @@ from tables import (
 )
 from tables.exceptions import HDF5ExtError
 
-from mytoolit.can.streaming import StreamingData
+from mytoolit.can.streaming import StreamingConfiguration, StreamingData
 
 # -- Functions ----------------------------------------------------------------
 
@@ -83,7 +83,9 @@ class Storage:
     """Code to store measurement data in HDF5 format"""
 
     def __init__(
-        self, filepath: Union[Path, str], axes: Optional[Iterable[str]] = None
+        self,
+        filepath: Union[Path, str],
+        channels: Optional[StreamingConfiguration] = None,
     ) -> None:
         """Initialize the storage object using the given arguments
 
@@ -94,17 +96,18 @@ class Storage:
             The filepath of the HDF5 file in which this object should store
             measurement data
 
-        axes:
-            All acceleration axes for which data should be collected or an
-            empty sequence, if the axes data should be taken from an existing
-            valid file at `filepath`.
+        channels:
+            All channels for which data should be collected or `None`, if the
+            axes data should be taken from an existing valid file at
+            `filepath`.
 
         Example
         -------
 
         >>> filepath = Path("test.hdf5")
-        >>> with Storage(filepath, axes=["x"]) as storage:
-        ...     pass
+        >>> with Storage(filepath,
+        ...     channels=StreamingConfiguration(first=True)) as storage:
+        ...         pass
         >>> filepath.unlink()
 
         """
@@ -112,7 +115,7 @@ class Storage:
         self.filepath = Path(filepath).expanduser().resolve()
 
         self.hdf: Optional[File] = None
-        self.axes = axes
+        self.channels = channels
 
     def __enter__(self) -> StorageData:
         """Open the HDF file for writing"""
@@ -158,7 +161,7 @@ class Storage:
                 f"Unable to open file “{self.filepath}”: {error}"
             ) from error
 
-        return StorageData(self.hdf, self.axes)
+        return StorageData(self.hdf, self.channels)
 
     def close(self) -> None:
         """Close the HDF file"""
@@ -171,7 +174,9 @@ class StorageData:
     """Store HDF acceleration data"""
 
     def __init__(
-        self, file_handle: File, axes: Optional[Iterable[str]] = None
+        self,
+        file_handle: File,
+        channels: Optional[StreamingConfiguration] = None,
     ) -> None:
         """Create new storage data object using the given file handle
 
@@ -181,26 +186,26 @@ class StorageData:
         file_handle:
             The HDF file that should store the data
 
-        axes:
-            All acceleration axes for which data should be collected or an
-            empty string, if the axes data should be taken from an existing
-            valid file at `filepath`.
+        channels:
+            All channels for which data should be collected or `None`, if the
+            axes data should be taken from an existing valid file at
+            `filepath`.
 
         Examples
         --------
 
-        Create new data (`axis` defined)
+        Create new data
 
         >>> filepath = Path("test.hdf5")
-        >>> with Storage(filepath, axes=["x"]) as data:
+        >>> with Storage(filepath, StreamingConfiguration(first=True)) as data:
         ...     data.add_acceleration(values=[12], counter=1,
         ...                           timestamp=4306978.449)
 
-        Use existing file (`axis` is `None`)
+        Read from existing file
 
         >>> with Storage(filepath) as data:
-        ...     print(data.axes)
-        ['x']
+        ...     print(data.dataloss())
+        0
 
         >>> filepath.unlink()
 
@@ -210,16 +215,16 @@ class StorageData:
         self.start_time: Optional[float] = None
 
         name = "acceleration"
-        if axes:
+        if channels:
+            self.axes = channels.axes()
             self.acceleration = self.hdf.create_table(
                 self.hdf.root,
                 name=name,
                 description=create_acceleration_description(
-                    attributes={axis: Float32Col() for axis in axes}
+                    attributes={axis: Float32Col() for axis in self.axes}
                 ),
                 title="STH Acceleration Data",
             )
-            self.axes = axes
         else:
             try:
                 self.acceleration = self.hdf.get_node(f"/{name}")
@@ -261,7 +266,7 @@ class StorageData:
         -------
 
         >>> filepath = Path("test.hdf5")
-        >>> with Storage(filepath, axes=["x"]) as data:
+        >>> with Storage(filepath, StreamingConfiguration(first=True)) as data:
         ...     data.add_acceleration(values=[12], counter=1,
         ...                           timestamp=4306978.449)
         >>> filepath.unlink()
@@ -305,26 +310,28 @@ class StorageData:
 
         Store streaming data for single channel
 
-        >>> channel3 = StreamingConfigBits(
-        ...     first=False, second=False, third=True)
+        >>> channel3 = StreamingConfiguration(first=False, second=False,
+        ...                                   third=True)
+        >>> bits3 = channel3.channels
         >>> data1 = StreamingData(
-        ...     values=[1, 2, 3], counter=21, timestamp=1, channels=channel3)
+        ...     values=[1, 2, 3], counter=21, timestamp=1, channels=bits3)
         >>> data2 = StreamingData(
-        ...     values=[4, 5, 6], counter=22, timestamp=2, channels=channel3)
+        ...     values=[4, 5, 6], counter=22, timestamp=2, channels=bits3)
         >>> filepath = Path("test.hdf5")
-        >>> with Storage(filepath, ["z"]) as storage:
+        >>> with Storage(filepath, channel3) as storage:
         ...     storage.add_streaming_data(data1)
         ...     storage.add_streaming_data(data2)
         >>> filepath.unlink()
 
         Store streaming data for three channels
 
-        >>> all = StreamingConfigBits(first=True, second=True, third=True)
+        >>> all = StreamingConfiguration(first=True, second=True, third=True)
+        >>> bits_all = all.channels
         >>> data1 = StreamingData(
-        ...     values=[1, 2, 3], counter=21, timestamp=1, channels=all)
+        ...     values=[1, 2, 3], counter=21, timestamp=1, channels=bits_all)
         >>> data2 = StreamingData(
-        ...     values=[4, 5, 6], counter=22, timestamp=2, channels=all)
-        >>> with Storage(filepath, ["x", "y", "z"]) as storage:
+        ...     values=[4, 5, 6], counter=22, timestamp=2, channels=bits_all)
+        >>> with Storage(filepath, all) as storage:
         ...     storage.add_streaming_data(data1)
         ...     storage.add_streaming_data(data2)
         >>> filepath.unlink()
@@ -353,7 +360,8 @@ class StorageData:
         -------
 
         >>> filepath = Path("test.hdf5")
-        >>> with Storage(filepath, ["z"]) as storage:
+        >>> with Storage(filepath,
+        ...              StreamingConfiguration(third=True)) as storage:
         ...     storage.add_acceleration_meta('Sensor_Range', "± 100 g₀")
         >>> filepath.unlink()
 
@@ -375,7 +383,8 @@ class StorageData:
         >>> from math import isclose
         >>> def calculate_dataloss():
         ...     filepath = Path("test.hdf5")
-        ...     with Storage(filepath, ["x"]) as storage:
+        ...     with Storage(filepath,
+        ...                  StreamingConfiguration(first=True)) as storage:
         ...         for counter in range(256):
         ...             storage.add_acceleration(values=[1, 2, 3],
         ...                                      counter=counter,

@@ -102,6 +102,8 @@ async def dataloss(arguments: Namespace) -> None:
 
         measurement_time_s = 10
 
+        sensor_config = SensorConfig(first=1)
+
         for oversampling_rate in (2**exponent for exponent in range(6, 10)):
             logger.info("Oversampling rate: %s", oversampling_rate)
             adc_config = ADCConfiguration(
@@ -114,7 +116,9 @@ async def dataloss(arguments: Namespace) -> None:
             logger.info("Sample rate: %s Hz", sample_rate)
 
             filepath = Path(f"Measurement {sample_rate} Hz.hdf5")
-            with Storage(filepath.resolve(), ["x"]) as storage:
+            with Storage(
+                filepath.resolve(), sensor_config.streaming_configuration()
+            ) as storage:
                 storage.add_acceleration_meta(
                     "Sensor_Range", f"± {sensor_range / 2} g₀"
                 )
@@ -129,7 +133,9 @@ async def dataloss(arguments: Namespace) -> None:
 
                 start_time = time()
                 try:
-                    async with network.open_data_stream(first=True) as stream:
+                    async with network.open_data_stream(
+                        **sensor_config
+                    ) as stream:
                         async for data, _ in stream:
                             data.apply(conversion_to_g)
                             storage.add_streaming_data(data)
@@ -230,12 +236,10 @@ async def measure(arguments: Namespace) -> None:
         sensor_range = await read_acceleration_sensor_range_in_g(network)
         conversion_to_g = partial(convert_raw_to_g, max_value=sensor_range)
 
-        axes = [
-            axis
-            for axis, channel in zip("xyz", user_sensor_config.values())
-            if channel
-        ]
-        with Storage(settings.get_output_filepath(), axes) as storage:
+        with Storage(
+            settings.get_output_filepath(),
+            user_sensor_config.streaming_configuration(),
+        ) as storage:
             storage.add_acceleration_meta(
                 "Sensor_Range", f"± {sensor_range / 2} g₀"
             )
