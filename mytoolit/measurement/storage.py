@@ -312,11 +312,8 @@ class StorageData:
 
         >>> channel3 = StreamingConfiguration(first=False, second=False,
         ...                                   third=True)
-        >>> bits3 = channel3.channels
-        >>> data1 = StreamingData(
-        ...     values=[1, 2, 3], counter=21, timestamp=1, channels=bits3)
-        >>> data2 = StreamingData(
-        ...     values=[4, 5, 6], counter=22, timestamp=2, channels=bits3)
+        >>> data1 = StreamingData(values=[1, 2, 3], counter=21, timestamp=1)
+        >>> data2 = StreamingData(values=[4, 5, 6], counter=22, timestamp=2)
         >>> filepath = Path("test.hdf5")
         >>> with Storage(filepath, channel3) as storage:
         ...     storage.add_streaming_data(data1)
@@ -326,11 +323,8 @@ class StorageData:
         Store streaming data for three channels
 
         >>> all = StreamingConfiguration(first=True, second=True, third=True)
-        >>> bits_all = all.channels
-        >>> data1 = StreamingData(
-        ...     values=[1, 2, 3], counter=21, timestamp=1, channels=bits_all)
-        >>> data2 = StreamingData(
-        ...     values=[4, 5, 6], counter=22, timestamp=2, channels=bits_all)
+        >>> data1 = StreamingData(values=[1, 2, 3], counter=21, timestamp=1)
+        >>> data2 = StreamingData(values=[4, 5, 6], counter=22, timestamp=2)
         >>> with Storage(filepath, all) as storage:
         ...     storage.add_streaming_data(data1)
         ...     storage.add_streaming_data(data2)

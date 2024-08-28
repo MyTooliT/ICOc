@@ -39,7 +39,6 @@ from mytoolit.can.node import Node
 from mytoolit.can.streaming import (
     AsyncStreamBuffer,
     StreamingConfiguration,
-    StreamingConfigBits,
     StreamingData,
     StreamingFormat,
     StreamingFormatVoltage,
@@ -1923,7 +1922,6 @@ class Network:
             values=values,
             timestamp=response.timestamp,
             counter=response.data[1],
-            channels=StreamingConfigBits(first=True, second=True, third=True),
         )
 
         return data

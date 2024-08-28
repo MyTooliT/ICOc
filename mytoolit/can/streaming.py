@@ -309,7 +309,6 @@ class AsyncStreamBuffer(Listener):
             timestamp=timestamp,
             counter=counter,
             values=values,
-            channels=self.configuration.channels,
         )
 
         # Calculate amount of lost messages
@@ -612,11 +611,7 @@ class StreamingData:
     """Support for storing data of a streaming message"""
 
     def __init__(
-        self,
-        counter: int,
-        timestamp: float,
-        values: Sequence[float],
-        channels: StreamingConfigBits,
+        self, counter: int, timestamp: float, values: Sequence[float]
     ) -> None:
         """Initialize the streaming data with the given arguments
 
@@ -632,16 +627,11 @@ class StreamingData:
         values:
             The streaming values
 
-        channels:
-            A bitfield specifying which of the measurement channels was enabled
-            when the measurement took place
-
         """
 
         self.counter = counter
         self.timestamp = timestamp
         self.values = values
-        self.channels = channels
 
     def apply(
         self,
@@ -658,10 +648,7 @@ class StreamingData:
         Examples
         --------
 
-        >>> channel3 = StreamingConfigBits(
-        ...     first=False, second=False, third=True)
-        >>> data = StreamingData(
-        ...     values=[1, 2, 3], counter=21, timestamp=1, channels=channel3)
+        >>> data = StreamingData(values=[1, 2, 3], counter=21, timestamp=1)
         >>> data.apply(lambda value: value + 10)
         >>> data.values
         [11, 12, 13]
@@ -678,10 +665,7 @@ class StreamingData:
         Examples
         --------
 
-        >>> all = StreamingConfigBits(
-        ...     first=True, second=True, third=True)
-        >>> StreamingData(
-        ...     values=[1, 2, 3], counter=21, timestamp=1, channels=all)
+        >>> StreamingData(values=[1, 2, 3], counter=21, timestamp=1)
         [1, 2, 3]@1 #21
 
         """
