@@ -7,6 +7,8 @@ from enum import auto, Enum
 from statistics import mean
 from typing import Iterable, NamedTuple
 
+from mytoolit.can.streaming import StreamingConfiguration
+
 # -- Classes ------------------------------------------------------------------
 
 
@@ -375,6 +377,34 @@ class SensorConfig(Mapping):
             raise ValueError(
                 "At least one measurement channel has to be enabled"
             )
+
+    def streaming_configuration(self) -> StreamingConfiguration:
+        """Get a streaming configuration that represents this config
+
+        Returns
+        -------
+
+        A stream configuration where
+
+        - every channel that is enabled in the sensor configuration is
+          enabled, and
+        - every channel that is disables in the sensor configuration is
+          disabled.
+
+        Examples
+        --------
+
+        >>> SensorConfig(second=1).streaming_configuration()
+        Channel 1 disabled, Channel 2 enabled, Channel 3 disabled
+
+        >>> SensorConfig(first=10, third=2).streaming_configuration()
+        Channel 1 enabled, Channel 2 disabled, Channel 3 enabled
+
+        """
+
+        return StreamingConfiguration(**{
+            channel: bool(value) for channel, value in self.attributes.items()
+        })
 
 
 class SensorType(Enum):
