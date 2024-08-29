@@ -104,15 +104,34 @@ class Storage:
         Example
         -------
 
+        Create new file
+
         >>> filepath = Path("test.hdf5")
         >>> with Storage(filepath,
-        ...     channels=StreamingConfiguration(first=True)) as storage:
-        ...         pass
+        ...              channels=StreamingConfiguration(first=True)
+        ... ) as storage:
+        ...     pass
+
+        Opening an existing file but still providing channels should fail
+
+        >>> with Storage(filepath,
+        ...             channels=StreamingConfiguration(first=True)
+        ... ) as storage:
+        ...     pass # doctest:+ELLIPSIS
+        Traceback (most recent call last):
+            ...
+        ValueError: File “...” exist but channels parameter is not None
         >>> filepath.unlink()
 
         """
 
         self.filepath = Path(filepath).expanduser().resolve()
+
+        if channels and self.filepath.exists():
+            raise ValueError(
+                f"File “{self.filepath}” exist but channels parameter "
+                "is not None"
+            )
 
         self.hdf: Optional[File] = None
         self.channels = channels
