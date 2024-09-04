@@ -7,7 +7,7 @@ from __future__ import annotations
 from datetime import datetime
 from pathlib import Path
 from types import TracebackType
-from typing import Dict, Optional, Sequence, Type, Union
+from typing import Dict, Optional, Type, Union
 
 from tables import (
     File,
@@ -216,9 +216,10 @@ class StorageData:
         Create new data
 
         >>> filepath = Path("test.hdf5")
+        >>> streaming_data = StreamingData(values=[1, 2, 3], counter=1,
+        ...                                timestamp=4306978.449)
         >>> with Storage(filepath, StreamingConfiguration(first=True)) as data:
-        ...     data.add_acceleration(values=[12], counter=1,
-        ...                           timestamp=4306978.449)
+        ...     data.add_streaming_data(streaming_data)
 
         Read from existing file
 
@@ -263,62 +264,6 @@ class StorageData:
                     f"incorrect format: {error}"
                 ) from error
 
-    def add_acceleration(
-        self, values: Sequence[float], counter: int, timestamp: float
-    ) -> None:
-        """Append acceleration data
-
-        Parameters
-        ----------
-
-        values:
-            The acceleration values that should be added
-
-        counter:
-            The message counter sent in the package that contained the
-            acceleration value
-
-        timestamp:
-            The timestamp of the acceleration message in milliseconds
-
-        Example
-        -------
-
-        >>> filepath = Path("test.hdf5")
-        >>> with Storage(filepath, StreamingConfiguration(first=True)) as data:
-        ...     data.add_acceleration(values=[12, 13, 14], counter=1,
-        ...                           timestamp=4306978.449)
-        >>> filepath.unlink()
-
-        """
-
-        if self.start_time is None:
-            self.start_time = timestamp
-            self.acceleration.attrs["Start_Time"] = datetime.now().isoformat()
-
-        assert isinstance(self.start_time, (int, float))
-
-        row = self.acceleration.row
-        timestamp = (timestamp - self.start_time) * 1000
-
-        if len(self.axes) == 1:
-            axis = self.axes[0]
-            for value in values:
-                row["timestamp"] = timestamp
-                row["counter"] = counter
-                row[axis] = value
-                row.append()
-        else:
-            row["timestamp"] = timestamp
-            row["counter"] = counter
-            for accelertation_type, value in zip(self.axes, values):
-                row[accelertation_type] = value
-            row.append()
-
-        # Flush data to disk every few values to keep memory usage in check
-        if self.acceleration.nrows % 1000 == 0:
-            self.acceleration.flush()
-
     def add_streaming_data(
         self,
         streaming_data: StreamingData,
@@ -360,11 +305,36 @@ class StorageData:
 
         """
 
-        self.add_acceleration(
-            values=streaming_data.values,
-            timestamp=streaming_data.timestamp * 1000,
-            counter=streaming_data.counter,
-        )
+        values = streaming_data.values
+        timestamp = streaming_data.timestamp
+        counter = streaming_data.counter
+
+        if self.start_time is None:
+            self.start_time = timestamp
+            self.acceleration.attrs["Start_Time"] = datetime.now().isoformat()
+
+        assert isinstance(self.start_time, (int, float))
+
+        row = self.acceleration.row
+        timestamp = (timestamp - self.start_time) * 1_000_000
+
+        if len(self.axes) == 1:
+            axis = self.axes[0]
+            for value in values:
+                row["timestamp"] = timestamp
+                row["counter"] = counter
+                row[axis] = value
+                row.append()
+        else:
+            row["timestamp"] = timestamp
+            row["counter"] = counter
+            for accelertation_type, value in zip(self.axes, values):
+                row[accelertation_type] = value
+            row.append()
+
+        # Flush data to disk every few values to keep memory usage in check
+        if self.acceleration.nrows % 1000 == 0:
+            self.acceleration.flush()
 
     def add_acceleration_meta(self, name: str, value: str) -> None:
         """Add acceleration metadata
@@ -408,13 +378,15 @@ class StorageData:
         ...     with Storage(filepath,
         ...                  StreamingConfiguration(first=True)) as storage:
         ...         for counter in range(256):
-        ...             storage.add_acceleration(values=[1, 2, 3],
-        ...                                      counter=counter,
-        ...                                      timestamp=counter/10)
+        ...             storage.add_streaming_data(
+        ...                 StreamingData(values=[1, 2, 3],
+        ...                               counter=counter,
+        ...                               timestamp=counter/10))
         ...         for counter in range(128, 256):
-        ...             storage.add_acceleration(values=[4, 5, 6],
-        ...                                      counter=counter,
-        ...                                      timestamp=(255 + counter)/10)
+        ...             storage.add_streaming_data(
+        ...                 StreamingData(values=[4, 5, 6],
+        ...                               counter=counter,
+        ...                               timestamp=(255 + counter)/10))
         ...
         ...         dataloss = storage.dataloss()
         ...     filepath.unlink()

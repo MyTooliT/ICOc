@@ -21,6 +21,7 @@ from can.interfaces.pcan.basic import (
     PCAN_RECEIVE_EVENT,
 )
 
+from mytoolit.can.streaming import StreamingData
 from mytoolit.cmdline.parse import (
     add_channel_arguments,
     mac_address,
@@ -998,7 +999,7 @@ class CommandLineInterface:
         self.vGetStreamingAccDataProcess()
 
     def update_acceleration_data(self, data, timestamp_ms):
-        timestamp = round(timestamp_ms, 3)
+        timestamp = timestamp_ms / 1000
         counter = data[1]
 
         axes = [
@@ -1023,8 +1024,8 @@ class CommandLineInterface:
             for start in range(2, 2 + number_values * 2, 2)
         ]
 
-        self.data.add_acceleration(
-            values=values, counter=counter, timestamp=timestamp
+        self.data.add_streaming_data(
+            StreamingData(values=values, counter=counter, timestamp=timestamp)
         )
         if self.tAccDataFormat == DataSets[1]:
             axis_values = {axis: value for axis, value in zip(axes, values)}
