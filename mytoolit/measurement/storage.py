@@ -286,7 +286,7 @@ class StorageData:
 
         >>> filepath = Path("test.hdf5")
         >>> with Storage(filepath, StreamingConfiguration(first=True)) as data:
-        ...     data.add_acceleration(values=[12], counter=1,
+        ...     data.add_acceleration(values=[12, 13, 14], counter=1,
         ...                           timestamp=4306978.449)
         >>> filepath.unlink()
 
@@ -300,11 +300,20 @@ class StorageData:
 
         row = self.acceleration.row
         timestamp = (timestamp - self.start_time) * 1000
-        row["timestamp"] = timestamp
-        row["counter"] = counter
-        for accelertation_type, value in zip(self.axes, values):
-            row[accelertation_type] = value
-        row.append()
+
+        if len(self.axes) == 1:
+            axis = self.axes[0]
+            for value in values:
+                row["timestamp"] = timestamp
+                row["counter"] = counter
+                row[axis] = value
+                row.append()
+        else:
+            row["timestamp"] = timestamp
+            row["counter"] = counter
+            for accelertation_type, value in zip(self.axes, values):
+                row[accelertation_type] = value
+            row.append()
 
         # Flush data to disk every few values to keep memory usage in check
         if self.acceleration.nrows % 1000 == 0:
