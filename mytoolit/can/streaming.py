@@ -115,6 +115,34 @@ class StreamingConfiguration:
             )
         ])
 
+    def enabled_channels(self) -> int:
+        """Get the number of activated channels
+
+        Returns
+        -------
+
+        The number of enabled channels
+
+        Examples
+        --------
+
+        >>> StreamingConfiguration(first=True).enabled_channels()
+        1
+
+        >>> StreamingConfiguration(first=False, second=True, third=False
+        ...                       ).enabled_channels()
+        1
+
+        >>> StreamingConfiguration(first=True, second=True, third=True
+        ...                       ).enabled_channels()
+        3
+
+        """
+
+        channels = self.channels
+
+        return channels.first + channels.second + channels.third
+
     def data_length(self) -> int:
         """Returns the streaming data length
 
@@ -152,11 +180,7 @@ class StreamingConfiguration:
 
         """
 
-        channels = self.channels
-
-        active_channels = channels.first + channels.second + channels.third
-
-        return 2 if active_channels == 2 else 3
+        return 2 if self.enabled_channels() == 2 else 3
 
     def axes(self) -> List[str]:
         """Get the activated axes returned by this streaming configuration
