@@ -651,12 +651,32 @@ class StreamingData:
         values:
             The streaming values
 
+        Examples
+        --------
+
+        Create new streaming data
+
+        >>> StreamingData(values=[1, 2, 3], counter=21, timestamp=1)
+        [1, 2, 3]@1 #21
+
+        Streaming data must store either two or three values
+
+        >>> StreamingData(values=[1], counter=21, timestamp=1)
+        Traceback (most recent call last):
+        ...
+        ValueError: Incorrect number of streaming values: 1 (instead of 2 or 3)
+
+        >>> StreamingData(values=[1, 2, 3, 4], counter=21, timestamp=1)
+        Traceback (most recent call last):
+        ...
+        ValueError: Incorrect number of streaming values: 4 (instead of 2 or 3)
+
         """
 
         if not 2 <= len(values) <= 3:
             raise ValueError(
-                f"Incorrect number of streaming values: {len(values)} instead "
-                "of 2 or 3"
+                f"Incorrect number of streaming values: {len(values)} "
+                "(instead of 2 or 3)"
             )
 
         self.counter = counter
