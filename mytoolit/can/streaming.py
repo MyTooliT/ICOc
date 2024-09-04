@@ -653,6 +653,12 @@ class StreamingData:
 
         """
 
+        if not 2 <= len(values) <= 3:
+            raise ValueError(
+                f"Incorrect number of streaming values: {len(values)} instead "
+                "of 2 or 3"
+            )
+
         self.counter = counter
         self.timestamp = timestamp
         self.values = values
