@@ -28,6 +28,14 @@ You can use the instructions below, if you want to work on the code of ICOc, i.e
       >   - development (`dev`) and
       >   - test (`test`) dependencies
 
+3. Install other required tools (for tests)
+
+   - `hdf5`: For the command line tool `h5dump` (Linux/macOS). You can install hdf5 via [Homebrew](https://brew.sh):
+
+     ```sh
+     brew install hdf5
+     ```
+
 ## Style
 
 Please use the guidelines from [PEP 8](https://www.python.org/dev/peps/pep-0008/). For code formatting we currently use [Black](https://github.com/psf/black), which should format code according to PEP 8 by default.
