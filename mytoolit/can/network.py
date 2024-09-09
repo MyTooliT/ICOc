@@ -387,19 +387,13 @@ class Network:
     # - https://mytoolit.github.io/Documentation/#page-system-configuration
     ADVERTISEMENT_TIME_EEPROM_TO_MS = 0.625
 
-    def __init__(self, sender: Union[str, Node] = "SPU 1") -> None:
+    def __init__(self) -> None:
         """Create a new network from the given arguments
 
         Please note, that you have to clean up used resources after you use
         this class using the method `shutdown`. Since this class implements
         the context manager interface we recommend you use a with statement to
         handle the cleanup phase automatically.
-
-        Parameters
-        ----------
-
-        sender:
-            The default sender of the network
 
         Examples
         --------
@@ -447,7 +441,7 @@ class Network:
         # We create the notifier when we need it for the first time, since
         # there might not be an active loop when you create the network object
         self._notifier: Optional[Notifier] = None
-        self.sender = Node(sender)
+        self.sender = Node("SPU 1")
 
     async def __aenter__(self) -> Network:
         """Initialize the network
