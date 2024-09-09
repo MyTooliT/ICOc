@@ -291,6 +291,12 @@ class StorageData:
         >>> with Storage(filepath, channel3) as storage:
         ...     storage.add_streaming_data(data1)
         ...     storage.add_streaming_data(data2)
+        ...     # Normally the class takes care about when to store back data
+        ...     # to the disk itself. We do a manual flush here to check the
+        ...     # number of stored items.
+        ...     storage.acceleration.flush()
+        ...     print(storage.acceleration.nrows)
+        6
         >>> filepath.unlink()
 
         Store streaming data for three channels
@@ -301,6 +307,9 @@ class StorageData:
         >>> with Storage(filepath, all) as storage:
         ...     storage.add_streaming_data(data1)
         ...     storage.add_streaming_data(data2)
+        ...     storage.acceleration.flush()
+        ...     print(storage.acceleration.nrows)
+        2
         >>> filepath.unlink()
 
         """
