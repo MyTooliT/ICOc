@@ -58,6 +58,7 @@ pytest-test-no-hardware:
 	       --ignore-glob='*commander.py' \
 	       --ignore-glob='*read_data.t' \
 	       --ignore-glob='*sth_name.t' \
+	       --ignore-glob='*store_data.t' \
 	       --ignore-glob='*measure.t' \
 	       --ignore='Documentation'
 
