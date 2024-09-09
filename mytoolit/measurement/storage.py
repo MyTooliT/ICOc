@@ -332,10 +332,6 @@ class StorageData:
                 row[accelertation_type] = value
             row.append()
 
-        # Flush data to disk every few values to keep memory usage in check
-        if self.acceleration.nrows % 1000 == 0:
-            self.acceleration.flush()
-
     def add_acceleration_meta(self, name: str, value: str) -> None:
         """Add acceleration metadata
 
