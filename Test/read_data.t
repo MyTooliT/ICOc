@@ -1,15 +1,15 @@
 -- Setup -----------------------------------------------------------------------
 
   $ cd "$TESTDIR"
+  $ EXAMPLEDIR=../mytoolit/examples
 
--- Check Example Code ----------------------------------------------------------
+-- Check Read Data Example -----------------------------------------------------
 
-  $ python ../mytoolit/examples/read_data.py
-  Read data values: \[.+\]@\d+\.\d+ #\d{1,3} (re)
-  Read data values: \[.+\]@\d+\.\d+ #\d{1,3} (re)
-  Read data values: \[.+\]@\d+\.\d+ #\d{1,3} (re)
-  Read data values: \[.+\]@\d+\.\d+ #\d{1,3} (re)
-  Read data values: \[.+\]@\d+\.\d+ #\d{1,3} (re)
+Read five data values
 
-  $ python ../mytoolit/examples/sth_name.py
-  Connected to sensor device “.+” (re)
+  $ python $EXAMPLEDIR/read_data.py
+  Read data values: \[.+\]@\d+\.\d+ #\d{1,3} (re)
+  Read data values: \[.+\]@\d+\.\d+ #\d{1,3} (re)
+  Read data values: \[.+\]@\d+\.\d+ #\d{1,3} (re)
+  Read data values: \[.+\]@\d+\.\d+ #\d{1,3} (re)
+  Read data values: \[.+\]@\d+\.\d+ #\d{1,3} (re)
