@@ -35,7 +35,7 @@ jobs:
              ! make doc 2>&1 >/dev/null | grep 'Warning: LaTeX Warning'
 
       - name: Upload documentation
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ICOc Manual
           path: Bookdown
@@ -47,7 +47,7 @@ jobs:
     steps:
 
       - name: Download bookdown documentation
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: ICOc Manual
           path: Bookdown
