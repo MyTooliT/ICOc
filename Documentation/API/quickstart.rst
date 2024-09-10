@@ -71,6 +71,16 @@ This object has the following attributes:
 .. |recommended amount of one or three enabled channels| replace:: **recommended amount** of one or three enabled channels
 .. _recommended amount of one or three enabled channels: https://mytoolit.github.io/ICOc/#channel-selection
 
+.. currentmodule:: mytoolit.measurement.storage
+
+If you want to store streaming data for later use you can use the :class:`Storage` class to open a context manager that lets you store data as `HDF5 <https://en.wikipedia.org/wiki/Hierarchical_Data_Format>`_ file via the method :func:`add_streaming_data` of the class :class:`StorageData`:
+
+.. automethod:: StorageData.add_streaming_data
+
+For a more complete example, please take a look at the :ref:`HDF5 example code<Examples>`.
+
+.. _Examples:
+
 Examples
 ========
 
