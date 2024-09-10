@@ -15,8 +15,16 @@ from mytoolit.can.identifier import Identifier
 # -- Classes ------------------------------------------------------------------
 
 
-class StreamingTimeoutError(Exception):
+class StreamingError(Exception):
+    """General exception for streaming errors"""
+
+
+class StreamingTimeoutError(StreamingError):
     """Raised if no streaming data was received for a certain amount of time"""
+
+
+class StreamingBufferError(StreamingError):
+    """Raised if there are too many streaming messages in the buffer"""
 
 
 # pylint: disable=too-few-public-methods
@@ -238,7 +246,7 @@ class AsyncStreamBuffer(Listener):
         max_buffer_size:
             Maximum amount of buffered messages kept by the stream buffer.
             If this amount is exceeded, then this listener will raise a
-            `StreamingTimeoutError`. A large buffer indicates that the
+            `StreamingBufferError`. A large buffer indicates that the
             application is not able to keep up with the current rate of
             retrieved messages and therefore the probability of losing
             messages is quite high.
@@ -288,7 +296,7 @@ class AsyncStreamBuffer(Listener):
         """
 
         if self.queue.qsize() > self.max_buffer_size:
-            raise StreamingTimeoutError(
+            raise StreamingBufferError(
                 f"Maximum buffer size of {self.max_buffer_size} messages "
                 "exceeded"
             )
