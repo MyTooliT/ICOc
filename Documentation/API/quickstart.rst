@@ -137,8 +137,44 @@ The example code below shows how to use this method:
    ...               return stream.dataloss()
 
    >>> data_loss = run(determine_data_loss(identifier="Test-STH"))
-   >>> data_loss < 0.1
+   >>> data_loss < 0.1 # We assume that the data loss was less than 10 %
    True
+
+If you want to calculate the amount of data loss for a specific time-span you can use the method :meth:`AsyncStreamBuffer.reset` to reset the message statistics at the start of the time-span. In the following example we stream data for (roughly) 2.1 seconds and return a list with the amount of data loss over periods of 0.5 seconds:
+
+.. doctest::
+
+   >>> from asyncio import run
+   >>> from time import monotonic
+   >>> from mytoolit.can import Network
+
+   >>> async def determine_data_loss(identifier):
+   ...       async with Network() as network:
+   ...           await network.connect_sensor_device(identifier)
+   ...
+   ...           start = monotonic()
+   ...           end = monotonic() + 2.1
+   ...           last_reset = start
+   ...           data_lost = []
+   ...           async with network.open_data_stream(first=True) as stream:
+   ...               async for data, lost_messages in stream:
+   ...                   current = monotonic()
+   ...                   if current >= last_reset + 0.5:
+   ...                      data_lost.append(stream.dataloss())
+   ...                      stream.reset_stats()
+   ...                      last_reset = current
+   ...                   if current > end:
+   ...                       break
+   ...
+   ...               return data_lost
+
+   >>> data_lost = run(determine_data_loss(identifier="Test-STH"))
+   >>> len(data_lost)
+   4
+   >>> all(map(lambda loss: loss < 0.1, data_lost))
+   True
+
+.. note:: We used a overall runtime of 2.1 seconds, since in a timing interval of 2 seconds there is always the possibility that the code above either returns three or four data loss values depending on the specific timing.
 
 Slow Processing of Data
 -----------------------

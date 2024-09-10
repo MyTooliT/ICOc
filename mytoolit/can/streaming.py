@@ -265,6 +265,24 @@ class MessageStats:
 
         return 0 if overall == 0 else self.lost / overall
 
+    def reset(self) -> None:
+        """Reset the amount of retrieved and lost messages to 0
+
+        Examples
+        --------
+
+        >>> stats = MessageStats(10, 90)
+        >>> stats.dataloss()
+        0.9
+        >>> stats.reset()
+        >>> stats.dataloss()
+        0
+
+        """
+
+        self.retrieved = 0
+        self.lost = 0
+
 
 # pylint: enable=too-few-public-methods
 
@@ -417,6 +435,18 @@ class AsyncStreamBuffer(Listener):
 
     def stop(self) -> None:
         """Stop handling new messages"""
+
+    def reset_stats(self) -> None:
+        """Reset the message statistics
+
+        This method resets the amount of lost an retrieved messages used in
+        the calculation of the method `dataloss`. Using this method can be
+        useful, if you want to calculate the amount of data loss since a
+        specific starting point.
+
+        """
+
+        self.stats.reset()
 
     def dataloss(self) -> float:
         """Calculate the overall amount of data loss
