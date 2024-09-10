@@ -1,7 +1,11 @@
 .. currentmodule:: mytoolit.can
 
+***
 API
-===
+***
+
+General
+=======
 
 To communicate with the ICOtronic system use the :class:`Network` class:
 
@@ -79,10 +83,69 @@ If you want to store streaming data for later use you can use the :class:`Storag
 
 For a more complete example, please take a look at the :ref:`HDF5 example code<Examples>`.
 
+Determining Data Loss
+=====================
+
+.. currentmodule:: mytoolit.can.streaming
+
+Sometimes the
+
+- **connection** to your sensor device might be **bad** or
+- code might run **too slow to retrieve/process streaming data**.
+
+In both cases there will be some form of data loss. The ICOc library currently takes multiple measures to detect data loss.
+
+Bad Connection
+--------------
+
+The code will raise a :class:`StreamingTimeoutError`, if there is **no streaming data for a certain amount of time** (default: 5 seconds):
+
+.. autoexception:: StreamingTimeoutError
+
+The iterator for streaming data also provides
+
+- the amount of lost messages between to consecutively received messages and
+- also keeps track of the messages lost overall.
+
+The code below shows you how you can use this value together with the overall amount of messages to determine the percentage of data loss.
+
+.. doctest::
+
+   >>> from asyncio import run
+   >>> from time import monotonic
+   >>> from mytoolit.can import Network
+
+   >>> async def determine_data_loss(identifier):
+   ...       async with Network() as network:
+   ...           await network.connect_sensor_device(identifier)
+   ...
+   ...           end = monotonic() + 1 # Read data for roughly one second
+   ...           messages = 0
+   ...           async with network.open_data_stream(first=True) as stream:
+   ...               async for data, lost_messages in stream:
+   ...                   messages += lost_messages + 1
+   ...                   if monotonic() > end:
+   ...                       break
+   ...
+   ...               data_loss = stream.lost_messages
+   ...               return data_loss
+
+   >>> data_loss = run(determine_data_loss(identifier="Test-STH"))
+   >>> data_loss < 0.1
+   True
+
+Slow Processing of Data
+-----------------------
+
+The buffer of the CAN controller is only able to store a certain amount of streaming messages before it has to drop them to make room for new ones. For this reason the ICOc library will raise a :class:`StreamingBufferError`, if the buffer for streaming messages exceeds a certain threshold (default: 10 000 messages).
+
+.. autoexception:: StreamingBufferError
+
 .. _Examples:
 
+********
 Examples
-========
+********
 
 For code examples, please check out the `examples directory <https://github.com/MyTooliT/ICOc/tree/master/mytoolit/examples>`_:
 
