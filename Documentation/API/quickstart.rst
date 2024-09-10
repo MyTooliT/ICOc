@@ -98,16 +98,25 @@ In both cases there will be some form of data loss. The ICOc library currently t
 Bad Connection
 --------------
 
-The code will raise a :class:`StreamingTimeoutError`, if there is **no streaming data for a certain amount of time** (default: 5 seconds):
+The iterator for streaming data :class:`AsyncStreamBuffer` will raise a :class:`StreamingTimeoutError`, if there is **no streaming data for a certain amount of time** (default: 5 seconds):
 
 .. autoexception:: StreamingTimeoutError
 
-The iterator for streaming data also provides
+:class:`AsyncStreamBuffer` also provides access to statistics that can be used to determine the amount of lost data. For example, if you iterate through the streaming messages with ``async for``, then in addition to the streaming data the iterator will also return the **amount of lost messages since the last successfully received message** (``lost_messages`` in the example below):
 
-- the amount of lost messages between to consecutively received messages and
-- also keeps track of the messages lost overall.
+.. code-block::
+   :emphasize-lines: 2
 
-The code below shows you how you can use this value together with the overall amount of messages to determine the percentage of data loss.
+   async with network.open_data_stream(first=True) as stream:
+       async for data, lost_messages in stream:
+           if lost_messages > 0:
+               print(f"Lost {lost_messages} messages!")
+
+To access the overall data quality, since the start of streaming you can use the method :meth:`AsyncStreamBuffer.dataloss`:
+
+.. automethod:: AsyncStreamBuffer.dataloss
+
+The example code below shows how to use this method:
 
 .. doctest::
 
@@ -120,15 +129,12 @@ The code below shows you how you can use this value together with the overall am
    ...           await network.connect_sensor_device(identifier)
    ...
    ...           end = monotonic() + 1 # Read data for roughly one second
-   ...           messages = 0
    ...           async with network.open_data_stream(first=True) as stream:
    ...               async for data, lost_messages in stream:
-   ...                   messages += lost_messages + 1
    ...                   if monotonic() > end:
    ...                       break
    ...
-   ...               data_loss = stream.lost_messages
-   ...               return data_loss
+   ...               return stream.dataloss()
 
    >>> data_loss = run(determine_data_loss(identifier="Test-STH"))
    >>> data_loss < 0.1
@@ -137,7 +143,7 @@ The code below shows you how you can use this value together with the overall am
 Slow Processing of Data
 -----------------------
 
-The buffer of the CAN controller is only able to store a certain amount of streaming messages before it has to drop them to make room for new ones. For this reason the ICOc library will raise a :class:`StreamingBufferError`, if the buffer for streaming messages exceeds a certain threshold (default: 10 000 messages).
+The buffer of the CAN controller is only able to store a certain amount of streaming messages before it has to drop them to make room for new ones. For this reason the ICOc library will raise a :class:`StreamingBufferError`, if the buffer for streaming messages exceeds a certain threshold (default: 10 000 messages):
 
 .. autoexception:: StreamingBufferError
 

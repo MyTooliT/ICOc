@@ -221,6 +221,54 @@ class StreamingConfiguration:
         ]
 
 
+# pylint: disable=too-few-public-methods
+
+
+class MessageStats:
+    """Store message statistics"""
+
+    def __init__(self, retrieved: int = 0, lost: int = 0):
+        """Initialize message statistics with the given arguments
+
+        Parameters
+        ----------
+
+        retrieved:
+            The number of successfully retrieved messages
+
+        """
+
+        self.retrieved = retrieved
+        self.lost = lost
+
+    def dataloss(self) -> float:
+        """Get the amount of data loss
+
+        Returns
+        -------
+
+        The overall amount of data loss as number between 0 (no data loss) and
+        1 (all data lost).
+
+        Examples
+        --------
+
+        >>> MessageStats().dataloss()
+        0
+
+        >>> MessageStats(50, 50).dataloss()
+        0.5
+
+        """
+
+        overall = self.retrieved + self.lost
+
+        return 0 if overall == 0 else self.lost / overall
+
+
+# pylint: enable=too-few-public-methods
+
+
 class AsyncStreamBuffer(Listener):
     """Buffer for streaming data"""
 
@@ -265,8 +313,8 @@ class AsyncStreamBuffer(Listener):
         self.timeout = timeout
         self.configuration = configuration
         self.last_counter = -1
-        self.lost_messages = 0
         self.max_buffer_size = max_buffer_size
+        self.stats = MessageStats()
 
     def __aiter__(self) -> AsyncIterator[Tuple[StreamingData, int]]:
         """Retrieve iterator for collected data
@@ -349,7 +397,8 @@ class AsyncStreamBuffer(Listener):
         last_counter = self.last_counter
         lost_messages = (counter - last_counter) % 256 - 1
         self.last_counter = counter
-        self.lost_messages += lost_messages
+        self.stats.lost += lost_messages
+        self.stats.retrieved += 1
 
         self.queue.put_nowait((streaming_data, lost_messages))
 
@@ -368,6 +417,19 @@ class AsyncStreamBuffer(Listener):
 
     def stop(self) -> None:
         """Stop handling new messages"""
+
+    def dataloss(self) -> float:
+        """Calculate the overall amount of data loss
+
+        Returns
+        -------
+
+        The overall amount of data loss as number between 0 (no data loss) and
+        1 (all data lost).
+
+        """
+
+        return self.stats.dataloss()
 
 
 class StreamingFormat:
