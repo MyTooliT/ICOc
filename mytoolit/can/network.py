@@ -2332,9 +2332,7 @@ class Network:
 
         return SensorConfig(*channels)
 
-    async def write_sensor_configuration(
-        self, first: int = 0, second: int = 0, third: int = 0
-    ) -> None:
+    async def write_sensor_configuration(self, config: SensorConfig) -> None:
         """Change the sensor numbers for the different measurement channels
 
         If you use the sensor number `0` for one of the different measurement
@@ -2343,28 +2341,20 @@ class Network:
         Parameters
         ----------
 
-        first:
-          The sensor number for the first measurement channel
-
-        second:
-          The sensor number for the second measurement channel
-
-        third:
-          The sensor number for the third measurement channel
+        config:
+            The sensor numbers of the different measurement channels
 
         """
 
-        for channel, sensor in zip(
-            ("first", "second", "third"), (first, second, third)
-        ):
-            if not isinstance(sensor, int) or sensor < 0 or sensor > 255:
-                raise ValueError(
-                    f"Incorrect value for argument {channel}: {sensor}"
-                )
-
         node = "STH 1"
 
-        data = [0b1000_0000, first, second, third, *(4 * [0])]
+        data = [
+            0b1000_0000,
+            config.first,
+            config.second,
+            config.third,
+            *(4 * [0]),
+        ]
         message = Message(
             block="Configuration",
             block_command=0x01,

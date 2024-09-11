@@ -226,7 +226,7 @@ async def measure(arguments: Namespace) -> None:
 
         if user_sensor_config.requires_channel_configuration_support():
             try:
-                await network.write_sensor_configuration(**user_sensor_config)
+                await network.write_sensor_configuration(user_sensor_config)
             except UnsupportedFeatureException as exception:
                 raise UnsupportedFeatureException(
                     f"Sensor channel configuration “{user_sensor_config}” is "
