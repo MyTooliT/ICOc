@@ -1,8 +1,8 @@
 .. currentmodule:: mytoolit.can
 
-***
-API
-***
+*****************
+Device Connection
+*****************
 
 Connecting to STU
 =================
@@ -31,6 +31,10 @@ To connect to an STH use the coroutine :meth:`Network.connect_sensor_device`
 
 .. automethod:: Network.connect_sensor_device
 
+***********************
+Auxiliary Functionality
+***********************
+
 Reading Names
 =============
 
@@ -55,8 +59,12 @@ If you want to read the name of the sensor device then the parameter node should
    >>> run(read_sensor_name(sensor_name))
    'Test-STH'
 
-Reading Streaming Data
-======================
+*********
+Streaming
+*********
+
+Reading Data
+============
 
 After you connected to the sensor device you use the coroutine :meth:`Network.open_data_stream` to open the data stream:
 
@@ -109,8 +117,8 @@ This object has the following attributes:
 .. |recommended amount of one or three enabled channels| replace:: **recommended amount** of one or three enabled channels
 .. _recommended amount of one or three enabled channels: https://mytoolit.github.io/ICOc/#channel-selection
 
-Storing Streaming Data
-======================
+Storing Data
+============
 
 .. currentmodule:: mytoolit.measurement.storage
 
