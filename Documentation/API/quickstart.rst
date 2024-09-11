@@ -4,8 +4,8 @@
 API
 ***
 
-General
-=======
+Connecting to STU
+=================
 
 To communicate with the ICOtronic system use the :class:`Network` class:
 
@@ -24,7 +24,41 @@ We recommend you use the context manager to open and close the connection (to th
 
    >>> run(create_and_shutdown_network())
 
-To connect to an STH to read streaming data you can use the coroutine :meth:`Network.open_data_stream`:
+Connecting to Sensor Device
+===========================
+
+To connect to an STH use the coroutine :meth:`Network.connect_sensor_device`
+
+.. automethod:: Network.connect_sensor_device
+
+Reading Names
+=============
+
+After your are connected to the sensor device you can read its (advertisement) name using the coroutine :meth:`Network.get_name`.
+
+.. automethod:: Network.get_name
+
+If you want to read the name of the sensor device then the parameter node should have the value ``"STH 1"``, if you want to read the name of the STU use the default value ``"STU 1"``.
+
+.. doctest::
+
+   >>> from asyncio import run
+   >>> from mytoolit.can import Network
+
+   >>> async def read_sensor_name(name):
+   ...     async with Network() as network:
+   ...         await network.connect_sensor_device(name)
+   ...         sensor_name = await network.get_name("STH 1")
+   ...         return sensor_name
+
+   >>> sensor_name = "Test-STH"
+   >>> run(read_sensor_name(sensor_name))
+   'Test-STH'
+
+Reading Streaming Data
+======================
+
+After you connected to the sensor device you use the coroutine :meth:`Network.open_data_stream` to open the data stream:
 
 .. automethod:: Network.open_data_stream
 
