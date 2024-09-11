@@ -2,6 +2,10 @@
 ICOc API Documentation
 ######################
 
+***********
+Description
+***********
+
 ICOc is
 
 - a set of command line tools (``icoc``, ``icon``, ``test-sth``, …) and
