@@ -317,16 +317,13 @@ class DataStreamContextManager:
         """
 
         reader = self.reader
-        configuration = self.configuration.channels
         # Raise exception if there if there is more than one second worth
         # of buffered data
         max_buffer_size = (
             await self.network.read_adc_configuration()
         ).sample_rate()
         self.reader.max_buffer_size = max_buffer_size
-        await self.network.start_streaming_data(
-            configuration.first, configuration.second, configuration.third
-        )
+        await self.network.start_streaming_data(self.configuration)
         self.network.notifier.add_listener(reader)
         return reader
 
@@ -1922,43 +1919,26 @@ class Network:
         return data
 
     async def start_streaming_data(
-        self, first: bool = False, second: bool = False, third: bool = False
+        self, config: StreamingConfiguration
     ) -> None:
         """Start streaming data
 
         Parameters
         ----------
 
-        first:
-            Specifies if the data of the first measurement channel should
-            be streamed or not
-
-        second:
-            Specifies if the data of the second measurement channel should
-            be streamed or not
-
-        third:
-            Specifies if the data of the third measurement channel should
-            be streamed or not
+        config:
+            Specifies which of the three measurement channels should be
+            enabled or disabled
 
         The CAN identifier that this coroutine returns can be used
         to filter CAN messages that contain the expected streaming data
 
         """
 
-        if not (first or second or third):
-            raise ValueError("Please enable at least one measurement channel")
-
-        active_channels = len(
-            [channel for channel in (first, second, third) if channel]
-        )
-
         streaming_format = StreamingFormat(
-            config=StreamingConfiguration(
-                first=first, second=second, third=third
-            ),
+            config=config,
             streaming=True,
-            sets=3 if active_channels <= 1 else 1,
+            sets=3 if config.enabled_channels() <= 1 else 1,
         )
         node = "STH 1"
         message = Message(
@@ -1973,9 +1953,9 @@ class Network:
         channels = [
             channel
             for channel in (
-                "first" if first else "",
-                "second" if second else "",
-                "third" if third else "",
+                "first" if config.channels.first else "",
+                "second" if config.channels.second else "",
+                "third" if config.channels.third else "",
             )
             if channel
         ]
