@@ -1919,14 +1919,14 @@ class Network:
         return data
 
     async def start_streaming_data(
-        self, config: StreamingConfiguration
+        self, channels: StreamingConfiguration
     ) -> None:
         """Start streaming data
 
         Parameters
         ----------
 
-        config:
+        channels:
             Specifies which of the three measurement channels should be
             enabled or disabled
 
@@ -1936,9 +1936,9 @@ class Network:
         """
 
         streaming_format = StreamingFormat(
-            config=config,
+            config=channels,
             streaming=True,
-            sets=3 if config.enabled_channels() <= 1 else 1,
+            sets=3 if channels.enabled_channels() <= 1 else 1,
         )
         node = "STH 1"
         message = Message(
@@ -1950,18 +1950,18 @@ class Network:
             data=[streaming_format.value],
         )
 
-        channels = [
+        measurement_channels = [
             channel
             for channel in (
-                "first" if config.channels.first else "",
-                "second" if config.channels.second else "",
-                "third" if config.channels.third else "",
+                "first" if channels.first else "",
+                "second" if channels.second else "",
+                "third" if channels.third else "",
             )
             if channel
         ]
         channels_text = "".join(
-            (f"{channel}, " for channel in channels[:-2])
-        ) + " and ".join(channels[-2:])
+            (f"{channel}, " for channel in measurement_channels[:-2])
+        ) + " and ".join(measurement_channels[-2:])
 
         await self._request(
             message,
