@@ -220,6 +220,73 @@ class StreamingConfiguration:
             if status
         ]
 
+    @property
+    def first(self) -> bool:
+        """Check the activation state of the first channel
+
+        Returns
+        -------
+
+        `True`, if the first channel is enabled or `False` otherwise
+
+        Examples
+        --------
+
+        >>> StreamingConfiguration(first=True, second=False, third=False).first
+        True
+        >>> StreamingConfiguration(first=False, second=False, third=True).first
+        False
+
+        """
+
+        return bool(self.channels.first)
+
+    @property
+    def second(self) -> bool:
+        """Check the activation state of the second channel
+
+        Returns
+        -------
+
+        `True`, if the second channel is enabled or `False` otherwise
+
+        Examples
+        --------
+
+        >>> StreamingConfiguration(
+        ...     first=True, second=False, third=False).second
+        False
+        >>> StreamingConfiguration(
+        ...     first=False, second=True, third=True).second
+        True
+
+        """
+
+        return bool(self.channels.second)
+
+    @property
+    def third(self) -> bool:
+        """Check the activation state of the third channel
+
+        Returns
+        -------
+
+        `True`, if the third channel is enabled or `False` otherwise
+
+        Examples
+        --------
+
+        >>> StreamingConfiguration(
+        ...     first=True, second=False, third=False).third
+        False
+        >>> StreamingConfiguration(
+        ...     first=False, second=False, third=True).third
+        True
+
+        """
+
+        return bool(self.channels.third)
+
 
 # pylint: disable=too-few-public-methods
 
