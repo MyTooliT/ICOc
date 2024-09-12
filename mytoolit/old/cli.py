@@ -30,7 +30,7 @@ from mytoolit.cmdline.parse import (
 from mytoolit.config import settings
 from mytoolit.measurement.acceleration import convert_raw_to_g
 from mytoolit.measurement.storage import Storage
-from mytoolit.measurement.sensor import SensorConfig
+from mytoolit.measurement.sensor import SensorConfiguration
 from mytoolit.old.network import Network
 from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
 from mytoolit.old.MyToolItCommands import (
@@ -558,7 +558,7 @@ class CommandLineInterface:
 
         """
 
-        self.sensor = SensorConfig(first, second, third)
+        self.sensor = SensorConfiguration(first, second, third)
         self.sensor.check()
 
         dataSets = self.Can.data_sets(*map(bool, (first, second, third)))

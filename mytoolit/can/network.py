@@ -45,7 +45,7 @@ from mytoolit.can.streaming import (
 )
 from mytoolit.can.status import State
 from mytoolit.measurement import convert_raw_to_supply_voltage
-from mytoolit.measurement.sensor import SensorConfig
+from mytoolit.measurement.sensor import SensorConfiguration
 from mytoolit.utility import convert_bytes_to_text
 from mytoolit.utility.log import get_log_file_handler
 
@@ -2263,7 +2263,7 @@ class Network:
     # - Get/Set Sensor Configuration -
     # --------------------------------
 
-    async def read_sensor_configuration(self) -> SensorConfig:
+    async def read_sensor_configuration(self) -> SensorConfiguration:
         """Read the current sensor configuration
 
         Raises
@@ -2319,9 +2319,11 @@ class Network:
 
         channels = response.data[1:4]
 
-        return SensorConfig(*channels)
+        return SensorConfiguration(*channels)
 
-    async def write_sensor_configuration(self, sensors: SensorConfig) -> None:
+    async def write_sensor_configuration(
+        self, sensors: SensorConfiguration
+    ) -> None:
         """Change the sensor numbers for the different measurement channels
 
         If you use the sensor number `0` for one of the different measurement

@@ -27,7 +27,7 @@ from mytoolit.can.streaming import StreamingTimeoutError
 from mytoolit.cmdline.parse import create_icon_parser
 from mytoolit.config import ConfigurationUtility, settings
 from mytoolit.measurement import convert_raw_to_g, Storage
-from mytoolit.measurement.sensor import SensorConfig
+from mytoolit.measurement.sensor import SensorConfiguration
 
 
 # -- Functions ----------------------------------------------------------------
@@ -102,7 +102,7 @@ async def dataloss(arguments: Namespace) -> None:
 
         measurement_time_s = 10
 
-        sensor_config = SensorConfig(first=1)
+        sensor_config = SensorConfiguration(first=1)
 
         for oversampling_rate in (2**exponent for exponent in range(6, 10)):
             logger.info("Oversampling rate: %s", oversampling_rate)
@@ -218,7 +218,7 @@ async def measure(arguments: Namespace) -> None:
         await network.write_adc_configuration(**adc_config)
         print(f"Sample Rate: {adc_config.sample_rate()} Hz")
 
-        user_sensor_config = SensorConfig(
+        user_sensor_config = SensorConfiguration(
             first=arguments.first_channel,
             second=arguments.second_channel,
             third=arguments.third_channel,
@@ -347,7 +347,7 @@ def main():
     arguments = parser.parse_args()
     try:
         if arguments.subcommand == "measure":
-            SensorConfig(
+            SensorConfiguration(
                 first=arguments.first_channel,
                 second=arguments.second_channel,
                 third=arguments.third_channel,

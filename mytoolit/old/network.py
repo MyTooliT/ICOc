@@ -79,7 +79,7 @@ from mytoolit.old.MyToolItCommands import (
     SystemCommandBlueTooth,
     VRefName,
 )
-from mytoolit.measurement.sensor import SensorConfig
+from mytoolit.measurement.sensor import SensorConfiguration
 from mytoolit.utility.log import get_log_file_handler
 
 
@@ -2400,7 +2400,7 @@ class Network(object):
 
         self.tWriteFrameWaitAckRetries(message.to_pcan(), retries=2)
 
-    def read_sensor_config(self) -> SensorConfig:
+    def read_sensor_config(self) -> SensorConfiguration:
         """Read the current sensor configuration
 
         Raises
@@ -2440,7 +2440,7 @@ class Network(object):
         assert isinstance(reply, dict)
         data = reply["Payload"]
         channels = data[1:4]
-        return SensorConfig(*channels)
+        return SensorConfiguration(*channels)
 
     # ==========
     # = EEPROM =

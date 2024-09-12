@@ -12,7 +12,7 @@ from mytoolit.can.streaming import StreamingConfiguration
 # -- Classes ------------------------------------------------------------------
 
 
-class SensorConfig(Mapping):
+class SensorConfiguration(Mapping):
     """Used to store the configuration of the three sensor channels"""
 
     def __init__(self, first: int = 0, second: int = 0, third: int = 0):
@@ -34,15 +34,15 @@ class SensorConfig(Mapping):
         Examples
         --------
 
-        >>> SensorConfig(first=0, second=1, third=2)
+        >>> SensorConfiguration(first=0, second=1, third=2)
         M1: None, M2: S1, M3: S2
 
-        >>> SensorConfig(first=256, second=1, third=2)
+        >>> SensorConfiguration(first=256, second=1, third=2)
         Traceback (most recent call last):
         ...
         ValueError: Incorrect value for first channel: “256”
 
-        >>> SensorConfig(first=0, second=1, third=-1)
+        >>> SensorConfiguration(first=0, second=1, third=-1)
         Traceback (most recent call last):
         ...
         ValueError: Incorrect value for third channel: “-1”
@@ -81,12 +81,12 @@ class SensorConfig(Mapping):
         Examples
         --------
 
-        >>> dict(**SensorConfig()) # doctest:+NORMALIZE_WHITESPACE
+        >>> dict(**SensorConfiguration()) # doctest:+NORMALIZE_WHITESPACE
         {'first': 0,
          'second': 0,
          'third': 0}
 
-        >>> dict(**SensorConfig(first=1, second=2, third=3)
+        >>> dict(**SensorConfiguration(first=1, second=2, third=3)
         ...     ) # doctest:+NORMALIZE_WHITESPACE
         {'first': 1,
          'second': 2,
@@ -114,7 +114,7 @@ class SensorConfig(Mapping):
         Examples
         --------
 
-        >>> for attribute in SensorConfig():
+        >>> for attribute in SensorConfiguration():
         ...     print(attribute)
         first
         second
@@ -142,10 +142,10 @@ class SensorConfig(Mapping):
         Examples
         --------
 
-        >>> len(SensorConfig())
+        >>> len(SensorConfiguration())
         3
 
-        >>> len(SensorConfig(second=10))
+        >>> len(SensorConfiguration(second=10))
         3
 
         """
@@ -163,13 +163,13 @@ class SensorConfig(Mapping):
         Examples
         --------
 
-        >>> str(SensorConfig(first=1, second=3, third=2))
+        >>> str(SensorConfiguration(first=1, second=3, third=2))
         'M1: S1, M2: S3, M3: S2'
 
-        >>> str(SensorConfig())
+        >>> str(SensorConfiguration())
         ''
 
-        >>> str(SensorConfig(second=1))
+        >>> str(SensorConfiguration(second=1))
         'M2: S1'
 
         """
@@ -191,10 +191,10 @@ class SensorConfig(Mapping):
         Examples
         --------
 
-        >>> repr(SensorConfig(first=1, second=3, third=2))
+        >>> repr(SensorConfiguration(first=1, second=3, third=2))
         'M1: S1, M2: S3, M3: S2'
 
-        >>> repr(SensorConfig())
+        >>> repr(SensorConfiguration())
         'M1: None, M2: None, M3: None'
 
         """
@@ -217,7 +217,7 @@ class SensorConfig(Mapping):
         Examples
         --------
 
-        >>> SensorConfig(first=1, second=3, third=2).first
+        >>> SensorConfiguration(first=1, second=3, third=2).first
         1
 
         """
@@ -239,7 +239,7 @@ class SensorConfig(Mapping):
         Examples
         --------
 
-        >>> SensorConfig(first=1, second=3, third=2).second
+        >>> SensorConfiguration(first=1, second=3, third=2).second
         3
 
         """
@@ -261,7 +261,7 @@ class SensorConfig(Mapping):
         Examples
         --------
 
-        >>> SensorConfig(first=1, second=3, third=2).third
+        >>> SensorConfiguration(first=1, second=3, third=2).third
         2
 
         """
@@ -312,15 +312,15 @@ class SensorConfig(Mapping):
         Examples
         --------
 
-        >>> SensorConfig(first=1, second=3, third=2
+        >>> SensorConfiguration(first=1, second=3, third=2
         ...     ).requires_channel_configuration_support()
         True
 
-        >>> SensorConfig(first=1, second=0, third=1
+        >>> SensorConfiguration(first=1, second=0, third=1
         ...     ).requires_channel_configuration_support()
         False
 
-        >>> SensorConfig().requires_channel_configuration_support()
+        >>> SensorConfiguration().requires_channel_configuration_support()
         False
 
         """
@@ -343,11 +343,11 @@ class SensorConfig(Mapping):
         Examples
         --------
 
-        >>> SensorConfig(first=3).empty()
+        >>> SensorConfiguration(first=3).empty()
         False
-        >>> SensorConfig().empty()
+        >>> SensorConfiguration().empty()
         True
-        >>> SensorConfig(third=0).empty()
+        >>> SensorConfiguration(third=0).empty()
         True
 
         """
@@ -365,8 +365,8 @@ class SensorConfig(Mapping):
         Examples
         --------
 
-        >>> SensorConfig(second=1).check()
-        >>> SensorConfig().check()
+        >>> SensorConfiguration(second=1).check()
+        >>> SensorConfiguration().check()
         Traceback (most recent call last):
             ...
         ValueError: At least one measurement channel has to be enabled
@@ -394,10 +394,10 @@ class SensorConfig(Mapping):
         Examples
         --------
 
-        >>> SensorConfig(second=1).streaming_configuration()
+        >>> SensorConfiguration(second=1).streaming_configuration()
         Channel 1 disabled, Channel 2 enabled, Channel 3 disabled
 
-        >>> SensorConfig(first=10, third=2).streaming_configuration()
+        >>> SensorConfiguration(first=10, third=2).streaming_configuration()
         Channel 1 enabled, Channel 2 disabled, Channel 3 enabled
 
         """

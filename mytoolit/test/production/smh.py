@@ -7,7 +7,7 @@ from unittest import main as unittest_main
 from mytoolit.can.node import Node
 from mytoolit.cmdline.commander import Commander
 from mytoolit.config import settings
-from mytoolit.measurement.sensor import guess_sensor, SensorConfig
+from mytoolit.measurement.sensor import guess_sensor, SensorConfiguration
 from mytoolit.report import Report
 from mytoolit.can.streaming import StreamingConfiguration
 from mytoolit.test.production import TestSensorNode
@@ -133,7 +133,7 @@ class TestSMH(TestSensorNode):
 
             for test_channel in range(1, settings.smh.channels + 1):
                 await self.can.write_sensor_configuration(
-                    SensorConfig(first=test_channel)
+                    SensorConfiguration(first=test_channel)
                 )
                 config = await self.can.read_sensor_configuration()
                 self.assertEqual(

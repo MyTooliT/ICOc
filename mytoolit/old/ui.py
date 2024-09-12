@@ -6,7 +6,7 @@ from typing import Callable, Iterable, Tuple
 from curses import curs_set, error, wrapper  # type: ignore[attr-defined]
 
 from mytoolit.config import settings
-from mytoolit.measurement.sensor import SensorConfig
+from mytoolit.measurement.sensor import SensorConfiguration
 from mytoolit.old.cli import CommandLineInterface
 from mytoolit.old.MyToolItCommands import (
     AdcAcquisitionTime,
@@ -477,7 +477,7 @@ class UserInterface(CommandLineInterface):
                 *(not sensor_number for sensor_number in sensor_config_local)
             )
         else:
-            sensor_config_device = SensorConfig(*[
+            sensor_config_device = SensorConfiguration(*[
                 number if enabled else 0
                 for number, enabled in enumerate(sensor_config_local, start=1)
             ])
