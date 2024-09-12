@@ -379,5 +379,8 @@ Afterwards make sure there were no (unexpected) errors in the output of the STH 
 11. Click on “Publish Release”
 12. Close the [milestone][] for the latest release number
 13. Create a new [milestone][] for the next release
+14. Go to [Read The Docs](https://readthedocs.org/projects/icoc/) and enable the documentation for the latest release
+    1. Click on “Versions”
+    2. Click on the button “Activate” next to the version number of the latest release
 
 [milestone]: https://github.com/MyTooliT/ICOc/milestones
