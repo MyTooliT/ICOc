@@ -502,7 +502,7 @@ icon config
 which will open the the user configuration in your default text editor. You can then edit this file and save your changes to update the configuration. For a list of available options, please take a look at the [default configuration][default values]. Please make sure to not make any mistakes when you edit this file. Otherwise (parts of) the ICOc commands will not work, printing an error message about the (first) incorrect configuration value.
 
 [Dynaconf]: https://www.dynaconf.com
-[default values]: https://github.com/MyTooliT/ICOc/blob/master/mytoolit/config/config.yaml
+[default values]: https://github.com/MyTooliT/ICOc/blob/main/mytoolit/config/config.yaml
 
 #### Adding the Path to Simplicity Commander on Linux
 

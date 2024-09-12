@@ -52,12 +52,12 @@ For development we recommend that you use a tool or plugin that reformats your c
 
 The following text describes some of the measures we should take to keep the software stable.
 
-Please only push your changes to the `master` branch, if you think there are no new bugs or regressions. The `master` branch **should always contain a working version of the software**. Please **always run**
+Please only push your changes to the `main` branch, if you think there are no new bugs or regressions. The `main` branch **should always contain a working version of the software**. Please **always run**
 
 - the **automatic test** (`make run`) for **every supported OS** (Linux, macOS, Windows) and
 - the **manual tests** on Windows
 
-before you push to the `master` branch.
+before you push to the `main` branch.
 
 ### Code Checks
 
@@ -146,7 +146,7 @@ and make sure that it reports no test failures.
 
 ##### Extended Tests {#development:section:extended-tests}
 
-The text below specifies extended manual test that should be executed before we [release a new version of ICOc](#development:section:release). Please note that the tests assume that you use more or less the [default configuration values](https://github.com/MyTooliT/ICOc/blob/master/mytoolit/config/config.yaml).
+The text below specifies extended manual test that should be executed before we [release a new version of ICOc](#development:section:release). Please note that the tests assume that you use more or less the [default configuration values](https://github.com/MyTooliT/ICOc/blob/main/mytoolit/config/config.yaml).
 
 ###### Check Command Line Interface
 
@@ -298,7 +298,7 @@ Afterwards make sure there were no (unexpected) errors in the output of the STH 
 
 ## Release {#development:section:release}
 
-1.  Check that the [**CI jobs** for the `master` branch finish successfully](https://github.com/MyTooliT/ICOc/actions)
+1.  Check that the [**CI jobs** for the `main` branch finish successfully](https://github.com/MyTooliT/ICOc/actions)
 2.  Check that the **checks and tests** run without any problems on **Linux**, **macOS** and **Windows**
 
     1. Set the value of `sth` → `status` in the [configuration](#changing-configuration-values) to `Epoxied`
@@ -333,7 +333,7 @@ Afterwards make sure there were no (unexpected) errors in the output of the STH 
        - `../../something.txt` use
        - `https://github.com/MyTooliT/ICOc/blob/REVISION/something.txt`,
 
-       where `REVISION` is the latest version of the master branch (e.g. `8568893f` for version `1.0.5`)
+       where `REVISION` is the latest version of the main branch (e.g. `8568893f` for version `1.0.5`)
 
     3. Commit your changes
     4. Copy the release notes

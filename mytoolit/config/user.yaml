@@ -3,7 +3,7 @@
 # take a look at the default configuration. The latest version
 # of the default configuration is available here:
 #
-# https://github.com/MyTooliT/ICOc/blob/master/mytoolit/config/config.yaml
+# https://github.com/MyTooliT/ICOc/blob/main/mytoolit/config/config.yaml
 #
 # Settings in this file will overwrite values from the default configuration.
 # In the case of maps and lists this might not be what you want. To change
