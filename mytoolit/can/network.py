@@ -280,7 +280,7 @@ class DataStreamContextManager:
     def __init__(
         self,
         network: Network,
-        configuration: StreamingConfiguration,
+        channels: StreamingConfiguration,
         timeout: float,
     ) -> None:
         """Create a new stream context manager for the given Network
@@ -292,7 +292,7 @@ class DataStreamContextManager:
             The CAN network class for which this context manager handles
             sensor device stream data
 
-        configuration:
+        channels:
             A streaming configuration that specifies which of the three
             streaming channels should be enabled or not
 
@@ -303,8 +303,8 @@ class DataStreamContextManager:
         """
 
         self.network = network
-        self.reader = AsyncStreamBuffer(configuration, timeout)
-        self.configuration = configuration
+        self.reader = AsyncStreamBuffer(channels, timeout)
+        self.channels = channels
 
     async def __aenter__(self) -> AsyncStreamBuffer:
         """Open the stream of measurement data
@@ -323,7 +323,7 @@ class DataStreamContextManager:
             await self.network.read_adc_configuration()
         ).sample_rate()
         self.reader.max_buffer_size = max_buffer_size
-        await self.network.start_streaming_data(self.configuration)
+        await self.network.start_streaming_data(self.channels)
         self.network.notifier.add_listener(reader)
         return reader
 
