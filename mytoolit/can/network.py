@@ -2319,7 +2319,7 @@ class Network:
 
         return SensorConfig(*channels)
 
-    async def write_sensor_configuration(self, config: SensorConfig) -> None:
+    async def write_sensor_configuration(self, sensors: SensorConfig) -> None:
         """Change the sensor numbers for the different measurement channels
 
         If you use the sensor number `0` for one of the different measurement
@@ -2328,7 +2328,7 @@ class Network:
         Parameters
         ----------
 
-        config:
+        sensors:
             The sensor numbers of the different measurement channels
 
         """
@@ -2337,9 +2337,9 @@ class Network:
 
         data = [
             0b1000_0000,
-            config.first,
-            config.second,
-            config.third,
+            sensors.first,
+            sensors.second,
+            sensors.third,
             *(4 * [0]),
         ]
         message = Message(
