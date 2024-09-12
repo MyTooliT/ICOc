@@ -545,7 +545,7 @@ class StreamingFormat:
         *value,
         streaming: Optional[bool] = None,
         width: Optional[int] = 2,
-        config: Optional[StreamingConfiguration] = None,
+        channels: Optional[StreamingConfiguration] = None,
         sets: Optional[int] = None,
         value_explanations: Tuple[str, str, str] = (
             "Value 1",
@@ -572,7 +572,7 @@ class StreamingFormat:
         width:
             Specifies the width of a single value (either 2 or 3 bytes)
 
-        config:
+        channels:
             Specifies for which channels data should be transmitted or not
 
         sets:
@@ -628,8 +628,7 @@ class StreamingFormat:
         # = Active Values =
         # =================
 
-        if config:
-            channels = config.channels
+        if channels:
             for shift, part in enumerate(
                 [channels.third, channels.second, channels.first]
             ):
@@ -662,7 +661,8 @@ class StreamingFormat:
         --------
 
         >>> StreamingFormat(width=3,
-        ...                 config=StreamingConfiguration(first=True), sets=15)
+        ...                 channels=StreamingConfiguration(first=True),
+        ...                 sets=15)
         Single Request, 3 Bytes, 15 Data Sets, Read Value 1
 
         >>> StreamingFormat(0b001, streaming=True)
@@ -723,13 +723,13 @@ class StreamingFormat:
 
         >>> StreamingFormat(
         ...     width=3,
-        ...     config=StreamingConfiguration(first=True),
+        ...     channels=StreamingConfiguration(first=True),
         ...     sets=15
         ... ).data_sets()
         15
 
         >>> StreamingFormat(
-        ...     config=StreamingConfiguration(first=True, second=False),
+        ...     channels=StreamingConfiguration(first=True, second=False),
         ...     sets=3
         ... ).data_sets()
         3
@@ -752,12 +752,13 @@ class StreamingFormat:
         Examples
         --------
 
-        >>> StreamingFormat(width=3, config=StreamingConfiguration(first=True),
+        >>> StreamingFormat(width=3,
+        ...                 channels=StreamingConfiguration(first=True),
         ...                 sets=15).data_bytes()
         3
 
         >>> StreamingFormat(
-        ...     config=StreamingConfiguration(first=True, second=False),
+        ...     channels=StreamingConfiguration(first=True, second=False),
         ...     width=2
         ... ).data_bytes()
         2
@@ -782,7 +783,7 @@ class StreamingFormatVoltage(StreamingFormat):
         width:
             Specifies the width of a single value (either 2 or 3 bytes)
 
-        config:
+        channels:
             Specifies for which channels data should be transmitted or not
 
         sets:

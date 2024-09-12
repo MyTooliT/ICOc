@@ -1881,7 +1881,9 @@ class Network:
         """
 
         streaming_format = StreamingFormat(
-            config=StreamingConfiguration(first=True, second=True, third=True),
+            channels=StreamingConfiguration(
+                first=True, second=True, third=True
+            ),
             sets=1,
         )
 
@@ -1936,7 +1938,7 @@ class Network:
         """
 
         streaming_format = StreamingFormat(
-            config=channels,
+            channels=channels,
             streaming=True,
             sets=3 if channels.enabled_channels() <= 1 else 1,
         )
@@ -2099,7 +2101,7 @@ class Network:
         """
 
         streaming_format = StreamingFormatVoltage(
-            config=StreamingConfiguration(first=True), sets=1
+            channels=StreamingConfiguration(first=True), sets=1
         )
         node = "STH 1"
         message = Message(
