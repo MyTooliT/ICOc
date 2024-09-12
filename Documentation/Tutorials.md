@@ -284,7 +284,7 @@ To improve this situation we offer an [API][] (Application Programming Interface
 - macOS, and
 - Windows
 
-and should (at least in theory) support the [same CAN hardware as python-can](https://python-can.readthedocs.io/en/master/interfaces.html). You can access most of this [API][] using the “new” Network class.
+and should (at least in theory) support the [same CAN hardware as python-can](https://python-can.readthedocs.io/en/stable/interfaces.html). You can access most of this [API][] using the “new” Network class.
 
 We also offer a (currently very limited) CLI tool based on this [API][] called ICOn. The text below describes how you can use this tool.
 
