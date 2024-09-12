@@ -74,11 +74,13 @@ After you opened the stream use an ``async with`` statement to iterate over the 
 
 .. doctest::
 
+   >>> from mytoolit.can.streaming import StreamingConfiguration
+
    >>> async def read_streaming_data():
    ...     async with Network() as network:
    ...         await network.connect_sensor_device("Test-STH")
-   ...
-   ...         async with network.open_data_stream(first=True) as stream:
+   ...         channels = StreamingConfiguration(first=True)
+   ...         async with network.open_data_stream(channels) as stream:
    ...             async for data, lost_messages in stream:
    ...                 print(data)
    ...                 break
@@ -152,7 +154,7 @@ The iterator for streaming data :class:`AsyncStreamBuffer` will raise a :class:`
 .. code-block::
    :emphasize-lines: 2
 
-   async with network.open_data_stream(first=True) as stream:
+   async with network.open_data_stream(channels) as stream:
        async for data, lost_messages in stream:
            if lost_messages > 0:
                print(f"Lost {lost_messages} messages!")
@@ -174,7 +176,8 @@ The example code below shows how to use this method:
    ...           await network.connect_sensor_device(identifier)
    ...
    ...           end = monotonic() + 1 # Read data for roughly one second
-   ...           async with network.open_data_stream(first=True) as stream:
+   ...           channels = StreamingConfiguration(first=True)
+   ...           async with network.open_data_stream(channels) as stream:
    ...               async for data, lost_messages in stream:
    ...                   if monotonic() > end:
    ...                       break
@@ -201,7 +204,8 @@ If you want to calculate the amount of data loss for a specific time-span you ca
    ...           end = monotonic() + 2.1
    ...           last_reset = start
    ...           data_lost = []
-   ...           async with network.open_data_stream(first=True) as stream:
+   ...           channels = StreamingConfiguration(first=True)
+   ...           async with network.open_data_stream(channels) as stream:
    ...               async for data, lost_messages in stream:
    ...                   current = monotonic()
    ...                   if current >= last_reset + 0.5:

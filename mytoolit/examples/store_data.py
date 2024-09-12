@@ -32,7 +32,7 @@ async def store_streaming_data(identifier):
             storage.add_acceleration_meta(
                 "Sensor_Range", f"± {sensor_range / 2} g₀"
             )
-            async with network.open_data_stream(first=True) as stream:
+            async with network.open_data_stream(stream_first) as stream:
                 async for data, _ in stream:
                     # Convert from ADC bit value into multiples of g
                     data.apply(conversion_to_g)

@@ -6,6 +6,7 @@ from asyncio import run
 from time import time
 
 from mytoolit.can import Network
+from mytoolit.can.streaming import StreamingConfiguration
 
 # -- Functions ----------------------------------------------------------------
 
@@ -14,7 +15,9 @@ async def iterate_streaming_data(network, measurement_time):
     offset_start = -1
     offset_end = -1
     messages = 0
-    async with network.open_data_stream(first=True) as stream:
+    async with network.open_data_stream(
+        StreamingConfiguration(first=True)
+    ) as stream:
         end = time() + measurement_time
         async for data, messages_lost in stream:
             if offset_start < 0:

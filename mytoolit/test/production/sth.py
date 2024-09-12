@@ -14,6 +14,7 @@ from unittest import main as unittest_main, skipIf
 from semantic_version import Version
 
 from mytoolit.can import Node
+from mytoolit.can.streaming import StreamingConfiguration
 from mytoolit.config import settings
 from mytoolit.measurement import convert_raw_to_g, g0, ratio_noise_max, volt
 from mytoolit.report import Report
@@ -268,7 +269,9 @@ class TestSTH(TestSensorNode):
             """Read streaming data of first channel"""
             stream_data = []
             seconds = 4
-            async with self.can.open_data_stream(first=True) as stream:
+            async with self.can.open_data_stream(
+                StreamingConfiguration(first=True)
+            ) as stream:
                 end_time = time() + seconds
                 async for data, _ in stream:
                     stream_data.extend(data.values)

@@ -2012,9 +2012,7 @@ class Network:
 
     def open_data_stream(
         self,
-        first: bool = False,
-        second: bool = False,
-        third: bool = False,
+        channels: StreamingConfiguration,
         timeout: float = 5,
     ) -> DataStreamContextManager:
         """Open measurement data stream
@@ -2022,17 +2020,8 @@ class Network:
         Parameters
         ----------
 
-        first:
-            Specifies if the data of the first measurement channel should
-            be streamed or not
-
-        second:
-            Specifies if the data of the second measurement channel should
-            be streamed or not
-
-        third:
-            Specifies if the data of the third measurement channel should
-            be streamed or not
+        channels:
+            Specifies which measurement channels should be enabled
 
         timeout:
             The amount of seconds between two consecutive messages, before
@@ -2051,8 +2040,8 @@ class Network:
         >>> async def read_streaming_data():
         ...     async with Network() as network:
         ...         await network.connect_sensor_device(0)
-        ...         async with network.open_data_stream(first=True,
-        ...                                             third=True) as stream:
+        ...         channels = StreamingConfiguration(first=True, third=True)
+        ...         async with network.open_data_stream(channels) as stream:
         ...             first = []
         ...             third = []
         ...             messages = 0
@@ -2071,9 +2060,7 @@ class Network:
 
         """
 
-        return DataStreamContextManager(
-            self, StreamingConfiguration(first, second, third), timeout
-        )
+        return DataStreamContextManager(self, channels, timeout)
 
     # -----------
     # - Voltage -

@@ -134,7 +134,7 @@ async def dataloss(arguments: Namespace) -> None:
                 start_time = time()
                 try:
                     async with network.open_data_stream(
-                        **sensor_config
+                        sensor_config.streaming_configuration()
                     ) as stream:
                         async for data, _ in stream:
                             data.apply(conversion_to_g)
@@ -247,13 +247,9 @@ async def measure(arguments: Namespace) -> None:
             sample_rate = (
                 await network.read_adc_configuration()
             ).sample_rate()
-            streaming_config = {
-                key: bool(value) for key, value in user_sensor_config.items()
-            }
+            streaming_config = user_sensor_config.streaming_configuration()
             logger.info("Streaming Configuration: %s", streaming_config)
-            values_per_message = (
-                2 if sum(streaming_config.values()) == 2 else 3
-            )
+            values_per_message = streaming_config.data_length()
 
             progress = tqdm(
                 total=round(sample_rate * measurement_time_s, 0),
@@ -265,7 +261,7 @@ async def measure(arguments: Namespace) -> None:
 
             try:
                 async with network.open_data_stream(
-                    **streaming_config
+                    streaming_config
                 ) as stream:
                     start_time = time()
                     async for data, _ in stream:

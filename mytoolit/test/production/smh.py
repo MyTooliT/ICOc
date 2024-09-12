@@ -9,6 +9,7 @@ from mytoolit.cmdline.commander import Commander
 from mytoolit.config import settings
 from mytoolit.measurement.sensor import guess_sensor, SensorConfig
 from mytoolit.report import Report
+from mytoolit.can.streaming import StreamingConfiguration
 from mytoolit.test.production import TestSensorNode
 from mytoolit.test.unit import ExtendedTestRunner
 
@@ -112,7 +113,7 @@ class TestSMH(TestSensorNode):
 
         async def read_streaming_data_amount(length: int):
             async with self.can.open_data_stream(
-                first=True, second=False, third=False
+                StreamingConfiguration(first=True, second=False, third=False)
             ) as stream:
                 stream_data = []
                 async for data, _ in stream:
