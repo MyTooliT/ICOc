@@ -26,7 +26,6 @@ from can import Bus, Listener, Message as CANMessage, Notifier
 from can.interfaces.pcan.pcan import PcanError
 from semantic_version import Version
 from netaddr import EUI
-from pint import Quantity
 
 from mytoolit.eeprom import EEPROMStatus
 from mytoolit.config import settings
@@ -2068,7 +2067,7 @@ class Network:
     # - Voltage -
     # -----------
 
-    async def read_supply_voltage(self) -> Quantity:
+    async def read_supply_voltage(self) -> float:
         """Read the current supply voltage of a connected STH
 
         Returns
@@ -2081,7 +2080,6 @@ class Network:
 
         >>> from asyncio import run
         >>> from platform import system
-        >>> from mytoolit.measurement.units import volt
 
         Read the supply voltage of STH 1
 
@@ -2095,7 +2093,7 @@ class Network:
         ...         await network.connect_sensor_device(0)
         ...         return await network.read_supply_voltage()
         >>> supply_voltage = run(read_supply_voltage())
-        >>> volt(3) <= supply_voltage <= volt(4.2)
+        >>> 3 <= supply_voltage <= 4.2
         True
 
         """

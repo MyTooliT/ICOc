@@ -2,17 +2,14 @@
 
 # -- Imports ------------------------------------------------------------------
 
-from pint import Quantity
-
 from mytoolit.measurement.constants import ADC_MAX_VALUE
-from mytoolit.measurement.units import volt
 
 # -- Functions ----------------------------------------------------------------
 
 
 def convert_raw_to_supply_voltage(
     voltage_raw: int, reference_voltage: float = 3.3
-) -> Quantity:
+) -> float:
     """Convert a raw 2 byte supply voltage value to a voltage value
 
     Parameters
@@ -32,17 +29,17 @@ def convert_raw_to_supply_voltage(
     Example:
 
     >>> voltage = convert_raw_to_supply_voltage(11000)
-    >>> volt(3.15) < voltage < volt(3.16)
+    >>> 3.15 < voltage < 3.16
     True
 
     >>> voltage = convert_raw_to_supply_voltage(2**15, reference_voltage=1.8)
-    >>> volt(5.12) < voltage < volt(5.14)
+    >>> 5.12 < voltage < 5.14
     True
 
     """
 
     if voltage_raw <= 0:
-        return volt(0)
+        return 0
 
     # The value below is the result of the voltage divider circuit, which
     # uses a 4.7 kΩ and 1 kΩ resistor: (470 kΩ + 100 kΩ) / 100 kΩ = 5.7
@@ -50,7 +47,7 @@ def convert_raw_to_supply_voltage(
     # take a look
     # [here](https://en.wikipedia.org/wiki/E_series_of_preferred_numbers).
     voltage_divider_factor = 5.7
-    return volt(
+    return (
         voltage_raw
         * voltage_divider_factor
         * reference_voltage

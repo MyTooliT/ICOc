@@ -16,7 +16,7 @@ from semantic_version import Version
 from mytoolit.can import Node
 from mytoolit.can.streaming import StreamingConfiguration
 from mytoolit.config import settings
-from mytoolit.measurement import convert_raw_to_g, g0, ratio_noise_max, volt
+from mytoolit.measurement import convert_raw_to_g, ratio_noise_max
 from mytoolit.report import Report
 from mytoolit.test.production import TestSensorNode
 from mytoolit.test.unit import ExtendedTestRunner
@@ -198,24 +198,24 @@ class TestSTH(TestSensorNode):
             """Check the supply voltage of the STH"""
 
             supply_voltage = await self.can.read_supply_voltage()
-            expected_voltage = volt(settings.sth.battery_voltage.average)
-            tolerance_voltage = volt(settings.sth.battery_voltage.tolerance)
+            expected_voltage = settings.sth.battery_voltage.average
+            tolerance_voltage = settings.sth.battery_voltage.tolerance
             expected_minimum_voltage = expected_voltage - tolerance_voltage
             expected_maximum_voltage = expected_voltage + tolerance_voltage
 
             self.assertGreaterEqual(
                 supply_voltage,
                 expected_minimum_voltage,
-                f"STH supply voltage of {supply_voltage:.3f~} is lower "
+                f"STH supply voltage of {supply_voltage:.3f} V is lower "
                 "than expected minimum voltage of "
-                f"{expected_minimum_voltage:.3f~}",
+                f"{expected_minimum_voltage:.3f} V",
             )
             self.assertLessEqual(
                 supply_voltage,
                 expected_maximum_voltage,
-                f"STH supply voltage of {supply_voltage:.3f~} is "
+                f"STH supply voltage of {supply_voltage:.3f} V is "
                 "greater than expected maximum voltage of "
-                f"{expected_minimum_voltage:.3f~}",
+                f"{expected_minimum_voltage:.3f} V",
             )
 
         self.loop.run_until_complete(test_supply_voltage())
@@ -228,16 +228,14 @@ class TestSTH(TestSensorNode):
 
             sensor = settings.acceleration_sensor()
             stream_data = await self.can.read_streaming_data_single()
-            acceleration = g0(
-                convert_raw_to_g(
-                    stream_data.values[0], sensor.acceleration.maximum
-                )
+            acceleration = convert_raw_to_g(
+                stream_data.values[0], sensor.acceleration.maximum
             )
 
             # We expect a stationary acceleration between -g₀ and g₀
             # (g₀ = 9.807 m/s²)
-            expected_acceleration = g0(0)
-            tolerance_acceleration = g0(sensor.acceleration.tolerance)
+            expected_acceleration = 0
+            tolerance_acceleration = sensor.acceleration.tolerance
             expected_minimum_acceleration = (
                 expected_acceleration - tolerance_acceleration
             )
@@ -248,16 +246,16 @@ class TestSTH(TestSensorNode):
             self.assertGreaterEqual(
                 acceleration,
                 expected_minimum_acceleration,
-                f"Measured acceleration {acceleration:.3f~} is lower "
+                f"Measured acceleration {acceleration:.3f} g is lower "
                 "than expected minimum acceleration "
-                f"{expected_minimum_acceleration:.3f~}",
+                f"{expected_minimum_acceleration:.3f} g",
             )
             self.assertLessEqual(
                 acceleration,
                 expected_maximum_acceleration,
-                f"Measured acceleration {acceleration:.3f~} is greater "
+                f"Measured acceleration {acceleration:.3f} g is greater "
                 "than expected maximum acceleration "
-                f"{expected_maximum_acceleration:.3f~}",
+                f"{expected_maximum_acceleration:.3f} g",
             )
 
         self.loop.run_until_complete(test_acceleration_single())
