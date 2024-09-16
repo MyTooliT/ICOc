@@ -22,20 +22,12 @@ dependencies = [
   "dynaconf>=3.1.12,<4",
   "matplotlib>=3.7.1,<4",
   "netaddr>=0.8.0,<2",
-  # Require old version of indirect dependency (for `tables`) `numpy`
-  # to fix the error:
-  #
-  # > ValueError: numpy.dtype size changed, may indicate binary incompatibility.
-  # > Expected 96 from C header, got 88 from PyObject
-  #
-  # TODO: Remove this dependency after `tables` supports numpy 2.0
-  "numpy>=1.26.4,<2",
   "pdfrw>=0.4,<2",
   "platformdirs>=3.5.0,<5",
   "python-can[pcan]>=4,<5",
   "pywin32>=306; os_name == 'nt'",
   "reportlab>=4.0.4,<5",
-  "tables==3.9.1",
+  "tables>=3.10.1,<4",
   "tqdm>=4.65,<5",
   "semantic_version>=2.10,<3",
   "windows-curses>=2.3.3,<3; os_name == 'nt'",
