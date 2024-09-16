@@ -31,7 +31,6 @@ dependencies = [
   # TODO: Remove this dependency after `tables` supports numpy 2.0
   "numpy>=1.26.4,<2",
   "pdfrw>=0.4,<2",
-  "pint>=0.22,<2",
   "platformdirs>=3.5.0,<5",
   "python-can[pcan]>=4,<5",
   "pywin32>=306; os_name == 'nt'",
