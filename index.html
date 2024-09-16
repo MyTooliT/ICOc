@@ -689,9 +689,9 @@ Sensors               M1: S1
 <blockquote>
 <p><strong>Note:</strong> If you only use the <code>icoc</code> command line tool, then you most probably do not need to change the configuration at all.</p>
 </blockquote>
-<p>All configuration options are currently stored in <a href="https://yaml.org">YAML</a> files (handled by the configuration library <a href="https://www.dynaconf.com">Dynaconf</a>). The <a href="https://github.com/MyTooliT/ICOc/blob/master/mytoolit/config/config.yaml">default values</a> are stored inside the package itself. If you want to overwrite or extend these values you should create a user configuration file. To do that you can use the command:</p>
+<p>All configuration options are currently stored in <a href="https://yaml.org">YAML</a> files (handled by the configuration library <a href="https://www.dynaconf.com">Dynaconf</a>). The <a href="https://github.com/MyTooliT/ICOc/blob/main/mytoolit/config/config.yaml">default values</a> are stored inside the package itself. If you want to overwrite or extend these values you should create a user configuration file. To do that you can use the command:</p>
 <div class="sourceCode" id="cb20"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a><span class="ex">icon</span> config</span></code></pre></div>
-<p>which will open the the user configuration in your default text editor. You can then edit this file and save your changes to update the configuration. For a list of available options, please take a look at the <a href="https://github.com/MyTooliT/ICOc/blob/master/mytoolit/config/config.yaml">default configuration</a>. Please make sure to not make any mistakes when you edit this file. Otherwise (parts of) the ICOc commands will not work, printing an error message about the (first) incorrect configuration value.</p>
+<p>which will open the the user configuration in your default text editor. You can then edit this file and save your changes to update the configuration. For a list of available options, please take a look at the <a href="https://github.com/MyTooliT/ICOc/blob/main/mytoolit/config/config.yaml">default configuration</a>. Please make sure to not make any mistakes when you edit this file. Otherwise (parts of) the ICOc commands will not work, printing an error message about the (first) incorrect configuration value.</p>
 <div id="adding-the-path-to-simplicity-commander-on-linux" class="section level4 hasAnchor" number="1.3.4.1">
 <h4><span class="header-section-number">1.3.4.1</span> Adding the Path to Simplicity Commander on Linux<a href="#adding-the-path-to-simplicity-commander-on-linux" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <ol style="list-style-type: decimal">
@@ -930,7 +930,7 @@ Logging:
 <li>macOS, and</li>
 <li>Windows</li>
 </ul>
-<p>and should (at least in theory) support the <a href="https://python-can.readthedocs.io/en/master/interfaces.html">same CAN hardware as python-can</a>. You can access most of this <a href="https://icoc.readthedocs.io">API</a> using the “new” Network class.</p>
+<p>and should (at least in theory) support the <a href="https://python-can.readthedocs.io/en/stable/interfaces.html">same CAN hardware as python-can</a>. You can access most of this <a href="https://icoc.readthedocs.io">API</a> using the “new” Network class.</p>
 <p>We also offer a (currently very limited) CLI tool based on this <a href="https://icoc.readthedocs.io">API</a> called ICOn. The text below describes how you can use this tool.</p>
 <div id="listing-available-sensor-devices" class="section level3 hasAnchor" number="2.3.1">
 <h3><span class="header-section-number">2.3.1</span> Listing Available Sensor Devices<a href="#listing-available-sensor-devices" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -955,7 +955,7 @@ Logging:
 <h3><span class="header-section-number">2.3.4</span> Opening the User Configuration<a href="#opening-the-user-configuration" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>To open the user configuration file, you can use the subcommand <code>config</code>:</p>
 <div class="sourceCode" id="cb45"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb45-1"><a href="#cb45-1" tabindex="-1"></a><span class="ex">icon</span> config</span></code></pre></div>
-<p>If the file does not exist yet, then it will be created and filled with the content of the <a href="https://github.com/MyTooliT/ICOc/blob/master/mytoolit/config/user.yaml">default user configuration</a>. For more information on how to change the configuration, please take a look <a href="#changing-configuration-values">here</a>.</p>
+<p>If the file does not exist yet, then it will be created and filled with the content of the <a href="https://github.com/MyTooliT/ICOc/blob/main/mytoolit/config/user.yaml">default user configuration</a>. For more information on how to change the configuration, please take a look <a href="#changing-configuration-values">here</a>.</p>
 </div>
 <div id="stu-commands" class="section level3 hasAnchor" number="2.3.5">
 <h3><span class="header-section-number">2.3.5</span> STU Commands<a href="#stu-commands" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -1685,44 +1685,49 @@ usbipd wsl attach --busid 5-4</code></pre></li>
 </ul>
 </blockquote></li>
 </ol></li>
+<li><p>Install other required tools (for tests)</p>
+<ul>
+<li><p><code>hdf5</code>: For the command line tool <code>h5dump</code> (Linux/macOS). You can install hdf5 via <a href="https://brew.sh">Homebrew</a>:</p>
+<div class="sourceCode" id="cb105"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb105-1"><a href="#cb105-1" tabindex="-1"></a><span class="ex">brew</span> install hdf5</span></code></pre></div></li>
+</ul></li>
 </ol>
 </div>
 <div id="style" class="section level2 hasAnchor" number="7.2">
 <h2><span class="header-section-number">7.2</span> Style<a href="#style" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Please use the guidelines from <a href="https://www.python.org/dev/peps/pep-0008/">PEP 8</a>. For code formatting we currently use <a href="https://github.com/psf/black">Black</a>, which should format code according to PEP 8 by default.</p>
 <p>To format the whole code base you can use the following command in the root of the repository:</p>
-<div class="sourceCode" id="cb105"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb105-1"><a href="#cb105-1" tabindex="-1"></a><span class="ex">black</span> .</span></code></pre></div>
+<div class="sourceCode" id="cb106"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb106-1"><a href="#cb106-1" tabindex="-1"></a><span class="ex">black</span> .</span></code></pre></div>
 <p>For development we recommend that you use a tool or plugin that reformats your code with Black every time you save. This way we can ensure that we use a consistent style for the whole code base.</p>
 </div>
 <div id="tests" class="section level2 hasAnchor" number="7.3">
 <h2><span class="header-section-number">7.3</span> Tests<a href="#tests" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>The following text describes some of the measures we should take to keep the software stable.</p>
-<p>Please only push your changes to the <code>master</code> branch, if you think there are no new bugs or regressions. The <code>master</code> branch <strong>should always contain a working version of the software</strong>. Please <strong>always run</strong></p>
+<p>Please only push your changes to the <code>main</code> branch, if you think there are no new bugs or regressions. The <code>main</code> branch <strong>should always contain a working version of the software</strong>. Please <strong>always run</strong></p>
 <ul>
 <li>the <strong>automatic test</strong> (<code>make run</code>) for <strong>every supported OS</strong> (Linux, macOS, Windows) and</li>
 <li>the <strong>manual tests</strong> on Windows</li>
 </ul>
-<p>before you push to the <code>master</code> branch.</p>
+<p>before you push to the <code>main</code> branch.</p>
 <div id="code-checks" class="section level3 hasAnchor" number="7.3.1">
 <h3><span class="header-section-number">7.3.1</span> Code Checks<a href="#code-checks" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <div id="flake8" class="section level4 hasAnchor" number="7.3.1.1">
 <h4><span class="header-section-number">7.3.1.1</span> Flake8<a href="#flake8" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>We check the code with <a href="https://flake8.pycqa.org">flake8</a>:</p>
-<div class="sourceCode" id="cb106"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb106-1"><a href="#cb106-1" tabindex="-1"></a><span class="ex">pip</span> install flake8</span></code></pre></div>
+<div class="sourceCode" id="cb107"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb107-1"><a href="#cb107-1" tabindex="-1"></a><span class="ex">pip</span> install flake8</span></code></pre></div>
 <p>Please use the following command in the root of the repository to make sure you did not add any code that introduces warnings:</p>
-<div class="sourceCode" id="cb107"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb107-1"><a href="#cb107-1" tabindex="-1"></a><span class="ex">flake8</span></span></code></pre></div>
+<div class="sourceCode" id="cb108"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb108-1"><a href="#cb108-1" tabindex="-1"></a><span class="ex">flake8</span></span></code></pre></div>
 </div>
 <div id="mypy" class="section level4 hasAnchor" number="7.3.1.2">
 <h4><span class="header-section-number">7.3.1.2</span> mypy<a href="#mypy" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>To check the type hint in the code base we use the static code checker <a href="https://mypy.readthedocs.io">mypy</a>:</p>
-<div class="sourceCode" id="cb108"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb108-1"><a href="#cb108-1" tabindex="-1"></a><span class="ex">pip</span> install mypy</span></code></pre></div>
+<div class="sourceCode" id="cb109"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb109-1"><a href="#cb109-1" tabindex="-1"></a><span class="ex">pip</span> install mypy</span></code></pre></div>
 <p>Please use the following command in the root of the repository to check the code base for type problems:</p>
-<div class="sourceCode" id="cb109"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb109-1"><a href="#cb109-1" tabindex="-1"></a><span class="ex">mypy</span> mytoolit</span></code></pre></div>
+<div class="sourceCode" id="cb110"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb110-1"><a href="#cb110-1" tabindex="-1"></a><span class="ex">mypy</span> mytoolit</span></code></pre></div>
 </div>
 <div id="pylint" class="section level4 hasAnchor" number="7.3.1.3">
 <h4><span class="header-section-number">7.3.1.3</span> Pylint<a href="#pylint" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>We currently use <a href="https://github.com/PyCQA/pylint">Pylint</a> to check the code:</p>
-<div class="sourceCode" id="cb110"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb110-1"><a href="#cb110-1" tabindex="-1"></a><span class="ex">pylint</span> mytoolit</span></code></pre></div>
+<div class="sourceCode" id="cb111"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb111-1"><a href="#cb111-1" tabindex="-1"></a><span class="ex">pylint</span> mytoolit</span></code></pre></div>
 </div>
 </div>
 <div id="automatic-tests" class="section level3 hasAnchor" number="7.3.2">
@@ -1730,11 +1735,11 @@ usbipd wsl attach --busid 5-4</code></pre></li>
 <div id="requirements-1" class="section level4 hasAnchor" number="7.3.2.1">
 <h4><span class="header-section-number">7.3.2.1</span> Requirements<a href="#requirements-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Please install the <a href="https://docs.pytest.org">pytest testing module</a>:</p>
-<div class="sourceCode" id="cb111"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb111-1"><a href="#cb111-1" tabindex="-1"></a><span class="ex">pip</span> install pytest</span></code></pre></div>
+<div class="sourceCode" id="cb112"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb112-1"><a href="#cb112-1" tabindex="-1"></a><span class="ex">pip</span> install pytest</span></code></pre></div>
 <div id="usage" class="section level5 hasAnchor" number="7.3.2.1.1">
 <h5><span class="header-section-number">7.3.2.1.1</span> Usage<a href="#usage" class="anchor-section" aria-label="Anchor link to header"></a></h5>
 <p>Please run the following command in the root of the repository:</p>
-<div class="sourceCode" id="cb112"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb112-1"><a href="#cb112-1" tabindex="-1"></a><span class="ex">pytest</span> <span class="at">-v</span></span></code></pre></div>
+<div class="sourceCode" id="cb113"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb113-1"><a href="#cb113-1" tabindex="-1"></a><span class="ex">pytest</span> <span class="at">-v</span></span></code></pre></div>
 <p>and make sure that it reports no test failures.</p>
 </div>
 </div>
@@ -1773,23 +1778,23 @@ usbipd wsl attach --busid 5-4</code></pre></li>
 </ol>
 <div id="development:section:extended-tests" class="section level5 hasAnchor" number="7.3.3.3.1">
 <h5><span class="header-section-number">7.3.3.3.1</span> Extended Tests<a href="#development:section:extended-tests" class="anchor-section" aria-label="Anchor link to header"></a></h5>
-<p>The text below specifies extended manual test that should be executed before we <a href="#development:section:release">release a new version of ICOc</a>. Please note that the tests assume that you use more or less the <a href="https://github.com/MyTooliT/ICOc/blob/master/mytoolit/config/config.yaml">default configuration values</a>.</p>
+<p>The text below specifies extended manual test that should be executed before we <a href="#development:section:release">release a new version of ICOc</a>. Please note that the tests assume that you use more or less the <a href="https://github.com/MyTooliT/ICOc/blob/main/mytoolit/config/config.yaml">default configuration values</a>.</p>
 <div id="check-command-line-interface" class="section level6 hasAnchor" number="7.3.3.3.1.1">
 <h6><span class="header-section-number">7.3.3.3.1.1</span> Check Command Line Interface<a href="#check-command-line-interface" class="anchor-section" aria-label="Anchor link to header"></a></h6>
 <ol style="list-style-type: decimal">
 <li><p>Open your favorite terminal application and change your working directory to the root of the repository</p></li>
 <li><p>Remove HDF5 files from the repository:</p>
-<div class="sourceCode" id="cb113"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb113-1"><a href="#cb113-1" tabindex="-1"></a><span class="fu">rm</span> <span class="pp">*</span>.hdf5</span></code></pre></div>
+<div class="sourceCode" id="cb114"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb114-1"><a href="#cb114-1" tabindex="-1"></a><span class="fu">rm</span> <span class="pp">*</span>.hdf5</span></code></pre></div>
 <blockquote>
 <p><strong>Note:</strong> You can ignore errors about “no matches for wildcard” on Linux and macOS. This message just tells you that there is no file with the extension <code>hdf5</code> in the current directory.</p>
 </blockquote></li>
 <li><p>Check that no HDF5 files exist in the repository. The following command should not produce any output:</p>
-<div class="sourceCode" id="cb114"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb114-1"><a href="#cb114-1" tabindex="-1"></a><span class="fu">ls</span> <span class="pp">*</span>.hdf5</span></code></pre></div></li>
+<div class="sourceCode" id="cb115"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb115-1"><a href="#cb115-1" tabindex="-1"></a><span class="fu">ls</span> <span class="pp">*</span>.hdf5</span></code></pre></div></li>
 <li><p>Give your test STH the <a href="#tutorials:section:sth-renaming">name</a> “Test-STH”</p></li>
 <li><p>Measure data for 10 seconds using the following command:</p>
-<div class="sourceCode" id="cb115"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb115-1"><a href="#cb115-1" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-n</span> <span class="st">&#39;Test-STH&#39;</span> <span class="at">-r</span> 10</span></code></pre></div></li>
+<div class="sourceCode" id="cb116"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb116-1"><a href="#cb116-1" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-n</span> <span class="st">&#39;Test-STH&#39;</span> <span class="at">-r</span> 10</span></code></pre></div></li>
 <li><p>Check that the repo now contains a HDF5 (<code>*.hdf5</code>) file</p>
-<div class="sourceCode" id="cb116"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb116-1"><a href="#cb116-1" tabindex="-1"></a><span class="fu">ls</span> <span class="pp">*</span>.hdf5</span></code></pre></div></li>
+<div class="sourceCode" id="cb117"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb117-1"><a href="#cb117-1" tabindex="-1"></a><span class="fu">ls</span> <span class="pp">*</span>.hdf5</span></code></pre></div></li>
 <li><p>Open the file in <a href="#measurement-data">HDFView</a></p></li>
 <li><p>Check that the table <code>acceleration</code> contains about 95 000 values</p></li>
 <li><p>Check that the table contains three columns</p></li>
@@ -1797,15 +1802,15 @@ usbipd wsl attach --busid 5-4</code></pre></li>
 <li><p>Check that <code>Sensor_Range</code> contains the correct maximum acceleration values for “Test-STH”</p></li>
 <li><p>Check that <code>Start_Time</code> contains (roughly) the date and time when you executed the command from step 5</p></li>
 <li><p>Check that ICOc handles the following incorrect program calls. The program should <strong>not crash</strong> and print a (helpful) <strong>error description</strong> (not a stak trace) before it exits.</p>
-<div class="sourceCode" id="cb117"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb117-1"><a href="#cb117-1" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-b</span> <span class="st">&#39;12-12-12-12-12&#39;</span></span>
-<span id="cb117-2"><a href="#cb117-2" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-n</span> <span class="st">&#39;TooooLong&#39;</span></span>
-<span id="cb117-3"><a href="#cb117-3" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-s</span> 1</span>
-<span id="cb117-4"><a href="#cb117-4" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-a</span> 257</span>
-<span id="cb117-5"><a href="#cb117-5" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-o</span> <span class="at">-1</span></span>
-<span id="cb117-6"><a href="#cb117-6" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-1</span> <span class="st">&#39; -1&#39;</span></span>
-<span id="cb117-7"><a href="#cb117-7" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-2</span> 256</span>
-<span id="cb117-8"><a href="#cb117-8" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-3</span> nine</span>
-<span id="cb117-9"><a href="#cb117-9" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-1</span> 0 <span class="at">-2</span> 0 <span class="at">-3</span> 0 <span class="at">-n</span> Test-STH</span></code></pre></div></li>
+<div class="sourceCode" id="cb118"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb118-1"><a href="#cb118-1" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-b</span> <span class="st">&#39;12-12-12-12-12&#39;</span></span>
+<span id="cb118-2"><a href="#cb118-2" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-n</span> <span class="st">&#39;TooooLong&#39;</span></span>
+<span id="cb118-3"><a href="#cb118-3" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-s</span> 1</span>
+<span id="cb118-4"><a href="#cb118-4" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-a</span> 257</span>
+<span id="cb118-5"><a href="#cb118-5" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-o</span> <span class="at">-1</span></span>
+<span id="cb118-6"><a href="#cb118-6" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-1</span> <span class="st">&#39; -1&#39;</span></span>
+<span id="cb118-7"><a href="#cb118-7" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-2</span> 256</span>
+<span id="cb118-8"><a href="#cb118-8" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-3</span> nine</span>
+<span id="cb118-9"><a href="#cb118-9" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-1</span> 0 <span class="at">-2</span> 0 <span class="at">-3</span> 0 <span class="at">-n</span> Test-STH</span></code></pre></div></li>
 </ol>
 </div>
 <div id="check-user-interface" class="section level6 hasAnchor" number="7.3.3.3.1.2">
@@ -1813,7 +1818,7 @@ usbipd wsl attach --busid 5-4</code></pre></li>
 <ol style="list-style-type: decimal">
 <li><p>Repeat steps 1. – 4. from the test above</p></li>
 <li><p>Open ICOc using the following command:</p>
-<div class="sourceCode" id="cb118"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb118-1"><a href="#cb118-1" tabindex="-1"></a><span class="ex">icoc</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb119"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb119-1"><a href="#cb119-1" tabindex="-1"></a><span class="ex">icoc</span></span></code></pre></div></li>
 <li><p>The main menu of ICOc should show up</p></li>
 <li><p>Try to connect to a non-existent STH</p>
 <ol style="list-style-type: decimal">
@@ -1907,19 +1912,19 @@ usbipd wsl attach --busid 5-4</code></pre></li>
 <p><strong>Note:</strong> For the text below we assume that you installed <a href="https://en.wikipedia.org/wiki/Make_(software)#Makefile"><code>make</code></a> on your machine.</p>
 </blockquote>
 <p>To run all checks, the STH test and the STU test use the following <code>make</code> command:</p>
-<div class="sourceCode" id="cb119"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb119-1"><a href="#cb119-1" tabindex="-1"></a><span class="fu">make</span> run</span></code></pre></div>
+<div class="sourceCode" id="cb120"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb120-1"><a href="#cb120-1" tabindex="-1"></a><span class="fu">make</span> run</span></code></pre></div>
 <p>Afterwards make sure there were no (unexpected) errors in the output of the STH and STU test.</p>
 </div>
 </div>
 <div id="development:section:release" class="section level2 hasAnchor" number="7.4">
 <h2><span class="header-section-number">7.4</span> Release<a href="#development:section:release" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <ol style="list-style-type: decimal">
-<li><p>Check that the <a href="https://github.com/MyTooliT/ICOc/actions"><strong>CI jobs</strong> for the <code>master</code> branch finish successfully</a></p></li>
+<li><p>Check that the <a href="https://github.com/MyTooliT/ICOc/actions"><strong>CI jobs</strong> for the <code>main</code> branch finish successfully</a></p></li>
 <li><p>Check that the <strong>checks and tests</strong> run without any problems on <strong>Linux</strong>, <strong>macOS</strong> and <strong>Windows</strong></p>
 <ol style="list-style-type: decimal">
 <li><p>Set the value of <code>sth</code> → <code>status</code> in the <a href="#changing-configuration-values">configuration</a> to <code>Epoxied</code></p></li>
 <li><p>Execute the command:</p>
-<div class="sourceCode" id="cb120"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb120-1"><a href="#cb120-1" tabindex="-1"></a><span class="fu">make</span> run</span></code></pre></div>
+<div class="sourceCode" id="cb121"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb121-1"><a href="#cb121-1" tabindex="-1"></a><span class="fu">make</span> run</span></code></pre></div>
 <p>in the root of the repository</p></li>
 </ol></li>
 <li><p>Check that the <strong>firmware flash</strong> works in Windows</p>
@@ -1942,7 +1947,7 @@ usbipd wsl attach --busid 5-4</code></pre></li>
 <li><code>../../something.txt</code> use</li>
 <li><code>https://github.com/MyTooliT/ICOc/blob/REVISION/something.txt</code>,</li>
 </ul>
-<p>where <code>REVISION</code> is the latest version of the master branch (e.g. <code>8568893f</code> for version <code>1.0.5</code>)</p></li>
+<p>where <code>REVISION</code> is the latest version of the main branch (e.g. <code>8568893f</code> for version <code>1.0.5</code>)</p></li>
 <li><p>Commit your changes</p></li>
 <li><p>Copy the release notes</p></li>
 <li><p>Paste them into the main text of the release web page</p></li>
@@ -1955,14 +1960,14 @@ usbipd wsl attach --busid 5-4</code></pre></li>
 <li><p>Update the <a href="https://pypi.org/project/icoc">official ICOc Python package on PyPI</a>:</p>
 <ol style="list-style-type: decimal">
 <li><p>Install <code>build</code> and <code>twine</code>:</p>
-<div class="sourceCode" id="cb121"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb121-1"><a href="#cb121-1" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">--upgrade</span> build twine</span></code></pre></div></li>
+<div class="sourceCode" id="cb122"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb122-1"><a href="#cb122-1" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">--upgrade</span> build twine</span></code></pre></div></li>
 <li><p>Build the package (in the root directory of the repository):</p>
-<div class="sourceCode" id="cb122"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb122-1"><a href="#cb122-1" tabindex="-1"></a><span class="ex">python3</span> <span class="at">-m</span> build</span></code></pre></div></li>
+<div class="sourceCode" id="cb123"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb123-1"><a href="#cb123-1" tabindex="-1"></a><span class="ex">python3</span> <span class="at">-m</span> build</span></code></pre></div></li>
 <li><p>Check the package:</p>
-<div class="sourceCode" id="cb123"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb123-1"><a href="#cb123-1" tabindex="-1"></a><span class="ex">twine</span> check dist/<span class="pp">*</span></span></code></pre></div>
+<div class="sourceCode" id="cb124"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb124-1"><a href="#cb124-1" tabindex="-1"></a><span class="ex">twine</span> check dist/<span class="pp">*</span></span></code></pre></div>
 <p>The output of the command above should print the text <code>PASSED</code> twice.</p></li>
 <li><p>Upload the package to PyPI:</p>
-<div class="sourceCode" id="cb124"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb124-1"><a href="#cb124-1" tabindex="-1"></a><span class="ex">twine</span> upload dist/<span class="pp">*</span></span></code></pre></div>
+<div class="sourceCode" id="cb125"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb125-1"><a href="#cb125-1" tabindex="-1"></a><span class="ex">twine</span> upload dist/<span class="pp">*</span></span></code></pre></div>
 <blockquote>
 <p><strong>Note:</strong> For the command above to work you need an API token, which you can create after <a href="https://pypi.org/account/login/">logging into the PyPI <code>mytoolit</code> account</a>. If you need access to the account, please contact <a href="https://github.com/sanssecours">René Schwaiger</a>.</p>
 </blockquote></li>
@@ -1972,6 +1977,11 @@ usbipd wsl attach --busid 5-4</code></pre></li>
 <li><p>Click on “Publish Release”</p></li>
 <li><p>Close the <a href="https://github.com/MyTooliT/ICOc/milestones">milestone</a> for the latest release number</p></li>
 <li><p>Create a new <a href="https://github.com/MyTooliT/ICOc/milestones">milestone</a> for the next release</p></li>
+<li><p>Go to <a href="https://readthedocs.org/projects/icoc/">Read The Docs</a> and enable the documentation for the latest release</p>
+<ol style="list-style-type: decimal">
+<li>Click on “Versions”</li>
+<li>Click on the button “Activate” next to the version number of the latest release</li>
+</ol></li>
 </ol>
 
 </div>
