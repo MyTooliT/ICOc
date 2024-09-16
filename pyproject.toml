@@ -53,7 +53,7 @@ keywords = [
 ]
 name = "icoc"
 readme = "ReadMe.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 
 [project.optional-dependencies]
 dev = [
