@@ -1,4 +1,4 @@
-[![GitHub Workflow Documentation](https://img.shields.io/github/actions/workflow/status/mytoolit/ICOc/documentation.yaml?branch=main&label=Documentation)](https://mytoolit.github.io/ICOc/) [![API Documentation](https://img.shields.io/readthedocs/icoc?label=API%20Documentation)](https://icoc.readthedocs.io/en/latest/) [![GitHub Workflow Tests](https://img.shields.io/github/actions/workflow/status/mytoolit/ICOc/tests.yaml?branch=main&label=Tests)](https://github.com/MyTooliT/ICOc/actions/workflows/tests.yaml)
+[![GitHub Workflow Documentation](https://img.shields.io/github/actions/workflow/status/mytoolit/ICOc/documentation.yaml?branch=main&label=Documentation)](https://mytoolit.github.io/ICOc/) [![API Documentation](https://img.shields.io/readthedocs/icoc?label=API%20Documentation)](https://icoc.readthedocs.io/en/stable/) [![GitHub Workflow Tests](https://img.shields.io/github/actions/workflow/status/mytoolit/ICOc/tests.yaml?branch=main&label=Tests)](https://github.com/MyTooliT/ICOc/actions/workflows/tests.yaml)
 
 # ICOc
 
