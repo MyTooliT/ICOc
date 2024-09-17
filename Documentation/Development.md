@@ -171,7 +171,7 @@ The text below specifies extended manual test that should be executed before we 
 5. Run the following command
 
    ```sh
-    icon measure -t 300 -n Test-STH
+   icon measure -t 300 -n Test-STH
    ```
 
    - There should be **no exceptions**
