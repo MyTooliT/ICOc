@@ -174,7 +174,7 @@ The text below specifies extended manual test that should be executed before we 
    icon measure -t 300 -n Test-STH
    ```
 
-   - There should be **no exceptions**
+   - The command should not print any **no error messages**.
    - The **data loss must be below 0.1 (1 %)**.
 
 6. Check that the repo now contains a HDF5 (`*.hdf5`) file
