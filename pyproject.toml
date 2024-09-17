@@ -5,6 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 authors = [
     {name = "Clemens Burgstaller", email = "burgstaller@ift.at"},
+    {name = "Christoph Mayer", email = "mayer@ift.at"},
     {name = "René Schwaiger", email = "rene.schwaiger@ift.at"},
 ]
 classifiers = [
