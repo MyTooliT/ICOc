@@ -1779,8 +1779,8 @@ usbipd wsl attach --busid 5-4</code></pre></li>
 <div id="development:section:extended-tests" class="section level5 hasAnchor" number="7.3.3.3.1">
 <h5><span class="header-section-number">7.3.3.3.1</span> Extended Tests<a href="#development:section:extended-tests" class="anchor-section" aria-label="Anchor link to header"></a></h5>
 <p>The text below specifies extended manual test that should be executed before we <a href="#development:section:release">release a new version of ICOc</a>. Please note that the tests assume that you use more or less the <a href="https://github.com/MyTooliT/ICOc/blob/main/mytoolit/config/config.yaml">default configuration values</a>.</p>
-<div id="check-command-line-interface" class="section level6 hasAnchor" number="7.3.3.3.1.1">
-<h6><span class="header-section-number">7.3.3.3.1.1</span> Check Command Line Interface<a href="#check-command-line-interface" class="anchor-section" aria-label="Anchor link to header"></a></h6>
+<div id="check-the-performance-of-the-library" class="section level6 hasAnchor" number="7.3.3.3.1.1">
+<h6><span class="header-section-number">7.3.3.3.1.1</span> Check the Performance of the Library<a href="#check-the-performance-of-the-library" class="anchor-section" aria-label="Anchor link to header"></a></h6>
 <ol style="list-style-type: decimal">
 <li><p>Open your favorite terminal application and change your working directory to the root of the repository</p></li>
 <li><p>Remove HDF5 files from the repository:</p>
@@ -1791,10 +1791,26 @@ usbipd wsl attach --busid 5-4</code></pre></li>
 <li><p>Check that no HDF5 files exist in the repository. The following command should not produce any output:</p>
 <div class="sourceCode" id="cb115"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb115-1"><a href="#cb115-1" tabindex="-1"></a><span class="fu">ls</span> <span class="pp">*</span>.hdf5</span></code></pre></div></li>
 <li><p>Give your test STH the <a href="#tutorials:section:sth-renaming">name</a> “Test-STH”</p></li>
-<li><p>Measure data for 10 seconds using the following command:</p>
-<div class="sourceCode" id="cb116"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb116-1"><a href="#cb116-1" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-n</span> <span class="st">&#39;Test-STH&#39;</span> <span class="at">-r</span> 10</span></code></pre></div></li>
+<li><p>Run the following command</p>
+<div class="sourceCode" id="cb116"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb116-1"><a href="#cb116-1" tabindex="-1"></a> <span class="ex">icon</span> measure <span class="at">-t</span> 300 <span class="at">-n</span> Test-STH</span></code></pre></div>
+<ul>
+<li>There should be <strong>no exceptions</strong></li>
+<li>The <strong>data loss must be below 0.1 (1 %)</strong>.</li>
+</ul></li>
 <li><p>Check that the repo now contains a HDF5 (<code>*.hdf5</code>) file</p>
 <div class="sourceCode" id="cb117"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb117-1"><a href="#cb117-1" tabindex="-1"></a><span class="fu">ls</span> <span class="pp">*</span>.hdf5</span></code></pre></div></li>
+<li><p>Open the file in <a href="#measurement-data">HDFView</a></p></li>
+<li><p>Check that the timestamp of the last value in the <code>acceleration</code> table has <strong>approximately the value <code>30 000 000</code></strong> (all values above <code>29 900 000</code> should be fine).</p></li>
+</ol>
+</div>
+<div id="check-command-line-interface" class="section level6 hasAnchor" number="7.3.3.3.1.2">
+<h6><span class="header-section-number">7.3.3.3.1.2</span> Check Command Line Interface<a href="#check-command-line-interface" class="anchor-section" aria-label="Anchor link to header"></a></h6>
+<ol style="list-style-type: decimal">
+<li><p>Repeat steps 1. – 4. from the test above</p></li>
+<li><p>Measure data for 10 seconds using the following command:</p>
+<div class="sourceCode" id="cb118"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb118-1"><a href="#cb118-1" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-n</span> <span class="st">&#39;Test-STH&#39;</span> <span class="at">-r</span> 10</span></code></pre></div></li>
+<li><p>Check that the repo now contains a HDF5 (<code>*.hdf5</code>) file</p>
+<div class="sourceCode" id="cb119"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb119-1"><a href="#cb119-1" tabindex="-1"></a><span class="fu">ls</span> <span class="pp">*</span>.hdf5</span></code></pre></div></li>
 <li><p>Open the file in <a href="#measurement-data">HDFView</a></p></li>
 <li><p>Check that the table <code>acceleration</code> contains about 95 000 values</p></li>
 <li><p>Check that the table contains three columns</p></li>
@@ -1802,23 +1818,23 @@ usbipd wsl attach --busid 5-4</code></pre></li>
 <li><p>Check that <code>Sensor_Range</code> contains the correct maximum acceleration values for “Test-STH”</p></li>
 <li><p>Check that <code>Start_Time</code> contains (roughly) the date and time when you executed the command from step 5</p></li>
 <li><p>Check that ICOc handles the following incorrect program calls. The program should <strong>not crash</strong> and print a (helpful) <strong>error description</strong> (not a stak trace) before it exits.</p>
-<div class="sourceCode" id="cb118"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb118-1"><a href="#cb118-1" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-b</span> <span class="st">&#39;12-12-12-12-12&#39;</span></span>
-<span id="cb118-2"><a href="#cb118-2" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-n</span> <span class="st">&#39;TooooLong&#39;</span></span>
-<span id="cb118-3"><a href="#cb118-3" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-s</span> 1</span>
-<span id="cb118-4"><a href="#cb118-4" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-a</span> 257</span>
-<span id="cb118-5"><a href="#cb118-5" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-o</span> <span class="at">-1</span></span>
-<span id="cb118-6"><a href="#cb118-6" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-1</span> <span class="st">&#39; -1&#39;</span></span>
-<span id="cb118-7"><a href="#cb118-7" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-2</span> 256</span>
-<span id="cb118-8"><a href="#cb118-8" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-3</span> nine</span>
-<span id="cb118-9"><a href="#cb118-9" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-1</span> 0 <span class="at">-2</span> 0 <span class="at">-3</span> 0 <span class="at">-n</span> Test-STH</span></code></pre></div></li>
+<div class="sourceCode" id="cb120"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb120-1"><a href="#cb120-1" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-b</span> <span class="st">&#39;12-12-12-12-12&#39;</span></span>
+<span id="cb120-2"><a href="#cb120-2" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-n</span> <span class="st">&#39;TooooLong&#39;</span></span>
+<span id="cb120-3"><a href="#cb120-3" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-s</span> 1</span>
+<span id="cb120-4"><a href="#cb120-4" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-a</span> 257</span>
+<span id="cb120-5"><a href="#cb120-5" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-o</span> <span class="at">-1</span></span>
+<span id="cb120-6"><a href="#cb120-6" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-1</span> <span class="st">&#39; -1&#39;</span></span>
+<span id="cb120-7"><a href="#cb120-7" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-2</span> 256</span>
+<span id="cb120-8"><a href="#cb120-8" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-3</span> nine</span>
+<span id="cb120-9"><a href="#cb120-9" tabindex="-1"></a><span class="ex">icoc</span> <span class="at">-1</span> 0 <span class="at">-2</span> 0 <span class="at">-3</span> 0 <span class="at">-n</span> Test-STH</span></code></pre></div></li>
 </ol>
 </div>
-<div id="check-user-interface" class="section level6 hasAnchor" number="7.3.3.3.1.2">
-<h6><span class="header-section-number">7.3.3.3.1.2</span> Check User Interface<a href="#check-user-interface" class="anchor-section" aria-label="Anchor link to header"></a></h6>
+<div id="check-user-interface" class="section level6 hasAnchor" number="7.3.3.3.1.3">
+<h6><span class="header-section-number">7.3.3.3.1.3</span> Check User Interface<a href="#check-user-interface" class="anchor-section" aria-label="Anchor link to header"></a></h6>
 <ol style="list-style-type: decimal">
 <li><p>Repeat steps 1. – 4. from the test above</p></li>
 <li><p>Open ICOc using the following command:</p>
-<div class="sourceCode" id="cb119"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb119-1"><a href="#cb119-1" tabindex="-1"></a><span class="ex">icoc</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb121"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb121-1"><a href="#cb121-1" tabindex="-1"></a><span class="ex">icoc</span></span></code></pre></div></li>
 <li><p>The main menu of ICOc should show up</p></li>
 <li><p>Try to connect to a non-existent STH</p>
 <ol style="list-style-type: decimal">
@@ -1912,7 +1928,7 @@ usbipd wsl attach --busid 5-4</code></pre></li>
 <p><strong>Note:</strong> For the text below we assume that you installed <a href="https://en.wikipedia.org/wiki/Make_(software)#Makefile"><code>make</code></a> on your machine.</p>
 </blockquote>
 <p>To run all checks, the STH test and the STU test use the following <code>make</code> command:</p>
-<div class="sourceCode" id="cb120"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb120-1"><a href="#cb120-1" tabindex="-1"></a><span class="fu">make</span> run</span></code></pre></div>
+<div class="sourceCode" id="cb122"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb122-1"><a href="#cb122-1" tabindex="-1"></a><span class="fu">make</span> run</span></code></pre></div>
 <p>Afterwards make sure there were no (unexpected) errors in the output of the STH and STU test.</p>
 </div>
 </div>
@@ -1924,7 +1940,7 @@ usbipd wsl attach --busid 5-4</code></pre></li>
 <ol style="list-style-type: decimal">
 <li><p>Set the value of <code>sth</code> → <code>status</code> in the <a href="#changing-configuration-values">configuration</a> to <code>Epoxied</code></p></li>
 <li><p>Execute the command:</p>
-<div class="sourceCode" id="cb121"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb121-1"><a href="#cb121-1" tabindex="-1"></a><span class="fu">make</span> run</span></code></pre></div>
+<div class="sourceCode" id="cb123"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb123-1"><a href="#cb123-1" tabindex="-1"></a><span class="fu">make</span> run</span></code></pre></div>
 <p>in the root of the repository</p></li>
 </ol></li>
 <li><p>Check that the <strong>firmware flash</strong> works in Windows</p>
@@ -1960,14 +1976,14 @@ usbipd wsl attach --busid 5-4</code></pre></li>
 <li><p>Update the <a href="https://pypi.org/project/icoc">official ICOc Python package on PyPI</a>:</p>
 <ol style="list-style-type: decimal">
 <li><p>Install <code>build</code> and <code>twine</code>:</p>
-<div class="sourceCode" id="cb122"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb122-1"><a href="#cb122-1" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">--upgrade</span> build twine</span></code></pre></div></li>
+<div class="sourceCode" id="cb124"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb124-1"><a href="#cb124-1" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">--upgrade</span> build twine</span></code></pre></div></li>
 <li><p>Build the package (in the root directory of the repository):</p>
-<div class="sourceCode" id="cb123"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb123-1"><a href="#cb123-1" tabindex="-1"></a><span class="ex">python3</span> <span class="at">-m</span> build</span></code></pre></div></li>
+<div class="sourceCode" id="cb125"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb125-1"><a href="#cb125-1" tabindex="-1"></a><span class="ex">python3</span> <span class="at">-m</span> build</span></code></pre></div></li>
 <li><p>Check the package:</p>
-<div class="sourceCode" id="cb124"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb124-1"><a href="#cb124-1" tabindex="-1"></a><span class="ex">twine</span> check dist/<span class="pp">*</span></span></code></pre></div>
+<div class="sourceCode" id="cb126"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb126-1"><a href="#cb126-1" tabindex="-1"></a><span class="ex">twine</span> check dist/<span class="pp">*</span></span></code></pre></div>
 <p>The output of the command above should print the text <code>PASSED</code> twice.</p></li>
 <li><p>Upload the package to PyPI:</p>
-<div class="sourceCode" id="cb125"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb125-1"><a href="#cb125-1" tabindex="-1"></a><span class="ex">twine</span> upload dist/<span class="pp">*</span></span></code></pre></div>
+<div class="sourceCode" id="cb127"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb127-1"><a href="#cb127-1" tabindex="-1"></a><span class="ex">twine</span> upload dist/<span class="pp">*</span></span></code></pre></div>
 <blockquote>
 <p><strong>Note:</strong> For the command above to work you need an API token, which you can create after <a href="https://pypi.org/account/login/">logging into the PyPI <code>mytoolit</code> account</a>. If you need access to the account, please contact <a href="https://github.com/sanssecours">René Schwaiger</a>.</p>
 </blockquote></li>
