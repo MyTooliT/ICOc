@@ -148,7 +148,7 @@ and make sure that it reports no test failures.
 
 The text below specifies extended manual test that should be executed before we [release a new version of ICOc](#development:section:release). Please note that the tests assume that you use more or less the [default configuration values](https://github.com/MyTooliT/ICOc/blob/main/mytoolit/config/config.yaml).
 
-###### Check Command Line Interface
+###### Check the Performance of the Library
 
 1. Open your favorite terminal application and change your working directory to the root of the repository
 
@@ -167,11 +167,15 @@ The text below specifies extended manual test that should be executed before we 
    ```
 
 4. Give your test STH the [name](#tutorials:section:sth-renaming) “Test-STH”
-5. Measure data for 10 seconds using the following command:
+
+5. Run the following command
 
    ```sh
-   icoc -n 'Test-STH' -r 10
+    icon measure -t 300 -n Test-STH
    ```
+
+   - There should be **no exceptions**
+   - The **data loss must be below 0.1 (1 %)**.
 
 6. Check that the repo now contains a HDF5 (`*.hdf5`) file
 
@@ -180,12 +184,32 @@ The text below specifies extended manual test that should be executed before we 
    ```
 
 7. Open the file in [HDFView](#measurement-data)
-8. Check that the table `acceleration` contains about 95 000 values
-9. Check that the table contains three columns
-10. Check that the meta attributes `Sensor_Range` and `Start_Time` exist
-11. Check that `Sensor_Range` contains the correct maximum acceleration values for “Test-STH”
-12. Check that `Start_Time` contains (roughly) the date and time when you executed the command from step 5
-13. Check that ICOc handles the following incorrect program calls. The program should **not crash** and print a (helpful) **error description** (not a stak trace) before it exits.
+
+8. Check that the timestamp of the last value in the `acceleration` table has **approximately the value `30 000 000`** (all values above `29 900 000` should be fine).
+
+###### Check Command Line Interface
+
+1. Repeat steps 1. – 4. from the test above
+
+2. Measure data for 10 seconds using the following command:
+
+   ```sh
+   icoc -n 'Test-STH' -r 10
+   ```
+
+3. Check that the repo now contains a HDF5 (`*.hdf5`) file
+
+   ```sh
+   ls *.hdf5
+   ```
+
+4. Open the file in [HDFView](#measurement-data)
+5. Check that the table `acceleration` contains about 95 000 values
+6. Check that the table contains three columns
+7. Check that the meta attributes `Sensor_Range` and `Start_Time` exist
+8. Check that `Sensor_Range` contains the correct maximum acceleration values for “Test-STH”
+9. Check that `Start_Time` contains (roughly) the date and time when you executed the command from step 5
+10. Check that ICOc handles the following incorrect program calls. The program should **not crash** and print a (helpful) **error description** (not a stak trace) before it exits.
 
     ```sh
     icoc -b '12-12-12-12-12'
