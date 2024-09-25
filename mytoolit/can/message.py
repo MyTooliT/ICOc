@@ -17,7 +17,7 @@ from netaddr import EUI
 from mytoolit.can.calibration import CalibrationMeasurementFormat
 from mytoolit.can.command import Command
 from mytoolit.can.identifier import Identifier
-from mytoolit.can.node import Node
+from mytoolit.can.node import NodeId
 from mytoolit.can.status import State
 from mytoolit.can.streaming import StreamingFormat, StreamingFormatVoltage
 from mytoolit.utility import convert_bytes_to_text
@@ -33,7 +33,7 @@ class Message:
         *message: Union[TPCANMsg, CANMessage],
         identifier: Optional[Identifier] = None,
         data: Optional[List[int]] = None,
-        **keyword_arguments: Union[Command, Node, None, str, int, bool],
+        **keyword_arguments: Union[Command, NodeId, None, str, int, bool],
     ) -> None:
         """Create a new message based on the given attributes
 
