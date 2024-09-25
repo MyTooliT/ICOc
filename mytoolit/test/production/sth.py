@@ -427,7 +427,7 @@ class TestSTH(TestSensorNode):
             acceleration_slope = acceleration_max / adc_max
             acceleration_offset = -(acceleration_max / 2)
 
-            # pylint: disable=too-many-arguments
+            # pylint: disable=too-many-arguments, too-many-positional-arguments
 
             async def write_read_check(
                 class_variable, write_routine, value, read_routine, axis, name
@@ -446,7 +446,7 @@ class TestSTH(TestSensorNode):
                     ),
                 )
 
-            # pylint: enable=too-many-arguments
+            # pylint: enable=too-many-arguments, too-many-positional-arguments
 
             class_variables = (
                 "acceleration_slope_x",

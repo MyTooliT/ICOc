@@ -517,7 +517,7 @@ class Network:
 
         return self._notifier
 
-    # pylint: disable=too-many-arguments
+    # pylint: disable=too-many-arguments, too-many-positional-arguments
 
     async def _request(
         self,
@@ -695,7 +695,7 @@ class Network:
             message, description=description, response_data=expected_data
         )
 
-    # pylint: enable=too-many-arguments
+    # pylint: enable=too-many-arguments, too-many-positional-arguments
 
     async def _request_product_data(
         self,
@@ -2653,7 +2653,7 @@ class Network:
         data = await self.read_eeprom(address, offset, length=4, node=node)
         return unpack("<f", bytearray(data))[0]
 
-    # pylint: disable=too-many-arguments
+    # pylint: disable=too-many-arguments, too-many-positional-arguments
 
     async def read_eeprom_int(
         self,
@@ -2712,7 +2712,7 @@ class Network:
             signed=signed,
         )
 
-    # pylint: enable=too-many-arguments
+    # pylint: enable=too-many-arguments, too-many-positional-arguments
 
     async def read_eeprom_text(
         self,
@@ -2768,7 +2768,7 @@ class Network:
         data = await self.read_eeprom(address, offset, length, node)
         return convert_bytes_to_text(data, until_null=True)
 
-    # pylint: disable=too-many-arguments
+    # pylint: disable=too-many-arguments, too-many-positional-arguments
 
     async def write_eeprom(
         self,
@@ -2854,7 +2854,7 @@ class Network:
             data = data[4:]
             offset += write_length
 
-    # pylint: enable=too-many-arguments
+    # pylint: enable=too-many-arguments, too-many-positional-arguments
 
     async def write_eeprom_float(
         self,
@@ -2903,7 +2903,7 @@ class Network:
         data = list(pack("f", value))
         await self.write_eeprom(address, offset, data, node=node)
 
-    # pylint: disable=too-many-arguments
+    # pylint: disable=too-many-arguments, too-many-positional-arguments
 
     async def write_eeprom_int(
         self,
@@ -2961,9 +2961,9 @@ class Network:
         data = list(value.to_bytes(length, byteorder="little", signed=signed))
         await self.write_eeprom(address, offset, data, node=node)
 
-    # pylint: enable=too-many-arguments
+    # pylint: enable=too-many-arguments, too-many-positional-arguments
 
-    # pylint: disable=too-many-arguments
+    # pylint: disable=too-many-arguments, too-many-positional-arguments
 
     async def write_eeprom_text(
         self,

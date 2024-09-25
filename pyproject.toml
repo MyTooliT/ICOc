@@ -89,9 +89,6 @@ ignore_missing_imports = true
 [tool.pylint.main]
 ignore-paths = [".*mytoolit\\\\old.*|.*mytoolit/old.*"]
 
-[tool.pylint.design]
-max-positional-arguments = 7
-
 [tool.pytest.ini_options]
 # - Use doctests
 # - Fail after first errors
