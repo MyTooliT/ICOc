@@ -5,7 +5,7 @@
 from time import sleep
 
 from mytoolit.config import settings
-from mytoolit.can.node import Node
+from mytoolit.can.node import NodeId
 from mytoolit.test.production.node import TestNode
 
 # -- Classes ------------------------------------------------------------------
@@ -82,7 +82,7 @@ class TestSensorNode(TestNode):
 
         self.loop.run_until_complete(self._test_connection("STH 1"))
 
-    async def _test_name(self, receiver: Node, name: str) -> str:
+    async def _test_name(self, receiver: NodeId, name: str) -> str:
         """Check if writing and reading back the name of a sensor device works
 
         Parameters

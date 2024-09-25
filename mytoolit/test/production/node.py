@@ -20,7 +20,8 @@ from dynaconf.utils.boxing import DynaBox
 from semantic_version import Version
 
 from mytoolit import __version__
-from mytoolit.can import Network, Node, State
+from mytoolit.can import Network, State
+from mytoolit.can.node import NodeId
 from mytoolit.cmdline.commander import Commander
 from mytoolit.config import settings
 from mytoolit.eeprom import EEPROMStatus
@@ -363,7 +364,7 @@ class TestNode(TestCase):
         commander.upload_flash(image_filepath)
 
     async def _test_eeprom_product_data(
-        self, node: Node, config: DynaBox
+        self, node: NodeId, config: DynaBox
     ) -> None:
         """Test if reading and writing the product data EEPROM page works
 
@@ -496,7 +497,7 @@ class TestNode(TestCase):
         cls.oem_data = "".join(map(chr, oem_data_list)).replace("\x00", "")
 
     async def _test_eeprom_statistics(
-        self, node: Node, production_date: date, batch_number: int
+        self, node: NodeId, production_date: date, batch_number: int
     ) -> None:
         """Test if reading and writing the statistics EEPROM page works
 
@@ -634,7 +635,7 @@ class TestNode(TestCase):
             + f"read batch number “{cls.batch_number}”",
         )
 
-    async def _test_eeprom_status(self, node: Node) -> None:
+    async def _test_eeprom_status(self, node: NodeId) -> None:
         """Test if reading and writing the EEPROM status byte works
 
         Attributes

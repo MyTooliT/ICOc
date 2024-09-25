@@ -10,7 +10,7 @@ from os import devnull
 from sys import stderr
 from unittest import main as unittest_main
 
-from mytoolit.can.node import Node
+from mytoolit.can.node import NodeId
 from mytoolit.can.network import CANInitError, Network, NoResponseError
 from mytoolit.config import settings
 from mytoolit.test.production import TestNode
@@ -129,14 +129,16 @@ class TestSTU(TestNode):
             # = Product Data =
             # ================
 
-            await self._test_eeprom_product_data(Node(receiver), settings.stu)
+            await self._test_eeprom_product_data(
+                NodeId(receiver), settings.stu
+            )
 
             # ==============
             # = Statistics =
             # ==============
 
             await self._test_eeprom_statistics(
-                Node(receiver),
+                NodeId(receiver),
                 settings.stu.production_date,
                 settings.stu.batch_number,
             )
@@ -145,7 +147,7 @@ class TestSTU(TestNode):
             # = EEPROM Status =
             # =================
 
-            await self._test_eeprom_status(Node(receiver))
+            await self._test_eeprom_status(NodeId(receiver))
 
         self.loop.run_until_complete(test_eeprom())
 

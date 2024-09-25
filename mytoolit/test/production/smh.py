@@ -4,7 +4,7 @@
 
 from unittest import main as unittest_main
 
-from mytoolit.can.node import Node
+from mytoolit.can.node import NodeId
 from mytoolit.cmdline.commander import Commander
 from mytoolit.config import settings
 from mytoolit.measurement.sensor import guess_sensor, SensorConfiguration
@@ -75,7 +75,7 @@ class TestSMH(TestSensorNode):
         async def test_eeprom():
             """Test the EERPOM of the SMH"""
 
-            receiver = Node("STH 1")
+            receiver = NodeId("STH 1")
             cls = type(self)
 
             # ========
