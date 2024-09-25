@@ -34,7 +34,7 @@ from mytoolit.can.adc import ADCConfiguration
 from mytoolit.can.calibration import CalibrationMeasurementFormat
 from mytoolit.can.error import UnsupportedFeatureException
 from mytoolit.can.message import Message
-from mytoolit.can.node import Node
+from mytoolit.can.node import NodeId
 from mytoolit.can.streaming import (
     AsyncStreamBuffer,
     StreamingConfiguration,
@@ -437,7 +437,7 @@ class Network:
         # We create the notifier when we need it for the first time, since
         # there might not be an active loop when you create the network object
         self._notifier: Optional[Notifier] = None
-        self.sender = Node("SPU 1")
+        self.sender = NodeId("SPU 1")
 
     async def __aenter__(self) -> Network:
         """Initialize the network
@@ -608,7 +608,7 @@ class Network:
 
     async def _request_bluetooth(
         self,
-        node: Union[str, Node],
+        node: Union[str, NodeId],
         subcommand: int,
         description: str,
         device_number: Optional[int] = None,
@@ -701,7 +701,7 @@ class Network:
         self,
         block_command: Union[str, int],
         description: str,
-        node: Union[str, Node],
+        node: Union[str, NodeId],
     ) -> CANMessage:
         """Send a request for product data
 
@@ -739,7 +739,7 @@ class Network:
     # = System =
     # ==========
 
-    async def reset_node(self, node: Union[str, Node]) -> None:
+    async def reset_node(self, node: Union[str, NodeId]) -> None:
         """Reset the specified node
 
         Parameters
@@ -790,7 +790,7 @@ class Network:
     # - Get/Set State -
     # -----------------
 
-    async def get_state(self, node: Union[str, Node] = "STU 1") -> State:
+    async def get_state(self, node: Union[str, NodeId] = "STU 1") -> State:
         """Get the current state of the specified node
 
         Parameters
@@ -833,7 +833,7 @@ class Network:
     # - Bluetooth -
     # -------------
 
-    async def activate_bluetooth(self, node: Union[str, Node] = "STU 1"):
+    async def activate_bluetooth(self, node: Union[str, NodeId] = "STU 1"):
         """Activate Bluetooth on the specified node
 
         Parameters
@@ -864,7 +864,7 @@ class Network:
         )
 
     async def deactivate_bluetooth(
-        self, node: Union[str, Node] = "STU 1"
+        self, node: Union[str, NodeId] = "STU 1"
     ) -> None:
         """Deactivate Bluetooth on a node
 
@@ -897,7 +897,7 @@ class Network:
         )
 
     async def get_available_devices(
-        self, node: Union[str, Node] = "STU 1"
+        self, node: Union[str, NodeId] = "STU 1"
     ) -> int:
         """Retrieve the number of available Bluetooth devices at a node
 
@@ -948,7 +948,7 @@ class Network:
         return available_devices
 
     async def get_name(
-        self, node: Union[str, Node] = "STU 1", device_number: int = 0xFF
+        self, node: Union[str, NodeId] = "STU 1", device_number: int = 0xFF
     ) -> str:
         """Retrieve the name of a Bluetooth device
 
@@ -1034,7 +1034,7 @@ class Network:
         return first_part + second_part
 
     async def set_name(
-        self, name: str, node: Union[str, Node] = "STU 1"
+        self, name: str, node: Union[str, NodeId] = "STU 1"
     ) -> None:
         """Set the name of a node
 
@@ -1094,7 +1094,7 @@ class Network:
         )
 
     async def connect_with_device_number(
-        self, device_number: int = 0, node: Union[str, Node] = "STU 1"
+        self, device_number: int = 0, node: Union[str, NodeId] = "STU 1"
     ) -> bool:
         """Connect to a Bluetooth device using a device number
 
@@ -1150,7 +1150,7 @@ class Network:
 
         return bool(response.data[2])
 
-    async def is_connected(self, node: Union[str, Node] = "STU 1") -> bool:
+    async def is_connected(self, node: Union[str, NodeId] = "STU 1") -> bool:
         """Check if the node is connected to a Bluetooth device
 
         Parameters
@@ -1212,7 +1212,7 @@ class Network:
         return bool(response.data[2])
 
     async def get_rssi(
-        self, node: Union[str, Node] = "STH 1", device_number: int = 0xFF
+        self, node: Union[str, NodeId] = "STH 1", device_number: int = 0xFF
     ):
         """Retrieve the RSSI (Received Signal Strength Indication) of a device
 
@@ -1556,7 +1556,7 @@ class Network:
         )
 
     async def get_mac_address(
-        self, node: Union[str, Node] = "STH 1", device_number: int = 0xFF
+        self, node: Union[str, NodeId] = "STH 1", device_number: int = 0xFF
     ) -> EUI:
         """Retrieve the Bluetooth MAC address of a device
 
@@ -1619,7 +1619,7 @@ class Network:
         return EUI(":".join(f"{byte:02x}" for byte in response.data[:1:-1]))
 
     async def connect_with_mac_address(
-        self, mac_address: EUI, node: Union[str, Node] = "STU 1"
+        self, mac_address: EUI, node: Union[str, NodeId] = "STU 1"
     ) -> None:
         """Connect to a Bluetooth device using its MAC address
 
@@ -1645,7 +1645,7 @@ class Network:
         )
 
     async def get_sensor_devices(
-        self, node: Union[str, Node] = "STU 1"
+        self, node: Union[str, NodeId] = "STU 1"
     ) -> List[STHDeviceInfo]:
         """Retrieve a list of available sensor devices
 
@@ -2535,7 +2535,7 @@ class Network:
         address: int,
         offset: int,
         length: int,
-        node: Union[str, Node] = "STU 1",
+        node: Union[str, NodeId] = "STU 1",
     ) -> List[int]:
         """Read EEPROM data
 
@@ -2589,7 +2589,7 @@ class Network:
                 block="EEPROM",
                 block_command="Read",
                 sender=self.sender,
-                receiver=Node(node),
+                receiver=NodeId(node),
                 request=True,
                 data=[address, offset, read_length, *reserved],
             )
@@ -2605,7 +2605,7 @@ class Network:
         return read_data
 
     async def read_eeprom_float(
-        self, address: int, offset: int, node: Union[str, Node] = "STU 1"
+        self, address: int, offset: int, node: Union[str, NodeId] = "STU 1"
     ) -> float:
         """Read EEPROM data in float format
 
@@ -2661,7 +2661,7 @@ class Network:
         offset: int,
         length: int,
         signed: bool = False,
-        node: Union[str, Node] = "STU 1",
+        node: Union[str, NodeId] = "STU 1",
     ) -> int:
         """Read an integer value from the EEPROM
 
@@ -2719,7 +2719,7 @@ class Network:
         address: int,
         offset: int,
         length: int,
-        node: Union[str, Node] = "STU 1",
+        node: Union[str, NodeId] = "STU 1",
     ) -> str:
         """Read EEPROM data in ASCII format
 
@@ -2776,7 +2776,7 @@ class Network:
         offset: int,
         data: List[int],
         length: Optional[int] = None,
-        node: Union[str, Node] = "STU 1",
+        node: Union[str, NodeId] = "STU 1",
     ) -> None:
         """Write EEPROM data at the specified address
 
@@ -2843,7 +2843,7 @@ class Network:
                 block="EEPROM",
                 block_command="Write",
                 sender=self.sender,
-                receiver=Node(node),
+                receiver=NodeId(node),
                 request=True,
                 data=[address, offset, write_length, *reserved, *write_data],
             )
@@ -2861,7 +2861,7 @@ class Network:
         address: int,
         offset: int,
         value: float,
-        node: Union[str, Node] = "STU 1",
+        node: Union[str, NodeId] = "STU 1",
     ) -> None:
         """Write a float value at the specified EEPROM address
 
@@ -2912,7 +2912,7 @@ class Network:
         value: int,
         length: int,
         signed: bool = False,
-        node: Union[str, Node] = "STU 1",
+        node: Union[str, NodeId] = "STU 1",
     ) -> None:
         """Write an integer number at the specified EEPROM address
 
@@ -2971,7 +2971,7 @@ class Network:
         offset: int,
         text: str,
         length: int,
-        node: Union[str, Node] = "STU 1",
+        node: Union[str, NodeId] = "STU 1",
     ) -> None:
         """Write a string at the specified EEPROM address
 
@@ -3024,7 +3024,7 @@ class Network:
     # ========================
 
     async def read_eeprom_status(
-        self, node: Union[str, Node] = "STU 1"
+        self, node: Union[str, NodeId] = "STU 1"
     ) -> EEPROMStatus:
         """Retrieve EEPROM status byte
 
@@ -3063,7 +3063,9 @@ class Network:
         )
 
     async def write_eeprom_status(
-        self, value: Union[int, EEPROMStatus], node: Union[str, Node] = "STU 1"
+        self,
+        value: Union[int, EEPROMStatus],
+        node: Union[str, NodeId] = "STU 1",
     ) -> None:
         """Change the value of the EEPROM status byte
 
@@ -3102,7 +3104,9 @@ class Network:
             node=node,
         )
 
-    async def read_eeprom_name(self, node: Union[str, Node] = "STU 1") -> str:
+    async def read_eeprom_name(
+        self, node: Union[str, NodeId] = "STU 1"
+    ) -> str:
         """Retrieve the name of the node from the EEPROM
 
         Parameters
@@ -3136,7 +3140,7 @@ class Network:
         )
 
     async def write_eeprom_name(
-        self, name: str, node: Union[str, Node] = "STU 1"
+        self, name: str, node: Union[str, NodeId] = "STU 1"
     ) -> None:
         """Write the name of the node into the EEPROM
 
@@ -3462,7 +3466,9 @@ class Network:
     # = Product Data =
     # ================
 
-    async def read_eeprom_gtin(self, node: Union[str, Node] = "STU 1") -> int:
+    async def read_eeprom_gtin(
+        self, node: Union[str, NodeId] = "STU 1"
+    ) -> int:
         """Read the global trade identifier number (GTIN) from the EEPROM
 
         Parameters
@@ -3497,7 +3503,7 @@ class Network:
         )
 
     async def write_eeprom_gtin(
-        self, gtin: int, node: Union[str, Node] = "STU 1"
+        self, gtin: int, node: Union[str, NodeId] = "STU 1"
     ) -> None:
         """Write the global trade identifier number (GTIN) to the EEPROM
 
@@ -3531,7 +3537,7 @@ class Network:
         )
 
     async def read_eeprom_hardware_version(
-        self, node: Union[str, Node] = "STU 1"
+        self, node: Union[str, NodeId] = "STU 1"
     ) -> Version:
         """Read the current hardware version from the EEPROM
 
@@ -3569,7 +3575,7 @@ class Network:
         return Version(major=major, minor=minor, patch=patch)
 
     async def write_eeprom_hardware_version(
-        self, version: Union[str, Version], node: Union[str, Node] = "STU 1"
+        self, version: Union[str, Version], node: Union[str, NodeId] = "STU 1"
     ):
         """Write hardware version to the EEPROM
 
@@ -3613,7 +3619,7 @@ class Network:
         )
 
     async def read_eeprom_firmware_version(
-        self, node: Union[str, Node] = "STU 1"
+        self, node: Union[str, NodeId] = "STU 1"
     ) -> Version:
         """Retrieve the current firmware version from the EEPROM
 
@@ -3651,7 +3657,7 @@ class Network:
         return Version(major=major, minor=minor, patch=patch)
 
     async def write_eeprom_firmware_version(
-        self, version: Union[str, Version], node: Union[str, Node] = "STU 1"
+        self, version: Union[str, Version], node: Union[str, NodeId] = "STU 1"
     ) -> None:
         """Write firmware version to the EEPROM
 
@@ -3696,7 +3702,7 @@ class Network:
         )
 
     async def read_eeprom_release_name(
-        self, node: Union[str, Node] = "STU 1"
+        self, node: Union[str, NodeId] = "STU 1"
     ) -> str:
         """Retrieve the current release name from the EEPROM
 
@@ -3731,7 +3737,7 @@ class Network:
         )
 
     async def write_eeprom_release_name(
-        self, name: str, node: Union[str, Node] = "STU 1"
+        self, name: str, node: Union[str, NodeId] = "STU 1"
     ):
         """Write the release name to the EEPROM
 
@@ -3767,7 +3773,7 @@ class Network:
         )
 
     async def read_eeprom_serial_number(
-        self, node: Union[str, Node] = "STU 1"
+        self, node: Union[str, NodeId] = "STU 1"
     ) -> str:
         """Retrieve the serial number from the EEPROM
 
@@ -3804,7 +3810,7 @@ class Network:
         )
 
     async def write_eeprom_serial_number(
-        self, serial_number: str, node: Union[str, Node] = "STU 1"
+        self, serial_number: str, node: Union[str, NodeId] = "STU 1"
     ):
         """Write the serial number to the EEPROM
 
@@ -3840,7 +3846,7 @@ class Network:
         )
 
     async def read_eeprom_product_name(
-        self, node: Union[str, Node] = "STU 1"
+        self, node: Union[str, NodeId] = "STU 1"
     ) -> str:
         """Retrieve the product name from the EEPROM
 
@@ -3876,7 +3882,7 @@ class Network:
         )
 
     async def write_eeprom_product_name(
-        self, name: str, node: Union[str, Node] = "STU 1"
+        self, name: str, node: Union[str, NodeId] = "STU 1"
     ):
         """Write the product name to the EEPROM
 
@@ -3910,7 +3916,7 @@ class Network:
         )
 
     async def read_eeprom_oem_data(
-        self, node: Union[str, Node] = "STU 1"
+        self, node: Union[str, NodeId] = "STU 1"
     ) -> List[int]:
         """Retrieve the OEM data from the EEPROM
 
@@ -3946,7 +3952,7 @@ class Network:
         )
 
     async def write_eeprom_oem_data(
-        self, data: List[int], node: Union[str, Node] = "STU 1"
+        self, data: List[int], node: Union[str, NodeId] = "STU 1"
     ):
         """Write OEM data to the EEPROM
 
@@ -3985,7 +3991,7 @@ class Network:
     # ==============
 
     async def read_eeprom_power_on_cycles(
-        self, node: Union[str, Node] = "STU 1"
+        self, node: Union[str, NodeId] = "STU 1"
     ) -> int:
         """Retrieve the number of power on cycles from the EEPROM
 
@@ -4021,7 +4027,7 @@ class Network:
         )
 
     async def write_eeprom_power_on_cycles(
-        self, times: int, node: Union[str, Node] = "STU 1"
+        self, times: int, node: Union[str, NodeId] = "STU 1"
     ):
         """Write the number of power on cycles to the EEPROM
 
@@ -4055,7 +4061,7 @@ class Network:
         )
 
     async def read_eeprom_power_off_cycles(
-        self, node: Union[str, Node] = "STU 1"
+        self, node: Union[str, NodeId] = "STU 1"
     ) -> int:
         """Retrieve the number of power off cycles from the EEPROM
 
@@ -4091,7 +4097,7 @@ class Network:
         )
 
     async def write_eeprom_power_off_cycles(
-        self, times: int, node: Union[str, Node] = "STU 1"
+        self, times: int, node: Union[str, NodeId] = "STU 1"
     ):
         """Write the number of power off cycles to the EEPROM
 
@@ -4125,7 +4131,7 @@ class Network:
         )
 
     async def read_eeprom_operating_time(
-        self, node: Union[str, Node] = "STU 1"
+        self, node: Union[str, NodeId] = "STU 1"
     ) -> int:
         """Retrieve the operating time from the EEPROM
 
@@ -4161,7 +4167,7 @@ class Network:
         )
 
     async def write_eeprom_operating_time(
-        self, seconds: int, node: Union[str, Node] = "STU 1"
+        self, seconds: int, node: Union[str, NodeId] = "STU 1"
     ):
         """Write operating time to the EEPROM
 
@@ -4196,7 +4202,7 @@ class Network:
         )
 
     async def read_eeprom_under_voltage_counter(
-        self, node: Union[str, Node] = "STU 1"
+        self, node: Union[str, NodeId] = "STU 1"
     ) -> int:
         """Retrieve the under voltage counter value from the EEPROM
 
@@ -4233,7 +4239,7 @@ class Network:
         )
 
     async def write_eeprom_under_voltage_counter(
-        self, times: int, node: Union[str, Node] = "STU 1"
+        self, times: int, node: Union[str, NodeId] = "STU 1"
     ):
         """Write the under voltage counter value to the EEPROM
 
@@ -4269,7 +4275,7 @@ class Network:
         )
 
     async def read_eeprom_watchdog_reset_counter(
-        self, node: Union[str, Node] = "STU 1"
+        self, node: Union[str, NodeId] = "STU 1"
     ) -> int:
         """Retrieve the watchdog reset counter value from the EEPROM
 
@@ -4306,7 +4312,7 @@ class Network:
         )
 
     async def write_eeprom_watchdog_reset_counter(
-        self, times: int, node: Union[str, Node] = "STU 1"
+        self, times: int, node: Union[str, NodeId] = "STU 1"
     ) -> None:
         """Write the watchdog reset counter value to the EEPROM
 
@@ -4342,7 +4348,7 @@ class Network:
         )
 
     async def read_eeprom_production_date(
-        self, node: Union[str, Node] = "STU 1"
+        self, node: Union[str, NodeId] = "STU 1"
     ) -> date:
         """Retrieve the production date from the EEPROM
 
@@ -4385,7 +4391,7 @@ class Network:
     # pylint: disable=redefined-outer-name
 
     async def write_eeprom_production_date(
-        self, date: Union[date, str], node: Union[str, Node] = "STU 1"
+        self, date: Union[date, str], node: Union[str, NodeId] = "STU 1"
     ) -> None:
         """Write the production date to the EEPROM
 
@@ -4445,7 +4451,7 @@ class Network:
     # pylint: enable=redefined-outer-name
 
     async def read_eeprom_batch_number(
-        self, node: Union[str, Node] = "STU 1"
+        self, node: Union[str, NodeId] = "STU 1"
     ) -> int:
         """Retrieve the batch number from the EEPROM
 
@@ -4481,7 +4487,7 @@ class Network:
         )
 
     async def write_eeprom_batch_number(
-        self, number: int, node: Union[str, Node] = "STU 1"
+        self, number: int, node: Union[str, NodeId] = "STU 1"
     ) -> None:
         """Write the batch number to the EEPROM
 
@@ -4996,7 +5002,7 @@ class Network:
     # = Product Data =
     # ================
 
-    async def get_gtin(self, node: Union[str, Node]) -> int:
+    async def get_gtin(self, node: Union[str, NodeId]) -> int:
         """Retrieve the GTIN (Global Trade Identification Number) of a node
 
         Parameters
@@ -5034,7 +5040,7 @@ class Network:
 
         return int.from_bytes(response.data, byteorder="little")
 
-    async def get_hardware_version(self, node: Union[str, Node]) -> Version:
+    async def get_hardware_version(self, node: Union[str, NodeId]) -> Version:
         """Retrieve the hardware version of a node
 
         Parameters
@@ -5073,7 +5079,7 @@ class Network:
         major, minor, patch = response.data[-3:]
         return Version(major=major, minor=minor, patch=patch)
 
-    async def get_firmware_version(self, node: Union[str, Node]) -> Version:
+    async def get_firmware_version(self, node: Union[str, NodeId]) -> Version:
         """Retrieve the firmware version of a node
 
         Parameters
@@ -5112,7 +5118,7 @@ class Network:
         major, minor, patch = response.data[-3:]
         return Version(major=major, minor=minor, patch=patch)
 
-    async def get_firmware_release_name(self, node: Union[str, Node]) -> str:
+    async def get_firmware_release_name(self, node: Union[str, NodeId]) -> str:
         """Retrieve the firmware release name of a node
 
         Parameters
@@ -5150,7 +5156,7 @@ class Network:
         release_name = convert_bytes_to_text(response.data, until_null=True)
         return release_name
 
-    async def get_serial_number(self, node: Union[str, Node]) -> str:
+    async def get_serial_number(self, node: Union[str, NodeId]) -> str:
         """Retrieve the serial number of a node
 
         Parameters
@@ -5199,7 +5205,7 @@ class Network:
 
         return convert_bytes_to_text(serial_number_bytes)
 
-    async def get_product_name(self, node: Union[str, Node]) -> str:
+    async def get_product_name(self, node: Union[str, NodeId]) -> str:
         """Retrieve the product name of a node
 
         Parameters
@@ -5248,7 +5254,7 @@ class Network:
 
         return convert_bytes_to_text(product_name_bytes)
 
-    async def get_oem_data(self, node: Union[str, Node]) -> bytearray:
+    async def get_oem_data(self, node: Union[str, NodeId]) -> bytearray:
         """Retrieve the OEM (free use) data
 
         Parameters

@@ -1,6 +1,6 @@
 # -- Imports ------------------------------------------------------------------
 
-from mytoolit.can import Node
+from mytoolit.can import NodeId
 
 from mytoolit.old.network import Network as OldNetwork
 from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
@@ -13,7 +13,7 @@ class Network:
         self.sth_name = sth_name
 
         self.network = OldNetwork(
-            sender=MyToolItNetworkNr["SPU1"], receiver=Node("STU 1").value
+            sender=MyToolItNetworkNr["SPU1"], receiver=NodeId("STU 1").value
         )
 
         self.network.bConnected = False

@@ -13,10 +13,10 @@ from typing import Union
 # -- Class --------------------------------------------------------------------
 
 
-class Node:
+class NodeId:
     """This class represents a CAN node of the ICOtronic system"""
 
-    def __init__(self, node: Union[int, str, Node] = 0) -> None:
+    def __init__(self, node: Union[int, str, NodeId] = 0) -> None:
         """Create a new node from the given argument
 
         A node represents a communication participant, such as a specific STH
@@ -33,30 +33,30 @@ class Node:
 
         Create node with default value
 
-        >>> Node().value
+        >>> NodeId().value
         0
 
         Create nodes with string values
 
-        >>> Node('STH 1')
+        >>> NodeId('STH 1')
         STH 1
 
-        >>> Node('STU1')
+        >>> NodeId('STU1')
         STU 1
 
-        >>> Node('SPU 1').value
+        >>> NodeId('SPU 1').value
         15
 
         Check that we can not use incorrect numbers to initialize a node
 
-        >>> Node('STU 15')
+        >>> NodeId('STU 15')
         Traceback (most recent call last):
            ...
         ValueError: Unknown node identifier “STU 15”
 
         You can create a copy of an already existing node
 
-        >>> Node(Node('STH 2'))
+        >>> NodeId(NodeId('STH 2'))
         STH 2
 
         """
@@ -94,7 +94,7 @@ class Node:
 
             raise ValueError(f"Unknown node identifier “{node}”")
 
-        if isinstance(node, Node):
+        if isinstance(node, NodeId):
             self.value = node.value
             return
 
@@ -111,19 +111,19 @@ class Node:
         Examples
         --------
 
-        >>> Node(0)
+        >>> NodeId(0)
         Broadcast With Acknowledgment
 
-        >>> Node(31)
+        >>> NodeId(31)
         Broadcast Without Acknowledgment
 
-        >>> Node(10)
+        >>> NodeId(10)
         STH 10
 
-        >>> Node(15)
+        >>> NodeId(15)
         SPU 1
 
-        >>> Node(18)
+        >>> NodeId(18)
         STU 2
 
         """
@@ -152,13 +152,13 @@ class Node:
         Examples
         --------
 
-        >>> Node('STH 1').is_sth()
+        >>> NodeId('STH 1').is_sth()
         True
 
-        >>> Node('STU 12').is_sth()
+        >>> NodeId('STU 12').is_sth()
         False
 
-        >>> Node('STH 12').is_sth()
+        >>> NodeId('STH 12').is_sth()
         True
 
         """
@@ -176,13 +176,13 @@ class Node:
         Examples
         --------
 
-        >>> Node('STH 7').is_stu()
+        >>> NodeId('STH 7').is_stu()
         False
 
-        >>> Node('STU 14').is_stu()
+        >>> NodeId('STU 14').is_stu()
         True
 
-        >>> Node('SPU 1').is_stu()
+        >>> NodeId('SPU 1').is_stu()
         False
 
         """

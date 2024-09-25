@@ -12,7 +12,7 @@ from __future__ import annotations
 from typing import Optional, Union
 
 from mytoolit.can.command import Command
-from mytoolit.can.node import Node
+from mytoolit.can.node import NodeId
 
 # -- Class --------------------------------------------------------------------
 
@@ -28,8 +28,8 @@ class Identifier:
         block_command: Union[None, str, int] = None,
         error: Optional[bool] = None,
         request: Optional[bool] = None,
-        sender: Union[Node, None, str, int] = None,
-        receiver: Union[Node, None, str, int] = None,
+        sender: Union[NodeId, None, str, int] = None,
+        receiver: Union[NodeId, None, str, int] = None,
     ) -> None:
         """Create a new identifier from a given integer
 
@@ -159,9 +159,9 @@ class Identifier:
 
         # Sender and receiver can be either an integer or a string like object
         if sender is not None:
-            set_part(start=6, width=5, number=Node(sender).value)
+            set_part(start=6, width=5, number=NodeId(sender).value)
         if receiver is not None:
-            set_part(start=0, width=5, number=Node(receiver).value)
+            set_part(start=0, width=5, number=NodeId(receiver).value)
 
     def __eq__(self, other: object) -> bool:
         """Compare this identifier to another object
@@ -533,7 +533,7 @@ class Identifier:
         'STH 5'
         """
 
-        return repr(Node(self.sender()))
+        return repr(NodeId(self.sender()))
 
     def receiver(self) -> int:
         """Get the receiver of the message
@@ -570,7 +570,7 @@ class Identifier:
         'STH 14'
         """
 
-        return repr(Node(self.receiver()))
+        return repr(NodeId(self.receiver()))
 
 
 # -- Main ---------------------------------------------------------------------
