@@ -13,7 +13,7 @@ from unittest import main as unittest_main, skipIf
 
 from semantic_version import Version
 
-from mytoolit.can import Node
+from mytoolit.can import NodeId
 from mytoolit.can.streaming import StreamingConfiguration
 from mytoolit.config import settings
 from mytoolit.measurement import convert_raw_to_g, ratio_noise_max
@@ -393,7 +393,7 @@ class TestSTH(TestSensorNode):
                     cls.bluetooth_mac  # pylint: disable=no-member
                 )
             )
-            cls.name = await self._test_name(Node(receiver), name)
+            cls.name = await self._test_name(NodeId(receiver), name)
 
             # =========================
             # = Sleep & Advertisement =
@@ -405,14 +405,16 @@ class TestSTH(TestSensorNode):
             # = Product Data =
             # ================
 
-            await self._test_eeprom_product_data(Node(receiver), settings.sth)
+            await self._test_eeprom_product_data(
+                NodeId(receiver), settings.sth
+            )
 
             # ==============
             # = Statistics =
             # ==============
 
             await self._test_eeprom_statistics(
-                Node(receiver),
+                NodeId(receiver),
                 settings.sth.production_date,
                 settings.sth.batch_number,
             )
@@ -507,7 +509,7 @@ class TestSTH(TestSensorNode):
             # = EEPROM Status =
             # =================
 
-            await self._test_eeprom_status(Node(receiver))
+            await self._test_eeprom_status(NodeId(receiver))
 
             # =========
             # = Reset =

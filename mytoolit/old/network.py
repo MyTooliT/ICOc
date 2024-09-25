@@ -42,7 +42,7 @@ from mytoolit.can import (
     ErrorStatusSTU,
     Identifier,
     Message,
-    Node,
+    NodeId,
     NodeStatusSTH,
     NodeStatusSTU,
     UnsupportedFeatureException,
@@ -94,8 +94,8 @@ class Network(object):
 
     def __init__(
         self,
-        sender=Node("SPU 1").value,
-        receiver=Node("STH 1").value,
+        sender=NodeId("SPU 1").value,
+        receiver=NodeId("STH 1").value,
         prescaler=2,
         acquisition=8,
         oversampling=64,
@@ -1572,7 +1572,7 @@ class Network(object):
             "Payload"
         ]
 
-        if Node(receiver).is_sth():
+        if NodeId(receiver).is_sth():
             return NodeStatusSTH(psw0[0:4])
         return NodeStatusSTU(psw0[0:4])
 
@@ -1590,7 +1590,7 @@ class Network(object):
             "Payload"
         ]
         status_word_1_bytes = payload[0:4]
-        if Node(receiver).is_sth():
+        if NodeId(receiver).is_sth():
             return ErrorStatusSTH(status_word_1_bytes)
         return ErrorStatusSTU(status_word_1_bytes)
 
@@ -2144,7 +2144,7 @@ class Network(object):
         sReturn = ""
         if "GTIN" == name:
             index = self.cmdSend(
-                Node("STH1").value,
+                NodeId("STH1").value,
                 MyToolItBlock["Product Data"],
                 MyToolItProductData["GTIN"],
                 [],
@@ -2156,7 +2156,7 @@ class Network(object):
             sReturn = str(iGtin)
         elif "Hardware Version" == name:
             index = self.cmdSend(
-                Node("STH1").value,
+                NodeId("STH1").value,
                 MyToolItBlock["Product Data"],
                 MyToolItProductData["Hardware Version"],
                 [],
@@ -2170,7 +2170,7 @@ class Network(object):
             )
         elif "Firmware Version" == name:
             index = self.cmdSend(
-                Node("STH1").value,
+                NodeId("STH1").value,
                 MyToolItBlock["Product Data"],
                 MyToolItProductData["Firmware Version"],
                 [],
@@ -2188,7 +2188,7 @@ class Network(object):
             )
         elif "Release Name" == name:
             index = self.cmdSend(
-                Node("STH1").value,
+                NodeId("STH1").value,
                 MyToolItBlock["Product Data"],
                 MyToolItProductData["Release Name"],
                 [],
@@ -2202,7 +2202,7 @@ class Network(object):
             aiSerialNumber = []
             for i in range(1, 5):
                 index = self.cmdSend(
-                    Node("STH1").value,
+                    NodeId("STH1").value,
                     MyToolItBlock["Product Data"],
                     MyToolItProductData["Serial Number " + str(i)],
                     [],
@@ -2224,7 +2224,7 @@ class Network(object):
             aiName = []
             for i in range(1, 17):
                 index = self.cmdSend(
-                    Node("STH1").value,
+                    NodeId("STH1").value,
                     MyToolItBlock["Product Data"],
                     MyToolItProductData["Product Name " + str(i)],
                     [],
@@ -2244,7 +2244,7 @@ class Network(object):
             aiOemFreeUse = []
             for i in range(1, 9):
                 index = self.cmdSend(
-                    Node("STH1").value,
+                    NodeId("STH1").value,
                     MyToolItBlock["Product Data"],
                     MyToolItProductData["OEM Free Use " + str(i)],
                     [],
@@ -2350,7 +2350,7 @@ class Network(object):
         """
 
         index = self.cmdSend(
-            Node(node).value,
+            NodeId(node).value,
             MyToolItBlock["Product Data"],
             MyToolItProductData["Release Name"],
             [],

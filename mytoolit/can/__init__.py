@@ -11,7 +11,7 @@ from .command import Command
 from .error import UnsupportedFeatureException
 from .identifier import Identifier
 from .message import Message
-from .node import Node
+from .node import NodeId
 from .network import Network, ErrorResponseError, NetworkError, NoResponseError
 from .status import (
     NodeStatusSTH,
