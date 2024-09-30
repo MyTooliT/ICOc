@@ -36,7 +36,7 @@ class Block:
         "Test": 0x3F,
     })
 
-    def __init__(self, block: str | int):
+    def __init__(self, block: Block | str | int):
         """Initialize Block object
 
         Parameters
@@ -60,6 +60,14 @@ class Block:
 
         >>> Block(0x3d)
         EEPROM (0x3d)
+
+        >>> Block(Block("Configuration"))
+        Configuration (0x28)
+
+        >>> Block(1.2)
+        Traceback (most recent call last):
+            ...
+        ValueError: Incorrect type for block parameter: float
 
         >>> Block(1234)
         Traceback (most recent call last):
