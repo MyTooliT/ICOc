@@ -12,12 +12,122 @@ from __future__ import annotations
 
 from typing import Optional, Union
 
-from mytoolit.old.MyToolItCommands import (
-    MyToolItBlock,
-    blocknumber_to_commands,
-)
+from bidict import bidict
+
+from mytoolit.old.MyToolItCommands import blocknumber_to_commands
 
 # -- Class --------------------------------------------------------------------
+
+
+class Block:
+    """This class represents a command block of the communication protocol
+
+    See also: https://mytoolit.github.io/Documentation/#blocks
+
+    """
+
+    block_number = bidict({
+        "System": 0x00,
+        "Streaming": 0x04,
+        "StatisticalData": 0x08,
+        "Configuration": 0x28,
+        "EEPROM": 0x3D,
+        "Product Data": 0x3E,
+        "Test": 0x3F,
+    })
+
+    def __init__(self, block: str | int):
+        """Initialize Block object
+
+        Parameters
+        ----------
+
+        block:
+            The block identifier
+
+        Raises
+        ------
+
+        `ValueError`
+        - if the block identifier is not known (string identifier) or
+        - if the block identifier is too small or large (int identifier)
+
+        Examples
+        --------
+
+        >>> Block("System")
+        System (0x00)
+
+        >>> Block(0x3d)
+        EEPROM (0x3d)
+
+        >>> Block(1234)
+        Traceback (most recent call last):
+            ...
+        ValueError: Block number is too large
+
+        >>> Block(-1)
+        Traceback (most recent call last):
+            ...
+        ValueError: Block number is too small
+
+        """
+
+        try:
+            if isinstance(block, str):
+                self.number = self.block_number[block]
+            else:
+                assert isinstance(block, int)
+                if block < 0 or block > 2**6:
+                    raise ValueError(
+                        "Block number is too "
+                        f"{'small' if block < 0 else 'large'}"
+                    )
+                self.number = block
+        except KeyError as error:
+            raise ValueError(f"Unknown block: {block}") from error
+
+    def name(self) -> str:
+        """Return the name of the block
+
+        Returns
+        -------
+
+        The name of the block
+
+        Examples
+        --------
+
+        >>> Block("Streaming").name()
+        'Streaming'
+
+        >>> Block("Configuration").name()
+        'Configuration'
+
+        >>> Block("Product Data").name()
+        'Product Data'
+
+        """
+
+        return type(self).block_number.inverse.get(self.number, "Unknown")
+
+    def __repr__(self) -> str:
+        """Get the string representation of the block
+
+        Returns
+        -------
+
+        A string that represents this block
+
+        Examples
+        --------
+
+        >>> Block("System")
+        System (0x00)
+
+        """
+
+        return f"{self.name()} ({self.number:0=#4x})"
 
 
 class Command:
@@ -116,11 +226,8 @@ class Command:
         # =========
 
         if isinstance(block, str):
-            try:
-                block = MyToolItBlock[block]
-                assert isinstance(block, int)
-            except KeyError as exception:
-                raise ValueError(f"Unknown block: {block}") from exception
+            block = Block(block).number
+            assert isinstance(block, int)
 
         if block is not None:
             set_part(start=10, width=6, number=block)
@@ -230,7 +337,7 @@ class Command:
 
         """
 
-        return MyToolItBlock.inverse.get(self.block(), "Unknown")
+        return Block(self.block()).name()
 
     def block_command(self) -> int:
         """Get the block command number
