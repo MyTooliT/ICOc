@@ -84,7 +84,7 @@ class Block:
         try:
             if isinstance(block, str):
                 self.number = self.block_number[block]
-            else:
+            elif isinstance(block, int):
                 assert isinstance(block, int)
                 if block < 0 or block > 2**6:
                     raise ValueError(
@@ -92,6 +92,13 @@ class Block:
                         f"{'small' if block < 0 else 'large'}"
                     )
                 self.number = block
+            elif isinstance(block, Block):
+                self.number = block.number
+            else:
+                raise ValueError(
+                    "Incorrect type for block parameter:"
+                    f" {type(block).__name__}"
+                )
         except KeyError as error:
             raise ValueError(f"Unknown block: {block}") from error
 
