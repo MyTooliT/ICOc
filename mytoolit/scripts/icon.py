@@ -13,7 +13,7 @@ from functools import partial
 from logging import basicConfig, getLogger
 from pathlib import Path
 from sys import stderr
-from time import perf_counter, process_time, time
+from time import perf_counter_ns, process_time_ns, time
 from typing import List
 
 from can.interfaces.pcan import PcanError
@@ -377,17 +377,18 @@ def main():
         }
 
         try:
-            perf_start, cpu_start = perf_counter(), process_time()
+            perf_start, cpu_start = perf_counter_ns(), process_time_ns()
             run(command_to_coroutine[arguments.subcommand](arguments))
-            run_time_command = perf_counter() - perf_start
-            cpu_time_command = process_time() - cpu_start
+            perf_end, cpu_end = perf_counter_ns(), process_time_ns()
+            run_time_command = perf_end - perf_start
+            cpu_time_command = cpu_end - cpu_start
             cpu_usage = cpu_time_command / run_time_command * 100
             logger.info(
                 "Ran command “%s” in %.2f seconds (CPU time: %.2f seconds, "
                 "CPU Usage: %.2f %%)",
                 arguments.subcommand,
-                run_time_command,
-                cpu_time_command,
+                run_time_command / 10**9,
+                cpu_time_command / 10**9,
                 cpu_usage,
             )
         except (
