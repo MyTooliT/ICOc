@@ -541,9 +541,9 @@ which will open the the user configuration in your default text editor. You can 
    icon config
    ```
 
-   If you never edited the configuration before, then the text should be the same as in the file linked [here](https://github.com/MyTooliT/ICOc/blob/main/mytoolit/config/user.yaml).
+   If you never edited the configuration before, then the displayed text should be the same as in the file linked [here](https://github.com/MyTooliT/ICOc/blob/main/mytoolit/config/user.yaml).
 
-2. Change the **programming board serial number**, to the serial number of your programming board (shown on the bottom of the display of the programmer):
+2. Change the **programming board serial number**, to the serial number of your programming board (shown on the bottom of the display):
 
    ```yaml
    # Use the programmer with serial number 440069950:
@@ -553,7 +553,7 @@ which will open the the user configuration in your default text editor. You can 
 3. Change the production date to the one of your PCB in [ISO date format](https://en.wikipedia.org/wiki/ISO_8601):
 
    ```yaml
-   # Use the production date “1. February of the year 3456”
+   # Use the production date “February the 1st of the year 3456”
    production date: &production_date 3456-02-01
    ```
 
@@ -572,7 +572,7 @@ which will open the the user configuration in your default text editor. You can 
    holder type: &holder_type D 10x130 HSK-A63
    ```
 
-6. Change the holder name (Bluetooth advertisement name) to the one of your sensor device. If your are not sure about the name you can use the [`icon`](#icon-cli-tool) or [`icoc`](#basic-usage) command line tool to determine the name. The STH and SMH tests use this value to connect the device.
+6. Change the holder name (Bluetooth advertisement name) to the one of your sensor device. If your are not sure about the name you can use the [`icon`](#icon-cli-tool) or [`icoc`](#basic-usage) command line tool to determine the name. The STH and SMH tests use this value to connect to the device.
 
    ```yaml
    # Connect to the sensor device with the name “untested”
@@ -582,13 +582,14 @@ which will open the the user configuration in your default text editor. You can 
 7. Update the serial number of the sensor device. The STH and SMH tests change the sensor device Bluetooth advertisement name to this value, after the EEPROM (part of the) test was executed, **if the state value is set to `Epoxied`**.
 
    ```yaml
-   # Use the value “tested” as new
+   # Use the value “tested” as sensor device name,
+   # after the EEPROM test (succeeded)
    holder serial number: &holder_serial tested
    ```
 
 8. Change the state value to
 
-   - `Bare PCB`, if the **sensor device test** (SMH/STH test) should flash **the sensor device** (SMH, STH) or to
+   - `Bare PCB`, if the **sensor device test** (SMH/STH test) should flash **the sensor device** or to
    - `Epoxied` if the test should not flash the sensor device.
 
    ```yaml
