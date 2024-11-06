@@ -719,12 +719,12 @@ Sensors               M1: S1
 <ol style="list-style-type: decimal">
 <li><p>Open the user configuration in your default text editor:</p>
 <div class="sourceCode" id="cb24"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a><span class="ex">icon</span> config</span></code></pre></div>
-<p>If you never edited the configuration before, then the text should be the same as in the file linked <a href="https://github.com/MyTooliT/ICOc/blob/main/mytoolit/config/user.yaml">here</a>.</p></li>
-<li><p>Change the <strong>programming board serial number</strong>, to the serial number of your programming board (shown on the bottom of the display of the programmer):</p>
+<p>If you never edited the configuration before, then the displayed text should be the same as in the file linked <a href="https://github.com/MyTooliT/ICOc/blob/main/mytoolit/config/user.yaml">here</a>.</p></li>
+<li><p>Change the <strong>programming board serial number</strong>, to the serial number of your programming board (shown on the bottom of the display):</p>
 <div class="sourceCode" id="cb25"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a><span class="co"># Use the programmer with serial number 440069950:</span></span>
 <span id="cb25-2"><a href="#cb25-2" tabindex="-1"></a><span class="fu">programming board serial number</span><span class="kw">:</span><span class="at"> </span><span class="ot">&amp;programmer_serial</span><span class="at"> 440069950</span></span></code></pre></div></li>
 <li><p>Change the production date to the one of your PCB in <a href="https://en.wikipedia.org/wiki/ISO_8601">ISO date format</a>:</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a><span class="co"># Use the production date “1. February of the year 3456”</span></span>
+<div class="sourceCode" id="cb26"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a><span class="co"># Use the production date “February the 1st of the year 3456”</span></span>
 <span id="cb26-2"><a href="#cb26-2" tabindex="-1"></a><span class="fu">production date</span><span class="kw">:</span><span class="at"> </span><span class="ot">&amp;production_date</span><span class="at"> 3456-02-01</span></span></code></pre></div></li>
 <li><p>Change the user name to the name of the person that runs the test:</p>
 <div class="sourceCode" id="cb27"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a><span class="co"># Use “Jane Doe” as name for the test operator</span></span>
@@ -733,15 +733,16 @@ Sensors               M1: S1
 <div class="sourceCode" id="cb28"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb28-1"><a href="#cb28-1" tabindex="-1"></a><span class="co"># Specify the holder type (the holder that contains the PCB)</span></span>
 <span id="cb28-2"><a href="#cb28-2" tabindex="-1"></a><span class="co"># as “D 10x130 HSK-A63”</span></span>
 <span id="cb28-3"><a href="#cb28-3" tabindex="-1"></a><span class="fu">holder type</span><span class="kw">:</span><span class="at"> </span><span class="ot">&amp;holder_type</span><span class="at"> D 10x130 HSK-A63</span></span></code></pre></div></li>
-<li><p>Change the holder name (Bluetooth advertisement name) to the one of your sensor device. If your are not sure about the name you can use the <a href="#icon-cli-tool"><code>icon</code></a> or <a href="#basic-usage"><code>icoc</code></a> command line tool to determine the name. The STH and SMH tests use this value to connect the device.</p>
+<li><p>Change the holder name (Bluetooth advertisement name) to the one of your sensor device. If your are not sure about the name you can use the <a href="#icon-cli-tool"><code>icon</code></a> or <a href="#basic-usage"><code>icoc</code></a> command line tool to determine the name. The STH and SMH tests use this value to connect to the device.</p>
 <div class="sourceCode" id="cb29"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb29-1"><a href="#cb29-1" tabindex="-1"></a><span class="co"># Connect to the sensor device with the name “untested”</span></span>
 <span id="cb29-2"><a href="#cb29-2" tabindex="-1"></a><span class="fu">holder name</span><span class="kw">:</span><span class="at"> </span><span class="ot">&amp;holder_name</span><span class="at"> untested</span></span></code></pre></div></li>
 <li><p>Update the serial number of the sensor device. The STH and SMH tests change the sensor device Bluetooth advertisement name to this value, after the EEPROM (part of the) test was executed, <strong>if the state value is set to <code>Epoxied</code></strong>.</p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb30-1"><a href="#cb30-1" tabindex="-1"></a><span class="co"># Use the value “tested” as new</span></span>
-<span id="cb30-2"><a href="#cb30-2" tabindex="-1"></a><span class="fu">holder serial number</span><span class="kw">:</span><span class="at"> </span><span class="ot">&amp;holder_serial</span><span class="at"> tested</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb30"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb30-1"><a href="#cb30-1" tabindex="-1"></a><span class="co"># Use the value “tested” as sensor device name,</span></span>
+<span id="cb30-2"><a href="#cb30-2" tabindex="-1"></a><span class="co"># after the EEPROM test (succeeded)</span></span>
+<span id="cb30-3"><a href="#cb30-3" tabindex="-1"></a><span class="fu">holder serial number</span><span class="kw">:</span><span class="at"> </span><span class="ot">&amp;holder_serial</span><span class="at"> tested</span></span></code></pre></div></li>
 <li><p>Change the state value to</p>
 <ul>
-<li><code>Bare PCB</code>, if the <strong>sensor device test</strong> (SMH/STH test) should flash <strong>the sensor device</strong> (SMH, STH) or to</li>
+<li><code>Bare PCB</code>, if the <strong>sensor device test</strong> (SMH/STH test) should flash <strong>the sensor device</strong> or to</li>
 <li><code>Epoxied</code> if the test should not flash the sensor device.</li>
 </ul>
 <div class="sourceCode" id="cb31"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb31-1"><a href="#cb31-1" tabindex="-1"></a><span class="co"># Do not flash the chip in the SMH/STH test</span></span>
