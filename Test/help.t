@@ -42,8 +42,8 @@ Check help output of measure command:
 
   $ icon measure --help
   usage: icon measure [-h] [-t TIME] [-1 [FIRST_CHANNEL]] [-2 [SECOND_CHANNEL]]
-                      [-3 [THIRD_CHANNEL]]
-                      (-n NAME | -m MAC_ADRESS | -d DEVICE_NUMBER) [-s 2–127]
+                      [-3 [THIRD_CHANNEL]]* (glob)
+                      *-d DEVICE_NUMBER) [-s 2–127] (glob)
                       [-a {1,2,3,4,8,16,32,64,128,256}]
                       [-o {1,2,4,8,16,32,64,128,256,512,1024,2048,4096}]
                       [-v {1.25,1.65,1.8,2.1,2.2,2.5,2.7,3.3,5,6.6}]
@@ -52,32 +52,32 @@ Check help output of measure command:
     -h, --help            show this help message and exit
   
   Measurement:
-    -t TIME, --time TIME  measurement time in seconds (0 for infinite runtime)
-    -1 [FIRST_CHANNEL], --first-channel [FIRST_CHANNEL]
+    -t* measurement time in seconds (0 for infinite runtime) (glob)
+    -1* [FIRST_CHANNEL] (glob)
                           sensor channel number for first measurement channel (1
                           - 255; 0 to disable)
-    -2 [SECOND_CHANNEL], --second-channel [SECOND_CHANNEL]
+    -2* [SECOND_CHANNEL] (glob)
                           sensor channel number for second measurement channel
                           (1 - 255; 0 to disable)
-    -3 [THIRD_CHANNEL], --third-channel [THIRD_CHANNEL]
+    -3* [THIRD_CHANNEL] (glob)
                           sensor channel number for third measurement channel (1
                           - 255; 0 to disable)
   
   Sensor Device Identifier:
-    -n NAME, --name NAME  Name of sensor device
-    -m MAC_ADRESS, --mac-address MAC_ADRESS
+    -n* Name of sensor device (glob)
+    -m* (glob)
                           Bluetooth MAC address of sensor device
-    -d DEVICE_NUMBER, --device-number DEVICE_NUMBER
+    -d* DEVICE_NUMBER (glob)
                           Bluetooth device number of sensor device
   
   ADC:
-    -s 2–127, --prescaler 2–127
+    -s* 2–127 (glob)
                           Prescaler value
-    -a {1,2,3,4,8,16,32,64,128,256}, --acquisition {1,2,3,4,8,16,32,64,128,256}
+    -a* {1,2,3,4,8,16,32,64,128,256} (glob)
                           Acquisition time value
-    -o {1,2,4,8,16,32,64,128,256,512,1024,2048,4096}, --oversampling {1,2,4,8,16,32,64,128,256,512,1024,2048,4096}
+    -o* {1,2,4,8,16,32,64,128,256,512,1024,2048,4096} (glob)
                           Oversampling rate value
-    -v {1.25,1.65,1.8,2.1,2.2,2.5,2.7,3.3,5,6.6}, --voltage-reference {1.25,1.65,1.8,2.1,2.2,2.5,2.7,3.3,5,6.6}
+    -v* {1.25,1.65,1.8,2.1,2.2,2.5,2.7,3.3,5,6.6} (glob)
                           Reference voltage in V
 
 Check help output of rename command:
@@ -92,10 +92,10 @@ Check help output of rename command:
     -h, --help            show this help message and exit
   
   Sensor Device Identifier:
-    -n NAME, --name NAME  Name of sensor device
-    -m MAC_ADRESS, --mac-address MAC_ADRESS
+    -n* Name of sensor device (glob)
+    -m* MAC_ADRESS (glob)
                           Bluetooth MAC address of sensor device
-    -d DEVICE_NUMBER, --device-number DEVICE_NUMBER
+    -d* DEVICE_NUMBER (glob)
                           Bluetooth device number of sensor device
 
 Check help output of STU command:
