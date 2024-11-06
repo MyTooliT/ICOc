@@ -16,6 +16,7 @@ from sys import exit as sys_exit, stderr
 from typing import List, Optional
 
 from dynaconf import Dynaconf, ValidationError, Validator
+from dynaconf.vendor.ruamel.yaml.parser import ParserError
 from platformdirs import site_config_dir, user_config_dir
 
 from mytoolit.utility.open import open_file, UnableToOpenError
@@ -464,4 +465,7 @@ with as_file(
         settings = Settings(default_settings_filepath=repo_settings_filepath)
     except SettingsIncorrectError as settings_incorrect_error:
         print(f"{settings_incorrect_error}", file=stderr)
+        sys_exit(1)
+    except ParserError as parsing_error:
+        print(f"Unable to parse configuration: {parsing_error}", file=stderr)
         sys_exit(1)
