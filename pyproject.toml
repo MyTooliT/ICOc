@@ -30,6 +30,9 @@ dependencies = [
   "reportlab>=4.0.4,<5",
   "tables>=3.10.1,<4",
   "tqdm>=4.65,<5",
+  # Fix `cannot import name 'deprecated' from 'typing_extensions'`
+  # TODO: Remove `typing_extensions` in the future (we do not use it directly)
+  'typing_extensions>=4.7.1',
   "semantic_version>=2.10,<3",
   "windows-curses>=2.3.3,<3; os_name == 'nt'",
 ]
