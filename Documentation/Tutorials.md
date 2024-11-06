@@ -476,7 +476,7 @@ The following description shows you how to run the STU tests.
 
    You can find the current version of the STU firmware [here](https://github.com/MyTooliT/STU/releases).
 
-2. Please take a look at the section [“General”](#tutorials:section:general) to find out how to execute the production tests for the STU. If you want to run the connection and EEPROM test (aka **all tests except the flash test**), then please execute the following command:
+2. Please take a look at the section [“General”](#tutorials:section:general) to find out how to execute the production tests for the STU. If you want to run the connection and EEPROM test (aka **all tests except the flash test**, i.e. the EEPROM and connection test), then please execute the following command:
 
    ```sh
    test-stu -k eeprom -k connection
