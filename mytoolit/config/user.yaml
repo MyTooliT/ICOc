@@ -32,16 +32,21 @@ user name: &username Dummy User
 # sensor: &sensor ADXL1002
 sensor: &sensor ADXL356
 
-# Holder type
+# Holder type (Only relevant for test report)
 holder type: &holder_type D 10x130 HSK-A63
 
-# Holder name
+# Holder name (Bluetooth advertisement name, used for initial connection)
 holder name: &holder_name BBBB1111
 
-# Holder serial number (format: 4 letters followed by 4 numbers)
+# Holder serial number
+# (Bluetooth advertisement name after test, if status is `Epoxied`)
+# (format: 4 letters followed by 4 numbers)
 holder serial number: &holder_serial BBBB1111
 
 # PCB state (`Bare PCB` or `Epoxied`)
+# If you run `test-sth`:
+# Bare PCB → Sensor device name afterwards is Base64 encoded MAC address
+# Epoxied → Sensor device name afterwards is holder serial number
 state: &state Epoxied
 #state: &state Bare PCB
 
