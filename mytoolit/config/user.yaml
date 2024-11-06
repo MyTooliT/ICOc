@@ -52,7 +52,8 @@ state: &state Epoxied
 
 # ------------------------------------------------------------------------------
 
-user: *username
+operator:
+  name: *username
 
 smh:
   name: *holder_name
