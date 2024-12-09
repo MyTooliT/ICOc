@@ -1,6 +1,6 @@
 from pathlib import Path
 from sys import stderr
-from time import sleep
+from time import perf_counter_ns, process_time_ns, sleep
 from typing import Callable, Iterable, Tuple
 
 from curses import curs_set, error, wrapper  # type: ignore[attr-defined]
@@ -803,6 +803,7 @@ class UserInterface(CommandLineInterface):
             self.KeyBoardInterrupt = True
 
     def run(self):
+        perf_start, cpu_start = perf_counter_ns(), process_time_ns()
         self._vRunConsoleStartup()
         self.reset()
         if self.connect:
@@ -810,6 +811,17 @@ class UserInterface(CommandLineInterface):
         else:
             wrapper(self.user_interface)
         self.close()
+        perf_end, cpu_end = perf_counter_ns(), process_time_ns()
+        run_time_command = perf_end - perf_start
+        cpu_time_command = cpu_end - cpu_start
+        cpu_usage = cpu_time_command / run_time_command * 100
+        self.logger.info(
+            "Ran command in %.2f seconds (CPU time: %.2f seconds, "
+            "CPU Usage: %.2f %%)",
+            run_time_command / 10**9,
+            cpu_time_command / 10**9,
+            cpu_usage,
+        )
 
 
 def main():
