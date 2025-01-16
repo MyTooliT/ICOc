@@ -14,7 +14,11 @@ from typing import Optional, Union
 
 from bidict import bidict
 
-from mytoolit.old.MyToolItCommands import blocknumber_to_commands
+from icotronic.can.blocks import (
+    blocks,
+    UnknownBlockError,
+    UnknownBlockCommandError,
+)
 
 # -- Class --------------------------------------------------------------------
 
@@ -253,15 +257,15 @@ class Command:
 
         if isinstance(block_command, str):
             try:
-                block_command_names = blocknumber_to_commands[self.block()]
-            except KeyError as exception:
+                block_command_names = blocks[self.block()]
+            except UnknownBlockError as exception:
                 raise ValueError(
                     f"Unknown block number: {block}"
                 ) from exception
 
             try:
-                block_command = block_command_names[block_command]
-            except KeyError as exception:
+                block_command = block_command_names[block_command].number
+            except UnknownBlockCommandError as exception:
                 raise ValueError(
                     f"Unknown block command: {block_command}"
                 ) from exception
@@ -395,10 +399,8 @@ class Command:
         """
 
         try:
-            return blocknumber_to_commands[self.block()].inverse[
-                self.block_command()
-            ]
-        except KeyError:
+            return blocks[self.block()][self.block_command()].name
+        except UnknownBlockError:
             return "Unknown"
 
     def is_acknowledgment(self) -> bool:
