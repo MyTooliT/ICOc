@@ -137,4 +137,4 @@ minversion = "6.0"
 version = {attr = "mytoolit.__version__"}
 
 [tool.setuptools.packages.find]
-include = ["mytoolit*"]
+include = ["icotronic*", "mytoolit*"]

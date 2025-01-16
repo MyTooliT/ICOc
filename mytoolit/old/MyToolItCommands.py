@@ -651,3 +651,51 @@ def int_to_mac_address(iAddr):
     return ":".join(
         f"{byte:02x}" for byte in int_to_byte_list(iAddr, 6, "big")
     )
+
+
+def create_block_code():
+    """Create block code for new version of library
+
+    See also: icotronic/can/blocks.py
+
+    """
+
+    def create_command_block_code(command_block, mytoolit_block):
+        return (
+            "[\n"
+            + ",\n".join([
+                f"{indent * 2}CANIdPart(0x{key:02X}, "
+                f'"{mytoolit_block.inverse.get(key)}", "{value}")'
+                for key, value in command_block.items()
+            ])
+            + "\n\t]"
+        )
+
+    blocks_mytoolit = [
+        (CommandBlockSystem, MyToolItSystem),
+        (CommandBlockStreaming, MyToolItStreaming),
+        (CommandBlockStatisticalData, MyToolItStatData),
+        (CommandBlockConfiguration, MyToolItConfiguration),
+        (CommandBlockEeprom, MyToolItEeprom),
+        (CommandBlockProductData, MyToolItProductData),
+        (CommandBlockTest, MyToolItTest),
+    ]
+
+    indent = 4 * " "
+    return (
+        "blocks = Blocks([\n"
+        + ",\n".join([
+            f'{indent}Block(0x{number:02X}, "{name}", '
+            f'"{CommandBlock[number]}",'
+            + create_command_block_code(command_block, mytoolit_block)
+            + ")"
+            for (name, number), (command_block, mytoolit_block) in zip(
+                MyToolItBlock.items(), blocks_mytoolit
+            )
+        ])
+        + "\n])"
+    )
+
+
+if __name__ == "__main__":
+    print(create_block_code())
