@@ -33,8 +33,8 @@ run: check test hardware-test
 
 check:
 	flake8
-	mypy mytoolit
-	pylint mytoolit
+	mypy icotronic mytoolit
+	pylint icotronic mytoolit
 
 .PHONY: test
 test: pytest-test sphinx-doctest
