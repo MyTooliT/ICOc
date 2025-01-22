@@ -224,8 +224,8 @@ class StorageData:
         Read from existing file
 
         >>> with Storage(filepath) as data:
-        ...     print(data.dataloss())
-        0
+        ...     print(data.dataloss_stats())
+        (1, 0)
 
         >>> filepath.unlink()
 
@@ -366,6 +366,70 @@ class StorageData:
 
         self.acceleration.attrs[name] = value
 
+    def dataloss_stats(self) -> tuple[int, int]:
+        """Determine number of lost and received messages
+
+        Returns
+        -------
+
+        Tuple containing the number of received and the number of lost messages
+
+        Examples
+        --------
+
+        >>> def calculate_dataloss_stats():
+        ...     filepath = Path("test.hdf5")
+        ...     with Storage(filepath,
+        ...                  StreamingConfiguration(first=True)) as storage:
+        ...         for counter in range(256):
+        ...             storage.add_streaming_data(
+        ...                 StreamingData(values=[1, 2, 3],
+        ...                               counter=counter,
+        ...                               timestamp=counter/10))
+        ...         for counter in range(128, 256):
+        ...             storage.add_streaming_data(
+        ...                 StreamingData(values=[4, 5, 6],
+        ...                               counter=counter,
+        ...                               timestamp=(255 + counter)/10))
+        ...
+        ...         stats = storage.dataloss_stats()
+        ...     filepath.unlink()
+        ...     return stats
+        >>> retrieved, lost = calculate_dataloss_stats()
+        >>> retrieved
+        384
+        >>> lost
+        128
+
+        """
+
+        # Write back acceleration data so we can iterate over it
+        self.acceleration.flush()
+
+        lost_messages = 0
+        last_counter = int(self.acceleration[0][0])
+
+        for record in self.acceleration:
+            counter = int(record[0])
+
+            if counter == last_counter:
+                continue  # Skip data with same message counter
+
+            lost_messages += (counter - last_counter) % 256 - 1
+
+            last_counter = counter
+
+        number_rows = len(self.acceleration)
+        # 3 axes → 1 message ↔ 1 row
+        # 2 axes → 1 message ↔ 1 row
+        # 1 axis → 1 message ↔ 3 rows
+
+        retrieved_messages = (
+            number_rows if len(self.axes) >= 2 else number_rows // 3
+        )
+
+        return (retrieved_messages, lost_messages)
+
     def dataloss(self) -> float:
         """Determine (minimum) data loss
 
@@ -374,8 +438,8 @@ class StorageData:
 
         Amount of lost messages divided by all messages (lost and retrieved)
 
-        Example
-        -------
+        Examples
+        --------
 
         >>> from math import isclose
         >>> def calculate_dataloss():
@@ -401,26 +465,54 @@ class StorageData:
 
         """
 
-        # Write back acceleration data so we can iterate over it
-        self.acceleration.flush()
+        retrieved_messages, lost_messages = self.dataloss_stats()
 
-        lost_messages = 0
-        retrieved_messages = 0
-        last_counter = int(self.acceleration[0][0])
-        for record in self.acceleration:
-            counter = int(record[0])
-
-            if counter == last_counter:
-                continue  # Skip data with same message counter
-
-            lost_messages += (counter - last_counter) % 256 - 1
-            retrieved_messages += 1
-
-            last_counter = counter
-
-        messages = lost_messages + retrieved_messages
+        messages = retrieved_messages + lost_messages
 
         return lost_messages / messages if messages > 0 else 0
+
+    def sampling_frequency(self) -> float:
+        """Calculate sampling frequency of measurement data
+
+
+        Returns
+        -------
+
+        Sampling frequency (of a single data channel) in Hz
+
+        Examples
+        --------
+
+        >>> from math import isclose
+        >>> def calculate_sampling_frequency():
+        ...     filepath = Path("test.hdf5")
+        ...     with Storage(filepath, StreamingConfiguration(
+        ...             first=True, second=True, third=True)) as storage:
+        ...         storage.add_streaming_data(
+        ...             StreamingData(values=[1, 2, 3],
+        ...                           counter=1,
+        ...                           timestamp=0))
+        ...         storage.add_streaming_data(
+        ...             StreamingData(values=[1, 2, 3],
+        ...                           counter=2,
+        ...                           timestamp=1))
+        ...
+        ...         sampling_frequency = storage.sampling_frequency()
+        ...     filepath.unlink()
+        ...     return sampling_frequency
+        >>> calculate_sampling_frequency()
+        2.0
+
+        """
+
+        retrieved_messages, lost_messages = self.dataloss_stats()
+        messages = retrieved_messages + lost_messages
+        rows_per_message = 3 if len(self.axes) == 1 else 1
+        if len(self.acceleration) > 1:
+            measurement_time_in_us = int(self.acceleration[-1]["timestamp"])
+            return rows_per_message * messages * 10**6 / measurement_time_in_us
+
+        return 0
 
 
 # -- Main ---------------------------------------------------------------------
