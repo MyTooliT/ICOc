@@ -837,10 +837,7 @@ class CommandLineInterface:
                     self.sensor.streaming_configuration(),
                 )
                 self.data = self.storage.open()
-                sensor_range = self.acceleration_range_g / 2
-                self.data.add_acceleration_meta(
-                    "Sensor_Range", f"± {sensor_range} g₀"
-                )
+                self.data.store_sensor_range(self.acceleration_range_g)
 
                 # ICOc does not use the network class to read the streaming
                 # data but uses the `Read` method of the PCAN API directly.

@@ -359,12 +359,43 @@ class StorageData:
         >>> filepath = Path("test.hdf5")
         >>> with Storage(filepath,
         ...              StreamingConfiguration(third=True)) as storage:
-        ...     storage.add_acceleration_meta('Sensor_Range', "± 100 g₀")
+        ...     storage.add_acceleration_meta("something", "some value")
+        ...     print(storage.acceleration.attrs["something"])
+        some value
         >>> filepath.unlink()
 
         """
 
         self.acceleration.attrs[name] = value
+
+    def store_sensor_range(self, sensor_range_in_g: float) -> None:
+        """Add metadata about sensor range
+
+        This method assumes that sensor have a symetric measurement range
+        (e.g. a sensor with a range of 200 g measures from - 100 g up to
+        + 100 g).
+
+        Parameters
+        ----------
+
+        sensor_range_in_g:
+            The measurement range of the sensor in multiples of g
+
+        >>> filepath = Path("test.hdf5")
+        >>> with Storage(filepath,
+        ...              StreamingConfiguration(third=True)) as storage:
+        ...     storage.store_sensor_range(200)
+        ...     print(storage.acceleration.attrs["Sensor_Range"])
+        ± 100 g₀
+        >>> filepath.unlink()
+
+        """
+
+        sensor_range_positive = round(sensor_range_in_g / 2)
+
+        self.add_acceleration_meta(
+            "Sensor_Range", f"± {sensor_range_positive} g₀"
+        )
 
     def dataloss_stats(self) -> tuple[int, int]:
         """Determine number of lost and received messages

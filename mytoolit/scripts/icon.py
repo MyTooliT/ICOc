@@ -119,9 +119,7 @@ async def dataloss(arguments: Namespace) -> None:
             with Storage(
                 filepath.resolve(), sensor_config.streaming_configuration()
             ) as storage:
-                storage.add_acceleration_meta(
-                    "Sensor_Range", f"± {sensor_range / 2} g₀"
-                )
+                storage.store_sensor_range(sensor_range)
 
                 progress = tqdm(
                     total=int(sample_rate * measurement_time_s),
@@ -240,9 +238,7 @@ async def measure(arguments: Namespace) -> None:
             settings.get_output_filepath(),
             user_sensor_config.streaming_configuration(),
         ) as storage:
-            storage.add_acceleration_meta(
-                "Sensor_Range", f"± {sensor_range / 2} g₀"
-            )
+            storage.store_sensor_range(sensor_range)
 
             sample_rate = (
                 await network.read_adc_configuration()
