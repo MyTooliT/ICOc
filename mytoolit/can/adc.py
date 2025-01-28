@@ -293,19 +293,13 @@ class ADCConfiguration(Mapping):
         """
 
         set_values = bool(self.data[0] >> 7)
-        prescaler = self.data[1]
-        acquisition_time = (
-            self.data[2] + 1 if self.data[2] <= 3 else 2 ** (self.data[2] - 1)
-        )
-        oversampling_rate = 2 ** self.data[3]
-        reference_voltage = self.reference_voltage()
 
         parts = [
             "Set" if set_values else "Get",
-            f"Prescaler: {prescaler}",
-            f"Acquisition Time: {acquisition_time}",
-            f"Oversampling Rate: {oversampling_rate}",
-            f"Reference Voltage: {reference_voltage} V",
+            f"Prescaler: {self.prescaler()}",
+            f"Acquisition Time: {self.acquisition_time()}",
+            f"Oversampling Rate: {self.oversampling_rate()}",
+            f"Reference Voltage: {self.reference_voltage()} V",
         ]
 
         return ", ".join(parts)
