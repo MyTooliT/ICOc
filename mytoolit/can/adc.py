@@ -130,7 +130,7 @@ class ADCConfiguration(Mapping):
             possible_oversampling_rates = [2**value for value in range(13)]
             if oversampling_rate not in possible_oversampling_rates:
                 raise ValueError(
-                    f"Oversampling rate of “{oversampling_rate}” out of"
+                    f"Oversampling rate of “{oversampling_rate}” out of "
                     "range, please use one of the following values: "
                     + ", ".join(map(str, possible_oversampling_rates))
                 )
