@@ -214,7 +214,7 @@ async def measure(arguments: Namespace) -> None:
             oversampling_rate=arguments.oversampling,
         )
         await network.write_adc_configuration(**adc_config)
-        print(f"Sample Rate: {round(adc_config.sample_rate())} Hz")
+        print(f"Sample Rate: {adc_config.sample_rate():.2f} Hz")
 
         user_sensor_config = SensorConfiguration(
             first=arguments.first_channel,
