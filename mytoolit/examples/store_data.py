@@ -29,9 +29,9 @@ async def store_streaming_data(identifier):
 
         with Storage(filepath, channels=stream_first) as storage:
             # Store acceleration range as metadata
-            storage.store_sensor_range(sensor_range)
+            storage.write_sensor_range(sensor_range)
             # Store sampling rate (and ADC configuration as metadata)
-            storage.store_sample_rate(await network.read_adc_configuration())
+            storage.write_sample_rate(await network.read_adc_configuration())
             async with network.open_data_stream(stream_first) as stream:
                 async for data, _ in stream:
                     # Convert from ADC bit value into multiples of g

@@ -369,7 +369,7 @@ class StorageData:
 
         self.acceleration.attrs[name] = value
 
-    def store_sensor_range(self, sensor_range_in_g: float) -> None:
+    def write_sensor_range(self, sensor_range_in_g: float) -> None:
         """Add metadata about sensor range
 
         This method assumes that sensor have a symetric measurement range
@@ -385,7 +385,7 @@ class StorageData:
         >>> filepath = Path("test.hdf5")
         >>> with Storage(filepath,
         ...              StreamingConfiguration(third=True)) as storage:
-        ...     storage.store_sensor_range(200)
+        ...     storage.write_sensor_range(200)
         ...     print(storage.acceleration.attrs["Sensor_Range"])
         ± 100 g₀
         >>> filepath.unlink()
@@ -398,7 +398,7 @@ class StorageData:
             "Sensor_Range", f"± {sensor_range_positive} g₀"
         )
 
-    def store_sample_rate(self, adc_configuration: ADCConfiguration) -> None:
+    def write_sample_rate(self, adc_configuration: ADCConfiguration) -> None:
         """Store the sample rate of the ADC
 
         Parameters
@@ -415,7 +415,7 @@ class StorageData:
         ...     oversampling_rate=256)
         >>> with Storage(filepath,
         ...              StreamingConfiguration(first=True)) as storage:
-        ...     storage.store_sample_rate(adc_configuration)
+        ...     storage.write_sample_rate(adc_configuration)
         ...     print(storage.acceleration.attrs["Sample_Rate"])
         1724.14 Hz (Prescaler: 2, Acquisition Time: 16, Oversampling Rate: 256)
         >>> filepath.unlink()

@@ -838,8 +838,8 @@ class CommandLineInterface:
                     self.sensor.streaming_configuration(),
                 )
                 self.data = self.storage.open()
-                self.data.store_sensor_range(self.acceleration_range_g)
-                self.data.store_sample_rate(
+                self.data.write_sensor_range(self.acceleration_range_g)
+                self.data.write_sample_rate(
                     ADCConfiguration(
                         prescaler=self.iPrescaler,
                         acquisition_time=AdcAcquisitionTime.inverse[
