@@ -63,6 +63,15 @@ class ADCConfiguration(Mapping):
             The ADC reference voltage in Volt
             (1.25, 1.65, 1.8, 2.1, 2.2, 2.5, 2.7, 3.3, 5, 6.6)
 
+        Examples
+        --------
+
+        >>> ADCConfiguration(prescaler=2,
+        ...     acquisition_time=4,
+        ...     oversampling_rate=64) # doctest:+NORMALIZE_WHITESPACE
+        Get, Prescaler: 2, Acquisition Time: 4, Oversampling Rate: 64,
+        Reference Voltage: 3.3 V
+
         """
 
         if data:
@@ -104,7 +113,7 @@ class ADCConfiguration(Mapping):
         # ====================
 
         if acquisition_time is not None:
-            possible_acquisition_times = list(range(1, 4)) + [
+            possible_acquisition_times = list(range(1, 5)) + [
                 2**value for value in range(3, 9)
             ]
             if acquisition_time not in possible_acquisition_times:
