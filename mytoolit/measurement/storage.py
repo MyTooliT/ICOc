@@ -23,6 +23,7 @@ from tables import (
 )
 from tables.exceptions import HDF5ExtError
 
+from mytoolit.can.adc import ADCConfiguration
 from mytoolit.can.streaming import StreamingConfiguration, StreamingData
 
 # -- Functions ----------------------------------------------------------------
@@ -395,6 +396,42 @@ class StorageData:
 
         self.add_acceleration_meta(
             "Sensor_Range", f"± {sensor_range_positive} g₀"
+        )
+
+    def store_sample_rate(self, adc_configuration: ADCConfiguration) -> None:
+        """Store the sample rate of the ADC
+
+        Parameters
+        ----------
+
+        adc_configuration:
+            The current ADC configuration of the sensor device
+
+        >>> filepath = Path("test.hdf5")
+        >>> adc_configuration = ADCConfiguration(
+        ...     set=True,
+        ...     prescaler=2,
+        ...     acquisition_time=16,
+        ...     oversampling_rate=256)
+        >>> with Storage(filepath,
+        ...              StreamingConfiguration(first=True)) as storage:
+        ...     storage.store_sample_rate(adc_configuration)
+        ...     print(storage.acceleration.attrs["Sample_Rate"])
+        1724.14 Hz (Prescaler: 2, Acquisition Time: 16, Oversampling Rate: 256)
+        >>> filepath.unlink()
+
+        """
+
+        sample_rate = adc_configuration.sample_rate()
+
+        adc_config_text = ", ".join([
+            f"Prescaler: {adc_configuration.prescaler()}",
+            f"Acquisition Time: {adc_configuration.acquisition_time()}",
+            f"Oversampling Rate: {adc_configuration.oversampling_rate()}",
+        ])
+
+        self.add_acceleration_meta(
+            "Sample_Rate", f"{sample_rate:.2f} Hz ({adc_config_text})"
         )
 
     def dataloss_stats(self) -> tuple[int, int]:

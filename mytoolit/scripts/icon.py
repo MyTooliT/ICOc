@@ -29,7 +29,6 @@ from mytoolit.config import ConfigurationUtility, settings
 from mytoolit.measurement import convert_raw_to_g, Storage
 from mytoolit.measurement.sensor import SensorConfiguration
 
-
 # -- Functions ----------------------------------------------------------------
 
 
@@ -120,6 +119,7 @@ async def dataloss(arguments: Namespace) -> None:
                 filepath.resolve(), sensor_config.streaming_configuration()
             ) as storage:
                 storage.store_sensor_range(sensor_range)
+                storage.store_sample_rate(adc_config)
 
                 progress = tqdm(
                     total=int(sample_rate * measurement_time_s),
@@ -239,16 +239,14 @@ async def measure(arguments: Namespace) -> None:
             user_sensor_config.streaming_configuration(),
         ) as storage:
             storage.store_sensor_range(sensor_range)
+            storage.store_sample_rate(adc_config)
 
-            sample_rate = (
-                await network.read_adc_configuration()
-            ).sample_rate()
             streaming_config = user_sensor_config.streaming_configuration()
             logger.info("Streaming Configuration: %s", streaming_config)
             values_per_message = streaming_config.data_length()
 
             progress = tqdm(
-                total=round(sample_rate * measurement_time_s, 0),
+                total=round(adc_config.sample_rate() * measurement_time_s, 0),
                 desc="Read sensor data",
                 unit=" values",
                 leave=False,
