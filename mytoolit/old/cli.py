@@ -21,6 +21,7 @@ from can.interfaces.pcan.basic import (
     PCAN_RECEIVE_EVENT,
 )
 
+from mytoolit.can.adc import ADCConfiguration
 from mytoolit.can.streaming import StreamingData
 from mytoolit.cmdline.parse import (
     add_channel_arguments,
@@ -838,6 +839,18 @@ class CommandLineInterface:
                 )
                 self.data = self.storage.open()
                 self.data.store_sensor_range(self.acceleration_range_g)
+                self.data.store_sample_rate(
+                    ADCConfiguration(
+                        prescaler=self.iPrescaler,
+                        acquisition_time=AdcAcquisitionTime.inverse[
+                            self.iAquistionTime
+                        ],
+                        oversampling_rate=AdcOverSamplingRate.inverse[
+                            self.iOversampling
+                        ],
+                        reference_voltage=AdcReference[self.sAdcRef] / 20,
+                    )
+                )
 
                 # ICOc does not use the network class to read the streaming
                 # data but uses the `Read` method of the PCAN API directly.
