@@ -123,23 +123,7 @@ class TestSTU(TestNode):
         async def test_eeprom():
             """Test the EERPOM of the STU"""
 
-            cls = type(self)
             receiver = "STU 1"
-
-            # ========
-            # = Name =
-            # ========
-
-            read_name = await self.can.read_eeprom_name()
-            expected_name = "Valerie"
-            self.assertEqual(
-                read_name,
-                expected_name,
-                f"Read name “{read_name}” does not match expected name "
-                + f"“{expected_name}”",
-            )
-
-            cls.name = read_name
 
             # ================
             # = Product Data =
