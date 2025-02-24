@@ -10,6 +10,11 @@ PDF_FILE := $(BOOKDOWN_DIRECTORY)/$(OUTPUT_NAME).pdf
 EPUB_FILE := $(BOOKDOWN_DIRECTORY)/$(OUTPUT_NAME).epub
 HTML_FILE := $(BOOKDOWN_DIRECTORY)/$(OUTPUT_NAME).html
 
+# Note: The pytest plugin `pytest-sphinx` (version 0.6.3) does unfortunately not
+# find our API documentation doctests, hence we specify the test files (*.rst)
+# manually.
+TEST_LOCATIONS := $(SPHINX_INPUT_DIRECTORY)/*.rst mytoolit Test
+
 ifeq ($(OS), Windows_NT)
 	OPERATING_SYSTEM := windows
 	# Disable Prysk Pytest plugin
@@ -37,7 +42,7 @@ check:
 	pylint mytoolit
 
 .PHONY: test
-test: pytest-test sphinx-doctest
+test: pytest-test
 test-no-hardware: pytest-test-no-hardware
 
 # ----------
@@ -45,7 +50,7 @@ test-no-hardware: pytest-test-no-hardware
 # ----------
 
 pytest-test:
-	pytest
+	pytest $(TEST_LOCATIONS)
 
 pytest-test-no-hardware:
 	pytest --ignore-glob='*network.py' \
@@ -55,37 +60,6 @@ pytest-test-no-hardware:
 	       --ignore-glob='*store_data.t' \
 	       --ignore-glob='*measure.t' \
 	       --ignore='Documentation'
-
-# -------------------
-# - Sphinx Doctests -
-# -------------------
-
-.PHONY: sphinx-doctest sphinx-doctest-$(OPERATING_SYSTEM)
-sphinx-doctest: sphinx-doctest-$(OPERATING_SYSTEM)
-
-# Somehow the pytest test seem to cause a problematic state on Linux,
-# since afterwards the Sphinx doctest often fail, reporting problems about
-# unsuccessful requests to the hardware.
-#
-# Example:
-#
-# > NoResponseError: Unable to enable streaming of first measurement channel
-#                    of “STH 1”).
-#
-# Therefore we reset the system before we run the tests on Linux.
-sphinx-doctest-linux: reset-stu sphinx-doctest-general
-sphinx-doctest-windows: sphinx-doctest-general
-sphinx-doctest-mac: sphinx-doctest-general
-
-.PHONY: reset-stu
-reset-stu:
-	icon stu reset
-
-# Note: The pytest plugin `pytest-sphinx` (version 0.6.3) does unfortunately not
-# find our API documentation doctests.
-.PHONY: sphinx-doctest-general
-sphinx-doctest-general:
-	sphinx-build -M doctest $(SPHINX_INPUT_DIRECTORY) $(SPHINX_DIRECTORY)
 
 # ------------------
 # - Hardware Tests -
