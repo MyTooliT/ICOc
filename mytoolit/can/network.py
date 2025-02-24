@@ -2041,6 +2041,8 @@ class Network:
 
         >>> from asyncio import run
 
+        Read data of first and third channel
+
         >>> async def read_streaming_data():
         ...     async with Network() as network:
         ...         await network.connect_sensor_device(0)
