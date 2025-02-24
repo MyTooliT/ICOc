@@ -206,10 +206,11 @@ The text below specifies extended manual test that should be executed before we 
 4. Open the file in [HDFView](#measurement-data)
 5. Check that the table `acceleration` contains about 95 000 values
 6. Check that the table contains three columns
-7. Check that the meta attributes `Sensor_Range` and `Start_Time` exist
-8. Check that `Sensor_Range` contains the correct maximum acceleration values for “Test-STH”
-9. Check that `Start_Time` contains (roughly) the date and time when you executed the command from step 5
-10. Check that ICOc handles the following incorrect program calls. The program should **not crash** and print a (helpful) **error description** (not a stak trace) before it exits.
+7. Check that the meta attributes `Sample_Rate`, `Sensor_Range` and `Start_Time` exist
+8. Check that `Sample_Rate` contains the value `9523.81 Hz (Prescaler: 2, Acquisition Time: 8, Oversampling Rate: 64)`
+9. Check that `Sensor_Range` contains the correct maximum acceleration values for “Test-STH”
+10. Check that `Start_Time` contains (roughly) the date and time when you executed the command from step 5
+11. Check that ICOc handles the following incorrect program calls. The program should **not crash** and print a (helpful) **error description** (not a stak trace) before it exits.
 
     ```sh
     icoc -b '12-12-12-12-12'
