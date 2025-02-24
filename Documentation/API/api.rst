@@ -96,6 +96,30 @@ After you opened the stream use an ``async with`` statement to iterate over the 
 
 .. currentmodule:: mytoolit.can.streaming
 
+You  can use the attribute `streaming` of the `Network` class to check if streaming is currently active or not.
+
+.. doctest::
+
+   >>> from mytoolit.can.streaming import StreamingConfiguration
+
+   >>> async def read_streaming_data():
+   ...     async with Network() as network:
+   ...         await network.connect_sensor_device("Test-STH")
+   ...         channels = StreamingConfiguration(first=True)
+   ...         print(f"Streaming active: {network.streaming}")
+   ...         async with network.open_data_stream(channels) as stream:
+   ...             print(f"Streaming active: {network.streaming}")
+   ...             async for data, lost_messages in stream:
+   ...                 break
+   ...             print(f"Streaming active: {network.streaming}")
+   ...         print(f"Streaming active: {network.streaming}")
+
+   >>> run(read_streaming_data()) # doctest:+ELLIPSIS
+   Streaming active: False
+   Streaming active: True
+   Streaming active: True
+   Streaming active: False
+
 The data returned by the ``async for`` (``stream``) is an object of the class :class:`StreamingData`:
 
 .. autoclass:: StreamingData

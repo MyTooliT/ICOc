@@ -437,6 +437,7 @@ class Network:
         # there might not be an active loop when you create the network object
         self._notifier: Optional[Notifier] = None
         self.sender = Node("SPU 1")
+        self.streaming = False
 
     async def __aenter__(self) -> Network:
         """Initialize the network
@@ -1970,6 +1971,7 @@ class Network:
                 f"channel of “{node}”"
             ),
         )
+        self.streaming = True
 
     async def stop_streaming_data(
         self, retries: int = 10, ignore_errors=False
@@ -2009,6 +2011,8 @@ class Network:
         except (NoResponseError, ErrorResponseError) as error:
             if not ignore_errors:
                 raise error
+
+        self.streaming = False
 
     def open_data_stream(
         self,
