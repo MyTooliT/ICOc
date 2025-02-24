@@ -4,6 +4,10 @@
 
 -- Check Measure Subcommand ----------------------------------------------------
 
+Reset STU to make sure we do not have higher than usual dataloss
+
+  $ icon stu reset
+
   $ dataloss=$(icon measure -t 5 -d 0 | grep 'Data Loss' | \
   > sed -E 's/[^0-9]+([0.9]\.[0-9]+)[^0-9]*/\1/')
   $ if [ "$(printf "%s < 0.1\n" "${dataloss}" | bc)" -eq 1 ]; then
