@@ -1855,7 +1855,8 @@ usbipd wsl attach --busid 5-4</code></pre></li>
 <li><p>Open the file in <a href="#measurement-data">HDFView</a></p></li>
 <li><p>Check that the table <code>acceleration</code> contains about 95 000 values</p></li>
 <li><p>Check that the table contains three columns</p></li>
-<li><p>Check that the meta attributes <code>Sensor_Range</code> and <code>Start_Time</code> exist</p></li>
+<li><p>Check that the meta attributes <code>Sample_Rate</code>, <code>Sensor_Range</code> and <code>Start_Time</code> exist</p></li>
+<li><p>Check that <code>Sample_Rate</code> contains the value <code>9523.81 Hz (Prescaler: 2, Acquisition Time: 8, Oversampling Rate: 64)</code></p></li>
 <li><p>Check that <code>Sensor_Range</code> contains the correct maximum acceleration values for “Test-STH”</p></li>
 <li><p>Check that <code>Start_Time</code> contains (roughly) the date and time when you executed the command from step 5</p></li>
 <li><p>Check that ICOc handles the following incorrect program calls. The program should <strong>not crash</strong> and print a (helpful) <strong>error description</strong> (not a stak trace) before it exits.</p>
@@ -2063,34 +2064,34 @@ usbipd wsl attach --busid 5-4</code></pre></li>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
-"sharing": null,
-"fontsettings": {
-"theme": "white",
-"family": "sans",
-"size": 2
-},
-"edit": {
-"link": null,
-"text": null
-},
-"history": {
-"link": null,
-"text": null
-},
-"view": {
-"link": null,
-"text": null
-},
-"download": ["Documentation.pdf", "Documentation.epub"],
-"search": {
-"engine": "fuse",
-"options": null
-},
-"toc": {
-"collapse": "none",
-"scroll_highlight": true
-},
-"toc_depth": 3
+  "sharing": null,
+  "fontsettings": {
+    "theme": "white",
+    "family": "sans",
+    "size": 2
+  },
+  "edit": {
+    "link": null,
+    "text": null
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": ["Documentation.pdf", "Documentation.epub"],
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "none",
+    "scroll_highlight": true
+  },
+  "toc_depth": 3
 });
 });
 </script>
