@@ -8,4 +8,4 @@
 Read the name of an STH  
 
   $ python $EXAMPLEDIR/sth_name.py
-  Connected to sensor device “.+” (re)
+  Connected to sensor device .+ (re)

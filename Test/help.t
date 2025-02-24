@@ -43,7 +43,7 @@ Check help output of measure command:
   $ icon measure --help
   usage: icon measure [-h] [-t TIME] [-1 [FIRST_CHANNEL]] [-2 [SECOND_CHANNEL]]
                       [-3 [THIRD_CHANNEL]]* (glob)
-                      *-d DEVICE_NUMBER) [-s 2–127] (glob)
+                      *-d DEVICE_NUMBER) [-s * (glob)
                       [-a {1,2,3,4,8,16,32,64,128,256}]
                       [-o {1,2,4,8,16,32,64,128,256,512,1024,2048,4096}]
                       [-v {1.25,1.65,1.8,2.1,2.2,2.5,2.7,3.3,5,6.6}]
@@ -71,7 +71,7 @@ Check help output of measure command:
                           Bluetooth device number of sensor device
   
   ADC:
-    -s* 2–127 (glob)
+    -s* (glob)
                           Prescaler value
     -a* {1,2,3,4,8,16,32,64,128,256} (glob)
                           Acquisition time value
