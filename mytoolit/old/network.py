@@ -36,8 +36,8 @@ from can.interfaces.pcan.basic import (
 )
 from semantic_version import Version
 
+from icotronic.can.command import Command
 from mytoolit.can import (
-    Command,
     ErrorStatusSTH,
     ErrorStatusSTU,
     Identifier,
