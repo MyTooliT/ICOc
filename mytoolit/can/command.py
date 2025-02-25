@@ -12,141 +12,13 @@ from __future__ import annotations
 
 from typing import Optional, Union
 
-from bidict import bidict
-
 from icotronic.can.blocks import (
     blocks,
     UnknownBlockError,
     UnknownBlockCommandError,
 )
 
-# -- Class --------------------------------------------------------------------
-
-
-class Block:
-    """This class represents a command block of the communication protocol
-
-    See also: https://mytoolit.github.io/Documentation/#blocks
-
-    """
-
-    block_number = bidict({
-        "System": 0x00,
-        "Streaming": 0x04,
-        "StatisticalData": 0x08,
-        "Configuration": 0x28,
-        "EEPROM": 0x3D,
-        "Product Data": 0x3E,
-        "Test": 0x3F,
-    })
-
-    def __init__(self, block: Block | str | int):
-        """Initialize Block object
-
-        Parameters
-        ----------
-
-        block:
-            The block identifier
-
-        Raises
-        ------
-
-        `ValueError`
-        - if the block identifier is not known (string identifier) or
-        - if the block identifier is too small or large (int identifier)
-
-        Examples
-        --------
-
-        >>> Block("System")
-        System (0x00)
-
-        >>> Block(0x3d)
-        EEPROM (0x3d)
-
-        >>> Block(Block("Configuration"))
-        Configuration (0x28)
-
-        >>> Block(1.2)
-        Traceback (most recent call last):
-            ...
-        ValueError: Incorrect type for block parameter: float
-
-        >>> Block(1234)
-        Traceback (most recent call last):
-            ...
-        ValueError: Block number is too large
-
-        >>> Block(-1)
-        Traceback (most recent call last):
-            ...
-        ValueError: Block number is too small
-
-        """
-
-        try:
-            if isinstance(block, str):
-                self.number = self.block_number[block]
-            elif isinstance(block, int):
-                assert isinstance(block, int)
-                if block < 0 or block > 2**6:
-                    raise ValueError(
-                        "Block number is too "
-                        f"{'small' if block < 0 else 'large'}"
-                    )
-                self.number = block
-            elif isinstance(block, Block):
-                self.number = block.number
-            else:
-                raise ValueError(
-                    "Incorrect type for block parameter:"
-                    f" {type(block).__name__}"
-                )
-        except KeyError as error:
-            raise ValueError(f"Unknown block: {block}") from error
-
-    def name(self) -> str:
-        """Return the name of the block
-
-        Returns
-        -------
-
-        The name of the block
-
-        Examples
-        --------
-
-        >>> Block("Streaming").name()
-        'Streaming'
-
-        >>> Block("Configuration").name()
-        'Configuration'
-
-        >>> Block("Product Data").name()
-        'Product Data'
-
-        """
-
-        return type(self).block_number.inverse.get(self.number, "Unknown")
-
-    def __repr__(self) -> str:
-        """Get the string representation of the block
-
-        Returns
-        -------
-
-        A string that represents this block
-
-        Examples
-        --------
-
-        >>> Block("System")
-        System (0x00)
-
-        """
-
-        return f"{self.name()} ({self.number:0=#4x})"
+# -- Classes ------------------------------------------------------------------
 
 
 class Command:
@@ -245,8 +117,10 @@ class Command:
         # =========
 
         if isinstance(block, str):
-            block = Block(block).number
-            assert isinstance(block, int)
+            try:
+                block = blocks[block].number
+            except UnknownBlockError as exception:
+                raise ValueError(f"Unknown block: {block}") from exception
 
         if block is not None:
             set_part(start=10, width=6, number=block)
@@ -354,9 +228,16 @@ class Command:
         >>> Command(0b111101_00000010_0_0).block_name()
         'EEPROM'
 
+                      block   command A E
+        >>> Command(0b100000_00000010_0_0).block_name()
+        'Unknown'
+
         """
 
-        return Block(self.block()).name()
+        try:
+            return blocks[self.block()].name
+        except UnknownBlockError:
+            return "Unknown"
 
     def block_command(self) -> int:
         """Get the block command number
