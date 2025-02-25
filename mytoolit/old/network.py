@@ -37,6 +37,7 @@ from can.interfaces.pcan.basic import (
 from semantic_version import Version
 
 from icotronic.can.command import Command
+from icotronic.can.error import UnsupportedFeatureException
 from mytoolit.can import (
     ErrorStatusSTH,
     ErrorStatusSTU,
@@ -45,7 +46,6 @@ from mytoolit.can import (
     NodeId,
     NodeStatusSTH,
     NodeStatusSTU,
-    UnsupportedFeatureException,
 )
 from mytoolit.eeprom import EEPROMStatus
 from mytoolit.config import settings
