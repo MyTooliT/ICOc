@@ -8,7 +8,7 @@ from re import compile as re_compile
 
 from netaddr import AddrFormatError, EUI
 
-from mytoolit.can.adc import ADCConfiguration
+from icotronic.can.adc import ADCConfiguration
 
 # -- Functions ----------------------------------------------------------------
 

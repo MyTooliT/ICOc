@@ -19,8 +19,8 @@ from typing import List
 from can.interfaces.pcan import PcanError
 from tqdm import tqdm
 
+from icotronic.can.adc import ADCConfiguration
 from mytoolit.can import Network
-from mytoolit.can.adc import ADCConfiguration
 from mytoolit.can.error import UnsupportedFeatureException
 from mytoolit.can.network import STHDeviceInfo, NetworkError
 from mytoolit.can.streaming import StreamingTimeoutError
