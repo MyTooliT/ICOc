@@ -28,10 +28,10 @@ from semantic_version import Version
 from netaddr import EUI
 
 from icotronic.can.adc import ADCConfiguration
+from icotronic.can.calibration import CalibrationMeasurementFormat
 from mytoolit.eeprom import EEPROMStatus
 from mytoolit.config import settings
 from mytoolit.measurement import ADC_MAX_VALUE
-from mytoolit.can.calibration import CalibrationMeasurementFormat
 from mytoolit.can.error import UnsupportedFeatureException
 from mytoolit.can.message import Message
 from mytoolit.can.node import NodeId
