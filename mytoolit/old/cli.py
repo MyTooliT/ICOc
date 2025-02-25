@@ -21,7 +21,7 @@ from can.interfaces.pcan.basic import (
     PCAN_RECEIVE_EVENT,
 )
 
-from mytoolit.can.adc import ADCConfiguration
+from icotronic.can.adc import ADCConfiguration
 from mytoolit.can.streaming import StreamingData
 from mytoolit.cmdline.parse import (
     add_channel_arguments,

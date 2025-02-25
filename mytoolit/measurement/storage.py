@@ -23,7 +23,7 @@ from tables import (
 )
 from tables.exceptions import HDF5ExtError
 
-from mytoolit.can.adc import ADCConfiguration
+from icotronic.can.adc import ADCConfiguration
 from mytoolit.can.streaming import StreamingConfiguration, StreamingData
 
 # -- Functions ----------------------------------------------------------------
