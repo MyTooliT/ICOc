@@ -7,7 +7,6 @@ for more information
 
 # -- Exports ------------------------------------------------------------------
 
-from .command import Command
 from .error import UnsupportedFeatureException
 from .identifier import Identifier
 from .message import Message

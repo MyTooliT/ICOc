@@ -15,7 +15,7 @@ from can import Message as CANMessage
 from netaddr import EUI
 
 from icotronic.can.calibration import CalibrationMeasurementFormat
-from mytoolit.can.command import Command
+from icotronic.can.command import Command
 from mytoolit.can.identifier import Identifier
 from mytoolit.can.node import NodeId
 from mytoolit.can.status import State
