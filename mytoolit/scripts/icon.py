@@ -20,8 +20,8 @@ from can.interfaces.pcan import PcanError
 from tqdm import tqdm
 
 from icotronic.can.adc import ADCConfiguration
+from icotronic.can.error import UnsupportedFeatureException
 from mytoolit.can import Network
-from mytoolit.can.error import UnsupportedFeatureException
 from mytoolit.can.network import STHDeviceInfo, NetworkError
 from mytoolit.can.streaming import StreamingTimeoutError
 from mytoolit.cmdline.parse import create_icon_parser
