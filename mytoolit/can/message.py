@@ -14,7 +14,7 @@ from can.interfaces.pcan.basic import PCAN_MESSAGE_EXTENDED, TPCANMsg
 from can import Message as CANMessage
 from netaddr import EUI
 
-from mytoolit.can.calibration import CalibrationMeasurementFormat
+from icotronic.can.calibration import CalibrationMeasurementFormat
 from mytoolit.can.command import Command
 from mytoolit.can.identifier import Identifier
 from mytoolit.can.node import NodeId
