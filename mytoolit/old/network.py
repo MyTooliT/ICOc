@@ -47,7 +47,7 @@ from icotronic.can.status import (
     NodeStatusSTH,
     NodeStatusSTU,
 )
-from mytoolit.eeprom import EEPROMStatus
+from icotronic.eeprom.status import EEPROMStatus
 from icotronic.config import settings
 from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkName
 from mytoolit.old.MyToolItCommands import (
