@@ -74,7 +74,7 @@ After you opened the stream use an ``async with`` statement to iterate over the 
 
 .. doctest::
 
-   >>> from mytoolit.can.streaming import StreamingConfiguration
+   >>> from icotronic.can.streaming import StreamingConfiguration
 
    >>> async def read_streaming_data():
    ...     async with Network() as network:
@@ -100,7 +100,7 @@ You  can use the attribute `streaming` of the `Network` class to check if stream
 
 .. doctest::
 
-   >>> from mytoolit.can.streaming import StreamingConfiguration
+   >>> from icotronic.can.streaming import StreamingConfiguration
 
    >>> async def read_streaming_data():
    ...     async with Network() as network:

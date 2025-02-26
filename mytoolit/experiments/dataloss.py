@@ -6,7 +6,7 @@ from asyncio import run
 from time import time
 
 from mytoolit.can import Network
-from mytoolit.can.streaming import StreamingConfiguration
+from icotronic.can.streaming import StreamingConfiguration
 
 # -- Functions ----------------------------------------------------------------
 

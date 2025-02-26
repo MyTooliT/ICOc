@@ -14,7 +14,7 @@ from unittest import main as unittest_main, skipIf
 from semantic_version import Version
 
 from icotronic.can.node import NodeId
-from mytoolit.can.streaming import StreamingConfiguration
+from icotronic.can.streaming import StreamingConfiguration
 from mytoolit.config import settings
 from mytoolit.measurement import convert_raw_to_g, ratio_noise_max
 from mytoolit.report import Report

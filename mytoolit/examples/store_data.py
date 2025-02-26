@@ -8,7 +8,7 @@ from pathlib import Path
 from time import time
 
 from mytoolit.can import Network
-from mytoolit.can.streaming import StreamingConfiguration
+from icotronic.can.streaming import StreamingConfiguration
 from mytoolit.measurement import convert_raw_to_g, Storage
 
 # -- Functions ----------------------------------------------------------------

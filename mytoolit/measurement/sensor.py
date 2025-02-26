@@ -7,7 +7,7 @@ from enum import auto, Enum
 from statistics import mean
 from typing import Iterable, NamedTuple
 
-from mytoolit.can.streaming import StreamingConfiguration
+from icotronic.can.streaming import StreamingConfiguration
 
 # -- Classes ------------------------------------------------------------------
 

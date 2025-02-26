@@ -23,7 +23,7 @@ from icotronic.can.adc import ADCConfiguration
 from icotronic.can.error import UnsupportedFeatureException
 from mytoolit.can import Network
 from mytoolit.can.network import STHDeviceInfo, NetworkError
-from mytoolit.can.streaming import StreamingTimeoutError
+from icotronic.can.streaming import StreamingTimeoutError
 from mytoolit.cmdline.parse import create_icon_parser
 from mytoolit.config import ConfigurationUtility, settings
 from mytoolit.measurement import convert_raw_to_g, Storage
