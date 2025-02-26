@@ -10,7 +10,7 @@ from os import devnull
 from sys import stderr
 from unittest import main as unittest_main
 
-from mytoolit.can.node import NodeId
+from icotronic.can.node import NodeId
 from mytoolit.can.network import CANInitError, Network, NoResponseError
 from mytoolit.config import settings
 from mytoolit.test.production import TestNode

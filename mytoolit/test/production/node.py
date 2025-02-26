@@ -19,9 +19,9 @@ from unittest import TestCase
 from dynaconf.utils.boxing import DynaBox
 from semantic_version import Version
 
+from icotronic.can.node import NodeId
 from mytoolit import __version__
 from mytoolit.can import Network, State
-from mytoolit.can.node import NodeId
 from mytoolit.cmdline.commander import Commander
 from mytoolit.config import settings
 from mytoolit.eeprom import EEPROMStatus
