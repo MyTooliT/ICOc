@@ -6,7 +6,7 @@ from math import log, sqrt
 from statistics import pvariance
 from typing import Iterable
 
-from mytoolit.measurement.constants import ADC_MAX_VALUE
+from icotronic.measurement.constants import ADC_MAX_VALUE
 
 # -- Functions ----------------------------------------------------------------
 

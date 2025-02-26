@@ -2,7 +2,7 @@
 
 # -- Imports ------------------------------------------------------------------
 
-from mytoolit.measurement.constants import ADC_MAX_VALUE
+from icotronic.measurement.constants import ADC_MAX_VALUE
 
 # -- Functions ----------------------------------------------------------------
 
