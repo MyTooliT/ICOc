@@ -79,7 +79,7 @@ from mytoolit.old.MyToolItCommands import (
     SystemCommandBlueTooth,
     VRefName,
 )
-from mytoolit.measurement.sensor import SensorConfiguration
+from icotronic.measurement.sensor import SensorConfiguration
 from mytoolit.utility.log import get_log_file_handler
 
 
