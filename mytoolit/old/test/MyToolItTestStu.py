@@ -33,7 +33,7 @@ from mytoolit.old.MyToolItCommands import (
 from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
 from mytoolit.old.MyToolItStu import TestConfig
 from icotronic.config import settings
-from mytoolit.utility.environment import add_commander_path_to_environment
+from mytoolit.old.utility.environment import add_commander_path_to_environment
 
 sVersion = TestConfig["Version"]
 sLogFile = "TestStu.txt"

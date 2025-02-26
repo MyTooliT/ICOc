@@ -64,7 +64,7 @@ from mytoolit.old.MyToolItSth import (
 )
 from mytoolit.old.SthLimits import SthLimits
 from icotronic.config import settings
-from mytoolit.utility.environment import add_commander_path_to_environment
+from mytoolit.old.utility.environment import add_commander_path_to_environment
 
 sVersion = TestConfig["Version"]
 sLogLocation = f"{repo_root}/"
