@@ -39,11 +39,11 @@ from semantic_version import Version
 from icotronic.can.command import Command
 from icotronic.can.error import UnsupportedFeatureException
 from icotronic.can.identifier import Identifier
+from icotronic.can.message import Message
 from icotronic.can.node import NodeId
-from mytoolit.can import (
+from icotronic.can.status import (
     ErrorStatusSTH,
     ErrorStatusSTU,
-    Message,
     NodeStatusSTH,
     NodeStatusSTU,
 )
