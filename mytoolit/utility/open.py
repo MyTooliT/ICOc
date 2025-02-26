@@ -105,7 +105,7 @@ def open_file(filepath: Union[Path, str]) -> None:
     >>> from os import environ
     >>> def test():
     ...     with as_file(
-    ...         files("mytoolit.config").joinpath("config.yaml")
+    ...         files("icotronic.config").joinpath("config.yaml")
     ...     ) as repo_config_file:
     ...         open_file(repo_config_file)
 

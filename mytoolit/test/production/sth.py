@@ -15,7 +15,7 @@ from semantic_version import Version
 
 from icotronic.can.node import NodeId
 from icotronic.can.streaming import StreamingConfiguration
-from mytoolit.config import settings
+from icotronic.config import settings
 from mytoolit.measurement import convert_raw_to_g, ratio_noise_max
 from mytoolit.report import Report
 from mytoolit.test.production import TestSensorNode

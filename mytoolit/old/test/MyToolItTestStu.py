@@ -32,7 +32,7 @@ from mytoolit.old.MyToolItCommands import (
 )
 from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
 from mytoolit.old.MyToolItStu import TestConfig
-from mytoolit.config import settings
+from icotronic.config import settings
 from mytoolit.utility.environment import add_commander_path_to_environment
 
 sVersion = TestConfig["Version"]
