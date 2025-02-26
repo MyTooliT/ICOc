@@ -25,7 +25,7 @@ from reportlab.rl_config import (  # pylint: disable=no-name-in-module
 
 from icotronic.report.forms import CheckBoxList, KeepTogether, Signature
 from icotronic.report.style import get_style_sheet
-from mytoolit.report.pdf import PDFImage
+from icotronic.report.pdf import PDFImage
 
 # -- Functions ----------------------------------------------------------------
 
