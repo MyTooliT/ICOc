@@ -21,12 +21,13 @@ from tqdm import tqdm
 
 from icotronic.can.adc import ADCConfiguration
 from icotronic.can.error import UnsupportedFeatureException
-from mytoolit.can import Network
-from mytoolit.can.network import STHDeviceInfo, NetworkError
 from icotronic.can.streaming import StreamingTimeoutError
 from icotronic.cmdline.parse import create_icon_parser
 from icotronic.config import ConfigurationUtility, settings
-from mytoolit.measurement import convert_raw_to_g, Storage
+from icotronic.measurement import convert_raw_to_g
+from mytoolit.can import Network
+from mytoolit.can.network import STHDeviceInfo, NetworkError
+from mytoolit.measurement import Storage
 from mytoolit.measurement.sensor import SensorConfiguration
 
 # -- Functions ----------------------------------------------------------------

@@ -7,9 +7,11 @@ from functools import partial
 from pathlib import Path
 from time import time
 
-from mytoolit.can import Network
 from icotronic.can.streaming import StreamingConfiguration
-from mytoolit.measurement import convert_raw_to_g, Storage
+from icotronic.measurement.acceleration import convert_raw_to_g
+
+from mytoolit.can import Network
+from mytoolit.measurement import Storage
 
 # -- Functions ----------------------------------------------------------------
 
