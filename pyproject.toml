@@ -74,8 +74,8 @@ test-sth = "mytoolit.test.production.sth:main"
 test-sth-verification = "mytoolit.old.test.MyToolItTestSth:main"
 test-stu-verification = "mytoolit.old.test.MyToolItTestStu:main"
 test-stu = "mytoolit.test.production.stu:main"
-convert-base64-mac = "mytoolit.scripts.name:main"
-convert-mac-base64 = "mytoolit.scripts.mac:main"
+convert-base64-mac = "icotronic.scripts.name:main"
+convert-mac-base64 = "icotronic.scripts.mac:main"
 
 [project.urls]
 Documentation = "https://mytoolit.github.io/ICOc/"
