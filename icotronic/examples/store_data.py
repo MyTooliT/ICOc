@@ -11,7 +11,7 @@ from icotronic.can.streaming import StreamingConfiguration
 from icotronic.measurement import Storage
 from icotronic.measurement.acceleration import convert_raw_to_g
 
-from mytoolit.can import Network
+from icotronic.can import Network
 
 # -- Functions ----------------------------------------------------------------
 

@@ -4,7 +4,7 @@
 
 from asyncio import run
 
-from mytoolit.can import Network
+from icotronic.can import Network
 
 # -- Functions ----------------------------------------------------------------
 

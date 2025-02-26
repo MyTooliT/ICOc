@@ -1,4 +1,4 @@
-.. currentmodule:: mytoolit.can
+.. currentmodule:: icotronic.can
 
 *****************
 Device Connection
@@ -16,7 +16,7 @@ We recommend you use the context manager to open and close the connection (to th
 .. doctest::
 
    >>> from asyncio import run
-   >>> from mytoolit.can import Network
+   >>> from icotronic.can import Network
 
    >>> async def create_and_shutdown_network():
    ...     async with Network() as network:
@@ -47,7 +47,7 @@ If you want to read the name of the sensor device then the parameter node should
 .. doctest::
 
    >>> from asyncio import run
-   >>> from mytoolit.can import Network
+   >>> from icotronic.can import Network
 
    >>> async def read_sensor_name(name):
    ...     async with Network() as network:
@@ -94,7 +94,7 @@ After you opened the stream use an ``async with`` statement to iterate over the 
 - receives a single streaming message and
   prints its representation.
 
-.. currentmodule:: mytoolit.can.streaming
+.. currentmodule:: icotronic.can.streaming
 
 You  can use the attribute `streaming` of the `Network` class to check if streaming is currently active or not.
 
@@ -157,7 +157,7 @@ For a more complete example, please take a look at the :ref:`HDF5 example code<E
 Determining Data Loss
 =====================
 
-.. currentmodule:: mytoolit.can.streaming
+.. currentmodule:: icotronic.can.streaming
 
 Sometimes the
 
@@ -193,7 +193,7 @@ The example code below shows how to use this method:
 
    >>> from asyncio import run
    >>> from time import monotonic
-   >>> from mytoolit.can import Network
+   >>> from icotronic.can import Network
 
    >>> async def determine_data_loss(identifier):
    ...       async with Network() as network:
@@ -218,7 +218,7 @@ If you want to calculate the amount of data loss for a specific time-span you ca
 
    >>> from asyncio import run
    >>> from time import monotonic
-   >>> from mytoolit.can import Network
+   >>> from icotronic.can import Network
 
    >>> async def determine_data_loss(identifier):
    ...       async with Network() as network:

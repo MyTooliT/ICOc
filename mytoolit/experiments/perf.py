@@ -6,7 +6,7 @@ from asyncio import run, wait_for
 from time import perf_counter_ns, process_time_ns
 
 from icotronic.can.adc import ADCConfiguration
-from mytoolit.can import Network
+from icotronic.can import Network
 from icotronic.can.streaming import StreamingConfiguration
 
 # -- Functions ----------------------------------------------------------------

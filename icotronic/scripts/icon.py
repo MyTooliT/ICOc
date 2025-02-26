@@ -27,7 +27,7 @@ from icotronic.config import ConfigurationUtility, settings
 from icotronic.measurement import convert_raw_to_g
 from icotronic.measurement import Storage
 from icotronic.measurement.sensor import SensorConfiguration
-from mytoolit.can.network import Network, NetworkError, STHDeviceInfo
+from icotronic.can.network import Network, NetworkError, STHDeviceInfo
 
 # -- Functions ----------------------------------------------------------------
 
