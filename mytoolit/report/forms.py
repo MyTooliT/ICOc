@@ -11,7 +11,7 @@ from reportlab.lib.colors import white
 from reportlab.lib.units import cm
 from reportlab.platypus import Flowable, KeepTogether, Paragraph, Table
 
-from mytoolit.report.style import get_style_sheet
+from icotronic.report.style import get_style_sheet
 
 # -- Classes ------------------------------------------------------------------
 
