@@ -29,7 +29,7 @@ from icotronic.cmdline.parse import (
     sth_name,
 )
 from icotronic.config import settings
-from mytoolit.measurement.acceleration import convert_raw_to_g
+from icotronic.measurement.acceleration import convert_raw_to_g
 from mytoolit.measurement.storage import Storage
 from mytoolit.measurement.sensor import SensorConfiguration
 from mytoolit.old.network import Network
