@@ -45,7 +45,7 @@ from icotronic.eeprom.status import EEPROMStatus
 from icotronic.measurement.constants import ADC_MAX_VALUE
 from icotronic.measurement.sensor import SensorConfiguration
 from icotronic.measurement.voltage import convert_raw_to_supply_voltage
-from mytoolit.utility import convert_bytes_to_text
+from icotronic.utility.data import convert_bytes_to_text
 from mytoolit.utility.log import get_log_file_handler
 
 # -- Classes ------------------------------------------------------------------
