@@ -3,7 +3,7 @@
 from argparse import ArgumentParser
 
 from icotronic.cmdline.parse import mac_address
-from mytoolit.utility import convert_mac_base64
+from icotronic.utility.naming import convert_mac_base64
 
 # -- Main ---------------------------------------------------------------------
 
