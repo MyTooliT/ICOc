@@ -21,8 +21,8 @@ from icotronic.measurement.acceleration import (
     ratio_noise_max,
 )
 from icotronic.report.report import Report
+from icotronic.test.unit import ExtendedTestRunner
 from mytoolit.test.production import TestSensorNode
-from mytoolit.test.unit import ExtendedTestRunner
 from mytoolit.utility import convert_mac_base64
 
 # -- Classes ------------------------------------------------------------------
