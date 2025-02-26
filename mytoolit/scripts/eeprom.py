@@ -7,7 +7,7 @@ from collections import Counter
 from netaddr import EUI
 
 from mytoolit.can import Network
-from mytoolit.cmdline import byte_value, mac_address
+from icotronic.cmdline.parse import byte_value, mac_address
 
 # -- Function -----------------------------------------------------------------
 
