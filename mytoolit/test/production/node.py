@@ -21,9 +21,9 @@ from semantic_version import Version
 
 from icotronic.can.node import NodeId
 from icotronic.can.status import State
+from icotronic.cmdline.commander import Commander
 from mytoolit import __version__
 from mytoolit.can import Network
-from mytoolit.cmdline.commander import Commander
 from mytoolit.config import settings
 from mytoolit.eeprom import EEPROMStatus
 from mytoolit.report import Report
