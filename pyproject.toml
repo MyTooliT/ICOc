@@ -67,7 +67,7 @@ test = [
 
 [project.scripts]
 icoc = "mytoolit.old.ui:main"
-icon = "mytoolit.scripts.icon:main"
+icon = "icotronic.scripts.icon:main"
 check-eeprom = "icotronic.report.report:main"
 test-smh = "mytoolit.test.production.smh:main"
 test-sth = "mytoolit.test.production.sth:main"
