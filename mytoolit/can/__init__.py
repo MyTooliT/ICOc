@@ -7,5 +7,4 @@ for more information
 
 # -- Exports ------------------------------------------------------------------
 
-from icotronic.can.message import Message
 from .network import Network, ErrorResponseError, NetworkError, NoResponseError
