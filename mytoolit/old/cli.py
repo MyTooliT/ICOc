@@ -31,7 +31,7 @@ from icotronic.cmdline.parse import (
 from icotronic.config import settings
 from icotronic.measurement.acceleration import convert_raw_to_g
 from mytoolit.measurement.storage import Storage
-from mytoolit.measurement.sensor import SensorConfiguration
+from icotronic.measurement.sensor import SensorConfiguration
 from mytoolit.old.network import Network
 from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
 from mytoolit.old.MyToolItCommands import (
