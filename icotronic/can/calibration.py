@@ -6,7 +6,7 @@ from typing import List, Optional, Union
 
 from bidict import bidict
 
-from mytoolit.utility.types import check_list
+from icotronic.utility.types import check_list
 
 # pylint: disable=too-few-public-methods
 

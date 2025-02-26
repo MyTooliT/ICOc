@@ -12,7 +12,7 @@ from collections.abc import Iterator, Mapping
 from math import log2
 from typing import List, Optional, Union
 
-from mytoolit.utility.types import check_list
+from icotronic.utility.types import check_list
 
 # -- Class --------------------------------------------------------------------
 
