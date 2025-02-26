@@ -23,7 +23,7 @@ from can.interfaces.pcan.basic import (
 
 from icotronic.can.adc import ADCConfiguration
 from icotronic.can.streaming import StreamingData
-from mytoolit.cmdline.parse import (
+from icotronic.cmdline.parse import (
     add_channel_arguments,
     mac_address,
     sth_name,
