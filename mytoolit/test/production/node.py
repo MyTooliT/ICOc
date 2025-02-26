@@ -20,8 +20,9 @@ from dynaconf.utils.boxing import DynaBox
 from semantic_version import Version
 
 from icotronic.can.node import NodeId
+from icotronic.can.status import State
 from mytoolit import __version__
-from mytoolit.can import Network, State
+from mytoolit.can import Network
 from mytoolit.cmdline.commander import Commander
 from mytoolit.config import settings
 from mytoolit.eeprom import EEPROMStatus

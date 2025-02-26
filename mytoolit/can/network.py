@@ -31,10 +31,11 @@ from icotronic.can.adc import ADCConfiguration
 from icotronic.can.calibration import CalibrationMeasurementFormat
 from icotronic.can.error import UnsupportedFeatureException
 from icotronic.can.node import NodeId
+from icotronic.can.message import Message
+from icotronic.can.status import State
 from mytoolit.eeprom import EEPROMStatus
 from mytoolit.config import settings
 from mytoolit.measurement import ADC_MAX_VALUE
-from mytoolit.can.message import Message
 from mytoolit.can.streaming import (
     AsyncStreamBuffer,
     StreamingConfiguration,
@@ -42,7 +43,6 @@ from mytoolit.can.streaming import (
     StreamingFormat,
     StreamingFormatVoltage,
 )
-from mytoolit.can.status import State
 from mytoolit.measurement import convert_raw_to_supply_voltage
 from mytoolit.measurement.sensor import SensorConfiguration
 from mytoolit.utility import convert_bytes_to_text
