@@ -13,7 +13,7 @@ HTML_FILE := $(BOOKDOWN_DIRECTORY)/$(OUTPUT_NAME).html
 # Note: The pytest plugin `pytest-sphinx` (version 0.6.3) does unfortunately not
 # find our API documentation doctests, hence we specify the test files (*.rst)
 # manually.
-TEST_LOCATIONS := $(SPHINX_INPUT_DIRECTORY)/api.rst icotronic mytoolit Test
+TEST_LOCATIONS := $(SPHINX_INPUT_DIRECTORY)/api.rst icotronic Test
 
 ifeq ($(OS), Windows_NT)
 	OPERATING_SYSTEM := windows
@@ -38,8 +38,8 @@ run: check test hardware-test
 
 check:
 	flake8
-	mypy icotronic mytoolit
-	pylint icotronic mytoolit
+	mypy icotronic
+	pylint icotronic
 
 .PHONY: test
 test: pytest-test

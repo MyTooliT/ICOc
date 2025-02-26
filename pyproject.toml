@@ -66,13 +66,10 @@ test = [
 ]
 
 [project.scripts]
-icoc = "mytoolit.old.ui:main"
 icon = "icotronic.scripts.icon:main"
 check-eeprom = "icotronic.report.report:main"
 test-smh = "icotronic.test.production.smh:main"
 test-sth = "icotronic.test.production.sth:main"
-test-sth-verification = "mytoolit.old.test.MyToolItTestSth:main"
-test-stu-verification = "mytoolit.old.test.MyToolItTestStu:main"
 test-stu = "icotronic.test.production.stu:main"
 convert-base64-mac = "icotronic.scripts.name:main"
 convert-mac-base64 = "icotronic.scripts.mac:main"
@@ -134,7 +131,7 @@ addopts = "--doctest-modules -x --ignore-glob='*._*.py' --ignore=Bookdown -v"
 minversion = "6.0"
 
 [tool.setuptools.dynamic]
-version = {attr = "mytoolit.__version__"}
+version = {attr = "icotronic.__version__"}
 
 [tool.setuptools.packages.find]
-include = ["icotronic*", "mytoolit*"]
+include = ["icotronic*"]

@@ -25,7 +25,7 @@ from icotronic.cmdline.commander import Commander
 from icotronic.config import settings
 from icotronic.eeprom.status import EEPROMStatus
 from icotronic.report.report import Report
-from mytoolit import __version__
+from icotronic import __version__
 from icotronic.can import Network
 
 # -- Class --------------------------------------------------------------------
