@@ -4,8 +4,8 @@
 
 from asyncio import run
 
-from mytoolit.can import Network
 from icotronic.can.streaming import StreamingConfiguration
+from mytoolit.can import Network
 
 # -- Functions ----------------------------------------------------------------
 
