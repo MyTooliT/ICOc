@@ -23,8 +23,8 @@ from reportlab.rl_config import (  # pylint: disable=no-name-in-module
     defaultPageSize,
 )
 
+from icotronic.report.style import get_style_sheet
 from mytoolit.report.pdf import PDFImage
-from mytoolit.report.style import get_style_sheet
 from mytoolit.report.forms import CheckBoxList, KeepTogether, Signature
 
 # -- Functions ----------------------------------------------------------------
