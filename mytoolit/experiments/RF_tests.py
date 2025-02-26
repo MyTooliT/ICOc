@@ -2,7 +2,7 @@ from asyncio import run
 from time import time
 
 from icotronic.can.message import Message
-from mytoolit.can import Network
+from icotronic.can import Network
 
 
 async def pfeifferl(
