@@ -7,7 +7,7 @@ from logging import FileHandler, Formatter, getLogger
 from pathlib import Path
 from time import time
 
-from mytoolit.utility.log import get_log_file_handler
+from icotronic.utility.log import get_log_file_handler
 
 cDict = {
     "Run": True,
