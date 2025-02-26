@@ -25,10 +25,9 @@ from icotronic.can.streaming import StreamingTimeoutError
 from icotronic.cmdline.parse import create_icon_parser
 from icotronic.config import ConfigurationUtility, settings
 from icotronic.measurement import convert_raw_to_g
-from mytoolit.can import Network
-from mytoolit.can.network import STHDeviceInfo, NetworkError
 from icotronic.measurement import Storage
 from icotronic.measurement.sensor import SensorConfiguration
+from mytoolit.can.network import Network, NetworkError, STHDeviceInfo
 
 # -- Functions ----------------------------------------------------------------
 
