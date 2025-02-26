@@ -21,9 +21,9 @@ from icotronic.measurement.acceleration import (
     ratio_noise_max,
 )
 from icotronic.report.report import Report
-from icotronic.test.unit import ExtendedTestRunner
-from mytoolit.test.production import TestSensorNode
 from mytoolit.utility import convert_mac_base64
+from icotronic.test.unit import ExtendedTestRunner
+from .sensor_node import TestSensorNode
 
 # -- Classes ------------------------------------------------------------------
 
@@ -545,7 +545,7 @@ def main():
     """Run production test for Sensory Tool Holder (STH)"""
 
     unittest_main(
-        testRunner=ExtendedTestRunner, module="mytoolit.test.production.sth"
+        testRunner=ExtendedTestRunner, module="icotronic.test.production.sth"
     )
 
 

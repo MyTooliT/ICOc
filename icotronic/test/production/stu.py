@@ -15,7 +15,7 @@ from icotronic.config import settings
 from icotronic.report.report import Report
 from icotronic.test.unit import ExtendedTestRunner
 from mytoolit.can.network import CANInitError, Network, NoResponseError
-from mytoolit.test.production import TestNode
+from .node import TestNode
 
 # -- Class --------------------------------------------------------------------
 
@@ -159,7 +159,7 @@ def main():
     """Run production test for Stationary Transceiver Unit (STU)"""
 
     unittest_main(
-        testRunner=ExtendedTestRunner, module="mytoolit.test.production.stu"
+        testRunner=ExtendedTestRunner, module="icotronic.test.production.stu"
     )
 
 
