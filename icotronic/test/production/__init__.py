@@ -7,8 +7,3 @@ will be one of the following hardware units:
 - sensory tool holder (STH)/sensory tool assembly
 - sensory milling head (SMH)
 """
-
-# -- Exports ------------------------------------------------------------------
-
-from .node import TestNode
-from .sensor_node import TestSensorNode

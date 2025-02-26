@@ -11,7 +11,7 @@ from icotronic.config import settings
 from icotronic.measurement.sensor import guess_sensor, SensorConfiguration
 from icotronic.report.report import Report
 from icotronic.test.unit import ExtendedTestRunner
-from mytoolit.test.production import TestSensorNode
+from .sensor_node import TestSensorNode
 
 # -- Classes ------------------------------------------------------------------
 
@@ -201,7 +201,7 @@ def main():
     """Run production test for Sensory Milling Head (SMH)"""
 
     unittest_main(
-        testRunner=ExtendedTestRunner, module="mytoolit.test.production.smh"
+        testRunner=ExtendedTestRunner, module="icotronic.test.production.smh"
     )
 
 
