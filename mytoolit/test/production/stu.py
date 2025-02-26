@@ -12,9 +12,9 @@ from unittest import main as unittest_main
 
 from icotronic.can.node import NodeId
 from icotronic.config import settings
+from icotronic.report.report import Report
 from mytoolit.can.network import CANInitError, Network, NoResponseError
 from mytoolit.test.production import TestNode
-from mytoolit.report import Report
 from mytoolit.test.unit import ExtendedTestRunner
 
 # -- Class --------------------------------------------------------------------

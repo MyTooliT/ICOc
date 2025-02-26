@@ -9,7 +9,7 @@ from icotronic.can.streaming import StreamingConfiguration
 from icotronic.cmdline.commander import Commander
 from icotronic.config import settings
 from icotronic.measurement.sensor import guess_sensor, SensorConfiguration
-from mytoolit.report import Report
+from icotronic.report.report import Report
 from mytoolit.test.production import TestSensorNode
 from mytoolit.test.unit import ExtendedTestRunner
 

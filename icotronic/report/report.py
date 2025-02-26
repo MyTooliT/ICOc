@@ -45,7 +45,7 @@ def _first_page(canvas, document, node):
     logo_offset = 50
     title_offset = logo_offset + logo_height + 20
 
-    with as_file(files("mytoolit.report") / "MyTooliT.pdf") as logo_filepath:
+    with as_file(files("icotronic.report") / "MyTooliT.pdf") as logo_filepath:
         PDFImage(logo_filepath, logo_width, logo_height).drawOn(
             canvas,
             (page_width - logo_width) / 2,
