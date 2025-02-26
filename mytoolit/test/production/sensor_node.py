@@ -4,8 +4,8 @@
 
 from time import sleep
 
+from icotronic.can.node import NodeId
 from mytoolit.config import settings
-from mytoolit.can.node import NodeId
 from mytoolit.test.production.node import TestNode
 
 # -- Classes ------------------------------------------------------------------

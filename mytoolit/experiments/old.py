@@ -1,6 +1,6 @@
 # -- Imports ------------------------------------------------------------------
 
-from mytoolit.can import NodeId
+from icotronic.can.node import NodeId
 
 from mytoolit.old.network import Network as OldNetwork
 from mytoolit.old.MyToolItNetworkNumbers import MyToolItNetworkNr
