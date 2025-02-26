@@ -19,7 +19,7 @@ from icotronic.can.command import Command
 from icotronic.can.identifier import Identifier
 from icotronic.can.node import NodeId
 from icotronic.can.status import State
-from mytoolit.can.streaming import StreamingFormat, StreamingFormatVoltage
+from icotronic.can.streaming import StreamingFormat, StreamingFormatVoltage
 from mytoolit.utility import convert_bytes_to_text
 
 # -- Classes ------------------------------------------------------------------

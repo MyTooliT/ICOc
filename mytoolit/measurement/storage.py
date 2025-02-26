@@ -24,7 +24,7 @@ from tables import (
 from tables.exceptions import HDF5ExtError
 
 from icotronic.can.adc import ADCConfiguration
-from mytoolit.can.streaming import StreamingConfiguration, StreamingData
+from icotronic.can.streaming import StreamingConfiguration, StreamingData
 
 # -- Functions ----------------------------------------------------------------
 
@@ -280,7 +280,7 @@ class StorageData:
         Examples
         --------
 
-        >>> from mytoolit.can.streaming import StreamingConfigBits
+        >>> from icotronic.can.streaming import StreamingConfigBits
 
         Store streaming data for single channel
 
