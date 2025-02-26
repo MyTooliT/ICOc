@@ -50,7 +50,7 @@ from mytoolit.old.MyToolItCommands import (
     SystemCommandRouting,
 )
 from mytoolit.old.Plotter import vPlotter, tArray2Binary
-from mytoolit.utility.log import get_log_file_handler
+from icotronic.utility.log import get_log_file_handler
 
 Watch = {
     # Time period displayed in the graph in seconds,

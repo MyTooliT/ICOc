@@ -80,7 +80,7 @@ from mytoolit.old.MyToolItCommands import (
     VRefName,
 )
 from icotronic.measurement.sensor import SensorConfiguration
-from mytoolit.utility.log import get_log_file_handler
+from icotronic.utility.log import get_log_file_handler
 
 
 class Network(object):
