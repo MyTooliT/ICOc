@@ -15,7 +15,7 @@ from subprocess import CalledProcessError, run
 from sys import byteorder
 from typing import List, Optional, Union
 
-from mytoolit.config import settings
+from icotronic.config import settings
 
 # -- Classes ------------------------------------------------------------------
 
@@ -217,7 +217,7 @@ class Commander:
 
         Enable debug mode of STH programming board
 
-        >>> from mytoolit.config import settings
+        >>> from icotronic.config import settings
 
         >>> commander = Commander(
         ...     serial_number=settings.sth.programming_board.serial_number,
@@ -297,7 +297,7 @@ class Commander:
 
         Measure power usage of connected STH
 
-        >>> from mytoolit.config import settings
+        >>> from icotronic.config import settings
 
         >>> commander = Commander(
         ...     serial_number=settings.sth.programming_board.serial_number,

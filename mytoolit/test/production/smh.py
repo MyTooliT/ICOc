@@ -7,7 +7,7 @@ from unittest import main as unittest_main
 from icotronic.can.node import NodeId
 from icotronic.can.streaming import StreamingConfiguration
 from icotronic.cmdline.commander import Commander
-from mytoolit.config import settings
+from icotronic.config import settings
 from mytoolit.measurement.sensor import guess_sensor, SensorConfiguration
 from mytoolit.report import Report
 from mytoolit.test.production import TestSensorNode

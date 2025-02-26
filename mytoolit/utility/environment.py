@@ -10,7 +10,7 @@ TODO: Remove this code after we get rid of “old” code (`mytoolit.old`)
 from os import environ, pathsep
 from platform import system
 
-from mytoolit.config import settings
+from icotronic.config import settings
 
 # -- Functions ----------------------------------------------------------------
 

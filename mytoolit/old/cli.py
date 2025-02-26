@@ -28,7 +28,7 @@ from icotronic.cmdline.parse import (
     mac_address,
     sth_name,
 )
-from mytoolit.config import settings
+from icotronic.config import settings
 from mytoolit.measurement.acceleration import convert_raw_to_g
 from mytoolit.measurement.storage import Storage
 from mytoolit.measurement.sensor import SensorConfiguration

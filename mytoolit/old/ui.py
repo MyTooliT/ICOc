@@ -5,7 +5,7 @@ from typing import Callable, Iterable, Tuple
 
 from curses import curs_set, error, wrapper  # type: ignore[attr-defined]
 
-from mytoolit.config import settings
+from icotronic.config import settings
 from mytoolit.measurement.sensor import SensorConfiguration
 from mytoolit.old.cli import CommandLineInterface
 from mytoolit.old.MyToolItCommands import (

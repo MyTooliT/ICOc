@@ -58,7 +58,7 @@ class ConfigurationUtility:
             )
 
             default_user_config = (
-                files("mytoolit.config")
+                files("icotronic.config")
                 .joinpath("user.yaml")
                 .read_text(encoding="utf-8")
             )
@@ -472,7 +472,7 @@ class Settings(Dynaconf):
 
 
 with as_file(
-    files("mytoolit.config").joinpath(ConfigurationUtility.config_filename)
+    files("icotronic.config").joinpath(ConfigurationUtility.config_filename)
 ) as repo_settings_filepath:
     try:
         settings = Settings(default_settings_filepath=repo_settings_filepath)
