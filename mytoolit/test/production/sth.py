@@ -20,7 +20,7 @@ from icotronic.measurement.acceleration import (
     convert_raw_to_g,
     ratio_noise_max,
 )
-from mytoolit.report import Report
+from icotronic.report.report import Report
 from mytoolit.test.production import TestSensorNode
 from mytoolit.test.unit import ExtendedTestRunner
 from mytoolit.utility import convert_mac_base64
