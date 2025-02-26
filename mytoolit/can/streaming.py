@@ -10,7 +10,7 @@ from typing import AsyncIterator, Callable, List, Optional, Sequence, Tuple
 
 from can import Listener, Message
 
-from mytoolit.can.identifier import Identifier
+from icotronic.can.identifier import Identifier
 
 # -- Classes ------------------------------------------------------------------
 

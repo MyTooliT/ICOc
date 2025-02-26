@@ -7,7 +7,6 @@ for more information
 
 # -- Exports ------------------------------------------------------------------
 
-from .identifier import Identifier
 from .message import Message
 from .node import NodeId
 from .network import Network, ErrorResponseError, NetworkError, NoResponseError
