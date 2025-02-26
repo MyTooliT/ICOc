@@ -20,7 +20,7 @@ from dynaconf.vendor.ruamel.yaml.parser import ParserError
 from dynaconf.vendor.ruamel.yaml.scanner import ScannerError
 from platformdirs import site_config_dir, user_config_dir
 
-from mytoolit.utility.open import open_file, UnableToOpenError
+from icotronic.utility.open import open_file, UnableToOpenError
 
 # -- Classes ------------------------------------------------------------------
 
