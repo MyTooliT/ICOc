@@ -372,22 +372,22 @@ class DataStreamContextManager:
             )
 
 
-class NewNetwork:
-    """Basic class to communicate with STU and sensor devices"""
+class CANNetwork:
+    """Basic class to initialize CAN communication"""
 
     def __init__(self) -> None:
-        """Create a new network from the given arguments
+        """Create a network without initializing the CAN connection
 
         To actually connect to the CAN bus you need to use the async context
         manager, provided by this class. If you want to manage the connection
-        yourself, please just use `__enter__` and `__exit__` manually.
+        yourself, please just use `__aenter__` and `__aexit__` manually.
 
         Examples
         --------
 
         Create a new network (without connecting to the CAN bus)
 
-        >>> network = NewNetwork()
+        >>> network = CANNetwork()
 
         """
 
@@ -400,15 +400,16 @@ class NewNetwork:
                 else settings.can.windows
             )
         )
-        self.bus: None | BusABC = None
+        self.bus: BusABC | None = None
+        self.notifier: Notifier | None = None
 
-    def __enter__(self) -> NewNetwork:
+    async def __aenter__(self) -> SPU:
         """Initialize the network
 
         Returns
         -------
 
-        An initialized network object
+        An network object that can be used to communicate with the STU
 
         Raises
         ------
@@ -418,16 +419,22 @@ class NewNetwork:
         Examples
         --------
 
+        >>> from asyncio import run
+
         Use a context manager to handle the cleanup process automatically
 
-        >>> with NewNetwork() as network:
-        ...     pass
+        >>> async def connect_can_context():
+        ...     async with CANNetwork() as network:
+        ...         pass
+        >>> run(connect_can_context())
 
-        Create and shutdown the network explicitly
+        Create and shutdown the connection explicitly
 
-        >>> network = NewNetwork()
-        >>> connected = network.__enter__()
-        >>> network.__exit__(None, None, None)
+        >>> async def connect_can_manual():
+        ...     network = CANNetwork()
+        ...     connected = await network.__aenter__()
+        ...     await network.__aexit__(None, None, None)
+        >>> run(connect_can_manual())
 
         """
 
@@ -446,15 +453,17 @@ class NewNetwork:
 
         self.bus.__enter__()
 
-        return self
+        self.notifier = Notifier(self.bus, listeners=[Logger()])
 
-    def __exit__(
+        return SPU(self.bus, self.notifier)
+
+    async def __aexit__(
         self,
         exception_type: Optional[Type[BaseException]],
         exception_value: Optional[BaseException],
         traceback: Optional[TracebackType],
     ) -> None:
-        """Disconnect from the network and clean up resources
+        """Disconnect CAN connection and clean up resources
 
         Parameters
         ----------
@@ -471,10 +480,284 @@ class NewNetwork:
         """
 
         bus = self.bus
-
         if bus is not None:
             bus.__exit__(exception_type, exception_value, traceback)
             bus.shutdown()
+
+        notifier = self.notifier
+        if notifier is not None:
+            notifier.stop()
+
+
+# pylint: disable=too-few-public-methods
+
+
+class SPU:
+    """Communicate with the ICOtronic system acting as SPU"""
+
+    def __init__(self, bus: BusABC, notifier: Notifier) -> None:
+        """Create an SPU instance using the given arguments
+
+        We strongly recommend you use the context manager interface of the
+        `CANNetwork` class to create objects of this type.
+
+        Parameters
+        ----------
+
+        bus:
+            A CAN bus object used to communicate with the STU
+
+        notifier:
+            A notifier class that listens to the communication of `bus`
+
+        Examples
+        --------
+
+        >>> from asyncio import run
+
+        Create a new CAN network connection using context manager interface
+
+        >>> async def create_connection():
+        ...     async with CANNetwork() as spu:
+        ...         # Use `spu.stu` to communicate with the STU
+        ...         pass
+        >>> run(create_connection())
+
+        """
+
+        self.bus = bus
+        self.notifier = notifier
+        self.sender = NodeId("SPU 1")
+        self.streaming = False
+        self.stu = STU(self)
+
+    # pylint: disable=too-many-arguments, too-many-positional-arguments
+
+    async def _request(
+        self,
+        message: Message,
+        description: str,
+        response_data: Union[bytearray, List[Union[int, None]], None] = None,
+        minimum_timeout: float = 0,
+        retries: int = 10,
+    ) -> CANMessage:
+        """Send a request message and wait for the response
+
+        Parameters
+        ----------
+
+        message:
+            The message containing the request
+
+        description:
+            A description of the request used in error messages
+
+        response_data:
+           Specifies the expected data in the acknowledgment message
+
+        minimum_timeout:
+           Minimum time before attempting additional connection attempt
+           in seconds
+
+        retries:
+           The number of times the message is sent again, if no response was
+           sent back in a certain amount of time
+
+        Returns
+        -------
+
+        The response message for the given request
+
+        Raises
+        ------
+
+        NoResponseError:
+            If the receiver did not respond to the message after retries
+            amount of messages sent
+
+        ErrorResponseError:
+            If the receiver answered with an error message
+
+        """
+
+        for attempt in range(retries):
+            listener = ResponseListener(message, response_data)
+            self.notifier.add_listener(listener)
+            getLogger("network.can").debug("%s", message)
+            self.bus.send(message.to_python_can())
+
+            try:
+                # We increase the timeout after the first and second try.
+                # This way we reduce the chance of the warning:
+                #
+                # - “Bus error: an error counter reached the 'heavy'/'warning'
+                #   limit”
+                #
+                # happening. This warning might show up after
+                #
+                # - we flashed the STU,
+                # - sent a reset command to the STU, and then
+                # - wait for the response of the STU.
+                timeout = max(min(attempt * 0.1 + 0.5, 2), minimum_timeout)
+                response = await wait_for(
+                    listener.on_message(), timeout=timeout
+                )
+                assert response is not None
+            except TimeoutError:
+                continue
+            finally:
+                listener.stop()
+                self.notifier.remove_listener(listener)
+
+            if response.is_error:
+                raise ErrorResponseError(
+                    "Received unexpected response for request to "
+                    f"{description}:\n\n{response.error_message}\n"
+                    f"Response Message: {Message(response.message)}"
+                )
+
+            return response.message
+
+        raise NoResponseError(f"Unable to {description}")
+
+    # pylint: enable=too-many-arguments, too-many-positional-arguments
+
+    # ==========
+    # = System =
+    # ==========
+
+    async def _reset_node(self, node: Union[str, NodeId]) -> None:
+        """Reset the specified node
+
+        Parameters
+        ----------
+
+        node:
+            The node to reset
+
+        Examples
+        --------
+
+        >>> from asyncio import run
+
+        Reset node, which is not connected
+
+        >>> async def reset():
+        ...     async with CANNetwork() as spu:
+        ...         await spu._reset_node('STH 1')
+        >>> run(reset()) # doctest: +IGNORE_EXCEPTION_DETAIL
+        Traceback (most recent call last):
+            ...
+        NoResponseError: Unable to reset node “STH 1”
+
+        """
+
+        message = Message(
+            block="System",
+            block_command="Reset",
+            sender=self.sender,
+            receiver=node,
+            request=True,
+        )
+        await self._request(
+            message,
+            description=f"reset node “{node}”",
+            response_data=message.data,
+            minimum_timeout=1,
+        )
+
+    # -----------------
+    # - Get/Set State -
+    # -----------------
+
+    async def _get_state(self, node: Union[str, NodeId] = "STU 1") -> State:
+        """Get the current state of the specified node
+
+        Parameters
+        ----------
+
+        node:
+            The node which should return its state
+
+        Returns
+        -------
+
+        The state of the given node
+
+        """
+
+        message = Message(
+            block="System",
+            block_command="Get/Set State",
+            sender=self.sender,
+            receiver=node,
+            request=True,
+            data=[(State(mode="Get")).value],
+        )
+
+        response = await self._request(
+            message, description=f"get state of node “{node}”"
+        )
+
+        return State(response.data[0])
+
+
+# pylint: enable=too-few-public-methods
+
+
+class STU:
+    """Communicate and control a connected STU"""
+
+    def __init__(self, spu: SPU) -> None:
+        """Initialize the STU
+
+        spu:
+            The SPU object that created this STU instance
+
+        """
+
+        self.spu = spu
+        self.sender = NodeId("STU 1")
+
+    async def reset(self) -> None:
+        """Reset the STU
+
+        >>> from asyncio import run
+
+        Reset the current STU
+
+        >>> async def reset():
+        ...     async with CANNetwork() as spu:
+        ...         await spu.stu.reset()
+        >>> run(reset())
+
+        """
+
+        await self.spu._reset_node(  # pylint: disable=protected-access
+            self.sender
+        )
+
+    async def get_state(self) -> State:
+        """Get the current state of the STU
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Get state of STU 1
+
+        >>> async def get_state():
+        ...     async with CANNetwork() as spu:
+        ...         return await spu.stu.get_state()
+        >>> run(get_state())
+        Get State, Location: Application, State: Operating
+
+        """
+
+        return await self.spu._get_state(  # pylint: disable=protected-access
+            self.sender
+        )
 
 
 # pylint: disable=too-many-public-methods
@@ -5429,7 +5712,7 @@ if __name__ == "__main__":
     if RUN_ALL_DOCTESTS:
         testmod()
     else:
-        TestClass = NewNetwork
+        TestClass = STU
         methods = [
             method_name
             for method_name in dir(TestClass)
