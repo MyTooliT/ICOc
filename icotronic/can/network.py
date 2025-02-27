@@ -906,6 +906,51 @@ class STU:
             response_data=6 * [0],  # type: ignore[arg-type]
         )
 
+    async def get_available_devices(self) -> int:
+        """Retrieve the number of available sensor devices
+
+        Returns
+        -------
+
+        The number of available sensor devices
+
+        Example
+        -------
+
+        >>> from asyncio import run, sleep
+
+        Get the number of available Bluetooth devices at STU 1
+
+        >>> async def get_number_bluetooth_devices():
+        ...     async with CANNetwork() as spu:
+        ...         stu = spu.stu
+        ...         await stu.activate_bluetooth()
+        ...
+        ...         # We assume at least one STH is available
+        ...         number_sths = 0
+        ...         while number_sths <= 0:
+        ...             number_sths = await stu.get_available_devices()
+        ...             await sleep(0.1)
+        ...
+        ...         return number_sths
+        >>> run(get_number_bluetooth_devices()) >= 0
+        1
+
+        """
+
+        node = self.sender
+        # pylint: disable=protected-access
+        answer = await self.spu._request_bluetooth(
+            node=node,
+            subcommand=2,
+            description=f"get available Bluetooth devices of node “{node}”",
+        )
+        # pylint: enable=protected-access
+
+        available_devices = int(convert_bytes_to_text(answer.data[2:]))
+
+        return available_devices
+
 
 # pylint: disable=too-many-public-methods
 
