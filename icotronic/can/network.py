@@ -901,6 +901,9 @@ class STU:
     async def reset(self) -> None:
         """Reset the STU
 
+        Examples
+        --------
+
         >>> from asyncio import run
 
         Reset the current STU
@@ -919,8 +922,8 @@ class STU:
     async def get_state(self) -> State:
         """Get the current state of the STU
 
-        Example
-        -------
+        Examples
+        --------
 
         >>> from asyncio import run
 
@@ -941,8 +944,8 @@ class STU:
     async def activate_bluetooth(self) -> None:
         """Activate Bluetooth on the STU
 
-        Example
-        -------
+        Examples
+        --------
 
         >>> from asyncio import run
 
@@ -974,8 +977,8 @@ class STU:
         node:
             The node where Bluetooth should be deactivated
 
-        Example
-        -------
+        Examples
+        --------
 
         >>> from asyncio import run, sleep
 
@@ -1004,8 +1007,8 @@ class STU:
 
         The number of available sensor devices
 
-        Example
-        -------
+        Examples
+        --------
 
         >>> from asyncio import run, sleep
 
