@@ -620,6 +620,95 @@ class SPU:
 
         raise NoResponseError(f"Unable to {description}")
 
+    async def _request_bluetooth(
+        self,
+        node: Union[str, NodeId],
+        subcommand: int,
+        description: str,
+        device_number: Optional[int] = None,
+        data: Optional[List[int]] = None,
+        response_data: Optional[List[Optional[int]]] = None,
+    ) -> CANMessage:
+        """Send a request for a certain Bluetooth command
+
+        Parameters
+        ----------
+
+        node:
+            The node on which the Bluetooth command should be executed
+
+        subcommand:
+            The number of the Bluetooth subcommand
+
+        device_number:
+            The device number of the Bluetooth device
+
+        description:
+            A description of the request used in error messages
+
+        data:
+            An optional list of bytes that should be included in the request
+
+        response_data:
+            An optional list of expected data bytes in the response message
+
+        Returns
+        -------
+
+        The response message for the given request
+
+        """
+
+        device_number = 0 if device_number is None else device_number
+        data = [0] * 6 if data is None else data
+        message = Message(
+            block="System",
+            block_command="Bluetooth",
+            sender=self.sender,
+            receiver=node,
+            request=True,
+            data=[subcommand, device_number] + data,
+        )
+
+        # The Bluetooth subcommand and device number should be the same in the
+        # response message.
+        #
+        # Unfortunately the device number is currently not the same for:
+        #
+        # - the subcommand that sets the second part of the name, and
+        # - the subcommand that retrieves the MAC address
+        # - the subcommand that writes the time values for the reduced energy
+        #   mode
+        #
+        # The subcommand number in the response message for the commands to
+        # set the time values for
+        #
+        # - the reduced energy mode and
+        # - the lowest energy mode
+        #
+        # are unfortunately also not correct.
+        set_second_part_name = 4
+        set_times_reduced_energy = 14
+        set_times_reduced_lowest = 16
+        get_mac_address = 17
+        expected_data: List[Optional[int]]
+        if subcommand in {get_mac_address, set_second_part_name}:
+            expected_data = [subcommand, None]
+        elif subcommand in {
+            set_times_reduced_energy,
+            set_times_reduced_lowest,
+        }:
+            expected_data = [None, None]
+        else:
+            expected_data = [subcommand, device_number]
+
+        if response_data is not None:
+            expected_data.extend(response_data)
+
+        return await self._request(
+            message, description=description, response_data=expected_data
+        )
+
     # pylint: enable=too-many-arguments, too-many-positional-arguments
 
     # ==========
@@ -757,6 +846,64 @@ class STU:
 
         return await self.spu._get_state(  # pylint: disable=protected-access
             self.sender
+        )
+
+    async def activate_bluetooth(self) -> None:
+        """Activate Bluetooth on the STU
+
+        Example
+        -------
+
+        >>> from asyncio import run
+
+        Activate Bluetooth on the STU
+
+        >>> async def activate():
+        ...     async with CANNetwork() as spu:
+        ...         await spu.stu.activate_bluetooth()
+        >>> run(activate())
+
+        """
+
+        node = self.sender
+        await self.spu._request_bluetooth(  # pylint: disable=protected-access
+            node=node,
+            subcommand=1,
+            description=f"activate Bluetooth of node “{node}”",
+            response_data=6 * [0],  # type: ignore[arg-type]
+        )
+
+    async def deactivate_bluetooth(
+        self, node: Union[str, NodeId] = "STU 1"
+    ) -> None:
+        """Deactivate Bluetooth on the STU
+
+        Parameters
+        ----------
+
+        node:
+            The node where Bluetooth should be deactivated
+
+        Example
+        -------
+
+        >>> from asyncio import run, sleep
+
+        Deactivate Bluetooth on STU 1
+
+        >>> async def deactivate_bluetooth():
+        ...     async with CANNetwork() as spu:
+        ...         await spu.stu.deactivate_bluetooth()
+        >>> run(deactivate_bluetooth())
+
+        """
+
+        node = self.sender
+        await self.spu._request_bluetooth(  # pylint: disable=protected-access
+            node=node,
+            subcommand=9,
+            description=f"deactivate Bluetooth on “{node}”",
+            response_data=6 * [0],  # type: ignore[arg-type]
         )
 
 
