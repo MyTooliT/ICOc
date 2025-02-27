@@ -22,7 +22,7 @@ from time import time
 from types import TracebackType
 from typing import List, NamedTuple, Optional, Sequence, Type, Union
 
-from can import Bus, Listener, Message as CANMessage, Notifier
+from can import Bus, BusABC, Listener, Message as CANMessage, Notifier
 from can.interfaces.pcan.pcan import PcanError
 from semantic_version import Version
 from netaddr import EUI
@@ -370,6 +370,111 @@ class DataStreamContextManager:
             await self.network.stop_streaming_data(
                 retries=1, ignore_errors=True
             )
+
+
+class NewNetwork:
+    """Basic class to communicate with STU and sensor devices"""
+
+    def __init__(self) -> None:
+        """Create a new network from the given arguments
+
+        To actually connect to the CAN bus you need to use the async context
+        manager, provided by this class. If you want to manage the connection
+        yourself, please just use `__enter__` and `__exit__` manually.
+
+        Examples
+        --------
+
+        Create a new network (without connecting to the CAN bus)
+
+        >>> network = NewNetwork()
+
+        """
+
+        self.configuration = (
+            settings.can.linux
+            if platform == "linux"
+            else (
+                settings.can.mac
+                if platform == "darwin"
+                else settings.can.windows
+            )
+        )
+        self.bus: None | BusABC = None
+
+    def __enter__(self) -> NewNetwork:
+        """Initialize the network
+
+        Returns
+        -------
+
+        An initialized network object
+
+        Raises
+        ------
+
+        `CANInitError` if the CAN initialization fails
+
+        Examples
+        --------
+
+        Use a context manager to handle the cleanup process automatically
+
+        >>> with NewNetwork() as network:
+        ...     pass
+
+        Create and shutdown the network explicitly
+
+        >>> network = NewNetwork()
+        >>> connected = network.__enter__()
+        >>> network.__exit__(None, None, None)
+
+        """
+
+        try:
+            self.bus = Bus(  # pylint: disable=abstract-class-instantiated
+                channel=self.configuration.get("channel"),
+                interface=self.configuration.get("interface"),
+                bitrate=self.configuration.get("bitrate"),
+            )  # type: ignore[abstract]
+        except (PcanError, OSError) as error:
+            raise CANInitError(
+                f"Unable to initialize CAN connection: {error}\n\n"
+                "Possible reason:\n\n"
+                "• CAN adapter is not connected to the computer"
+            ) from error
+
+        self.bus.__enter__()
+
+        return self
+
+    def __exit__(
+        self,
+        exception_type: Optional[Type[BaseException]],
+        exception_value: Optional[BaseException],
+        traceback: Optional[TracebackType],
+    ) -> None:
+        """Disconnect from the network and clean up resources
+
+        Parameters
+        ----------
+
+        exception_type:
+            The type of the exception in case of an exception
+
+        exception_value:
+            The value of the exception in case of an exception
+
+        traceback:
+            The traceback in case of an exception
+
+        """
+
+        bus = self.bus
+
+        if bus is not None:
+            bus.__exit__(exception_type, exception_value, traceback)
+            bus.shutdown()
 
 
 # pylint: disable=too-many-public-methods
@@ -5324,8 +5429,16 @@ if __name__ == "__main__":
     if RUN_ALL_DOCTESTS:
         testmod()
     else:
-        run_docstring_examples(
-            Network.read_streaming_data_single,
-            globals(),
-            verbose=True,
-        )
+        TestClass = NewNetwork
+        methods = [
+            method_name
+            for method_name in dir(TestClass)
+            if callable(getattr(TestClass, method_name))
+        ]
+        for method_name in methods:
+            run_docstring_examples(
+                getattr(TestClass, method_name),
+                globals(),
+                name=f"{TestClass}.{method_name}",
+                verbose=False,
+            )
