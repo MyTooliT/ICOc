@@ -12,6 +12,7 @@ from typing import Type
 
 from can import Bus, BusABC, Message as CANMessage, Notifier
 from can.interfaces.pcan.pcan import PcanError
+from netaddr import EUI
 
 from icotronic.can.message import Message
 from icotronic.can.network import (
@@ -764,6 +765,64 @@ class STU:
         return int.from_bytes(
             response.data[2:3], byteorder="little", signed=True
         )
+
+    async def get_mac_address(self, device_number: int) -> EUI:
+        """Retrieve the MAC address of sensor device
+
+        Notes:
+            - Bluetooth needs to be activated (`activate_bluetooth`) before
+              calling this coroutine.
+            - You need to wait for the specified sensor device to be
+              available (using `get_available_devices`). Otherwise the
+              coroutine will report an incorrect MAC address, even if the
+              sensor device would be online.
+
+        Parameters
+        ----------
+
+        device_number:
+            The number of the Bluetooth device (0 up to the number of
+            available devices - 1)
+
+        Returns
+        -------
+
+        The MAC address of the specified sensor device
+
+        Example
+        -------
+
+        >>> from asyncio import run, sleep
+
+        Retrieve the MAC address of STH 1
+
+        >>> async def get_bluetooth_mac():
+        ...     async with CANNetwork() as spu:
+        ...         stu = spu.stu
+        ...         # We assume that at least one STH is available
+        ...         await stu.activate_bluetooth()
+        ...         while await stu.get_available_devices() <= 0:
+        ...             await sleep(0.1)
+        ...         return await stu.get_mac_address(0)
+        >>> mac_address = run(get_bluetooth_mac())
+        >>> isinstance(mac_address, EUI)
+        True
+        >>> mac_address != EUI(0)
+        True
+
+        """
+
+        node = "STU 1"
+        # pylint: disable=protected-access
+        response = await self.spu._request_bluetooth(
+            node=node,
+            device_number=device_number,
+            subcommand=17,
+            description=f"get MAC address of “{device_number}” from “{node}”",
+        )
+        # pylint: enable=protected-access
+
+        return EUI(":".join(f"{byte:02x}" for byte in response.data[:1:-1]))
 
 
 # -- Main ---------------------------------------------------------------------
