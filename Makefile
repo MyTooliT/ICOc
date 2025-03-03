@@ -54,6 +54,7 @@ pytest-test:
 
 pytest-test-no-hardware:
 	pytest --ignore-glob='*network.py' \
+	       --ignore-glob='*new.py' \
 	       --ignore-glob='*commander.py' \
 	       --ignore-glob='*read_data.t' \
 	       --ignore-glob='*sth_name.t' \
