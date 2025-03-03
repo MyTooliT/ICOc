@@ -769,14 +769,6 @@ class STU:
     async def get_mac_address(self, device_number: int) -> EUI:
         """Retrieve the MAC address of sensor device
 
-        Notes:
-            - Bluetooth needs to be activated (`activate_bluetooth`) before
-              calling this coroutine.
-            - You need to wait for the specified sensor device to be
-              available (using `get_available_devices`). Otherwise the
-              coroutine will report an incorrect MAC address, even if the
-              sensor device would be online.
-
         Parameters
         ----------
 
@@ -798,12 +790,7 @@ class STU:
 
         >>> async def get_bluetooth_mac():
         ...     async with CANNetwork() as spu:
-        ...         stu = spu.stu
-        ...         # We assume that at least one STH is available
-        ...         await stu.activate_bluetooth()
-        ...         while await stu.get_available_devices() <= 0:
-        ...             await sleep(0.1)
-        ...         return await stu.get_mac_address(0)
+        ...         return await spu.stu.get_mac_address(0)
         >>> mac_address = run(get_bluetooth_mac())
         >>> isinstance(mac_address, EUI)
         True
