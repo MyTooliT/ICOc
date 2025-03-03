@@ -533,14 +533,8 @@ class STU:
             response_data=6 * [0],  # type: ignore[arg-type]
         )
 
-    async def deactivate_bluetooth(self, node: str | NodeId = "STU 1") -> None:
+    async def deactivate_bluetooth(self) -> None:
         """Deactivate Bluetooth on the STU
-
-        Parameters
-        ----------
-
-        node:
-            The node where Bluetooth should be deactivated
 
         Examples
         --------
