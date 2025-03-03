@@ -716,6 +716,55 @@ class STU:
 
         return bool(response.data[2])
 
+    async def get_rssi(self, device_number: int):
+        """Retrieve the RSSI (Received Signal Strength Indication) of an STH
+
+        Parameters
+        ----------
+
+        device_number:
+            The number of the Bluetooth device (0 up to the number of
+            available devices)
+
+        Returns
+        -------
+
+        The RSSI of the device
+
+        Examples
+        --------
+
+        >>> from asyncio import run, sleep
+
+        Retrieve the RSSI of a disconnected STH
+
+        >>> async def get_bluetooth_rssi():
+        ...     async with CANNetwork() as spu:
+        ...         stu = spu.stu
+        ...         await stu.activate_bluetooth()
+        ...         # We assume that at least one STH is available
+        ...         # Get the RSSI of device “0”
+        ...         return await stu.get_rssi(0)
+        >>> rssi = run(get_bluetooth_rssi())
+        >>> -70 < rssi < 0
+        True
+
+        """
+
+        node = "STU 1"
+        # pylint: disable=protected-access
+        response = await self.spu._request_bluetooth(
+            node=node,
+            device_number=device_number,
+            subcommand=12,
+            description=f"get RSSI of “{device_number}” from “{node}”",
+        )
+        # pylint: enable=protected-access
+
+        return int.from_bytes(
+            response.data[2:3], byteorder="little", signed=True
+        )
+
 
 # -- Main ---------------------------------------------------------------------
 
