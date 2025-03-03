@@ -658,6 +658,64 @@ class STU:
 
         return bool(response.data[2])
 
+    async def is_connected(self) -> bool:
+        """Check if the STU is connected to a Bluetooth device
+
+        Returns
+        -------
+
+        - True, if a Bluetooth device is connected to the node
+        - False, otherwise
+
+        Example
+        -------
+
+        >>> from asyncio import run, sleep
+
+        Check connection of device “0” to STU
+
+        >>> async def check_bluetooth_connection():
+        ...     async with CANNetwork() as spu:
+        ...         stu = spu.stu
+        ...         await stu.activate_bluetooth()
+        ...         await sleep(0.1)
+        ...         connected_start = await stu.is_connected()
+        ...
+        ...         # We assume that at least one STH is available
+        ...         await stu.connect_with_device_number(0)
+        ...         # Wait for device connection
+        ...         connected_between = False
+        ...         while not connected_between:
+        ...             connected_between = await stu.is_connected()
+        ...             await sleep(0.1)
+        ...             await stu.connect_with_device_number(0)
+        ...
+        ...         # Deactivate Bluetooth connection
+        ...         await stu.deactivate_bluetooth()
+        ...         # Wait until device is disconnected
+        ...         await sleep(0.1)
+        ...         connected_after = await stu.is_connected()
+        ...
+        ...         return connected_start, connected_between, connected_after
+        >>> run(check_bluetooth_connection())
+        (False, True, False)
+
+        """
+
+        node = "STU 1"
+        # pylint: disable=protected-access
+        response = await self.spu._request_bluetooth(
+            node=node,
+            subcommand=8,
+            response_data=[None, *(5 * [0])],
+            description=(
+                f"check if “{node}” is connected to a Bluetooth device"
+            ),
+        )
+        # pylint: enable=protected-access
+
+        return bool(response.data[2])
+
 
 # -- Main ---------------------------------------------------------------------
 
