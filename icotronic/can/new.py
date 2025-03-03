@@ -609,6 +609,61 @@ class STU:
 
         return available_devices
 
+    async def connect_with_device_number(self, device_number: int = 0) -> bool:
+        """Connect to a Bluetooth device using a device number
+
+        Parameters
+        ----------
+
+        device_number:
+            The number of the Bluetooth device (0 up to the number of
+            available devices - 1)
+
+        Returns
+        -------
+
+        - True, if
+          1. in search mode,
+          2. at least single device was found,
+          3. no legacy mode,
+          4. and scanning mode active
+        - False, otherwise
+
+        Example
+        -------
+
+        >>> from asyncio import run, sleep
+
+        Connect to device “0”
+
+        >>> async def connect_bluetooth_device_number():
+        ...     async with CANNetwork() as spu:
+        ...         stu = spu.stu
+        ...         await stu.activate_bluetooth()
+        ...         # We assume that at least one STH is available
+        ...         status = False
+        ...         while not status:
+        ...             status = await stu.connect_with_device_number(0)
+        ...
+        ...         # Return status of Bluetooth device connect response
+        ...         return status
+        >>> run(connect_bluetooth_device_number())
+        True
+
+        """
+
+        node = "STU 1"
+        # pylint: disable=protected-access
+        response = await self.spu._request_bluetooth(
+            node=node,
+            subcommand=7,
+            device_number=device_number,
+            description=f"connect to “{device_number}” from “{node}”",
+        )
+        # pylint: enable=protected-access
+
+        return bool(response.data[2])
+
 
 # -- Main ---------------------------------------------------------------------
 
