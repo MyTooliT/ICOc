@@ -636,14 +636,15 @@ class STU:
         ...         stu = spu.stu
         ...         await stu.activate_bluetooth()
         ...         # We assume that at least one STH is available
-        ...         status = False
-        ...         while not status:
-        ...             status = await stu.connect_with_device_number(0)
-        ...
+        ...         connected = before = await stu.is_connected()
+        ...         while not connected:
+        ...             connected = await stu.connect_with_device_number(0)
+        ...         await stu.deactivate_bluetooth()
+        ...         after = await stu.is_connected()
         ...         # Return status of Bluetooth device connect response
-        ...         return status
+        ...         return before, connected, after
         >>> run(connect_bluetooth_device_number())
-        True
+        (False, True, False)
 
         """
 
@@ -767,7 +768,10 @@ class STU:
         )
 
     async def get_mac_address(self, device_number: int) -> EUI:
-        """Retrieve the MAC address of sensor device
+        """Retrieve the MAC address of a sensor device
+
+        Note: Bluetooth needs to be activated before calling this coroutine,
+              otherwise an incorrect MAC address will be returned.
 
         Parameters
         ----------
@@ -790,7 +794,9 @@ class STU:
 
         >>> async def get_bluetooth_mac():
         ...     async with CANNetwork() as spu:
-        ...         return await spu.stu.get_mac_address(0)
+        ...         stu = spu.stu
+        ...         await stu.activate_bluetooth()
+        ...         return await stu.get_mac_address(0)
         >>> mac_address = run(get_bluetooth_mac())
         >>> isinstance(mac_address, EUI)
         True
