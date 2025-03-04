@@ -527,7 +527,7 @@ class STU:
         """
 
         self.spu = spu
-        self.sender = NodeId("STU 1")
+        self.id = NodeId("STU 1")
 
     async def reset(self) -> None:
         """Reset the STU
@@ -546,9 +546,7 @@ class STU:
 
         """
 
-        await self.spu._reset_node(  # pylint: disable=protected-access
-            self.sender
-        )
+        await self.spu._reset_node(self.id)  # pylint: disable=protected-access
 
     async def get_state(self) -> State:
         """Get the current state of the STU
@@ -569,7 +567,7 @@ class STU:
         """
 
         return await self.spu._get_state(  # pylint: disable=protected-access
-            self.sender
+            self.id
         )
 
     async def activate_bluetooth(self) -> None:
@@ -589,11 +587,10 @@ class STU:
 
         """
 
-        node = self.sender
         await self.spu._request_bluetooth(  # pylint: disable=protected-access
-            node=node,
+            node=self.id,
             subcommand=1,
-            description=f"activate Bluetooth of node “{node}”",
+            description=f"activate Bluetooth of node “{self.id}”",
             response_data=6 * [0],  # type: ignore[arg-type]
         )
 
@@ -614,11 +611,10 @@ class STU:
 
         """
 
-        node = self.sender
         await self.spu._request_bluetooth(  # pylint: disable=protected-access
-            node=node,
+            node=self.id,
             subcommand=9,
-            description=f"deactivate Bluetooth on “{node}”",
+            description=f"deactivate Bluetooth on “{self.id}”",
             response_data=6 * [0],  # type: ignore[arg-type]
         )
 
@@ -654,12 +650,11 @@ class STU:
 
         """
 
-        node = self.sender
         # pylint: disable=protected-access
         answer = await self.spu._request_bluetooth(
-            node=node,
+            node=self.id,
             subcommand=2,
-            description=f"get available Bluetooth devices of node “{node}”",
+            description=f"get available Bluetooth devices of node “{self.id}”",
         )
         # pylint: enable=protected-access
 
@@ -705,7 +700,7 @@ class STU:
         """
 
         return await self.spu._get_name(  # pylint: disable=protected-access
-            node="STU 1",
+            node=self.id,
             device_number=device_number,
         )
 
@@ -753,13 +748,12 @@ class STU:
 
         """
 
-        node = "STU 1"
         # pylint: disable=protected-access
         response = await self.spu._request_bluetooth(
-            node=node,
+            node=self.id,
             subcommand=7,
             device_number=device_number,
-            description=f"connect to “{device_number}” from “{node}”",
+            description=f"connect to “{device_number}” from “{self.id}”",
         )
         # pylint: enable=protected-access
 
@@ -809,14 +803,13 @@ class STU:
 
         """
 
-        node = "STU 1"
         # pylint: disable=protected-access
         response = await self.spu._request_bluetooth(
-            node=node,
+            node=self.id,
             subcommand=8,
             response_data=[None, *(5 * [0])],
             description=(
-                f"check if “{node}” is connected to a Bluetooth device"
+                f"check if “{self.id}” is connected to a Bluetooth device"
             ),
         )
         # pylint: enable=protected-access
@@ -858,13 +851,12 @@ class STU:
 
         """
 
-        node = "STU 1"
         # pylint: disable=protected-access
         response = await self.spu._request_bluetooth(
-            node=node,
+            node=self.id,
             device_number=device_number,
             subcommand=12,
-            description=f"get RSSI of “{device_number}” from “{node}”",
+            description=f"get RSSI of “{device_number}” from “{self.id}”",
         )
         # pylint: enable=protected-access
 
@@ -910,13 +902,14 @@ class STU:
 
         """
 
-        node = "STU 1"
         # pylint: disable=protected-access
         response = await self.spu._request_bluetooth(
-            node=node,
+            node=self.id,
             device_number=device_number,
             subcommand=17,
-            description=f"get MAC address of “{device_number}” from “{node}”",
+            description=(
+                f"get MAC address of “{device_number}” from “{self.id}”"
+            ),
         )
         # pylint: enable=protected-access
 
