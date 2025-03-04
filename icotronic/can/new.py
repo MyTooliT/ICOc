@@ -830,6 +830,7 @@ class STU:
         --------
 
         >>> from asyncio import run, sleep
+        >>> from time import time
 
         >>> async def get_bluetooth_mac():
         ...     async with CANNetwork() as spu:
@@ -841,10 +842,19 @@ class STU:
         >>> async def connect(mac_address):
         ...     async with CANNetwork() as spu:
         ...         stu = spu.stu
-        ...         return await stu.is_connected()
-        ...
+        ...         connected = before = await stu.is_connected()
+        ...         timeout = time() + 10
+        ...         await stu.connect_with_mac_address(mac_address)
+        ...         while not connected:
+        ...             if time() > timeout:
+        ...                 break
+        ...             await sleep(0.1)
+        ...             connected = await stu.is_connected()
+        ...         await stu.deactivate_bluetooth()
+        ...         after = await stu.is_connected()
+        ...         return before, connected, after
         >>> run(connect(mac_address))
-        False
+        (False, True, False)
 
         """
 
