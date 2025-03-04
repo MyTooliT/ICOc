@@ -448,6 +448,66 @@ class SPU:
 
         return State(response.data[0])
 
+    async def _get_name(
+        self, node: str | NodeId = "STU 1", device_number: int = 0xFF
+    ) -> str:
+        """Retrieve the name of a Bluetooth device
+
+        You can use this method to name of both
+
+        1. disconnected and
+        2. connected
+
+        devices.
+
+        1. For disconnected sensor devices you will usually use the STU (e.g.
+           `STU 1`) and the device number at the STU (in the range `0` up to
+           the number of devices - 1) to retrieve the name.
+
+        2. For connected devices you will use the device name and the special
+           “self addressing” device number (`0xff`) to ask a device about its
+           own name. **Note**: A connected STH will return its own name,
+           regardless of the value of the device number.
+
+        Parameters
+        ----------
+
+        node:
+            The node which has access to the Bluetooth device
+
+        device_number:
+            The number of the Bluetooth device (0 up to the number of
+            available devices - 1; 0xff for self addressing).
+
+        Returns
+        -------
+
+        The (Bluetooth broadcast) name of the device
+
+        """
+
+        description = f"name of device “{device_number}” from “{node}”"
+
+        answer = await self._request_bluetooth(
+            node=node,
+            subcommand=5,
+            device_number=device_number,
+            description=f"get first part of {description}",
+        )
+
+        first_part = convert_bytes_to_text(answer.data[2:])
+
+        answer = await self._request_bluetooth(
+            node=node,
+            device_number=device_number,
+            subcommand=6,
+            description=f"get second part of {description}",
+        )
+
+        second_part = convert_bytes_to_text(answer.data[2:])
+
+        return first_part + second_part
+
 
 # pylint: enable=too-few-public-methods
 
@@ -603,6 +663,48 @@ class STU:
         available_devices = int(convert_bytes_to_text(answer.data[2:]))
 
         return available_devices
+
+    async def get_name(self, device_number: int) -> str:
+        """Retrieve the name of a sensor device
+
+        Parameters
+        ----------
+
+        device_number:
+            The number of the Bluetooth device (0 up to the number of
+            available devices - 1)
+
+        Returns
+        -------
+
+        The (Bluetooth broadcast) name of the device
+
+        Examples
+        --------
+
+        >>> from asyncio import run, sleep
+        >>> from platform import system
+
+        Get Bluetooth advertisement name of device “0” from STU 1
+
+        >>> async def get_bluetooth_device_name():
+        ...     async with CANNetwork() as spu:
+        ...         stu = spu.stu
+        ...         await stu.activate_bluetooth()
+        ...         # We assume that at least one STH is available
+        ...         return await stu.get_name(0)
+        >>> name = run(get_bluetooth_device_name())
+        >>> isinstance(name, str)
+        True
+        >>> 0 <= len(name) <= 8
+        True
+
+        """
+
+        return await self.spu._get_name(  # pylint: disable=protected-access
+            node="STU 1",
+            device_number=device_number,
+        )
 
     async def connect_with_device_number(self, device_number: int = 0) -> bool:
         """Connect to a Bluetooth device using a device number
