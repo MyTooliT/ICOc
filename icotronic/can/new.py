@@ -1,3 +1,5 @@
+# pylint: disable=too-many-lines
+
 """Communicate with the ICOtronic system"""
 
 # -- Imports ------------------------------------------------------------------
@@ -21,6 +23,7 @@ from icotronic.can.network import (
     Logger,
     NoResponseError,
     ResponseListener,
+    STHDeviceInfo,
 )
 from icotronic.can.node import NodeId
 from icotronic.can.status import State
@@ -919,6 +922,79 @@ class STU:
 
         return EUI(":".join(f"{byte:02x}" for byte in response.data[:1:-1]))
 
+    async def get_sensor_devices(self) -> list[STHDeviceInfo]:
+        """Retrieve a list of available sensor devices
+
+        Returns
+        -------
+
+        A list of available devices including:
+
+        - device number,
+        - name,
+        - MAC address and
+        - RSSI
+
+        for each device
+
+        Examples
+        --------
+
+        >>> from asyncio import run, sleep
+        >>> from netaddr import EUI
+
+        Retrieve the list of Bluetooth devices at STU 1
+
+        >>> async def get_sensor_devices():
+        ...     async with CANNetwork() as spu:
+        ...         stu = spu.stu
+        ...         # We assume that at least one sensor device is available
+        ...         devices = []
+        ...         while not devices:
+        ...             devices = await stu.get_sensor_devices()
+        ...             await sleep(0.1)
+        ...
+        ...         return devices
+        >>> devices = run(get_sensor_devices())
+        >>> len(devices) >= 1
+        True
+        >>> device = devices[0]
+
+        >>> device.device_number
+        0
+
+        >>> isinstance(device.name, str)
+        True
+        >>> 0 <= len(device.name) <= 8
+        True
+
+        >>> -80 < device.rssi < 0
+        True
+
+        >>> isinstance(device.mac_address, EUI)
+        True
+
+        """
+
+        await self.activate_bluetooth()
+        available_devices = await self.get_available_devices()
+        devices = []
+        for device in range(available_devices):
+            mac_address = await self.get_mac_address(device)
+            rssi = await self.get_rssi(device)
+            name = await self.get_name(device)
+
+            devices.append(
+                STHDeviceInfo(
+                    device_number=device,
+                    mac_address=mac_address,
+                    name=name,
+                    rssi=rssi,
+                )
+            )
+
+        return devices
+
 
 # -- Main ---------------------------------------------------------------------
 
@@ -926,7 +1002,7 @@ if __name__ == "__main__":
     from doctest import run_docstring_examples
 
     run_docstring_examples(
-        STU.get_mac_address,
+        STU.get_sensor_devices,
         globals(),
         verbose=True,
     )
