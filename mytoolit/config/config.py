@@ -121,9 +121,21 @@ class Settings(Dynaconf):
         if settings_files is None:
             settings_files = []
 
+        # If we use PyInstaller to create an installer for the package, then
+        # loading the default config from the package data (`config.yaml`) does
+        # not seem to work. As a workaround we also load data from
+        # `default.yaml` inside the user configuration directory. This way you
+        # can copy the content of `config.yaml` to this location before
+        # executing any code and ICOc should still work, even when loading the
+        # default config from the package data fails.
+        user_default_filepath = (
+            Path(ConfigurationUtility.user_config_filepath).parent
+            / "default.yaml"
+        )
         settings_files = [
             default_settings_filepath,
             ConfigurationUtility.site_config_filepath,
+            user_default_filepath,
             ConfigurationUtility.user_config_filepath,
         ] + settings_files
 
