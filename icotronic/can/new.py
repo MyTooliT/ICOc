@@ -817,59 +817,6 @@ class STU:
 
         return EUI(":".join(f"{byte:02x}" for byte in response.data[:1:-1]))
 
-    async def connect_with_mac_address(self, mac_address: EUI) -> None:
-        """Connect to a Bluetooth sensor device using its MAC address
-
-        Parameters
-        ----------
-
-        mac_address:
-            The MAC address of the sensor device
-
-        Examples
-        --------
-
-        >>> from asyncio import run, sleep
-        >>> from time import time
-
-        >>> async def get_bluetooth_mac():
-        ...     async with CANNetwork() as spu:
-        ...         return await spu.stu.get_mac_address(0)
-        >>> mac_address = run(get_bluetooth_mac())
-        >>> mac_address != EUI(0)
-        True
-
-        >>> async def connect(mac_address):
-        ...     async with CANNetwork() as spu:
-        ...         stu = spu.stu
-        ...         connected = before = await stu.is_connected()
-        ...         timeout = time() + 10
-        ...         await stu.connect_with_mac_address(mac_address)
-        ...         while not connected:
-        ...             if time() > timeout:
-        ...                 break
-        ...             await sleep(0.1)
-        ...             connected = await stu.is_connected()
-        ...         await stu.deactivate_bluetooth()
-        ...         after = await stu.is_connected()
-        ...         return before, connected, after
-        >>> run(connect(mac_address))
-        (False, True, False)
-
-        """
-
-        mac_address_bytes_reversed = list(reversed(mac_address.packed))
-        node = "STU 1"
-        # pylint: disable=protected-access
-        await self.spu._request_bluetooth(
-            node=node,
-            subcommand=18,
-            data=mac_address_bytes_reversed,
-            response_data=mac_address_bytes_reversed,
-            description=f"connect to device “{mac_address}” from “{node}”",
-        )
-        # pylint: enable=protected-access
-
 
 # -- Main ---------------------------------------------------------------------
 
@@ -877,7 +824,7 @@ if __name__ == "__main__":
     from doctest import run_docstring_examples
 
     run_docstring_examples(
-        STU.connect_with_mac_address,
+        STU.get_mac_address,
         globals(),
         verbose=True,
     )
