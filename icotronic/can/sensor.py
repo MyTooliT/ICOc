@@ -46,7 +46,7 @@ class SensorDevice:
 
         """
 
-        await self.spu._reset_node(self.id)  # pylint: disable=protected-access
+        await self.spu.reset_node(self.id)
 
     async def get_state(self) -> State:
         """Get the current state of the sensor device
@@ -74,9 +74,7 @@ class SensorDevice:
 
         """
 
-        return await self.spu._get_state(  # pylint: disable=protected-access
-            self.id
-        )
+        return await self.spu.get_state(self.id)
 
     async def get_name(self) -> str:
         """Retrieve the name of the sensor device
@@ -107,9 +105,7 @@ class SensorDevice:
 
         """
 
-        return await self.spu._get_name(  # pylint: disable=protected-access
-            node=self.id, device_number=0xFF
-        )
+        return await self.spu.get_name(node=self.id, device_number=0xFF)
 
     async def set_name(self, name: str) -> None:
         """Set the name of a sensor device

@@ -66,7 +66,7 @@ class STU:
 
         """
 
-        await self.spu._reset_node(self.id)  # pylint: disable=protected-access
+        await self.spu.reset_node(self.id)
 
     async def get_state(self) -> State:
         """Get the current state of the STU
@@ -87,9 +87,7 @@ class STU:
 
         """
 
-        return await self.spu._get_state(  # pylint: disable=protected-access
-            self.id
-        )
+        return await self.spu.get_state(self.id)
 
     async def activate_bluetooth(self) -> None:
         """Activate Bluetooth on the STU
@@ -221,9 +219,8 @@ class STU:
 
         """
 
-        return await self.spu._get_name(  # pylint: disable=protected-access
-            node=self.id,
-            device_number=device_number,
+        return await self.spu.get_name(
+            node=self.id, device_number=device_number
         )
 
     async def connect_with_device_number(self, device_number: int = 0) -> bool:

@@ -230,7 +230,7 @@ class SPU:
     # = System =
     # ==========
 
-    async def _reset_node(self, node: str | NodeId) -> None:
+    async def reset_node(self, node: str | NodeId) -> None:
         """Reset the specified node
 
         Parameters
@@ -249,7 +249,7 @@ class SPU:
 
         >>> async def reset():
         ...     async with Connection() as stu:
-        ...         await stu.spu._reset_node('STH 1')
+        ...         await stu.spu.reset_node('STH 1')
         >>> run(reset()) # doctest: +IGNORE_EXCEPTION_DETAIL
         Traceback (most recent call last):
             ...
@@ -275,7 +275,7 @@ class SPU:
     # - Get/Set State -
     # -----------------
 
-    async def _get_state(self, node: str | NodeId = "STU 1") -> State:
+    async def get_state(self, node: str | NodeId = "STU 1") -> State:
         """Get the current state of the specified node
 
         Parameters
@@ -306,7 +306,7 @@ class SPU:
 
         return State(response.data[0])
 
-    async def _get_name(
+    async def get_name(
         self, node: str | NodeId = "STU 1", device_number: int = 0xFF
     ) -> str:
         """Retrieve the name of a Bluetooth device
