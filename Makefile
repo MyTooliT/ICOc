@@ -53,9 +53,12 @@ pytest-test:
 	pytest $(TEST_LOCATIONS)
 
 pytest-test-no-hardware:
-	pytest --ignore-glob='*network.py' \
-	       --ignore-glob='*new.py' \
-	       --ignore-glob='*commander.py' \
+	pytest --ignore-glob='*commander.py' \
+	       --ignore-glob='*connection.py' \
+	       --ignore-glob='*can/sensor.py' \
+	       --ignore-glob='*can/spu.py' \
+	       --ignore-glob='*can/stu.py' \
+	       --ignore-glob='*network.py' \
 	       --ignore-glob='*read_data.t' \
 	       --ignore-glob='*sth_name.t' \
 	       --ignore-glob='*store_data.t' \
