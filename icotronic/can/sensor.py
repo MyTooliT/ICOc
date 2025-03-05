@@ -228,7 +228,7 @@ class SensorDevice:
             node=self.id,
             device_number=self_addressing,
             subcommand=13,
-            description="read reduced energy time values of sensor device",
+            description="get reduced energy time values of sensor device",
         )
         # pylint: enable=protected-access
 
@@ -316,7 +316,7 @@ class SensorDevice:
             subcommand=14,
             data=data,
             response_data=list(data),
-            description="write reduced energy time values of sensor device",
+            description="set reduced energy time values of sensor device",
         )
         # pylint: enable=protected-access
 
