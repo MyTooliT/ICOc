@@ -4,6 +4,8 @@
 
 from __future__ import annotations
 
+from netaddr import EUI
+
 from icotronic.can.constants import (
     ADVERTISEMENT_TIME_EEPROM_TO_MS,
     DEVICE_NUMBER_SELF_ADDRESSING,
@@ -447,6 +449,39 @@ class SensorDevice:
         )
         # pylint: enable=protected-access
 
+    async def get_mac_address(self) -> EUI:
+        """Retrieve the MAC address of the sensor device
+
+        Returns
+        -------
+
+        The MAC address of the specified sensor device
+
+        Example
+        -------
+
+        >>> from asyncio import run
+        >>> from icotronic.can.connection import Connection
+
+        Retrieve the MAC address of STH 1
+
+        >>> async def get_bluetooth_mac():
+        ...     async with Connection() as stu:
+        ...         # We assume that at least one sensor device is available
+        ...         async with stu.connect_sensor_device(0) as sensor_device:
+        ...             return await sensor_device.get_mac_address()
+        >>> mac_address = run(get_bluetooth_mac())
+        >>> isinstance(mac_address, EUI)
+        True
+        >>> mac_address != EUI(0)
+        True
+
+        """
+
+        return await self.spu.get_mac_address(
+            self.id, DEVICE_NUMBER_SELF_ADDRESSING
+        )
+
 
 # -- Main ---------------------------------------------------------------------
 
@@ -454,7 +489,7 @@ if __name__ == "__main__":
     from doctest import run_docstring_examples
 
     run_docstring_examples(
-        SensorDevice.set_energy_mode_lowest,
+        SensorDevice.get_mac_address,
         globals(),
         verbose=True,
     )
