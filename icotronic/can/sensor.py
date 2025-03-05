@@ -4,7 +4,10 @@
 
 from __future__ import annotations
 
-from icotronic.can.constants import ADVERTISEMENT_TIME_EEPROM_TO_MS
+from icotronic.can.constants import (
+    ADVERTISEMENT_TIME_EEPROM_TO_MS,
+    DEVICE_NUMBER_SELF_ADDRESSING,
+)
 from icotronic.can.network import Times
 from icotronic.can.status import State
 from icotronic.can.spu import SPU
@@ -164,14 +167,13 @@ class SensorDevice:
         # Use 0 bytes at end of names that are shorter than 8 bytes
         bytes_name.extend([0] * (8 - length_name))
         description = f"name of “{node}”"
-        self_addressing = 0xFF
 
         # pylint: disable=protected-access
 
         await self.spu._request_bluetooth(
             node=node,
             subcommand=3,
-            device_number=self_addressing,
+            device_number=DEVICE_NUMBER_SELF_ADDRESSING,
             data=bytes_name[:6],
             description=f"set first part of {description}",
         )
@@ -179,7 +181,7 @@ class SensorDevice:
         await self.spu._request_bluetooth(
             node=node,
             subcommand=4,
-            device_number=self_addressing,
+            device_number=DEVICE_NUMBER_SELF_ADDRESSING,
             data=bytes_name[6:] + [0] * 4,
             description=f"set second part of {description}",
         )
@@ -222,11 +224,10 @@ class SensorDevice:
 
         """
 
-        self_addressing = 0xFF
         # pylint: disable=protected-access
         response = await self.spu._request_bluetooth(
             node=self.id,
-            device_number=self_addressing,
+            device_number=DEVICE_NUMBER_SELF_ADDRESSING,
             subcommand=13,
             description="get reduced energy time values of sensor device",
         )
@@ -307,12 +308,10 @@ class SensorDevice:
             + advertisement_time.to_bytes(2, "little")
         )
 
-        self_addressing = 0xFF
-
         # pylint: disable=protected-access
         await self.spu._request_bluetooth(
             node=self.id,
-            device_number=self_addressing,
+            device_number=DEVICE_NUMBER_SELF_ADDRESSING,
             subcommand=14,
             data=data,
             response_data=list(data),
