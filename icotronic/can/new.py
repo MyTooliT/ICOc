@@ -35,7 +35,7 @@ from icotronic.utility.data import convert_bytes_to_text
 # -- Classes ------------------------------------------------------------------
 
 
-class CANNetwork:
+class Connection:
     """Basic class to initialize CAN communication"""
 
     def __init__(self) -> None:
@@ -50,7 +50,7 @@ class CANNetwork:
 
         Create a new network (without connecting to the CAN bus)
 
-        >>> network = CANNetwork()
+        >>> network = Connection()
 
         """
 
@@ -87,14 +87,14 @@ class CANNetwork:
         Use a context manager to handle the cleanup process automatically
 
         >>> async def connect_can_context():
-        ...     async with CANNetwork() as network:
+        ...     async with Connection() as network:
         ...         pass
         >>> run(connect_can_context())
 
         Create and shutdown the connection explicitly
 
         >>> async def connect_can_manual():
-        ...     network = CANNetwork()
+        ...     network = Connection()
         ...     connected = await network.__aenter__()
         ...     await network.__aexit__(None, None, None)
         >>> run(connect_can_manual())
@@ -378,7 +378,7 @@ class SPU:
         Reset node, which is not connected
 
         >>> async def reset():
-        ...     async with CANNetwork() as stu:
+        ...     async with Connection() as stu:
         ...         await stu.spu._reset_node('STH 1')
         >>> run(reset()) # doctest: +IGNORE_EXCEPTION_DETAIL
         Traceback (most recent call last):
@@ -509,7 +509,6 @@ class STU:
         spu:
             The SPU object that created this STU instance
 
-
         Examples
         --------
 
@@ -518,10 +517,9 @@ class STU:
         Create an STU object
 
         >>> async def create_stu():
-        ...     async with CANNetwork() as stu:
+        ...     async with Connection() as stu:
         ...         pass # call some coroutines of `stu` object
         >>> run(create_stu())
-
 
         """
 
@@ -539,7 +537,7 @@ class STU:
         Reset the current STU
 
         >>> async def reset():
-        ...     async with CANNetwork() as stu:
+        ...     async with Connection() as stu:
         ...         await stu.reset()
         >>> run(reset())
 
@@ -558,7 +556,7 @@ class STU:
         Get state of STU 1
 
         >>> async def get_state():
-        ...     async with CANNetwork() as stu:
+        ...     async with Connection() as stu:
         ...         return await stu.get_state()
         >>> run(get_state())
         Get State, Location: Application, State: Operating
@@ -580,7 +578,7 @@ class STU:
         Activate Bluetooth on the STU
 
         >>> async def activate():
-        ...     async with CANNetwork() as stu:
+        ...     async with Connection() as stu:
         ...         await stu.activate_bluetooth()
         >>> run(activate())
 
@@ -604,7 +602,7 @@ class STU:
         Deactivate Bluetooth on STU 1
 
         >>> async def deactivate_bluetooth():
-        ...     async with CANNetwork() as stu:
+        ...     async with Connection() as stu:
         ...         await stu.deactivate_bluetooth()
         >>> run(deactivate_bluetooth())
 
@@ -633,7 +631,7 @@ class STU:
         Get the number of available Bluetooth devices at STU 1
 
         >>> async def get_number_bluetooth_devices():
-        ...     async with CANNetwork() as stu:
+        ...     async with Connection() as stu:
         ...         await stu.activate_bluetooth()
         ...
         ...         # We assume at least one STH is available
@@ -684,7 +682,7 @@ class STU:
         Get Bluetooth advertisement name of device “0” from STU 1
 
         >>> async def get_bluetooth_device_name():
-        ...     async with CANNetwork() as stu:
+        ...     async with Connection() as stu:
         ...         await stu.activate_bluetooth()
         ...         # We assume that at least one STH is available
         ...         return await stu.get_name(0)
@@ -729,7 +727,7 @@ class STU:
         Connect to device “0”
 
         >>> async def connect_bluetooth_device_number():
-        ...     async with CANNetwork() as stu:
+        ...     async with Connection() as stu:
         ...         await stu.activate_bluetooth()
         ...         # We assume that at least one STH is available
         ...         connected = before = await stu.is_connected()
@@ -772,7 +770,7 @@ class STU:
         Check connection of device “0” to STU
 
         >>> async def check_bluetooth_connection():
-        ...     async with CANNetwork() as stu:
+        ...     async with Connection() as stu:
         ...         await stu.activate_bluetooth()
         ...         await sleep(0.1)
         ...         connected_start = await stu.is_connected()
@@ -834,7 +832,7 @@ class STU:
         Retrieve the RSSI of a disconnected STH
 
         >>> async def get_bluetooth_rssi():
-        ...     async with CANNetwork() as stu:
+        ...     async with Connection() as stu:
         ...         await stu.activate_bluetooth()
         ...         # We assume that at least one STH is available
         ...         # Get the RSSI of device “0”
@@ -884,7 +882,7 @@ class STU:
         Retrieve the MAC address of STH 1
 
         >>> async def get_bluetooth_mac():
-        ...     async with CANNetwork() as stu:
+        ...     async with Connection() as stu:
         ...         await stu.activate_bluetooth()
         ...         return await stu.get_mac_address(0)
         >>> mac_address = run(get_bluetooth_mac())
@@ -932,7 +930,7 @@ class STU:
         Retrieve the list of Bluetooth devices at STU 1
 
         >>> async def get_sensor_devices():
-        ...     async with CANNetwork() as stu:
+        ...     async with Connection() as stu:
         ...         # We assume that at least one sensor device is available
         ...         devices = []
         ...         while not devices:
@@ -1006,7 +1004,7 @@ class STU:
         Connect to the sensor device with device number `0`
 
         >>> async def connect_sensor_device():
-        ...     async with CANNetwork() as stu:
+        ...     async with Connection() as stu:
         ...         async with stu.connect_sensor_device(0):
         ...             connected = await stu.is_connected()
         ...         after = await stu.is_connected()
@@ -1135,7 +1133,7 @@ class SensorDevice:
         Reset a sensor device
 
         >>> async def reset():
-        ...     async with CANNetwork() as stu:
+        ...     async with Connection() as stu:
         ...         # We assume that at least one sensor device is available
         ...         async with stu.connect_sensor_device(0) as sensor_device:
         ...             await sensor_device.reset()
@@ -1161,7 +1159,7 @@ class SensorDevice:
         Get state of STU 1
 
         >>> async def get_state():
-        ...     async with CANNetwork() as stu:
+        ...     async with Connection() as stu:
         ...         # We assume that at least one sensor device is available
         ...         async with stu.connect_sensor_device(0) as sensor_device:
         ...             return await sensor_device.get_state()
