@@ -319,6 +319,59 @@ class SensorDevice:
         )
         # pylint: enable=protected-access
 
+    async def get_energy_mode_lowest(self) -> Times:
+        """Read the reduced lowest energy mode (mode 2) time values
+
+        See also:
+
+        - https://mytoolit.github.io/Documentation/#sleep-advertisement-times
+
+        Returns
+        -------
+
+        A tuple containing the advertisement time in the lowest energy mode in
+        milliseconds and the time until the device will switch from the
+        reduced energy mode (mode 1) to the lowest energy mode (mode 2) – if
+        there is no activity – in milliseconds
+
+        Example
+        -------
+
+        >>> from asyncio import run
+        >>> from icotronic.can.connection import Connection
+
+        Retrieve the reduced energy time values of a sensor device
+
+        >>> async def read_energy_mode_lowest():
+        ...     async with Connection() as stu:
+        ...         # We assume that at least one sensor device is available
+        ...         async with stu.connect_sensor_device(0) as sensor_device:
+        ...             return await sensor_device.get_energy_mode_lowest()
+        >>> times = run(read_energy_mode_lowest())
+        >>> round(times.advertisement)
+        2500
+        >>> times.sleep
+        259200000
+
+        """
+
+        # pylint: disable=protected-access
+        response = await self.spu._request_bluetooth(
+            node=self.id,
+            device_number=DEVICE_NUMBER_SELF_ADDRESSING,
+            subcommand=15,
+            description="get lowest energy mode time values of sensor device",
+        )
+        # pylint: enable=protected-access
+
+        wait_time = int.from_bytes(response.data[2:6], byteorder="little")
+        advertisement_time = (
+            int.from_bytes(response.data[6:], byteorder="little")
+            * ADVERTISEMENT_TIME_EEPROM_TO_MS
+        )
+
+        return Times(sleep=wait_time, advertisement=advertisement_time)
+
 
 # -- Main ---------------------------------------------------------------------
 
@@ -326,7 +379,7 @@ if __name__ == "__main__":
     from doctest import run_docstring_examples
 
     run_docstring_examples(
-        SensorDevice.set_energy_mode_reduced,
+        SensorDevice.get_energy_mode_lowest,
         globals(),
         verbose=True,
     )
