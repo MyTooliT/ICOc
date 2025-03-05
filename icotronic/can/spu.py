@@ -8,6 +8,7 @@ from asyncio import wait_for
 from logging import getLogger
 
 from can import BusABC, Message as CANMessage, Notifier
+from netaddr import EUI
 
 from icotronic.can.message import Message
 from icotronic.can.network import (
@@ -432,6 +433,53 @@ class SPU:
         return int.from_bytes(
             response.data[2:3], byteorder="little", signed=True
         )
+
+    async def get_mac_address(
+        self, node: str | NodeId = "STH 1", device_number: int = 0xFF
+    ) -> EUI:
+        """Retrieve the Bluetooth MAC address of a device
+
+        You can use this method to retrieve the address of both
+
+        1. disconnected and
+        2. connected
+
+        devices.
+
+        1. For disconnected devices (STHs) you will usually use the STU (e.g.
+           `STU 1`) and the device number at the STU (in the range `0` up to
+           the number of devices - 1) to retrieve the MAC address.
+
+        2. For connected devices you will use the device name and the special
+           “self addressing” device number (`0xff`) to ask a device about its
+           own device number. **Note**: A connected STH will return its own
+           MAC address, regardless of the value of the device number.
+
+        Parameters
+        ----------
+
+        node:
+            The node which should retrieve the MAC address
+
+        device_number:
+            The number of the Bluetooth device (0 up to the number of
+            available devices - 1; 0xff for self addressing).
+
+        Returns
+        -------
+
+        The MAC address of the device specified via node and device number
+
+        """
+
+        response = await self._request_bluetooth(
+            node=node,
+            device_number=device_number,
+            subcommand=17,
+            description=f"get MAC address of “{device_number}” from “{node}”",
+        )
+
+        return EUI(":".join(f"{byte:02x}" for byte in response.data[:1:-1]))
 
 
 # -- Main ---------------------------------------------------------------------

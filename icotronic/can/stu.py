@@ -412,18 +412,7 @@ class STU:
 
         """
 
-        # pylint: disable=protected-access
-        response = await self.spu._request_bluetooth(
-            node=self.id,
-            device_number=device_number,
-            subcommand=17,
-            description=(
-                f"get MAC address of “{device_number}” from “{self.id}”"
-            ),
-        )
-        # pylint: enable=protected-access
-
-        return EUI(":".join(f"{byte:02x}" for byte in response.data[:1:-1]))
+        return await self.spu.get_mac_address(self.id, device_number)
 
     async def get_sensor_devices(self) -> list[STHDeviceInfo]:
         """Retrieve a list of available sensor devices
