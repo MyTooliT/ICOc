@@ -1156,6 +1156,35 @@ class SensorDevice:
 
         await self.spu._reset_node(self.id)  # pylint: disable=protected-access
 
+    async def get_state(self) -> State:
+        """Get the current state of the sensor device
+
+        Returns
+        -------
+
+        The operating state of the sensor device
+
+        Examples
+        --------
+
+        >>> from asyncio import run
+
+        Get state of STU 1
+
+        >>> async def get_state():
+        ...     async with CANNetwork() as spu:
+        ...         # We assume that at least one sensor device is available
+        ...         async with spu.stu.connect_sensor_device(0) as device:
+        ...             return await device.get_state()
+        >>> run(get_state())
+        Get State, Location: Application, State: Operating
+
+        """
+
+        return await self.spu._get_state(  # pylint: disable=protected-access
+            self.id
+        )
+
 
 # pylint: enable=too-few-public-methods
 
@@ -1166,7 +1195,7 @@ if __name__ == "__main__":
     from doctest import run_docstring_examples
 
     run_docstring_examples(
-        SensorDevice.reset,
+        SensorDevice.get_state,
         globals(),
         verbose=True,
     )
