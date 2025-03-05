@@ -76,6 +76,39 @@ class SensorDevice:
             self.id
         )
 
+    async def get_name(self) -> str:
+        """Retrieve the name of the sensor device
+
+        Returns
+        -------
+
+        The (Bluetooth broadcast) name of the device
+
+        Examples
+        --------
+
+        >>> from asyncio import run
+        >>> from icotronic.can.connection import Connection
+
+        Get Bluetooth advertisement name of device “0”
+
+        >>> async def get_sensor_device_name():
+        ...     async with Connection() as stu:
+        ...         # We assume that at least one sensor device is available
+        ...         async with stu.connect_sensor_device(0) as sensor_device:
+        ...             return await sensor_device.get_name()
+        >>> name = run(get_sensor_device_name())
+        >>> isinstance(name, str)
+        True
+        >>> 0 <= len(name) <= 8
+        True
+
+        """
+
+        return await self.spu._get_name(  # pylint: disable=protected-access
+            node=self.id, device_number=0xFF
+        )
+
 
 # -- Main ---------------------------------------------------------------------
 
@@ -83,7 +116,7 @@ if __name__ == "__main__":
     from doctest import run_docstring_examples
 
     run_docstring_examples(
-        SensorDevice.get_state,
+        SensorDevice.get_name,
         globals(),
         verbose=True,
     )
