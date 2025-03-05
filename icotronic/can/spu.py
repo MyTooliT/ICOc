@@ -43,7 +43,7 @@ class SPU:
 
         self.bus = bus
         self.notifier = notifier
-        self.sender = NodeId("SPU 1")
+        self.id = NodeId("SPU 1")
         self.streaming = False
 
     # pylint: disable=too-many-arguments, too-many-positional-arguments
@@ -179,7 +179,7 @@ class SPU:
         message = Message(
             block="System",
             block_command="Bluetooth",
-            sender=self.sender,
+            sender=self.id,
             receiver=node,
             request=True,
             data=[subcommand, device_number] + data,
@@ -260,7 +260,7 @@ class SPU:
         message = Message(
             block="System",
             block_command="Reset",
-            sender=self.sender,
+            sender=self.id,
             receiver=node,
             request=True,
         )
@@ -294,7 +294,7 @@ class SPU:
         message = Message(
             block="System",
             block_command="Get/Set State",
-            sender=self.sender,
+            sender=self.id,
             receiver=node,
             request=True,
             data=[(State(mode="Get")).value],
