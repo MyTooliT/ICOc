@@ -66,7 +66,7 @@ class CANNetwork:
         self.bus: BusABC | None = None
         self.notifier: Notifier | None = None
 
-    async def __aenter__(self) -> SPU:
+    async def __aenter__(self) -> STU:
         """Initialize the network
 
         Returns
@@ -118,7 +118,7 @@ class CANNetwork:
 
         self.notifier = Notifier(self.bus, listeners=[Logger()])
 
-        return SPU(self.bus, self.notifier)
+        return STU(SPU(self.bus, self.notifier))
 
     async def __aexit__(
         self,
@@ -161,9 +161,6 @@ class SPU:
     def __init__(self, bus: BusABC, notifier: Notifier) -> None:
         """Create an SPU instance using the given arguments
 
-        We strongly recommend you use the context manager interface of the
-        `CANNetwork` class to create objects of this type.
-
         Parameters
         ----------
 
@@ -173,26 +170,12 @@ class SPU:
         notifier:
             A notifier class that listens to the communication of `bus`
 
-        Examples
-        --------
-
-        >>> from asyncio import run
-
-        Create a new CAN network connection using context manager interface
-
-        >>> async def create_connection():
-        ...     async with CANNetwork() as spu:
-        ...         # Use `spu.stu` to communicate with the STU
-        ...         pass
-        >>> run(create_connection())
-
         """
 
         self.bus = bus
         self.notifier = notifier
         self.sender = NodeId("SPU 1")
         self.streaming = False
-        self.stu = STU(self)
 
     # pylint: disable=too-many-arguments, too-many-positional-arguments
 
@@ -395,8 +378,8 @@ class SPU:
         Reset node, which is not connected
 
         >>> async def reset():
-        ...     async with CANNetwork() as spu:
-        ...         await spu._reset_node('STH 1')
+        ...     async with CANNetwork() as stu:
+        ...         await stu.spu._reset_node('STH 1')
         >>> run(reset()) # doctest: +IGNORE_EXCEPTION_DETAIL
         Traceback (most recent call last):
             ...
@@ -526,6 +509,20 @@ class STU:
         spu:
             The SPU object that created this STU instance
 
+
+        Examples
+        --------
+
+        >>> from asyncio import run
+
+        Create an STU object
+
+        >>> async def create_stu():
+        ...     async with CANNetwork() as stu:
+        ...         pass # call some coroutines of `stu` object
+        >>> run(create_stu())
+
+
         """
 
         self.spu = spu
@@ -542,8 +539,8 @@ class STU:
         Reset the current STU
 
         >>> async def reset():
-        ...     async with CANNetwork() as spu:
-        ...         await spu.stu.reset()
+        ...     async with CANNetwork() as stu:
+        ...         await stu.reset()
         >>> run(reset())
 
         """
@@ -561,8 +558,8 @@ class STU:
         Get state of STU 1
 
         >>> async def get_state():
-        ...     async with CANNetwork() as spu:
-        ...         return await spu.stu.get_state()
+        ...     async with CANNetwork() as stu:
+        ...         return await stu.get_state()
         >>> run(get_state())
         Get State, Location: Application, State: Operating
 
@@ -583,8 +580,8 @@ class STU:
         Activate Bluetooth on the STU
 
         >>> async def activate():
-        ...     async with CANNetwork() as spu:
-        ...         await spu.stu.activate_bluetooth()
+        ...     async with CANNetwork() as stu:
+        ...         await stu.activate_bluetooth()
         >>> run(activate())
 
         """
@@ -607,8 +604,8 @@ class STU:
         Deactivate Bluetooth on STU 1
 
         >>> async def deactivate_bluetooth():
-        ...     async with CANNetwork() as spu:
-        ...         await spu.stu.deactivate_bluetooth()
+        ...     async with CANNetwork() as stu:
+        ...         await stu.deactivate_bluetooth()
         >>> run(deactivate_bluetooth())
 
         """
@@ -636,8 +633,7 @@ class STU:
         Get the number of available Bluetooth devices at STU 1
 
         >>> async def get_number_bluetooth_devices():
-        ...     async with CANNetwork() as spu:
-        ...         stu = spu.stu
+        ...     async with CANNetwork() as stu:
         ...         await stu.activate_bluetooth()
         ...
         ...         # We assume at least one STH is available
@@ -688,8 +684,7 @@ class STU:
         Get Bluetooth advertisement name of device “0” from STU 1
 
         >>> async def get_bluetooth_device_name():
-        ...     async with CANNetwork() as spu:
-        ...         stu = spu.stu
+        ...     async with CANNetwork() as stu:
         ...         await stu.activate_bluetooth()
         ...         # We assume that at least one STH is available
         ...         return await stu.get_name(0)
@@ -734,8 +729,7 @@ class STU:
         Connect to device “0”
 
         >>> async def connect_bluetooth_device_number():
-        ...     async with CANNetwork() as spu:
-        ...         stu = spu.stu
+        ...     async with CANNetwork() as stu:
         ...         await stu.activate_bluetooth()
         ...         # We assume that at least one STH is available
         ...         connected = before = await stu.is_connected()
@@ -778,8 +772,7 @@ class STU:
         Check connection of device “0” to STU
 
         >>> async def check_bluetooth_connection():
-        ...     async with CANNetwork() as spu:
-        ...         stu = spu.stu
+        ...     async with CANNetwork() as stu:
         ...         await stu.activate_bluetooth()
         ...         await sleep(0.1)
         ...         connected_start = await stu.is_connected()
@@ -841,8 +834,7 @@ class STU:
         Retrieve the RSSI of a disconnected STH
 
         >>> async def get_bluetooth_rssi():
-        ...     async with CANNetwork() as spu:
-        ...         stu = spu.stu
+        ...     async with CANNetwork() as stu:
         ...         await stu.activate_bluetooth()
         ...         # We assume that at least one STH is available
         ...         # Get the RSSI of device “0”
@@ -892,8 +884,7 @@ class STU:
         Retrieve the MAC address of STH 1
 
         >>> async def get_bluetooth_mac():
-        ...     async with CANNetwork() as spu:
-        ...         stu = spu.stu
+        ...     async with CANNetwork() as stu:
         ...         await stu.activate_bluetooth()
         ...         return await stu.get_mac_address(0)
         >>> mac_address = run(get_bluetooth_mac())
@@ -941,8 +932,7 @@ class STU:
         Retrieve the list of Bluetooth devices at STU 1
 
         >>> async def get_sensor_devices():
-        ...     async with CANNetwork() as spu:
-        ...         stu = spu.stu
+        ...     async with CANNetwork() as stu:
         ...         # We assume that at least one sensor device is available
         ...         devices = []
         ...         while not devices:
@@ -1016,8 +1006,7 @@ class STU:
         Connect to the sensor device with device number `0`
 
         >>> async def connect_sensor_device():
-        ...     async with CANNetwork() as spu:
-        ...         stu = spu.stu
+        ...     async with CANNetwork() as stu:
         ...         async with stu.connect_sensor_device(0):
         ...             connected = await stu.is_connected()
         ...         after = await stu.is_connected()
@@ -1146,10 +1135,10 @@ class SensorDevice:
         Reset a sensor device
 
         >>> async def reset():
-        ...     async with CANNetwork() as spu:
+        ...     async with CANNetwork() as stu:
         ...         # We assume that at least one sensor device is available
-        ...         async with spu.stu.connect_sensor_device(0) as device:
-        ...             await device.reset()
+        ...         async with stu.connect_sensor_device(0) as sensor_device:
+        ...             await sensor_device.reset()
         >>> run(reset())
 
         """
@@ -1172,10 +1161,10 @@ class SensorDevice:
         Get state of STU 1
 
         >>> async def get_state():
-        ...     async with CANNetwork() as spu:
+        ...     async with CANNetwork() as stu:
         ...         # We assume that at least one sensor device is available
-        ...         async with spu.stu.connect_sensor_device(0) as device:
-        ...             return await device.get_state()
+        ...         async with stu.connect_sensor_device(0) as sensor_device:
+        ...             return await sensor_device.get_state()
         >>> run(get_state())
         Get State, Location: Application, State: Operating
 
