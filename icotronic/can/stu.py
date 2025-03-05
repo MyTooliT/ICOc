@@ -373,17 +373,8 @@ class STU:
 
         """
 
-        # pylint: disable=protected-access
-        response = await self.spu._request_bluetooth(
-            node=self.id,
-            device_number=device_number,
-            subcommand=12,
-            description=f"get RSSI of “{device_number}” from “{self.id}”",
-        )
-        # pylint: enable=protected-access
-
-        return int.from_bytes(
-            response.data[2:3], byteorder="little", signed=True
+        return await self.spu.get_rssi(
+            node=self.id, device_number=device_number
         )
 
     async def get_mac_address(self, device_number: int) -> EUI:

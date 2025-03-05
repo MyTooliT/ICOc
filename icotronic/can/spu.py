@@ -366,5 +366,77 @@ class SPU:
 
         return first_part + second_part
 
+    async def get_rssi(
+        self, node: Union[str, NodeId] = "STH 1", device_number: int = 0xFF
+    ):
+        """Retrieve the RSSI (Received Signal Strength Indication) of a device
 
-# pylint: enable=too-few-public-methods
+        You can use this method to retrieve the RSSI of both
+
+        1. disconnected and
+        2. connected
+
+        devices.
+
+        1. For disconnected devices (STHs) you will usually use the STU (e.g.
+           `STU 1`) and the device number at the STU (in the range `0` up to
+           the number of devices - 1) to retrieve the RSSI.
+
+        2. For connected devices you will use the device name and the special
+           “self addressing” device number (`0xff`) to ask a device about its
+           own RSSI.
+
+        Parameters
+        ----------
+
+        node:
+            The node which should retrieve the RSSI
+
+        device_number:
+            The number of the Bluetooth device (0 up to the number of
+            available devices - 1; 0xff for self addressing).
+
+        Returns
+        -------
+
+        The RSSI of the device specified via node and device number
+
+        Examples
+        --------
+
+        >>> from asyncio import run, sleep
+        >>> from icotronic.can.connection import Connection
+
+        Retrieve the RSSI of a disconnected STH
+
+        >>> async def get_bluetooth_rssi():
+        ...     async with Connection() as stu:
+        ...         await stu.activate_bluetooth()
+        ...
+        ...         # We assume that at least one STH is available
+        ...         # Get the RSSI of device “0”
+        ...         return await stu.spu.get_rssi('STU 1', 0)
+        >>> rssi = run(get_bluetooth_rssi())
+        >>> -70 < rssi < 0
+        True
+
+        """
+
+        response = await self._request_bluetooth(
+            node=node,
+            device_number=device_number,
+            subcommand=12,
+            description=f"get RSSI of “{device_number}” from “{node}”",
+        )
+
+        return int.from_bytes(
+            response.data[2:3], byteorder="little", signed=True
+        )
+
+
+# -- Main ---------------------------------------------------------------------
+
+if __name__ == "__main__":
+    from doctest import testmod
+
+    testmod()
