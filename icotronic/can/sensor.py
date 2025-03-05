@@ -4,6 +4,8 @@
 
 from __future__ import annotations
 
+from icotronic.can.constants import ADVERTISEMENT_TIME_EEPROM_TO_MS
+from icotronic.can.network import Times
 from icotronic.can.status import State
 from icotronic.can.spu import SPU
 
@@ -183,6 +185,60 @@ class SensorDevice:
 
         # pylint: enable=protected-access
 
+    async def get_energy_mode_reduced(self) -> Times:
+        """Read the reduced energy mode (mode 1) sensor device time values
+
+        See also:
+
+        - https://mytoolit.github.io/Documentation/#sleep-advertisement-times
+
+        Returns
+        -------
+
+        A tuple containing the advertisement time in the reduced energy mode
+        in milliseconds and the time until the device will switch from the
+        disconnected state to the low energy mode (mode 1) – if there is no
+        activity – in milliseconds
+
+        Example
+        -------
+
+        >>> from asyncio import run
+        >>> from icotronic.can.connection import Connection
+
+        Retrieve the reduced energy time values of a sensor device
+
+        >>> async def read_energy_mode_reduced():
+        ...     async with Connection() as stu:
+        ...         # We assume that at least one sensor device is available
+        ...         async with stu.connect_sensor_device(0) as sensor_device:
+        ...             return await sensor_device.get_energy_mode_reduced()
+        >>> times = run(read_energy_mode_reduced())
+        >>> round(times.advertisement)
+        1250
+        >>> times.sleep
+        300000
+
+        """
+
+        self_addressing = 0xFF
+        # pylint: disable=protected-access
+        response = await self.spu._request_bluetooth(
+            node=self.id,
+            device_number=self_addressing,
+            subcommand=13,
+            description="read reduced energy time values of sensor device",
+        )
+        # pylint: enable=protected-access
+
+        wait_time = int.from_bytes(response.data[2:6], byteorder="little")
+        advertisement_time = (
+            int.from_bytes(response.data[6:], byteorder="little")
+            * ADVERTISEMENT_TIME_EEPROM_TO_MS
+        )
+
+        return Times(sleep=wait_time, advertisement=advertisement_time)
+
 
 # -- Main ---------------------------------------------------------------------
 
@@ -190,7 +246,7 @@ if __name__ == "__main__":
     from doctest import run_docstring_examples
 
     run_docstring_examples(
-        SensorDevice.set_name,
+        SensorDevice.get_energy_mode_reduced,
         globals(),
         verbose=True,
     )
