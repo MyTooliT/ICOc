@@ -367,7 +367,7 @@ class SPU:
         return first_part + second_part
 
     async def get_rssi(
-        self, node: Union[str, NodeId] = "STH 1", device_number: int = 0xFF
+        self, node: str | NodeId = "STH 1", device_number: int = 0xFF
     ):
         """Retrieve the RSSI (Received Signal Strength Indication) of a device
 

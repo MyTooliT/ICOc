@@ -241,7 +241,7 @@ class SensorDevice:
         return Times(sleep=wait_time, advertisement=advertisement_time)
 
     async def set_energy_mode_reduced(
-        self, times: Optional[Times] = None
+        self, times: Times | None = None
     ) -> None:
         """Writes the time values for the reduced energy mode (mode 1)
 
