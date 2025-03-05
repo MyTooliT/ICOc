@@ -1133,6 +1133,28 @@ class SensorDevice:
         """
 
         self.spu = spu
+        self.id = "STH 1"
+
+    async def reset(self) -> None:
+        """Reset the sensor device
+
+        Examples
+        --------
+
+        >>> from asyncio import run
+
+        Reset a sensor device
+
+        >>> async def reset():
+        ...     async with CANNetwork() as spu:
+        ...         # We assume that at least one sensor device is available
+        ...         async with spu.stu.connect_sensor_device(0) as device:
+        ...             await device.reset()
+        >>> run(reset())
+
+        """
+
+        await self.spu._reset_node(self.id)  # pylint: disable=protected-access
 
 
 # pylint: enable=too-few-public-methods
@@ -1144,7 +1166,7 @@ if __name__ == "__main__":
     from doctest import run_docstring_examples
 
     run_docstring_examples(
-        STU.connect_sensor_device,
+        SensorDevice.reset,
         globals(),
         verbose=True,
     )
