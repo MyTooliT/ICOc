@@ -372,6 +372,81 @@ class SensorDevice:
 
         return Times(sleep=wait_time, advertisement=advertisement_time)
 
+    async def set_energy_mode_lowest(self, times: Times | None = None) -> None:
+        """Writes the time values for the lowest energy mode (mode 2)
+
+        See also:
+
+        - https://mytoolit.github.io/Documentation/#sleep-advertisement-times
+
+        Parameters
+        ----------
+
+        times:
+            The values for the advertisement time in the reduced energy mode
+            in milliseconds and the time until the device will go into the
+            lowest energy mode (mode 2) from the reduced energy mode (mode 1)
+            – if there is no activity – in milliseconds.
+
+            If you do not specify these values then the default values from
+            the configuration will be used
+
+        Example
+        -------
+
+        >>> from asyncio import run
+        >>> from icotronic.can.connection import Connection
+
+        Read and write the reduced energy time values of a sensor device
+
+        >>> async def read_write_energy_mode_lowest(sleep, advertisement):
+        ...     async with Connection() as stu:
+        ...         # We assume that at least one sensor device is available
+        ...         async with stu.connect_sensor_device(0) as sensor_device:
+        ...             await sensor_device.set_energy_mode_lowest(
+        ...                 Times(sleep=sleep, advertisement=advertisement))
+        ...             times = await sensor_device.get_energy_mode_lowest()
+        ...
+        ...             # Overwrite changed values with default config values
+        ...             await sensor_device.set_energy_mode_lowest()
+        ...
+        ...             return times
+        >>> times = run(read_write_energy_mode_lowest(200_000, 2000))
+        >>> times.sleep
+        200000
+        >>> round(times.advertisement)
+        2000
+
+        """
+
+        if times is None:
+            time_settings = settings.sensory_device.bluetooth
+            times = Times(
+                sleep=time_settings.sleep_time_2,
+                advertisement=time_settings.advertisement_time_2,
+            )
+
+        sleep_time = times.sleep
+        advertisement_time = round(
+            times.advertisement / ADVERTISEMENT_TIME_EEPROM_TO_MS
+        )
+
+        data = list(
+            sleep_time.to_bytes(4, "little")
+            + advertisement_time.to_bytes(2, "little")
+        )
+
+        # pylint: disable=protected-access
+        await self.spu._request_bluetooth(
+            node=self.id,
+            device_number=DEVICE_NUMBER_SELF_ADDRESSING,
+            subcommand=16,
+            data=data,
+            response_data=list(data),
+            description="set reduced energy time values of sensor device",
+        )
+        # pylint: enable=protected-access
+
 
 # -- Main ---------------------------------------------------------------------
 
@@ -379,7 +454,7 @@ if __name__ == "__main__":
     from doctest import run_docstring_examples
 
     run_docstring_examples(
-        SensorDevice.get_energy_mode_lowest,
+        SensorDevice.set_energy_mode_lowest,
         globals(),
         verbose=True,
     )
