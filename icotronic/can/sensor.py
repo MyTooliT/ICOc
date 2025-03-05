@@ -30,7 +30,7 @@ class SensorDevice:
         Examples
         --------
 
-        >>> from asyncio import run
+        >>> from asyncio import run, sleep
         >>> from icotronic.can.connection import Connection
 
         Reset a sensor device
@@ -40,6 +40,8 @@ class SensorDevice:
         ...         # We assume that at least one sensor device is available
         ...         async with stu.connect_sensor_device(0) as sensor_device:
         ...             await sensor_device.reset()
+        ...             # Wait some time for reset to take place
+        ...             await sleep(1)
         >>> run(reset())
 
         """
