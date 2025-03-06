@@ -23,10 +23,12 @@ from icotronic.can.streaming import (
     StreamingConfiguration,
     StreamingData,
     StreamingFormat,
+    StreamingFormatVoltage,
 )
 from icotronic.can.status import State
 from icotronic.can.spu import SPU
 from icotronic.config import settings
+from icotronic.measurement.voltage import convert_raw_to_supply_voltage
 
 # -- Classes ------------------------------------------------------------------
 
@@ -880,6 +882,62 @@ class SensorDevice:
 
         return ADCConfiguration(response.data[0:5])
 
+    async def read_supply_voltage(self) -> float:
+        """Read the current supply voltage
+
+        Returns
+        -------
+
+        The supply voltage of the sensor device
+
+        Example
+        -------
+
+        >>> from asyncio import run
+        >>> from icotronic.can.connection import Connection
+
+        Read the supply voltage of the sensor device with device number 0
+
+        >>> async def read_supply_voltage():
+        ...     async with Connection() as stu:
+        ...         # We assume that at least one sensor device is available
+        ...         async with stu.connect_sensor_device(0) as sensor_device:
+        ...             return await sensor_device.read_supply_voltage()
+        >>> supply_voltage = run(read_supply_voltage())
+        >>> 3 <= supply_voltage <= 4.2
+        True
+
+        """
+
+        streaming_format = StreamingFormatVoltage(
+            channels=StreamingConfiguration(first=True), sets=1
+        )
+        node = self.id
+        message = Message(
+            block="Streaming",
+            block_command="Voltage",
+            sender=self.spu.id,
+            receiver=node,
+            request=True,
+            data=[streaming_format.value],
+        )
+
+        # pylint: disable=protected-access
+        response = await self.spu._request(
+            message, description=f"read supply voltage of “{node}”"
+        )
+        # pylint: enable=protected-access
+
+        voltage_bytes = response.data[2:4]
+        voltage_raw = int.from_bytes(voltage_bytes, "little")
+
+        adc_configuration = await self.read_adc_configuration()
+
+        return convert_raw_to_supply_voltage(
+            voltage_raw,
+            reference_voltage=adc_configuration.reference_voltage(),
+        )
+
 
 # -- Main ---------------------------------------------------------------------
 
@@ -887,7 +945,7 @@ if __name__ == "__main__":
     from doctest import run_docstring_examples
 
     run_docstring_examples(
-        SensorDevice.open_data_stream,
+        SensorDevice.read_supply_voltage,
         globals(),
         verbose=True,
     )
