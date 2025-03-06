@@ -18,6 +18,7 @@ from icotronic.can.constants import (
     DEVICE_NUMBER_SELF_ADDRESSING,
 )
 from icotronic.can.adc import ADCConfiguration
+from icotronic.can.error import UnsupportedFeatureException
 from icotronic.can.message import Message
 from icotronic.can.network import NoResponseError, ErrorResponseError, Times
 from icotronic.can.streaming import (
@@ -30,6 +31,7 @@ from icotronic.can.streaming import (
 from icotronic.can.status import State
 from icotronic.can.spu import SPU
 from icotronic.config import settings
+from icotronic.measurement.sensor import SensorConfiguration
 from icotronic.measurement.voltage import convert_raw_to_supply_voltage
 
 # -- Classes ------------------------------------------------------------------
@@ -1062,6 +1064,71 @@ class SensorDevice:
         )
         # pylint: enable=protected-access
 
+    # --------------------------------
+    # - Get/Set Sensor Configuration -
+    # --------------------------------
+
+    async def get_sensor_configuration(self) -> SensorConfiguration:
+        """Read the current sensor configuration
+
+        Raises
+        ------
+
+        A `UnsupportedFeatureException` in case the sensor node replies with
+        an error message
+
+        Returns
+        -------
+
+        The sensor number for the different axes
+
+        Examples
+        --------
+
+        >>> from asyncio import run
+        >>> from icotronic.can.connection import Connection
+
+        Reading sensor config from device without sensor config support fails
+
+        >>> async def read_sensor_config():
+        ...     async with Connection() as stu:
+        ...         # We assume that at least one sensor device is available
+        ...         async with stu.connect_sensor_device(0) as sensor_device:
+        ...             return await sensor_device.get_sensor_configuration()
+        >>> config = run(
+        ...     read_sensor_config()) #doctest: +IGNORE_EXCEPTION_DETAIL
+        Traceback (most recent call last):
+           ...
+        UnsupportedFeatureException: Reading sensor configuration is not
+        supported
+
+        """
+
+        node = self.id
+        message = Message(
+            block="Configuration",
+            block_command=0x01,
+            sender=self.spu.id,
+            receiver=node,
+            request=True,
+            data=[0] * 8,
+        )
+
+        try:
+            # pylint: disable=protected-access
+            response = await self.spu._request(
+                message, description=f"read sensor configuration of “{node}”"
+            )
+            # pylint: enable=protected-access
+        except ErrorResponseError as error:
+            raise UnsupportedFeatureException(
+                "Reading sensor configuration not supported"
+            ) from error
+
+        channels = response.data[1:4]
+
+        return SensorConfiguration(*channels)
+
 
 # -- Main ---------------------------------------------------------------------
 
@@ -1069,7 +1136,7 @@ if __name__ == "__main__":
     from doctest import run_docstring_examples
 
     run_docstring_examples(
-        SensorDevice.write_adc_configuration,
+        SensorDevice.get_sensor_configuration,
         globals(),
         verbose=True,
     )
