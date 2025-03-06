@@ -10,7 +10,13 @@ from icotronic.can.constants import (
     ADVERTISEMENT_TIME_EEPROM_TO_MS,
     DEVICE_NUMBER_SELF_ADDRESSING,
 )
+from icotronic.can.message import Message
 from icotronic.can.network import Times
+from icotronic.can.streaming import (
+    StreamingConfiguration,
+    StreamingData,
+    StreamingFormat,
+)
 from icotronic.can.status import State
 from icotronic.can.spu import SPU
 from icotronic.config import settings
@@ -482,6 +488,82 @@ class SensorDevice:
             self.id, DEVICE_NUMBER_SELF_ADDRESSING
         )
 
+    async def read_streaming_data_single(
+        self,
+        channels=StreamingConfiguration(first=True, second=True, third=True),
+    ) -> StreamingData:
+        """Read a single set of raw ADC values from the sensor device
+
+        Parameters
+        ----------
+
+        channels:
+            Specifies which of the three measurement channels should be
+            enabled or disabled
+
+        Returns
+        -------
+
+        The latest three ADC values measured by the sensor device
+
+        Examples
+        --------
+
+        >>> from asyncio import run
+        >>> from icotronic.can.connection import Connection
+
+        Read a single value from all three measurement channels
+
+        >>> async def read_sensor_values():
+        ...     async with Connection() as stu:
+        ...         # We assume that at least one sensor device is available
+        ...         async with stu.connect_sensor_device(0) as sensor_device:
+        ...             return await sensor_device.read_streaming_data_single()
+        >>> data = run(read_sensor_values())
+        >>> len(data.values)
+        3
+        >>> all([0 <= value <= 0xffff for value in data.values])
+        True
+
+        """
+
+        streaming_format = StreamingFormat(
+            channels=channels,
+            sets=1,
+        )
+
+        node = self.id
+        # pylint: disable=protected-access
+        response = await self.spu._request(
+            Message(
+                block="Streaming",
+                block_command="Data",
+                sender=self.spu.id,
+                receiver=self.id,
+                request=True,
+                data=[streaming_format.value],
+            ),
+            description=f"read single set of streaming values from “{node}”",
+        )
+        # pylint: enable=protected-access
+        values = [
+            int.from_bytes(word, byteorder="little")
+            for word in (
+                response.data[2:4],
+                response.data[4:6],
+                response.data[6:8],
+            )
+        ]
+        assert len(values) == 2 or len(values) == 3
+
+        data = StreamingData(
+            values=values,
+            timestamp=response.timestamp,
+            counter=response.data[1],
+        )
+
+        return data
+
 
 # -- Main ---------------------------------------------------------------------
 
@@ -489,7 +571,7 @@ if __name__ == "__main__":
     from doctest import run_docstring_examples
 
     run_docstring_examples(
-        SensorDevice.get_mac_address,
+        SensorDevice.read_streaming_data_single,
         globals(),
         verbose=True,
     )
