@@ -158,6 +158,10 @@ class SensorDevice:
         self.spu = spu
         self.id = "STH 1"
 
+    # ==========
+    # = System =
+    # ==========
+
     async def reset(self) -> None:
         """Reset the sensor device
 
@@ -181,6 +185,10 @@ class SensorDevice:
         """
 
         await self.spu.reset_node(self.id)
+
+    # -----------------
+    # - Get/Set State -
+    # -----------------
 
     async def get_state(self) -> State:
         """Get the current state of the sensor device
@@ -209,6 +217,10 @@ class SensorDevice:
         """
 
         return await self.spu.get_state(self.id)
+
+    # -------------
+    # - Bluetooth -
+    # -------------
 
     async def get_name(self) -> str:
         """Retrieve the name of the sensor device
@@ -608,6 +620,14 @@ class SensorDevice:
             self.id, DEVICE_NUMBER_SELF_ADDRESSING
         )
 
+    # =============
+    # = Streaming =
+    # =============
+
+    # --------
+    # - Data -
+    # --------
+
     async def read_streaming_data_single(
         self,
         channels=StreamingConfiguration(first=True, second=True, third=True),
@@ -838,6 +858,10 @@ class SensorDevice:
 
         return DataStreamContextManager(self, channels, timeout)
 
+    # -----------
+    # - Voltage -
+    # -----------
+
     async def read_supply_voltage(self) -> float:
         """Read the current supply voltage
 
@@ -893,6 +917,14 @@ class SensorDevice:
             voltage_raw,
             reference_voltage=adc_configuration.reference_voltage(),
         )
+
+    # =================
+    # = Configuration =
+    # =================
+
+    # -----------------------------
+    # - Get/Set ADC Configuration -
+    # -----------------------------
 
     async def read_adc_configuration(self) -> ADCConfiguration:
         """Read the current ADC configuration
