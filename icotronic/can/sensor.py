@@ -10,6 +10,7 @@ from icotronic.can.constants import (
     ADVERTISEMENT_TIME_EEPROM_TO_MS,
     DEVICE_NUMBER_SELF_ADDRESSING,
 )
+from icotronic.can.adc import ADCConfiguration
 from icotronic.can.message import Message
 from icotronic.can.network import Times
 from icotronic.can.streaming import (
@@ -564,6 +565,52 @@ class SensorDevice:
 
         return data
 
+    async def read_adc_configuration(self) -> ADCConfiguration:
+        """Read the current ADC configuration
+
+        Returns
+        -------
+
+        The ADC configuration of the sensor node
+
+        Examples
+        --------
+
+        >>> from asyncio import run
+        >>> from icotronic.can.connection import Connection
+
+        Read ADC sensor config of sensor device with device id 0
+
+        >>> async def read_adc_config():
+        ...     async with Connection() as stu:
+        ...         # We assume that at least one sensor device is available
+        ...         async with stu.connect_sensor_device(0) as sensor_device:
+        ...             return await sensor_device.read_adc_configuration()
+        >>> run(read_adc_config()) # doctest:+NORMALIZE_WHITESPACE
+        Get, Prescaler: 2, Acquisition Time: 8, Oversampling Rate: 64,
+        Reference Voltage: 3.3 V
+
+        """
+
+        node = self.id
+
+        message = Message(
+            block="Configuration",
+            block_command="Get/Set ADC Configuration",
+            sender=self.spu.id,
+            receiver=node,
+            request=True,
+            data=[0] * 8,
+        )
+
+        # pylint: disable=protected-access
+        response = await self.spu._request(
+            message, description=f"Read ADC configuration of “{node}”"
+        )
+        # pylint: enable=protected-access
+
+        return ADCConfiguration(response.data[0:5])
+
 
 # -- Main ---------------------------------------------------------------------
 
@@ -571,7 +618,7 @@ if __name__ == "__main__":
     from doctest import run_docstring_examples
 
     run_docstring_examples(
-        SensorDevice.read_streaming_data_single,
+        SensorDevice.read_adc_configuration,
         globals(),
         verbose=True,
     )
