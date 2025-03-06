@@ -1117,7 +1117,7 @@ class SensorDevice:
         try:
             # pylint: disable=protected-access
             response = await self.spu._request(
-                message, description=f"read sensor configuration of “{node}”"
+                message, description=f"get sensor configuration of “{node}”"
             )
             # pylint: enable=protected-access
         except ErrorResponseError as error:
@@ -1129,6 +1129,71 @@ class SensorDevice:
 
         return SensorConfiguration(*channels)
 
+    async def set_sensor_configuration(
+        self, sensors: SensorConfiguration
+    ) -> None:
+        """Change the sensor numbers for the different measurement channels
+
+        If you use the sensor number `0` for one of the different measurement
+        channels, then the sensor (number) for that channel will stay the same.
+
+        Parameters
+        ----------
+
+        sensors:
+            The sensor numbers of the different measurement channels
+
+        Examples
+        --------
+
+        >>> from asyncio import run
+        >>> from icotronic.can.connection import Connection
+
+        Setting sensor config from device without sensor config support fails
+
+        >>> async def set_sensor_config():
+        ...     async with Connection() as stu:
+        ...         # We assume that at least one sensor device is available
+        ...         async with stu.connect_sensor_device(0) as sensor_device:
+        ...             await sensor_device.set_sensor_configuration(
+        ...                 SensorConfiguration(first=0, second=0, third=0))
+        >>> config = run(
+        ...     set_sensor_config()) #doctest: +IGNORE_EXCEPTION_DETAIL
+        Traceback (most recent call last):
+           ...
+        UnsupportedFeatureException: Writing sensor configuration is not
+        supported
+
+        """
+
+        node = self.id
+        data = [
+            0b1000_0000,
+            sensors.first,
+            sensors.second,
+            sensors.third,
+            *(4 * [0]),
+        ]
+        message = Message(
+            block="Configuration",
+            block_command=0x01,
+            sender=self.spu.id,
+            receiver=node,
+            request=True,
+            data=data,
+        )
+
+        try:
+            # pylint: disable=protected-access
+            await self.spu._request(
+                message, description=f"set sensor configuration of “{node}”"
+            )
+            # pylint: enable=protected-access
+        except ErrorResponseError as error:
+            raise UnsupportedFeatureException(
+                "Writing sensor configuration not supported"
+            ) from error
+
 
 # -- Main ---------------------------------------------------------------------
 
@@ -1136,7 +1201,7 @@ if __name__ == "__main__":
     from doctest import run_docstring_examples
 
     run_docstring_examples(
-        SensorDevice.get_sensor_configuration,
+        SensorDevice.set_sensor_configuration,
         globals(),
         verbose=True,
     )
