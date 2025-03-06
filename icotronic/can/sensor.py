@@ -1,5 +1,7 @@
 """Support for sensor devices (SHA, SMH and STH)"""
 
+# pylint: disable=too-many-lines
+
 # -- Imports ------------------------------------------------------------------
 
 from __future__ import annotations
@@ -836,52 +838,6 @@ class SensorDevice:
 
         return DataStreamContextManager(self, channels, timeout)
 
-    async def read_adc_configuration(self) -> ADCConfiguration:
-        """Read the current ADC configuration
-
-        Returns
-        -------
-
-        The ADC configuration of the sensor node
-
-        Examples
-        --------
-
-        >>> from asyncio import run
-        >>> from icotronic.can.connection import Connection
-
-        Read ADC sensor config of sensor device with device id 0
-
-        >>> async def read_adc_config():
-        ...     async with Connection() as stu:
-        ...         # We assume that at least one sensor device is available
-        ...         async with stu.connect_sensor_device(0) as sensor_device:
-        ...             return await sensor_device.read_adc_configuration()
-        >>> run(read_adc_config()) # doctest:+NORMALIZE_WHITESPACE
-        Get, Prescaler: 2, Acquisition Time: 8, Oversampling Rate: 64,
-        Reference Voltage: 3.3 V
-
-        """
-
-        node = self.id
-
-        message = Message(
-            block="Configuration",
-            block_command="Get/Set ADC Configuration",
-            sender=self.spu.id,
-            receiver=node,
-            request=True,
-            data=[0] * 8,
-        )
-
-        # pylint: disable=protected-access
-        response = await self.spu._request(
-            message, description=f"Read ADC configuration of “{node}”"
-        )
-        # pylint: enable=protected-access
-
-        return ADCConfiguration(response.data[0:5])
-
     async def read_supply_voltage(self) -> float:
         """Read the current supply voltage
 
@@ -938,6 +894,142 @@ class SensorDevice:
             reference_voltage=adc_configuration.reference_voltage(),
         )
 
+    async def read_adc_configuration(self) -> ADCConfiguration:
+        """Read the current ADC configuration
+
+        Returns
+        -------
+
+        The ADC configuration of the sensor node
+
+        Examples
+        --------
+
+        >>> from asyncio import run
+        >>> from icotronic.can.connection import Connection
+
+        Read ADC sensor config of sensor device with device id 0
+
+        >>> async def read_adc_config():
+        ...     async with Connection() as stu:
+        ...         # We assume that at least one sensor device is available
+        ...         async with stu.connect_sensor_device(0) as sensor_device:
+        ...             return await sensor_device.read_adc_configuration()
+        >>> run(read_adc_config()) # doctest:+NORMALIZE_WHITESPACE
+        Get, Prescaler: 2, Acquisition Time: 8, Oversampling Rate: 64,
+        Reference Voltage: 3.3 V
+
+        """
+
+        node = self.id
+
+        message = Message(
+            block="Configuration",
+            block_command="Get/Set ADC Configuration",
+            sender=self.spu.id,
+            receiver=node,
+            request=True,
+            data=[0] * 8,
+        )
+
+        # pylint: disable=protected-access
+        response = await self.spu._request(
+            message, description=f"Read ADC configuration of “{node}”"
+        )
+        # pylint: enable=protected-access
+
+        return ADCConfiguration(response.data[0:5])
+
+    async def write_adc_configuration(
+        self,
+        reference_voltage: float = 3.3,
+        prescaler: int = 2,
+        acquisition_time: int = 8,
+        oversampling_rate: int = 64,
+    ) -> None:
+        """Change the ADC configuration of a connected sensor device
+
+        Parameters
+        ----------
+
+        reference_voltage:
+            The ADC reference voltage in Volt
+            (1.25, 1.65, 1.8, 2.1, 2.2, 2.5, 2.7, 3.3, 5, 6.6)
+
+        prescaler:
+            The ADC prescaler value (1 – 127)
+
+        acquisition_time:
+            The ADC acquisition time in number of cycles
+            (1, 2, 3, 4, 8, 16, 32, … , 256)
+
+        oversampling_rate:
+            The ADC oversampling rate (1, 2, 4, 8, … , 4096)
+
+        Examples
+        --------
+
+        >>> from asyncio import run
+        >>> from icotronic.can.connection import Connection
+
+        Read and write ADC sensor config
+
+        >>> async def write_read_adc_config():
+        ...     async with Connection() as stu:
+        ...         # We assume that at least one sensor device is available
+        ...         async with stu.connect_sensor_device(0) as sensor_device:
+        ...             await sensor_device.write_adc_configuration(
+        ...                 3.3, 8, 8, 64)
+        ...             modified_config1 = (await
+        ...                 sensor_device.read_adc_configuration())
+        ...
+        ...             adc_config = ADCConfiguration(reference_voltage=5.0,
+        ...                                           prescaler=16,
+        ...                                           acquisition_time=8,
+        ...                                           oversampling_rate=128)
+        ...             await sensor_device.write_adc_configuration(
+        ...                 **adc_config)
+        ...             modified_config2 = (await
+        ...                 sensor_device.read_adc_configuration())
+        ...
+        ...             # Write back default config values
+        ...             await sensor_device.write_adc_configuration(
+        ...                 3.3, 2, 8, 64)
+        ...             return modified_config1, modified_config2
+        >>> config1, config2 = run(write_read_adc_config())
+        >>> config1 # doctest:+NORMALIZE_WHITESPACE
+        Get, Prescaler: 8, Acquisition Time: 8, Oversampling Rate: 64,
+        Reference Voltage: 3.3 V
+        >>> config2 # doctest:+NORMALIZE_WHITESPACE
+        Get, Prescaler: 16, Acquisition Time: 8, Oversampling Rate: 128,
+        Reference Voltage: 5.0 V
+
+        """
+
+        node = self.id
+        adc_configuration = ADCConfiguration(
+            set=True,
+            prescaler=prescaler,
+            acquisition_time=acquisition_time,
+            oversampling_rate=oversampling_rate,
+            reference_voltage=reference_voltage,
+        )
+
+        message = Message(
+            block="Configuration",
+            block_command="Get/Set ADC Configuration",
+            sender=self.spu.id,
+            receiver=node,
+            request=True,
+            data=adc_configuration.data,
+        )
+
+        # pylint: disable=protected-access
+        await self.spu._request(
+            message, description=f"write ADC configuration of “{node}”"
+        )
+        # pylint: enable=protected-access
+
 
 # -- Main ---------------------------------------------------------------------
 
@@ -945,7 +1037,7 @@ if __name__ == "__main__":
     from doctest import run_docstring_examples
 
     run_docstring_examples(
-        SensorDevice.read_supply_voltage,
+        SensorDevice.write_adc_configuration,
         globals(),
         verbose=True,
     )
