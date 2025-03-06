@@ -126,14 +126,14 @@ class Connection:
 
         """
 
+        notifier = self.notifier
+        if notifier is not None:
+            notifier.stop()
+
         bus = self.bus
         if bus is not None:
             bus.__exit__(exception_type, exception_value, traceback)
             bus.shutdown()
-
-        notifier = self.notifier
-        if notifier is not None:
-            notifier.stop()
 
 
 # -- Main ---------------------------------------------------------------------
