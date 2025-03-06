@@ -80,7 +80,7 @@ class DataStreamContextManager:
 
         """
 
-        adc_config = await self.device.read_adc_configuration()
+        adc_config = await self.device.get_adc_configuration()
         # Raise exception if there if there is more than one second worth
         # of buffered data
         self.reader = AsyncStreamBuffer(
@@ -628,7 +628,7 @@ class SensorDevice:
     # - Data -
     # --------
 
-    async def read_streaming_data_single(
+    async def get_streaming_data_single(
         self,
         channels=StreamingConfiguration(first=True, second=True, third=True),
     ) -> StreamingData:
@@ -658,7 +658,7 @@ class SensorDevice:
         ...     async with Connection() as stu:
         ...         # We assume that at least one sensor device is available
         ...         async with stu.connect_sensor_device(0) as sensor_device:
-        ...             return await sensor_device.read_streaming_data_single()
+        ...             return await sensor_device.get_streaming_data_single()
         >>> data = run(read_sensor_values())
         >>> len(data.values)
         3
@@ -862,7 +862,7 @@ class SensorDevice:
     # - Voltage -
     # -----------
 
-    async def read_supply_voltage(self) -> float:
+    async def get_supply_voltage(self) -> float:
         """Read the current supply voltage
 
         Returns
@@ -878,12 +878,12 @@ class SensorDevice:
 
         Read the supply voltage of the sensor device with device number 0
 
-        >>> async def read_supply_voltage():
+        >>> async def get_supply_voltage():
         ...     async with Connection() as stu:
         ...         # We assume that at least one sensor device is available
         ...         async with stu.connect_sensor_device(0) as sensor_device:
-        ...             return await sensor_device.read_supply_voltage()
-        >>> supply_voltage = run(read_supply_voltage())
+        ...             return await sensor_device.get_supply_voltage()
+        >>> supply_voltage = run(get_supply_voltage())
         >>> 3 <= supply_voltage <= 4.2
         True
 
@@ -911,7 +911,7 @@ class SensorDevice:
         voltage_bytes = response.data[2:4]
         voltage_raw = int.from_bytes(voltage_bytes, "little")
 
-        adc_configuration = await self.read_adc_configuration()
+        adc_configuration = await self.get_adc_configuration()
 
         return convert_raw_to_supply_voltage(
             voltage_raw,
@@ -926,7 +926,7 @@ class SensorDevice:
     # - Get/Set ADC Configuration -
     # -----------------------------
 
-    async def read_adc_configuration(self) -> ADCConfiguration:
+    async def get_adc_configuration(self) -> ADCConfiguration:
         """Read the current ADC configuration
 
         Returns
@@ -946,7 +946,7 @@ class SensorDevice:
         ...     async with Connection() as stu:
         ...         # We assume that at least one sensor device is available
         ...         async with stu.connect_sensor_device(0) as sensor_device:
-        ...             return await sensor_device.read_adc_configuration()
+        ...             return await sensor_device.get_adc_configuration()
         >>> run(read_adc_config()) # doctest:+NORMALIZE_WHITESPACE
         Get, Prescaler: 2, Acquisition Time: 8, Oversampling Rate: 64,
         Reference Voltage: 3.3 V
@@ -972,7 +972,7 @@ class SensorDevice:
 
         return ADCConfiguration(response.data[0:5])
 
-    async def write_adc_configuration(
+    async def set_adc_configuration(
         self,
         reference_voltage: float = 3.3,
         prescaler: int = 2,
@@ -1010,22 +1010,22 @@ class SensorDevice:
         ...     async with Connection() as stu:
         ...         # We assume that at least one sensor device is available
         ...         async with stu.connect_sensor_device(0) as sensor_device:
-        ...             await sensor_device.write_adc_configuration(
+        ...             await sensor_device.set_adc_configuration(
         ...                 3.3, 8, 8, 64)
         ...             modified_config1 = (await
-        ...                 sensor_device.read_adc_configuration())
+        ...                 sensor_device.get_adc_configuration())
         ...
         ...             adc_config = ADCConfiguration(reference_voltage=5.0,
         ...                                           prescaler=16,
         ...                                           acquisition_time=8,
         ...                                           oversampling_rate=128)
-        ...             await sensor_device.write_adc_configuration(
+        ...             await sensor_device.set_adc_configuration(
         ...                 **adc_config)
         ...             modified_config2 = (await
-        ...                 sensor_device.read_adc_configuration())
+        ...                 sensor_device.get_adc_configuration())
         ...
         ...             # Write back default config values
-        ...             await sensor_device.write_adc_configuration(
+        ...             await sensor_device.set_adc_configuration(
         ...                 3.3, 2, 8, 64)
         ...             return modified_config1, modified_config2
         >>> config1, config2 = run(write_read_adc_config())
