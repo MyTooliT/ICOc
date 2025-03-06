@@ -4,6 +4,11 @@
 
 from __future__ import annotations
 
+from asyncio import CancelledError
+from logging import getLogger
+from types import TracebackType
+from typing import Type
+
 from netaddr import EUI
 
 from icotronic.can.constants import (
@@ -12,8 +17,9 @@ from icotronic.can.constants import (
 )
 from icotronic.can.adc import ADCConfiguration
 from icotronic.can.message import Message
-from icotronic.can.network import Times
+from icotronic.can.network import NoResponseError, ErrorResponseError, Times
 from icotronic.can.streaming import (
+    AsyncStreamBuffer,
     StreamingConfiguration,
     StreamingData,
     StreamingFormat,
@@ -23,6 +29,115 @@ from icotronic.can.spu import SPU
 from icotronic.config import settings
 
 # -- Classes ------------------------------------------------------------------
+
+
+class DataStreamContextManager:
+    """Open and close a data stream from a sensor device"""
+
+    def __init__(
+        self,
+        sensor_device: SensorDevice,
+        channels: StreamingConfiguration,
+        timeout: float,
+    ) -> None:
+        """Create a new stream context manager for the given Network
+
+        Parameters
+        ----------
+
+        sensor_device:
+            The sensor device for which this context manager handles
+            the streaming data
+
+        channels:
+            A streaming configuration that specifies which of the three
+            streaming channels should be enabled or not
+
+        timeout
+            The amount of seconds between two consecutive messages, before
+            a TimeoutError will be raised
+
+        """
+
+        self.device = sensor_device
+        self.channels = channels
+        self.timeout = timeout
+        self.reader: AsyncStreamBuffer | None = None
+        self.logger = getLogger(__name__)
+        self.logger.debug("Initialized data stream context manager")
+
+    async def __aenter__(self) -> AsyncStreamBuffer:
+        """Open the stream of measurement data
+
+        Returns
+        -------
+
+        The stream buffer for the measurement stream
+
+        """
+
+        adc_config = await self.device.read_adc_configuration()
+        # Raise exception if there if there is more than one second worth
+        # of buffered data
+        self.reader = AsyncStreamBuffer(
+            self.channels,
+            self.timeout,
+            max_buffer_size=round(adc_config.sample_rate()),
+        )
+
+        self.device.spu.notifier.add_listener(self.reader)
+        await self.device.start_streaming_data(self.channels)
+        self.logger.debug("Entered data stream context manager")
+
+        return self.reader
+
+    async def __aexit__(
+        self,
+        exception_type: Type[BaseException] | None,
+        exception_value: BaseException | None,
+        traceback: TracebackType | None,
+    ) -> None:
+        """Clean up the resources used by the stream
+
+        Parameters
+        ----------
+
+        exception_type:
+            The type of the exception in case of an exception
+
+        exception_value:
+            The value of the exception in case of an exception
+
+        traceback:
+            The traceback in case of an exception
+
+        """
+
+        if self.reader is not None:
+            self.reader.stop()
+            self.device.spu.notifier.remove_listener(self.reader)
+
+        if exception_type is None or isinstance(
+            exception_type, type(CancelledError)
+        ):
+            self.logger.info("Stopping stream")
+            await self.device.stop_streaming_data()
+        else:
+            # If there was an error while streaming data, then stoping the
+            # stream will usually also fail. Because of this we only try once
+            # and ignore any errors.
+            #
+            # If we did not do that, then the user of the API would be notified
+            # about the error to disable the stream, but not about the original
+            # error. It would also take considerably more time until the
+            # computer would report an error, since the code would usually try
+            # to stop the stream (and fail) multiple times beforehand.
+            self.logger.info(
+                "Stopping stream after error (%s)", exception_type
+            )
+            await self.device.stop_streaming_data(
+                retries=1, ignore_errors=True
+            )
 
 
 class SensorDevice:
@@ -565,6 +680,160 @@ class SensorDevice:
 
         return data
 
+    async def start_streaming_data(
+        self, channels: StreamingConfiguration
+    ) -> None:
+        """Start streaming data
+
+        Parameters
+        ----------
+
+        channels:
+            Specifies which of the three measurement channels should be
+            enabled or disabled
+
+        The CAN identifier that this coroutine returns can be used
+        to filter CAN messages that contain the expected streaming data
+
+        """
+
+        streaming_format = StreamingFormat(
+            channels=channels,
+            streaming=True,
+            sets=3 if channels.enabled_channels() <= 1 else 1,
+        )
+        node = self.id
+        message = Message(
+            block="Streaming",
+            block_command="Data",
+            sender=self.spu.id,
+            receiver=node,
+            request=True,
+            data=[streaming_format.value],
+        )
+
+        measurement_channels = [
+            channel
+            for channel in (
+                "first" if channels.first else "",
+                "second" if channels.second else "",
+                "third" if channels.third else "",
+            )
+            if channel
+        ]
+        channels_text = "".join(
+            (f"{channel}, " for channel in measurement_channels[:-2])
+        ) + " and ".join(measurement_channels[-2:])
+
+        # pylint: disable=protected-access
+        await self.spu._request(
+            message,
+            description=(
+                f"enable streaming of {channels_text} measurement "
+                f"channel of “{node}”"
+            ),
+        )
+        # pylint: enable=protected-access
+
+    async def stop_streaming_data(
+        self, retries: int = 10, ignore_errors=False
+    ) -> None:
+        """Stop streaming data
+
+        Parameters
+        ----------
+
+        retries:
+            The number of times the message is sent again, if no response was
+            sent back in a certain amount of time
+
+        ignore_errors:
+            Specifies, if this coroutine should ignore, if there were any
+            problems while stopping the stream.
+
+        """
+
+        streaming_format = StreamingFormat(streaming=True, sets=0)
+        node = self.id
+        message = Message(
+            block="Streaming",
+            block_command="Data",
+            sender=self.spu.id,
+            receiver=node,
+            request=True,
+            data=[streaming_format.value],
+        )
+
+        try:
+            # pylint: disable=protected-access
+            await self.spu._request(
+                message,
+                description=f"disable data streaming of “{node}”",
+                retries=retries,
+            )
+            # pylint: enable=protected-access
+        except (NoResponseError, ErrorResponseError) as error:
+            if not ignore_errors:
+                raise error
+
+    def open_data_stream(
+        self,
+        channels: StreamingConfiguration,
+        timeout: float = 5,
+    ) -> DataStreamContextManager:
+        """Open measurement data stream
+
+        Parameters
+        ----------
+
+        channels:
+            Specifies which measurement channels should be enabled
+
+        timeout:
+            The amount of seconds between two consecutive messages, before
+            a TimeoutError will be raised
+
+        Returns
+        -------
+
+        A context manager object for managing stream data
+
+        Examples
+        --------
+
+        >>> from asyncio import run
+        >>> from icotronic.can.connection import Connection
+
+        Read data of first and third channel
+
+        >>> async def read_streaming_data():
+        ...     async with Connection() as stu:
+        ...         # We assume that at least one sensor device is available
+        ...         async with stu.connect_sensor_device(0) as sensor_device:
+        ...             channels = StreamingConfiguration(first=True,
+        ...                                               third=True)
+        ...             async with sensor_device.open_data_stream(
+        ...               channels) as stream:
+        ...                 first = []
+        ...                 third = []
+        ...                 messages = 0
+        ...                 async for data, _ in stream:
+        ...                     first.append(data.values[0])
+        ...                     third.append(data.values[1])
+        ...                     messages += 1
+        ...                     if messages >= 3:
+        ...                         break
+        ...                 return first, third
+        >>> first, third = run(read_streaming_data())
+        >>> len(first)
+        3
+        >>> len(third)
+        3
+
+        """
+
+        return DataStreamContextManager(self, channels, timeout)
+
     async def read_adc_configuration(self) -> ADCConfiguration:
         """Read the current ADC configuration
 
@@ -618,7 +887,7 @@ if __name__ == "__main__":
     from doctest import run_docstring_examples
 
     run_docstring_examples(
-        SensorDevice.read_adc_configuration,
+        SensorDevice.open_data_stream,
         globals(),
         verbose=True,
     )
