@@ -372,6 +372,63 @@ class EEPROM:
         data = list(pack("f", value))
         await self.write(address, offset, data)
 
+    # pylint: disable=too-many-arguments, too-many-positional-arguments
+
+    async def write_int(
+        self,
+        address: int,
+        offset: int,
+        value: int,
+        length: int,
+        signed: bool = False,
+    ) -> None:
+        """Write an integer number at the specified EEPROM address
+
+        Parameters
+        ----------
+
+        address:
+            The page number in the EEPROM
+
+        offset:
+            The offset to the base address in the specified page
+
+        value:
+            The number that should be stored at the specified location
+
+        length:
+            This value specifies how long the number is in bytes
+
+        signed:
+            Specifies if `value` is a signed number (`True`) or an
+            unsigned number (`False`)
+
+        Example
+        -------
+
+        >>> from asyncio import run
+        >>> from icotronic.can.connection import Connection
+
+        Write int value to and read (same) int value from EEPROM of STU 1
+
+        >>> async def write_and_read_int(value):
+        ...     async with Connection() as stu:
+        ...         await stu.eeprom.write_int(address=10, offset=0,
+        ...             value=value, length=8, signed=True)
+        ...         return await stu.eeprom.read_int(address=10, offset=0,
+        ...                 length=8, signed=True)
+        >>> value = -1337
+        >>> read_value = run(write_and_read_int(value))
+        >>> value == read_value
+        True
+
+        """
+
+        data = list(value.to_bytes(length, byteorder="little", signed=signed))
+        await self.write(address, offset, data)
+
+    # pylint: enable=too-many-arguments, too-many-positional-arguments
+
 
 # -- Main ---------------------------------------------------------------------
 
@@ -379,7 +436,7 @@ if __name__ == "__main__":
     from doctest import run_docstring_examples
 
     run_docstring_examples(
-        EEPROM.write_float,
+        EEPROM.write_int,
         globals(),
         verbose=True,
     )
