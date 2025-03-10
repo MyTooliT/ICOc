@@ -11,6 +11,7 @@ from typing import AsyncGenerator, Type
 
 from netaddr import EUI
 
+from icotronic.can.eeprom import EEPROM
 from icotronic.can.network import STHDeviceInfo
 from icotronic.can.node import NodeId
 from icotronic.can.sensor import SensorDevice
@@ -47,6 +48,7 @@ class STU:
 
         self.spu = spu
         self.id = NodeId("STU 1")
+        self.eeprom = EEPROM(spu, self.id)
 
     async def reset(self) -> None:
         """Reset the STU
