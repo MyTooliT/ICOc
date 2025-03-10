@@ -543,6 +543,60 @@ class EEPROM:
             address=0, offset=0, length=1, value=EEPROMStatus(value).value
         )
 
+    async def read_name(self) -> str:
+        """Retrieve the name of the node from the EEPROM
+
+        Returns
+        -------
+
+        The name of the node
+
+        Examples
+        --------
+
+        >>> from asyncio import run
+        >>> from icotronic.can.connection import Connection
+
+        Read the name of STU 1
+
+        >>> async def read_name():
+        ...     async with Connection() as stu:
+        ...         return await stu.eeprom.read_name()
+        >>> isinstance(run(read_name()), str)
+        True
+
+        """
+
+        return await self.read_text(address=0, offset=1, length=8)
+
+    async def write_name(self, name: str) -> None:
+        """Write the name of the node into the EEPROM
+
+        Parameters
+        ----------
+
+        name:
+            The new (Bluetooth advertisement) name of the node
+
+        Examples
+        --------
+
+        >>> from asyncio import run
+        >>> from icotronic.can.connection import Connection
+
+        Write and read the name of STU 1
+
+        >>> async def write_read_name(name):
+        ...     async with Connection() as stu:
+        ...         await stu.eeprom.write_name(name)
+        ...         return await stu.eeprom.read_name()
+        >>> run(write_read_name('Valerie'))
+        'Valerie'
+
+        """
+
+        await self.write_text(address=0, offset=1, text=name, length=8)
+
 
 # -- Main ---------------------------------------------------------------------
 
@@ -550,7 +604,7 @@ if __name__ == "__main__":
     from doctest import run_docstring_examples
 
     run_docstring_examples(
-        EEPROM.write_status,
+        EEPROM.write_name,
         globals(),
         verbose=True,
     )
