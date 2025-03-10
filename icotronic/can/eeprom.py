@@ -50,9 +50,6 @@ class EEPROM:
         length:
             This value specifies how many bytes you want to read
 
-        node:
-            The node from which the EEPROM data should be retrieved
-
         Returns
         -------
 
@@ -119,9 +116,6 @@ class EEPROM:
         offset:
             The offset to the base address in the specified page
 
-        node:
-            The node from which the EEPROM data should be retrieved
-
         Returns
         -------
 
@@ -150,6 +144,60 @@ class EEPROM:
         data = await self.read(address, offset, length=4)
         return unpack("<f", bytearray(data))[0]
 
+    async def read_int(
+        self,
+        address: int,
+        offset: int,
+        length: int,
+        signed: bool = False,
+    ) -> int:
+        """Read an integer value from the EEPROM
+
+        Parameters
+        ----------
+
+        address:
+            The page number in the EEPROM
+
+        offset:
+            The offset to the base address in the specified page
+
+        length:
+            This value specifies how long the number is in bytes
+
+        signed:
+            Specifies if `value` is a signed number (`True`) or an
+            unsigned number (`False`)
+
+        Returns
+        -------
+
+        The number at the specified location of the EEPROM
+
+        Example
+        -------
+
+        >>> from asyncio import run
+        >>> from icotronic.can.connection import Connection
+
+        Read the operating time (in seconds) of STU 1
+
+        >>> async def read_operating_time():
+        ...     async with Connection() as stu:
+        ...         return await stu.eeprom.read_int(address=5, offset=8,
+        ...                                          length=4)
+        >>> operating_time = run(read_operating_time())
+        >>> operating_time >= 0
+        True
+
+        """
+
+        return int.from_bytes(
+            await self.read(address, offset, length),
+            "little",
+            signed=signed,
+        )
+
 
 # -- Main ---------------------------------------------------------------------
 
@@ -157,7 +205,7 @@ if __name__ == "__main__":
     from doctest import run_docstring_examples
 
     run_docstring_examples(
-        EEPROM.read_float,
+        EEPROM.read_int,
         globals(),
         verbose=True,
     )
