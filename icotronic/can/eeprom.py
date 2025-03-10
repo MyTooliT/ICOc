@@ -2,7 +2,7 @@
 
 # -- Imports ------------------------------------------------------------------
 
-from struct import unpack
+from struct import pack, unpack
 
 from icotronic.can.message import Message
 from icotronic.can.node import NodeId
@@ -329,6 +329,49 @@ class EEPROM:
             data = data[4:]
             offset += write_length
 
+    async def write_float(
+        self,
+        address: int,
+        offset: int,
+        value: float,
+    ) -> None:
+        """Write a float value at the specified EEPROM address
+
+        Parameters
+        ----------
+
+        address:
+            The page number in the EEPROM
+
+        offset:
+            The offset to the base address in the specified page
+
+        value:
+            The float value that should be stored at the specified location
+
+        Examples
+        --------
+
+        >>> from asyncio import run
+        >>> from icotronic.can.connection import Connection
+
+        Write float value to and read (same) float value from EEPROM of STU 1
+
+        >>> async def write_and_read_float(value):
+        ...     async with Connection() as stu:
+        ...         await stu.eeprom.write_float(address=10, offset=0,
+        ...                                      value=value)
+        ...         return await stu.eeprom.read_float(address=10, offset=0)
+        >>> value = 42.5
+        >>> read_value = run(write_and_read_float(value))
+        >>> value == read_value
+        True
+
+        """
+
+        data = list(pack("f", value))
+        await self.write(address, offset, data)
+
 
 # -- Main ---------------------------------------------------------------------
 
@@ -336,7 +379,7 @@ if __name__ == "__main__":
     from doctest import run_docstring_examples
 
     run_docstring_examples(
-        EEPROM.write,
+        EEPROM.write_float,
         globals(),
         verbose=True,
     )
