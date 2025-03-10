@@ -14,7 +14,7 @@ from icotronic.utility.data import convert_bytes_to_text
 
 
 class EEPROM:
-    """Read and write EEPROM data"""
+    """Read and write EEPROM data of ICOtronic devices (STU/sensor devices)"""
 
     def __init__(self, spu: SPU, node: NodeId) -> None:
         """Create an EEPROM instance using the given arguments
@@ -598,13 +598,46 @@ class EEPROM:
         await self.write_text(address=0, offset=1, text=name, length=8)
 
 
+class SensorDeviceEEPROM(EEPROM):
+    """Read and write EEPROM data of sensor devices"""
+
+    async def read_sleep_time_1(self) -> int:
+        """Retrieve sleep time 1 from the EEPROM
+
+        Returns
+        -------
+
+        The current value of sleep time 1 in milliseconds
+
+        Examples
+        --------
+
+        >>> from asyncio import run
+        >>> from icotronic.can.connection import Connection
+
+        Read sleep time 1 of the sensor device with device id 0
+
+        >>> async def read_sleep_time_1():
+        ...     async with Connection() as stu:
+        ...         # We assume that at least one sensor device is available
+        ...         async with stu.connect_sensor_device(0) as sensor_device:
+        ...             return await sensor_device.eeprom.read_sleep_time_1()
+        >>> sleep_time = run(read_sleep_time_1())
+        >>> isinstance(sleep_time, int)
+        True
+
+        """
+
+        return await self.read_int(address=0, offset=9, length=4)
+
+
 # -- Main ---------------------------------------------------------------------
 
 if __name__ == "__main__":
     from doctest import run_docstring_examples
 
     run_docstring_examples(
-        EEPROM.write_name,
+        SensorDeviceEEPROM.read_sleep_time_1,
         globals(),
         verbose=True,
     )

@@ -18,7 +18,7 @@ from icotronic.can.constants import (
     DEVICE_NUMBER_SELF_ADDRESSING,
 )
 from icotronic.can.adc import ADCConfiguration
-from icotronic.can.eeprom import EEPROM
+from icotronic.can.eeprom import SensorDeviceEEPROM
 from icotronic.can.error import UnsupportedFeatureException
 from icotronic.can.message import Message
 from icotronic.can.network import NoResponseError, ErrorResponseError, Times
@@ -161,7 +161,7 @@ class SensorDevice:
 
         self.spu = spu
         self.id = NodeId("STH 1")
-        self.eeprom = EEPROM(spu, self.id)
+        self.eeprom = SensorDeviceEEPROM(spu, self.id)
 
     # ==========
     # = System =
