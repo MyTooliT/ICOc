@@ -5,6 +5,7 @@
 from icotronic.can.calibration import CalibrationMeasurementFormat
 from icotronic.can.message import Message
 from icotronic.can.sensor import SensorDevice
+from icotronic.measurement.constants import ADC_MAX_VALUE
 
 # -- Classes ------------------------------------------------------------------
 
@@ -114,6 +115,82 @@ class STH(SensorDevice):
         """
 
         await self._acceleration_self_test(activate=False, dimension=dimension)
+
+    async def read_acceleration_voltage(
+        self, dimension: str = "x", reference_voltage: float = 3.3
+    ) -> float:
+        """Retrieve the current acceleration voltage in Volt
+
+        Parameters
+        ----------
+
+        dimension:
+            The dimension (x=1, y=2, z=3) for which the acceleration voltage
+            should be measured
+
+        reference_voltage:
+            The reference voltage for the ADC in Volt
+
+        Returns
+        -------
+
+        The voltage of the acceleration sensor in Volt
+
+        Example
+        -------
+
+        >>> from asyncio import run
+        >>> from icotronic.can.connection import Connection
+
+        Read the acceleration voltage of STH 1
+
+        >>> async def read_acceleration_voltage():
+        ...     async with Connection() as stu:
+        ...         # We assume that at least one sensor device is available
+        ...         async with stu.connect_sensor_device(0, STH) as sth:
+        ...             before = await sth.read_acceleration_voltage()
+        ...             await sth.activate_acceleration_self_test()
+        ...             between = await sth.read_acceleration_voltage()
+        ...             await sth.deactivate_acceleration_self_test()
+        ...             after = await sth.read_acceleration_voltage()
+        ...         return (before, between, after)
+        >>> before, between, after = run(read_acceleration_voltage())
+        >>> before < between and after < between
+        True
+
+        """
+
+        try:
+            dimension_number = "xyz".index(dimension) + 1
+        except ValueError as error:
+            raise ValueError(
+                f"Invalid dimension value: “{dimension}”"
+            ) from error
+
+        node = self.id
+        message = Message(
+            block="Configuration",
+            block_command="Calibration Measurement",
+            sender=self.spu.id,
+            receiver=node,
+            request=True,
+            data=CalibrationMeasurementFormat(
+                set=True,
+                element="Data",
+                method="Measure",
+                reference_voltage=reference_voltage,
+                dimension=dimension_number,
+            ).data,
+        )
+
+        # pylint: disable=protected-access
+        response = await self.spu._request(
+            message, description=f"retrieve acceleration voltage of “{node}”"
+        )
+        # pylint: enable=protected-access
+
+        adc_value = int.from_bytes(response.data[4:], "little")
+        return adc_value / ADC_MAX_VALUE * reference_voltage
 
 
 # -- Main ---------------------------------------------------------------------
