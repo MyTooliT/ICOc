@@ -511,6 +511,38 @@ class EEPROM:
             (await self.read(address=0, offset=0, length=1)).pop()
         )
 
+    async def write_status(self, value: int | EEPROMStatus) -> None:
+        """Change the value of the EEPROM status byte
+
+        Parameters
+        ----------
+
+        value:
+            The new value for the status byte
+
+
+        Example
+        -------
+
+        >>> from asyncio import run
+        >>> from icotronic.can.connection import Connection
+
+        Write and read the status byte of STU 1
+
+        >>> async def write_read_status_byte():
+        ...     async with Connection() as stu:
+        ...         await stu.eeprom.write_status(EEPROMStatus('Initialized'))
+        ...         return await stu.eeprom.read_status()
+        >>> status = run(write_read_status_byte())
+        >>> status.is_initialized()
+        True
+
+        """
+
+        await self.write_int(
+            address=0, offset=0, length=1, value=EEPROMStatus(value).value
+        )
+
 
 # -- Main ---------------------------------------------------------------------
 
@@ -518,7 +550,7 @@ if __name__ == "__main__":
     from doctest import run_docstring_examples
 
     run_docstring_examples(
-        EEPROM.read_status,
+        EEPROM.write_status,
         globals(),
         verbose=True,
     )
