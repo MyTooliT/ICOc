@@ -2,13 +2,13 @@
 
 # -- Imports ------------------------------------------------------------------
 
+from struct import unpack
+
 from icotronic.can.message import Message
 from icotronic.can.node import NodeId
 from icotronic.can.spu import SPU
 
 # -- Classes ------------------------------------------------------------------
-
-# pylint: disable=too-few-public-methods
 
 
 class EEPROM:
@@ -31,9 +31,9 @@ class EEPROM:
         self.spu = spu
         self.id = node
 
-    # ==========
-    # = EEPROM =
-    # ==========
+    # ===========
+    # = General =
+    # ===========
 
     async def read(self, address: int, offset: int, length: int) -> list[int]:
         """Read EEPROM data
@@ -107,8 +107,49 @@ class EEPROM:
 
         return read_data
 
+    async def read_float(self, address: int, offset: int) -> float:
+        """Read EEPROM data in float format
 
-# pylint: enable=too-few-public-methods
+        Parameters
+        ----------
+
+        address:
+            The page number in the EEPROM
+
+        offset:
+            The offset to the base address in the specified page
+
+        node:
+            The node from which the EEPROM data should be retrieved
+
+        Returns
+        -------
+
+        The float number at the specified location of the EEPROM
+
+        Example
+        -------
+
+        >>> from asyncio import run
+        >>> from icotronic.can.connection import Connection
+        >>> from icotronic.can.sth import STH
+
+        Read slope of acceleration for x-axis of STH 1
+
+        >>> async def read_slope():
+        ...     async with Connection() as stu:
+        ...         # We assume that at least one sensor device is available
+        ...         async with stu.connect_sensor_device(0, STH) as sth:
+        ...             return await sth.eeprom.read_float(address=8, offset=0)
+        >>> slope = run(read_slope())
+        >>> isinstance(slope, float)
+        True
+
+        """
+
+        data = await self.read(address, offset, length=4)
+        return unpack("<f", bytearray(data))[0]
+
 
 # -- Main ---------------------------------------------------------------------
 
@@ -116,7 +157,7 @@ if __name__ == "__main__":
     from doctest import run_docstring_examples
 
     run_docstring_examples(
-        EEPROM.read,
+        EEPROM.read_float,
         globals(),
         verbose=True,
     )
