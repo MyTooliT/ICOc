@@ -598,6 +598,37 @@ class EEPROM:
 
         await self.write_text(address=0, offset=1, text=name, length=8)
 
+    # ================
+    # = Product Data =
+    # ================
+
+    async def read_gtin(self) -> int:
+        """Read the global trade identifier number (GTIN) from the EEPROM
+
+        Returns
+        -------
+
+        The GTIN of the specified node
+
+        Examples
+        --------
+
+        >>> from asyncio import run
+        >>> from icotronic.can.connection import Connection
+
+        Read the GTIN of STU 1
+
+        >>> async def read_gtin():
+        ...     async with Connection() as stu:
+        ...         return await stu.eeprom.read_gtin()
+        >>> gtin = run(read_gtin())
+        >>> isinstance(gtin, int)
+        True
+
+        """
+
+        return await self.read_int(address=4, offset=0, length=8)
+
 
 class SensorDeviceEEPROM(EEPROM):
     """Read and write EEPROM data of sensor devices"""
@@ -879,7 +910,7 @@ if __name__ == "__main__":
     from doctest import run_docstring_examples
 
     run_docstring_examples(
-        SensorDeviceEEPROM.write_advertisement_time_2,
+        EEPROM.read_gtin,
         globals(),
         verbose=True,
     )
