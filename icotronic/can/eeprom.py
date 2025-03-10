@@ -7,6 +7,7 @@ from struct import unpack
 from icotronic.can.message import Message
 from icotronic.can.node import NodeId
 from icotronic.can.spu import SPU
+from icotronic.utility.data import convert_bytes_to_text
 
 # -- Classes ------------------------------------------------------------------
 
@@ -198,6 +199,52 @@ class EEPROM:
             signed=signed,
         )
 
+    async def read_text(self, address: int, offset: int, length: int) -> str:
+        """Read EEPROM data in ASCII format
+
+        Please note, that this function will only return the characters up
+        to the first null byte.
+
+        Parameters
+        ----------
+
+        address:
+            The page number in the EEPROM
+
+        offset:
+            The offset to the base address in the specified page
+
+        length:
+            This value specifies how many characters you want to read
+
+        Returns
+        -------
+
+        A string that contains the text at the specified location
+
+        Example
+        -------
+
+        >>> from asyncio import run
+        >>> from icotronic.can.connection import Connection
+
+        Read name of STU 1
+
+        >>> async def read_name_eeprom():
+        ...     async with Connection() as stu:
+        ...         return await stu.eeprom.read_text(address=0, offset=1,
+        ...                                           length=8)
+        >>> name = run(read_name_eeprom())
+        >>> 0 <= len(name) <= 8
+        True
+        >>> isinstance(name, str)
+        True
+
+        """
+
+        data = await self.read(address, offset, length)
+        return convert_bytes_to_text(data, until_null=True)
+
 
 # -- Main ---------------------------------------------------------------------
 
@@ -205,7 +252,7 @@ if __name__ == "__main__":
     from doctest import run_docstring_examples
 
     run_docstring_examples(
-        EEPROM.read_int,
+        EEPROM.read_text,
         globals(),
         verbose=True,
     )
