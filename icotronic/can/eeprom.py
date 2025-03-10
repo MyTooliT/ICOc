@@ -245,6 +245,90 @@ class EEPROM:
         data = await self.read(address, offset, length)
         return convert_bytes_to_text(data, until_null=True)
 
+    async def write(
+        self,
+        address: int,
+        offset: int,
+        data: list[int],
+        length: int | None = None,
+    ) -> None:
+        """Write EEPROM data at the specified address
+
+        Parameters
+        ----------
+
+        address:
+            The page number in the EEPROM
+
+        offset:
+            The offset to the base address in the specified page
+
+        data:
+            A list of byte value that should be stored at the specified EEPROM
+            location
+
+        length:
+            This optional parameter specifies how many of the bytes in `data`
+            should be stored in the EEPROM. If you specify a length that is
+            greater, than the size of the data list, then the remainder of
+            the EEPROM data will be filled with null bytes.
+
+        Examples
+        --------
+
+        >>> from asyncio import run
+        >>> from icotronic.can.connection import Connection
+
+        Write data to and read (same) data from EEPROM of STU 1
+
+        >>> async def write_and_read_eeprom(data):
+        ...     async with Connection() as stu:
+        ...         await stu.eeprom.write(address=10, offset=3, data=data)
+        ...         return await stu.eeprom.read(address=10, offset=3,
+        ...                                      length=len(data))
+        >>> data = [1, 3, 3, 7]
+        >>> read_data = run(write_and_read_eeprom(data))
+        >>> data == read_data
+        True
+
+        """
+
+        # Change data, if
+        # - only a subset, or
+        # - additional data
+        # should be written to the EEPROM.
+        if length is not None:
+            # Cut off additional data bytes
+            data = data[:length]
+            # Fill up additional data bytes
+            data.extend([0] * (length - len(data)))
+
+        node = self.id
+
+        while data:
+            write_data = data[:4]  # Maximum of 4 bytes per message
+            write_length = len(write_data)
+            # Use zeroes to fill up missing data bytes
+            write_data.extend([0] * (4 - write_length))
+
+            reserved = [0] * 1
+            message = Message(
+                block="EEPROM",
+                block_command="Write",
+                sender=self.spu.id,
+                receiver=node,
+                request=True,
+                data=[address, offset, write_length, *reserved, *write_data],
+            )
+            # pylint: disable=protected-access
+            await self.spu._request(
+                message, description=f"write EEPROM data in “{node}”"
+            )
+            # pylint: enable=protected-access
+
+            data = data[4:]
+            offset += write_length
+
 
 # -- Main ---------------------------------------------------------------------
 
@@ -252,7 +336,7 @@ if __name__ == "__main__":
     from doctest import run_docstring_examples
 
     run_docstring_examples(
-        EEPROM.read_text,
+        EEPROM.write,
         globals(),
         verbose=True,
     )
