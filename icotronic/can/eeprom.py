@@ -7,6 +7,7 @@ from struct import pack, unpack
 from icotronic.can.message import Message
 from icotronic.can.node import NodeId
 from icotronic.can.spu import SPU
+from icotronic.eeprom.status import EEPROMStatus
 from icotronic.utility.data import convert_bytes_to_text
 
 # -- Classes ------------------------------------------------------------------
@@ -478,6 +479,38 @@ class EEPROM:
         data = list(map(ord, list(text)))
         await self.write(address, offset, data, length)
 
+    # ========================
+    # = System Configuration =
+    # ========================
+
+    async def read_status(self) -> EEPROMStatus:
+        """Retrieve EEPROM status byte
+
+        Returns
+        -------
+
+        An EEPROM status object for the current status byte value
+
+        Example
+        -------
+
+        >>> from asyncio import run
+        >>> from icotronic.can.connection import Connection
+
+        Read the status byte of STU 1
+
+        >>> async def read_status_byte():
+        ...     async with Connection() as stu:
+        ...         return await stu.eeprom.read_status()
+        >>> isinstance(run(read_status_byte()), EEPROMStatus)
+        True
+
+        """
+
+        return EEPROMStatus(
+            (await self.read(address=0, offset=0, length=1)).pop()
+        )
+
 
 # -- Main ---------------------------------------------------------------------
 
@@ -485,7 +518,7 @@ if __name__ == "__main__":
     from doctest import run_docstring_examples
 
     run_docstring_examples(
-        EEPROM.write_text,
+        EEPROM.read_status,
         globals(),
         verbose=True,
     )
