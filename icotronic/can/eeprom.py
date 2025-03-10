@@ -429,6 +429,55 @@ class EEPROM:
 
     # pylint: enable=too-many-arguments, too-many-positional-arguments
 
+    async def write_text(
+        self,
+        address: int,
+        offset: int,
+        text: str,
+        length: int,
+    ) -> None:
+        """Write a string at the specified EEPROM address
+
+        Parameters
+        ----------
+
+        address:
+            The page number in the EEPROM
+
+        offset:
+            The offset to the base address in the specified page
+
+        text:
+            An ASCII string that should be written to the specified location
+
+        length:
+            This optional parameter specifies how many of the character in
+            `text` should be stored in the EEPROM. If you specify a length
+            that is greater than the size of the data list, then the
+            remainder of the EEPROM data will be filled with null bytes.
+
+        Examples
+        --------
+
+        >>> from asyncio import run
+        >>> from icotronic.can.connection import Connection
+
+        Write text to and read (same) text from EEPROM of STU 1
+
+        >>> async def write_and_read_text(text):
+        ...     async with Connection() as stu:
+        ...         await stu.eeprom.write_text(address=10, offset=11,
+        ...                                     text=text, length=len(text))
+        ...         return await stu.eeprom.read_text(address=10, offset=11,
+        ...                                           length=len(text))
+        >>> run(write_and_read_text("something"))
+        'something'
+
+        """
+
+        data = list(map(ord, list(text)))
+        await self.write(address, offset, data, length)
+
 
 # -- Main ---------------------------------------------------------------------
 
@@ -436,7 +485,7 @@ if __name__ == "__main__":
     from doctest import run_docstring_examples
 
     run_docstring_examples(
-        EEPROM.write_int,
+        EEPROM.write_text,
         globals(),
         verbose=True,
     )
