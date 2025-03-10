@@ -739,6 +739,35 @@ class SensorDeviceEEPROM(EEPROM):
             length=2,
         )
 
+    async def read_sleep_time_2(self) -> int:
+        """Retrieve sleep time 2 from the EEPROM
+
+        Returns
+        -------
+
+        The current value of sleep time 2 in milliseconds
+
+        Example
+        -------
+
+        >>> from asyncio import run
+        >>> from icotronic.can.connection import Connection
+
+        Read sleep time 2 of STH 1
+
+        >>> async def read_sleep_time_2():
+        ...     async with Connection() as stu:
+        ...         # We assume that at least one sensor device is available
+        ...         async with stu.connect_sensor_device(0) as sensor_device:
+        ...             return await sensor_device.eeprom.read_sleep_time_2()
+        >>> sleep_time = run(read_sleep_time_2())
+        >>> isinstance(sleep_time, int)
+        True
+
+        """
+
+        return await self.read_int(address=0, offset=15, length=4)
+
 
 # -- Main ---------------------------------------------------------------------
 
@@ -746,7 +775,7 @@ if __name__ == "__main__":
     from doctest import run_docstring_examples
 
     run_docstring_examples(
-        SensorDeviceEEPROM.write_advertisement_time_1,
+        SensorDeviceEEPROM.read_sleep_time_2,
         globals(),
         verbose=True,
     )
