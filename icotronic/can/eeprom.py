@@ -712,8 +712,7 @@ class SensorDeviceEEPROM(EEPROM):
         >>> from asyncio import run
         >>> from icotronic.can.connection import Connection
 
-        Write and read advertisement time 1 of the sensor device with device
-        id 0
+        Write and read advertisement time 1 of sensor device with device id 0
 
         >>> async def write_read_advertisement_time_1(milliseconds):
         ...     async with Connection() as stu:
@@ -753,7 +752,7 @@ class SensorDeviceEEPROM(EEPROM):
         >>> from asyncio import run
         >>> from icotronic.can.connection import Connection
 
-        Read sleep time 2 of STH 1
+        Read sleep time 2 of sensor device with device id 0
 
         >>> async def read_sleep_time_2():
         ...     async with Connection() as stu:
@@ -783,7 +782,7 @@ class SensorDeviceEEPROM(EEPROM):
         >>> from asyncio import run
         >>> from icotronic.can.connection import Connection
 
-        Write and read sleep time 2 of STH 1
+        Write and read sleep time 2 of sensor device with device id 0
 
         >>> async def write_read_sleep_time_2(milliseconds):
         ...     async with Connection() as stu:
