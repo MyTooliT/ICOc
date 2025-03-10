@@ -57,6 +57,7 @@ pytest-test-no-hardware:
 	       --ignore-glob='*connection.py' \
 	       --ignore-glob='*can/sensor.py' \
 	       --ignore-glob='*can/spu.py' \
+	       --ignore-glob='*can/sth.py' \
 	       --ignore-glob='*can/stu.py' \
 	       --ignore-glob='*network.py' \
 	       --ignore-glob='*read_data.t' \

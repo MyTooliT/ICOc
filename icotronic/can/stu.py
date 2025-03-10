@@ -7,7 +7,7 @@ from __future__ import annotations
 from asyncio import sleep
 from contextlib import asynccontextmanager
 from time import time
-from typing import AsyncGenerator
+from typing import AsyncGenerator, Type
 
 from netaddr import EUI
 
@@ -487,9 +487,13 @@ class STU:
 
         return devices
 
+    # pylint: disable=too-many-locals
+
     @asynccontextmanager
     async def connect_sensor_device(
-        self, identifier: int | str | EUI
+        self,
+        identifier: int | str | EUI,
+        sensor_device_class: Type[SensorDevice] = SensorDevice,
     ) -> AsyncGenerator[SensorDevice]:
         """Connect to a sensor device (e.g. SHA, SMH or STH)
 
@@ -504,6 +508,9 @@ class STU:
             - device number (`int`)
 
             of the sensor device we want to connect to
+
+        sensor_device_class:
+            Sensor device subclass that should be returned by context manager
 
         Example
         -------
@@ -610,9 +617,11 @@ class STU:
                 await sleep(0.1)
 
         try:
-            yield SensorDevice(self.spu)
+            yield sensor_device_class(self.spu)
         finally:
             await self.deactivate_bluetooth()
+
+    # pylint: enable=too-many-locals
 
 
 # -- Main ---------------------------------------------------------------------
