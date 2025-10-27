@@ -15,7 +15,11 @@ from platform import system
 from sys import exit as sys_exit, stderr
 from typing import List, Optional
 
-from dynaconf import Dynaconf, ValidationError, Validator
+from dynaconf import (  # type: ignore[attr-defined]
+    Dynaconf,
+    ValidationError,
+    Validator,
+)
 from dynaconf.vendor.ruamel.yaml.parser import ParserError
 from dynaconf.vendor.ruamel.yaml.scanner import ScannerError
 from platformdirs import site_config_dir, user_config_dir
