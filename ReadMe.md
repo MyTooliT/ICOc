@@ -1,5 +1,15 @@
 [![GitHub Workflow Documentation](https://img.shields.io/github/actions/workflow/status/mytoolit/ICOc/documentation.yaml?branch=main&label=Documentation)](https://mytoolit.github.io/ICOc/) [![API Documentation](https://img.shields.io/readthedocs/icoc?label=API%20Documentation)](https://icoc.readthedocs.io/en/stable/) [![GitHub Workflow Tests](https://img.shields.io/github/actions/workflow/status/mytoolit/ICOc/tests.yaml?branch=main&label=Tests)](https://github.com/MyTooliT/ICOc/actions/workflows/tests.yaml)
 
+**ICOc is deprecated!**
+
+If you want to:
+
+- **write Python code** that uses the ICOtronic system, please use the [ICOtronic package](https://github.com/MyTooliT/ICOtronic) instead.
+- **test ICOtronic hardware**, please use [ICOtest](https://github.com/MyTooliT/ICOtest) instead.
+- **collect measurement data** with the ICOtronic system, please use either
+  - the command line tool [`icon`](https://mytoolit.github.io/ICOtronic/#data-collection) of the ICOtronic package or
+  - the web GUI [ICOdaq](https://git.ift.tuwien.ac.at/ift/icotronic/icodaq).
+
 # ICOc
 
 This repository contains data collection and test software for the [ICOtronic system](https://www.mytoolit.com/ICOtronic/). For more information, please take a look [at the online documentation of ICOc](https://mytoolit.github.io/ICOc/).
